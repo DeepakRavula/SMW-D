@@ -157,8 +157,14 @@ $bundle = BackendAsset::register($this);
                             'label'=>Yii::t('backend', 'System'),
                             'options' => ['class' => 'header']
                         ],
-                        [
-                            'label'=>Yii::t('backend', 'Users'),
+						[
+                            'label'=>Yii::t('backend', 'Students'),
+                            'icon'=>'<i class="fa fa-users"></i>',
+                            'url'=>['/student/index'],
+                            'visible'=>Yii::$app->user->can('administrator')
+                        ],
+						[
+                            'label'=>Yii::t('backend', 'Customers'),
                             'icon'=>'<i class="fa fa-users"></i>',
                             'url'=>['/user/index'],
                             'visible'=>Yii::$app->user->can('administrator')
