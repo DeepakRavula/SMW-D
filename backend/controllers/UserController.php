@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\User;
+use common\models\UserImport;
 use backend\models\UserForm;
 use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
@@ -52,8 +53,12 @@ class UserController extends Controller
 				'validationRules' => [
 				],
 				'on afterSave' => function($event) {
+
 					/* @var $file \League\Flysystem\File */
 					$file = $event->file;
+					$userImport = new UserImport();
+					$userImport->file = $file;
+					$userImport->import();
 					// do something (resize, add watermark etc)
 				}
 			]
