@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\User;
 use backend\models\UserForm;
+use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -28,7 +29,38 @@ class UserController extends Controller
         ];
     }
 
-    /**
+
+	public function actions() {
+		return [
+			'upload' => [
+				'class' => 'trntv\filekit\actions\UploadAction',
+				'multiple' => false,
+				'disableCsrf' => true,
+				'responseFormat' => yii\web\Response::FORMAT_JSON,
+				'responsePathParam' => 'path',
+				'responseBaseUrlParam' => 'base_url',
+				'responseUrlParam' => 'url',
+				'responseDeleteUrlParam' => 'delete_url',
+				'responseMimeTypeParam' => 'type',
+				'responseNameParam' => 'name',
+				'responseSizeParam' => 'size',
+				'deleteRoute' => 'delete',
+				'fileStorage' => 'fileStorage', // Yii::$app->get('fileStorage')
+				'fileStorageParam' => 'fileStorage', // ?fileStorage=someStorageComponent
+				'sessionKey' => '_uploadedFiles',
+				'allowChangeFilestorage' => false,
+				'validationRules' => [
+				],
+				'on afterSave' => function($event) {
+					/* @var $file \League\Flysystem\File */
+					$file = $event->file;
+					// do something (resize, add watermark etc)
+				}
+			]
+		];
+	}
+
+	/**
      * Lists all User models.
      * @return mixed
      */
@@ -91,6 +123,23 @@ class UserController extends Controller
             'model' => $model,
             'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')
         ]);
+    }
+
+    /**
+     * Updates an existing User model.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionImport()
+    {
+        $model = new UserImportForm();
+        if ($model->load(Yii::$app->request->post()) && $model->import()) {
+            return $this->redirect(['import']);
+        }
+
+        return $this->render('import', [
+			'model' => $model,
+		]);
     }
 
     /**

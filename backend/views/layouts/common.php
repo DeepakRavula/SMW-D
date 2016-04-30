@@ -193,6 +193,12 @@ $bundle = BackendAsset::register($this);
                             'url'=>['/invoice/index'],
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
+						[
+                            'label'=>Yii::t('backend', 'Import'),
+                            'icon'=>'<i class="fa fa-users"></i>',
+                            'url'=>['/user/import'],
+                            'visible'=>Yii::$app->user->can('administrator')
+                        ],
                         [
                             'label'=>Yii::t('backend', 'Other'),
                             'url' => '#',
