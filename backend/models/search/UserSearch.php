@@ -12,6 +12,7 @@ use common\models\User;
  */
 class UserSearch extends User
 {
+	public $role_name;
     /**
      * @inheritdoc
      */
@@ -19,7 +20,7 @@ class UserSearch extends User
     {
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'email'], 'safe'],
+            [['username', 'auth_key', 'password_hash', 'email','role_name'], 'safe'],
         ];
     }
 
@@ -38,7 +39,7 @@ class UserSearch extends User
      */
     public function search($params)
     {
-        $query = User::find();
+        $query = User::find()->alias('u');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -56,10 +57,14 @@ class UserSearch extends User
             'logged_at' => $this->logged_at
         ]);
 
+ 		$query->leftJoin(['rbac_auth_assignment aa'], 'u.id = aa.user_id');
+ 		$query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
+
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'auth_key', $this->auth_key])
             ->andFilterWhere(['like', 'password_hash', $this->password_hash])
-            ->andFilterWhere(['like', 'email', $this->email]);
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['ai.name' => $this->role_name]);
 
         return $dataProvider;
     }

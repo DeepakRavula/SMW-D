@@ -68,6 +68,9 @@ class UserImport extends Model {
 			$user->email = $row['Billing Email Address'];
 			$user->save();
 
+            $auth = Yii::$app->authManager;
+        	$auth->assign($auth->getRole(User::ROLE_CUSTOMER), $user->getId());
+
 			$userProfile = new UserProfile();
 			$userProfile->user_id = $user->id;
 			$userProfile->firstname = $row['Billing First Name'];

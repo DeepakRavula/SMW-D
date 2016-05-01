@@ -9,6 +9,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
+use common\models\User;
 
 $bundle = BackendAsset::register($this);
 ?>
@@ -166,7 +167,7 @@ $bundle = BackendAsset::register($this);
 						[
                             'label'=>Yii::t('backend', 'Customers'),
                             'icon'=>'<i class="fa fa-users"></i>',
-                            'url'=>['/user/index'],
+                            'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER],
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
