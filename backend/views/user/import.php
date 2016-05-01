@@ -10,8 +10,9 @@ $this->title = Yii::t('backend', 'Import {modelClass}', [
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Import'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-create">
+<div class="user-import-form">
 
+<div id = "alert_placeholder"></div>
 <?php echo \trntv\filekit\widget\Upload::widget([
     'model' => $model,
     'attribute' => 'file',
@@ -21,6 +22,18 @@ $this->params['breadcrumbs'][] = $this->title;
     //'minFileSize' => 1 * 1024 * 1024, // 1Mb
     'maxNumberOfFiles' => 3, // default 1,
     'acceptFileTypes' => new JsExpression('/(\.|\/)(csv|CSV)$/i'),
-    'clientOptions' => [],
+    'clientOptions' => ['done' => new JsExpression('UserImport.onDone')],
 ]);?>
 </div>
+<script type="text/javascript">
+
+bootstrap_alert = function() {}
+bootstrap_alert.success = function(message) {
+            $('#alert_placeholder').html('<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>'+message+'</span></div>')
+        }
+	var UserImport = {
+		onDone : function(e, data) {
+			bootstrap_alert.success('User data imported successfully');
+		}
+	}
+</script>
