@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "smw_student".
+ * This is the model class for table "student".
  *
  * @property integer $id
  * @property string $first_name

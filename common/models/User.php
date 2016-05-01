@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
+use \common\models\Address;
 
 /**
  * User model
@@ -137,6 +138,15 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
     }
+
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+	public function getAddresses() {
+		return $this->hasMany(Address::className(), ['id' => 'address_id'])
+		  ->viaTable('user_address', ['user_id' => 'id']);
+	}
 
     /**
      * @inheritdoc

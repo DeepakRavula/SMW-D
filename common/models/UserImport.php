@@ -3,6 +3,8 @@
 namespace common\models;
 
 use common\models\User;
+use common\models\Address;
+use common\models\PhoneNumber;
 use yii\base\Exception;
 use yii\base\Model;
 use Yii;
@@ -55,7 +57,10 @@ class UserImport extends Model {
 
 			$user = User::findOne(['email' => $row['Billing Email Address']]);
 
-			if (!empty($user)) { //user already exists, so skip
+			/* @todo - recognize parent and associate, if billing email already exists
+			 * 
+			 */
+			if (!empty($user)) {
 				continue;
 			}
 
@@ -68,7 +73,6 @@ class UserImport extends Model {
 			$userProfile->firstname = $row['Billing First Name'];
 			$userProfile->lastname = $row['Billing Last Name'];
 			$userProfile->save();
-			$adultUser = false;
 
 			$student = new Student();
 			$student->first_name = $row['First Name'];
@@ -77,9 +81,7 @@ class UserImport extends Model {
 			$student->customer_id = $user->id;
 			$student->save();
 
-			continue;
-
-			$address = new Addresses;
+			$address = new Address;
 			$address->label = 'billing';
 
 			$cityName = $row['Billing City'];
@@ -87,12 +89,13 @@ class UserImport extends Model {
 			$pincodeName = $row['Billing Postal Code'];
 
 			$address->address = $addressName;
-			$city = Cities::model()->findByAttributes(['name' => $cityName]);
+			$city = City::findOne(['name' => $cityName]);
 
 			if (empty($city)) {
 				$city = new Cities;
 				$city->name = $row['City'];
 				$city->province_id = 1;
+				$city->save();
 			}
 
 			$address->city_id = $city->id;
@@ -101,20 +104,22 @@ class UserImport extends Model {
 			$address->postal_code = $pincodeName;
 			$address->save();
 
+			$user->link('addresses', $address);
+
 			if (!empty($row['Billing Home Tel'])) {
 				$phoneNumber = $row['Billing Home Tel'];
-				$phone = new PhoneNumbers;
+				$phone = new PhoneNumber;
 				$phone->number = $phoneNumber;
-				$phone->label_id = Users::LABEL_HOME;
-				$phone->user_id = $adultUser ? $student->id : $parent->id;
+				$phone->label_id = PhoneNumber::LABEL_HOME;
+				$phone->user_id = $user->id;
 				$phone->save();
 			}
 			if (!empty($row['Billing Work Tel'])) {
 				$phoneNumber = $row['Billing Work Tel'];
-				$phone = new PhoneNumbers;
+				$phone = new PhoneNumber;
 				$phone->number = $phoneNumber;
-				$phone->label_id = Users::LABEL_WORK;
-				$phone->user_id = $adultUser ? $student->id : $parent->id;
+				$phone->label_id = PhoneNumber::LABEL_WORK;
+				$phone->user_id = $user->id;
 
 				if (!empty($row['Billing Work Tel Ext.'])) {
 					$phone->extension = $row['Billing Work Tel Ext.'];
@@ -125,18 +130,12 @@ class UserImport extends Model {
 
 			if (!empty($row['Billing Other Tel'])) {
 				$phoneNumber = $row['Billing Other Tel'];
-				$phone = new PhoneNumbers;
+				$phone = new PhoneNumber;
 				$phone->number = $phoneNumber;
-				$phone->label_id = Users::LABEL_OTHER;
-				$phone->user_id = $adultUser ? $student->id : $parent->id;
+				$phone->label_id = PhoneNumber::LABEL_OTHER;
+				$phone->user_id = $user->id;
 				$phone->save();
 			}
-
-			$userAddressAssoc = new UserAddress;
-			$userAddressAssoc->user_id = $adultUser ? $student->id : $parent->id;
-			$userAddressAssoc->address_id = $address->id;
-			$userAddressAssoc->save();
 		}
 	}
-
 }
