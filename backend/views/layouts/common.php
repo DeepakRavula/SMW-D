@@ -171,6 +171,12 @@ $bundle = BackendAsset::register($this);
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
+                            'label'=>Yii::t('backend', 'Teachers'),
+                            'icon'=>'<i class="fa fa-users"></i>',
+                            'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_TEACHER],	
+                            'visible'=>Yii::$app->user->can('administrator')
+                        ],	
+						[
                             'label'=>Yii::t('backend', 'Programs'),
                             'icon'=>'<i class="fa fa-users"></i>',
                             'url'=>['/program/index'],
