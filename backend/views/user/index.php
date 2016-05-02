@@ -27,7 +27,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             'id',
-            'username',
+			[
+				'label' => 'User Name',
+				'value' => function($data) {
+					return $data->userProfile->fullName;
+                },
+			],
             'email:email',
             [
                 'class' => EnumColumn::className(),

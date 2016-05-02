@@ -30,8 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Customer Name',
 				'value' => function($data) {
-					return $data->customer->userProfile->fullName;
-                }, 
+					$fullName = ! (empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;
+					return $fullName;
+                } 
 			],
             ['class' => 'yii\grid\ActionColumn'],
         ],
