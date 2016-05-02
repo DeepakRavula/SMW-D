@@ -183,6 +183,12 @@ $bundle = BackendAsset::register($this);
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
+                            'label'=>Yii::t('backend', 'Qualifications'),
+                            'icon'=>'<i class="fa fa-users"></i>',
+                            'url'=>['/qualification/index'], 
+							'visible'=>Yii::$app->user->can('administrator')
+                        ],	
+						[
                             'label'=>Yii::t('backend', 'Locations'),
                             'icon'=>'<i class="fa fa-users"></i>',
                             'url'=>['/location/index'],
