@@ -49,4 +49,8 @@ class Student extends \yii\db\ActiveRecord
             'customer_id' => 'Customer ID',
         ];
     }
+	public function getCustomer()
+    {
+        return $this->hasOne(User::className(), ['id' => 'customer_id']);
+    }
 }

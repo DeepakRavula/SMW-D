@@ -21,12 +21,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
             'first_name',
             'last_name',
             'birth_date',
-            'customer_id',
-
+			[
+				'label' => 'Customer Name',
+				'value' => function($data) {
+					return $data->customer->userProfile->fullName;
+                }, 
+			],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
