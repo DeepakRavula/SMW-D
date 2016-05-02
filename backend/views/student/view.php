@@ -30,7 +30,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'first_name',
             'last_name',
             'birth_date',
-            'customer_id',
+			[
+				'label' => 'Age',
+				'value' => DateTime::createFromFormat('Y-m-d', $model->birth_date)->diff(new DateTime('now'))->y, 
+			],	
+			[
+				'label' => 'Customer Name',
+				'value' => $model->fullName, 
+				
+			],
         ],
     ]) ?>
 
