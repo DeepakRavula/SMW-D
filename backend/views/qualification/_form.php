@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\ArrayHelper;
+use common\models\User;
+use common\models\Program;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Qualification */
@@ -14,9 +17,8 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->errorSummary($model); ?>
 
-    <?php echo $form->field($model, 'teacher_id')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'program_id')->textInput(['maxlength' => true]) ?>
+	<?php echo $form->field($model, 'teacher_id')->dropDownList(ArrayHelper::map(User::find()->all(), 'id', 'email')) ?>
+	<?php echo $form->field($model, 'program_id')->dropDownList(ArrayHelper::map(Program::find()->all(), 'id', 'name')) ?>
 
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
