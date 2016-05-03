@@ -47,14 +47,22 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'student_id' => 'Student ID',
-            'teacher_id' => 'Teacher ID',
-            'program_id' => 'Program ID',
-            'rate' => 'Rate',
+            'student_id' => 'Student Name',
+            'program_id' => 'Program Name',
             'quantity' => 'Quantity',
             'commencement_date' => 'Commencement Date',
             'invoiced_id' => 'Invoiced ID',
             'location_id' => 'Location ID',
         ];
+    }
+	
+	public function getStudentName()
+    {
+        return $this->hasOne(Student::className(), ['id' => 'student_id']);
+    }
+
+	public function getProgramName()
+    {
+        return $this->hasOne(Program::className(), ['id' => 'program_id']);
     }
 }
