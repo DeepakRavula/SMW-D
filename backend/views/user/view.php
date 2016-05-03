@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'status',
 			[
 				'label' => 'Address',
-				'value' => $model->primaryAddress->address, 
+				'value' => ! empty($model->primaryAddress->address) ?  $model->primaryAddress->address : null,
 			],
 			[
 				'label' => 'Phone Number',
