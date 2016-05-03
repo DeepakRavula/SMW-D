@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\query\ProgramQuery;
 
 /**
  * This is the model class for table "program".
@@ -23,6 +24,14 @@ class Program extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return '{{%program}}';
+    }
+
+    /**
+     * @return UserQuery
+     */
+    public static function find()
+    {
+        return new ProgramQuery(get_called_class());
     }
 
     /**

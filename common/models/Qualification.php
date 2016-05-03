@@ -43,4 +43,21 @@ class Qualification extends \yii\db\ActiveRecord
             'program_id' => 'Program ID',
         ];
     }
+
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'teacher_id']);
+    }
+	
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProgram()
+    {
+        return $this->hasOne(Program::className(), ['id' => 'program_id']);
+    }
 }

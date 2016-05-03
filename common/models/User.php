@@ -219,6 +219,14 @@ class User extends ActiveRecord implements IdentityInterface
             ->one();
     }
 
+	public static function findByRole($role)
+	{
+		return static::find()
+			->join('LEFT JOIN','rbac_auth_assignment','rbac_auth_assignment.user_id = id')
+			->where(['rbac_auth_assignment.item_name' => $role])
+			->all();
+	}
+
     /**
      * @inheritdoc
      */
