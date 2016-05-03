@@ -14,6 +14,9 @@ use Yii;
  */
 class Program extends \yii\db\ActiveRecord
 {
+    const STATUS_IN_ACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    
     /**
      * @inheritdoc
      */
@@ -44,6 +47,18 @@ class Program extends \yii\db\ActiveRecord
             'name' => 'Name',
             'rate' => 'Rate',
             'status' => 'Status',
+        ];
+    }
+    
+    /**
+     * Returns program statuses list
+     * @return array|mixed
+     */
+    public static function statuses()
+    {
+        return [
+            self::STATUS_IN_ACTIVE => Yii::t('common', 'In Active'),
+            self::STATUS_ACTIVE => Yii::t('common', 'Active')
         ];
     }
 }
