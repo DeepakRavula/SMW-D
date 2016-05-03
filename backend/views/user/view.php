@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
+use common\grid\EnumColumn;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -26,15 +29,47 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'username',
-            'auth_key',
+			[
+				'label' => 'First Name',
+				'value' => $model->userProfile->firstname, 
+			],
+			[
+				'label' => 'Last Name',
+				'value' => $model->userProfile->lastname, 
+			],
             'email:email',
             'status',
-            'created_at:datetime',
-            'updated_at:datetime',
-            'logged_at:datetime',
+			[
+				'label' => 'Address',
+				'value' => $model->primaryAddress->address, 
+			],
+			[
+				'label' => 'Phone Number',
+				'value' => $model->phoneNumber->number, 
+			],
         ],
     ]) ?>
 
 </div>
+
+    <?php echo GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+			[
+				'label' => 'Name',
+				'value' => function($data) {
+					return $data->fullName;
+                }, 	
+			],
+            'birth_date',
+			[
+				'label' => 'Customer Name',
+				'value' => function($data) {
+					$fullName = ! (empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;
+					return $fullName;
+                } 
+			],
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>

@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -30,7 +31,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'first_name',
             'last_name',
             'birth_date',
-            'customer_id',
+			[
+				'label' => 'Age',
+				'value' => DateTime::createFromFormat('Y-m-d', $model->birth_date)->diff(new DateTime('now'))->y, 
+			],	
+			[
+				'label' => 'Customer Name',
+				'value' => $model->fullName, 
+				
+			],
         ],
     ]) ?>
 

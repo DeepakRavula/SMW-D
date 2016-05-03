@@ -26,7 +26,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            'id',
 			[
 				'label' => 'User Name',
 				'value' => function($data) {
@@ -40,10 +39,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 'enum' => User::statuses(),
                 'filter' => User::statuses()
             ],
-            'created_at:datetime',
-            'logged_at:datetime',
-            // 'updated_at',
-
+			[
+				'label' => 'Primary Address',
+				'value' => function($data) {
+					$Address = ! (empty($data->primaryAddress->address)) ? $data->primaryAddress->address : null;
+					return $Address;
+                },
+			],
+			[
+				'label' => 'Phone',
+				'value' => function($data) {
+					return ! empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
+                },
+			],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
