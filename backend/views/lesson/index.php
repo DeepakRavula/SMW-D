@@ -20,12 +20,19 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'student_id',
-            'teacher_id',
-            'program_id',
-            'rate',
-            // 'quantity',
+			[
+				'label' => 'Student Name',
+				'value' => function($data) {
+					return $data->studentName->fullName;
+                }, 	
+			],
+			[
+				'label' => 'Program Name',
+				'value' => function($data) {
+					return $data->programName->name;
+                }, 	
+			],
+            'quantity',
             // 'commencement_date',
             // 'invoiced_id',
             // 'location_id',

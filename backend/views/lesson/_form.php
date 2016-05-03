@@ -1,8 +1,10 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
-
+use common\models\Student;
+use common\models\Program;
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -14,13 +16,9 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->errorSummary($model); ?>
 
-    <?php echo $form->field($model, 'student_id')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'student_id')->dropDownList(ArrayHelper::map(Student::find()->all(),'id','fullName')) ?>
 
-    <?php echo $form->field($model, 'teacher_id')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'program_id')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'rate')->textInput() ?>
+    <?php echo $form->field($model, 'program_id')->dropDownList(ArrayHelper::map(Program::find()->all(),'id','name')) ?>
 
     <?php echo $form->field($model, 'quantity')->textInput() ?>
 
