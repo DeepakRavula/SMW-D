@@ -15,7 +15,7 @@ use common\models\query\ProgramQuery;
  */
 class Program extends \yii\db\ActiveRecord
 {
-    const STATUS_IN_ACTIVE = 0;
+    const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     
     /**
@@ -66,7 +66,7 @@ class Program extends \yii\db\ActiveRecord
     public static function statuses()
     {
         return [
-            self::STATUS_IN_ACTIVE => Yii::t('common', 'In Active'),
+            self::STATUS_INACTIVE => Yii::t('common', 'In Active'),
             self::STATUS_ACTIVE => Yii::t('common', 'Active')
         ];
     }
