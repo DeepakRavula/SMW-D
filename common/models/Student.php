@@ -46,7 +46,7 @@ class Student extends \yii\db\ActiveRecord
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'birth_date' => 'Birth Date',
-            'customer_id' => 'Customer ID',
+            'customer_id' => 'Customer Name',
         ];
     }
 	public function getCustomer()
