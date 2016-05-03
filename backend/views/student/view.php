@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			],	
 			[
 				'label' => 'Customer Name',
-				'value' => $model->fullName, 
+				'value' => ! empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null , 
 				
 			],
         ],
