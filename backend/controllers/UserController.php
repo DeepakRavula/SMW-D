@@ -169,6 +169,34 @@ class UserController extends Controller
         return $this->redirect(['index']);
     }
 
+
+    /**
+     * Deletes an existing User model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDeleteAll()
+    {
+		$db = Yii::$app->db;
+		$command = $db->createCommand("DELETE u, up, pn, ua, a,s,raa  FROM `user` u
+			LEFT JOIN `user_profile` up ON u.`id` = up.`user_id`
+			LEFT JOIN `phone_number` pn ON u.`id` = pn.`user_id`
+			LEFT JOIN `user_address` ua ON u.`id` = ua.`user_id` 
+			LEFT JOIN `student` s ON s.`customer_id` = u.`id`           
+			LEFT JOIN `address` a ON a.`id` = ua.`address_id` 
+			LEFT JOIN `rbac_auth_assignment` raa ON raa.`user_id` = u.`id`  
+			LEFT JOIN `rbac_auth_item` rai ON rai.`type` = u.`status`      
+			WHERE rai.`name` = 'customer'");
+		$command->execute();
+
+		Yii::$app->session->setFlash('alert', [
+			'options'=>['class'=>'alert-success'],
+			'body'=>Yii::t('backend', 'All customer and student records have been deleted successfully ', [])
+		]);
+        return $this->redirect(['index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER]);
+    }
+
     /**
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
