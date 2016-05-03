@@ -18,7 +18,7 @@ class Qualification extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'qualification';
+        return '{{%qualification}}';
     }
 
     /**
@@ -39,8 +39,8 @@ class Qualification extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'teacher_id' => 'Teacher ID',
-            'program_id' => 'Program ID',
+            'teacher_id' => 'Teacher Name',
+            'program_id' => 'Program Name ',
         ];
     }
 

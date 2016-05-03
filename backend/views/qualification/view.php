@@ -27,8 +27,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
 			'id',
-            'user.userProfile.fullName',
-            'program.name',
+			[
+				'label' => 'Teacher Name',
+				'value' => $model->user->userProfile->fullName, 	
+			],
+			[
+				'label' => 'Program Name',
+				'value' => $model->program->name, 	
+			],
         ],
     ]) ?>
 
