@@ -33,12 +33,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
 			],
             'email:email',
-            [
-                'class' => EnumColumn::className(),
-                'attribute' => 'status',
-                'enum' => User::statuses(),
-                'filter' => User::statuses()
-            ],
 			[
 				'label' => 'Primary Address',
 				'value' => function($data) {

@@ -65,7 +65,7 @@ class UserSearch extends User
             ->andFilterWhere(['like', 'password_hash', $this->password_hash])
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['ai.name' => $this->role_name]);
-
+		$query->active();
         return $dataProvider;
     }
 }
