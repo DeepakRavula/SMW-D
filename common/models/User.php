@@ -302,7 +302,6 @@ class User extends ActiveRecord implements IdentityInterface
         $auth = Yii::$app->authManager;
         $auth->assign($auth->getRole(User::ROLE_USER), $this->getId());
     }
-
     /**
      * @return string
      */
@@ -319,11 +318,9 @@ class User extends ActiveRecord implements IdentityInterface
     
     public static function findByRole($role)
     {
-        return ArrayHelper::map(
-            static::find()
-            ->join('LEFT JOIN','rbac_auth_assignment','rbac_auth_assignment.user_id = id')
-            ->where(['rbac_auth_assignment.item_name' => $role])
-            ->all()
-            , 'id', 'username');
+	   return static::find()
+		->join('LEFT JOIN','rbac_auth_assignment','rbac_auth_assignment.user_id = id')
+		->where(['rbac_auth_assignment.item_name' => $role])
+		->all();
     }
 }
