@@ -12,6 +12,8 @@ use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
+use common\models\Student;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -87,7 +89,13 @@ class UserController extends Controller
      */
     public function actionView($id)
     {
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => Student::find()->where(['customer_id' => $id])
+        ]);
+
         return $this->render('view', [
+            'dataProvider' => $dataProvider,
             'model' => $this->findModel($id),
         ]);
     }

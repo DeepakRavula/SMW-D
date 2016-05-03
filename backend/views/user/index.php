@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Phone',
 				'value' => function($data) {
-					return $data->phoneNumber->number;
+					return ! empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                 },
 			],
             ['class' => 'yii\grid\ActionColumn'],
