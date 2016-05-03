@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
+use common\grid\EnumColumn;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -48,3 +51,25 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
 </div>
+
+    <?php echo GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+			[
+				'label' => 'Name',
+				'value' => function($data) {
+					return $data->fullName;
+                }, 	
+			],
+            'birth_date',
+			[
+				'label' => 'Customer Name',
+				'value' => function($data) {
+					$fullName = ! (empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;
+					return $fullName;
+                } 
+			],
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>

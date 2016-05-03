@@ -1,6 +1,8 @@
 <?php
 
+use common\models\User;
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -20,7 +22,7 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'birth_date')->textInput() ?>
 
-    <?php echo $form->field($model, 'customer_id')->textInput() ?>
+    <?php echo $form->field($model, 'customer_id')->dropDownList(ArrayHelper::map(User::findByRole(User::ROLE_CUSTOMER),'id','userProfile.fullName')) ?>
 
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

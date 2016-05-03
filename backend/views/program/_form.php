@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Program;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
@@ -18,7 +19,7 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'rate')->textInput() ?>
 
-    <?php echo $form->field($model, 'status')->textInput() ?>
+    <?php echo $form->field($model, 'status')->dropDownList(Program::statuses()) ?>
 
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
