@@ -10,6 +10,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use common\models\User;
+use common\models\Location;
 
 $bundle = BackendAsset::register($this);
 ?>
@@ -32,6 +33,11 @@ $bundle = BackendAsset::register($this);
                 </a>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
+                        <li>                            
+                <?= Html::dropDownList('location', null,
+      ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control']
+) ?>
+                        </li>
                         <li id="timeline-notifications" class="notifications-menu">
                             <a href="<?php echo Url::to(['/timeline-event/index']) ?>">
                                 <i class="fa fa-bell"></i>
