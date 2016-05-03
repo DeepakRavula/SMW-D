@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
 			[
 				'label' => 'Phone Number',
-				'value' => $model->phoneNumber->number, 
+				'value' => ! empty($model->phoneNumber->number) ? $model->phoneNumber->number : null, 
 			],
         ],
     ]) ?>
