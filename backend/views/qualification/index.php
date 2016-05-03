@@ -12,15 +12,12 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="qualification-index">
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <p>
         <?php echo Html::a('Create Qualification', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 			[
