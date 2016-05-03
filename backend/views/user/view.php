@@ -31,11 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
 			[
 				'label' => 'First Name',
-				'value' => $model->userProfile->firstname, 
+				'value' => ! empty($model->userProfile->firstname) ? $model->userProfile->firstname : null, 
 			],
 			[
 				'label' => 'Last Name',
-				'value' => $model->userProfile->lastname, 
+				'value' => ! empty($model->userProfile->lastname) ? $model->userProfile->lastname : null, 
 			],
             'email:email',
             'status',
