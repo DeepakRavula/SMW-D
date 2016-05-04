@@ -23,10 +23,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'name',
             'address',
-            'city_id',
-            'province_id',
-            // 'postal_code',
-            // 'country_id',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
