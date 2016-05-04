@@ -260,7 +260,7 @@ $bundle = BackendAsset::register($this);
 								[
 									'label' => Yii::t('backend', 'Cities'),
 									'icon' => '<i class="fa fa-building"></i>',
-									'url' => ['/user/import'],
+									'url' => ['/city/index'],
 									'visible' => Yii::$app->user->can('administrator')
 								],
 								[
