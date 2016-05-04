@@ -272,7 +272,7 @@ $bundle = BackendAsset::register($this);
 								[
 									'label' => Yii::t('backend', 'Countries'),
 									'icon' => '<i class="fa fa-globe"></i>',
-									'url' => ['/user/import'],
+									'url' => ['/country/index'],
 									'visible' => Yii::$app->user->can('administrator')
 								],
 								[
