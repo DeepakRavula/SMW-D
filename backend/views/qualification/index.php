@@ -23,13 +23,13 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Teacher Name',
 				'value' => function($data) {
-					return $data->user->userProfile->fullName;
+					return ! empty($data->user->userProfile->fullName) ? $data->user->userProfile->fullName : null;
                 }, 	
 			],
 			[
 				'label' => 'Program Name',
 				'value' => function($data) {
-					return $data->program->name;
+					return ! empty($data->program->name) ? $data->program->name : null;
                 }, 	
 			],
             ['class' => 'yii\grid\ActionColumn'],
