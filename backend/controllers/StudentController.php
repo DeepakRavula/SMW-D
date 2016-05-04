@@ -32,8 +32,11 @@ class StudentController extends Controller
      */
     public function actionIndex()
     {
+		$session = Yii::$app->session;
         $dataProvider = new ActiveDataProvider([
-            'query' => Student::find(),
+            'query' => Student::find()
+					->join('INNER JOIN','user','user.id = customer_id')
+					->where(['user.location_id' => $session->get('location_id') ])
         ]);
 
         return $this->render('index', [

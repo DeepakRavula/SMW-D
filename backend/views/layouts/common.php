@@ -33,10 +33,25 @@ $bundle = BackendAsset::register($this);
                 </a>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
-                        <li>                            
-                <?= Html::dropDownList('location', null,
-      ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control']
-) ?>
+                        <li>  <div>
+                            <?php $form = Html::beginForm(); ?>                        
+                                 <?= Html::dropDownList('location_id', null,
+                                  ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'location_id', 'options' => [Yii::$app->session->get("location_id") => ['Selected'=>'selected']]
+, 'onChange'=>
+                                "$.ajax({
+                                    type     :'POST',
+                                    cache    : false,
+                                    url  : '/location/changelocation',
+                                    data: {
+                                        location_id: $('#location_id').val()
+                                    },
+                                    success  : function(response) {
+										location.reload();
+                                    }
+                                });"]
+                            ) ?>
+                            <?php Html::endForm() ?>
+                            </div>
                         </li>
                         <li id="timeline-notifications" class="notifications-menu">
                             <a href="<?php echo Url::to(['/timeline-event/index']) ?>">

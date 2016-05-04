@@ -118,4 +118,13 @@ class LocationController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionChangelocation() {
+        if (Yii::$app->request->isAjax) {
+            $location_id = Yii::$app->request->post("location_id");
+            Yii::$app->session->set("location_id" , $location_id);
+        }
+
+    }    
+    
 }
