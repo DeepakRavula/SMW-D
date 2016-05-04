@@ -35,9 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				'value' => ! empty($model->programName->name) ? $model->programName->name: null,
 			],
             'quantity',
-            'commencement_date',
-            'invoiced_id',
-            'location_id',
+            'commencement_date'
         ],
     ]) ?>
 
