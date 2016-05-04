@@ -26,7 +26,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
 			[
 				'label' => 'Student Name',
 				'value' => ! empty($model->studentName->fullName) ? $model->studentName->fullName : null,
