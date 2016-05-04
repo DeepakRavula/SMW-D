@@ -33,7 +33,7 @@ class ProgramController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Program::find(),
+            'query' => Program::find()->active(),
         ]);
 
         return $this->render('index', [
