@@ -200,19 +200,19 @@ $bundle = BackendAsset::register($this);
 						[
                             'label'=>Yii::t('backend', 'Staff Members'),
                             'icon'=>'<i class="fa fa-users"></i>',
-                            'url'=>['/program/index'],
+							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],    
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
                             'label'=>Yii::t('backend', 'Owners'),
                             'icon'=>'<i class="fa fa-user"></i>',
-                            'url'=>['/program/index'],
+							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],    
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
                             'label'=>Yii::t('backend', 'Administrators'),
                             'icon'=>'<i class="fa fa-user-secret"></i>',
-                            'url'=>['/program/index'],
+							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR],    
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
