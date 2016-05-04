@@ -178,13 +178,31 @@ $bundle = BackendAsset::register($this);
                         ],
 						[
                             'label'=>Yii::t('backend', 'Teachers'),
-                            'icon'=>'<i class="fa fa-lg fa-fw fa-graduation-cap"></i>',
+                            'icon'=>'<i class="fa fa-graduation-cap"></i>',
                             'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_TEACHER],	
                             'visible'=>Yii::$app->user->can('administrator')
-                        ],	
+                        ],
+						[
+                            'label'=>Yii::t('backend', 'Staff Members'),
+                            'icon'=>'<i class="fa fa-users"></i>',
+                            'url'=>['/program/index'],
+                            'visible'=>Yii::$app->user->can('administrator')
+                        ],
+						[
+                            'label'=>Yii::t('backend', 'Owners'),
+                            'icon'=>'<i class="fa fa-user"></i>',
+                            'url'=>['/program/index'],
+                            'visible'=>Yii::$app->user->can('administrator')
+                        ],
+						[
+                            'label'=>Yii::t('backend', 'Administrators'),
+                            'icon'=>'<i class="fa fa-user-secret"></i>',
+                            'url'=>['/program/index'],
+                            'visible'=>Yii::$app->user->can('administrator')
+                        ],
 						[
                             'label'=>Yii::t('backend', 'Programs'),
-                            'icon'=>'<i class="fa fa-lg fa-fw fa-table"></i>',
+                            'icon'=>'<i class="fa fa-table"></i>',
                             'url'=>['/program/index'],
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
@@ -195,36 +213,54 @@ $bundle = BackendAsset::register($this);
 							'visible'=>Yii::$app->user->can('administrator')
                         ],	
 						[
-                            'label'=>Yii::t('backend', 'Locations'),
-                            'icon'=>'<i class="fa fa-lg fa-fw fa-map-marker"></i>',
-                            'url'=>['/location/index'],
-                            'visible'=>Yii::$app->user->can('administrator')
-                        ],
-						[
                             'label'=>Yii::t('backend', 'Lessons'),
-                            'icon'=>'<i class="fa fa-lg fa-fw fa-music"></i>',
+                            'icon'=>'<i class="fa  fa-music"></i>',
                             'url'=>['/lesson/index'],
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
-                            'label'=>Yii::t('backend', 'Invoice'),
-                            'icon'=>'<i class="fa fa-lg fa-fw fa-dollar"></i>',
+                            'label'=>Yii::t('backend', 'Invoices'),
+                            'icon'=>'<i class="fa  fa-dollar"></i>',
                             'url'=>['/invoice/index'],
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
-						[
-                            'label'=>Yii::t('backend', 'Import'),
-                            'icon'=>'<i class="fa fa-lg fa-fw fa-upload"></i>',
-                            'url'=>['/user/import'],
-                            'visible'=>Yii::$app->user->can('administrator')
-                        ],
                         [
-                            'label'=>Yii::t('backend', 'Other'),
+                            'label'=>Yii::t('backend', 'Setup'),
                             'url' => '#',
                             'icon'=>'<i class="fa fa-cogs"></i>',
                             'options'=>['class'=>'treeview'],
                             'items'=>[
-                                [
+								[
+                            		'label'=>Yii::t('backend', 'Locations'),
+                            		'icon'=>'<i class="fa  fa-map-marker"></i>',
+                            		'url'=>['/location/index'],
+                            		'visible'=>Yii::$app->user->can('administrator')
+                        		],
+								[
+                            		'label'=>Yii::t('backend', 'Import'),
+                            		'icon'=>'<i class="fa  fa-upload"></i>',
+                            		'url'=>['/user/import'],
+                            		'visible'=>Yii::$app->user->can('administrator')
+                        		],
+								[
+									'label' => Yii::t('backend', 'Cities'),
+									'icon' => '<i class="fa fa-building"></i>',
+									'url' => ['/user/import'],
+									'visible' => Yii::$app->user->can('administrator')
+								],
+								[
+									'label' => Yii::t('backend', 'Provinces'),
+									'icon' => '<i class="fa  fa-upload"></i>',
+									'url' => ['/user/import'],
+									'visible' => Yii::$app->user->can('administrator')
+								],
+								[
+									'label' => Yii::t('backend', 'Countries'),
+									'icon' => '<i class="fa fa-globe"></i>',
+									'url' => ['/user/import'],
+									'visible' => Yii::$app->user->can('administrator')
+								],
+								[
                                     'label'=>Yii::t('backend', 'i18n'),
                                     'url' => '#',
                                     'icon'=>'<i class="fa fa-flag"></i>',
