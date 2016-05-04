@@ -48,10 +48,10 @@ class Location extends \yii\db\ActiveRecord {
 			'id' => 'ID',
 			'name' => 'Name',
 			'address' => 'Address',
-			'city_id' => 'City ID',
-			'province_id' => 'Province ID',
+			'city_id' => 'City',
+			'province_id' => 'Province',
 			'postal_code' => 'Postal Code',
-			'country_id' => 'Country ID',
+			'country_id' => 'Country',
 		];
 	}
 
