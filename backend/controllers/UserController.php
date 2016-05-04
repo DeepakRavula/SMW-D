@@ -186,8 +186,7 @@ class UserController extends Controller
 			LEFT JOIN `student` s ON s.`customer_id` = u.`id`           
 			LEFT JOIN `address` a ON a.`id` = ua.`address_id` 
 			LEFT JOIN `rbac_auth_assignment` raa ON raa.`user_id` = u.`id`  
-			LEFT JOIN `rbac_auth_item` rai ON rai.`type` = u.`status`      
-			WHERE rai.`name` = 'customer'");
+			WHERE raa.`item_name` = 'customer'");
 		$command->execute();
 
 		Yii::$app->session->setFlash('alert', [
