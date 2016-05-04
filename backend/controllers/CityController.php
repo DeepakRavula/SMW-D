@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Location;
-use yii\data\ActiveDataProvider;
+use common\models\City;
+use backend\models\search\CitySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * LocationController implements the CRUD actions for Location model.
+ * CityController implements the CRUD actions for City model.
  */
-class LocationController extends Controller
+class CityController extends Controller
 {
     public function behaviors()
     {
@@ -27,22 +27,22 @@ class LocationController extends Controller
     }
 
     /**
-     * Lists all Location models.
+     * Lists all City models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Location::find(),
-        ]);
+        $searchModel = new CitySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single Location model.
+     * Displays a single City model.
      * @param integer $id
      * @return mixed
      */
@@ -54,13 +54,13 @@ class LocationController extends Controller
     }
 
     /**
-     * Creates a new Location model.
+     * Creates a new City model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Location();
+        $model = new City();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -72,7 +72,7 @@ class LocationController extends Controller
     }
 
     /**
-     * Updates an existing Location model.
+     * Updates an existing City model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -91,7 +91,7 @@ class LocationController extends Controller
     }
 
     /**
-     * Deletes an existing Location model.
+     * Deletes an existing City model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -104,27 +104,18 @@ class LocationController extends Controller
     }
 
     /**
-     * Finds the Location model based on its primary key value.
+     * Finds the City model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Location the loaded model
+     * @return City the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Location::findOne($id)) !== null) {
+        if (($model = City::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
-    public function actionChangelocation() {
-        if (Yii::$app->request->isAjax) {
-            $location_id = Yii::$app->request->post("location_id");
-            Yii::$app->session->set("location_id" , $location_id);
-        }
-
-    }    
-    
 }

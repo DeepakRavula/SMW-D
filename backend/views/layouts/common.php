@@ -33,10 +33,25 @@ $bundle = BackendAsset::register($this);
                 </a>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
-                        <li>                            
-                <?= Html::dropDownList('location', null,
-      ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control']
-) ?>
+                        <li>  <div>
+                            <?php $form = Html::beginForm(); ?>                        
+                                 <?= Html::dropDownList('location_id', null,
+                                  ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'location_id', 'options' => [Yii::$app->session->get("location_id") => ['Selected'=>'selected']]
+, 'onChange'=>
+                                "$.ajax({
+                                    type     :'POST',
+                                    cache    : false,
+                                    url  : '/location/changelocation',
+                                    data: {
+                                        location_id: $('#location_id').val()
+                                    },
+                                    success  : function(response) {
+										location.reload();
+                                    }
+                                });"]
+                            ) ?>
+                            <?php Html::endForm() ?>
+                            </div>
                         </li>
                         <li id="timeline-notifications" class="notifications-menu">
                             <a href="<?php echo Url::to(['/timeline-event/index']) ?>">
@@ -185,19 +200,19 @@ $bundle = BackendAsset::register($this);
 						[
                             'label'=>Yii::t('backend', 'Staff Members'),
                             'icon'=>'<i class="fa fa-users"></i>',
-                            'url'=>['/program/index'],
+							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],    
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
                             'label'=>Yii::t('backend', 'Owners'),
                             'icon'=>'<i class="fa fa-user"></i>',
-                            'url'=>['/program/index'],
+							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],    
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
                             'label'=>Yii::t('backend', 'Administrators'),
                             'icon'=>'<i class="fa fa-user-secret"></i>',
-                            'url'=>['/program/index'],
+							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR],    
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
@@ -245,19 +260,19 @@ $bundle = BackendAsset::register($this);
 								[
 									'label' => Yii::t('backend', 'Cities'),
 									'icon' => '<i class="fa fa-building"></i>',
-									'url' => ['/user/import'],
+									'url' => ['/city/index'],
 									'visible' => Yii::$app->user->can('administrator')
 								],
 								[
 									'label' => Yii::t('backend', 'Provinces'),
 									'icon' => '<i class="fa  fa-upload"></i>',
-									'url' => ['/user/import'],
+									'url' => ['/province/index'],
 									'visible' => Yii::$app->user->can('administrator')
 								],
 								[
 									'label' => Yii::t('backend', 'Countries'),
 									'icon' => '<i class="fa fa-globe"></i>',
-									'url' => ['/user/import'],
+									'url' => ['/country/index'],
 									'visible' => Yii::$app->user->can('administrator')
 								],
 								[
