@@ -27,7 +27,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
             'first_name',
             'last_name',
             'birth_date',

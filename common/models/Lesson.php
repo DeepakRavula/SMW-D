@@ -33,9 +33,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['student_id', 'teacher_id', 'program_id', 'location_id'], 'required'],
-            [['student_id', 'teacher_id', 'program_id', 'invoiced_id', 'location_id'], 'integer'],
-            [['rate'], 'number'],
+            [['student_id', 'program_id', 'location_id'], 'required'],
+            [['student_id', 'program_id', 'invoiced_id', 'location_id'], 'integer'],
             [['quantity', 'commencement_date'], 'safe'],
         ];
     }

@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Name',
 				'value' => function($data) {
-					return $data->fullName;
+					return ! empty($data->fullName) ? $data->fullName : null;
                 }, 	
 			],
             'birth_date',

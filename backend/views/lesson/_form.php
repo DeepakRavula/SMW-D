@@ -22,7 +22,7 @@ use common\models\Program;
 
     <?php echo $form->field($model, 'quantity')->textInput() ?>
 
-    <?php echo $form->field($model, 'commencement_date')->textInput() ?>
+    <?php echo $form->field($model, 'commencement_date')->widget(\yii\jui\DatePicker::classname(), ['dateFormat' => 'yyyy-MM-dd',])  ?>
 
     <?php echo $form->field($model, 'invoiced_id')->textInput() ?>
 
