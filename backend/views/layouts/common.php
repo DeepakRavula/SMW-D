@@ -266,7 +266,7 @@ $bundle = BackendAsset::register($this);
 								[
 									'label' => Yii::t('backend', 'Provinces'),
 									'icon' => '<i class="fa  fa-upload"></i>',
-									'url' => ['/user/import'],
+									'url' => ['/province/index'],
 									'visible' => Yii::$app->user->can('administrator')
 								],
 								[
