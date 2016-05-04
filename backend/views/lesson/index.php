@@ -23,20 +23,19 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Student Name',
 				'value' => function($data) {
-					return $data->studentName->fullName;
+					return ! empty($data->studentName->fullName) ? $data->studentName->fullName : null;
                 }, 	
 			],
 			[
 				'label' => 'Program Name',
 				'value' => function($data) {
-					return $data->programName->name;
+					return ! empty($data->programName->name) ? $data->programName->name : null;
                 }, 	
 			],
             'quantity',
             // 'commencement_date',
             // 'invoiced_id',
             // 'location_id',
-
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

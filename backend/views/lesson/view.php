@@ -27,10 +27,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'student_id',
-            'teacher_id',
-            'program_id',
-            'rate',
+			[
+				'label' => 'Student Name',
+				'value' => ! empty($model->studentName->fullName) ? $model->studentName->fullName : null,
+			],
+			[
+				'label' => 'Program Name',
+				'value' => ! empty($model->programName->name) ? $model->programName->name: null,
+			],
             'quantity',
             'commencement_date',
             'invoiced_id',

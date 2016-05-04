@@ -24,12 +24,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
 			[
 				'label' => 'User Name',
 				'value' => function($data) {
-					return $data->userProfile->fullName;
+					return ! empty($data->userProfile->fullName) ? $data->userProfile->fullName : null;
                 },
 			],
             'email:email',
