@@ -21,14 +21,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'name',
+             [
+             'attribute'=>'name',
+             'format' => 'raw',
+             'value'=>function ($data) {
+                        return Html::a($data->name, ['location/view', 'id' => $data->id]);
+                      },
+             ],
             'address',
-            'city_id',
-            'province_id',
-            // 'postal_code',
-            // 'country_id',
 
-            ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 

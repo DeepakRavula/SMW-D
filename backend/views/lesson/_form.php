@@ -24,10 +24,6 @@ use common\models\Program;
 
     <?php echo $form->field($model, 'commencement_date')->widget(\yii\jui\DatePicker::classname(), ['dateFormat' => 'yyyy-MM-dd',])  ?>
 
-    <?php echo $form->field($model, 'invoiced_id')->textInput() ?>
-
-    <?php echo $form->field($model, 'location_id')->textInput() ?>
-
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

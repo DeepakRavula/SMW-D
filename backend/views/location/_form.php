@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use common\models\City;
+use common\models\Province;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
@@ -18,13 +20,20 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
 
-    <?php echo $form->field($model, 'city_id')->textInput() ?>
+    <?php echo $form->field($model, 'city_id')->dropDownList(\yii\helpers\ArrayHelper::map(
+            City::find()->all(),
+            'id',
+            'name'
+        ), ['prompt'=>'']) ?>
 
-    <?php echo $form->field($model, 'province_id')->textInput() ?>
+
+    <?php echo $form->field($model, 'province_id')->dropDownList(\yii\helpers\ArrayHelper::map(
+            Province::find()->all(),
+            'id',
+            'name'
+        ), ['prompt'=>'']) ?>
 
     <?php echo $form->field($model, 'postal_code')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'country_id')->textInput() ?>
 
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

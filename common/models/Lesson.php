@@ -14,7 +14,6 @@ use Yii;
  * @property double $rate
  * @property string $quantity
  * @property string $commencement_date
- * @property integer $invoiced_id
  * @property integer $location_id
  */
 class Lesson extends \yii\db\ActiveRecord
@@ -34,7 +33,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             [['student_id', 'program_id', 'location_id'], 'required'],
-            [['student_id', 'program_id', 'invoiced_id', 'location_id'], 'integer'],
+            [['student_id', 'program_id', 'location_id'], 'integer'],
             [['quantity', 'commencement_date'], 'safe'],
         ];
     }
@@ -50,7 +49,6 @@ class Lesson extends \yii\db\ActiveRecord
             'program_id' => 'Program Name',
             'quantity' => 'Quantity',
             'commencement_date' => 'Commencement Date',
-            'invoiced_id' => 'Invoiced ID',
             'location_id' => 'Location ID',
         ];
     }
