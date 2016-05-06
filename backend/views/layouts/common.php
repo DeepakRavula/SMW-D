@@ -19,8 +19,8 @@ $bundle = BackendAsset::register($this);
         <!-- header logo: style can be found in header.less -->
         <header class="main-header">
             <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
-                <!-- Add the class icon to your logo image or logo icon to add the margining -->
-                <?php echo Yii::$app->name ?>
+                <!-- Add the class icon to your logo image or logo icon to add the margining -->                
+                <img src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/logo.png')) ?>"  />        
             </a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top" role="navigation">
@@ -91,9 +91,7 @@ $bundle = BackendAsset::register($this);
                         </li>
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <img src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/anonymous.jpg')) ?>" class="user-image">
-                                <span><?php echo Yii::$app->user->identity->username ?> <i class="caret"></i></span>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span><?php echo Yii::$app->user->identity->username ?> <i class="caret"></i></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
@@ -136,7 +134,7 @@ $bundle = BackendAsset::register($this);
                         <img src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/anonymous.jpg')) ?>" class="img-circle" />
                     </div>
                     <div class="pull-left info">
-                        <p><?php echo Yii::t('backend', 'Hello, {username}', ['username'=>Yii::$app->user->identity->getPublicIdentity()]) ?></p>
+                        <p><?php echo Yii::t('backend', 'Hello, {username}', ['username'=>Yii::$app->user->identity->username]) ?></p>
                         <a href="<?php echo Url::to(['/sign-in/profile']) ?>">
                             <i class="fa fa-circle text-success"></i>
                             <?php echo Yii::$app->formatter->asDatetime(time()) ?>
