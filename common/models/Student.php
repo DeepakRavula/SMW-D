@@ -61,4 +61,11 @@ class Student extends \yii\db\ActiveRecord
         }
         return null;
     }
+
+	public function beforeSave($insert) {
+		$birthDate = \DateTime::createFromFormat('m/d/y', $this->birth_date);
+		$this->birth_date = $birthDate->format('Y-m-d');
+
+		return parent::beforeSave($insert);
+	}
 }
