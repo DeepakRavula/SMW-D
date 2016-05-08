@@ -109,8 +109,9 @@ class UserController extends Controller
     {
         $model = new UserForm();
         $model->setScenario('create');
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+			$role = current($model->roles);
+            return $this->redirect(['index', 'UserSearch[role_name]' => $role]);
         }
 
         return $this->render('create', [
