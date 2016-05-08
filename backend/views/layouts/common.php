@@ -232,6 +232,12 @@ $bundle = BackendAsset::register($this);
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
+                            'label'=>Yii::t('backend', 'Schedule'),
+                            'icon'=>'<i class="fa  fa-calendar"></i>',
+                            'url'=>['/schedule/index'],
+                            'visible'=>Yii::$app->user->can('administrator')
+                        ],
+						[
                             'label'=>Yii::t('backend', 'Invoices'),
                             'icon'=>'<i class="fa  fa-dollar"></i>',
                             'url'=>['/invoice/index'],

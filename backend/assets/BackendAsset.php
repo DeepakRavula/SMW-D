@@ -16,10 +16,13 @@ class BackendAsset extends AssetBundle
     public $baseUrl = '@web';
 
     public $css = [
-        'css/style.css'
+        'css/style.css',
+        'plugins/fullcalendar/fullcalendar.css'
     ];
     public $js = [
-        'js/app.js'
+        'js/app.js',
+        'plugins/momentjs/moment-with-locales.js',
+        'plugins/fullcalendar/fullcalendar.js'
     ];
 
     public $depends = [
