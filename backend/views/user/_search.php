@@ -23,7 +23,6 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'email') ?>
 
-    <?php echo $form->field($model, 'role') ?>
 
     <?php echo $form->field($model, 'status') ?>
 

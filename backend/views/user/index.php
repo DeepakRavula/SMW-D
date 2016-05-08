@@ -9,15 +9,13 @@ use yii\grid\GridView;
 /* @var $searchModel backend\models\search\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('backend', 'Users');
+$this->title = Yii::t('backend',  ucwords($searchModel->role_name));
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <p>
-        <?php echo Html::a(Yii::t('backend', 'Create {modelClass}', [
+        <?php echo Html::a(Yii::t('backend', 'Create ' . ucwords($searchModel->role_name), [
     'modelClass' => 'User',
 ]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -50,9 +48,11 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
+	<?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
     <p>
         <?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
     'modelClass' => 'User',
 ]), ['delete-all'], ['class' => 'btn btn-danger']) ?>
     </p>
+	<?php endif;?>
 </div>
