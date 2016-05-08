@@ -39,6 +39,8 @@ class UserSearch extends User
      */
     public function search($params)
     {
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
         $query = User::find()->alias('u');
 
         $dataProvider = new ActiveDataProvider([
@@ -64,6 +66,7 @@ class UserSearch extends User
             ->andFilterWhere(['like', 'auth_key', $this->auth_key])
             ->andFilterWhere(['like', 'password_hash', $this->password_hash])
             ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'location_id', $locationId])
             ->andFilterWhere(['ai.name' => $this->role_name]);
 		$query->active();
         return $dataProvider;

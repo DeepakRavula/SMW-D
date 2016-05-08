@@ -73,12 +73,11 @@ class UserController extends Controller
      */
     public function actionIndex()
     {
-		$session = Yii::$app->session;
-		$dataProvider = new ActiveDataProvider([
-            'query' => User::find()
-					->where(['location_id' => $session->get('location_id') ])
-        ]);
+        $searchModel = new UserSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }

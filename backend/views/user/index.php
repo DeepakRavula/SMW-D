@@ -21,11 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
     'modelClass' => 'User',
 ]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-    <p>
-        <?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
-    'modelClass' => 'User',
-]), ['delete-all'], ['class' => 'btn btn-danger']) ?>
-    </p>
 
 
     <?php echo GridView::widget([
@@ -55,4 +50,9 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
+    <p>
+        <?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
+    'modelClass' => 'User',
+]), ['delete-all'], ['class' => 'btn btn-danger']) ?>
+    </p>
 </div>
