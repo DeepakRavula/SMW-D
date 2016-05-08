@@ -14,13 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
 
-    <p>
-        <?php echo Html::a(Yii::t('backend', 'Create ' . ucwords($searchModel->role_name), [
-    'modelClass' => 'User',
-]), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -32,13 +25,6 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
             'email:email',
 			[
-				'label' => 'Primary Address',
-				'value' => function($data) {
-					$Address = ! (empty($data->primaryAddress->address)) ? $data->primaryAddress->address : null;
-					return $Address;
-                },
-			],
-			[
 				'label' => 'Phone',
 				'value' => function($data) {
 					return ! empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
@@ -47,6 +33,12 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+	I
+	<p>
+        <?php echo Html::a(Yii::t('backend', 'Create ' . ucwords($searchModel->role_name), [
+    'modelClass' => 'User',
+]), ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
 
 	<?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
     <p>
