@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 </div>
 
-<?php if (current(Yii::$app->authManager->getRolesByUser($model->id))->name === User::ROLE_CUSTOMER): ?>
+<?php if (end(Yii::$app->authManager->getRolesByUser($model->id))->name === User::ROLE_CUSTOMER): ?>
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
