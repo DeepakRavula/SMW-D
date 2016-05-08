@@ -33,7 +33,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-	I
 	<p>
         <?php echo Html::a(Yii::t('backend', 'Create ' . ucwords($searchModel->role_name), [
     'modelClass' => 'User',
