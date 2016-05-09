@@ -11,11 +11,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="student-index">
 
-
-    <p>
-        <?php echo Html::a('Create Student', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -37,5 +32,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+
+	<p>
+        <?php echo Html::a('Create Student', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
 
 </div>

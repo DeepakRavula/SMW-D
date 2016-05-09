@@ -2,6 +2,8 @@
 namespace backend\models;
 
 use common\models\User;
+use common\models\Program;
+use common\models\Qualification;
 use yii\base\Exception;
 use yii\base\Model;
 use Yii;
@@ -17,6 +19,7 @@ class UserForm extends Model
     public $password;
     public $status;
     public $roles;
+	public $qualifications;
 
     private $model;
 
@@ -48,12 +51,18 @@ class UserForm extends Model
             ['password', 'string', 'min' => 6],
 
             [['status'], 'integer'],
+            [['qualifications'], 'each',
+                'rule' => ['in', 'range' => ArrayHelper::getColumn(
+					Program::find()->active()->all(),	
+                    'id'
+                )]
+            ],
             [['roles'], 'each',
                 'rule' => ['in', 'range' => ArrayHelper::getColumn(
                     Yii::$app->authManager->getRoles(),
                     'name'
                 )]
-            ],
+            ]
         ];
     }
 
@@ -85,6 +94,9 @@ class UserForm extends Model
             Yii::$app->authManager->getRolesByUser($model->getId()),
             'name'
         );
+		$this->qualifications = ArrayHelper::getColumn(
+				Program::find()->active()->all(), 'id'
+		);
         return $this->model;
     }
 
@@ -115,6 +127,8 @@ class UserForm extends Model
             if ($this->password) {
                 $model->setPassword($this->password);
             }
+
+			$model->location_id = Yii::$app->session->get('location_id');
             if (!$model->save()) {
                 throw new Exception('Model not saved');
             }
@@ -129,6 +143,19 @@ class UserForm extends Model
                     $auth->assign($auth->getRole($role), $model->getId());
                 }
             }
+
+			if (current(Yii::$app->authManager->getRolesByUser($model->getId()))->name === User::ROLE_TEACHER) {
+				Qualification::deleteAll(['teacher_id' => $model->getId()]);
+				if ($this->qualifications && is_array($this->qualifications)) {
+					foreach ($this->qualifications as $qualification) {
+						$qualificationModel = new Qualification();
+						$qualificationModel->program_id = $qualification;
+						$qualificationModel->teacher_id = $model->getId();
+						$qualificationModel->save();
+					}
+				}
+					
+			}
 
             return !$model->hasErrors();
         }

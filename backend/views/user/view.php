@@ -15,61 +15,70 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-view">
 
-    <p>
-        <?php echo Html::a(Yii::t('backend', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::a(Yii::t('backend', 'Delete'), ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
 
-    <?php echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
+
+	<?php
+	echo DetailView::widget([
+		'model' => $model,
+		'attributes' => [
 			[
 				'label' => 'First Name',
-				'value' => ! empty($model->userProfile->firstname) ? $model->userProfile->firstname : null, 
+				'value' => !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null,
 			],
 			[
 				'label' => 'Last Name',
-				'value' => ! empty($model->userProfile->lastname) ? $model->userProfile->lastname : null, 
+				'value' => !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null,
 			],
-            'email:email',
-            'status',
+			'email:email',
 			[
 				'label' => 'Address',
-				'value' => ! empty($model->primaryAddress->address) ?  $model->primaryAddress->address : null,
+				'value' => !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null,
 			],
 			[
 				'label' => 'Phone Number',
-				'value' => ! empty($model->phoneNumber->number) ? $model->phoneNumber->number : null, 
+				'value' => !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null,
 			],
-        ],
-    ]) ?>
+		],
+	])
+	?>
+	<p>
+		<?php echo Html::a(Yii::t('backend', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+		<?php
+		echo Html::a(Yii::t('backend', 'Delete'), ['delete', 'id' => $model->id], [
+			'class' => 'btn btn-danger',
+			'data' => [
+				'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
+				'method' => 'post',
+			],
+		])
+		?>
+    </p>
 
 </div>
-
-    <?php echo GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+<h3>Students </h3>
+<?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
+<?php if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER): ?>
+	<?php
+	echo GridView::widget([
+		'dataProvider' => $dataProvider,
+		'columns' => [
+			['class' => 'yii\grid\SerialColumn'],
 			[
 				'label' => 'Name',
 				'value' => function($data) {
-					return ! empty($data->fullName) ? $data->fullName : null;
-                }, 	
+					return !empty($data->fullName) ? $data->fullName : null;
+				},
 			],
-            'birth_date',
+			'birth_date',
 			[
 				'label' => 'Customer Name',
 				'value' => function($data) {
-					$fullName = ! (empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;
+					$fullName = !(empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;
 					return $fullName;
-                } 
+				}
 			],
-            ['class' => 'yii\grid\ActionColumn','controller' => 'student'],
-        ],
-    ]); ?>
+			['class' => 'yii\grid\ActionColumn', 'controller' => 'student'],
+		],
+	]);
+	?>
+<?php endif; ?>

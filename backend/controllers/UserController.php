@@ -14,6 +14,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
+use common\models\Program;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -73,12 +74,11 @@ class UserController extends Controller
      */
     public function actionIndex()
     {
-		$session = Yii::$app->session;
-		$dataProvider = new ActiveDataProvider([
-            'query' => User::find()
-					->where(['location_id' => $session->get('location_id') ])
-        ]);
+        $searchModel = new UserSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -111,12 +111,15 @@ class UserController extends Controller
         $model = new UserForm();
         $model->setScenario('create');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+			$userRoles = Yii::$app->authManager->getRolesByUser($model->model->id);
+			$userRole = end($userRoles);
+            return $this->redirect(['index', 'UserSearch[role_name]' => $userRole->name]);
         }
 
         return $this->render('create', [
             'model' => $model,
-            'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')
+            'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+            'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name')
         ]);
     }
 
@@ -130,12 +133,14 @@ class UserController extends Controller
         $model = new UserForm();
         $model->setModel($this->findModel($id));
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+			$role = end($model->roles);
+            return $this->redirect(['index', 'UserSearch[role_name]' => $role]);
         }
 
         return $this->render('update', [
             'model' => $model,
-            'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')
+            'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+            'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name')
         ]);
     }
 

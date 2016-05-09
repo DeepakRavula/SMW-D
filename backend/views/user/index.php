@@ -9,24 +9,10 @@ use yii\grid\GridView;
 /* @var $searchModel backend\models\search\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('backend', 'Users');
+$this->title = Yii::t('backend',  ! ($searchModel->role_name) ? ucwords($searchModel->role_name) : 'User');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?php echo Html::a(Yii::t('backend', 'Create {modelClass}', [
-    'modelClass' => 'User',
-]), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-    <p>
-        <?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
-    'modelClass' => 'User',
-]), ['delete-all'], ['class' => 'btn btn-danger']) ?>
-    </p>
-
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
@@ -39,13 +25,6 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
             'email:email',
 			[
-				'label' => 'Primary Address',
-				'value' => function($data) {
-					$Address = ! (empty($data->primaryAddress->address)) ? $data->primaryAddress->address : null;
-					return $Address;
-                },
-			],
-			[
 				'label' => 'Phone',
 				'value' => function($data) {
 					return ! empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
@@ -54,5 +33,17 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+	<p>
+        <?php echo Html::a(Yii::t('backend', 'Create ' .  (! empty($searchModel->role_name) ? ucwords($searchModel->role_name) : 'User'), [
+    'modelClass' => 'User',
+]), ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
 
+	<?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
+    <p>
+        <?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
+    'modelClass' => 'User',
+]), ['delete-all'], ['class' => 'btn btn-danger']) ?>
+    </p>
+	<?php endif;?>
 </div>

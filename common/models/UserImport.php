@@ -68,6 +68,7 @@ class UserImport extends Model {
 			$user->email = $row['Billing Email Address'];
 			$user->password = Yii::$app->security->generateRandomString(8);
 			$user->status = User::STATUS_ACTIVE;
+			$user->location_id = Yii::$app->session->get('location_id');
 			$user->save();
 
             $auth = Yii::$app->authManager;
