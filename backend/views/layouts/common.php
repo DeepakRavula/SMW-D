@@ -41,7 +41,7 @@ $bundle = BackendAsset::register($this);
                                 "$.ajax({
                                     type     :'POST',
                                     cache    : false,
-                                    url  : '/location/changelocation',
+                                    url  : '/location/change-location',
                                     data: {
                                         location_id: $('#location_id').val()
                                     },
