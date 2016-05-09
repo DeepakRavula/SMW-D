@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
 </div>
-
+<h3> Associated students </h3>
 <?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER): ?>
 	<?php
