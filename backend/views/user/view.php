@@ -30,7 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
 				'value' => !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null,
 			],
 			'email:email',
-			'status',
 			[
 				'label' => 'Address',
 				'value' => !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null,
