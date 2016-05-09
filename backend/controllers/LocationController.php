@@ -119,7 +119,7 @@ class LocationController extends Controller
         }
     }
     
-    public function actionChangelocation() {
+    public function actionChangeLocation() {
         if (Yii::$app->request->isAjax) {
             $location_id = Yii::$app->request->post("location_id");
             Yii::$app->session->set("location_id" , $location_id);
