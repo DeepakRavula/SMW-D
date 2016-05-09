@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Student;
+use common\models\Enrolment;
+use common\models\Qualification;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -51,9 +53,29 @@ class StudentController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $enrolmentModel = Enrolment::findOne(['student_id' => $id]);
+        $model = $this->findModel($id);
+
+		if(empty($enrolmentModel)) {
+			$enrolmentModel = new Enrolment();
+		}
+
+        if ($enrolmentModel->load(Yii::$app->request->post()) ) {
+			$enrolmentModel->student_id = $id;
+			$qualification = Qualification::findOne([
+				'teacher_id' => $enrolmentModel->teacherId,
+				'program_id' => $enrolmentModel->programId,
+			]);
+			$enrolmentModel->qualification_id = $qualification->id;
+			if($enrolmentModel->save()) {
+            	return $this->redirect(['view', 'id' => $model->id]);
+			}
+        } else {
+            return $this->render('update', [
+            	'model' => $model,
+                'enrolmentModel' => $enrolmentModel,
+            ]);
+        }
     }
 
     /**
@@ -84,6 +106,18 @@ class StudentController extends Controller
     {
         $model = $this->findModel($id);
 
+	}
+
+    /**
+     * Enrols a student to the chosen program
+     * If update is successful, the browser will be redirected to the student's 'view' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionEnrol($id)
+    {
+        $model = $this->findModel($id);
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -92,6 +126,7 @@ class StudentController extends Controller
             ]);
         }
     }
+
 
     /**
      * Deletes an existing Student model.

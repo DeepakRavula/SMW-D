@@ -17,3 +17,11 @@ $this->params['breadcrumbs'][] = 'Update';
     ]) ?>
 
 </div>
+
+<div class="enrolment-create">
+
+    <?php echo $this->render('//enrolment/_form', [
+        'model' => $enrolmentModel,
+    ]) ?>
+
+</div>
