@@ -27,65 +27,105 @@ $(document).ready(function() {
     defaultView: 'resourceDay',
     editable: true,
     droppable: true,
-    resources: [{
-      'id': 'resource1',
-      'name': 'Resource 1'
+    resources:  [{
+      'id': '1',
+      'name': 'Alex Orlandi'
     }, {
-      'id': 'resource2',
-      'name': 'Resource 2'
+      'id': '2',
+      'name': 'Angie Bonavota'
     }, {
-      'id': 'resource3',
-      'name': 'Resource 3',
+      'id': '150',
+      'name': 'Daniela Giancola',
       'className': ['red']
     }, {
-      'id': 'resource4',
-      'name': 'Resource 4',
+      'id': '151',
+      'name': 'Giampiero De Angelis',
     }, {
-      'id': 'resource4',
-      'name': 'Resource 4',
+      'id': '152',
+      'name': 'Kevin Leung',
+    }, {
+      'id': '153',
+      'name': 'Monica Hickey',
+    }, {
+      'id': '154',
+      'name': 'Sandra Putnik',
+    }, {
+      'id': '155',
+      'name': 'Steven Saunders',
     }],
     events: [{
-      title: 'R1-R2: Lunch 12.15-14.45',
-      start: new Date(y, m, d, 12, 15),
-      end: new Date(y, m, d, 14, 45),
+      title: '[AM] Karen Johnson (Guitar)',
+      start: new Date(y, m, d, 10, 15),
+      end: new Date(y, m, d, 11, 45),
       allDay: false,
-      resources: ['resource1', 'resource2']
+      resources: ['1', '2']
     }, {
-      title: 'R1: All day',
-      start: new Date(y, m, d, 10, 30),
-      end: new Date(y, m, d, 11, 0),
-      allDay: true,
-      resources: 'resource1'
-    }, {
-      title: 'R2: Meeting 11.00',
+      title: '[AM] Jake Attal (Piano)',
       start: new Date(y, m, d, 11, 0),
-      allDay: true,
-      resources: 'resource2'
-    }, {
-      title: 'R1/R2: Lunch 12-14',
-      start: new Date(y, m, d, 12, 0),
-      end: new Date(y, m, d, 14, 0),
+      end: new Date(y, m, d, 12, 30),
       allDay: false,
-      resources: ['resource1', 'resource2']
+      resources: '150'
+    }, {
+      title: '[PM] Karen Johnson (Violin)',
+      start: new Date(y, m, d, 13, 0),
+	   end: new Date(y, m, d, 14, 30),
+      allDay: false,
+      resources: '152'
+    }, {
+      title: '[PM] Jake Attal (Guitar)',
+      start: new Date(y, m, d, 15, 0),
+      end: new Date(y, m, d, 16, 30),
+      allDay: false,
+      resources: ['153', '154']
     }, {
       id: 777,
-      title: 'Lunch',
-      start: new Date(y, m, d, 12, 0),
-      end: new Date(y, m, d, 14, 0),
+      title: '[PM] Tiffany Kong (Piano)',
+      start: new Date(y, m, d, 17, 0),
+      end: new Date(y, m, d, 18, 30),
       allDay: false,
-      resources: ['resource1']
+      resources: ['155']
     }, {
       id: 999,
-      title: 'Repeating Event',
-      start: new Date(y, m, d - 3, 16, 0),
+      title: '[PM] Kimberly Aquino (Guitar)',
+      start: new Date(y, m, d, 19, 0),
+      end: new Date(y, m, d, 20, 30),
       allDay: false,
-      resources: 'resource2'
+      resources: '155'
     }, {
-      id: 999,
-      title: 'Repeating Event',
-      start: new Date(y, m, d + 4, 16, 0),
+      
+       title: 'Nicholas Hanns (Guitar)',
+      start: new Date(y, m, d, 21, 0),
+      end: new Date(y, m, d, 22, 30),
       allDay: false,
-      resources: 'resource2'
+      resources: '153'
+    },{
+      
+      title: 'Rita Fabian (Piano)',
+      start: new Date(y, m, d, 23, 0),
+      end: new Date(y, m, d, 00, 0),
+      allDay: false,
+      resources: '155'
+    }, {
+      
+       title: '[AM] Vanessa Pryia (Guitar)',
+      start: new Date(y, m, d, 3, 0),
+      end: new Date(y, m, d, 4, 30),
+      allDay: false,
+      resources: '155'
+    },{
+      
+       title: '[AM] Paul Faggil (Piano)',
+      start: new Date(y, m, d, 4, 0),
+      end: new Date(y, m, d, 5, 30),
+      allDay: false,
+      resources: '151'
+    },{
+     
+       title: '[AM] Giselle Andrews (Guitar)',
+      start: new Date(y, m, d, 6, 0),
+      end: new Date(y, m, d, 7, 30),
+      allDay: false,
+      resources: '152'
     }],
     // the 'ev' parameter is the mouse event rather than the resource 'event'
     // the ev.data is the resource column clicked upon
