@@ -18,7 +18,8 @@ use yii\bootstrap\ActiveForm;
         <?php echo $form->field($model, 'email') ?>
         <?php echo $form->field($model, 'password')->passwordInput() ?>
         <?php echo $form->field($model, 'status')->dropDownList(User::statuses()) ?>
-		<?php if (end(Yii::$app->authManager->getRolesByUser($model->model->id))->name === User::ROLE_TEACHER): ?>
+		<?php $roles = Yii::$app->authManager->getRolesByUser($model->model->id); $role = end($roles);?>
+		<?php if ( ! empty($role) && $role === User::ROLE_TEACHER): ?>
        		<?php echo $form->field($model, 'qualifications')->checkboxList($programs) ?>
 		<?php endif;?>
         <?php echo $form->field($model, 'roles')->checkboxList($roles) ?>
