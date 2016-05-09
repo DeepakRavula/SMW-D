@@ -11,6 +11,7 @@ use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use common\models\User;
 use common\models\Location;
+use yii\web\JsExpression;
 
 $bundle = BackendAsset::register($this);
 ?>
@@ -31,13 +32,19 @@ $bundle = BackendAsset::register($this);
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
+
+				<?php $location_id = Yii::$app->session->get('location_id');
+
+				if(empty($location_id)) {
+					Yii::$app->session->set('location_id', '1');
+				}?>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
                         <li>  <div>
                             <?php $form = Html::beginForm(); ?>                        
                                  <?= Html::dropDownList('location_id', null,
                                   ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'location_id', 'options' => [Yii::$app->session->get("location_id") => ['Selected'=>'selected']]
-, 'onChange'=>
+, 'onChange'=> new JsExpression(
                                 "$.ajax({
                                     type     :'POST',
                                     cache    : false,
@@ -48,7 +55,7 @@ $bundle = BackendAsset::register($this);
                                     success  : function(response) {
 										location.reload();
                                     }
-                                });"]
+                                });")]
                             ) ?>
                             <?php Html::endForm() ?>
                             </div>

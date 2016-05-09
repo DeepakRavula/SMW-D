@@ -110,9 +110,10 @@ class UserController extends Controller
     {
         $model = new UserForm();
         $model->setScenario('create');
-        if ($model->load(Yii::$app->request->post())) {
-			$role = end($model->roles);
-            return $this->redirect(['index', 'UserSearch[role_name]' => $role]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			$userRoles = Yii::$app->authManager->getRolesByUser($model->model->id);
+			$userRole = end($userRoles);
+            return $this->redirect(['index', 'UserSearch[role_name]' => $userRole->name]);
         }
 
         return $this->render('create', [
