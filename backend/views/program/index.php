@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'name',
-            'rate',
+            'rate:currency',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

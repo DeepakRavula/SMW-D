@@ -21,11 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		'attributes' => [
 			'first_name',
 			'last_name',
-			'birth_date',
-			[
-				'label' => 'Age',
-				'value' => DateTime::createFromFormat('Y-m-d', $model->birth_date)->diff(new DateTime('now'))->y,
-			],
+			'birth_date:date',
 			[
 				'label' => 'Customer Name',
 				'value' => !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null,
