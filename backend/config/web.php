@@ -1,4 +1,6 @@
 <?php
+
+
 $config = [
     'homeUrl'=>Yii::getAlias('@backendUrl'),
     'controllerNamespace' => 'backend\controllers',

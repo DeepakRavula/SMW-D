@@ -33,7 +33,11 @@ $config = [
         ],
 
         'formatter'=>[
-            'class'=>'yii\i18n\Formatter'
+            'class'=>'yii\i18n\Formatter',
+			'dateFormat' => 'php:m-d-y',
+			'datetimeFormat' => 'php:m-d-y H:i:s',
+			'timeFormat' => 'php:H:i:s',
+			'currencyCode' => 'CAD',
         ],
 
         'glide' => [

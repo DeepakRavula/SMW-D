@@ -9,7 +9,7 @@ use yii\grid\GridView;
 /* @var $searchModel backend\models\search\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('backend',  ucwords($searchModel->role_name));
+$this->title = Yii::t('backend',  ! ($searchModel->role_name) ? ucwords($searchModel->role_name) : 'User');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 	<p>
-        <?php echo Html::a(Yii::t('backend', 'Create ' . ucwords($searchModel->role_name), [
+        <?php echo Html::a(Yii::t('backend', 'Create ' .  (! empty($searchModel->role_name) ? ucwords($searchModel->role_name) : 'User'), [
     'modelClass' => 'User',
 ]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>

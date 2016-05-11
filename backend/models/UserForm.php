@@ -127,6 +127,8 @@ class UserForm extends Model
             if ($this->password) {
                 $model->setPassword($this->password);
             }
+
+			$model->location_id = Yii::$app->session->get('location_id');
             if (!$model->save()) {
                 throw new Exception('Model not saved');
             }

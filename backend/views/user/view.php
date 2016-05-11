@@ -30,7 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
 				'value' => !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null,
 			],
 			'email:email',
-			'status',
 			[
 				'label' => 'Address',
 				'value' => !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null,
@@ -56,8 +55,9 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
 </div>
-
-<?php if (end(Yii::$app->authManager->getRolesByUser($model->id))->name === User::ROLE_CUSTOMER): ?>
+<h3>Students </h3>
+<?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
+<?php if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER): ?>
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,

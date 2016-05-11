@@ -11,6 +11,7 @@ use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use common\models\User;
 use common\models\Location;
+use yii\web\JsExpression;
 
 $bundle = BackendAsset::register($this);
 ?>
@@ -31,24 +32,30 @@ $bundle = BackendAsset::register($this);
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
+
+				<?php $location_id = Yii::$app->session->get('location_id');
+
+				if(empty($location_id)) {
+					Yii::$app->session->set('location_id', '1');
+				}?>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
                         <li>  <div>
                             <?php $form = Html::beginForm(); ?>                        
                                  <?= Html::dropDownList('location_id', null,
                                   ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'location_id', 'options' => [Yii::$app->session->get("location_id") => ['Selected'=>'selected']]
-, 'onChange'=>
+, 'onChange'=> new JsExpression(
                                 "$.ajax({
                                     type     :'POST',
                                     cache    : false,
-                                    url  : '/location/changelocation',
+                                    url  : '/location/change-location',
                                     data: {
                                         location_id: $('#location_id').val()
                                     },
                                     success  : function(response) {
 										location.reload();
                                     }
-                                });"]
+                                });")]
                             ) ?>
                             <?php Html::endForm() ?>
                             </div>
@@ -152,30 +159,11 @@ $bundle = BackendAsset::register($this);
                             'label'=>Yii::t('backend', 'Main'),
                             'options' => ['class' => 'header']
                         ],
-                        [
-                            'label'=>Yii::t('backend', 'Timeline'),
-                            'icon'=>'<i class="fa fa-bar-chart-o"></i>',
-                            'url'=>['/timeline-event/index'],
-                            'badge'=> TimelineEvent::find()->today()->count(),
-                            'badgeBgClass'=>'label-success',
-                        ],
-                        [
-                            'label'=>Yii::t('backend', 'Content'),
-                            'url' => '#',
-                            'icon'=>'<i class="fa fa-edit"></i>',
-                            'options'=>['class'=>'treeview'],
-                            'items'=>[
-                                ['label'=>Yii::t('backend', 'Static pages'), 'url'=>['/page/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'Articles'), 'url'=>['/article/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'Article Categories'), 'url'=>['/article-category/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'Text Widgets'), 'url'=>['/widget-text/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'Menu Widgets'), 'url'=>['/widget-menu/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'Carousel Widgets'), 'url'=>['/widget-carousel/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                            ]
-                        ],
-                        [
-                            'label'=>Yii::t('backend', 'System'),
-                            'options' => ['class' => 'header']
+						[
+                            'label'=>Yii::t('backend', 'Schedule'),
+                            'icon'=>'<i class="fa  fa-calendar"></i>',
+                            'url'=>['/schedule/index'],
+                            'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
                             'label'=>Yii::t('backend', 'Students'),
@@ -226,16 +214,34 @@ $bundle = BackendAsset::register($this);
                             'visible'=>Yii::$app->user->can('administrator')
                         ],
 						[
-                            'label'=>Yii::t('backend', 'Schedule'),
-                            'icon'=>'<i class="fa  fa-calendar"></i>',
-                            'url'=>['/schedule/index'],
-                            'visible'=>Yii::$app->user->can('administrator')
-                        ],
-						[
                             'label'=>Yii::t('backend', 'Invoices'),
                             'icon'=>'<i class="fa  fa-dollar"></i>',
                             'url'=>['/invoice/index'],
                             'visible'=>Yii::$app->user->can('administrator')
+                        ],
+                        [
+                            'label'=>Yii::t('backend', 'System'),
+                            'options' => ['class' => 'header']
+                        ],
+                        [
+                            'label'=>Yii::t('backend', 'Access Control'),
+                            'url' => '#',
+                            'icon'=>'<i class="fa fa-edit"></i>',
+                            'options'=>['class'=>'treeview'],
+                            'items'=>[
+                                ['label'=>Yii::t('backend', 'Roles'), 'url'=>['/admin/role'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                ['label'=>Yii::t('backend', 'Permissions'), 'url'=>['/admin/permission'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                ['label'=>Yii::t('backend', 'Assignments'), 'url'=>['/admin/assignment'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                ['label'=>Yii::t('backend', 'Routes'), 'url'=>['/admin/route'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                ['label'=>Yii::t('backend', 'Rules'), 'url'=>['/admin/rule'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                            ]
+                        ],
+                        [
+                            'label'=>Yii::t('backend', 'Timeline'),
+                            'icon'=>'<i class="fa fa-bar-chart-o"></i>',
+                            'url'=>['/timeline-event/index'],
+                            'badge'=> TimelineEvent::find()->today()->count(),
+                            'badgeBgClass'=>'label-success',
                         ],
                         [
                             'label'=>Yii::t('backend', 'Setup'),

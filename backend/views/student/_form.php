@@ -20,7 +20,7 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
 
-    <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname(), ['dateFormat' => 'yyyy-MM-dd',])  ?>
+    <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname())  ?>
 
     <?php echo $form->field($model, 'customer_id')->dropDownList(ArrayHelper::map(User::findByRole(User::ROLE_CUSTOMER),'id','userProfile.fullName')) ?>
 
