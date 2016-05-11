@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 					return ! empty($data->fullName) ? $data->fullName : null;
                 }, 	
 			],
-            'birth_date',
+            'birth_date:date',
 			[
 				'label' => 'Customer Name',
 				'value' => function($data) {
