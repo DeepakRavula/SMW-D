@@ -157,15 +157,6 @@ class UserForm extends Model
                 $model->afterSignup();
             }
             
-           /* $userProfileModel = $model->getUserProfile($model->getId());
-            print_r($userProfileModel);
-            die;
-           // $userProfileModel->user_id = $model->getId();
-            $userProfileModel->lastname = $this->lastname;
-            $userProfileModel->firstname = $this->firstname;
-            $userProfileModel->save();
-            */
-            
             
             $auth = Yii::$app->authManager;
             $auth->revokeAll($model->getId());
