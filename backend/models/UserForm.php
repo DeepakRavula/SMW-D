@@ -2,6 +2,7 @@
 namespace backend\models;
 
 use common\models\User;
+use common\models\UserProfile;
 use common\models\Program;
 use common\models\Qualification;
 use yii\base\Exception;
@@ -20,6 +21,8 @@ class UserForm extends Model
     public $status;
     public $roles;
 	public $qualifications;
+    public $lastname;
+    public $firstname;
 
     private $model;
 
@@ -62,7 +65,15 @@ class UserForm extends Model
                     Yii::$app->authManager->getRoles(),
                     'name'
                 )]
-            ]
+            ],
+            
+            ['lastname', 'filter', 'filter' => 'trim'],
+            ['lastname', 'required'],
+            ['lastname', 'string', 'min' => 2, 'max' => 255],
+            
+            ['firstname', 'filter', 'filter' => 'trim'],
+            ['firstname', 'required'],
+            ['firstname', 'string', 'min' => 2, 'max' => 255]
         ];
     }
 
@@ -76,7 +87,9 @@ class UserForm extends Model
             'email' => Yii::t('common', 'Email'),
             'status' => Yii::t('common', 'Status'),
             'password' => Yii::t('common', 'Password'),
-            'roles' => Yii::t('common', 'Roles')
+            'roles' => Yii::t('common', 'Roles'),
+            'lastname' => Yii::t('common', 'Last Name'),
+            'firstname' => Yii::t('common', 'First Name')
         ];
     }
 
@@ -94,6 +107,12 @@ class UserForm extends Model
             Yii::$app->authManager->getRolesByUser($model->getId()),
             'name'
         );
+        $this->lastname = ArrayHelper::getColumn(
+				UserProfile::findByUserid($model->getId()), 'lastname'
+		);
+        $this->firstname = ArrayHelper::getColumn(
+				UserProfile::findByUserid($model->getId()), 'firstname'
+		);
 		$this->qualifications = ArrayHelper::getColumn(
 				Program::find()->active()->all(), 'id'
 		);
@@ -127,6 +146,8 @@ class UserForm extends Model
             if ($this->password) {
                 $model->setPassword($this->password);
             }
+            $lastname = $this->lastname;
+            $firstname = $this->firstname;
 
 			$model->location_id = Yii::$app->session->get('location_id');
             if (!$model->save()) {
@@ -135,6 +156,17 @@ class UserForm extends Model
             if ($isNewRecord) {
                 $model->afterSignup();
             }
+            
+           /* $userProfileModel = $model->getUserProfile($model->getId());
+            print_r($userProfileModel);
+            die;
+           // $userProfileModel->user_id = $model->getId();
+            $userProfileModel->lastname = $this->lastname;
+            $userProfileModel->firstname = $this->firstname;
+            $userProfileModel->save();
+            */
+            
+            
             $auth = Yii::$app->authManager;
             $auth->revokeAll($model->getId());
 
@@ -156,6 +188,13 @@ class UserForm extends Model
 				}
 					
 			}
+            
+            $userProfileModel = UserProfile::findByUserid($model->getId());
+            $userProfileModel->lastname = $lastname;
+            $userProfileModel->firstname = $firstname;
+            $userProfileModel->save();
+            //$model->link('userProfile', $userProfileModel); //automatically saved into database
+            
 
             return !$model->hasErrors();
         }

@@ -117,4 +117,17 @@ class UserProfile extends ActiveRecord
             ? Yii::getAlias($this->avatar_base_url . '/' . $this->avatar_path)
             : $default;
     }
+    
+    /**
+     * Finds user by user_id
+     *
+     * @param string $user_id
+     * @return static|null
+     */
+    public static function findByUserid($user_id)
+    {
+        return static::find()
+            ->andWhere(['user_id' => $user_id])
+            ->one();
+    }
 }
