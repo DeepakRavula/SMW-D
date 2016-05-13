@@ -107,12 +107,14 @@ class UserForm extends Model
             Yii::$app->authManager->getRolesByUser($model->getId()),
             'name'
         );
-        $this->lastname = ArrayHelper::getColumn(
-				UserProfile::findByUserid($model->getId()), 'lastname'
-		);
-        $this->firstname = ArrayHelper::getColumn(
-				UserProfile::findByUserid($model->getId()), 'firstname'
-		);
+       	$userFirstName = UserProfile::findOne(['user_id' => $model->getId()]); 
+	  		if(! empty($userFirstName->firstname)){
+				$this->firstname = $userFirstName->firstname;
+	   	}
+	    $userLastName = UserProfile::findOne(['user_id' => $model->getId()]); 
+	   		if(! empty($userLastName->lastname)){
+			   $this->lastname = $userLastName->lastname;
+	   }
 		$this->qualifications = ArrayHelper::getColumn(
 				Program::find()->active()->all(), 'id'
 		);
@@ -180,7 +182,7 @@ class UserForm extends Model
 					
 			}
             
-            $userProfileModel = UserProfile::findByUserid($model->getId());
+            $userProfileModel = UserProfile::findOne($model->getId());
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
