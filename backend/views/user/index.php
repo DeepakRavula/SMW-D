@@ -17,13 +17,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-			[
-				'label' => 'User Name',
-				'value' => function($data) {
-					return ! empty($data->userProfile->fullName) ? $data->userProfile->fullName : null;
-                },
-			],
-            'email:email',
+			'userProfile.firstname',
+            'userProfile.lastname',
+            'email',
 			[
 				'label' => 'Phone',
 				'value' => function($data) {
@@ -36,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<p>
         <?php echo Html::a(Yii::t('backend', 'Create ' .  (! empty($searchModel->role_name) ? ucwords($searchModel->role_name) : 'User'), [
     'modelClass' => 'User',
-]), ['create'], ['class' => 'btn btn-success']) ?>
+]), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-success']) ?>
     </p>
 
 	<?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>

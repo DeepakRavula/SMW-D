@@ -32,8 +32,8 @@ class PhoneNumber extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'label_id', 'number'], 'required'],
-            [['user_id', 'label_id', 'extension'], 'integer'],
+            [['label_id', 'number'], 'required'],
+            [['label_id', 'extension'], 'integer'],
             [['number'], 'string', 'max' => 16],
         ];
     }
@@ -49,6 +49,15 @@ class PhoneNumber extends \yii\db\ActiveRecord
             'label_id' => 'Label ID',
             'number' => 'Number',
             'extension' => 'Extension',
+        ];
+    }
+
+	public static function phoneLabels()
+    {
+        return [
+            self::LABEL_HOME => Yii::t('common', 'Home'),
+            self::LABEL_WORK => Yii::t('common', 'Work'),
+            self::LABEL_OTHER => Yii::t('common', 'Other')
         ];
     }
 }

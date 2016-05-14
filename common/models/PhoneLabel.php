@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\models\PhoneNumber;
 use Yii;
 
 /**
@@ -40,5 +41,13 @@ class PhoneLabel extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
         ];
+    }
+
+    public static function findByPhoneLabel($user_id)
+    {
+        return static::find()
+			->join('INNER JOIN','phone_number','phone_number.label_id = phone_label.id')
+			->where(['phone_number.user_id' => $user_id ])
+			->all();
     }
 }

@@ -2,6 +2,9 @@
 namespace backend\models;
 
 use common\models\User;
+use common\models\UserProfile;
+use common\models\PhoneLabel;
+use common\models\PhoneNumber;
 use common\models\Program;
 use common\models\Qualification;
 use yii\base\Exception;
@@ -20,7 +23,11 @@ class UserForm extends Model
     public $status;
     public $roles;
 	public $qualifications;
-
+    public $lastname;
+    public $firstname;
+	public $phonenumber;
+	public $phonelabel;
+	public $phoneextension;
     private $model;
 
     /**
@@ -30,7 +37,6 @@ class UserForm extends Model
     {
         return [
             ['username', 'filter', 'filter' => 'trim'],
-            ['username', 'required'],
             ['username', 'unique', 'targetClass' => User::className(), 'filter' => function ($query) {
                 if (!$this->getModel()->isNewRecord) {
                     $query->andWhere(['not', ['id'=>$this->getModel()->id]]);
@@ -62,7 +68,19 @@ class UserForm extends Model
                     Yii::$app->authManager->getRoles(),
                     'name'
                 )]
-            ]
+            ],
+            
+            ['lastname', 'filter', 'filter' => 'trim'],
+            ['lastname', 'required'],
+            ['lastname', 'string', 'min' => 2, 'max' => 255],
+            
+            ['firstname', 'filter', 'filter' => 'trim'],
+            ['firstname', 'required'],
+            ['firstname', 'string', 'min' => 2, 'max' => 255],
+
+			['phonelabel','required'],
+			['phoneextension','integer'],
+			['phonenumber','required']
         ];
     }
 
@@ -76,7 +94,12 @@ class UserForm extends Model
             'email' => Yii::t('common', 'Email'),
             'status' => Yii::t('common', 'Status'),
             'password' => Yii::t('common', 'Password'),
-            'roles' => Yii::t('common', 'Roles')
+            'roles' => Yii::t('common', 'Roles'),
+            'lastname' => Yii::t('common', 'Last Name'),
+            'firstname' => Yii::t('common', 'First Name'),
+            'phonelabel' => Yii::t('common', 'Phone Label'),
+            'phonenumber' => Yii::t('common', 'Phone Number'),
+            'phoneextension' => Yii::t('common', 'Phone Extension')
         ];
     }
 
@@ -94,9 +117,27 @@ class UserForm extends Model
             Yii::$app->authManager->getRolesByUser($model->getId()),
             'name'
         );
+       	$userFirstName = UserProfile::findOne(['user_id' => $model->getId()]); 
+	  		if(! empty($userFirstName->firstname)){
+				$this->firstname = $userFirstName->firstname;
+	   	}
+	    $userLastName = UserProfile::findOne(['user_id' => $model->getId()]); 
+	   		if(! empty($userLastName->lastname)){
+			   $this->lastname = $userLastName->lastname;
+	   	}
+	   	
+		$phoneNumber = PhoneNumber::findOne(['user_id' => $model->getId()]); 
+	   		if(! empty($phoneNumber->number) || ! empty($phoneNumber->extension)){
+			   $this->phoneextension = $phoneNumber->extension;
+			   $this->phonenumber = $phoneNumber->number;
+               $this->phonelabel = $phoneNumber->label_id;
+			   
+	   	} 
+        
 		$this->qualifications = ArrayHelper::getColumn(
-				Program::find()->active()->all(), 'id'
+			Qualification::find()->where(['teacher_id'=>$model->getId()])->all(), 'program_id'
 		);
+        
         return $this->model;
     }
 
@@ -127,7 +168,11 @@ class UserForm extends Model
             if ($this->password) {
                 $model->setPassword($this->password);
             }
-
+            $lastname = $this->lastname;
+            $firstname = $this->firstname;
+			$phonenumber = $this->phonenumber;
+			$phoneextension = $this->phoneextension;
+			$phonelabel = $this->phonelabel;
 			$model->location_id = Yii::$app->session->get('location_id');
             if (!$model->save()) {
                 throw new Exception('Model not saved');
@@ -135,6 +180,8 @@ class UserForm extends Model
             if ($isNewRecord) {
                 $model->afterSignup();
             }
+            
+            
             $auth = Yii::$app->authManager;
             $auth->revokeAll($model->getId());
 
@@ -156,7 +203,22 @@ class UserForm extends Model
 				}
 					
 			}
-
+            $userProfileModel = UserProfile::findOne($model->getId());
+            $userProfileModel->lastname = $lastname;
+            $userProfileModel->firstname = $firstname;
+            $userProfileModel->save();
+            //$model->link('userProfile', $userProfileModel); //automatically saved into database
+			
+			$phoneNumberModel = PhoneNumber::findOne($model->getId());
+			if(empty($phoneNumberModel)){
+				$phoneNumberModel = new PhoneNumber();
+				$phoneNumberModel->user_id = $model->getId();
+			}
+            $phoneNumberModel->extension = $phoneextension;
+            $phoneNumberModel->number = $phonenumber;
+            $phoneNumberModel->label_id = $phonelabel;
+            $phoneNumberModel->save();
+		
             return !$model->hasErrors();
         }
         return null;

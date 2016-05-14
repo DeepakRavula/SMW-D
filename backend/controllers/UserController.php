@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\User;
+use common\models\UserProfile;
+use common\models\PhoneNumber;
 use common\models\UserImport;
 use backend\models\UserForm;
 use backend\models\UserImportForm;
@@ -110,6 +112,7 @@ class UserController extends Controller
     {
         $model = new UserForm();
         $model->setScenario('create');
+        $model->roles = Yii::$app->request->queryParams['User']['role_name'];
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			$userRoles = Yii::$app->authManager->getRolesByUser($model->model->id);
 			$userRole = end($userRoles);

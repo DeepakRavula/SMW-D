@@ -15,13 +15,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-			[
-				'label' => 'Name',
-				'value' => function($data) {
-					return ! empty($data->fullName) ? $data->fullName : null;
-                }, 	
-			],
-            'birth_date',
+			'first_name',
+            'last_name',
+            'birth_date:date',
 			[
 				'label' => 'Customer Name',
 				'value' => function($data) {
