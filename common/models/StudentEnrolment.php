@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "enrolment".
+ * This is the model class for table "student_enrolment".
  *
  * @property integer $id
  * @property integer $student_id
@@ -13,17 +13,14 @@ use Yii;
  * @property string $commencement_date
  * @property string $renewal_date
  */
-class Enrolment extends \yii\db\ActiveRecord
+class StudentEnrolment extends \yii\db\ActiveRecord
 {
-
-	public $teacherId;
-	public $programId;
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'enrolment';
+        return 'student_enrolment';
     }
 
     /**
@@ -51,17 +48,4 @@ class Enrolment extends \yii\db\ActiveRecord
             'renewal_date' => 'Renewal Date',
         ];
     }
-
-	public static function getWeekdaysList()
-	{
-		return [
-		1	=>	'Monday',
-				'Tuesday',
-				'Wednesday',
-				'Thursday',
-				'Friday',
-				'Saturday',
-				'Sunday',
-		];
-	}
 }

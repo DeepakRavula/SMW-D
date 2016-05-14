@@ -19,20 +19,9 @@ use kartik\time\TimePicker;
 
     <?php echo $form->errorSummary($model); ?>
 
-    <?php echo $form->field($model, 'teacherId')->dropDownList(ArrayHelper::map(User::findByRole(User::ROLE_TEACHER),'id','userProfile.fullName')) ?>
-
     <?php echo $form->field($model, 'programId')->dropDownList(ArrayHelper::map(Program::find()->active()->all(), 'id', 'name')); ?>
 
-    <?php echo $form->field($model, 'preferred_day')->dropDownList(Enrolment::getWeekdaysList()); ?>
-
-    <?php echo $form->field($model, 'preferred_time')->widget(TimePicker::classname(), []);?>
-
-    <?php echo $form->field($model, 'length')->widget(TimePicker::classname(), [
-		'pluginOptions' => [
-			'showMeridian' => false,
-			'minuteStep' => 15,
-		]]);?>
-
+    <?php echo $form->field($model, 'teacherId')->dropDownList(ArrayHelper::map(User::findByRole(User::ROLE_TEACHER),'id','userProfile.fullName')) ?>
 
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
