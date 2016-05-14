@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<p>
         <?php echo Html::a(Yii::t('backend', 'Create ' .  (! empty($searchModel->role_name) ? ucwords($searchModel->role_name) : 'User'), [
     'modelClass' => 'User',
-]), ['create'], ['class' => 'btn btn-success']) ?>
+]), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-success']) ?>
     </p>
 
 	<?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
