@@ -130,12 +130,10 @@ class UserForm extends Model
 	   		if(! empty($phoneNumber->number) || ! empty($phoneNumber->extension)){
 			   $this->phoneextension = $phoneNumber->extension;
 			   $this->phonenumber = $phoneNumber->number;
+               $this->phonelabel = $phoneNumber->label_id;
 			   
 	   	} 
-		
-		$this->phonelabel = ArrayHelper::getColumn(
-	        PhoneLabel::findByPhoneLabel($model->getId()), 'name'		
-        );
+        
 		$this->qualifications = ArrayHelper::getColumn(
 			Qualification::find()->where(['teacher_id'=>$model->getId()])->all(), 'program_id'
 		);
