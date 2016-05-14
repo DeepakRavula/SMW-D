@@ -138,8 +138,9 @@ class UserForm extends Model
 	        PhoneLabel::findByPhoneLabel($model->getId()), 'name'		
         );
 		$this->qualifications = ArrayHelper::getColumn(
-				Program::find()->active()->all(), 'id'
+			Qualification::find()->where(['teacher_id'=>$model->getId()])->all(), 'program_id'
 		);
+        
         return $this->model;
     }
 
