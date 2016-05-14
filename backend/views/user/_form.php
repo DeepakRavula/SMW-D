@@ -15,7 +15,6 @@ use yii\bootstrap\ActiveForm;
 <div class="user-form">
 
     <?php $form = ActiveForm::begin(); ?>
-        <?php echo $form->field($model, 'username') ?>
         <?php echo $form->field($model, 'firstname') ?>
         <?php echo $form->field($model, 'lastname') ?>
         <?php echo $form->field($model, 'email') ?>

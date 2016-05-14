@@ -91,7 +91,7 @@ class LoginForm extends Model
     {
         if ($this->user === false) {
             $this->user = User::find()
-                ->andWhere(['or', ['username'=>$this->username], ['email'=>$this->username]])
+                ->where(['email'=>$this->username])
                 ->one();
         }
 
