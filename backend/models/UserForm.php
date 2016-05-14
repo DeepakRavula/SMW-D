@@ -116,8 +116,9 @@ class UserForm extends Model
 			   $this->lastname = $userLastName->lastname;
 	   }
 		$this->qualifications = ArrayHelper::getColumn(
-				Program::find()->active()->all(), 'id'
+			Qualification::find()->where(['teacher_id'=>$model->getId()])->all(), 'program_id'
 		);
+        
         return $this->model;
     }
 
