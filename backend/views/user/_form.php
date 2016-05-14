@@ -2,6 +2,7 @@
 
 use common\models\User;
 use yii\helpers\Html;
+use common\models\PhoneNumber;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -19,6 +20,11 @@ use yii\bootstrap\ActiveForm;
         <?php echo $form->field($model, 'lastname') ?>
         <?php echo $form->field($model, 'email') ?>
         <?php echo $form->field($model, 'password')->passwordInput() ?>
+        <?php echo $form->field($model, 'phonenumber',['inputOptions' => ['placeholder' => $model->getAttributeLabel('Number')],]) ?>
+        <?php echo $form->field($model, 'phonelabel')->dropDownList(PhoneNumber::phoneLabels(), ['prompt'=>'Select Label'],['inputOptions' => ['placeholder' => $model->getAttributeLabel('Extension')]
+		])->label(false) ?>
+        <?php echo $form->field($model, 'phoneextension',['inputOptions' => ['placeholder' => $model->getAttributeLabel('Extension')]
+		])->label(false) ?>
         <?php echo $form->field($model, 'status')->dropDownList(User::statuses()) ?>
 		<?php $userRoles = Yii::$app->authManager->getRolesByUser($model->model->id); $userRole = end($userRoles);?>
 		<?php if ( ! empty($userRole) && $userRole === User::ROLE_TEACHER): ?>

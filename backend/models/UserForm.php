@@ -3,6 +3,8 @@ namespace backend\models;
 
 use common\models\User;
 use common\models\UserProfile;
+use common\models\PhoneLabel;
+use common\models\PhoneNumber;
 use common\models\Program;
 use common\models\Qualification;
 use yii\base\Exception;
@@ -23,7 +25,9 @@ class UserForm extends Model
 	public $qualifications;
     public $lastname;
     public $firstname;
-
+	public $phonenumber;
+	public $phonelabel;
+	public $phoneextension;
     private $model;
 
     /**
@@ -73,7 +77,11 @@ class UserForm extends Model
             
             ['firstname', 'filter', 'filter' => 'trim'],
             ['firstname', 'required'],
-            ['firstname', 'string', 'min' => 2, 'max' => 255]
+            ['firstname', 'string', 'min' => 2, 'max' => 255],
+
+			['phonelabel','required'],
+			['phoneextension','integer'],
+			['phonenumber','required']
         ];
     }
 
@@ -89,7 +97,10 @@ class UserForm extends Model
             'password' => Yii::t('common', 'Password'),
             'roles' => Yii::t('common', 'Roles'),
             'lastname' => Yii::t('common', 'Last Name'),
-            'firstname' => Yii::t('common', 'First Name')
+            'firstname' => Yii::t('common', 'First Name'),
+            'phonelabel' => Yii::t('common', 'Phone Label'),
+            'phonenumber' => Yii::t('common', 'Phone Number'),
+            'phoneextension' => Yii::t('common', 'Phone Extension')
         ];
     }
 
@@ -114,7 +125,18 @@ class UserForm extends Model
 	    $userLastName = UserProfile::findOne(['user_id' => $model->getId()]); 
 	   		if(! empty($userLastName->lastname)){
 			   $this->lastname = $userLastName->lastname;
-	   }
+	   	}
+	   	
+		$phoneNumber = PhoneNumber::findOne(['user_id' => $model->getId()]); 
+	   		if(! empty($phoneNumber->number) || ! empty($phoneNumber->extension)){
+			   $this->phoneextension = $phoneNumber->extension;
+			   $this->phonenumber = $phoneNumber->number;
+			   
+	   	} 
+		
+		$this->phonelabel = ArrayHelper::getColumn(
+	        PhoneLabel::findByPhoneLabel($model->getId()), 'name'		
+        );
 		$this->qualifications = ArrayHelper::getColumn(
 				Program::find()->active()->all(), 'id'
 		);
@@ -150,7 +172,9 @@ class UserForm extends Model
             }
             $lastname = $this->lastname;
             $firstname = $this->firstname;
-
+			$phonenumber = $this->phonenumber;
+			$phoneextension = $this->phoneextension;
+			$phonelabel = $this->phonelabel;
 			$model->location_id = Yii::$app->session->get('location_id');
             if (!$model->save()) {
                 throw new Exception('Model not saved');
@@ -181,14 +205,22 @@ class UserForm extends Model
 				}
 					
 			}
-            
             $userProfileModel = UserProfile::findOne($model->getId());
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
             //$model->link('userProfile', $userProfileModel); //automatically saved into database
-            
-
+			
+			$phoneNumberModel = PhoneNumber::findOne($model->getId());
+			if(empty($phoneNumberModel)){
+				$phoneNumberModel = new PhoneNumber();
+				$phoneNumberModel->user_id = $model->getId();
+			}
+            $phoneNumberModel->extension = $phoneextension;
+            $phoneNumberModel->number = $phonenumber;
+            $phoneNumberModel->label_id = $phonelabel;
+            $phoneNumberModel->save();
+		
             return !$model->hasErrors();
         }
         return null;
