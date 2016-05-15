@@ -9,6 +9,7 @@
 namespace backend\assets;
 
 use yii\web\AssetBundle;
+use yii\web\View;
 
 class BackendAsset extends AssetBundle
 {
@@ -30,4 +31,9 @@ class BackendAsset extends AssetBundle
         'common\assets\AdminLte',
         'common\assets\Html5shiv'
     ];
+    
+    public function init() {
+        $this->jsOptions['position'] = View::POS_BEGIN;
+        parent::init();
+    }
 }
