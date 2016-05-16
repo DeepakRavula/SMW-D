@@ -34,41 +34,47 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {
+        
         /* $teacherAvailability = ArrayHelper::map(TeacherAvailability::find()->all(), 'id', 'teacher_id as name');*/
         $teacherAvailability = (new \yii\db\Query())
             ->select(['ta.teacher_id as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
             ->join('Join', 'user_profile up', 'up.user_id = ta.teacher_id')
-            ->where('ta.location_id = :location_id AND ta.day = DATE_FORMAT(now(),\'%w\')', [':location_id'=>1])
+            ->where('ta.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+            ->orderBy('id desc')
             ->all();
         
         $events = array();
         $student = array();
+        $students = array();
         
         foreach($teacherAvailability as $teacher){
             
-            $studentAvailability = (new \yii\db\Query())
-                ->select(['q.teacher_id as id', 'concat(s.first_name,\' \',s.last_name) as name, ed.from_time, ed.to_time'])
+            $studentEvents = (new \yii\db\Query())
+                ->select(['q.teacher_id as id', 'concat(s.first_name,\' \',s.last_name) as title, HOUR(ed.from_time) as start_hours, MINUTE(ed.from_time) as start_minutes, HOUR(ed.to_time) as end_hours, MINUTE(ed.to_time) as end_minutes, ed.day'])
                 ->from('enrolment e')
                 ->join('Join', 'qualification q', 'q.id = e.qualification_id')
                 ->join('Join', 'enrolment_schedule_day ed', 'ed.enrolment_id = e.id')
                 ->join('Join', 'student s', 's.id = e.student_id')
-                ->where('q.teacher_id = :teacher_id AND ed.day = DATE_FORMAT(now(),\'%w\')', [':teacher_id'=>$teacher['id']])
+                ->where('q.teacher_id = :teacher_id', [':teacher_id'=>$teacher['id']])
                 ->all();
                 
-            foreach($studentAvailability as $studentAvailability){
-                $student['title'] = $studentAvailability['name'];
-                $student['start'] = date("D M d Y").' '.$studentAvailability["from_time"];
-                $student['end'] = date("D M d Y").' '.$studentAvailability["to_time"];
+            foreach($studentEvents as $studentEvents){
+                $student['title'] = $studentEvents['title'];
+                $student['start_hours'] = $studentEvents["start_hours"];
+                $student['end_hours'] = $studentEvents["end_hours"];
+                $student['start_minutes'] = $studentEvents["start_minutes"];
+                $student['end_minutes'] = $studentEvents["end_minutes"];
                 $student['allDay'] = false;
-                $student['resources'] = $studentAvailability['id']; 
+                $student['resources'] = $studentEvents['id']; 
+                $student['day'] = $studentEvents['day'];
                 
                 array_push($events, $student);
             } 
             
         }
         
-		return $this->render('index', ['teacherAvailability'=>$teacherAvailability, 'events'=>$events]);
+		return $this->render('index', ['teacherAvailability'=>$teacherAvailability, 'events'=>$events, 'student'=>$events]);
     }
 
 }
