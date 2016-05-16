@@ -18,6 +18,10 @@ class Enrolment extends \yii\db\ActiveRecord
 
 	public $teacherId;
 	public $programId;
+	public $fromTime;
+	public $toTime;
+	public $duration;
+
     /**
      * @inheritdoc
      */
@@ -64,4 +68,14 @@ class Enrolment extends \yii\db\ActiveRecord
 				'Sunday',
 		];
 	}
+
+	public static function getDuration()
+	{
+		return [
+			'0:45',
+			'1:00',
+			'1:30'
+		];
+	}
+
 }

@@ -71,7 +71,7 @@ class StudentController extends Controller
             	return $this->redirect(['view', 'id' => $model->id]);
 			}
         } else {
-            return $this->render('update', [
+            return $this->render('view', [
             	'model' => $model,
                 'enrolmentModel' => $enrolmentModel,
             ]);
@@ -106,7 +106,14 @@ class StudentController extends Controller
     {
         $model = $this->findModel($id);
 
-	}
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        }
+    }
 
     /**
      * Enrols a student to the chosen program

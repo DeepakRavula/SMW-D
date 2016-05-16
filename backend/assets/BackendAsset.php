@@ -18,12 +18,14 @@ class BackendAsset extends AssetBundle
 
     public $css = [
         'css/style.css',
-        'plugins/fullcalendar/fullcalendar.css'
+        'plugins/fullcalendar/fullcalendar.css',
+        'plugins/jquery-timepicker/jquery.timepicker.css'
     ];
     public $js = [
         'js/app.js',
         'plugins/momentjs/moment-with-locales.js',
-        'plugins/fullcalendar/fullcalendar.js'
+        'plugins/fullcalendar/fullcalendar.js',
+        'plugins/jquery-timepicker/jquery.timepicker.js'
     ];
 
     public $depends = [

@@ -43,3 +43,11 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
 </div>
+
+<div class="enrolment-create">
+
+    <?php echo $this->render('//enrolment/_form', [
+        'model' => $enrolmentModel,
+    ]) ?>
+
+</div>
