@@ -5,6 +5,8 @@ namespace backend\controllers;
 use Yii;
 use common\models\User;
 use common\models\UserProfile;
+use common\models\UserAddress;
+use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\UserImport;
 use backend\models\UserForm;

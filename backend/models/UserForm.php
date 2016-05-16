@@ -4,6 +4,8 @@ namespace backend\models;
 use common\models\User;
 use common\models\UserProfile;
 use common\models\PhoneLabel;
+use common\models\UserAddress;
+use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\Program;
 use common\models\Qualification;
@@ -25,6 +27,12 @@ class UserForm extends Model
 	public $qualifications;
     public $lastname;
     public $firstname;
+	public $addresslabel;
+	public $city;
+	public $province;
+	public $postalcode;
+	public $country;
+	public $address;
 	public $phonenumber;
 	public $phonelabel;
 	public $phoneextension;
@@ -80,7 +88,14 @@ class UserForm extends Model
 
 			['phonelabel','required'],
 			['phoneextension','integer'],
-			['phonenumber','required']
+			['phonenumber','required'],
+					
+			['address','required'],
+			['addresslabel','required'],
+			['postalcode','required'],
+			['province','required'],
+			['city','required'],
+			['country','required']
         ];
     }
 
@@ -99,7 +114,13 @@ class UserForm extends Model
             'firstname' => Yii::t('common', 'First Name'),
             'phonelabel' => Yii::t('common', 'Phone Label'),
             'phonenumber' => Yii::t('common', 'Phone Number'),
-            'phoneextension' => Yii::t('common', 'Phone Extension')
+            'phoneextension' => Yii::t('common', 'Phone Extension'),
+            'address' => Yii::t('common', 'Address'),
+            'addresslabel' => Yii::t('common', 'Address Label'),
+            'postalcode' => Yii::t('common', 'Postal code'),
+            'province' => Yii::t('common', 'Province'),
+            'city' => Yii::t('common', 'City'),
+            'country' => Yii::t('common', 'Country')
         ];
     }
 
@@ -127,13 +148,21 @@ class UserForm extends Model
 	   	}
 	   	
 		$phoneNumber = PhoneNumber::findOne(['user_id' => $model->getId()]); 
-	   		if(! empty($phoneNumber->number) || ! empty($phoneNumber->extension)){
+	   		if(! empty($phoneNumber)){
 			   $this->phoneextension = $phoneNumber->extension;
 			   $this->phonenumber = $phoneNumber->number;
                $this->phonelabel = $phoneNumber->label_id;
-			   
 	   	} 
-        
+			
+		$address = Address::findByUserId($model->getId());
+		if(! empty($address)){
+		$this->address = $address->address;
+		$this->addresslabel = $address->label;
+		$this->city = $address->city_id;
+		$this->country = $address->country_id;
+		$this->province = $address->province_id;
+		$this->postalcode = $address->postal_code;
+		}	
 		$this->qualifications = ArrayHelper::getColumn(
 			Qualification::find()->where(['teacher_id'=>$model->getId()])->all(), 'program_id'
 		);
@@ -171,8 +200,14 @@ class UserForm extends Model
             $lastname = $this->lastname;
             $firstname = $this->firstname;
 			$phonenumber = $this->phonenumber;
-			$phoneextension = $this->phoneextension;
 			$phonelabel = $this->phonelabel;
+			$phoneextension = $this->phoneextension;
+			$address = $this->address;
+			$addresslabel = $this->addresslabel;
+			$city = $this->city;
+			$country = $this->country;
+			$province = $this->province;
+			$postalcode = $this->postalcode;
 			$model->location_id = Yii::$app->session->get('location_id');
             if (!$model->save()) {
                 throw new Exception('Model not saved');
@@ -207,7 +242,6 @@ class UserForm extends Model
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
-            //$model->link('userProfile', $userProfileModel); //automatically saved into database
 			
 			$phoneNumberModel = PhoneNumber::findOne($model->getId());
 			if(empty($phoneNumberModel)){
@@ -218,7 +252,19 @@ class UserForm extends Model
             $phoneNumberModel->number = $phonenumber;
             $phoneNumberModel->label_id = $phonelabel;
             $phoneNumberModel->save();
-		
+
+			$addressModel = Address::findByUserId($model->getId());
+				if(empty($addressModel)){
+					$addressModel = new Address();
+			}
+			$addressModel->city_id = $city;
+			$addressModel->address = $address;
+			$addressModel->label = $addresslabel;
+			$addressModel->postal_code = $postalcode;
+			$addressModel->country_id = $country;
+			$addressModel->province_id = $province;
+            $addressModel->save();
+			$model->link('addresses', $addressModel);
             return !$model->hasErrors();
         }
         return null;

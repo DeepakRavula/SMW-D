@@ -18,7 +18,11 @@ use \common\models\User;
  */
 class Address extends \yii\db\ActiveRecord
 {
-    /**
+	const LABEL_HOME = 'Home';
+    const LABEL_WORK = 'Work';
+	const LABEL_OTHER = 'Other';
+	const LABEL_BILLING = 'Billing';
+	/**
      * @inheritdoc
      */
     public static function tableName()
@@ -63,4 +67,21 @@ class Address extends \yii\db\ActiveRecord
 		return $this->hasMany(User::className(), ['id' => 'user_id'])
 		  ->viaTable('user_address', ['address_id' => 'id']);
 	}
+
+	public static function findByUserId($user_id) {
+		return static::find()
+			->join('INNER JOIN','user_address','user_address.address_id = address.id')
+			->where(['user_address.user_id' => $user_id ])
+			->one();
+	}
+
+	public static function labels()
+    {
+        return [
+            self::LABEL_HOME => Yii::t('common', 'Home'),
+            self::LABEL_WORK => Yii::t('common', 'Work'),
+            self::LABEL_OTHER => Yii::t('common', 'Other'),
+            self::LABEL_BILLING => Yii::t('common', 'Billing')
+        ];
+    }
 }
