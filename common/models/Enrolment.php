@@ -93,15 +93,18 @@ class Enrolment extends \yii\db\ActiveRecord
         
         return parent::beforeValidate ();
     }
-    
     public function afterSave($insert, $changedAttributes)
     {        
         $enrolmentScheduleDayModel = new EnrolmentScheduleDay();
         $enrolmentScheduleDayModel->enrolment_id = $this->id;
         $enrolmentScheduleDayModel->day = $this->day;
         $enrolmentScheduleDayModel->from_time = $this->fromTime;
-        $enrolmentScheduleDayModel->to_time = date("H:i:s", strtotime("$this->fromTime + $this->duration hours"));        
+		$durationList = $this->getDuration();
+		$this->duration = $durationList[$this->duration];
+        $enrolmentScheduleDayModel->duration = $this->duration;
+		$secs = strtotime($this->duration) - strtotime("00:00:00");
+		$toTime = date("H:i:s",strtotime($this->fromTime) + $secs);
+        $enrolmentScheduleDayModel->to_time = $toTime; 
         $enrolmentScheduleDayModel->save();
-        
     } 
 }
