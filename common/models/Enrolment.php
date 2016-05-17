@@ -98,7 +98,7 @@ class Enrolment extends \yii\db\ActiveRecord
         $enrolmentScheduleDayModel = new EnrolmentScheduleDay();
         $enrolmentScheduleDayModel->enrolment_id = $this->id;
         $enrolmentScheduleDayModel->day = $this->day;
-        $enrolmentScheduleDayModel->from_time = $this->fromTime;
+        $enrolmentScheduleDayModel->from_time = date("H:i:s",strtotime($this->fromTime));
 		$durationList = $this->getDuration();
 		$this->duration = $durationList[$this->duration];
         $enrolmentScheduleDayModel->duration = $this->duration;
