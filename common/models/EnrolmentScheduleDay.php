@@ -31,7 +31,7 @@ class EnrolmentScheduleDay extends \yii\db\ActiveRecord
         return [
             [['enrolment_id', 'day', 'from_time', 'to_time'], 'required'],
             [['enrolment_id', 'day'], 'integer'],
-            [['from_time', 'to_time'], 'safe'],
+            [['from_time', 'to_time','duration'], 'safe'],
         ];
     }
 
