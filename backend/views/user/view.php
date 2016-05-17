@@ -82,3 +82,13 @@ $this->params['breadcrumbs'][] = $this->title;
 	]);
 	?>
 <?php endif; ?>
+<?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
+<h3>Teachers Availability</h3>
+<div class="teacher-availability-create">
+
+    <?php echo $this->render('//teacher-availability/_form', [
+        'model' => $teacherAvailabilityModel,
+    ]) ?>
+
+</div>
+<?php endif; ?>

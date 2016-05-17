@@ -4,6 +4,7 @@ use common\models\User;
 use common\models\Location;
 use common\models\TeacherAvailability;
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
