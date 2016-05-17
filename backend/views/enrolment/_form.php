@@ -26,6 +26,9 @@ use yii\jui\DatePicker;
     <?php echo $form->field($model, 'teacherId')->dropDownList(ArrayHelper::map(User::findByRole(User::ROLE_TEACHER),'id','userProfile.fullName')) ?>
 
     <?php echo $form->field($model, 'fromTime'); ?>
+    
+    <?php echo $form->field($model, 'day')->dropdownList(Enrolment::getWeekdaysList());?>
+    
     <?php echo $form->field($model, 'duration')->dropdownList(Enrolment::getDuration());?>
 
     <?php echo $form->field($model, 'commencement_date')->widget(DatePicker::classname());?>

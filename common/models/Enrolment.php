@@ -9,6 +9,8 @@ use Yii;
  *
  * @property integer $id
  * @property integer $student_id
+ * @property integer $teacherId
+ * @property integer $programId
  * @property integer $qualification_id
  * @property string $commencement_date
  * @property string $renewal_date
@@ -19,8 +21,8 @@ class Enrolment extends \yii\db\ActiveRecord
 	public $teacherId;
 	public $programId;
 	public $fromTime;
-	public $toTime;
 	public $duration;
+    public $day;
 
     /**
      * @inheritdoc
@@ -36,9 +38,9 @@ class Enrolment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['student_id', 'qualification_id'], 'required'],
-            [['student_id', 'qualification_id'], 'integer'],
-            [['commencement_date', 'renewal_date'], 'safe'],
+            [['student_id', 'qualification_id', 'teacherId', 'programId'], 'required'],
+            [['student_id', 'qualification_id', 'teacherId', 'programId', 'day'], 'integer'],
+            [['commencement_date', 'renewal_date', 'teacherId', 'programId', 'day', 'fromTime', 'duration'], 'safe'],
         ];
     }
 
@@ -77,5 +79,29 @@ class Enrolment extends \yii\db\ActiveRecord
 			'1:30'
 		];
 	}
-
+    
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {   
+        if ($this->commencement_date != NULL)
+            $this->commencement_date = date_format(date_create_from_format('m-d-y', $this->commencement_date), 'Y-m-d');
+    
+        if ($this->renewal_date != NULL)
+            $this->renewal_date = date_format(date_create_from_format('m-d-y', $this->renewal_date), 'Y-m-d');
+        
+        return parent::beforeValidate ();
+    }
+    
+    public function afterSave($insert, $changedAttributes)
+    {        
+        $enrolmentScheduleDayModel = new EnrolmentScheduleDay();
+        $enrolmentScheduleDayModel->enrolment_id = $this->id;
+        $enrolmentScheduleDayModel->day = $this->day;
+        $enrolmentScheduleDayModel->from_time = $this->fromTime;
+        $enrolmentScheduleDayModel->to_time = date("H:i:s", strtotime("$this->fromTime + $this->duration hours"));        
+        $enrolmentScheduleDayModel->save();
+        
+    } 
 }

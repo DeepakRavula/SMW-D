@@ -53,12 +53,10 @@ class StudentController extends Controller
      */
     public function actionView($id)
     {
-        $enrolmentModel = Enrolment::findOne(['student_id' => $id]);
+        //$enrolmentModel = Enrolment::findOne(['student_id' => $id]);
         $model = $this->findModel($id);
 
-		if(empty($enrolmentModel)) {
-			$enrolmentModel = new Enrolment();
-		}
+		$enrolmentModel = new Enrolment();
 
         if ($enrolmentModel->load(Yii::$app->request->post()) ) {
 			$enrolmentModel->student_id = $id;
