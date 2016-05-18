@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use common\models\Enrolment;
 use common\models\User;
 
 /* @var $this yii\web\View */
@@ -43,7 +44,72 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
 </div>
-
+<?php
+	echo GridView::widget([
+		'dataProvider' => $dataProvider,
+		'columns' => [
+			['class' => 'yii\grid\SerialColumn'],
+			[
+				'label' => 'Program Name',
+				'value' => function($data) {
+					return !empty($data->qualification->program->name) ? $data->qualification->program->name : null;
+				},
+			],
+			[
+				'label' => 'Teacher Name',
+				'value' => function($data) {
+					return !empty($data->qualification->user->userProfile->fullName) ? $data->qualification->user->userProfile->fullName : null;
+				},
+			],
+			[
+				'label' => 'Day',
+				'value' => function($data) {
+					if(! empty($data->enrolmentScheduleDay->day)){
+					$dayList = Enrolment::getWeekdaysList();
+					$day = $dayList[$data->enrolmentScheduleDay->day];
+					return ! empty($day) ? $day : null;
+					}
+					return null;
+				},
+			],
+			[
+				'label' => 'From Time',
+				'value' => function($data) {
+					return !empty($data->enrolmentScheduleDay->from_time) ? $data->enrolmentScheduleDay->from_time: null;
+				},
+			],
+			[
+				'label' => 'Duration',
+				'value' => function($data) {
+					return !empty($data->enrolmentScheduleDay->duration) ? $data->enrolmentScheduleDay->duration : null;
+				},
+			],
+			[
+				'label' => 'Commencement Date',
+				'value' => function($data) {
+					if(!empty($data->commencement_date)){
+					$date = $data->commencement_date;
+					$commencement_date = date('d-m-Y',strtotime($date));
+					return ! empty($commencement_date) ? $commencement_date : null;
+					}
+					return null;
+				},
+			],
+			[
+				'label' => 'Renewal Date',
+				'value' => function($data) {
+					if(!empty($data->renewal_date)){
+					$date = $data->renewal_date;
+					$renewal_date = date('d-m-Y',strtotime($date));
+					return ! empty($renewal_date) ? $renewal_date : null;
+					}
+					return null;
+				},
+			],
+			['class' => 'yii\grid\ActionColumn', 'controller' => 'student'],
+		],
+	]);
+	?>
 <div class="enrolment-create">
 
     <?php echo $this->render('//enrolment/_form', [

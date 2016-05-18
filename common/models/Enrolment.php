@@ -55,9 +55,21 @@ class Enrolment extends \yii\db\ActiveRecord
             'qualification_id' => 'Qualification ID',
             'commencement_date' => 'Commencement Date',
             'renewal_date' => 'Renewal Date',
+			'teacherId' => 'Teacher Name',
+			'programId' => 'Program Name'
         ];
     }
 
+	public function getQualification()
+    {
+        return $this->hasOne(Qualification::className(), ['id' => 'qualification_id']);
+    }
+    
+	public function getEnrolmentScheduleDay()
+    {
+        return $this->hasOne(EnrolmentScheduleDay::className(), ['enrolment_id' => 'id']);
+    }
+	
 	public static function getWeekdaysList()
 	{
 		return [
@@ -70,7 +82,7 @@ class Enrolment extends \yii\db\ActiveRecord
 				'Sunday',
 		];
 	}
-
+	
 	public static function getDuration()
 	{
 		return [
@@ -79,7 +91,7 @@ class Enrolment extends \yii\db\ActiveRecord
 			'1:30'
 		];
 	}
-    
+   
     /**
      * @inheritdoc
      */

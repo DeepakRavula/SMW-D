@@ -53,11 +53,11 @@ class StudentController extends Controller
      */
     public function actionView($id)
     {
-        //$enrolmentModel = Enrolment::findOne(['student_id' => $id]);
+		$dataProvider = new ActiveDataProvider([
+            'query' => Enrolment::find()->where(['student_id' => $id])
+        ]);
         $model = $this->findModel($id);
-
 		$enrolmentModel = new Enrolment();
-
         if ($enrolmentModel->load(Yii::$app->request->post()) ) {
 			$enrolmentModel->student_id = $id;
 			$qualification = Qualification::findOne([
@@ -71,6 +71,7 @@ class StudentController extends Controller
         } else {
             return $this->render('view', [
             	'model' => $model,
+            	'dataProvider' => $dataProvider,
                 'enrolmentModel' => $enrolmentModel,
             ]);
         }
