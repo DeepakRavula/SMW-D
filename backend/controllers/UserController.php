@@ -101,11 +101,8 @@ class UserController extends Controller
         ]);
  		$model = $this->findModel($id);
 		
-		//$teacherAvailabilityModel = TeacherAvailability::findOne(['teacher_id' => $id]);
-
-		//if(empty($teacherAvailabilityModel)) {
 			$teacherAvailabilityModel = new TeacherAvailability();
-		//}
+			$teacherAvailabilityModel->teacher_id = $id; 
 
         if ($teacherAvailabilityModel->load(Yii::$app->request->post()) ) {
 			

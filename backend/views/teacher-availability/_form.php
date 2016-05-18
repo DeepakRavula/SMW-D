@@ -18,8 +18,6 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->errorSummary($model); ?>
 
-    <?php echo $form->field($model, 'teacher_id')->dropDownList(ArrayHelper::map(User::findByRole(User::ROLE_TEACHER),'id','userProfile.fullName')) ?>
-
     <?php echo $form->field($model, 'location_id')->dropDownList(ArrayHelper::map(Location::find()->all(), 'id', 'name')); ?>
 
     <?php echo $form->field($model, 'day')->dropdownList(TeacherAvailability::getWeekdaysList());?>
