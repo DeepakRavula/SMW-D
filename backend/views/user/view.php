@@ -5,6 +5,7 @@ use yii\widgets\DetailView;
 use yii\grid\GridView;
 use common\grid\EnumColumn;
 use common\models\User;
+use common\models\TeacherAvailability;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -84,6 +85,34 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php endif; ?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
 <h3>Teachers Availability</h3>
+<?php
+	echo GridView::widget([
+		'dataProvider' => $dataProvider1,
+		'columns' => [
+			['class' => 'yii\grid\SerialColumn'],
+			[
+				'label' => 'Location Name',
+				'value' => function($data) {
+					return !empty($data->location->name) ? $data->location->name : null;
+				},
+			],
+			[
+                'label' => 'Day',
+                'value' => function($data) {
+                    if(! empty($data->day)){
+                    $dayList = TeacherAvailability::getWeekdaysList();
+                    $day = $dayList[$data->day];
+                    return ! empty($day) ? $day : null;
+                    }
+                    return null;
+                },
+            ],
+			'from_time',
+			'to_time',
+			['class' => 'yii\grid\ActionColumn', 'controller' => 'student'],
+		],
+	]);
+	?>
 <div class="teacher-availability-create">
 
     <?php echo $this->render('//teacher-availability/_form', [

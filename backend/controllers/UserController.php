@@ -99,6 +99,9 @@ class UserController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Student::find()->where(['customer_id' => $id])
         ]);
+		$dataProvider1 =  new ActiveDataProvider([
+            'query' => TeacherAvailability::find()->where(['teacher_id' => $id])
+			]);
  		$model = $this->findModel($id);
 		
 			$teacherAvailabilityModel = new TeacherAvailability();
@@ -112,6 +115,7 @@ class UserController extends Controller
         }
         return $this->render('view', [
             'dataProvider' => $dataProvider,
+			'dataProvider1' => $dataProvider1,
             'model' =>$model, 
             'teacherAvailabilityModel' => $teacherAvailabilityModel, 
         ]);
