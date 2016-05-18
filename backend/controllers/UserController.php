@@ -8,6 +8,7 @@ use common\models\UserProfile;
 use common\models\UserAddress;
 use common\models\Address;
 use common\models\PhoneNumber;
+use common\models\TeacherAvailability;
 use common\models\UserImport;
 use backend\models\UserForm;
 use backend\models\UserImportForm;
@@ -98,12 +99,23 @@ class UserController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Student::find()->where(['customer_id' => $id])
         ]);
+ 		$model = $this->findModel($id);
+		
+			$teacherAvailabilityModel = new TeacherAvailability();
+			$teacherAvailabilityModel->teacher_id = $id; 
 
+        if ($teacherAvailabilityModel->load(Yii::$app->request->post()) ) {
+			
+			if($teacherAvailabilityModel->save()) {
+            	return $this->redirect(['view', 'id' => $model->id]);
+			}
+        }
         return $this->render('view', [
             'dataProvider' => $dataProvider,
-            'model' => $this->findModel($id),
+            'model' =>$model, 
+            'teacherAvailabilityModel' => $teacherAvailabilityModel, 
         ]);
-    }
+	}
 
     /**
      * Creates a new User model.
