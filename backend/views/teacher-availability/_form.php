@@ -33,3 +33,19 @@ use yii\bootstrap\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+<script type="text/javascript">
+$('#teacheravailability-from_time').timepicker({
+    'minTime': '9:00am',
+    'maxTime': '8:30pm',
+	'step' : 30,
+    'showDuration': false
+});
+</script>
+<script type="text/javascript">
+$('#teacheravailability-to_time').timepicker({
+    'minTime': '9:30am',
+    'maxTime': '8:30pm',
+	'step' : 30,
+    'showDuration': false
+});
+</script>
