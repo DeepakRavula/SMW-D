@@ -161,9 +161,10 @@ class TeacherAvailabilityController extends Controller
 		$output = [];
 
 		foreach($fromTimes as $id=> $fromTime) {
+			$fromtime = date("g:i a",strtotime($fromTime));
 			$output[] = [
 				'id' => $fromTime,
-				'name' => $fromTime,
+				'name' => $fromtime,
 			];
 		}
 		$result = [
