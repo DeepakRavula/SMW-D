@@ -5,6 +5,8 @@ namespace backend\controllers;
 use Yii;
 use common\models\Enrolment;
 use common\models\User;
+use common\models\UserProfile;
+use common\models\Qualification;
 use common\models\TeacherAvailability;
 use backend\models\EnrolmentSearch;
 use yii\web\Controller;
@@ -108,14 +110,19 @@ class EnrolmentController extends Controller
 
 	public function actionTeachers() {
 		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-		$teachers =ArrayHelper::map(User::findByRole(User::ROLE_TEACHER),'id','userProfile.fullName'); 
+
+		$programId = $_POST['depdrop_parents'][0];
+		$qualifications = Qualification::find()
+				->where(['program_id' => $programId])
+				->all();
+		
 		$result = [];
 		$output = [];
+		foreach($qualifications as  $qualification) {
 
-		foreach($teachers as $id=> $teacher) {
 			$output[] = [
-				'id' => $id,
-				'name' => $teacher,
+				'id' => $qualification->user->id,
+				'name' => $qualification->user->userProfile->fullName,
 			];
 		}
 		$result = [

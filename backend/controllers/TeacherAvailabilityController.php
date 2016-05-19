@@ -136,7 +136,7 @@ class TeacherAvailabilityController extends Controller
 		foreach($days as $id=> $day) {
 			$weekday = $dayList[$day];
 			$output[] = [
-				'id' => $id,
+				'id' => $day,
 				'name' => $weekday,
 			];
 		}
@@ -162,7 +162,7 @@ class TeacherAvailabilityController extends Controller
 
 		foreach($fromTimes as $id=> $fromTime) {
 			$output[] = [
-				'id' => $id,
+				'id' => $fromTime,
 				'name' => $fromTime,
 			];
 		}
