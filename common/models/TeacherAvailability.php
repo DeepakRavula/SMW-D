@@ -63,4 +63,9 @@ class TeacherAvailability extends \yii\db\ActiveRecord
                 'Sunday',
         ];
     }
+
+	public function getLocation()
+    {
+        return $this->hasOne(Location::className(), ['id' => 'location_id']);
+    }
 }
