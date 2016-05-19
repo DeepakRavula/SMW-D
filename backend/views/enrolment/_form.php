@@ -26,12 +26,6 @@ use yii\helpers\Url;
     <?php echo $form->field($model, 'programId')->dropDownList(ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),['prompt'=>'Select..']); ?>
 
 
-<<<<<<< HEAD
-    <?php echo $form->field($model, 'day')->dropdownList(Enrolment::getWeekdaysList());?>
-	
-    <?php echo $form->field($model, 'fromTime'); ?>
-    
-=======
 	<?php // Dependent Dropdown
 	echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
 		 'options' => ['id'=>'enrolment-teacherId'],
