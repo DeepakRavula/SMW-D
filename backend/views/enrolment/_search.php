@@ -21,10 +21,6 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'qualification_id') ?>
 
-    <?php echo $form->field($model, 'preferred_day') ?>
-
-    <?php echo $form->field($model, 'preferred_time') ?>
-
     <?php // echo $form->field($model, 'length') ?>
 
     <div class="form-group">
