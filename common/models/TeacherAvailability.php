@@ -16,18 +16,6 @@ use Yii;
  */
 class TeacherAvailability extends \yii\db\ActiveRecord
 {
-   public static function getWeekdaysList()
-    {
-        return [
-        1    => 'Monday',
-                'Tuesday',
-                'Wednesday',
-                'Thursday',
-                'Friday',
-                'Saturday',
-                'Sunday',
-        ];
-    }
 	/**
      * @inheritdoc
      */
@@ -60,6 +48,19 @@ class TeacherAvailability extends \yii\db\ActiveRecord
             'day' => 'Day',
             'from_time' => 'From Time',
             'to_time' => 'To Time',
+        ];
+    }
+
+	public static function getWeekdaysList()
+    {
+        return [
+        1    => 'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday',
         ];
     }
 }

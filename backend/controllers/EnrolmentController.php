@@ -4,10 +4,14 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Enrolment;
+use common\models\User;
+use common\models\TeacherAvailability;
 use backend\models\EnrolmentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -101,4 +105,24 @@ class EnrolmentController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+	public function actionTeachers() {
+		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		$teachers =ArrayHelper::map(User::findByRole(User::ROLE_TEACHER),'id','userProfile.fullName'); 
+		$result = [];
+		$output = [];
+
+		foreach($teachers as $id=> $teacher) {
+			$output[] = [
+				'id' => $id,
+				'name' => $teacher,
+			];
+		}
+		$result = [
+			'output' => $output,	
+			'selected' => '',
+		];
+
+		return $result;
+	}
 }

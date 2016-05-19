@@ -3,9 +3,11 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\Enrolment;
 use common\models\TeacherAvailability;
 use backend\models\TeacherAvailabilitySearch;
 use yii\web\Controller;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -118,4 +120,57 @@ class TeacherAvailabilityController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+	public function actionDays() {
+		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		$teacherId = $_POST['depdrop_parents'][0];
+		$days = ArrayHelper::map(
+			TeacherAvailability::find()
+				->where(['teacher_id' => $teacherId])
+				->all(),
+			'id', 'day'
+		);
+		$dayList = TeacherAvailability::getWeekdaysList();
+		$result = [];
+		$output = [];
+
+		foreach($days as $id=> $day) {
+			$weekday = $dayList[$day];
+			$output[] = [
+				'id' => $id,
+				'name' => $weekday,
+			];
+		}
+		$result = [
+			'output' => $output,	
+			'selected' => '',
+		];
+
+		return $result;
+	}
+	
+	public function actionFromtimes() {
+		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		$teacherId = $_POST['depdrop_parents'][0];
+		$fromTimes = ArrayHelper::map(
+			TeacherAvailability::find()
+				->where(['teacher_id' => $teacherId])
+				->all(),
+			'id', 'from_time'
+		);
+		$result = [];
+		$output = [];
+
+		foreach($fromTimes as $id=> $fromTime) {
+			$output[] = [
+				'id' => $id,
+				'name' => $fromTime,
+			];
+		}
+		$result = [
+			'output' => $output,	
+			'selected' => '',
+		];
+
+		return $result;
+	}
 }
