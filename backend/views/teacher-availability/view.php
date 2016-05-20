@@ -2,11 +2,12 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use common\models\TeacherAvailability;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\TeacherAvailability */
 
-$this->title = $model->id;
+$this->title = $model->teacherIdentity->publicIdentity;
 $this->params['breadcrumbs'][] = ['label' => 'Teacher Availabilities', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -22,16 +23,31 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
-
+    <?php $dayList = TeacherAvailability::getWeekdaysList();
+          $day = $dayList[$model->day];
+	      $fromTime = date("g:i a",strtotime($model->from_time));
+	      $toTime = date("g:i a",strtotime($model->to_time));
+	;?>
     <?php echo DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'teacher_id',
-            'location_id',
-            'day',
-            'from_time',
-            'to_time',
+            
+            [
+				'label' => 'Location',
+				'value' => !empty($model->location->name) ? $model->location->name : null,
+			],
+           [
+                'label' => 'Day',
+                'value' => ! empty($day) ? $day : null,
+            ],
+            [
+				'label' => 'From Time',
+				'value' =>  !empty($fromTime) ? $fromTime : null,
+			],
+            [
+				'label' => 'To Time',
+				'value' =>  !empty($toTime) ? $toTime : null,
+			],
         ],
     ]) ?>
 

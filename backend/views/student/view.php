@@ -5,11 +5,12 @@ use yii\widgets\DetailView;
 use yii\grid\GridView;
 use common\models\Enrolment;
 use common\models\User;
+use common\models\Student;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 
-$this->title = $model->id;
+$this->title = $model->studentIdentity;
 $this->params['breadcrumbs'][] = ['label' => 'Students', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

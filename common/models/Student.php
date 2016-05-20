@@ -104,4 +104,12 @@ class Student extends \yii\db\ActiveRecord
 		$times[] = date('g:i', $start_time);
 		return $times; 
 	}
+	public function getStudentIdentity()
+	{
+        if ( $this->getFullname()) {
+            return $this->getFullname();
+        }
+
+        return $this->getFullName();
+    }
 }
