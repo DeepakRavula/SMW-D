@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Enrolment;
 use common\models\User;
+use common\models\Student;
 use common\models\UserProfile;
 use common\models\Qualification;
 use common\models\TeacherAvailability;
@@ -104,9 +105,11 @@ class EnrolmentController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+		$model = new Student();
+		$enrolment = $this->findModel($id);
+        $enrolment->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['student/index','id' => $model->id]);
     }
 
     /**

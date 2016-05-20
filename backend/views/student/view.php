@@ -110,7 +110,7 @@ $this->params['breadcrumbs'][] = $this->title;
 					return null;
 				},
 			],
-			['class' => 'yii\grid\ActionColumn', 'controller' => 'enrolment'],
+			['class' => 'yii\grid\ActionColumn', 'controller' => 'enrolment','template' => '{view} {delete}'],
 		],
 	]);
 	?>
