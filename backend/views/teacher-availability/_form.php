@@ -3,6 +3,7 @@
 use common\models\User;
 use common\models\Location;
 use common\models\TeacherAvailability;
+use kartik\time\TimePicker;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
@@ -22,9 +23,9 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'day')->dropdownList(TeacherAvailability::getWeekdaysList());?>
 
-    <?php echo $form->field($model, 'from_time');?>
+    <?php echo $form->field($model, 'from_time')->widget(TimePicker::classname(), []);?>
 
-    <?php echo $form->field($model, 'to_time');?>
+    <?php echo $form->field($model, 'to_time')->widget(TimePicker::classname(), []);?>
 
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
@@ -33,19 +34,3 @@ use yii\bootstrap\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
-<script type="text/javascript">
-$('#teacheravailability-from_time').timepicker({
-    'minTime': '9:00am',
-    'maxTime': '8:30pm',
-	'step' : 30,
-    'showDuration': false
-});
-</script>
-<script type="text/javascript">
-$('#teacheravailability-to_time').timepicker({
-    'minTime': '9:30am',
-    'maxTime': '8:30pm',
-	'step' : 30,
-    'showDuration': false
-});
-</script>

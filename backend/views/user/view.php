@@ -109,7 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
 			'from_time',
 			'to_time',
-			['class' => 'yii\grid\ActionColumn', 'controller' => 'student'],
+			['class' => 'yii\grid\ActionColumn', 'controller' => 'teacher-availability'],
 		],
 	]);
 	?>
