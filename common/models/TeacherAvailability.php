@@ -30,8 +30,8 @@ class TeacherAvailability extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['teacher_id', 'location_id', 'day', 'from_time', 'to_time'], 'required'],
-            [['teacher_id', 'location_id', 'day'], 'integer'],
+            [['teacher_id','day', 'from_time', 'to_time'], 'required'],
+            [['teacher_id','day'], 'integer'],
             [['from_time', 'to_time'], 'safe'],
         ];
     }
@@ -44,7 +44,6 @@ class TeacherAvailability extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'teacher_id' => 'Teacher Name',
-            'location_id' => 'Location',
             'day' => 'Day',
             'from_time' => 'From Time',
             'to_time' => 'To Time',
@@ -62,11 +61,6 @@ class TeacherAvailability extends \yii\db\ActiveRecord
                 'Saturday',
                 'Sunday',
         ];
-    }
-
-	public function getLocation()
-    {
-        return $this->hasOne(Location::className(), ['id' => 'location_id']);
     }
 
 	public function IsAvailableAtLocation($location_id)

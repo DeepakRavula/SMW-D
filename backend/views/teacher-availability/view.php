@@ -13,16 +13,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="teacher-availability-view">
 
-    <p>
-        <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
     <?php $dayList = TeacherAvailability::getWeekdaysList();
           $day = $dayList[$model->day];
 	      $fromTime = date("g:i a",strtotime($model->from_time));
@@ -31,11 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo DetailView::widget([
         'model' => $model,
         'attributes' => [
-            
-            [
-				'label' => 'Location',
-				'value' => !empty($model->location->name) ? $model->location->name : null,
-			],
            [
                 'label' => 'Day',
                 'value' => ! empty($day) ? $day : null,
@@ -51,4 +36,14 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
+    <p>
+        <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
 </div>

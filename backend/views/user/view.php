@@ -86,18 +86,12 @@ $this->params['breadcrumbs'][] = $this->title;
 	?>
 <?php endif; ?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
-<h3>Teachers Availability</h3>
+<h4>Teachers Availability</h4>
 <?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider1,
 		'columns' => [
 			['class' => 'yii\grid\SerialColumn'],
-			[
-				'label' => 'Location Name',
-				'value' => function($data) {
-					return !empty($data->location->name) ? $data->location->name : null;
-				},
-			],
 			[
                 'label' => 'Day',
                 'value' => function($data) {

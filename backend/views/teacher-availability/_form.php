@@ -14,12 +14,10 @@ use yii\bootstrap\ActiveForm;
 ?>
 
 <div class="teacher-availability-form">
-
+<h4>TeacherAvailability Form</h4>
     <?php $form = ActiveForm::begin(); ?>
 
     <?php echo $form->errorSummary($model); ?>
-
-    <?php echo $form->field($model, 'location_id')->dropDownList(ArrayHelper::map(Location::find()->all(), 'id', 'name')); ?>
 
     <?php echo $form->field($model, 'day')->dropdownList(TeacherAvailability::getWeekdaysList());?>
 
