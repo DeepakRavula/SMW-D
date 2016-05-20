@@ -109,8 +109,26 @@ $this->params['breadcrumbs'][] = $this->title;
                     return null;
                 },
             ],
-			'from_time',
-			'to_time',
+			[
+                'label' => 'From Time',
+                'value' => function($data) {
+                    if(! empty($data->from_time)){
+                    $fromTime = date("g:i a",strtotime($data->from_time));
+                    return ! empty($fromTime) ? $fromTime : null;
+                    }
+                    return null;
+                },
+            ],
+			[
+                'label' => 'To Time',
+                'value' => function($data) {
+                    if(! empty($data->to_time)){
+                    $toTime = date("g:i a",strtotime($data->to_time));
+                    return ! empty($toTime) ? $toTime : null;
+                    }
+                    return null;
+                },
+            ],
 			['class' => 'yii\grid\ActionColumn', 'controller' => 'teacher-availability'],
 		],
 	]);
