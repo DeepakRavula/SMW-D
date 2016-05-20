@@ -69,11 +69,12 @@ class TeacherAvailability extends \yii\db\ActiveRecord
         return $this->hasOne(Location::className(), ['id' => 'location_id']);
     }
 
-	public function IsAvailableAtLocation($location_id){
+	public function IsAvailableAtLocation($location_id)
+	{
 		return $this->find()->where(['teacher_id' => $this->teacher_id,'location_id' => $location_id])->exists();
 	}
 
-	public function getStudentIdentity() 
+	public function getTeacherIdentity() 
 	{
         return $this->hasOne(User::className(), ['id' => 'teacher_id']);
     }
