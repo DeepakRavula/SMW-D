@@ -29,8 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
-	<p>
-        <?php echo Html::a('Create Student', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+	
 
 </div>

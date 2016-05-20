@@ -85,9 +85,12 @@ class StudentController extends Controller
     public function actionCreate()
     {
         $model = new Student();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+		$session = Yii::$app->session;
+		
+        if ($model->load(Yii::$app->request->post())) {
+			$model->customer_id = $session->get('customer_id');
+			$model->save();
+            return $this->redirect(['user/view', 'id' => $session->get('customer_id')]);
         } else {
             return $this->render('create', [
                 'model' => $model,
