@@ -17,6 +17,8 @@ use common\models\Province;
  * @property integer $province_id
  * @property string $postal_code
  * @property integer $country_id
+ * @property string $from_time
+ * @property string $to_time
  */
 class Location extends \yii\db\ActiveRecord {
 
@@ -32,11 +34,12 @@ class Location extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['name', 'address', 'city_id', 'province_id', 'postal_code', 'country_id'], 'required'],
+			[['name', 'address', 'city_id', 'province_id', 'postal_code', 'from_time', 'to_time'], 'required'],
 			[['city_id', 'province_id', 'country_id'], 'integer'],
 			[['name'], 'string', 'max' => 32],
 			[['address'], 'string', 'max' => 64],
 			[['postal_code'], 'string', 'max' => 16],
+           // ['from_time', 'to_time', 'safe']
 		];
 	}
 
@@ -52,6 +55,8 @@ class Location extends \yii\db\ActiveRecord {
 			'province_id' => 'Province',
 			'postal_code' => 'Postal Code',
 			'country_id' => 'Country',
+            'from_time' => 'From Time',
+            'to_time' => 'To Time',
 		];
 	}
 

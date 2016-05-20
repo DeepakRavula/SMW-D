@@ -24,8 +24,11 @@ $(document).ready(function() {
       left: 'prev,next today',
       center: 'title',
       right: 'month,agendaWeek,resourceDay'
-    },
+    },    
     defaultView: 'resourceDay',
+    minTime: "<?php echo $from_time; ?>",
+    maxTime: "<?php echo $to_time; ?>",
+    slotDuration: "00:30:01",
     editable: true,
     droppable: true,
     resources:  <?php echo Json::encode($teacherAvailability); ?>,

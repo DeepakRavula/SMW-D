@@ -5,6 +5,7 @@ use yii\bootstrap\ActiveForm;
 use common\models\City;
 use common\models\Province;
 
+
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -34,6 +35,10 @@ use common\models\Province;
         ), ['prompt'=>'']) ?>
 
     <?php echo $form->field($model, 'postal_code')->textInput(['maxlength' => true]) ?>
+    
+    <?php echo $form->field($model, 'from_time')->textInput(['maxlength' => true]) ?>
+    
+    <?php echo $form->field($model, 'to_time')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
