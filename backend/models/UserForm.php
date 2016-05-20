@@ -226,18 +226,7 @@ class UserForm extends Model
                 }
             }
 
-			if (current(Yii::$app->authManager->getRolesByUser($model->getId()))->name === User::ROLE_TEACHER) {
-				Qualification::deleteAll(['teacher_id' => $model->getId()]);
-				if ($this->qualifications && is_array($this->qualifications)) {
-					foreach ($this->qualifications as $qualification) {
-						$qualificationModel = new Qualification();
-						$qualificationModel->program_id = $qualification;
-						$qualificationModel->teacher_id = $model->getId();
-						$qualificationModel->save();
-					}
-				}
-					
-			}
+
             $userProfileModel = UserProfile::findOne($model->getId());
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
@@ -265,6 +254,19 @@ class UserForm extends Model
 			$addressModel->province_id = $province;
             $addressModel->save();
 			$model->link('addresses', $addressModel);
+
+			if (current(Yii::$app->authManager->getRolesByUser($model->getId()))->name === User::ROLE_TEACHER) {
+				Qualification::deleteAll(['teacher_id' => $model->getId()]);
+				if ($this->qualifications && is_array($this->qualifications)) {
+					foreach ($this->qualifications as $qualification) {
+						$qualificationModel = new Qualification();
+						$qualificationModel->program_id = $qualification;
+						$qualificationModel->teacher_id = $model->getId();
+						$qualificationModel->save();
+					}
+				}
+					
+			}
             return !$model->hasErrors();
         }
         return null;

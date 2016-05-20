@@ -128,25 +128,27 @@ class EnrolmentController extends Controller
 	public function actionTeachers() {
 		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
+		$session = Yii::$app->session;
+		$location_id = $session->get('location_id');
 		$programId = $_POST['depdrop_parents'][0];
 		$qualifications = Qualification::find()
 				->where(['program_id' => $programId])
 				->all();
-		
 		$result = [];
 		$output = [];
 		foreach($qualifications as  $qualification) {
-
-			$output[] = [
-				'id' => $qualification->user->id,
-				'name' => $qualification->user->userProfile->fullName,
-			];
+			if($qualification->teacherAvailability->IsAvailableAtLocation($location_id)){
+				$output[] = [
+					'id' => $qualification->user->id,
+					'name' => $qualification->user->userProfile->fullName,
+				];
+			}
 		}
 		$result = [
 			'output' => $output,	
 			'selected' => '',
 		];
-
+		
 		return $result;
 	}
 }

@@ -95,7 +95,7 @@ class UserController extends Controller
      */
     public function actionView($id)
     {
-
+        Yii::$app->session->set("customer_id" , $id);
         $dataProvider = new ActiveDataProvider([
             'query' => Student::find()->where(['customer_id' => $id])
         ]);

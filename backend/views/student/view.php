@@ -75,8 +75,11 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'From Time',
 				'value' => function($data) {
-					$fromTime = date("g:i a",strtotime($data->enrolmentScheduleDay->from_time));
-					return !empty($fromTime) ? $fromTime : null;
+					if(! empty($data->enrolmentScheduleDay->from_time)){
+						$fromTime = date("g:i a",strtotime($data->enrolmentScheduleDay->from_time));
+						return !empty($fromTime) ? $fromTime : null;
+					}
+					return null;
 				},
 			],
 			[

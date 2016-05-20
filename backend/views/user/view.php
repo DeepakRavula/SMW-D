@@ -58,7 +58,9 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER): ?>
-<h3>Students </h3>
+<h3>Students </h3> 
+<?php echo Html::a('Create Student', ['student/create'], ['class' => 'btn btn-success'])?>
+
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
