@@ -28,6 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'lesson_id',
+            'amount',
+            'date',
+            'status',
         ],
     ]) ?>
 

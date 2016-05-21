@@ -26,16 +26,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo DetailView::widget([
         'model' => $model,
         'attributes' => [
-			[
-				'label' => 'Student Name',
-				'value' => ! empty($model->studentName->fullName) ? $model->studentName->fullName : null,
-			],
-			[
-				'label' => 'Program Name',
-				'value' => ! empty($model->programName->name) ? $model->programName->name: null,
-			],
-            'quantity',
-            'commencement_date'
+            'id',
+            'enrolment_schedule_day_id',
+            'status',
+            'date',
         ],
     ]) ?>
 

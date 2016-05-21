@@ -12,20 +12,23 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="invoice-index">
 
 
-
+    <p>
+        <?php echo Html::a('Create Invoice', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
+            'id',
             'lesson_id',
+            'amount',
+            'date',
+            'status',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-	<p>
-        <?php echo Html::a('Create Invoice', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
 </div>
