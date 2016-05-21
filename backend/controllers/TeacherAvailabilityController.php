@@ -102,13 +102,13 @@ class TeacherAvailabilityController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+		$model = $this->findModel($id);
+		$teacherId = $model->teacher_id;
+        $model->delete();
         
-        if (!isset($_GET['ajax'])) {
-            return $this->redirect(['//user/index','UserSearch[role_name]' => User::ROLE_TEACHER]);
-        }
-        
-        return $this->redirect(['index']);
+      //  if (!isset($_GET['ajax'])) {
+            return $this->redirect(['user/view','id' => $teacherId]);
+    //    }
     }
 
     /**
