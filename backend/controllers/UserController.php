@@ -95,6 +95,7 @@ class UserController extends Controller
      */
     public function actionView($id)
     {
+		$session = Yii::$app->session;
         Yii::$app->session->set("customer_id" , $id);
         $dataProvider = new ActiveDataProvider([
             'query' => Student::find()->where(['customer_id' => $id])
@@ -106,7 +107,7 @@ class UserController extends Controller
 		
 			$teacherAvailabilityModel = new TeacherAvailability();
 			$teacherAvailabilityModel->teacher_id = $id; 
-
+			$teacherAvailabilityModel->location_id = $session->get('location_id');
         if ($teacherAvailabilityModel->load(Yii::$app->request->post()) ) {
 			
 			if($teacherAvailabilityModel->save()) {
