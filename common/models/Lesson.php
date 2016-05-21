@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\Invoice;
+use common\models\query\LessonQuery;
 /**
  * This is the model class for table "lesson".
  *
@@ -62,5 +63,13 @@ class Lesson extends \yii\db\ActiveRecord
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
+    }
+
+	    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEnrolmentScheduleDay()
+    {
+        return $this->hasOne(EnrolmentScheduleDay::className(), ['id' => 'enrolment_schedule_day_id']);
     }
 }

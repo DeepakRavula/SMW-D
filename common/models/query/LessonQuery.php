@@ -40,7 +40,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function unInvoiced()
     {
         $this->leftJoin('invoice', 'invoice.lesson_id = lesson.id')
-			->where(['not', ['invoice.id' => null]]);
+			->where(['invoice.id' => null]);
         return $this;
     }
 }
