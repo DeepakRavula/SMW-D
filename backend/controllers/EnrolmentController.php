@@ -140,7 +140,7 @@ class EnrolmentController extends Controller
 		$result = [];
 		$output = [];
 		foreach($qualifications as  $qualification) {
-			if($qualification->user->location_id == $location_id){
+			if($qualification->teacherAvailability->IsAvailableAtLocation($location_id)){
 				$output[] = [
 					'id' => $qualification->user->id,
 					'name' => $qualification->user->userProfile->fullName,
