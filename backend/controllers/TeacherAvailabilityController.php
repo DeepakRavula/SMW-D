@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Enrolment;
 use common\models\TeacherAvailability;
+use common\models\User;
 use backend\models\TeacherAvailabilitySearch;
 use yii\web\Controller;
 use yii\helpers\ArrayHelper;
@@ -63,6 +64,7 @@ class TeacherAvailabilityController extends Controller
     public function actionCreate()
     {
         $model = new TeacherAvailability();
+        $model->location_id = Yii::$app->session->get('location_id');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -101,7 +103,11 @@ class TeacherAvailabilityController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        
+        if (!isset($_GET['ajax'])) {
+            return $this->redirect(['//user/index','UserSearch[role_name]' => User::ROLE_TEACHER]);
+        }
+        
         return $this->redirect(['index']);
     }
 
