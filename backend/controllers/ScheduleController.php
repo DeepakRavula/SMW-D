@@ -41,8 +41,7 @@ class ScheduleController extends Controller
             ->select(['distinct(ta.teacher_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
             ->join('Join', 'user_profile up', 'up.user_id = ta.teacher_id')
-            ->join('Join', 'user u', 'u.id = ta.teacher_id')
-            ->where('u.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+            ->where('ta.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->orderBy('id desc')
             ->all();
         
