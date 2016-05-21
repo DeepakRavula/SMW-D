@@ -14,7 +14,7 @@ use yii\bootstrap\ActiveForm;
 ?>
 
 <div class="teacher-availability-form">
-<h4>TeacherAvailability Form</h4>
+<h4>Teacher Availability Form</h4>
     <?php $form = ActiveForm::begin(); ?>
 
     <?php echo $form->errorSummary($model); ?>
