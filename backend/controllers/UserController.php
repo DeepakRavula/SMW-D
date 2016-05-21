@@ -109,6 +109,12 @@ class UserController extends Controller
 			$teacherAvailabilityModel->teacher_id = $id; 
 			$teacherAvailabilityModel->location_id = $session->get('location_id');
         if ($teacherAvailabilityModel->load(Yii::$app->request->post()) ) {
+
+			$fromtime = date("H:i:s",  strtotime($_POST['TeacherAvailability']['from_time']));
+			$totime = date("H:i:s", strtotime($_POST['TeacherAvailability']['to_time']));
+
+			$teacherAvailabilityModel->from_time = $fromtime;
+			$teacherAvailabilityModel->to_time = $totime;
 			
 			if($teacherAvailabilityModel->save()) {
             	return $this->redirect(['view', 'id' => $model->id]);
