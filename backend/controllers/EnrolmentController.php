@@ -105,11 +105,11 @@ class EnrolmentController extends Controller
      */
     public function actionDelete($id)
     {
-		$model = new Student();
 		$enrolment = $this->findModel($id);
+		$student_id = $enrolment->student_id;
         $enrolment->delete();
 
-        return $this->redirect(['student/index','id' => $model->id]);
+        return $this->redirect(['student/view','id' => $student_id]);
     }
 
     /**
