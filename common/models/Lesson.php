@@ -3,27 +3,27 @@
 namespace common\models;
 
 use Yii;
-
+use common\models\Invoice;
+use common\models\query\LessonQuery;
 /**
  * This is the model class for table "lesson".
  *
  * @property integer $id
- * @property string $student_id
- * @property string $teacher_id
- * @property string $program_id
- * @property double $rate
- * @property string $quantity
- * @property string $commencement_date
- * @property integer $location_id
+ * @property integer $enrolment_schedule_day_id
+ * @property integer $status
+ * @property string $date
  */
 class Lesson extends \yii\db\ActiveRecord
 {
+	const STATUS_COMPLETED = 1;
+	const STATUS_PENDING = 2;
+	const STATUS_CANCELED = 3;
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%lesson}}';
+        return 'lesson';
     }
 
     /**
@@ -32,9 +32,9 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['student_id', 'program_id', 'location_id'], 'required'],
-            [['student_id', 'program_id', 'location_id'], 'integer'],
-            [['quantity', 'commencement_date'], 'safe'],
+            [['enrolment_schedule_day_id', 'status'], 'required'],
+            [['enrolment_schedule_day_id', 'status'], 'integer'],
+            [['date'], 'safe'],
         ];
     }
 
@@ -45,21 +45,49 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'student_id' => 'Student Name',
-            'program_id' => 'Program Name',
-            'quantity' => 'Quantity',
-            'commencement_date' => 'Commencement Date',
-            'location_id' => 'Location ID',
+            'enrolment_schedule_day_id' => 'Enrolment Schedule Day ID',
+            'status' => 'Status',
+            'date' => 'Date',
         ];
     }
-	
-	public function getStudentName()
+
+    /**
+     * @inheritdoc
+     * @return LessonQuery the active query used by this AR class.
+     */
+    public static function find()
     {
-        return $this->hasOne(Student::className(), ['id' => 'student_id']);
+        return new LessonQuery(get_called_class());
     }
 
-	public function getProgramName()
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInvoice()
     {
-        return $this->hasOne(Program::className(), ['id' => 'program_id']);
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
     }
+
+	    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEnrolmentScheduleDay()
+    {
+        return $this->hasOne(EnrolmentScheduleDay::className(), ['id' => 'enrolment_schedule_day_id']);
+    }
+
+	public function status($data){
+		switch($data->status){
+			case Lesson::STATUS_COMPLETED:
+				$status = 'Completed';
+			break;
+			case Lesson::STATUS_PENDING:
+				$status = 'Pending';
+			break;
+			case Lesson::STATUS_CANCELED:
+				$status = 'Canceled';
+			break;
+		}
+		return $status;
+	}
 }

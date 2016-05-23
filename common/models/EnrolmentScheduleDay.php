@@ -48,4 +48,11 @@ class EnrolmentScheduleDay extends \yii\db\ActiveRecord
             'to_time' => 'To Time',
         ];
     }
+	 /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['id' => 'enrolment_id']);
+    }
 }
