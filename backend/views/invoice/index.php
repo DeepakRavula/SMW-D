@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use common\models\Invoice;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -12,21 +13,41 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="invoice-index">
 
 
-    <p>
-        <?php echo Html::a('Create Invoice', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'lesson_id',
+			[
+				'label' => 'Program Name',
+				'value' => function($data) {
+					return ! empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
+                },
+			],
             'amount',
-            'date',
-            'status',
-
+			[
+				'label' => 'Date',
+				'value' => function($data) {
+					$date = date("d-m-y", strtotime($data->date)); 
+					return ! empty($date) ? $date : null;
+                },
+			],
+	    	[
+				'label' => 'Status',
+				'value' => function($data) {
+					switch($data->status){
+						case Invoice::STATUS_UNPAID:
+							$status = 'Unpaid';
+						break;
+						case Invoice::STATUS_PAID:
+							$status = 'Paid';
+						break;
+						case Invoice::STATUS_CANCELED:
+							$status = 'Canceled';
+						break;
+					}
+					return $status;
+                },
+			],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

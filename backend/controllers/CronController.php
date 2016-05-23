@@ -34,25 +34,34 @@ class CronController extends Controller
      */
     public function actionDailyInvoice()
     {
-		$today = date('w',strtotime('today'));
-		$enrolmentScheduleDays = EnrolmentScheduleDay::find()->where(['day' => $today])->all();
+		$date = new \DateTime();
+		$date->add(\DateInterval::createFromDateString('yesterday'));
+		
+		$yesterday = date('w',strtotime('today'));
+		if($yesterday == 0)
+			$yesterday += 7; 
+		$yesterday;
+		
+		$enrolmentScheduleDays = EnrolmentScheduleDay::find()->where(['day' => $yesterday])->all();
 		foreach($enrolmentScheduleDays as $enrolmentScheduleDay){
-			$lesson = new Lesson();
-			$lesson->enrolment_schedule_day_id = $enrolmentScheduleDay->id;
-			$lesson->save();
+			$lessonModel = new Lesson();
+			$lessonModel->enrolment_schedule_day_id = $enrolmentScheduleDay->id;
+			$lessonModel->status = Lesson::STATUS_COMPLETED;
+			$lessonModel->date = $date->format('Y-m-d H:i:s');
+			$lessonModel->save();
 		}
 		
 		$unInvoicedLessons = Lesson::find()->unInvoiced()->all();
 		foreach($unInvoicedLessons as $unInvoicedLesson){
-			$invoice = new Invoice();
-			$invoice->lesson_id = $unInvoicedLesson->id;
+			$invoiceModel = new Invoice();
+			$invoiceModel->lesson_id = $unInvoicedLesson->id;
 			$amount = $unInvoicedLesson->enrolmentScheduleDay->enrolment->qualification->program->rate;
-			$invoice->amount = $amount;
+			$invoiceModel->amount = $amount;
 			$dateTime = new \DateTime();
 			$date = $dateTime->format('Y-m-d H:i:s'); 
-			$invoice->date = $date;
-			$invoice->status = 1;
-			$invoice->save();
+			$invoiceModel->date = $date;
+			$invoiceModel->status = Invoice::STATUS_PAID;
+			$invoiceModel->save();
 		}
     }
 }

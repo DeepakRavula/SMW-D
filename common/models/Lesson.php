@@ -15,6 +15,9 @@ use common\models\query\LessonQuery;
  */
 class Lesson extends \yii\db\ActiveRecord
 {
+	const STATUS_COMPLETED = 1;
+	const STATUS_PENDING = 2;
+	const STATUS_CANCELED = 3;
     /**
      * @inheritdoc
      */
@@ -72,4 +75,19 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(EnrolmentScheduleDay::className(), ['id' => 'enrolment_schedule_day_id']);
     }
+
+	public function status($data){
+		switch($data->status){
+			case Lesson::STATUS_COMPLETED:
+				$status = 'Completed';
+			break;
+			case Lesson::STATUS_PENDING:
+				$status = 'Pending';
+			break;
+			case Lesson::STATUS_CANCELED:
+				$status = 'Canceled';
+			break;
+		}
+		return $status;
+	}
 }

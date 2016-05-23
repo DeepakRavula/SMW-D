@@ -12,6 +12,26 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-view">
 
+
+
+    <?php echo DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+			[
+				'label' => 'Program Name',
+				'value' => ! empty($model->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $model->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null,
+			],
+            'amount',
+			[
+				'label' => 'Date',
+				'value' => ! empty(date("d-m-y", strtotime($model->date))) ? date("d-m-y", strtotime($model->date)) : null,
+			],
+			[
+				'label' => 'Status',
+				'value' => $model->status($model),
+			],
+        ],
+    ]) ?>
     <p>
         <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -22,16 +42,4 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
-
-    <?php echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'lesson_id',
-            'amount',
-            'date',
-            'status',
-        ],
-    ]) ?>
-
 </div>

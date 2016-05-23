@@ -64,7 +64,12 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Qualification::className(), ['id' => 'qualification_id']);
     }
-    
+   
+	public function getStudent()
+    {
+        return $this->hasOne(Student::className(), ['id' => 'student_id']);
+    }
+	
 	public function getEnrolmentScheduleDay()
     {
         return $this->hasOne(EnrolmentScheduleDay::className(), ['enrolment_id' => 'id']);
