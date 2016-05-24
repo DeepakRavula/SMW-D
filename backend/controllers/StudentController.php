@@ -66,6 +66,7 @@ class StudentController extends Controller
 				'program_id' => $enrolmentModel->programId,
 			]);
 			$enrolmentModel->qualification_id = $qualification->id;
+			$enrolmentModel->location_id = Yii::$app->session->get('location_id');
 			if($enrolmentModel->save()) {
             	return $this->redirect(['view', 'id' => $model->id]);
 			}
