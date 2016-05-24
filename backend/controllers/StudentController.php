@@ -38,7 +38,8 @@ class StudentController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Student::find()
 					->join('INNER JOIN','user','user.id = customer_id')
-					->where(['user.location_id' => $session->get('location_id') ])
+					->join('INNER JOIN','user_location','user_location.user_id = user.id')
+					->where(['user_location.location_id' => $session->get('location_id') ])
         ]);
 
         return $this->render('index', [

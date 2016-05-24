@@ -37,7 +37,7 @@ class CronController extends Controller
 		$date = new \DateTime();
 		$date->add(\DateInterval::createFromDateString('yesterday'));
 		
-		$yesterday = date('w',strtotime('today'));
+		$yesterday = date('w',strtotime('yesterday'));
 		if($yesterday == 0)
 			$yesterday += 7; 
 		$yesterday;
