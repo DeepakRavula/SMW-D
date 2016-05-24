@@ -65,6 +65,7 @@ class UserImport extends Model {
 				$userLocationModel->user_id = $user->id;
 				$userLocationModel->location_id = Yii::$app->session->get('location_id');
 				$userLocationModel->save();
+				continue;
 			}
 
 			$user = new User();
