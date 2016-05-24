@@ -36,6 +36,7 @@ class CronController extends Controller
     {
 		$date = new \DateTime();
 		$date->add(\DateInterval::createFromDateString('yesterday'));
+		$yesterdayDate = $date->format('Y-m-d');
 		
 		$yesterday = date('w',strtotime('yesterday'));
 		if($yesterday == 0)
@@ -44,11 +45,13 @@ class CronController extends Controller
 		
 		$enrolmentScheduleDays = EnrolmentScheduleDay::find()->where(['day' => $yesterday])->all();
 		foreach($enrolmentScheduleDays as $enrolmentScheduleDay){
-			$lessonModel = new Lesson();
-			$lessonModel->enrolment_schedule_day_id = $enrolmentScheduleDay->id;
-			$lessonModel->status = Lesson::STATUS_COMPLETED;
-			$lessonModel->date = $date->format('Y-m-d H:i:s');
-			$lessonModel->save();
+			if(strtotime($enrolmentScheduleDay->enrolment->commencement_date) < strtotime($yesterdayDate)){
+				$lessonModel = new Lesson();
+				$lessonModel->enrolment_schedule_day_id = $enrolmentScheduleDay->id;
+				$lessonModel->status = Lesson::STATUS_COMPLETED;
+				$lessonModel->date = $date->format('Y-m-d H:i:s');
+				$lessonModel->save();
+			}
 		}
 		
 		$unInvoicedLessons = Lesson::find()->unInvoiced()->all();
