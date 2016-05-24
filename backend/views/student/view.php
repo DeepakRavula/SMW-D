@@ -86,7 +86,11 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Duration',
 				'value' => function($data) {
-					return !empty($data->enrolmentScheduleDay->duration) ? $data->enrolmentScheduleDay->duration : null;
+					if(! empty($data->enrolmentScheduleDay->duration)){
+                    	$duration = date("H:i",strtotime($data->enrolmentScheduleDay->duration));
+                    	return !empty($duration) ? $duration : null;
+					}
+					return null;
 				},
 			],
 			[
