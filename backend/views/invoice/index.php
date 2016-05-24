@@ -18,12 +18,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 			[
-				'label' => 'Program Name',
-				'value' => function($data) {
-					return ! empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
+			    'label' => 'Customer Name',
+                'value' => function($data) {
+                    return ! empty($data->lesson->enrolmentScheduleDay->enrolment->student->customer->userProfile->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->customer->userProfile->fullName : null;
                 },
-			],
-            'amount',
+            ],
+            [
+                'label' => 'Lesson',
+                'value' => function($data) {
+                    return ! empty($data->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->fullName. ' (' .$data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name. ')' : null;
+                },
+            ],
+           'amount:currency',
 			[
 				'label' => 'Date',
 				'value' => function($data) {
