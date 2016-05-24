@@ -9,6 +9,7 @@ use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\Program;
 use common\models\Qualification;
+use common\models\UserLocation;
 use yii\base\Exception;
 use yii\base\Model;
 use Yii;
@@ -208,7 +209,6 @@ class UserForm extends Model
 			$country = $this->country;
 			$province = $this->province;
 			$postalcode = $this->postalcode;
-			$model->location_id = Yii::$app->session->get('location_id');
             if (!$model->save()) {
                 throw new Exception('Model not saved');
             }
@@ -226,7 +226,14 @@ class UserForm extends Model
                 }
             }
 
-
+            $userLocationModel = UserLocation::findOne($model->getId());
+			if(empty($userLocationModel)){
+				$userLocationModel = new UserLocation();
+			}
+            $userLocationModel->user_id = $model->getId();
+            $userLocationModel->location_id = Yii::$app->session->get('location_id');
+            $userLocationModel->save();
+			
             $userProfileModel = UserProfile::findOne($model->getId());
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;

@@ -38,7 +38,8 @@ class StudentController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Student::find()
 					->join('INNER JOIN','user','user.id = customer_id')
-					->where(['user.location_id' => $session->get('location_id') ])
+					->join('INNER JOIN','user_location','user_location.user_id = user.id')
+					->where(['user_location.location_id' => $session->get('location_id') ])
         ]);
 
         return $this->render('index', [
@@ -65,6 +66,7 @@ class StudentController extends Controller
 				'program_id' => $enrolmentModel->programId,
 			]);
 			$enrolmentModel->qualification_id = $qualification->id;
+			$enrolmentModel->location_id = Yii::$app->session->get('location_id');
 			if($enrolmentModel->save()) {
             	return $this->redirect(['view', 'id' => $model->id]);
 			}

@@ -61,12 +61,13 @@ class UserSearch extends User
 
  		$query->leftJoin(['rbac_auth_assignment aa'], 'u.id = aa.user_id');
  		$query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
+ 		$query->leftJoin(['user_location ul'], 'ul.user_id = u.id');
 
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'auth_key', $this->auth_key])
             ->andFilterWhere(['like', 'password_hash', $this->password_hash])
             ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'location_id', $locationId])
+            ->andFilterWhere(['like', 'ul.location_id', $locationId])
             ->andFilterWhere(['ai.name' => $this->role_name]);
 		$query->active();
         return $dataProvider;

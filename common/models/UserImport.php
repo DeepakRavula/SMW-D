@@ -61,6 +61,10 @@ class UserImport extends Model {
 			 * 
 			 */
 			if (!empty($user)) {
+				$userLocationModel = new UserLocation();
+				$userLocationModel->user_id = $user->id;
+				$userLocationModel->location_id = Yii::$app->session->get('location_id');
+				$userLocationModel->save();
 				continue;
 			}
 
@@ -68,9 +72,13 @@ class UserImport extends Model {
 			$user->email = $row['Billing Email Address'];
 			$user->password = Yii::$app->security->generateRandomString(8);
 			$user->status = User::STATUS_ACTIVE;
-			$user->location_id = Yii::$app->session->get('location_id');
 			$user->save();
-
+		
+			$userLocationModel = new UserLocation();
+			$userLocationModel->user_id = $user->id;
+			$userLocationModel->location_id = Yii::$app->session->get('location_id');
+			$userLocationModel->save();
+			
             $auth = Yii::$app->authManager;
         	$auth->assign($auth->getRole(User::ROLE_CUSTOMER), $user->getId());
 
