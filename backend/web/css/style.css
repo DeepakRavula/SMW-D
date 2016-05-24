@@ -26,6 +26,15 @@ body .table {
 }
 
 #location_id {
-	margin-top: 7px;
+	margin: 9px 10px 0 0;
 }
+#timeline-notifications{
+  margin-left: 8px;
+}
+.sidebar-menu, .sidebar-menu:hover{
+  height: calc(100vh - 124px);
+  display: block;
+  overflow: scroll;
+}
+
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */
