@@ -209,7 +209,6 @@ class UserForm extends Model
 			$country = $this->country;
 			$province = $this->province;
 			$postalcode = $this->postalcode;
-			$model->location_id = Yii::$app->session->get('location_id');
             if (!$model->save()) {
                 throw new Exception('Model not saved');
             }
