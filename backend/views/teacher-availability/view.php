@@ -13,11 +13,12 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="teacher-availability-view">
 
-    <?php $dayList = TeacherAvailability::getWeekdaysList();
-          $day = $dayList[$model->day];
-	      $fromTime = date("g:i a",strtotime($model->from_time));
-	      $toTime = date("g:i a",strtotime($model->to_time));
-	;?>
+    <?php 
+		$dayList = TeacherAvailability::getWeekdaysList();
+        $day = $dayList[$model->day];
+	    $fromTime = date("g:i a",strtotime($model->from_time));
+	    $toTime = date("g:i a",strtotime($model->to_time));
+	?>
     <?php echo DetailView::widget([
         'model' => $model,
         'attributes' => [

@@ -104,7 +104,7 @@ class TeacherAvailabilityController extends Controller
     public function actionDelete($id)
     {
 		$model = $this->findModel($id);
-		$teacherId = $model->teacher_id;
+		$teacherId = $model->teacher->id;
         $model->delete();
         
       //  if (!isset($_GET['ajax'])) {
@@ -136,20 +136,24 @@ class TeacherAvailabilityController extends Controller
 			'user_id' => $teacherId,
 			'location_id' => $location_id,
 		]);
-		$availabilities = TeacherAvailability::find()
+		if(! empty($teacherLocation)){
+			$availabilities = TeacherAvailability::find()
 				->where(['teacher_location_id' => $teacherLocation->id])
 				->groupBy(['day'])
 				->all();
+		}
 		$dayList = TeacherAvailability::getWeekdaysList();
 		$result = [];
 		$output = [];
-
-		foreach($availabilities as $availability) {
-			$weekday = $dayList[$availability->day];
-			$output[] = [
-				'id' => $availability->day,
-				'name' => $weekday,
-			];
+		
+		if(! empty($availabilities)){
+			foreach($availabilities as $availability) {
+				$weekday = $dayList[$availability->day];
+				$output[] = [
+					'id' => $availability->day,
+					'name' => $weekday,
+				];
+			}
 		}
 		$result = [
 			'output' => $output,	
@@ -171,25 +175,29 @@ class TeacherAvailabilityController extends Controller
 			'user_id' => $teacherId,
 			'location_id' => $location_id,
 		]);
-		$availabilities = TeacherAvailability::find()
+		if(! empty($teacherLocation)){
+			$availabilities = TeacherAvailability::find()
 				->where([
 					'teacher_location_id' => $teacherLocation->id,
 					'day' =>  $day,
 					])
 				->all();
+		}
 		$result = [];
 		$output = [];
 
 		$availableHours = [];
+		if(! empty($availabilities)){
+			foreach($availabilities as $availability) {
+				$start    = new \DateTime($availability->from_time);
+				$end      = new \DateTime($availability->to_time); // add 1 second because last one is not included in the loop
+				$interval = new \DateInterval('PT30M');
+				$hours   = new \DatePeriod($start, $interval, $end);
 
-		foreach($availabilities as $availability) {
-			$start    = new \DateTime($availability->from_time);
-			$end      = new \DateTime($availability->to_time); // add 1 second because last one is not included in the loop
-			$interval = new \DateInterval('PT30M');
-			$hours   = new \DatePeriod($start, $interval, $end);
-
-			foreach($hours as $hour) {
-				$availableHours[] = $hour->format("h:ia");
+				foreach($hours as $hour) {
+					$availableHours[] = $hour->format("h:ia");
+				}
+		
 			}
 		}
 
