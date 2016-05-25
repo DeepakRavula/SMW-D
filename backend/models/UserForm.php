@@ -226,13 +226,14 @@ class UserForm extends Model
                 }
             }
 
-            $userLocationModel = UserLocation::findOne($model->getId());
+            $userLocationModel = UserLocation::findOne(["user_id"=>$model->getId(), "location_id"=>Yii::$app->session->get('location_id')]);
 			if(empty($userLocationModel)){
 				$userLocationModel = new UserLocation();
+                $userLocationModel->user_id = $model->getId();
+                $userLocationModel->location_id = Yii::$app->session->get('location_id');
+                $userLocationModel->save();
 			}
-            $userLocationModel->user_id = $model->getId();
-            $userLocationModel->location_id = Yii::$app->session->get('location_id');
-            $userLocationModel->save();
+            
 			
             $userProfileModel = UserProfile::findOne($model->getId());
             $userProfileModel->lastname = $lastname;
