@@ -34,6 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		[
 				'label' => 'Status',
 				'value' => function($data) {
+					$status = null;
 					switch($data->status){
 						case Lesson::STATUS_COMPLETED:
 							$status = 'Completed';

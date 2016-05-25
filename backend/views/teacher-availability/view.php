@@ -7,7 +7,7 @@ use common\models\TeacherAvailability;
 /* @var $this yii\web\View */
 /* @var $model common\models\TeacherAvailability */
 
-$this->title = $model->teacherIdentity->publicIdentity;
+$this->title = $model->teacher->publicIdentity;
 $this->params['breadcrumbs'][] = ['label' => 'Teacher Availabilities', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

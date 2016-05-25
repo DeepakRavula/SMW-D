@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\User;
+use common\models\UserLocation;
 use common\models\UserProfile;
 use common\models\UserAddress;
 use common\models\Address;
@@ -100,14 +101,22 @@ class UserController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Student::find()->where(['customer_id' => $id])
         ]);
-		$dataProvider1 =  new ActiveDataProvider([
-            'query' => TeacherAvailability::find()->where(['teacher_id' => $id])
-			]);
  		$model = $this->findModel($id);
 		
-			$teacherAvailabilityModel = new TeacherAvailability();
-			$teacherAvailabilityModel->teacher_id = $id; 
-			$teacherAvailabilityModel->location_id = $session->get('location_id');
+		$teacherAvailabilityModel = new TeacherAvailability();
+		$teacherLocation = UserLocation::findOne([
+			'user_id' => $id,
+			'location_id' => $session->get('location_id'),
+		]);
+		$teacherAvailabilityModel->teacher_location_id = $teacherLocation->id;
+
+		$dataProvider1 =  new ActiveDataProvider([
+            'query' => TeacherAvailability::find()
+				->where([
+					'teacher_location_id' => $teacherLocation->id
+				])
+			]);
+
         if ($teacherAvailabilityModel->load(Yii::$app->request->post()) ) {
 
 			$fromtime = date("H:i:s",  strtotime($_POST['TeacherAvailability']['from_time']));

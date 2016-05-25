@@ -8,8 +8,7 @@ use Yii;
  * This is the model class for table "teacher_availability_day".
  *
  * @property string $id
- * @property string $teacher_id
- * @property string $location_id
+ * @property integer $teacher_location_id
  * @property integer $day
  * @property string $from_time
  * @property string $to_time
@@ -30,8 +29,8 @@ class TeacherAvailability extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['teacher_id','day', 'from_time', 'to_time'], 'required'],
-            [['teacher_id','day'], 'integer'],
+            [['teacher_location_id','day', 'from_time', 'to_time'], 'required'],
+            [['teacher_location_id','day'], 'integer'],
             [['from_time', 'to_time'], 'safe'],
         ];
     }
@@ -43,7 +42,7 @@ class TeacherAvailability extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'teacher_id' => 'Teacher Name',
+            'teacher_location_id' => 'Teacher Location',
             'day' => 'Day',
             'from_time' => 'From Time',
             'to_time' => 'To Time',
@@ -63,13 +62,16 @@ class TeacherAvailability extends \yii\db\ActiveRecord
         ];
     }
 
-	public function IsAvailableAtLocation($location_id)
+	public function IsAvailableAtLocation($teacher_location_id)
 	{
-		return $this->find()->where(['teacher_id' => $this->teacher_id,'location_id' => $location_id])->exists();
+		return $this->find()
+				->where(['teacher_location_id' => $this->teacher_location_id])
+				->exists();
 	}
 
-	public function getTeacherIdentity() 
+	public function getTeacher() 
 	{
-        return $this->hasOne(User::className(), ['id' => 'teacher_id']);
+        return $this->hasOne(User::className(), ['id' => 'user_id'])
+			->viaTable('user_location', ['user_id' => 'teacher_location_id']);
     }
 }
