@@ -55,7 +55,11 @@ use yii\helpers\Url;
 		 ]
 	 ]);?>
 
-    <?php echo $form->field($model, 'duration')->dropdownList(Enrolment::getDuration());?>
+    <?php echo $form->field($model, 'duration')->widget(TimePicker::classname(), [
+	'pluginOptions' => [
+		'showMeridian' => false,
+	]
+	]);?>
 
     <?php echo $form->field($model, 'commencement_date')->widget(DatePicker::classname());?>
 
