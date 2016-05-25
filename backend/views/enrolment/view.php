@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	$dayList = Enrolment::getWeekdaysList();
 	$day = $dayList[$model->enrolmentScheduleDay->day];
 	$fromTime = date("g:i a",strtotime($model->enrolmentScheduleDay->from_time));
+	$duration = date("g:i",strtotime($model->enrolmentScheduleDay->duration));
 	$date = $model->commencement_date;
 	$commencement_date = date('d-m-Y',strtotime($date));
 	$renewalDate = $model->renewal_date;
@@ -31,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
 			[
 				'label' => 'Teacher Name',
-				'value' => !empty($model->qualification->user->userProfile->fullName) ? $model->qualification->user->userProfile->fullName : null,
+				'value' => !empty($model->qualification->teacher->publicIdentity) ? $model->qualification->teacher->publicIdentity : null,
 			],
 			[
 				'label' => 'Day',
@@ -43,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
 			[
 				'label' => 'Duration',
-				'value' => !empty($model->enrolmentScheduleDay->duration) ? $model->enrolmentScheduleDay->duration : null,
+				'value' => !empty($duration) ? $duration : null,
 			],
 			[
 				'label' => 'Commencement Date',

@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Teacher Name',
 				'value' => function($data) {
-					return !empty($data->qualification->user->userProfile->fullName) ? $data->qualification->user->userProfile->fullName : null;
+					return !empty($data->qualification->teacher->publicIdentity) ? $data->qualification->teacher->publicIdentity : null;
 				},
 			],
 			[
