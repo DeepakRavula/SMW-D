@@ -58,6 +58,7 @@ use yii\helpers\Url;
     <?php echo $form->field($model, 'duration')->widget(TimePicker::classname(), [
 	'pluginOptions' => [
 		'showMeridian' => false,
+		'defaultTime' => date('H:i',strtotime('00:45')),
 	]
 	]);?>
 
