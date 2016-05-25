@@ -65,7 +65,7 @@ class TeacherAvailability extends \yii\db\ActiveRecord
 	public function IsAvailableAtLocation($teacher_location_id)
 	{
 		return $this->find()
-				->where(['teacher_location_id' => $this->teacher_location_id])
+				->where(['teacher_location_id' => $teacher_location_id])
 				->exists();
 	}
 
