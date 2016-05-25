@@ -37,11 +37,11 @@ use yii\helpers\Url;
 	 ]);?>
 		<?php // Dependent Dropdown
 	echo $form->field($model, 'day')->widget(DepDrop::classname(), [
-		 'options' => ['id'=>'day-id'],
+		 'options' => ['id'=>'teacher-availability-day'],
 		 'pluginOptions'=>[
 			 'depends'=>['enrolment-teacherId'],
 			 'placeholder' => 'Select...',
-			 'url' => Url::to(['/teacher-availability/days'])
+			 'url' => Url::to(['/teacher-availability/available-days'])
 		 ]
 	 ]);?>
 
@@ -49,9 +49,9 @@ use yii\helpers\Url;
 	echo $form->field($model, 'fromTime')->widget(DepDrop::classname(), [
 		 'options' => ['id'=>'fromTime-id'],
 		 'pluginOptions'=>[
-			 'depends'=>['enrolment-teacherId'],
+			 'depends'=>['enrolment-teacherId', 'teacher-availability-day'],
 			 'placeholder' => 'Select...',
-			 'url' => Url::to(['/teacher-availability/fromtimes'])
+			 'url' => Url::to(['/teacher-availability/available-hours'])
 		 ]
 	 ]);?>
 

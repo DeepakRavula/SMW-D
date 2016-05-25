@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Enrolment;
+use common\models\UserLocation;
 use common\models\TeacherAvailability;
 use common\models\User;
 use backend\models\TeacherAvailabilitySearch;
@@ -126,23 +127,27 @@ class TeacherAvailabilityController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-	public function actionDays() {
+	public function actionAvailableDays() {
 		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		$session = Yii::$app->session;
 		$teacherId = $_POST['depdrop_parents'][0];
-		$days = ArrayHelper::map(
-			TeacherAvailability::find()
-				->where(['teacher_id' => $teacherId])
-				->all(),
-			'id', 'day'
-		);
+		$location_id = $session->get('location_id');
+		$teacherLocation = UserLocation::findOne([
+			'user_id' => $teacherId,
+			'location_id' => $location_id,
+		]);
+		$availabilities = TeacherAvailability::find()
+				->where(['teacher_location_id' => $teacherLocation->id])
+				->groupBy(['day'])
+				->all();
 		$dayList = TeacherAvailability::getWeekdaysList();
 		$result = [];
 		$output = [];
 
-		foreach($days as $id=> $day) {
-			$weekday = $dayList[$day];
+		foreach($availabilities as $availability) {
+			$weekday = $dayList[$availability->day];
 			$output[] = [
-				'id' => $day,
+				'id' => $availability->day,
 				'name' => $weekday,
 			];
 		}
@@ -154,23 +159,44 @@ class TeacherAvailabilityController extends Controller
 		return $result;
 	}
 	
-	public function actionFromtimes() {
+	public function actionAvailableHours() {
 		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-		$teacherId = $_POST['depdrop_parents'][0];
-		$fromTimes = ArrayHelper::map(
-			TeacherAvailability::find()
-				->where(['teacher_id' => $teacherId])
-				->all(),
-			'id', 'from_time'
-		);
+		$request = Yii::$app->request;
+		$session = Yii::$app->session;
+		$depDrop = $request->post('depdrop_all_params');
+		$teacherId = $depDrop['enrolment-teacherId'];
+		$day = $depDrop['teacher-availability-day'];
+		$location_id = $session->get('location_id');
+		$teacherLocation = UserLocation::findOne([
+			'user_id' => $teacherId,
+			'location_id' => $location_id,
+		]);
+		$availabilities = TeacherAvailability::find()
+				->where([
+					'teacher_location_id' => $teacherLocation->id,
+					'day' =>  $day,
+					])
+				->all();
 		$result = [];
 		$output = [];
 
-		foreach($fromTimes as $id=> $fromTime) {
-			$fromtime = date("g:i a",strtotime($fromTime));
+		$availableHours = [];
+
+		foreach($availabilities as $availability) {
+			$start    = new \DateTime($availability->from_time);
+			$end      = new \DateTime($availability->to_time); // add 1 second because last one is not included in the loop
+			$interval = new \DateInterval('PT30M');
+			$hours   = new \DatePeriod($start, $interval, $end);
+
+			foreach($hours as $hour) {
+				$availableHours[] = $hour->format("h:ia");
+			}
+		}
+
+		foreach($availableHours as $id => $availableHour) {
 			$output[] = [
-				'id' => $fromTime,
-				'name' => $fromtime,
+				'id' => (string)$id,
+				'name' => $availableHour,
 			];
 		}
 		$result = [
