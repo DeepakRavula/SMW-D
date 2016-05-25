@@ -204,6 +204,8 @@ class UserController extends Controller
         {            
             Yii::$app->authManager->revokeAll($id);
             $this->findModel($id)->delete();
+			$userLocationModel = UserLocation::findOne(["user_id"=>$id, "location_id"=>Yii::$app->session->get('location_id')]);
+            $userLocationModel->delete();
         }else{
             $userLocationModel = UserLocation::findOne(["user_id"=>$id, "location_id"=>Yii::$app->session->get('location_id')]);
             $userLocationModel->delete();            
