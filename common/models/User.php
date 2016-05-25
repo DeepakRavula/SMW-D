@@ -9,7 +9,8 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
-use \common\models\Address;
+use common\models\Address;
+use common\models\UserLocation;
 
 /**
  * User model
@@ -165,6 +166,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function getPhoneNumber()
     {
         return $this->hasOne(PhoneNumber::className(), ['user_id' => 'id']);
+    }
+
+	/**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLocation()
+    {
+        return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);
     }
 	
     /**

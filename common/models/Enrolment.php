@@ -88,15 +88,6 @@ class Enrolment extends \yii\db\ActiveRecord
 		];
 	}
 	
-	public static function getDuration()
-	{
-		return [
-			'0:45',
-			'1:00',
-			'1:30'
-		];
-	}
-   
     /**
      * @inheritdoc
      */
@@ -116,8 +107,6 @@ class Enrolment extends \yii\db\ActiveRecord
         $enrolmentScheduleDayModel->enrolment_id = $this->id;
         $enrolmentScheduleDayModel->day = $this->day;
         $enrolmentScheduleDayModel->from_time = date("H:i:s",strtotime($this->fromTime));
-		$durationList = $this->getDuration();
-		$this->duration = $durationList[$this->duration];
         $enrolmentScheduleDayModel->duration = $this->duration;
 		$secs = strtotime($this->duration) - strtotime("00:00:00");
 		$toTime = date("H:i:s",strtotime($this->fromTime) + $secs);

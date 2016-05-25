@@ -135,17 +135,20 @@ class EnrolmentController extends Controller
 		$location_id = $session->get('location_id');
 		$programId = $_POST['depdrop_parents'][0];
 		$qualifications = Qualification::find()
-				->where(['program_id' => $programId])
-				->all();
+					->with(['teacher' => function($query) use($location_id) {
+						$query->with(['location' => function($query) use($location_id){
+							$query->where(['location_id' => $location_id]);
+						}]);
+					}])
+					->where(['program_id' => $programId])
+					->all();
 		$result = [];
 		$output = [];
 		foreach($qualifications as  $qualification) {
-			if($qualification->teacherAvailability->IsAvailableAtLocation($location_id)){
-				$output[] = [
-					'id' => $qualification->user->id,
-					'name' => $qualification->user->userProfile->fullName,
-				];
-			}
+			$output[] = [
+				'id' => $qualification->teacher->id,
+				'name' => $qualification->teacher->publicIdentity,
+			];
 		}
 		$result = [
 			'output' => $output,	
