@@ -10,6 +10,7 @@ use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
 use common\models\UserImport;
+use common\models\UserLocation;
 use backend\models\UserForm;
 use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
@@ -197,9 +198,17 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
-        Yii::$app->authManager->revokeAll($id);
-        $this->findModel($id)->delete();
-
+        $userLocationModel = UserLocation::findAll(["user_id"=>$id]);
+        
+        if(count($userLocationModel) == 1)
+        {            
+            Yii::$app->authManager->revokeAll($id);
+            $this->findModel($id)->delete();
+        }else{
+            $userLocationModel = UserLocation::findOne(["user_id"=>$id, "location_id"=>Yii::$app->session->get('location_id')]);
+            $userLocationModel->delete();            
+        }
+        
         return $this->redirect(['index']);
     }
 
