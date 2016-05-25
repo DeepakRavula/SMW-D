@@ -11,7 +11,6 @@ use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
 use common\models\UserImport;
-use common\models\UserLocation;
 use backend\models\UserForm;
 use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
