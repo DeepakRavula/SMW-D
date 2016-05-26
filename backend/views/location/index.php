@@ -29,6 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
                       },
              ],
             'address',
+			'from_time',
+			'to_time',
 
         ],
     ]); ?>
