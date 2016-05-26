@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\Enrolment;
+use common\models\EnrolmentScheduleDay;
 use common\models\Lesson;
 use common\models\Invoice;
 use yii\data\ActiveDataProvider;
@@ -33,8 +35,12 @@ class LessonController extends Controller
      */
     public function actionIndex()
     {
+		$session = Yii::$app->session;
         $dataProvider = new ActiveDataProvider([
-            'query' => Lesson::find(),
+            'query' => Lesson::find()
+					->join('INNER JOIN','enrolment_schedule_day','enrolment_schedule_day.id = enrolment_schedule_day_id')
+					->join('INNER JOIN','enrolment','enrolment.id = enrolment_schedule_day.enrolment_id')
+					->where(['enrolment.location_id' => $session->get('location_id') ])
         ]);
 
         return $this->render('index', [
