@@ -21,7 +21,10 @@ $this->params['breadcrumbs'][] = $this->title;
 				'label' => 'Program Name',
 				'value' => ! empty($model->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $model->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null,
 			],
-            'amount',
+            'unit',
+			'tax',
+			'subtotal',
+			'total:currency',
 			[
 				'label' => 'Date',
 				'value' => ! empty(date("d-m-y", strtotime($model->date))) ? date("d-m-y", strtotime($model->date)) : null,
