@@ -59,11 +59,12 @@ class EnrolmentScheduleDay extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-
-		$count = 0;
+		
 		$interval = new \DateInterval('P1D');
-		$start = $this->enrolment->commencement_date;
-		$end = $this->enrolment->renewal_date;
+		$commencementDate = $this->enrolment->commencement_date;
+		$renewalDate = $this->enrolment->renewal_date;
+		$start = new \DateTime($commencementDate);
+		$end = new \DateTime($renewalDate);
 		$period = new \DatePeriod($start, $interval, $end);
 
 		foreach($period as $day){
@@ -78,25 +79,4 @@ class EnrolmentScheduleDay extends \yii\db\ActiveRecord
 			}
 		}
     } 
-
-
-	/**
-	 * @param String $dayNumber eg 1 => Mon, 2 => Tue, etc
-	 * @param DateTime $start
-	 * @param DateTime $end
-	 * @return int
-	 */
-	function countDaysByDayNumber($dayNumber, \DateTime $start, \DateTime $end)
-	{
-		$count = 0;
-		$interval = new \DateInterval('P1D');
-		$period = new \DatePeriod($start, $interval, $end);
-
-		foreach($period as $day){
-			if($day->format('N') === $dayNumber) {
-				$count ++;
-			}
-		}
-		return $count;
-	}
 }
