@@ -203,7 +203,7 @@ class TeacherAvailabilityController extends Controller
 
 		foreach($availableHours as $id => $availableHour) {
 			$output[] = [
-				'id' => (string)$id,
+				'id' => $availableHour,
 				'name' => $availableHour,
 			];
 		}

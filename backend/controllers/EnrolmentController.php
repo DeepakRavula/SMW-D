@@ -135,8 +135,8 @@ class EnrolmentController extends Controller
 		$location_id = $session->get('location_id');
 		$programId = $_POST['depdrop_parents'][0];
 		$qualifications = Qualification::find()
-					->with(['teacher' => function($query) use($location_id) {
-						$query->with(['location' => function($query) use($location_id){
+					->joinWith(['teacher' => function($query) use($location_id) {
+						$query->joinWith(['location' => function($query) use($location_id){
 							$query->where(['location_id' => $location_id]);
 						}]);
 					}])
