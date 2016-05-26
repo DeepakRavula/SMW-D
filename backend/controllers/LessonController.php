@@ -155,5 +155,6 @@ class LessonController extends Controller
 			'status' => Invoice::STATUS_UNPAID,
 		])	;
 		$invoice->save();
+		return $this->redirect(['lesson/index','id' => $id]);
 	}
 }

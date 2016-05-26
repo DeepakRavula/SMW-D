@@ -101,12 +101,3 @@ $this->params['breadcrumbs'][] = $this->title;
 
 </div>
 
-<?php
-$this->registerJs(
-   '$("document").ready(function(){ 
-        $("#new_medicine").on("pjax:end", function() {
-            $.pjax.reload({container:"#medicine"});  //Reload GridView
-        });
-    });'
-);
-?>
