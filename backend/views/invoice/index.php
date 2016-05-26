@@ -29,7 +29,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     return ! empty($data->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->fullName. ' (' .$data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name. ')' : null;
                 },
             ],
-           'amount:currency',
+			'unit',
+			'tax',
+			'subtotal',
+           'total:currency',
 			[
 				'label' => 'Date',
 				'value' => function($data) {

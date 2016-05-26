@@ -121,14 +121,37 @@ class LessonController extends Controller
     }
 
 	public function actionInvoice($id) {
-		$invoice = new Invoice();	
+		$invoice = new Invoice();
+		$model = Lesson::findOne(['id' => $id]);
+		$duration = date("H:i",strtotime($model->enrolmentScheduleDay->duration));
+		$unit = null;
+		switch($duration){
+			case '00:30':
+				$unit = '0.5';
+			break;
+			case '00:45':
+				$unit = '0.75';
+			break;
+			case '01:00':
+				$unit = '1';
+			break;
+			case '01:30':
+				$unit = '1.5';
+			break;
+		}
+		$rate = $model->enrolmentScheduleDay->enrolment->qualification->program->rate;
+		$tax = $rate * (13.5 / 100);
+		$amount = $unit * $rate;
+		$date = new \DateTime();
+		$date->add(\DateInterval::createFromDateString('today'));
+		$today = $date->format('Y-m-d');
 		$invoice->setAttributes([
 			'lesson_id' => $id,
-			'unit' => 1,
-			'tax' =>  135,
-			'subtotal'	 => 200,
-			'total' => 250,
-			'date' => '2016-5-26',
+			'unit' => $unit,
+			'tax' =>  $tax,
+			'subtotal'	 => $amount,
+			'total' => $amount + $tax,
+			'date' => $today,
 			'status' => Invoice::STATUS_UNPAID,
 		])	;
 		$invoice->save();
