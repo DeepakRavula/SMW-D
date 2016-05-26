@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\Lesson;
 
 /**
  * This is the model class for table "enrolment_schedule_day".
@@ -55,4 +56,27 @@ class EnrolmentScheduleDay extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Enrolment::className(), ['id' => 'enrolment_id']);
     }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+		
+		$interval = new \DateInterval('P1D');
+		$commencementDate = $this->enrolment->commencement_date;
+		$renewalDate = $this->enrolment->renewal_date;
+		$start = new \DateTime($commencementDate);
+		$end = new \DateTime($renewalDate);
+		$period = new \DatePeriod($start, $interval, $end);
+
+		foreach($period as $day){
+			if($day->format('N') === $this->day) {
+				$lesson = new Lesson();
+				$lesson->setAttributes([
+					'enrolment_schedule_day_id'	 => $this->id,
+					'status' => Lesson::STATUS_PENDING,
+					'date' => $day->format('Y-m-d'),
+				]);
+				$lesson->save();
+			}
+		}
+    } 
 }
