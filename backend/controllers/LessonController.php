@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Lesson;
+use common\models\Invoice;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -118,4 +119,18 @@ class LessonController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+	public function actionInvoice($id) {
+		$invoice = new Invoice();	
+		$invoice->setAttributes([
+			'lesson_id' => $id,
+			'unit' => 1,
+			'tax' =>  135,
+			'subtotal'	 => 200,
+			'total' => 250,
+			'date' => '2016-5-26',
+			'status' => Invoice::STATUS_UNPAID,
+		])	;
+		$invoice->save();
+	}
 }
