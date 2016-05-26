@@ -65,7 +65,7 @@ class Lesson extends \yii\db\ActiveRecord
      */
     public function getInvoice()
     {
-        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
+        return $this->hasOne(Invoice::className(), ['lesson_id' => 'id']);
     }
 
 	    /**

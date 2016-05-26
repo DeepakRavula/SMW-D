@@ -35,9 +35,9 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return [
             [['lesson_id'], 'required'],
-            [['lesson_id', 'status'], 'integer'],
-            [['amount'], 'number'],
-            [['date'], 'safe'],
+            [['lesson_id'], 'integer'],
+            [['lesson_id'], 'unique'],
+            [['unit', 'tax', 'subtotal', 'total', 'date', 'status'], 'safe'],
         ];
     }
 
@@ -71,6 +71,8 @@ class Invoice extends \yii\db\ActiveRecord
    
 	public function status($data)
     {
+		$status = null;
+
         switch($data->status){
 			case Invoice::STATUS_UNPAID:
 				$status = 'Unpaid';
