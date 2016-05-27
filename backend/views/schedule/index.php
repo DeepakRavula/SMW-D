@@ -63,12 +63,13 @@ $(document).ready(function() {
         for (loop = start._d.getTime();
             loop <= end._d.getTime();
             loop = loop + one_day) {
-
+            
             var column_date = new Date(loop);
+            
             switch (column_date.getDay()) {
                 case 0:
                     $.each(student_events, function(i, val)  { 
-                        if (val.day == 7) {
+                        if (val.day == 7 && new Date(column_date) >= new Date(val.commencement_date) && new Date(column_date) <= new Date(val.renewal_date)) {
                             // we're in sunday, create the event
                             events.push({
                                 title: val.title,
@@ -82,7 +83,7 @@ $(document).ready(function() {
                     break;
                 case 1:
                     $.each(student_events, function(i, val)  { 
-                        if (val.day == 1) {
+                        if (val.day == 1 && new Date(column_date) >= new Date(val.commencement_date) && new Date(column_date) <= new Date(val.renewal_date)) {
                             // we're in Monday, create the event
                             events.push({
                                 title: val.title,
@@ -96,7 +97,7 @@ $(document).ready(function() {
                     break;
                 case 2:
                     $.each(student_events, function(i, val)  { 
-                        if (val.day == 2) {
+                        if (val.day == 2 && new Date(column_date) >= new Date(val.commencement_date) && new Date(column_date) <= new Date(val.renewal_date)) {
                             // we're in Tuesday, create the event
                             events.push({
                                 title: val.title,
@@ -110,7 +111,7 @@ $(document).ready(function() {
                     break;
                 case 3:
                     $.each(student_events, function(i, val)  { 
-                        if (val.day == 3) {
+                        if (val.day == 3 && new Date(column_date) >= new Date(val.commencement_date) && new Date(column_date) <= new Date(val.renewal_date)) {
                             // we're in Wednesday, create the event
                             events.push({
                                 title: val.title,
@@ -124,7 +125,7 @@ $(document).ready(function() {
                     break;
                 case 4:
                     $.each(student_events, function(i, val)  { 
-                        if (val.day == 4) {
+                        if (val.day == 4 && new Date(column_date) >= new Date(val.commencement_date) && new Date(column_date) <= new Date(val.renewal_date)) {
                             // we're in Thursday, create the event
                             events.push({
                                 title: val.title,
@@ -138,7 +139,7 @@ $(document).ready(function() {
                     break;
                 case 5:
                     $.each(student_events, function(i, val)  { 
-                        if (val.day == 5) {
+                        if (val.day == 5 && new Date(column_date) >= new Date(val.commencement_date) && new Date(column_date) <= new Date(val.renewal_date)) {
                             // we're in Friday, create the event
                             events.push({
                                 title: val.title,
@@ -152,7 +153,7 @@ $(document).ready(function() {
                     break;
                 case  6:
                     $.each(student_events, function(i, val)  { 
-                        if (val.day == 6) {
+                        if (val.day == 6 && new Date(column_date) >= new Date(val.commencement_date) && new Date(column_date) <= new Date(val.renewal_date)) {
                             // we're in Saturday, create the event
                             events.push({
                                 title: val.title,

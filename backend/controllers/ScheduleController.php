@@ -53,7 +53,7 @@ class ScheduleController extends Controller
         foreach($teacherAvailability as $teacher){
             
             $studentEvents = (new \yii\db\Query())
-                ->select(['q.teacher_id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, HOUR(ed.from_time) as start_hours, MINUTE(ed.from_time) as start_minutes, HOUR(ed.to_time) as end_hours, MINUTE(ed.to_time) as end_minutes, ed.day'])
+                ->select(['q.teacher_id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, HOUR(ed.from_time) as start_hours, MINUTE(ed.from_time) as start_minutes, HOUR(ed.to_time) as end_hours, MINUTE(ed.to_time) as end_minutes, ed.day, e.commencement_date, e.renewal_date'])
                 ->from('enrolment e')
                 ->join('Join', 'qualification q', 'q.id = e.qualification_id')
                 ->join('Join', 'enrolment_schedule_day ed', 'ed.enrolment_id = e.id')
@@ -71,6 +71,8 @@ class ScheduleController extends Controller
                 $student['allDay'] = false;
                 $student['resources'] = $studentEvents['id']; 
                 $student['day'] = $studentEvents['day'];
+                $student['commencement_date'] = $studentEvents['commencement_date']; 
+                $student['renewal_date'] = $studentEvents['renewal_date'];
                 
                 array_push($events, $student);
             } 
