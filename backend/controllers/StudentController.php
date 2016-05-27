@@ -67,6 +67,9 @@ class StudentController extends Controller
 			]);
 			$enrolmentModel->qualification_id = $qualification->id;
 			$enrolmentModel->location_id = Yii::$app->session->get('location_id');
+			$renewalDate = \DateTime::createFromFormat('m-d-y', $enrolmentModel->commencement_date);
+			$renewalDate->add(new \DateInterval('P1Y'));
+			$enrolmentModel->renewal_date = $renewalDate->format('Y-m-d');
 			if($enrolmentModel->save()) {
             	return $this->redirect(['view', 'id' => $model->id]);
 			}

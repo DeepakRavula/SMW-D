@@ -40,7 +40,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             [['student_id', 'qualification_id', 'teacherId', 'programId'], 'required'],
             [['student_id', 'qualification_id', 'teacherId', 'programId', 'day'], 'integer'],
-            [['commencement_date', 'renewal_date', 'teacherId', 'programId', 'day', 'fromTime', 'duration'], 'safe'],
+            [['commencement_date','teacherId', 'programId', 'day', 'fromTime', 'duration'], 'safe'],
         ];
     }
 
@@ -96,9 +96,6 @@ class Enrolment extends \yii\db\ActiveRecord
         if ($this->commencement_date != NULL)
             $this->commencement_date = date_format(date_create_from_format('m-d-y', $this->commencement_date), 'Y-m-d');
     
-        if ($this->renewal_date != NULL)
-            $this->renewal_date = date_format(date_create_from_format('m-d-y', $this->renewal_date), 'Y-m-d');
-        
         return parent::beforeValidate ();
     }
     public function afterSave($insert, $changedAttributes)
