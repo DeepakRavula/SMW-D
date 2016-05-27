@@ -64,8 +64,6 @@ use yii\helpers\Url;
 
     <?php echo $form->field($model, 'commencement_date')->widget(DatePicker::classname());?>
 
-    <?php echo $form->field($model, 'renewal_date')->widget(DatePicker::classname());?>
-	
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
