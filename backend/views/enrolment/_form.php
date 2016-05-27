@@ -8,7 +8,7 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use kartik\time\TimePicker;
-use yii\jui\DatePicker;
+use kartik\date\DatePicker;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 
