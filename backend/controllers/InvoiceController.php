@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Invoice;
+use common\models\User;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -117,5 +118,14 @@ class InvoiceController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+	public function actionAddInvoice()
+    {
+        $model = new User();
+
+            return $this->render('create', [
+                'model' => $model,
+            ]);
     }
 }

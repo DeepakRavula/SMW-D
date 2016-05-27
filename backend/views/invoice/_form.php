@@ -1,6 +1,10 @@
 <?php
 
 use yii\helpers\Html;
+use common\models\User;
+use common\models\UserProfile;
+use common\models\UserLocation;
+use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -14,17 +18,14 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->errorSummary($model); ?>
 
-    <?php echo $form->field($model, 'lesson_id')->textInput() ?>
-
-    <?php echo $form->field($model, 'amount')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'date')->textInput() ?>
-
-    <?php echo $form->field($model, 'status')->textInput() ?>
-
-    <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
+<?php echo $form->field($model, 'customer')->dropDownList(
+		ArrayHelper::map(
+				User::find()
+					->join('INNER JOIN','user_location','user_location.user_id = user.id')
+					->join('INNER JOIN','rbac_auth_assignment','rbac_auth_assignment.user_id = user.id')
+					->where(['user_location.location_id' => Yii::$app->session->get('location_id'),'rbac_auth_assignment.item_name' => 'customer'])			
+				->all(),
+		'id','userProfile.fullName' ), ['prompt'=>'Select Customer'])->label(false) ?>
 
     <?php ActiveForm::end(); ?>
 
