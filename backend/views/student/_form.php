@@ -3,6 +3,7 @@
 use common\models\User;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
+use kartik\date\DatePicker;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -23,7 +24,14 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
 
-    <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname())  ?>
+    <?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(),[
+			'type' => DatePicker::TYPE_COMPONENT_APPEND,
+			'pluginOptions' => [
+    		    'format' => 'mm-dd-yy',
+        		'todayHighlight' => true,
+				'autoclose'=>true
+    		]
+			]);?>
 
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
