@@ -55,7 +55,7 @@ class StudentController extends Controller
     public function actionView($id)
     {
 		$dataProvider = new ActiveDataProvider([
-            'query' => Enrolment::find()->where(['student_id' => $id])
+            'query' => Enrolment::find()->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
         ]);
         $model = $this->findModel($id);
 		$enrolmentModel = new Enrolment();

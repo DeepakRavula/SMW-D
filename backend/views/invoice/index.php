@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-index">
 
-
+<?php echo Html::a('Add Invoice', ['invoice/create'], ['class' => 'btn btn-success'])?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -20,19 +20,18 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 			    'label' => 'Customer Name',
                 'value' => function($data) {
-                    return ! empty($data->lesson->enrolmentScheduleDay->enrolment->student->customer->userProfile->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->customer->userProfile->fullName : null;
+                    return ! empty($data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null;
                 },
             ],
             [
                 'label' => 'Lesson',
                 'value' => function($data) {
-                    return ! empty($data->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->fullName. ' (' .$data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name. ')' : null;
+                    return ! empty($data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->fullName. ' (' .$data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->qualification->program->name. ')' : null;
                 },
             ],
-			'unit',
 			'tax',
-			'subtotal',
-           'total:currency',
+			'subTotal',
+            'total:currency',
 			[
 				'label' => 'Date',
 				'value' => function($data) {
@@ -44,14 +43,14 @@ $this->params['breadcrumbs'][] = $this->title;
 				'label' => 'Status',
 				'value' => function($data) {
 					switch($data->status){
-						case Invoice::STATUS_UNPAID:
-							$status = 'Unpaid';
+						case Invoice::STATUS_OWING:
+							$status = 'Owing';
 						break;
 						case Invoice::STATUS_PAID:
 							$status = 'Paid';
 						break;
-						case Invoice::STATUS_CANCELED:
-							$status = 'Canceled';
+						case Invoice::STATUS_CREDIT:
+							$status = 'Credited';
 						break;
 					}
 					return $status;

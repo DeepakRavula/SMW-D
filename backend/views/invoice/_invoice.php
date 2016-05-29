@@ -30,7 +30,19 @@ $this->params['breadcrumbs'][] = $this->title;
 					return ! empty($data->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->enrolmentScheduleDay->enrolment->qualification->program->name : null;
                 },
 			],	
-			[
+            [
+				'label' => 'Program Price',
+				'value' => function($data) {
+					return ! empty($data->enrolmentScheduleDay->enrolment->qualification->program->rate) ? $data->enrolmentScheduleDay->enrolment->qualification->program->rate : null;
+                },
+			],
+            [
+				'label' => 'Duration',
+				'value' => function($data) {
+					return ! empty($data->enrolmentScheduleDay->duration) ? $data->enrolmentScheduleDay->duration : null;
+                },
+			],
+			/*[
 				'label' => 'Lesson Status',
 				'value' => function($data) {
 					$status = null;
@@ -53,8 +65,8 @@ $this->params['breadcrumbs'][] = $this->title;
 				'value' => function($data) {
 					$status = null;
 
-					if( ! empty($data->invoiceLineItem->invoice->status)) {
-						switch($data->invoiceLineItem->invoice->status){
+					if( ! empty($data->invoice->status)) {
+						switch($data->invoice->status){
 							case Invoice::STATUS_UNPAID:
 								$status = 'Unpaid';
 							break;
@@ -94,10 +106,19 @@ $this->params['breadcrumbs'][] = $this->title;
 						);
 					},
 				],
-			],
+			],*/
         ],
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>
 
 </div>
 
+<?php
+$this->registerJs(
+   '$("document").ready(function(){ 
+        $("#new_medicine").on("pjax:end", function() {
+            $.pjax.reload({container:"#medicine"});  //Reload GridView
+        });
+    });'
+);
+?>

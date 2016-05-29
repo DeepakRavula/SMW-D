@@ -74,11 +74,13 @@ use yii\bootstrap\ActiveForm;
         <?php echo $form->field($model, 'qualifications')->checkboxList($programs) ?>
         </div>
 		<?php endif;?>
-        <div class="col-md-12">
-            <?php echo $form->field($model, 'roles')->checkboxList($roles) ?>
+        <div class="row-fluid">
+        <div class="col-md-2">
+            <?php echo $form->field($model, 'roles')->dropDownList($roles) ?>
         </div>
         <div class="col-md-2">
             <?php echo $form->field($model, 'status')->dropDownList(User::statuses(), ['options' => [2 => ['Selected'=>'selected']]]) ?>
+        </div>
         </div>
         <div class="col-md-12">
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
