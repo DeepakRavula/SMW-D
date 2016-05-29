@@ -22,8 +22,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="user-view">
 	<div>
 		<div class="row-fluid">
-		<p class="teachers-name"><?php echo !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
-		<?php echo !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?></div>
+		<p class="teachers-name">
+			<?php echo !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
+			<?php echo !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?></div>
 		</div>
 		<div class="row-fluid">
 			<?php echo !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null ?>

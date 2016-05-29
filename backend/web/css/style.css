@@ -92,4 +92,11 @@ body .table {
   font-size: 18px;
   font-weight: bold;
 }
+#userform-roles .checkbox, #userform-qualifications .checkbox{
+  display: inline-block;
+  margin-right: 15px;
+}
+.no-label label{
+  display: none;
+}
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */

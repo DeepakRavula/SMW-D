@@ -44,13 +44,13 @@ use yii\bootstrap\ActiveForm;
             <?php echo $form->field($model, 'city')->dropDownList(ArrayHelper::map(City::find()->all(),'id','name' ), ['prompt'=>'Select City'])->label('') ?>
         </div>
         <div class="clearfix"></div>
-        <div class="col-md-4">
+        <div class="col-md-4 no-label">
             <?php echo $form->field($model, 'province')->dropDownList(ArrayHelper::map(Province::find()->all(),'id','name'), ['prompt'=>'Select Province'])->label('') ?>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 no-label">
             <?php echo $form->field($model, 'country')->dropDownList(ArrayHelper::map(Country::find()->all(),'id','name'), ['prompt'=>'Select Country'])->label('') ?>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 no-label">
             <?php echo $form->field($model, 'postalcode',['inputOptions' => ['placeholder' => $model->getAttributeLabel('Postal code')]])->label('') ?>
         </div>
         <div class="clearfix"></div>
@@ -66,15 +66,21 @@ use yii\bootstrap\ActiveForm;
         ])->label('') ?>
         </div>
         <div class="clearfix"></div>
-        <?php echo $form->field($model, 'status')->dropDownList(User::statuses(), ['options' => [2 => ['Selected'=>'selected']]]) ?>
-		
+        
 		<?php $userRoles = Yii::$app->authManager->getRolesByUser($model->model->id); $userRole = end($userRoles);?>
 		<?php //if ( ! empty($userRole) && $userRole->name === User::ROLE_TEACHER): ?>
 	   <?php if ( ! empty($userRole) && $userRole->name === User::ROLE_TEACHER || $model->roles === User::ROLE_TEACHER): ?>
-       		<?php echo $form->field($model, 'qualifications')->checkboxList($programs) ?>
+       	<div class="col-md-12">
+        <?php echo $form->field($model, 'qualifications')->checkboxList($programs) ?>
+        </div>
 		<?php endif;?>
-        <?php echo $form->field($model, 'roles')->checkboxList($roles) ?>
-        <div class="form-group">
+        <div class="col-md-12">
+            <?php echo $form->field($model, 'roles')->checkboxList($roles) ?>
+        </div>
+        <div class="col-md-2">
+            <?php echo $form->field($model, 'status')->dropDownList(User::statuses(), ['options' => [2 => ['Selected'=>'selected']]]) ?>
+        </div>
+        <div class="col-md-12">
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
         </div>
     <?php ActiveForm::end(); ?>
