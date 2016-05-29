@@ -14,39 +14,53 @@ $this->title = $model->getPublicIdentity();
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<style>
+	.summary{
+		display: none;
+	}
+</style>
 <div class="user-view">
-
-
-
-	<?php
-	echo DetailView::widget([
-		'model' => $model,
-		'attributes' => [
-			[
-				'label' => 'First Name',
-				'value' => !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null,
-			],
-			[
-				'label' => 'Last Name',
-				'value' => !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null,
-			],
-			'email:email',
-			[
-				'label' => 'Address',
-				'value' => !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null,
-			],
-			[
-				'label' => 'Phone Number',
-				'value' => !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null,
-			],
-		],
-	])
-	?>
-	<p>
-		<?php echo Html::a(Yii::t('backend', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+	<div>
+		<div class="row-fluid">
+		<p class="teachers-name"><?php echo !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
+		<?php echo !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?></div>
+		</div>
+		<div class="row-fluid">
+			<?php echo !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null ?>
+		</div>
+		<div class="row-fluid">
+			<?php echo !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>
+		</div>
+	</div>
+<!-- 	<?php
+	// echo DetailView::widget([
+	// 	'model' => $model,
+	// 	'attributes' => [
+	// 		[
+	// 			'label' => 'First Name',
+	// 			'value' => !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null,
+	// 		],
+	// 		[
+	// 			'label' => 'Last Name',
+	// 			'value' => !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null,
+	// 		],
+	// 		'email:email',
+	// 		[
+	// 			'label' => 'Address',
+	// 			'value' => !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null,
+	// 		],
+	// 		[
+	// 			'label' => 'Phone Number',
+	// 			'value' => !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null,
+	// 		],
+	// 	],
+	//])
+	?> -->
+	<p class="m-t-20">
+		<?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit details'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		<?php
-		echo Html::a(Yii::t('backend', 'Delete'), ['delete', 'id' => $model->id], [
-			'class' => 'btn btn-danger',
+		echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
+			'class' => '',
 			'data' => [
 				'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
 				'method' => 'post',
@@ -54,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		])
 		?>
     </p>
-
+<hr>
 </div>
 <?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER): ?>
@@ -86,10 +100,22 @@ $this->params['breadcrumbs'][] = $this->title;
 	?>
 <?php endif; ?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
-<h4>Teachers Availability</h4>
+<div class="col-md-12">
+<h4 class="pull-left m-r-20">Teachers Availability</h4>
+<a href="#" class="availability"><i class="fa fa-plus-circle"></i> Add availability</a>
+<div class="clearfix"></div>
+</div>
+<div class="teacher-availability-create row-fluid">
+
+    <?php echo $this->render('//teacher-availability/_form', [
+        'model' => $teacherAvailabilityModel,
+    ]) ?>
+
+</div>
 <?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider1,
+		'options' => ['class' => 'col-md-5'],
 		'columns' => [
 			['class' => 'yii\grid\SerialColumn'],
 			[
@@ -127,11 +153,11 @@ $this->params['breadcrumbs'][] = $this->title;
 		],
 	]);
 	?>
-<div class="teacher-availability-create">
-
-    <?php echo $this->render('//teacher-availability/_form', [
-        'model' => $teacherAvailabilityModel,
-    ]) ?>
-
-</div>
+	<div class="clearfix"></div>
 <?php endif; ?>
+
+<script>
+	$('.availability').click(function(){
+		$('.teacher-availability-create').show(); 
+	});
+</script>

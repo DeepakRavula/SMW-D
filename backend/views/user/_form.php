@@ -26,40 +26,46 @@ use yii\bootstrap\ActiveForm;
         <div class="col-md-6">
             <?php echo $form->field($model, 'lastname') ?>
         </div>
+        <div class="clearfix"></div>
         <div class="col-md-6">
             <?php echo $form->field($model, 'email') ?>
         </div>
          <div class="col-md-6">
             <?php echo $form->field($model, 'password')->passwordInput() ?>
         </div>
+        <div class="clearfix"></div>
         <div class="col-md-4">
             <?php echo $form->field($model, 'address',['inputOptions' => ['placeholder' => $model->getAttributeLabel('Address')],]) ?>
         </div>
         <div class="col-md-4">
-            <?php echo $form->field($model, 'addresslabel')->dropDownList(Address::labels(),['prompt'=>'Select Address Label'])->label(false) ?>
+            <?php echo $form->field($model, 'addresslabel')->dropDownList(Address::labels(),['prompt'=>'Select Address Label'])->label('') ?>
         </div>
         <div class="col-md-4">
-            <?php echo $form->field($model, 'city')->dropDownList(ArrayHelper::map(City::find()->all(),'id','name' ), ['prompt'=>'Select City'])->label(false) ?>
+            <?php echo $form->field($model, 'city')->dropDownList(ArrayHelper::map(City::find()->all(),'id','name' ), ['prompt'=>'Select City'])->label('') ?>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-4">
+            <?php echo $form->field($model, 'province')->dropDownList(ArrayHelper::map(Province::find()->all(),'id','name'), ['prompt'=>'Select Province'])->label('') ?>
         </div>
         <div class="col-md-4">
-            <?php echo $form->field($model, 'province')->dropDownList(ArrayHelper::map(Province::find()->all(),'id','name'), ['prompt'=>'Select Province'])->label(false) ?>
+            <?php echo $form->field($model, 'country')->dropDownList(ArrayHelper::map(Country::find()->all(),'id','name'), ['prompt'=>'Select Country'])->label('') ?>
         </div>
         <div class="col-md-4">
-            <?php echo $form->field($model, 'postalcode',['inputOptions' => ['placeholder' => $model->getAttributeLabel('Postal code')]])->label(false) ?>
+            <?php echo $form->field($model, 'postalcode',['inputOptions' => ['placeholder' => $model->getAttributeLabel('Postal code')]])->label('') ?>
         </div>
-        <div class="col-md-4">
-            <?php echo $form->field($model, 'country')->dropDownList(ArrayHelper::map(Country::find()->all(),'id','name'), ['prompt'=>'Select Country'])->label(false) ?>
-        </div>
+        <div class="clearfix"></div>
+
         <div class="col-md-4">
             <?php echo $form->field($model, 'phonenumber',['inputOptions' => ['placeholder' => $model->getAttributeLabel('Number')],]) ?>
         </div>
         <div class="col-md-4">
-            <?php echo $form->field($model, 'phonelabel')->dropDownList(PhoneNumber::phoneLabels(), ['prompt'=>'Select Label'])->label(false) ?>
+            <?php echo $form->field($model, 'phonelabel')->dropDownList(PhoneNumber::phoneLabels(), ['prompt'=>'Select Label'])->label('') ?>
         </div>
         <div class="col-md-4">
             <?php echo $form->field($model, 'phoneextension',['inputOptions' => ['placeholder' => $model->getAttributeLabel('Extension')]
-        ])->label(false) ?>
+        ])->label('') ?>
         </div>
+        <div class="clearfix"></div>
         <?php echo $form->field($model, 'status')->dropDownList(User::statuses(), ['options' => [2 => ['Selected'=>'selected']]]) ?>
 		
 		<?php $userRoles = Yii::$app->authManager->getRolesByUser($model->model->id); $userRole = end($userRoles);?>
