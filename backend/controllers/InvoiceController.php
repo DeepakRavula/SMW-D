@@ -77,7 +77,7 @@ class InvoiceController extends Controller
 			$model->customer_id = $customer->id;
 			$location_id = Yii::$app->session->get('location_id');
        		$query = Lesson::find()
-                ->joinwith('invoice i')
+                ->joinwith('invoiceLineItem ili')
                 ->joinwith(['enrolmentScheduleDay' => function($query) use($location_id, $customer) {
 					$query->joinWith(['enrolment e' => function($query) use($customer) {
 						$query->joinWith('student s')
@@ -86,7 +86,7 @@ class InvoiceController extends Controller
 					->where(['e.location_id' => $location_id]);
 				}])
                 ->where([
-					'i.id' => null,
+					'ili.id' => null,
 				]);
         
 			$unInvoicedLessonsDataProvider = new ActiveDataProvider([
@@ -94,7 +94,16 @@ class InvoiceController extends Controller
 			]);
 		}
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+		$post = $request->post();
+        if ( ! empty($post['selection']) && is_array($post['selection'])) {
+			$invoice = new Invoice();
+			$invoice->invoice_number = 1;
+			$invoice->date = (new \DateTime())->format('Y-m-d');
+			$invoice->status = Invoice::STATUS_OWING;
+			$invoice->save();
+			print_r($invoice->getErrors());die;
+			foreach($post['selection'] as $lesson) {
+			}
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [

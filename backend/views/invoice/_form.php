@@ -33,8 +33,14 @@ use yii\helpers\Url;
 
     <?php ActiveForm::end(); ?>
 
-
+    <?php $form = ActiveForm::begin(); ?>
     <?php echo $this->render('_uninvoiced_lessons', [
 		'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
     ]) ?>
+
+    <div class="form-group">
+        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    </div>
+    <?php ActiveForm::end(); ?>
+
 </div>
