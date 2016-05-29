@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-use common\models\Invoice;
+use common\models\InvoiceLineItem;
 use common\models\query\LessonQuery;
 /**
  * This is the model class for table "lesson".
@@ -63,9 +63,9 @@ class Lesson extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getInvoice()
+    public function getInvoiceLineItem()
     {
-        return $this->hasOne(Invoice::className(), ['lesson_id' => 'id']);
+        return $this->hasOne(InvoiceLineItem::className(), ['lesson_id' => 'id']);
     }
 
 	    /**

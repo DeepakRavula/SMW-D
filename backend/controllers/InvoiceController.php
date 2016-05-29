@@ -4,6 +4,10 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Invoice;
+use common\models\InvoiceLineItem;
+use common\models\User;
+use common\models\Lesson;
+use common\models\Location;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -61,12 +65,73 @@ class InvoiceController extends Controller
     public function actionCreate()
     {
         $model = new Invoice();
+		$request = Yii::$app->request;
+		$invoice = $request->get('Invoice');
+		$unInvoicedLessonsDataProvider = null;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+		if(isset($invoice['customer_id'])) {
+			$customer = User::findOne(['id' => $invoice['customer_id']]);
+
+			if(empty($customer)) {
+            	throw new NotFoundHttpException('The requested page does not exist.');
+			}
+
+			$model->customer_id = $customer->id;
+			$location_id = Yii::$app->session->get('location_id');
+       		$query = Lesson::find()
+                ->joinwith('invoiceLineItem ili')
+                ->joinwith(['enrolmentScheduleDay' => function($query) use($location_id, $customer) {
+					$query->joinWith(['enrolment e' => function($query) use($customer) {
+						$query->joinWith('student s')
+								->where(['s.customer_id' => $customer->id]);
+					}])
+					->where(['e.location_id' => $location_id]);
+				}])
+                ->where([
+					'ili.id' => null,
+				]);
+        
+			$unInvoicedLessonsDataProvider = new ActiveDataProvider([
+				'query' => $query,
+			]);
+		}
+
+		$post = $request->post();
+        if ( ! empty($post['selection']) && is_array($post['selection'])) {
+			$invoice = new Invoice();
+			$invoice->invoice_number = 1;
+			$invoice->date = (new \DateTime())->format('Y-m-d');
+			$invoice->status = Invoice::STATUS_OWING;
+			$invoice->save();
+            $subTotal=0;
+			foreach($post['selection'] as $selection) {
+                $lesson = Lesson::findOne(['id'=>$selection]);
+                $invoiceLineItem = new InvoiceLineItem();
+                $invoiceLineItem->invoice_id = $invoice->id;
+                $invoiceLineItem->lesson_id = $lesson->id;
+                $time = explode(':', $lesson->enrolmentScheduleDay->duration);
+                $invoiceLineItem->unit = (($time[0]*60) + ($time[1])) / 60;
+                $invoiceLineItem->amount = $lesson->enrolmentScheduleDay->enrolment->qualification->program->rate;
+                $invoiceLineItem->save(); 
+
+                $subTotal += $invoiceLineItem->amount;
+			}
+            
+            $invoice = Invoice::findOne(['id'=>$invoice->id]);
+            $invoice->subTotal = $subTotal;
+            $taxPercentage = $lesson->enrolmentScheduleDay->enrolment->location->province->tax_rate;
+            $taxAmount = $subTotal*$taxPercentage/100;
+            $totalAmount = $subTotal + $taxAmount;
+            $invoice->tax = $taxAmount;
+            $invoice->total = $totalAmount;
+            $invoice->save();         
+             
+            return $this->redirect('create');
+            
         } else {
             return $this->render('create', [
                 'model' => $model,
+				'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
             ]);
         }
     }
@@ -117,5 +182,48 @@ class InvoiceController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+	public function actionAddInvoice()
+    {
+        $model = new User();
+        
+        if( isset(Yii::$app->request->queryParams['User']))
+        {
+            $model->customer = Yii::$app->request->queryParams['User']["customer"];
+        }        
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+    
+    public function generateInvoice()
+    {
+        $query = Student::find()
+					//->join('INNER JOIN','user_location','user_location.user_id = Student.id')
+					->join('INNER JOIN','enrolment','enrolment.student_id = Student.id')
+                    ->join('INNER JOIN','enrolment_schedule_day','enrolment_schedule_day.enrolment_id = enrolment.id')
+                    ->join('INNER JOIN','qualification','qualification.id = enrolment.qualification_id')
+                    ->join('INNER JOIN','program','program.id = qualification.program_id')
+					->where(['enrolment.location_id' => Yii::$app->session->get('location_id')])	
+                ->select('first_name, program.name, enrolment_schedule_day.duration')
+				->all();
+        //$query =  Student::find()->with('enrolment', 'enrolment_schedule_day')->all();    
+        $query = enrolment::find()
+                ->joinwith('student s')
+                ->joinwith('enrolmentScheduleDay es')
+                ->joinwith('qualification q')
+                ->joinWith('qualification.program p')
+                ->groupBy('p.name')
+                ->where(['location_id' => Yii::$app->session->get('location_id'), 's.customer_id' => 171]);
+        
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        return $this->renderPartial('_invoice', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }

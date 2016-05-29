@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\query\InvoiceQuery;
+use common\models\InvoiceLineItem;
 
 /**
  * This is the model class for table "invoice".
@@ -16,9 +17,11 @@ use common\models\query\InvoiceQuery;
  */
 class Invoice extends \yii\db\ActiveRecord
 {
-	const STATUS_UNPAID = 1;
-	const STATUS_PAID = 2;
-	const STATUS_CANCELED = 3;
+	const STATUS_PAID = 1; 
+	const STATUS_OWING = 2;
+	const STATUS_CREDIT = 3;
+
+	public $customer_id;
 	
     /**
      * @inheritdoc
@@ -34,11 +37,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['lesson_id'], 'required'],
-            [['lesson_id'], 'integer'],
-            [['lesson_id'], 'unique'],
-            [['unit', 'tax', 'subtotal', 'total', 'date', 'status'], 'safe'],
-        ];
+		];
     }
 
     /**
@@ -48,8 +47,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'lesson_id' => 'Lesson ID',
-            'amount' => 'Amount',
+			'invoice_number' => 'Invoice Number',
             'date' => 'Date',
             'status' => 'Status',
         ];
@@ -64,9 +62,9 @@ class Invoice extends \yii\db\ActiveRecord
         return new InvoiceQuery(get_called_class());
     }
 
-    public function getLesson()
+    public function getLineItems()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lesson_id']);
+        return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
    
 	public function status($data)
