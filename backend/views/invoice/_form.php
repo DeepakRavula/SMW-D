@@ -14,7 +14,7 @@ use yii\bootstrap\ActiveForm;
 
 <div class="invoice-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['method' => 'get']); ?>
 
     <?php echo $form->errorSummary($model); ?>
 
@@ -25,8 +25,12 @@ use yii\bootstrap\ActiveForm;
 					->join('INNER JOIN','rbac_auth_assignment','rbac_auth_assignment.user_id = user.id')
 					->where(['user_location.location_id' => Yii::$app->session->get('location_id'),'rbac_auth_assignment.item_name' => 'customer'])			
 				->all(),
-		'id','userProfile.fullName' ), ['prompt'=>'Select Customer'])->label(false) ?>
+		'id','userProfile.fullName' ), ['prompt'=>'Select Customer', 'onchange'=>'this.form.submit()'] )->label(false) ?>
 
     <?php ActiveForm::end(); ?>
 
+<?php
+    if($model->customer)
+        echo $this->context->generateInvoice(); 
+?>
 </div>

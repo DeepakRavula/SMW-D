@@ -5,6 +5,8 @@ namespace backend\controllers;
 use Yii;
 use common\models\Invoice;
 use common\models\User;
+use common\models\Student;
+use common\models\enrolment;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -123,9 +125,43 @@ class InvoiceController extends Controller
 	public function actionAddInvoice()
     {
         $model = new User();
+        
+        if( isset(Yii::$app->request->queryParams['User']))
+        {
+            $model->customer = Yii::$app->request->queryParams['User']["customer"];
+        }        
 
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+    
+    public function generateInvoice()
+    {
+        $query = Student::find()
+					//->join('INNER JOIN','user_location','user_location.user_id = Student.id')
+					->join('INNER JOIN','enrolment','enrolment.student_id = Student.id')
+                    ->join('INNER JOIN','enrolment_schedule_day','enrolment_schedule_day.enrolment_id = enrolment.id')
+                    ->join('INNER JOIN','qualification','qualification.id = enrolment.qualification_id')
+                    ->join('INNER JOIN','program','program.id = qualification.program_id')
+					->where(['enrolment.location_id' => Yii::$app->session->get('location_id')])	
+                ->select('first_name, program.name, enrolment_schedule_day.duration')
+				->all();
+        //$query =  Student::find()->with('enrolment', 'enrolment_schedule_day')->all();    
+        $query = enrolment::find()
+                ->joinwith('student s')
+                ->joinwith('enrolmentScheduleDay es')
+                ->joinwith('qualification q')
+                ->joinWith('qualification.program p')
+                ->groupBy('p.name')
+                ->where(['location_id' => Yii::$app->session->get('location_id'), 's.customer_id' => 171]);
+        
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        return $this->renderPartial('_invoice', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }
