@@ -6,6 +6,7 @@ use common\models\UserProfile;
 use common\models\UserLocation;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -14,11 +15,14 @@ use yii\bootstrap\ActiveForm;
 
 <div class="invoice-form">
 
-    <?php $form = ActiveForm::begin(['method' => 'get']); ?>
+    <?php $form = ActiveForm::begin([
+		'method' => 'get',
+		'action' => Url::to('/invoice/create'),
+		]); ?>
 
     <?php echo $form->errorSummary($model); ?>
 
-<?php echo $form->field($model, 'id')->dropDownList(
+<?php echo $form->field($model, 'customer_id')->dropDownList(
 		ArrayHelper::map(
 				User::find()
 					->join('INNER JOIN','user_location','user_location.user_id = user.id')
@@ -30,7 +34,7 @@ use yii\bootstrap\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 
-    <?php echo $this->render('_invoiced_lessons', [
+    <?php echo $this->render('_uninvoiced_lessons', [
 		'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
     ]) ?>
 </div>

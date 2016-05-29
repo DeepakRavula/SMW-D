@@ -19,6 +19,8 @@ class Invoice extends \yii\db\ActiveRecord
 	const STATUS_UNPAID = 1;
 	const STATUS_PAID = 2;
 	const STATUS_CANCELED = 3;
+
+	public $customer_id;
 	
     /**
      * @inheritdoc

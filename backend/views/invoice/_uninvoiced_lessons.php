@@ -12,17 +12,24 @@ $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="lesson-index">
-
+<?php if( ! empty($unInvoicedLessonsDataProvider)): ?>
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php echo GridView::widget([
         'dataProvider' => $unInvoicedLessonsDataProvider,
         'columns' => [
+			[
+				'class' => 'yii\grid\CheckboxColumn',
+				// you may configure additional properties here
+			],
             ['class' => 'yii\grid\SerialColumn'],
-			'id'
+
+   			'id',
+			'enrolmentScheduleDay.enrolment.student.customer.publicIdentity',
+			'enrolmentScheduleDay.enrolment.student.fullName',
         ],
     ]); ?>
-	<?php yii\widgets\Pjax::end(); ?>
-
+ <?php yii\widgets\Pjax::end(); ?>
+<?php endif;?>
 </div>
 
 <?php

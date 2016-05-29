@@ -64,16 +64,17 @@ class InvoiceController extends Controller
     {
         $model = new Invoice();
 		$request = Yii::$app->request;
-		$user = $request->get('User');
+		$invoice = $request->get('Invoice');
 		$unInvoicedLessonsDataProvider = null;
 
-		if(isset($user['id'])) {
-			$customer = User::findOne(['id' => $user['id']]);
+		if(isset($invoice['customer_id'])) {
+			$customer = User::findOne(['id' => $invoice['customer_id']]);
 
 			if(empty($customer)) {
             	throw new NotFoundHttpException('The requested page does not exist.');
 			}
 
+			$model->customer_id = $customer->id;
 			$location_id = Yii::$app->session->get('location_id');
        		$query = Lesson::find()
                 ->joinwith('invoice i')
