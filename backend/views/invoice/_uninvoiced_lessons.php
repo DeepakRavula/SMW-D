@@ -24,8 +24,18 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
    			'id',
-			'enrolmentScheduleDay.enrolment.student.customer.publicIdentity',
-			'enrolmentScheduleDay.enrolment.student.fullName',
+            [
+			    'label' => 'Customer Name',
+                'value' => function($data) {
+                    return ! empty($data->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $data->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null;
+                },
+            ],
+            [
+			    'label' => 'Customer Name',
+                'value' => function($data) {
+                    return ! empty($data->enrolmentScheduleDay->enrolment->student->fullName) ? $data->enrolmentScheduleDay->enrolment->student->fullName : null;
+                },
+            ],
         ],
     ]); ?>
  <?php yii\widgets\Pjax::end(); ?>

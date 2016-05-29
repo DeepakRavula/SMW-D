@@ -14,7 +14,6 @@ use common\models\Lesson;
  * @property integer $lesson_id
  * @property double $unit
  * @property string $amount
- * @property string $tax
  */
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
@@ -32,9 +31,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoice_id', 'lesson_id', 'unit', 'amount', 'tax'], 'required'],
+            [['invoice_id', 'lesson_id', 'unit', 'amount'], 'required'],
             [['invoice_id', 'lesson_id'], 'integer'],
-            [['unit', 'amount', 'tax'], 'number'],
+            [['unit', 'amount'], 'number'],
         ];
     }
 
@@ -45,7 +44,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getInvoice()
     {
-        return $this->hasOne(Invoice::className(), ['invoice_id' => 'id']);
+        return $this->hasOne(Invoice::className(), ['invoice_id' => 'invoice_id']);
     }
     /**
      * @inheritdoc
@@ -58,7 +57,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'lesson_id' => 'Lesson ID',
             'unit' => 'Unit',
             'amount' => 'Amount',
-            'tax' => 'Tax',
         ];
     }
 }

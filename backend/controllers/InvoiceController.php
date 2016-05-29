@@ -4,8 +4,10 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Invoice;
+use common\models\InvoiceLineItem;
 use common\models\User;
 use common\models\Lesson;
+use common\models\Location;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -101,10 +103,31 @@ class InvoiceController extends Controller
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->save();
-			print_r($invoice->getErrors());die;
-			foreach($post['selection'] as $lesson) {
+            $subTotal=0;
+			foreach($post['selection'] as $selection) {
+                $lesson = Lesson::findOne(['id'=>$selection]);
+                $invoiceLineItem = new InvoiceLineItem();
+                $invoiceLineItem->invoice_id = $invoice->id;
+                $invoiceLineItem->lesson_id = $lesson->id;
+                $time = explode(':', $lesson->enrolmentScheduleDay->duration);
+                $invoiceLineItem->unit = (($time[0]*60) + ($time[1])) / 60;
+                $invoiceLineItem->amount = $lesson->enrolmentScheduleDay->enrolment->qualification->program->rate;
+                $invoiceLineItem->save(); 
+
+                $subTotal += $invoiceLineItem->amount;
 			}
-            return $this->redirect(['view', 'id' => $model->id]);
+            
+            $invoice = Invoice::findOne(['id'=>$invoice->id]);
+            $invoice->subTotal = $subTotal;
+            $taxPercentage = $lesson->enrolmentScheduleDay->enrolment->location->province->tax_rate;
+            $taxAmount = $subTotal*$taxPercentage/100;
+            $totalAmount = $subTotal + $taxAmount;
+            $invoice->tax = $taxAmount;
+            $invoice->total = $totalAmount;
+            $invoice->save();         
+             
+            return $this->redirect('create');
+            
         } else {
             return $this->render('create', [
                 'model' => $model,

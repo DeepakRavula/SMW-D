@@ -14,6 +14,7 @@ use Yii;
  * @property integer $qualification_id
  * @property string $commencement_date
  * @property string $renewal_date
+ * @property string $location_id
  */
 class Enrolment extends \yii\db\ActiveRecord
 {
@@ -40,7 +41,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             [['student_id', 'qualification_id', 'teacherId', 'programId'], 'required'],
             [['student_id', 'qualification_id', 'teacherId', 'programId', 'day'], 'integer'],
-            [['commencement_date', 'renewal_date', 'teacherId', 'programId', 'day', 'fromTime', 'duration'], 'safe'],
+            [['commencement_date', 'renewal_date', 'teacherId', 'programId', 'day', 'fromTime', 'duration','location_id'], 'safe'],
         ];
     }
 
@@ -73,6 +74,11 @@ class Enrolment extends \yii\db\ActiveRecord
 	public function getEnrolmentScheduleDay()
     {
         return $this->hasOne(EnrolmentScheduleDay::className(), ['enrolment_id' => 'id']);
+    }
+    
+    public function getLocation()
+    {
+        return $this->hasOne(Location::className(), ['id' => 'location_id']);
     }
 	
 	public static function getWeekdaysList()

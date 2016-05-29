@@ -53,8 +53,8 @@ $this->params['breadcrumbs'][] = $this->title;
 				'value' => function($data) {
 					$status = null;
 
-					if( ! empty($data->invoice->status)) {
-						switch($data->invoice->status){
+					if( ! empty($data->invoiceLineItem->invoice->status)) {
+						switch($data->invoiceLineItem->invoice->status){
 							case Invoice::STATUS_UNPAID:
 								$status = 'Unpaid';
 							break;
