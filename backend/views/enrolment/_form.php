@@ -18,7 +18,7 @@ use yii\helpers\Url;
 ?>
 
 <div class="enrolment-form form-well">
-
+<h4>Add new program details</h4>
     <?php $form = ActiveForm::begin(); ?>
 
     <?php echo $form->errorSummary($model); ?>

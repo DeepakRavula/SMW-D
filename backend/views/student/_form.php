@@ -19,21 +19,29 @@ use yii\bootstrap\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php echo $form->errorSummary($model); ?>
-
-    <?php echo $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(),[
-			'type' => DatePicker::TYPE_COMPONENT_APPEND,
-			'pluginOptions' => [
-    		    'format' => 'mm-dd-yy',
-        		'todayHighlight' => true,
-				'autoclose'=>true
-    		]
-			]);?>
-
-    <div class="form-group">
+    <div class="row-fluid">
+        <div class="col-md-4">
+        <?php echo $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="row-fluid">
+        <div class="col-md-4">
+            <?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(),[
+        			'type' => DatePicker::TYPE_COMPONENT_APPEND,
+        			'pluginOptions' => [
+            		    'format' => 'mm-dd-yy',
+                		'todayHighlight' => true,
+        				'autoclose'=>true
+            		]
+        			]);?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="col-md-12">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 

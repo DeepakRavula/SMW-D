@@ -62,17 +62,20 @@ $this->params['breadcrumbs'][] = $this->title;
 		])
 		?>
     </p>
-
-</div>
 <hr>
+
 <?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER): ?>
-<h3>Students </h3> 
-<?php echo Html::a('Create Student', ['student/create'], ['class' => 'btn btn-success'])?>
-
+	<div class="col-md-12">
+		<div class="row-fluid">
+<h3 class="m-0 pull-left">Students </h3> 
+<?php echo Html::a('<i class="fa fa-plus-circle"></i> Add new student', ['student/create'], ['class' => 'm-t-0 m-l-20 add-new-program text-add-new'])?>
+<div class="clearfix"></div>
+</div>
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
+		'options' => ['class'=>'m-t-10'],
 		'columns' => [
 			['class' => 'yii\grid\SerialColumn'],
 			[
@@ -93,6 +96,10 @@ $this->params['breadcrumbs'][] = $this->title;
 		],
 	]);
 	?>
+	<div class="clearfix"></div>
+	</div>
+	</div>
+
 <?php endif; ?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
 <div class="col-md-12">
@@ -144,7 +151,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return null;
                 },
             ],
-			['class' => 'yii\grid\ActionColumn', 'controller' => 'teacher-availability','template' => '{view} {delete}'],
+			['class' => 'yii\grid\ActionColumn', 'controller' => 'teacher-availability','template' => '{delete}'],
 		],
 	]);
 	?>
