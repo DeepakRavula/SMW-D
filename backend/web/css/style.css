@@ -56,9 +56,14 @@ body .table {
   transition: all 0.3s;
 }
 .btn-primary:hover,
+.btn-primary:focus,
 .btn-primary:focus{
   background-color: #a81010;
   border-color: #a81010;
 }
-
+.flex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */
