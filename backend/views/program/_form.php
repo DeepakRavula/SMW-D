@@ -14,17 +14,20 @@ use yii\bootstrap\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php echo $form->errorSummary($model); ?>
-
-    <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'rate')->textInput() ?>
-
-    <?php echo $form->field($model, 'status')->dropDownList(Program::statuses()) ?>
-
-    <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+	<div class="row">
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+		</div>
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'rate')->textInput() ?>
+		</div>
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'status')->dropDownList(Program::statuses()) ?>
+		</div>
+	</div>
+	<div class="row-fluid">
+        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-success']) ?>
     </div>
-
     <?php ActiveForm::end(); ?>
 
 </div>

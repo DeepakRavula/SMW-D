@@ -11,8 +11,13 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->params['body-class'] = 'login-page';
 ?>
 <div class="login-box">
+    
     <div class="login-logo">
-        <?php echo Html::encode($this->title) ?>
+        <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
+                <!-- Add the class icon to your logo image or logo icon to add the margining -->                
+                <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
+            </a>
+        <?php //echo Html::encode($this->title) ?>
     </div><!-- /.login-logo -->
     <div class="header"></div>
     <div class="login-box-body">

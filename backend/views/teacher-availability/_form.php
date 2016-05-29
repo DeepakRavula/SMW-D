@@ -12,23 +12,28 @@ use yii\bootstrap\ActiveForm;
 /* @var $model common\models\TeacherAvailability */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-
+<div class="row-fluid">
 <div class="teacher-availability-form">
-<h4>Teacher Availability Form</h4>
+<h4>Add Teacher's Availability Day and Time</h4>
     <?php $form = ActiveForm::begin(); ?>
 
     <?php echo $form->errorSummary($model); ?>
+    <div class="row">
+	<div class="col-md-2">
+		<?php echo $form->field($model, 'day')->dropdownList(TeacherAvailability::getWeekdaysList());?>
+	</div>
+	<div class="col-md-2">
+		<?php echo $form->field($model, 'from_time')->widget(TimePicker::classname(), []);?>
+	</div>
+	<div class="col-md-2">
+		<?php echo $form->field($model, 'to_time')->widget(TimePicker::classname(), []);?>
+	</div>
 
-    <?php echo $form->field($model, 'day')->dropdownList(TeacherAvailability::getWeekdaysList());?>
-
-    <?php echo $form->field($model, 'from_time')->widget(TimePicker::classname(), []);?>
-
-    <?php echo $form->field($model, 'to_time')->widget(TimePicker::classname(), []);?>
-
-    <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+	</div>
+	<div class="form-group">
+        <?php echo Html::submitButton($model->isNewRecord ? 'Add' : 'Edit', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
-
     <?php ActiveForm::end(); ?>
-
 </div>
+</div>
+<div class="clearfix"></div>

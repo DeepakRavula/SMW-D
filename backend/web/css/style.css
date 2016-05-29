@@ -19,10 +19,19 @@ body .user-panel > .info {
 body .table {
   word-break: break-all;
 }
+.m-t-20{
+  margin-top: 20px;
+}
+.m-r-20{
+  margin-right: 20px;
+}
 .logo > img
 {
   width: 122px;  
   padding-left: 2px;
+}
+.login-box > .login-logo > .logo > img{
+  width: 200px;
 }
 
 #location_id {
@@ -37,4 +46,50 @@ body .table {
   overflow: scroll;
 }
 
+.login-page,
+.register-page{
+  background: #fff;
+}
+.login-box-body,
+.register-box-body{
+    box-shadow: 0 0 27px rgba(6, 6, 6, 0.06);
+    border: 1px solid #EAE9E9;
+    border-radius: 3px;
+}
+.btn-primary{
+  background-color: #E12E2B;
+  border-color: #E12E2B;
+  transition: all 0.3s;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:focus{
+  background-color: #a81010;
+  border-color: #a81010;
+}
+.flex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.teacher-availability-create{
+  display: none;
+}
+.teacher-availability-form{
+      background: rgba(236, 236, 236, 0.35);
+    padding: 0 19px;
+    border: 1px solid rgba(221, 221, 221, 0.45);
+    margin-bottom: 20px;
+    /* float: left; */
+    clear: both;
+}
+.availability{
+    float: left;
+    margin: 10px 0 0 0;
+    border-bottom: 1px solid;
+}
+.teachers-name{
+  font-size: 18px;
+  font-weight: bold;
+}
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */
