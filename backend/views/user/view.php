@@ -14,15 +14,9 @@ $this->title = $model->getPublicIdentity();
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<style>
-	.summary{
-		display: none;
-	}
-</style>
 <div class="user-view">
-	<div>
 		<div class="row-fluid">
-		<p class="teachers-name">
+		<p class="users-name">
 			<?php echo !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
 			<?php echo !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?></div>
 		</div>
@@ -32,7 +26,6 @@ $this->params['breadcrumbs'][] = $this->title;
 		<div class="row-fluid">
 			<?php echo !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>
 		</div>
-	</div>
 <!-- 	<?php
 	// echo DetailView::widget([
 	// 	'model' => $model,
@@ -69,8 +62,9 @@ $this->params['breadcrumbs'][] = $this->title;
 		])
 		?>
     </p>
-<hr>
+
 </div>
+<hr>
 <?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER): ?>
 <h3>Students </h3> 
@@ -103,7 +97,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Teachers Availability</h4>
-<a href="#" class="availability"><i class="fa fa-plus-circle"></i> Add availability</a>
+<a href="#" class="availability text-add-new"><i class="fa fa-plus-circle"></i> Add availability</a>
 <div class="clearfix"></div>
 </div>
 <div class="teacher-availability-create row-fluid">

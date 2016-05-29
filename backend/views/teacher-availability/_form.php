@@ -13,7 +13,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <div class="row-fluid">
-<div class="teacher-availability-form">
+<div class="teacher-availability-form form-well">
 <h4>Add Teacher's Availability Day and Time</h4>
     <?php $form = ActiveForm::begin(); ?>
 

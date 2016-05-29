@@ -17,15 +17,16 @@ use yii\helpers\Url;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="enrolment-form">
+<div class="enrolment-form form-well">
 
     <?php $form = ActiveForm::begin(); ?>
 
     <?php echo $form->errorSummary($model); ?>
-
+    <div class="row">
+	<div class="col-md-4">
     <?php echo $form->field($model, 'programId')->dropDownList(ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),['prompt'=>'Select..']); ?>
-
-
+	</div>
+	<div class="col-md-4">
 	<?php // Dependent Dropdown
 	echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
 		 'options' => ['id'=>'enrolment-teacherId'],
@@ -35,7 +36,9 @@ use yii\helpers\Url;
 			 'url' => Url::to(['/enrolment/teachers'])
 		 ]
 	 ]);?>
-		<?php // Dependent Dropdown
+	 </div>
+	 <div class="col-md-4">
+	 	<?php // Dependent Dropdown
 	echo $form->field($model, 'day')->widget(DepDrop::classname(), [
 		 'options' => ['id'=>'teacher-availability-day'],
 		 'pluginOptions'=>[
@@ -44,8 +47,11 @@ use yii\helpers\Url;
 			 'url' => Url::to(['/teacher-availability/available-days'])
 		 ]
 	 ]);?>
-
-		<?php // Dependent Dropdown
+	 </div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+			<?php // Dependent Dropdown
 	echo $form->field($model, 'fromTime')->widget(DepDrop::classname(), [
 		 'options' => ['id'=>'fromTime-id'],
 		 'pluginOptions'=>[
@@ -54,15 +60,17 @@ use yii\helpers\Url;
 			 'url' => Url::to(['/teacher-availability/available-hours'])
 		 ]
 	 ]);?>
-
-    <?php echo $form->field($model, 'duration')->widget(TimePicker::classname(), [
+		</div>
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'duration')->widget(TimePicker::classname(), [
 	'pluginOptions' => [
 		'showMeridian' => false,
 		'defaultTime' => date('H:i',strtotime('00:45')),
 	]
 	]);?>
-
-    <?php echo $form->field($model, 'commencement_date')->widget(DatePicker::classname(),[
+		</div>
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'commencement_date')->widget(DatePicker::classname(),[
 			'type' => DatePicker::TYPE_COMPONENT_APPEND,
 			'pluginOptions' => [
     		    'format' => 'mm-dd-yy',
@@ -70,7 +78,8 @@ use yii\helpers\Url;
 				'autoclose'=>true
     		]
 			]);?>
-
+		</div>
+	</div>
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

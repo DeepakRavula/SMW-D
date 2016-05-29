@@ -75,7 +75,7 @@ body .table {
 .teacher-availability-create{
   display: none;
 }
-.teacher-availability-form{
+.form-well{
       background: rgba(236, 236, 236, 0.35);
     padding: 0 19px;
     border: 1px solid rgba(221, 221, 221, 0.45);
@@ -83,12 +83,12 @@ body .table {
     /* float: left; */
     clear: both;
 }
-.availability{
+.text-add-new{
     float: left;
     margin: 10px 0 0 0;
     border-bottom: 1px solid;
 }
-.teachers-name{
+.users-name{
   font-size: 18px;
   font-weight: bold;
 }
@@ -96,7 +96,10 @@ body .table {
   display: inline-block;
   margin-right: 15px;
 }
-.no-label label{
+.no-label label, .dn{
   display: none;
 }
+.summary{
+    display: none;
+  }
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */
