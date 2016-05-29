@@ -18,7 +18,7 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->errorSummary($model); ?>
 
-<?php echo $form->field($model, 'customer')->dropDownList(
+<?php echo $form->field($model, 'id')->dropDownList(
 		ArrayHelper::map(
 				User::find()
 					->join('INNER JOIN','user_location','user_location.user_id = user.id')
@@ -29,8 +29,8 @@ use yii\bootstrap\ActiveForm;
 
     <?php ActiveForm::end(); ?>
 
-<?php
-    if($model->customer)
-        echo $this->context->generateInvoice(); 
-?>
+
+    <?php echo $this->render('_invoiced_lessons', [
+		'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+    ]) ?>
 </div>

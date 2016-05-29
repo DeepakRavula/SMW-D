@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-index">
 
-<?php echo Html::a('Add Invoice', ['invoice/add-invoice'], ['class' => 'btn btn-success'])?>
+<?php echo Html::a('Add Invoice', ['invoice/create'], ['class' => 'btn btn-success'])?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [

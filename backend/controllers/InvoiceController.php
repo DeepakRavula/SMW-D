@@ -5,8 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Invoice;
 use common\models\User;
-use common\models\Student;
-use common\models\enrolment;
+use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -64,12 +63,42 @@ class InvoiceController extends Controller
     public function actionCreate()
     {
         $model = new Invoice();
+		$request = Yii::$app->request;
+		$user = $request->get('User');
+		$unInvoicedLessonsDataProvider = null;
+
+		if(isset($user['id'])) {
+			$customer = User::findOne(['id' => $user['id']]);
+
+			if(empty($customer)) {
+            	throw new NotFoundHttpException('The requested page does not exist.');
+			}
+
+			$location_id = Yii::$app->session->get('location_id');
+       		$query = Lesson::find()
+                ->joinwith('invoice i')
+                ->joinwith(['enrolmentScheduleDay' => function($query) use($location_id, $customer) {
+					$query->joinWith(['enrolment e' => function($query) use($customer) {
+						$query->joinWith('student s')
+								->where(['s.customer_id' => $customer->id]);
+					}])
+					->where(['e.location_id' => $location_id]);
+				}])
+                ->where([
+					'i.id' => null,
+				]);
+        
+			$unInvoicedLessonsDataProvider = new ActiveDataProvider([
+				'query' => $query,
+			]);
+		}
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+				'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
             ]);
         }
     }
