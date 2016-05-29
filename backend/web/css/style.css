@@ -24,6 +24,9 @@ body .table {
   width: 122px;  
   padding-left: 2px;
 }
+.login-box > .login-logo > .logo > img{
+  width: 200px;
+}
 
 #location_id {
 	margin: 9px 10px 0 0;
@@ -35,6 +38,27 @@ body .table {
   height: calc(100vh - 124px);
   display: block;
   overflow: scroll;
+}
+
+.login-page,
+.register-page{
+  background: #fff;
+}
+.login-box-body,
+.register-box-body{
+    box-shadow: 0 0 27px rgba(6, 6, 6, 0.06);
+    border: 1px solid #EAE9E9;
+    border-radius: 3px;
+}
+.btn-primary{
+  background-color: #E12E2B;
+  border-color: #E12E2B;
+  transition: all 0.3s;
+}
+.btn-primary:hover,
+.btn-primary:focus{
+  background-color: #a81010;
+  border-color: #a81010;
 }
 
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */
