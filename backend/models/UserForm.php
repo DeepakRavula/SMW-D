@@ -72,12 +72,7 @@ class UserForm extends Model
                     'id'
                 )]
             ],
-            [['roles'], 'each',
-                'rule' => ['in', 'range' => ArrayHelper::getColumn(
-                    Yii::$app->authManager->getRoles(),
-                    'name'
-                )]
-            ],
+            ['roles','required'],
             
             ['lastname', 'filter', 'filter' => 'trim'],
             ['lastname', 'required'],
@@ -220,11 +215,8 @@ class UserForm extends Model
             $auth = Yii::$app->authManager;
             $auth->revokeAll($model->getId());
 
-            if ($this->roles && is_array($this->roles)) {
-                foreach ($this->roles as $role) {
-                    $auth->assign($auth->getRole($role), $model->getId());
-                }
-            }
+            if ($this->roles != null)
+            $auth->assign($auth->getRole($this->roles), $model->getId());
 
             $userLocationModel = UserLocation::findOne(["user_id"=>$model->getId(), "location_id"=>Yii::$app->session->get('location_id')]);
 			if(empty($userLocationModel)){
