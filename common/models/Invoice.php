@@ -64,7 +64,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getLineItems()
     {
-        return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoice_id']);
+        return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
    
 	public function status($data)

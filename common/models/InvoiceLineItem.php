@@ -44,7 +44,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getInvoice()
     {
-        return $this->hasOne(Invoice::className(), ['invoice_id' => 'invoice_id']);
+        return $this->hasOne(Invoice::className(), ['invoice_id' => 'id']);
     }
     /**
      * @inheritdoc
