@@ -132,6 +132,10 @@ body .table {
   font-size: 18px;
   font-weight: bold;
 }
+.users-name em small{
+  font-size: 12px;
+  color: gray;
+}
 #userform-roles .checkbox, #userform-qualifications .checkbox{
   display: inline-block;
   margin-right: 15px;

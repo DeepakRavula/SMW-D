@@ -13,16 +13,23 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'options' => ['class'=>'col-md-5'],
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $u= \yii\helpers\StringHelper::basename(get_class($model));
+            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        },
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'name',
             'rate:currency',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            //['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-	<p>
+    <div class="clearfix"></div>
+	<div class="col-md-12">
         <?php echo Html::a('Create Program', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    </div>
 
 </div>
