@@ -55,14 +55,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
 					if( ! empty($data->invoiceLineItem->invoice->status)) {
 						switch($data->invoiceLineItem->invoice->status){
-							case Invoice::STATUS_UNPAID:
-								$status = 'Unpaid';
-							break;
 							case Invoice::STATUS_PAID:
 								$status = 'Paid';
 							break;
-							case Invoice::STATUS_CANCELED:
-								$status = 'Canceled';
+							case Invoice::STATUS_OWING:
+								$status = 'Owing';
+							break;
+							case Invoice::STATUS_CREDIT:
+								$status = 'Credit';
 							break;
 						}
 					}

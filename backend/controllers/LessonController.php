@@ -7,6 +7,7 @@ use common\models\Enrolment;
 use common\models\EnrolmentScheduleDay;
 use common\models\Lesson;
 use common\models\Invoice;
+use common\models\InvoiceLineItem;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -129,38 +130,31 @@ class LessonController extends Controller
 	public function actionInvoice($id) {
 		$invoice = new Invoice();
 		$model = Lesson::findOne(['id' => $id]);
-		$duration = date("H:i",strtotime($model->enrolmentScheduleDay->duration));
-		$unit = null;
-		switch($duration){
-			case '00:30':
-				$unit = '0.5';
-			break;
-			case '00:45':
-				$unit = '0.75';
-			break;
-			case '01:00':
-				$unit = '1';
-			break;
-			case '01:30':
-				$unit = '1.5';
-			break;
-		}
-		$rate = $model->enrolmentScheduleDay->enrolment->qualification->program->rate;
-		$tax = $rate * (13.5 / 100);
-		$amount = $unit * $rate;
-		$date = new \DateTime();
-		$date->add(\DateInterval::createFromDateString('today'));
-		$today = $date->format('Y-m-d');
-		$invoice->setAttributes([
-			'lesson_id' => $id,
-			'unit' => $unit,
-			'tax' =>  $tax,
-			'subtotal'	 => $amount,
-			'total' => $amount + $tax,
-			'date' => $today,
-			'status' => Invoice::STATUS_UNPAID,
-		])	;
+		$invoice->invoice_number = 1;
+		$invoice->date = (new \DateTime())->format('Y-m-d');
+		$invoice->status = Invoice::STATUS_OWING;
 		$invoice->save();
+        $subTotal=0;
+
+		$invoiceLineItem = new InvoiceLineItem();
+		$invoiceLineItem->invoice_id = $invoice->id;
+		$invoiceLineItem->lesson_id = $id;
+		$time = explode(':', $model->enrolmentScheduleDay->duration);
+		$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
+		$invoiceLineItem->amount = $model->enrolmentScheduleDay->enrolment->qualification->program->rate;
+		$invoiceLineItem->save();
+
+		$subTotal += $invoiceLineItem->amount;
+
+		$invoice = Invoice::findOne(['id' => $invoice->id]);
+		$invoice->subTotal = $subTotal;
+		$taxPercentage = $model->enrolmentScheduleDay->enrolment->location->province->tax_rate;
+		$taxAmount = $subTotal * $taxPercentage / 100;
+		$totalAmount = $subTotal + $taxAmount;
+		$invoice->tax = $taxAmount;
+		$invoice->total = $totalAmount;
+		$invoice->save();
+
 		return $this->redirect(['lesson/index','id' => $id]);
 	}
 }
