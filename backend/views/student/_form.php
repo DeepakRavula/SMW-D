@@ -11,7 +11,8 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="student-form">
+<div class="student-form form-well">
+    <h4>Add new student</h4>
 	<?php
 	$session = Yii::$app->session;
 	$locationId = $session->get('location_id');
@@ -19,7 +20,7 @@ use yii\bootstrap\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php echo $form->errorSummary($model); ?>
-    <div class="row-fluid">
+    <div class="row">
         <div class="col-md-4">
         <?php echo $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
         </div>
@@ -28,7 +29,7 @@ use yii\bootstrap\ActiveForm;
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="row-fluid">
+    <div class="row">
         <div class="col-md-4">
             <?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(),[
         			'type' => DatePicker::TYPE_COMPONENT_APPEND,
@@ -41,9 +42,10 @@ use yii\bootstrap\ActiveForm;
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="col-md-12">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    <div class="form-group">
+        <?php echo Html::submitButton($model->isNewRecord ? 'Add' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
+    <div class="clearfix"></div>
 
     <?php ActiveForm::end(); ?>
 
