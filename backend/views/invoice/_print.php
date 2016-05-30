@@ -50,7 +50,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
             'columns' => [
-              ['class' => 'yii\grid\SerialColumn'],
                 [ 
                 'attribute' => 'id',
                 'label' => 'ID',
