@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			</p>
 		</div>
 		<div class="col-md-2">
-			<i class="fa fa-map-marker"></i> <?php echo !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null ?>
+			<i class="fa fa-map-marker"></i> <?php echo !empty($address->address) ? $address->address : null ?>
 		</div>
 		<div class="col-md-2">
 			<i class="fa fa-phone-square"></i> <?php echo !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>

@@ -129,11 +129,13 @@ class UserController extends Controller
             	return $this->redirect(['view', 'id' => $model->id]);
 			}
         }
+        $address = Address::findByUserId($model->id);
         return $this->render('view', [
             'student' => new Student(),
             'dataProvider' => $dataProvider,
 			'dataProvider1' => $dataProvider1,
             'model' =>$model, 
+            'address' => $address,
             'teacherAvailabilityModel' => $teacherAvailabilityModel, 
         ]);
 	}
