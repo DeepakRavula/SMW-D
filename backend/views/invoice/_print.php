@@ -49,6 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
+            'tableOptions' =>['class' => 'table table-bordered'],
+            'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
                 [ 
                 'attribute' => 'id',
@@ -104,7 +106,7 @@ $this->params['breadcrumbs'][] = $this->title;
       </div>
 </div>
 <script>
-	// $(document).ready(function(){
-	// 	window.print();
-	// });
+	$(document).ready(function(){
+		window.print();
+	});
 </script>

@@ -19,6 +19,9 @@ body .user-panel > .info {
 body .table {
   word-break: break-all;
 }
+.bg-light-gray{
+  background: #F7F7F7;
+}
 .m-0{
   margin: 0;
 }
@@ -151,5 +154,6 @@ body .table {
   }
   .invoice{
     margin: 0 auto;
+    box-shadow: 0px 0px 42px rgba(0, 0, 0, 0.05);
   }
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */

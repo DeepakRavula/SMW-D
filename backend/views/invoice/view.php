@@ -48,10 +48,25 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
+            'tableOptions' =>['class' => 'table table-bordered'],
+            'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
-                'id',
-                'unit',
-                'amount:currency',
+                [ 
+                'attribute' => 'id',
+                'label' => 'ID',
+                'enableSorting' => false,
+                ],
+                [ 
+                'attribute' => 'unit',
+                'label' => 'Unit',
+                'enableSorting' => false,
+                ],
+                [ 
+                'attribute' => 'amount',
+                'format' => 'currency',
+                'label' => 'Amount',
+                'enableSorting' => false,
+                ],
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
@@ -90,9 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
       </div>
     <div class="row no-print">
         <div class="col-xs-12">
-            <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
-          <button type="button" class="btn btn-success pull-right"><i class="fa fa-credit-card"></i> Submit Payment
-          </button>
+            <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>
           <button type="button" class="btn btn-primary pull-right" style="margin-right: 5px;">
             <i class="fa fa-download"></i> Generate PDF
           </button>
