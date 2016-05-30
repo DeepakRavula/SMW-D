@@ -3,7 +3,7 @@
 /* @var $model backend\models\UserForm */
 /* @var $roles yii\rbac\Role[] */
 $this->title = Yii::t('backend', 'Create {modelClass}', [
-    'modelClass' => 'User',
+    'modelClass' => $model->roles,
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
