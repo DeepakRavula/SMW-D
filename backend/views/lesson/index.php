@@ -12,10 +12,14 @@ $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="lesson-index">
-
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $u= \yii\helpers\StringHelper::basename(get_class($model));
+            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        },
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 			[
@@ -81,11 +85,11 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
 			[
 				'class' => 'yii\grid\ActionColumn',
-				'template' => '{invoice} {view} {update} {delete}',
+				'template' => '{invoice}',
 				'buttons' => [
 					'invoice' => function ($url, $model) {
 						return Html::a(
-							'<span class="glyphicon glyphicon-usd"></span>',
+							'<i class="fa fa-file-pdf-o" data-toggle="tooltip" data-placement="bottom" title="Generate Invoice"></i>',
 							$url, 
 							[
 								'title' => 'Generate Invoice',

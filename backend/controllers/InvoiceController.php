@@ -233,4 +233,17 @@ class InvoiceController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+    public function actionPrint($id){
+
+        $model = $this->findModel($id);
+        $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
+        $invoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $invoiceLineItems,
+        ]);
+        $this->layout = "/print-invoice";
+        return $this->render('_print', [
+            'model' => $model,
+            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
+        ]);
+    }
 }

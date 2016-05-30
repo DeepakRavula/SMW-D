@@ -31,6 +31,9 @@ body .table {
 .m-t-20{
   margin-top: 20px;
 }
+.m-b-10{
+  margin-bottom: 10px;
+}
 .m-l-20{
   margin-left: 20px !important;
 }
@@ -107,7 +110,7 @@ body .table {
 .detail-icon{
   width: 18px;
     text-align: center;
-    margin-right: 10px;
+    margin-right: 2px;
 }
 .action-btns{
   margin-top: 15px;
@@ -145,5 +148,8 @@ body .table {
 }
 .summary{
     display: none;
+  }
+  .invoice{
+    margin: 0 auto;
   }
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */

@@ -16,11 +16,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-xs-12">
           <h2 class="page-header">
-            <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
+            <div class="logo pull-left">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
-            </a>
+            </div>
             <small class="pull-right">Date: <?php echo date("m/d/Y", strtotime($model->date));?></small>
+            <div class="clearfix"></div>
           </h2>
         </div>
         <!-- /.col -->
@@ -49,9 +50,23 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
             'columns' => [
-                'id',
-                'unit',
-                'amount:currency',
+              ['class' => 'yii\grid\SerialColumn'],
+                [ 
+                'attribute' => 'id',
+                'label' => 'ID',
+                'enableSorting' => false,
+                ],
+                [ 
+                'attribute' => 'unit',
+                'label' => 'Unit',
+                'enableSorting' => false,
+                ],
+                [ 
+                'attribute' => 'amount',
+                'format' => 'currency',
+                'label' => 'Amount',
+                'enableSorting' => false,
+                ],
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
@@ -88,16 +103,9 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <!-- /.col -->
       </div>
-    <div class="row no-print">
-        <div class="col-xs-12">
-            <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default']) ?>
-          <button type="button" class="btn btn-success pull-right"><i class="fa fa-credit-card"></i> Submit Payment
-          </button>
-          <button type="button" class="btn btn-primary pull-right" style="margin-right: 5px;">
-            <i class="fa fa-download"></i> Generate PDF
-          </button>
-        </div>
-      </div>
-
-    
 </div>
+<script>
+	// $(document).ready(function(){
+	// 	window.print();
+	// });
+</script>
