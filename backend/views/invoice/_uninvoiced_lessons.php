@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
-			    'label' => 'Customer Name',
+			    'label' => 'Student Name',
                 'value' => function($data) {
                     return ! empty($data->enrolmentScheduleDay->enrolment->student->fullName) ? $data->enrolmentScheduleDay->enrolment->student->fullName : null;
                 },

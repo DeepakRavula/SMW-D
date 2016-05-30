@@ -72,14 +72,14 @@ class Invoice extends \yii\db\ActiveRecord
 		$status = null;
 
         switch($data->status){
-			case Invoice::STATUS_UNPAID:
-				$status = 'Unpaid';
+			case Invoice::STATUS_OWING:
+				$status = 'Owing';
 			break;
 			case Invoice::STATUS_PAID:
 				$status = 'Paid';
 			break;
-			case Invoice::STATUS_CANCELED:
-				$status = 'Canceled';
+			case Invoice::STATUS_CREDIT:
+				$status = 'Credited';
 			break;
 		}
 		return $status;

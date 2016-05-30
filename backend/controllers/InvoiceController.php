@@ -52,8 +52,15 @@ class InvoiceController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
+        $invoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $invoiceLineItems,
+        ]);
+        
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
         ]);
     }
 
