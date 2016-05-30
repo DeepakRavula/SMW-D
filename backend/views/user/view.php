@@ -180,4 +180,5 @@ $this->params['breadcrumbs'][] = $this->title;
 	$('.add-new-student').click(function(){
 		$('.show-create-student-form').show();
 	});
+	
 </script>
