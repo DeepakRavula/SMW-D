@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -11,38 +11,41 @@ $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-view">
+    <div>
+        <div>
+            <?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null?>
+        </div>
 
-
-
-    <?php echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-			[
-				'label' => 'Program Name',
-				'value' => ! empty($model->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $model->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null,
-			],
-            'unit',
-			'tax',
-			'subtotal',
-			'total:currency',
-			[
-				'label' => 'Date',
-				'value' => ! empty(date("d-m-y", strtotime($model->date))) ? date("d-m-y", strtotime($model->date)) : null,
-			],
-			[
-				'label' => 'Status',
-				'value' => $model->status($model),
-			],
-        ],
-    ]) ?>
-    <p>
-        <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
+        <div>
+            <p>Date : <?php echo date("m/d/Y", strtotime($model->date));?> </p>
+            <p>Number : <?php echo $model->invoice_number;?> </p>
+            <p>Status : <?php echo $model->status($model);?> </p>
+        </div>
+    </div>
+    <div>
+    <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+        <?php echo GridView::widget([
+            'dataProvider' => $invoiceLineItemsDataProvider,
+            'columns' => [
+                'id',
+                'unit',
+                'amount:currency',
             ],
-        ]) ?>
-    </p>
+        ]); ?>
+    <?php yii\widgets\Pjax::end(); ?>
+    </div>
+    <div>
+        <div>
+            Payments
+        </div>
+        <div>
+            <p>SubTotal : <?php echo $model->subTotal;?> </p> 
+            <p>Tax : <?php echo $model->tax;?> </p>
+            <p>Total : <?php echo $model->total;?> </p>
+            <p>Paid : 0.00 </p>
+            <p>Balance : <?php echo $model->total;?> </p>
+        </div>
+    </div>
+
+    
 </div>

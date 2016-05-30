@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
-                'label' => 'Lesson',
+                'label' => 'Student Name',
                 'value' => function($data) {
                     return ! empty($data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->fullName. ' (' .$data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->qualification->program->name. ')' : null;
                 },
