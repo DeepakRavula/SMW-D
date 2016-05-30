@@ -14,52 +14,53 @@ $this->title = $model->studentIdentity;
 $this->params['breadcrumbs'][] = ['label' => 'Students', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="row-fluid">
-<p class="users-name"><?php echo $model->first_name; ?><?php echo $model->last_name; ?></p>
-</div>
-<div class="row-fluid">
-<?php echo $model->birth_date; ?>
-</div>
-<div class="row-fluid">
-	<?php echo !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null ?>
-</div>
-
-
-<div class="student-view">
-	<?php
-	// echo DetailView::widget([
-	// 	'model' => $model,
-	// 	'attributes' => [
-	// 		'first_name',
-	// 		'last_name',
-	// 		'birth_date:date',
-	// 		[
-	// 			'label' => 'Customer Name',
-	// 			'value' => !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null,
-	// 		],
-	// 	],
-	// ])
-	?>
-	<p>
-		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit details', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+<div class="user-details-wrapper">
+	<div class="col-md-12">
+		<p class="users-name"><?php echo $model->first_name; ?> <?php echo $model->last_name; ?></p>
+	</div>
+	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Birth date">
+		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo $model->birth_date; ?>
+	</div>
+	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
+		<i class="fa fa-user detail-icon"></i> <?php echo !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null ?>
+	</div>
+	<div class="clearfix"></div>
+	<div class="student-view">
 		<?php
-		echo Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id], [
-			'data' => [
-				'confirm' => 'Are you sure you want to delete this item?',
-				'method' => 'post',
-			],
-		])
+		// echo DetailView::widget([
+		// 	'model' => $model,
+		// 	'attributes' => [
+		// 		'first_name',
+		// 		'last_name',
+		// 		'birth_date:date',
+		// 		[
+		// 			'label' => 'Customer Name',
+		// 			'value' => !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null,
+		// 		],
+		// 	],
+		// ])
 		?>
-    </p>
+		<div class="col-md-12 action-btns">
+			<?php echo Html::a('<i class="fa fa-pencil"></i> Edit details', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+			<?php
+			echo Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id], [
+				'data' => [
+					'confirm' => 'Are you sure you want to delete this item?',
+					'method' => 'post',
+				],
+			])
+			?>
+	    </div>
+	    <div class="clearfix"></div>
+	</div>
 </div>
-
 </div>
-<hr>
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Program details</h4>
 <a href="#" class="add-new-program text-add-new"><i class="fa fa-plus-circle"></i> Add new program</a>
 <div class="clearfix"></div>
 </div>
+
 <div class="dn enrolment-create">
     <?php echo $this->render('//enrolment/_form', [
         'model' => $enrolmentModel,

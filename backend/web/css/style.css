@@ -34,6 +34,9 @@ body .table {
 .m-l-20{
   margin-left: 20px !important;
 }
+.m-r-10{
+  margin-right: 10px;
+}
 .m-r-20{
   margin-right: 20px;
 }
@@ -68,6 +71,12 @@ body .table {
     border: 1px solid #EAE9E9;
     border-radius: 3px;
 }
+.error-summary{
+  background: rgba(255, 0, 0, 0.09);
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 3px;
+}
 .btn-primary{
   background-color: #E12E2B;
   border-color: #E12E2B;
@@ -94,6 +103,25 @@ body .table {
     margin-bottom: 20px;
     /* float: left; */
     clear: both;
+}
+.detail-icon{
+  width: 18px;
+    text-align: center;
+    margin-right: 10px;
+}
+.action-btns{
+  margin-top: 15px;
+}
+.hand{
+  cursor: pointer;
+}
+.user-details-wrapper {
+  margin: -10px -10px 0 -10px;
+  padding: 10px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+    background: #F9F9F9;
+    border-bottom: 1px solid #F3F3F3;
 }
 .text-add-new{
     float: left;

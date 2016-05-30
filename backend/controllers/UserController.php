@@ -130,6 +130,7 @@ class UserController extends Controller
 			}
         }
         return $this->render('view', [
+            'student' => new Student(),
             'dataProvider' => $dataProvider,
 			'dataProvider1' => $dataProvider1,
             'model' =>$model, 

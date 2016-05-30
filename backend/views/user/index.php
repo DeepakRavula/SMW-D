@@ -16,6 +16,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $u= \yii\helpers\StringHelper::basename(get_class($model));
+            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        },
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 			'userProfile.firstname',
@@ -27,20 +32,21 @@ $this->params['breadcrumbs'][] = $this->title;
 					return ! empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                 },
 			],
-            ['class' => 'yii\grid\ActionColumn'],
+            //['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 	<p>
-        <?php echo Html::a(Yii::t('backend', 'Create ' .  (! empty($searchModel->role_name) ? ucwords($searchModel->role_name) : 'User'), [
+<?php echo Html::a(Yii::t('backend', 'Add ' .  (! empty($searchModel->role_name) ? ucwords($searchModel->role_name) : 'User'), [
     'modelClass' => 'User',
-]), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-success']) ?>
+]), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-success pull-left m-r-20']) ?>
     </p>
 
 	<?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
     <p>
         <?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
     'modelClass' => 'User',
-]), ['delete-all'], ['class' => 'btn btn-danger']) ?>
+]), ['delete-all'], ['class' => 'btn btn-danger pull-left']) ?>
     </p>
+    <div class="clearfix"></div>
 	<?php endif;?>
 </div>

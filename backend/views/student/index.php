@@ -13,6 +13,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $u= \yii\helpers\StringHelper::basename(get_class($model));
+            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        },
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 			'first_name',
@@ -25,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
 					return $fullName;
                 } 
 			],
-            ['class' => 'yii\grid\ActionColumn'],
+            //['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 

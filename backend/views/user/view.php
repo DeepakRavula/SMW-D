@@ -14,19 +14,23 @@ $this->title = $model->getPublicIdentity();
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-view">
-		<div class="row-fluid">
-		<p class="users-name">
-			<?php echo !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
-			<?php echo !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?></div>
+<div class="user-view user-details-wrapper">
+		<div class="col-md-12 users-name">
+			<p class="users-name"><?php echo !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
+				<?php echo !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?> 
+				<em>
+					<small><?php echo !empty($model->email) ? $model->email : null ?></small>
+				</em>
+			</p>
 		</div>
-		<div class="row-fluid">
-			<?php echo !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null ?>
+		<div class="col-md-2">
+			<i class="fa fa-map-marker"></i> <?php echo !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null ?>
 		</div>
-		<div class="row-fluid">
-			<?php echo !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>
+		<div class="col-md-2">
+			<i class="fa fa-phone-square"></i> <?php echo !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>
 		</div>
-<!-- 	<?php
+		<div class="clearfix"></div>
+	<?php
 	// echo DetailView::widget([
 	// 	'model' => $model,
 	// 	'attributes' => [
@@ -48,9 +52,9 @@ $this->params['breadcrumbs'][] = $this->title;
 	// 			'value' => !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null,
 	// 		],
 	// 	],
-	//])
-	?> -->
-	<p class="m-t-20">
+	// ])
+	?> 
+	<div class="col-md-12 action-btns">
 		<?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit details'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		<?php
 		echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
@@ -61,21 +65,33 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
 		])
 		?>
-    </p>
-<hr>
-
+    </div>
+    <div class="clearfix"></div>
+</div>
+</div>
 <?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER): ?>
-	<div class="col-md-12">
-		<div class="row-fluid">
-<h3 class="m-0 pull-left">Students </h3> 
-<?php echo Html::a('<i class="fa fa-plus-circle"></i> Add new student', ['student/create'], ['class' => 'm-t-0 m-l-20 add-new-program text-add-new'])?>
-<div class="clearfix"></div>
-</div>
+		<div class="col-md-12">
+			<h4 class="pull-left m-r-20">Students </h4> 
+			<a href="#" class="add-new-student text-add-new"><i class="fa fa-plus-circle"></i> Add new student</a>
+			<?php //echo Html::a('<i class="fa fa-plus-circle"></i> Add new student', ['student/create'], ['class' => 'add-new-program text-add-new'])?>
+			<div class="clearfix"></div>
+		</div>
+		<div class="dn show-create-student-form">
+		    <?php echo $this->render('//student/create', [
+		        'model' => $student,
+		    ]) ?>
+		</div>
+
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
-		'options' => ['class'=>'m-t-10'],
+		'rowOptions' => function ($model, $key, $index, $grid) {
+            $u= \yii\helpers\StringHelper::basename(get_class($model));
+            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        },
+		'options' => ['class'=>'col-md-12'],
 		'columns' => [
 			['class' => 'yii\grid\SerialColumn'],
 			[
@@ -92,13 +108,12 @@ $this->params['breadcrumbs'][] = $this->title;
 					return $fullName;
 				}
 			],
-			['class' => 'yii\grid\ActionColumn', 'controller' => 'student'],
+			//['class' => 'yii\grid\ActionColumn', 'controller' => 'student'],
 		],
 	]);
 	?>
 	<div class="clearfix"></div>
-	</div>
-	</div>
+	
 
 <?php endif; ?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
@@ -161,5 +176,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <script>
 	$('.availability').click(function(){
 		$('.teacher-availability-create').show(); 
+	});
+	$('.add-new-student').click(function(){
+		$('.show-create-student-form').show();
 	});
 </script>
