@@ -63,7 +63,8 @@ class Student extends \yii\db\ActiveRecord
     }
 
 	public function beforeSave($insert) {
-		$this->birth_date = (new \DateTime($this->birth_date))->format('Y-m-d');
+        $birthDate = \DateTime::createFromFormat('m-d-y', $this->birth_date);
+        $this->birth_date = $birthDate->format('Y-m-d');
 
 		return parent::beforeSave($insert);
 	}
