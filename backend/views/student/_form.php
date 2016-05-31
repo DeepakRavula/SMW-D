@@ -17,7 +17,7 @@ use yii\bootstrap\ActiveForm;
 	$session = Yii::$app->session;
 	$locationId = $session->get('location_id');
 	?>
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['action' => '/student/create']); ?>
 
     <?php echo $form->errorSummary($model); ?>
     <div class="row">
@@ -42,6 +42,7 @@ use yii\bootstrap\ActiveForm;
         </div>
         <div class="clearfix"></div>
     </div>
+	<?php echo   $form->field($customer, 'id')->hiddenInput()->label(false); ?>
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Add' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
