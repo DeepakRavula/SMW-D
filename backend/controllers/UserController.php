@@ -83,6 +83,7 @@ class UserController extends Controller
         $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -97,7 +98,8 @@ class UserController extends Controller
     public function actionView($id)
     {
         $searchModel = new UserSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $db = $searchModel->search(Yii::$app->request->queryParams);
+
 		$session = Yii::$app->session;
         Yii::$app->session->set("customer_id" , $id);
         $dataProvider = new ActiveDataProvider([

@@ -10,11 +10,11 @@ use common\models\TeacherAvailability;
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
 
-$this->title = Yii::t('backend',  ! ($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name).'s Detail');
+$this->title = Yii::t('backend',  !($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name).'s Detail');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<?php echo '<pre>'; print_r($searchModel->role_name) ?>
+<?php //echo '<pre>'; print_r($searchModel) ?>
 <div class="user-view user-details-wrapper">
 		<div class="col-md-12 users-name">
 			<p class="users-name"><?php echo !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>

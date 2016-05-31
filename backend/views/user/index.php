@@ -9,17 +9,18 @@ use yii\grid\GridView;
 /* @var $searchModel backend\models\search\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+$role = ! ($searchModel->role_name) ? null : $searchModel->role_name;
 $this->title = Yii::t('backend',  ! ($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name).'s');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-index">
 
+<div class="user-index">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'rowOptions' => function ($model, $key, $index, $grid) {
+        'rowOptions' => function ($model, $key, $index, $grid) use ($role){
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?UserSearch%5Brole_name%5D='.$role.'&id="+(this.id);'];
         },
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
