@@ -13,13 +13,18 @@ use yii\bootstrap\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php echo $form->errorSummary($model); ?>
-
-    <?php echo $form->field($model, 'enrolment_schedule_day_id')->textInput() ?>
-
-    <?php echo $form->field($model, 'status')->textInput() ?>
-
-    <?php echo $form->field($model, 'date')->textInput() ?>
-
+	<div class="row">
+	<div class="col-md-4">
+		<?php echo $form->field($model, 'enrolment_schedule_day_id')->textInput() ?>
+	</div>
+	<div class="col-md-4">
+		<?php echo $form->field($model, 'status')->textInput() ?>
+	</div>
+	<div class="col-md-4">
+		<?php echo $form->field($model, 'date')->textInput() ?>
+	</div>
+    <div class="clearfix"></div>
+    </div>
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

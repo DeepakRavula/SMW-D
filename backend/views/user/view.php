@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	// ])
 	?> 
 	<div class="col-md-12 action-btns">
-		<?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit details'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+		<?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update details'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		<?php
 		echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
 			'class' => '',
