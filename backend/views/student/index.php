@@ -33,6 +33,11 @@ $this->params['breadcrumbs'][] = $this->title;
             //['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+    <p>
+        <?php echo Html::a(Yii::t('backend', 'Create Student', [
+            'modelClass' => 'User',
+        ]), ['create'], ['class' => 'btn btn-success pull-left m-r-20']) ?>
+    </p>
 
 	
 

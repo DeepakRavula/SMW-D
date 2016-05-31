@@ -31,14 +31,7 @@ use yii\bootstrap\ActiveForm;
     </div>
     <div class="row">
         <div class="col-md-4">
-            <?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(),[
-        			'type' => DatePicker::TYPE_COMPONENT_APPEND,
-        			'pluginOptions' => [
-            		    'format' => 'mm-dd-yy',
-                		'todayHighlight' => true,
-        				'autoclose'=>true
-            		]
-        			]);?>
+            <?php echo $form->field($model, 'birth_date')->textInput() ?>
         </div>
         <div class="clearfix"></div>
     </div>
@@ -50,3 +43,11 @@ use yii\bootstrap\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+<script>
+$(function () {
+    $("#student-birth_date").datepicker({
+        changeMonth: true,
+        changeYear: true
+    });
+});
+</script>
