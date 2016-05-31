@@ -9,8 +9,8 @@ use common\models\Student;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
-
-$this->title = $model->studentIdentity;
+$this->title = 'Student Details';
+//$this->title = $model->studentIdentity;
 $this->params['breadcrumbs'][] = ['label' => 'Students', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
