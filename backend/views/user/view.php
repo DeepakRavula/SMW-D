@@ -11,7 +11,7 @@ use common\models\TeacherAvailability;
 /* @var $model common\models\User */
 
 $this->title = Yii::t('backend',  !($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name).'s Detail');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', !($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name)), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php //echo '<pre>'; print_r($searchModel) ?>
@@ -81,6 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		<div class="dn show-create-student-form">
 		    <?php echo $this->render('//student/create', [
 		        'model' => $student,
+				'customer' => $model,
 		    ]) ?>
 		</div>
 

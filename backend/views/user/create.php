@@ -5,8 +5,8 @@
 $this->title = Yii::t('backend', 'Create {modelClass}', [
     'modelClass' => $model->roles,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Users'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', ucwords($model->roles)), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Create')];
 ?>
 <div class="user-create">
 
