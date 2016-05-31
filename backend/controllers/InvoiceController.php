@@ -37,7 +37,12 @@ class InvoiceController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Invoice::find(),
+            'query' => Invoice::find()
+				->join('INNER JOIN','invoice_line_item ili','ili.invoice_id = invoice.id')
+				->join('INNER JOIN','lesson l','l.id = ili.lesson_id')
+				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = l.enrolment_schedule_day_id')
+				->join('INNER JOIN','enrolment e','e.id = esd.enrolment_id')
+				->where(['e.location_id' => Yii::$app->session->get('location_id')]),
         ]);
 
         return $this->render('index', [
