@@ -22,7 +22,6 @@ class UserForm extends Model
 {
     public $username;
     public $email;
-    public $password;
     public $status;
     public $roles;
 	public $qualifications;
@@ -62,9 +61,6 @@ class UserForm extends Model
                 }
             }],
 
-            ['password', 'required', 'on' => 'create'],
-            ['password', 'string', 'min' => 6],
-
             [['status'], 'integer'],
             [['qualifications'], 'each',
                 'rule' => ['in', 'range' => ArrayHelper::getColumn(
@@ -75,11 +71,11 @@ class UserForm extends Model
             ['roles','required'],
             
             ['lastname', 'filter', 'filter' => 'trim'],
-            ['lastname', 'required'],
+            ['lastname', 'required', 'on' => 'create'],
             ['lastname', 'string', 'min' => 2, 'max' => 255],
             
             ['firstname', 'filter', 'filter' => 'trim'],
-            ['firstname', 'required'],
+            ['firstname', 'required', 'on' => 'create'],
             ['firstname', 'string', 'min' => 2, 'max' => 255],
 
 			['phonelabel','required'],
@@ -190,9 +186,6 @@ class UserForm extends Model
             $model->username = $this->username;
             $model->email = $this->email;
             $model->status = $this->status;
-            if ($this->password) {
-                $model->setPassword($this->password);
-            }
             $lastname = $this->lastname;
             $firstname = $this->firstname;
 			$phonenumber = $this->phonenumber;
@@ -253,8 +246,15 @@ class UserForm extends Model
 			$addressModel->country_id = $country;
 			$addressModel->province_id = $province;
             $addressModel->save();
-			$model->link('addresses', $addressModel);
 
+			$userAddressModel = UserAddress::findOne($model->getId());
+				if(empty($userAddressModel)){
+					$userAddressModel = new UserAddress();
+			}
+			$userAddressModel->user_id = $model->id;
+			$userAddressModel->address_id = $addressModel->id;
+			$userAddressModel->save();
+			
 			if (current(Yii::$app->authManager->getRolesByUser($model->getId()))->name === User::ROLE_TEACHER) {
 				Qualification::deleteAll(['teacher_id' => $model->getId()]);
 				if ($this->qualifications && is_array($this->qualifications)) {
