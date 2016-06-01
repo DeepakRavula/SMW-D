@@ -31,7 +31,13 @@ use yii\bootstrap\ActiveForm;
     </div>
     <div class="row">
         <div class="col-md-4">
-            <?php echo $form->field($model, 'birth_date')->textInput() ?>
+            <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname(), [
+				'clientOptions' => [
+					'changeMonth' => true,
+					'changeYear' => true,
+					'yearRange' => '-70:-4'	
+				]
+]); ?>
         </div>
         <div class="clearfix"></div>
     </div>
@@ -44,11 +50,4 @@ use yii\bootstrap\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
-<script>
-$(function () {
-    $("#student-birth_date").datepicker({
-        changeMonth: true,
-        changeYear: true
-    });
-});
-</script>
+
