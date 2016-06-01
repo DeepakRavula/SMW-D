@@ -17,7 +17,7 @@ use yii\bootstrap\ActiveForm;
 	$session = Yii::$app->session;
 	$locationId = $session->get('location_id');
 	?>
-    <?php $form = ActiveForm::begin(['action' => '/student/create']); ?>
+    <?php $form = ActiveForm::begin($model->isNewRecord ? ['action' => '/student/create'] : null); ?>
 
     <?php echo $form->errorSummary($model); ?>
     <div class="row">
