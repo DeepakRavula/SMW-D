@@ -163,7 +163,7 @@ $bundle = BackendAsset::register($this);
                             'label'=>Yii::t('backend', 'Schedule'),
                             'icon'=>'<i class="fa  fa-calendar"></i>',
                             'url'=>['/schedule/index'],
-                            'visible'=>Yii::$app->user->can('administrator')
+                            'visible'=>Yii::$app->user->can('staff')
                         ],
 						[
                             'label'=>Yii::t('backend', 'Students'),
