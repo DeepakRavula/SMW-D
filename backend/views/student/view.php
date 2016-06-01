@@ -70,6 +70,8 @@ $this->params['breadcrumbs'][] = $this->title;
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
 		'options' => ['class' => 'col-md-12'],
+		'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
 		'columns' => [
 			['class' => 'yii\grid\SerialColumn'],
 			[
