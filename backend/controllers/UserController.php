@@ -12,6 +12,7 @@ use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
 use common\models\UserImport;
 use backend\models\UserForm;
+use backend\models\StaffUserForm;
 use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
 use yii\helpers\ArrayHelper;
@@ -155,6 +156,10 @@ class UserController extends Controller
         $model = new UserForm();
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
+		if($model->roles === 'staffmember'){
+			$model = new StaffUserForm();
+        	$model->setScenario('create');
+		}
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
         }

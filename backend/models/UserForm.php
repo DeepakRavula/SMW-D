@@ -186,9 +186,6 @@ class UserForm extends Model
             $model->username = $this->username;
             $model->email = $this->email;
             $model->status = $this->status;
-            if ($this->password) {
-                $model->setPassword($this->password);
-            }
             $lastname = $this->lastname;
             $firstname = $this->firstname;
 			$phonenumber = $this->phonenumber;
@@ -249,8 +246,15 @@ class UserForm extends Model
 			$addressModel->country_id = $country;
 			$addressModel->province_id = $province;
             $addressModel->save();
-			$model->link('addresses', $addressModel);
 
+			$userAddressModel = UserAddress::findOne($model->getId());
+				if(empty($userAddressModel)){
+					$userAddressModel = new UserAddress();
+			}
+			$userAddressModel->user_id = $model->id;
+			$userAddressModel->address_id = $addressModel->id;
+			$userAddressModel->save();
+			
 			if (current(Yii::$app->authManager->getRolesByUser($model->getId()))->name === User::ROLE_TEACHER) {
 				Qualification::deleteAll(['teacher_id' => $model->getId()]);
 				if ($this->qualifications && is_array($this->qualifications)) {
