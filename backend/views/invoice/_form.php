@@ -21,7 +21,8 @@ use yii\helpers\Url;
 		]); ?>
 
     <?php echo $form->errorSummary($model); ?>
-
+    <div class="row">
+<div class="col-md-4">
 <?php echo $form->field($model, 'customer_id')->dropDownList(
 		ArrayHelper::map(
 				User::find()
@@ -30,7 +31,9 @@ use yii\helpers\Url;
 					->where(['user_location.location_id' => Yii::$app->session->get('location_id'),'rbac_auth_assignment.item_name' => 'customer'])			
 				->all(),
 		'id','userProfile.fullName' ), ['prompt'=>'Select Customer', 'onchange'=>'this.form.submit()'] )->label(false) ?>
-
+</div>
+</div>
+<div class="clearfix"></div>
     <?php ActiveForm::end(); ?>
 
     <?php $form = ActiveForm::begin(); ?>

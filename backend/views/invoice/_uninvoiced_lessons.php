@@ -16,6 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php echo GridView::widget([
         'dataProvider' => $unInvoicedLessonsDataProvider,
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
 			[
 				'class' => 'yii\grid\CheckboxColumn',
