@@ -32,6 +32,7 @@ use yii\bootstrap\ActiveForm;
     <div class="row">
         <div class="col-md-4">
             <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname(), [
+                'options' => ['class'=>'form-control'],
 				'clientOptions' => [
 					'changeMonth' => true,
 					'changeYear' => true,
@@ -41,7 +42,7 @@ use yii\bootstrap\ActiveForm;
         </div>
         <div class="clearfix"></div>
     </div>
-	<?php echo   $form->field($customer, 'id')->hiddenInput()->label(false); ?>
+	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Add' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

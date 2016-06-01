@@ -94,6 +94,8 @@ $this->params['breadcrumbs'][] = $this->title;
             return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
         },
 		'options' => ['class'=>'col-md-12'],
+		'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
 		'columns' => [
 			['class' => 'yii\grid\SerialColumn'],
 			[
