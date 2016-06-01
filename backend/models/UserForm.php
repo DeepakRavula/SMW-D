@@ -22,7 +22,6 @@ class UserForm extends Model
 {
     public $username;
     public $email;
-    public $password;
     public $status;
     public $roles;
 	public $qualifications;
@@ -62,9 +61,6 @@ class UserForm extends Model
                 }
             }],
 
-            ['password', 'required', 'on' => 'create'],
-            ['password', 'string', 'min' => 6],
-
             [['status'], 'integer'],
             [['qualifications'], 'each',
                 'rule' => ['in', 'range' => ArrayHelper::getColumn(
@@ -75,11 +71,11 @@ class UserForm extends Model
             ['roles','required'],
             
             ['lastname', 'filter', 'filter' => 'trim'],
-            ['lastname', 'required'],
+            ['lastname', 'required', 'on' => 'create'],
             ['lastname', 'string', 'min' => 2, 'max' => 255],
             
             ['firstname', 'filter', 'filter' => 'trim'],
-            ['firstname', 'required'],
+            ['firstname', 'required', 'on' => 'create'],
             ['firstname', 'string', 'min' => 2, 'max' => 255],
 
 			['phonelabel','required'],

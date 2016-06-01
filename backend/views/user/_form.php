@@ -46,9 +46,6 @@ use yii\bootstrap\ActiveForm;
         <div class="col-md-6">
             <?php echo $form->field($model, 'email') ?>
         </div>
-         <div class="col-md-6">
-            <?php echo $form->field($model, 'password')->passwordInput() ?>
-        </div>
         <div class="clearfix"></div>
         <hr>
         <!-- Address show hide -->
