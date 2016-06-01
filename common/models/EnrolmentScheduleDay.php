@@ -57,6 +57,14 @@ class EnrolmentScheduleDay extends \yii\db\ActiveRecord
         return $this->hasOne(Enrolment::className(), ['id' => 'enrolment_id']);
     }
 
+	/**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['enrolment_schedule_day_id' => 'id']);
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
 		
