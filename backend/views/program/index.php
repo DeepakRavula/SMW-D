@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
     <div class="clearfix"></div>
 	<div class="col-md-12">
-        <?php echo Html::a('Create Program', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php echo Html::a('Add new Program', ['create'], ['class' => 'btn btn-success']) ?>
     </div>
 
 </div>
