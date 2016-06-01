@@ -61,11 +61,11 @@ body .table {
 #timeline-notifications{
   margin-left: 8px;
 }
-.sidebar-menu, .sidebar-menu:hover{
+/*.sidebar-menu, .sidebar-menu:hover{
   height: calc(100vh - 124px);
   display: block;
   overflow: scroll;
-}
+}*/
 
 .login-page,
 .register-page{
