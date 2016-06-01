@@ -18,6 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
             return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
         },
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 			'first_name',

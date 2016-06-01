@@ -22,6 +22,8 @@ $this->params['breadcrumbs'][] = $this->title;
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
             return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?UserSearch%5Brole_name%5D='.$role.'&id="+(this.id);'];
         },
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 			'userProfile.firstname',
