@@ -15,13 +15,11 @@ $config = [
         'class' => 'mdm\admin\components\AccessControl',
         'allowActions' => [
             'student/*',
-            'customer/*',
             'site/*',
             'admin/*',
 			'user/*',
 			'program/*',
 	    	'teacher/*',
-			'staffmember/*',
 			'owner/*',
 			'administrator/*',
 	    	'qualification/*',

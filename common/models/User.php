@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 use common\models\Address;
 use common\models\UserLocation;
+use backend\models\UserForm;
 
 /**
  * User model
@@ -43,12 +44,11 @@ class User extends ActiveRecord implements IdentityInterface
     const ROLE_ADMINISTRATOR = 'administrator';
     const ROLE_CUSTOMER = 'customer';
     const ROLE_TEACHER = 'teacher';
-    const ROLE_STAFFMEMBER = 'staffmember';
+    const ROLE_STAFF = 'staff';
     const ROLE_OWNER = 'owner';
 
     const EVENT_AFTER_SIGNUP = 'afterSignup';
     const EVENT_AFTER_LOGIN = 'afterLogin';
-	public $customer;
     /**
      * @inheritdoc
      */
@@ -317,9 +317,11 @@ class User extends ActiveRecord implements IdentityInterface
         $profile->load($profileData, '');
         $this->link('userProfile', $profile);
         $this->trigger(self::EVENT_AFTER_SIGNUP);
+		$model = new UserForm();
+        $model->roles = Yii::$app->request->queryParams['User']['role_name'];
         // Default role
         $auth = Yii::$app->authManager;
-        $auth->assign($auth->getRole(User::ROLE_USER), $this->getId());
+        $auth->assign($auth->getRole($model->roles), $this->getId());
     }
     /**
      * @return string

@@ -22,6 +22,7 @@ use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
 use common\models\Program;
+use yii\web\ForbiddenHttpException;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -153,10 +154,16 @@ class UserController extends Controller
      */
     public function actionCreate()
     {
+
+
         $model = new UserForm();
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
-		if($model->roles === 'staffmember'){
+		if($model->roles === User::ROLE_STAFF){
+			if ( ! Yii::$app->user->can('createStaff')) {
+				throw new ForbiddenHttpException;
+			}
+
 			$model = new StaffUserForm();
         	$model->setScenario('create');
 		}
@@ -180,9 +187,17 @@ class UserController extends Controller
     {
         $model = new UserForm();
         $model->setModel($this->findModel($id));
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
-        }
+		$user = $this->findModel($id);
+		if (! Yii::$app->user->can('updateOwnProfile', ['model' => $user])){
+			throw new ForbiddenHttpException;
+		}
+		if($model->roles === User::ROLE_STAFF){
+			$model = new StaffUserForm();
+        	$model->setModel($this->findModel($id));
+		}
+		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+   		    return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
+		}
 
         return $this->render('update', [
             'model' => $model,

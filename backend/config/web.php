@@ -42,6 +42,16 @@ $config = [
         ],
         'admin' => [
             'class' => 'mdm\admin\Module',
+            'controllerMap' => [
+                 'assignment' => [
+                    'class' => 'mdm\admin\controllers\AssignmentController',
+                     'userClassName' => 'common\models\User',
+                    'idField' => 'id',
+                    'usernameField' => 'email',
+                    'fullnameField' => 'publicIdentity',
+                    ],
+                    'searchClass' => 'backend\models\search\UserSearch'
+                ],
         ],
     ],
     'as globalAccess'=>[
@@ -73,15 +83,26 @@ $config = [
             [
                 'controllers'=>['user'],
                 'allow' => true,
-                'roles' => ['administrator'],
+                'roles' => ['administrator', 'staff'],
             ],
             [
+                'controllers'=>['schedule','student', 'lesson', 'invoice','timeline-event','enrolment','teacher-availability'],
+                'allow' => true,
+                'roles' => ['staff'],
+            ],
+            [
+                'controllers'=>['program', 'city', 'location','province'],
+                'allow' => true,
+                'roles' => ['staff'],
+                'actions'=>['index', 'view']
+            ],
+			[
                 'controllers'=>['user'],
                 'allow' => false,
             ],
             [
                 'allow' => true,
-                'roles' => ['manager'],
+                'roles' => ['administrator'],
             ]
         ]
     ]
