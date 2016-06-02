@@ -21,7 +21,6 @@ $config = [
 			'user/*',
 			'program/*',
 	    	'teacher/*',
-			'staffmember/*',
 			'owner/*',
 			'administrator/*',
 	    	'qualification/*',

@@ -86,12 +86,23 @@ $config = [
                 'roles' => ['administrator', 'staff'],
             ],
             [
+                'controllers'=>['schedule', 'lesson', 'invoice'],
+                'allow' => true,
+                'roles' => ['staff'],
+            ],
+            [
+                'controllers'=>['program', 'city', 'location'],
+                'allow' => true,
+                'roles' => ['staff'],
+                'actions'=>['index', 'view']
+            ],
+            [
                 'controllers'=>['user'],
                 'allow' => false,
             ],
             [
                 'allow' => true,
-                'roles' => ['administrator', 'staff'],
+                'roles' => ['administrator'],
             ]
         ]
     ]
