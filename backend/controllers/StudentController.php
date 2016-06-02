@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Student;
 use common\models\Enrolment;
+use common\models\Lesson;
 use common\models\Qualification;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -57,6 +58,13 @@ class StudentController extends Controller
 		$dataProvider = new ActiveDataProvider([
             'query' => Enrolment::find()->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
         ]);
+		$lessonModel = new ActiveDataProvider([
+			'query' => Lesson::find()
+				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = lesson.enrolment_schedule_day_id')
+				->join('INNER JOIN','enrolment e','e.id = esd.enrolment_id')
+				->join('INNER JOIN','student s','s.id = e.student_id')
+				->where(['e.student_id' => $id,'e.location_id' => Yii::$app->session->get('location_id')])
+		]);
         $model = $this->findModel($id);
 		$enrolmentModel = new Enrolment();
         if ($enrolmentModel->load(Yii::$app->request->post()) ) {
@@ -78,6 +86,7 @@ class StudentController extends Controller
             	'model' => $model,
             	'dataProvider' => $dataProvider,
                 'enrolmentModel' => $enrolmentModel,
+				'lessonModel' => $lessonModel,
             ]);
         }
     }

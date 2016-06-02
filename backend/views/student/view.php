@@ -12,7 +12,6 @@ use common\models\Student;
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 $this->title = 'Student Details';
-//$this->title = $model->studentIdentity;
 $this->params['breadcrumbs'][] = ['label' => 'Students', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -28,20 +27,6 @@ $this->params['breadcrumbs'][] = $this->title;
 	</div>
 	<div class="clearfix"></div>
 	<div class="student-view">
-		<?php
-		// echo DetailView::widget([
-		// 	'model' => $model,
-		// 	'attributes' => [
-		// 		'first_name',
-		// 		'last_name',
-		// 		'birth_date:date',
-		// 		[
-		// 			'label' => 'Customer Name',
-		// 			'value' => !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null,
-		// 		],
-		// 	],
-		// ])
-		?>
 		<div class="col-md-12 action-btns">
 			<?php echo Html::a('<i class="fa fa-pencil"></i> Update details', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 			<?php
@@ -150,7 +135,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <?php
 echo GridView::widget([
-	'dataProvider' => $dataProvider,
+	'dataProvider' => $lessonModel,
 	'options' => ['class' => 'col-md-12'],
 	'columns' => [
 		['class' => 'yii\grid\SerialColumn'],
@@ -170,7 +155,7 @@ echo GridView::widget([
 			'label' => 'Lesson Status',
 			'value' => function($data) {
 				$status = null;
-				switch ($data->enrolmentScheduleDay->lesson->status) {
+				switch ($data->status) {
 					case Lesson::STATUS_COMPLETED:
 						$status = 'Completed';
 						break;
@@ -189,8 +174,8 @@ echo GridView::widget([
 			'value' => function($data) {
 				$status = null;
 
-				if (!empty($data->enrolmentScheduleDay->lesson->invoiceLineItem->invoice->status)) {
-					switch ($data->enrolmentScheduleDay->lesson->invoiceLineItem->invoice->status) {
+				if (!empty($data->invoiceLineItem->invoice->status)) {
+					switch ($data->invoiceLineItem->invoice->status) {
 						case Invoice::STATUS_PAID:
 							$status = 'Paid';
 							break;
@@ -210,7 +195,7 @@ echo GridView::widget([
 		[
 			'label' => 'Date',
 			'value' => function($data) {
-				$date = date("d-m-y", strtotime($data->enrolmentScheduleDay->lesson->date));
+				$date = date("d-m-y", strtotime($data->date));
 				return !empty($date) ? $date : null;
 			},
 		],
