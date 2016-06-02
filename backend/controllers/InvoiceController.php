@@ -138,7 +138,7 @@ class InvoiceController extends Controller
             $invoice->total = $totalAmount;
             $invoice->save();         
              
-            return $this->redirect('create');
+            return $this->redirect('index');
             
         } else {
             return $this->render('create', [

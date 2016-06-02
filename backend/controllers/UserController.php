@@ -187,9 +187,17 @@ class UserController extends Controller
     {
         $model = new UserForm();
         $model->setModel($this->findModel($id));
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
-        }
+		$user = $this->findModel($id);
+		if (! Yii::$app->user->can('updateOwnProfile', ['model' => $user])){
+			throw new ForbiddenHttpException;
+		}
+		if($model->roles === User::ROLE_STAFF){
+			$model = new StaffUserForm();
+        	$model->setModel($this->findModel($id));
+		}
+		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+   		    return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
+		}
 
         return $this->render('update', [
             'model' => $model,

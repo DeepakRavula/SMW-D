@@ -187,7 +187,7 @@ $bundle = BackendAsset::register($this);
                             'label'=>Yii::t('backend', 'Staff Members'),
                             'icon'=>'<i class="fa fa-users"></i>',
 							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_STAFF],    
-                            'visible'=>Yii::$app->user->can('owner')
+                            'visible'=>Yii::$app->user->can('staff')
                         ],
 						[
                             'label'=>Yii::t('backend', 'Owners'),
@@ -285,19 +285,49 @@ $bundle = BackendAsset::register($this);
                                     'url' => '#',
                                     'icon'=>'<i class="fa fa-flag"></i>',
                                     'options'=>['class'=>'treeview'],
+                            		'visible'=>Yii::$app->user->can('administrator'),
                                     'items'=>[
-                                        ['label'=>Yii::t('backend', 'i18n Source Message'), 'url'=>['/i18n/i18n-source-message/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                        ['label'=>Yii::t('backend', 'i18n Message'), 'url'=>['/i18n/i18n-message/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                        [
+											'label'=>Yii::t('backend', 'i18n Source Message'),
+											'url'=>['/i18n/i18n-source-message/index'],
+											'icon'=>'<i class="fa fa-angle-double-right"></i>'
+										],
+                                        [
+											'label'=>Yii::t('backend', 'i18n Message'),
+											'url'=>['/i18n/i18n-message/index'], 
+											'icon'=>'<i class="fa fa-angle-double-right"></i>'
+										],
                                     ]
                                 ],
-                                ['label'=>Yii::t('backend', 'Key-Value Storage'), 'url'=>['/key-storage/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'File Storage'), 'url'=>['/file-storage/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'Cache'), 'url'=>['/cache/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'File Manager'), 'url'=>['/file-manager/index'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                [
+									'label'=>Yii::t('backend', 'Key-Value Storage'),
+									'url'=>['/key-storage/index'],
+									'icon'=>'<i class="fa fa-angle-double-right"></i>',
+									'visible'=>Yii::$app->user->can('administrator')
+								],
+                                [
+									'label'=>Yii::t('backend', 'File Storage'),
+									'url'=>['/file-storage/index'],
+									'icon'=>'<i class="fa fa-angle-double-right"></i>',
+									'visible'=>Yii::$app->user->can('administrator')
+								],
+                                [
+									'label'=>Yii::t('backend', 'Cache'),
+									'url'=>['/cache/index'],
+									'icon'=>'<i class="fa fa-angle-double-right"></i>',
+									'visible'=>Yii::$app->user->can('administrator')
+								],
+                                [
+									'label'=>Yii::t('backend', 'File Manager'),
+									'url'=>['/file-manager/index'], 
+									'icon'=>'<i class="fa fa-angle-double-right"></i>',
+									'visible'=>Yii::$app->user->can('administrator')
+								],
                                 [
                                     'label'=>Yii::t('backend', 'System Information'),
                                     'url'=>['/system-information/index'],
-                                    'icon'=>'<i class="fa fa-angle-double-right"></i>'
+                                    'icon'=>'<i class="fa fa-angle-double-right"></i>',
+									'visible'=>Yii::$app->user->can('administrator')
                                 ],
                                 [
                                     'label'=>Yii::t('backend', 'Logs'),
@@ -305,6 +335,7 @@ $bundle = BackendAsset::register($this);
                                     'icon'=>'<i class="fa fa-angle-double-right"></i>',
                                     'badge'=>\backend\models\SystemLog::find()->count(),
                                     'badgeBgClass'=>'label-danger',
+									'visible'=>Yii::$app->user->can('administrator')
                                 ],
                             ]
                         ]

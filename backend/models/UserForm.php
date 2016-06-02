@@ -130,6 +130,7 @@ class UserForm extends Model
             Yii::$app->authManager->getRolesByUser($model->getId()),
             'name'
         );
+		$this->roles = end($this->roles);
        	$userFirstName = UserProfile::findOne(['user_id' => $model->getId()]); 
 	  		if(! empty($userFirstName->firstname)){
 				$this->firstname = $userFirstName->firstname;
