@@ -225,7 +225,7 @@ class UserForm extends Model
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
 			
-			$phoneNumberModel = PhoneNumber::findOne($model->getId());
+			$phoneNumberModel = PhoneNumber::findOne(['user_id' => $model->getId()]);
 			if(empty($phoneNumberModel)){
 				$phoneNumberModel = new PhoneNumber();
 				$phoneNumberModel->user_id = $model->getId();
