@@ -5,6 +5,8 @@ use yii\widgets\DetailView;
 use yii\grid\GridView;
 use common\models\Enrolment;
 use common\models\User;
+use common\models\Lesson;
+use common\models\Invoice;
 use common\models\Student;
 
 /* @var $this yii\web\View */
@@ -143,6 +145,78 @@ $this->params['breadcrumbs'][] = $this->title;
 		],
 	]);
 	?>
+<div class="col-md-12">
+	<h4 class="pull-left m-r-20">Lesson details</h4>
+</div>
+<?php
+echo GridView::widget([
+	'dataProvider' => $dataProvider,
+	'options' => ['class' => 'col-md-12'],
+	'columns' => [
+		['class' => 'yii\grid\SerialColumn'],
+		[
+			'label' => 'Student Name',
+			'value' => function($data) {
+				return !empty($data->enrolmentScheduleDay->enrolment->student->fullName) ? $data->enrolmentScheduleDay->enrolment->student->fullName : null;
+			},
+		],
+		[
+			'label' => 'Program Name',
+			'value' => function($data) {
+				return !empty($data->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->enrolmentScheduleDay->enrolment->qualification->program->name : null;
+			},
+		],
+		[
+			'label' => 'Lesson Status',
+			'value' => function($data) {
+				$status = null;
+				switch ($data->enrolmentScheduleDay->lesson->status) {
+					case Lesson::STATUS_COMPLETED:
+						$status = 'Completed';
+						break;
+					case Lesson::STATUS_PENDING:
+						$status = 'Pending';
+						break;
+					case Lesson::STATUS_CANCELED:
+						$status = 'Canceled';
+						break;
+				}
+				return $status;
+			},
+		],
+		[
+			'label' => 'Invoice Status',
+			'value' => function($data) {
+				$status = null;
+
+				if (!empty($data->enrolmentScheduleDay->lesson->invoiceLineItem->invoice->status)) {
+					switch ($data->enrolmentScheduleDay->lesson->invoiceLineItem->invoice->status) {
+						case Invoice::STATUS_PAID:
+							$status = 'Paid';
+							break;
+						case Invoice::STATUS_OWING:
+							$status = 'Owing';
+							break;
+						case Invoice::STATUS_CREDIT:
+							$status = 'Credit';
+							break;
+					}
+				} else {
+					$status = 'UnInvoiced';
+				}
+				return $status;
+			},
+		],
+		[
+			'label' => 'Date',
+			'value' => function($data) {
+				$date = date("d-m-y", strtotime($data->enrolmentScheduleDay->lesson->date));
+				return !empty($date) ? $date : null;
+			},
+		],
+	],
+]);
+?>
 <div class="clearfix"></div>
 <script>
 	$('.add-new-program').click(function(){
