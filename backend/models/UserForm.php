@@ -227,8 +227,11 @@ class UserForm extends Model
 			}
             
 			
-            $userProfileModel = UserProfile::findOne($model->getId());
-            $userProfileModel->lastname = $lastname;
+            $userProfileModel = UserProfile::findOne(['user_id' => $model->getId()]);
+			if(empty($userProfileModel)) {
+				$userProfileModel = new UserProfile();
+			}
+			$userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
 			
@@ -254,7 +257,7 @@ class UserForm extends Model
 			$addressModel->province_id = $province;
             $addressModel->save();
 
-			$userAddressModel = UserAddress::findOne($model->getId());
+			$userAddressModel = UserAddress::findOne(['user_id' => $model->getId()]);
 				if(empty($userAddressModel)){
 					$userAddressModel = new UserAddress();
 			}
