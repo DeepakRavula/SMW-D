@@ -205,7 +205,7 @@ $bundle = BackendAsset::register($this);
                             'label'=>Yii::t('backend', 'Programs'),
                             'icon'=>'<i class="fa fa-table"></i>',
                             'url'=>['/program/index'],
-                            'visible'=>Yii::$app->user->can('administrator')
+                            'visible'=>Yii::$app->user->can('staff')
                         ],
 						[
                             'label'=>Yii::t('backend', 'Lessons'),
@@ -272,7 +272,7 @@ $bundle = BackendAsset::register($this);
 									'label' => Yii::t('backend', 'Provinces'),
 									'icon' => '<i class="fa  fa-upload"></i>',
 									'url' => ['/province/index'],
-									'visible' => Yii::$app->user->can('administrator')
+									'visible' => Yii::$app->user->can('staff')
 								],
 								[
 									'label' => Yii::t('backend', 'Countries'),
