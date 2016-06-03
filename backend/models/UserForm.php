@@ -23,7 +23,6 @@ class UserForm extends Model
     public $username;
     public $email;
     public $status;
-    public $password;
     public $roles;
 	public $qualifications;
     public $lastname;
@@ -52,8 +51,6 @@ class UserForm extends Model
                 }
             }],
             ['username', 'string', 'min' => 2, 'max' => 255],
-            ['password', 'required', 'on' => 'create'],
-            ['password', 'string', 'min' => 6],
  
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
@@ -190,9 +187,6 @@ class UserForm extends Model
             $model->username = $this->username;
             $model->email = $this->email;
             $model->status = $this->status;
-            if ($this->password) {
-                $model->setPassword($this->password);
-            }
 
             $lastname = $this->lastname;
             $firstname = $this->firstname;

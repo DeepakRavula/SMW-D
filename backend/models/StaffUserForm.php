@@ -39,9 +39,6 @@ class StaffUserForm extends UserForm
                 }
             }],
 
-			['password', 'required'],
-            ['password', 'string', 'min' => 6],
-					
             [['status'], 'integer'],
             ['roles','required'],
             
