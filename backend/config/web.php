@@ -34,13 +34,6 @@ $config = [
             'enableAutoLogin' => true,
             'as afterLogin' => 'common\behaviors\LoginTimestampBehavior'
         ],
-        'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
-            'transport' => [
-                'class' => 'Swift_MailTransport',
-            ],
-			'useFileTransport' => false,
-        ],
     ],
     'modules'=>[
         'i18n' => [

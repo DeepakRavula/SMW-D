@@ -48,16 +48,10 @@ $config = [
             'maxImageSize' => env('GLIDE_MAX_IMAGE_SIZE'),
             'signKey' => env('GLIDE_SIGN_KEY')
         ],
-
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
-            //'useFileTransport' => true,
-            'messageConfig' => [
-                'charset' => 'UTF-8',
-                'from' => env('ADMIN_EMAIL')
-            ]
+			'useFileTransport' => false,
         ],
-
         'db'=>[
             'class'=>'yii\db\Connection',
             'dsn' => env('DB_DSN'),
