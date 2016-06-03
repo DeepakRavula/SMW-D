@@ -55,8 +55,7 @@ $config = [
                 'host' => 'server3.kristingreen.ca',
                 'username' => 'no-reply@arcadiamusicacademy.com',
                 'password' => 'T8m9rDt5RVjs',
-                'port' => '465',
-                'encryption' => 'ssl',
+                'port' => '25',
             ],
         ],
         'db'=>[
