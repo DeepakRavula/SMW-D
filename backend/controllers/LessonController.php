@@ -42,6 +42,7 @@ class LessonController extends Controller
 					->join('INNER JOIN','enrolment_schedule_day','enrolment_schedule_day.id = enrolment_schedule_day_id')
 					->join('INNER JOIN','enrolment','enrolment.id = enrolment_schedule_day.enrolment_id')
 					->where(['enrolment.location_id' => $session->get('location_id') ])
+					->andWhere('lesson.date <= NOW()')
         ]);
 
         return $this->render('index', [
