@@ -251,24 +251,19 @@ class UserController extends Controller
     {
         $model = new UserForm();
         $model->setModel($this->findModel($id));
-		$ownProfile = true;
-		if ( Yii::$app->user->can('deleteOwnProfile', ['model' => $id])){
-			$ownProfile = false;
+
+		$role = $model->roles;
+		if(($role === User::ROLE_TEACHER) && ( ! Yii::$app->user->can('deleteTeacherProfile'))){
+			throw new ForbiddenHttpException;		
 		}
-		if(( ! $ownProfile)){
-			$role = $model->roles;
-			if(($role === User::ROLE_TEACHER) && ( ! Yii::$app->user->can('deleteTeacherProfile'))){
-				throw new ForbiddenHttpException;		
-			}
-			if(($role === User::ROLE_CUSTOMER) && ( ! Yii::$app->user->can('deleteCustomerProfile'))){
-				throw new ForbiddenHttpException;		
-			}
-			if(($role === User::ROLE_OWNER) && ( ! Yii::$app->user->can('deleteOwnerProfile'))){
-				throw new ForbiddenHttpException;		
-			}
-			if(($role === User::ROLE_STAFF) && ( ! Yii::$app->user->can('deleteStaffProfile'))){
-				throw new ForbiddenHttpException;		
-			}
+		if(($role === User::ROLE_CUSTOMER) && ( ! Yii::$app->user->can('deleteCustomerProfile'))){
+			throw new ForbiddenHttpException;		
+		}
+		if(($role === User::ROLE_OWNER) && ( ! Yii::$app->user->can('deleteOwnerProfile'))){
+			throw new ForbiddenHttpException;		
+		}
+		if(($role === User::ROLE_STAFF) && ( ! Yii::$app->user->can('deleteStaffProfile'))){
+			throw new ForbiddenHttpException;		
 		}
         $userLocationModel = UserLocation::findAll(["user_id"=>$id]);
         
