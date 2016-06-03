@@ -48,7 +48,7 @@ class UserController extends Controller
 				'class' => 'trntv\filekit\actions\UploadAction',
 				'multiple' => false,
 				'disableCsrf' => true,
-				'responseFormat' => yii\web\Response::FORMAT_JSON,
+				'responseFormat' => \yii\web\Response::FORMAT_JSON,
 				'responsePathParam' => 'path',
 				'responseBaseUrlParam' => 'base_url',
 				'responseUrlParam' => 'url',
