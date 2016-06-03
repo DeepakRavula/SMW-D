@@ -9,7 +9,7 @@ use yii\widgets\ActiveForm;
 $this->title = Yii::t('frontend', 'Reset password');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="col-lg-8 center">
+<div class="login-box">
     
     <div class="login-logo">
         <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
@@ -19,18 +19,19 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php //echo Html::encode($this->title) ?>
     </div><!-- /.login-logo -->
     <div class="header"></div>
-    <div class="site-reset-password">
+    <div class="site-reset-password login-box-body">
         <h1><?php echo Html::encode($this->title) ?></h1>
 
-        <div class="row">
-            <div class="col-lg-5">
+        <div class="body">
                 <?php $form = ActiveForm::begin(['id' => 'reset-password-form']); ?>
                     <?php echo $form->field($model, 'password')->passwordInput() ?>
                     <div class="form-group">
-                        <?php echo Html::submitButton('Save', ['class' => 'btn btn-primary']) ?>
+                        <?php echo Html::submitButton('Save', [
+                            'class' => 'btn btn-primary btn-flat btn-block',
+                            'name' => 'login-button'
+                        ]) ?>
                     </div>
                 <?php ActiveForm::end(); ?>
-            </div>
         </div>
     </div>
 </div>w

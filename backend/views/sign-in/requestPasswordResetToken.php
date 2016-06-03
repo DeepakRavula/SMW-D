@@ -19,18 +19,25 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php //echo Html::encode($this->title) ?>
     </div><!-- /.login-logo -->
     <div class="header"></div>
-    <div class="site-request-password-reset">
-        <h1><?php echo Html::encode($this->title) ?></h1>
+    <div class="site-request-password-reset login-box-body">
+        <h4><?php echo Html::encode($this->title) ?></h4>
+        <p>To reset your password, please enter an email associated with your account.</p>
 
-        <div class="row">
-            <div class="col-lg-5">
+        <div class="body">
                 <?php $form = ActiveForm::begin(['id' => 'request-password-reset-form']); ?>
                     <?php echo $form->field($model, 'email') ?>
                     <div class="form-group">
-                        <?php echo Html::submitButton('Send', ['class' => 'btn btn-primary']) ?>
+                        <?php echo Html::submitButton('Send', [
+                            'class' => 'btn btn-primary btn-flat btn-block',
+                            'name' => 'login-button'
+                        ]) ?>
+                    </div>
+                    <div class="m-t-10 text-left">
+                        <?php echo Yii::t('frontend', '<a href="{link}"><i class="fa fa-angle-left"></i> Back</a>', [
+                            'link'=>yii\helpers\Url::to(['/sign-in'])
+                        ]) ?>
                     </div>
                 <?php ActiveForm::end(); ?>
-            </div>
         </div>
     </div>
 </div>

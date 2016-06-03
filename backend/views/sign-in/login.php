@@ -25,17 +25,18 @@ $this->params['body-class'] = 'login-page';
         <div class="body">
             <?php echo $form->field($model, 'username') ?>
             <?php echo $form->field($model, 'password')->passwordInput() ?>
-            <?php echo $form->field($model, 'rememberMe')->checkbox(['class'=>'simple']) ?>
-        </div>
-        <div style="color:#999;margin:1em 0">
-            <?php echo Yii::t('frontend', 'If you forgot your password you can reset it <a href="{link}">here</a>', [
-                'link'=>yii\helpers\Url::to(['sign-in/requestpasswordreset'])
-            ]) ?>
+            <?php //echo $form->field($model, 'rememberMe')->checkbox(['class'=>'simple']) ?>
         </div>
         <div class="footer">
             <?php echo Html::submitButton(Yii::t('backend', 'Sign me in'), [
                 'class' => 'btn btn-primary btn-flat btn-block',
                 'name' => 'login-button'
+            ]) ?>
+        </div>
+
+        <div class="m-t-10 text-right">
+            <?php echo Yii::t('frontend', '<a href="{link}">Forgot your password?</a>', [
+                'link'=>yii\helpers\Url::to(['sign-in/requestpasswordreset'])
             ]) ?>
         </div>
         <?php ActiveForm::end(); ?>
