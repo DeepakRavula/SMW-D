@@ -34,6 +34,17 @@ $config = [
             'enableAutoLogin' => true,
             'as afterLogin' => 'common\behaviors\LoginTimestampBehavior'
         ],
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'smtp.gmail.com',
+                'username' => 'sriramjano@gmail.com',
+                'password' => 'poonpani',
+                'port' => '587',
+                'encryption' => 'tls',
+            ],
+        ],
     ],
     'modules'=>[
         'i18n' => [
@@ -61,7 +72,7 @@ $config = [
                 'controllers'=>['sign-in'],
                 'allow' => true,
                 'roles' => ['?'],
-                'actions'=>['login']
+                'actions'=>['login','requestpasswordreset','resetpassword']
             ],
             [
                 'controllers'=>['sign-in'],

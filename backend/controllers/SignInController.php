@@ -10,6 +10,8 @@ namespace backend\controllers;
 
 use backend\models\LoginForm;
 use backend\models\AccountForm;
+use backend\models\PasswordResetRequestForm;
+use backend\models\ResetPasswordForm;
 use Intervention\Image\ImageManagerStatic;
 use trntv\filekit\actions\DeleteAction;
 use trntv\filekit\actions\UploadAction;
@@ -111,5 +113,60 @@ class SignInController extends Controller
             return $this->refresh();
         }
         return $this->render('account', ['model'=>$model]);
+    }
+    
+    /**
+     * @return string|Response
+     */
+    public function actionRequestpasswordreset()
+    {
+        $this->layout = 'base';
+        $model = new PasswordResetRequestForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail()) {
+                Yii::$app->getSession()->setFlash('alert', [
+                    'body'=>Yii::t('backend', 'Check your email for further instructions.'),
+                    'options'=>['class'=>'alert-success']
+                ]);
+
+                return $this->goHome();
+            } else {
+                Yii::$app->getSession()->setFlash('alert', [
+                    'body'=>Yii::t('backend', 'Sorry, we are unable to reset password for email provided.'),
+                    'options'=>['class'=>'alert-danger']
+                ]);
+            }
+        }
+
+        return $this->render('requestPasswordResetToken', [
+            'model' => $model,
+        ]);
+    }
+    
+    /**
+     * @param $token
+     * @return string|Response
+     * @throws BadRequestHttpException
+     */
+    public function actionResetpassword($token)
+    {
+        $this->layout = 'base';
+        try {
+            $model = new ResetPasswordForm($token);
+        } catch (InvalidParamException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
+            Yii::$app->getSession()->setFlash('alert', [
+                'body'=> Yii::t('backend', 'New password was saved.'),
+                'options'=>['class'=>'alert-success']
+            ]);
+            return $this->goHome();
+        }
+
+        return $this->render('resetPassword', [
+            'model' => $model,
+        ]);
     }
 }
