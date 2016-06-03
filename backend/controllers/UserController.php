@@ -188,9 +188,27 @@ class UserController extends Controller
         $model = new UserForm();
         $model->setModel($this->findModel($id));
 		$user = $this->findModel($id);
+		$ownProfile = true;
 		if (! Yii::$app->user->can('updateOwnProfile', ['model' => $user])){
-			throw new ForbiddenHttpException;
+			$ownProfile = false;
 		}
+		
+		if(( ! $ownProfile)){
+			$role = $model->roles;
+			if(($role === User::ROLE_TEACHER) && ( ! Yii::$app->user->can('updateTeacherProfile'))){
+				throw new ForbiddenHttpException;		
+			}
+			if(($role === User::ROLE_CUSTOMER) && ( ! Yii::$app->user->can('updateCustomerProfile'))){
+				throw new ForbiddenHttpException;		
+			}
+			if(($role === User::ROLE_OWNER) && ( ! Yii::$app->user->can('updateOwnerProfile'))){
+				throw new ForbiddenHttpException;		
+			}
+			if(($role === User::ROLE_STAFF) && ( ! Yii::$app->user->can('updateStaffProfile'))){
+				throw new ForbiddenHttpException;		
+			}
+		}
+		
 		if($model->roles === User::ROLE_STAFF){
 			$model = new StaffUserForm();
         	$model->setModel($this->findModel($id));
@@ -231,6 +249,27 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
+        $model = new UserForm();
+        $model->setModel($this->findModel($id));
+		$ownProfile = true;
+		if ( Yii::$app->user->can('deleteOwnProfile', ['model' => $id])){
+			$ownProfile = false;
+		}
+		if(( ! $ownProfile)){
+			$role = $model->roles;
+			if(($role === User::ROLE_TEACHER) && ( ! Yii::$app->user->can('deleteTeacherProfile'))){
+				throw new ForbiddenHttpException;		
+			}
+			if(($role === User::ROLE_CUSTOMER) && ( ! Yii::$app->user->can('deleteCustomerProfile'))){
+				throw new ForbiddenHttpException;		
+			}
+			if(($role === User::ROLE_OWNER) && ( ! Yii::$app->user->can('deleteOwnerProfile'))){
+				throw new ForbiddenHttpException;		
+			}
+			if(($role === User::ROLE_STAFF) && ( ! Yii::$app->user->can('deleteStaffProfile'))){
+				throw new ForbiddenHttpException;		
+			}
+		}
         $userLocationModel = UserLocation::findAll(["user_id"=>$id]);
         
         if(count($userLocationModel) == 1)
@@ -244,7 +283,7 @@ class UserController extends Controller
             $userLocationModel->delete();            
         }
         
-        return $this->redirect(['index']);
+   		return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
     }
 
 
