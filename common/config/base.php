@@ -50,7 +50,14 @@ $config = [
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
-			'useFileTransport' => false,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'server3.kristingreen.ca',
+                'username' => 'no-reply@arcadiamusicacademy.com',
+                'password' => 'T8m9rDt5RVjs',
+                'port' => '465',
+                'encryption' => 'ssl',
+            ],
         ],
         'db'=>[
             'class'=>'yii\db\Connection',
