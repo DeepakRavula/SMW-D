@@ -64,6 +64,7 @@ class StudentController extends Controller
 				->join('INNER JOIN','enrolment e','e.id = esd.enrolment_id')
 				->join('INNER JOIN','student s','s.id = e.student_id')
 				->where(['e.student_id' => $id,'e.location_id' => Yii::$app->session->get('location_id')])
+				->andWhere('lesson.date <= NOW()')
 		]);
         $model = $this->findModel($id);
 		$enrolmentModel = new Enrolment();
