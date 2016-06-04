@@ -52,10 +52,11 @@ $config = [
             'class' => 'yii\swiftmailer\Mailer',
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
-                'host' => 'server3.kristingreen.ca',
-                'username' => 'no-reply@arcadiamusicacademy.com',
-                'password' => 'T8m9rDt5RVjs',
-                'port' => '25',
+                'host' => env('SMTP_HOST'),
+                'username' => env('SMTP_USERNAME'),
+                'password' => env('SMTP_PASSWORD'),
+                'port' => env('SMTP_PORT'),
+				'encryption' => env('SMTP_ENCRYPTION'),
             ],
         ],
         'db'=>[
@@ -181,11 +182,7 @@ if (YII_ENV_DEV) {
     $config['components']['cache'] = [
         'class' => 'yii\caching\DummyCache'
     ];
-    $config['components']['mailer']['transport'] = [
-        'class' => 'Swift_SmtpTransport',
-        'host' => env('SMTP_HOST'),
-        'port' => env('SMTP_PORT'),
-    ];
+   
 }
 
 return $config;
