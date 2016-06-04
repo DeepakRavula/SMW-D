@@ -26,6 +26,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
    			'id',
+			[
+			    'label' => 'Date',
+			 	'value' => function($data){
+					$date = (new \DateTime($data->date))->format("m-d-Y");
+					return ! empty($date) ? $date : null;
+				}	
+			],
             [
 			    'label' => 'Customer Name',
                 'value' => function($data) {
