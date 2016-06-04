@@ -67,7 +67,7 @@ $config = [
                 'controllers'=>['sign-in'],
                 'allow' => true,
                 'roles' => ['@'],
-                'actions'=>['logout']
+                'actions'=>['logout','profile','account']
             ],
             [
                 'controllers'=>['site'],
