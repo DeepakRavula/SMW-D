@@ -36,7 +36,7 @@ $this->params['body-class'] = 'login-page';
 
         <div class="m-t-10 text-right">
             <?php echo Yii::t('frontend', '<a href="{link}">Forgot your password?</a>', [
-                'link'=>yii\helpers\Url::to(['sign-in/requestpasswordreset'])
+                'link'=>yii\helpers\Url::to(['sign-in/request-password-reset'])
             ]) ?>
         </div>
         <?php ActiveForm::end(); ?>

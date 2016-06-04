@@ -118,7 +118,7 @@ class SignInController extends Controller
     /**
      * @return string|Response
      */
-    public function actionRequestpasswordreset()
+    public function actionRequestPasswordReset()
     {
         $this->layout = 'base';
         $model = new PasswordResetRequestForm();
@@ -148,7 +148,7 @@ class SignInController extends Controller
      * @return string|Response
      * @throws BadRequestHttpException
      */
-    public function actionResetpassword($token)
+    public function actionResetPassword($token)
     {
         $this->layout = 'base';
         try {
