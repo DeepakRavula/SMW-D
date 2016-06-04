@@ -166,6 +166,7 @@ class UserController extends Controller
 
 			$model = new StaffUserForm();
         	$model->setScenario('create');
+        	$model->roles = Yii::$app->request->queryParams['User']['role_name'];
 		}
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
