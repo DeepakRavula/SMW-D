@@ -11,6 +11,7 @@ use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use common\models\User;
 use common\models\Location;
+use common\models\UserLocation;
 use yii\web\JsExpression;
 
 $bundle = BackendAsset::register($this);
@@ -35,12 +36,25 @@ $bundle = BackendAsset::register($this);
 
 				<?php $location_id = Yii::$app->session->get('location_id');
 
-				if(empty($location_id)) {
-					Yii::$app->session->set('location_id', '1');
-				}?>
+					$roles = ArrayHelper::getColumn(
+						Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
+						'name'
+					);
+					$role = end($roles);
+
+					if(empty($location_id)) {
+						if($role !== User::ROLE_ADMINISTRATOR) {
+							$userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
+							Yii::$app->session->set('location_id', $userLocation->location_id);
+						} else {
+							Yii::$app->session->set('location_id', '1');
+						}
+					}?>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
-                        <li>  <div>
+						<li>
+						<?php if($role === User::ROLE_ADMINISTRATOR):?>
+                        <div>
                             <?php $form = Html::beginForm(); ?>                        
                                  <?= Html::dropDownList('location_id', null,
                                   ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'location_id', 'options' => [Yii::$app->session->get("location_id") => ['Selected'=>'selected']]
@@ -59,6 +73,13 @@ $bundle = BackendAsset::register($this);
                             ) ?>
                             <?php Html::endForm() ?>
                             </div>
+						<?php else:?>
+						<?php
+							$userLocationId = Yii::$app->session->get('location_id');
+							$location = Location::findOne(['id' => $userLocationId]);
+							echo $location->name;
+						?>
+						<?php endif;?>
                         </li>
                         <li id="timeline-notifications" class="notifications-menu">
                             <a href="<?php echo Url::to(['/timeline-event/index']) ?>">
@@ -98,7 +119,7 @@ $bundle = BackendAsset::register($this);
                         </li>
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span><?php echo Yii::$app->user->identity->username ?> <i class="caret"></i></span>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span><?php echo Yii::$app->user->identity->userProfile->fullName ?> <i class="caret"></i></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->

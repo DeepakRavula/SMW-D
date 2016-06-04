@@ -61,13 +61,13 @@ $config = [
                 'controllers'=>['sign-in'],
                 'allow' => true,
                 'roles' => ['?'],
-                'actions'=>['login','requestpasswordreset','resetpassword']
+                'actions'=>['login','request-password-reset','reset-password']
             ],
             [
                 'controllers'=>['sign-in'],
                 'allow' => true,
                 'roles' => ['@'],
-                'actions'=>['logout']
+                'actions'=>['logout','profile','account']
             ],
             [
                 'controllers'=>['site'],
