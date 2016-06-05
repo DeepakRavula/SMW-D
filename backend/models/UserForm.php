@@ -78,16 +78,7 @@ class UserForm extends Model
             ['firstname', 'required', 'on' => 'create'],
             ['firstname', 'string', 'min' => 2, 'max' => 255],
 
-			['phonelabel','required'],
-			['phoneextension','integer'],
-			['phonenumber','required'],
-					
-			['address','required'],
-			['addresslabel','required'],
-			['postalcode','required'],
-			['province','required'],
-			['city','required'],
-			['country','required']
+			['phoneextension','integer'],					
         ];
     }
 
