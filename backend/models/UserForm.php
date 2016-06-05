@@ -186,7 +186,11 @@ class UserForm extends Model
             $isNewRecord = $model->getIsNewRecord();
             $model->username = $this->username;
             $model->email = $this->email;
-            $model->status = $this->status;
+            if ($isNewRecord) {
+                $model->status = User::STATUS_ACTIVE;
+            } else {                
+                $model->status = $this->status;
+            }
 
             $lastname = $this->lastname;
             $firstname = $this->firstname;
