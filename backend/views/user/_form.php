@@ -9,6 +9,7 @@ use common\models\Address;
 use common\models\PhoneNumber;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
+use wbraganca\selectivity\SelectivityWidget;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\UserForm */
@@ -124,7 +125,16 @@ use yii\bootstrap\ActiveForm;
                     <!-- <h4>Choose qualifications</h4> -->
                     <div class="row">
                         <div class="col-md-12">
-                            <?php echo $form->field($model, 'qualifications')->checkboxList($programs)->label(false) ?>
+                            <?php //echo $form->field($model, 'qualifications')->checkboxList($programs)->label(false) ?>
+
+							<?= $form->field($model, 'qualifications')->widget(SelectivityWidget::classname(), [
+								'pluginOptions' => [
+									'allowClear' => true,
+									'multiple' => true,
+									'items' => $programs,
+									'placeholder' => 'No city selected'
+								]
+							]); ?>
                         </div>
                         <div class="clearfix"></div>
                     </div>
