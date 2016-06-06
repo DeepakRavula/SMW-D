@@ -157,7 +157,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
 	public function getPrimaryAddress() {
 		return $this->hasOne(Address::className(), ['id' => 'address_id'])
-		  ->viaTable('user_address', ['user_id' => 'id'])->where(['label' => 'billing']);
+		  ->viaTable('user_address', ['user_id' => 'id']);
 	}
 
 	/**

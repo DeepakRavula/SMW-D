@@ -77,8 +77,17 @@ class UserForm extends Model
             ['firstname', 'filter', 'filter' => 'trim'],
             ['firstname', 'required', 'on' => 'create'],
             ['firstname', 'string', 'min' => 2, 'max' => 255],
-
-			['phoneextension','integer'],					
+			
+            ['phonelabel','required'],
+            ['phoneextension','integer'],
+            ['phonenumber','required'],
+					
+            ['address','required'],
+            ['addresslabel','required'],
+            ['postalcode','required'],
+            ['province','required'],
+            ['city','required'],
+            ['country','required']					
         ];
     }
 
@@ -226,7 +235,7 @@ class UserForm extends Model
             $userProfileModel->save();
 			
 			$phoneNumberModel = PhoneNumber::findOne(['user_id' => $model->getId()]);
-			if(empty($phoneNumberModel)){
+			if(empty($phoneNumberModel) || ($phoneNumberModel->label_id != $phonelabel)){
 				$phoneNumberModel = new PhoneNumber();
 				$phoneNumberModel->user_id = $model->getId();
 			}
@@ -236,7 +245,7 @@ class UserForm extends Model
             $phoneNumberModel->save();
 
 			$addressModel = Address::findByUserId($model->getId());
-				if(empty($addressModel)){
+				if(empty($addressModel)  || ($addressModel->label != $addresslabel)){
 					$addressModel = new Address();
 			}
 			$addressModel->city_id = $city;
