@@ -122,6 +122,15 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php endif; ?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
 <div class="col-md-12">
+    <div class="col-md-2">
+        <h4>Qualifications</h4>
+    </div>
+    <div class="col-md-10">
+        <?= $program?>
+    </div>
+    <div class="clearfix"></div>
+</div>
+<div class="col-md-12">
 <h4 class="pull-left m-r-20">Teachers Availability</h4>
 <a href="#" class="availability text-add-new"><i class="fa fa-plus-circle"></i> Add availability</a>
 <div class="clearfix"></div>
