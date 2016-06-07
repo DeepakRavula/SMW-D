@@ -63,6 +63,10 @@ class CityController extends Controller
         $model = new City();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+		    Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'City has been created successfully'
+        ]); 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -82,6 +86,10 @@ class CityController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+		    Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'City has been updated successfully'
+        ]); 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -99,7 +107,10 @@ class CityController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        Yii::$app->session->setFlash('alert', [
+           	'options' => ['class' => 'alert-success'],
+           	'body' => 'City has been deleted successfully'
+        ]); 
         return $this->redirect(['index']);
     }
 
