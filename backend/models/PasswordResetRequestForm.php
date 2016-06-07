@@ -50,22 +50,19 @@ class PasswordResetRequestForm extends Model
 
         if ($user) {
             $token = UserToken::create($user->id, UserToken::TYPE_PASSWORD_RESET, Time::SECONDS_IN_A_DAY);
+				$sendGrid = Yii::$app->sendGrid;
             if ($user->save()) {
-                return Yii::$app->commandBus->handle(new SendEmailCommand([
-                    'to' => $this->email,
-                    'subject' => Yii::t('backend', 'Password reset for {name}', ['name'=>Yii::$app->name]),
-                    'view' => 'passwordResetToken',
-                    'params' => [
-                        'user' => $user,
-                        'token' => $token->token
-                    ]
-                ]));
+    
+                return $sendGrid->compose('passwordResetToken',['token'=>$token->token,'user'=>$user])
+					->setFrom('smwarcadia@gmail.com')
+					->setTo($this->email)
+                    ->setSubject(Yii::t('backend', 'Password reset for {name}', ['name'=>Yii::$app->name]))
+                    ->send($sendGrid);
             }
-        }
 
         return false;
     }
-
+	}
     /**
      * @return array
      */
