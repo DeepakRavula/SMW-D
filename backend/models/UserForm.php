@@ -148,14 +148,16 @@ class UserForm extends Model
 	   	} 
 			
 		$address = Address::findByUserId($model->getId());
+
 		if(! empty($address)){
-		$this->address = $address->address;
-		$this->addresslabel = $address->label;
-		$this->city = $address->city_id;
-		$this->country = $address->country_id;
-		$this->province = $address->province_id;
-		$this->postalcode = $address->postal_code;
+			$this->address = $address->address;
+			$this->addresslabel = $address->label;
+			$this->city = $address->city_id;
+			$this->country = $address->country_id;
+			$this->province = $address->province_id;
+			$this->postalcode = $address->postal_code;
 		}	
+
 		$this->qualifications = ArrayHelper::getColumn(
 			Qualification::find()->where(['teacher_id'=>$model->getId()])->all(), 'program_id'
 		);

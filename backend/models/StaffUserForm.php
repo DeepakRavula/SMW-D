@@ -21,8 +21,6 @@ use yii\helpers\ArrayHelper;
  */
 class StaffUserForm extends UserForm
 {
-    
-
     /**
      * @inheritdoc
      */
@@ -49,6 +47,9 @@ class StaffUserForm extends UserForm
             ['firstname', 'filter', 'filter' => 'trim'],
             ['firstname', 'required', 'on' => 'create'],
             ['firstname', 'string', 'min' => 2, 'max' => 255],
+
+            [['phonelabel', 'phoneextension', 'phonenumber', 'address'], 'safe'],
+            [['addresslabel', 'postalcode', 'province', 'city', 'country'],'safe']
         ];
     }
 }

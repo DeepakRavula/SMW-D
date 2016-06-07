@@ -169,7 +169,7 @@ class UserController extends Controller
         	$model->roles = Yii::$app->request->queryParams['User']['role_name'];
 		}
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
+            return $this->redirect(['view', 'id' => $model->getModel()->id]);
         }
 
         return $this->render('create', [
@@ -215,7 +215,7 @@ class UserController extends Controller
         	$model->setModel($this->findModel($id));
 		}
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-   		    return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
+            return $this->redirect(['view', 'id' => $model->getModel()->id]);
 		}
 
         return $this->render('update', [
