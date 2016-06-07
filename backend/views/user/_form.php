@@ -125,16 +125,18 @@ use wbraganca\selectivity\SelectivityWidget;
                     <!-- <h4>Choose qualifications</h4> -->
                     <div class="row">
                         <div class="col-md-12">
-                            <?php //echo $form->field($model, 'qualifications')->checkboxList($programs)->label(false) ?>
 
-							<?= $form->field($model, 'qualifications')->widget(SelectivityWidget::classname(), [
+							<?= $form->field($model, 'qualifications')->widget(SelectivityWidget::classname(),
+							[
 								'pluginOptions' => [
 									'allowClear' => true,
 									'multiple' => true,
-									'items' => $programs,
-									'placeholder' => 'No city selected'
+									'items' =>$programs, 
+									'value' => $model->qualifications,
+									'placeholder' => 'No qualification selected'
 								]
-							]); ?>
+							]);?>
+							
                         </div>
                         <div class="clearfix"></div>
                     </div>
