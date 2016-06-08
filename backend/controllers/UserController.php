@@ -178,10 +178,6 @@ class UserController extends Controller
 			if ( ! Yii::$app->user->can('createStaff')) {
 				throw new ForbiddenHttpException;
 			}
-
-			$model = new StaffUserForm();
-        	$model->setScenario('create');
-        	$model->roles = Yii::$app->request->queryParams['User']['role_name'];
 		}
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			Yii::$app->session->setFlash('alert', [
@@ -229,10 +225,6 @@ class UserController extends Controller
 			}
 		}
 		
-		if($model->roles === User::ROLE_STAFFMEMBER){
-			$model = new StaffUserForm();
-        	$model->setModel($this->findModel($id));
-		}
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			Yii::$app->session->setFlash('alert', [
                 'options' => ['class'=>'alert-success'],
