@@ -62,7 +62,7 @@ $config = [
 	    * 
 	    */
 	   'sendGrid' => [
-			'class' => 'bryglen\sendgrid\Mailer',
+			'class' => 'shershennm\sendgrid\Mailer',
 			'username' => 'jenifermonica',
 			'password' => 'password3',
 			//'viewPath' => 'backend/views/sign-in', // your view path here
