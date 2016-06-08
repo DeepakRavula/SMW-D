@@ -174,7 +174,7 @@ class UserController extends Controller
         $model = new UserForm();
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
-		if($model->roles === User::ROLE_STAFF){
+		if($model->roles === User::ROLE_STAFFMEMBER){
 			if ( ! Yii::$app->user->can('createStaff')) {
 				throw new ForbiddenHttpException;
 			}
@@ -224,12 +224,12 @@ class UserController extends Controller
 			if(($role === User::ROLE_OWNER) && ( ! Yii::$app->user->can('updateOwnerProfile'))){
 				throw new ForbiddenHttpException;		
 			}
-			if(($role === User::ROLE_STAFF) && ( ! Yii::$app->user->can('updateStaffProfile'))){
+			if(($role === User::ROLE_STAFFMEMBER) && ( ! Yii::$app->user->can('updateStaffProfile'))){
 				throw new ForbiddenHttpException;		
 			}
 		}
 		
-		if($model->roles === User::ROLE_STAFF){
+		if($model->roles === User::ROLE_STAFFMEMBER){
 			$model = new StaffUserForm();
         	$model->setModel($this->findModel($id));
 		}
@@ -286,7 +286,7 @@ class UserController extends Controller
 		if(($role === User::ROLE_OWNER) && ( ! Yii::$app->user->can('deleteOwnerProfile'))){
 			throw new ForbiddenHttpException;		
 		}
-		if(($role === User::ROLE_STAFF) && ( ! Yii::$app->user->can('deleteStaffProfile'))){
+		if(($role === User::ROLE_STAFFMEMBER) && ( ! Yii::$app->user->can('deleteStaffProfile'))){
 			throw new ForbiddenHttpException;		
 		}
         $userLocationModel = UserLocation::findAll(["user_id"=>$id]);

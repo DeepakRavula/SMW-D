@@ -83,17 +83,17 @@ $config = [
             [
                 'controllers'=>['user'],
                 'allow' => true,
-                'roles' => ['administrator', 'staff'],
+                'roles' => ['administrator', 'staffmember'],
             ],
 			[
                 'controllers'=>['schedule','student', 'lesson', 'invoice','timeline-event','enrolment','teacher-availability'],
                 'allow' => true,
-                'roles' => ['staff'],
+                'roles' => ['staffmember'],
             ],
             [
                 'controllers'=>['program', 'city', 'location','province','country'],
                 'allow' => true,
-                'roles' => ['staff'],
+                'roles' => ['staffmember'],
                 'actions'=>['index', 'view']
             ],
 			[

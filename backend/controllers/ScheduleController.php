@@ -33,7 +33,7 @@ class ScheduleController extends Controller
                     [
                         'allow' => true,
                         'actions' => ['index'],
-                        'roles' => ['staff'],
+                        'roles' => ['staffmember'],
                     ],
                 ],
             ],
