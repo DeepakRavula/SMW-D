@@ -169,9 +169,8 @@ class UserController extends Controller
      */
     public function actionCreate()
     {
-
-
         $model = new UserForm();
+		$phoneNumberModels = [new PhoneNumber];
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
 		if($model->roles === User::ROLE_STAFFMEMBER){
@@ -184,11 +183,40 @@ class UserController extends Controller
         	$model->roles = Yii::$app->request->queryParams['User']['role_name'];
 		}
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
+            UserForm::loadMultiple($phoneNumberModels, Yii::$app->request->post());
+
+            // validate all models
+            $valid = $model->validate();
+            $valid = UserForm::validateMultiple($phoneNumberModels) && $valid;
+
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+
+                try {
+                    if ($flag = $model->save(false)) {
+                        foreach ($phoneNumberModels as $phoneNumberModel) {
+                            $modelAddress->customer_id = $modelCustomer->id;
+                            if (! ($flag = $phoneNumberModel->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
+                    }
+
+                    if ($flag) {
+                        $transaction->commit();
+                        return $this->redirect(['view', 'id' => $model->getModel()->id]);
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            }
 			Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => $model->roles. ' has been created successfully'
             ]);
-            return $this->redirect(['view', 'id' => $model->getModel()->id]);
+            //return $this->redirect(['view', 'id' => $model->getModel()->id]);
         }
 
         return $this->render('create', [
@@ -240,15 +268,14 @@ class UserController extends Controller
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
             UserForm::loadMultiple($phoneNumberModels, Yii::$app->request->post());
             $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
-			$userModel = new User();
             // validate all models
-            $valid = $userModel->validate();
+            $valid = $model->validate();
             $valid = UserForm::validateMultiple($phoneNumberModels) && $valid;
 
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
-                    if ($flag = $userModel->save(false)) {
+                    if ($flag = $model->save(false)) {
                         if (!empty($deletedIDs)) {
                             PhoneNumber::deleteAll(['id' => $deletedIDs]);
                         }
