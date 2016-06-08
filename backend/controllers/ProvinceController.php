@@ -63,6 +63,10 @@ class ProvinceController extends Controller
         $model = new Province();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'Province has been created successfully'
+        ]); 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -82,6 +86,10 @@ class ProvinceController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'Province has been updated successfully'
+        ]); 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -99,7 +107,10 @@ class ProvinceController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        Yii::$app->session->setFlash('alert', [
+          	'options' => ['class' => 'alert-success'],
+           	'body' => 'Province has been deleted successfully'
+        ]); 
         return $this->redirect(['index']);
     }
 

@@ -63,6 +63,10 @@ class LocationController extends Controller
         $model = new Location();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'Location has been created successfully'
+        ]);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -82,6 +86,10 @@ class LocationController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'Location has been updated successfully'
+        ]);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -99,7 +107,10 @@ class LocationController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+		Yii::$app->session->setFlash('alert', [
+           	'options' => ['class' => 'alert-success'],
+           	'body' => 'Location has been deleted successfully'
+        ]);
         return $this->redirect(['index']);
     }
 
