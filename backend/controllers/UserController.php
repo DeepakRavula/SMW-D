@@ -182,7 +182,7 @@ class UserController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
-                'body' => $model->roles. ' has been created successfully'
+                'body' => ucwords($model->roles). ' has been created successfully'
             ]);
             return $this->redirect(['view', 'id' => $model->getModel()->id]);
         }
@@ -228,7 +228,7 @@ class UserController extends Controller
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			Yii::$app->session->setFlash('alert', [
                 'options' => ['class'=>'alert-success'],
-                'body' => $model->roles. ' profile has been updated successfully'
+                'body' => ucwords($model->roles). ' profile has been updated successfully'
             ]);
             return $this->redirect(['view', 'id' => $model->getModel()->id]);
 		}
@@ -295,7 +295,7 @@ class UserController extends Controller
         }
        		Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
-                'body' => $model->roles. ' profile has been deleted successfully'
+                'body' => ucwords($model->roles). ' profile has been deleted successfully'
             ]); 
    		return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
     }
