@@ -168,6 +168,15 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(PhoneNumber::className(), ['user_id' => 'id']);
     }
 
+
+	/**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPhoneNumbers()
+    {
+        return $this->hasMany(PhoneNumber::className(), ['user_id' => 'id']);
+    }
+
 	/**
      * @return \yii\db\ActiveQuery
      */

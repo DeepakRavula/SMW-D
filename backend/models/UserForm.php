@@ -37,6 +37,7 @@ class UserForm extends Model
 	public $phonelabel;
 	public $phoneextension;
     private $model;
+	public $phoneNumbers;
 
     /**
      * @inheritdoc
@@ -130,6 +131,13 @@ class UserForm extends Model
             Yii::$app->authManager->getRolesByUser($model->getId()),
             'name'
         );
+
+		if(count($model->phoneNumbers) > 0) {
+			$this->phoneNumbers = $model->phoneNumbers;
+		} else {
+			$this->phoneNumbers = [new PhoneNumber];
+		}
+
 		$this->roles = end($this->roles);
        	$userFirstName = UserProfile::findOne(['user_id' => $model->getId()]); 
 	  		if(! empty($userFirstName->firstname)){
@@ -178,7 +186,7 @@ class UserForm extends Model
 
 
 public static function createMultiple($modelClass, $multipleModels = [])
-    {
+{
         $model    = new $modelClass;
         $formName = $model->formName();
         $post     = Yii::$app->request->post($formName);
@@ -202,7 +210,6 @@ public static function createMultiple($modelClass, $multipleModels = [])
         unset($model, $formName, $post);
 
         return $models;
-    }
 }
 
     /**

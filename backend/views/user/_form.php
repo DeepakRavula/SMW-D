@@ -17,6 +17,23 @@ use wbraganca\dynamicform\DynamicFormWidget;
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $roles yii\rbac\Role[] */
 /* @var $permissions yii\rbac\Permission[] */
+
+
+$js = '
+jQuery(".dynamicform_wrapper").on("afterInsert", function(e, item) {
+    jQuery(".dynamicform_wrapper .panel-title-address").each(function(index) {
+        jQuery(this).html("Address: " + (index + 1))
+    });
+});
+
+jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
+    jQuery(".dynamicform_wrapper .panel-title-address").each(function(index) {
+        jQuery(this).html("Address: " + (index + 1))
+    });
+});
+';
+
+$this->registerJs($js);
 ?>
 <style>
     .box-body{
@@ -37,7 +54,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
 
 <div class="user-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
         <div class="col-md-6">
             <?php echo $form->field($model, 'firstname') ?>
         </div>
@@ -98,25 +115,22 @@ use wbraganca\dynamicform\DynamicFormWidget;
         'min' => 0, // 0 or 1 (default 1)
         'insertButton' => '.add-item', // css class
         'deleteButton' => '.remove-item', // css class
-        'model' => $modelsAddress[0],
+        'model' => $phoneNumberModels[0],
         'formId' => 'dynamic-form',
         'formFields' => [
-            'full_name',
-            'address_line1',
-            'address_line2',
-            'city',
-            'state',
-            'postal_code',
+            'phonenumber',
+            'phonelabel',
+            'phoneextension',
         ],
     ]); ?>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <i class="fa fa-envelope"></i> Address Book
-            <button type="button" class="pull-right add-item btn btn-success btn-xs"><i class="fa fa-plus"></i> Add address</button>
+            <i class="fa fa-envelope"></i> Phone Numbers
+            <button type="button" class="pull-right add-item btn btn-success btn-xs"><i class="fa fa-plus"></i> Add Phone</button>
             <div class="clearfix"></div>
         </div>
         <div class="panel-body container-items"><!-- widgetContainer -->
-            <?php foreach ($modelsAddress as $index => $modelAddress): ?>
+            <?php foreach ($phoneNumberModels as $index => $phoneNumberModel): ?>
                 <div class="item panel panel-default"><!-- widgetBody -->
                     <div class="panel-heading">
                         <span class="panel-title-address">Address: <?= ($index + 1) ?></span>
@@ -126,36 +140,20 @@ use wbraganca\dynamicform\DynamicFormWidget;
                     <div class="panel-body">
                         <?php
                             // necessary for update action.
-                            if (!$modelAddress->isNewRecord) {
-                                echo Html::activeHiddenInput($modelAddress, "[{$index}]id");
+                            if (!$phoneNumberModel->isNewRecord) {
+                                echo Html::activeHiddenInput($phoneNumberModel, "[{$index}]id");
                             }
                         ?>
-                        <?= $form->field($modelAddress, "[{$index}]full_name")->textInput(['maxlength' => true]) ?>
 
                         <div class="row">
                             <div class="col-sm-6">
-                                <?= $form->field($modelAddress, "[{$index}]address_line1")->textInput(['maxlength' => true]) ?>
+                                <?= $form->field($phoneNumberModel, "[{$index}]number")->textInput(['maxlength' => true]) ?>
                             </div>
                             <div class="col-sm-6">
-                                <?= $form->field($modelAddress, "[{$index}]address_line2")->textInput(['maxlength' => true]) ?>
-                            </div>
-                        </div><!-- end:row -->
-
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <?= $form->field($modelAddress, "[{$index}]city")->textInput(['maxlength' => true]) ?>
+                                <?= $form->field($phoneNumberModel, "[{$index}]label_id")->textInput(['maxlength' => true]) ?>
                             </div>
                             <div class="col-sm-6">
-                                <?= $form->field($modelAddress, "[{$index}]state")->textInput(['maxlength' => true]) ?>
-                            </div>
-                        </div><!-- end:row -->
-
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <?= $form->field($modelAddress, "[{$index}]country")->dropDownList(Yii::$app->params['country'], ['prompt' => '']) ?>
-                            </div>
-                            <div class="col-sm-6">
-                                <?= $form->field($modelAddress, "[{$index}]postal_code")->textInput(['maxlength' => true]) ?>
+                                <?= $form->field($phoneNumberModel, "[{$index}]extension")->textInput(['maxlength' => true]) ?>
                             </div>
                         </div><!-- end:row -->
                     </div>

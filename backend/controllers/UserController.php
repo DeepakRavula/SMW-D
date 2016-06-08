@@ -280,7 +280,8 @@ class UserController extends Controller
         return $this->render('update', [
             'model' => $model,
             'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-            'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name')
+            'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+			'phoneNumberModels' => $phoneNumberModels
         ]);
     }
 
