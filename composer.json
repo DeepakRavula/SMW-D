@@ -54,7 +54,8 @@
     "kartik-v/yii2-widget-datepicker": "@dev",
     "kartik-v/yii2-date-range": "*",
     "shershennm/yii2-sendgrid": "*",
-    "wbraganca/yii2-selectivity": "^1.0"
+    "wbraganca/yii2-selectivity": "^1.0",
+    "wbraganca/yii2-dynamicform": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",

@@ -233,7 +233,43 @@ class UserController extends Controller
 			$model = new StaffUserForm();
         	$model->setModel($this->findModel($id));
 		}
+
+		$phoneNumberModels = $model->phoneNumbers;
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            $oldIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
+            $phoneNumberModels = Model::createMultiple(Address::classname(), $phoneNumberModels);
+            Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
+            $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
+
+            // validate all models
+            $valid = $modelCustomer->validate();
+            $valid = Model::validateMultiple($modelsAddress) && $valid;
+
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+                    if ($flag = $modelCustomer->save(false)) {
+                        if (!empty($deletedIDs)) {
+                            Address::deleteAll(['id' => $deletedIDs]);
+                        }
+                        foreach ($modelsAddress as $modelAddress) {
+                            $modelAddress->customer_id = $modelCustomer->id;
+                            if (! ($flag = $modelAddress->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
+                    }
+                    if ($flag) {
+                        $transaction->commit();
+                        return $this->redirect(['view', 'id' => $modelCustomer->id]);
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            }
+
 			Yii::$app->session->setFlash('alert', [
                 'options' => ['class'=>'alert-success'],
                 'body' => $model->roles. ' profile has been updated successfully'
