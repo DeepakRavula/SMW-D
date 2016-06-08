@@ -63,6 +63,10 @@ class ProgramController extends Controller
         $model = new Program();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('alert', [
+        	    'options' => ['class' => 'alert-success'],
+            	'body' => 'Program has been created successfully'
+        ]);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -82,7 +86,11 @@ class ProgramController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+			Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'Program has been updated successfully'
+        ]);
+			return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -99,7 +107,10 @@ class ProgramController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+		Yii::$app->session->setFlash('alert', [
+           	'options' => ['class' => 'alert-success'],
+           	'body' => 'Program has been deleted successfully'
+        ]);
         return $this->redirect(['index']);
     }
 

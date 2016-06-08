@@ -80,6 +80,10 @@ class StudentController extends Controller
 			$renewalDate->add(new \DateInterval('P1Y'));
 			$enrolmentModel->renewal_date = $renewalDate->format('Y-m-d');
 			if($enrolmentModel->save()) {
+			    Yii::$app->session->setFlash('alert', [
+            	    'options' => ['class' => 'alert-success'],
+                	'body' => 'Enrolment has been added successfully'
+            ]);
             	return $this->redirect(['view', 'id' => $model->id]);
 			}
         } else {
@@ -105,6 +109,10 @@ class StudentController extends Controller
         if ($model->load(Yii::$app->request->post())) {
 			$model->customer_id = $user['id'];
 			$model->save();
+			Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+                'body' => 'Student has been created successfully'
+            ]);
             return $this->redirect(['user/view', 'id' => $model->customer_id]);
         } else {
             return $this->render('create', [
@@ -124,6 +132,10 @@ class StudentController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Student profile has been updated successfully'
+            ]);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -161,7 +173,10 @@ class StudentController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+ 		Yii::$app->session->setFlash('alert', [
+            'options' => ['class' => 'alert-success'],
+            'body' => 'Student profile has been deleted successfully'
+        ]);
         return $this->redirect(['index']);
     }
 
