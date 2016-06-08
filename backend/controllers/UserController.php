@@ -240,21 +240,21 @@ class UserController extends Controller
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
             UserForm::loadMultiple($phoneNumberModels, Yii::$app->request->post());
             $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
-
+			$userModel = new User();
             // validate all models
-            $valid = $modelCustomer->validate();
-            $valid = Model::validateMultiple($modelsAddress) && $valid;
+            $valid = $userModel->validate();
+            $valid = UserForm::validateMultiple($phoneNumberModels) && $valid;
 
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
-                    if ($flag = $modelCustomer->save(false)) {
+                    if ($flag = $userModel->save(false)) {
                         if (!empty($deletedIDs)) {
-                            Address::deleteAll(['id' => $deletedIDs]);
+                            PhoneNumber::deleteAll(['id' => $deletedIDs]);
                         }
-                        foreach ($modelsAddress as $modelAddress) {
-                            $modelAddress->customer_id = $modelCustomer->id;
-                            if (! ($flag = $modelAddress->save(false))) {
+                        foreach ($phoneNumberModels as $phoneNumberModel) {
+                            $phoneNumberModel->user_id = $id;
+                            if (! ($flag = $phoneNumberModel->save(false))) {
                                 $transaction->rollBack();
                                 break;
                             }
@@ -262,7 +262,7 @@ class UserController extends Controller
                     }
                     if ($flag) {
                         $transaction->commit();
-                        return $this->redirect(['view', 'id' => $modelCustomer->id]);
+                        return $this->redirect(['view', 'id' => $id]);
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();
@@ -273,7 +273,7 @@ class UserController extends Controller
                 'options' => ['class'=>'alert-success'],
                 'body' => $model->roles. ' profile has been updated successfully'
             ]);
-            return $this->redirect(['view', 'id' => $model->getModel()->id]);
+           // return $this->redirect(['view', 'id' => $model->getModel()->id]);
 		}
 
         return $this->render('update', [
