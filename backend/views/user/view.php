@@ -126,7 +126,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <h4>Qualifications</h4>
     </div>
     <div class="col-md-10">
-        <?= $program?>
+       <h4> <?= $program?></h4>
     </div>
     <div class="clearfix"></div>
 </div>
