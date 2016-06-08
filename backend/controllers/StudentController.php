@@ -82,7 +82,7 @@ class StudentController extends Controller
 			if($enrolmentModel->save()) {
 			    Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
-                	'body' => 'Enrolment has been added successfully'
+                	'body' => 'Program has been added successfully'
             ]);
             	return $this->redirect(['view', 'id' => $model->id]);
 			}
