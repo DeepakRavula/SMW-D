@@ -132,6 +132,10 @@ class UserController extends Controller
 			$teacherAvailabilityModel->to_time = $totime;
 			
 			if($teacherAvailabilityModel->save()) {
+				Yii::$app->session->setFlash('alert', [
+            	    'options' => ['class' => 'alert-success'],
+                	'body' => 'Teacher availability has been added successfully'
+            ]);
             	return $this->redirect(['view', 'id' => $model->id]);
 			}
         }
@@ -169,6 +173,10 @@ class UserController extends Controller
         	$model->roles = Yii::$app->request->queryParams['User']['role_name'];
 		}
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => $model->roles. ' has been created successfully'
+            ]);
             return $this->redirect(['view', 'id' => $model->getModel()->id]);
         }
 
@@ -215,6 +223,10 @@ class UserController extends Controller
         	$model->setModel($this->findModel($id));
 		}
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('alert', [
+                'options' => ['class'=>'alert-success'],
+                'body' => $model->roles. ' profile has been updated successfully'
+            ]);
             return $this->redirect(['view', 'id' => $model->getModel()->id]);
 		}
 
@@ -278,7 +290,10 @@ class UserController extends Controller
             $userLocationModel = UserLocation::findOne(["user_id"=>$id, "location_id"=>Yii::$app->session->get('location_id')]);
             $userLocationModel->delete();            
         }
-        
+       		Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => $model->roles. ' profile has been deleted successfully'
+            ]); 
    		return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
     }
 
