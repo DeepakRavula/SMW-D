@@ -10,6 +10,7 @@ use common\models\UserAddress;
 use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
+use common\models\Qualification;
 use common\models\UserImport;
 use backend\models\UserForm;
 use backend\models\StaffUserForm;
@@ -122,7 +123,16 @@ class UserController extends Controller
 					'teacher_location_id' => $teacherLocation->id
 				])
 			]);
-
+        $program = null;
+        $qualifications = Qualification::find()
+            ->joinWith('program')
+            ->where(['teacher_id' => $id])
+            ->all();
+        foreach($qualifications as $qualification) {
+            $program .= "{$qualification->program->name}, ";
+        }
+        $program = substr($program, 0, -2);
+        
         if ($teacherAvailabilityModel->load(Yii::$app->request->post()) ) {
 
 			$fromtime = date("H:i:s",  strtotime($_POST['TeacherAvailability']['from_time']));
@@ -148,6 +158,7 @@ class UserController extends Controller
             'address' => $address,
             'searchModel' => $searchModel,
             'teacherAvailabilityModel' => $teacherAvailabilityModel, 
+            'program' => $program
         ]);
 	}
 
