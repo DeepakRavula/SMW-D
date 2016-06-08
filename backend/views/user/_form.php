@@ -21,14 +21,14 @@ use wbraganca\dynamicform\DynamicFormWidget;
 
 $js = '
 jQuery(".dynamicform_wrapper").on("afterInsert", function(e, item) {
-    jQuery(".dynamicform_wrapper .panel-title-address").each(function(index) {
-        jQuery(this).html("Address: " + (index + 1))
+    jQuery(".dynamicform_wrapper .panel-title-phone").each(function(index) {
+        jQuery(this).html("Phone Number: " + (index + 1))
     });
 });
 
 jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
-    jQuery(".dynamicform_wrapper .panel-title-address").each(function(index) {
-        jQuery(this).html("Address: " + (index + 1))
+    jQuery(".dynamicform_wrapper .panel-title-phone").each(function(index) {
+        jQuery(this).html("Phone Number: " + (index + 1))
     });
 });
 ';
@@ -133,7 +133,7 @@ $this->registerJs($js);
             <?php foreach ($phoneNumberModels as $index => $phoneNumberModel): ?>
                 <div class="item panel panel-default"><!-- widgetBody -->
                     <div class="panel-heading">
-                        <span class="panel-title-address">Address: <?= ($index + 1) ?></span>
+                        <span class="panel-title-phone">Phone Number: <?= ($index + 1) ?></span>
                         <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>
                         <div class="clearfix"></div>
                     </div>
@@ -150,7 +150,7 @@ $this->registerJs($js);
                                 <?= $form->field($phoneNumberModel, "[{$index}]number")->textInput(['maxlength' => true]) ?>
                             </div>
                             <div class="col-sm-6">
-                                <?= $form->field($phoneNumberModel, "[{$index}]label_id")->textInput(['maxlength' => true]) ?>
+                                <?= $form->field($phoneNumberModel, "[{$index}]label_id")->dropDownList(PhoneNumber::phoneLabels(), ['prompt'=>'Select Label']) ?>
                             </div>
                             <div class="col-sm-6">
                                 <?= $form->field($phoneNumberModel, "[{$index}]extension")->textInput(['maxlength' => true]) ?>

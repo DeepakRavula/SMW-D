@@ -233,13 +233,12 @@ class UserController extends Controller
 			$model = new StaffUserForm();
         	$model->setModel($this->findModel($id));
 		}
-
 		$phoneNumberModels = $model->phoneNumbers;
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
             $oldIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
-            $phoneNumberModels = Model::createMultiple(Address::classname(), $phoneNumberModels);
-            Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
+            $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
+            UserForm::loadMultiple($phoneNumberModels, Yii::$app->request->post());
             $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
 
             // validate all models
