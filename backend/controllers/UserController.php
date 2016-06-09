@@ -171,6 +171,7 @@ class UserController extends Controller
     {
         $model = new UserForm();
 		$phoneNumberModels = [new PhoneNumber];
+		$addressModels = [new Address];
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
 		if($model->roles === User::ROLE_STAFFMEMBER){
@@ -185,14 +186,27 @@ class UserController extends Controller
             // validate all models
             $valid = $model->validate();
             $valid = UserForm::validateMultiple($phoneNumberModels) && $valid;
+			
+			$addressModels = UserForm::createMultiple(Address::classname());
+            UserForm::loadMultiple($addressModels, Yii::$app->request->post());
 
-            if ($valid) {
+            // validate all models
+            $valid = $model->validate();
+            $valid = UserForm::validateMultiple($addressModels) && $valid;
+			if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
                     if ($flag = $model->save(false)) {
                         foreach ($phoneNumberModels as $phoneNumberModel) {
                             $phoneNumberModel->user_id = $model->getModel()->id;
                             if (! ($flag = $phoneNumberModel->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
+   					    foreach ($addressModels as $addressModel) {
+                            $addresssModel->user_id = $model->getModel()->id;
+                            if (! ($flag = $addressModel->save(false))) {
                                 $transaction->rollBack();
                                 break;
                             }
@@ -207,19 +221,21 @@ class UserController extends Controller
                     $transaction->rollBack();
                 }
             }
-			Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => ucwords($model->roles). ' has been created successfully'
-            ]);
-        }
+
+		Yii::$app->session->setFlash('alert', [
+            'options' => ['class' => 'alert-success'],
+            'body' => ucwords($model->roles). ' has been created successfully'
+        ]);
+    }
 
         return $this->render('create', [
             'model' => $model,
             'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
             'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-			'phoneNumberModels' => $phoneNumberModels
+			'phoneNumberModels' => $phoneNumberModels,
+			'addressModels' => $addressModels
         ]);
-    }
+}
 
     /**
      * Updates an existing User model.
@@ -251,11 +267,14 @@ class UserController extends Controller
 				throw new ForbiddenHttpException;		
 			}
 		}
-		
 		$phoneNumberModels = $model->phoneNumbers;
+		$addressModels = $model->addresses;
 		
 		if(count($phoneNumberModels) === 0){
 			$phoneNumberModels = [new PhoneNumber];
+		}
+		if(count($addressModels) === 0){
+			$addressModels = [new Address];
 		}
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
@@ -266,7 +285,15 @@ class UserController extends Controller
             // validate all models
             $valid = $model->validate();
             $valid = UserForm::validateMultiple($phoneNumberModels) && $valid;
-
+			
+			$oldIDs = ArrayHelper::map($addressModels, 'id', 'id');
+            $addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
+            UserForm::loadMultiple($addressModels, Yii::$app->request->post());
+            $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($addressModels, 'id', 'id')));
+            // validate all models
+            $valid = $model->validate();
+            $valid = UserForm::validateMultiple($addressModels) && $valid;
+			
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
@@ -281,6 +308,16 @@ class UserController extends Controller
                                 break;
                             }
                         }
+              			if (!empty($deletedIDs)) {
+                            Address::deleteAll(['id' => $deletedIDs]);
+                        }
+                        foreach ($addressModels as $addressModel) {
+                            $addressModel->user_id = $id;
+                            if (! ($flag = $addressModel->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
                     }
                     if ($flag) {
                         $transaction->commit();
@@ -291,19 +328,20 @@ class UserController extends Controller
                 }
             }
 
-			Yii::$app->session->setFlash('alert', [
-                'options' => ['class'=>'alert-success'],
-                'body' => ucwords($model->roles). ' profile has been updated successfully'
-            ]);
-		}
+		Yii::$app->session->setFlash('alert', [
+            'options' => ['class'=>'alert-success'],
+            'body' => ucwords($model->roles). ' profile has been updated successfully'
+        ]);
+	}
 
         return $this->render('update', [
             'model' => $model,
             'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
             'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-			'phoneNumberModels' => $phoneNumberModels
+			'phoneNumberModels' => $phoneNumberModels,
+			'addressModels' => $addressModels
         ]);
-    }
+}
 
     /**
      * Updates an existing User model.
