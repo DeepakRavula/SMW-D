@@ -45,8 +45,7 @@ class ScheduleController extends Controller
      * @return mixed
      */
     public function actionIndex()
-    {
-        
+    {        
         /* $teacherAvailability = ArrayHelper::map(TeacherAvailability::find()->all(), 'id', 'teacher_id as name');*/
         $teacherAvailability = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
@@ -58,43 +57,22 @@ class ScheduleController extends Controller
             ->all();
         
         $events = array();
-        $student = array();
-        $students = array();
-        
-        foreach($teacherAvailability as $teacher){
-            
-            $studentEvents = (new \yii\db\Query())
-                ->select(['q.teacher_id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, HOUR(ed.from_time) as start_hours, MINUTE(ed.from_time) as start_minutes, HOUR(ed.to_time) as end_hours, MINUTE(ed.to_time) as end_minutes, ed.day, e.commencement_date, e.renewal_date'])
-                ->from('enrolment e')
-                ->join('Join', 'qualification q', 'q.id = e.qualification_id')
-                ->join('Join', 'enrolment_schedule_day ed', 'ed.enrolment_id = e.id')
-                ->join('Join', 'student s', 's.id = e.student_id')
-                ->join('Join', 'program p', 'p.id = q.program_id')
-                ->where('q.teacher_id = :teacher_id', [':teacher_id'=>$teacher['id']])
-                ->all();
-                
-            foreach($studentEvents as $studentEvents){
-                $student['title'] = $studentEvents['title'];
-                $student['start_hours'] = $studentEvents["start_hours"];
-                $student['end_hours'] = $studentEvents["end_hours"];
-                $student['start_minutes'] = $studentEvents["start_minutes"];
-                $student['end_minutes'] = $studentEvents["end_minutes"];
-                $student['allDay'] = false;
-                $student['resources'] = $studentEvents['id']; 
-                $student['day'] = $studentEvents['day'];
-                $student['commencement_date'] = $studentEvents['commencement_date']; 
-                $student['renewal_date'] = $studentEvents['renewal_date'];
-                
-                array_push($events, $student);
-            } 
-            
-        }
-        
+        $events = (new \yii\db\Query())
+            ->select(['q.teacher_id as resources', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, ed.day, concat(DATE(l.date),\' \',ed.from_time) as start, concat(DATE(l.date),\' \',ed.to_time) as end'])
+            ->from('lesson l')
+            ->join('Join', 'enrolment_schedule_day ed', 'ed.id = l.enrolment_schedule_day_id')
+            ->join('Join', 'enrolment e', 'e.id = ed.enrolment_id')
+            ->join('Join', 'qualification q', 'q.id = e.qualification_id')            
+            ->join('Join', 'student s', 's.id = e.student_id')
+            ->join('Join', 'program p', 'p.id = q.program_id')
+            ->where('e.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+            ->all();
+
         $location = Location::findOne($id=Yii::$app->session->get('location_id'));
         $from_time = $location->from_time;
         $to_time = $location->to_time;
         
-		return $this->render('index', ['teacherAvailability'=>$teacherAvailability, 'events'=>$events, 'student'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
+		return $this->render('index', ['teacherAvailability'=>$teacherAvailability, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
     }
 
 }
