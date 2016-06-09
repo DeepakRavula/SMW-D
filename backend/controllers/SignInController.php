@@ -66,6 +66,10 @@ class SignInController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+			Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'You have been logged in successfully'
+            ]);
             return $this->goBack();
         } else {
             return $this->render('login', [
@@ -77,6 +81,10 @@ class SignInController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
+			Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'You have been logged out successfully'
+            ]);
         return $this->goHome();
     }
 
@@ -124,14 +132,14 @@ class SignInController extends Controller
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->getSession()->setFlash('alert', [
-                    'body'=>Yii::t('backend', 'Check your email for further instructions.'),
-                    'options'=>['class'=>'alert-success']
-                ]);
+			Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'Check your email for further instruction'
+            ]);
 
                 return $this->goHome();
             } else {
-                Yii::$app->getSession()->setFlash('alert', [
+               Yii::$app->session->setFlash('alert', [
                     'body'=>Yii::t('backend', 'Sorry, we are unable to reset password for email provided.'),
                     'options'=>['class'=>'alert-danger']
                 ]);
@@ -158,7 +166,7 @@ class SignInController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->getSession()->setFlash('alert', [
+            Yii::$app->session->setFlash('alert', [
                 'body'=> Yii::t('backend', 'New password was saved.'),
                 'options'=>['class'=>'alert-success']
             ]);

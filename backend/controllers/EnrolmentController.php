@@ -108,7 +108,10 @@ class EnrolmentController extends Controller
 		$enrolment = $this->findModel($id);
 		$student_id = $enrolment->student_id;
         $enrolment->delete();
-
+		Yii::$app->session->setFlash('alert', [
+            'options' => ['class' => 'alert-success'],
+            'body' => 'Program has been deleted successfully'
+        ]);
         return $this->redirect(['student/view','id' => $student_id]);
     }
 

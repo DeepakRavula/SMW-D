@@ -54,7 +54,10 @@ $this->registerJs($js);
 
 <div class="user-form">
 
-    <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
+    <?php $form = ActiveForm::begin(); ?>
+        <div class="col-md-12">
+            <?= $form->errorSummary($model); ?>
+        </div>
         <div class="col-md-6">
             <?php echo $form->field($model, 'firstname') ?>
         </div>

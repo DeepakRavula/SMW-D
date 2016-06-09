@@ -45,15 +45,14 @@ class UserForm extends Model
     public function rules()
     {
         return [
-            ['username', 'filter', 'filter' => 'trim'],
-            ['username', 'unique', 'targetClass' => User::className(), 'filter' => function ($query) {
-                if (!$this->getModel()->isNewRecord) {
-                    $query->andWhere(['not', ['id'=>$this->getModel()->id]]);
-                }
-            }],
-            ['username', 'string', 'min' => 2, 'max' => 255],
+            ['firstname', 'filter', 'filter' => 'trim'],
+            ['firstname', 'required', 'on' => 'create'],
+            ['firstname', 'string', 'min' => 2, 'max' => 255],
  
-            ['email', 'filter', 'filter' => 'trim'],
+            ['lastname', 'filter', 'filter' => 'trim'],
+            ['lastname', 'required', 'on' => 'create'],
+            ['lastname', 'string', 'min' => 2, 'max' => 255],['email', 'filter', 'filter' => 'trim'],
+			
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'unique', 'targetClass'=> User::className(), 'filter' => function ($query) {
@@ -70,25 +69,9 @@ class UserForm extends Model
                 )]
             ],
             ['roles','required'],
-            
-            ['lastname', 'filter', 'filter' => 'trim'],
-            ['lastname', 'required', 'on' => 'create'],
-            ['lastname', 'string', 'min' => 2, 'max' => 255],
-            
-            ['firstname', 'filter', 'filter' => 'trim'],
-            ['firstname', 'required', 'on' => 'create'],
-            ['firstname', 'string', 'min' => 2, 'max' => 255],
-			
-            ['phonelabel','required'],
-            ['phoneextension','integer'],
-            ['phonenumber','required'],
-					
-            ['address','required'],
-            ['addresslabel','required'],
-            ['postalcode','required'],
-            ['province','required'],
-            ['city','required'],
-            ['country','required']					
+           		    
+			[['phonelabel', 'phoneextension', 'phonenumber', 'address'], 'safe'],
+            [['addresslabel', 'postalcode', 'province', 'city', 'country'],'safe']	
         ];
     }
 
@@ -140,12 +123,9 @@ class UserForm extends Model
 
 		$this->roles = end($this->roles);
        	$userFirstName = UserProfile::findOne(['user_id' => $model->getId()]); 
-	  		if(! empty($userFirstName->firstname)){
+	  		if(! empty($userFirstName)){
 				$this->firstname = $userFirstName->firstname;
-	   	}
-	    $userLastName = UserProfile::findOne(['user_id' => $model->getId()]); 
-	   		if(! empty($userLastName->lastname)){
-			   $this->lastname = $userLastName->lastname;
+			    $this->lastname = $userFirstName->lastname;
 	   	}
 	   	
 		$phoneNumber = PhoneNumber::findOne(['user_id' => $model->getId()]); 

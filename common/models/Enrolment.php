@@ -39,7 +39,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['student_id', 'qualification_id'], 'required'],
+            [['student_id', 'qualification_id','programId','commencement_date'], 'required'],
             [['student_id', 'qualification_id', 'teacherId', 'programId', 'day'], 'integer'],
             [['commencement_date','teacherId', 'programId', 'day', 'fromTime', 'duration'], 'safe'],
         ];

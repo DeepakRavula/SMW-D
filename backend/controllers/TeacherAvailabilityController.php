@@ -106,10 +106,11 @@ class TeacherAvailabilityController extends Controller
 		$model = $this->findModel($id);
 		$teacherId = $model->teacher->id;
         $model->delete();
-        
-      //  if (!isset($_GET['ajax'])) {
+     	Yii::$app->session->setFlash('alert', [
+       	    'options' => ['class' => 'alert-success'],
+          	'body' => 'Teacher Availability has been deleted successfully'
+        ]); 
             return $this->redirect(['user/view','id' => $teacherId]);
-    //    }
     }
 
     /**

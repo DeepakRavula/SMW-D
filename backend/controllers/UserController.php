@@ -177,10 +177,6 @@ class UserController extends Controller
 			if ( ! Yii::$app->user->can('createStaff')) {
 				throw new ForbiddenHttpException;
 			}
-
-			$model = new StaffUserForm();
-        	$model->setScenario('create');
-        	$model->roles = Yii::$app->request->queryParams['User']['role_name'];
 		}
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
@@ -214,7 +210,7 @@ class UserController extends Controller
             }
 			Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
-                'body' => $model->roles. ' has been created successfully'
+                'body' => ucwords($model->roles). ' has been created successfully'
             ]);
             //return $this->redirect(['view', 'id' => $model->getModel()->id]);
         }
@@ -258,11 +254,6 @@ class UserController extends Controller
 			}
 		}
 		
-		if($model->roles === User::ROLE_STAFFMEMBER){
-			$model = new StaffUserForm();
-        	$model->setModel($this->findModel($id));
-		}
-		$phoneNumberModels = $model->phoneNumbers;
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
             $oldIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
@@ -299,7 +290,7 @@ class UserController extends Controller
 
 			Yii::$app->session->setFlash('alert', [
                 'options' => ['class'=>'alert-success'],
-                'body' => $model->roles. ' profile has been updated successfully'
+                'body' => ucwords($model->roles). ' profile has been updated successfully'
             ]);
            // return $this->redirect(['view', 'id' => $model->getModel()->id]);
 		}
@@ -367,7 +358,7 @@ class UserController extends Controller
         }
        		Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
-                'body' => $model->roles. ' profile has been deleted successfully'
+                'body' => ucwords($model->roles). ' profile has been deleted successfully'
             ]); 
    		return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
     }

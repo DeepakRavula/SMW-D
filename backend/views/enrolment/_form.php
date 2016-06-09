@@ -20,8 +20,9 @@ use yii\helpers\Url;
 <div class="enrolment-form form-well">
 	<h4>Add new program details</h4>
     <?php $form = ActiveForm::begin(); ?>
-
-    <?php echo $form->errorSummary($model); ?>
+        <div class="col-md-12">
+            <?= $form->errorSummary($model); ?>
+        </div>
     <div class="row">
 	<div class="col-md-4">
     <?php echo $form->field($model, 'programId')->dropDownList(ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),['prompt'=>'Select..']); ?>

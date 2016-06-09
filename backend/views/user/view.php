@@ -31,30 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
 			<i class="fa fa-phone-square"></i> <?php echo !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>
 		</div>
 		<div class="clearfix"></div>
-	<?php
-	// echo DetailView::widget([
-	// 	'model' => $model,
-	// 	'attributes' => [
-	// 		[
-	// 			'label' => 'First Name',
-	// 			'value' => !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null,
-	// 		],
-	// 		[
-	// 			'label' => 'Last Name',
-	// 			'value' => !empty($model->userProfile->lastname) ? $model->userProfile->lastname : null,
-	// 		],
-	// 		'email:email',
-	// 		[
-	// 			'label' => 'Address',
-	// 			'value' => !empty($model->primaryAddress->address) ? $model->primaryAddress->address : null,
-	// 		],
-	// 		[
-	// 			'label' => 'Phone Number',
-	// 			'value' => !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null,
-	// 		],
-	// 	],
-	// ])
-	?> 
 	<div class="col-md-12 action-btns">
 		<?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update details'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		<?php

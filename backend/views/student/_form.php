@@ -25,7 +25,7 @@ use yii\bootstrap\ActiveForm;
         <?php echo $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-md-4">
-            <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
+            <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true,'value' => $customer->userProfile->firstname]) ?>
         </div>
         <div class="clearfix"></div>
     </div>
