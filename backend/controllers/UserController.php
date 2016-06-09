@@ -178,7 +178,7 @@ class UserController extends Controller
 				throw new ForbiddenHttpException;
 			}
 		}
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
 			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
             UserForm::loadMultiple($phoneNumberModels, Yii::$app->request->post());
 
@@ -188,11 +188,10 @@ class UserController extends Controller
 
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
-
                 try {
                     if ($flag = $model->save(false)) {
                         foreach ($phoneNumberModels as $phoneNumberModel) {
-                            $modelAddress->customer_id = $modelCustomer->id;
+                            $phoneNumberModel->user_id = $model->getModel()->id;
                             if (! ($flag = $phoneNumberModel->save(false))) {
                                 $transaction->rollBack();
                                 break;
@@ -212,7 +211,6 @@ class UserController extends Controller
                 'options' => ['class' => 'alert-success'],
                 'body' => ucwords($model->roles). ' has been created successfully'
             ]);
-            //return $this->redirect(['view', 'id' => $model->getModel()->id]);
         }
 
         return $this->render('create', [
@@ -254,6 +252,11 @@ class UserController extends Controller
 			}
 		}
 		
+		$phoneNumberModels = $model->phoneNumbers;
+		
+		if(count($phoneNumberModels) === 0){
+			$phoneNumberModels = [new PhoneNumber];
+		}
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
             $oldIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
@@ -292,7 +295,6 @@ class UserController extends Controller
                 'options' => ['class'=>'alert-success'],
                 'body' => ucwords($model->roles). ' profile has been updated successfully'
             ]);
-           // return $this->redirect(['view', 'id' => $model->getModel()->id]);
 		}
 
         return $this->render('update', [

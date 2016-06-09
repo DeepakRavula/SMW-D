@@ -54,7 +54,7 @@ $this->registerJs($js);
 
 <div class="user-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
         <div class="col-md-12">
             <?= $form->errorSummary($model); ?>
         </div>
