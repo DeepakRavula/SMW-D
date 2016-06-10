@@ -36,11 +36,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     return ! empty($data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->fullName. ' (' .$data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->qualification->program->name. ')' : null;
                 },
             ],
-			'tax',
-			'subTotal',
+			'tax:currency',
+			'subTotal:currency',
             'total:currency',
 			[
-				'label' => 'Date',
+			'label' => 'Date',
 				'value' => function($data) {
 					$date = date("d-m-y", strtotime($data->date)); 
 					return ! empty($date) ? $date : null;
