@@ -38,7 +38,7 @@ class UserForm extends Model
 	public $phoneextension;
     private $model;
 	public $phoneNumbers;
-
+	public $addresses;
     /**
      * @inheritdoc
      */
@@ -121,6 +121,12 @@ class UserForm extends Model
 			$this->phoneNumbers = [new PhoneNumber];
 		}
 
+		if(count($model->addresses) > 0) {
+			$this->addresses = $model->addresses;
+		} else {
+			$this->addresses = [new Address];
+		}
+
 		$this->roles = end($this->roles);
        	$userFirstName = UserProfile::findOne(['user_id' => $model->getId()]); 
 	  		if(! empty($userFirstName)){
@@ -167,29 +173,28 @@ class UserForm extends Model
 
 public static function createMultiple($modelClass, $multipleModels = [])
 {
-        $model    = new $modelClass;
-        $formName = $model->formName();
-        $post     = Yii::$app->request->post($formName);
-        $models   = [];
+	$model = new $modelClass;
+	$formName = $model->formName();
+	$post = Yii::$app->request->post($formName);
+	$models = [];
 
-        if (! empty($multipleModels)) {
-            $keys = array_keys(ArrayHelper::map($multipleModels, 'id', 'id'));
-            $multipleModels = array_combine($keys, $multipleModels);
-        }
+	if (!empty($multipleModels)) {
+		$keys = array_keys(ArrayHelper::map($multipleModels, 'id', 'id'));
+		$multipleModels = array_combine($keys, $multipleModels);
+	}
 
-        if ($post && is_array($post)) {
-            foreach ($post as $i => $item) {
-                if (isset($item['id']) && !empty($item['id']) && isset($multipleModels[$item['id']])) {
-                    $models[] = $multipleModels[$item['id']];
-                } else {
-                    $models[] = new $modelClass;
-                }
-            }
-        }
+	if ($post && is_array($post)) {
+		foreach ($post as $i => $item) {
+			if (isset($item['id']) && !empty($item['id']) && isset($multipleModels[$item['id']])) {
+				$models[] = $multipleModels[$item['id']];
+			} else {
+				$models[] = new $modelClass;
+			}
+		}
+	}
+	unset($model, $formName, $post);
 
-        unset($model, $formName, $post);
-
-        return $models;
+	return $models;
 }
 
     /**
