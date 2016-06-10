@@ -205,11 +205,11 @@ class UserController extends Controller
                             }
                         }
    					    foreach ($addressModels as $addressModel) {
-                            $addresssModel->user_id = $model->getModel()->id;
                             if (! ($flag = $addressModel->save(false))) {
                                 $transaction->rollBack();
                                 break;
                             }
+							$model->getModel()->link('addresses', $addressModel);
                         }
                     }
 
@@ -312,11 +312,11 @@ class UserController extends Controller
                             Address::deleteAll(['id' => $deletedIDs]);
                         }
                         foreach ($addressModels as $addressModel) {
-                            $addressModel->user_id = $id;
                             if (! ($flag = $addressModel->save(false))) {
                                 $transaction->rollBack();
                                 break;
                             }
+							$model->getModel()->link('addresses', $addressModel);
                         }
                     }
                     if ($flag) {
