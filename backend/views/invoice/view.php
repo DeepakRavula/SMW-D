@@ -107,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <!-- /.col -->
         <div class="col-xs-6">
-          <p class="lead">Balance : <?php echo $model->total;?> </p>
+          <!-- <p class="lead">Balance : <?php //echo $model->total;?> </p> -->
 
           <div class="table-responsive">
             <table class="table">
