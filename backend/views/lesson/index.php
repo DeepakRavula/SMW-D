@@ -39,18 +39,15 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Lesson Status',
 				'value' => function($data) {
-					$status = null;
-					switch($data->status){
-						case Lesson::STATUS_COMPLETED:
-							$status = 'Completed';
-						break;
-						case Lesson::STATUS_PENDING:
-							$status = 'Pending';
-						break;
-						case Lesson::STATUS_CANCELED:
-							$status = 'Canceled';
-						break;
+					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+					$currentDate = new \DateTime();
+
+					if($lessonDate <= $currentDate) {
+						$status = 'Completed';
+					} else {
+						$status = 'Scheduled';
 					}
+
 					return $status;
                 },
 			],
@@ -73,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
 						}
 					}
 					else {
-						$status = 'UnInvoiced';	
+						$status = 'Not Invoiced';	
 					}
 					return $status;
                 },
