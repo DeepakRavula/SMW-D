@@ -39,8 +39,27 @@ class LessonQuery extends \yii\db\ActiveQuery
      */
     public function unInvoiced()
     {
-        $this->leftJoin('invoice', 'invoice.lesson_id = lesson.id')
-			->where(['invoice.id' => null]);
+		$this->joinWith(['invoiceLineItem' => function($query) {
+			$query->joinWith('invoice');
+			$query->where(['invoice.id' => null]);
+		}]);
+		
         return $this;
     }
+
+	public function completed() {
+		$this->andFilterWhere(['<=', 'l.date', (new \DateTime())->format('Y-m-d')]);
+		
+		return $this;
+	}
+
+	public function location($locationId) {
+		$this->joinWith(['enrolmentScheduleDay' => function($query) use($locationId) {
+			$query->joinWith('enrolment');
+			$query->andFilterWhere(['enrolment.location_id' => $locationId]);
+		}]);
+		$this->andFilterWhere(['<=', 'l.date', (new \DateTime())->format('Y-m-d')]);
+		
+		return $this;
+	}
 }
