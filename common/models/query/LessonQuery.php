@@ -53,12 +53,17 @@ class LessonQuery extends \yii\db\ActiveQuery
 		return $this;
 	}
 
+	public function scheduled() {
+		$this->andFilterWhere(['>', 'l.date', (new \DateTime())->format('Y-m-d')]);
+		
+		return $this;
+	}
+
 	public function location($locationId) {
 		$this->joinWith(['enrolmentScheduleDay' => function($query) use($locationId) {
 			$query->joinWith('enrolment');
 			$query->andFilterWhere(['enrolment.location_id' => $locationId]);
 		}]);
-		$this->andFilterWhere(['<=', 'l.date', (new \DateTime())->format('Y-m-d')]);
 		
 		return $this;
 	}
