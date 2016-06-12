@@ -16,14 +16,19 @@ use yii\helpers\ArrayHelper;
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
-
-    <?php echo $form->field($model, 'invoiceStatus')->dropDownList(LessonSearch::invoiceStatuses());?>
-
-    <?php echo $form->field($model, 'lessonStatus')->dropDownList(LessonSearch::lessonStatuses());?>
-
-    <div class="form-group">
+    <div class="row">
+    <div class="col-md-3">
+        <?php echo $form->field($model, 'invoiceStatus')->dropDownList(LessonSearch::invoiceStatuses());?>
+    </div>
+    <div class="col-md-3">
+        <?php echo $form->field($model, 'lessonStatus')->dropDownList(LessonSearch::lessonStatuses());?>
+    </div>
+    
+    <div class="col-md-3 form-group m-t-5">
+        <br>
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
         <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
+    </div>
     </div>
 
     <?php ActiveForm::end(); ?>
