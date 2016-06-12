@@ -12,7 +12,8 @@ $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="lesson-index">
-<?php //yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+<?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],
@@ -100,7 +101,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
         ],
     ]); ?>
-	<?php //yii\widgets\Pjax::end(); ?>
+	<?php yii\widgets\Pjax::end(); ?>
 
 </div>
 
