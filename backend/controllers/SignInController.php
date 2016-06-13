@@ -66,10 +66,6 @@ class SignInController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-			Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'You have been logged in successfully'
-            ]);
             return $this->goBack();
         } else {
             return $this->render('login', [
@@ -81,10 +77,6 @@ class SignInController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
-			Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'You have been logged out successfully'
-            ]);
         return $this->goHome();
     }
 
