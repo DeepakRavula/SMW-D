@@ -12,7 +12,6 @@ use yii\bootstrap\ActiveForm;
 ?>
 
 <div class="student-form form-well">
-    <h4>Add new student</h4>
 	<?php
 	$session = Yii::$app->session;
 	$locationId = $session->get('location_id');

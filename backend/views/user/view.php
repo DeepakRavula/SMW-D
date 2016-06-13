@@ -11,8 +11,8 @@ use common\models\Address;
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
 
-$this->title = Yii::t('backend',  !($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name).'s Detail');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', !($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name)), 'url' => ['index']];
+$this->title = Yii::t('backend',  !($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name).' Detail');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', !($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name. 's')), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php //echo '<pre>'; print_r($addressModels) ?>
