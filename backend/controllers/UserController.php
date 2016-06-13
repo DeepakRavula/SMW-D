@@ -146,7 +146,7 @@ class UserController extends Controller
             	    'options' => ['class' => 'alert-success'],
                 	'body' => 'Teacher availability has been added successfully'
             ]);
-            	return $this->redirect(['view', 'id' => $model->id]);
+			    return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name,'id' => $id]);
 			}
         }
         $address = Address::findByUserId($model->id);
