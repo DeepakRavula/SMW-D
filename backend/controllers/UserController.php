@@ -215,7 +215,7 @@ class UserController extends Controller
 			            'options' => ['class' => 'alert-success'],
             			'body' => ucwords($model->roles). ' has been created successfully'
         			]);
-                        return $this->redirect(['view', 'id' => $model->getModel()->id]);
+			    return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles,'id' => $model->getModel()->id]);
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();
@@ -314,7 +314,7 @@ class UserController extends Controller
                     }
                     if ($flag) {
                         $transaction->commit();
-                        return $this->redirect(['view', 'id' => $id]);
+			    return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles,'id' => $model->getModel()->id]);
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();
