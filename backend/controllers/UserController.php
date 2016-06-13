@@ -18,13 +18,13 @@ use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\base\Model;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
 use common\models\Program;
 use yii\web\ForbiddenHttpException;
-
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -180,23 +180,26 @@ class UserController extends Controller
 			}
 		}
         if ($model->load(Yii::$app->request->post())) {
-			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
-            UserForm::loadMultiple($phoneNumberModels, Yii::$app->request->post());
-
-            // validate all models
-            $valid = $model->validate();
-            $valid = UserForm::validateMultiple($phoneNumberModels) && $valid;
-			
 			$addressModels = UserForm::createMultiple(Address::classname());
-            UserForm::loadMultiple($addressModels, Yii::$app->request->post());
-
-            // validate all models
+            Model::loadMultiple($addressModels, Yii::$app->request->post());
             $valid = $model->validate();
-            $valid = UserForm::validateMultiple($addressModels) && $valid;
+            $valid = Model::validateMultiple($addressModels) && $valid;		
+			
+			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
+            Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
+            $valid = Model::validateMultiple($phoneNumberModels) && $valid;
+			
 			if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
                     if ($flag = $model->save(false)) {
+						foreach ($addressModels as $addressModel) {
+                            if (! ($flag = $addressModel->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+							$model->getModel()->link('addresses', $addressModel);
+                        }
                         foreach ($phoneNumberModels as $phoneNumberModel) {
                             $phoneNumberModel->user_id = $model->getModel()->id;
                             if (! ($flag = $phoneNumberModel->save(false))) {
@@ -204,28 +207,20 @@ class UserController extends Controller
                                 break;
                             }
                         }
-   					    foreach ($addressModels as $addressModel) {
-                            if (! ($flag = $addressModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-							$model->getModel()->link('addresses', $addressModel);
-                        }
                     }
 
                     if ($flag) {
                         $transaction->commit();
+					Yii::$app->session->setFlash('alert', [
+			            'options' => ['class' => 'alert-success'],
+            			'body' => ucwords($model->roles). ' has been created successfully'
+        			]);
                         return $this->redirect(['view', 'id' => $model->getModel()->id]);
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();
                 }
             }
-
-		Yii::$app->session->setFlash('alert', [
-            'options' => ['class' => 'alert-success'],
-            'body' => ucwords($model->roles). ' has been created successfully'
-        ]);
     }
 
         return $this->render('create', [
@@ -276,30 +271,28 @@ class UserController extends Controller
 		if(count($addressModels) === 0){
 			$addressModels = [new Address];
 		}
-		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+		if ($model->load(Yii::$app->request->post())) {
 
-            $oldIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
+            $oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
-            UserForm::loadMultiple($phoneNumberModels, Yii::$app->request->post());
-            $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
+            Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
+            $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
             // validate all models
             $valid = $model->validate();
-            $valid = UserForm::validateMultiple($phoneNumberModels) && $valid;
+            $valid = Model::validateMultiple($phoneNumberModels) && $valid;
 			
-			$oldIDs = ArrayHelper::map($addressModels, 'id', 'id');
+			$oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
             $addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
-            UserForm::loadMultiple($addressModels, Yii::$app->request->post());
-            $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($addressModels, 'id', 'id')));
-            // validate all models
-            $valid = $model->validate();
-            $valid = UserForm::validateMultiple($addressModels) && $valid;
+            Model::loadMultiple($addressModels, Yii::$app->request->post());
+            $deletedAddressIDs = array_diff($oldAddressIDs, array_filter(ArrayHelper::map($addressModels, 'id', 'id')));
+            $valid = Model::validateMultiple($addressModels) && $valid;
 			
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
                     if ($flag = $model->save(false)) {
-                        if (!empty($deletedIDs)) {
-                            PhoneNumber::deleteAll(['id' => $deletedIDs]);
+                        if (!empty($deletedPhoneIDs)) {
+                            PhoneNumber::deleteAll(['id' => $deletedPhoneIDs]);
                         }
                         foreach ($phoneNumberModels as $phoneNumberModel) {
                             $phoneNumberModel->user_id = $id;
@@ -308,8 +301,8 @@ class UserController extends Controller
                                 break;
                             }
                         }
-              			if (!empty($deletedIDs)) {
-                            Address::deleteAll(['id' => $deletedIDs]);
+              			if (!empty($deletedAddressIDs)) {
+                            Address::deleteAll(['id' => $deletedAddressIDs]);
                         }
                         foreach ($addressModels as $addressModel) {
                             if (! ($flag = $addressModel->save(false))) {

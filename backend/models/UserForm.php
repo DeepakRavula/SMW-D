@@ -114,6 +114,7 @@ class UserForm extends Model
             Yii::$app->authManager->getRolesByUser($model->getId()),
             'name'
         );
+		$this->roles = end($this->roles);
 
 		if(count($model->phoneNumbers) > 0) {
 			$this->phoneNumbers = $model->phoneNumbers;
@@ -127,7 +128,6 @@ class UserForm extends Model
 			$this->addresses = [new Address];
 		}
 
-		$this->roles = end($this->roles);
        	$userFirstName = UserProfile::findOne(['user_id' => $model->getId()]); 
 	  		if(! empty($userFirstName)){
 				$this->firstname = $userFirstName->firstname;
