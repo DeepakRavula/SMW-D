@@ -16,6 +16,12 @@ $this->params['body-class'] = array_key_exists('body-class', $this->params) ?
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?php echo Yii::$app->language ?>">
+<?php if (Yii::$app->session->hasFlash('alert')):?>
+<?php echo \yii\bootstrap\Alert::widget([
+    'body'=>ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'body'),
+    'options'=>ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'options'),
+])?>
+<?php endif; ?>
 <head>
     <meta charset="<?php echo Yii::$app->charset ?>">
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
@@ -25,6 +31,7 @@ $this->params['body-class'] = array_key_exists('body-class', $this->params) ?
     <?php $this->head() ?>
 
 </head>
+
 <?php echo Html::beginTag('body', [
     'class' => implode(' ', [
         ArrayHelper::getValue($this->params, 'body-class'),
@@ -34,19 +41,13 @@ $this->params['body-class'] = array_key_exists('body-class', $this->params) ?
         Yii::$app->keyStorage->get('backend.layout-collapsed-sidebar') ? 'sidebar-collapse' : null,
     ])
 ])?>
+
     <?php $this->beginBody() ?>
+
         <?php echo $content ?>
     <?php $this->endBody() ?>
+
 <?php echo Html::endTag('body') ?>
 </html>
-<?php $this->endPage() ?>
 
-	<?php if (Yii::$app->session->hasFlash('alert')): ?>
-		<?php
-		echo \yii\bootstrap\Alert::widget([
-			'body' => ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'body'),
-			'options' => ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'options'),
-		])
-		?>
-<?php endif; ?>
-</section>
+<?php $this->endPage() ?>
