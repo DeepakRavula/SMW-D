@@ -6,6 +6,7 @@ use yii\grid\GridView;
 use common\grid\EnumColumn;
 use common\models\User;
 use common\models\TeacherAvailability;
+use common\models\Address;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -14,7 +15,7 @@ $this->title = Yii::t('backend',  !($searchModel->role_name) ? 'User' : ucwords(
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', !($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name)), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<?php //echo '<pre>'; print_r($searchModel) ?>
+<?php //echo '<pre>'; print_r($addressModels) ?>
 <div class="user-view user-details-wrapper">
 		<div class="col-md-12 users-name">
 			<p class="users-name"><?php echo !empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>

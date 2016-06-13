@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Birth date">
 		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo (new \DateTime($model->birth_date))->format('m-d-Y'); ?>
 	</div>
-	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
+	<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
 		<i class="fa fa-user detail-icon"></i> <?php echo !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null ?>
 	</div>
 	<div class="col-md-2">
@@ -140,6 +140,8 @@ $this->params['breadcrumbs'][] = $this->title;
 echo GridView::widget([
 	'dataProvider' => $lessonModel,
 	'options' => ['class' => 'col-md-12'],
+	'tableOptions' =>['class' => 'table table-bordered'],
+	'headerRowOptions' => ['class' => 'bg-light-gray' ],
 	'columns' => [
 		['class' => 'yii\grid\SerialColumn'],
 		[
