@@ -13,6 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="invoice-index">
 
 <?php echo Html::a('Add Invoice', ['invoice/create'], ['class' => 'btn btn-success m-b-10'])?>
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],

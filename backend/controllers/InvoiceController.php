@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
+use backend\models\search\InvoiceSearch;
 use common\models\User;
 use common\models\Lesson;
 use common\models\Location;
@@ -36,6 +37,17 @@ class InvoiceController extends Controller
      */
     public function actionIndex()
     {
+
+
+        $searchModel = new InvoiceSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+
+		/*
         $dataProvider = new ActiveDataProvider([
             'query' => Invoice::find()
 				->join('INNER JOIN','invoice_line_item ili','ili.invoice_id = invoice.id')
@@ -48,6 +60,8 @@ class InvoiceController extends Controller
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
+		 * 
+		 */
     }
 
     /**
