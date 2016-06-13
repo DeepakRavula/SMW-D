@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 </div>
 <div class="col-md-12">
-<h4 class="pull-left m-r-20">Program details</h4>
+<h4 class="pull-left m-r-20">Enrolments</h4>
 <a href="#" class="add-new-program text-add-new"><i class="fa fa-plus-circle"></i> Add new program</a>
 <div class="clearfix"></div>
 </div>
@@ -134,7 +134,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	]);
 	?>
 <div class="col-md-12">
-	<h4 class="pull-left m-r-20">Lesson details</h4>
+	<h4 class="pull-left m-r-20">Lessons</h4>
 </div>
 <?php
 echo GridView::widget([
@@ -144,12 +144,6 @@ echo GridView::widget([
 	'headerRowOptions' => ['class' => 'bg-light-gray' ],
 	'columns' => [
 		['class' => 'yii\grid\SerialColumn'],
-		[
-			'label' => 'Student Name',
-			'value' => function($data) {
-				return !empty($data->enrolmentScheduleDay->enrolment->student->fullName) ? $data->enrolmentScheduleDay->enrolment->student->fullName : null;
-			},
-		],
 		[
 			'label' => 'Program Name',
 			'value' => function($data) {
