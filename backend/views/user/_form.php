@@ -195,45 +195,6 @@ $this->registerJs($js);
                             }
                         ?>
 
-<!-- Phone show hide -->
-<?php DynamicFormWidget::begin([
-    'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
-    'widgetBody' => '.container-items', // required: css class selector
-    'widgetItem' => '.item', // required: css class
-    'limit' => 4, // the maximum times, an element can be cloned (default 999)
-    'min' => 0, // 0 or 1 (default 1)
-    'insertButton' => '.add-item', // css class
-    'deleteButton' => '.remove-item', // css class
-    'model' => $phoneNumberModels[0],
-    'formId' => 'dynamic-form',
-    'formFields' => [
-        'phonenumber',
-        'phonelabel',
-        'phoneextension',
-    ],
-]); ?>
-<!-- Phone show hide -->
- <div class="row-fluid">
-    <div class="col-md-12">
-        <h4 class="pull-left m-r-20">Phone</h4>
-        <a href="#" class="add-phone text-add-new add-item"><i class="fa fa-plus-circle"></i> Add new phone</a>
-        <div class="clearfix"></div>
-    </div>
-    <?php foreach ($phoneNumberModels as $index => $phoneNumberModel): ?>
-    <div class="container-items phone-fields form-well">
-        <div class="item"><!-- widgetBody -->
-            <h4>
-                <span class="panel-title-phone">Phone Number: <?= ($index + 1) ?></span>
-                <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
-                <div class="clearfix"></div>
-            </h4>
-                <?php
-                    // necessary for update action.
-                    if (!$phoneNumberModel->isNewRecord) {
-                        echo Html::activeHiddenInput($phoneNumberModel, "[{$index}]id");
-                    }
-                ?>
-
                 <div class="row">
                     <div class="col-sm-6">
                         <?= $form->field($phoneNumberModel, "[{$index}]number")->textInput(['maxlength' => true]) ?>
@@ -250,6 +211,7 @@ $this->registerJs($js);
     </div>
     <?php endforeach; ?>
     <div class="clearfix"></div>
+	</div>
 </div>
 <hr class="hr-ph">
 <?php DynamicFormWidget::end(); ?>
@@ -300,7 +262,7 @@ $this->registerJs($js);
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
         </div>
     <?php ActiveForm::end(); ?>
-</div>
+	</div>
 <script>
     $('.add-address').bind('click', function(){
          $('.address-fields').show();
