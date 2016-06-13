@@ -73,9 +73,7 @@ $this->registerJs($js);
 <div class="user-form">
 
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
-        <div class="col-md-12">
-            <?= $form->errorSummary($model); ?>
-        </div>
+
         <div class="col-md-6">
             <?php echo $form->field($model, 'firstname') ?>
         </div>
@@ -108,20 +106,21 @@ $this->registerJs($js);
 			'postalcode',
         ],
     ]); ?>
-<div class="row-fluid">
-    <div class="col-md-12">
-        <h4 class="pull-left m-r-20">Address</h4>
-        <a href="#" class="add-address text-add-new  add-item"><i class="fa fa-plus-circle"></i> Add new address</a>
-        <div class="clearfix"></div>
-    </div>
-    <?php foreach ($addressModels as $index => $addressModel): ?>
-    <div class="container-items address-fields form-well">
-        <div class="item"><!-- widgetBody -->
-            <h4>
-                <span class="panel-title-address">Address: <?= ($index + 1) ?></span>
-                <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
-                <div class="clearfix"></div>
-            </h4>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <i class="fa fa-envelope"></i> Address
+            <button type="button" class="pull-right add-item btn btn-success btn-xs"><i class="fa fa-plus"></i> Add Address</button>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-body container-items"><!-- widgetContainer -->
+            <?php foreach ($addressModels as $index => $addressModel): ?>
+                <div class="item panel panel-default"><!-- widgetBody -->
+                    <div class="panel-heading">
+                        <span class="panel-title-address">Address: <?= ($index + 1) ?></span>
+                        <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="panel-body">
                 <?php
                     // necessary for update action.
                     if (!$addressModel->isNewRecord) {
