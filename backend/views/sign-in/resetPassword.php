@@ -25,6 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="body">
                 <?php $form = ActiveForm::begin(['id' => 'reset-password-form']); ?>
                     <?php echo $form->field($model, 'password')->passwordInput() ?>
+                    <?php echo $form->field($model, 'reenterpassword')->passwordInput() ?>
                     <div class="form-group">
                         <?php echo Html::submitButton('Save', [
                             'class' => 'btn btn-primary btn-flat btn-block',
