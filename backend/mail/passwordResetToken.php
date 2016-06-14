@@ -18,7 +18,7 @@ If you follow the link below you will be able to personally reset your password:
 <br>
 (NOTE:This link is good until today and can only be used once)<br>
 <br>
-If you didn't make this request then you safely ignored this email.<br>
+If you didn't make this request then you can safely ignored this email.<br>
 <br>
 Thank you<br>
 Arcadia Music Academy Team.<br>

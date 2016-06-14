@@ -162,7 +162,7 @@ class SignInController extends Controller
                 'body'=> Yii::t('backend', 'New password was saved.'),
                 'options'=>['class'=>'alert-success']
             ]);
-            return $this->goHome();
+            return $this->redirect(['login']);
         }
 
         return $this->render('resetPassword', [

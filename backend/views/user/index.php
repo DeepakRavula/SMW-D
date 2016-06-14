@@ -4,13 +4,18 @@ use common\grid\EnumColumn;
 use common\models\User;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$role = ! ($searchModel->role_name) ? null : $searchModel->role_name;
-$this->title = Yii::t('backend',  ! ($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name).'s');
+$roles = ArrayHelper::getColumn(
+         	Yii::$app->authManager->getRoles(),'description'
+        );
+$roles = array_flip($roles);
+$role = array_search($searchModel->role_name,$roles);
+$this->title = Yii::t('backend',  ! ($role) ? 'User' : $role.'s');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -39,9 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 	<p>
-<?php echo Html::a(Yii::t('backend', 'Add ' .  (! empty($searchModel->role_name) ? ucwords($searchModel->role_name) : 'User'), [
-    'modelClass' => 'User',
-]), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-success pull-left m-r-20']) ?>
+<?php echo Html::a(Yii::t('backend', 'Add '), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-success pull-left m-r-20']) ?>
     </p>
 
 	<?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>

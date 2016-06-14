@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		<p class="users-name"><?php echo $model->first_name; ?> <?php echo $model->last_name; ?></p>
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Birth date">
-		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo (new \DateTime($model->birth_date))->format('m-d-Y'); ?>
+		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo (new \DateTime($model->birth_date))->format('d-m-Y'); ?>
 	</div>
 	<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
 		<i class="fa fa-user detail-icon"></i> <?php echo !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null ?>

@@ -16,6 +16,7 @@ class ResetPasswordForm extends Model
      * @var
      */
     public $password;
+    public $reenterpassword;
 
     /**
      * @var \common\models\UserToken
@@ -55,6 +56,7 @@ class ResetPasswordForm extends Model
         return [
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
+			['reenterpassword', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match" ]
         ];
     }
 
@@ -80,7 +82,8 @@ class ResetPasswordForm extends Model
     public function attributeLabels()
     {
         return [
-            'password'=>Yii::t('backend', 'Password')
+            'password'=>Yii::t('backend', 'Password'),
+            'reenterpassword'=>Yii::t('backend', 'Confirm Password')
         ];
     }
 }
