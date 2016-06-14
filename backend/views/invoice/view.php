@@ -6,9 +6,9 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 
-$this->title = $model->id;
+$this->title = 'Invoice';
 $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 ?>
 <?php //echo '<pre>'; print_r($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer); ?>
 
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-            <small class="pull-right">Date: <?php echo date("m/d/Y", strtotime($model->date));?></small>
+            <small class="pull-right">Date: <?php echo date("d/m/Y", strtotime($model->date));?></small>
           </h2>
         </div>
         <!-- /.col -->
@@ -51,11 +51,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'tableOptions' =>['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
-                [ 
-                'attribute' => 'id',
-                'label' => 'ID',
-                'enableSorting' => false,
-                ],
 			    [
 				'label' => 'Teacher Name',
 				'value' => function($data) {
@@ -113,25 +108,25 @@ $this->params['breadcrumbs'][] = $this->title;
             <table class="table">
               <tbody><tr>
                 <th style="width:50%">Subtotal:</th>
-                <td><?php echo $model->subTotal;?></td>
+                <td><?php echo 'CA$' .$model->subTotal;?></td>
               </tr>
               <tr>
                 <th>Tax</th>
-                <td><?php echo $model->tax;?></td>
+                <td><?php echo 'CA$' .$model->tax;?></td>
               </tr>
               <tr>
                 <th>Paid:</th>
-                <td>$0.00</td>
+                <td>CA$0.00</td>
               </tr>
               <tr>
                 <th>Total:</th>
-                <td><?php echo $model->total;?></td>
+                <td><?php echo 'CA$' .$model->total;?></td>
               </tr>
             </tbody></table>
           </div>
         </div>
         <!-- /.col -->
-      </div>
+		</div>
     <div class="row no-print">
         <div class="col-xs-12">
             <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>

@@ -55,7 +55,7 @@ $this->registerJs($js);
         padding-left: 0;
         padding-right: 0;
     }
-    .address-fields, .phone-fields, .quali-fields{
+     .quali-fields{
         display: none;
     }
     hr{
@@ -106,54 +106,56 @@ $this->registerJs($js);
 			'postalcode',
         ],
     ]); ?>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <i class="fa fa-envelope"></i> Address
-            <button type="button" class="pull-right add-item btn btn-success btn-xs"><i class="fa fa-plus"></i> Add Address</button>
+    <div class="row-fluid">
+      <div class="col-md-12">
+          <h4 class="pull-left m-r-20">Address</h4>
+          <a href="#" class="add-address text-add-new  add-item"><i class="fa fa-plus-circle"></i> Add new address</a>
+          <div class="clearfix"></div>
+      </div>
+      <?php foreach ($addressModels as $index => $addressModel): ?>
+      <div class="container-items address-fields form-well">
+          <div class="item"><!-- widgetBody -->
+              <h4>
+                  <span class="panel-title-address">Address: <?= ($index + 1) ?></span>
+                  <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
+
             <div class="clearfix"></div>
-        </div>
-        <div class="panel-body container-items"><!-- widgetContainer -->
-            <?php foreach ($addressModels as $index => $addressModel): ?>
-                <div class="item panel panel-default"><!-- widgetBody -->
-                    <div class="panel-heading">
-                        <span class="panel-title-address">Address: <?= ($index + 1) ?></span>
-                        <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="panel-body">
-                <?php
-                    // necessary for update action.
-                    if (!$addressModel->isNewRecord) {
-                        echo Html::activeHiddenInput($addressModel, "[{$index}]id");
-                    }
-                ?>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <?= $form->field($addressModel, "[{$index}]label")->dropDownList(Address::labels(),['prompt'=>'Select Label']) ?>
-                    </div>
-                    <div class="col-sm-6">
-                        <?= $form->field($addressModel, "[{$index}]address")->textInput(['maxlength' => true]) ?>
-                    </div>
-                    <div class="col-sm-6">
-                        <?= $form->field($addressModel, "[{$index}]city_id")->dropDownList(ArrayHelper::map(City::find()->all(),'id','name' ), ['prompt'=>'Select City']) ?>
-                    </div>
-                    <div class="col-sm-6">
-                        <?= $form->field($addressModel, "[{$index}]country_id")->dropDownList(ArrayHelper::map(Country::find()->all(),'id','name'), ['prompt'=>'Select Country']) ?>
-                    </div>
-                    <div class="col-sm-6">
-                        <?= $form->field($addressModel, "[{$index}]province_id")->dropDownList(ArrayHelper::map(Province::find()->all(),'id','name'), ['prompt'=>'Select Province']) ?>
-                    </div>
-                    <div class="col-sm-6">
-                        <?= $form->field($addressModel, "[{$index}]postal_code")->textInput(['maxlength' => true]) ?>
-                    </div>
-                    <div class="clearfix"></div>
-                </div><!-- end:row -->
-        </div>
+              </h4>
+                  <?php
+                      // necessary for update action.
+                      if (!$addressModel->isNewRecord) {
+                          echo Html::activeHiddenInput($addressModel, "[{$index}]id");
+                      }
+                  ?>
+                  <div class="row">
+                      <div class="col-sm-6">
+                          <?= $form->field($addressModel, "[{$index}]label")->dropDownList(Address::labels(),['prompt'=>'Select Label']) ?>
+
     </div>
-    <?php endforeach; ?>
-    <div class="clearfix"></div>
 </div>
-<?php DynamicFormWidget::end(); ?>
+                     <div class="col-sm-6">
+                         <?= $form->field($addressModel, "[{$index}]address")->textInput(['maxlength' => true]) ?>
+                     </div>
+                     <div class="col-sm-6">
+                         <?= $form->field($addressModel, "[{$index}]city_id")->dropDownList(ArrayHelper::map(City::find()->all(),'id','name' ), ['prompt'=>'Select City']) ?>
+                     </div>
+                     <div class="col-sm-6">
+                         <?= $form->field($addressModel, "[{$index}]country_id")->dropDownList(ArrayHelper::map(Country::find()->all(),'id','name'), ['prompt'=>'Select Country']) ?>
+                     </div>
+                     <div class="col-sm-6">
+                         <?= $form->field($addressModel, "[{$index}]province_id")->dropDownList(ArrayHelper::map(Province::find()->all(),'id','name'), ['prompt'=>'Select Province']) ?>
+                     </div>
+                     <div class="col-sm-6">
+                         <?= $form->field($addressModel, "[{$index}]postal_code")->textInput(['maxlength' => true]) ?>
+                     </div>
+                     <div class="clearfix"></div>
+                 </div><!-- end:row -->
+</div>
+     </div>
+     <?php endforeach; ?>
+     <div class="clearfix"></div>
+ </div>
+ <?php DynamicFormWidget::end(); ?>
 
 <hr class="hr-ad">
     <?php DynamicFormWidget::begin([
@@ -172,28 +174,27 @@ $this->registerJs($js);
             'phoneextension',
         ],
     ]); ?>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <i class="fa fa-phone-square"></i> Phone Numbers
-            <button type="button" class="pull-right add-item1 btn btn-success btn-xs"><i class="fa fa-plus"></i> Add Phone</button>
-            <div class="clearfix"></div>
-        </div>
-        <div class="panel-body container-items1"><!-- widgetContainer -->
-            <?php foreach ($phoneNumberModels as $index => $phoneNumberModel): ?>
-                <div class="item1 panel panel-default"><!-- widgetBody -->
-                    <div class="panel-heading">
-                        <span class="panel-title-phone">Phone Number: <?= ($index + 1) ?></span>
-                        <button type="button" class="pull-right remove-item1 btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="panel-body">
-                        <?php
-                            // necessary for update action.
-                            if (!$phoneNumberModel->isNewRecord) {
-                                echo Html::activeHiddenInput($phoneNumberModel, "[{$index}]id");
-                            }
-                        ?>
-
+  <div class="row-fluid">
+     <div class="col-md-12">
+         <h4 class="pull-left m-r-20">Phone</h4>
+        <a href="#" class="add-phone text-add-new add-item1"><i class="fa fa-plus-circle"></i> Add new phone</a>
+         <div class="clearfix"></div>
+     </div>
+     <?php foreach ($phoneNumberModels as $index => $phoneNumberModel): ?>
+     <div class="container-items1 phone-fields form-well">
+        <div class="item1"><!-- widgetBody -->
+            <h4>
+                 <span class="panel-title-phone">Phone Number: <?= ($index + 1) ?></span>
+                 <button type="button" class="pull-right remove-item1 btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
+                 <div class="clearfix"></div>
+             </h4>
+                 <?php
+                    // necessary for update action.
+                     if (!$phoneNumberModel->isNewRecord) {
+                         echo Html::activeHiddenInput($phoneNumberModel, "[{$index}]id");
+                     }
+                 ?>
+ 
                 <div class="row">
                     <div class="col-sm-6">
                         <?= $form->field($phoneNumberModel, "[{$index}]number")->textInput(['maxlength' => true]) ?>
