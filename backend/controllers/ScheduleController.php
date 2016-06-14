@@ -81,12 +81,12 @@ class ScheduleController extends Controller
 		$data = Yii::$app->request->rawBody;
 		$data = Json::decode($data, true);
 		
-		$day = $data['minutes'] / (24*60);
-		$lessonDate = Lesson::findOne(['id' => $data['id']]);
-		$date = new \DateTime($lessonDate->date);
-		$date->modify('+' .$day. 'day');
+        $secs = $data['minutes']*60;
 		$lessonModel = Lesson::findOne(['id' => $data['id']]);
-		$lessonModel->date = $date->format('Y-m-d'); 
+        $lessonModel->date = date("Y-m-d H:i:s",strtotime($lessonModel->date) + $secs);
 		$lessonModel->update(); 
+        /*$enrolmentScheduleDayModel = Lesson::EnrolmentScheduleDay(['id' => $lessonModel->enrolment_schedule_day_id]);
+        $enrolmentScheduleDayModel->date = date("Y-m-d H:i:s",strtotime($lessonModel->date) + $secs);
+		$enrolmentScheduleDayModel->update(); */
     }
 }
