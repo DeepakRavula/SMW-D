@@ -43,14 +43,30 @@ $(document).ready(function() {
       console.log(end);
       console.log(ev.data); // resources
     },
-    eventClick: function(event) {
-       event.title = "CLICKED!";
-
-       $('#calendar').fullCalendar('updateEvent', event);
-    },
-    eventDrop: function(event,dayDelta,minuteDelta,allDay,revertFunc) {
+    eventDrop: function(event, delta, revertFunc, jsEvent, ui, view) {
+      $.ajax({
+        url: "<?php echo Url::to(['schedule/update-events']);?>",
+        type: "POST",
+        contentType: 'application/json',
+		dataType: "json",
+        data: JSON.stringify({
+          "id": event.id,
+  		  "minutes": delta.asMinutes(),
+        }),
+        success: function(data, textStatus) {
+          if (!data)
+          {
+            console.log(data);
+            return;
+          }
+          //calendar.fullCalendar('updateEvent', event);
+        },
+        error: function() {
+         // revertFunc();
+        }
+    });
         
-        updateEventTimes(event, dayDelta, minuteDelta, allDay, revertFunc)
+        //updateEventTimes(event, dayDelta, minuteDelta, allDay, revertFunc)
 
        //$('#calendar').fullCalendar('updateEvent', event);
     }
@@ -58,11 +74,6 @@ $(document).ready(function() {
   
     function updateEventTimes(event, dayDelta, minuteDelta, allDay, revertFunc)
     {
-        alert(
-            event.title + " was moved " +
-            dayDelta + " days and " +
-            minuteDelta + " minutes."
-        );
       //console.log(event);
       $.ajax({
         url: "<?php echo Url::to(['schedule/updateEvents']);?>",

@@ -11,6 +11,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\filters\AccessControl;
 
 /**
@@ -58,7 +59,7 @@ class ScheduleController extends Controller
         
         $events = array();
         $events = (new \yii\db\Query())
-            ->select(['q.teacher_id as resources', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, ed.day, concat(DATE(l.date),\' \',ed.from_time) as start, concat(DATE(l.date),\' \',ed.to_time) as end'])
+            ->select(['q.teacher_id as resources', 'l.id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, ed.day, concat(DATE(l.date),\' \',ed.from_time) as start, concat(DATE(l.date),\' \',ed.to_time) as end'])
             ->from('lesson l')
             ->join('Join', 'enrolment_schedule_day ed', 'ed.id = l.enrolment_schedule_day_id')
             ->join('Join', 'enrolment e', 'e.id = ed.enrolment_id')
@@ -76,7 +77,9 @@ class ScheduleController extends Controller
     }
     
     public function actionUpdateEvents(){
-        print_r($_POST);
+		$data = Yii::$app->request->rawBody;
+		$data = Json::decode($data, true);
+        print_r($data);
     }
 
 }
