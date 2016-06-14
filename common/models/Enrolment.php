@@ -101,6 +101,9 @@ class Enrolment extends \yii\db\ActiveRecord
     {   
         if ($this->commencement_date != NULL)
             $this->commencement_date = date_format(date_create_from_format('m-d-y', $this->commencement_date), 'Y-m-d');
+            $secs = strtotime($this->fromTime) - strtotime("00:00:00");
+            $this->commencement_date = date("Y-m-d H:i:s",strtotime($this->commencement_date) + $secs);
+            
     
         return parent::beforeValidate ();
     }

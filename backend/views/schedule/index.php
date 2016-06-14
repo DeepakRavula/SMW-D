@@ -51,15 +51,15 @@ $(document).ready(function() {
         contentType: 'application/json',
 		dataType: "json",
         data: JSON.stringify({
-          "id": event.id,
-  		  "minutes": delta.asMinutes(),
+            "id": event.id,
+            "minutes": delta.asMinutes(),
         }),
         success: function(data, textStatus) {
-          if (!data)
-          {
-            console.log(data);
-            return;
-          }
+            if (!data)
+            {
+                console.log(data);
+                return;
+            }
           //calendar.fullCalendar('updateEvent', event);
         },
         error: function() {
