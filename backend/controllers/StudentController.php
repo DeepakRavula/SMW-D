@@ -11,6 +11,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -105,7 +106,7 @@ class StudentController extends Controller
     {
         $model = new Student();
 		$request = Yii::$app->request;
-		$user = $request->post('User');	
+		$user = $request->post('User');
         if ($model->load(Yii::$app->request->post())) {
 			$model->customer_id = $user['id'];
 			$model->save();
@@ -113,7 +114,12 @@ class StudentController extends Controller
             	'options' => ['class' => 'alert-success'],
                 'body' => 'Student has been created successfully'
             ]);
-            return $this->redirect(['user/view', 'id' => $model->customer_id]);
+			$roles = ArrayHelper::getColumn(
+            	Yii::$app->authManager->getRolesByUser($model->customer_id),
+            'name'
+        );
+			$role = end($roles);
+            return $this->redirect(['user/view', 'UserSearch[role_name]' => $role, 'id' => $model->customer_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
