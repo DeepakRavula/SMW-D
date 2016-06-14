@@ -109,8 +109,13 @@ class TeacherAvailabilityController extends Controller
      	Yii::$app->session->setFlash('alert', [
        	    'options' => ['class' => 'alert-success'],
           	'body' => 'Teacher Availability has been deleted successfully'
-        ]); 
-            return $this->redirect(['user/view','id' => $teacherId]);
+        ]);
+		$roles = ArrayHelper::getColumn(
+            	Yii::$app->authManager->getRolesByUser($teacherId),
+            'name'
+        );
+			$role = end($roles);
+            return $this->redirect(['user/view', 'UserSearch[role_name]' => $role, 'id' => $teacherId]);
     }
 
     /**

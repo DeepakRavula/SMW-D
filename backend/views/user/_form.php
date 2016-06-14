@@ -55,7 +55,7 @@ $this->registerJs($js);
         padding-left: 0;
         padding-right: 0;
     }
-    .address-fields, .phone-fields, .quali-fields{
+     .quali-fields{
         display: none;
     }
     hr{
