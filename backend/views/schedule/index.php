@@ -26,6 +26,7 @@ $(document).ready(function() {
       center: 'title',
       right: 'month,agendaWeek,resourceDay'
     },    
+	titleFormat: 'DD-MMM-YYYY, dddd',
     defaultView: 'resourceDay',
     minTime: "<?php echo $from_time; ?>",
     maxTime: "<?php echo $to_time; ?>",
