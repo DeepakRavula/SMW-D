@@ -96,7 +96,7 @@ class UserImport extends Model {
 			$student->save();
 
 			$address = new Address;
-			$address->label = 'billing';
+			$address->label = 'Billing';
 
 			$cityName = $row['Billing City'];
 			$addressName = $row['Billing Address'];
