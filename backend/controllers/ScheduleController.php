@@ -74,5 +74,9 @@ class ScheduleController extends Controller
         
 		return $this->render('index', ['teacherAvailability'=>$teacherAvailability, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
     }
+    
+    public function actionUpdateEvents(){
+        print_r($_POST);
+    }
 
 }

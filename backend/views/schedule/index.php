@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Json;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 
@@ -43,12 +44,48 @@ $(document).ready(function() {
       console.log(ev.data); // resources
     },
     eventClick: function(event) {
-      console.log(event);
+       event.title = "CLICKED!";
+
+       $('#calendar').fullCalendar('updateEvent', event);
     },
-    eventDrop: function (event, delta, revertFunc) {
-      console.log(event);
+    eventDrop: function(event,dayDelta,minuteDelta,allDay,revertFunc) {
+        
+        updateEventTimes(event, dayDelta, minuteDelta, allDay, revertFunc)
+
+       //$('#calendar').fullCalendar('updateEvent', event);
     }
   });
- 
+  
+    function updateEventTimes(event, dayDelta, minuteDelta, allDay, revertFunc)
+    {
+        alert(
+            event.title + " was moved " +
+            dayDelta + " days and " +
+            minuteDelta + " minutes."
+        );
+      //console.log(event);
+      $.ajax({
+        url: "<?php echo Url::to(['schedule/updateEvents']);?>",
+        type: "POST",
+        contentType: 'application/json',
+        data: ({
+          id: event.id,
+          day: dayDelta,
+          min: minuteDelta,
+          allday: allDay
+        }),
+        success: function(data, textStatus) {
+          if (!data)
+          {
+            console.log(data);
+            return;
+          }
+          calendar.fullCalendar('updateEvent', event);
+        },
+        error: function() {
+         // revertFunc();
+        }
+    });
+    };
 });
 </script>
