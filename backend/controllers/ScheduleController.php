@@ -6,6 +6,7 @@ use Yii;
 use common\models\Qualification;
 use common\models\TeacherAvailability;
 use common\models\Location;
+use common\models\Lesson;
 use backend\models\search\QualificationSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -79,7 +80,13 @@ class ScheduleController extends Controller
     public function actionUpdateEvents(){
 		$data = Yii::$app->request->rawBody;
 		$data = Json::decode($data, true);
-        print_r($data);
+		
+		$day = $data['minutes'] / (24*60);
+		$lessonDate = Lesson::findOne(['id' => $data['id']]);
+		$date = new \DateTime($lessonDate->date);
+		$date->modify('+' .$day. 'day');
+		$lessonModel = Lesson::findOne(['id' => $data['id']]);
+		$lessonModel->date = $date->format('Y-m-d'); 
+		$lessonModel->update(); 
     }
-
 }
