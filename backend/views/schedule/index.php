@@ -11,6 +11,7 @@ $this->title = 'Schedule';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="schedule-index">
+<div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div id='calendar'></div>
 </div>
 <script type="text/javascript">
@@ -45,59 +46,26 @@ $(document).ready(function() {
       console.log(ev.data); // resources
     },
     eventDrop: function(event, delta, revertFunc, jsEvent, ui, view) {
-      $.ajax({
-        url: "<?php echo Url::to(['schedule/update-events']);?>",
-        type: "POST",
-        contentType: 'application/json',
-		dataType: "json",
-        data: JSON.stringify({
-            "id": event.id,
-            "minutes": delta.asMinutes(),
-        }),
-        success: function(data, textStatus) {
-            if (!data)
-            {
-                console.log(data);
-                return;
+        $.ajax({
+            url: "<?php echo Url::to(['schedule/update-events']);?>",
+            type: "POST",
+            contentType: 'application/json',
+            dataType: "json",
+            data: JSON.stringify({
+                "id": event.id,
+                "minutes": delta.asMinutes(),
+            }),
+            success: function(response) {
+                    
+              //calendar.fullCalendar('updateEvent', event);
+            },
+            error: function() {
+             // revertFunc();
             }
-          //calendar.fullCalendar('updateEvent', event);
-        },
-        error: function() {
-         // revertFunc();
-        }
-    });
+        });
         
-        //updateEventTimes(event, dayDelta, minuteDelta, allDay, revertFunc)
-
-       //$('#calendar').fullCalendar('updateEvent', event);
+        $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
     }
   });
-  
-    function updateEventTimes(event, dayDelta, minuteDelta, allDay, revertFunc)
-    {
-      //console.log(event);
-      $.ajax({
-        url: "<?php echo Url::to(['schedule/updateEvents']);?>",
-        type: "POST",
-        contentType: 'application/json',
-        data: ({
-          id: event.id,
-          day: dayDelta,
-          min: minuteDelta,
-          allday: allDay
-        }),
-        success: function(data, textStatus) {
-          if (!data)
-          {
-            console.log(data);
-            return;
-          }
-          calendar.fullCalendar('updateEvent', event);
-        },
-        error: function() {
-         // revertFunc();
-        }
-    });
-    };
 });
 </script>

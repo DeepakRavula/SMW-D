@@ -60,7 +60,7 @@ class ScheduleController extends Controller
         
         $events = array();
         $events = (new \yii\db\Query())
-            ->select(['q.teacher_id as resources', 'l.id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, ed.day, l.date as start, concat(DATE(l.date),\' \',ed.to_time) as end'])
+            ->select(['q.teacher_id as resources', 'l.id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, ed.day, l.date as start, ADDTIME(l.date, ed.duration) as end'])
             ->from('lesson l')
             ->join('Join', 'enrolment_schedule_day ed', 'ed.id = l.enrolment_schedule_day_id')
             ->join('Join', 'enrolment e', 'e.id = ed.enrolment_id')
@@ -85,8 +85,5 @@ class ScheduleController extends Controller
 		$lessonModel = Lesson::findOne(['id' => $data['id']]);
         $lessonModel->date = date("Y-m-d H:i:s",strtotime($lessonModel->date) + $secs);
 		$lessonModel->update(); 
-        /*$enrolmentScheduleDayModel = Lesson::EnrolmentScheduleDay(['id' => $lessonModel->enrolment_schedule_day_id]);
-        $enrolmentScheduleDayModel->date = date("Y-m-d H:i:s",strtotime($lessonModel->date) + $secs);
-		$enrolmentScheduleDayModel->update(); */
     }
 }
