@@ -16,12 +16,6 @@ $this->params['body-class'] = array_key_exists('body-class', $this->params) ?
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?php echo Yii::$app->language ?>">
-<?php if (Yii::$app->session->hasFlash('alert')):?>
-<?php echo \yii\bootstrap\Alert::widget([
-    'body'=>ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'body'),
-    'options'=>ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'options'),
-])?>
-<?php endif; ?>
 <head>
     <meta charset="<?php echo Yii::$app->charset ?>">
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
