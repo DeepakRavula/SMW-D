@@ -189,6 +189,13 @@ class UserController extends Controller
             Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
             $valid = Model::validateMultiple($phoneNumberModels) && $valid;
 			
+			if(empty($addressModels)) {
+				$addressModels = [new Address];
+			}
+
+			if(empty($phoneNumberModels)) {
+				$phoneNumberModels = [new PhoneNumber];
+			}
 			if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
