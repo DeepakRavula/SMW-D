@@ -13,8 +13,12 @@ use yii\helpers\ArrayHelper;
 $roles = ArrayHelper::getColumn(
          	Yii::$app->authManager->getRoles(),'description'
         );
-$roles = array_flip($roles);
-$role = array_search($searchModel->role_name,$roles);
+foreach($roles as $name => $description){
+	if($name === $searchModel->role_name){
+		$role = $description;
+	}
+}
+
 $this->title = Yii::t('backend',  ! ($role) ? 'User' : $role.'s');
 $this->params['breadcrumbs'][] = $this->title;
 ?>

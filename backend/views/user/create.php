@@ -7,8 +7,11 @@ use yii\helpers\ArrayHelper;
 $roles = ArrayHelper::getColumn(
          	Yii::$app->authManager->getRoles(),'description'
         );
-$roles = array_flip($roles);
-$role = array_search($model->roles,$roles);
+foreach($roles as $name => $description){
+	if($name === $model->roles){
+		$role = $description;
+	}
+}
 $this->title = Yii::t('backend', 'Add new {modelClass}', [
     'modelClass' => $role,
 ]);
