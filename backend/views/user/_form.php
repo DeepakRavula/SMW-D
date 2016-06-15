@@ -75,17 +75,18 @@ $this->registerJs($js);
 <div class="user-form">
 
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
-        <div class="col-md-6">
+    <div class="row-fluid">
+        <div class="col-md-4">
             <?php echo $form->field($model, 'firstname') ?>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <?php echo $form->field($model, 'lastname') ?>
         </div>
-        <div class="clearfix"></div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <?php echo $form->field($model, 'email') ?>
         </div>
         <div class="clearfix"></div>
+      </div>
     <hr class="hr-ad">
 
 	<?php DynamicFormWidget::begin([
@@ -127,65 +128,68 @@ $this->registerJs($js);
             	<button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
             	<div class="clearfix"></div>
             </h4>
-          <div class="row">
-            <div class="col-sm-4">
-                  <?= $form->field($addressModel, "[{$index}]label")->dropDownList(Address::labels(),['prompt'=>'Select Label']) ?>
-            </div>
-              <div class="col-sm-4">
-                  <?= $form->field($addressModel, "[{$index}]address")->textInput(['maxlength' => true]) ?>
-              </div>
-            	<div class="col-sm-4">
-                    <?= $form->field($addressModel, "[{$index}]city_id")->dropDownList(
-            						ArrayHelper::map(City::find()->all(),'id','name' ),
-            						['options' => [
-            							$locationModel->city_id => ['selected' => true],
-            						 	]
-            				 		])
-            				?>
-              </div>
-            </div>
             <div class="row">
               <div class="col-sm-4">
-                  <?= $form->field($addressModel, "[{$index}]country_id")->dropDownList(
-          						ArrayHelper::map(Country::find()->all(),'id','name'),
-          						['options' => [
-          							$locationModel->country_id => ['selected' => true],
-          						 	]
-          				 		]) 
-          				?>
+                    <?= $form->field($addressModel, "[{$index}]label")->dropDownList(Address::labels(),['prompt'=>'Select Label']) ?>
               </div>
-              <div class="col-sm-4">
-                  <?= $form->field($addressModel, "[{$index}]province_id")->dropDownList(
-          						ArrayHelper::map(Province::find()->all(),'id','name'),
-          						['options' => [
-          							$locationModel->province_id => ['selected' => true],
-          							]
-          				 		]) 
-          				?>
+                <div class="col-sm-4">
+                    <?= $form->field($addressModel, "[{$index}]address")->textInput(['maxlength' => true]) ?>
+                </div>
+              	<div class="col-sm-4">
+                      <?= $form->field($addressModel, "[{$index}]city_id")->dropDownList(
+              						ArrayHelper::map(City::find()->all(),'id','name' ),
+              						['options' => [
+              							$locationModel->city_id => ['selected' => true],
+              						 	]
+              				 		])
+              				?>
+                </div>
+                <div class="clearfix"></div>
               </div>
-              <div class="col-sm-4">
-                  <?= $form->field($addressModel, "[{$index}]postal_code")->textInput(['maxlength' => true]) ?>
-              </div>
-              
-              <div class="clearfix"></div>
-          </div>
-    	</div><!-- end:row -->
+              <div class="row">
+                <div class="col-sm-4">
+                    <?= $form->field($addressModel, "[{$index}]country_id")->dropDownList(
+            						ArrayHelper::map(Country::find()->all(),'id','name'),
+            						['options' => [
+            							$locationModel->country_id => ['selected' => true],
+            						 	]
+            				 		]) 
+            				?>
+                </div>
+                <div class="col-sm-4">
+                    <?= $form->field($addressModel, "[{$index}]province_id")->dropDownList(
+            						ArrayHelper::map(Province::find()->all(),'id','name'),
+            						['options' => [
+            							$locationModel->province_id => ['selected' => true],
+            							]
+            				 		]) 
+            				?>
+                </div>
+                <div class="col-sm-4">
+                    <?= $form->field($addressModel, "[{$index}]postal_code")->textInput(['maxlength' => true]) ?>
+                </div>
+                
+                <div class="clearfix"></div>
+            </div>
+    	   </div><!-- end:row -->
       </div>
-</div>
+      <div class="clearfix"></div>
+    </div>
     <?php endforeach; ?>
-     <div class="clearfix"></div>
- </div>
  <?php DynamicFormWidget::end(); ?>
 
+
 <hr class="hr-ad">
+
+
     <?php DynamicFormWidget::begin([
         'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
-        'widgetBody' => '.container-items1', // required: css class selector
-        'widgetItem' => '.item1', // required: css class
+        'widgetBody' => '.container-items-phone', // required: css class selector
+        'widgetItem' => '.item-phone', // required: css class
         'limit' => 4, // the maximum times, an element can be cloned (default 999)
         'min' => 0, // 0 or 1 (default 1)
-        'insertButton' => '.add-item1', // css class
-        'deleteButton' => '.remove-item1', // css class
+        'insertButton' => '.add-item-phone', // css class
+        'deleteButton' => '.remove-item-phone', // css class
         'model' => $phoneNumberModels[0],
         'formId' => 'dynamic-form',
         'formFields' => [
@@ -197,7 +201,7 @@ $this->registerJs($js);
   <div class="row-fluid">
      <div class="col-md-12">
          <h4 class="pull-left m-r-20">Phone</h4>
-        <a href="#" class="add-phone text-add-new add-item1"><i class="fa fa-plus-circle"></i> Add new phone</a>
+        <a href="#" class="add-phone text-add-new add-item-phone"><i class="fa fa-plus-circle"></i> Add new phone</a>
          <div class="clearfix"></div>
      </div>
      <?php foreach ($phoneNumberModels as $index => $phoneNumberModel): ?>
@@ -207,11 +211,11 @@ $this->registerJs($js);
                echo Html::activeHiddenInput($phoneNumberModel, "[{$index}]id");
            }
        ?>
-     <div class="container-items1 phone-fields form-well">
-        <div class="item-block item1"><!-- widgetBody -->
+     <div class="container-items-phone phone-fields form-well">
+        <div class="item-block item-phone"><!-- widgetBody -->
             <h4>
                  <span class="panel-title-phone">Phone Number: <?= ($index + 1) ?></span>
-                 <button type="button" class="pull-right remove-item1 btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
+                 <button type="button" class="pull-right remove-item-phone btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
                  <div class="clearfix"></div>
              </h4>
                 <div class="row">
@@ -225,11 +229,11 @@ $this->registerJs($js);
                         <?= $form->field($phoneNumberModel, "[{$index}]extension")->textInput(['maxlength' => true]) ?>
                     </div>
                     <div class="clearfix"></div>
-                    </div>
-                </div><!-- end:row -->
+                </div>
+             </div><!-- end:row -->
         </div>
+        <div class="clearfix"></div>
     <?php endforeach; ?>
-    <div class="clearfix"></div>
 </div>
 <hr class="hr-ph">
 <?php DynamicFormWidget::end(); ?>
@@ -243,7 +247,7 @@ $this->registerJs($js);
                     <a href="#" class="add-quali text-add-new"><i class="fa fa-plus-circle"></i> Add new qualification </a>
                     <div class="clearfix"></div>
                 </div>
-                <div class="quali-fields form-well">
+                <div class="quali-fields form-well p-l-20">
                     <!-- <h4>Choose qualifications</h4> -->
                     <div class="row">
                         <div class="col-md-12">
@@ -290,7 +294,7 @@ $this->registerJs($js);
          $('.phone-fields').show();
          $('.hr-ph').hide();
          setTimeout(function(){
-            $('.add-phone').addClass('add-item');
+            $('.add-phone').addClass('add-item-phone');
         }, 100);
     });
     $('.add-quali').bind('click', function(){
