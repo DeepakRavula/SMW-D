@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Json;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 
@@ -10,6 +11,7 @@ $this->title = 'Schedule';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="schedule-index">
+<div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div id='calendar'></div>
 </div>
 <script type="text/javascript">
@@ -25,6 +27,7 @@ $(document).ready(function() {
       center: 'title',
       right: 'month,agendaWeek,resourceDay'
     },    
+	titleFormat: 'DD-MMM-YYYY, dddd',
     defaultView: 'resourceDay',
     minTime: "<?php echo $from_time; ?>",
     maxTime: "<?php echo $to_time; ?>",
@@ -42,13 +45,27 @@ $(document).ready(function() {
       console.log(end);
       console.log(ev.data); // resources
     },
-    eventClick: function(event) {
-      console.log(event);
-    },
-    eventDrop: function (event, delta, revertFunc) {
-      console.log(event);
+    eventDrop: function(event, delta, revertFunc, jsEvent, ui, view) {
+        $.ajax({
+            url: "<?php echo Url::to(['schedule/update-events']);?>",
+            type: "POST",
+            contentType: 'application/json',
+            dataType: "json",
+            data: JSON.stringify({
+                "id": event.id,
+                "minutes": delta.asMinutes(),
+            }),
+            success: function(response) {
+                    
+              //calendar.fullCalendar('updateEvent', event);
+            },
+            error: function() {
+             // revertFunc();
+            }
+        });
+        
+        $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
     }
   });
- 
 });
 </script>

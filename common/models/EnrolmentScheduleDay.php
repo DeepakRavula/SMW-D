@@ -81,7 +81,7 @@ class EnrolmentScheduleDay extends \yii\db\ActiveRecord
 				$lesson->setAttributes([
 					'enrolment_schedule_day_id'	 => $this->id,
 					'status' => Lesson::STATUS_PENDING,
-					'date' => $day->format('Y-m-d'),
+					'date' => $day->format('Y-m-d H:i:s'),
 				]);
 				$lesson->save();
 			}

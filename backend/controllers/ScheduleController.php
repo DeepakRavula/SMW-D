@@ -6,11 +6,13 @@ use Yii;
 use common\models\Qualification;
 use common\models\TeacherAvailability;
 use common\models\Location;
+use common\models\Lesson;
 use backend\models\search\QualificationSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\filters\AccessControl;
 
 /**
@@ -58,7 +60,7 @@ class ScheduleController extends Controller
         
         $events = array();
         $events = (new \yii\db\Query())
-            ->select(['q.teacher_id as resources', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, ed.day, concat(DATE(l.date),\' \',ed.from_time) as start, concat(DATE(l.date),\' \',ed.to_time) as end'])
+            ->select(['q.teacher_id as resources', 'l.id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, ed.day, l.date as start, ADDTIME(l.date, ed.duration) as end'])
             ->from('lesson l')
             ->join('Join', 'enrolment_schedule_day ed', 'ed.id = l.enrolment_schedule_day_id')
             ->join('Join', 'enrolment e', 'e.id = ed.enrolment_id')
@@ -74,5 +76,20 @@ class ScheduleController extends Controller
         
 		return $this->render('index', ['teacherAvailability'=>$teacherAvailability, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
     }
+    
+    public function actionUpdateEvents(){
+		$data = Yii::$app->request->rawBody;
+		$data = Json::decode($data, true);
+		$lesson = Lesson::findOne(['id' => $data['id']]);
+		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
 
+		if((float)$data['minutes'] > 0) {
+			$lessonDate->add(new \DateInterval('PT' .$data['minutes'].  'M'));	
+		} else {
+			$lessonDate->sub(new \DateInterval('PT' . abs($data['minutes']) . 'M'));	
+		}
+
+		$lesson->date = $lessonDate->format('Y-m-d H:i:s');
+		$lesson->save();
+    }
 }
