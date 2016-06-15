@@ -7,12 +7,22 @@ use common\grid\EnumColumn;
 use common\models\User;
 use common\models\TeacherAvailability;
 use common\models\Address;
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
 
-$this->title = Yii::t('backend',  !($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name).' Detail');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', !($searchModel->role_name) ? 'User' : ucwords($searchModel->role_name. 's')), 'url' => ['index']];
+$roles = ArrayHelper::getColumn(
+         	Yii::$app->authManager->getRoles(),'description'
+        );
+foreach($roles as $name => $description){
+	if($name === $searchModel->role_name){
+		$role = $description;
+	}
+}
+
+$this->title = Yii::t('backend',  !($role) ? 'User' : $role.' Detail');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', ! $role ? 'User' : $role. 's'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php //echo '<pre>'; print_r($addressModels) ?>
