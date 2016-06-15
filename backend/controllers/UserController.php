@@ -314,6 +314,10 @@ class UserController extends Controller
                     }
                     if ($flag) {
                         $transaction->commit();
+					Yii::$app->session->setFlash('alert', [
+			            'options' => ['class' => 'alert-success'],
+            			'body' => ucwords($model->roles). ' has been updated successfully'
+        			]);
 			    return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles,'id' => $model->getModel()->id]);
                     }
                 } catch (Exception $e) {
