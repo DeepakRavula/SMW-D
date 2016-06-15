@@ -436,7 +436,12 @@ class UserController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = User::findOne($id)) !== null) {
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
+		$model = User::find()->joinWith(['location' => function($query) use($locationId) {
+			$query->where(['location_id' => $locationId]);
+		}])->where(['user.id' => $id])->one();
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
