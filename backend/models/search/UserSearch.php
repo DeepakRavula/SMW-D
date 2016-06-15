@@ -67,8 +67,12 @@ class UserSearch extends User
             ->andFilterWhere(['like', 'auth_key', $this->auth_key])
             ->andFilterWhere(['like', 'password_hash', $this->password_hash])
             ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'ul.location_id', $locationId])
             ->andFilterWhere(['ai.name' => $this->role_name]);
+
+		if($this->role_name !== USER::ROLE_ADMINISTRATOR) {
+            $query->andFilterWhere(['like', 'ul.location_id', $locationId]);
+		}
+
 		$query->active();
         return $dataProvider;
     }
