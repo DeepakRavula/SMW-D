@@ -170,8 +170,6 @@ class UserController extends Controller
     public function actionCreate()
     {
         $model = new UserForm();
-		$phoneNumberModels = [new PhoneNumber];
-		$addressModels = [new Address];
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
 		if($model->roles === User::ROLE_STAFFMEMBER){
@@ -189,13 +187,7 @@ class UserController extends Controller
             Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
             $valid = Model::validateMultiple($phoneNumberModels) && $valid;
 			
-			if(empty($addressModels)) {
-				$addressModels = [new Address];
-			}
-
-			if(empty($phoneNumberModels)) {
-				$phoneNumberModels = [new PhoneNumber];
-			}
+			
 			if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
@@ -229,7 +221,12 @@ class UserController extends Controller
                 }
             }
     }
-
+	if(empty($addressModels)) {
+		$addressModels = [new Address];
+	}
+	if(empty($phoneNumberModels)) {
+		$phoneNumberModels = [new PhoneNumber];
+	}
         return $this->render('create', [
             'model' => $model,
             'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
