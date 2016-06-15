@@ -6,6 +6,7 @@ use common\models\City;
 use common\models\Province;
 use common\models\Country;
 use common\models\Address;
+use common\models\Location;
 use common\models\PhoneNumber;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
@@ -65,9 +66,10 @@ $this->registerJs($js);
         margin-bottom: 10px;
         padding-top: 15px;
     }
-    .quali-fields label{
+    .address-fields, .phone-fields, .quali-fields label{
         display: none;
     }
+
 </style>
 
 <div class="user-form">
@@ -87,16 +89,16 @@ $this->registerJs($js);
             <?php echo $form->field($model, 'email') ?>
         </div>
         <div class="clearfix"></div>
-      <hr class="hr-ad">
+    <hr class="hr-ad">
 
-<?php DynamicFormWidget::begin([
-        'widgetContainer' => 'dynamicform_address', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
-        'widgetBody' => '.container-items', // required: css class selector
-        'widgetItem' => '.item', // required: css class
-        'limit' => 4, // the maximum times, an element can be cloned (default 999)
-        'min' => 0, // 0 or 1 (default 1)
-        'insertButton' => '.add-item', // css class
-        'deleteButton' => '.remove-item', // css class
+	<?php DynamicFormWidget::begin([
+        'widgetContainer' => 'dynamicform_address', 
+        'widgetBody' => '.container-items',
+        'widgetItem' => '.item',
+        'limit' => 4, 
+        'min' => 0,
+        'insertButton' => '.add-item',
+        'deleteButton' => '.remove-item', 
         'model' => $addressModels[0],
         'formId' => 'dynamic-form',
         'formFields' => [
@@ -109,51 +111,71 @@ $this->registerJs($js);
         ],
     ]); ?>
     <div class="row-fluid">
-      <div class="col-md-12">
-          <h4 class="pull-left m-r-20">Address</h4>
-          <a href="#" class="add-address text-add-new  add-item"><i class="fa fa-plus-circle"></i> Add new address</a>
-          <div class="clearfix"></div>
-      </div>
-      <?php foreach ($addressModels as $index => $addressModel): ?>
+      	<div class="col-md-12">
+        	<h4 class="pull-left m-r-20">Address</h4>
+          	<a href="#" class="add-address text-add-new add-item"><i class="fa fa-plus-circle"></i> Add new address</a>
+          	<div class="clearfix"></div>
+      	</div>
+    	<?php foreach ($addressModels as $index => $addressModel): ?>
+      <?php
+            if (!$addressModel->isNewRecord) {
+                echo Html::activeHiddenInput($addressModel, "[{$index}]id");
+            }
+      $locationModel = Location::findOne(['id' => Yii::$app->session->get('location_id')]);
+        ?>
       <div class="container-items address-fields form-well">
-          <div class="item"><!-- widgetBody -->
-              <h4>
-                  <span class="panel-title-address">Address: <?= ($index + 1) ?></span>
-                  <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
-
-            <div class="clearfix"></div>
-              </h4>
-                  <?php
-                      // necessary for update action.
-                      if (!$addressModel->isNewRecord) {
-                          echo Html::activeHiddenInput($addressModel, "[{$index}]id");
-                      }
-                  ?>
-                  <div class="row">
-                      <div class="col-sm-6">
-                          <?= $form->field($addressModel, "[{$index}]label")->dropDownList(Address::labels(),['prompt'=>'Select Label']) ?>
-    </div>
+        	<div class="item-block item"><!-- widgetBody -->
+            <h4>
+            	<span class="panel-title-address">Address: <?= ($index + 1) ?></span>
+            	<button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
+            	<div class="clearfix"></div>
+            </h4>
+          <div class="row">
+            <div class="col-sm-4">
+                  <?= $form->field($addressModel, "[{$index}]label")->dropDownList(Address::labels(),['prompt'=>'Select Label']) ?>
+            </div>
+              <div class="col-sm-4">
+                  <?= $form->field($addressModel, "[{$index}]address")->textInput(['maxlength' => true]) ?>
+              </div>
+            	<div class="col-sm-4">
+                    <?= $form->field($addressModel, "[{$index}]city_id")->dropDownList(
+            						ArrayHelper::map(City::find()->all(),'id','name' ),
+            						['options' => [
+            							$locationModel->city_id => ['selected' => true],
+            						 	]
+            				 		])
+            				?>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                  <?= $form->field($addressModel, "[{$index}]country_id")->dropDownList(
+          						ArrayHelper::map(Country::find()->all(),'id','name'),
+          						['options' => [
+          							$locationModel->country_id => ['selected' => true],
+          						 	]
+          				 		]) 
+          				?>
+              </div>
+              <div class="col-sm-4">
+                  <?= $form->field($addressModel, "[{$index}]province_id")->dropDownList(
+          						ArrayHelper::map(Province::find()->all(),'id','name'),
+          						['options' => [
+          							$locationModel->province_id => ['selected' => true],
+          							]
+          				 		]) 
+          				?>
+              </div>
+              <div class="col-sm-4">
+                  <?= $form->field($addressModel, "[{$index}]postal_code")->textInput(['maxlength' => true]) ?>
+              </div>
+              
+              <div class="clearfix"></div>
+          </div>
+    	</div><!-- end:row -->
+      </div>
 </div>
-                     <div class="col-sm-6">
-                         <?= $form->field($addressModel, "[{$index}]address")->textInput(['maxlength' => true]) ?>
-                     </div>
-                     <div class="col-sm-6">
-                         <?= $form->field($addressModel, "[{$index}]city_id")->dropDownList(ArrayHelper::map(City::find()->all(),'id','name' ), ['prompt'=>'Select City']) ?>
-                     </div>
-                     <div class="col-sm-6">
-                         <?= $form->field($addressModel, "[{$index}]country_id")->dropDownList(ArrayHelper::map(Country::find()->all(),'id','name'), ['prompt'=>'Select Country']) ?>
-                     </div>
-                     <div class="col-sm-6">
-                         <?= $form->field($addressModel, "[{$index}]province_id")->dropDownList(ArrayHelper::map(Province::find()->all(),'id','name'), ['prompt'=>'Select Province']) ?>
-                     </div>
-                     <div class="col-sm-6">
-                         <?= $form->field($addressModel, "[{$index}]postal_code")->textInput(['maxlength' => true]) ?>
-                     </div>
-                     <div class="clearfix"></div>
-                 </div><!-- end:row -->
-</div>
-     </div>
-     <?php endforeach; ?>
+    <?php endforeach; ?>
      <div class="clearfix"></div>
  </div>
  <?php DynamicFormWidget::end(); ?>
@@ -182,33 +204,33 @@ $this->registerJs($js);
          <div class="clearfix"></div>
      </div>
      <?php foreach ($phoneNumberModels as $index => $phoneNumberModel): ?>
+     <?php
+          // necessary for update action.
+           if (!$phoneNumberModel->isNewRecord) {
+               echo Html::activeHiddenInput($phoneNumberModel, "[{$index}]id");
+           }
+       ?>
      <div class="container-items1 phone-fields form-well">
-        <div class="item1"><!-- widgetBody -->
+        <div class="item-block item1"><!-- widgetBody -->
             <h4>
                  <span class="panel-title-phone">Phone Number: <?= ($index + 1) ?></span>
                  <button type="button" class="pull-right remove-item1 btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
                  <div class="clearfix"></div>
              </h4>
-                 <?php
-                    // necessary for update action.
-                     if (!$phoneNumberModel->isNewRecord) {
-                         echo Html::activeHiddenInput($phoneNumberModel, "[{$index}]id");
-                     }
-                 ?>
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <?= $form->field($phoneNumberModel, "[{$index}]number")->textInput(['maxlength' => true]) ?>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <?= $form->field($phoneNumberModel, "[{$index}]label_id")->dropDownList(PhoneNumber::phoneLabels(), ['prompt'=>'Select Label']) ?>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <?= $form->field($phoneNumberModel, "[{$index}]extension")->textInput(['maxlength' => true]) ?>
                     </div>
                     <div class="clearfix"></div>
+                    </div>
                 </div><!-- end:row -->
         </div>
-    </div>
     <?php endforeach; ?>
     <div class="clearfix"></div>
 </div>

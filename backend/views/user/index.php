@@ -13,8 +13,13 @@ use yii\helpers\ArrayHelper;
 $roles = ArrayHelper::getColumn(
          	Yii::$app->authManager->getRoles(),'description'
         );
-$roles = array_flip($roles);
-$role = array_search($searchModel->role_name,$roles);
+foreach($roles as $name => $description){
+	if($name === $searchModel->role_name){
+		$role = $description;
+		break;
+	}
+}
+$roleName = $searchModel->role_name;
 $this->title = Yii::t('backend',  ! ($role) ? 'User' : $role.'s');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -22,10 +27,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="user-index">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'rowOptions' => function ($model, $key, $index, $grid) use ($role){
+        'rowOptions' => function ($model, $key, $index, $grid) use ($roleName){
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?UserSearch%5Brole_name%5D='.$role.'&id="+(this.id);'];
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?UserSearch%5Brole_name%5D='.$roleName.'&id="+(this.id);'];
         },
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],

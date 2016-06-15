@@ -189,6 +189,13 @@ class UserController extends Controller
             Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
             $valid = Model::validateMultiple($phoneNumberModels) && $valid;
 			
+			if(empty($addressModels)) {
+				$addressModels = [new Address];
+			}
+
+			if(empty($phoneNumberModels)) {
+				$phoneNumberModels = [new PhoneNumber];
+			}
 			if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
@@ -314,6 +321,10 @@ class UserController extends Controller
                     }
                     if ($flag) {
                         $transaction->commit();
+					Yii::$app->session->setFlash('alert', [
+			            'options' => ['class' => 'alert-success'],
+            			'body' => ucwords($model->roles). ' has been updated successfully'
+        			]);
 			    return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles,'id' => $model->getModel()->id]);
                     }
                 } catch (Exception $e) {
@@ -432,7 +443,12 @@ class UserController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = User::findOne($id)) !== null) {
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
+		$model = User::find()->joinWith(['location' => function($query) use($locationId) {
+			$query->where(['location_id' => $locationId]);
+		}])->where(['user.id' => $id])->one();
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

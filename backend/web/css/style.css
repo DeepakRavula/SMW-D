@@ -113,12 +113,19 @@ body .table {
   display: none;
 }
 .form-well{
-      background: rgba(236, 236, 236, 0.35);
-    padding: 0 19px;
+    background: rgba(236, 236, 236, 0.35);
     border: 1px solid rgba(221, 221, 221, 0.45);
-    margin-bottom: 20px;
     /* float: left; */
     clear: both;
+}
+.form-well .item-block:first-child{
+  padding-top: 0;
+}
+.form-well .item-block:not(:first-child){
+  border-top: 1px solid #ddd;
+}
+.form-well .item-block {
+  padding: 10px 19px 20px;
 }
 .detail-icon{
   width: 18px;
