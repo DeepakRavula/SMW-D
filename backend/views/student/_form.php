@@ -11,7 +11,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="student-form form-well">
+<div class="student-form form-well form-well-smw">
 	<?php
 	$session = Yii::$app->session;
 	$locationId = $session->get('location_id');

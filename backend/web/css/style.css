@@ -57,7 +57,10 @@ body .table {
 .login-box > .login-logo > .logo > img{
   width: 200px;
 }
-
+.form-well-smw{
+  padding: 10px 19px 20px;
+  margin-bottom: 20px;
+}
 #location_id {
   margin: 9px 10px 0 0;
 }
