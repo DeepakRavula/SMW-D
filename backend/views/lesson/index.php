@@ -18,11 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
-        'rowOptions' => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
-        },
+        // 'rowOptions' => function ($model, $key, $index, $grid) {
+        //     $u= \yii\helpers\StringHelper::basename(get_class($model));
+        //     $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+        //     return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        //},
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 			[
@@ -85,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
 			[
 				'class' => 'yii\grid\ActionColumn',
-				'template' => '{invoice}',
+				'template' => '{view} {invoice} {delete}',
 				'buttons' => [
 					'invoice' => function ($url, $model) {
 						return Html::a(
