@@ -158,11 +158,7 @@ class SignInController extends Controller
             throw new BadRequestHttpException($e->getMessage());
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('alert', [
-                'body'=> Yii::t('backend', 'New password was saved.'),
-                'options'=>['class'=>'alert-success']
-            ]);
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword())		  {
             return $this->redirect(['login']);
         }
 
