@@ -48,7 +48,7 @@ $config = [
             'maxImageSize' => env('GLIDE_MAX_IMAGE_SIZE'),
             'signKey' => env('GLIDE_SIGN_KEY')
         ],
-       /* 'mailer' => [
+        'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
@@ -59,14 +59,7 @@ $config = [
 				'encryption' => env('SMTP_ENCRYPTION'),
             ],
         ],
-	    * 
-	    */
-	   'sendGrid' => [
-			'class' => 'shershennm\sendgrid\Mailer',
-			'username' => 'jenifermonica',
-			'password' => 'password3',
-			//'viewPath' => 'backend/views/sign-in', // your view path here
-		],
+	     
 		'db'=>[
             'class'=>'yii\db\Connection',
             'dsn' => env('DB_DSN'),
