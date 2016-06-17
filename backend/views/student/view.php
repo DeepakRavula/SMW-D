@@ -16,13 +16,18 @@ $this->title = 'Student Details';
 $this->params['breadcrumbs'][] = ['label' => 'Students', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?php
+echo $this->render('_profile', [
+        'model' => $model,
+]);
+ ?>
+ <div class="tabbable-panel">
+     <div class="tabbable-line">
 <?php 
 
-
-
-$profileContent = $this->render('_profile',[
-		'model'	=> $model,
-]);
+// $profileContent = $this->render('_profile',[
+// 		'model'	=> $model,
+// ]);
 
 $enrolmentContent =  $this->render('_enrolment', [
 	'dataProvider' => $dataProvider,
@@ -35,14 +40,15 @@ $lessonContent =  $this->render('_lesson', [
 ?>
 <?php echo Tabs::widget([
     'items' => [
-        [
-            'label' => 'Profile',
-            'content' => $profileContent,
-            'active' => true
-        ],
+        // [
+        //     'label' => 'Profile',
+        //     'content' => $profileContent,
+        //     'active' => true
+        // ],
         [
             'label' => 'Enrolments',
             'content' => $enrolmentContent,
+            'active' => true
         ],
 		[
             'label' => 'Lessons',
@@ -50,7 +56,9 @@ $lessonContent =  $this->render('_lesson', [
         ],
     ],
 ]);?>
-
+<div class="clearfix"></div>
+     </div>
+ </div>
 <script>
 	$('.add-new-program').click(function(){
 		$('.enrolment-create').show(); 

@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="schedule-index">
 <div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
-<div id='calendar'></div>
+<div id='calendar' class="p-10"></div>
 </div>
 <script type="text/javascript">
 $(document).ready(function() { 

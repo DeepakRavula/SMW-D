@@ -10,7 +10,7 @@ use common\models\Invoice;
 $this->title = 'Invoices';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="invoice-index">
+<div class="invoice-index p-10">
 
 <?php echo Html::a('Add Invoice', ['invoice/create'], ['class' => 'btn btn-success m-b-10 m-t-20 pull-right'])?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>

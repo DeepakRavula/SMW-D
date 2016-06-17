@@ -5,7 +5,6 @@ use common\models\Lesson;
 use common\models\Invoice;
 use yii\grid\GridView;
 ?>
-<hr>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Lessons</h4>
 </div>

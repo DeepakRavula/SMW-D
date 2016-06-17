@@ -175,12 +175,11 @@ $this->registerJs($js);
 						<div class="clearfix"></div>
 					</div><!-- end row -->
 				</div><!-- widgetBody -->
-			<div class="clearfix"></div>
 	<?php endforeach; ?>
 			</div><!-- widgetContainer -->
     </div>
 <?php DynamicFormWidget::end(); ?>
-
+<div class="clearfix"></div>
 
 	<hr class="hr-ad">
 
@@ -237,10 +236,10 @@ $this->registerJs($js);
 	                    <div class="clearfix"></div>
 	                </div>
 				</div>
-				<div class="clearfix"></div>
 		<?php endforeach; ?>
 				</div>
 		</div>
+    <div class="clearfix"></div>
 		<hr class="hr-ph">
 		<?php DynamicFormWidget::end(); ?>
         <!-- Qualification show hide -->
@@ -271,11 +270,10 @@ $userRole = end($userRoles); ?>
 							?>
 
 						</div>
-						<div class="clearfix"></div>
 					</div>
 				</div>
-				<div class="clearfix"></div>
 			</div>
+      <div class="clearfix"></div>
 			<hr class="hr-qu">
 <?php endif; ?>
         <div class="row-fluid">
@@ -285,8 +283,8 @@ $userRole = end($userRoles); ?>
 		<?php endif; ?>
 			</div>
         </div>
-        <div class="col-md-12">
-<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+        <div class="col-md-12 m-b-10">
+          <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
         </div>
 <?php ActiveForm::end(); ?>
 	</div> <!-- user-form -->

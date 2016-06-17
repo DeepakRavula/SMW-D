@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 ?>
 <?php //echo '<pre>'; print_r($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer); ?>
 
-<div class="invoice-view">
+<div class="invoice-view p-10">
     <div class="row">
         <div class="col-xs-12">
           <h2 class="page-header">

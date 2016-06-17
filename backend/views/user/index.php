@@ -48,16 +48,17 @@ $this->params['breadcrumbs'][] = $this->title;
             //['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-	<p>
+    <div class="p-l-20 m-b-20">
 <?php echo Html::a(Yii::t('backend', 'Add '), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-success pull-left m-r-20']) ?>
-    </p>
 
 	<?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
-    <p>
         <?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
-    'modelClass' => 'User',
-]), ['delete-all'], ['class' => 'btn btn-danger pull-left']) ?>
-    </p>
+            'modelClass' => 'User',
+            ]), 
+            ['delete-all'], 
+            ['class' => 'btn btn-danger pull-left']) 
+        ?>
+    <?php endif;?>
     <div class="clearfix"></div>
-	<?php endif;?>
+    </div>
 </div>

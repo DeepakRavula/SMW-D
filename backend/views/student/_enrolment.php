@@ -5,7 +5,6 @@ use yii\grid\GridView;
 use common\models\Lesson;
 use common\models\Enrolment;
 ?>
-<hr>
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Enrolments</h4>
 <a href="#" class="add-new-program text-add-new"><i class="fa fa-plus-circle"></i> Add new program</a>

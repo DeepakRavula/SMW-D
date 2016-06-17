@@ -9,7 +9,7 @@ use yii\grid\GridView;
 $this->title = 'Programs';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="program-index">
+<div class="program-index m-t-20">
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
     <div class="clearfix"></div>
-	<div class="col-md-12">
+	<div class="col-md-12 m-b-20">
         <?php echo Html::a('Add new Program', ['create'], ['class' => 'btn btn-success']) ?>
     </div>
 
