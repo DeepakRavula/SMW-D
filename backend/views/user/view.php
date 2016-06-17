@@ -51,6 +51,16 @@ $profileContent = $this->render('_profile',[
 		'teacherAvailabilityModel' => $teacherAvailabilityModel,
 ]);
 
+$addressContent = $this->render('_address',[
+		'model'	=> $model,
+		'dataProvider1' => $dataProvider1,
+]);
+
+$phoneContent = $this->render('_phone',[
+		'model'	=> $model,
+		'dataProvider1' => $dataProvider1,
+]);
+
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -58,6 +68,19 @@ $profileContent = $this->render('_profile',[
             'label' => 'Profile',
             'content' => $profileContent,
             'active' => true
+        ],
+		[
+            'label' => 'Contacts',
+            'items' => [
+                 [
+                     'label' => 'Address',
+                     'content' => 'address',
+                 ],
+                 [
+                     'label' => 'Phone Number',
+                    'content' =>'phone' ,
+                 ],
+            ],
         ],
         [
             'label' => 'Students',

@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 ?>
-
+<hr>
 <div class="col-md-12 users-name">
     <p class="users-name"><?php echo!empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
         <?php echo!empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?> 
