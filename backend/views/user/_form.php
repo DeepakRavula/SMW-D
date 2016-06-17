@@ -94,7 +94,7 @@ $this->registerJs($js);
 		'widgetContainer' => 'dynamicform_address', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
 		'widgetBody' => '.address-container-items', // required: css class selector
 		'widgetItem' => '.address-item', // required: css class
-		'limit' => 4, // the maximum times, an element can be cloned (default 999)
+		'limit' => 10, // the maximum times, an element can be cloned (default 999)
 		'min' => 0, // 0 or 1 (default 1)
 		'insertButton' => '.address-add-item', // css class
 		'deleteButton' => '.address-remove-item', // css class
@@ -175,9 +175,9 @@ $this->registerJs($js);
 						<div class="clearfix"></div>
 					</div><!-- end row -->
 				</div><!-- widgetBody -->
-			</div><!-- widgetContainer -->
 			<div class="clearfix"></div>
 	<?php endforeach; ?>
+			</div><!-- widgetContainer -->
     </div>
 <?php DynamicFormWidget::end(); ?>
 
@@ -190,7 +190,7 @@ $this->registerJs($js);
 		'widgetContainer' => 'dynamicform_phone', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
 		'widgetBody' => '.phone-container-items', // required: css class selector
 		'widgetItem' => '.phone-item', // required: css class
-		'limit' => 4, // the maximum times, an element can be cloned (default 999)
+		'limit' => 10, // the maximum times, an element can be cloned (default 999)
 		'min' => 0, // 0 or 1 (default 1)
 		'insertButton' => '.phone-add-item', // css class
 		'deleteButton' => '.phone-remove-item', // css class
@@ -239,6 +239,7 @@ $this->registerJs($js);
 				</div>
 				<div class="clearfix"></div>
 		<?php endforeach; ?>
+				</div>
 		</div>
 		<hr class="hr-ph">
 		<?php DynamicFormWidget::end(); ?>
@@ -288,7 +289,7 @@ $userRole = end($userRoles); ?>
 <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
         </div>
 <?php ActiveForm::end(); ?>
-	</div>
+	</div> <!-- user-form -->
 	<script>
 		$('.add-address').bind('click', function () {
 			$('.address-fields').show();
