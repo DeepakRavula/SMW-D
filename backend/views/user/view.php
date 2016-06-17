@@ -42,6 +42,18 @@ $this->params['breadcrumbs'][] = $this->title;
 			<i class="fa fa-phone-square"></i> <?php echo !empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>
 		</div>
 		<div class="clearfix"></div>
+<?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
+<?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
+<div class="row-fluid m-t-20">
+    <div class="col-md-2">
+        <h5 class="m-t-5"><i class="fa fa-graduation-cap"></i> Qualifications</h5>
+    </div>
+    <div class="col-md-10">
+       <span class="label label-primary"><?= $program?></span>
+    </div>
+    <div class="clearfix"></div>
+</div>
+<?php endif; ?>
 	<div class="col-md-12 action-btns">
 		<?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update details'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		<?php
@@ -108,15 +120,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php endif; ?>
 <?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
-<div class="col-md-12">
+<!-- <div class="col-md-12">
     <div class="col-md-2">
         <h4>Qualifications</h4>
     </div>
     <div class="col-md-10">
-       <h4> <?= $program?></h4>
+       <h4> <?php //echo $program?></h4>
     </div>
     <div class="clearfix"></div>
-</div>
+</div> -->
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Teachers Availability</h4>
 <a href="#" class="availability text-add-new"><i class="fa fa-plus-circle"></i> Add availability</a>

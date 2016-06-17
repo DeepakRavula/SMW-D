@@ -72,7 +72,11 @@ body .table {
   display: block;
   overflow: scroll;
 }*/
-
+.label {
+  font-weight: normal;
+    font-size: 100%;
+    text-transform: capitalize;
+}
 .login-page,
 .register-page{
   background: #fff;
