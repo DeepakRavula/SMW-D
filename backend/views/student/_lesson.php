@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use common\models\Lesson;
+use common\models\Invoice;
 use yii\grid\GridView;
 ?>
 <hr>
