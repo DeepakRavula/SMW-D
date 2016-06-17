@@ -125,11 +125,7 @@ class SignInController extends Controller
         $isEmailSent = false;
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-			Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Check your email for further instruction'
-            ]);
-            $isEmailSent = true;
+            	$isEmailSent = true;
             } else {
                Yii::$app->session->setFlash('alert', [
                     'body'=>Yii::t('backend', 'Sorry, we are unable to reset password for email provided.'),
