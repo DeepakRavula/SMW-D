@@ -122,14 +122,10 @@ class SignInController extends Controller
     {
         $this->layout = 'base';
         $model = new PasswordResetRequestForm();
+        $isEmailSent = false;
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-			Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Check your email for further instruction'
-            ]);
-
-                return $this->goHome();
+            	$isEmailSent = true;
             } else {
                Yii::$app->session->setFlash('alert', [
                     'body'=>Yii::t('backend', 'Sorry, we are unable to reset password for email provided.'),
@@ -140,6 +136,7 @@ class SignInController extends Controller
 
         return $this->render('requestPasswordResetToken', [
             'model' => $model,
+            'isEmailSent' => $isEmailSent
         ]);
     }
     
@@ -157,11 +154,7 @@ class SignInController extends Controller
             throw new BadRequestHttpException($e->getMessage());
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('alert', [
-                'body'=> Yii::t('backend', 'New password was saved.'),
-                'options'=>['class'=>'alert-success']
-            ]);
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword())		  {
             return $this->redirect(['login']);
         }
 
