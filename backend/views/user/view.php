@@ -70,65 +70,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="clearfix"></div>
 </div>
 </div>
-<?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
-<?php if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER): ?>
-<?php endif; ?>
-<?php //echo '<pre>'; print_r($addressModels) ?>
-<div class="user-view user-details-wrapper">
-
-<?php 
-
-$studentContent = null;
-
-if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER)	 {
-	$studentContent =  $this->render('_student', [
-		'model'	=> $model,
-		'dataProvider' => $dataProvider,
-		'student' => $student,
-	]);
-}
-	?>
-	<div class="clearfix"></div>
-	
-
-<?php if ( ! empty($role) && $role->name === User::ROLE_TEACHER): ?>
-<!-- <div class="col-md-12">
-    <div class="col-md-2">
-        <h4>Qualifications</h4>
-    </div>
-    <div class="col-md-10">
-       <h4> <?php //echo $program?></h4>
-    </div>
-    <div class="clearfix"></div>
-</div> -->
-<div class="col-md-12">
-<h4 class="pull-left m-r-20">Teachers Availability</h4>
-<a href="#" class="availability text-add-new"><i class="fa fa-plus-circle"></i> Add availability</a>
-<div class="clearfix"></div>
-</div>
-<div class="teacher-availability-create row-fluid">
-<?php
-$profileContent = $this->render('_profile',[
-		'model'	=> $model,
-		'dataProvider1' => $dataProvider1,
-		'teacherAvailabilityModel' => $teacherAvailabilityModel,
-]);
-
-?>
-<?php echo Tabs::widget([
-    'items' => [
-        [
-            'label' => 'Profile',
-            'content' => $profileContent,
-            'active' => true
-        ],
-        [
-            'label' => 'Students',
-            'content' => $studentContent,
-        ],
-    ],
-]);?>
-
 <script>
 	$('.availability').click(function(){
 		$('.teacher-availability-create').show(); 
