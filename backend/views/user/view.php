@@ -13,25 +13,31 @@ use yii\bootstrap\Tabs;
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
 
-$roles = ArrayHelper::getColumn(
+$roleNames = ArrayHelper::getColumn(
          	Yii::$app->authManager->getRoles(),'description'
         );
-foreach($roles as $name => $description){
+foreach($roleNames as $name => $description){
 	if($name === $searchModel->role_name){
-		$role = $description;
+		$roleName = $description;
 	}
 }
 
-$this->title = Yii::t('backend',  !($role) ? 'User' : $role.' Detail');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', ! $role ? 'User' : $role. 's'), 'url' => ['index']];
+$this->title = Yii::t('backend',  !($roleName) ? 'User' : $roleName.' Detail');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', ! $roleName ? 'User' : $roleName. 's'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
+<?php
+echo $this->render('_profile', [
+        'model' => $model,
+		'dataProvider1' => $dataProvider1,
+		'teacherAvailabilityModel' => $teacherAvailabilityModel,
+]);
+ ?>
+<div class="tabbable-panel">
+	<div class="tabbable-line">
+		
 <?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
-<?php if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER): ?>
-<?php endif; ?>
-<?php //echo '<pre>'; print_r($addressModels) ?>
-<div class="user-view user-details-wrapper">
 
 <?php 
 
@@ -44,12 +50,6 @@ if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER)	 {
 		'student' => $student,
 	]);
 }
-
-$profileContent = $this->render('_profile',[
-		'model'	=> $model,
-		'dataProvider1' => $dataProvider1,
-		'teacherAvailabilityModel' => $teacherAvailabilityModel,
-]);
 
 $addressContent = $this->render('_address',[
 		'model'	=> $model,
@@ -64,11 +64,6 @@ $phoneContent = $this->render('_phone',[
 ?>
 <?php echo Tabs::widget([
     'items' => [
-        [
-            'label' => 'Profile',
-            'content' => $profileContent,
-            'active' => true
-        ],
 		[
             'label' => 'Contacts',
             'items' => [
@@ -88,7 +83,9 @@ $phoneContent = $this->render('_phone',[
         ],
     ],
 ]);?>
-
+<div class="clearfix"></div>
+     </div>
+ </div>
 <script>
 	$('.availability').click(function(){
 		$('.teacher-availability-create').show(); 
