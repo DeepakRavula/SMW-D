@@ -13,7 +13,7 @@ use common\models\TeacherAvailability;
 use common\models\Qualification;
 use common\models\UserImport;
 use backend\models\UserForm;
-use backend\models\StaffUserForm;
+use common\models\Lesson;
 use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
 use yii\helpers\ArrayHelper;
@@ -147,6 +147,14 @@ class UserController extends Controller {
 			}
 		}
 		$address = Address::findByUserId($model->id);
+		$lessonDataProvider = new ActiveDataProvider([
+			'query' => Lesson::find()
+				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = lesson.enrolment_schedule_day_id')
+				->join('INNER JOIN','enrolment e','e.id = esd.enrolment_id')
+				->join('INNER JOIN','student s','s.id = e.student_id')
+				->where(['e.location_id' => Yii::$app->session->get('location_id'),'s.customer_id' => $id])
+				->andWhere('lesson.date <= NOW()')
+		]);
 		return $this->render('view', [
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,
@@ -155,7 +163,8 @@ class UserController extends Controller {
 					'address' => $address,
 					'searchModel' => $searchModel,
 					'teacherAvailabilityModel' => $teacherAvailabilityModel,
-					'program' => $program
+					'program' => $program,
+					'lessonDataProvider' => $lessonDataProvider
 		]);
 	}
 

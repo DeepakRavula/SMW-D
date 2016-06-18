@@ -10,12 +10,18 @@ use yii\grid\GridView;
 </div>
 <?php
 echo GridView::widget([
-	'dataProvider' => $lessonModel,
+	'dataProvider' => $lessonDataProvider,
 	'options' => ['class' => 'col-md-12'],
 	'tableOptions' =>['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray' ],
 	'columns' => [
 		['class' => 'yii\grid\SerialColumn'],
+		[
+			'label' => 'Student Name',
+			'value' => function($data) {
+				return !empty($data->enrolmentScheduleDay->enrolment->student->fullName) ? $data->enrolmentScheduleDay->enrolment->student->fullName : null;
+			},
+		],
 		[
 			'label' => 'Program Name',
 			'value' => function($data) {

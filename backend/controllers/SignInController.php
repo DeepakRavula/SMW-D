@@ -154,12 +154,14 @@ class SignInController extends Controller
             throw new BadRequestHttpException($e->getMessage());
         }
 
+        $isResetPassword = false;
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword())		  {
-            return $this->redirect(['login']);
+            $isResetPassword = true;
         }
 
         return $this->render('resetPassword', [
             'model' => $model,
+			'isResetPassword' => $isResetPassword,
         ]);
     }
 }

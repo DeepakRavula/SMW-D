@@ -16,7 +16,7 @@ You have requested to reset your password for your Arcadia Music Academy account
 If you follow the link below you will be able to personally reset your password:
 <?php echo Html::a(Html::encode($resetLink), $resetLink) ?><br>
 <br>
-(NOTE:This link is good for today and can only be used once)<br>
+(NOTE:This link can be used just once and is scheduled to expire after 24 hours.)<br>
 <br>
 If you didn't make this request then you can safely ignored this email.<br>
 <br>
