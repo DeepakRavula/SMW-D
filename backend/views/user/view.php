@@ -65,6 +65,10 @@ $lessonContent = $this->render('_lesson',[
 		'model'	=> $model,
 		'lessonDataProvider' => $lessonDataProvider,
 ]);
+
+$enrolmentContent = $this->render('_enrolment',[
+		'enrolmentDataProvider' => $enrolmentDataProvider,
+]);
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -86,6 +90,10 @@ $lessonContent = $this->render('_lesson',[
             'content' => $studentContent,
 			'active' => true,
         ],
+		[
+			'label' => 'Enrolments',
+			'content' => $enrolmentContent,
+		],
 		[
 			'label' => 'Lessons',
 			'content' => $lessonContent,

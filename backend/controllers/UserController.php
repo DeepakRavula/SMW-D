@@ -12,6 +12,7 @@ use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
 use common\models\Qualification;
 use common\models\UserImport;
+use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
 use backend\models\UserImportForm;
@@ -155,6 +156,12 @@ class UserController extends Controller {
 				->where(['e.location_id' => Yii::$app->session->get('location_id'),'s.customer_id' => $id])
 				->andWhere('lesson.date <= NOW()')
 		]);
+		$query = Enrolment::find()
+			->joinWith('student s')
+			->where(['location_id' => Yii::$app->session->get('location_id'),'s.customer_id' => $id]);
+		$enrolmentDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
 		return $this->render('view', [
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,
@@ -164,7 +171,8 @@ class UserController extends Controller {
 					'searchModel' => $searchModel,
 					'teacherAvailabilityModel' => $teacherAvailabilityModel,
 					'program' => $program,
-					'lessonDataProvider' => $lessonDataProvider
+					'lessonDataProvider' => $lessonDataProvider,
+					'enrolmentDataProvider' => $enrolmentDataProvider
 		]);
 	}
 
