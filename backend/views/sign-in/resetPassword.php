@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php //echo Html::encode($this->title) ?>
     </div><!-- /.login-logo -->
     <div class="header"></div>
+	<?php if( ! $isResetPassword):?>
     <div class="site-reset-password login-box-body">
         <h1><?php echo Html::encode($this->title) ?></h1>
 
@@ -35,4 +36,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php ActiveForm::end(); ?>
         </div>
     </div>
-</div>w
+	 <?php else:?>
+    <div class="site-request-password-reset login-box-body">
+        <p>Your password have been saved successfully . Click <?php echo Yii::t('frontend', '<a href="{link}">here</a>', [
+                            'link'=>yii\helpers\Url::to(['/sign-in/login'])
+                        ]) ?> to login page.
+        </p>
+    </div>
+    <?php endif;?>
+</div>
