@@ -10,7 +10,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Programs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="program-update">
+<div class="program-update p-10">
 
     <?php echo $this->render('_form', [
         'model' => $model,
