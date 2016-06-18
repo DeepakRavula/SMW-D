@@ -79,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Date',
 				'value' => function($data) {
-					$date = date("d-m-y", strtotime($data->date)); 
+					$date = date("d-m-Y", strtotime($data->date)); 
 					return ! empty($date) ? $date : null;
                 },
 			],

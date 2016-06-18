@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 				[
 				'label' => 'Date',
 				'value' => function($data) {
-					$date = date("d-m-y", strtotime($data->lesson->date)); 
+					$date = date("d-m-Y", strtotime($data->lesson->date)); 
 					return ! empty($date) ? $date : null;
                 },
 			    ],
