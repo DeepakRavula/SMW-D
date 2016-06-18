@@ -51,15 +51,15 @@ if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER)	 {
 	]);
 }
 
-$addressContent = $this->render('_address',[
+$addressContent = $this->render('_contact',[
 		'model'	=> $model,
 		'dataProvider1' => $dataProvider1,
 ]);
 
-$phoneContent = $this->render('_phone',[
-		'model'	=> $model,
-		'dataProvider1' => $dataProvider1,
-]);
+// $phoneContent = $this->render('_phone',[
+// 		'model'	=> $model,
+// 		'dataProvider1' => $dataProvider1,
+// ]);
 
 $lessonContent = $this->render('_lesson',[
 		'model'	=> $model,
@@ -70,16 +70,17 @@ $lessonContent = $this->render('_lesson',[
     'items' => [
 		[
             'label' => 'Contacts',
-            'items' => [
-                 [
-                     'label' => 'Address',
-                     'content' => 'coming soon..',
-                 ],
-                 [
-                     'label' => 'Phone Number',
-                    'content' =>'coming soon..' ,
-                 ],
-            ],
+            'content' => $addressContent,
+            // 'items' => [
+            //      [
+            //          'label' => 'Address',
+            //          'content' => $addressContent,
+            //      ],
+            //      [
+            //          'label' => 'Phone Number',
+            //         'content' =>'coming soon..' ,
+            //      ],
+            //],
         ],
         [
             'label' => 'Students',
