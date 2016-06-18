@@ -4,32 +4,33 @@ use yii\helpers\Html;
 ?>
 <div class="row-fluid user-details-wrapper">
     <div class="col-md-12 p-t-10">
-        <p class="users-name"><?php echo!empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
+        <p class="users-name pull-left"><?php echo!empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
             <?php echo!empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?> 
-            <em>
-                <small><?php echo!empty($model->email) ? $model->email : null ?></small>
-            </em>
+            <!-- <em>
+                <small><?php //echo!empty($model->email) ? $model->email : null ?></small>
+            </em> -->
         </p>
+        <div class="m-l-20 pull-left m-t-5">
+            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update details'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+            <?php
+            echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
+                'class' => '',
+                'data' => [
+                    'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
+                    'method' => 'post',
+                ],
+            ])
+            ?>
+            <div class="clearfix"></div>
+        </div>
     </div>
-    <div class="col-md-2">
-        <i class="fa fa-phone-square"></i> <?php echo!empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>
+<!--     <div class="col-md-2">
+        <i class="fa fa-phone-square"></i> <?php //echo!empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>
     </div>
     <div class="col-md-2 relative">
-        <i class="fa fa-map-marker"></i> <?php echo!empty($address->address) ? $address->address : null ?>
-    </div>
-    <div class="col-md-12 action-btns">
-        <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update details'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
-        <?php
-        echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
-            'class' => '',
-            'data' => [
-                'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ])
-        ?>
-        <div class="clearfix"></div>
-    </div>
+        <i class="fa fa-map-marker"></i> <?php //echo!empty($address->address) ? $address->address : null ?>
+    </div> -->
+    
     <div class="clearfix"></div>
 </div>
 

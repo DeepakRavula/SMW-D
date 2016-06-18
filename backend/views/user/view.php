@@ -69,7 +69,7 @@ $lessonContent = $this->render('_lesson',[
 <?php echo Tabs::widget([
     'items' => [
 		[
-            'label' => 'Contacts',
+            'label' => 'Contact',
             'content' => $addressContent,
             // 'items' => [
             //      [
