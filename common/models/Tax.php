@@ -7,11 +7,10 @@ use Yii;
 /**
  * This is the model class for table "tax".
  *
- * @property string $id
- * @property string $province_id
+ * @property integer $id
+ * @property integer $province_id
  * @property double $tax_rate
- * @property string $from_date
- * @property string $to_date
+ * @property string $since
  */
 class Tax extends \yii\db\ActiveRecord
 {
@@ -29,10 +28,10 @@ class Tax extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['province_id', 'tax_rate'], 'required'],
             [['province_id'], 'integer'],
             [['tax_rate'], 'number'],
-            [['from_date', 'to_date'], 'safe'],
+            [['since'], 'required'],
+            [['since'], 'safe'],
         ];
     }
 
@@ -45,8 +44,7 @@ class Tax extends \yii\db\ActiveRecord
             'id' => 'ID',
             'province_id' => 'Province ID',
             'tax_rate' => 'Tax Rate',
-            'from_date' => 'From Date',
-            'to_date' => 'To Date',
+            'since' => 'Since',
         ];
     }
 }

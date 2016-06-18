@@ -21,9 +21,7 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'tax_rate') ?>
 
-    <?php echo $form->field($model, 'from_date') ?>
-
-    <?php echo $form->field($model, 'to_date') ?>
+    <?php echo $form->field($model, 'since') ?>
 
     <div class="form-group">
         <?php echo Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

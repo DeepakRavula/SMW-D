@@ -29,9 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'province_id',
             'tax_rate',
-            'from_date',
-            'to_date',
-        ],
+            'since',
+       ],
     ]) ?>
 
 </div>
