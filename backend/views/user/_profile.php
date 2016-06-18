@@ -12,10 +12,11 @@ use yii\helpers\Html;
         </p>
     </div>
     <div class="col-md-2">
-        <i class="fa fa-map-marker"></i> <?php echo!empty($address->address) ? $address->address : null ?>
-    </div>
-    <div class="col-md-2">
         <i class="fa fa-phone-square"></i> <?php echo!empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>
+    </div>
+    <div class="col-md-2 relative">
+        <small class="address-label">Address 1</small>
+        <i class="fa fa-map-marker"></i> <?php echo!empty($address->address) ? $address->address : null ?>
     </div>
     <div class="col-md-12 action-btns">
         <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update details'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
