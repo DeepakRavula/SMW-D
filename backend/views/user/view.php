@@ -61,6 +61,10 @@ $phoneContent = $this->render('_phone',[
 		'dataProvider1' => $dataProvider1,
 ]);
 
+$lessonContent = $this->render('_lesson',[
+		'model'	=> $model,
+		'lessonDataProvider' => $lessonDataProvider,
+]);
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -69,19 +73,28 @@ $phoneContent = $this->render('_phone',[
             'items' => [
                  [
                      'label' => 'Address',
-                     'content' => 'address',
+                     'content' => 'coming soon..',
                  ],
                  [
                      'label' => 'Phone Number',
-                    'content' =>'phone' ,
+                    'content' =>'coming soon..' ,
                  ],
             ],
         ],
         [
             'label' => 'Students',
             'content' => $studentContent,
+			'active' => true,
         ],
-    ],
+		[
+			'label' => 'Lessons',
+			'content' => $lessonContent,
+		],
+		[
+			'label' => 'Invoices',
+			'content' => 'coming soon..',
+		],
+	],
 ]);?>
 <div class="clearfix"></div>
      </div>
