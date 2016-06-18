@@ -15,7 +15,6 @@ use yii\helpers\Html;
         <i class="fa fa-phone-square"></i> <?php echo!empty($model->phoneNumber->number) ? $model->phoneNumber->number : null ?>
     </div>
     <div class="col-md-2 relative">
-        <small class="address-label">Address 1</small>
         <i class="fa fa-map-marker"></i> <?php echo!empty($address->address) ? $address->address : null ?>
     </div>
     <div class="col-md-12 action-btns">
