@@ -5,8 +5,6 @@ namespace backend\controllers;
 use Yii;
 use common\models\User;
 use common\models\UserLocation;
-use common\models\UserProfile;
-use common\models\UserAddress;
 use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
@@ -15,6 +13,7 @@ use common\models\UserImport;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
+use common\models\Location;
 use common\models\Invoice;
 use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
@@ -354,6 +353,7 @@ class UserController extends Controller {
 					'model' => $model,
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+					'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
 					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels
 		]);
