@@ -107,5 +107,18 @@ $invoiceContent = $this->render('_invoice',[
 	$('.add-new-student').click(function(){
 		$('.show-create-student-form').show();
 	});
-	
+	$('.add-address').bind('click', function () {
+		$('.address-fields').show();
+		$('.hr-ad').hide();
+		setTimeout(function () {
+			$('.add-address').addClass('add-item');
+		}, 100);
+	});
+	$('.add-phone').bind('click', function () {
+		$('.phone-fields').show();
+		$('.hr-ph').hide();
+		setTimeout(function () {
+			$('.add-phone').addClass('add-item-phone');
+		}, 100);
+	});	
 </script>

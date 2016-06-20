@@ -1,3 +1,6 @@
+<?php
+use yii\helpers\Html;
+?>
 <div class="row-fluid p-b-20">
 	<div class="col-md-6">
 		<div class="row-fluid">
@@ -14,18 +17,15 @@
 						. $address->postal_code . '<br>'
 						. $address->country->name;
 
-//						if ($address->id == $model->primary_address_id)
-//							echo ' (Default)';
 						echo '</td><td>';
-//						echo CHtml::link('<i class="fa fa-times"></i>', array('deleteAttr', 'id_user' => $model->id, 'id_addr' => $address->id), array('class' => 'delete_addr', 'confirm' => 'Are you sure?'));
 						echo '</td>';
 						echo '</tr>';
 					}
 					?>
 				</tbody>
 			</table>
- <?php //echo!empty($address->address) ? $address->address : null ?>
 		</div>
+	<?php echo Html::a('<i class="fa fa-pencil"></i> Update details', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 	</div>
 	<div class="col-md-6">
 		<div class="row-fluid">
@@ -40,10 +40,7 @@
 						if (isset($phoneNumber->extension))
 							echo ', '.$phone_item->extension;
 
-//						if ($address->id == $model->primary_address_id)
-//							echo ' (Default)';
 						echo '</td><td>';
-//						echo CHtml::link('<i class="fa fa-times"></i>', array('deleteAttr', 'id_user' => $model->id, 'id_addr' => $address->id), array('class' => 'delete_addr', 'confirm' => 'Are you sure?'));
 						echo '</td>';
 						echo '</tr>';
 					}
