@@ -7,11 +7,10 @@ use Yii;
 /**
  * This is the model class for table "tax".
  *
- * @property string $id
- * @property string $province_id
+ * @property integer $id
+ * @property integer $province_id
  * @property double $tax_rate
- * @property string $from_date
- * @property string $to_date
+ * @property string $since
  */
 class Tax extends \yii\db\ActiveRecord
 {
