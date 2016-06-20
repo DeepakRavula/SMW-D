@@ -29,15 +29,21 @@ $I->expectTo('see validations errors');
 $I->see('Incorrect username or password.', '.help-block');
 
 $I->amGoingTo('try to login with correct credentials');
-$loginPage->login('webmaster', 'webmaster');
+$loginPage->login('webmaster@example.org', 'webmaster');
 if (method_exists($I, 'wait')) {
     $I->wait(3); // only for selenium
 }
 $I->expectTo('see that user is logged');
+
+$I->click('#user-menu');
+if (method_exists($I, 'wait')) {
+    $I->wait(3); // only for selenium
+}
 $I->seeLink('Logout');
 
-/** Uncomment if using WebDriver
- * $I->click('Logout (erau)');
- * $I->dontSeeLink('Logout (erau)');
- * $I->seeLink('Login');
- */
+$I->click('Logout');
+if (method_exists($I, 'wait')) {
+    $I->wait(3); // only for selenium
+}
+$I->dontSeeLink('Logout)');
+$I->see('Sign me in', 'button[name="login-button"]');

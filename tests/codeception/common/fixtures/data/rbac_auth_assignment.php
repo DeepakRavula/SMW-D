@@ -13,12 +13,12 @@ return [
         'created_at' => '1440552894',
     ],
     [
-        'item_name' => "manager",
+        'item_name' => "staffmember",
         'user_id' => "2",
         'created_at' => '1440552894',
     ],
     [
-        'item_name' => "user",
+        'item_name' => "customer",
         'user_id' => "3",
         'created_at' => '1440552894',
     ],
