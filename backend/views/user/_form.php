@@ -36,16 +36,19 @@ use wbraganca\dynamicform\DynamicFormWidget;
         margin-bottom: 10px;
         padding-top: 15px;
     }
-    .address-fields, .phone-fields, .quali-fields label{
+    .address-fields, .phone-fields, .quali-fields label, .section-tab{
         display: none;
     }
+	.active{
+		display: block;
+	}
 
 </style>
 
 <div class="user-form"> 
 
 	<?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
-    <div class="row-fluid">
+    <div class="row-fluid section-tab">
         <div class="col-md-4">
 			<?php echo $form->field($model, 'firstname') ?>
         </div>
@@ -58,6 +61,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
         <div class="clearfix"></div>
 	</div>
     <hr class="hr-ad">
+	<div class="section-tab <?= $section == 'contact' ? 'active' : null;?> ">
 	<?php echo $this->render('_form-contact-address',[
 		'addressModels' => $addressModels,
 		'form' => $form
@@ -65,7 +69,8 @@ use wbraganca\dynamicform\DynamicFormWidget;
 	<?php echo $this->render('_form-contact-phone',[
 		'phoneNumberModels' => $phoneNumberModels,
 		'form' => $form
-	]);?>	
+	]);?>
+	</div>
         <!-- Qualification show hide -->
 <?php $userRoles = Yii::$app->authManager->getRolesByUser($model->model->id);
 $userRole = end($userRoles); ?>

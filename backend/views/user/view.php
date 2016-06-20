@@ -54,8 +54,8 @@ if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER)	 {
 $addressContent = $this->render('_contact',[
 		'model'	=> $model,
 		'dataProvider1' => $dataProvider1,
-		'phoneNumbers' => $phoneNumbers,
-		'addresses' => $addresses,
+		'addressDataProvider' => $addressDataProvider,
+		'phoneDataProvider' => $phoneDataProvider,
 ]);
 
 $lessonContent = $this->render('_lesson',[

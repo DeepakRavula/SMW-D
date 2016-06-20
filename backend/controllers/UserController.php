@@ -148,8 +148,12 @@ class UserController extends Controller {
 				return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $id]);
 			}
 		}
-		$addresses = $model->addresses;
-		$phoneNumbers = $model->phoneNumbers;
+		$addressDataProvider = new ActiveDataProvider([
+			'query' => $model->getAddresses(),
+			]);
+		$phoneDataProvider = new ActiveDataProvider([
+			'query' => $model->getPhoneNumbers(),
+			]);
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => Lesson::find()
 				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = lesson.enrolment_schedule_day_id')
@@ -187,11 +191,11 @@ class UserController extends Controller {
 					'dataProvider' => $dataProvider,
 					'dataProvider1' => $dataProvider1,
 					'model' => $model,
-					'addresses' => $addresses,
-					'phoneNumbers' => $phoneNumbers,
 					'searchModel' => $searchModel,
 					'teacherAvailabilityModel' => $teacherAvailabilityModel,
 					'program' => $program,
+					'addressDataProvider' => $addressDataProvider,
+					'phoneDataProvider' => $phoneDataProvider,
 					'lessonDataProvider' => $lessonDataProvider,
 					'enrolmentDataProvider' => $enrolmentDataProvider,
 					'invoiceDataProvider' => $invoiceDataProvider
@@ -270,6 +274,8 @@ class UserController extends Controller {
 	 * @return mixed
 	 */
 	public function actionUpdate($id) {
+		$request = Yii::$app->request;
+		$section = $request->get('section');
 		$model = new UserForm();
 		$model->setModel($this->findModel($id));
 		$user = $this->findModel($id);
@@ -277,7 +283,6 @@ class UserController extends Controller {
 		if (!Yii::$app->user->can('updateOwnProfile', ['model' => $user])) {
 			$ownProfile = false;
 		}
-
 		if ((!$ownProfile)) {
 			$role = $model->roles;
 			if (($role === User::ROLE_TEACHER) && (!Yii::$app->user->can('updateTeacherProfile'))) {
@@ -355,7 +360,8 @@ class UserController extends Controller {
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
-					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels
+					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels,
+			'section' => $section
 		]);
 	}
 
