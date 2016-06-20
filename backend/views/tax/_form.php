@@ -20,14 +20,14 @@ use common\models\Province;
             Province::find()->all(),
             'id',
             'name'
-        ), ['prompt'=>'']) ?>
+        ), ['prompt' => 'Select Province...']) ?>
 
     <?php echo $form->field($model, 'tax_rate')->textInput() ?>
 
     <?php echo $form->field($model, 'since')->widget(\yii\jui\DatePicker::classname(), [
-                'options' => ['class'=>'form-control'],
-				'clientOptions' => [
-					'changeMonth' => true,
+                    'options' => ['class'=>'form-control'],
+                    'clientOptions' => [
+                    'changeMonth' => true,
 					'changeYear' => true,
 					'yearRange' => '-2:+70'	
 				]

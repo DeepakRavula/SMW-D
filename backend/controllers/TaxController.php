@@ -61,7 +61,6 @@ class TaxController extends Controller
     public function actionCreate()
     {
         $model = new Tax();
-       // $provinceList = Province::find()->select('id')->all(); 
         if ($model->load(Yii::$app->request->post()) && $model->save()) { 
             Yii::$app->session->setFlash('alert', [
             	'options' => ['class' => 'alert-success'],
@@ -71,7 +70,7 @@ class TaxController extends Controller
         } else {
             return $this->render('create', [
                 'model' => $model,
-                //'provinceList' => $provinceList,
+
             ]);
         }
     }
