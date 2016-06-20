@@ -1,0 +1,19 @@
+<?php
+
+use yii\helpers\Html;
+
+
+/* @var $this yii\web\View */
+/* @var $model common\models\Tax */
+
+$this->title = 'Create Tax';
+$this->params['breadcrumbs'][] = ['label' => 'Taxes', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="tax-create">
+
+    <?php echo $this->render('_form', [
+        'model' => $model,
+    ]) ?>
+
+</div>
