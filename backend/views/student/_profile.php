@@ -12,9 +12,6 @@ use yii\helpers\Html;
 	<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
 		<i class="fa fa-user detail-icon"></i> <?php echo !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null ?>
 	</div>
-	<div class="col-md-2">
-		<i class="fa fa-map-marker"></i> <?php echo !empty($model->customer->primaryAddress->address) ? $model->customer->primaryAddress->address : null ?>
-	</div>
 	<div class="clearfix"></div>
 	<div class="student-view">
 		<div class="col-md-12 action-btns">

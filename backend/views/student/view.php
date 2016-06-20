@@ -25,10 +25,6 @@ echo $this->render('_profile', [
      <div class="tabbable-line">
 <?php 
 
-// $profileContent = $this->render('_profile',[
-// 		'model'	=> $model,
-// ]);
-
 $enrolmentContent =  $this->render('_enrolment', [
 	'dataProvider' => $dataProvider,
     'enrolmentModel' => $enrolmentModel,
@@ -37,18 +33,21 @@ $enrolmentContent =  $this->render('_enrolment', [
 $lessonContent =  $this->render('_lesson', [
 	'lessonModel' => $lessonModel,
 ]);
+
+$contactContent =  $this->render('_contact', [
+	'model' => $model,
+]);
 ?>
 <?php echo Tabs::widget([
     'items' => [
-        // [
-        //     'label' => 'Profile',
-        //     'content' => $profileContent,
-        //     'active' => true
-        // ],
+		[
+            'label' => 'Contacts',
+            'content' => $contactContent,
+            'active' => true
+        ],
         [
             'label' => 'Enrolments',
             'content' => $enrolmentContent,
-            'active' => true
         ],
 		[
             'label' => 'Lessons',
