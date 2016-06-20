@@ -15,6 +15,7 @@ use common\models\UserImport;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
+use common\models\Invoice;
 use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
 use yii\helpers\ArrayHelper;
@@ -162,6 +163,24 @@ class UserController extends Controller {
 		$enrolmentDataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
+		
+		$location_id = Yii::$app->session->get('location_id');
+		$query = Invoice::find()
+			->joinWith(['lineItems li'=>function($query) use($location_id,$id){
+				$query->joinWith(['lesson l'=>function($query) use($location_id,$id){	
+					$query->joinWith(['enrolmentScheduleDay esd'=>function($query) use($location_id,$id){
+					$query->joinWith(['enrolment e'=>function($query) use($location_id,$id){
+						$query->joinWith('student s')
+							->where(['s.customer_id' => $id]);
+						}])
+					->where(['e.location_id' => $location_id]);
+				}]);
+			}]);
+		}]);
+		$invoiceDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+		
 		return $this->render('view', [
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,
@@ -172,7 +191,8 @@ class UserController extends Controller {
 					'teacherAvailabilityModel' => $teacherAvailabilityModel,
 					'program' => $program,
 					'lessonDataProvider' => $lessonDataProvider,
-					'enrolmentDataProvider' => $enrolmentDataProvider
+					'enrolmentDataProvider' => $enrolmentDataProvider,
+					'invoiceDataProvider' => $invoiceDataProvider
 		]);
 	}
 

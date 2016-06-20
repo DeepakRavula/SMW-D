@@ -56,11 +56,6 @@ $addressContent = $this->render('_contact',[
 		'dataProvider1' => $dataProvider1,
 ]);
 
-// $phoneContent = $this->render('_phone',[
-// 		'model'	=> $model,
-// 		'dataProvider1' => $dataProvider1,
-// ]);
-
 $lessonContent = $this->render('_lesson',[
 		'model'	=> $model,
 		'lessonDataProvider' => $lessonDataProvider,
@@ -69,22 +64,17 @@ $lessonContent = $this->render('_lesson',[
 $enrolmentContent = $this->render('_enrolment',[
 		'enrolmentDataProvider' => $enrolmentDataProvider,
 ]);
+
+$invoiceContent = $this->render('_invoice',[
+		'invoiceDataProvider' => $invoiceDataProvider,
+]);
 ?>
 <?php echo Tabs::widget([
     'items' => [
 		[
             'label' => 'Contact',
             'content' => $addressContent,
-            // 'items' => [
-            //      [
-            //          'label' => 'Address',
-            //          'content' => $addressContent,
-            //      ],
-            //      [
-            //          'label' => 'Phone Number',
-            //         'content' =>'coming soon..' ,
-            //      ],
-            //],
+			'active' => true,
         ],
         [
             'label' => 'Students',
@@ -101,7 +91,7 @@ $enrolmentContent = $this->render('_enrolment',[
 		],
 		[
 			'label' => 'Invoices',
-			'content' => 'coming soon..',
+			'content' => $invoiceContent,
 		],
 	],
 ]);?>
