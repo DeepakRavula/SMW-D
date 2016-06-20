@@ -19,6 +19,66 @@ body .user-panel > .info {
 body .table {
   word-break: break-all;
 }
+
+/*****************************
+Skin-black Modification
+******************************/
+a{
+  color: #ea212d;
+}
+a:hover, a:focus{
+  color: #bc3c3c;
+}
+.skin-black .wrapper, 
+.skin-black .main-sidebar, 
+.skin-black .left-side{
+  background-color: #332323;
+}
+.skin-black .sidebar-menu>li.header {
+    color: #fff;
+    background: #150b0b;
+}
+.skin-black .sidebar-menu>li:hover>a, 
+.skin-black .sidebar-menu>li.active>a {
+    background: #483535;
+}
+.content-wrapper, .right-side {
+    background-color: #f5ecec;
+}
+.box{
+  border-top: 3px solid #ded2d2;
+}
+.skin-black .sidebar a {
+    color: #ffffff;
+}
+.fc-event {
+    border: 1px solid #da0f0f;
+    background-color: #da0f0f;
+}
+.bg-light-blue, .label-primary, .modal-primary .modal-body {
+    background-color: transparent !important;
+    border: 1px solid #ea212d;
+    color: #ea212d !important;
+}
+.fc-state-default{
+  border-color: rgba(51, 51, 51, 0.1) rgba(72, 72, 72, 0.1) rgba(130, 130, 130, 0.25) !important;
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f9f9f9+0,f9f9f9+100 */
+  background: #f9f9f9 !important; /* Old browsers */
+  background: -moz-linear-gradient(top,  #f9f9f9 0%, #f9f9f9 100%) !important; /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  #f9f9f9 0%,#f9f9f9 100%) !important; /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  #f9f9f9 0%,#f9f9f9 100%) !important; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#f9f9f9',GradientType=0 ) !important; /* IE6-9 */
+}
+.selectivity-multiple-selected-item, .selectivity-load-more.highlight, .selectivity-result-item.highlight,
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+    background: #e12e2b;
+}
+/*****************************
+Resets
+******************************/
+.relative{
+  position: relative;
+}
 .bg-light-gray{
   background: #F7F7F7;
 }
@@ -55,8 +115,17 @@ body .table {
 .p-10{
   padding: 10px;
 }
+.p-t-10{
+  padding-top: 10px;
+}
+.p-t-20{
+  padding-top: 20px;
+}
 .p-b-10{
   padding-bottom: 10px;
+}
+.p-b-20{
+  padding-bottom: 20px;
 }
 .p-l-20{
   padding-left: 20px;
@@ -64,6 +133,7 @@ body .table {
 .p-r-20{
   padding-right: 20px;
 }
+/*****************************/
 .logo > img
 {
   width: 122px;  

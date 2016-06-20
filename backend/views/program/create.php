@@ -10,7 +10,7 @@ $this->title = 'Add new Program';
 $this->params['breadcrumbs'][] = ['label' => 'Programs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="program-create">
+<div class="program-create p-10">
 
     <?php echo $this->render('_form', [
         'model' => $model,

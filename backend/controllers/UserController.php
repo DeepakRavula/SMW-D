@@ -12,8 +12,10 @@ use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
 use common\models\Qualification;
 use common\models\UserImport;
+use common\models\Enrolment;
 use backend\models\UserForm;
-use backend\models\StaffUserForm;
+use common\models\Lesson;
+use common\models\Invoice;
 use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
 use yii\helpers\ArrayHelper;
@@ -146,16 +148,53 @@ class UserController extends Controller {
 				return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $id]);
 			}
 		}
-		$address = Address::findByUserId($model->id);
+		$addresses = $model->addresses;
+		$phoneNumbers = $model->phoneNumbers;
+		$lessonDataProvider = new ActiveDataProvider([
+			'query' => Lesson::find()
+				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = lesson.enrolment_schedule_day_id')
+				->join('INNER JOIN','enrolment e','e.id = esd.enrolment_id')
+				->join('INNER JOIN','student s','s.id = e.student_id')
+				->where(['e.location_id' => Yii::$app->session->get('location_id'),'s.customer_id' => $id])
+				->andWhere('lesson.date <= NOW()')
+		]);
+		$query = Enrolment::find()
+			->joinWith('student s')
+			->where(['location_id' => Yii::$app->session->get('location_id'),'s.customer_id' => $id]);
+		$enrolmentDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+		
+		$location_id = Yii::$app->session->get('location_id');
+		$query = Invoice::find()
+			->joinWith(['lineItems li'=>function($query) use($location_id,$id){
+				$query->joinWith(['lesson l'=>function($query) use($location_id,$id){	
+					$query->joinWith(['enrolmentScheduleDay esd'=>function($query) use($location_id,$id){
+					$query->joinWith(['enrolment e'=>function($query) use($location_id,$id){
+						$query->joinWith('student s')
+							->where(['s.customer_id' => $id]);
+						}])
+					->where(['e.location_id' => $location_id]);
+				}]);
+			}]);
+		}]);
+		$invoiceDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+		
 		return $this->render('view', [
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,
 					'dataProvider1' => $dataProvider1,
 					'model' => $model,
-					'address' => $address,
+					'addresses' => $addresses,
+					'phoneNumbers' => $phoneNumbers,
 					'searchModel' => $searchModel,
 					'teacherAvailabilityModel' => $teacherAvailabilityModel,
-					'program' => $program
+					'program' => $program,
+					'lessonDataProvider' => $lessonDataProvider,
+					'enrolmentDataProvider' => $enrolmentDataProvider,
+					'invoiceDataProvider' => $invoiceDataProvider
 		]);
 	}
 

@@ -67,7 +67,18 @@ class Address extends \yii\db\ActiveRecord
 		return $this->hasMany(User::className(), ['id' => 'user_id'])
 		  ->viaTable('user_address', ['address_id' => 'id']);
 	}
-
+	
+	public function getCity() {
+		return $this->hasOne(City::className(), ['id' => 'city_id']);
+	}
+	
+	public function getProvince() {
+		return $this->hasOne(Province::className(), ['id' => 'province_id']);
+	}
+	
+	public function getCountry() {
+		return $this->hasOne(Country::className(), ['id' => 'country_id']);
+	}	
 	public static function findByUserId($user_id) {
 		return static::find()
 			->join('INNER JOIN','user_address','user_address.address_id = address.id')
