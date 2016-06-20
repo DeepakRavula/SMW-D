@@ -294,6 +294,12 @@ $bundle = BackendAsset::register($this);
 									'icon' => '<i class="fa  fa-upload"></i>',
 									'url' => ['/province/index'],
 									'visible' => Yii::$app->user->can('staffmember')
+								], 
+                                [
+									'label' => Yii::t('backend', 'Taxes'),
+									'icon' => '<i class="fa  fa-cny"></i>',
+									'url' => ['/tax/index'],
+									'visible' => Yii::$app->user->can('staffmember')
 								],
 								[
 									'label' => Yii::t('backend', 'Countries'),
