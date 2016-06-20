@@ -31,6 +31,7 @@ class Tax extends \yii\db\ActiveRecord
             [['province_id', 'tax_rate'], 'required'],
             [['tax_rate'], 'number'],
             [['since'], 'safe'],
+            [['since'], 'required'],
         ];
     }
 

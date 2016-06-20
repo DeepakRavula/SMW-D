@@ -12,15 +12,8 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tax-index">
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?php echo Html::a('Create Tax', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
          
@@ -37,5 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+    
+    <p>
+        <?php echo Html::a('Add', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
 
 </div>
