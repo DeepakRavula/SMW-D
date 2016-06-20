@@ -119,7 +119,7 @@ class StudentController extends Controller
             'name'
         );
 			$role = end($roles);
-            return $this->redirect(['user/view', 'UserSearch[role_name]' => $role, 'id' => $model->customer_id]);
+            return $this->redirect(['view','id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
