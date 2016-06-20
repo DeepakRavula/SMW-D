@@ -4,7 +4,6 @@ namespace backend\controllers;
 use common\models\Province;
 use Yii;
 use common\models\Tax;
-use common\models\Province;
 use backend\models\search\TaxSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -62,7 +61,6 @@ class TaxController extends Controller
     public function actionCreate()
     {
         $model = new Tax();
-        $provinceList = Province::find()->select('id')->all(); 
         if ($model->load(Yii::$app->request->post()) && $model->save()) { 
             Yii::$app->session->setFlash('alert', [
             	'options' => ['class' => 'alert-success'],
@@ -72,7 +70,6 @@ class TaxController extends Controller
         } else {
             return $this->render('create', [
                 'model' => $model,
-                'provinceList' => $provinceList,
             ]);
         }
     }
