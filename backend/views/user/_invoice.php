@@ -3,7 +3,9 @@
 use yii\grid\GridView;
 use common\models\Invoice;
 ?>
-
+<div class="col-md-12">
+	<h4 class="pull-left m-r-20">Invoices</h4>
+</div>
 <?php echo GridView::widget([
         'dataProvider' => $invoiceDataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],

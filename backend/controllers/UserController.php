@@ -13,7 +13,6 @@ use common\models\TeacherAvailability;
 use common\models\Qualification;
 use common\models\UserImport;
 use common\models\Enrolment;
-use common\models\Invoice;
 use backend\models\UserForm;
 use common\models\Lesson;
 use common\models\Invoice;
