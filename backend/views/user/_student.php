@@ -43,7 +43,7 @@ echo GridView::widget([
 			return $fullName;
 		}
 	],
-	//['class' => 'yii\grid\ActionColumn', 'controller' => 'student'],
+	['class' => 'yii\grid\ActionColumn', 'controller' => 'student'],
 ],
 ]);
 ?>
