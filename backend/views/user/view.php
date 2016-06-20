@@ -54,6 +54,8 @@ if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER)	 {
 $addressContent = $this->render('_contact',[
 		'model'	=> $model,
 		'dataProvider1' => $dataProvider1,
+		'phoneNumbers' => $phoneNumbers,
+		'addresses' => $addresses,
 ]);
 
 // $phoneContent = $this->render('_phone',[
@@ -75,6 +77,7 @@ $enrolmentContent = $this->render('_enrolment',[
 		[
             'label' => 'Contact',
             'content' => $addressContent,
+			'active' => true,
             // 'items' => [
             //      [
             //          'label' => 'Address',
@@ -89,7 +92,7 @@ $enrolmentContent = $this->render('_enrolment',[
         [
             'label' => 'Students',
             'content' => $studentContent,
-			'active' => true,
+			//'active' => true,
         ],
 		[
 			'label' => 'Enrolments',

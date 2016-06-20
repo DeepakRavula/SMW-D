@@ -51,7 +51,11 @@ class PhoneNumber extends \yii\db\ActiveRecord
             'extension' => 'Extension',
         ];
     }
-
+	
+ 	public function getLabel()
+    {
+        return $this->hasOne(PhoneLabel::className(), ['id' => 'label_id']);
+    }
 	public static function phoneLabels()
     {
         return [
