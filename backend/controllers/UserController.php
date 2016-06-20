@@ -13,6 +13,7 @@ use common\models\TeacherAvailability;
 use common\models\Qualification;
 use common\models\UserImport;
 use common\models\Enrolment;
+use common\models\Invoice;
 use backend\models\UserForm;
 use common\models\Lesson;
 use common\models\Invoice;
@@ -148,7 +149,8 @@ class UserController extends Controller {
 				return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $id]);
 			}
 		}
-		$address = Address::findByUserId($model->id);
+		$addresses = $model->addresses;
+		$phoneNumbers = $model->phoneNumbers;
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => Lesson::find()
 				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = lesson.enrolment_schedule_day_id')
@@ -186,7 +188,8 @@ class UserController extends Controller {
 					'dataProvider' => $dataProvider,
 					'dataProvider1' => $dataProvider1,
 					'model' => $model,
-					'address' => $address,
+					'addresses' => $addresses,
+					'phoneNumbers' => $phoneNumbers,
 					'searchModel' => $searchModel,
 					'teacherAvailabilityModel' => $teacherAvailabilityModel,
 					'program' => $program,

@@ -54,6 +54,8 @@ if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER)	 {
 $addressContent = $this->render('_contact',[
 		'model'	=> $model,
 		'dataProvider1' => $dataProvider1,
+		'phoneNumbers' => $phoneNumbers,
+		'addresses' => $addresses,
 ]);
 
 $lessonContent = $this->render('_lesson',[
@@ -79,7 +81,7 @@ $invoiceContent = $this->render('_invoice',[
         [
             'label' => 'Students',
             'content' => $studentContent,
-			'active' => true,
+			//'active' => true,
         ],
 		[
 			'label' => 'Enrolments',
