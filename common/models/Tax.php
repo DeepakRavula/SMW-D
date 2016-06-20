@@ -30,9 +30,8 @@ class Tax extends \yii\db\ActiveRecord
     {
         return [
             [['province_id', 'tax_rate'], 'required'],
-            [['province_id'], 'integer'],
             [['tax_rate'], 'number'],
-            [['from_date', 'to_date'], 'safe'],
+            [['since'], 'safe'],
         ];
     }
 
@@ -43,10 +42,19 @@ class Tax extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'province_id' => 'Province ID',
+            'province_id' => 'Province Name',
             'tax_rate' => 'Tax Rate',
-            'from_date' => 'From Date',
-            'to_date' => 'To Date',
+            'since' => 'Since',
         ];
+    } 
+    public function beforeSave($insert) {
+        $sinceDate = \DateTime::createFromFormat('m-d-Y', $this->since);
+        $this->since = $sinceDate->format('Y-m-d');
+
+		return parent::beforeSave($insert);
+	}
+    public function getProvince()
+    {
+       return $this->hasOne(Province::className(), ['id' => 'province_id']);
     }
 }

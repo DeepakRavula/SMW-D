@@ -26,11 +26,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'province_id',
+                        	[
+				'label' => 'Province Name',
+				'value' =>  ! (empty($model->province->name)) ? $model->province->name : null,
+            ],
             'tax_rate',
-            'from_date',
-            'to_date',
+            'since',
         ],
     ]) ?>
 

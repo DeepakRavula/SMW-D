@@ -23,12 +23,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'province_id',
+         
+           	[
+				'label' => 'Province Name',
+				'value' => function($data) {
+					$provinceName = ! (empty($data->province->name)) ? $data->province->name : null;
+					return $provinceName;
+                } 
+			],
             'tax_rate',
-            'from_date',
-            'to_date',
+            'since:date',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

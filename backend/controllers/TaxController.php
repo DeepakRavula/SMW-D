@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Tax;
+use common\models\Province;
 use backend\models\search\TaxSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -47,7 +48,7 @@ class TaxController extends Controller
      * @return mixed
      */
     public function actionView($id)
-    {
+    { 
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -110,7 +111,7 @@ class TaxController extends Controller
         
         Yii::$app->session->setFlash('alert', [
           	'options' => ['class' => 'alert-success'],
-           	'body' => 'Province has been deleted successfully'
+           	'body' => 'Tax has been deleted successfully'
         ]);
 
         return $this->redirect(['index']);
