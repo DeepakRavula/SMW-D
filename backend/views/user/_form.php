@@ -48,7 +48,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
 <div class="user-form"> 
 
 	<?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
-    <div class="row-fluid section-tab">
+    <div class="row-fluid section-tab <?= $section == 'profile' ? 'active' : null;?> ">
         <div class="col-md-4">
 			<?php echo $form->field($model, 'firstname') ?>
         </div>
