@@ -14,7 +14,7 @@ use yii\widgets\ListView;
 			<p>Address </p>
   <?php echo ListView::widget([
         'dataProvider' => $addressDataProvider,
-        'itemView'=>'_view-address', 
+        'itemView'=>'_view-contact-address', 
     ]); ?>
 
 		</div>
@@ -27,7 +27,7 @@ use yii\widgets\ListView;
 			<i class="fa fa-phone-square"></i>
 	<?php echo ListView::widget([
         'dataProvider' => $phoneDataProvider,
-        'itemView'=>'_view-phone', 
+        'itemView'=>'_view-contact-phone', 
     ]); ?>
 	
 		</div><br>

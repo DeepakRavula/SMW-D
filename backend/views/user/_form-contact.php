@@ -1,12 +1,12 @@
 <div id = "contact-section" class="section-tab">
 	<?php
-	echo $this->render('_contact-address', [
+	echo $this->render('_form-contact-address', [
 		'addressModels' => $addressModels,
 		'form' => $form,
 	]);
 	?>
 	<?php
-	echo $this->render('_contact-phone', [
+	echo $this->render('_form-contact-phone', [
 		'phoneNumberModels' => $phoneNumberModels,
 		'form' => $form
 	]);

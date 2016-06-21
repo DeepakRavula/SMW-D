@@ -277,7 +277,8 @@ class UserController extends Controller {
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
-					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels
+					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels,
+					'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
 		]);
 	}
 
@@ -379,7 +380,7 @@ class UserController extends Controller {
 					'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
 					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels,
-			'section' => $section
+					'section' => $section
 		]);
 	}
 

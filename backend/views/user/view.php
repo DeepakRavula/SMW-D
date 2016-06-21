@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 
 <?php 
 
-$profileContent = $this->render('_profile', [
+$profileContent = $this->render('_view-profile', [
         'model' => $model,
 		'dataProvider1' => $dataProvider1,
 		'teacherAvailabilityModel' => $teacherAvailabilityModel,
@@ -43,7 +43,7 @@ if ( ! empty($role) && $role->name === User::ROLE_CUSTOMER)	 {
 	]);
 }
 
-$addressContent = $this->render('_contact',[
+$addressContent = $this->render('_view-contact',[
 		'model'	=> $model,
 		'dataProvider1' => $dataProvider1,
 		'addressDataProvider' => $addressDataProvider,
