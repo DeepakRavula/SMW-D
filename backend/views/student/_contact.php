@@ -18,17 +18,13 @@
 						. $address->postal_code . '<br>'
 						. $address->country->name;
 
-//						if ($address->id == $model->primary_address_id)
-//							echo ' (Default)';
 						echo '</td><td>';
-//						echo CHtml::link('<i class="fa fa-times"></i>', array('deleteAttr', 'id_user' => $model->id, 'id_addr' => $address->id), array('class' => 'delete_addr', 'confirm' => 'Are you sure?'));
 						echo '</td>';
 						echo '</tr>';
 					}
 					?>
 				</tbody>
 			</table>
- <?php //echo!empty($address->address) ? $address->address : null ?>
 		</div>
 	</div>
 	<div class="col-md-6">
@@ -46,10 +42,7 @@
 						if (isset($phoneNumber->extension))
 							echo ', '.$phone_item->extension;
 
-//						if ($address->id == $model->primary_address_id)
-//							echo ' (Default)';
 						echo '</td><td>';
-//						echo CHtml::link('<i class="fa fa-times"></i>', array('deleteAttr', 'id_user' => $model->id, 'id_addr' => $address->id), array('class' => 'delete_addr', 'confirm' => 'Are you sure?'));
 						echo '</td>';
 						echo '</tr>';
 					}

@@ -26,7 +26,9 @@ $this->params['breadcrumbs'][] = ['label'=>Yii::t('backend', 'Update')];
 		'locations' => $locations,
 		'programs' => $programs,
 		'phoneNumberModels' => $phoneNumberModels,
-		'addressModels' => $addressModels
+		'addressModels' => $addressModels,
+		'section' => $section
+
     ]) ?>
 
 </div>
