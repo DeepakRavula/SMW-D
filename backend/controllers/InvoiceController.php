@@ -7,6 +7,7 @@ use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use common\models\User;
+use common\models\Tax;
 use common\models\Lesson;
 use common\models\Location;
 use yii\data\ActiveDataProvider;
@@ -129,9 +130,11 @@ class InvoiceController extends Controller
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->save();
-            $subTotal=0;
+            $subTotal = 0;
+            $taxAmount = 0;
 			foreach($post['selection'] as $selection) {
                 $lesson = Lesson::findOne(['id'=>$selection]);
+                $lessonDate = $lesson->date;
                 $invoiceLineItem = new InvoiceLineItem();
                 $invoiceLineItem->invoice_id = $invoice->id;
                 $invoiceLineItem->lesson_id = $lesson->id;
@@ -139,14 +142,26 @@ class InvoiceController extends Controller
                 $invoiceLineItem->unit = (($time[0]*60) + ($time[1])) / 60;
                 $invoiceLineItem->amount = $lesson->enrolmentScheduleDay->enrolment->qualification->program->rate;
                 $invoiceLineItem->save(); 
-
                 $subTotal += $invoiceLineItem->amount;
-			}
-            
+                
+                $taxSubTotal = $invoiceLineItem->amount;
+                $taxCalculate = $lesson->enrolmentScheduleDay->enrolment->location->province->id;
+                $taxModels = Tax::find()
+                   ->where(['province_id' => $taxCalculate]) 
+                   ->orderBy('since DESC')
+                   ->all();
+                    foreach ($taxModels as $taxModel) {
+                        $since = $taxModel->since;
+                        if ($since <= $lessonDate) {
+                            $taxPercentage = $taxModel->tax_rate;
+                            break;
+                        }
+                    }
+                    
+                $taxAmount += $taxSubTotal * $taxPercentage / 100;
+            }
             $invoice = Invoice::findOne(['id'=>$invoice->id]);
             $invoice->subTotal = $subTotal;
-            $taxPercentage = $lesson->enrolmentScheduleDay->enrolment->location->province->tax_rate;
-            $taxAmount = $subTotal*$taxPercentage/100;
             $totalAmount = $subTotal + $taxAmount;
             $invoice->tax = $taxAmount;
             $invoice->total = $totalAmount;
