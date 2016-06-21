@@ -1,9 +1,11 @@
 <div class="row-fluid p-b-20">
 	<div class="col-md-6">
 		<div class="row-fluid">
-			<i class="fa fa-map-marker"></i>
-			<p>Address </p>
-			<table class="table">
+			<div class="m-t-10 f-s-18">
+			<i class="fa fa-map-marker m-r-5"></i>
+			Address
+			</div>
+			<table class="table m-t-10 table-no-border-no-hover p-l-0">
 				<tbody>
 					<?php
 					$addresses = $model->customer->addresses;
@@ -31,9 +33,11 @@
 	</div>
 	<div class="col-md-6">
 		<div class="row-fluid">
-			<p class="m-0">Phone number</p>
-			<i class="fa fa-phone-square"></i>
-			<table class="table">
+			<div class="m-t-10 f-s-18">
+			<i class="fa fa-phone-square m-r-5"></i>
+			Phone number
+			</div>
+			<table class="table m-t-10 table-no-border-no-hover">
 				<tbody>
 					<?php
 					foreach ($phoneNumbers as $phoneNumber) {
@@ -54,8 +58,8 @@
 			</table>
 		</div>
 		<div class="row-fluid m-t-10">
-			<p class="m-0">Email</p>
-			<i class="fa fa-envelope"></i> <?php echo!empty($model->customer->email) ? $model->customer->email : null ?>
+			<div class="m-t-10 f-s-18"><i class="fa fa-envelope m-r-5"></i> Email</div>
+			<?php echo!empty($model->customer->email) ? $model->customer->email : null ?>
 		</div>
 	</div>
 	<div class="clearfix"></div>
