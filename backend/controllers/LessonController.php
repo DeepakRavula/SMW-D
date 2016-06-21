@@ -3,13 +3,10 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Enrolment;
-use common\models\EnrolmentScheduleDay;
 use backend\models\search\LessonSearch;
 use common\models\Lesson;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

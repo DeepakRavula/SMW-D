@@ -4,17 +4,11 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Enrolment;
-use common\models\User;
-use common\models\Student;
-use common\models\UserProfile;
 use common\models\Qualification;
-use common\models\TeacherAvailability;
 use backend\models\EnrolmentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.

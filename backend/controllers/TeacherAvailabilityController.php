@@ -3,10 +3,8 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Enrolment;
 use common\models\UserLocation;
 use common\models\TeacherAvailability;
-use common\models\User;
 use backend\models\TeacherAvailabilitySearch;
 use yii\web\Controller;
 use yii\helpers\ArrayHelper;

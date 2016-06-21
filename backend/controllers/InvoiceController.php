@@ -8,7 +8,6 @@ use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use common\models\User;
 use common\models\Lesson;
-use common\models\Location;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -46,22 +45,6 @@ class InvoiceController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
-
-		/*
-        $dataProvider = new ActiveDataProvider([
-            'query' => Invoice::find()
-				->join('INNER JOIN','invoice_line_item ili','ili.invoice_id = invoice.id')
-				->join('INNER JOIN','lesson l','l.id = ili.lesson_id')
-				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = l.enrolment_schedule_day_id')
-				->join('INNER JOIN','enrolment e','e.id = esd.enrolment_id')
-				->where(['e.location_id' => Yii::$app->session->get('location_id')]),
-        ]);
-
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
-		 * 
-		 */
     }
 
     /**
