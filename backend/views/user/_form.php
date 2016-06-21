@@ -2,16 +2,8 @@
 
 use common\models\User;
 use yii\helpers\Html;
-use common\models\City;
-use common\models\Province;
-use common\models\Country;
-use common\models\Address;
-use common\models\Location;
-use common\models\PhoneNumber;
-use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
-use wbraganca\selectivity\SelectivityWidget;
-use wbraganca\dynamicform\DynamicFormWidget;
+use yii\bootstrap\Tabs;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\UserForm */
@@ -36,82 +28,47 @@ use wbraganca\dynamicform\DynamicFormWidget;
         margin-bottom: 10px;
         padding-top: 15px;
     }
-    .address-fields, .phone-fields, .quali-fields label, .section-tab{
+    .quali-fields label{
         display: none;
     }
-	.active{
-		display: block;
-	}
 
 </style>
 
 <div class="user-form"> 
 
 	<?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
-    <div class="row-fluid section-tab <?= $section == 'profile' ? 'active' : null;?> ">
-        <div class="col-md-4">
-			<?php echo $form->field($model, 'firstname') ?>
-        </div>
-        <div class="col-md-4">
-			<?php echo $form->field($model, 'lastname') ?>
-        </div>
-        <div class="col-md-4">
-			<?php echo $form->field($model, 'email') ?>
-        </div>
-        <div class="clearfix"></div>
-	</div>
-    <hr class="hr-ad">
-	<div class="section-tab <?= $section == 'contact' ? 'active' : null;?> ">
-	<?php echo $this->render('_form-contact-address',[
-		'addressModels' => $addressModels,
-		'form' => $form
-		]);?>
-	<?php echo $this->render('_form-contact-phone',[
-		'phoneNumberModels' => $phoneNumberModels,
-		'form' => $form
-	]);?>
-	</div>
-        <!-- Qualification show hide -->
-<?php $userRoles = Yii::$app->authManager->getRolesByUser($model->model->id);
-$userRole = end($userRoles); ?>
-<?php //if ( ! empty($userRole) && $userRole->name === User::ROLE_TEACHER):  ?>
-<?php if (!empty($userRole) && $userRole->name === User::ROLE_TEACHER || $model->roles === User::ROLE_TEACHER): ?>
-			<div class="row-fluid">
-				<div class="col-md-12">
-					<h4 class="pull-left m-r-20">Qualifications</h4>
-					<a href="#" class="add-quali text-add-new"><i class="fa fa-plus-circle"></i> Add new qualification </a>
-					<div class="clearfix"></div>
-				</div>
-				<div class="quali-fields form-well p-l-20">
-					<!-- <h4>Choose qualifications</h4> -->
-					<div class="row">
-						<div class="col-md-12">
-							<?=
-							$form->field($model, 'qualifications')->widget(SelectivityWidget::classname(), [
-								'pluginOptions' => [
-									'allowClear' => true,
-									'multiple' => true,
-									'items' => $programs,
-									'value' => $model->qualifications,
-									'placeholder' => 'No qualification selected'
-								]
-							]);
-							?>
+	<?php
+		$profileContent = $this->render('_form-profile',[
+			'model'	=> $model,
+			'section' => $section,
+			'form' =>$form,
+			'programs' => $programs,
+		]);
 
-						</div>
-					</div>
-				</div>
-			</div>
-      <div class="clearfix"></div>
-			<hr class="hr-qu">
-<?php endif; ?>
-        <div class="row-fluid">
-			<div class="col-md-2">
-			<?php if (!$model->getModel()->getIsNewRecord()) : ?>
-			<?php echo $form->field($model, 'status')->dropDownList(User::statuses(), ['options' => [2 => ['Selected' => 'selected']]]) ?>
-		<?php endif; ?>
-			</div>
-        </div>
+		$addressContent = $this->render('_form-contact',[
+			'addressModels' => $addressModels,
+			'phoneNumberModels' => $phoneNumberModels,
+			'form' => $form,
+			'section' => $section
+		]);
+
+	?>
+	<?php echo Tabs::widget([ 
+	'id' => 'user-update-tab',
+    'items' => [
+		[
+            'label' => 'Profile',
+            'content' => $profileContent,
+			'active' => $section === 'profile',
+        ],
+        [
+            'label' => 'Contacts',
+            'content' => $addressContent,
+			'active' => $section === 'contact',
+        ],
+	],
+]);?>
+
         <div class="col-md-12 m-b-10">
           <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
         </div>
@@ -136,4 +93,10 @@ $userRole = end($userRoles); ?>
 			$('.quali-fields').show();
 			$('.hr-qu').hide();
 		});
+		$('#user-update-tab a').click(function (e) {
+ 			$('.section-tab').css('display','block');
+			//$('#contact-section').css('display','block');
+			e.preventDefault();
+  			$(this).tab('show');
+		})
 	</script>

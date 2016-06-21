@@ -3,7 +3,6 @@ namespace backend\models;
 
 use common\models\User;
 use common\models\UserProfile;
-use common\models\PhoneLabel;
 use common\models\UserAddress;
 use common\models\Address;
 use common\models\PhoneNumber;

@@ -5,8 +5,6 @@ namespace backend\controllers;
 use Yii;
 use common\models\User;
 use common\models\UserLocation;
-use common\models\UserProfile;
-use common\models\UserAddress;
 use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
@@ -99,6 +97,12 @@ class UserController extends Controller {
 	 * @return mixed
 	 */
 	public function actionView($id) {
+		$request = Yii::$app->request;
+		$section = $request->get('section');
+		if(empty($section)){
+			$section = 'profile';
+		}
+		
 		$searchModel = new UserSearch();
 		$db = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -189,6 +193,7 @@ class UserController extends Controller {
 		return $this->render('view', [
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,
+					'section' => $section,
 					'dataProvider1' => $dataProvider1,
 					'model' => $model,
 					'searchModel' => $searchModel,
@@ -208,6 +213,12 @@ class UserController extends Controller {
 	 * @return mixed
 	 */
 	public function actionCreate() {
+		$request = Yii::$app->request;
+		$section = $request->get('section');
+		if(empty($section)){
+			$section = 'profile';
+		}
+		
 		$model = new UserForm();
 		$addressModels = [new Address];
 		$phoneNumberModels = [new PhoneNumber];
@@ -261,6 +272,7 @@ class UserController extends Controller {
 		}
 		return $this->render('create', [
 					'model' => $model,
+					'section' => $section,
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
@@ -276,6 +288,10 @@ class UserController extends Controller {
 	public function actionUpdate($id) {
 		$request = Yii::$app->request;
 		$section = $request->get('section');
+		if(empty($section)){
+			$section = 'profile';
+		}
+		
 		$model = new UserForm();
 		$model->setModel($this->findModel($id));
 		$user = $this->findModel($id);

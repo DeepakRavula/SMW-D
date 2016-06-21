@@ -1,12 +1,6 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\DetailView;
-use yii\grid\GridView;
-use common\grid\EnumColumn;
 use common\models\User;
-use common\models\TeacherAvailability;
-use common\models\Address;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\Tabs;
 
@@ -21,25 +15,23 @@ foreach($roleNames as $name => $description){
 		$roleName = $description;
 	}
 }
-
-$this->title = Yii::t('backend',  !($roleName) ? 'User' : $roleName.' Detail');
+$this->title = Yii::t('backend', $model->publicIdentity . '(' . (!($roleName) ? 'User' : $roleName) . ')');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', ! $roleName ? 'User' : $roleName. 's'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = $model->publicIdentity;
 ?>
 
-<?php
-echo $this->render('_profile', [
-        'model' => $model,
-		'dataProvider1' => $dataProvider1,
-		'teacherAvailabilityModel' => $teacherAvailabilityModel,
-]);
- ?>
 <div class="tabbable-panel">
 	<div class="tabbable-line">
 		
 <?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles);?>
 
 <?php 
+
+$profileContent = $this->render('_profile', [
+        'model' => $model,
+		'dataProvider1' => $dataProvider1,
+		'teacherAvailabilityModel' => $teacherAvailabilityModel,
+]);
 
 $studentContent = null;
 
@@ -74,9 +66,14 @@ $invoiceContent = $this->render('_invoice',[
 <?php echo Tabs::widget([
     'items' => [
 		[
-            'label' => 'Contact',
-            'content' => $addressContent,
+            'label' => 'Profile',
+            'content' => $profileContent,
 			'active' => true,
+        ],
+		[
+            'label' => 'Contacts',
+            'content' => $addressContent,
+			//'active' => true,
         ],
         [
             'label' => 'Students',
