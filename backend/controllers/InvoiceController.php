@@ -134,7 +134,7 @@ class InvoiceController extends Controller
             $taxAmount = 0;
 			foreach($post['selection'] as $selection) {
                 $lesson = Lesson::findOne(['id'=>$selection]);
-                $lessonDate = $lesson->date;
+                $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
                 $invoiceLineItem = new InvoiceLineItem();
                 $invoiceLineItem->invoice_id = $invoice->id;
                 $invoiceLineItem->lesson_id = $lesson->id;
@@ -144,21 +144,21 @@ class InvoiceController extends Controller
                 $invoiceLineItem->save(); 
                 $subTotal += $invoiceLineItem->amount;
                 
-                $taxSubTotal = $invoiceLineItem->amount;
+                $lessonAmount = $invoiceLineItem->amount;
                 $taxCalculate = $lesson->enrolmentScheduleDay->enrolment->location->province->id;
                 $taxModels = Tax::find()
                    ->where(['province_id' => $taxCalculate]) 
                    ->orderBy('since DESC')
                    ->all();
                     foreach ($taxModels as $taxModel) {
-                        $since = $taxModel->since;
+                        $since = \DateTime::createFromFormat('Y-m-d H:i:s', $taxModel->since);
                         if ($since <= $lessonDate) {
                             $taxPercentage = $taxModel->tax_rate;
                             break;
                         }
                     }
                     
-                $taxAmount += $taxSubTotal * $taxPercentage / 100;
+                $taxAmount += $lessonAmount * $taxPercentage / 100;
             }
             $invoice = Invoice::findOne(['id'=>$invoice->id]);
             $invoice->subTotal = $subTotal;
