@@ -43,6 +43,8 @@ use yii\bootstrap\Tabs;
 			'section' => $section,
 			'form' =>$form,
 			'programs' => $programs,
+			'roles' => $roles,
+			'locations' => $locations
 		]);
 
 		$addressContent = $this->render('_form-contact',[

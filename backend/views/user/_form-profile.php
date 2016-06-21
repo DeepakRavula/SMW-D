@@ -47,10 +47,20 @@ $userRole = end($userRoles); ?>
       <div class="clearfix"></div>
 			<hr class="hr-qu">
 <?php endif; ?>
-        <div class="row-fluid">
-			<div class="col-md-2">
-			<?php if (!$model->getModel()->getIsNewRecord()) : ?>
-			<?php echo $form->field($model, 'status')->dropDownList(User::statuses(), ['options' => [2 => ['Selected' => 'selected']]]) ?>
-		<?php endif; ?>
-			</div>
-        </div>
+<div class="row-fluid">
+	<div class="col-md-2">
+	<?php if (!$model->getModel()->getIsNewRecord()) : ?>
+		<?php echo $form->field($model, 'roles')->dropDownList($roles) ?>
+	<?php endif; ?>
+	</div>
+	<div class="col-md-2">
+	<?php if (!$model->getModel()->getIsNewRecord()) : ?>
+		<?php echo $form->field($model, 'status')->dropDownList(User::statuses(), ['options' => [2 => ['Selected' => 'selected']]]) ?>
+	<?php endif; ?>
+	</div>
+	<div class="col-md-2">
+	<?php if (!$model->getModel()->getIsNewRecord()) : ?>
+		<?php echo $form->field($model, 'locations')->dropDownList($locations) ?>
+	<?php endif; ?>
+	</div>
+</div>
