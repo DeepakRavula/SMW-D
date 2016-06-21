@@ -11,7 +11,7 @@ use yii\helpers\Html;
             </em> -->
         </p>
         <div class="m-l-20 pull-left m-t-5">
-            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update details'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Profile'), ['update', 'id' => $model->id,'section' => 'profile'], ['class' => 'm-r-20']) ?>
             <?php
             echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
                 'class' => '',

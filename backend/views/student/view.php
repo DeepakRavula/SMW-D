@@ -34,8 +34,10 @@ $lessonContent =  $this->render('_lesson', [
 	'lessonModel' => $lessonModel,
 ]);
 
-$contactContent =  $this->render('_contact', [
+$contactContent =  $this->render('_view-contact', [
 	'model' => $model,
+    'addressDataProvider' => $addressDataProvider,
+    'phoneDataProvider' => $phoneDataProvider,
 ]);
 ?>
 <?php echo Tabs::widget([

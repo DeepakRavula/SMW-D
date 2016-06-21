@@ -144,6 +144,14 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
     }
 
+	/**
+    * @return \yii\db\ActiveQuery
+    */
+    public function getUserLocation()
+    {
+        return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

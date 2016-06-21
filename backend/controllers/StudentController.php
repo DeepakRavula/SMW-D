@@ -36,14 +36,15 @@ class StudentController extends Controller
      */
     public function actionIndex()
     {
-		$session = Yii::$app->session;
-        $dataProvider = new ActiveDataProvider([
-            'query' => Student::find()
-					->join('INNER JOIN','user','user.id = customer_id')
-					->join('INNER JOIN','user_location','user_location.user_id = user.id')
-					->where(['user_location.location_id' => $session->get('location_id') ])
-        ]);
-
+		$locationId = Yii::$app->session->get('location_id');
+        $query = Student::find()
+			->joinWith(['customer' => function($query) use($locationId){
+				$query->joinWith('userLocation')
+					->where(['location_id' => $locationId]);
+			}]);
+		$dataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
@@ -59,6 +60,7 @@ class StudentController extends Controller
 		$dataProvider = new ActiveDataProvider([
             'query' => Enrolment::find()->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
         ]);
+		
 		$lessonModel = new ActiveDataProvider([
 			'query' => Lesson::find()
 				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = lesson.enrolment_schedule_day_id')
@@ -67,6 +69,24 @@ class StudentController extends Controller
 				->where(['e.student_id' => $id,'e.location_id' => Yii::$app->session->get('location_id')])
 				->andWhere('lesson.date <= NOW()')
 		]);
+
+		$query = Student::find()
+				->joinWith(['customer' => function($query){
+						$query->joinWith('addresses');	
+					}])
+				->where(['customer_id' => $id]);
+		$addressDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+		$query = Student::find()
+			->joinWith(['customer' => function($query){
+					$query->joinWith('phoneNumbers');	
+				}])
+			->where(['customer_id' => $id]);
+		$phoneDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+		
         $model = $this->findModel($id);
 		$enrolmentModel = new Enrolment();
         if ($enrolmentModel->load(Yii::$app->request->post()) ) {
@@ -93,6 +113,8 @@ class StudentController extends Controller
             	'dataProvider' => $dataProvider,
                 'enrolmentModel' => $enrolmentModel,
 				'lessonModel' => $lessonModel,
+    			'addressDataProvider' => $addressDataProvider,
+			    'phoneDataProvider' => $phoneDataProvider,
             ]);
         }
     }

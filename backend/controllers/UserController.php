@@ -5,8 +5,6 @@ namespace backend\controllers;
 use Yii;
 use common\models\User;
 use common\models\UserLocation;
-use common\models\UserProfile;
-use common\models\UserAddress;
 use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
@@ -15,6 +13,7 @@ use common\models\UserImport;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
+use common\models\Location;
 use common\models\Invoice;
 use backend\models\UserImportForm;
 use backend\models\search\UserSearch;
@@ -99,6 +98,12 @@ class UserController extends Controller {
 	 * @return mixed
 	 */
 	public function actionView($id) {
+		$request = Yii::$app->request;
+		$section = $request->get('section');
+		if(empty($section)){
+			$section = 'profile';
+		}
+		
 		$searchModel = new UserSearch();
 		$db = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -148,8 +153,12 @@ class UserController extends Controller {
 				return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $id]);
 			}
 		}
-		$addresses = $model->addresses;
-		$phoneNumbers = $model->phoneNumbers;
+		$addressDataProvider = new ActiveDataProvider([
+			'query' => $model->getAddresses(),
+			]);
+		$phoneDataProvider = new ActiveDataProvider([
+			'query' => $model->getPhoneNumbers(),
+			]);
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => Lesson::find()
 				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = lesson.enrolment_schedule_day_id')
@@ -185,13 +194,14 @@ class UserController extends Controller {
 		return $this->render('view', [
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,
+					'section' => $section,
 					'dataProvider1' => $dataProvider1,
 					'model' => $model,
-					'addresses' => $addresses,
-					'phoneNumbers' => $phoneNumbers,
 					'searchModel' => $searchModel,
 					'teacherAvailabilityModel' => $teacherAvailabilityModel,
 					'program' => $program,
+					'addressDataProvider' => $addressDataProvider,
+					'phoneDataProvider' => $phoneDataProvider,
 					'lessonDataProvider' => $lessonDataProvider,
 					'enrolmentDataProvider' => $enrolmentDataProvider,
 					'invoiceDataProvider' => $invoiceDataProvider
@@ -204,6 +214,12 @@ class UserController extends Controller {
 	 * @return mixed
 	 */
 	public function actionCreate() {
+		$request = Yii::$app->request;
+		$section = $request->get('section');
+		if(empty($section)){
+			$section = 'profile';
+		}
+		
 		$model = new UserForm();
 		$addressModels = [new Address];
 		$phoneNumberModels = [new PhoneNumber];
@@ -257,10 +273,12 @@ class UserController extends Controller {
 		}
 		return $this->render('create', [
 					'model' => $model,
+					'section' => $section,
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
-					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels
+					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels,
+					'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
 		]);
 	}
 
@@ -270,6 +288,12 @@ class UserController extends Controller {
 	 * @return mixed
 	 */
 	public function actionUpdate($id) {
+		$request = Yii::$app->request;
+		$section = $request->get('section');
+		if(empty($section)){
+			$section = 'profile';
+		}
+		
 		$model = new UserForm();
 		$model->setModel($this->findModel($id));
 		$user = $this->findModel($id);
@@ -277,7 +301,6 @@ class UserController extends Controller {
 		if (!Yii::$app->user->can('updateOwnProfile', ['model' => $user])) {
 			$ownProfile = false;
 		}
-
 		if ((!$ownProfile)) {
 			$role = $model->roles;
 			if (($role === User::ROLE_TEACHER) && (!Yii::$app->user->can('updateTeacherProfile'))) {
@@ -354,8 +377,10 @@ class UserController extends Controller {
 					'model' => $model,
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+					'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
-					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels
+					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels,
+					'section' => $section
 		]);
 	}
 

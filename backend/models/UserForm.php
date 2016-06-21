@@ -3,7 +3,6 @@ namespace backend\models;
 
 use common\models\User;
 use common\models\UserProfile;
-use common\models\PhoneLabel;
 use common\models\UserAddress;
 use common\models\Address;
 use common\models\PhoneNumber;
@@ -36,6 +35,7 @@ class UserForm extends Model
 	public $phonenumber;
 	public $phonelabel;
 	public $phoneextension;
+	public $locations;
     private $model;
 	public $phoneNumbers;
 	public $addresses;
@@ -69,7 +69,7 @@ class UserForm extends Model
                 )]
             ],
             ['roles','required'],
-           		    
+           	['locations','safe'],    
 			[['phonelabel', 'phoneextension', 'phonenumber', 'address'], 'safe'],
             [['addresslabel', 'postalcode', 'province', 'city', 'country'],'safe']	
         ];
