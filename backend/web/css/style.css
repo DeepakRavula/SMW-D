@@ -52,8 +52,8 @@ a:hover, a:focus{
     color: #ffffff;
 }
 .fc-event {
-    border: 1px solid #da0f0f;
-    background-color: #da0f0f;
+    border: 1px solid #da0f0f !important;
+    background-color: #da0f0f !important;
 }
 .bg-light-blue, .label-primary, .modal-primary .modal-body {
     background-color: transparent !important;
@@ -68,6 +68,12 @@ a:hover, a:focus{
   background: -webkit-linear-gradient(top,  #f9f9f9 0%,#f9f9f9 100%) !important; /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(to bottom,  #f9f9f9 0%,#f9f9f9 100%) !important; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#f9f9f9',GradientType=0 ) !important; /* IE6-9 */
+}
+.fc-state-active{
+  border: 1px solid #f7aeae !important;
+}
+.fc-cell-overlay{
+  background: #f5b8b1 !important;
 }
 .selectivity-multiple-selected-item, .selectivity-load-more.highlight, .selectivity-result-item.highlight,
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
