@@ -49,9 +49,10 @@ class Tax extends \yii\db\ActiveRecord
     } 
     public function beforeSave($insert) {
         $sinceDate = \DateTime::createFromFormat('d-m-Y', $this->since);
-        $this->since = $sinceDate->format('Y-m-d');
+        $date = $sinceDate->format('Y-m-d');
+        $this->since = date( "Y-m-d H:i:s", strtotime($date. " + 4hours 30minutes ") );
 
-		return parent::beforeSave($insert);
+        return parent::beforeSave($insert);
 	}
     public function getProvince()
     {
