@@ -8,7 +8,7 @@ use yii\helpers\Html;
 
 $this->title = 'Add new Program';
 $this->params['breadcrumbs'][] = ['label' => 'Programs', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'Create';
 ?>
 <div class="program-create p-10">
 

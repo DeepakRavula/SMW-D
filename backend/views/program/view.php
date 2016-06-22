@@ -12,6 +12,14 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="program-view p-10">
 
+    <?php echo DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'name',
+            'rate'
+        ],
+    ]) ?>
+
     <p>
         <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -22,13 +30,5 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
-
-    <?php echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'name',
-            'rate'
-        ],
-    ]) ?>
 
 </div>
