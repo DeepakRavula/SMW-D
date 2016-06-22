@@ -48,7 +48,7 @@ class Tax extends \yii\db\ActiveRecord
         ];
     } 
     public function beforeSave($insert) {
-        $sinceDate = \DateTime::createFromFormat('m-d-Y', $this->since);
+        $sinceDate = \DateTime::createFromFormat('d-m-Y', $this->since);
         $this->since = $sinceDate->format('Y-m-d');
 
 		return parent::beforeSave($insert);
