@@ -45,11 +45,12 @@ $contactContent =  $this->render('_view-contact', [
 		[
             'label' => 'Contacts',
             'content' => $contactContent,
-            'active' => true
+           // 'active' => true,
         ],
         [
             'label' => 'Enrolments',
             'content' => $enrolmentContent,
+			'active' => $section === 'enrolment',
         ],
 		[
             'label' => 'Lessons',
@@ -62,7 +63,7 @@ $contactContent =  $this->render('_view-contact', [
  </div>
 <script>
 	$('.add-new-program').click(function(){
-		$('.enrolment-create').show(); 
+		$('.enrolment-create').show();
 	});
 </script>
 

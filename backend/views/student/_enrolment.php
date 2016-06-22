@@ -1,8 +1,6 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
-use common\models\Lesson;
 use common\models\Enrolment;
 ?>
 <div class="col-md-12">
@@ -11,7 +9,7 @@ use common\models\Enrolment;
 <div class="clearfix"></div>
 </div>
 
-<div class="dn enrolment-create">
+<div class="dn enrolment-create section-tab">
     <?php echo $this->render('//enrolment/_form', [
         'model' => $enrolmentModel,
     ]) ?>

@@ -57,6 +57,11 @@ class StudentController extends Controller
      */
     public function actionView($id)
     {
+		$request = Yii::$app->request;
+		$section = $request->get('section');
+		if(empty($section)){
+			$section = 'enrolment';
+		}
 		$dataProvider = new ActiveDataProvider([
             'query' => Enrolment::find()->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
         ]);
@@ -105,7 +110,7 @@ class StudentController extends Controller
             	    'options' => ['class' => 'alert-success'],
                 	'body' => 'Program has been added successfully'
             ]);
-            	return $this->redirect(['view', 'id' => $model->id]);
+            	return $this->redirect(['view', 'id' => $model->id,'section' => 'enrolment']);
 			}
         } else {
             return $this->render('view', [
@@ -115,6 +120,7 @@ class StudentController extends Controller
 				'lessonModel' => $lessonModel,
     			'addressDataProvider' => $addressDataProvider,
 			    'phoneDataProvider' => $phoneDataProvider,
+				'section' => $section
             ]);
         }
     }
