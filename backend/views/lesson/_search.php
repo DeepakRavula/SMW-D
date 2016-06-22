@@ -27,7 +27,6 @@ use yii\helpers\ArrayHelper;
     <div class="col-md-3 form-group m-t-5">
         <br>
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
     </div>
     </div>
 

@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use common\models\Lesson;
 use common\models\Invoice;
 
 /* @var $this yii\web\View */
@@ -18,11 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
-        // 'rowOptions' => function ($model, $key, $index, $grid) {
-        //     $u= \yii\helpers\StringHelper::basename(get_class($model));
-        //     $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-        //     return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
-        //},
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 			[
