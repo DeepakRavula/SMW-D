@@ -33,7 +33,7 @@ use yii\bootstrap\Tabs;
 
 <div class="user-form"> 
 
-<?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
+	<?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 	<?php
 	$profileContent = $this->render('_form-profile', [
 		'model' => $model,
@@ -60,25 +60,30 @@ use yii\bootstrap\Tabs;
 	]);
 	?>
 	<?php
+	$items = [
+		[
+			'label' => 'Profile',
+			'content' => $profileContent,
+			'active' => $section === 'profile',
+		],
+		[
+			'label' => 'Contacts',
+			'content' => $addressContent,
+			'active' => $section === 'contact',
+		],
+	];
+	if (in_array($model->roles, ['teacher'])) {
+		$items[] = [
+			'label' => 'Qualifications',
+			'content' => $qualificationContent,
+			'active' => $section === 'qualification',
+		];
+	}
+	?>
+	<?php
 	echo Tabs::widget([
 		'id' => 'user-update-tab',
-		'items' => [
-			[
-				'label' => 'Profile',
-				'content' => $profileContent,
-				'active' => $section === 'profile',
-			],
-			[
-				'label' => 'Contacts',
-				'content' => $addressContent,
-				'active' => $section === 'contact',
-			],
-			[
-				'label' => 'Qualifications',
-				'content' => $qualificationContent,
-				'active' => $section === 'qualification',
-			],
-		],
+		'items' => $items,
 	]);
 	?>
 
