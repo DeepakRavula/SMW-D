@@ -1,6 +1,5 @@
 <?php
 
-use common\models\User;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Tabs;
@@ -10,8 +9,6 @@ use yii\bootstrap\Tabs;
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $roles yii\rbac\Role[] */
 /* @var $permissions yii\rbac\Permission[] */
-
-
 ?>
 <style>
     .box-body{
@@ -36,69 +33,83 @@ use yii\bootstrap\Tabs;
 
 <div class="user-form"> 
 
-	<?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
+<?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 	<?php
-		$profileContent = $this->render('_form-profile',[
-			'model'	=> $model,
-			'section' => $section,
-			'form' =>$form,
-			'programs' => $programs,
-			'roles' => $roles,
-			'locations' => $locations
-		]);
+	$profileContent = $this->render('_form-profile', [
+		'model' => $model,
+		'section' => $section,
+		'form' => $form,
+		'programs' => $programs,
+		'roles' => $roles,
+		'locations' => $locations
+	]);
 
-		$addressContent = $this->render('_form-contact',[
-			'addressModels' => $addressModels,
-			'phoneNumberModels' => $phoneNumberModels,
-			'form' => $form,
-			'section' => $section
-		]);
+	$addressContent = $this->render('_form-contact', [
+		'addressModels' => $addressModels,
+		'phoneNumberModels' => $phoneNumberModels,
+		'form' => $form,
+		'section' => $section
+	]);
 
+	$qualificationContent = $this->render('_form-qualification', [
+		'model' => $model,
+		'section' => $section,
+		'form' => $form,
+		'programs' => $programs,
+		'roles' => $roles,
+	]);
 	?>
-	<?php echo Tabs::widget([ 
-	'id' => 'user-update-tab',
-    'items' => [
-		[
-            'label' => 'Profile',
-            'content' => $profileContent,
-			'active' => $section === 'profile',
-        ],
-        [
-            'label' => 'Contacts',
-            'content' => $addressContent,
-			'active' => $section === 'contact',
-        ],
-	],
-]);?>
+	<?php
+	echo Tabs::widget([
+		'id' => 'user-update-tab',
+		'items' => [
+			[
+				'label' => 'Profile',
+				'content' => $profileContent,
+				'active' => $section === 'profile',
+			],
+			[
+				'label' => 'Contacts',
+				'content' => $addressContent,
+				'active' => $section === 'contact',
+			],
+			[
+				'label' => 'Qualifications',
+				'content' => $qualificationContent,
+				'active' => $section === 'qualification',
+			],
+		],
+	]);
+	?>
 
-        <div class="col-md-12 m-b-10">
-          <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-        </div>
-<?php ActiveForm::end(); ?>
-	</div> <!-- user-form -->
-	<script>
-		$('.add-address').bind('click', function () {
-			$('.address-fields').show();
-			$('.hr-ad').hide();
-			setTimeout(function () {
-				$('.add-address').addClass('add-item');
-			}, 100);
-		});
-		$('.add-phone').bind('click', function () {
-			$('.phone-fields').show();
-			$('.hr-ph').hide();
-			setTimeout(function () {
-				$('.add-phone').addClass('add-item-phone');
-			}, 100);
-		});
-		$('.add-quali').bind('click', function () {
-			$('.quali-fields').show();
-			$('.hr-qu').hide();
-		});
-		$('#user-update-tab a').click(function (e) {
- 			$('.section-tab').css('display','block');
-			//$('#contact-section').css('display','block');
-			e.preventDefault();
-  			$(this).tab('show');
-		})
-	</script>
+	<div class="col-md-12 m-b-10">
+		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+	</div>
+	<?php ActiveForm::end(); ?>
+</div> <!-- user-form -->
+<script>
+	$('.add-address').bind('click', function () {
+		$('.address-fields').show();
+		$('.hr-ad').hide();
+		setTimeout(function () {
+			$('.add-address').addClass('add-item');
+		}, 100);
+	});
+	$('.add-phone').bind('click', function () {
+		$('.phone-fields').show();
+		$('.hr-ph').hide();
+		setTimeout(function () {
+			$('.add-phone').addClass('add-item-phone');
+		}, 100);
+	});
+	$('.add-quali').bind('click', function () {
+		$('.quali-fields').show();
+		$('.hr-qu').hide();
+	});
+	$('#user-update-tab a').click(function (e) {
+		$('.section-tab').css('display', 'block');
+		//$('#contact-section').css('display','block');
+		e.preventDefault();
+		$(this).tab('show');
+	})
+</script>
