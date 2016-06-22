@@ -1,15 +1,12 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
-use common\models\Lesson;
-use common\models\Invoice;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Lessons';
-$this->params['breadcrumbs'][] = $this->title;
+//$this->title = 'Lessons';
+//$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="lesson-index">
 <?php if( ! empty($unInvoicedLessonsDataProvider)): ?>

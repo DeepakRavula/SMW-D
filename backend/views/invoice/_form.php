@@ -2,8 +2,6 @@
 
 use yii\helpers\Html;
 use common\models\User;
-use common\models\UserProfile;
-use common\models\UserLocation;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
