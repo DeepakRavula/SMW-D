@@ -62,6 +62,10 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 		$invoiceContent = $this->render('_invoice', [
 			'invoiceDataProvider' => $invoiceDataProvider,
 		]);
+
+		$qualificationContent = $this->render('_view-qualification',[
+			'program' => $program,	
+		]);
 		?>
 		<?php
 		$items = [
@@ -73,32 +77,41 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 			[
 				'label' => 'Contacts',
 				'content' => $addressContent,
-			//'active' => true,
 			],
-		]; //print_r($role->nam);die;
+		];
+		if (in_array($role->name, ['teacher'])) {
+			$items[] =
+			[
+				'label' => 'Qualifications',
+				'content' => $qualificationContent,
+			];
+		}
 		if (in_array($role->name, ['teacher', 'customer'])) {
-			$items[] = [
+			$items[] =
+			[
 				'label' => 'Students',
 				'content' => $studentContent,
-					//'active' => true,
 			];
 		}
 		if (in_array($role->name, ['customer'])) {
-			$items[] = [
-						'label' => 'Enrolments',
-						'content' => $enrolmentContent,
+			$items[] =
+			[
+				'label' => 'Enrolments',
+				'content' => $enrolmentContent,
 			];
 		}
 		if (in_array($role->name, ['customer'])) {
-			$items[] = [
-						'label' => 'Lessons',
-						'content' => $lessonContent,
+			$items[] =
+			[
+				'label' => 'Lessons',
+				'content' => $lessonContent,
 			];
 		}
 		if (in_array($role->name, ['customer'])) {
-			$items[] = [
-						'label' => 'Invoices',
-						'content' => $invoiceContent,
+			$items[] =
+			[
+				'label' => 'Invoices',
+				'content' => $invoiceContent,
 			];
 		}
 		?>
