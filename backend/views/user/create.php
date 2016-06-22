@@ -25,6 +25,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Create')];
         'roles' => $roles,
 		'locations' => $locations,
         'programs' => $programs,
+		'teacherAvailabilityModel' => $teacherAvailabilityModel,
 		'phoneNumberModels' => $phoneNumberModels,
 		'addressModels' => $addressModels,
 		'section' => $section

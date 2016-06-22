@@ -1,3 +1,4 @@
+
 <?php
 
 use common\models\User;
@@ -29,8 +30,8 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 		<?php
 		$profileContent = $this->render('_view-profile', [
 			'model' => $model,
-			'dataProvider1' => $dataProvider1,
-			'teacherAvailabilityModel' => $teacherAvailabilityModel,
+			//'dataProvider1' => $dataProvider1,
+		//	'teacherAvailabilityModel' => $teacherAvailabilityModel,
 		]);
 
 		$studentContent = null;
@@ -45,7 +46,7 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 
 		$addressContent = $this->render('_view-contact', [
 			'model' => $model,
-			'dataProvider1' => $dataProvider1,
+			//'dataProvider1' => $dataProvider1,
 			'addressDataProvider' => $addressDataProvider,
 			'phoneDataProvider' => $phoneDataProvider,
 		]);
@@ -66,6 +67,10 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 		$qualificationContent = $this->render('_view-qualification',[
 			'program' => $program,	
 		]);
+
+		$teacherAvailabilityContent = $this->render('_view-teacher-availability',[
+			'teacherDataProvider' => $teacherDataProvider,
+		]);
 		?>
 		<?php
 		$items = [
@@ -84,6 +89,13 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 			[
 				'label' => 'Qualifications',
 				'content' => $qualificationContent,
+			];
+		}
+		if (in_array($role->name, ['teacher'])) {
+			$items[] =
+			[
+				'label' => 'Availability',
+				'content' => $teacherAvailabilityContent,
 			];
 		}
 		if (in_array($role->name, ['teacher', 'customer'])) {

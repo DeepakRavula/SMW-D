@@ -113,7 +113,28 @@ class UserController extends Controller {
 			'query' => Student::find()->where(['customer_id' => $id])
 		]);
 		$model = $this->findModel($id);
+		$teacherLocation = UserLocation::findOne([
+					'user_id' => $id,
+					'location_id' => $session->get('location_id'),
+		]);
+		$teacherDataProvider = new ActiveDataProvider([
+			'query' => TeacherAvailability::find()
+					->where([
+						'teacher_location_id' => $teacherLocation->id
+					])
+		]);
 
+				$program = null;
+		$qualifications = Qualification::find()
+				->joinWith('program')
+				->where(['teacher_id' => $id])
+				->all();
+		foreach ($qualifications as $qualification) {
+			$program .= "{$qualification->program->name}, ";
+		}
+		$program = substr($program, 0, -2);
+		
+		/*
 		$teacherAvailabilityModel = new TeacherAvailability();
 		$teacherLocation = UserLocation::findOne([
 					'user_id' => $id,
@@ -153,6 +174,8 @@ class UserController extends Controller {
 				return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $id]);
 			}
 		}
+ * 
+ */
 		$addressDataProvider = new ActiveDataProvider([
 			'query' => $model->getAddresses(),
 			]);
@@ -195,10 +218,9 @@ class UserController extends Controller {
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,
 					'section' => $section,
-					'dataProvider1' => $dataProvider1,
+					'teacherDataProvider' => $teacherDataProvider,
 					'model' => $model,
 					'searchModel' => $searchModel,
-					'teacherAvailabilityModel' => $teacherAvailabilityModel,
 					'program' => $program,
 					'addressDataProvider' => $addressDataProvider,
 					'phoneDataProvider' => $phoneDataProvider,
@@ -271,12 +293,34 @@ class UserController extends Controller {
 				}
 			}
 		}
+		
+		$teacherAvailabilityModel = new TeacherAvailability();
+		$locationId = Yii::$app->session->get('location_id');
+		
+		if ($teacherAvailabilityModel->load(Yii::$app->request->post())) {
+
+			$fromtime = date("H:i:s", strtotime($_POST['TeacherAvailability']['from_time']));
+			$totime = date("H:i:s", strtotime($_POST['TeacherAvailability']['to_time']));
+
+			$teacherAvailabilityModel->teacher_location_id = $locationId;
+			$teacherAvailabilityModel->from_time = $fromtime;
+			$teacherAvailabilityModel->to_time = $totime;
+
+			if ($teacherAvailabilityModel->save()) {
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-success'],
+					'body' => 'Teacher availability has been added successfully'
+				]);
+				return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $id]);
+			}
+		}
 		return $this->render('create', [
 					'model' => $model,
 					'section' => $section,
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
+					'teacherAvailabilityModel' => $teacherAvailabilityModel,
 					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels,
 					'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
 		]);
@@ -372,11 +416,15 @@ class UserController extends Controller {
 				'body' => ucwords($model->roles) . ' profile has been updated successfully'
 			]);
 		}
-
+		$teacherAvailabilityModel = TeacherAvailability::find()
+				->joinWith('teacher')
+				->where(['id' => $id]);
+	//print_r($teacherAvailabilityModel);die;	
 		return $this->render('update', [
 					'model' => $model,
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+					'teacherAvailabilityModel' => $teacherAvailabilityModel,
 					'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
 					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels,

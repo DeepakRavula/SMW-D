@@ -58,6 +58,14 @@ use yii\bootstrap\Tabs;
 		'programs' => $programs,
 		'roles' => $roles,
 	]);
+
+	$teacherAvailabilityContent = $this->render('_form-teacher-availability', [
+		'teacherAvailabilityModel' => $teacherAvailabilityModel,
+		//'section' => $section,
+		'form' => $form,
+		//'programs' => $programs,
+		//'roles' => $roles,
+	]);
 	?>
 	<?php
 	$items = [
@@ -77,6 +85,13 @@ use yii\bootstrap\Tabs;
 			'label' => 'Qualifications',
 			'content' => $qualificationContent,
 			'active' => $section === 'qualification',
+		];
+	}
+	if (in_array($model->roles, ['teacher'])) {
+		$items[] = [
+			'label' => 'Availability',
+			'content' => $teacherAvailabilityContent,
+			'active' => $section === 'availability',
 		];
 	}
 	?>
@@ -110,6 +125,10 @@ use yii\bootstrap\Tabs;
 	$('.add-quali').bind('click', function () {
 		$('.quali-fields').show();
 		$('.hr-qu').hide();
+	});
+	$('.availability').bind('click', function () {
+	$('.teacher-availability-create').show();
+	$('.hr-qu').hide();
 	});
 	$('#user-update-tab a').click(function (e) {
 		$('.section-tab').css('display', 'block');
