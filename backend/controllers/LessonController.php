@@ -6,6 +6,7 @@ use Yii;
 use backend\models\search\LessonSearch;
 use common\models\Lesson;
 use common\models\Invoice;
+use common\models\Tax;
 use common\models\InvoiceLineItem;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -122,13 +123,17 @@ class LessonController extends Controller
     }
 
 	public function actionInvoice($id) {
-		$invoice = new Invoice();
 		$model = Lesson::findOne(['id' => $id]);
-		$invoice->invoice_number = 1;
-		$invoice->date = (new \DateTime())->format('Y-m-d');
-		$invoice->status = Invoice::STATUS_OWING;
-		$invoice->save();
-        $subTotal=0;
+        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+		$currentDate = new \DateTime();
+		if($lessonDate <= $currentDate){
+			$invoice = new Invoice();
+			$invoice->invoice_number = 1;
+			$invoice->date = (new \DateTime())->format('Y-m-d');
+			$invoice->status = Invoice::STATUS_OWING;
+			$invoice->save();
+       		$subTotal = 0;
+        	$taxAmount = 0;
 
 		$invoiceLineItem = new InvoiceLineItem();
 		$invoiceLineItem->invoice_id = $invoice->id;
@@ -137,18 +142,42 @@ class LessonController extends Controller
 		$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
 		$invoiceLineItem->amount = $model->enrolmentScheduleDay->enrolment->qualification->program->rate;
 		$invoiceLineItem->save();
-
-		$subTotal += $invoiceLineItem->amount;
+		
+		$subTotal += $invoiceLineItem->amount;                
+        $lessonAmount = $invoiceLineItem->amount;
+		$provinceId = $model->enrolmentScheduleDay->enrolment->location->province->id;
+        $taxModels = Tax::find()
+            ->where(['province_id' => $provinceId]) 
+            ->orderBy('since DESC')
+            ->all();
+            foreach ($taxModels as $taxModel) {
+                $since = \DateTime::createFromFormat('Y-m-d H:i:s', $taxModel->since);
+                if ($since <= $lessonDate) {
+                    $taxPercentage = $taxModel->tax_rate;
+                    break;
+                }
+            }            
+        	$taxAmount += $lessonAmount * $taxPercentage / 100;
 
 		$invoice = Invoice::findOne(['id' => $invoice->id]);
 		$invoice->subTotal = $subTotal;
-		$taxPercentage = $model->enrolmentScheduleDay->enrolment->location->province->tax_rate;
-		$taxAmount = $subTotal * $taxPercentage / 100;
 		$totalAmount = $subTotal + $taxAmount;
 		$invoice->tax = $taxAmount;
 		$invoice->total = $totalAmount;
 		$invoice->save();
-
+        Yii::$app->session->setFlash('alert', [
+           	'options' => ['class' => 'alert-success'],
+           	'body' => 'Invoice has been generated successfully'
+        ]); 
 		return $this->redirect(['lesson/index','id' => $id]);
+	
+		}
+		else{
+		        Yii::$app->session->setFlash('alert', [
+           	'options' => ['class' => 'alert-success'],
+           	'body' => 'Generate invoice against completed lesson only.'
+        ]); 
+		return $this->redirect(['lesson/index','id' => $id]);	
+		}
 	}
 }
