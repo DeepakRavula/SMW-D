@@ -56,13 +56,13 @@ $this->params['breadcrumbs'][] = $this->title;
 	
 		$studentContent = null;
 
-		if (!empty($role) && $role->name === User::ROLE_CUSTOMER) {
-			$studentContent = $this->render('_student', [
+		//if (!empty($role) && $role->name === User::ROLE_CUSTOMER) {
+			$studentContent = $this->render('_customer-student', [
 				'model' => $model,
 				'dataProvider' => $dataProvider,
 				'student' => $student,
 			]);
-		}
+		//}
 
 		$addressContent = $this->render('_view-contact', [
 			'model' => $model,
@@ -90,6 +90,10 @@ $this->params['breadcrumbs'][] = $this->title;
 		$teacherAvailabilityContent = $this->render('_view-teacher-availability',[
 			'teacherDataProvider' => $teacherDataProvider,
 		]);
+
+		$teacherStudentContent = $this->render('_teacher-student',[
+			'studentDataProvider' => $studentDataProvider,
+		]);
 		?>
 		<?php
 		$items = [
@@ -113,7 +117,14 @@ $this->params['breadcrumbs'][] = $this->title;
 				'content' => $teacherAvailabilityContent,
 			];
 		}
-		if (in_array($role->name, ['teacher', 'customer'])) {
+		if (in_array($role->name, ['teacher'])) {
+			$items[] =
+			[
+				'label' => 'Students',
+				'content' => $teacherStudentContent,
+			];
+		}
+		if (in_array($role->name, ['customer'])) {
 			$items[] =
 			[
 				'label' => 'Students',

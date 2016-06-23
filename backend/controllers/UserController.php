@@ -112,6 +112,16 @@ class UserController extends Controller {
 		$dataProvider = new ActiveDataProvider([
 			'query' => Student::find()->where(['customer_id' => $id])
 		]);
+
+		$query = Student::find()
+				->joinWith(['customer' => function($query) use($id){
+					$query->joinWith('qualification')
+							->where(['teacher_id' => $id]);
+				}]);
+		$studentDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+				
 		$model = $this->findModel($id);
 		$teacherLocation = UserLocation::findOne([
 					'user_id' => $id,
@@ -184,7 +194,8 @@ class UserController extends Controller {
 					'phoneDataProvider' => $phoneDataProvider,
 					'lessonDataProvider' => $lessonDataProvider,
 					'enrolmentDataProvider' => $enrolmentDataProvider,
-					'invoiceDataProvider' => $invoiceDataProvider
+					'invoiceDataProvider' => $invoiceDataProvider,
+					'studentDataProvider' => $studentDataProvider,
 		]);
 	}
 
