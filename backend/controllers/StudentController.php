@@ -65,6 +65,7 @@ class StudentController extends Controller
 		$dataProvider = new ActiveDataProvider([
             'query' => Enrolment::find()->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
         ]);
+		
 		$session = Yii::$app->session;
 		$location_id = $session->get('location_id');
 		$currentDate = new \DateTime();

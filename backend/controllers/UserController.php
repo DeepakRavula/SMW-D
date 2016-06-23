@@ -150,14 +150,24 @@ class UserController extends Controller {
 		$phoneDataProvider = new ActiveDataProvider([
 			'query' => $model->getPhoneNumbers(),
 			]);
+		
+		$session = Yii::$app->session;
+		$location_id = $session->get('location_id');
+		$currentDate = new \DateTime();
+		$query = Lesson::find()
+			->joinWith(['enrolmentScheduleDay esd' => function($query) use($location_id,$id) {
+				$query->joinWith(['enrolment e' => function($query) use($location_id,$id){
+					$query->joinWith('student s')
+						->where(['e.location_id' => $location_id,'s.customer_id' => $id]);
+					}]);
+			}])
+			->andWhere(['<=', 'lesson.date', $currentDate->format('Y-m-d')
+			]);
+
 		$lessonDataProvider = new ActiveDataProvider([
-			'query' => Lesson::find()
-				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = lesson.enrolment_schedule_day_id')
-				->join('INNER JOIN','enrolment e','e.id = esd.enrolment_id')
-				->join('INNER JOIN','student s','s.id = e.student_id')
-				->where(['e.location_id' => Yii::$app->session->get('location_id'),'s.customer_id' => $id])
-				->andWhere('lesson.date <= NOW()')
+			'query' => $query,
 		]);
+		
 		$query = Enrolment::find()
 			->joinWith('student s')
 			->where(['location_id' => Yii::$app->session->get('location_id'),'s.customer_id' => $id]);
