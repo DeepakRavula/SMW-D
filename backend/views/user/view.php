@@ -4,6 +4,7 @@
 use common\models\User;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\Tabs;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -16,10 +17,34 @@ foreach ($roleNames as $name => $description) {
 		$roleName = $description;
 	}
 }
-$this->title = Yii::t('backend', $model->publicIdentity . '(' . (!($roleName) ? 'User' : $roleName) . ')');
+$this->title = Yii::t('backend', !($roleName) ? 'User' : $roleName . ' Details');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', !$roleName ? 'User' : $roleName . 's'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $model->publicIdentity;
+$this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<div class="row-fluid user-details-wrapper">
+    <div class="col-md-12 p-t-10">
+        <p class="users-name pull-left"><?php echo!empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
+            <?php echo!empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?> 
+             <em>
+                <small><?php echo !empty($model->email) ? $model->email : null ?></small>
+            </em> 
+        </p>
+        <div class="m-l-20 pull-left m-t-5">
+            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Profile'), ['update', 'id' => $model->id,'section' => 'profile'], ['class' => 'm-r-20']) ?>
+            <?php
+            echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
+                'class' => '',
+                'data' => [
+                    'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
+                    'method' => 'post',
+                ],
+            ])
+            ?>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
 
 <div class="tabbable-panel">
 	<div class="tabbable-line">
@@ -28,11 +53,11 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 		$role = end($roles); ?>
 
 		<?php
-		$profileContent = $this->render('_view-profile', [
-			'model' => $model,
+		//$profileContent = $this->render('_view-profile', [
+//			'model' => $model,
 			//'dataProvider1' => $dataProvider1,
 		//	'teacherAvailabilityModel' => $teacherAvailabilityModel,
-		]);
+//		]);
 
 		$studentContent = null;
 
@@ -74,14 +99,15 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 		?>
 		<?php
 		$items = [
-			[
-				'label' => 'Profile',
-				'content' => $profileContent,
-				'active' => true,
-			],
+//			[
+//				'label' => 'Profile',
+//				'content' => $profileContent,
+//				'active' => true,
+//			],
 			[
 				'label' => 'Contacts',
 				'content' => $addressContent,
+				'active' => true,
 			],
 		];
 		if (in_array($role->name, ['teacher'])) {
