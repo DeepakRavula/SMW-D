@@ -1,7 +1,7 @@
 <?php
 
 namespace backend\controllers;
-
+use common\models\Payments;
 use Yii;
 use common\models\User;
 use common\models\UserLocation;
@@ -171,7 +171,12 @@ class UserController extends Controller {
 		$invoiceDataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
-		
+		$paymentsDataProvider = new ActiveDataProvider([
+			'query' => Payments::find()
+                
+                ->where(['user_id' => $id]),
+		]);
+        
 		return $this->render('view', [
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,
@@ -184,7 +189,8 @@ class UserController extends Controller {
 					'phoneDataProvider' => $phoneDataProvider,
 					'lessonDataProvider' => $lessonDataProvider,
 					'enrolmentDataProvider' => $enrolmentDataProvider,
-					'invoiceDataProvider' => $invoiceDataProvider
+					'invoiceDataProvider' => $invoiceDataProvider,
+                    'paymentsDataProvider' => $paymentsDataProvider,
 		]);
 	}
 

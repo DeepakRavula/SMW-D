@@ -63,6 +63,10 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 		$invoiceContent = $this->render('_invoice', [
 			'invoiceDataProvider' => $invoiceDataProvider,
 		]);
+        
+        $paymentsContent = $this->render('_payments', [
+			'paymentsDataProvider' => $paymentsDataProvider,
+		]);
 
 		$qualificationContent = $this->render('_view-qualification',[
 			'program' => $program,	
@@ -124,6 +128,13 @@ $this->params['breadcrumbs'][] = $model->publicIdentity;
 			[
 				'label' => 'Invoices',
 				'content' => $invoiceContent,
+			];
+		}
+        if (in_array($role->name, ['customer'])) {
+			$items[] =
+			[
+				'label' => 'Payments',
+				'content' => $paymentsContent,
 			];
 		}
 		?>
