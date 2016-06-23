@@ -48,9 +48,9 @@ class Tax extends \yii\db\ActiveRecord
         ];
     } 
     public function beforeSave($insert) {
-        $sinceDate = \DateTime::createFromFormat('d-m-Y', $this->since);
-        $date = $sinceDate->format('Y-m-d');
-        $this->since = date( "Y-m-d H:i:s", strtotime($date. " + 4hours 30minutes ") );
+        $date = new \DateTime($this->since);
+        $date->add(new \DateInterval('PT5H'));
+        $this->since = $date->format('Y-m-d H:i:s') . "\n";
 
         return parent::beforeSave($insert);
 	}
