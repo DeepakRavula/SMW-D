@@ -65,15 +65,19 @@ class StudentController extends Controller
 		$dataProvider = new ActiveDataProvider([
             'query' => Enrolment::find()->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
         ]);
-		
-		$lessonModel = new ActiveDataProvider([
-			'query' => Lesson::find()
-				->join('INNER JOIN','enrolment_schedule_day esd','esd.id = lesson.enrolment_schedule_day_id')
-				->join('INNER JOIN','enrolment e','e.id = esd.enrolment_id')
-				->join('INNER JOIN','student s','s.id = e.student_id')
-				->where(['e.student_id' => $id,'e.location_id' => Yii::$app->session->get('location_id')])
-				->andWhere('lesson.date <= NOW()')
-		]);
+		$session = Yii::$app->session;
+		$location_id = $session->get('location_id');
+		$currentDate = new \DateTime();
+		$query = Lesson::find()
+			->joinWith(['enrolmentScheduleDay' => function($query) use($location_id,$id) {
+				$query->joinWith(['enrolment' => function($query) use($location_id,$id){
+					$query->where(['location_id' => $location_id,'student_id' => $id]);
+					}]);
+				}])
+			->andWhere(['<=', 'lesson.date', $currentDate->format('Y-m-d')]);
+			$lessonDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);	
 
 		$query = Student::find()
 				->joinWith(['customer' => function($query){
@@ -117,7 +121,7 @@ class StudentController extends Controller
             	'model' => $model,
             	'dataProvider' => $dataProvider,
                 'enrolmentModel' => $enrolmentModel,
-				'lessonModel' => $lessonModel,
+				'lessonDataProvider' => $lessonDataProvider,
     			'addressDataProvider' => $addressDataProvider,
 			    'phoneDataProvider' => $phoneDataProvider,
 				'section' => $section

@@ -31,7 +31,7 @@ $enrolmentContent =  $this->render('_enrolment', [
 ]);
 
 $lessonContent =  $this->render('_lesson', [
-	'lessonModel' => $lessonModel,
+	'lessonDataProvider' => $lessonDataProvider,
 ]);
 
 $contactContent =  $this->render('_view-contact', [
