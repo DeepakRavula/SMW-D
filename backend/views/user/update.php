@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
@@ -25,7 +24,6 @@ $this->params['breadcrumbs'][] = ['label'=>Yii::t('backend', 'Update')];
         'roles' => $roles,
 		'locations' => $locations,
 		'programs' => $programs,
-		'teacherAvailabilityModel' => $teacherAvailabilityModel,
 		'phoneNumberModels' => $phoneNumberModels,
 		'addressModels' => $addressModels,
 		'section' => $section
