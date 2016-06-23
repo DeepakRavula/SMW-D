@@ -3,15 +3,10 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Qualification;
-use common\models\TeacherAvailability;
 use common\models\Location;
 use common\models\Lesson;
-use backend\models\search\QualificationSearch;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\filters\AccessControl;
 
@@ -84,9 +79,9 @@ class ScheduleController extends Controller
 		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
 
 		if((float)$data['minutes'] > 0) {
-			$lessonDate->add(new \DateInterval('PT' .$data['minutes'].  'M'));	
+			$lessonDate->add(new \DateInterval('PT' .round($data['minutes']).  'M'));	
 		} else {
-			$lessonDate->sub(new \DateInterval('PT' . abs($data['minutes']) . 'M'));	
+			$lessonDate->sub(new \DateInterval('PT' . round(abs($data['minutes'])) . 'M'));	
 		}
 
 		$lesson->date = $lessonDate->format('Y-m-d H:i:s');
