@@ -117,7 +117,8 @@ class InvoiceController extends Controller
             $taxAmount = 0;
 			foreach($post['selection'] as $selection) {
                 $lesson = Lesson::findOne(['id'=>$selection]);
-                $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
+                $actualLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
+                $lessonDate = $actualLessonDate->format('Y-m-d'); 
                 $invoiceLineItem = new InvoiceLineItem();
                 $invoiceLineItem->invoice_id = $invoice->id;
                 $invoiceLineItem->lesson_id = $lesson->id;
@@ -134,7 +135,7 @@ class InvoiceController extends Controller
                    ->orderBy('since DESC')
                    ->all();
                     foreach ($taxModels as $taxModel) {
-                        $since = \DateTime::createFromFormat('Y-m-d H:i:s', $taxModel->since);
+                        $since = date('Y-m-d', strtotime($taxModel->since));
                         if ($since <= $lessonDate) {
                             $taxPercentage = $taxModel->tax_rate;
                             break;
