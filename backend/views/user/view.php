@@ -53,12 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		$role = end($roles); ?>
 
 		<?php
-		//$profileContent = $this->render('_view-profile', [
-//			'model' => $model,
-			//'dataProvider1' => $dataProvider1,
-		//	'teacherAvailabilityModel' => $teacherAvailabilityModel,
-//		]);
-
+	
 		$studentContent = null;
 
 		if (!empty($role) && $role->name === User::ROLE_CUSTOMER) {
@@ -71,7 +66,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 		$addressContent = $this->render('_view-contact', [
 			'model' => $model,
-			//'dataProvider1' => $dataProvider1,
 			'addressDataProvider' => $addressDataProvider,
 			'phoneDataProvider' => $phoneDataProvider,
 		]);
@@ -99,11 +93,6 @@ $this->params['breadcrumbs'][] = $this->title;
 		?>
 		<?php
 		$items = [
-//			[
-//				'label' => 'Profile',
-//				'content' => $profileContent,
-//				'active' => true,
-//			],
 			[
 				'label' => 'Contacts',
 				'content' => $addressContent,
@@ -152,9 +141,6 @@ $this->params['breadcrumbs'][] = $this->title;
 				'content' => $invoiceContent,
 			];
 		}
-		?>
-		<?php
-		//print_r($items);die;
 		?>
 		<?php
 		echo Tabs::widget([

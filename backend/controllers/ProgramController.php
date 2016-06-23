@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Program;
+use common\models\Student;
+use common\models\User;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -48,8 +50,27 @@ class ProgramController extends Controller
      */
     public function actionView($id)
     {
+		
+		$query = Student::find()
+				->joinWith(['enrolment' => function($query) use($id){
+					$query->joinWith('qualification')
+						->where(['program_id' => $id]);
+				}]);
+		$studentDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+
+		$query = User::find()
+				->joinWith('qualification')
+				->where(['program_id' => $id]);
+		$teacherDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+		
         return $this->render('view', [
             'model' => $this->findModel($id),
+			'studentDataProvider' => $studentDataProvider, 
+			'teacherDataProvider' => $teacherDataProvider, 
         ]);
     }
 
