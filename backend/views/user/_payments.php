@@ -17,7 +17,7 @@ use common\models\Invoice;
             return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
         },
         'columns' => [
-           /* ['class' => 'yii\grid\SerialColumn'],
+            ['class' => 'yii\grid\SerialColumn'],
             [
                 'label' => 'Invoice Number',
                 'value' => function($data) {
@@ -29,7 +29,7 @@ use common\models\Invoice;
 				'value' => function($data) {
 					return ! empty($data->paymentMethods->name) ? $data->paymentMethods->name : null;
                 },
-			],*/
+			],
             'amount:currency',            
 	    ],
     ]); ?>

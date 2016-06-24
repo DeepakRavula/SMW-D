@@ -176,7 +176,14 @@ class UserController extends Controller {
                 
                 ->where(['user_id' => $id]),
 		]);
-        
+        $payments = Payments::find()
+				->joinWith('invoice')
+				->where(['user_id' => $id])
+				->all();
+        $paymentMethods = Payments::find()
+				->joinWith('paymentMethods')
+				->where(['user_id' => $id])
+				->all();
 		return $this->render('view', [
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,

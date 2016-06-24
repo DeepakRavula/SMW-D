@@ -48,4 +48,14 @@ class Payments extends \yii\db\ActiveRecord
             'amount' => 'Amount',
         ];
     }
+    
+    public function getInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
+    }
+    
+    public function getPaymentMethods()
+    {
+        return $this->hasOne(PaymentMethods::className(), ['id' => 'payment_method_id']);
+    }
 }
