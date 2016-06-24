@@ -267,13 +267,12 @@ class UserController extends Controller {
 							}
 						}
 						$userLocationModel = UserLocation::findOne(['user_id' => $model->getModel()->id]);
-						$from_time = $_POST['TeacherAvailability'][0]['from_time'];
-						$fromTime = new \DateTime($from_time);
-						$toTime = new \DateTime($_POST['TeacherAvailability']['to_time']);
 						foreach ($availabilityModels as $availabilityModel) {
 							$availabilityModel->teacher_location_id = $userLocationModel->id;
-							$availabilityModel->from_time = $fromTime->format("H:i:s");
-							$availabilityModel->to_time = $toTime->format("H:i:s");
+							$fromTime = \DateTime::createFromFormat('H:i A', $availabilityModel->from_time);
+							$toTime = \DateTime::createFromFormat('H:i A', $availabilityModel->to_time);
+							$availabilityModel->from_time = $fromTime->format('H:i:s');
+							$availabilityModel->to_time = $toTime->format('H:i:s');
 							if (!($flag = $availabilityModel->save(false))) {
 								$transaction->rollBack();
 								break;
@@ -389,13 +388,13 @@ class UserController extends Controller {
 							TeacherAvailability::deleteAll(['id' => $deletedAvailabilityIDs]);
 						}
 
-						$fromTime = new \DateTime($_POST['TeacherAvailability']['from_time']);
-						$toTime = new \DateTime($_POST['TeacherAvailability']['to_time']);	
 						$userLocationModel = UserLocation::findOne(['user_id' => $id]);
 						foreach ($availabilityModels as $availabilityModel) {
 							$availabilityModel->teacher_location_id = $userLocationModel->id;
-							$availabilityModel->from_time = $fromTime->format("H:i:s");
-							$availabilityModel->to_time = $toTime->format("H:i:s");
+							$fromTime = \DateTime::createFromFormat('H:i A', $availabilityModel->from_time);
+							$toTime = \DateTime::createFromFormat('H:i A', $availabilityModel->to_time);
+							$availabilityModel->from_time = $fromTime->format('H:i:s');
+							$availabilityModel->to_time = $toTime->format('H:i:s');
 							if (!($flag = $availabilityModel->save(false))) {
 								$transaction->rollBack();
 								break;
