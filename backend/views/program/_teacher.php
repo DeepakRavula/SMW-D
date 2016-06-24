@@ -13,7 +13,7 @@ echo GridView::widget([
 			return !empty($data->publicIdentity) ? $data->publicIdentity : null;
 		},
 	],
-//	['class' => 'yii\grid\ActionColumn', 'controller' => 'student'],
+	['class' => 'yii\grid\ActionColumn', 'controller' => 'user','template' => '{view}'],
 ],
 ]);
 ?>
