@@ -40,6 +40,7 @@ class UserForm extends Model
     private $model;
 	public $phoneNumbers;
 	public $addresses;
+	public $availabilities;
 	public $teacherAvailabilityDay;
 	public $fromTime;
 	public $toTime;
@@ -134,7 +135,13 @@ class UserForm extends Model
 		} else {
 			$this->addresses = [new Address];
 		}
-
+		
+		if(count($model->availabilities) > 0) {
+			$this->availabilities = $model->availabilities;
+		} else {
+			$this->availabilities = [new TeacherAvailability];
+		}
+		
        	$userFirstName = UserProfile::findOne(['user_id' => $model->getId()]); 
 	  		if(! empty($userFirstName)){
 				$this->firstname = $userFirstName->firstname;
@@ -280,7 +287,6 @@ public static function createMultiple($modelClass, $multipleModels = [])
 				$teacherAvailabilityModel->day = $this->teacherAvailabilityDay;
 				$teacherAvailabilityModel->from_time = $fromTime->format("H:i:s");
 				$teacherAvailabilityModel->to_time = $toTime->format("H:i:s");
-				$teacherAvailabilityModel->teacher_location_id = $userLocationModel->id;	
 			}
 			$teacherAvailabilityModel->save();
 			

@@ -59,6 +59,7 @@ use yii\bootstrap\Tabs;
 	$teacherAvailabilityContent = $this->render('_form-teacher-availability', [
 		'model' => $model,
 		'form' => $form,
+		'availabilityModels' => $availabilityModels,
 	]);
 	?>
 	<?php
