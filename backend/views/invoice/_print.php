@@ -104,6 +104,9 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <!-- /.col -->
       </div>
+    <label for="notes">Notes:</label>
+    <div class="clearfix"></div>
+    <textarea rows=5, cols=110, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea>
 </div>
 <script>
 	$(document).ready(function(){

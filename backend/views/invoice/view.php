@@ -126,7 +126,12 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
           </div>
         </div>
         <!-- /.col -->
-		</div>
+	</div> 
+        <div class="col-md-4">
+            <label for="notes">Notes:</label>
+            <div class="clearfix"></div>
+            <textarea rows=4, cols=110, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea> 
+        </div>
     <div class="row no-print">
         <div class="col-xs-12">
             <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>
@@ -134,7 +139,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
             <i class="fa fa-download"></i> Generate PDF
           </button>
         </div>
-      </div>
+    </div>
 
     
 </div>
