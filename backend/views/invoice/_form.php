@@ -36,6 +36,8 @@ use yii\helpers\Url;
 
     <?php $form = ActiveForm::begin(); ?>
     <?php echo $this->render('_uninvoiced_lessons', [
+		'model'=>$model,
+		'form'=>$form,
 		'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
     ]) ?>
 
