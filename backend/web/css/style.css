@@ -51,6 +51,12 @@ a:hover, a:focus{
 .skin-black .sidebar a {
     color: #ffffff;
 }
+.skin-black .sidebar-menu>li>.treeview-menu{
+  background: #130808;
+}
+.skin-black .treeview-menu>li>a {
+    color: #e8e8e8;
+}
 .fc-event {
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
@@ -97,7 +103,7 @@ Resets
 .m-t-0{
   margin-top: 0px !important;
 }
-.m-t-10{
+.m-t-10, .empty{
   margin-top: 10px;
 }
 .m-t-20{
@@ -121,8 +127,14 @@ Resets
 .m-r-20{
   margin-right: 20px;
 }
+.p-0{
+  padding: 0;
+}
 .p-10{
   padding: 10px;
+}
+.p-20{
+  padding: 20px;
 }
 .p-t-10{
   padding-top: 10px;

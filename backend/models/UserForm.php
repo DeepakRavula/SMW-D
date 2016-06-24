@@ -264,10 +264,13 @@ public static function createMultiple($modelClass, $multipleModels = [])
                 $userLocationModel->location_id = Yii::$app->session->get('location_id');
                 $userLocationModel->save();
 			}
+			/*
 			if (! $isNewRecord) {
                 $userLocationModel->location_id = $this->locations;
                 $userLocationModel->save();
 			}
+			 * 
+			 */
 			
 			$fromTime = new \DateTime($this->fromTime);
 			$toTime = new \DateTime($this->toTime);

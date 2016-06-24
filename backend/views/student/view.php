@@ -31,7 +31,7 @@ $enrolmentContent =  $this->render('_enrolment', [
 ]);
 
 $lessonContent =  $this->render('_lesson', [
-	'lessonModel' => $lessonModel,
+	'lessonDataProvider' => $lessonDataProvider,
 ]);
 
 $contactContent =  $this->render('_view-contact', [
@@ -43,11 +43,6 @@ $contactContent =  $this->render('_view-contact', [
 <?php echo Tabs::widget([
     'items' => [
 		[
-            'label' => 'Contacts',
-            'content' => $contactContent,
-           // 'active' => true,
-        ],
-        [
             'label' => 'Enrolments',
             'content' => $enrolmentContent,
 			'active' => $section === 'enrolment',
@@ -55,6 +50,10 @@ $contactContent =  $this->render('_view-contact', [
 		[
             'label' => 'Lessons',
             'content' => $lessonContent,
+        ],
+		[
+            'label' => 'Contacts',
+            'content' => $contactContent,
         ],
     ],
 ]);?>

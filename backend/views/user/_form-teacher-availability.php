@@ -15,7 +15,7 @@ use kartik\time\TimePicker;
 </div>
 <div class="teacher-availability-create row-fluid">
 	<!--<div class="teacher-availability-form form-well form-well-smw">-->
-		<div class="row">
+		<div class="row-fluid form-well">
 			<div class="col-md-2">
 				<?php echo $form->field($model, 'teacherAvailabilityDay')->dropdownList(TeacherAvailability::getWeekdaysList(),['prompt' => 'select day']); ?>
 			</div>
@@ -25,7 +25,7 @@ use kartik\time\TimePicker;
 			<div class="col-md-2">
 				<?php echo $form->field($model, 'toTime')->widget(TimePicker::classname(), []); ?>
 			</div>
-
+			<div class="clearfix"></div>
 		</div>
 </div>
 </div>

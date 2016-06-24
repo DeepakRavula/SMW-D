@@ -27,7 +27,7 @@ use common\models\User;
 	</div>
 	<div class="col-md-2">
 		<?php if (!$model->getModel()->getIsNewRecord()) : ?>
-			<?php echo $form->field($model, 'locations')->dropDownList($locations) ?>
+			<?php //echo $form->field($model, 'locations')->dropDownList([$locations,'prompt' => 'select location']) ?>
 		<?php endif; ?>
 	</div>
 </div>

@@ -53,7 +53,12 @@ class Student extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'customer_id']);
     }
-    
+   
+	public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['student_id' => 'id']);
+    }
+	
 	public function getFullName()
     {
 		if ($this->first_name || $this->last_name) {

@@ -85,7 +85,8 @@ class InvoiceController extends Controller
 			if(empty($customer)) {
             	throw new NotFoundHttpException('The requested page does not exist.');
 			}
-
+			
+			$currentDate = new \DateTime();
 			$model->customer_id = $customer->id;
 			$location_id = Yii::$app->session->get('location_id');
        		$query = Lesson::find()
@@ -97,8 +98,8 @@ class InvoiceController extends Controller
 					}])
 					->where(['e.location_id' => $location_id]);
 				}])
-                ->where([
-					'ili.id' => null,
+                ->where(['ili.id' => null])
+				->andWhere(['<=','lesson.date',$currentDate->format('Y:m:d')
 				]);
         
 			$unInvoicedLessonsDataProvider = new ActiveDataProvider([
