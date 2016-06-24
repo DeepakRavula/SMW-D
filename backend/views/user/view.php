@@ -54,15 +54,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
 		<?php
 	
-		$studentContent = null;
-
-		//if (!empty($role) && $role->name === User::ROLE_CUSTOMER) {
-			$studentContent = $this->render('_customer-student', [
+		$studentContent = $this->render('_customer-student', [
 				'model' => $model,
 				'dataProvider' => $dataProvider,
 				'student' => $student,
-			]);
-		//}
+		]);
 
 		$addressContent = $this->render('_view-contact', [
 			'model' => $model,
@@ -103,54 +99,48 @@ $this->params['breadcrumbs'][] = $this->title;
 				'active' => true,
 			],
 		];
-		if (in_array($role->name, ['teacher'])) {
-			$items[] =
+
+		$teacherItems = [
 			[
 				'label' => 'Qualifications',
 				'content' => $qualificationContent,
-			];
-		}
-		if (in_array($role->name, ['teacher'])) {
-			$items[] =
+			],
 			[
 				'label' => 'Availability',
 				'content' => $teacherAvailabilityContent,
-			];
-		}
-		if (in_array($role->name, ['teacher'])) {
-			$items[] =
+			],
 			[
 				'label' => 'Students',
 				'content' => $teacherStudentContent,
-			];
-		}
-		if (in_array($role->name, ['customer'])) {
-			$items[] =
+			],	
+			
+		];
+		
+		$customerItems = [
 			[
 				'label' => 'Students',
 				'content' => $studentContent,
-			];
-		}
-		if (in_array($role->name, ['customer'])) {
-			$items[] =
+			],
 			[
 				'label' => 'Enrolments',
 				'content' => $enrolmentContent,
-			];
-		}
-		if (in_array($role->name, ['customer'])) {
-			$items[] =
+			],
 			[
 				'label' => 'Lessons',
 				'content' => $lessonContent,
-			];
-		}
-		if (in_array($role->name, ['customer'])) {
-			$items[] =
+			],
 			[
 				'label' => 'Invoices',
 				'content' => $invoiceContent,
-			];
+			]
+		];
+		
+		if (in_array($role->name, ['teacher'])) {
+			$items = array_merge($items,$teacherItems);
+		}
+		
+		if (in_array($role->name, ['customer'])) {
+			$items = array_merge($items,$customerItems);
 		}
 		?>
 		<?php
