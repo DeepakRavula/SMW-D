@@ -1,7 +1,6 @@
 
 <?php
 
-use common\models\User;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\Tabs;
 use yii\helpers\Html;
@@ -95,6 +94,11 @@ $this->params['breadcrumbs'][] = $this->title;
 		$teacherStudentContent = $this->render('_teacher-student',[
 			'studentDataProvider' => $studentDataProvider,
 		]);
+
+		$staffLocationContent = $this->render('_staff-location',[
+			'locationDataProvider' => $locationDataProvider,
+		]);
+		
 		?>
 		<?php
 		$items = [
@@ -139,13 +143,22 @@ $this->params['breadcrumbs'][] = $this->title;
 				'content' => $invoiceContent,
 			]
 		];
-		
+		$staffItems = [
+			[
+				'label' => 'Locations',
+				'content' => $staffLocationContent,
+			],	
+		];
 		if (in_array($role->name, ['teacher'])) {
 			$items = array_merge($items,$teacherItems);
 		}
 		
 		if (in_array($role->name, ['customer'])) {
 			$items = array_merge($items,$customerItems);
+		}
+
+		if (in_array($role->name, ['staffmember'])) {
+			$items = array_merge($items,$staffItems);
 		}
         if (in_array($role->name, ['customer'])) {
 			$items[] =
@@ -154,9 +167,6 @@ $this->params['breadcrumbs'][] = $this->title;
 				'content' => $paymentsContent,
 			];
 		}
-		?>
-		<?php
-		//print_r($items);die;
 		?>
 		<?php
 		echo Tabs::widget([

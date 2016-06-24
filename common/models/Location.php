@@ -81,6 +81,11 @@ class Location extends \yii\db\ActiveRecord {
         return $this->hasMany(Enrolment::className(), ['location_id' => 'id']);
     }
 
+	public function getUserLocations()
+    {
+        return $this->hasMany(UserLocation::className(), ['location_id' => 'id']);
+    }
+
 	/**
 	 * @inheritdoc
 	 */
