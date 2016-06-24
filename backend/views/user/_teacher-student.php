@@ -21,14 +21,7 @@ echo GridView::widget([
 			return !empty($data->fullName) ? $data->fullName : null;
 		},
 	],
-	[
-		'label' => 'Customer Name',
-		'value' => function($data) {
-			$fullName = !(empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;
-			return $fullName;
-		}
-	],
-	['class' => 'yii\grid\ActionColumn', 'controller' => 'student'],
+	['class' => 'yii\grid\ActionColumn', 'controller' => 'student','template' => '{view}'],
 ],
 ]);
 ?>
