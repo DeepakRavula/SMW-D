@@ -193,6 +193,12 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);
     }
 	
+	public function getAvailabilities()
+    {
+        return $this->hasMany(UserLocation::className(), ['user_id' => 'id'])
+		  ->viaTable('teacher_availability_day', ['teacher_location_id' => 'id']);
+    }
+	
 	public function getQualification()
     {
         return $this->hasOne(Qualification::className(), ['teacher_id' => 'id']);

@@ -224,6 +224,8 @@ class UserController extends Controller {
 		$model = new UserForm();
 		$addressModels = [new Address];
 		$phoneNumberModels = [new PhoneNumber];
+		$availabilityModels = [new TeacherAvailability];
+		
 		$model->setScenario('create');
 		$model->roles = Yii::$app->request->queryParams['User']['role_name'];
 		if ($model->roles === User::ROLE_STAFFMEMBER) {
@@ -238,8 +240,11 @@ class UserController extends Controller {
 			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
 			Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
 
+			$availabilityModels = UserForm::createMultiple(TeacherAvailability::classname());
+			Model::loadMultiple($availabilityModels, Yii::$app->request->post());
+
 			$valid = $model->validate();
-			$valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels)) && $valid;
+			$valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels) || Model::validateMultiple($availabilityModels)) && $valid;
 
 			if ($valid) {
 				$transaction = \Yii::$app->db->beginTransaction();
@@ -261,6 +266,19 @@ class UserController extends Controller {
 								break;
 							}
 						}
+						$userLocationModel = UserLocation::findOne(['user_id' => $model->getModel()->id]);
+						$from_time = $_POST['TeacherAvailability'][0]['from_time'];
+						$fromTime = new \DateTime($from_time);
+						$toTime = new \DateTime($_POST['TeacherAvailability']['to_time']);
+						foreach ($availabilityModels as $availabilityModel) {
+							$availabilityModel->teacher_location_id = $userLocationModel->id;
+							$availabilityModel->from_time = $fromTime->format("H:i:s");
+							$availabilityModel->to_time = $toTime->format("H:i:s");
+							if (!($flag = $availabilityModel->save(false))) {
+								$transaction->rollBack();
+								break;
+							}
+						}
 					}
 
 					if ($flag) {
@@ -278,6 +296,7 @@ class UserController extends Controller {
 					'section' => $section,
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+					'availabilityModels' => (empty($availabilityModels)) ? [new TeacherAvailability] : $availabilityModels,
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
 					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels,
 					'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
@@ -318,8 +337,11 @@ class UserController extends Controller {
 				throw new ForbiddenHttpException;
 			}
 		}
+		
 		$addressModels = $model->addresses;
 		$phoneNumberModels = $model->phoneNumbers;
+		$availabilityModels = $model->availabilities;
+		
 		if ($model->load(Yii::$app->request->post())) {
 			$oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
 			$addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
@@ -330,9 +352,14 @@ class UserController extends Controller {
 			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
 			Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
 			$deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
+			
+			$oldAvailabilityIDs = ArrayHelper::map($availabilityModels, 'id', 'id');
+			$availabilityModels = UserForm::createMultiple(TeacherAvailability::classname(), $availabilityModels);
+			Model::loadMultiple($availabilityModels, Yii::$app->request->post());
+			$deletedAvailabilityIDs = array_diff($oldAvailabilityIDs, array_filter(ArrayHelper::map($availabilityModels, 'id', 'id')));
 
 			$valid = $model->validate();
-			$valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels)) && $valid;
+			$valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels) || Model::validateMultiple($availabilityModels)) && $valid;
 
 			if ($valid) {
 				$transaction = \Yii::$app->db->beginTransaction();
@@ -354,6 +381,22 @@ class UserController extends Controller {
 						foreach ($phoneNumberModels as $phoneNumberModel) {
 							$phoneNumberModel->user_id = $id;
 							if (!($flag = $phoneNumberModel->save(false))) {
+								$transaction->rollBack();
+								break;
+							}
+						}
+						if (!empty($deletedAvailabilityIDs)) {
+							TeacherAvailability::deleteAll(['id' => $deletedAvailabilityIDs]);
+						}
+
+						$fromTime = new \DateTime($_POST['TeacherAvailability']['from_time']);
+						$toTime = new \DateTime($_POST['TeacherAvailability']['to_time']);	
+						$userLocationModel = UserLocation::findOne(['user_id' => $id]);
+						foreach ($availabilityModels as $availabilityModel) {
+							$availabilityModel->teacher_location_id = $userLocationModel->id;
+							$availabilityModel->from_time = $fromTime->format("H:i:s");
+							$availabilityModel->to_time = $toTime->format("H:i:s");
+							if (!($flag = $availabilityModel->save(false))) {
 								$transaction->rollBack();
 								break;
 							}
@@ -380,6 +423,7 @@ class UserController extends Controller {
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 					'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
+					'availabilityModels' => (empty($availabilityModels)) ? [new TeacherAvailability] : $availabilityModels,
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
 					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels,
 					'section' => $section
