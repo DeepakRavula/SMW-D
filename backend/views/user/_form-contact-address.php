@@ -123,3 +123,4 @@ $this->registerJs($js);
     </div>
 <?php DynamicFormWidget::end(); ?>
 <div class="clearfix"></div>
+<hr class="hr-ad">

@@ -44,6 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="clearfix"></div>
         </div>
     </div>
+    <div class="clearfix"></div>
 </div>
 
 <div class="tabbable-panel">

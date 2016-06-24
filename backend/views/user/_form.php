@@ -15,7 +15,7 @@ use yii\bootstrap\Tabs;
         padding-left: 0;
         padding-right: 0;
     }
-	.quali-fields{
+	.address-fields, .phone-fields, .quali-fields, .quali-fields label{
         display: none;
     }
     hr{
@@ -24,9 +24,6 @@ use yii\bootstrap\Tabs;
     .form-well{
         margin-bottom: 10px;
         padding-top: 15px;
-    }
-    .quali-fields label{
-        display: none;
     }
 
 </style>
@@ -92,18 +89,24 @@ use yii\bootstrap\Tabs;
 		];
 	}
 	?>
-	<?php
-	echo Tabs::widget([
-		'id' => 'user-update-tab',
-		'items' => $items,
-	]);
-	?>
+	<div class="tabbable-panel">
+		<div class="tabbable-line">
+			<?php
+			echo Tabs::widget([
+				'id' => 'user-update-tab',
+				'items' => $items,
+
+			]);
+			?>
+		</div>
+	</div>
 
 	<div class="col-md-12 m-b-10">
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div> <!-- user-form -->
+
 <script>
 	$('.add-address').bind('click', function () {
 		$('.address-fields').show();
