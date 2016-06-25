@@ -110,7 +110,8 @@ class InvoiceController extends Controller
 		$post = $request->post();
         if ( ! empty($post['selection']) && is_array($post['selection'])) {
 			$invoice = new Invoice();
-			$invoice->invoice_number = 1;
+            $invoiceNumber = $model->invoiceNumber()->invoice_number;
+			$invoice->invoice_number = $invoiceNumber + 1;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->notes = $_POST['Invoice']['notes'];
@@ -118,6 +119,7 @@ class InvoiceController extends Controller
 			$invoice->save();
             $subTotal = 0;
             $taxAmount = 0;
+            $taxPercentage= 0;
 			foreach($post['selection'] as $selection) {
                 $lesson = Lesson::findOne(['id'=>$selection]);
                 $actualLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
