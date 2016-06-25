@@ -2,8 +2,9 @@
 
 use yii\grid\GridView;
 use common\models\TeacherAvailability;
+use yii\helpers\Html;
 
-?> 
+?>
 <?php
 
 echo GridView::widget([
@@ -48,3 +49,6 @@ echo GridView::widget([
 	],
 ]);
 ?>
+<div class="m-t-20">
+		<?php echo Html::a('<i class="fa fa-pencil"></i> Update Availability', ['update', 'id' => $model->id,'section' => 'availability'], ['class' => 'm-r-20']) ?>
+</div>
