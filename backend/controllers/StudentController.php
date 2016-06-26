@@ -7,6 +7,7 @@ use common\models\Student;
 use common\models\Enrolment;
 use common\models\Lesson;
 use common\models\Qualification;
+use backend\models\search\StudentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -36,17 +37,12 @@ class StudentController extends Controller
      */
     public function actionIndex()
     {
-		$locationId = Yii::$app->session->get('location_id');
-        $query = Student::find()
-			->joinWith(['customer' => function($query) use($locationId){
-				$query->joinWith('userLocation')
-					->where(['location_id' => $locationId]);
-			}]);
-		$dataProvider = new ActiveDataProvider([
-			'query' => $query,
-		]);
+        $searchModel = new StudentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel
         ]);
     }
 
