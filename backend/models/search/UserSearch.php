@@ -13,6 +13,8 @@ use common\models\User;
 class UserSearch extends User
 {
 	public $role_name;
+    public $lastname;
+    public $firstname;
     /**
      * @inheritdoc
      */
@@ -20,7 +22,7 @@ class UserSearch extends User
     {
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'email','role_name'], 'safe'],
+            [['username', 'auth_key', 'password_hash', 'email','role_name','firstname','lastname'], 'safe'],
         ];
     }
 
@@ -62,12 +64,15 @@ class UserSearch extends User
  		$query->leftJoin(['rbac_auth_assignment aa'], 'u.id = aa.user_id');
  		$query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
  		$query->leftJoin(['user_location ul'], 'ul.user_id = u.id');
+        $query->leftJoin(['user_profile uf'], 'uf.user_id = u.id');
 
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'auth_key', $this->auth_key])
             ->andFilterWhere(['like', 'password_hash', $this->password_hash])
             ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['ai.name' => $this->role_name]);
+            ->andFilterWhere(['ai.name' => $this->role_name])
+            ->andFilterWhere(['like', 'uf.lastname' , $this->lastname])
+            ->andFilterWhere(['like', 'uf.firstname' , $this->firstname]);
 
 		if($this->role_name !== USER::ROLE_ADMINISTRATOR) {
             $query->andFilterWhere(['like', 'ul.location_id', $locationId]);
