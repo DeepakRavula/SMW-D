@@ -18,20 +18,23 @@ $roles = ArrayHelper::getColumn(
         'method' => 'get',
     ]); ?>
     <div class="row col-md-12">
-        <div class="col-md-2">
+        <div class="col-md-6">
             <?php echo $form->field($model, 'lastname') ?>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-6">
             <?php echo $form->field($model, 'firstname') ?>
         </div>
-        <div class="col-md-3">
+    </div>
+    <div class="row col-md-12">
+        <div class="col-md-6">
             <?php echo $form->field($model, 'email') ?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
             <?php echo $form->field($model, 'role_name')->dropDownList($roles, ['prompt'=>'All']);?>
         </div>
-        
-        <div class="col-md-2 form-group m-t-5">
+    </div>
+    <div class="row col-md-12">   
+        <div class="col-md-3 center form-group m-t-5">
             <br>
             <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
         </div>

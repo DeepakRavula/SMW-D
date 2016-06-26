@@ -42,11 +42,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'userProfile.lastname',
                 'email',
                 [
+                    'label' => 'Role',
+                    'value' => function($data) {
+                        $roles = \Yii::$app->authManager->getRolesByUser($data->id);
+                            foreach($roles as $roles){
+                                return $roles->description;
+                            }
+                    },
+                ],
+                [
                     'label' => 'Phone',
                     'value' => function($data) {
                         return ! empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                     },
-                ],
+                ]
                 //['class' => 'yii\grid\ActionColumn'],
             ],
         ]); ?>
