@@ -69,7 +69,13 @@ $this->registerJs($js);
 	<?= $form->field($availabilityModel, "[{$index}]day")->dropdownList(TeacherAvailability::getWeekdaysList(),['prompt' => 'select day']) ?>
 	                    </div>
 	                    <div class="col-sm-4">
-	<?= $form->field($availabilityModel, "[{$index}]from_time")->widget(TimePicker::classname(), []) ?>
+<?php
+	$fromTime = \DateTime::createFromFormat('H:i:s', $availabilityModel->from_time);
+	$toTime = \DateTime::createFromFormat('H:i:s', $availabilityModel->to_time);
+	$availabilityModel->from_time = ! empty($availabilityModel->from_time) ? $fromTime->format('g:i A') : null;
+	$availabilityModel->to_time = ! empty($availabilityModel->to_time) ? $toTime->format('g:i A') : null;
+?>
+	<?= $form->field($availabilityModel, "[{$index}]from_time")->widget(TimePicker::classname(), []); ?>
 	                    </div>
 	                    <div class="col-sm-4">
 	<?= $form->field($availabilityModel, "[{$index}]to_time")->widget(TimePicker::classname(), []) ?>
