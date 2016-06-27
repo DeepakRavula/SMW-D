@@ -96,9 +96,10 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
     <?php yii\widgets\Pjax::end(); ?>
     </div>
     <div class="row">
-        <!-- accepted payments column -->
-        <div class="col-xs-6">
-         
+        <div class="col-xs-4 notes">
+            <label for="notes">Notes:</label>
+            <div class="clearfix"></div>
+            <textarea rows=4, cols=60, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea> 
         </div>
         <!-- /.col -->
         <div class="col-xs-6">
@@ -106,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 
           <div class="table-responsive">
             <table class="table">
-              <tbody><tr>
+              <tbody><tr style="border-top: 0">
                 <th style="width:50%">Subtotal:</th>
                 <td><?php echo 'CA$' .$model->subTotal;?></td>
               </tr>
@@ -127,11 +128,6 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         </div>
         <!-- /.col -->
 	</div> 
-        <div class="col-md-4">
-            <label for="notes">Notes:</label>
-            <div class="clearfix"></div>
-            <textarea rows=4, cols=110, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea> 
-        </div>
     <div class="row no-print">
         <div class="col-xs-12">
             <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>

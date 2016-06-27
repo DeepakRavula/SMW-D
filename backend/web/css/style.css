@@ -85,6 +85,13 @@ a:hover, a:focus{
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
     background: #e12e2b;
 }
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    z-index: 2;
+    color: #fff;
+    cursor: default;
+    background-color: #e12e2b;
+    border-color: #e12e2b;
+}
 /*****************************
 Resets
 ******************************/
