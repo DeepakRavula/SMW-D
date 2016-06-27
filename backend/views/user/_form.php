@@ -15,7 +15,7 @@ use yii\bootstrap\Tabs;
         padding-left: 0;
         padding-right: 0;
     }
-	.address-fields, .phone-fields, .quali-fields, .quali-fields label{
+	.address-fields, .phone-fields, .quali-fields, .quali-fields label, .availability-fields{
         display: none;
     }
     hr{
@@ -127,8 +127,8 @@ use yii\bootstrap\Tabs;
 		$('.quali-fields').show();
 		$('.hr-qu').hide();
 	});
-	$('.availability').bind('click', function () {
-	$('.teacher-availability-create').show();
+	$('.add-availability').bind('click', function () {
+	$('.availability-fields').show();
 	$('.hr-qu').hide();
 	});
 	$('#user-update-tab a').click(function (e) {

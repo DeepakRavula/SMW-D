@@ -18,13 +18,12 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', $role.'s'), 'url'
 $this->params['breadcrumbs'][] = ['label'=>Yii::t('backend', 'Update')];
 ?>
 <style>
-	.address-fields, .phone-fields, .quali-fields, .teacher-availability-create{
+	.address-fields, .phone-fields, .quali-fields, .teacher-availability-fields{
         display: block !important;
     }
     .hr-ad, .hr-ph, .add-quali{
     	display: none !important;
     }
-
 </style>
 <div class="user-update p-t-10">
 

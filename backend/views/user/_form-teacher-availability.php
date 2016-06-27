@@ -87,5 +87,4 @@ $this->registerJs($js);
 				</div>
 		</div>
     <div class="clearfix"></div>
-		<hr class="hr-ph">
 		<?php DynamicFormWidget::end(); ?>
