@@ -10,7 +10,7 @@ use yii\helpers\Html;
 		<span class="label label-primary"><?= $program ?></span>
 	</div>
 	<div class="clearfix"></div>
-	<div class="m-t-20">
+	<div class="col-md-12 m-t-20 m-b-20">
 		<?php echo Html::a('<i class="fa fa-pencil"></i> Update Qualification', ['update', 'id' => $model->id,'section' => 'qualification'], ['class' => 'm-r-20']) ?>
 	</div>
 </div>
