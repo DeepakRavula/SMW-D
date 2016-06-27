@@ -53,8 +53,8 @@ class InvoiceSearch extends Invoice
             return $dataProvider;
         }
 
-		$this->fromDate =  \DateTime::createFromFormat('m-d-y', $this->fromDate);
-		$this->toDate =  \DateTime::createFromFormat('m-d-y', $this->toDate);
+		$this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);
+		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
 		
 		$query->andWhere(['between','date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 
