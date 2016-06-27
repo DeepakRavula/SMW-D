@@ -85,10 +85,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
 		$qualificationContent = $this->render('_view-qualification',[
 			'program' => $program,	
+			'model' => $model,
 		]);
 
 		$teacherAvailabilityContent = $this->render('_view-teacher-availability',[
 			'teacherDataProvider' => $teacherDataProvider,
+			'model' => $model,
 		]);
 
 		$teacherStudentContent = $this->render('_teacher-student',[
