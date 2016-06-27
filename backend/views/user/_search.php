@@ -18,11 +18,11 @@ $roles = ArrayHelper::getColumn(
         'method' => 'get',
     ]); ?>
     <div class="row col-md-12">
-        <div class="col-md-6">
-            <?php echo $form->field($model, 'lastname') ?>
+		<div class="col-md-6">
+            <?php echo $form->field($model, 'firstname') ?>
         </div>
         <div class="col-md-6">
-            <?php echo $form->field($model, 'firstname') ?>
+            <?php echo $form->field($model, 'lastname') ?>
         </div>
     </div>
     <div class="row col-md-12">
