@@ -10,7 +10,8 @@ $this->title = 'Students';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="student-index">
-
+<?php yii\widgets\Pjax::begin(['id' => 'student-index']); ?>
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
@@ -36,6 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
+	<?php yii\widgets\Pjax::end(); ?>
 
 	
 
