@@ -4,6 +4,7 @@ namespace backend\controllers;
 use common\models\Payments;
 use Yii;
 use common\models\User;
+use common\models\UserAddress;
 use common\models\UserLocation;
 use common\models\Address;
 use common\models\PhoneNumber;
@@ -510,6 +511,24 @@ class UserController extends Controller {
 			'body' => ucwords($model->roles) . ' profile has been deleted successfully'
 		]);
 		return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
+	}
+
+
+	public function actionDeleteAddress($id,$userId) {
+		$model = new UserForm();
+		$model->setModel($this->findModel($userId));
+
+		$userAddressModel = UserAddress::findOne(["address_id" => $id]);
+		$userAddressModel->delete();
+		
+		$addressModel = Address::findOne(['id' => $id]);
+		$addressModel->delete();
+		
+		Yii::$app->session->setFlash('alert', [
+			'options' => ['class' => 'alert-success'],
+			'body' => 'Address has been deleted successfully'
+		]);
+		return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $userId]);
 	}
 
 	/**

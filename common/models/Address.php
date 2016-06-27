@@ -67,6 +67,11 @@ class Address extends \yii\db\ActiveRecord
 		return $this->hasMany(User::className(), ['id' => 'user_id'])
 		  ->viaTable('user_address', ['address_id' => 'id']);
 	}
+
+	public function getUsers() {
+		return $this->hasOne(User::className(), ['id' => 'user_id'])
+		  ->viaTable('user_address', ['address_id' => 'id']);
+	}
 	
 	public function getCity() {
 		return $this->hasOne(City::className(), ['id' => 'city_id']);
