@@ -126,9 +126,17 @@ class LessonController extends Controller
 		$model = Lesson::findOne(['id' => $id]);
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
 		$currentDate = new \DateTime();
+		$location_id = Yii::$app->session->get('location_id');
+		$lastInvoice = Invoice::lastInvoice($location_id);
+		if(empty($lastInvoice)) {
+			$invoiceNumber = 1;
+		} else {
+			$invoiceNumber = $lastInvoice->invoice_number + 1;
+		}
+
 		if($lessonDate <= $currentDate){
-			$invoice = new Invoice();
-			$invoice->invoice_number = 1;
+			$invoice = new Invoice();	
+			$invoice->invoice_number = $invoiceNumber;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->save();

@@ -37,8 +37,6 @@ class InvoiceController extends Controller
      */
     public function actionIndex()
     {
-
-
         $searchModel = new InvoiceSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -78,6 +76,7 @@ class InvoiceController extends Controller
 		$request = Yii::$app->request;
 		$invoice = $request->get('Invoice');
 		$unInvoicedLessonsDataProvider = null;
+		$location_id = Yii::$app->session->get('location_id');
 
 		if(isset($invoice['customer_id'])) {
 			$customer = User::findOne(['id' => $invoice['customer_id']]);
@@ -88,7 +87,6 @@ class InvoiceController extends Controller
 			
 			$currentDate = new \DateTime();
 			$model->customer_id = $customer->id;
-			$location_id = Yii::$app->session->get('location_id');
        		$query = Lesson::find()
                 ->joinwith('invoiceLineItem ili')
                 ->joinwith(['enrolmentScheduleDay' => function($query) use($location_id, $customer) {
@@ -110,9 +108,16 @@ class InvoiceController extends Controller
 		$post = $request->post();
         if ( ! empty($post['selection']) && is_array($post['selection'])) {
 			$invoice = new Invoice();
-            $invoiceNumber = $model->invoiceNumber()->invoice_number;
-			$invoice->invoice_number = $invoiceNumber + 1;
-			$invoice->date = (new \DateTime())->format('Y-m-d');
+			$lastInvoice = Invoice::lastInvoice($location_id);
+
+			if(empty($lastInvoice)) {
+				$invoiceNumber = 1;
+			} else {
+				$invoiceNumber = $lastInvoice->invoice_number + 1;
+			}
+
+			$invoice->invoice_number = $invoiceNumber;
+			$invoice->date = (new \DateTime())->format('Y-m-d');	
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->notes = $_POST['Invoice']['notes'];
 			

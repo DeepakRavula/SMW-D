@@ -85,18 +85,18 @@ class Invoice extends \yii\db\ActiveRecord
 		return $status;
     }
     
-    public function invoiceNumber(){
-        $location_id = Yii::$app->session->get('location_id');
-        return $query = Invoice::find()
+    public static function lastInvoice($location_id){
+        return $query = Invoice::find()->alias('i')
             ->joinwith(['lineItems' => function($query) use($location_id){
                 $query->joinWith(['lesson' => function($query) use($location_id){
                     $query->joinWith(['enrolmentScheduleDay'  => function($query) use($location_id){
-                        $query->joinWith('enrolment e')
-                        ->where(['e.location_id' => $location_id]);
+                        $query->joinWith(['enrolment e' => function($query) use($location_id){
+                        	$query->where(['e.location_id' => $location_id]);
+						}]);
                     }]);
                 }]);
             }])
-            ->orderBy(['invoice_number' => 'SORT_DESC'])
+            ->orderBy(['i.id' => SORT_DESC])
             ->one();
     }
 }
