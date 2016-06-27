@@ -75,7 +75,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <!-- accepted payments column -->
         <div class="col-xs-6">
-         
+                <label for="notes">Notes:</label>
+                <div class="clearfix"></div>
+                <textarea rows=5, cols=110, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea>
         </div>
         <!-- /.col -->
         <div class="col-xs-6">
@@ -83,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
           <div class="table-responsive">
             <table class="table">
-              <tbody><tr>
+              <tbody><tr style="border-top: 0">
                 <th style="width:50%">Subtotal:</th>
                 <td><?php echo $model->subTotal;?></td>
               </tr>
@@ -104,9 +106,6 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <!-- /.col -->
       </div>
-    <label for="notes">Notes:</label>
-    <div class="clearfix"></div>
-    <textarea rows=5, cols=110, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea>
 </div>
 <script>
 	$(document).ready(function(){

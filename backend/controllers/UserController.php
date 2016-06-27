@@ -303,6 +303,10 @@ class UserController extends Controller {
 
 					if ($flag) {
 						$transaction->commit();
+						Yii::$app->session->setFlash('alert', [
+								'options' => ['class' => 'alert-success'],
+								'body' => ucwords($model->roles) . ' profile has been created successfully'
+						]);
 						return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
 					}
 				} catch (Exception $e) {
@@ -424,7 +428,11 @@ class UserController extends Controller {
 					}
 					if ($flag) {
 						$transaction->commit();
-						return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
+						Yii::$app->session->setFlash('alert', [
+								'options' => ['class' => 'alert-success'],
+								'body' => ucwords($model->roles) . ' profile has been updated successfully'
+						]);
+					return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
 					}
 				} catch (Exception $e) {
 					$transaction->rollBack();
@@ -432,10 +440,7 @@ class UserController extends Controller {
 			}
 
 
-			Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => ucwords($model->roles) . ' profile has been updated successfully'
-			]);
+			
 		}
 	
 		return $this->render('update', [
