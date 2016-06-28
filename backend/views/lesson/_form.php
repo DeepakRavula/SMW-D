@@ -15,13 +15,7 @@ use yii\bootstrap\ActiveForm;
     <?php echo $form->errorSummary($model); ?>
 	<div class="row">
 	<div class="col-md-4">
-		<?php echo $form->field($model, 'enrolment_schedule_day_id')->textInput() ?>
-	</div>
-	<div class="col-md-4">
-		<?php echo $form->field($model, 'status')->textInput() ?>
-	</div>
-	<div class="col-md-4">
-		<?php echo $form->field($model, 'date')->textInput() ?>
+		<?php echo $form->field($model, 'notes')->textarea() ?>
 	</div>
     <div class="clearfix"></div>
     </div>
