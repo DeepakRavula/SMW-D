@@ -14,7 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 		<div class="col-md-12">
 			<p class="users-name">
 				<?php echo ! empty($model->enrolmentScheduleDay->enrolment->student->fullName) ? $model->enrolmentScheduleDay->enrolment->student->fullName : null ?>
-				<em><small><?php echo ! empty(date("d-m-Y", strtotime($model->date))) ? date("d-m-Y g:i a", strtotime($model->date)) : null ?></small></em>
 			</p>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
@@ -37,6 +36,9 @@ $this->params['breadcrumbs'][] = $this->title;
 		<div class="clearfix"></div>
 		<div><h5>Teacher Name:
 		<?php echo !empty($model->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity) ? $model->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity : null;?>
+        <br>
+        Lesson Date:
+        <em><small><?php echo ! empty(date("d-m-Y", strtotime($model->date))) ? date("d-m-Y g:i a", strtotime($model->date)) : null ?></small></em>
         </h5></div>
 		<div class="student-view">
 			<div class="col-md-12 action-btns">
@@ -47,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		                'method' => 'post',
 		            ],
 		        ]) ?>
-				<?php echo Html::a('<i class="fa fa-dollar"></i> Generate Invoice', ['invoice', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+				<?php echo Html::a('<i class="fa fa-dollar"></i> Invoice this Lesson', ['invoice', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		    </div>
 		    <div class="clearfix"></div>
 		</div>
