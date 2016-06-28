@@ -82,7 +82,7 @@ class ProgramController extends Controller
     public function actionCreate()
     {
         $model = new Program();
-
+		$model->status = Program::STATUS_ACTIVE;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			Yii::$app->session->setFlash('alert', [
         	    'options' => ['class' => 'alert-success'],
