@@ -169,6 +169,7 @@ class UserForm extends Model
 		$this->qualifications = ArrayHelper::getColumn(
 			Qualification::find()->where(['teacher_id'=>$model->getId()])->all(), 'program_id'
 		);
+        $this->qualifications = array_map('strval', $this->qualifications);
 	/*	
 		$teacherId = UserLocation::findOne()->where(['location_id' => Yii::$app->session->get('location_id')]);
 		$teacherAvailability = TeacherAvailability::findOne([$teacherId->user_id => $model->getId()]); 
