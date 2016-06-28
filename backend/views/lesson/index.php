@@ -83,7 +83,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				'buttons' => [
 					'invoice' => function ($url, $model) {
 						return Html::a(
-							'<i class="fa fa-file-pdf-o" data-toggle="tooltip" data-placement="bottom" title="Generate Invoice"></i>',
+							'<i class="fa  fa-dollar" data-toggle="tooltip" data-placement="bottom" title="Generate Invoice"></i>',
 							$url, 
 							[
 								'title' => 'Generate Invoice',
