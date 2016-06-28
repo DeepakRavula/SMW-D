@@ -70,7 +70,7 @@ use yii\bootstrap\Tabs;
 			'active' => $section === 'profile',
 		],
 		[
-			'label' => 'Contacts',
+			'label' => 'Contact Information',
 			'content' => $addressContent,
 			'active' => $section === 'contact',
 		],
