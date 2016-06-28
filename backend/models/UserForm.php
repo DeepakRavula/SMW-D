@@ -27,6 +27,7 @@ class UserForm extends Model
 	public $qualifications;
     public $lastname;
     public $firstname;
+	public $notes;
 	public $addresslabel;
 	public $city;
 	public $province;
@@ -75,6 +76,7 @@ class UserForm extends Model
                 )]
             ],
             ['roles','required'],
+			['notes','safe'],
            	['locations','safe'],    
 			[['phonelabel', 'phoneextension', 'phonenumber', 'address'], 'safe'],
             [['addresslabel', 'postalcode', 'province', 'city', 'country'],'safe'],
@@ -146,6 +148,7 @@ class UserForm extends Model
 	  		if(! empty($userFirstName)){
 				$this->firstname = $userFirstName->firstname;
 			    $this->lastname = $userFirstName->lastname;
+				$this->notes = $userFirstName->notes;
 	   	}
 	   	
 		$phoneNumber = PhoneNumber::findOne(['user_id' => $model->getId()]); 
@@ -170,17 +173,6 @@ class UserForm extends Model
 			Qualification::find()->where(['teacher_id'=>$model->getId()])->all(), 'program_id'
 		);
         $this->qualifications = array_map('strval', $this->qualifications);
-	/*	
-		$teacherId = UserLocation::findOne()->where(['location_id' => Yii::$app->session->get('location_id')]);
-		$teacherAvailability = TeacherAvailability::findOne([$teacherId->user_id => $model->getId()]); 
-	  		if(! empty($teacherAvailability)){
-				$this->teacherAvailabilityDay = $teacherAvailability->day;
-			    $this->fromTime = $teacherAvailability->from_time;
-				$this->toTime = $teacherAvailability->to_time; 
-	   	}
-    
-	 * 
-	 */    
         return $this->model;
     }
 
@@ -272,14 +264,7 @@ public static function createMultiple($modelClass, $multipleModels = [])
                 $userLocationModel->location_id = Yii::$app->session->get('location_id');
                 $userLocationModel->save();
 			}
-			/*
-			if (! $isNewRecord) {
-                $userLocationModel->location_id = $this->locations;
-                $userLocationModel->save();
-			}
-			 * 
-			 */
-			
+
 			$fromTime = new \DateTime($this->fromTime);
 			$toTime = new \DateTime($this->toTime);
 			$teacherAvailabilityModel = TeacherAvailability::findOne(['teacher_location_id' => $userLocationModel->id]);
@@ -297,6 +282,7 @@ public static function createMultiple($modelClass, $multipleModels = [])
 			}
 			$userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
+			$userProfileModel->notes = $this->notes;
             $userProfileModel->save();
 			
 			$phoneNumberModel = PhoneNumber::findOne(['user_id' => $model->getId()]);

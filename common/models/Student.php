@@ -30,7 +30,7 @@ class Student extends \yii\db\ActiveRecord
     {
         return [
             [['first_name', 'last_name'], 'required'],
-            [['birth_date'], 'safe'],
+            [['birth_date','notes'], 'safe'],
             [['customer_id'], 'integer'],
             [['first_name', 'last_name'], 'string', 'max' => 30],
         ];
@@ -47,6 +47,7 @@ class Student extends \yii\db\ActiveRecord
             'last_name' => 'Last Name',
             'birth_date' => 'Birth Date',
             'customer_id' => 'Customer Name',
+            'notes' => 'Notes',
         ];
     }
 	public function getCustomer()
