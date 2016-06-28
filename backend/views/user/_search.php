@@ -11,30 +11,26 @@ $roles = ArrayHelper::getColumn(
          	Yii::$app->authManager->getRoles(),'description'
         )
 ?>
-<div class="user-search">
+<div class="user-search m-t-10">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
     <div class="row col-md-12">
-		<div class="col-md-6">
+		<div class="col-md-2">
             <?php echo $form->field($model, 'firstname') ?>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-2">
             <?php echo $form->field($model, 'lastname') ?>
         </div>
-    </div>
-    <div class="row col-md-12">
-        <div class="col-md-6">
+        <div class="col-md-2">
             <?php echo $form->field($model, 'email') ?>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-2">
             <?php echo $form->field($model, 'role_name')->dropDownList($roles, ['prompt'=>'All']);?>
-        </div>
-    </div>
-    <div class="row col-md-12">   
-        <div class="col-md-3 center form-group m-t-5">
+        </div> 
+        <div class="col-md-2 center form-group m-t-5">
             <br>
             <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
         </div>
