@@ -42,6 +42,9 @@ use yii\bootstrap\ActiveForm;
 				]
 ]); ?>
         </div>
+		<div class="col-md-4">
+            <?php echo $form->field($model, 'notes')->textarea()?>
+        </div>
         <div class="clearfix"></div>
     </div>
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
