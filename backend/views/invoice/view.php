@@ -97,36 +97,11 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
     </div>
     <div class="row">
         <!-- /.col -->
-        <div class="col-xs-12">
-          <table class="table">
-              <tbody>
-                <tr>
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td><strong>Total:</strong></td>
-                  <td><?php echo 'CA$' .$model->total;?></td>
-                </tr>
-              </tbody>
-            </table>
-        </div>
         <div class="col-xs-6">
           <!-- <p class="lead">Balance : <?php //echo $model->total;?> </p> -->
 
           <div class="table-responsive">
             <table class="table">
-              <tbody>
-                <tr>
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td><strong>Total:</strong></td>
-                  <td><?php echo 'CA$' .$model->total;?></td>
-                </tr>
-              </tbody>
-
               <tbody><tr style="border-top: 0">
                 <th style="width:50%">Subtotal:</th>
                 <td><?php echo 'CA$' .$model->subTotal;?></td>
