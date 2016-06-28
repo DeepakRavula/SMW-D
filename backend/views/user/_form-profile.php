@@ -12,6 +12,9 @@ use common\models\User;
 	<div class="col-md-4">
 		<?php echo $form->field($model, 'email') ?>
 	</div>
+	<div class="col-md-4">
+		<?php echo $form->field($model, 'notes')->textarea() ?>
+	</div>
 	<div class="clearfix"></div>
 </div>
 <div class="row-fluid">
