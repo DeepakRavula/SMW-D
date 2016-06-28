@@ -105,13 +105,22 @@ class ProgramController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+			
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			Yii::$app->session->setFlash('alert', [
+			if($model->status == Program::STATUS_INACTIVE){
+				Yii::$app->session->setFlash('alert', [
             	'options' => ['class' => 'alert-success'],
             	'body' => 'Program has been updated successfully'
-        ]);
-			return $this->redirect(['view', 'id' => $model->id]);
+       		]);
+				return $this->redirect(['index']);
+			}
+			else{
+				Yii::$app->session->setFlash('alert', [
+            	'options' => ['class' => 'alert-success'],
+            	'body' => 'Program has been updated successfully'
+        	]);
+				return $this->redirect(['view', 'id' => $model->id]);
+			}
         } else {
             return $this->render('update', [
                 'model' => $model,

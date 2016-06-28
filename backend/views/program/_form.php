@@ -22,7 +22,9 @@ use yii\bootstrap\ActiveForm;
 			<?php echo $form->field($model, 'rate')->textInput() ?>
 		</div>
 		<div class="col-md-4">
+			<?php if (!$model->getIsNewRecord()) : ?>
 			<?php echo $form->field($model, 'status')->dropDownList(Program::statuses()) ?>
+			<?php endif; ?>
 		</div>
 	</div>
 	<div class="row-fluid">
