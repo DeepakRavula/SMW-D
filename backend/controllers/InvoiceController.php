@@ -114,6 +114,7 @@ class InvoiceController extends Controller
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->notes = $_POST['Invoice']['notes'];
+			$invoice->internal_notes = $_POST['Invoice']['internal_notes'];
 			
 			$invoice->save();
             $subTotal = 0;

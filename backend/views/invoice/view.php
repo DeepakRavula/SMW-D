@@ -128,6 +128,11 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
             <textarea rows=4, cols=60, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea> 
         </div>
             <div class="clearfix"></div>
+	<div class="col-xs-4 notes">
+            <label for="notes">Internal Notes:</label>
+            <textarea rows=4, cols=60, readonly =true, name="notes" ><?php echo $model->internal_notes; ?></textarea> 
+        </div>
+            <div class="clearfix"></div>
     <div class="row no-print">
         <div class="col-xs-12">
             <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>
