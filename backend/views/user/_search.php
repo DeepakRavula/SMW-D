@@ -27,9 +27,6 @@ $roles = ArrayHelper::getColumn(
         <div class="col-md-2">
             <?php echo $form->field($model, 'email') ?>
         </div>
-        <div class="col-md-2">
-            <?php echo $form->field($model, 'role_name')->dropDownList($roles, ['prompt'=>'All']);?>
-        </div> 
         <div class="col-md-2 center form-group m-t-5">
             <br>
             <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
