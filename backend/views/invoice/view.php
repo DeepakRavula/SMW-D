@@ -51,35 +51,35 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
             'tableOptions' =>['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
-			    [
-				'label' => 'Teacher Name',
-				'value' => function($data) {
-					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity : null;
-				},
-			    ],
-				[
-				'label' => 'Program Name',
-				'value' => function($data) {
-					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
-				},
-			    ],
-				[
-				'label' => 'Date',
-				'value' => function($data) {
-					$date = date("d-m-Y", strtotime($data->lesson->date)); 
-					return ! empty($date) ? $date : null;
-                },
-			    ],
-				[
-				'label' => 'From Time',
-				'value' => function($data) {
-					if(! empty($data->lesson->enrolmentScheduleDay->from_time)){
-						$fromTime = date("g:i a",strtotime($data->lesson->enrolmentScheduleDay->from_time));
-						return !empty($fromTime) ? $fromTime : null;
-					}
-					return null;
-				},
-			    ],
+      			    [
+            				'label' => 'Teacher Name',
+            				'value' => function($data) {
+            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity : null;
+            				},
+            			    ],
+            				[
+            				'label' => 'Program Name',
+            				'value' => function($data) {
+            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
+            				},
+            			    ],
+            				[
+            				'label' => 'Date',
+            				'value' => function($data) {
+            					$date = date("d-m-Y", strtotime($data->lesson->date)); 
+            					return ! empty($date) ? $date : null;
+                            },
+            			    ],
+            				[
+            				'label' => 'From Time',
+            				'value' => function($data) {
+            					if(! empty($data->lesson->enrolmentScheduleDay->from_time)){
+            						$fromTime = date("g:i a",strtotime($data->lesson->enrolmentScheduleDay->from_time));
+            						return !empty($fromTime) ? $fromTime : null;
+            					}
+            					return null;
+            				},
+      			    ],
                 [ 
                 'attribute' => 'unit',
                 'label' => 'Unit',
@@ -97,11 +97,36 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
     </div>
     <div class="row">
         <!-- /.col -->
+        <div class="col-xs-12">
+          <table class="table">
+              <tbody>
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                  <td><strong>Total:</strong></td>
+                  <td><?php echo 'CA$' .$model->total;?></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
         <div class="col-xs-6">
           <!-- <p class="lead">Balance : <?php //echo $model->total;?> </p> -->
 
           <div class="table-responsive">
             <table class="table">
+              <tbody>
+                <tr>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                  <td> </td>
+                  <td><strong>Total:</strong></td>
+                  <td><?php echo 'CA$' .$model->total;?></td>
+                </tr>
+              </tbody>
+
               <tbody><tr style="border-top: 0">
                 <th style="width:50%">Subtotal:</th>
                 <td><?php echo 'CA$' .$model->subTotal;?></td>
