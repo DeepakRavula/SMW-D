@@ -11,26 +11,50 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Programs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="program-view p-10">
+<div class="program-view">
+	<div class="row-fluid user-details-wrapper">
+    <div class="col-md-12 p-t-10">
+        <p class="users-name pull-left">
+        	<?php echo $model->name; ?>
+        	<em>
+        		<small><?php echo $model->rate; ?></small>
+        	</em>
+        	<?php //echo DetailView::widget([
+		  //       'model' => $model,
+				// 'options' => ['class' => 'col-md-4'],
+		  //       'attributes' => [
+		  //           'name',
+		  //           'rate'
+		  //       ],
+		    //]) ?>
+        </p>
+        <div class="row col-md-12">
+            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Program'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+            <?php
+            echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
+                'class' => '',
+                'data' => [
+                    'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
+                    'method' => 'post',
+                ],
+            ])
+            ?>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
 
-    <?php echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'name',
-            'rate'
-        ],
-    ]) ?>
-
-    <p>
-        <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+    <!-- <p>
+        <?php //echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php //echo Html::a('Delete', ['delete', 'id' => $model->id], [
+            //'class' => 'btn btn-danger',
+            // 'data' => [
+             //   'confirm' => 'Are you sure you want to delete this item?',
+             //    'method' => 'post',
+          //  ],
+        //]) ?>
+    </p> -->
 </div>
 <div class="tabbable-panel">
 	<div class="tabbable-line">
