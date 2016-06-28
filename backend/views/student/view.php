@@ -52,7 +52,7 @@ $contactContent =  $this->render('_view-contact', [
             'content' => $lessonContent,
         ],
 		[
-            'label' => 'Contacts',
+            'label' => 'Contact information',
             'content' => $contactContent,
         ],
     ],

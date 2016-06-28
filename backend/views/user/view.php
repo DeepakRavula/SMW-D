@@ -105,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		<?php
 		$items = [
 			[
-				'label' => 'Contacts',
+				'label' => 'Contact information',
 				'content' => $addressContent,
 				'active' => true,
 			],
