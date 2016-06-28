@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		                'method' => 'post',
 		            ],
 		        ]) ?>
-				<?php echo Html::a('<i class="fa fa-dollar"></i> Generate Invoice', ['invoice', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+				<?php echo Html::a('<i class="fa fa-dollar"></i> Invoice this Lesson', ['invoice', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		    </div>
 		    <div class="clearfix"></div>
 		</div>
