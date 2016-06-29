@@ -43,4 +43,13 @@ class UserLocation extends \yii\db\ActiveRecord
             'location_id' => 'Location ID',
         ];
     }
+
+	/**
+    * @return \yii\db\ActiveQuery
+    */
+    public function getTeacherAvailability()
+    {
+        return $this->hasOne(TeacherAvailability::className(), ['teacher_location_id' => 'id'])
+			->andWhere(['not',['teacher_availability_day.id' => null]]);
+    }
 }
