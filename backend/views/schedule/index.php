@@ -31,7 +31,7 @@ $(document).ready(function() {
     defaultView: 'resourceDay',
     minTime: "<?php echo $from_time; ?>",
     maxTime: "<?php echo $to_time; ?>",
-    slotDuration: "00:30:01",
+    slotDuration: "00:15:01",
     editable: true,
     droppable: true,
     resources:  <?php echo Json::encode($teacherAvailability); ?>,
