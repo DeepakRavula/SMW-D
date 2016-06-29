@@ -44,6 +44,71 @@ $this->params['breadcrumbs'][] = $this->title;
 					return ! empty($data->enrolmentScheduleDay->duration) ? $data->enrolmentScheduleDay->duration : null;
                 },
 			],
+			/*[
+				'label' => 'Lesson Status',
+				'value' => function($data) {
+					$status = null;
+					switch($data->status){
+						case Lesson::STATUS_COMPLETED:
+							$status = 'Completed';
+						break;
+						case Lesson::STATUS_PENDING:
+							$status = 'Pending';
+						break;
+						case Lesson::STATUS_CANCELED:
+							$status = 'Canceled';
+						break;
+					}
+					return $status;
+                },
+			],
+			[
+				'label' => 'Invoice Status',
+				'value' => function($data) {
+					$status = null;
+
+					if( ! empty($data->invoice->status)) {
+						switch($data->invoice->status){
+							case Invoice::STATUS_UNPAID:
+								$status = 'Unpaid';
+							break;
+							case Invoice::STATUS_PAID:
+								$status = 'Paid';
+							break;
+							case Invoice::STATUS_CANCELED:
+								$status = 'Canceled';
+							break;
+						}
+					}
+					else {
+						$status = 'UnInvoiced';	
+					}
+					return $status;
+                },
+			],
+			[
+				'label' => 'Date',
+				'value' => function($data) {
+					$date = date("d-m-y", strtotime($data->date)); 
+					return ! empty($date) ? $date : null;
+                },
+			],
+			[
+				'class' => 'yii\grid\ActionColumn',
+				'template' => '{invoice} {view} {update} {delete}',
+				'buttons' => [
+					'invoice' => function ($url, $model) {
+						return Html::a(
+							'<span class="glyphicon glyphicon-usd"></span>',
+							$url, 
+							[
+								'title' => 'Generate Invoice',
+								'data-pjax' => 'lesson-index',
+							]
+						);
+					},
+				],
+			],*/
         ],
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>

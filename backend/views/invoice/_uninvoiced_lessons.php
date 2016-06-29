@@ -45,8 +45,8 @@ use yii\grid\GridView;
         ],
     ]); ?>
  <?php yii\widgets\Pjax::end(); ?>
+	<?php echo $form->field($model, 'notes')->textarea() ?>
 	<?php echo $form->field($model, 'internal_notes')->textarea() ?>
-	<?php echo $form->field($model, 'notes')->label('Printed Notes')->textarea() ?>
 <?php endif;?>
 </div>
 
