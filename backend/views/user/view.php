@@ -112,7 +112,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Contact Information',
 				'content' => $addressContent,
-				'active' => true,
+				'active' => $section === 'contact',
 			],
 		];
 
@@ -120,10 +120,12 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Qualifications',
 				'content' => $qualificationContent,
+				'active' => $section === 'qualification',
 			],
 			[
 				'label' => 'Availability',
 				'content' => $teacherAvailabilityContent,
+				'active' => $section === 'availability',
 			],
 			[
 				'label' => 'Students',
@@ -136,6 +138,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Students',
 				'content' => $studentContent,
+				'active' => $section === 'student',
 			],
 			[
 				'label' => 'Enrolments',

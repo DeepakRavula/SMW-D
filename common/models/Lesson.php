@@ -34,7 +34,7 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['enrolment_schedule_day_id', 'status'], 'required'],
             [['enrolment_schedule_day_id', 'status'], 'integer'],
-            [['date'], 'safe'],
+            [['date','notes'], 'safe'],
         ];
     }
 
@@ -48,6 +48,7 @@ class Lesson extends \yii\db\ActiveRecord
             'enrolment_schedule_day_id' => 'Enrolment Schedule Day ID',
             'status' => 'Status',
             'date' => 'Date',
+            'notes' => 'Notes',
         ];
     }
 

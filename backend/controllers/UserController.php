@@ -433,7 +433,7 @@ class UserController extends Controller {
 								'options' => ['class' => 'alert-success'],
 								'body' => ucwords($model->roles) . ' profile has been updated successfully'
 						]);
-					return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
+					return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles,'section' => $section, 'id' => $model->getModel()->id]);
 					}
 				} catch (Exception $e) {
 					$transaction->rollBack();

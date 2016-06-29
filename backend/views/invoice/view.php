@@ -105,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 <tr>
                   <td colspan="4">
                     <div class="row-fluid">
-                    <em><strong>Notes: </strong><?php echo $model->notes; ?></em>
+                    <em><strong>Printed Notes: </strong><?php echo $model->notes; ?></em>
                     </div>
                     <hr class="right-side-faded">
                     <div class="row-fluid">
