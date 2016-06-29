@@ -46,17 +46,41 @@ $this->params['breadcrumbs'][] = $this->title;
     <div>
     </div>
     <div>
-    <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+   <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
             'tableOptions' =>['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
-                [ 
-                'attribute' => 'id',
-                'label' => 'ID',
-                'enableSorting' => false,
-                ],
+      			    [
+            				'label' => 'Teacher Name',
+            				'value' => function($data) {
+            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity : null;
+            				},
+            			    ],
+            				[
+            				'label' => 'Program Name',
+            				'value' => function($data) {
+            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
+            				},
+            			    ],
+            				[
+            				'label' => 'Date',
+            				'value' => function($data) {
+            					$date = date("d-m-Y", strtotime($data->lesson->date)); 
+            					return ! empty($date) ? $date : null;
+                            },
+            			    ],
+            				[
+            				'label' => 'From Time',
+            				'value' => function($data) {
+            					if(! empty($data->lesson->enrolmentScheduleDay->from_time)){
+            						$fromTime = date("g:i a",strtotime($data->lesson->enrolmentScheduleDay->from_time));
+            						return !empty($fromTime) ? $fromTime : null;
+            					}
+            					return null;
+            				},
+      			    ],
                 [ 
                 'attribute' => 'unit',
                 'label' => 'Unit',
