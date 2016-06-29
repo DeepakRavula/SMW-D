@@ -60,9 +60,4 @@ class Qualification extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Program::className(), ['id' => 'program_id']);
     }
-
-	public function getTeacherAvailability()
-    {
-        return $this->hasOne(TeacherAvailability::className(), ['teacher_id' => 'teacher_id']);
-    }
 }
