@@ -124,14 +124,13 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         <!-- /.col -->
         </div>
 	<div class="col-xs-4 notes">
-            <label for="notes">Notes:</label>
-            <textarea rows=4, cols=60, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea> 
-        </div>
-            <div class="clearfix"></div>
-	<div class="col-xs-4 notes">
             <label for="notes">Internal Notes:</label>
             <textarea rows=4, cols=60, readonly =true, name="notes" ><?php echo $model->internal_notes; ?></textarea> 
+            <label for="notes">Printed Notes:</label>
+            <textarea rows=4, cols=60, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea> 
         </div>
+            <div class="clearfix"></div>    
+	</div>
             <div class="clearfix"></div>
     <div class="row no-print">
         <div class="col-xs-12">
