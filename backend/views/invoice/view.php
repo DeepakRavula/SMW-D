@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
-            'tableOptions' =>['class' => 'table table-bordered'],
+            'tableOptions' =>['class' => 'table table-bordered m-0'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
       			    [
@@ -97,47 +97,53 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
     </div>
     <div class="row">
         <!-- /.col -->
-        <div class="col-xs-6">
+        <div class="col-xs-12">
           <!-- <p class="lead">Balance : <?php //echo $model->total;?> </p> -->
-
           <div class="table-responsive">
-            <table class="table">
-              <tbody><tr style="border-top: 0">
-                <th style="width:50%">Subtotal:</th>
-                <td><?php echo 'CA$' .$model->subTotal;?></td>
-              </tr>
-              <tr>
-                <th>Tax</th>
-                <td><?php echo 'CA$' .$model->tax;?></td>
-              </tr>
-              <tr>
-                <th>Paid:</th>
-                <td>CA$0.00</td>
-              </tr>
-              <tr>
-                <th>Total:</th>
-                <td><?php echo 'CA$' .$model->total;?></td>
-              </tr>
-            </tbody></table>
+            <table class="table table-invoice-total">
+              <tbody>
+                <tr>
+                  <td colspan="4">
+                    <div class="row-fluid">
+                    <em><strong>Notes: </strong><?php echo $model->notes; ?></em>
+                    </div>
+                    <hr>
+                    <div class="row-fluid">
+                    <em><strong>Internal notes: <?php echo $model->internal_notes; ?></strong></em>
+                    </div>
+                  </td>
+                  <td colspan="2">
+                    <table>
+                    <tr>
+                      <td style="width: 100px;"><strong>Tax:</strong></td>
+                      <td style="width: 186px;"><?php echo 'CA$' .$model->tax;?></td>
+                    </tr>
+                    <tr>
+                      <td style="width: 100px;"><strong>Total:</strong></td>
+                      <td style="width: 186px;"><?php echo 'CA$' .$model->total;?></td> 
+                    </tr>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
         <!-- /.col -->
         </div>
-	<div class="col-xs-4 notes">
-            <label for="notes">Notes:</label>
-            <textarea rows=4, cols=60, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea> 
-        </div>
-            <div class="clearfix"></div>
-	<div class="col-xs-4 notes">
-            <label for="notes">Internal Notes:</label>
-            <textarea rows=4, cols=60, readonly =true, name="notes" ><?php echo $model->internal_notes; ?></textarea> 
-        </div>
-            <div class="clearfix"></div>
-    <div class="row no-print">
-        <div class="col-xs-12">
-            <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>
-        </div>
-    </div>
-
-    
+<!-- <div class="col-xs-4 notes">
+  <label for="notes">Notes:</label>
+  <textarea rows=4, cols=60, readonly =true, name="notes" ></textarea>
+</div>
+<div class="clearfix"></div>
+<div class="col-xs-4 notes">
+  <label for="notes">Internal Notes:</label>
+  <textarea rows=4, cols=60, readonly =true, name="notes" ></textarea>
+</div> -->
+<div class="clearfix"></div>
+<div class="row no-print">
+  <div class="col-xs-12">
+    <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>
+  </div>
+</div>
 </div>
