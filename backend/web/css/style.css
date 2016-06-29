@@ -472,3 +472,26 @@ Licensed under MIT
   border-bottom: 1px solid #eee;
   padding-bottom: 15px;
 }
+.table-invoice-total>tbody>tr:hover{
+  background: transparent;
+}
+.table-invoice-total>tbody>tr>td:first-of-type{
+  width: 65.5vw;
+}
+/*User view*/
+.c-title{
+  font-weight: bold;
+}
+/*Delete contact element*/
+.del-ce{
+  position: absolute;
+  top: 15px;
+  right: 0;
+  font-size: 9px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.del-ce>span.label:hover{
+  background: #ea212d !important;
+  color: #fff !important;
+}
