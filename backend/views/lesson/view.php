@@ -39,6 +39,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <br>
         Lesson Date:
         <em><small><?php echo ! empty(date("d-m-Y", strtotime($model->date))) ? date("d-m-Y g:i a", strtotime($model->date)) : null ?></small></em>
+		<br>
+		Notes:
+		<?php echo ! empty($model->notes) ? $model->notes : null; ?>
         </h5></div>
 		<div class="student-view">
 			<div class="col-md-12 action-btns">
