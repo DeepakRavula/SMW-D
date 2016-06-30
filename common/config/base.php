@@ -37,7 +37,7 @@ $config = [
 			'dateFormat' => 'php:d-m-Y',
 			'datetimeFormat' => 'php:d-m-Y H:i:s',
 			'timeFormat' => 'php:H:i:s',
-			'currencyCode' => 'CAD',
+			'currencyCode' => 'USD',
         ],
 
         'glide' => [

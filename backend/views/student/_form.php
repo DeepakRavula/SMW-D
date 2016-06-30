@@ -44,7 +44,10 @@ use yii\bootstrap\ActiveForm;
         </div>
         <div class="col-xs-6">
     		<div class="row-fluid">
-                <?php echo $form->field($model, 'notes')->textarea()?>
+                <?php
+            $customerName = $model->isNewRecord ? $customer->userProfile->lastname : null;
+        ?>
+            <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true,'value' => $customerName]) ?>
             </div>
             <div class="clearfix"></div>
         </div>

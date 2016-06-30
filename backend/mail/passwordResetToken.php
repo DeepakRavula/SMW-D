@@ -13,7 +13,7 @@ Dear <?php echo Html::encode($user->publicIdentity) ?>,<br>
 <br>
 You have requested to reset your password for your Arcadia Music Academy account.<br>
 <br>
-If you follow the link below you will be able to personally reset your password:
+If you follow the link below you will be able to reset your password:
 <?php echo Html::a(Html::encode($resetLink), $resetLink) ?><br>
 <br>
 (NOTE:This link can be used just once and is scheduled to expire after 24 hours.)<br>
