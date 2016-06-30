@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-            <small class="pull-right">Date: <?php echo date("d/m/Y", strtotime($model->date));?></small>
+          <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>  
           </h2>
         </div>
         <!-- /.col -->
@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
     <div class="row invoice-info">
         <!-- /.col -->
         <div class="col-sm-4 invoice-col">
-          To
+        Bill To,
           <address>
             <strong><?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null?></strong>
             <br>
@@ -37,7 +37,8 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         </div>
         <!-- /.col -->
         <div class="col-sm-4 invoice-col">
-          <b>Invoice:</b> #<?php echo $model->invoice_number;?> <br>
+			<b>Date:</b> <?php echo date("d/m/Y", strtotime($model->date));?><br>
+          <b>Invoice Number:</b> #<?php echo $model->invoice_number;?> <br>
           <b>Status:</b> <?php echo $model->status($model);?><br>
         </div>
         <!-- /.col -->
@@ -51,40 +52,30 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
             'tableOptions' =>['class' => 'table table-bordered m-0'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
-      			    [
-            				'label' => 'Teacher Name',
+							    [
+            				'label' => 'Student Name',
             				'value' => function($data) {
-            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity : null;
+            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->fullName : null;
             				},
             			    ],
-            				[
+						            				[
             				'label' => 'Program Name',
             				'value' => function($data) {
             					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
             				},
             			    ],
-            				[
-            				'label' => 'Date',
-            				'value' => function($data) {
-            					$date = date("d-m-Y", strtotime($data->lesson->date)); 
-            					return ! empty($date) ? $date : null;
-                            },
-            			    ],
-            				[
-            				'label' => 'From Time',
-            				'value' => function($data) {
-            					if(! empty($data->lesson->enrolmentScheduleDay->from_time)){
-            						$fromTime = date("g:i a",strtotime($data->lesson->enrolmentScheduleDay->from_time));
-            						return !empty($fromTime) ? $fromTime : null;
-            					}
-            					return null;
-            				},
-      			    ],
+	
                 [ 
                 'attribute' => 'unit',
                 'label' => 'Unit',
                 'enableSorting' => false,
                 ],
+												[
+            				'label' => 'Weight',
+            				'value' => function($data) {
+            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) ? Yii::$app->formatter->asCurrency($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) : null;
+            				},
+            			    ],
                 [ 
                 'attribute' => 'amount',
                 'format' => 'currency',
@@ -116,11 +107,11 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                     <table>
                     <tr>
                       <td style="width: 100px;"><strong>Tax:</strong></td>
-                      <td style="width: 186px;"><?php echo 'CA$' .$model->tax;?></td>
+                      <td style="width: 186px;"><?php echo Yii::$app->formatter->asCurrency($model->tax);?></td>
                     </tr>
                     <tr>
                       <td style="width: 100px;"><strong>Total:</strong></td>
-                      <td style="width: 186px;"><?php echo 'CA$' .$model->total;?></td> 
+                      <td style="width: 186px;"><?php echo Yii::$app->formatter->asCurrency($model->total);?></td> 
                     </tr>
                     </table>
                   </td>
@@ -143,7 +134,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 <div class="clearfix"></div>
 <div class="row no-print">
   <div class="col-xs-12">
-    <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>
+    <?php //echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>
   </div>
 </div>
 </div>
