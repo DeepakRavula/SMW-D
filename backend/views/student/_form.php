@@ -25,7 +25,7 @@ use yii\bootstrap\ActiveForm;
         </div>
         <div class="col-md-4">
 		<?php
-			$customerName = $model->isNewRecord	? $customer->userProfile->firstname : null;
+			$customerName = $model->isNewRecord	? $customer->userProfile->lastname : null;
 		?>
             <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true,'value' => $customerName]) ?>
         </div>
