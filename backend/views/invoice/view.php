@@ -33,6 +33,31 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
             <strong><?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null?></strong>
             <br>
             <strong>Email:</strong> <?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email : null?>
+			<?php
+			$addresses = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->addresses;
+			foreach($addresses as $address){
+				if($address->label === 'Billing'){
+					$billingAddress = $address;
+					break;
+				}
+			}
+
+			$phoneNumber = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->phoneNumber; 
+			?>
+			 <br>
+			 <?php
+			if(! empty($billingAddress)){
+				echo 'Billing Address:';
+				echo $billingAddress->address . ', ' . $billingAddress->city->name;
+				echo $billingAddress->province->name . ', ' . $billingAddress->country->name;
+				echo $billingAddress->postal_code;
+			}
+			echo "<br>";
+			if(! empty($phoneNumber)){
+				echo 'Phone Number:';
+				echo $phoneNumber->number;
+			}
+				?>
           </address>
         </div>
         <!-- /.col -->
