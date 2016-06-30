@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 	 <?php else:?>
     <div class="site-request-password-reset login-box-body">
-        <p>Your password have been saved successfully . Click <?php echo Yii::t('frontend', '<a href="{link}">here</a>', [
+        <p>Your password has been saved successfully . Click <?php echo Yii::t('frontend', '<a href="{link}">here</a>', [
                             'link'=>yii\helpers\Url::to(['/sign-in/login'])
                         ]) ?> to login page.
         </p>
