@@ -19,7 +19,7 @@ use wbraganca\selectivity\SelectivityWidget;
 						'multiple' => true,
 						'items' => $programs,
 						'value' => $model->qualifications,
-						'placeholder' => 'No qualification selected'
+						'placeholder' => 'Select Qualification'
 					]
 				]);
 				?>
