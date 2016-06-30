@@ -14,7 +14,6 @@ use yii\widgets\ListView;
 		</div>
 	</div>
 	<div class="col-xs-4">
-		
 		<div class="row-fluid">
 			<p class="c-title m-0"><i class="fa fa-phone-square"></i> Phone number</p>
 			<?php echo ListView::widget([

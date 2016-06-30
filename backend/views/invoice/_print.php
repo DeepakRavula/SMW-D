@@ -46,10 +46,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <div>
     </div>
     <div>
-   <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+    <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
-            'tableOptions' =>['class' => 'table table-bordered'],
+            'tableOptions' =>['class' => 'table table-bordered m-0'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
       			    [
@@ -97,39 +97,41 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php yii\widgets\Pjax::end(); ?>
     </div>
     <div class="row">
-        <!-- accepted payments column -->
-        <div class="col-xs-6">
-                <label for="notes">Notes:</label>
-                <div class="clearfix"></div>
-                <textarea rows=5, cols=110, readonly =true, name="notes" ><?php echo $model->notes; ?></textarea>
-        </div>
         <!-- /.col -->
-        <div class="col-xs-6">
-          <p class="lead">Balance : <?php echo $model->total;?> </p>
-
+        <div class="col-xs-12">
+          <!-- <p class="lead">Balance : <?php //echo $model->total;?> </p> -->
           <div class="table-responsive">
-            <table class="table">
-              <tbody><tr style="border-top: 0">
-                <th style="width:50%">Subtotal:</th>
-                <td><?php echo $model->subTotal;?></td>
-              </tr>
-              <tr>
-                <th>Tax</th>
-                <td><?php echo $model->tax;?></td>
-              </tr>
-              <tr>
-                <th>Paid:</th>
-                <td>$0.00</td>
-              </tr>
-              <tr>
-                <th>Total:</th>
-                <td><?php echo $model->total;?></td>
-              </tr>
-            </tbody></table>
+            <table class="table table-invoice-total">
+              <tbody>
+                <tr>
+                  <td colspan="4">
+                    <div class="row-fluid m-t-10">
+                    <em><strong>Printed Notes: </strong><?php echo $model->notes; ?></em>
+                    </div>
+                    <hr class="right-side-faded">
+                    <div class="row-fluid">
+                    <em><strong>Internal notes: <?php echo $model->internal_notes; ?></strong></em>
+                    </div>
+                  </td>
+                  <td colspan="2">
+                    <table>
+                    <tr>
+                      <td style="width: 100px;"><strong>Tax:</strong></td>
+                      <td style="width: 186px;"><?php echo 'CA$' .$model->tax;?></td>
+                    </tr>
+                    <tr>
+                      <td style="width: 100px;"><strong>Total:</strong></td>
+                      <td style="width: 186px;"><?php echo 'CA$' .$model->total;?></td> 
+                    </tr>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
         <!-- /.col -->
-      </div>
+        </div>
 </div>
 <script>
 	$(document).ready(function(){

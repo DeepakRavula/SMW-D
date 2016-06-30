@@ -95,6 +95,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
     </div>
+    <?php //echo $this->render('_invoice_table-details' ); ?>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
@@ -104,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
               <tbody>
                 <tr>
                   <td colspan="4">
-                    <div class="row-fluid">
+                    <div class="row-fluid m-t-10">
                     <em><strong>Printed Notes: </strong><?php echo $model->notes; ?></em>
                     </div>
                     <hr class="right-side-faded">
@@ -131,15 +132,6 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         </div>
         <!-- /.col -->
         </div>
-<!-- <div class="col-xs-4 notes">
-  <label for="notes">Notes:</label>
-  <textarea rows=4, cols=60, readonly =true, name="notes" ></textarea>
-</div>
-<div class="clearfix"></div>
-<div class="col-xs-4 notes">
-  <label for="notes">Internal Notes:</label>
-  <textarea rows=4, cols=60, readonly =true, name="notes" ></textarea>
-</div> -->
 <div class="clearfix"></div>
 <div class="row no-print">
   <div class="col-xs-12">

@@ -16,6 +16,12 @@ $this->params['breadcrumbs'][] = $this->title;
 				<?php echo ! empty($model->enrolmentScheduleDay->enrolment->student->fullName) ? $model->enrolmentScheduleDay->enrolment->student->fullName : null ?>
 			</p>
 		</div>
+		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
+			<i class="fa fa-calendar"></i> <?php echo ! empty(date("d-m-Y", strtotime($model->date))) ? date("d-m-Y g:i a", strtotime($model->date)) : null ?>	
+		</div>
+		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
+			<i class="fa fa-graduation"></i> <?php echo !empty($model->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity) ? $model->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity : null;?>
+		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
 			<i class="fa fa-music detail-icon"></i> <?php echo ! empty($model->enrolmentScheduleDay->enrolment->qualification->program->name) ? $model->enrolmentScheduleDay->enrolment->qualification->program->name : null ?>
 		</div>
@@ -34,17 +40,18 @@ $this->params['breadcrumbs'][] = $this->title;
 		</div>
 
 		<div class="clearfix"></div>
-		<div><h5>Teacher Name:
-		<?php echo !empty($model->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity) ? $model->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity : null;?>
-        <br>
-        Lesson Date:
-        <em><small><?php echo ! empty(date("d-m-Y", strtotime($model->date))) ? date("d-m-Y g:i a", strtotime($model->date)) : null ?></small></em>
-		<br>
-		Notes:
-		<?php echo ! empty($model->notes) ? $model->notes : null; ?>
-        </h5></div>
+		<div class="row-fluid">
+			<div class="col-md-12">
+				<h5 class="m-t-20"><em><i class="fa fa-info-circle"></i> Notes:
+				<?php echo ! empty($model->notes) ? $model->notes : null; ?>
+				</em>
+			</h5>
+			</div>
+
+		</div>
 		<div class="student-view">
-			<div class="col-md-12 action-btns">
+			<div class="col-md-12 action-btns m-b-20">
+				<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 				<?php echo Html::a('<i class="fa fa-pencil"></i> Update details', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		        <?php echo Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id], ['class' => 'm-r-20',
 		            'data' => [
@@ -52,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		                'method' => 'post',
 		            ],
 		        ]) ?>
-				<?php echo Html::a('<i class="fa fa-dollar"></i> Invoice this Lesson', ['invoice', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+				
 		    </div>
 		    <div class="clearfix"></div>
 		</div>
