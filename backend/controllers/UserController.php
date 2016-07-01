@@ -514,36 +514,6 @@ class UserController extends Controller {
 	}
 
 
-	public function actionDeleteAddress($id,$userId) {
-		$model = new UserForm();
-		$model->setModel($this->findModel($userId));
-
-		$userAddressModel = UserAddress::findOne(["address_id" => $id]);
-		$userAddressModel->delete();
-		
-		$addressModel = Address::findOne(['id' => $id]);
-		$addressModel->delete();
-		
-		Yii::$app->session->setFlash('alert', [
-			'options' => ['class' => 'alert-success'],
-			'body' => 'Address has been deleted successfully'
-		]);
-		return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $userId]);
-	}
-
-	public function actionDeletePhone($id,$userId) {
-		$model = new UserForm();
-		$model->setModel($this->findModel($userId));
-		
-		$userPhoneModel = PhoneNumber::findOne(["id" => $id]);
-		$userPhoneModel->delete();
-
-		Yii::$app->session->setFlash('alert', [
-			'options' => ['class' => 'alert-success'],
-			'body' => 'Phone Number has been deleted successfully'
-		]);
-	return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $userId]);
-}
 	/**
 	 * Deletes an existing User model.
 	 * If deletion is successful, the browser will be redirected to the 'index' page.
