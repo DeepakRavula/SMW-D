@@ -25,12 +25,6 @@ use yii\bootstrap\ActiveForm;
             <?php echo $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
             </div>
             <div class="row-fluid">
-    		<?php
-    			$customerName = $model->isNewRecord	? $customer->userProfile->firstname : null;
-    		?>
-                <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true,'value' => $customerName]) ?>
-            </div>
-            <div class="row-fluid">
                 <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname(), [
                     'options' => ['class'=>'form-control'],
                     'clientOptions' => [
