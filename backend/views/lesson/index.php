@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
             [
+				'class' => 'yii\grid\SerialColumn',
 				'header' => 'Serial No.',
 			],
 			[

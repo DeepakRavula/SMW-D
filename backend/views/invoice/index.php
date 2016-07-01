@@ -24,7 +24,10 @@ $this->params['breadcrumbs'][] = $this->title;
             return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
         },
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            [
+				'class' => 'yii\grid\SerialColumn',
+				'header' => 'Serial No.',
+			],
 			[
 			    'label' => 'Customer Name',
                 'value' => function($data) {
