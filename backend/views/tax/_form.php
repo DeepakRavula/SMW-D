@@ -12,33 +12,41 @@ use common\models\Province;
 
 <div class="tax-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+	<?php $form = ActiveForm::begin(); ?>
 
-    <?php echo $form->errorSummary($model); ?> 
-  
-    <?php echo $form->field($model, 'province_id')->dropDownList(\yii\helpers\ArrayHelper::map(
-            Province::find()->all(),
-            'id',
-            'name'
-        ), ['prompt' => 'Select Province...']) ?>
-
-    <?php echo $form->field($model, 'tax_rate')->textInput() ?>
-
-    <?php echo $form->field($model, 'since')->widget(\yii\jui\DatePicker::classname(), [
-                    'options' => ['class'=>'form-control'],
-                    'clientOptions' => [
-                    'changeMonth' => true,
+	<div class="col-md-12">
+		<?= $form->errorSummary($model); ?>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+			<?php
+			echo $form->field($model, 'province_id')->dropDownList(\yii\helpers\ArrayHelper::map(
+							Province::find()->all(), 'id', 'name'
+					), ['prompt' => 'Select Province...'])
+			?>
+		</div>
+		<div class="col-md-4 ">
+			<?php echo $form->field($model, 'tax_rate')->textInput() ?>
+		</div>
+		<div class="col-md-4">
+			<?php
+			echo $form->field($model, 'since')->widget(\yii\jui\DatePicker::classname(), [
+				'options' => ['class' => 'form-control'],
+				'clientOptions' => [
+					'changeMonth' => true,
 					'changeYear' => true,
-					'yearRange' => '-2:+70'	
+					'yearRange' => '-2:+70'
 				]
-    ]); ?>
+			]);
+			?>
 
+		</div>
+	</div> 
 
-    
     <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+	<?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
 
 </div>

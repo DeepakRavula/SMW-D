@@ -11,34 +11,50 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-foreach($roles as $name => $description){
+foreach ($roles as $name => $description) {
 	$role = $name;
 }
 ?>
 <div class="location-view">
-    <?php if($role === User::ROLE_ADMINISTRATOR):?>
-    <p>
-        <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-    <?php endif;?>
+	<?php if ($role === User::ROLE_ADMINISTRATOR): ?>
+	    <p>
+			<?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+			<?php
+			echo Html::a('Delete', ['delete', 'id' => $model->id], [
+				'class' => 'btn btn-danger',
+				'data' => [
+					'confirm' => 'Are you sure you want to delete this item?',
+					'method' => 'post',
+				],
+			])
+			?>
+	    </p>
+	<?php endif; ?>
 
-    <?php echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'name',
-            'address',
-            'city.name',
-            'province.name',
-            'postal_code',
-            'country.name',
-        ],
-    ]) ?>
+	<?php
+	echo DetailView::widget([
+		'model' => $model,
+		'attributes' => [
+			[
+				'label' => 'Location',
+				'value' => $model->name,
+			],
+			'address',
+			[
+				'label' => 'City',
+				'value' => $model->city->name,
+			],
+			[
+				'label' => 'Province',
+				'value' => $model->province->name,
+			],
+			'postal_code',
+			[
+				'label' => 'Country',
+				'value' => $model->country->name,
+			],
+		],
+	])
+	?>
 
 </div>

@@ -6,9 +6,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Tax */
 
-$this->title = 'Create Tax';
+$this->title = 'Add new Tax';
 $this->params['breadcrumbs'][] = ['label' => 'Taxes', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'Create';
 ?>
 <div class="tax-create">
 

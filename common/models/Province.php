@@ -44,7 +44,15 @@ class Province extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
             'tax_rate' => 'Tax Rate',
-            'country_id' => 'Country ID',
+            'country_id' => 'Country Name',
         ];
     }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCountry()
+    {
+        return $this->hasOne(Country::className(), ['id' => 'country_id']);
+    }
+	
 }
