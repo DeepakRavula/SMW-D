@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
 use yii\bootstrap\Tabs;
 
 /* @var $this yii\web\View */
@@ -16,18 +15,15 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="col-md-12 p-t-10">
         <p class="users-name pull-left">
         	<?php echo $model->name; ?>
-        	<em>
-        		<small><?php echo $model->rate; ?></small>
-        	</em>
-        	<?php //echo DetailView::widget([
-		  //       'model' => $model,
-				// 'options' => ['class' => 'col-md-4'],
-		  //       'attributes' => [
-		  //           'name',
-		  //           'rate'
-		  //       ],
-		    //]) ?>
+        	<br>
+			
         </p>
+		</div>
+		<h5>Rate:
+			<em>
+        		<small><?php echo $model->rate; ?></small>
+        	</em></h5>
+	</div>
         <div class="row col-md-12">
             <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Program'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
             <?php
@@ -41,9 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ?>
             <div class="clearfix"></div>
         </div>
-    </div>
     <div class="clearfix"></div>
-</div>
 
     <!-- <p>
         <?php //echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
