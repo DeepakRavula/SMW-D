@@ -12,17 +12,17 @@ $this->params['breadcrumbs'][] = ['label' => 'Enrolments', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="enrolment-view">
-<?php
+	<?php
 	$dayList = Enrolment::getWeekdaysList();
 	$day = $dayList[$model->enrolmentScheduleDay->day];
-	$fromTime = date("g:i a",strtotime($model->enrolmentScheduleDay->from_time));
-	$duration = date("g:i",strtotime($model->enrolmentScheduleDay->duration));
+	$fromTime = date("g:i a", strtotime($model->enrolmentScheduleDay->from_time));
+	$duration = date("g:i", strtotime($model->enrolmentScheduleDay->duration));
 	$date = $model->commencement_date;
-	$commencement_date = date('d-m-Y',strtotime($date));
+	$commencement_date = date('d-m-Y', strtotime($date));
 	$renewalDate = $model->renewal_date;
-	$renewal_date = date('d-m-Y',strtotime($renewalDate));
-?>
-<?php
+	$renewal_date = date('d-m-Y', strtotime($renewalDate));
+	?>
+	<?php
 	echo DetailView::widget([
 		'model' => $model,
 		'attributes' => [
@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
 			[
 				'label' => 'Day',
-				'value' => ! empty($day) ? $day : null,
+				'value' => !empty($day) ? $day : null,
 			],
 			[
 				'label' => 'From Time',
@@ -48,22 +48,24 @@ $this->params['breadcrumbs'][] = $this->title;
 			],
 			[
 				'label' => 'Commencement Date',
-				'value' => ! empty($commencement_date) ? $commencement_date : null,	
+				'value' => !empty($commencement_date) ? $commencement_date : null,
 			],
 			[
 				'label' => 'Renewal Date',
-				'value' => ! empty($renewal_date) ? $renewal_date : null,
+				'value' => !empty($renewal_date) ? $renewal_date : null,
 			],
 		],
 	])
 	?>
     <p>
-        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
+		<?php
+		echo Html::a('Delete', ['delete', 'id' => $model->id], [
+			'class' => 'btn btn-danger',
+			'data' => [
+				'confirm' => 'Are you sure you want to delete this item?',
+				'method' => 'post',
+			],
+		])
+		?>
     </p>
 </div>

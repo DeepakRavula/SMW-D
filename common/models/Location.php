@@ -39,7 +39,7 @@ class Location extends \yii\db\ActiveRecord {
 			[['name'], 'string', 'max' => 32],
 			[['address'], 'string', 'max' => 64],
 			[['postal_code'], 'string', 'max' => 16],
-           // ['from_time', 'to_time', 'safe']
+				// ['from_time', 'to_time', 'safe']
 		];
 	}
 
@@ -55,46 +55,45 @@ class Location extends \yii\db\ActiveRecord {
 			'province_id' => 'Province',
 			'postal_code' => 'Postal Code',
 			'country_id' => 'Country',
-            'from_time' => 'From Time',
-            'to_time' => 'To Time',
+			'from_time' => 'From Time',
+			'to_time' => 'To Time',
 		];
 	}
 
+	public function getCountry() {
+		return $this->hasOne(Country::className(), ['id' => 'country_id']);
+	}
 
-	public function getCountry()
-    {
-        return $this->hasOne(Country::className(), ['id' => 'country_id']);
-    }
+	public function getCity() {
+		return $this->hasOne(City::className(), ['id' => 'city_id']);
+	}
 
-	public function getCity()
-    {
-        return $this->hasOne(City::className(), ['id' => 'city_id']);
-    }
+	public function getProvince() {
+		return $this->hasOne(Province::className(), ['id' => 'province_id']);
+	}
 
-	public function getProvince()
-    {
-        return $this->hasOne(Province::className(), ['id' => 'province_id']);
-    }
-    
-    public function getEnrolment()
-    {
-        return $this->hasMany(Enrolment::className(), ['location_id' => 'id']);
-    }
+	public function getEnrolment() {
+		return $this->hasMany(Enrolment::className(), ['location_id' => 'id']);
+	}
 
-	public function getUserLocations()
-    {
-        return $this->hasMany(UserLocation::className(), ['location_id' => 'id']);
-    }
+	public function getUserLocations() {
+		return $this->hasMany(UserLocation::className(), ['location_id' => 'id']);
+	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public function beforeSave($insert) {
 		if (parent::beforeSave($insert)) {
-			$this->country_id = 1; // 
+			$this->country_id = 1;
+			$fromTime = \DateTime::createFromFormat("g:i a", $this->from_time);
+			$this->from_time = $fromTime->format("H:i");
+			$toTime = \DateTime::createFromFormat("g:i a", $this->to_time);
+			$this->to_time = $toTime->format("H:i");
 			return true;
 		} else {
 			return false;
 		}
 	}
+
 }

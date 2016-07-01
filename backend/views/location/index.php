@@ -13,11 +13,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     <p>
-        <?php echo Html::a('Create Location', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php echo Html::a('Add', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+		'rowOptions' => function ($model, $key, $index, $grid) {
+            $u= \yii\helpers\StringHelper::basename(get_class($model));
+            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        },
         'columns' => [
             [
 				'class' => 'yii\grid\SerialColumn',
