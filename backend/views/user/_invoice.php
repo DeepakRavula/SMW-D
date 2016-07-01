@@ -51,6 +51,6 @@ use common\models\Invoice;
 					return $status;
                 },
 			],
-            ['class' => 'yii\grid\ActionColumn','controller' => 'invoice','template' => '{view}{delete}']
+            //['class' => 'yii\grid\ActionColumn','controller' => 'invoice','template' => '{view}{delete}']
         ],
     ]); ?>
