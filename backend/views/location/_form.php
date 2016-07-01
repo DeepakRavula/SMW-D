@@ -58,10 +58,12 @@ use kartik\time\TimePicker;
 	<div class="row">
 		<div class="col-md-4">
 			<?php
-			$fromTime = \DateTime::createFromFormat("H:i:s", $model->from_time);
-			$model->from_time = $fromTime->format("g:i a");
-			$toTime = \DateTime::createFromFormat("H:i:s", $model->to_time);
-			$model->to_time = $toTime->format("g:i a");
+			if( ! $model->isNewRecord){
+				$fromTime = \DateTime::createFromFormat("H:i:s", $model->from_time);
+				$model->from_time = $fromTime->format("g:i a");
+				$toTime = \DateTime::createFromFormat("H:i:s", $model->to_time);
+				$model->to_time = $toTime->format("g:i a");
+			}
 			?>
 			<?php
 			echo $form->field($model, 'from_time')->widget(TimePicker::classname(), [
@@ -85,7 +87,7 @@ use kartik\time\TimePicker;
 
     <div class="form-group">
 <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
+	</div>
 <?php ActiveForm::end(); ?>
 
 </div>
