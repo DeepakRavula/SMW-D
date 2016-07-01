@@ -17,19 +17,14 @@ foreach($roles as $name => $description){
 ?>
 <div class="program-view">
 	<div class="row-fluid user-details-wrapper">
-    <div class="col-md-12 p-t-10">
-        <p class="users-name pull-left">
-        	<?php echo $model->name; ?>
-        	<br>
-					
-        </p>
+    <div class="col-xs-2">
+        	<i class="fa fa-music"></i> <?php echo $model->name; ?>
     </div>
-		<h5>Rate:
-			<em>
-        		<small><?php echo $model->rate; ?></small>
-        	</em></h5>
+    <div class="col-xs-2" data-toggle="tooltip" data-placement="bottom" title="Rate">
+    	<i class="fa fa-money"></i> <?php echo $model->rate; ?>
+    </div>
         <?php if($role === User::ROLE_ADMINISTRATOR):?>
-            <div class="row col-md-12">
+            <div class="col-md-12 m-t-20">
                 <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Program'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
                 <?php
                 echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
@@ -42,7 +37,7 @@ foreach($roles as $name => $description){
                 ?>
                 <div class="clearfix"></div>
             </div>
-        <?php endif;?>
+        <?php endif;?> 
     <div class="clearfix"></div>
 
     <!-- <p>

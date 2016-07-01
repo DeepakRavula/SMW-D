@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return ! empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                     },
                 ],
-                ['class' => 'yii\grid\ActionColumn'],
+                //['class' => 'yii\grid\ActionColumn'],
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
