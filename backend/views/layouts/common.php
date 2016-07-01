@@ -27,7 +27,7 @@ $bundle = BackendAsset::register($this);
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top" role="navigation">
                 <!-- Sidebar toggle button-->
-                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <a href="#" class="sidebar-toggle m-r-10" data-toggle="offcanvas" role="button">
                     <span class="sr-only"><?php echo Yii::t('backend', 'Toggle navigation') ?></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -50,11 +50,8 @@ $bundle = BackendAsset::register($this);
 							Yii::$app->session->set('location_id', '1');
 						}
 					}?>
-                <div class="navbar-custom-menu">
-                    <ul class="nav navbar-nav">
-						<li>
-						<?php if($role === User::ROLE_ADMINISTRATOR):?>
-                        <div>
+                    <?php if($role === User::ROLE_ADMINISTRATOR):?>
+                        <div class="pull-left">
                             <?php $form = Html::beginForm(); ?>                        
                                  <?= Html::dropDownList('location_id', null,
                                   ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'location_id', 'options' => [Yii::$app->session->get("location_id") => ['Selected'=>'selected']]
@@ -67,20 +64,21 @@ $bundle = BackendAsset::register($this);
                                         location_id: $('#location_id').val()
                                     },
                                     success  : function(response) {
-										location.reload();
+                                        location.reload();
                                     }
                                 });")]
                             ) ?>
                             <?php Html::endForm() ?>
                             </div>
-						<?php else:?>
-						<?php
-							$userLocationId = Yii::$app->session->get('location_id');
-							$location = Location::findOne(['id' => $userLocationId]);
-							echo $location->name;
-						?>
-						<?php endif;?>
-                        </li>
+                        <?php else:?>
+                        <?php
+                            $userLocationId = Yii::$app->session->get('location_id');
+                            $location = Location::findOne(['id' => $userLocationId]);
+                            echo $location->name;
+                        ?>
+                        <?php endif;?>
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
                         <li id="timeline-notifications" class="notifications-menu">
                             <a href="<?php echo Url::to(['/timeline-event/index']) ?>">
                                 <i class="fa fa-bell"></i>

@@ -30,20 +30,23 @@ $this->params['breadcrumbs'][] = $this->title;
             </em> 
         </p>
         <div class="clearfix"></div>
-		<div class="row-fluid"><h6 class="m-0"><em><i class="fa fa-info-circle"></i> Notes:
-		<?php echo ! empty($model->userProfile->notes) ? $model->userProfile->notes : null; ?></em>
-		</h6>
+		<div class="row-fluid">
+			<h5 class="m-0"><em><i class="fa fa-info-circle"></i> Notes:
+				<?php echo ! empty($model->userProfile->notes) ? $model->userProfile->notes : null; ?></em>
+			</h5>
 		</div>	
         <div class="pull-left m-t-10">
             <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Profile'), ['update', 'id' => $model->id,'section' => 'profile'], ['class' => 'm-r-20']) ?>
             <?php
-            echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
+          /*  echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
                 'class' => '',
                 'data' => [
                     'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
                     'method' => 'post',
                 ],
             ])
+		   * 
+		   */
             ?>
             <div class="clearfix"></div>
         </div>

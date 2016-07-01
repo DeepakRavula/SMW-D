@@ -291,6 +291,9 @@ table tr td:last-of-type>a:nth-child(2)>span.glyphicon{
     background: #F9F9F9;
     border-bottom: 1px solid #F3F3F3;
 }
+.lesson-view>.user-details-wrapper{
+  background: transparent;
+}
 .text-add-new{
     float: left;
     margin: 10px 0 0 0;
@@ -495,10 +498,18 @@ Licensed under MIT
   top: 15px;
   right: 0;
   font-size: 9px;
-  transition: all 0.3s;
   cursor: pointer;
+}
+.del-ce>span.label{
+  transition: background 0.3s;
 }
 .del-ce>span.label:hover{
   background: #ea212d !important;
   color: #fff !important;
+}
+.action-btns>.del-ce{
+    position: relative;
+    left: 0;
+    font-size: 14px;
+    top: 0;
 }
