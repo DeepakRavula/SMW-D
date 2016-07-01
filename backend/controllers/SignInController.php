@@ -18,6 +18,7 @@ use trntv\filekit\actions\UploadAction;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\imagine\Image;
+use yii\base\InvalidParamException;
 use yii\web\Controller;
 
 class SignInController extends Controller
@@ -148,20 +149,23 @@ class SignInController extends Controller
     public function actionResetPassword($token)
     {
         $this->layout = 'base';
+		$tokenExpired = false;
+		$model = null;
         try {
             $model = new ResetPasswordForm($token);
         } catch (InvalidParamException $e) {
-            throw new BadRequestHttpException($e->getMessage());
+ 			$tokenExpired = true; 
         }
 
         $isResetPassword = false;
-        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword())		  {
+        if ($model && $model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword())		  {
             $isResetPassword = true;
         }
 
         return $this->render('resetPassword', [
             'model' => $model,
 			'isResetPassword' => $isResetPassword,
+			'tokenExpired' => $tokenExpired,
         ]);
     }
 }
