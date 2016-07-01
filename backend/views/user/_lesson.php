@@ -73,7 +73,7 @@ echo GridView::widget([
 				return !empty($date) ? $date : null;
 			},
 		],
-        ['class' => 'yii\grid\ActionColumn','controller' => 'lesson']
+        //['class' => 'yii\grid\ActionColumn','controller' => 'lesson']
 	],
 ]);
 ?>

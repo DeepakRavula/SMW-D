@@ -12,13 +12,4 @@ use yii\helpers\Html;
         </div>
     </div>
     <div class="clearfix"></div>
-    <?php
-            echo Html::a(Yii::t('backend', '<span class="label label-primary">Delete</span>'), ['delete-phone', 'id' => $model->id,'userId' => $model->user->id], [
-                'class' => 'del-ce',
-                'data' => [
-                    'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
-                    'method' => 'post',
-                ],
-            ])
-            ?>
 </div>

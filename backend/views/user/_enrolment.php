@@ -84,7 +84,7 @@ use common\models\Enrolment;
 					return null;
 				},
 			],
-			['class' => 'yii\grid\ActionColumn', 'controller' => 'enrolment','template' => '{delete}'],
+			//['class' => 'yii\grid\ActionColumn', 'controller' => 'enrolment','template' => '{delete}'],
 		],
 	]);
 	?>

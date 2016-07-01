@@ -9,7 +9,7 @@ use yii\helpers\Html;
 /* @var $model common\models\User */
 
 $roleNames = ArrayHelper::getColumn(
-				Yii::$app->authManager->getRoles(), 'description'
+				Yii::$app->authManager->getRoles(), 'description','name'
 );
 foreach ($roleNames as $name => $description) {
 	if ($name === $searchModel->role_name) {
@@ -17,7 +17,7 @@ foreach ($roleNames as $name => $description) {
 	}
 }
 $this->title = Yii::t('backend', !($roleName) ? 'User' : $roleName . ' Details');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', !$roleName ? 'User' : $roleName . 's'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', !$roleName ? 'User' : $roleName . 's'), 'url' => ['index', 'UserSearch[role_name]' =>$searchModel->role_name]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

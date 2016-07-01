@@ -14,7 +14,7 @@ foreach($roles as $name => $description){
 	}
 }
 $this->title = Yii::t('backend', 'Update {modelClass} ', ['modelClass' => $role]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', $role.'s'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', $role.'s'), 'url' => ['index', 'UserSearch[role_name]' =>$name]];
 $this->params['breadcrumbs'][] = ['label'=>Yii::t('backend', 'Update')];
 ?>
 <style>

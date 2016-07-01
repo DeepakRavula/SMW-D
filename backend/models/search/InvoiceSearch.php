@@ -44,7 +44,8 @@ class InvoiceSearch extends Invoice
     {
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
-        $query = Invoice::find()->alias('l');//->location($locationId);
+        $query = Invoice::find()->alias('l')->location($locationId);//->location($locationId);
+			
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

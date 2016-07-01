@@ -31,6 +31,18 @@ class InvoiceQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
-
+    
+	public function location($locationId) {
+		$this->joinWith(['lineItems' => function($query) use($locationId) {
+			$query->joinWith(['lesson'=> function($query) use($locationId){ 
+				$query->joinWith(['enrolmentScheduleDay' => function($query) use($locationId) {
+					$query->joinWith(['enrolment' => function($query) use($locationId) {
+						$query->andFilterWhere(['enrolment.location_id' => $locationId]);
+					}]);
+				}]);
+			}]);
+		}]);
+		return $this;
+	}
 
 }
