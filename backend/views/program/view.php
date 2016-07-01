@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
@@ -9,6 +10,10 @@ use yii\bootstrap\Tabs;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Programs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+foreach($roles as $name => $description){
+	$role = $name;
+}
 ?>
 <div class="program-view">
 	<div class="row-fluid user-details-wrapper">
@@ -18,25 +23,22 @@ $this->params['breadcrumbs'][] = $this->title;
         	<br>
 			
         </p>
-		</div>
-		<h5>Rate:
-			<em>
-        		<small><?php echo $model->rate; ?></small>
-        	</em></h5>
-	</div>
-        <div class="row col-md-12">
-            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Program'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
-            <?php
-            echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
-                'class' => '',
-                'data' => [
-                    'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
-                    'method' => 'post',
-                ],
-            ])
-            ?>
-            <div class="clearfix"></div>
-        </div>
+        <?php if($role === User::ROLE_ADMINISTRATOR):?>
+            <div class="row col-md-12">
+                <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Program'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+                <?php
+                echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
+                    'class' => '',
+                    'data' => [
+                        'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
+                        'method' => 'post',
+                    ],
+                ])
+                ?>
+                <div class="clearfix"></div>
+            </div>
+        <?php endif;?>
+    </div>
     <div class="clearfix"></div>
 
     <!-- <p>
