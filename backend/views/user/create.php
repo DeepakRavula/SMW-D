@@ -15,7 +15,7 @@ foreach($roles as $name => $description){
 $this->title = Yii::t('backend', 'Add new {modelClass}', [
     'modelClass' => $role,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', $role.'s'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', $role.'s'), 'url' => ['index', 'UserSearch[role_name]' =>$name]];
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Create')];
 ?>
 <div class="user-create m-t-10">
