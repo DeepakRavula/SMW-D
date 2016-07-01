@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\ArrayHelper;
+use common\models\Country;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Province */
@@ -10,20 +12,32 @@ use yii\bootstrap\ActiveForm;
 
 <div class="province-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+	<?php $form = ActiveForm::begin(); ?>
 
-    <?php echo $form->errorSummary($model); ?>
+	<div class="col-md-12">
+		<?= $form->errorSummary($model); ?>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+		</div>
+		<div class="col-md-4 ">
+			<?php echo $form->field($model, 'tax_rate')->textInput() ?>
+		</div>
+		<div class="col-md-4 ">
+			<?php
+			echo $form->field($model, 'country_id')->dropDownList(ArrayHelper::map(
+							Country::find()->all(), 'id', 'name'
+			))
+			?>
+		</div>
+	</div>
 
-    <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'tax_rate')->textInput() ?>
-
-    <?php echo $form->field($model, 'country_id')->textInput() ?>
 
     <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+	<?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
 
 </div>
