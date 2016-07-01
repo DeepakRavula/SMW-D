@@ -21,8 +21,13 @@ foreach($roles as $name => $description){
         <p class="users-name pull-left">
         	<?php echo $model->name; ?>
         	<br>
-			
+					
         </p>
+    </div>
+		<h5>Rate:
+			<em>
+        		<small><?php echo $model->rate; ?></small>
+        	</em></h5>
         <?php if($role === User::ROLE_ADMINISTRATOR):?>
             <div class="row col-md-12">
                 <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Program'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
@@ -38,7 +43,6 @@ foreach($roles as $name => $description){
                 <div class="clearfix"></div>
             </div>
         <?php endif;?>
-    </div>
     <div class="clearfix"></div>
 
     <!-- <p>
