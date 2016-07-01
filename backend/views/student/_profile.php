@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 ?>
-<pre><?php print_r($model->customer->id)?></pre>
 <div class="user-details-wrapper">
 	<div class="col-md-12">
 		<p class="users-name"><?php echo $model->first_name; ?> <?php echo $model->last_name; ?></p>
