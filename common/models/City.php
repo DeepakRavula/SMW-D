@@ -41,7 +41,11 @@ class City extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'province_id' => 'Province ID',
+            'province_id' => 'Province Name',
         ];
     }
+
+	public function getProvince() {
+		return $this->hasOne(Province::className(), ['id' => 'province_id']);
+	}
 }

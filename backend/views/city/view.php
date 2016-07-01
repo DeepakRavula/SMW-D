@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\City */
@@ -9,26 +10,39 @@ use yii\widgets\DetailView;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Cities', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+foreach ($roles as $name => $description) {
+	$role = $name;
+}
 ?>
 <div class="city-view">
+	<?php if ($role === User::ROLE_ADMINISTRATOR): ?>
+	    <p>
+			<?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+			<?php
+			echo Html::a('Delete', ['delete', 'id' => $model->id], [
+				'class' => 'btn btn-danger',
+				'data' => [
+					'confirm' => 'Are you sure you want to delete this item?',
+					'method' => 'post',
+				],
+			])
+			?>
+	    </p>
+	<?php endif; ?>
 
-    <p>
-        <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?php echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'name',
-            'province_id',
-        ],
-    ]) ?>
+	<?php
+	echo DetailView::widget([
+		'model' => $model,
+		'attributes' => [
+			'name',
+			[
+				'label' => 'Province Name',
+				'value' => !empty($model->province->name) ? $model->province->name : null,
+			],
+		],
+	])
+	?>
 
 </div>
