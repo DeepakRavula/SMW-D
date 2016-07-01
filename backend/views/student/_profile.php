@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 ?>
+<pre><?php print_r($model->customer->id)?></pre>
 <div class="user-details-wrapper">
 	<div class="col-md-12">
 		<p class="users-name"><?php echo $model->first_name; ?> <?php echo $model->last_name; ?></p>
@@ -10,7 +11,9 @@ use yii\helpers\Html;
 		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo (new \DateTime($model->birth_date))->format('d-m-Y'); ?>
 	</div>
 	<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
-		<?php echo Html::a('<i class="fa fa-user detail-icon"></i>' . !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null, ['user/view?UserSearch%5Brole_name%5D=customer&id='.$model->customer->id]) ?>
+		<a href="/user/view?UserSearch%5Brole_name%5D=customer&id=<?php echo $model->customer->id ?>">
+		<i class="fa fa-user detail-icon"></i> <?php echo !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null ?>
+	</a>
 	</div>
 	<div class="clearfix"></div>
 	<div class="student-view">
