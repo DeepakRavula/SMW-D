@@ -23,7 +23,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            [
+				'header' => 'Serial No.',
+			],
 			[
 				'label' => 'Student Name',
 				'value' => function($data) {
