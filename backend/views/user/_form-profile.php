@@ -28,7 +28,7 @@ use common\models\User;
 			<div class="clearfix"></div>
 		</div>
 	</div>
-	<div class="col-xs-4">
+	<div class="col-xs-8">
 		<?php echo $form->field($model, 'notes')->textarea() ?>
 	</div>
 	<div class="clearfix"></div>
