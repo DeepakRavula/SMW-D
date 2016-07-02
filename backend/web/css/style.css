@@ -28,7 +28,7 @@ hr.right-side-faded{
   background-image: linear-gradient(to right, rgba(21, 20, 20, 0.18), rgba(236, 236, 236, 0.75), rgba(0, 0, 0, 0))
 }
 /*****************************
-Skin-black Modification
+Skin-black // Theme Modification
 ******************************/
 a{
   color: #ea212d;
@@ -98,6 +98,10 @@ a:hover, a:focus{
     cursor: default;
     background-color: #e12e2b;
     border-color: #e12e2b;
+}
+.user-panel>.image>img {
+    width: 45px !important;
+    height: 45px !important;
 }
 /*****************************
 Resets

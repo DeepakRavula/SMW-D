@@ -17,12 +17,17 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->errorSummary($model); ?>
     <div class="row">
-        <div class="col-xs-6">
-            <div class="row-fluid">
+        <div class="col-xs-4">
             <?php echo $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="row-fluid">
-                <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname(), [
+        </div>
+        <div class="col-xs-4">
+             <?php
+            $customerName = $model->isNewRecord ? $customer->userProfile->lastname : null;
+        ?>
+            <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true,'value' => $customerName]) ?>
+        </div>
+        <div class="col-xs-4">
+            <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname(), [
                     'options' => ['class'=>'form-control'],
                     'clientOptions' => [
                         'changeMonth' => true,
@@ -30,19 +35,9 @@ use yii\bootstrap\ActiveForm;
                         'yearRange' => '-70:-4' 
                     ]
                 ]); ?>
-            </div>
+        </div>
             <div class="clearfix"></div>
         </div>
-        <div class="col-xs-6">
-    		<div class="row-fluid">
-                <?php
-            $customerName = $model->isNewRecord ? $customer->userProfile->lastname : null;
-        ?>
-            <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true,'value' => $customerName]) ?>
-            </div>
-            <div class="clearfix"></div>
-        </div>
-    </div>
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
     <div class="row-fluid">
     <div class="form-group">
