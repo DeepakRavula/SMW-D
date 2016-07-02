@@ -46,7 +46,12 @@ use yii\bootstrap\ActiveForm;
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
     <div class="row-fluid">
     <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Add' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php echo Html::submitButton($model->isNewRecord ? 'Add' : 'Save', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+		<?php 
+			if(! $model->isNewRecord){
+				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn btn-primary']); 	
+			}
+		?>
     </div>
     <div class="clearfix"></div>
     </div>
