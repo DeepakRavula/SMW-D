@@ -182,61 +182,71 @@ $bundle = BackendAsset::register($this);
                             'label'=>Yii::t('backend', 'Schedule'),
                             'icon'=>'<i class="fa  fa-calendar"></i>',
                             'url'=>['/schedule/index'],
-                            'visible'=>Yii::$app->user->can('staffmember')
+                            'visible'=>Yii::$app->user->can('staffmember'),
+                            'active'=>(Yii::$app->controller->id=='schedule')? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Students'),
                             'icon'=>'<i class="fa fa-lg fa-fw fa-child"></i>',
                             'url'=>['/student/index'],
-                            'visible'=>Yii::$app->user->can('staffmember')
+                            'visible'=>Yii::$app->user->can('staffmember'),
+                            'active'=>(Yii::$app->controller->id=='student')? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Customers'),
                             'icon'=>'<i class="fa fa-lg fa-fw fa-male"></i>',
                             'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER],
-                            'visible'=>Yii::$app->user->can('staffmember')
+                            'visible'=>Yii::$app->user->can('staffmember'),
+                            'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_CUSTOMER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_CUSTOMER)) ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Teachers'),
                             'icon'=>'<i class="fa fa-graduation-cap"></i>',
                             'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_TEACHER],	
-                            'visible'=>Yii::$app->user->can('staffmember')
+                            'visible'=>Yii::$app->user->can('staffmember'),
+                            'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_TEACHER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_TEACHER)) ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Staff Members'),
                             'icon'=>'<i class="fa fa-users"></i>',
 							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],    
-                            'visible'=>Yii::$app->user->can('staffmember')
+                            'visible'=>Yii::$app->user->can('staffmember'),
+                            'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_STAFFMEMBER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_STAFFMEMBER)) ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Owners'),
                             'icon'=>'<i class="fa fa-user"></i>',
 							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],    
-                            'visible'=>Yii::$app->user->can('administrator')
+                            'visible'=>Yii::$app->user->can('administrator'),
+                            'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_OWNER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_OWNER)) ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Administrators'),
                             'icon'=>'<i class="fa fa-user-secret"></i>',
 							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR],    
-                            'visible'=>Yii::$app->user->can('administrator')
+                            'visible'=>Yii::$app->user->can('administrator'),
+                            'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_ADMINISTRATOR || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_ADMINISTRATOR)) ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Programs'),
                             'icon'=>'<i class="fa fa-table"></i>',
                             'url'=>['/program/index'],
-                            'visible'=>Yii::$app->user->can('staffmember')
+                            'visible'=>Yii::$app->user->can('staffmember'),
+                            'active'=>(Yii::$app->controller->id=='program')? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Lessons'),
                             'icon'=>'<i class="fa  fa-music"></i>',
                             'url'=>['/lesson/index'],
-                            'visible'=>Yii::$app->user->can('staffmember')
+                            'visible'=>Yii::$app->user->can('staffmember'),
+                            'active'=>(Yii::$app->controller->id=='lesson')? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Invoices'),
                             'icon'=>'<i class="fa  fa-dollar"></i>',
                             'url'=>['/invoice/index'],
-                            'visible'=>Yii::$app->user->can('staffmember')
+                            'visible'=>Yii::$app->user->can('staffmember'),
+                            'active'=>(Yii::$app->controller->id=='invoice')? true : false,
                         ],
                         [
                             'label'=>Yii::t('backend', 'System'),
