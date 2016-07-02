@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -10,18 +9,8 @@ $this->title = 'Students';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<style>
-	.advanced-search {
-        display: none;
-    }
-		.search-mode {
-        display: block;
-    }
-</style>
-
 <div class="student-index">
 <?php yii\widgets\Pjax::begin(['id' => 'student-index']); ?>
-    <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -52,16 +41,4 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 
 	<?php yii\widgets\Pjax::end(); ?>
-
-	
-
 </div>
-<script>
-		$(".advanced-search-toggle").click(function(){
-		if($('.search-mode').is(":visible")){
-			$('.advanced-search').fadeOut();
-		} else {
-			$('.advanced-search').fadeIn();
-		}
-	});
-	</script>
