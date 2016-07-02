@@ -28,22 +28,14 @@ echo GridView::widget([
 		[
 			'label' => 'From Time',
 			'value' => function($data) {
-				if (!empty($data->from_time)) {
-					$fromTime = date("g:i a", strtotime($data->from_time));
-					return !empty($fromTime) ? $fromTime : null;
-				}
-				return null;
-			},
+				return ! empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
+			}
 		],
 		[
 			'label' => 'To Time',
 			'value' => function($data) {
-				if (!empty($data->to_time)) {
-					$toTime = date("g:i a", strtotime($data->to_time));
-					return !empty($toTime) ? $toTime : null;
-				}
-				return null;
-			},
+				return ! empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
+			}
 		],
 		['class' => 'yii\grid\ActionColumn', 'controller' => 'teacher-availability', 'template' => '{delete}'],
 	],

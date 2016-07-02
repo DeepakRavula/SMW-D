@@ -30,9 +30,8 @@ use common\models\Invoice;
 			[
 			'label' => 'Date',
 				'value' => function($data) {
-					$date = date("d-m-Y", strtotime($data->date)); 
-					return ! empty($date) ? $date : null;
-                },
+					return ! empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
+                }
 			],
 	    	[
 				'label' => 'Status',

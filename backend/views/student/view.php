@@ -1,13 +1,5 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\DetailView;
-use yii\grid\GridView;
-use common\models\Enrolment;
-use common\models\User;
-use common\models\Lesson;
-use common\models\Invoice;
-use common\models\Student;
 use yii\bootstrap\Tabs;
 
 /* @var $this yii\web\View */
