@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\CitySearch */
@@ -19,7 +20,6 @@ use yii\bootstrap\ActiveForm;
 
    <?php echo $form->field($model, 'last_name') ?>
 
-    <?php echo $form->field($model, 'birth_date') ?>
 	 <?php echo $form->field($model, 'customer_id') ?>
 
     <div class="form-group">
