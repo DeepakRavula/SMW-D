@@ -104,6 +104,11 @@ use yii\bootstrap\Tabs;
 
 	<div class="col-md-12 m-b-10">
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+			<?php
+			if(! $model->getModel()->getIsNewRecord()){
+				echo Html::a('Cancel', ['view','UserSearch[role_name]' => $model->roles,'id' => $model->getModel()->id,'section' => $section], ['class'=>'btn btn-primary']); 	
+			}
+		?>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div> <!-- user-form -->
