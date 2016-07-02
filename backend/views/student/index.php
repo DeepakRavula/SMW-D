@@ -11,9 +11,10 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="student-index">
 <?php yii\widgets\Pjax::begin(['id' => 'student-index']); ?>
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
@@ -30,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'last_name',
             'birth_date:date',
 			[
+                'attribute' => 'customer_id',
 				'label' => 'Customer Name',
 				'value' => function($data) {
 					$fullName = ! (empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;

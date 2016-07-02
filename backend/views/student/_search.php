@@ -2,41 +2,31 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;
-
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\search\UserSearch */
+/* @var $model backend\models\search\CitySearch */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="user-search m-t-10">
+<div class="student-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
-    <div class="row col-md-12">
-    <div class="col-md-3">
+
     <?php echo $form->field($model, 'first_name') ?>
+
+   <?php echo $form->field($model, 'last_name') ?>
+
+    <?php echo $form->field($model, 'birth_date') ?>
+	 <?php echo $form->field($model, 'customer_id') ?>
+
+    <div class="form-group">
+        <?php echo Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+        <?php echo Html::resetButton('Reset', ['class' => 'btn btn-default']) ?>
     </div>
-    <div class="col-md-3">
-    <?php echo $form->field($model, 'last_name') ?>
-    </div>
-    <div class="col-md-3">
-    <?php
-        //$customer = ArrayHelper::map(Student::customer()->all(), 'id', 'id'));
-        $a= ['1' => 'Yes', '0' => 'No'];
-        echo $form->field($model, 'customer_id')->dropDownList($a,['prompt'=>'Select Option']);
-    ?>
-    </div>
-    <div class="col-md-3">
-    <div class="form-group m-t-5">
-        <br>
-        <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
-    </div>
-    </div>
-    </div>
+
     <?php ActiveForm::end(); ?>
-    
+
 </div>
