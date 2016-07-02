@@ -50,5 +50,5 @@ echo GridView::widget([
 ]);
 ?>
 <div class="col-md-12 m-b-20 m-t-20">
-		<?php echo Html::a('<i class="fa fa-pencil"></i> Update Availability', ['update', 'id' => $model->id,'section' => 'availability'], ['class' => 'm-r-20']) ?>
+		<?php echo Html::a('<i class="fa fa-pencil"></i> Update Availability', ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'section' => 'availability'], ['class' => 'm-r-20']) ?>
 </div>
