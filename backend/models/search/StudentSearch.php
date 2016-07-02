@@ -5,8 +5,6 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\User;
-use common\models\UserLocation;
 use common\models\Student;
 
 /**
@@ -21,7 +19,7 @@ class StudentSearch extends Student
     public function rules()
     {
         return [
-            [['first_name', 'last_name'], 'safe'],
+            [['first_name', 'last_name','customer_id'], 'safe'],
         ];
     }
 

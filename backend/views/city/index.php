@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        //'filterModel' => $searchModel,
+        'filterModel' => $searchModel,
 		'rowOptions' => function ($model, $key, $index, $grid) {
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
@@ -32,12 +32,14 @@ $this->params['breadcrumbs'][] = $this->title;
 				'header' => 'Serial No.',
 			],
 			[
+                'attribute' => 'name',
 				'label' => 'Name',
 				'value' => function($data) {
 					return ! empty($data->name) ? $data->name : null;
 				}
-			],	
+			],
 			[
+                'attribute' => 'province_id',
 				'label' => 'Province Name',
 				'value' => function($data) {
 					return ! empty($data->province->name) ? $data->province->name :null;

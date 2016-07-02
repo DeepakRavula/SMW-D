@@ -1,9 +1,6 @@
 <?php
 
-use common\models\User;
 use yii\helpers\Html;
-use yii\helpers\ArrayHelper;
-use kartik\date\DatePicker;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
