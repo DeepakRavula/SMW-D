@@ -37,12 +37,19 @@ class StudentController extends Controller
      */
     public function actionIndex()
     {
+		$request = Yii::$app->request;
+		$searchMode = false;
+		$studentSearch = $request->get('StudentSearch');
+		if(isset($studentSearch)){
+			$searchMode = true;
+		}
         $searchModel = new StudentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel
+            'searchModel' => $searchModel,
+			'searchMode'=> $searchMode
         ]);
     }
 

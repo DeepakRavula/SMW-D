@@ -41,7 +41,6 @@ class StudentSearch extends Student
     public function search($params)
     {
         $locationId = Yii::$app->session->get('location_id');
-        //$query = Student::find()->alias('s');
 		$query = Student::find()
 			->joinWith(['customer' => function($query) use($locationId){
 				$query->joinWith('userLocation')
@@ -58,7 +57,6 @@ class StudentSearch extends Student
         $query->andFilterWhere(['like', 'first_name', $this->first_name])
               ->andFilterWhere(['like', 'last_name', $this->last_name])
               ->andFilterWhere(['like', 'customer_id', $this->customer_id]);
-              ;
 
         return $dataProvider;
     }

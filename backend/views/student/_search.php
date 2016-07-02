@@ -10,7 +10,8 @@ use yii\helpers\ArrayHelper;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="user-search m-t-10">
+	<div class="advanced-search-toggle btn-default col-xs-6 col-md-3 col-sm-4 demo-icon-font "><i class="fa fa-search-plus"></i> Advanced Search</div>
+	<div class="advanced-search <?= ! empty($searchMode) ? 'search-mode' : null;?>">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -25,7 +26,6 @@ use yii\helpers\ArrayHelper;
     </div>
     <div class="col-md-3">
     <?php
-        //$customer = ArrayHelper::map(Student::customer()->all(), 'id', 'id'));
         $a= ['1' => 'Yes', '0' => 'No'];
         echo $form->field($model, 'customer_id')->dropDownList($a,['prompt'=>'Select Option']);
     ?>
@@ -38,5 +38,4 @@ use yii\helpers\ArrayHelper;
     </div>
     </div>
     <?php ActiveForm::end(); ?>
-    
 </div>

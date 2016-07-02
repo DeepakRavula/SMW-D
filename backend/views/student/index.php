@@ -9,9 +9,19 @@ use yii\grid\GridView;
 $this->title = 'Students';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<style>
+	.advanced-search {
+        display: none;
+    }
+		.search-mode {
+        display: block;
+    }
+</style>
+
 <div class="student-index">
 <?php yii\widgets\Pjax::begin(['id' => 'student-index']); ?>
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php echo $this->render('_search', ['model' => $searchModel,'searchMode'=> $searchMode]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
@@ -36,7 +46,6 @@ $this->params['breadcrumbs'][] = $this->title;
 					return $fullName;
                 } 
 			],
-            //['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 
@@ -45,3 +54,12 @@ $this->params['breadcrumbs'][] = $this->title;
 	
 
 </div>
+<script>
+		$(".advanced-search-toggle").click(function(){
+		if($('.search-mode').is(":visible")){
+			$('.advanced-search').fadeOut();
+		} else {
+			$('.advanced-search').fadeIn();
+		}
+	});
+	</script>
