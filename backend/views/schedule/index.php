@@ -12,6 +12,10 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="schedule-index">
 <div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
+<div class="e1Div">
+    <input type="checkbox" name="e1" id="e1" />
+    <label for="e1">Show All Teachers</label>
+</div>
 <div id='calendar' class="p-10"></div>
 </div>
 <script type="text/javascript">
@@ -66,6 +70,13 @@ $(document).ready(function() {
         
         $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
     }
+  });
+  
+  
+  $("#e1").change(function() {
+     // $('#calendar').fullCalendar('removeResource', { id: '313'});
+        $('#calendar').fullCalendar('addResource', [{ id: '548', title: 'Room E', eventColor: 'blue' }],scroll);
+        alert();
   });
 });
 </script>
