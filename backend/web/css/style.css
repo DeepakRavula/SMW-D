@@ -92,6 +92,9 @@ a:hover, a:focus{
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
     background: #e12e2b;
 }
+.pagination{
+  margin-left: 20px;
+}
 .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
     z-index: 2;
     color: #fff;
@@ -202,6 +205,11 @@ Resets
   display: block;
   overflow: scroll;
 }*/
+.bg-light-gray>th:first-child,
+table>tbody>tr>td:first-child {
+    width: 81px;
+    text-align: center;
+}
 table tr td:last-of-type>a>i ,
 table tr td:last-of-type>a:nth-child(2)>span.glyphicon{
     margin: 0 7px;
