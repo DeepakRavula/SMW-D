@@ -8,6 +8,7 @@ $this->title = 'Student Details';
 $this->params['breadcrumbs'][] = ['label' => 'Students', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
 <?php
 echo $this->render('_profile', [
         'model' => $model,

@@ -207,7 +207,6 @@ Resets
 }*/
 .bg-light-gray>th:first-child,
 table>tbody>tr>td:first-child {
-    width: 81px;
     text-align: center;
 }
 table tr td:last-of-type>a>i ,

@@ -10,6 +10,16 @@ $this->title = 'Invoice';
 $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 ?>
+<style>
+    table>thead>tr>th:first-child,
+    table>tbody>tr>td:first-child{
+        text-align: left !important;
+    }
+    table>thead>tr>th:last-child,
+    table>tbody>tr>td:last-child{
+      text-align: right;
+    }
+</style>
 <?php //echo '<pre>'; print_r($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer); ?>
 
 <div class="invoice-view p-10">
@@ -27,49 +37,91 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
       </div>
     <div class="row invoice-info">
         <!-- /.col -->
-        <div class="col-sm-4 invoice-col">
+        <div class="col-sm-4 invoice-col m-b-20">
         Bill To,
-          <address>
-            <strong><?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null?></strong>
-            <br>
-            <strong>Email:</strong> <?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email : null?>
-			<?php
-			$addresses = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->addresses;
-			foreach($addresses as $address){
-				if($address->label === 'Billing'){
-					$billingAddress = $address;
-					break;
-				}
-			}
-
-			$phoneNumber = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->phoneNumber; 
-			?>
-			 <br>
-			 <?php
-			if(! empty($billingAddress)){
-				echo 'Billing Address:';
-				echo $billingAddress->address . ', ' . $billingAddress->city->name;
-				echo $billingAddress->province->name . ', ' . $billingAddress->country->name;
-				echo $billingAddress->postal_code;
-			}
-			echo "<br>";
-			if(! empty($phoneNumber)){
-				echo 'Phone Number:';
-				echo $phoneNumber->number;
-			}
-				?>
-          </address>
+          <div class="row m-t-10">
+            <div class="col-xs-4">
+              <strong>Name:</strong>
+            </div>
+            <div class="col-xs-8">
+              <strong><?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null?></strong>
+            </div>
+          </div>
+            <div class="row">
+              <div class="col-xs-4">
+                <strong>Email:</strong> 
+              </div>
+              <div class="col-xs-8">
+                <?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email : null?>
+              </div>
+            </div>
+            <?php
+                $addresses = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->addresses;
+                foreach($addresses as $address){
+                  if($address->label === 'Billing'){
+                    $billingAddress = $address;
+                    break;
+                  }
+                }
+                $phoneNumber = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->phoneNumber; 
+            ?>
+<!-- Billing address -->
+            <?php if(! empty($billingAddress)){ ?>
+            <div class="row">
+              <div class="col-xs-4">
+                <strong><?php echo 'Billing Address:'; ?></strong>
+              </div>
+              <div class="col-xs-8">
+                <?php 
+                    echo $billingAddress->address . '<br> ' . $billingAddress->city->name . ', ';
+                    echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ', ';
+                    echo $billingAddress->postal_code;
+                ?>
+              </div>
+            </div>
+            <?php } ?>
+<!-- Phone number -->
+          <?php if(! empty($phoneNumber)){ ?>
+            <div class="row">
+              <div class="col-xs-4">
+                <strong><?php echo 'Phone Number:'; ?></strong>
+              </div>
+              <div class="col-xs-8">
+                <?php echo $phoneNumber->number;?>
+              </div>
+            </div>
+           <?php } ?>
         </div>
         <!-- /.col -->
-        <div class="col-sm-4 invoice-col">
-			<b>Date:</b> <?php echo date("d/m/Y", strtotime($model->date));?><br>
-          <b>Invoice Number:</b> #<?php echo $model->invoice_number;?> <br>
-          <b>Status:</b> <?php echo $model->status($model);?><br>
+        <br>
+        <div class="col-sm-4 invoice-col m-t-10">
+          <div class="row">
+            <div class="col-xs-4">
+              <strong>Invoice Number: </strong>
+            </div>
+            <div class="col-xs-7">
+              #<?php echo $model->invoice_number;?>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-4">
+              <strong>Date: </strong>
+            </div>
+            <div class="col-xs-7">
+              <?php echo date("d/m/Y", strtotime($model->date));?>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-4">
+              <strong>Status: </strong>
+            </div>
+            <div class="col-xs-7">
+              <?php echo $model->status($model);?>
+            </div>
+          </div>
         </div>
         <!-- /.col -->
       </div>
-    <div>
-    </div>
     <div>
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
@@ -95,15 +147,15 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 'label' => 'Unit',
                 'enableSorting' => false,
                 ],
-												[
+								[
             				'label' => 'Weight',
             				'value' => function($data) {
-            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) ? Yii::$app->formatter->asCurrency($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) : null;
+            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate : null;
             				},
-            			    ],
+            		],
                 [ 
                 'attribute' => 'amount',
-                'format' => 'currency',
+                //'format' => 'currency',
                 'label' => 'Amount',
                 'enableSorting' => false,
                 ],
@@ -131,13 +183,13 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                   </td>
                   <td colspan="2">
                     <table>
-                    <tr>
+                    <!-- <tr>
                       <td style="width: 100px;"><strong>Tax:</strong></td>
                       <td style="width: 186px;"><?php echo Yii::$app->formatter->asCurrency($model->tax);?></td>
-                    </tr>
+                    </tr> -->
                     <tr>
-                      <td style="width: 100px;"><strong>Total:</strong></td>
-                      <td style="width: 186px;"><?php echo Yii::$app->formatter->asCurrency($model->total);?></td> 
+                      <td style="width: 100px;"><strong>Total</strong></td>
+                      <td style="width: 135px;"><?php echo $model->total;//echo Yii::$app->formatter->asCurrency($model->total);?></td> 
                     </tr>
                     </table>
                   </td>
