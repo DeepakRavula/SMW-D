@@ -30,6 +30,6 @@ use yii\widgets\ListView;
 	</div>
 	<div class="clearfix"></div>
 	<div class="m-t-20">
-		<?php echo Html::a('<i class="fa fa-pencil"></i> Update Contact Information', ['update', 'id' => $model->id,'section' => 'contact'], ['class' => 'm-r-20']) ?>
+		<?php echo Html::a('<i class="fa fa-pencil"></i> Update Contact Information', ['update','UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id,'section' => 'contact'], ['class' => 'm-r-20']) ?>
 	</div>
 </div>

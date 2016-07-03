@@ -1,7 +1,5 @@
 <?php
 
-use yii\helpers\Html;
-use common\models\Lesson;
 use common\models\Invoice;
 use yii\grid\GridView;
 ?>
@@ -69,11 +67,9 @@ echo GridView::widget([
 		[
 			'label' => 'Date',
 			'value' => function($data) {
-				$date = date("d-m-Y", strtotime($data->date));
-				return !empty($date) ? $date : null;
-			},
+				return ! empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
+			}
 		],
-        //['class' => 'yii\grid\ActionColumn','controller' => 'lesson']
 	],
 ]);
 ?>

@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			</h5>
 		</div>	
         <div class="pull-left m-t-10">
-            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Profile'), ['update', 'id' => $model->id,'section' => 'profile'], ['class' => 'm-r-20']) ?>
+            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Profile'), ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'section' => 'profile'], ['class' => 'm-r-20']) ?>
             <?php
           /*  echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
                 'class' => '',
@@ -72,6 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			'model' => $model,
 			'addressDataProvider' => $addressDataProvider,
 			'phoneDataProvider' => $phoneDataProvider,
+			'searchModel' => $searchModel
 		]);
 
 		$lessonContent = $this->render('_lesson', [
@@ -94,11 +95,13 @@ $this->params['breadcrumbs'][] = $this->title;
 		$qualificationContent = $this->render('_view-qualification',[
 			'program' => $program,	
 			'model' => $model,
+			'searchModel' => $searchModel
 		]);
 
 		$teacherAvailabilityContent = $this->render('_view-teacher-availability',[
 			'teacherDataProvider' => $teacherDataProvider,
 			'model' => $model,
+			'searchModel' => $searchModel
 		]);
 
 		$teacherStudentContent = $this->render('_teacher-student',[
