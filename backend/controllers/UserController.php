@@ -66,14 +66,13 @@ class UserController extends Controller {
 				'validationRules' => [
 				],
 				'on afterSave' => function($event) {
-
-			/* @var $file \League\Flysystem\File */
-			$file = $event->file;
-			$userImport = new UserImport();
-			$userImport->file = $file;
-			$userImport->import();
-			// do something (resize, add watermark etc)
-		}
+					/* @var $file \League\Flysystem\File */
+					$file = $event->file;
+					$userImport = new UserImport();
+					$userImport->file = $file;
+					return $userImport->import();
+					// do something (resize, add watermark etc)
+				}
 			]
 		];
 	}

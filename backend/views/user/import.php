@@ -33,6 +33,7 @@ bootstrap_alert.success = function(message) {
         }
 	var UserImport = {
 		onDone : function(e, data) {
+			console.log(data);
 			bootstrap_alert.success('User data imported successfully');
 		}
 	}
