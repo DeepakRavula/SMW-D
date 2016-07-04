@@ -6,7 +6,7 @@ use yii\widgets\ListView;
 <div class="row-fluid p-20">
 	<div class="col-xs-4">
 		<div class="row-fluid">
-		<p class="c-title m-0"><i class="fa fa-map-marker"></i> Address </p>
+		<p class="c-title m-0"><i class="fa fa-map-marker"></i> Addresses </p>
 		  <?php echo ListView::widget([
 		        'dataProvider' => $addressDataProvider,
 		        'itemView'=>'_view-contact-address', 
@@ -15,7 +15,7 @@ use yii\widgets\ListView;
 	</div>
 	<div class="col-xs-4">
 		<div class="row-fluid">
-			<p class="c-title m-0"><i class="fa fa-phone-square"></i> Phone number</p>
+			<p class="c-title m-0"><i class="fa fa-phone-square"></i> Phone Numbers</p>
 			<?php echo ListView::widget([
 		        'dataProvider' => $phoneDataProvider,
 		        'itemView'=>'_view-contact-phone', 
