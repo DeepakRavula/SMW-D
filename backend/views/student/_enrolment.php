@@ -21,7 +21,6 @@ use common\models\Enrolment;
 		'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
 		'columns' => [
-			['class' => 'yii\grid\SerialColumn'],
 			[
 				'label' => 'Program Name',
 				'value' => function($data) {
@@ -75,7 +74,6 @@ use common\models\Enrolment;
 
 				}
 			],
-			['class' => 'yii\grid\ActionColumn', 'controller' => 'enrolment','template' => '{delete}'],
 		],
 	]);
 	?>

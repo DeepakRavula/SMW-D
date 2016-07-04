@@ -27,10 +27,6 @@ $this->params['breadcrumbs'][] = $this->title;
         },
         //'filterModel' => $searchModel,
         'columns' => [
-            [
-				'class' => 'yii\grid\SerialColumn',
-				'header' => 'Serial No.',
-			],
             'name',
             'tax_rate',
 			[

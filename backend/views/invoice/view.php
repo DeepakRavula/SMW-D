@@ -174,11 +174,15 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 <tr>
                   <td colspan="4">
                     <div class="row-fluid m-t-10">
+					<?php if(! empty($model->notes)):?>
                     <em><strong>Printed Notes: </strong><?php echo $model->notes; ?></em>
+					<?php endif;?>
                     </div>
                     <hr class="right-side-faded">
                     <div class="row-fluid">
+					<?php if(! empty($model->internal_notes)):?>
                     <em><strong>Internal notes: <?php echo $model->internal_notes; ?></strong></em>
+					<?php endif;?>
                     </div>
                   </td>
                   <td colspan="2">

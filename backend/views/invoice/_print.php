@@ -38,7 +38,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row invoice-info m-b-20">
         <!-- /.col -->
         <div class="col-sm-6 invoice-col">
-        Bill To,
           <div class="row m-t-10">
             <div class="col-xs-4">
               <strong>Name:</strong>
@@ -129,26 +128,26 @@ $this->params['breadcrumbs'][] = $this->title;
             'tableOptions' =>['class' => 'table table-bordered m-0'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
-      			    [
-            				'label' => 'Teacher Name',
+     					[
+            				'label' => 'Student Name',
             				'value' => function($data) {
-            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity : null;
+            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->fullName : null;
             				},
             			    ],
-            				[
+            			[
             				'label' => 'Program Name',
             				'value' => function($data) {
             					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
             				},
-            			    ],
-            				[
+            			],
+            			[
             				'label' => 'Date',
             				'value' => function($data) {
             					$date = date("d-m-Y", strtotime($data->lesson->date)); 
             					return ! empty($date) ? $date : null;
                             },
-            			    ],
-            				[
+            			],
+            			[
             				'label' => 'From Time',
             				'value' => function($data) {
             					if(! empty($data->lesson->enrolmentScheduleDay->from_time)){
@@ -157,21 +156,20 @@ $this->params['breadcrumbs'][] = $this->title;
             					}
             					return null;
             				},
-      			    ],
-                [ 
-                'attribute' => 'unit',
-                'label' => 'Unit',
-                'enableSorting' => false,
-                ],
-                [
-                    'label' => 'Weight',
-                    'value' => function($data) {
-                      return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate : null;
-                    },
-                ],
+      			    	],
+                		[ 
+			                'attribute' => 'unit',
+            			    'label' => 'Unit',
+			                'enableSorting' => false,
+            		    ],
+                		[
+		                    'label' => 'Weight',
+        		            'value' => function($data) {
+                			      return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate : null;
+                    		},
+                		],
                 [ 
                 'attribute' => 'amount',
-                //'format' => 'currency',
                 'label' => 'Amount',
                 'enableSorting' => false,
                 ],
@@ -189,12 +187,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 <tr>
                   <td colspan="4">
                     <div class="row-fluid m-t-10">
+					<?php if(! empty($model->notes)):?>
                     <em><strong>Printed Notes: </strong><?php echo $model->notes; ?></em>
+					<?php endif;?>
                     </div>
                     <hr class="right-side-faded">
-                    <div class="row-fluid">
-                    <em><strong>Internal notes: <?php echo $model->internal_notes; ?></strong></em>
-                    </div>
                   </td>
                   <td colspan="2">
                     <table>

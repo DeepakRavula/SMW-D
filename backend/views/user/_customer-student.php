@@ -28,7 +28,6 @@ echo GridView::widget([
 'tableOptions' =>['class' => 'table table-bordered'],
 'headerRowOptions' => ['class' => 'bg-light-gray' ],
 'columns' => [
-	['class' => 'yii\grid\SerialColumn'],
 	[
 		'label' => 'Name',
 		'value' => function($data) {

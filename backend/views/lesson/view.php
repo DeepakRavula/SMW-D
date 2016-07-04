@@ -42,10 +42,12 @@ $this->params['breadcrumbs'][] = $this->title;
 		<div class="clearfix"></div>
 		<div class="row-fluid">
 			<div class="col-md-12">
+				<?php if(! empty($model->notes)) :?>
 				<h5 class="m-t-20"><em><i class="fa fa-info-circle"></i> Notes:
 				<?php echo ! empty($model->notes) ? $model->notes : null; ?>
 				</em>
 			</h5>
+				<?php endif;?>
 			</div>
 
 		</div>

@@ -15,6 +15,12 @@ use yii\helpers\Html;
 	</a>
 	</div>
 	<div class="clearfix"></div>
+		<div class="row-fluid"><?php if(! empty($model->notes)) :?>
+			<h5 class="m-0"><em><i class="fa fa-info-circle"></i> Notes:
+				<?php echo ! empty($model->notes) ? $model->notes : null; ?></em>
+			</h5>
+			<?php endif;?>
+		</div>
 	<div class="student-view">
 		<div class="col-md-12 action-btns">
 			<?php echo Html::a('<i class="fa fa-pencil"></i> Update details', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>

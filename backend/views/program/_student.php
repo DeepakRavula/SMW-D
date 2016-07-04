@@ -15,14 +15,12 @@ echo GridView::widget([
 'headerRowOptions' => ['class' => 'bg-light-gray' ],
 'options' => ['class' => 'col-md-4'],
 'columns' => [
-	['class' => 'yii\grid\SerialColumn'],
 	[
 		'label' => 'Student Name',
 		'value' => function($data) {
 			return !empty($data->fullName) ? $data->fullName : null;
 		},
 	],
-	//['class' => 'yii\grid\ActionColumn', 'controller' => 'student','template' => '{view}'],
 ],
 ]);
 ?>

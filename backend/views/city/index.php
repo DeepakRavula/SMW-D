@@ -27,10 +27,6 @@ $this->params['breadcrumbs'][] = $this->title;
             return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
         },
         'columns' => [
-            [
-				'class' => 'yii\grid\SerialColumn',
-				'header' => 'Serial No.',
-			],
 			[
                 'attribute' => 'name',
 				'label' => 'Name',
