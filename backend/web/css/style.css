@@ -205,14 +205,14 @@ Resets
   display: block;
   overflow: scroll;
 }*/
-.bg-light-gray>th:first-child,
+/*.bg-light-gray>th:first-child,
 table>tbody>tr>td:first-child {
     text-align: center;
 }
 table tr td:last-of-type>a>i ,
 table tr td:last-of-type>a:nth-child(2)>span.glyphicon{
     margin: 0 7px;
-}
+}*/
 .label {
   font-weight: normal;
     font-size: 100%;

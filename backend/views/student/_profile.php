@@ -15,8 +15,8 @@ use yii\helpers\Html;
 	</a>
 	</div>
 	<div class="clearfix"></div>
-		<div class="row-fluid"><?php if(! empty($model->notes)) :?>
-			<h5 class="m-0"><em><i class="fa fa-info-circle"></i> Notes:
+		<div class="col-xs-12"><?php if(! empty($model->notes)) :?>
+			<h5><em><i class="fa fa-info-circle"></i> Notes:
 				<?php echo ! empty($model->notes) ? $model->notes : null; ?></em>
 			</h5>
 			<?php endif;?>
