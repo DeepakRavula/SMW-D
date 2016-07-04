@@ -12,7 +12,6 @@ use common\models\Enrolment;
 		'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
 		'columns' => [
-			['class' => 'yii\grid\SerialColumn'],
 			[
 				'label' => 'Student Name',
 				'value' => function($data) {

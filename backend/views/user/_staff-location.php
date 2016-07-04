@@ -7,7 +7,6 @@ use yii\grid\GridView;
 echo GridView::widget([
 'dataProvider' => $locationDataProvider,
 'columns' => [
-	['class' => 'yii\grid\SerialColumn'],
 	[
 		'label' => 'Location Name',
 		'value' => function($data) {

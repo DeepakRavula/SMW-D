@@ -17,7 +17,6 @@ use common\models\Invoice;
             return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
         },
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
             [
                 'label' => 'Student Name',
                 'value' => function($data) {

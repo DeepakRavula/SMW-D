@@ -22,10 +22,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
-            [
-				'class' => 'yii\grid\SerialColumn',
-				'header' => 'Serial No.',
-			],
 			'first_name',
             'last_name',
             'birth_date:date',
