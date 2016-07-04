@@ -41,6 +41,7 @@ class Address extends \yii\db\ActiveRecord
             [['label'], 'string', 'max' => 32],
             [['address'], 'string', 'max' => 64],
             [['postal_code'], 'string', 'max' => 16],
+            [['is_primary'], 'boolean'],
         ];
     }
 
