@@ -131,17 +131,13 @@ class UserController extends Controller {
 		]);
 				
 		$model = $this->findModel($id);
-		$teacherLocation = UserLocation::findOne([
-					'user_id' => $id,
-					'location_id' => $session->get('location_id'),
-		]);
-		$teacherDataProvider = new ActiveDataProvider([
-			'query' => TeacherAvailability::find()
-					->where([
-						'teacher_location_id' => $teacherLocation->id
-					])
-		]);
 
+		$query = TeacherAvailability::find()
+				->joinWith('userLocation')
+				->where(['user_id' => $id]);
+		$teacherDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);	
 		$program = null;
 		$qualifications = Qualification::find()
 				->joinWith('program')
@@ -549,12 +545,21 @@ class UserController extends Controller {
 	protected function findModel($id) {
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
+		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+			foreach ($roles as $name => $description) {
+			$role = $name;
+		}
+		$adminModel = User::findOne(['id' => $id]); 
 		$model = User::find()->joinWith(['location' => function($query) use($locationId) {
 						$query->where(['location_id' => $locationId]);
 					}])->where(['user.id' => $id])->one();
 				if ($model !== null) {
 					return $model;
-				} else {
+				} 
+				elseif($role === User::ROLE_ADMINISTRATOR &&  $adminModel != null){
+					return $adminModel;
+				}
+				else {
 					throw new NotFoundHttpException('The requested page does not exist.');
 				}
 			}

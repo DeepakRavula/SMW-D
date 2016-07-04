@@ -74,4 +74,9 @@ class TeacherAvailability extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id'])
 			->viaTable('user_location', ['id' => 'teacher_location_id']);
     }
+
+	public function getUserLocation() 
+	{
+        return $this->hasOne(UserLocation::className(), ['id' => 'teacher_location_id']);
+    }
 }
