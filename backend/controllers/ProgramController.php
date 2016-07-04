@@ -33,11 +33,20 @@ class ProgramController extends Controller
      * @return mixed
      */
     public function actionIndex()
-    {
+    {   
+        $active =1;
+        if(Yii::$app->request->getIsAjax()) {
+            $request = Yii::$app->request;
+            $active = $request->get('active');
+        }
+        
+        $query = Program::find()->active();
+        if($active==0){
+            $query = Program::find();
+        }  
         $dataProvider = new ActiveDataProvider([
-            'query' => Program::find()->active(),
+            'query' => $query,
         ]);
-
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
