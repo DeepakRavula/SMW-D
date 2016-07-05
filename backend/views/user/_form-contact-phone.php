@@ -64,7 +64,11 @@ $this->registerJs($js);
 					}
 					?>
 
-	                <div class="row">
+	                <div class="row"> 
+                        <div class="col-sm-4">
+						<?= $form->field($phoneNumberModel, "[{$index}]is_primary")->checkbox() ?>
+						</div> 
+                        <div class="clearfix"></div>
 	                    <div class="col-sm-4">
 	<?= $form->field($phoneNumberModel, "[{$index}]number")->textInput(['maxlength' => true]) ?>
 	                    </div>
@@ -83,3 +87,17 @@ $this->registerJs($js);
     <div class="clearfix"></div>
 		<hr class="hr-ph">
 		<?php DynamicFormWidget::end(); ?>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.phone-container-items').on('change', 'input[type="checkbox"]', function(){
+		var checked = $(this).prop('checked');
+		$('.phone-container-items input[type="checkbox"]').prop('checked', false);
+
+		if(checked) {
+			$(this).prop('checked', true);
+		} else {
+			$(this).prop('checked', false);
+		}
+	});
+});
+</script>
