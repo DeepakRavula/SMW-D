@@ -14,12 +14,13 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="program-index m-t-20">
 <div class="pull-right  m-r-20">
-	<?php \yii\widgets\Pjax::begin(); ?>
+	<?php yii\widgets\Pjax::begin(['id' => 'active-program']) ?>
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
-	<?= $form->field($searchModel, 'activeOnly')->checkbox(); ?>
+	<?= $form->field($searchModel, 'activeOnly')->checkbox(['data-pjax' => true]); ?>
 	<?php ActiveForm::end(); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 </div>
+	<?php yii\widgets\Pjax::begin(['id' => 'program-listing']) ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
             'options' => ['class'=>'col-md-5'],
@@ -37,8 +38,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 //['class' => 'yii\grid\ActionColumn'],
             ],
         ]); ?>
+    <?php \yii\widgets\Pjax::end(); ?>
     <div class="clearfix"></div>
 	<div class="col-md-12 m-b-20">
         <?php echo Html::a('Add', ['create'], ['class' => 'btn btn-success']) ?>
     </div>
 </div>
+  <script>
+  $("#programsearch-activeonly").on("change", function() {
+      var activeOnly = $(this).is(":checked");
+      var url = "<?php echo Url::to(['program/index']);?>?ProgramSearch[activeOnly]=" + (activeOnly | 0);
+      $.ajax({
+          url: url,
+          type:'POST',
+          success:function(result){
+              $.pjax.reload({container:"#program-listing"});  //Reload GridView
+          },
+      });
+             
+  });
+  </script>

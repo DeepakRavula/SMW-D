@@ -22,6 +22,7 @@ class ProgramSearch extends Program
     public function rules()
     {
         return [
+			[['name','rate','activeOnly'],'safe'],
         ];
     }
 
