@@ -63,7 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
 					return $status;
                 },
 			],
-			['class' => 'yii\grid\ActionColumn','template' => '{view}{delete}']
+			['class' => 'yii\grid\ActionColumn','template' => '{delete}']
         ],
     ]); ?>
 

@@ -89,7 +89,7 @@ use kartik\time\TimePicker;
 <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
 		<?php 
 			if(! $model->isNewRecord){
-				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn btn-primary']); 	
+				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn']); 	
 			}
 		?>
 	</div>
