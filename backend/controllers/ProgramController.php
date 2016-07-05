@@ -10,6 +10,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use backend\models\search\ProgramSearch;
 
 /**
  * ProgramController implements the CRUD actions for Program model.
@@ -34,20 +35,11 @@ class ProgramController extends Controller
      */
     public function actionIndex()
     {   
-        $active =1;
-        if(Yii::$app->request->getIsAjax()) {
-            $request = Yii::$app->request;
-            $active = $request->get('active');
-        }
-        
-        $query = Program::find()->active();
-        if($active==0){
-            $query = Program::find();
-        }  
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
+        $searchModel = new ProgramSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
