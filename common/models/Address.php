@@ -41,6 +41,7 @@ class Address extends \yii\db\ActiveRecord
             [['label'], 'string', 'max' => 32],
             [['address'], 'string', 'max' => 64],
             [['postal_code'], 'string', 'max' => 16],
+            [['is_primary'], 'boolean'],
         ];
     }
 
@@ -57,6 +58,7 @@ class Address extends \yii\db\ActiveRecord
             'province_id' => 'Province ID',
             'postal_code' => 'Postal Code',
             'country_id' => 'Country ID',
+            'is_primary' => 'Primary Address',
         ];
     }
 

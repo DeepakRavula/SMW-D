@@ -65,6 +65,7 @@ $this->registerJs($js);
 				<div class="item-block address-item"><!-- widgetBody -->
 					<h4>
 						<span class="panel-title-address">Address: <?= ($index + 1) ?></span>
+							
 						<button type="button" class="pull-right address-remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
 						<div class="clearfix"></div>
 					</h4>
@@ -76,6 +77,9 @@ $this->registerJs($js);
 					?>
 
 					<div class="row">
+						<div class="col-sm-4">
+						<?= $form->field($addressModel, "[{$index}]is_primary")->checkbox() ?>
+						</div>
 						<div class="col-sm-4">
 							<?= $form->field($addressModel, "[{$index}]label")->dropDownList(Address::labels(), ['prompt' => 'Select Label']) ?>
 						</div>
@@ -125,3 +129,17 @@ $this->registerJs($js);
 <?php DynamicFormWidget::end(); ?>
 <div class="clearfix"></div>
 <hr class="hr-ad">
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.address-container-items').on('change', 'input[type="checkbox"]', function(){
+		var checked = $(this).prop('checked');
+		$('.address-container-items input[type="checkbox"]').prop('checked', false);
+
+		if(checked) {
+			$(this).prop('checked', true);
+		} else {
+			$(this).prop('checked', false);
+		}
+	});
+});
+</script>
