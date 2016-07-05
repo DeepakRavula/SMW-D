@@ -24,6 +24,14 @@ $this->params['breadcrumbs'][] = $this->title;
             return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
         },
         'columns' => [
+        'invoice_number',
+            [
+			'label' => 'Date',
+				'value' => function($data) {
+					$date = Yii::$app->formatter->asDate($data->date); 
+					return ! empty($date) ? $date : null;
+                },
+			],
 			[
 			    'label' => 'Customer Name',
                 'value' => function($data) {
@@ -39,13 +47,6 @@ $this->params['breadcrumbs'][] = $this->title;
 			'tax:currency',
 			'subTotal:currency',
             'total:currency',
-			[
-			'label' => 'Date',
-				'value' => function($data) {
-					$date = Yii::$app->formatter->asDate($data->date); 
-					return ! empty($date) ? $date : null;
-                },
-			],
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
