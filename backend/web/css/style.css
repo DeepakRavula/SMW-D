@@ -202,7 +202,7 @@ Resets
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background: url('http://www.htmllion.com/img/demo/select-arrow.png') no-repeat 97% center;
+    background: url(/img/select-arrow.png) no-repeat 97% center;
     color: #fff;
     filter:invert(100%);
     -webkit-filter: invert(100%);
