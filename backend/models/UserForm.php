@@ -258,7 +258,7 @@ public static function createMultiple($modelClass, $multipleModels = [])
             $auth->assign($auth->getRole($this->roles), $model->getId());
 
             $userLocationModel = UserLocation::findOne(["user_id"=>$model->getId(), "location_id"=>Yii::$app->session->get('location_id')]);
-			if(empty($userLocationModel)){
+			if(empty($userLocationModel) && $this->roles !== User::ROLE_ADMINISTRATOR){
 				$userLocationModel = new UserLocation();
                 $userLocationModel->user_id = $model->getId();
                 $userLocationModel->location_id = Yii::$app->session->get('location_id');
@@ -267,15 +267,16 @@ public static function createMultiple($modelClass, $multipleModels = [])
 
 			$fromTime = new \DateTime($this->fromTime);
 			$toTime = new \DateTime($this->toTime);
-			$teacherAvailabilityModel = TeacherAvailability::findOne(['teacher_location_id' => $userLocationModel->id]);
-			if(empty($teacherAvailabilityModel)){
-				$teacherAvailabilityModel = new TeacherAvailability;
-				$teacherAvailabilityModel->day = $this->teacherAvailabilityDay;
-				$teacherAvailabilityModel->from_time = $fromTime->format("H:i:s");
-				$teacherAvailabilityModel->to_time = $toTime->format("H:i:s");
+			if(! empty($userLocationModel)){
+				$teacherAvailabilityModel = TeacherAvailability::findOne(['teacher_location_id' => $userLocationModel->id]);
+				if(empty($teacherAvailabilityModel)){
+					$teacherAvailabilityModel = new TeacherAvailability;
+					$teacherAvailabilityModel->day = $this->teacherAvailabilityDay;
+					$teacherAvailabilityModel->from_time = $fromTime->format("H:i:s");
+					$teacherAvailabilityModel->to_time = $toTime->format("H:i:s");
+				}
+				$teacherAvailabilityModel->save();
 			}
-			$teacherAvailabilityModel->save();
-			
             $userProfileModel = UserProfile::findOne(['user_id' => $model->getId()]);
 			if(empty($userProfileModel)) {
 				$userProfileModel = new UserProfile();

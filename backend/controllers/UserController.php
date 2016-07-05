@@ -104,12 +104,12 @@ class UserController extends Controller {
 		if(empty($section)){
 			$section = 'profile';
 		}
+		$session = Yii::$app->session;
+		$location_id = $session->get('location_id');
 		
 		$searchModel = new UserSearch();
 		$db = $searchModel->search(Yii::$app->request->queryParams);
 
-		$session = Yii::$app->session;
-		Yii::$app->session->set("customer_id", $id);
 		$dataProvider = new ActiveDataProvider([
 			'query' => Student::find()->where(['customer_id' => $id])
 		]);
@@ -131,17 +131,13 @@ class UserController extends Controller {
 		]);
 				
 		$model = $this->findModel($id);
-		$teacherLocation = UserLocation::findOne([
-					'user_id' => $id,
-					'location_id' => $session->get('location_id'),
-		]);
-		$teacherDataProvider = new ActiveDataProvider([
-			'query' => TeacherAvailability::find()
-					->where([
-						'teacher_location_id' => $teacherLocation->id
-					])
-		]);
 
+		$query = TeacherAvailability::find()
+				->joinWith('userLocation')
+				->where(['user_id' => $id]);
+		$teacherDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);	
 		$program = null;
 		$qualifications = Qualification::find()
 				->joinWith('program')
@@ -159,49 +155,33 @@ class UserController extends Controller {
 			'query' => $model->getPhoneNumbers(),
 			]);
 		
-		$session = Yii::$app->session;
-		$location_id = $session->get('location_id');
+
 		$currentDate = new \DateTime();
-		$query = Lesson::find()
-			->joinWith(['enrolmentScheduleDay esd' => function($query) use($location_id,$id) {
-				$query->joinWith(['enrolment e' => function($query) use($location_id,$id){
-					$query->joinWith('student s')
-						->where(['e.location_id' => $location_id,'s.customer_id' => $id]);
-					}]);
-			}])
-			->andWhere(['<=', 'lesson.date', $currentDate->format('Y-m-d')
-			]);
+		$lessonQuery = Lesson::find()
+				->location($location_id)
+				->student($id)
+				->andWhere(['<=', 'lesson.date', $currentDate->format('Y-m-d')]);
 
 		$lessonDataProvider = new ActiveDataProvider([
-			'query' => $query,
+			'query' => $lessonQuery,
 		]);
 		
-		$query = Enrolment::find()
+		$enrolmentQuery = Enrolment::find()
 			->joinWith('student s')
-			->where(['location_id' => Yii::$app->session->get('location_id'),'s.customer_id' => $id]);
+			->where(['location_id' => $location_id,'s.customer_id' => $id]);
+		
 		$enrolmentDataProvider = new ActiveDataProvider([
-			'query' => $query,
+			'query' => $enrolmentQuery,
 		]);
 		
-		$location_id = Yii::$app->session->get('location_id');
-		$query = Invoice::find()
-			->joinWith(['lineItems li'=>function($query) use($location_id,$id){
-				$query->joinWith(['lesson l'=>function($query) use($location_id,$id){	
-					$query->joinWith(['enrolmentScheduleDay esd'=>function($query) use($location_id,$id){
-					$query->joinWith(['enrolment e'=>function($query) use($location_id,$id){
-						$query->joinWith('student s')
-							->where(['s.customer_id' => $id]);
-						}])
-					->where(['e.location_id' => $location_id]);
-				}]);
-			}]);
-		}]);
+		$invoiceQuery = Invoice::find()
+				->location($location_id)
+				->student($id);
 		$invoiceDataProvider = new ActiveDataProvider([
-			'query' => $query,
+			'query' => $invoiceQuery,
 		]);
 		$paymentsDataProvider = new ActiveDataProvider([
-			'query' => Payments::find()
-                
+			'query' => Payments::find()        
                 ->where(['user_id' => $id]),
 		]);
         $payments = Payments::find()
@@ -549,12 +529,21 @@ class UserController extends Controller {
 	protected function findModel($id) {
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
+		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+			foreach ($roles as $name => $description) {
+			$role = $name;
+		}
+		$adminModel = User::findOne(['id' => $id]); 
 		$model = User::find()->joinWith(['location' => function($query) use($locationId) {
 						$query->where(['location_id' => $locationId]);
 					}])->where(['user.id' => $id])->one();
 				if ($model !== null) {
 					return $model;
-				} else {
+				} 
+				elseif($role === User::ROLE_ADMINISTRATOR &&  $adminModel != null){
+					return $adminModel;
+				}
+				else {
 					throw new NotFoundHttpException('The requested page does not exist.');
 				}
 			}
