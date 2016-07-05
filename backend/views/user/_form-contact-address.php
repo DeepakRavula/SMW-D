@@ -130,9 +130,15 @@ $this->registerJs($js);
 <hr class="hr-ad">
 <script type="text/javascript">
 $(document).ready(function(){
-	$('.address-container-items').on('click', 'input[type="checkbox"]', function(){
+	$('.address-container-items').on('change', 'input[type="checkbox"]', function(){
+		var checked = $(this).prop('checked');
 		$('.address-container-items input[type="checkbox"]').prop('checked', false);
-		$(this).prop('checked', true);
+
+		if(checked) {
+			$(this).prop('checked', true);
+		} else {
+			$(this).prop('checked', false);
+		}
 	});
 });
 </script>
