@@ -34,22 +34,12 @@ $bundle = BackendAsset::register($this);
                     <span class="icon-bar"></span>
                 </a>
 
-				<?php $location_id = Yii::$app->session->get('location_id');
-
-					$roles = ArrayHelper::getColumn(
+				<?php $roles = ArrayHelper::getColumn(
 						Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
 						'name'
 					);
 					$role = end($roles);
-
-					if(empty($location_id)) {
-						if($role !== User::ROLE_ADMINISTRATOR) {
-							$userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-							Yii::$app->session->set('location_id', $userLocation->location_id);
-						} else {
-							Yii::$app->session->set('location_id', '1');
-						}
-					}?>
+					?>
                     <?php if($role === User::ROLE_ADMINISTRATOR):?>
                         <div class="pull-left">
                             <?php $form = Html::beginForm(); ?>                        
