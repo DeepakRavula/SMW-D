@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="program-index m-t-20">
 <div class="pull-right  m-r-20">
-	<?php yii\widgets\Pjax::begin(['id' => 'active-program']) ?>
+	<?php yii\widgets\Pjax::begin() ?>
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
 	<?= $form->field($searchModel, 'activeOnly')->checkbox(['data-pjax' => true]); ?>
 	<?php ActiveForm::end(); ?>
@@ -34,8 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'columns' => [
                 'name',
                 'rate:currency',
-
-                //['class' => 'yii\grid\ActionColumn'],
             ],
         ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
@@ -48,13 +46,6 @@ $this->params['breadcrumbs'][] = $this->title;
   $("#programsearch-activeonly").on("change", function() {
       var activeOnly = $(this).is(":checked");
       var url = "<?php echo Url::to(['program/index']);?>?ProgramSearch[activeOnly]=" + (activeOnly | 0);
-      $.ajax({
-          url: url,
-          type:'POST',
-          success:function(result){
-              $.pjax.reload({container:"#program-listing"});  //Reload GridView
-          },
-      });
-             
+      $.pjax.reload({url:url,container:"#program-listing",replace:false});  //Reload GridView
   });
   </script>
