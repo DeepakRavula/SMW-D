@@ -33,20 +33,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
 			],
 			[
-			    'label' => 'Customer Name',
+			    'label' => 'Customer',
                 'value' => function($data) {
                     return ! empty($data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null;
                 },
             ],
-            [
-                'label' => 'Student Name',
-                'value' => function($data) {
-                    return ! empty($data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->fullName. ' (' .$data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->qualification->program->name. ')' : null;
-                },
-            ],
-			'tax:currency',
-			'subTotal:currency',
-            'total:currency',
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
@@ -64,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
 					return $status;
                 },
 			],
-			['class' => 'yii\grid\ActionColumn','template' => '{delete}']
+            'total',
         ],
     ]); ?>
 
