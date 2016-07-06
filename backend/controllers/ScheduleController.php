@@ -49,6 +49,8 @@ class ScheduleController extends Controller
             ->from('teacher_availability_day ta')
             ->join('Join', 'user_location ul', 'ul.id = ta.teacher_location_id')
             ->join('Join', 'user_profile up', 'up.user_id = ul.user_id')
+            ->join('Join', 'qualification q', 'q.teacher_id = up.user_id')  
+            ->join('Join', 'enrolment e', 'e.qualification_id = q.id')
             ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->orderBy('id desc')
             ->all();
@@ -86,5 +88,17 @@ class ScheduleController extends Controller
 
 		$lesson->date = $lessonDate->format('Y-m-d H:i:s');
 		$lesson->save();
+    }
+    
+    public function actionAllTeachers(){
+		$teacherAvailability = (new \yii\db\Query())
+            ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
+            ->from('teacher_availability_day ta')
+            ->join('Join', 'user_location ul', 'ul.id = ta.teacher_location_id')
+            ->join('Join', 'user_profile up', 'up.user_id = ul.user_id')
+            ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+            ->orderBy('id desc')
+            ->all();
+        echo Json::encode($teacherAvailability);
     }
 }
