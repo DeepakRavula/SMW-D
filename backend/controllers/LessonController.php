@@ -185,7 +185,7 @@ class LessonController extends Controller
 		}
 		else{
 		        Yii::$app->session->setFlash('alert', [
-           	'options' => ['class' => 'alert-success'],
+           	'options' => ['class' => 'alert-danger'],
            	'body' => 'Generate invoice against completed lesson only.'
         ]); 
 		return $this->redirect(['lesson/view','id' => $id]);	
