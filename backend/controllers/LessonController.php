@@ -151,7 +151,7 @@ class LessonController extends Controller
 		$invoiceLineItem->lesson_id = $id;
 		$time = explode(':', $model->enrolmentScheduleDay->duration);
 		$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
-		$invoiceLineItem->amount = $model->enrolmentScheduleDay->enrolment->qualification->program->rate;
+		$invoiceLineItem->amount = $model->enrolmentScheduleDay->enrolment->qualification->program->rate * $invoiceLineItem->unit;
 		$invoiceLineItem->save();
 		
 		$subTotal += $invoiceLineItem->amount;                
