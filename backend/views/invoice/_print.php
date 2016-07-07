@@ -30,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </div>
+			  <h5><?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address; ?></h5>
             <div class="clearfix"></div>
           </h2>
         </div>
@@ -195,14 +196,26 @@ $this->params['breadcrumbs'][] = $this->title;
                   </td>
                   <td colspan="2">
                     <table>
-                   <!--  <tr>
-                      <td style="width: 100px;"><strong>Tax:</strong></td>
-                      <td style="width: 186px;"><?php echo 'CA$' .$model->tax;?></td>
-                    </tr> -->
+					<tr>
+                     <td style="width: 100px;"><strong>SubTotal</strong></td>
+                     <td style="width: 186px;"><?php echo $model->subTotal;?></td>
+                   </tr> 
                     <tr>
-                      <td style="width: 100px;"><strong>Total</strong></td>
-                      <td style="width: 70px;"><?php echo $model->total;?></td> 
-                    </tr>
+                     <td style="width: 100px;"><strong>Tax</strong></td>
+                     <td style="width: 186px;"><?php echo $model->tax;?></td>
+                   </tr> 
+                   <tr>
+                     <td style="width: 100px;"><strong>Total</strong></td>
+                     <td style="width: 135px;"><?php echo $model->total;?></td> 
+                   </tr>
+                    <tr>
+                     <td style="width: 100px;"><strong>Paid</strong></td>
+                     <td style="width: 135px;"><?php echo '0.00';?></td> 
+                   </tr>
+                    <tr>
+                     <td style="width: 100px;"><strong>Balance</strong></td>
+                     <td style="width: 135px;"><?php echo $model->total;?></td> 
+                   </tr>
                     </table>
                   </td>
                 </tr>
@@ -211,6 +224,7 @@ $this->params['breadcrumbs'][] = $this->title;
           </div>
         </div>
         <!-- /.col -->
+		
         </div>
 </div>
 <script>
