@@ -159,6 +159,12 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 'label' => 'Amount',
                 'enableSorting' => false,
                 ],
+                [
+                'attribute' => 'amount',
+                //'format' => 'currency',
+                'label' => 'Total',
+                'enableSorting' => false,
+                ]
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
