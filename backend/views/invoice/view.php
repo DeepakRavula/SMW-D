@@ -31,6 +31,9 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
           <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
+           <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address)): ?>
+                <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address?>
+			<?php endif;?> 
           </h2>
         </div>
         <!-- /.col -->
@@ -49,10 +52,12 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
           </div>
             <div class="row">
               <div class="col-xs-4">
+				<?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email)): ?>
                 <strong>Email:</strong> 
               </div>
               <div class="col-xs-8">
-                <?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email : null?>
+                <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email?>
+			<?php endif;?>
               </div>
             </div>
             <?php
@@ -193,13 +198,25 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                   </td>
                   <td colspan="2">
                     <table>
-                    <!-- <tr>
-                      <td style="width: 100px;"><strong>Tax:</strong></td>
-                      <td style="width: 186px;"><?php echo Yii::$app->formatter->asCurrency($model->tax);?></td>
-                    </tr> -->
+					<tr>
+                      <td style="width: 100px;"><strong>SubTotal</strong></td>
+                      <td style="width: 186px;"><?php echo $model->subTotal;?></td>
+                    </tr> 
+                     <tr>
+                      <td style="width: 100px;"><strong>Tax</strong></td>
+                      <td style="width: 186px;"><?php echo $model->tax;?></td>
+                    </tr> 
                     <tr>
                       <td style="width: 100px;"><strong>Total</strong></td>
-                      <td style="width: 135px;"><?php echo $model->total;//echo Yii::$app->formatter->asCurrency($model->total);?></td> 
+                      <td style="width: 135px;"><?php echo $model->total;?></td> 
+                    </tr>
+					<tr>
+                      <td style="width: 100px;"><strong>Paid</strong></td>
+                      <td style="width: 135px;"><?php echo '0.00';?></td> 
+                    </tr>
+					<tr>
+                      <td style="width: 100px;"><strong>Balance</strong></td>
+                      <td style="width: 135px;"><?php echo $model->total;?></td> 
                     </tr>
                     </table>
                   </td>
