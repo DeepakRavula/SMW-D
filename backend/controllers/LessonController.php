@@ -180,15 +180,15 @@ class LessonController extends Controller
            	'options' => ['class' => 'alert-success'],
            	'body' => 'Invoice has been generated successfully'
         ]); 
-		return $this->redirect(['lesson/index','id' => $id]);
+		return $this->redirect(['invoice/view','id' => $invoice->id]);
 	
 		}
 		else{
 		        Yii::$app->session->setFlash('alert', [
-           	'options' => ['class' => 'alert-success'],
+           	'options' => ['class' => 'alert-danger'],
            	'body' => 'Generate invoice against completed lesson only.'
         ]); 
-		return $this->redirect(['lesson/index','id' => $id]);	
+		return $this->redirect(['lesson/view','id' => $id]);	
 		}
 	}
 }
