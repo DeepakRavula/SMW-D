@@ -13,8 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="schedule-index">
 <div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div class="e1Div">
-    <?= Html::checkbox('active', true, ['label' => 'Active Only', 'id' => 'active' ]); ?>
-    <label for="e1">Show All Teachers</label>
+    <?= Html::checkbox('active', true, ['label' => 'Active Teachers', 'id' => 'active' ]); ?>
 </div>
 <div id='calendar' class="p-10"></div>
 </div>
@@ -60,11 +59,8 @@ $(document).ready(function() {
                 "minutes": delta.asMinutes(),
             }),
             success: function(response) {
-                    
-              //calendar.fullCalendar('updateEvent', event);
             },
             error: function() {
-             // revertFunc();
             }
         });
         
@@ -74,9 +70,6 @@ $(document).ready(function() {
   
   
   $("#active").change(function() {
-     // $('#calendar').fullCalendar('removeResource', { id: '313'});
-        //$('#calendar').fullCalendar( 'refresh' );
-       // $('#calendar').fullCalendar('addResource', [{ id: '548', name: 'Room E', eventColor: 'blue' }],scroll);
        var resources = <?php echo Json::encode($allTeachers); ?>;
         if( $(this).is(':checked') ){
             var resources = <?php echo Json::encode($teachersWithClass); ?>;
@@ -118,10 +111,8 @@ $(document).ready(function() {
                     }),
                     success: function(response) {
                             
-                      //calendar.fullCalendar('updateEvent', event);
                     },
                     error: function() {
-                     // revertFunc();
                     }
                 });
                 
