@@ -38,7 +38,7 @@ $(document).ready(function() {
     slotDuration: "00:15:01",
     editable: true,
     droppable: true,
-    resources:  <?php echo Json::encode($teacherAvailability); ?>,
+    resources:  <?php echo Json::encode($teachersWithClass); ?>,
     events: <?php echo Json::encode($events); ?>,
     // the 'ev' parameter is the mouse event rather than the resource 'event'
     // the ev.data is the resource column clicked upon
@@ -77,27 +77,12 @@ $(document).ready(function() {
      // $('#calendar').fullCalendar('removeResource', { id: '313'});
         //$('#calendar').fullCalendar( 'refresh' );
        // $('#calendar').fullCalendar('addResource', [{ id: '548', name: 'Room E', eventColor: 'blue' }],scroll);
-       var resourcesOld = <?php echo Json::encode($teacherAvailability); ?>;
+       var resources = <?php echo Json::encode($allTeachers); ?>;
         if( $(this).is(':checked') ){
-            var resources = <?php echo Json::encode($teacherAvailability); ?>;
+            var resources = <?php echo Json::encode($teachersWithClass); ?>;
         }
-        $.ajax({
-            url: "<?php echo Url::to(['schedule/all-teachers']);?>",
-            type: "POST",
-            contentType: 'application/json',
-            dataType: "json",
-            success: function(response) {                    
-              var resources = response;
-                $('#calendar').fullCalendar( 'removeResource', resourcesOld);
-                $('#calendar').fullCalendar( 'addResource', resources);         
-                $('#calendar').fullCalendar( 'refetchEvents' );
-            },
-            error: function() {
-             // revertFunc();
-            }
-        });
-        
-        /*$('#calendar').fullCalendar({
+        $('#calendar').html('');
+        $('#calendar').unbind().removeData().fullCalendar({
             header: {
               left: 'prev,next today',
               center: 'title',
@@ -142,7 +127,7 @@ $(document).ready(function() {
                 
                 $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
             }
-        });*/
+        });
   });
 });
 </script>
