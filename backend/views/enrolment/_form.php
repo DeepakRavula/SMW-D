@@ -19,9 +19,7 @@ use yii\helpers\Url;
 
 <div class="enrolment-form form-well form-well-smw">
 	<?php $form = ActiveForm::begin(); ?>
-	<div class="col-md-12">
-		<?= $form->errorSummary($model); ?>
-	</div>
+	
     <div class="row">
 		<div class="col-md-4">
 			<?php echo $form->field($model, 'programId')->dropDownList(ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'), ['prompt' => 'Select..']); ?>
