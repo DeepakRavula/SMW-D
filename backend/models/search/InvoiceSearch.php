@@ -44,8 +44,7 @@ class InvoiceSearch extends Invoice
     {
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
-        $query = Invoice::find()->alias('l')->location($locationId);//->location($locationId);
-			
+        $query = Invoice::find()->alias('i')->location($locationId);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -57,7 +56,7 @@ class InvoiceSearch extends Invoice
 		$this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);
 		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
 		
-		$query->andWhere(['between','date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+		$query->andWhere(['between','i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 
         return $dataProvider;
     }
