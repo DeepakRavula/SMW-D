@@ -16,10 +16,7 @@ use kartik\time\TimePicker;
 <div class="location-form">
 
 	<?php $form = ActiveForm::begin(); ?>
-	<div class="col-md-12">
-		<?= $form->errorSummary($model); ?>
-	</div>
-	<div class="row">
+		<div class="row">
 		<div class="col-md-4">
 			<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 		</div>

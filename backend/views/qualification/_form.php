@@ -15,9 +15,7 @@ use common\models\Program;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?php echo $form->errorSummary($model); ?>
-
-	<?php echo $form->field($model, 'teacher_id')->dropDownList(ArrayHelper::map(User::findByRole(User::ROLE_TEACHER), 'id', 'userProfile.fullName')) ?>
+  	<?php echo $form->field($model, 'teacher_id')->dropDownList(ArrayHelper::map(User::findByRole(User::ROLE_TEACHER), 'id', 'userProfile.fullName')) ?>
 	<?php echo $form->field($model, 'program_id')->dropDownList(ArrayHelper::map(Program::find()->active()->all(), 'id', 'name')) ?>
 
     <div class="form-group">

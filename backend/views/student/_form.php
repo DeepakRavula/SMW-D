@@ -15,7 +15,6 @@ use yii\bootstrap\ActiveForm;
 	?>
     <?php $form = ActiveForm::begin($model->isNewRecord ? ['action' => '/student/create'] : null); ?>
 
-    <?php echo $form->errorSummary($model); ?>
     <div class="row">
         <div class="col-xs-4">
             <?php echo $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>

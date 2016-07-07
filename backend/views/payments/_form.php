@@ -12,8 +12,6 @@ use yii\bootstrap\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?php echo $form->errorSummary($model); ?>
-
     <?php echo $form->field($model, 'user_id')->textInput(['maxlength' => true]) ?>
 
     <?php echo $form->field($model, 'invoice_id')->textInput(['maxlength' => true]) ?>
