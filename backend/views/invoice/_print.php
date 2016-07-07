@@ -11,6 +11,13 @@ $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <style>
+.table-invoice-childtable{
+  width: 185px;
+  float:right;
+}
+  .table-invoice-childtable>tbody>tr>td:first-of-type{
+    width: 100px;
+  }
     table>thead>tr>th:first-child,
     table>tbody>tr>td:first-child{
         text-align: left !important;
@@ -129,51 +136,48 @@ $this->params['breadcrumbs'][] = $this->title;
             'tableOptions' =>['class' => 'table table-bordered m-0'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
-     					[
-            				'label' => 'Student Name',
-            				'value' => function($data) {
-            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->fullName : null;
-            				},
-            			    ],
-            			[
-            				'label' => 'Program Name',
-            				'value' => function($data) {
-            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
-            				},
-            			],
-            			[
-            				'label' => 'Date',
-            				'value' => function($data) {
-            					$date = date("d-m-Y", strtotime($data->lesson->date)); 
-            					return ! empty($date) ? $date : null;
-                            },
-            			],
-            			[
-            				'label' => 'From Time',
-            				'value' => function($data) {
-            					if(! empty($data->lesson->enrolmentScheduleDay->from_time)){
-            						$fromTime = date("g:i a",strtotime($data->lesson->enrolmentScheduleDay->from_time));
-            						return !empty($fromTime) ? $fromTime : null;
-            					}
-            					return null;
-            				},
-      			    	],
-                		[ 
-			                'attribute' => 'unit',
-            			    'label' => 'Unit',
-			                'enableSorting' => false,
-            		    ],
-                		[
-		                    'label' => 'Weight',
-        		            'value' => function($data) {
-                			      return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate : null;
-                    		},
-                		],
+                  [
+                    'label' => 'Student Name',
+                    'value' => function($data) {
+                      return !empty($data->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->fullName : null;
+                    },
+                      ],
+                                [
+                    'label' => 'Program Name',
+                    'value' => function($data) {
+                      return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
+                    },
+                      ],
+  
+                [ 
+                'attribute' => 'unit',
+                'label' => 'Unit',
+                'headerOptions' => ['class' => 'text-center'],
+                'contentOptions' => ['class' => 'text-center'],
+                'enableSorting' => false,
+                ],
+                [
+                    'label' => 'Weight',
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center'],
+                    'value' => function($data) {
+                      return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate : null;
+                    },
+                ],
                 [ 
                 'attribute' => 'amount',
+                //'format' => 'currency',
+                'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Amount',
                 'enableSorting' => false,
                 ],
+                [
+                'attribute' => 'amount',
+                //'format' => 'currency',
+                'label' => 'Total',
+                'enableSorting' => false,
+                ]
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
@@ -181,41 +185,48 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
-          <!-- <p class="lead">Balance : <?php //echo $model->total;?> </p> -->
           <div class="table-responsive">
             <table class="table table-invoice-total">
               <tbody>
                 <tr>
                   <td colspan="4">
-                    <div class="row-fluid m-t-10">
-					<?php if(! empty($model->notes)):?>
-                    <em><strong>Printed Notes: </strong><?php echo $model->notes; ?></em>
-					<?php endif;?>
+                    <?php if(! empty($model->notes)):?>
+                    <div class="row-fluid m-t-20">
+                      <em><strong>Notes: </strong><Br>
+                        <?php echo $model->notes; ?></em>
+                      </div>
+                      <?php endif;?>
+                      <?php if(! empty($model->notes) && ! empty($model->internal_notes)):?>
+                      <hr class="right-side-faded">
+                      <?php endif;?>
+                      <?php if(! empty($model->internal_notes)):?>
+                      <div class="row-fluid">
+                      <em><strong>Internal notes: <?php echo $model->internal_notes; ?></strong></em>
                     </div>
-                    <hr class="right-side-faded">
+                    <?php endif;?>
                   </td>
                   <td colspan="2">
-                    <table>
-					<tr>
-                     <td style="width: 100px;"><strong>SubTotal</strong></td>
-                     <td style="width: 186px;"><?php echo $model->subTotal;?></td>
-                   </tr> 
-                    <tr>
-                     <td style="width: 100px;"><strong>Tax</strong></td>
-                     <td style="width: 186px;"><?php echo $model->tax;?></td>
-                   </tr> 
-                   <tr>
-                     <td style="width: 100px;"><strong>Total</strong></td>
-                     <td style="width: 135px;"><?php echo $model->total;?></td> 
-                   </tr>
-                    <tr>
-                     <td style="width: 100px;"><strong>Paid</strong></td>
-                     <td style="width: 135px;"><?php echo '0.00';?></td> 
-                   </tr>
-                    <tr>
-                     <td style="width: 100px;"><strong>Balance</strong></td>
-                     <td style="width: 135px;"><?php echo $model->total;?></td> 
-                   </tr>
+                    <table class="table-invoice-childtable">
+                     <tr>
+                      <td>SubTotal</td>
+                      <td><?php echo $model->subTotal;?></td>
+                    </tr> 
+                     <tr>
+                      <td>Tax</td>
+                      <td><?php echo $model->tax;?></td>
+                    </tr>
+                     <tr>
+                      <td>Paid</td>
+                      <td><?php echo '0.00';?></td> 
+                    </tr>
+                     <tr>
+                      <tr>
+                      <td><strong>Total</strong></td>
+                      <td><strong><?php echo $model->total;?></strong></td> 
+                    </tr>
+                      <td class="p-t-20">Balance</td>
+                      <td class="p-t-20"><?php echo $model->total;?></td> 
+                    </tr>
                     </table>
                   </td>
                 </tr>
@@ -224,7 +235,6 @@ $this->params['breadcrumbs'][] = $this->title;
           </div>
         </div>
         <!-- /.col -->
-		
         </div>
 </div>
 <script>

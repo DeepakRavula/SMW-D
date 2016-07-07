@@ -150,10 +150,14 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 [ 
                 'attribute' => 'unit',
                 'label' => 'Unit',
+                'headerOptions' => ['class' => 'text-center'],
+                'contentOptions' => ['class' => 'text-center'],
                 'enableSorting' => false,
                 ],
 								[
             				'label' => 'Weight',
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center'],
             				'value' => function($data) {
             					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate : null;
             				},
@@ -161,6 +165,8 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 [ 
                 'attribute' => 'amount',
                 //'format' => 'currency',
+                'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Amount',
                 'enableSorting' => false,
                 ],
@@ -174,49 +180,50 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
     </div>
-    <?php //echo $this->render('_invoice_table-details' ); ?>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
-          <!-- <p class="lead">Balance : <?php //echo $model->total;?> </p> -->
           <div class="table-responsive">
             <table class="table table-invoice-total">
               <tbody>
                 <tr>
                   <td colspan="4">
-                    <div class="row-fluid m-t-10">
-					<?php if(! empty($model->notes)):?>
-                    <em><strong>Printed Notes: </strong><?php echo $model->notes; ?></em>
-					<?php endif;?>
+                    <?php if(! empty($model->notes)):?>
+                    <div class="row-fluid m-t-20">
+                      <em><strong>Notes: </strong><Br>
+                        <?php echo $model->notes; ?></em>
+                      </div>
+                      <?php endif;?>
+                      <?php if(! empty($model->notes) && ! empty($model->internal_notes)):?>
+                      <hr class="right-side-faded">
+                      <?php endif;?>
+                      <?php if(! empty($model->internal_notes)):?>
+                      <div class="row-fluid">
+                      <em><strong>Internal notes: <?php echo $model->internal_notes; ?></strong></em>
                     </div>
-                    <hr class="right-side-faded">
-                    <div class="row-fluid">
-					<?php if(! empty($model->internal_notes)):?>
-                    <em><strong>Internal notes: <?php echo $model->internal_notes; ?></strong></em>
-					<?php endif;?>
-                    </div>
+                    <?php endif;?>
                   </td>
                   <td colspan="2">
-                    <table>
-					<tr>
-                      <td style="width: 100px;"><strong>SubTotal</strong></td>
-                      <td style="width: 186px;"><?php echo $model->subTotal;?></td>
+                    <table class="table-invoice-childtable">
+					           <tr>
+                      <td>SubTotal</td>
+                      <td><?php echo $model->subTotal;?></td>
                     </tr> 
                      <tr>
-                      <td style="width: 100px;"><strong>Tax</strong></td>
-                      <td style="width: 186px;"><?php echo $model->tax;?></td>
-                    </tr> 
-                    <tr>
-                      <td style="width: 100px;"><strong>Total</strong></td>
-                      <td style="width: 135px;"><?php echo $model->total;?></td> 
+                      <td>Tax</td>
+                      <td><?php echo $model->tax;?></td>
                     </tr>
-					<tr>
-                      <td style="width: 100px;"><strong>Paid</strong></td>
-                      <td style="width: 135px;"><?php echo '0.00';?></td> 
+					           <tr>
+                      <td>Paid</td>
+                      <td><?php echo '0.00';?></td> 
                     </tr>
-					<tr>
-                      <td style="width: 100px;"><strong>Balance</strong></td>
-                      <td style="width: 135px;"><?php echo $model->total;?></td> 
+					           <tr>
+                      <tr>
+                      <td><strong>Total</strong></td>
+                      <td><strong><?php echo $model->total;?></strong></td> 
+                    </tr>
+                      <td class="p-t-20">Balance</td>
+                      <td class="p-t-20"><?php echo $model->total;?></td> 
                     </tr>
                     </table>
                   </td>

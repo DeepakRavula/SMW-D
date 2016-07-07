@@ -510,6 +510,14 @@ Licensed under MIT
 .table-invoice-total>tbody>tr>td:first-of-type{
   width: 65.5vw;
 }
+.table-invoice-childtable{
+  width: 310px;
+  line-height: 24px;
+}
+.table-invoice-childtable>tbody>tr>td:first-of-type{
+  width: 165px;
+  text-align: right !important;
+}
 /*User view*/
 .c-title{
   font-weight: bold;
