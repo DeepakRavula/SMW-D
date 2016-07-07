@@ -47,7 +47,7 @@ $(document).ready(function(){
   $("#programsearch-activeonly").on("change", function() {
       var activeOnly = $(this).is(":checked");
       var url = "<?php echo Url::to(['program/index']);?>?ProgramSearch[activeOnly]=" + (activeOnly | 0);
-      $.pjax.reload({url:url,container:"#program-listing",replace:false});  //Reload GridView
+      $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
   });
 });
   </script>
