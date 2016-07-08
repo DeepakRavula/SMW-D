@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="schedule-index">
 <div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div class="e1Div">
-    <?= Html::checkbox('active', true, ['label' => 'Active Teachers', 'id' => 'active' ]); ?>
+    <?= Html::checkbox('active', false, ['label' => 'Show All Teachers', 'id' => 'active' ]); ?>
 </div>
 <div id='calendar' class="p-10"></div>
 </div>
@@ -70,9 +70,9 @@ $(document).ready(function() {
   
   
   $("#active").change(function() {
-       var resources = <?php echo Json::encode($allTeachers); ?>;
+       var resources = <?php echo Json::encode($teachersWithClass); ?>;
         if( $(this).is(':checked') ){
-            var resources = <?php echo Json::encode($teachersWithClass); ?>;
+            var resources = <?php echo Json::encode($allTeachers); ?>;
         }
         $('#calendar').html('');
         $('#calendar').unbind().removeData().fullCalendar({
