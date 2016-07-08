@@ -119,6 +119,11 @@ $config = [
             [
                 'allow' => true,
                 'roles' => ['administrator'],
+            ],
+            [
+                'controllers'=>['release-notes'],
+                'allow' => true,
+                'roles' => ['administrator'],
             ]
         ]
     ]

@@ -239,6 +239,13 @@ $bundle = BackendAsset::register($this);
                             'active'=>(Yii::$app->controller->id=='invoice')? true : false,
                         ],
                         [
+                            'label'=>Yii::t('backend', 'Release Notes'),
+                            'icon'=>'<i class="fa fa-sticky-note"></i>',
+							'url'=>['/release-notes/index'],    
+                            'visible'=>Yii::$app->user->can('administrator'),
+                            'active'=>(Yii::$app->controller->id=='release-notes')? true : false,
+                        ],
+                        [
                             'label'=>Yii::t('backend', 'System'),
                             'options' => ['class' => 'header']
                         ],
