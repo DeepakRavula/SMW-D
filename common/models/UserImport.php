@@ -16,7 +16,6 @@ use yii\helpers\ArrayHelper;
 class UserImport extends Model {
 
 	public $file;
-
 	/**
 	 * @inheritdoc
 	 */
@@ -68,8 +67,8 @@ class UserImport extends Model {
 				$errors[] = 'Error on Line ' . ($i + 1) . ': User email already exists at another location. Removing email address from profile.';
 				continue;
 			}
-
-			$transaction = $connection->beginTransaction();
+			
+			$transaction = \Yii::$app->db->beginTransaction();
 
 			try {
 				$user = new User();
@@ -165,18 +164,24 @@ class UserImport extends Model {
 				}
 
 				$transaction->commit();
-				$success++;
+				$successCount++;
 			} catch (\Exception $e) {
 				$transaction->rollBack();
 				$errors[] = 'Error on Line ' . ($i + 1) . ': ' . $e->getMessage();
 			}
 		}
-
+/*
+echo $successCount;
+echo $studentCount;
+echo $customerCount;
+print_r($errors);die;
+ * 
+ */
 		return [
-			'errors' => $errors,
 			'successCount' => $successCount,
 			'studentCount' => $studentCount,
 			'customerCount' => $customerCount,
-		]
+			'errors' => $errors,
+		];
 	}
 }
