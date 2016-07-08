@@ -15,7 +15,7 @@ use common\models\User;
 <body>
 <script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
 <script type="text/javascript">
-    FreshWidget.init("", {"queryString": "&helpdesk_ticket[requester]=<?php echo Yii::$app->user->identity->email;?>",
+    FreshWidget.init("", {"queryString": "&helpdesk_ticket[requester]=<?php echo Yii::$app->user->identity->email;?> &helpdesk_ticket[subject]=<?php echo $this->title;?>",
 "widgetType": "popup", "buttonType": "text", "buttonText": "Feedback", 
 "buttonColor": "white", "buttonBg": "#E30018", "alignment": "2",
  "offset": "260px", "formHeight": "500px","screenshot": "no", 
