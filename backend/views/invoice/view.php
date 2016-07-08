@@ -33,6 +33,9 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
           <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
            <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address)): ?>
                 <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address?>
+			<?php endif;?>
+			<?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number)): ?><br>
+            <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number?>
 			<?php endif;?> 
           </h2>
         </div>

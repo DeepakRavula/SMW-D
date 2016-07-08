@@ -27,7 +27,6 @@ $this->params['breadcrumbs'][] = $this->title;
       text-align: right;
     }
 </style>
-<?php //echo '<pre>'; print_r($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer); ?>
 
 <div class="invoice-view">
     <div class="row">
@@ -36,8 +35,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="logo pull-left">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
-            </div>
-			  <h5><?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address; ?></h5>
+            </div>     <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address)): ?>
+                <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address?>
+			<?php endif;?>
+			<?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number)): ?><br>
+            <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number?>
+			<?php endif;?> 
+			  
             <div class="clearfix"></div>
           </h2>
         </div>
@@ -56,10 +60,12 @@ $this->params['breadcrumbs'][] = $this->title;
           </div>
             <div class="row">
               <div class="col-xs-4">
+				<?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email)): ?>
                 <strong>Email:</strong> 
               </div>
               <div class="col-xs-8">
                 <?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email : null?>
+			<?php endif;?>
               </div>
             </div>
             <?php
