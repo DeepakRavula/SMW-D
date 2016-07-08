@@ -3,6 +3,7 @@
  * @var $this yii\web\View
  */
 use common\models\User;
+use yii\helpers\Html;
 ?>
 <?php $this->beginContent('@backend/views/layouts/common.php'); ?> 
 <div class="box"> 
@@ -15,7 +16,7 @@ use common\models\User;
 <body>
 <script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
 <script type="text/javascript">
-    FreshWidget.init("", {"queryString": "&helpdesk_ticket[requester]=<?php echo Yii::$app->user->identity->email;?> &helpdesk_ticket[subject]=<?php echo $this->title;?>",
+    FreshWidget.init("", {"queryString": "&helpdesk_ticket[requester]=<?= Html::encode( Yii::$app->user->identity->email);?> &helpdesk_ticket[subject]=<?= Html::encode($this->title);?>",
 "widgetType": "popup", "buttonType": "text", "buttonText": "Feedback", 
 "buttonColor": "white", "buttonBg": "#E30018", "alignment": "2",
  "offset": "260px", "formHeight": "500px","screenshot": "no", 
