@@ -170,18 +170,13 @@ class UserImport extends Model {
 				$errors[] = 'Error on Line ' . ($i + 1) . ': ' . $e->getMessage();
 			}
 		}
-/*
-echo $successCount;
-echo $studentCount;
-echo $customerCount;
-print_r($errors);die;
- * 
- */
+
 		return [
 			'successCount' => $successCount,
 			'studentCount' => $studentCount,
 			'customerCount' => $customerCount,
 			'errors' => $errors,
+			'totalRows' => count($rows),
 		];
 	}
 }

@@ -40,6 +40,13 @@ bootstrap_alert.success = function(message) {
 				var error = $("<div/>").html(val);
 				$('#import-log').append(error);	
 			});
+			var importMessage = 'Import complete';
+			var studentMessage = data.result.studentCount + (' students imported out of ') + data.result.totalRows;
+			var customerMessage = data.result.customerCount + (' customers created'); 
+			$('#import-log').append(importMessage);
+			var student = $("<div/>").html(studentMessage);	
+			$('#import-log').append(student);
+			$('#import-log').append(customerMessage);
 			console.log(data);
 			bootstrap_alert.success('User data imported successfully');
 		}
