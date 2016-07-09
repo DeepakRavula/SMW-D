@@ -144,7 +144,6 @@ class LessonController extends Controller
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->save();
        		$subTotal = 0;
-        	$taxAmount = 0;
             $invoiceLineItem = new InvoiceLineItem();
             $invoiceLineItem->invoice_id = $invoice->id;
             $invoiceLineItem->lesson_id = $id;
@@ -153,7 +152,6 @@ class LessonController extends Controller
             $invoiceLineItem->amount = $model->enrolmentScheduleDay->enrolment->qualification->program->rate * $invoiceLineItem->unit;
             $invoiceLineItem->save();
             $subTotal += $invoiceLineItem->amount;                
-            $provinceId = $model->enrolmentScheduleDay->enrolment->location->province->id;
             $invoice = Invoice::findOne(['id' => $invoice->id]);
             $invoice->subTotal = $subTotal;
             $totalAmount = $subTotal + $taxAmount;
