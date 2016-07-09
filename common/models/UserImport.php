@@ -73,12 +73,23 @@ class UserImport extends Model {
 			try {
 				$user = new User();
 				$user->email = $row['Billing Email Address'];
+
 				$user->password = Yii::$app->security->generateRandomString(8);
 				$user->status = User::STATUS_ACTIVE;
+				if( ! $user->validate(['email'])) {
+					$user->email = null;
+					$errors[] = 'Error on Line ' . ($i + 1) . ': Invalid Email address. Skipping email address for customer named, "' . $row['Billing First Name'] . '"';
+				}	
 				if($user->save()) {
 					$customerCount++;
 				}
 
+				$userProfile = new UserProfile();
+				$userProfile->user_id = $user->id;
+				$userProfile->firstname = $row['Billing First Name'];
+				$userProfile->lastname = $row['Billing Last Name'];
+				$userProfile->save();
+				
 				$userLocationModel = new UserLocation();
 				$userLocationModel->user_id = $user->id;
 				$userLocationModel->location_id = Yii::$app->session->get('location_id');
@@ -86,18 +97,13 @@ class UserImport extends Model {
 				
 				$auth = Yii::$app->authManager;
 				$auth->assign($auth->getRole(User::ROLE_CUSTOMER), $user->getId());
-
-				$userProfile = new UserProfile();
-				$userProfile->user_id = $user->id;
-				$userProfile->firstname = $row['Billing First Name'];
-				$userProfile->lastname = $row['Billing Last Name'];
-				$userProfile->save();
-
+				
 				$student = new Student();
 				$student->first_name = $row['First Name'];
 				$student->last_name = $row['Last Name'];
 				$student->birth_date = $row['Date of Birth'];
 				$student->customer_id = $user->id;
+				
 				if( ! $student->validate(['birth_date'])) {
 					$student->birth_date = null;
 					$errors[] = 'Error on Line ' . ($i + 1) . ': Incorrect Date format. Skipping DOB for student named, "' . $student->first_name . '"';
@@ -170,18 +176,13 @@ class UserImport extends Model {
 				$errors[] = 'Error on Line ' . ($i + 1) . ': ' . $e->getMessage();
 			}
 		}
-/*
-echo $successCount;
-echo $studentCount;
-echo $customerCount;
-print_r($errors);die;
- * 
- */
+
 		return [
 			'successCount' => $successCount,
 			'studentCount' => $studentCount,
 			'customerCount' => $customerCount,
 			'errors' => $errors,
+			'totalRows' => count($rows),
 		];
 	}
 }

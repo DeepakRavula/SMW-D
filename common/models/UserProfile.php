@@ -62,7 +62,7 @@ class UserProfile extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id'], 'required'],
+            [['user_id','firstname','lastname'], 'required'],
             [['user_id', 'gender'], 'integer'],
             [['gender'], 'in', 'range' => [NULL, self::GENDER_FEMALE, self::GENDER_MALE]],
             [['firstname', 'middlename', 'lastname', 'avatar_path', 'avatar_base_url'], 'string', 'max' => 255],
