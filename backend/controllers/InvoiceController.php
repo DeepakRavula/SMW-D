@@ -124,6 +124,7 @@ class InvoiceController extends Controller
 			
 			$invoice->save();
             $subTotal = 0;
+			$taxAmount = 0;
             foreach($post['selection'] as $selection) {
                 $lesson = Lesson::findOne(['id'=>$selection]);
                 $actualLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
@@ -148,7 +149,7 @@ class InvoiceController extends Controller
             	'body' => 'Invoice has been created successfully'
             ]); 
             
-            return $this->redirect('index');
+            return $this->redirect(['view', 'id' => $invoice->id]);
             
         } 
         else {

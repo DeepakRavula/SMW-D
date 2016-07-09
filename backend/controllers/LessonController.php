@@ -144,6 +144,7 @@ class LessonController extends Controller
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->save();
        		$subTotal = 0;
+			$taxAmount = 0;
             $invoiceLineItem = new InvoiceLineItem();
             $invoiceLineItem->invoice_id = $invoice->id;
             $invoiceLineItem->lesson_id = $id;
