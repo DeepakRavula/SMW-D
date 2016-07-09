@@ -25,6 +25,9 @@ $this->params['breadcrumbs'][] = $this->title;
     'clientOptions' => ['done' => new JsExpression('UserImport.onDone')],
 ]);?>
 </div>
+<div id="import-log">
+
+</div>
 <script type="text/javascript">
 
 bootstrap_alert = function() {}
@@ -33,6 +36,10 @@ bootstrap_alert.success = function(message) {
         }
 	var UserImport = {
 		onDone : function(e, data) {
+			$.each(data.result.errors, function(index, val){
+				var error = $("<div/>").html(val);
+				$('#import-log').append(error);	
+			});
 			console.log(data);
 			bootstrap_alert.success('User data imported successfully');
 		}
