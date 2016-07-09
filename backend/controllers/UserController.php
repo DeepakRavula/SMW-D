@@ -47,7 +47,7 @@ class UserController extends Controller {
 	public function actions() {
 		return [
 			'upload' => [
-				'class' => 'trntv\filekit\actions\UploadAction',
+				'class' => 'common\actions\UserImportUploadAction',
 				'multiple' => false,
 				'disableCsrf' => true,
 				'responseFormat' => \yii\web\Response::FORMAT_JSON,
@@ -66,14 +66,9 @@ class UserController extends Controller {
 				'validationRules' => [
 				],
 				'on afterSave' => function($event) {
-
-			/* @var $file \League\Flysystem\File */
-			$file = $event->file;
-			$userImport = new UserImport();
-			$userImport->file = $file;
-			$userImport->import();
-			// do something (resize, add watermark etc)
-		}
+					/* @var $file \League\Flysystem\File */
+					// do something (resize, add watermark etc)
+				}
 			]
 		];
 	}

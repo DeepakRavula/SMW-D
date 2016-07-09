@@ -33,6 +33,7 @@ class Student extends \yii\db\ActiveRecord
             [['birth_date','notes'], 'safe'],
             [['customer_id'], 'integer'],
             [['first_name', 'last_name'], 'string', 'max' => 30],
+			[['birth_date'], 'date', 'format' => 'php:d-m-Y']
         ];
     }
 

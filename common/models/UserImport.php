@@ -16,7 +16,6 @@ use yii\helpers\ArrayHelper;
 class UserImport extends Model {
 
 	public $file;
-
 	/**
 	 * @inheritdoc
 	 */
@@ -53,7 +52,11 @@ class UserImport extends Model {
 
 	public function import() {
 		$rows = $this->parseCSV();
-		foreach ($rows as $row) {
+		$errors = [];
+		$successCount = 0;
+		$studentCount = 0;
+		$customerCount = 0;
+		foreach ($rows as $i => $row) {
 
 			$user = User::findOne(['email' => $row['Billing Email Address']]);
 
@@ -61,95 +64,124 @@ class UserImport extends Model {
 			 * 
 			 */
 			if (!empty($user)) {
+				$errors[] = 'Error on Line ' . ($i + 1) . ': User email already exists at another location. Removing email address from profile.';
+				continue;
+			}
+			
+			$transaction = \Yii::$app->db->beginTransaction();
+
+			try {
+				$user = new User();
+				$user->email = $row['Billing Email Address'];
+				$user->password = Yii::$app->security->generateRandomString(8);
+				$user->status = User::STATUS_ACTIVE;
+				if($user->save()) {
+					$customerCount++;
+				}
+
 				$userLocationModel = new UserLocation();
 				$userLocationModel->user_id = $user->id;
 				$userLocationModel->location_id = Yii::$app->session->get('location_id');
 				$userLocationModel->save();
-				continue;
-			}
+				
+				$auth = Yii::$app->authManager;
+				$auth->assign($auth->getRole(User::ROLE_CUSTOMER), $user->getId());
 
-			$user = new User();
-			$user->email = $row['Billing Email Address'];
-			$user->password = Yii::$app->security->generateRandomString(8);
-			$user->status = User::STATUS_ACTIVE;
-			$user->save();
-		
-			$userLocationModel = new UserLocation();
-			$userLocationModel->user_id = $user->id;
-			$userLocationModel->location_id = Yii::$app->session->get('location_id');
-			$userLocationModel->save();
-			
-            $auth = Yii::$app->authManager;
-        	$auth->assign($auth->getRole(User::ROLE_CUSTOMER), $user->getId());
+				$userProfile = new UserProfile();
+				$userProfile->user_id = $user->id;
+				$userProfile->firstname = $row['Billing First Name'];
+				$userProfile->lastname = $row['Billing Last Name'];
+				$userProfile->save();
 
-			$userProfile = new UserProfile();
-			$userProfile->user_id = $user->id;
-			$userProfile->firstname = $row['Billing First Name'];
-			$userProfile->lastname = $row['Billing Last Name'];
-			$userProfile->save();
-
-			$student = new Student();
-			$student->first_name = $row['First Name'];
-			$student->last_name = $row['Last Name'];
-			$student->birth_date = $row['Date of Birth'];
-			$student->customer_id = $user->id;
-			$student->save();
-
-			$address = new Address;
-			$address->label = 'Billing';
-
-			$cityName = $row['Billing City'];
-			$addressName = $row['Billing Address'];
-			$pincodeName = $row['Billing Postal Code'];
-
-			$address->address = $addressName;
-			$city = City::findOne(['name' => $cityName]);
-
-			if (empty($city)) {
-				$city = new Cities;
-				$city->name = $row['City'];
-				$city->province_id = 1;
-				$city->save();
-			}
-
-			$address->city_id = $city->id;
-			$address->province_id = 1;
-			$address->country_id = 1;
-			$address->postal_code = $pincodeName;
-			$address->save();
-
-			$user->link('addresses', $address);
-
-			if (!empty($row['Billing Home Tel'])) {
-				$phoneNumber = $row['Billing Home Tel'];
-				$phone = new PhoneNumber;
-				$phone->number = $phoneNumber;
-				$phone->label_id = PhoneNumber::LABEL_HOME;
-				$phone->user_id = $user->id;
-				$phone->save();
-			}
-			if (!empty($row['Billing Work Tel'])) {
-				$phoneNumber = $row['Billing Work Tel'];
-				$phone = new PhoneNumber;
-				$phone->number = $phoneNumber;
-				$phone->label_id = PhoneNumber::LABEL_WORK;
-				$phone->user_id = $user->id;
-
-				if (!empty($row['Billing Work Tel Ext.'])) {
-					$phone->extension = $row['Billing Work Tel Ext.'];
+				$student = new Student();
+				$student->first_name = $row['First Name'];
+				$student->last_name = $row['Last Name'];
+				$student->birth_date = $row['Date of Birth'];
+				$student->customer_id = $user->id;
+				if( ! $student->validate(['birth_date'])) {
+					$student->birth_date = null;
+					$errors[] = 'Error on Line ' . ($i + 1) . ': Incorrect Date format. Skipping DOB for student named, "' . $student->first_name . '"';
+				}
+				
+				if($student->save()) {
+					$studentCount++;	
 				}
 
-				$phone->save();
-			}
+				$address = new Address;
+				$address->label = 'Billing';
 
-			if (!empty($row['Billing Other Tel'])) {
-				$phoneNumber = $row['Billing Other Tel'];
-				$phone = new PhoneNumber;
-				$phone->number = $phoneNumber;
-				$phone->label_id = PhoneNumber::LABEL_OTHER;
-				$phone->user_id = $user->id;
-				$phone->save();
+				$cityName = $row['Billing City'];
+				$addressName = $row['Billing Address'];
+				$pincodeName = $row['Billing Postal Code'];
+
+				$address->address = $addressName;
+				$city = City::findOne(['name' => $cityName]);
+
+				if (empty($city)) {
+					$city = new Cities;
+					$city->name = $row['City'];
+					$city->province_id = 1;
+					$city->save();
+				}
+
+				$address->city_id = $city->id;
+				$address->province_id = 1;
+				$address->country_id = 1;
+				$address->postal_code = $pincodeName;
+				$address->save();
+
+				$user->link('addresses', $address);
+
+				if (!empty($row['Billing Home Tel'])) {
+					$phoneNumber = $row['Billing Home Tel'];
+					$phone = new PhoneNumber;
+					$phone->number = $phoneNumber;
+					$phone->label_id = PhoneNumber::LABEL_HOME;
+					$phone->user_id = $user->id;
+					$phone->save();
+				}
+				if (!empty($row['Billing Work Tel'])) {
+					$phoneNumber = $row['Billing Work Tel'];
+					$phone = new PhoneNumber;
+					$phone->number = $phoneNumber;
+					$phone->label_id = PhoneNumber::LABEL_WORK;
+					$phone->user_id = $user->id;
+
+					if (!empty($row['Billing Work Tel Ext.'])) {
+						$phone->extension = $row['Billing Work Tel Ext.'];
+					}
+
+					$phone->save();
+				}
+
+				if (!empty($row['Billing Other Tel'])) {
+					$phoneNumber = $row['Billing Other Tel'];
+					$phone = new PhoneNumber;
+					$phone->number = $phoneNumber;
+					$phone->label_id = PhoneNumber::LABEL_OTHER;
+					$phone->user_id = $user->id;
+					$phone->save();
+				}
+
+				$transaction->commit();
+				$successCount++;
+			} catch (\Exception $e) {
+				$transaction->rollBack();
+				$errors[] = 'Error on Line ' . ($i + 1) . ': ' . $e->getMessage();
 			}
 		}
+/*
+echo $successCount;
+echo $studentCount;
+echo $customerCount;
+print_r($errors);die;
+ * 
+ */
+		return [
+			'successCount' => $successCount,
+			'studentCount' => $studentCount,
+			'customerCount' => $customerCount,
+			'errors' => $errors,
+		];
 	}
 }
