@@ -125,8 +125,7 @@ class InvoiceController extends Controller
 			$invoice->save();
             $subTotal = 0;
             $taxAmount = 0;
-            $taxPercentage= 0;
-			foreach($post['selection'] as $selection) {
+            foreach($post['selection'] as $selection) {
                 $lesson = Lesson::findOne(['id'=>$selection]);
                 $actualLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
                 $lessonDate = $actualLessonDate->format('Y-m-d'); 
@@ -138,22 +137,6 @@ class InvoiceController extends Controller
                 $invoiceLineItem->amount = $lesson->enrolmentScheduleDay->enrolment->qualification->program->rate * $invoiceLineItem->unit;
                 $invoiceLineItem->save(); 
                 $subTotal += $invoiceLineItem->amount;
-                
-                $lessonAmount = $invoiceLineItem->amount;
-                $taxCalculate = $lesson->enrolmentScheduleDay->enrolment->location->province->id;
-                $taxModels = Tax::find()
-                   ->where(['province_id' => $taxCalculate]) 
-                   ->orderBy('since DESC')
-                   ->all();
-                    foreach ($taxModels as $taxModel) {
-                        $since = date('Y-m-d', strtotime($taxModel->since));
-                        if ($since <= $lessonDate) {
-                            $taxPercentage = $taxModel->tax_rate;
-                            break;
-                        }
-                    }
-                    
-                $taxAmount += $lessonAmount * $taxPercentage / 100;
             }
             $invoice = Invoice::findOne(['id'=>$invoice->id]);
             $invoice->subTotal = $subTotal;
@@ -164,10 +147,13 @@ class InvoiceController extends Controller
             Yii::$app->session->setFlash('alert', [
             	'options' => ['class' => 'alert-success'],
             	'body' => 'Invoice has been created successfully'
-        ]); 
+            ]); 
+            
             return $this->redirect('index');
             
-        } else {
+        } 
+        else {
+            
             return $this->render('create', [
                 'model' => $model,
 				'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
