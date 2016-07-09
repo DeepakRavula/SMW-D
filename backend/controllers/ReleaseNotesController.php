@@ -4,10 +4,12 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\ReleaseNotes;
+use common\models\ReleaseNotesRead;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 
 /**
  * Release_notesController implements the CRUD actions for ReleaseNotes model.
@@ -61,8 +63,9 @@ class ReleaseNotesController extends Controller
     public function actionCreate()
     {
         $model = new ReleaseNotes();
-        //$model->date = new \DateTime();
-        $model->user_id = 43;
+        $currentDate = new \DateTime();
+        $model->date =  $currentDate->format('Y-m-d');
+        $model->user_id = Yii::$app->user->id;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -118,5 +121,15 @@ class ReleaseNotesController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    
+    public function actionUpdateReadNotes(){
+        $data = Yii::$app->request->rawBody;
+		$data = Json::decode($data, true);
+        $model = new ReleaseNotesRead();
+        $model->release_note_id = $data['id'];
+        $model->user_id = Yii::$app->user->id;
+        $model->save();
+        
     }
 }

@@ -56,7 +56,8 @@
     "kartik-v/yii2-mpdf": "*",
     "shershennm/yii2-sendgrid": "*",
     "wbraganca/yii2-selectivity": "^1.0",
-    "wbraganca/yii2-dynamicform": "dev-master"
+    "wbraganca/yii2-dynamicform": "dev-master",
+    "2amigos/yii2-ckeditor-widget": "~1.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",

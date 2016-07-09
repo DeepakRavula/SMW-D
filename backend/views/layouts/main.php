@@ -1,7 +1,9 @@
-<?php
+<?php   
 /**
  * @var $this yii\web\View
  */
+use yii\helpers\Json;
+use yii\helpers\Url;
 ?>
 <?php $this->beginContent('@backend/views/layouts/common.php'); ?> 
 <div class="box"> 
@@ -21,4 +23,21 @@
     $("form").on("afterValidate", function (event, messages) {
         $('#notification').html("Form has some errors. Please fix and try again.").fadeIn();
     });
+</script>
+<script>
+$(".releaseNotes .close").click(function(){
+    $.ajax({
+        url: "<?php echo Url::to(['release-notes/update-read-notes']);?>",
+        type: "POST",
+        contentType: 'application/json',
+        dataType: "json",
+        data: JSON.stringify({
+            "id": $( ".releaseNotes" ).attr("data-id")
+        }),
+        success: function(response) {
+        },
+        error: function(xhr) {
+        }
+    });
+})
 </script>

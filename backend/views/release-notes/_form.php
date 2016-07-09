@@ -2,6 +2,7 @@
 
 use yii\helpers\Html; 
 use yii\bootstrap\ActiveForm; 
+use dosamigos\ckeditor\CKEditor;
 
 /* @var $this yii\web\View */ 
 /* @var $model common\models\ReleaseNotes */ 
@@ -13,8 +14,11 @@ use yii\bootstrap\ActiveForm;
     <?php $form = ActiveForm::begin(); ?> 
 
     <?php echo $form->errorSummary($model); ?> 
-
-    <?php echo $form->field($model, 'notes')->textInput(['maxlength' => true]) ?>
+    
+    <?= $form->field($model, 'notes')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'full'
+    ]) ?>
 
     <div class="form-group"> 
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?> 

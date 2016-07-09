@@ -12,6 +12,8 @@ use yii\widgets\Breadcrumbs;
 use common\models\User;
 use common\models\Location;
 use common\models\UserLocation;
+use common\models\ReleaseNotes;
+use common\models\ReleaseNotesRead;
 use yii\web\JsExpression;
 
 $bundle = BackendAsset::register($this);
@@ -365,6 +367,19 @@ $bundle = BackendAsset::register($this);
 
             <!-- Main content -->
             <section class="content">
+                <?php //$releaseNotes = ReleaseNotes::unReadNotes(Yii::$app->user->id);
+                $latestNotes = ReleaseNotes::latestNotes();
+                $unReadNotes = ReleaseNotesRead::findOne(['release_note_id'=>$latestNotes->id, 'user_id'=>Yii::$app->user->id]);
+                ?>
+                <?php if($role === User::ROLE_ADMINISTRATOR || $role === User::ROLE_STAFFMEMBER || $role === User::ROLE_OWNER):?>
+                    <?php if ( empty($unReadNotes) && ! empty($latestNotes)):?>
+                       <?php Yii::$app->session->setFlash('alert', [
+                            'options' => ['class' => 'alert alert-warning releaseNotes', 'data-id' => $latestNotes->id],
+                            'body' => $latestNotes->notes
+                        ]);
+                        ?>
+                    <?php endif; ?>
+                <?php endif; ?>
                 <?php if (Yii::$app->session->hasFlash('alert')):?>
                     <?php echo \yii\bootstrap\Alert::widget([
                         'body'=>ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'body'),

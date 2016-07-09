@@ -47,4 +47,13 @@ class ReleaseNotes extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
         ];
     }
+    
+    public function getReleaseNoteReads()
+    {
+        return $this->hasMany(ReleaseNotesRead::className(), ['release_note_id' => 'id']);
+    }
+    
+    public static function latestNotes(){
+        return $query = ReleaseNotes::find()->orderBy(['id' => SORT_DESC])->one();
+    }
 }
