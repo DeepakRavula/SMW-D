@@ -25,14 +25,14 @@ use yii\helpers\Url;
     });
 </script>
 <script>
-$(".releaseNotes .close").click(function(){
+$(".release-notes .close").click(function(){
     $.ajax({
         url: "<?php echo Url::to(['release-notes/update-read-notes']);?>",
         type: "POST",
         contentType: 'application/json',
         dataType: "json",
         data: JSON.stringify({
-            "id": $( ".releaseNotes" ).attr("data-id")
+            "id": $( ".release-notes" ).attr("data-id")
         }),
         success: function(response) {
         },

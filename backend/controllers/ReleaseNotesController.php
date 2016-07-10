@@ -64,7 +64,7 @@ class ReleaseNotesController extends Controller
     {
         $model = new ReleaseNotes();
         $currentDate = new \DateTime();
-        $model->date =  $currentDate->format('Y-m-d');
+        $model->date =  $currentDate->format('Y-m-d H:i:s');
         $model->user_id = Yii::$app->user->id;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
