@@ -1,6 +1,5 @@
 <?php
 
-
 $config = [
     'homeUrl'=>Yii::getAlias('@backendUrl'),
     'controllerNamespace' => 'backend\controllers',
@@ -69,6 +68,13 @@ $config = [
 				Yii::$app->session->set('location_id', '1');
 			}
 		}
+        $unReadNotes = array();
+        $latestNotes = common\models\ReleaseNotes::latestNotes();
+        if( ! empty($latestNotes)){
+            $unReadNotes = common\models\ReleaseNotesRead::findOne(['release_note_id'=>$latestNotes->id, 'user_id'=>Yii::$app->user->id]);
+        }
+        Yii::$app->view->params['latestNotes'] = $latestNotes;
+        Yii::$app->view->params['unReadNotes'] = $unReadNotes;
     },
     'as globalAccess'=>[
         'class'=>'\common\behaviors\GlobalAccessBehavior',
@@ -117,6 +123,11 @@ $config = [
                 'allow' => false,
             ],
             [
+                'allow' => true,
+                'roles' => ['administrator'],
+            ],
+            [
+                'controllers'=>['release-notes'],
                 'allow' => true,
                 'roles' => ['administrator'],
             ]

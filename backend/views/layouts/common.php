@@ -12,6 +12,8 @@ use yii\widgets\Breadcrumbs;
 use common\models\User;
 use common\models\Location;
 use common\models\UserLocation;
+use common\models\ReleaseNotes;
+use common\models\ReleaseNotesRead;
 use yii\web\JsExpression;
 
 $bundle = BackendAsset::register($this);
@@ -239,6 +241,13 @@ $bundle = BackendAsset::register($this);
                             'active'=>(Yii::$app->controller->id=='invoice')? true : false,
                         ],
                         [
+                            'label'=>Yii::t('backend', 'Release Notes'),
+                            'icon'=>'<i class="fa fa-sticky-note"></i>',
+							'url'=>['/release-notes/index'],    
+                            'visible'=>Yii::$app->user->can('administrator'),
+                            'active'=>(Yii::$app->controller->id=='release-notes')? true : false,
+                        ],
+                        [
                             'label'=>Yii::t('backend', 'System'),
                             'options' => ['class' => 'header']
                         ],
@@ -358,6 +367,19 @@ $bundle = BackendAsset::register($this);
 
             <!-- Main content -->
             <section class="content">
+                <?php
+                $latestNotes = $this->params['latestNotes'];
+                $unReadNotes = $this->params['unReadNotes'];
+                ?>
+                <?php if($role === User::ROLE_ADMINISTRATOR || $role === User::ROLE_STAFFMEMBER || $role === User::ROLE_OWNER):?>
+                    <?php if ( empty($unReadNotes) && ! empty($latestNotes)):?>
+                       <?php Yii::$app->session->setFlash('alert', [
+                            'options' => ['class' => 'alert alert-warning release-notes', 'data-id' => $latestNotes->id],
+                            'body' => $latestNotes->notes
+                        ]);
+                        ?>
+                    <?php endif; ?>
+                <?php endif; ?>
                 <?php if (Yii::$app->session->hasFlash('alert')):?>
                     <?php echo \yii\bootstrap\Alert::widget([
                         'body'=>ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'body'),

@@ -5,6 +5,8 @@
  */
 use common\models\User;
 use yii\helpers\Html;
+use yii\helpers\Json;
+use yii\helpers\Url;
 ?>
 <?php $this->beginContent('@backend/views/layouts/common.php'); ?> 
 <div class="box">  
@@ -25,11 +27,28 @@ use yii\helpers\Html;
     </script>
 </body>
 <script type="text/javascript">
+$(document).ready(function(){
     $("form").on("afterValidate", function (event, messages, errorAttributes) {        
         if (errorAttributes.length > 0) {
             $('#notification').html("Form has some errors. Please fix and try again.").fadeIn();
         }
     });
+    $(".release-notes .close").click(function(){
+        $.ajax({
+            url: "<?php echo Url::to(['release-notes/update-read-notes']);?>",
+            type: "POST",
+            contentType: 'application/json',
+            dataType: "json",
+            data: JSON.stringify({
+                "id": $( ".release-notes" ).attr("data-id")
+            }),
+            success: function(response) {
+            },
+            error: function(xhr) {
+            }
+        });
+    });
+});
 </script>
 
 
