@@ -518,6 +518,12 @@ Licensed under MIT
   width: 165px;
   text-align: right !important;
 }
+.invoice-address{
+    border-left: 1px solid #ddd;
+    padding: 0 30px 7px;
+    margin-left: 30px;
+    line-height: 23px;
+}
 /*User view*/
 .c-title{
   font-weight: bold;

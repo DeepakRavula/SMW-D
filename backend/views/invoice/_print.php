@@ -29,20 +29,22 @@ $this->params['breadcrumbs'][] = $this->title;
 </style>
 
 <div class="invoice-view">
-    <div class="row">
-        <div class="col-xs-12">
+    <div class="col-xs-12">
           <h2 class="page-header">
-            <div class="logo pull-left">
+            <a class="logo pull-left">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
-            </div>     <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address)): ?>
+            </a>
+          <div class="pull-left invoice-address">
+          <small><?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address)): ?>
                 <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address?>
-			<?php endif;?>
-			<?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number)): ?><br>
+      <?php endif;?>
+      <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number)): ?><br>
             <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number?>
-			<?php endif;?> 
-			  
-            <div class="clearfix"></div>
+      <?php endif;?> 
+      </small> 
+      </div>
+      <div class="clearfix"></div>
           </h2>
         </div>
         <!-- /.col -->

@@ -26,17 +26,21 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
     <div class="row">
         <div class="col-xs-12">
           <h2 class="page-header">
-            <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
+            <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo pull-left">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
           <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
-           <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address)): ?>
+          <div class="pull-left invoice-address">
+          <small><?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address)): ?>
                 <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address?>
 			<?php endif;?>
 			<?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number)): ?><br>
             <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number?>
 			<?php endif;?> 
+      </small> 
+      </div>
+      <div class="clearfix"></div>
           </h2>
         </div>
         <!-- /.col -->
