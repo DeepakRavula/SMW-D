@@ -19,13 +19,22 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
     table>tbody>tr>td:last-child{
       text-align: right;
     }
+    .logo>img{
+      width:235px;
+    }
+    .badge{
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 400;
+      padding: 5px 15px;
+    }
 </style>
 <?php //echo '<pre>'; print_r($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer); ?>
 
-<div class="invoice-view p-10">
+<div class="invoice-view p-50">
     <div class="row">
         <div class="col-xs-12">
-          <h2 class="page-header">
+          <h2 class="m-0">
             <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo pull-left">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
@@ -45,29 +54,13 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         </div>
         <!-- /.col -->
       </div>
-    <div class="row invoice-info">
+    <div class="row invoice-info m-t-20">
         <!-- /.col -->
-        <div class="col-sm-4 invoice-col m-b-20">
-        Bill To,
+        <div class="col-sm-8 invoice-col m-b-20">
           <div class="row m-t-10">
-            <div class="col-xs-4">
-              <strong>Name:</strong>
-            </div>
             <div class="col-xs-8">
-              <strong><?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null?></strong>
-            </div>
-          </div>
-            <div class="row">
-              <div class="col-xs-4">
-				<?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email)): ?>
-                <strong>Email:</strong> 
-              </div>
-              <div class="col-xs-8">
-                <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email?>
-			<?php endif;?>
-              </div>
-            </div>
-            <?php
+              <h3 class="m-0 f-w-400"><?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null?></h3>
+              <?php
                 $addresses = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->addresses;
                 foreach($addresses as $address){
                   if($address->label === 'Billing'){
@@ -77,64 +70,42 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 }
                 $phoneNumber = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->phoneNumber; 
             ?>
-<!-- Billing address -->
+            <!-- Billing address -->
             <?php if(! empty($billingAddress)){ ?>
-            <div class="row">
-              <div class="col-xs-4">
-                <strong><?php echo 'Billing Address:'; ?></strong>
-              </div>
-              <div class="col-xs-8">
-                <?php 
+              <?php 
                     echo $billingAddress->address . '<br> ' . $billingAddress->city->name . ', ';
                     echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ', ';
                     echo $billingAddress->postal_code;
-                ?>
-              </div>
+               } ?>
+            <div class="row-fluid m-t-20">
+              <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email)): ?>
+              <?php echo 'E: '; ?><?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email?>
+              <?php endif;?>
             </div>
-            <?php } ?>
-<!-- Phone number -->
-          <?php if(! empty($phoneNumber)){ ?>
-            <div class="row">
-              <div class="col-xs-4">
-                <strong><?php echo 'Phone Number:'; ?></strong>
-              </div>
-              <div class="col-xs-8">
-                <?php echo $phoneNumber->number;?>
-              </div>
+            <!-- Phone number -->
+            <div class="row-fluid">
+              <?php if(! empty($phoneNumber)){ ?><?php echo 'P: '; ?>
+              <?php echo $phoneNumber->number; } ?>
             </div>
-           <?php } ?>
+            </div>
+          </div>
         </div>
         <!-- /.col -->
-        <br>
-        <div class="col-sm-4 invoice-col m-t-10">
-          <div class="row">
-            <div class="col-xs-4">
-              <strong>Invoice Number: </strong>
-            </div>
-            <div class="col-xs-7">
+        <div class="col-sm-4 invoice-col m-t-10 text-right">
+          <div class="row-fluid">
+              <h2 class="m-0"><strong>INVOICE </strong></h2>
+          </div>
+            <div class="row-fluid">
               #<?php echo $model->invoice_number;?>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-4">
-              <strong>Date: </strong>
-            </div>
-            <div class="col-xs-7">
+          <div class="row-fluid">
               <?php echo date("d/m/Y", strtotime($model->date));?>
+          </div>
+          <div class="row-fluid m-t-20">
+              Invoice Status<br>
+              <label class="badge bg-red"><?php echo $model->status($model);?><label>
             </div>
           </div>
-          <div class="row">
-            <div class="col-xs-4">
-              <strong>Status: </strong>
-            </div>
-            <div class="col-xs-7">
-              <?php echo $model->status($model);?>
-            </div>
-          </div>
-        </div>
-        <!-- /.col -->
-      </div>
-    <div>
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
@@ -186,7 +157,6 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
-    </div>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">

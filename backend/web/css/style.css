@@ -66,6 +66,9 @@ a:hover, a:focus{
 .skin-black .treeview-menu>li>a {
     color: #e8e8e8;
 }
+.bg-red{
+  background: #ea212c !important;
+}
 .fc-event {
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
@@ -110,6 +113,9 @@ a:hover, a:focus{
 /*****************************
 Resets
 ******************************/
+.f-w-400{
+  font-weight: 400;
+}
 .relative{
   position: relative;
 }
@@ -158,6 +164,9 @@ Resets
 .p-20{
   padding: 20px;
 }
+.p-50{
+  padding: 50px;
+}
 .p-t-10{
   padding-top: 10px;
 }
@@ -181,6 +190,9 @@ Resets
 }
 .f-s-18, .tab-pane>h4{
   font-size: 18px;
+}
+.text-gray{
+  color: gray !important;
 }
 /*****************************/
 .logo > img
@@ -515,14 +527,15 @@ Licensed under MIT
   line-height: 24px;
 }
 .table-invoice-childtable>tbody>tr>td:first-of-type{
-  width: 165px;
+  width: 169px;
   text-align: right !important;
 }
 .invoice-address{
-    border-left: 1px solid #ddd;
-    padding: 0 30px 7px;
+    border-left: 1px solid #f1f1f1;
+    padding: 14px 30px 23px;
     margin-left: 30px;
     line-height: 23px;
+    font-size: 24px;
 }
 /*User view*/
 .c-title{
