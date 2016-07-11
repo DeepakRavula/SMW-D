@@ -19,9 +19,6 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
     table>tbody>tr>td:last-child{
       text-align: right;
     }
-    .logo>img{
-      width:235px;
-    }
     .badge{
       border-radius: 50px;
       font-size: 18px;
@@ -33,14 +30,14 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 
 <div class="invoice-view p-50">
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-12 p-0">
           <h2 class="m-0">
             <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo pull-left">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
           <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
-          <div class="pull-left invoice-address">
+          <div class="pull-left invoice-address text-gray">
           <small><?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address)): ?>
                 <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address?>
 			<?php endif;?>
@@ -56,10 +53,11 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
       </div>
     <div class="row invoice-info m-t-20">
         <!-- /.col -->
-        <div class="col-sm-8 invoice-col m-b-20">
+        <div class="col-sm-8 invoice-col m-b-20 p-0">
           <div class="row m-t-10">
             <div class="col-xs-8">
               <h3 class="m-0 f-w-400"><?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null?></h3>
+              <div class="text-gray">
               <?php
                 $addresses = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->addresses;
                 foreach($addresses as $address){
@@ -87,21 +85,21 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
               <?php if(! empty($phoneNumber)){ ?><?php echo 'P: '; ?>
               <?php echo $phoneNumber->number; } ?>
             </div>
-            </div>
+            </div></div>
           </div>
         </div>
         <!-- /.col -->
-        <div class="col-sm-4 invoice-col m-t-10 text-right">
+        <div class="col-sm-4 invoice-col m-t-10 text-right p-0">
           <div class="row-fluid">
               <h2 class="m-0"><strong>INVOICE </strong></h2>
           </div>
-            <div class="row-fluid">
+            <div class="row-fluid  text-gray">
               #<?php echo $model->invoice_number;?>
             </div>
-          <div class="row-fluid">
+          <div class="row-fluid text-gray">
               <?php echo date("d/m/Y", strtotime($model->date));?>
           </div>
-          <div class="row-fluid m-t-20">
+          <div class="row-fluid m-t-20 text-gray">
               Invoice Status<br>
               <label class="badge bg-red"><?php echo $model->status($model);?><label>
             </div>

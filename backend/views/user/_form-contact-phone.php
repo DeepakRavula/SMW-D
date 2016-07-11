@@ -53,7 +53,8 @@ $this->registerJs($js);
 <?php foreach ($phoneNumberModels as $index => $phoneNumberModel): ?>
 				<div class="item-block phone-item"><!-- widgetBody -->
 					<h4>
-						<span class="panel-title-phone">Phone Number: <?= ($index + 1) ?></span>
+						<span class="panel-title-phone pull-left">Phone Number: <?= ($index + 1) ?></span>
+						<em class="pull-left f-s-14 m-l-20"><?= $form->field($phoneNumberModel, "[{$index}]is_primary")->checkbox() ?></em>
 						<button type="button" class="pull-right phone-remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
 						<div class="clearfix"></div>
 					</h4>
@@ -64,10 +65,7 @@ $this->registerJs($js);
 					}
 					?>
 
-	                <div class="row"> 
-                        <div class="col-sm-4">
-						<?= $form->field($phoneNumberModel, "[{$index}]is_primary")->checkbox() ?>
-						</div> 
+	                <div class="row">
                         <div class="clearfix"></div>
 	                    <div class="col-sm-4">
 	<?= $form->field($phoneNumberModel, "[{$index}]number")->textInput(['maxlength' => true]) ?>
@@ -85,7 +83,7 @@ $this->registerJs($js);
 				</div>
 		</div>
     <div class="clearfix"></div>
-		<hr class="hr-ph">
+		<hr class="hr-ph right-side-faded">
 		<?php DynamicFormWidget::end(); ?>
 <script type="text/javascript">
 $(document).ready(function(){

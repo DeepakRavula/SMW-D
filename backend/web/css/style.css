@@ -110,6 +110,10 @@ a:hover, a:focus{
     width: 45px !important;
     height: 45px !important;
 }
+.alert {
+    margin-bottom: 0;
+    border-radius: 0 !important;
+}
 /*****************************
 Resets
 ******************************/
@@ -187,6 +191,12 @@ Resets
 }
 .p-r-20{
   padding-right: 20px;
+}
+.f-s-14{
+  font-size: 14px;
+}
+.f-s-16{
+  font-size: 16px;
 }
 .f-s-18, .tab-pane>h4{
   font-size: 18px;
@@ -532,7 +542,7 @@ Licensed under MIT
 }
 .invoice-address{
     border-left: 1px solid #f1f1f1;
-    padding: 14px 30px 23px;
+    padding: 0px 30px 10px;
     margin-left: 30px;
     line-height: 23px;
     font-size: 24px;

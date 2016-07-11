@@ -25,9 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     .logo>img{
       width:135px;
     }
-    .invoice-address{
-      padding: 0px 30px 10px;
-    }
+    
     .badge{
       border-radius: 50px;
       font-size: 18px;
