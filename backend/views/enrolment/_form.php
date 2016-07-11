@@ -22,7 +22,7 @@ use yii\helpers\Url;
 	
     <div class="row">
 		<div class="col-md-4">
-			<?php echo $form->field($model, 'programId')->dropDownList(ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'), ['prompt' => 'Select..']); ?>
+			<?php echo $form->field($model, 'program_id')->dropDownList(ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'), ['prompt' => 'Select..']); ?>
 		</div>
 		<div class="col-md-4">
 			<?php
@@ -30,7 +30,7 @@ use yii\helpers\Url;
 			echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
 				'options' => ['id' => 'enrolment-teacherId'],
 				'pluginOptions' => [
-					'depends' => ['enrolment-programid'],
+					'depends' => ['enrolment-program_id'],
 					'placeholder' => 'Select...',
 					'url' => Url::to(['/enrolment/teachers'])
 				]
@@ -55,7 +55,7 @@ use yii\helpers\Url;
 		<div class="col-md-4">
 			<?php
 			// Dependent Dropdown
-			echo $form->field($model, 'fromTime')->widget(DepDrop::classname(), [
+			echo $form->field($model, 'from_time')->widget(DepDrop::classname(), [
 				'options' => ['id' => 'fromTime-id'],
 				'pluginOptions' => [
 					'depends' => ['enrolment-teacherId', 'teacher-availability-day'],
@@ -95,11 +95,3 @@ use yii\helpers\Url;
 	<?php ActiveForm::end(); ?>
 
 </div>
-<script type="text/javascript">
-	$('#enrolment-fromtime').timepicker({
-		'minTime': '9:00am',
-		'maxTime': '8:30pm',
-		'step': 30,
-		'showDuration': false
-	});
-</script>

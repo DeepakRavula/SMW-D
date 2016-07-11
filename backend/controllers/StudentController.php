@@ -66,11 +66,9 @@ class StudentController extends Controller
 		$location_id = $session->get('location_id');
 		$currentDate = new \DateTime();
 		$query = Lesson::find()
-			->joinWith(['enrolmentScheduleDay' => function($query) use($location_id,$id) {
-				$query->joinWith(['enrolment' => function($query) use($location_id,$id){
+				->joinWith(['enrolment' => function($query) use($location_id,$id){
 					$query->where(['location_id' => $location_id,'student_id' => $id]);
-					}]);
-				}])
+					}])
 			->andWhere(['<=', 'lesson.date', $currentDate->format('Y-m-d')]);
 			$lessonDataProvider = new ActiveDataProvider([
 			'query' => $query,
@@ -97,22 +95,15 @@ class StudentController extends Controller
 		$enrolmentModel = new Enrolment();
         if ($enrolmentModel->load(Yii::$app->request->post()) ) {
 			$enrolmentModel->student_id = $id;
-			$qualification = Qualification::findOne([
-				'teacher_id' => $enrolmentModel->teacherId,
-				'program_id' => $enrolmentModel->programId,
-			]);
-			$enrolmentModel->qualification_id = $qualification->id;
-			$enrolmentModel->location_id = Yii::$app->session->get('location_id');
 			$renewalDate = \DateTime::createFromFormat('m-d-y', $enrolmentModel->commencement_date);
 			$renewalDate->add(new \DateInterval('P1Y'));
 			$enrolmentModel->renewal_date = $renewalDate->format('Y-m-d');
-			if($enrolmentModel->save()) {
+			$enrolmentModel->save();
 			    Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
                 	'body' => 'Program has been added successfully'
             ]);
             	return $this->redirect(['view', 'id' => $model->id,'section' => 'enrolment']);
-			}
         } else {
             return $this->render('view', [
             	'model' => $model,
@@ -237,5 +228,4 @@ class StudentController extends Controller
 					throw new NotFoundHttpException('The requested page does not exist.');
 				}
 			}
-
-		}
+	}

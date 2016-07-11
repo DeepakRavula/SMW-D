@@ -60,8 +60,7 @@ class LessonQuery extends \yii\db\ActiveQuery
 	}
 
 	public function location($locationId) {
-		$this->joinWith(['enrolmentScheduleDay' => function($query) use($locationId) {
-			$query->joinWith('enrolment');
+		$this->joinWith(['enrolment' => function($query) use($locationId){
 			$query->andFilterWhere(['enrolment.location_id' => $locationId]);
 		}]);
 		
@@ -69,11 +68,9 @@ class LessonQuery extends \yii\db\ActiveQuery
 	}
 
 	public function student($id) {
-		$this->joinWith(['enrolmentScheduleDay' => function($query) use($id) {
-			$query->joinWith(['enrolment e' => function($query) use($id){
-					$query->joinWith('student s')
-						->where(['s.customer_id' => $id]);
-					}]);
+		$this->joinWith(['enrolment e' => function($query) use($id){
+			$query->joinWith('student s')
+				->where(['s.customer_id' => $id]);
 			}]);
 		return $this;
 	}

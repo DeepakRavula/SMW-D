@@ -19,12 +19,7 @@ use Yii;
 class Enrolment extends \yii\db\ActiveRecord
 {
 
-	public $teacherId;
-	public $programId;
-	public $fromTime;
-	public $duration;
-    public $day;
-
+public $teacherId;
     /**
      * @inheritdoc
      */
@@ -39,9 +34,9 @@ class Enrolment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['student_id', 'qualification_id','programId','commencement_date'], 'required'],
-            [['student_id', 'qualification_id', 'teacherId', 'programId', 'day'], 'integer'],
-            [['commencement_date','teacherId', 'programId', 'day', 'fromTime', 'duration'], 'safe'],
+            [['student_id', 'program_id','commencement_date'], 'required'],
+            [['student_id', 'teacherId', 'program_id', 'day'], 'integer'],
+            [['commencement_date','teacherId', 'program_id', 'day', 'from_time','to_time','location_id', 'duration'], 'safe'],
         ];
     }
 
@@ -53,17 +48,16 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'student_id' => 'Student ID',
-            'qualification_id' => 'Qualification ID',
             'commencement_date' => 'Commencement Date',
             'renewal_date' => 'Renewal Date',
 			'teacherId' => 'Teacher Name',
-			'programId' => 'Program Name'
+			'program_id' => 'Program Name'
         ];
     }
 
-	public function getQualification()
+	public function getLesson()
     {
-        return $this->hasOne(Qualification::className(), ['id' => 'qualification_id']);
+        return $this->hasMany(Lesson::className(), ['enrolment_id' => 'id']);
     }
    
 	public function getStudent()
@@ -71,14 +65,14 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'student_id']);
     }
 	
-	public function getEnrolmentScheduleDay()
-    {
-        return $this->hasOne(EnrolmentScheduleDay::className(), ['enrolment_id' => 'id']);
-    }
-    
     public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'location_id']);
+    }
+
+	public function getProgram()
+    {
+        return $this->hasOne(Program::className(), ['id' => 'program_id']);
     }
 	
 	public static function getWeekdaysList()
@@ -99,24 +93,38 @@ class Enrolment extends \yii\db\ActiveRecord
      */
     public function beforeSave($insert)
     {   
-        if ($this->commencement_date != NULL)
-            $this->commencement_date = date_format(date_create_from_format('m-d-y', $this->commencement_date), 'Y-m-d');
-            $secs = strtotime($this->fromTime) - strtotime("00:00:00");
-            $this->commencement_date = date("Y-m-d H:i:s",strtotime($this->commencement_date) + $secs);
-            
-    
+      	$this->location_id = Yii::$app->session->get('location_id');
+        $this->commencement_date = date_format(date_create_from_format('m-d-y', $this->commencement_date), 'Y-m-d');
+        $secs = strtotime($this->from_time) - strtotime("00:00:00");
+        $this->commencement_date = date("Y-m-d H:i:s",strtotime($this->commencement_date) + $secs);
+       	$this->from_time = date("H:i:s",strtotime($this->from_time));
+		$secs = strtotime($this->duration) - strtotime("00:00:00");
+		$toTime = date("H:i:s",strtotime($this->from_time) + $secs);
+        $this->to_time = $toTime; 
+        
         return parent::beforeValidate ();
     }
-    public function afterSave($insert, $changedAttributes)
-    {        
-        $enrolmentScheduleDayModel = new EnrolmentScheduleDay();
-        $enrolmentScheduleDayModel->enrolment_id = $this->id;
-        $enrolmentScheduleDayModel->day = $this->day;
-        $enrolmentScheduleDayModel->from_time = date("H:i:s",strtotime($this->fromTime));
-        $enrolmentScheduleDayModel->duration = $this->duration;
-		$secs = strtotime($this->duration) - strtotime("00:00:00");
-		$toTime = date("H:i:s",strtotime($this->fromTime) + $secs);
-        $enrolmentScheduleDayModel->to_time = $toTime; 
-        $enrolmentScheduleDayModel->save();
+   public function afterSave($insert, $changedAttributes)
+    {
+		
+		$interval = new \DateInterval('P1D');
+		$commencementDate = $this->commencement_date;
+		$renewalDate = $this->renewal_date;
+		$start = new \DateTime($commencementDate);
+		$end = new \DateTime($renewalDate);
+		$period = new \DatePeriod($start, $interval, $end);
+
+		foreach($period as $day){
+			if($day->format('N') === $this->day) {
+				$lesson = new Lesson();
+				$lesson->setAttributes([
+					'enrolment_id'	 => $this->id,
+					'teacher_id' => $this->teacherId,
+					'status' => Lesson::STATUS_PENDING,
+					'date' => $day->format('Y-m-d H:i:s'),
+				]);
+				$lesson->save();
+			}
+		}
     } 
 }
