@@ -2,19 +2,16 @@
 
 use yii\db\Migration;
 
-class m160711_154703_rbac_auth_assignment_master_data extends Migration
+class m160711_180321_release_notes_master_data extends Migration
 {
     public function up()
     {
-		$sql = file_get_contents(dirname(__FILE__).'/' . get_class($this) . '_' . __FUNCTION__ . '.sql');
-        
-		return $this->execute($sql);
 
     }
 
     public function down()
     {
-        echo "m160711_154703_rbac_auth_assignment_master_data cannot be reverted.\n";
+        echo "m160711_180321_release_notes_master_data cannot be reverted.\n";
 
         return false;
     }
