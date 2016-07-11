@@ -108,7 +108,7 @@ $config = [
                 'roles' => ['administrator', 'staffmember'],
             ],
 			[
-                'controllers'=>['schedule','student', 'lesson', 'invoice','timeline-event','enrolment','teacher-availability'],
+                'controllers'=>['schedule','student', 'release-notes', 'lesson', 'invoice','timeline-event','enrolment','teacher-availability'],
                 'allow' => true,
                 'roles' => ['staffmember'],
             ],
