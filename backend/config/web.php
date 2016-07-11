@@ -68,7 +68,7 @@ $config = [
 				Yii::$app->session->set('location_id', '1');
 			}
 		}
-        $unReadNotes = array();
+        $unReadNotes = [];
         $latestNotes = common\models\ReleaseNotes::latestNotes();
         if( ! empty($latestNotes)){
             $unReadNotes = common\models\ReleaseNotesRead::findOne(['release_note_id'=>$latestNotes->id, 'user_id'=>Yii::$app->user->id]);
