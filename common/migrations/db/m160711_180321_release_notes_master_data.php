@@ -6,6 +6,9 @@ class m160711_180321_release_notes_master_data extends Migration
 {
     public function up()
     {
+		$sql = file_get_contents(dirname(__FILE__).'/' . get_class($this) . '_' . __FUNCTION__ . '.sql');
+        
+		return $this->execute($sql);
 
     }
 
