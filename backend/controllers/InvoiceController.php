@@ -89,12 +89,11 @@ class InvoiceController extends Controller
 			$model->customer_id = $customer->id;
        		$query = Lesson::find()
                 ->joinwith('invoiceLineItem ili')
-                ->joinwith(['enrolmentScheduleDay' => function($query) use($location_id, $customer) {
-					$query->joinWith(['enrolment e' => function($query) use($customer) {
-						$query->joinWith('student s')
-								->where(['s.customer_id' => $customer->id]);
+				->joinWith(['enrolment e' => function($query) use($customer,$location_id) {
+						$query->joinWith(['student s' => function($query) use($customer,$location_id){
+								$query->where(['s.customer_id' => $customer->id]);
 					}])
-					->where(['e.location_id' => $location_id]);
+				->where(['e.location_id' => $location_id]);
 				}])
                 ->where(['ili.id' => null])
 				->andWhere(['<=','lesson.date',$currentDate->format('Y:m:d')
@@ -132,9 +131,9 @@ class InvoiceController extends Controller
                 $invoiceLineItem = new InvoiceLineItem();
                 $invoiceLineItem->invoice_id = $invoice->id;
                 $invoiceLineItem->lesson_id = $lesson->id;
-                $time = explode(':', $lesson->enrolmentScheduleDay->duration);
+                $time = explode(':', $lesson->enrolment->duration);
                 $invoiceLineItem->unit = (($time[0]*60) + ($time[1])) / 60;
-                $invoiceLineItem->amount = $lesson->enrolmentScheduleDay->enrolment->qualification->program->rate * $invoiceLineItem->unit;
+                $invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
                 $invoiceLineItem->save(); 
                 $subTotal += $invoiceLineItem->amount;
             }
@@ -223,34 +222,7 @@ class InvoiceController extends Controller
         ]);
     }
     
-    public function generateInvoice()
-    {
-        $query = Student::find()
-					//->join('INNER JOIN','user_location','user_location.user_id = Student.id')
-					->join('INNER JOIN','enrolment','enrolment.student_id = Student.id')
-                    ->join('INNER JOIN','enrolment_schedule_day','enrolment_schedule_day.enrolment_id = enrolment.id')
-                    ->join('INNER JOIN','qualification','qualification.id = enrolment.qualification_id')
-                    ->join('INNER JOIN','program','program.id = qualification.program_id')
-					->where(['enrolment.location_id' => Yii::$app->session->get('location_id')])	
-                ->select('first_name, program.name, enrolment_schedule_day.duration')
-				->all();
-        //$query =  Student::find()->with('enrolment', 'enrolment_schedule_day')->all();    
-        $query = enrolment::find()
-                ->joinwith('student s')
-                ->joinwith('enrolmentScheduleDay es')
-                ->joinwith('qualification q')
-                ->joinWith('qualification.program p')
-                ->groupBy('p.name')
-                ->where(['location_id' => Yii::$app->session->get('location_id'), 's.customer_id' => 171]);
-        
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        return $this->renderPartial('_invoice', [
-            'dataProvider' => $dataProvider,
-        ]);
-    }
+    
     public function actionPrint($id){
 
         $model = $this->findModel($id);

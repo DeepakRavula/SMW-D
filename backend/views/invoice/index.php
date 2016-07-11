@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 			    'label' => 'Customer',
                 'value' => function($data) {
-                    return ! empty($data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $data->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null;
+                    return ! empty($data->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $data->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null;
                 },
             ],
 	    	[
