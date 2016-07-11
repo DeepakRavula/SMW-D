@@ -68,7 +68,7 @@ $config = [
 				Yii::$app->session->set('location_id', '1');
 			}
 		}
-        $unReadNotes = array();
+        $unReadNotes = [];
         $latestNotes = common\models\ReleaseNotes::latestNotes();
         if( ! empty($latestNotes)){
             $unReadNotes = common\models\ReleaseNotesRead::findOne(['release_note_id'=>$latestNotes->id, 'user_id'=>Yii::$app->user->id]);
@@ -108,7 +108,7 @@ $config = [
                 'roles' => ['administrator', 'staffmember'],
             ],
 			[
-                'controllers'=>['schedule','student', 'lesson', 'invoice','timeline-event','enrolment','teacher-availability'],
+                'controllers'=>['schedule','student', 'release-notes', 'lesson', 'invoice','timeline-event','enrolment','teacher-availability'],
                 'allow' => true,
                 'roles' => ['staffmember'],
             ],
