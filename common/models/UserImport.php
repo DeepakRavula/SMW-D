@@ -134,9 +134,17 @@ class UserImport extends Model {
 				$address->province_id = 1;
 				$address->country_id = 1;
 				$address->postal_code = $pincodeName;
+				if( ! $address->validate(['address'])) {
+					$address->address = null;
+					$errors[] = 'Error on Line ' . ($i + 1) . ': Address is missing. Skipping  address for customer named, "' . $row['Billing First Name'] . '"';
+				}
 				$address->save();
-
-				$user->link('addresses', $address);
+				
+				$userAddress = new UserAddress();
+				$userAddress->user_id = $user->id;
+				$userAddress->address_id = $address->address;
+				$userAddress->save();
+				//$user->link('addresses', $address);
 
 				if (!empty($row['Billing Home Tel'])) {
 					$phoneNumber = $row['Billing Home Tel'];
