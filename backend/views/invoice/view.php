@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
       padding: 5px 15px;
     }
 </style>
-<div class="invoice-view p-10">
+<div class="invoice-view p-50">
     <div class="row">
         <div class="col-xs-12 p-0">
           <h2 class="m-0">
@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
           <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
-          <div class="pull-left invoice-address">
+          <div class="pull-left invoice-address text-gray">
           <small><?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address)): ?>
                 <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address?>
 			<?php endif;?>
@@ -54,21 +54,10 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         <div class="col-sm-8 invoice-col m-b-20 p-0">
           <div class="row m-t-10">
             <div class="col-xs-8">
-              <strong><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></strong>
-            </div>
-          </div>
-            <div class="row">
-              <div class="col-xs-4">
-				<?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->email)): ?>
-                <strong>Email:</strong> 
-              </div>
-              <div class="col-xs-8">
-                <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->email?>
-			<?php endif;?>
-              </div>
-            </div>
-            <?php
-                $addresses = $model->lineItems[0]->lesson->enrolment->student->customer->addresses;
+              <h3 class="m-0 f-w-400"><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></h3>
+            <div class="text-gray">
+	    <?php
+	                    $addresses = $model->lineItems[0]->lesson->enrolment->student->customer->addresses;
                 foreach($addresses as $address){
                   if($address->label === 'Billing'){
                     $billingAddress = $address;
@@ -81,12 +70,12 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
             <?php if(! empty($billingAddress)){ ?>
               <?php 
                     echo $billingAddress->address . '<br> ' . $billingAddress->city->name . ', ';
-                    echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ', ';
+                    echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ' ';
                     echo $billingAddress->postal_code;
                } ?>
             <div class="row-fluid m-t-20">
-              <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email)): ?>
-              <?php echo 'E: '; ?><?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email?>
+              <?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->email)): ?>
+              <?php echo 'E: '; ?><?php echo $model->lineItems[0]->lesson->enrolment->student->customer->email?>
               <?php endif;?>
             </div>
             <!-- Phone number -->

@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-          <div class="pull-left invoice-address">
+          <div class="pull-left invoice-address  text-gray">
           <small><?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address)): ?>
                 <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address?>
       <?php endif;?>
@@ -61,23 +61,10 @@ $this->params['breadcrumbs'][] = $this->title;
         <!-- /.col -->
         <div class="col-sm-9 invoice-col m-b-20 pull-left p-0">
           <div class="row m-t-10">
-            <div class="col-xs-4">
-              <strong>Name:</strong>
-            </div>
-            <div class="col-xs-8">
-              <strong><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></strong>
-            </div>
-          </div>
-            <div class="row">
-              <div class="col-xs-4">
-				<?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->email)): ?>
-                <strong>Email:</strong> 
-              </div>
-              <div class="col-xs-8">
-                <?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->email) ? $model->lineItems[0]->lesson->enrolment->student->customer->email : null?>
-			<?php endif;?>
-              </div>
-            </div>
+            <div class="col-xs-12">
+              
+                <h3 class="m-0 f-w-400"><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></h3>
+            <div class="text-gray">
             <?php
                 $addresses = $model->lineItems[0]->lesson->enrolment->student->customer->addresses;
                 foreach($addresses as $address){
@@ -87,29 +74,18 @@ $this->params['breadcrumbs'][] = $this->title;
                   }
                 }
                 $phoneNumber = $model->lineItems[0]->lesson->enrolment->student->customer->phoneNumber; 
-            ?>
-<!-- Billing address -->
-            <?php if(! empty($billingAddress)){ ?>
-            <div class="row">
-              <div class="col-xs-4">
-                <strong><?php echo 'Billing Address:'; ?></strong>
-              </div>
-              <div class="col-xs-8">
-                <?php 
-                    echo $billingAddress->address . '<br> ' . $billingAddress->city->name . ', ';
-                    echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ', ';
-                    echo $billingAddress->postal_code;
+            
                 ?>
                 <!-- Billing address -->
                 <?php if(! empty($billingAddress)){ ?>
                   <?php 
                         echo $billingAddress->address . '<br> ' . $billingAddress->city->name . ', ';
-                        echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ', ';
+                        echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ' ';
                         echo $billingAddress->postal_code;
                    } ?>
                 <div class="row-fluid m-t-20">
-                  <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email)): ?>
-                  <?php echo 'E: '; ?><?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email?>
+                  <?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->email)): ?>
+                  <?php echo 'E: '; ?><?php echo $model->lineItems[0]->lesson->enrolment->student->customer->email?>
                   <?php endif;?>
                 </div>
               </div>
