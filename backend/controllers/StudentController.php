@@ -68,8 +68,7 @@ class StudentController extends Controller
 		$query = Lesson::find()
 				->joinWith(['enrolment' => function($query) use($location_id,$id){
 					$query->where(['location_id' => $location_id,'student_id' => $id]);
-					}])
-			->andWhere(['<=', 'lesson.date', $currentDate->format('Y-m-d')]);
+				}]);
 			$lessonDataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);	

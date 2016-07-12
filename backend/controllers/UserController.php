@@ -152,8 +152,7 @@ class UserController extends Controller {
 		$currentDate = new \DateTime();
 		$lessonQuery = Lesson::find()
 				->location($location_id)
-				->student($id)
-				->andWhere(['<=', 'lesson.date', $currentDate->format('Y-m-d')]);
+				->student($id);
 
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => $lessonQuery,
