@@ -10,9 +10,8 @@ $this->title = Yii::t('backend', 'Import {modelClass}', [
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Import'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-import-form">
-
 <div id = "alert_placeholder"></div>
+<div class="user-import-form p-10 pull-left">
 <?php echo \trntv\filekit\widget\Upload::widget([
     'model' => $model,
     'attribute' => 'file',
@@ -25,9 +24,10 @@ $this->params['breadcrumbs'][] = $this->title;
     'clientOptions' => ['done' => new JsExpression('UserImport.onDone')],
 ]);?>
 </div>
-<div id="import-log">
+<div id="import-log" class="p-t-10 pull-left">
 
 </div>
+<div class="clearfix"></div>
 <script type="text/javascript">
 
 bootstrap_alert = function() {}
@@ -40,7 +40,7 @@ bootstrap_alert.success = function(message) {
 				var error = $("<div/>").html(val);
 				$('#import-log').append(error);	
 			});
-			var importMessage = 'Import complete';
+			var importMessage = '<strong>Import complete</strong>';
 			var studentMessage = data.result.studentCount + (' students imported out of ') + data.result.totalRows;
 			var customerMessage = data.result.customerCount + (' customers created'); 
 			$('#import-log').append(importMessage);
