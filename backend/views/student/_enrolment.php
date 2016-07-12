@@ -24,21 +24,21 @@ use common\models\Enrolment;
 			[
 				'label' => 'Program Name',
 				'value' => function($data) {
-					return !empty($data->qualification->program->name) ? $data->qualification->program->name : null;
+					return !empty($data->program->name) ? $data->program->name : null;
 				},
 			],
 			[
 				'label' => 'Teacher Name',
 				'value' => function($data) {
-					return !empty($data->qualification->teacher->publicIdentity) ? $data->qualification->teacher->publicIdentity : null;
+					return !empty($data->program->qualification->teacher->publicIdentity) ? $data->program->qualification->teacher->publicIdentity : null;
 				},
 			],
 			[
 				'label' => 'Day',
 				'value' => function($data) {
-					if(! empty($data->enrolmentScheduleDay->day)){
+					if(! empty($data->day)){
 					$dayList = Enrolment::getWeekdaysList();
-					$day = $dayList[$data->enrolmentScheduleDay->day];
+					$day = $dayList[$data->day];
 					return ! empty($day) ? $day : null;
 					}
 					return null;
@@ -47,14 +47,14 @@ use common\models\Enrolment;
 			[
 				'label' => 'From Time',
 				'value' => function($data) {
-						return ! empty($data->enrolmentScheduleDay->from_time) ? Yii::$app->formatter->asTime($data->enrolmentScheduleDay->from_time) : null;
+						return ! empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
 				}
 			],
 			[
 				'label' => 'Duration',
 				'value' => function($data) {
-					if(! empty($data->enrolmentScheduleDay->duration)){
-                    	$duration = date("H:i",strtotime($data->enrolmentScheduleDay->duration));
+					if(! empty($data->duration)){
+                    	$duration = date("H:i",strtotime($data->duration));
                     	return !empty($duration) ? $duration : null;
 					}
 					return null;

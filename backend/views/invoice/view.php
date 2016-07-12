@@ -26,9 +26,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
       padding: 5px 15px;
     }
 </style>
-<?php //echo '<pre>'; print_r($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer); ?>
-
-<div class="invoice-view p-50">
+<div class="invoice-view p-10">
     <div class="row">
         <div class="col-xs-12 p-0">
           <h2 class="m-0">
@@ -37,12 +35,12 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
           <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
-          <div class="pull-left invoice-address text-gray">
-          <small><?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address)): ?>
-                <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address?>
+          <div class="pull-left invoice-address">
+          <small><?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address)): ?>
+                <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address?>
 			<?php endif;?>
-			<?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number)): ?><br>
-            <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number?>
+			<?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->phone_number)): ?><br>
+            <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->phone_number?>
 			<?php endif;?> 
       </small> 
       </div>
@@ -56,17 +54,28 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         <div class="col-sm-8 invoice-col m-b-20 p-0">
           <div class="row m-t-10">
             <div class="col-xs-8">
-              <h3 class="m-0 f-w-400"><?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null?></h3>
-              <div class="text-gray">
-              <?php
-                $addresses = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->addresses;
+              <strong><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></strong>
+            </div>
+          </div>
+            <div class="row">
+              <div class="col-xs-4">
+				<?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->email)): ?>
+                <strong>Email:</strong> 
+              </div>
+              <div class="col-xs-8">
+                <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->email?>
+			<?php endif;?>
+              </div>
+            </div>
+            <?php
+                $addresses = $model->lineItems[0]->lesson->enrolment->student->customer->addresses;
                 foreach($addresses as $address){
                   if($address->label === 'Billing'){
                     $billingAddress = $address;
                     break;
                   }
                 }
-                $phoneNumber = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->phoneNumber; 
+                $phoneNumber = $model->lineItems[0]->lesson->enrolment->student->customer->phoneNumber; 
             ?>
             <!-- Billing address -->
             <?php if(! empty($billingAddress)){ ?>
@@ -113,13 +122,13 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 							    [
             				'label' => 'Student Name',
             				'value' => function($data) {
-            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->fullName : null;
+            					return !empty($data->lesson->enrolment->student->fullName) ? $data->lesson->enrolment->student->fullName : null;
             				},
             			    ],
 						            				[
             				'label' => 'Program Name',
             				'value' => function($data) {
-            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
+            					return !empty($data->lesson->enrolment->program->name) ? $data->lesson->enrolment->program->name : null;
             				},
             			    ],
 	
@@ -135,12 +144,11 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center'],
             				'value' => function($data) {
-            					return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate : null;
+            					return !empty($data->lesson->enrolment->program->rate) ? $data->lesson->enrolment->program->rate : null;
             				},
             		],
                 [ 
                 'attribute' => 'amount',
-                //'format' => 'currency',
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Amount',
@@ -148,7 +156,6 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                 ],
                 [
                 'attribute' => 'amount',
-                //'format' => 'currency',
                 'label' => 'Total',
                 'enableSorting' => false,
                 ]
@@ -212,7 +219,6 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 <div class="clearfix"></div>
 <div class="row no-print">
   <div class="col-xs-12">
-    <?php //echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default', 'target'=>'_blank',]) ?>
   </div>
 </div>
 </div>

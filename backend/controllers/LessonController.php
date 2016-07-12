@@ -148,9 +148,9 @@ class LessonController extends Controller
             $invoiceLineItem = new InvoiceLineItem();
             $invoiceLineItem->invoice_id = $invoice->id;
             $invoiceLineItem->lesson_id = $id;
-            $time = explode(':', $model->enrolmentScheduleDay->duration);
+            $time = explode(':', $model->enrolment->duration);
             $invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
-            $invoiceLineItem->amount = $model->enrolmentScheduleDay->enrolment->qualification->program->rate * $invoiceLineItem->unit;
+            $invoiceLineItem->amount = $model->enrolment->program->rate * $invoiceLineItem->unit;
             $invoiceLineItem->save();
             $subTotal += $invoiceLineItem->amount;                
             $invoice = Invoice::findOne(['id' => $invoice->id]);

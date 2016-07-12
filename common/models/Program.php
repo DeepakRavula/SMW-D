@@ -70,4 +70,9 @@ class Program extends \yii\db\ActiveRecord
             self::STATUS_ACTIVE => Yii::t('common', 'Active')
         ];
     }
+
+	public function getQualification()
+    {
+        return $this->hasOne(Qualification::className(), ['program_id' => 'id']);
+    }
 }
