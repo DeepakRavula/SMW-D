@@ -9,7 +9,7 @@ $this->title = 'Update Location';
 $this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="location-update">
+<div class="location-update p-10">
 
     <?php echo $this->render('_form', [
         'model' => $model,

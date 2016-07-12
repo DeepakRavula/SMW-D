@@ -10,7 +10,7 @@ use yii\grid\GridView;
 $this->title = 'Cities';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="city-index">
+<div class="city-index p-10">
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
@@ -21,6 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
 		'rowOptions' => function ($model, $key, $index, $grid) {
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);

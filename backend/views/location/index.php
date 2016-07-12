@@ -9,7 +9,7 @@ use yii\grid\GridView;
 $this->title = 'Locations';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="location-index">
+<div class="location-index p-10">
 
 
     <p>
@@ -18,6 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
 		'rowOptions' => function ($model, $key, $index, $grid) {
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
