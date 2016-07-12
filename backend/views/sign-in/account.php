@@ -9,7 +9,7 @@ use yii\bootstrap\ActiveForm;
 $this->title = Yii::t('backend', 'Edit account')
 ?>
 
-<div class="user-profile-form">
+<div class="user-profile-form p-10">
 
     <?php $form = ActiveForm::begin(); ?>
 	<div class="row-fluid">
@@ -32,6 +32,7 @@ $this->title = Yii::t('backend', 'Edit account')
     <div class="col-md-12">
         <?php echo Html::submitButton(Yii::t('backend', 'Update'), ['class' => 'btn btn-primary']) ?>
     </div>
+    <div class="clearfix"></div>
 
     <?php ActiveForm::end(); ?>
 

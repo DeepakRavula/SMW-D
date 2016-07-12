@@ -31,7 +31,14 @@ jQuery(".dynamicform_address").on("afterDelete", function(e) {
 
 $this->registerJs($js);
 ?>
-
+<style>
+	.checkbox{
+		margin: 0;
+	}
+	input[type="checkbox"]{
+		margin-top: 2px;
+	}
+</style>
 <?php
 	DynamicFormWidget::begin([
 		'widgetContainer' => 'dynamicform_address', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
@@ -64,8 +71,8 @@ $this->registerJs($js);
 <?php foreach ($addressModels as $index => $addressModel): ?>
 				<div class="item-block address-item"><!-- widgetBody -->
 					<h4>
-						<span class="panel-title-address">Address: <?= ($index + 1) ?></span>
-							
+						<span class="panel-title-address pull-left">Address: <?= ($index + 1) ?></span>
+						<em class="pull-left f-s-14 m-l-20"><?= $form->field($addressModel, "[{$index}]is_primary")->checkbox() ?></em>
 						<button type="button" class="pull-right address-remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
 						<div class="clearfix"></div>
 					</h4>
@@ -77,9 +84,6 @@ $this->registerJs($js);
 					?>
 
 					<div class="row">
-						<div class="col-sm-4">
-						<?= $form->field($addressModel, "[{$index}]is_primary")->checkbox() ?>
-						</div>
 						<div class="col-sm-4">
 							<?= $form->field($addressModel, "[{$index}]label")->dropDownList(Address::labels(), ['prompt' => 'Select Label']) ?>
 						</div>
@@ -128,7 +132,7 @@ $this->registerJs($js);
     </div>
 <?php DynamicFormWidget::end(); ?>
 <div class="clearfix"></div>
-<hr class="hr-ad">
+<hr class="hr-ad right-side-faded">
 <script type="text/javascript">
 $(document).ready(function(){
 	$('.address-container-items').on('change', 'input[type="checkbox"]', function(){
