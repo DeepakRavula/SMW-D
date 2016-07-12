@@ -10,7 +10,7 @@ $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Release Notes', 'url' => ['index']]; 
 $this->params['breadcrumbs'][] = $this->title; 
 ?> 
-<div class="release-notes-view"> 
+<div class="release-notes-view p-10"> 
 
     <p> 
         <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?> 

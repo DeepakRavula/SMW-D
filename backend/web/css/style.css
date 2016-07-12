@@ -335,7 +335,8 @@ table tr td:last-of-type>a:nth-child(2)>span.glyphicon{
     background: #F9F9F9;
     border-bottom: 1px solid #F3F3F3;
 }
-.lesson-view>.user-details-wrapper{
+.lesson-view>.user-details-wrapper, 
+.location-view>.user-details-wrapper {
   background: transparent;
 }
 .text-add-new{
