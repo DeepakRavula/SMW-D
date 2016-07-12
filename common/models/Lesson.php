@@ -32,8 +32,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['enrolment_schedule_day_id', 'status'], 'required'],
-            [['enrolment_schedule_day_id', 'status'], 'integer'],
+            [['enrolment_id','teacher_id', 'status'], 'required'],
+            [['enrolment_id', 'status'], 'integer'],
             [['date','notes'], 'safe'],
         ];
     }
@@ -45,7 +45,8 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'enrolment_schedule_day_id' => 'Enrolment Schedule Day ID',
+            'enrolment_id' => 'Enrolment',
+			'teacher_id' => 'Teacher Name',
             'status' => 'Status',
             'date' => 'Date',
             'notes' => 'Notes',
@@ -72,9 +73,9 @@ class Lesson extends \yii\db\ActiveRecord
 	    /**
      * @return \yii\db\ActiveQuery
      */
-    public function getEnrolmentScheduleDay()
+    public function getEnrolment()
     {
-        return $this->hasOne(EnrolmentScheduleDay::className(), ['id' => 'enrolment_schedule_day_id']);
+        return $this->hasOne(Enrolment::className(), ['id' => 'enrolment_id']);
     }
 
 	public function status($data){

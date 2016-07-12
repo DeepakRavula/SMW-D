@@ -43,12 +43,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-            <div class="pull-left invoice-address text-gray">
-          <small><?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address)): ?>
-                <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->address?>
+          <div class="pull-left invoice-address  text-gray">
+          <small><?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address)): ?>
+                <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address?>
       <?php endif;?>
-      <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number)): ?><br>
-            <?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->userLocation->location->phone_number?>
+      <?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->phone_number)): ?><br>
+            <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->phone_number?>
       <?php endif;?> 
       </small> 
       </div>
@@ -62,28 +62,30 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-sm-9 invoice-col m-b-20 pull-left p-0">
           <div class="row m-t-10">
             <div class="col-xs-12">
-              <h3 class="m-0 f-w-400"><?php echo isset($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null?></h3>
-                <div class="text-gray">
-                  <?php
-                    $addresses = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->addresses;
-                    foreach($addresses as $address){
-                      if($address->label === 'Billing'){
-                        $billingAddress = $address;
-                        break;
-                      }
-                    }
-                    $phoneNumber = $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->phoneNumber; 
+              
+                <h3 class="m-0 f-w-400"><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></h3>
+            <div class="text-gray">
+            <?php
+                $addresses = $model->lineItems[0]->lesson->enrolment->student->customer->addresses;
+                foreach($addresses as $address){
+                  if($address->label === 'Billing'){
+                    $billingAddress = $address;
+                    break;
+                  }
+                }
+                $phoneNumber = $model->lineItems[0]->lesson->enrolment->student->customer->phoneNumber; 
+            
                 ?>
                 <!-- Billing address -->
                 <?php if(! empty($billingAddress)){ ?>
                   <?php 
                         echo $billingAddress->address . '<br> ' . $billingAddress->city->name . ', ';
-                        echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ', ';
+                        echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ' ';
                         echo $billingAddress->postal_code;
                    } ?>
                 <div class="row-fluid m-t-20">
-                  <?php if( ! empty($model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email)): ?>
-                  <?php echo 'E: '; ?><?php echo $model->lineItems[0]->lesson->enrolmentScheduleDay->enrolment->student->customer->email?>
+                  <?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->email)): ?>
+                  <?php echo 'E: '; ?><?php echo $model->lineItems[0]->lesson->enrolment->student->customer->email?>
                   <?php endif;?>
                 </div>
               </div>
@@ -121,13 +123,13 @@ $this->params['breadcrumbs'][] = $this->title;
                   [
                     'label' => 'Student Name',
                     'value' => function($data) {
-                      return !empty($data->lesson->enrolmentScheduleDay->enrolment->student->fullName) ? $data->lesson->enrolmentScheduleDay->enrolment->student->fullName : null;
+                      return !empty($data->lesson->enrolment->student->fullName) ? $data->lesson->enrolment->student->fullName : null;
                     },
                       ],
                                 [
                     'label' => 'Program Name',
                     'value' => function($data) {
-                      return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->name : null;
+                      return !empty($data->lesson->enrolment->program->name) ? $data->lesson->enrolment->program->name : null;
                     },
                       ],
   
@@ -143,12 +145,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center'],
                     'value' => function($data) {
-                      return !empty($data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate) ? $data->lesson->enrolmentScheduleDay->enrolment->qualification->program->rate : null;
+                      return !empty($data->lesson->enrolment->program->rate) ? $data->lesson->enrolment->program->rate : null;
                     },
                 ],
                 [ 
                 'attribute' => 'amount',
-                //'format' => 'currency',
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Amount',
@@ -156,7 +157,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                 'attribute' => 'amount',
-                //'format' => 'currency',
                 'label' => 'Total',
                 'enableSorting' => false,
                 ]

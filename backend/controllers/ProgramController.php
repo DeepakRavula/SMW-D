@@ -53,10 +53,9 @@ class ProgramController extends Controller
     {
 		
 		$query = Student::find()
-				->joinWith(['enrolment' => function($query) use($id){
-					$query->joinWith('qualification')
-						->where(['program_id' => $id]);
-				}]);
+				->joinWith('enrolment')
+				->where(['program_id' => $id]);
+		
 		$studentDataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);

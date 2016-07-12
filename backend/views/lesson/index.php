@@ -26,13 +26,13 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Student Name',
 				'value' => function($data) {
-					return ! empty($data->enrolmentScheduleDay->enrolment->student->fullName) ? $data->enrolmentScheduleDay->enrolment->student->fullName : null;
+					return ! empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
                 },
 			],
 			[
 				'label' => 'Program Name',
 				'value' => function($data) {
-					return ! empty($data->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->enrolmentScheduleDay->enrolment->qualification->program->name : null;
+					return ! empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
                 },
 			],
 			[
@@ -81,25 +81,6 @@ $this->params['breadcrumbs'][] = $this->title;
 					return $status;
                 },
 			],
-/*
-			[
-				'class' => 'yii\grid\ActionColumn',
-				'template' => '{view} {invoice} {delete}',
-				'buttons' => [
-					'invoice' => function ($url, $model) {
-						return Html::a(
-							'<i class="fa  fa-dollar" data-toggle="tooltip" data-placement="bottom" title="Generate Invoice"></i>',
-							$url, 
-							[
-								'title' => 'Generate Invoice',
-								'data-pjax' => 'lesson-index',
-							]
-						);
-					},
-				],
-			],
- * 
- */
         ],
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>

@@ -20,11 +20,10 @@ echo GridView::widget([
 	'tableOptions' =>['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray' ],
 	'columns' => [
-		['class' => 'yii\grid\SerialColumn'],
 		[
 			'label' => 'Program Name',
 			'value' => function($data) {
-				return !empty($data->enrolmentScheduleDay->enrolment->qualification->program->name) ? $data->enrolmentScheduleDay->enrolment->qualification->program->name : null;
+				return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
 			},
 		],
 		[
@@ -72,7 +71,6 @@ echo GridView::widget([
 				return !empty($date) ? $date : null;
 			},
 		],
-        //['class' => 'yii\grid\ActionColumn','controller' => 'lesson']
 	],
 ]);
 ?>

@@ -20,9 +20,12 @@ use yii\grid\GridView;
 				'class' => 'yii\grid\CheckboxColumn',
 							// you may configure additional properties here
 			],
-            ['class' => 'yii\grid\SerialColumn'],
-
-   			'id',
+			[
+			    'label' => 'Lesson Id',
+			 	'value' => function($data){
+					return ! empty($data->id) ? $data->id : null;
+				}	
+			],
 			[
 			    'label' => 'Date',
 			 	'value' => function($data){
@@ -33,13 +36,13 @@ use yii\grid\GridView;
             [
 			    'label' => 'Customer Name',
                 'value' => function($data) {
-                    return ! empty($data->enrolmentScheduleDay->enrolment->student->customer->publicIdentity) ? $data->enrolmentScheduleDay->enrolment->student->customer->publicIdentity : null;
+                    return ! empty($data->enrolment->student->customer->publicIdentity) ? $data->enrolment->student->customer->publicIdentity : null;
                 },
             ],
             [
 			    'label' => 'Student Name',
                 'value' => function($data) {
-                    return ! empty($data->enrolmentScheduleDay->enrolment->student->fullName) ? $data->enrolmentScheduleDay->enrolment->student->fullName : null;
+                    return ! empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
                 },
             ],
         ],
@@ -49,13 +52,3 @@ use yii\grid\GridView;
 	<?php echo $form->field($model, 'notes')->label('Printed Notes')->textarea() ?>
 <?php endif;?>
 </div>
-
-<?php
-$this->registerJs(
-   '$("document").ready(function(){ 
-        $("#new_medicine").on("pjax:end", function() {
-            $.pjax.reload({container:"#medicine"});  //Reload GridView
-        });
-    });'
-);
-?>

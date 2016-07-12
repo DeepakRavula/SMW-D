@@ -35,10 +35,8 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 	public function location($locationId) {
 		$this->joinWith(['lineItems' => function($query) use($locationId) {
 			$query->joinWith(['lesson'=> function($query) use($locationId){ 
-				$query->joinWith(['enrolmentScheduleDay' => function($query) use($locationId) {
-					$query->joinWith(['enrolment' => function($query) use($locationId) {
-						$query->andFilterWhere(['enrolment.location_id' => $locationId]);
-					}]);
+				$query->joinWith(['enrolment' => function($query) use($locationId) {
+					$query->andFilterWhere(['enrolment.location_id' => $locationId]);
 				}]);
 			}]);
 		}]);
@@ -48,11 +46,9 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 	public function student($id) {
 		$this->joinWith(['lineItems li'=>function($query) use($id){
 			$query->joinWith(['lesson l'=>function($query) use($id){	
-				$query->joinWith(['enrolmentScheduleDay esd'=>function($query) use($id){
-					$query->joinWith(['enrolment e'=>function($query) use($id){
-						$query->joinWith('student s')
-							->where(['s.customer_id' => $id]);
-						}]);
+				$query->joinWith(['enrolment e'=>function($query) use($id){
+					$query->joinWith('student s')
+						->where(['s.customer_id' => $id]);
 					}]);
 				}]);
 			}]);

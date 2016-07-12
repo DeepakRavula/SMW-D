@@ -13,14 +13,14 @@ $this->params['breadcrumbs'][] = $this->title;
 	<div class="user-details-wrapper">
 		<div class="col-md-12">
 			<p class="users-name">
-				<?php echo ! empty($model->enrolmentScheduleDay->enrolment->student->fullName) ? $model->enrolmentScheduleDay->enrolment->student->fullName : null ?>
+				<?php echo ! empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null ?>
 			</p>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
 			<i class="fa fa-calendar"></i> <?php echo ! empty(date("d-m-Y", strtotime($model->date))) ? date("d-m-Y g:i a", strtotime($model->date)) : null ?>	
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
-			<i class="fa fa-music detail-icon"></i> <?php echo ! empty($model->enrolmentScheduleDay->enrolment->qualification->program->name) ? $model->enrolmentScheduleDay->enrolment->qualification->program->name : null ?>
+			<i class="fa fa-music detail-icon"></i> <?php echo ! empty($model->enrolment->program->name) ? $model->enrolment->program->name : null ?>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
 			<i class="fa fa-info-circle detail-icon"></i> <?php 
@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			echo $status ?>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
-			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity) ? $model->enrolmentScheduleDay->enrolment->qualification->teacher->publicIdentity : null;?>
+			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->enrolment->program->qualification->teacher->publicIdentity) ? $model->enrolment->program->qualification->teacher->publicIdentity : null;?>
 		</div>
 
 		<div class="clearfix"></div>

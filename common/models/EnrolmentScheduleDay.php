@@ -64,27 +64,4 @@ class EnrolmentScheduleDay extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Lesson::className(), ['enrolment_schedule_day_id' => 'id']);
     }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-		
-		$interval = new \DateInterval('P1D');
-		$commencementDate = $this->enrolment->commencement_date;
-		$renewalDate = $this->enrolment->renewal_date;
-		$start = new \DateTime($commencementDate);
-		$end = new \DateTime($renewalDate);
-		$period = new \DatePeriod($start, $interval, $end);
-
-		foreach($period as $day){
-			if($day->format('N') === $this->day) {
-				$lesson = new Lesson();
-				$lesson->setAttributes([
-					'enrolment_schedule_day_id'	 => $this->id,
-					'status' => Lesson::STATUS_PENDING,
-					'date' => $day->format('Y-m-d H:i:s'),
-				]);
-				$lesson->save();
-			}
-		}
-    } 
 }

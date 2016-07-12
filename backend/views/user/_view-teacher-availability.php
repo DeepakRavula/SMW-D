@@ -36,7 +36,6 @@ echo GridView::widget([
 				return ! empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
 			}
 		],
-		['class' => 'yii\grid\ActionColumn', 'controller' => 'teacher-availability', 'template' => '{delete}'],
 	],
 ]);
 ?>
