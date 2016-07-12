@@ -37,10 +37,7 @@ class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_NOT_ACTIVE = 1;
     const STATUS_ACTIVE = 2;
-    const STATUS_DELETED = 3;
 
-    const ROLE_USER = 'user';
-    const ROLE_MANAGER = 'manager';
     const ROLE_ADMINISTRATOR = 'administrator';
     const ROLE_CUSTOMER = 'customer';
     const ROLE_TEACHER = 'teacher';
@@ -319,9 +316,8 @@ class User extends ActiveRecord implements IdentityInterface
     public static function statuses()
     {
         return [
-            self::STATUS_NOT_ACTIVE => Yii::t('common', 'Not Active'),
+            self::STATUS_NOT_ACTIVE => Yii::t('common', 'Inactive'),
             self::STATUS_ACTIVE => Yii::t('common', 'Active'),
-            self::STATUS_DELETED => Yii::t('common', 'Deleted')
         ];
     }
 
