@@ -9,7 +9,7 @@ use yii\grid\GridView;
 $this->title = 'Release Notes'; 
 $this->params['breadcrumbs'][] = $this->title; 
 ?> 
-<div class="release-notes-index"> 
+<div class="release-notes-index p-10"> 
 
 
     <p> 
@@ -18,13 +18,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo GridView::widget([ 
         'dataProvider' => $dataProvider, 
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'], 
-
             'notes:raw',
             'date:date',
             'user.publicIdentity',
-
             ['class' => 'yii\grid\ActionColumn'], 
         ], 
     ]); ?> 
