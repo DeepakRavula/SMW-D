@@ -10,6 +10,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Programs';
+$this->params['subtitle'] = Html::a('Add', ['create'], ['class' => 'btn btn-primary']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="program-index m-t-20">
@@ -38,9 +39,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
     <div class="clearfix"></div>
-	<div class="col-md-12 m-b-20">
-        <?php echo Html::a('Add', ['create'], ['class' => 'btn btn-success']) ?>
-    </div>
 </div>
   <script>
 $(document).ready(function(){
