@@ -62,16 +62,24 @@ $this->params['breadcrumbs'][] = $this->title;
 	]); ?>
 <?php yii\widgets\Pjax::end(); ?>
 <div class="p-l-20 m-b-20">
-<?php echo Html::a(Yii::t('backend', 'Add '), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-success pull-left']) ?>
+<?php echo Html::a(Yii::t('backend', 'Add '), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-success pull-left m-r-20']) ?>
 
 <?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
 	<?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
 		'modelClass' => 'User',
 		]), 
-		['delete-all'], 
-		['class' => 'btn pull-left']) 
+		['delete-all-customer'], 
+		['class' => 'btn btn-danger pull-left']) 
 	?>
 <?php endif;?>
+<?php if($searchModel->role_name === User::ROLE_STAFFMEMBER):?>
+	<?php echo Html::a(Yii::t('backend', 'Delete All StaffMembers', [
+		'modelClass' => 'User',
+		]), 
+		['delete-all-staff-members'], 
+		['class' => 'btn btn-danger pull-left']) 
+	?>
+<?php endif;?>    
 <div class="clearfix"></div>
 </div>
 </div>
