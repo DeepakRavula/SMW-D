@@ -67,10 +67,18 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
 		'modelClass' => 'User',
 		]), 
-		['delete-all'], 
-		['class' => 'btn pull-left']) 
+		['delete-all-customer'], 
+		['class' => 'btn btn-danger pull-left']) 
 	?>
 <?php endif;?>
+<?php if($searchModel->role_name === User::ROLE_STAFFMEMBER):?>
+	<?php echo Html::a(Yii::t('backend', 'Delete All Staff Members', [
+		'modelClass' => 'User',
+		]), 
+		['delete-all-staff-members'], 
+		['class' => 'btn btn-danger pull-left']) 
+	?>
+<?php endif;?>    
 <div class="clearfix"></div>
 </div>
 </div>
