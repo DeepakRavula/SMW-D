@@ -8,16 +8,10 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Countries';
+$this->params['subtitle'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', ['create'], ['class' => 'btn btn-success']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="country-index">
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?php echo Html::a('Add', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
 		'rowOptions' => function ($model, $key, $index, $grid) {
