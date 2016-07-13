@@ -13,9 +13,9 @@ foreach($roles as $name => $description){
 		$role = $description;
 	}
 }
-$this->title = Yii::t('backend', 'Update {modelClass} ', ['modelClass' => $role]);
+$this->title = Yii::t('backend', 'Edit {modelClass} ', ['modelClass' => $role]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', $role.'s'), 'url' => ['index', 'UserSearch[role_name]' =>$model->roles]];
-$this->params['breadcrumbs'][] = ['label'=>Yii::t('backend', 'Update')];
+$this->params['breadcrumbs'][] = ['label'=>Yii::t('backend', 'Edit')];
 ?>
 <style>
 	.address-fields, .phone-fields, .quali-fields, .teacher-availability-fields{

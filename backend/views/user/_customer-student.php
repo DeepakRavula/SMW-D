@@ -5,7 +5,7 @@ use yii\grid\GridView;
 ?>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Students </h4> 
-	<a href="#" class="add-new-student text-add-new"><i class="fa fa-plus-circle"></i> Add new student</a>
+	<a href="#" class="add-new-student text-add-new"><i class="fa fa-plus"></i></a>
 	<?php //echo Html::a('<i class="fa fa-plus-circle"></i> Add new student', ['student/create'], ['class' => 'add-new-program text-add-new'])?>
 	<div class="clearfix"></div>
 </div>

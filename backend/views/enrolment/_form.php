@@ -89,7 +89,7 @@ use yii\helpers\Url;
 		</div>
 	</div>
     <div class="form-group">
-		<?php echo Html::submitButton($model->isNewRecord ? 'Add' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>
 
 	<?php ActiveForm::end(); ?>

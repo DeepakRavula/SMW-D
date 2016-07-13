@@ -50,7 +50,7 @@ foreach ($roles as $name => $description) {
 	<?php if ($role === User::ROLE_ADMINISTRATOR): ?>
 	<div class="student-view">
 		<div class="col-md-12 action-btns">
-			<?php echo Html::a('<i class="fa fa-pencil"></i> Update details', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+			<?php echo Html::a('<i class="fa fa-pencil"></i>Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 			<?php
 			echo Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id], [
 				'data' => [
@@ -64,34 +64,4 @@ foreach ($roles as $name => $description) {
 	</div>
 	<?php endif; ?>
 </div>
-
-
-
-
-	<?php
-	// echo DetailView::widget([
-	// 	'model' => $model,
-	// 	'attributes' => [
-	// 		[
-	// 			'label' => 'Location',
-	// 			'value' => $model->name,
-	// 		],
-	// 		'address',
-	// 		[
-	// 			'label' => 'City',
-	// 			'value' => $model->city->name,
-	// 		],
-	// 		[
-	// 			'label' => 'Province',
-	// 			'value' => $model->province->name,
-	// 		],
-	// 		'postal_code',
-	// 		[
-	// 			'label' => 'Country',
-	// 			'value' => $model->country->name,
-	// 		],
-	// 	],
-	// ])
-	?>
-
 </div>

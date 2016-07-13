@@ -8,7 +8,7 @@ use yii\helpers\Html;
 
 $this->title = 'Create Release Notes'; 
 $this->params['breadcrumbs'][] = ['label' => 'Release Notes', 'url' => ['index']]; 
-$this->params['breadcrumbs'][] = $this->title; 
+$this->params['breadcrumbs'][] = 'Create'; 
 ?> 
 <div class="release-notes-create p-10"> 
 

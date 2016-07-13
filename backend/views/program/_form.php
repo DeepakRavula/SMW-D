@@ -27,7 +27,7 @@ use yii\bootstrap\ActiveForm;
 		</div>
 	</div>
 	<div class="row-fluid">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-success']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php 
 			if(! $model->isNewRecord){
 				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn']); 	

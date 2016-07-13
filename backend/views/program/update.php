@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
 
-$this->title = 'Update Program';
+$this->title = 'Edit Program';
 $this->params['breadcrumbs'][] = ['label' => 'Programs', 'url' => ['index']];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Edit';
 ?>
 <div class="program-update p-10">
 

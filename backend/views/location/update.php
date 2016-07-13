@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
 
-$this->title = 'Update Location';
+$this->title = 'Edit Location';
 $this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Edit';
 ?>
 <div class="location-update p-10">
 

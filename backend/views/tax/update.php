@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Tax */
 
-$this->title = 'Update Tax';
+$this->title = 'Edit Tax';
 $this->params['breadcrumbs'][] = ['label' => 'Taxes', 'url' => ['index']];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Edit';
 ?>
 <div class="tax-update">
 
