@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		'modelClass' => 'User',
 		]), 
 		['delete-all-customer'], 
-		['class' => 'btn btn-danger pull-left']) 
+		['class' => 'btn pull-left']) 
 	?>
 <?php endif;?>
 <?php if($searchModel->role_name === User::ROLE_STAFFMEMBER):?>
@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		'modelClass' => 'User',
 		]), 
 		['delete-all-staff-members'], 
-		['class' => 'btn btn-danger pull-left']) 
+		['class' => 'btn pull-left']) 
 	?>
 <?php endif;?>    
 <div class="clearfix"></div>
