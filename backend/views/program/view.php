@@ -25,7 +25,7 @@ foreach($roles as $name => $description){
     </div>
         <?php if($role === User::ROLE_ADMINISTRATOR):?>
             <div class="col-md-12 m-t-20">
-                <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Program'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+                <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
                 <?php
                 echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
                     'class' => '',
