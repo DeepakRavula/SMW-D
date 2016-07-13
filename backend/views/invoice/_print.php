@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
     .table-invoice-childtable>tbody>tr>td:first-of-type{
       width: 230px;
     }
-    .logo>img{
+    .invoice-view .logo>img{
       width:135px;
     }
     
@@ -33,8 +33,15 @@ $this->params['breadcrumbs'][] = $this->title;
       padding: 7px 30px;
       background: #ea212c;
     }
+    @media print{
+      .text-gray{
+        color: gray !important;
+      }
+      .invoice-labels{
+        width: 82px;
+      }
+    }
 </style>
-
 <div class="invoice-view p-10">
     <div class="row">
         <div class="col-xs-12 p-0">
@@ -44,6 +51,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
           <div class="pull-left invoice-address  text-gray">
+            <div class="row-fluid">
+              <h2 class="m-0 text-inverse"><strong>INVOICE </strong></h2>
+          </div>
           <small><?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address)): ?>
                 <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address?>
       <?php endif;?>
@@ -62,8 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-sm-9 invoice-col m-b-20 pull-left p-0">
           <div class="row m-t-10">
             <div class="col-xs-12">
-              
-                <h3 class="m-0 f-w-400"><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></h3>
+                <h4 class="m-0 f-w-400"><strong><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></strong></h4>
             <div class="text-gray">
             <?php
                 $addresses = $model->lineItems[0]->lesson->enrolment->student->customer->addresses;
@@ -98,19 +107,21 @@ $this->params['breadcrumbs'][] = $this->title;
           </div>
         </div>
         <!-- /.col -->
-        <div class="col-sm-3 invoice-col m-t-10 text-right pull-right p-0">
-          <div class="row-fluid">
-              <h2 class="m-0"><strong>INVOICE </strong></h2>
-          </div>
-            <div class="row-fluid text-gray">
-              #<?php echo $model->invoice_number;?>
+        <div class="col-sm-3 invoice-col m-t-10 text-right p-0">
+            <div class="row-fluid  text-gray">
+              <div class="col-xs-4 pull-right text-right p-r-0">#<?php echo $model->invoice_number;?></div>
+              <div class="invoice-labels col-xs-2 pull-right">Number:</div> 
+              <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">
-              <?php echo date("d/m/Y", strtotime($model->date));?>
+              <div class="col-xs-4 pull-right text-right p-r-0"><?php echo date("d/m/Y", strtotime($model->date));?></div>
+              <div class="invoice-labels col-xs-2 pull-right">Date:</div>
+              <div class="clearfix"></div>
           </div>
-          <div class="row-fluid m-t-20 text-gray">
-              <span class="m-r-10">Invoice Status</span><br>
-              <label class="badge bg-red"><?php echo $model->status($model);?><label>
+          <div class="row-fluid text-gray">
+              <div class="col-xs-4 pull-right text-right p-r-0"><?php echo $model->status($model);?></div>
+              <div class="invoice-labels col-xs-2 pull-right">Status:</div>
+              <div class="clearfix"></div>
             </div>
           </div>
           <div class="clearfix"></div>

@@ -189,6 +189,12 @@ Resets
 .p-l-20{
   padding-left: 20px;
 }
+.p-r-0{
+  padding-right: 0;
+}
+.p-r-10{
+  padding-right: 10px;
+}
 .p-r-20{
   padding-right: 20px;
 }
@@ -203,6 +209,9 @@ Resets
 }
 .text-gray{
   color: gray !important;
+}
+.text-inverse{
+  color: black !important;
 }
 /*****************************/
 .logo > img
@@ -542,7 +551,7 @@ Licensed under MIT
   text-align: right !important;
 }
 .invoice-address{
-    border-left: 1px solid #f1f1f1;
+    /*border-left: 1px solid #f1f1f1;*/
     padding: 0px 30px 10px;
     margin-left: 30px;
     line-height: 23px;
@@ -573,4 +582,64 @@ Licensed under MIT
     left: 0;
     font-size: 14px;
     top: 0;
+}
+
+@media print{
+    .pull-left{
+    float: left;
+    }
+    .pull-right{
+    float: right;
+    }
+    .clearfix{
+    clear:both;
+    }
+    .col-sm-9 {
+    width: 75%;
+    }
+    .col-sm-3 {
+    width: 25%;
+    }
+    .col-xs-4 {
+    width: 40.333333%;
+    }
+    .col-xs-2 {
+    width: 16.66666667%;
+    }
+    .bg-light-gray {
+    background: #F7F7F7;
+    }
+    table>thead>tr>th:first-child,
+    table>tbody>tr>td:first-child{
+    text-align: left;
+    }
+    table>thead>tr>th:last-child,
+    table>tbody>tr>td:last-child{
+    text-align: right;
+    }
+    .table-invoice-childtable>tbody>tr>td:first-of-type{
+    width: 230px;
+    }
+    .invoice-view .logo>img{
+    width:135px;
+    }
+    .badge{
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 400;
+    padding: 7px 30px;
+    background: #ea212c;
+    }
+    .text-right{
+    text-align: right;
+    }
+    .p-r-0{
+    padding-right: 0;
+    }
+    .text-gray{
+    color: gray;
+    }
+    .invoice-labels{
+    width: 100px;
+    }
 }

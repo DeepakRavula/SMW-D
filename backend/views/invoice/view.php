@@ -11,6 +11,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 ?>
 <style>
+  .invoice-view .logo>img{
+    width: 216px;
+  }
     table>thead>tr>th:first-child,
     table>tbody>tr>td:first-child{
         text-align: left !important;
@@ -36,6 +39,9 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
             </a>
           <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
           <div class="pull-left invoice-address text-gray">
+            <div class="row-fluid">
+              <h2 class="m-0 text-inverse"><strong>INVOICE </strong></h2>
+          </div>
           <small><?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address)): ?>
                 <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address?>
 			<?php endif;?>
@@ -54,8 +60,8 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         <div class="col-sm-8 invoice-col m-b-20 p-0">
           <div class="row m-t-10">
             <div class="col-xs-8">
-              <h3 class="m-0 f-w-400"><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></h3>
-            <div class="text-gray">
+              <h4 class="m-0 f-w-400"><strong><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></strong></h4>
+              <div class="text-gray">
 	    <?php
 	                    $addresses = $model->lineItems[0]->lesson->enrolment->student->customer->addresses;
                 foreach($addresses as $address){
@@ -88,18 +94,20 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         </div>
         <!-- /.col -->
         <div class="col-sm-4 invoice-col m-t-10 text-right p-0">
-          <div class="row-fluid">
-              <h2 class="m-0"><strong>INVOICE </strong></h2>
-          </div>
             <div class="row-fluid  text-gray">
-              #<?php echo $model->invoice_number;?>
+              <div class="col-md-4 pull-right text-right p-r-0">#<?php echo $model->invoice_number;?></div>
+              <div class="col-md-2 pull-right">Number:</div> 
+              <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">
-              <?php echo date("d/m/Y", strtotime($model->date));?>
+              <div class="col-md-4 pull-right text-right p-r-0"><?php echo date("d/m/Y", strtotime($model->date));?></div>
+              <div class="col-md-2 pull-right">Date:</div>
+              <div class="clearfix"></div>
           </div>
-          <div class="row-fluid m-t-20 text-gray">
-              Invoice Status<br>
-              <label class="badge bg-red"><?php echo $model->status($model);?><label>
+          <div class="row-fluid text-gray">
+              <div class="col-md-4 pull-right text-right p-r-0"><?php echo $model->status($model);?></div>
+              <div class="col-md-2 pull-right">Status:</div>
+              <div class="clearfix"></div>
             </div>
           </div>
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
