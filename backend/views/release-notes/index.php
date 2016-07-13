@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */ 
 
 $this->title = 'Release Notes';
-$this->params['subtitle'] = Html::a('Create Release Notes', ['create'], ['class' => 'btn btn-success']);
+$this->params['subtitle'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i> Create', ['create'], ['class' => 'btn btn-success']);
 $this->params['breadcrumbs'][] = $this->title; 
 ?> 
 <div class="release-notes-index p-10"> 

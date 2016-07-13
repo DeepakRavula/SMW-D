@@ -10,7 +10,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Programs';
-$this->params['subtitle'] = Html::a('Add', ['create'], ['class' => 'btn btn-primary']);
+$this->params['subtitle'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', ['create'], ['class' => 'btn btn-success']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="program-index m-t-20">
