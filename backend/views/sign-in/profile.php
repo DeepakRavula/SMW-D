@@ -8,7 +8,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $model common\models\UserProfile */
 /* @var $form yii\bootstrap\ActiveForm */
 
-$this->title = Yii::t('backend', 'Edit profile')
+$this->title = Yii::t('backend', 'Edit Profile')
 ?>
 
 <div class="user-profile-form p-t-10">
@@ -24,20 +24,11 @@ $this->title = Yii::t('backend', 'Edit profile')
             <?php echo $form->field($model, 'firstname')->textInput(['maxlength' => 255]) ?>
         </div>
         <div class="col-md-3">
-            <?php echo $form->field($model, 'middlename')->textInput(['maxlength' => 255]) ?>
-        </div>
-        <div class="col-md-3">
             <?php echo $form->field($model, 'lastname')->textInput(['maxlength' => 255]) ?>
         </div>
-        <div class="col-md-3">
-            <?php echo $form->field($model, 'gender')->dropDownlist([
-            UserProfile::GENDER_FEMALE => Yii::t('backend', 'Female'),
-            UserProfile::GENDER_MALE => Yii::t('backend', 'Male')
-        ]) ?>
-        </div>
-        <div class="col-md-3">
-            <?php echo $form->field($model, 'locale')->dropDownlist(Yii::$app->params['availableLocales']) ?>
-        </div>
+		<div class="col-md-3">
+			<?php echo $form->field($model, 'email') ?>
+		</div>
         <div class="col-md-6">
             <?php echo Html::submitButton(Yii::t('backend', 'Update'), ['class' => 'btn btn-primary']) ?>
         </div>
