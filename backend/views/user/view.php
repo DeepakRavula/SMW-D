@@ -109,10 +109,6 @@ $this->params['breadcrumbs'][] = $this->title;
 			'studentDataProvider' => $studentDataProvider,
 		]);
 
-		$staffLocationContent = $this->render('_staff-location',[
-			'locationDataProvider' => $locationDataProvider,
-		]);
-		
 		?>
 		<?php
 		$items = [
@@ -160,22 +156,12 @@ $this->params['breadcrumbs'][] = $this->title;
 				'content' => $invoiceContent,
 			]
 		];
-		$staffItems = [
-			[
-				'label' => 'Locations',
-				'content' => $staffLocationContent,
-			],	
-		];
 		if (in_array($role->name, ['teacher'])) {
 			$items = array_merge($items,$teacherItems);
 		}
 		
 		if (in_array($role->name, ['customer'])) {
 			$items = array_merge($items,$customerItems);
-		}
-
-		if (in_array($role->name, ['staffmember'])) {
-			$items = array_merge($items,$staffItems);
 		}
         if (in_array($role->name, ['customer'])) {
 			$items[] =
