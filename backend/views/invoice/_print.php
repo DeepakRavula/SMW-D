@@ -152,7 +152,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'enableSorting' => false,
                 ],
                 [
-                    'label' => 'Weight',
+                    'label' => 'Rate/hr',
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center'],
                     'value' => function($data) {

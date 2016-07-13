@@ -4,13 +4,11 @@ namespace backend\controllers;
 use common\models\Payments;
 use Yii;
 use common\models\User;
-use common\models\UserAddress;
 use common\models\UserLocation;
 use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
 use common\models\Qualification;
-use common\models\UserImport;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
@@ -154,8 +152,7 @@ class UserController extends Controller {
 		$currentDate = new \DateTime();
 		$lessonQuery = Lesson::find()
 				->location($location_id)
-				->student($id)
-				->andWhere(['<=', 'lesson.date', $currentDate->format('Y-m-d')]);
+				->student($id);
 
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => $lessonQuery,
@@ -470,17 +467,19 @@ class UserController extends Controller {
 		if (($role === User::ROLE_STAFFMEMBER) && (!Yii::$app->user->can('deleteStaffProfile'))) {
 			throw new ForbiddenHttpException;
 		}
-		$userLocationModel = UserLocation::findAll(["user_id" => $id]);
-
-		if (count($userLocationModel) == 1) {
-			Yii::$app->authManager->revokeAll($id);
-			$this->findModel($id)->delete();
-			$userLocationModel = UserLocation::findOne(["user_id" => $id, "location_id" => Yii::$app->session->get('location_id')]);
-			$userLocationModel->delete();
-		} else {
-			$userLocationModel = UserLocation::findOne(["user_id" => $id, "location_id" => Yii::$app->session->get('location_id')]);
-			$userLocationModel->delete();
-		}
+	
+		$db = Yii::$app->db;
+		$command = $db->createCommand("DELETE u, up, pn, ua, a,ul,raa  FROM `user` u
+			LEFT JOIN `user_profile` up ON u.`id` = up.`user_id`
+			LEFT JOIN `phone_number` pn ON u.`id` = pn.`user_id`
+			LEFT JOIN `user_address` ua ON u.`id` = ua.`user_id` 
+			LEFT JOIN `user_location` ul ON ul.`user_id` = u.`id`           
+			LEFT JOIN `address` a ON a.`id` = ua.`address_id` 
+			LEFT JOIN `rbac_auth_assignment` raa ON raa.`user_id` = u.`id`  
+			WHERE u.`id` = :id AND ul.`location_id` = :locationId",[':id' => $id,':locationId' => Yii::$app->session->get('location_id')]);
+		$command->execute();
+		
+		
 		Yii::$app->session->setFlash('alert', [
 			'options' => ['class' => 'alert-success'],
 			'body' => ucwords($model->roles) . ' profile has been deleted successfully'

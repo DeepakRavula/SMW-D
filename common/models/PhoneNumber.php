@@ -47,7 +47,7 @@ class PhoneNumber extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'label_id' => 'Label ID',
+            'label_id' => 'Label',
             'number' => 'Number',
             'extension' => 'Extension',
             'is_primary' => 'Primary Phone Number'

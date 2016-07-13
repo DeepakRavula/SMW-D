@@ -38,6 +38,17 @@ $this->params['breadcrumbs'][] = $this->title;
 		</div>	
         <div class="pull-left m-t-10">
             <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Update Profile'), ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'section' => 'profile'], ['class' => 'm-r-20']) ?>
+			<?php if($searchModel->role_name === 'staffmember'):?>
+			 <?php
+            echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
+                'class' => '',
+                'data' => [
+                    'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
+                    'method' => 'post',
+                ],
+            ])
+            ?>
+			<?php endif;?>
             <div class="clearfix"></div>
         </div>
     </div>

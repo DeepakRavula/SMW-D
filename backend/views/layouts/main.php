@@ -21,8 +21,8 @@ use yii\helpers\Url;
     <script type="text/javascript">
         FreshWidget.init("", {"queryString": "&helpdesk_ticket[requester]=<?= Html::encode(Yii::$app->user->identity->email); ?> &helpdesk_ticket[subject]=<?= Html::encode($this->title); ?>",
             "widgetType": "popup", "buttonType": "text", "buttonText": "Feedback",
-            "buttonColor": "white", "buttonBg": "#E30018", "alignment": "2",
-            "offset": "260px", "formHeight": "500px", "screenshot": "no",
+            "buttonColor": "white", "buttonBg": "#E30018", "alignment": "1",
+            "offset": "860px", "formHeight": "500px", "screenshot": "no",
             "captcha": "yes", "url": "http://smw.freshdesk.com"});
     </script>
 </body>
