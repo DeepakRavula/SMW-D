@@ -24,14 +24,6 @@ use yii\helpers\Html;
 	<div class="student-view">
 		<div class="col-md-12 action-btns">
 			<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
-			<?php
-			echo Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id], [
-				'data' => [
-					'confirm' => 'Are you sure you want to delete this item?',
-					'method' => 'post',
-				],
-			])
-			?>
 	    </div>
 	    <div class="clearfix"></div>
 	</div>
