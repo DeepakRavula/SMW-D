@@ -73,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	?>
 <?php endif;?>
 <?php if($searchModel->role_name === User::ROLE_STAFFMEMBER):?>
-	<?php echo Html::a(Yii::t('backend', 'Delete All StaffMembers', [
+	<?php echo Html::a(Yii::t('backend', 'Delete All Staff Members', [
 		'modelClass' => 'User',
 		]), 
 		['delete-all-staff-members'], 

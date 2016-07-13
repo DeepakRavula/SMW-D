@@ -111,8 +111,8 @@ class UserController extends Controller {
 
 		$query = Student::find()
 				->joinWith(['enrolment' => function($query) use($id){
-					$query->joinWith('qualification')
-							->where(['teacher_id' => $id]);
+                    $query->joinWith('lesson')
+						->where(['teacher_id' => $id]);
 				}]);
 		$studentDataProvider = new ActiveDataProvider([
 			'query' => $query,
@@ -516,11 +516,10 @@ class UserController extends Controller {
     
     public function actionDeleteAllStaffMembers() {
 		$db = Yii::$app->db;
-		$command = $db->createCommand("DELETE u, up, pn, ua, a,s,raa  FROM `user` u
+		$command = $db->createCommand("DELETE u, up, pn, ua, a,raa  FROM `user` u
 			LEFT JOIN `user_profile` up ON u.`id` = up.`user_id`
 			LEFT JOIN `phone_number` pn ON u.`id` = pn.`user_id`
 			LEFT JOIN `user_address` ua ON u.`id` = ua.`user_id`
-            LEFT JOIN `student` s ON s.`customer_id` = u.`id`
 			LEFT JOIN `address` a ON a.`id` = ua.`address_id` 
 			LEFT JOIN `rbac_auth_assignment` raa ON raa.`user_id` = u.`id`  
 			WHERE raa.`item_name` = 'staffmember'");
