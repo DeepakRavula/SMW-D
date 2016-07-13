@@ -476,7 +476,7 @@ class UserController extends Controller {
 			LEFT JOIN `user_location` ul ON ul.`user_id` = u.`id`           
 			LEFT JOIN `address` a ON a.`id` = ua.`address_id` 
 			LEFT JOIN `rbac_auth_assignment` raa ON raa.`user_id` = u.`id`  
-			WHERE u.`id` = :id AND ul.`location_id` = :locationId",[':id' => $id,':locationId' => Yii::$app->session->get('location_id')]);
+			WHERE u.`id` = :id",[':id' => $id]);
 		$command->execute();
 		
 		
