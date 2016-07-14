@@ -151,6 +151,11 @@ class UserController extends Controller {
 			]);
 		$phoneDataProvider = new ActiveDataProvider([
 			'query' => $model->getPhoneNumbers(),
+            'sort' => [
+            'defaultOrder' => [
+            'is_primary' => SORT_DESC,
+             ]
+                ]
 			]);
 		
 
