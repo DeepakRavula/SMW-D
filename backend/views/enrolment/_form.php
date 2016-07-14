@@ -76,11 +76,19 @@ use yii\helpers\Url;
 			?>
 		</div>
 		<div class="col-md-4">
+			<?php 
+            if($model->isNewRecord){
+                $model->commencement_date = date('d-m-Y');
+            }
+            ?>
 			<?php
 			echo $form->field($model, 'commencement_date')->widget(DatePicker::classname(), [
 				'type' => DatePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'format' => 'mm-dd-yy',
+                'options' => [
+                    'value' => $model->commencement_date,                      
+                    ],
+       				'pluginOptions' => [
+					'format' => 'dd-mm-yyyy',
 					'todayHighlight' => true,
 					'autoclose' => true
 				]
