@@ -57,4 +57,9 @@ class UserLocation extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Location::className(), ['id' => 'location_id']);
     }
+
+	public function getUserProfile()
+    {
+        return $this->hasOne(UserProfile::className(), ['user_id' => 'user_id']);
+    }
 }

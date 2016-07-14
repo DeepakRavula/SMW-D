@@ -9,7 +9,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\filters\AccessControl;
-
+use common\models\TeacherAvailability;
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
@@ -42,7 +42,9 @@ class ScheduleController extends Controller
      * @return mixed
      */
     public function actionIndex()
-    {        
+    {  
+		$today = new \DateTime('today');
+		$day = $today->format('N');
         $teachersWithClass = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
@@ -52,10 +54,11 @@ class ScheduleController extends Controller
             ->join('Join', 'enrolment e', 'e.program_id = q.program_id')
             ->join('Join', 'lesson l', 'l.teacher_id = up.user_id')
             ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+			->andWhere('ta.day = :day',[':day' => $day])
             ->orderBy('id desc')
             ->all();
             
-        $allTeachers = (new \yii\db\Query())
+			$allTeachers = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
             ->join('Join', 'user_location ul', 'ul.id = ta.teacher_location_id')

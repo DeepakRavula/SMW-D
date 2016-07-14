@@ -97,6 +97,14 @@ class UserProfile extends ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
+  /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['teacher_id' => 'user_id']);
+    }
+	
     /**
      * @return null|string
      */
