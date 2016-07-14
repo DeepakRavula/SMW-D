@@ -64,7 +64,7 @@ $this->registerJs($js);
     <div class="row-fluid">
 		<div class="col-md-12">
 			<h4 class="pull-left m-r-20">Addresses</h4>
-			<a href="#" class="add-address text-add-new address-add-item"><i class="fa fa-plus-circle"></i> Add new address</a>
+			<a href="#" class="add-address text-add-new address-add-item"><i class="fa fa-plus"></i></a>
 			<div class="clearfix"></div>
 		</div>
 		<div class="address-container-items address-fields form-well">
