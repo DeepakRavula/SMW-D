@@ -5,14 +5,13 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 
-$this->title = 'Update Invoice: ' . ' ' . $model->id;
+$this->title = 'Edit Invoice';
 $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Edit';
 ?>
 <div class="invoice-update">
 
-    <?php echo $this->render('_form', [
+    <?php echo $this->render('_update-form', [
         'model' => $model,
     ]) ?>
 

@@ -7,6 +7,7 @@ use yii\grid\GridView;
 /* @var $model common\models\Invoice */
 
 $this->title = 'Invoice';
+$this->params['subtitle'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id]);
 $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 ?>
@@ -168,7 +169,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                   <td colspan="4">
                     <?php if(! empty($model->notes)):?>
                     <div class="row-fluid m-t-20">
-                      <em><strong>Notes: </strong><Br>
+                      <em><strong>Printed Notes: </strong><Br>
                         <?php echo $model->notes; ?></em>
                       </div>
                       <?php endif;?>
@@ -177,7 +178,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
                       <?php endif;?>
                       <?php if(! empty($model->internal_notes)):?>
                       <div class="row-fluid">
-                      <em><strong>Internal notes: <?php echo $model->internal_notes; ?></strong></em>
+                      <em><strong>Internal notes:</strong><Br> <?php echo $model->internal_notes; ?></em>
                     </div>
                     <?php endif;?>
                   </td>

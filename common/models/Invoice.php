@@ -37,6 +37,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+			[['notes','internal_notes'],'safe']
 		];
     }
 
@@ -50,6 +51,8 @@ class Invoice extends \yii\db\ActiveRecord
 			'invoice_number' => 'Invoice Number',
             'date' => 'Date',
             'status' => 'Status',
+			'notes' => 'Printed Notes',
+			'internal_notes' => 'Internal Notes'
         ];
     }
 

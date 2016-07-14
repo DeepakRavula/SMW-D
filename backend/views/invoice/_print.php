@@ -184,18 +184,13 @@ $this->params['breadcrumbs'][] = $this->title;
                   <td colspan="4">
                     <?php if(! empty($model->notes)):?>
                     <div class="row-fluid m-t-20">
-                      <em><strong>Notes: </strong><Br>
+                      <em><strong> Printed Notes: </strong><Br>
                         <?php echo $model->notes; ?></em>
                       </div>
                       <?php endif;?>
                       <?php if(! empty($model->notes) && ! empty($model->internal_notes)):?>
                       <hr class="right-side-faded">
                       <?php endif;?>
-                      <?php if(! empty($model->internal_notes)):?>
-                      <div class="row-fluid">
-                      <em><strong>Internal notes: <?php echo $model->internal_notes; ?></strong></em>
-                    </div>
-                    <?php endif;?>
                   </td>
                   <td colspan="2">
                     <table class="table-invoice-childtable">
