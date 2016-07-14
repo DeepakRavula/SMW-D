@@ -55,7 +55,7 @@ public $teacherId;
         ];
     }
 
-	public function getLesson()
+	public function getLessons()
     {
         return $this->hasMany(Lesson::className(), ['enrolment_id' => 'id']);
     }

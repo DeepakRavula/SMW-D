@@ -30,7 +30,7 @@ use common\models\Enrolment;
 			[
 				'label' => 'Teacher Name',
 				'value' => function($data) {
-					return !empty($data->program->qualification->teacher->publicIdentity) ? $data->program->qualification->teacher->publicIdentity : null;
+					return !empty($data->lessons[0]->teacher->publicIdentity) ? $data->lessons[0]->teacher->publicIdentity : null;
 				},
 			],
 			[
