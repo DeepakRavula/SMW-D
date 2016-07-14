@@ -77,6 +77,16 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Enrolment::className(), ['id' => 'enrolment_id']);
     }
+    
+    public function getTeacher()
+    {
+        return $this->hasOne(User::className(), ['id' => 'teacher_id']);
+    }
+    
+    public function getTeacherProfile()
+    {
+        return $this->hasOne(UserProfile::className(), ['user_id' => 'teacher_id']);
+    }
 
 	public function status($data){
 		switch($data->status){

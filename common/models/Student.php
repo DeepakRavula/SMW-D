@@ -55,6 +55,11 @@ class Student extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'customer_id']);
     }
+    
+    public function getCustomerProfile()
+    {
+        return $this->hasOne(UserProfile::className(), ['user_id' => 'customer_id']);
+    }
    
 	public function getEnrolment()
     {
