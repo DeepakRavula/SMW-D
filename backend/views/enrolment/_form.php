@@ -79,8 +79,11 @@ use yii\helpers\Url;
 			<?php
 			echo $form->field($model, 'commencement_date')->widget(DatePicker::classname(), [
 				'type' => DatePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'format' => 'mm-dd-yy',
+                'options' => [
+                    'value' => date("d-m-Y"),                      
+                    ],
+       				'pluginOptions' => [
+					'format' => 'dd-mm-yyyy',
 					'todayHighlight' => true,
 					'autoclose' => true
 				]
