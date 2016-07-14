@@ -94,7 +94,7 @@ public $teacherId;
     public function beforeSave($insert)
     {   
       	$this->location_id = Yii::$app->session->get('location_id');
-        $this->commencement_date = date_format(date_create_from_format('m-d-y', $this->commencement_date), 'Y-m-d');
+        $this->commencement_date = date_format(date_create_from_format('d-m-Y', $this->commencement_date), 'Y-m-d');
         $secs = strtotime($this->from_time) - strtotime("00:00:00");
         $this->commencement_date = date("Y-m-d H:i:s",strtotime($this->commencement_date) + $secs);
        	$this->from_time = date("H:i:s",strtotime($this->from_time));
