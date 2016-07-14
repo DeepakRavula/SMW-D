@@ -88,15 +88,33 @@ class ScheduleController extends Controller
 		$data = Json::decode($data, true);
 		$lesson = Lesson::findOne(['id' => $data['id']]);
 		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
-
+        $rescheduledLessonDate = clone $lessonDate;
 		if((float)$data['minutes'] > 0) {
-			$lessonDate->add(new \DateInterval('PT' .round($data['minutes']).  'M'));	
+			$rescheduledLessonDate->add(new \DateInterval('PT' .round($data['minutes']).  'M'));	
 		} else {
-			$lessonDate->sub(new \DateInterval('PT' . round(abs($data['minutes'])) . 'M'));	
+			$rescheduledLessonDate->sub(new \DateInterval('PT' . round(abs($data['minutes'])) . 'M'));	
 		}
-
-		$lesson->date = $lessonDate->format('Y-m-d H:i:s');
+        $lesson->date = $rescheduledLessonDate->format('Y-m-d H:i:s');
 		$lesson->save();
+        $program = $lesson->enrolment->program->name;
+        $to_name[] = $lesson->teacherProfile->firstname;
+        $to_mail[] = $lesson->teacher->email;
+        $to_name[] = $lesson->enrolment->student->customerProfile->firstname;
+        $to_mail[] = $lesson->enrolment->student->customer->email;
+        for($i=0;$i<count($to_name);$i++)
+        {
+            Yii::$app->mailer->compose() 
+                ->setFrom('smw@arcadiamusicacademy.com')   
+                ->setTo($to_mail[$i]) 
+                ->setSubject('Re-Schedule Notification') 
+                ->setHtmlBody('Dear ' . $to_name[$i] . ',<br>
+                    <br>
+                    Your ' . $program . ' lesson has been Re-scheduled from '. $lessonDate->format('d-m-Y H:i') .' to ' . $rescheduledLessonDate->format('d-m-Y H:i') . '.<br>
+                    <br>
+                    Thank you<br>
+                    Arcadia Music Academy Team.<br>')
+                ->send();
+        }
     }
     
 }
