@@ -31,7 +31,7 @@ use yii\bootstrap\ActiveForm;
                     'clientOptions' => [
                         'changeMonth' => true,
                         'changeYear' => true,
-                        'yearRange' => '-70:-4' 
+                        'yearRange' => '-70:today' 
                     ]
                 ]); ?>
         </div>
