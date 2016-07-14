@@ -143,6 +143,11 @@ class UserController extends Controller {
 		
 		$addressDataProvider = new ActiveDataProvider([
 			'query' => $model->getAddresses(),
+            'sort' => [
+            'defaultOrder' => [
+            'is_primary' => SORT_DESC,
+        ]
+    ],
 			]);
 		$phoneDataProvider = new ActiveDataProvider([
 			'query' => $model->getPhoneNumbers(),
