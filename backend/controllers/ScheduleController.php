@@ -43,7 +43,6 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {        
-        /* $teacherAvailability = ArrayHelper::map(TeacherAvailability::find()->all(), 'id', 'teacher_id as name');*/
         $teachersWithClass = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
@@ -51,6 +50,7 @@ class ScheduleController extends Controller
             ->join('Join', 'user_profile up', 'up.user_id = ul.user_id')
             ->join('Join', 'qualification q', 'q.teacher_id = up.user_id')  
             ->join('Join', 'enrolment e', 'e.program_id = q.program_id')
+            ->join('Join', 'lesson l', 'l.teacher_id = up.user_id')
             ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->orderBy('id desc')
             ->all();
@@ -68,7 +68,6 @@ class ScheduleController extends Controller
         $events = (new \yii\db\Query())
             ->select(['q.teacher_id as resources', 'l.id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, e.day, l.date as start, ADDTIME(l.date, e.duration) as end'])
             ->from('lesson l')
-            //->join('Join', 'enrolment_schedule_day ed', 'ed.id = l.enrolment_schedule_day_id')
             ->join('Join', 'enrolment e', 'e.id = l.enrolment_id')
             ->join('Join', 'qualification q', 'q.teacher_id = l.teacher_id')            
             ->join('Join', 'student s', 's.id = e.student_id')
