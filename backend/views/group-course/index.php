@@ -8,28 +8,26 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Group Courses';
+$this->params['subtitle'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', ['create'], ['class' => 'btn btn-success']); 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="group-course-index">
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?php echo Html::a('Create Group Course', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
             'title',
             'rate',
-            'length',
-
-            ['class' => 'yii\grid\ActionColumn'],
+			[
+				'attribute' => 'length',
+				'label' => 'Length',
+				'value' => function($data){
+					$length = \DateTime::createFromFormat('H:i:s', $data->length);
+					return ! empty($data->length) ? $length->format('H:i') : null;
+				}
+			],
+            
+			['class' => 'yii\grid\ActionColumn','template' => '{view}'],
         ],
     ]); ?>
 

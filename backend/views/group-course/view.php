@@ -6,31 +6,26 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
 
-$this->title = $model->title;
+$this->title = 'Group Course Details';
 $this->params['breadcrumbs'][] = ['label' => 'Group Courses', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="group-course-view">
-
-    <p>
-        <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?php echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'title',
-            'rate',
-            'length',
-        ],
-    ]) ?>
-
+	<div class="row-fluid user-details-wrapper">
+    <div class="col-xs-2">
+        	<i class="fa fa-music"></i> <?php echo $model->title; ?>
+    </div>
+    <div class="col-xs-2" data-toggle="tooltip" data-placement="bottom" title="Rate">
+    	<i class="fa fa-money"></i> <?php echo $model->rate; ?>
+    </div>
+	<div class="col-xs-2" data-toggle="tooltip" data-placement="bottom" title="length">
+    	<i class="fa fa-calendar"></i> <?php 
+		$length = \DateTime::createFromFormat('H:i:s', $model->length);
+		echo $length->format('H:i'); ?>
+    </div>
+    <div class="col-md-12 m-t-20">
+        <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+    </div>
+    <div class="clearfix"></div>
+</div>
 </div>
