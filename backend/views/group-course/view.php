@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use yii\bootstrap\Tabs;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
@@ -12,13 +12,13 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="group-course-view">
 	<div class="row-fluid user-details-wrapper">
-    <div class="col-xs-2">
+    <div class="col-md-2">
         	<i class="fa fa-music"></i> <?php echo $model->title; ?>
     </div>
-    <div class="col-xs-2" data-toggle="tooltip" data-placement="bottom" title="Rate">
+    <div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Rate">
     	<i class="fa fa-money"></i> <?php echo $model->rate; ?>
     </div>
-	<div class="col-xs-2" data-toggle="tooltip" data-placement="bottom" title="length">
+	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="length">
     	<i class="fa fa-calendar"></i> <?php 
 		$length = \DateTime::createFromFormat('H:i:s', $model->length);
 		echo $length->format('H:i'); ?>
@@ -29,3 +29,43 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="clearfix"></div>
 </div>
 </div>
+<div class="tabbable-panel">
+     <div class="tabbable-line">
+<?php 
+
+/*$enrolmentContent =  $this->render('_enrolment', [
+	'dataProvider' => $dataProvider,
+    'enrolmentModel' => $enrolmentModel,
+]);
+ * 
+ */
+
+$lessonContent =  $this->render('_lesson', [
+	'lessonDataProvider' => $lessonDataProvider,
+]);
+
+?>
+<?php echo Tabs::widget([
+    'items' => [
+/*		[
+            'label' => 'Enrolments',
+            'content' => $enrolmentContent,
+			'active' => $section === 'enrolment',
+        ],
+ * 
+ */
+		[
+            'label' => 'Lessons',
+            'content' => $lessonContent,
+        ],
+    ],
+]);?>
+<div class="clearfix"></div>
+     </div>
+ </div>
+<script>
+	$('.add-new-program').click(function(){
+		$('.enrolment-create').show();
+	});
+</script>
+
