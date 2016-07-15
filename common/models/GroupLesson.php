@@ -30,9 +30,9 @@ class GroupLesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['course_id', 'teacher_id'], 'required'],
+            [['course_id', 'teacher_id','from_time','to_time'], 'required'],
             [['course_id', 'teacher_id', 'status'], 'integer'],
-            [['date'], 'safe'],
+            [['date','from_time','to_time','location_id'], 'safe'],
         ];
     }
 
@@ -57,6 +57,11 @@ class GroupLesson extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\GroupLessonQuery(get_called_class());
+    }
+
+	public function getTeacher()
+    {
+        return $this->hasOne(User::className(), ['id' => 'teacher_id']);
     }
 
 	public function getGroupCourse()

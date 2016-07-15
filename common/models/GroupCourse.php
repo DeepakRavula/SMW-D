@@ -33,7 +33,7 @@ class GroupCourse extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'rate', 'length','day','teacher_id','from_time','to_time','start_date','end_date'], 'required'],
+            [['title', 'rate', 'length','day','teacher_id','from_time','start_date','end_date'], 'required'],
             [['rate','day','teacher_id'], 'integer'],
             [['length'], 'safe'],
             [['title'], 'string', 'max' => 255],
@@ -68,7 +68,7 @@ class GroupCourse extends \yii\db\ActiveRecord
         return new \common\models\query\GroupCourseQuery(get_called_class());
     }
 
-	public function getGroupLesson()
+	public function getGroupLessons()
     {
         return $this->hasMany(GroupLesson::className(), ['course_id' => 'id']);
     }
@@ -85,4 +85,34 @@ class GroupCourse extends \yii\db\ActiveRecord
                 'Sunday',
         ];
     }
+
+	public function afterSave($insert, $changedAttributes)
+    {
+		$this->from_time = date("H:i:s",strtotime($this->from_time));
+		$secs = strtotime($this->length) - strtotime("00:00:00");
+		$toTime = date("H:i:s",strtotime($this->from_time) + $secs);
+        $this->to_time = $toTime; 
+		$interval = new \DateInterval('P1D');
+		$startDate = $this->start_date;
+		$endDate = $this->end_date;
+		$start = new \DateTime($startDate);
+		$end = new \DateTime($endDate);
+		$period = new \DatePeriod($start, $interval, $end);
+
+		foreach($period as $day){
+			if($day->format('N') === $this->day) {
+				$groupLesson = new GroupLesson();
+				$groupLesson->setAttributes([
+					'course_id'	 => $this->id,
+					'teacher_id' => $this->teacher_id,
+					'location_id' => Yii::$app->session->get('location_id'),
+					'from_time' => $this->from_time,
+					'to_time' => $this->to_time,
+					'date' => $day->format('Y-m-d H:i:s'),
+					'status' => Lesson::STATUS_PENDING,
+				]);
+				$groupLesson->save();
+			}
+		}
+    } 
 }

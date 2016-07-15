@@ -23,54 +23,27 @@ echo GridView::widget([
 		[
 			'label' => 'Teacher Name',
 			'value' => function($data) {
-				return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
+				return !empty($data->teacher->userProfile->fullName) ? $data->teacher->userProfile->fullName : null;
 			},
 		],
 		[
-			'label' => 'Lesson Status',
+			'label' => 'From Time',
 			'value' => function($data) {
-				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-				$currentDate = new \DateTime();
-
-				if ($lessonDate <= $currentDate) {
-					$status = 'Completed';
-				} else {
-					$status = 'Scheduled';
-				}
-
-				return $status;
+				return !empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
 			},
 		],
 		[
-			'label' => 'Invoice Status',
+			'label' => 'To Time',
 			'value' => function($data) {
-				$status = null;
-
-				if (!empty($data->invoiceLineItem->invoice->status)) {
-					switch ($data->invoiceLineItem->invoice->status) {
-						case Invoice::STATUS_PAID:
-							$status = 'Paid';
-							break;
-						case Invoice::STATUS_OWING:
-							$status = 'Owing';
-							break;
-						case Invoice::STATUS_CREDIT:
-							$status = 'Credit';
-							break;
-					}
-				} else {
-					$status = 'Not Invoiced';
-				}
-				return $status;
+				return !empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
 			},
 		],
 		[
 			'label' => 'Date',
 			'value' => function($data) {
-				$date = date("d-m-Y", strtotime($data->date));
-				return !empty($date) ? $date : null;
+				return !empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
 			},
 		],
-	],
+	]
 ]);
 ?>

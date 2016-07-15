@@ -100,12 +100,20 @@ class GroupCourseController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+		$teacherModel = ArrayHelper::map(User::find()
+			->joinWith('userLocation ul')
+			->join('INNER JOIN','rbac_auth_assignment raa','raa.user_id = user.id')
+			->where(['raa.item_name' => 'teacher'])
+			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+			->all(),
+			'id','userProfile.fullName'		
+		);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+				'teacher' => $teacherModel,
             ]);
         }
     }
