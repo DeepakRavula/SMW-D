@@ -83,8 +83,12 @@ class LessonController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+		
+        if ($model->load(Yii::$app->request->post())) {
+			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+   	   		$model->date = $lessonDate->format('Y-m-d H:i:s');
+			$model->save();
+		
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [

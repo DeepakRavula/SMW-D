@@ -15,6 +15,20 @@ use kartik\datetime\DateTimePicker;
 <?php $form = ActiveForm::begin(); ?>
 
    	<div class="row">
+		<div class="col-xs-4">
+            <?php
+            echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
+               'options' => [
+                    'value' => date("d-m-Y g:i A", strtotime($model->date)),
+               ],
+                'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd-mm-yyyy HH:ii P'
+                ]
+            ]);
+            ?>
+        </div>	
         <div class="col-md-4">
             <?php echo $form->field($model, 'notes')->textarea() ?>
         </div> 
