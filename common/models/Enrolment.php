@@ -121,7 +121,8 @@ public $teacherId;
 					'enrolment_id'	 => $this->id,
 					'teacher_id' => $this->teacherId,
 					'status' => Lesson::STATUS_SCHEDULED,
-									]);
+					'date' => $day->format('Y-m-d H:i:s'),
+				]);
 				$lesson->save();
 			}
 		}

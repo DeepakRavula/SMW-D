@@ -15,8 +15,8 @@ use common\models\query\LessonQuery;
  */
 class Lesson extends \yii\db\ActiveRecord
 {
-	const STATUS_COMPLETED = 1;
-	const STATUS_SCHEDULED = 2;
+	const STATUS_SCHEDULED = 1;
+	const STATUS_COMPLETED = 2;
     const STATUS_RESCHEDULED = 3;
 	const STATUS_CANCELED = 4;
     /**
@@ -35,7 +35,7 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['enrolment_id','teacher_id', 'status'], 'required'],
             [['enrolment_id', 'status'], 'integer'],
-            ['status', 'in', 'range' => array_keys(self::lessonstatuses())],
+            ['status', 'in', 'range' => array_keys(self::lessonStatuses())],
             [['date','notes'], 'safe'],
         ];
     }
@@ -92,25 +92,21 @@ class Lesson extends \yii\db\ActiveRecord
 
 	public function status($data){
 		switch($data->status){
+			case Lesson::STATUS_SCHEDULED:
+				$status = 'Scheduled';
+			break;
 			case Lesson::STATUS_COMPLETED:
 				$status = 'Completed';
 			break;
-			case Lesson::STATUS_PENDING:
-				$status = 'Pending';
+			case Lesson::STATUS_RESCHEDULED:
+				$status = 'Rescheduled';
 			break;
 			case Lesson::STATUS_CANCELED:
 				$status = 'Canceled';
 			break;
 		}
 	}
-	public function beforeSave($insert) {
-		if(! empty($this->date)){
-	        $Date = \DateTime::createFromFormat('d-m-Y g:i a', $this->date);
-    	    $this->date = $Date->format('Y-m-d H:i');
-		}
-		return parent::beforeSave($insert);
-	}
-	   
+	
 	public static function lessonStatuses() {
 		return [
             self::STATUS_COMPLETED => Yii::t('common', 'Completed'),

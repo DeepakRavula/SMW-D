@@ -23,17 +23,20 @@ $this->params['breadcrumbs'][] = $this->title;
 			<i class="fa fa-music detail-icon"></i> <?php echo ! empty($model->enrolment->program->name) ? $model->enrolment->program->name : null ?>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
-			<i class="fa fa-info-circle detail-icon"></i> 
-               <?php $statuses = $model->lessonstatuses($model);
-               foreach($statuses as $status => $value)
-               {
-                  if($model->status === $status)
-                  echo $value; 
-               }
-               ?>
+			<i class="fa fa-info-circle detail-icon"></i> <?php 
+				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+				$currentDate = new \DateTime();
+
+				if ($lessonDate <= $currentDate) {
+					$status = 'Completed';
+				} else {
+					$status = 'Scheduled';
+				}
+
+			echo $status ?>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
-			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->enrolment->program->qualification->teacher->publicIdentity) ? $model->enrolment->program->qualification->teacher->publicIdentity : null;?>
+			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null;?>
 		</div>
 
 		<div class="clearfix"></div>
