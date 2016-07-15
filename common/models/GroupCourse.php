@@ -14,6 +14,11 @@ use Yii;
  */
 class GroupCourse extends \yii\db\ActiveRecord
 {
+	public $from_time;
+	public $to_time;
+	public $start_date;
+	public $end_date;
+	
     /**
      * @inheritdoc
      */
@@ -28,8 +33,8 @@ class GroupCourse extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'rate', 'length'], 'required'],
-            [['rate'], 'integer'],
+            [['title', 'rate', 'length','day','teacher_id','from_time','to_time','start_date','end_date'], 'required'],
+            [['rate','day','teacher_id'], 'integer'],
             [['length'], 'safe'],
             [['title'], 'string', 'max' => 255],
         ];
@@ -45,6 +50,12 @@ class GroupCourse extends \yii\db\ActiveRecord
             'title' => 'Title',
             'rate' => 'Rate',
             'length' => 'Length',
+			'teacher_id' => 'Teacher Name',
+			'day' => 'Day',
+			'from_time' => 'From Time',
+			'to_time' => 'To Time',
+			'start_date' => 'Start Date',
+			'end_date' => 'End Date',
         ];
     }
 
@@ -55,5 +66,23 @@ class GroupCourse extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\GroupCourseQuery(get_called_class());
+    }
+
+	public function getGroupLesson()
+    {
+        return $this->hasMany(GroupLesson::className(), ['course_id' => 'id']);
+    }
+
+	public static function getWeekdaysList()
+    {
+        return [
+        1    => 'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday',
+        ];
     }
 }

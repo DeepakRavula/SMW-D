@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\GroupCourse;
 
 /**
  * This is the model class for table "group_lesson".
@@ -56,5 +57,10 @@ class GroupLesson extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\GroupLessonQuery(get_called_class());
+    }
+
+	public function getGroupCourse()
+    {
+        return $this->hasOne(GroupCourse::className(), ['id' => 'course_id']);
     }
 }

@@ -52,4 +52,9 @@ class GroupEnrolment extends \yii\db\ActiveRecord
     {
         return new \common\models\query\GroupEnrolmentQuery(get_called_class());
     }
+
+	public function getGroupCourse()
+    {
+        return $this->hasOne(GroupCourse::className(), ['id' => 'course_id']);
+    }
 }

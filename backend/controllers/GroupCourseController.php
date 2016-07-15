@@ -4,11 +4,14 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\GroupCourse;
+use common\models\GroupLesson;
+use common\models\User;
+use yii\data\ActiveDataProvider;
 use backend\models\search\GroupCourseSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\helpers\ArrayHelper;
 use yii\filters\VerbFilter;
-
 /**
  * GroupCourseController implements the CRUD actions for GroupCourse model.
  */
@@ -48,8 +51,17 @@ class GroupCourseController extends Controller
      */
     public function actionView($id)
     {
+		$location_id = Yii::$app->session->get('location_id');
+		$query = GroupLesson::find()
+				->joinWith('groupCourse')
+				->where(['location_id' => $location_id,'course_id' => $id]);
+				
+			$lessonDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);	
         return $this->render('view', [
             'model' => $this->findModel($id),
+			'lessonDataProvider' => $lessonDataProvider,
         ]);
     }
 
@@ -61,12 +73,20 @@ class GroupCourseController extends Controller
     public function actionCreate()
     {
         $model = new GroupCourse();
-
+		$teacherModel = ArrayHelper::map(User::find()
+					->joinWith('userLocation ul')
+					->join('INNER JOIN','rbac_auth_assignment raa','raa.user_id = user.id')
+					->where(['raa.item_name' => 'teacher'])
+					->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+					->all(),
+				'id','userProfile.fullName'		
+			);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+				'teacher' => $teacherModel,
             ]);
         }
     }
