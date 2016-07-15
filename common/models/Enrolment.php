@@ -120,9 +120,8 @@ public $teacherId;
 				$lesson->setAttributes([
 					'enrolment_id'	 => $this->id,
 					'teacher_id' => $this->teacherId,
-					'status' => Lesson::STATUS_PENDING,
-					'date' => $day->format('Y-m-d H:i:s'),
-				]);
+					'status' => Lesson::STATUS_SCHEDULED,
+									]);
 				$lesson->save();
 			}
 		}
