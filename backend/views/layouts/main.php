@@ -19,11 +19,11 @@ use yii\helpers\Url;
 <body>
     <script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
     <script type="text/javascript">
-        FreshWidget.init("", {"queryString": "&helpdesk_ticket[requester]=<?= Html::encode(Yii::$app->user->identity->email); ?> &helpdesk_ticket[subject]=<?= Html::encode($this->title); ?>",
+        FreshWidget.init("", {"queryString": "&widgetType=popup&searchArea=no&helpdesk_ticket[requester]=<?= Html::encode(Yii::$app->user->identity->email); ?> &helpdesk_ticket[subject]=<?= Html::encode($this->title); ?>",
             "widgetType": "popup", "buttonType": "text", "buttonText": "Feedback",
             "buttonColor": "white", "buttonBg": "#E30018", "alignment": "1",
             "offset": "860px", "formHeight": "500px", "screenshot": "no",
-            "captcha": "yes", "url": "http://smw.freshdesk.com"});
+            "url": "http://smw.freshdesk.com"});
     </script>
 </body>
 <script type="text/javascript">
