@@ -43,8 +43,6 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {  
-		$today = new \DateTime('today');
-		$day = $today->format('N');
         $teachersWithClass = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
@@ -54,7 +52,6 @@ class ScheduleController extends Controller
             ->join('Join', 'enrolment e', 'e.program_id = q.program_id')
             ->join('Join', 'lesson l', 'l.teacher_id = up.user_id')
             ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
-			->andWhere('ta.day = :day',[':day' => $day])
             ->orderBy('id desc')
             ->all();
             
