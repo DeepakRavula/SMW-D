@@ -16,8 +16,6 @@ class GroupCourse extends \yii\db\ActiveRecord
 {
 	public $from_time;
 	public $to_time;
-	public $start_date;
-	public $end_date;
 	
     /**
      * @inheritdoc
@@ -85,7 +83,13 @@ class GroupCourse extends \yii\db\ActiveRecord
                 'Sunday',
         ];
     }
-
+	public function beforeSave($insert) {
+	        $startDate = \DateTime::createFromFormat('d-m-Y', $this->start_date);
+	        $endDate = \DateTime::createFromFormat('d-m-Y', $this->end_date);
+    	    $this->start_date =  $startDate->format('Y-m-d H:i:s');
+    	    $this->end_date =  $endDate->format('Y-m-d H:i:s');
+		return parent::beforeSave($insert);
+	}
 	public function afterSave($insert, $changedAttributes)
     {
 		$this->from_time = date("H:i:s",strtotime($this->from_time));
