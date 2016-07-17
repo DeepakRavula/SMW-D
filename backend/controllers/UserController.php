@@ -225,6 +225,9 @@ class UserController extends Controller {
 			$section = 'profile';
 		}
 		
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
+
 		$model = new UserForm();
 		$addressModels = [new Address];
 		$phoneNumberModels = [new PhoneNumber];
@@ -270,7 +273,10 @@ class UserController extends Controller {
 								break;
 							}
 						}
-						$userLocationModel = UserLocation::findOne(['user_id' => $model->getModel()->id]);
+						$userLocationModel = UserLocation::findOne([
+							'user_id' => $model->getModel()->id,
+							'location_id' => $locationId,
+						]);
 						foreach ($availabilityModels as $availabilityModel) {
 							$availabilityModel->teacher_location_id = $userLocationModel->id;
 							$fromTime = \DateTime::createFromFormat('H:i A', $availabilityModel->from_time);
@@ -318,6 +324,8 @@ class UserController extends Controller {
 	public function actionUpdate($id) {
 		$request = Yii::$app->request;
 		$section = $request->get('section');
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
 		if(empty($section)){
 			$section = 'profile';
 		}
@@ -396,7 +404,10 @@ class UserController extends Controller {
 							TeacherAvailability::deleteAll(['id' => $deletedAvailabilityIDs]);
 						}
 
-						$userLocationModel = UserLocation::findOne(['user_id' => $id]);
+						$userLocationModel = UserLocation::findOne([
+							'user_id' => $id,
+							'location_id' => $locationId,
+						]);
 						foreach ($availabilityModels as $availabilityModel) {
 							$availabilityModel->teacher_location_id = $userLocationModel->id;
 							$fromTime = \DateTime::createFromFormat('H:i A', $availabilityModel->from_time);
