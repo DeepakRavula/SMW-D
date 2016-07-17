@@ -104,9 +104,9 @@ public $teacherId;
         
         return parent::beforeValidate ();
     }
+
    public function afterSave($insert, $changedAttributes)
     {
-		
 		$interval = new \DateInterval('P1D');
 		$commencementDate = $this->commencement_date;
 		$renewalDate = $this->renewal_date;
@@ -116,6 +116,12 @@ public $teacherId;
 
 		foreach($period as $day){
 			if($day->format('N') === $this->day) {
+				$professionalDevelopmentDay = clone $day;
+				$professionalDevelopmentDay->modify('first day of this month');
+				$professionalDevelopmentDay->modify('fifth ' . $day->format('l'));
+				if($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+					continue;
+				}
 				$lesson = new Lesson();
 				$lesson->setAttributes([
 					'enrolment_id'	 => $this->id,
