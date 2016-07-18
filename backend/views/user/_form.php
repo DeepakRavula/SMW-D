@@ -15,7 +15,7 @@ use yii\bootstrap\Tabs;
         padding-left: 0;
         padding-right: 0;
     }
-	.address-fields, .phone-fields, .quali-fields, .quali-fields label, .availability-fields{
+	.address-fields, .phone-fields, .quali-fields, .quali-fields label{
         display: none;
     }
     hr{
