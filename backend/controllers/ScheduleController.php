@@ -66,12 +66,11 @@ class ScheduleController extends Controller
         
         $events = array();
         $events = (new \yii\db\Query())
-            ->select(['q.teacher_id as resources', 'l.id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, e.day, l.date as start, ADDTIME(l.date, e.duration) as end'])
+            ->select(['l.teacher_id as resources', 'l.id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, e.day, l.date as start, ADDTIME(l.date, e.duration) as end'])
             ->from('lesson l')
             ->join('Join', 'enrolment e', 'e.id = l.enrolment_id')
-            ->join('Join', 'qualification q', 'q.teacher_id = l.teacher_id')            
             ->join('Join', 'student s', 's.id = e.student_id')
-            ->join('Join', 'program p', 'p.id = q.program_id')
+            ->join('Join', 'program p', 'p.id = e.program_id')
             ->where('e.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->all();
 
