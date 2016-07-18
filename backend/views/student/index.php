@@ -24,7 +24,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
 			'first_name',
             'last_name',
-            'birth_date:date',
 			[
                 'attribute' => 'customer_id',
 				'label' => 'Customer Name',
