@@ -115,11 +115,10 @@ class GroupCourse extends \yii\db\ActiveRecord
 					$groupLesson->setAttributes([
 						'course_id'	 => $this->id,
 						'teacher_id' => $this->teacher_id,
-						'location_id' => Yii::$app->session->get('location_id'),
 						'from_time' => $this->from_time,
 						'to_time' => $this->to_time,
 						'date' => $day->format('Y-m-d H:i:s'),
-						'status' => Lesson::STATUS_PENDING,
+						'status' => GroupLesson::STATUS_SCHEDULED,
 					]);
 					$groupLesson->save();
 				}

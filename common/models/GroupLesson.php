@@ -16,6 +16,9 @@ use common\models\GroupCourse;
  */
 class GroupLesson extends \yii\db\ActiveRecord
 {
+	const STATUS_SCHEDULED = 1;
+	const STATUS_COMPLETED = 2;
+	const STATUS_CANCELED = 3;
     /**
      * @inheritdoc
      */
@@ -32,7 +35,7 @@ class GroupLesson extends \yii\db\ActiveRecord
         return [
             [['course_id', 'teacher_id','from_time','to_time'], 'required'],
             [['course_id', 'teacher_id', 'status'], 'integer'],
-            [['date','from_time','to_time','location_id'], 'safe'],
+            [['date','from_time','to_time'], 'safe'],
         ];
     }
 

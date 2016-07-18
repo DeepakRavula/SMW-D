@@ -81,6 +81,7 @@ class GroupCourseController extends Controller
 					->all(),
 				'id','userProfile.fullName'		
 			);
+		$model->location_id = Yii::$app->session->get('location_id');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
