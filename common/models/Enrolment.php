@@ -59,7 +59,12 @@ public $teacherId;
     {
         return $this->hasMany(Lesson::className(), ['enrolment_id' => 'id']);
     }
-   
+  
+	public function getQualification()
+    {
+        return $this->hasOne(Qualification::className(), ['program_id' => 'program_id']);
+    }
+	
 	public function getStudent()
     {
         return $this->hasOne(Student::className(), ['id' => 'student_id']);
