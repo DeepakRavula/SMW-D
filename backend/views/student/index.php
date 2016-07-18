@@ -1,7 +1,9 @@
 <?php
 
 use yii\grid\GridView;
-
+use yii\widgets\Pjax;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -10,7 +12,14 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="student-index">
-<?php yii\widgets\Pjax::begin(['id' => 'student-index']); ?>
+<div class="pull-right  m-r-20">
+	<?php yii\widgets\Pjax::begin() ?>
+	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
+	<?= $form->field($searchModel, 'enrolledStudent')->checkbox(['data-pjax' => true]); ?>
+	<?php ActiveForm::end(); ?>
+    <?php \yii\widgets\Pjax::end(); ?>
+</div>
+<?php yii\widgets\Pjax::begin(['id' => 'student-listing']); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -37,3 +46,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
 	<?php yii\widgets\Pjax::end(); ?>
 </div>
+<script>
+$(document).ready(function(){
+  $("#studentsearch-enrolledstudent").on("change", function() {
+      var enrolledStudent = $(this).is(":checked");
+      var url = "<?php echo Url::to(['student/index']);?>?StudentSearch[enrolledStudent]=" + (enrolledStudent | 0);
+      $.pjax.reload({url:url,container:"#student-listing",replace:false,  timeout: 4000});  //Reload GridView
+  });
+});
+  </script>
