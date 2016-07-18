@@ -115,4 +115,36 @@ class Lesson extends \yii\db\ActiveRecord
             self::STATUS_CANCELED => Yii::t('common', 'Canceled'),
 		];
 	}
+
+    public function afterSave($insert, $changedAttributes)
+    {
+		if( ! $insert) {
+        	$rescheduledLessonDate = clone $this->date;
+		    $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes->date);
+			$program = $this->enrolment->program->name;
+			$to_name[] = $this->teacherProfile->firstname;
+			$to_mail[] = $this->teacher->email;
+			$to_name[] = $this->enrolment->student->customerProfile->firstname;
+			$to_mail[] = $this->enrolment->student->customer->email;
+			$subject = Yii::$app->name . ' - $program lesson rescheduled from <date> to <to-date>';
+			for($i=0;$i<count($to_name);$i++)
+			{
+				Yii::$app->mailer->compose('lessonReschedule', [
+					'program' => $program,
+					])
+					->setFrom('smw@arcadiamusicacademy.com')   
+					->setTo($to_mail[$i]) 
+					->setSubject($subject) 
+					->setHtmlBody('Dear ' . $to_name[$i] . ',<br>
+						<br>
+						Your ' . $program . ' lesson has been Re-scheduled from '. $lessonDate->format('d-m-Y H:i') .' to ' . $rescheduledLessonDate->format('d-m-Y H:i') . '.<br>
+						<br>
+						Thank you<br>
+						Arcadia Music Academy Team.<br>')
+					->send();
+			}
+		}
+
+        return parent::afterSave($insert, $changedAttributes);
+    }
 }
