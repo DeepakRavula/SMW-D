@@ -48,7 +48,6 @@ $this->registerJs($js);
 		'min' => 0, // 0 or 1 (default 1)
 		'insertButton' => '.address-add-item', // css class
 		'deleteButton' => '.address-remove-item', // css class
-		'insertPosition' => 'top',
 		'model' => $addressModels[0],
 		'formId' => 'dynamic-form',
 		'formFields' => [
