@@ -130,13 +130,13 @@ class Lesson extends \yii\db\ActiveRecord
 
 	public function notifyReschedule($user, $program, $fromDate, $toDate) {
         $subject = Yii::$app->name . ' - ' . $program->name 
-				. ' lesson rescheduled from ' . $fromDate->format('d-m-Y H:i a') . ' to ' . $toDate->format('d-m-Y H:i a');
+				. ' lesson rescheduled from ' . $fromDate->format('d-m-Y h:i a') . ' to ' . $toDate->format('d-m-Y h:i a');
 
 		Yii::$app->mailer->compose('lessonReschedule', [
 			'program' => $program->name,
 			'toName' => $user->userProfile->firstname,
-			'fromDate' => $fromDate->format('d-m-Y H:i a'),
-			'toDate' => $toDate->format('d-m-Y H:i a'), 
+			'fromDate' => $fromDate->format('d-m-Y h:i a'),
+			'toDate' => $toDate->format('d-m-Y h:i a'), 
 			])
 			->setFrom(\Yii::$app->params['robotEmail'])   
 			->setTo($user->email) 
