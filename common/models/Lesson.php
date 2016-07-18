@@ -118,31 +118,30 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-		if( ! $insert) {
-        	$rescheduledLessonDate = clone $this->date;
-		    $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes->date);
-			$program = $this->enrolment->program->name;
-			$to_name[] = $this->teacherProfile->firstname;
-			$to_mail[] = $this->teacher->email;
-			$to_name[] = $this->enrolment->student->customerProfile->firstname;
-			$to_mail[] = $this->enrolment->student->customer->email;
-			$subject = Yii::$app->name . ' - $program lesson rescheduled from <date> to <to-date>';
-			for($i=0;$i<count($to_name);$i++)
-			{
+        if( ! $insert) {
+            $rescheduledLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+            $to_date = $rescheduledLessonDate->format('d-m-Y H:i');
+            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
+            $from_date = $lessonDate->format('d-m-Y H:i');
+            $program = $this->enrolment->program->name;
+            $to_name[] = $this->teacherProfile->firstname;
+            $to_mail[] = $this->teacher->email;
+            $to_name[] = $this->enrolment->student->customerProfile->firstname;
+            $to_mail[] = $this->enrolment->student->customer->email;
+            $subject = Yii::$app->name . ' - ' .$program. ' lesson rescheduled from ' .$from_date. ' to ' .$to_date;
+            for($i=0;$i<count($to_name);$i++)
+            {
 				Yii::$app->mailer->compose('lessonReschedule', [
-					'program' => $program,
+                    'program' => $program,
+                    'to_name' => $to_name[$i],
+                    'from_date' => $from_date,
+                    'to_date' => $to_date, 
 					])
 					->setFrom('smw@arcadiamusicacademy.com')   
 					->setTo($to_mail[$i]) 
 					->setSubject($subject) 
-					->setHtmlBody('Dear ' . $to_name[$i] . ',<br>
-						<br>
-						Your ' . $program . ' lesson has been Re-scheduled from '. $lessonDate->format('d-m-Y H:i') .' to ' . $rescheduledLessonDate->format('d-m-Y H:i') . '.<br>
-						<br>
-						Thank you<br>
-						Arcadia Music Academy Team.<br>')
 					->send();
-			}
+            }
 		}
 
         return parent::afterSave($insert, $changedAttributes);
