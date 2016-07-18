@@ -119,11 +119,9 @@ class Lesson extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if( ! $insert) {
-            $rescheduledLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-            $toDate = $rescheduledLessonDate->format('d-m-Y H:i');
-            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
-            $fromDate = $lessonDate->format('d-m-Y H:i');
-			$this->notifyReschedule($this->teacher, $this->enrolment->program, $fromDate, $toDate);
+            $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+            $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
+            $this->notifyReschedule($this->teacher, $this->enrolment->program, $fromDate, $toDate);
 			$this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
 		}
 
@@ -132,13 +130,13 @@ class Lesson extends \yii\db\ActiveRecord
 
 	public function notifyReschedule($user, $program, $fromDate, $toDate) {
         $subject = Yii::$app->name . ' - ' . $program->name 
-				. ' lesson rescheduled from ' . $fromDate . ' to ' . $toDate;
+				. ' lesson rescheduled from ' . $fromDate->format('d-m-Y H:i a') . ' to ' . $toDate->format('d-m-Y H:i a');
 
 		Yii::$app->mailer->compose('lessonReschedule', [
 			'program' => $program->name,
-			'to_name' => $user->userProfile->firstname,
-			'from_date' => $fromDate,
-			'to_date' => $toDate, 
+			'toName' => $user->userProfile->firstname,
+			'fromDate' => $fromDate->format('d-m-Y H:i a'),
+			'toDate' => $toDate->format('d-m-Y H:i a'), 
 			])
 			->setFrom(\Yii::$app->params['robotEmail'])   
 			->setTo($user->email) 
