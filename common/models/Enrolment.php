@@ -117,7 +117,7 @@ public $teacherId;
 		foreach($period as $day){
 			if($day->format('N') === $this->day) {
 				$professionalDevelopmentDay = clone $day;
-				$professionalDevelopmentDay->modify('first day of this month');
+				$professionalDevelopmentDay->modify('last day of previous month');
 				$professionalDevelopmentDay->modify('fifth ' . $day->format('l'));
 				if($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
 					continue;
