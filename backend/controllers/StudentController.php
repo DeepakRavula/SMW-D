@@ -71,6 +71,9 @@ class StudentController extends Controller
 				}]);
 			$lessonDataProvider = new ActiveDataProvider([
 			'query' => $query,
+        	'pagination'=> [
+            	'params'  => ['section' => $section]
+        	],
 		]);	
 
 		$query = Student::find()

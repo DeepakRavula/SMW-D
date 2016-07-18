@@ -25,7 +25,8 @@ class BackendAsset extends AssetBundle
         'js/app.js',
         'plugins/momentjs/moment-with-locales.js',
         'plugins/fullcalendar/fullcalendar.js',
-        'plugins/jquery-timepicker/jquery.timepicker.js'
+        'plugins/jquery-timepicker/jquery.timepicker.js',
+        'plugins/history/jquery.history.js'
     ];
 
     public $depends = [
