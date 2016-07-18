@@ -23,7 +23,7 @@ echo GridView::widget([
 		[
 			'label' => 'Teacher Name',
 			'value' => function($data) {
-				return !empty($data->teacher->userProfile->fullName) ? $data->teacher->userProfile->fullName : null;
+				return !empty($data->groupCourse->teacher->publicIdentity) ? $data->groupCourse->teacher->publicIdentity : null;
 			},
 		],
 		[

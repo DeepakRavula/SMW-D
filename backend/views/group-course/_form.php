@@ -38,6 +38,10 @@ use common\models\GroupCourse;
 		<div class="col-md-4">
             <?php echo $form->field($model, 'day')->dropdownList(GroupCourse::getWeekdaysList(),['prompt' => 'select day']) ?>
 		</div>
+	<?php
+		$fromTime = \DateTime::createFromFormat('H:i:s', $model->from_time);
+		$model->from_time = ! empty($model->from_time) ? $fromTime->format('g:i A') : null;
+	?>
 		<div class="col-md-4">
 		<?= $form->field($model, 'from_time')->widget(TimePicker::classname(), []); ?>
 		</div>

@@ -71,6 +71,11 @@ class GroupCourse extends \yii\db\ActiveRecord
         return $this->hasMany(GroupLesson::className(), ['course_id' => 'id']);
     }
 
+	public function getTeacher()
+    {
+        return $this->hasOne(User::className(), ['id' => 'teacher_id']);
+    }
+	
 	public static function getWeekdaysList()
     {
         return [

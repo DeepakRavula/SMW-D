@@ -32,14 +32,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="tabbable-panel">
      <div class="tabbable-line">
 <?php 
-
-/*$enrolmentContent =  $this->render('_enrolment', [
-	'dataProvider' => $dataProvider,
-    'enrolmentModel' => $enrolmentModel,
-]);
- * 
- */
-
 $lessonContent =  $this->render('_lesson', [
 	'lessonDataProvider' => $lessonDataProvider,
 ]);
@@ -47,13 +39,6 @@ $lessonContent =  $this->render('_lesson', [
 ?>
 <?php echo Tabs::widget([
     'items' => [
-/*		[
-            'label' => 'Enrolments',
-            'content' => $enrolmentContent,
-			'active' => $section === 'enrolment',
-        ],
- * 
- */
 		[
             'label' => 'Lessons',
             'content' => $lessonContent,
@@ -63,9 +48,4 @@ $lessonContent =  $this->render('_lesson', [
 <div class="clearfix"></div>
      </div>
  </div>
-<script>
-	$('.add-new-program').click(function(){
-		$('.enrolment-create').show();
-	});
-</script>
 
