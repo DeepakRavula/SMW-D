@@ -108,10 +108,11 @@ class UserController extends Controller {
 		]);
 
 		$query = Student::find()
-				->joinWith(['enrolment' => function($query) use($id){
+				->joinWith(['enrolment e' => function($query) use($id){
                     $query->joinWith('qualification')
 						->where(['teacher_id' => $id]);
-				}]);
+				}])
+				->where(['e.location_id' => $location_id]);
 		$studentDataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
