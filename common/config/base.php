@@ -1,6 +1,6 @@
 <?php
 $config = [
-    'name'=>'Studio Manager Web - Arcadia Academy of Music',
+    'name'=>'Arcadia Academy of Music',
     'vendorPath'=>dirname(dirname(__DIR__)).'/vendor',
     'extensions' => require(__DIR__ . '/../../vendor/yiisoft/extensions.php'),
     'sourceLanguage'=>'en-US',
