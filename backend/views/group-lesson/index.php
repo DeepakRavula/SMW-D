@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php echo Html::a('Create Group Lesson', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php yii\widgets\Pjax::begin(['enablePushState' => false]) ?>
+    <?php yii\widgets\Pjax::begin() ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,

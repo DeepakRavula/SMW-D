@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="user-index">
-    <?php yii\widgets\Pjax::begin(['id' => 'lesson-index','enablePushState' => false]); ?>
+    <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
         	'filterModel' => $searchModel,

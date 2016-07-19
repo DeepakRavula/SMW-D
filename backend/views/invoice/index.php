@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-index p-10">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-    <?php yii\widgets\Pjax::begin(['enablePushState' => false]) ?>
+    <?php yii\widgets\Pjax::begin() ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],

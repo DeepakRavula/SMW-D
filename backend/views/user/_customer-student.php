@@ -16,7 +16,7 @@ use yii\grid\GridView;
 	]) ?>
 </div>
 
-<?php yii\widgets\Pjax::begin(['enablePushState' => false]) ?>
+<?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
 'dataProvider' => $dataProvider,

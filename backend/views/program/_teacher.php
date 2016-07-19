@@ -2,7 +2,7 @@
 
 use yii\grid\GridView;
 ?>
-<?php yii\widgets\Pjax::begin(['enablePushState' => false]) ?>
+<?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
 'dataProvider' => $teacherDataProvider,

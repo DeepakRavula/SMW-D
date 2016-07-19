@@ -5,7 +5,7 @@ use common\models\TeacherAvailability;
 use yii\helpers\Html;
 
 ?>
-<?php yii\widgets\Pjax::begin(['enablePushState' => false]) ?>
+<?php yii\widgets\Pjax::begin() ?>
 <?php
 
 echo GridView::widget([
