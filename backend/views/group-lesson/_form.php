@@ -22,15 +22,10 @@ use kartik\time\TimePicker;
 		<?php
 		$fromTime = \DateTime::createFromFormat('H:i:s', $model->from_time);
 		$model->from_time = ! empty($model->from_time) ? $fromTime->format('g:i A') : null;
-		$toTime = \DateTime::createFromFormat('H:i:s', $model->to_time);
-		$model->to_time = ! empty($model->to_time) ? $toTime->format('g:i A') : null;
 		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s',$model->date);
 	?>
 		<div class="col-md-4">
 		<?= $form->field($model, 'from_time')->widget(TimePicker::classname(), []); ?>
-		</div>
-		<div class="col-md-4">
-		<?= $form->field($model, 'to_time')->widget(TimePicker::classname(), []); ?>
 		</div>
 		<div class="col-md-4">
             <?php
