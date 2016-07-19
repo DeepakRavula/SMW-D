@@ -11,11 +11,6 @@ use yii\grid\GridView;
 <?php
 echo GridView::widget([
 	'dataProvider' => $lessonDataProvider,
-	'rowOptions' => function ($model, $key, $index, $grid) {
-		$u= \yii\helpers\StringHelper::basename(get_class($model));
-		$u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-		return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
-	},
 	'options' => ['class' => 'col-md-12'],
 	'tableOptions' =>['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray' ],
@@ -44,6 +39,7 @@ echo GridView::widget([
 				return !empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
 			},
 		],
+		['class' => 'yii\grid\ActionColumn','controller' => 'group-lesson','template' => '{view}'],
 	]
 ]);
 ?>
