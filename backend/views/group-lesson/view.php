@@ -6,9 +6,11 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupLesson */
 
-$this->title = 'Group Lesson Details';
-$this->params['breadcrumbs'][] = ['label' => 'Group Lessons', 'url' => ['group-course/view', 'id' => $model->groupCourse->id]];
-$this->params['breadcrumbs'][] = $this->title;
+if(Yii::$app->controller->action->id === 'view'){
+	$this->title = 'Group Lesson Details';
+	$this->params['breadcrumbs'][] = ['label' => 'Group Lessons', 'url' => ['group-course/view', 'id' => $model->groupCourse->id]];
+	$this->params['breadcrumbs'][] = $this->title;
+}
 ?>
 <div class="group-lesson-view">
 	<div class="row-fluid user-details-wrapper">
@@ -43,7 +45,10 @@ $this->params['breadcrumbs'][] = $this->title;
 		echo !empty($model->from_time && $model->to_time) ? $fromTime->format('g:i A') . ' - ' . $toTime->format('g:i A') : null;?>
 	</div>
     <div class="col-md-12 m-t-20">
-        <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+        <?php 
+		if(Yii::$app->controller->action->id === 'view'){
+			echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']);
+		}?>
     </div>
     <div class="clearfix"></div>
 </div>

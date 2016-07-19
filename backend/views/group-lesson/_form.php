@@ -24,6 +24,7 @@ use kartik\time\TimePicker;
 		$model->from_time = ! empty($model->from_time) ? $fromTime->format('g:i A') : null;
 		$toTime = \DateTime::createFromFormat('H:i:s', $model->to_time);
 		$model->to_time = ! empty($model->to_time) ? $toTime->format('g:i A') : null;
+		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s',$model->date);
 	?>
 		<div class="col-md-4">
 		<?= $form->field($model, 'from_time')->widget(TimePicker::classname(), []); ?>
@@ -35,7 +36,7 @@ use kartik\time\TimePicker;
             <?php
             echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
                'options' => [
-                    'value' => date("d-m-Y g:i A", strtotime($model->date)),
+                    'value' => $lessonDate->format('d-m-Y g:i A'),
                ],
                 'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
