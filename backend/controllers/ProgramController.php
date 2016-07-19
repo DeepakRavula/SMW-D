@@ -51,16 +51,19 @@ class ProgramController extends Controller
      */
     public function actionView($id)
     {
-		
+		$locationId = Yii::$app->session->get('location_id');	
 		$query = Student::find()
 				->joinWith('enrolment')
-				->where(['program_id' => $id]);
+				->where(['program_id' => $id,'location_id' => $locationId]);
 		
 		$studentDataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
 
 		$query = User::find()
+				->joinWith(['userLocation ul' => function($query) use($locationId){
+					$query->where(['ul.location_id' => $locationId]);
+				}])
 				->joinWith('qualification')
 				->where(['program_id' => $id]);
 		$teacherDataProvider = new ActiveDataProvider([
