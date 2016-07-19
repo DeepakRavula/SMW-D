@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 ?>
+<?php yii\widgets\Pjax::begin(['enablePushState' => false]) ?>
 <?php
 echo GridView::widget([
 'dataProvider' => $teacherDataProvider,
@@ -18,5 +19,6 @@ echo GridView::widget([
 ],
 ]);
 ?>
+<?php \yii\widgets\Pjax::end(); ?>
 <div class="clearfix"></div>
 

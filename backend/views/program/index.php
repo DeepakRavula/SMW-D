@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="program-index m-t-20">
 <div class="pull-right  m-r-20">
-	<?php yii\widgets\Pjax::begin() ?>
+	<?php yii\widgets\Pjax::begin(['enablePushState' => false]) ?>
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
 	<?= $form->field($searchModel, 'activeOnly')->checkbox(['data-pjax' => true]); ?>
 	<?php ActiveForm::end(); ?>

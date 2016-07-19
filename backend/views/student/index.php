@@ -10,7 +10,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="student-index">
-<?php yii\widgets\Pjax::begin(['id' => 'student-index']); ?>
+<?php yii\widgets\Pjax::begin(['id' => 'student-index','enablePushState' => false]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,

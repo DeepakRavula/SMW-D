@@ -6,6 +6,7 @@ use common\models\Invoice;
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Invoices</h4>
 </div>
+<?php yii\widgets\Pjax::begin(['enablePushState' => false]) ?>
 <?php echo GridView::widget([
         'dataProvider' => $invoiceDataProvider,
         'options' => ['class' => 'col-md-12'],
@@ -52,3 +53,4 @@ use common\models\Invoice;
             //['class' => 'yii\grid\ActionColumn','controller' => 'invoice','template' => '{view}{delete}']
         ],
     ]); ?>
+<?php \yii\widgets\Pjax::end(); ?>

@@ -6,6 +6,7 @@ use common\models\Invoice;
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Payments</h4>
 </div>
+<?php yii\widgets\Pjax::begin(['enablePushState' => false]) ?>
 <?php echo GridView::widget([
         'dataProvider' => $paymentsDataProvider,
         'options' => ['class' => 'col-md-12'],
@@ -32,3 +33,4 @@ use common\models\Invoice;
             'amount:currency',            
 	    ],
     ]); ?>
+<?php \yii\widgets\Pjax::end(); ?>

@@ -48,12 +48,7 @@ $lessonContent =  $this->render('_lesson', [
 $(document).ready(function() {
 	$('.add-new-program').click(function(){
 		$('.enrolment-create').show();
-	});
-
-	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-	  var target = $(e.target).data('section');
-	  History.replaceState(null, null, "?section=lessons"); 
-	});
+  });
 });
 </script>
 
