@@ -99,15 +99,17 @@ public $teacherId;
     public function beforeSave($insert)
     {   
       	$this->location_id = Yii::$app->session->get('location_id');
-        $this->commencement_date = date_format(date_create_from_format('d-m-Y', $this->commencement_date), 'Y-m-d');
         $secs = strtotime($this->from_time) - strtotime("00:00:00");
+       	$renewalDate = \DateTime::createFromFormat('d-m-Y', $this->commencement_date);
         $this->commencement_date = date("Y-m-d H:i:s",strtotime($this->commencement_date) + $secs);
        	$this->from_time = date("H:i:s",strtotime($this->from_time));
 		$secs = strtotime($this->duration) - strtotime("00:00:00");
 		$toTime = date("H:i:s",strtotime($this->from_time) + $secs);
         $this->to_time = $toTime; 
-        
-        return parent::beforeValidate ();
+		$renewalDate->add(new \DateInterval('P1Y'));
+		$this->renewal_date = $renewalDate->format('Y-m-d H:i:s');
+		
+        return parent::beforeSave($insert);
     }
 
    public function afterSave($insert, $changedAttributes)

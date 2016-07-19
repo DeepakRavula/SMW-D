@@ -94,9 +94,6 @@ class StudentController extends Controller
 		$enrolmentModel = new Enrolment();
         if ($enrolmentModel->load(Yii::$app->request->post()) ) {
 			$enrolmentModel->student_id = $id;
-			$renewalDate = \DateTime::createFromFormat('d-m-Y', $enrolmentModel->commencement_date);
-			$renewalDate->add(new \DateInterval('P1Y'));
-			$enrolmentModel->renewal_date = $renewalDate->format('Y-m-d');
 			$enrolmentModel->save();
 			    Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
