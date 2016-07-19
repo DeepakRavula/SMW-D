@@ -81,7 +81,14 @@ class GroupLessonController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+			$fromTime = \DateTime::createFromFormat('g:i A',$model->from_time);
+			$model->from_time = $fromTime->format('H:i:s');
+			$toTime = \DateTime::createFromFormat('g:i A',$model->to_time);
+			$model->to_time = $toTime->format('H:i:s');
+			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+   	   		$model->date = $lessonDate->format('Y-m-d H:i:s');
+			$model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [

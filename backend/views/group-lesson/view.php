@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model common\models\GroupLesson */
 
 $this->title = 'Group Lesson Details';
-$this->params['breadcrumbs'][] = ['label' => 'Group Lessons', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Group Lessons', 'url' => ['group-course/view', 'id' => $model->groupCourse->id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="group-lesson-view">
@@ -33,10 +33,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
 		echo $status ?>
 	</div>
-   <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
+   <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher Name">
 			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null;?>
-		</div>
-	
+	</div>	
+	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Time">
+		<i class="fa fa-clock-o"></i> <?php 
+		$fromTime = \DateTime::createFromFormat('H:i:s',$model->from_time);
+		$toTime = \DateTime::createFromFormat('H:i:s',$model->to_time);
+		echo !empty($model->from_time && $model->to_time) ? $fromTime->format('g:i A') . ' - ' . $toTime->format('g:i A') : null;?>
+	</div>
     <div class="col-md-12 m-t-20">
         <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
     </div>

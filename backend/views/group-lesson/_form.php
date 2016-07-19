@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use kartik\datetime\DateTimePicker;
+use kartik\time\TimePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupLesson */
@@ -9,23 +11,53 @@ use yii\bootstrap\ActiveForm;
 ?>
 
 <div class="group-lesson-form">
+<?=
+	$this->render('view', [
+    	'model' => $model,
+    ]);
+?>
+<?php $form = ActiveForm::begin(); ?>
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?php echo $form->errorSummary($model); ?>
-
-    <?php echo $form->field($model, 'course_id')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'teacher_id')->textInput() ?>
-
-    <?php echo $form->field($model, 'date')->textInput() ?>
-
-    <?php echo $form->field($model, 'status')->textInput() ?>
-
+   	<div class="row">
+		<?php
+		$fromTime = \DateTime::createFromFormat('H:i:s', $model->from_time);
+		$model->from_time = ! empty($model->from_time) ? $fromTime->format('g:i A') : null;
+		$toTime = \DateTime::createFromFormat('H:i:s', $model->to_time);
+		$model->to_time = ! empty($model->to_time) ? $toTime->format('g:i A') : null;
+	?>
+		<div class="col-md-4">
+		<?= $form->field($model, 'from_time')->widget(TimePicker::classname(), []); ?>
+		</div>
+		<div class="col-md-4">
+		<?= $form->field($model, 'to_time')->widget(TimePicker::classname(), []); ?>
+		</div>
+		<div class="col-md-4">
+            <?php
+            echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
+               'options' => [
+                    'value' => date("d-m-Y g:i A", strtotime($model->date)),
+               ],
+                'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd-mm-yyyy HH:ii P'
+                ]
+            ]);
+            ?>
+        </div>	
+        <div class="col-md-4">
+            <?php echo $form->field($model, 'notes')->textarea() ?>
+        </div> 
+    </div>
     <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+        <?php
+        if (!$model->isNewRecord) {
+            echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+        }
+        ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
 
 </div>
