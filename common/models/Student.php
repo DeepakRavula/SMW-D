@@ -82,41 +82,6 @@ class Student extends \yii\db\ActiveRecord
 		return parent::beforeSave($insert);
 	}
 
-	public static function timeRange($start, $end, $by='30 mins') { 
-
-		$start_time = strtotime($start); 
-		$end_time   = strtotime($end); 
-
-		$current    = time(); 
-		$add_time   = strtotime('+'.$by, $current); 
-		$diff       = $add_time-$current; 
-
-		$times = array(); 
-		while ($start_time < $end_time) { 
-			$times[] = date('g:i A', $start_time);
-			$start_time += $diff; 
-		} 
-		$times[] = date('g:i A', $start_time);
-		return $times; 
-	}
-
-	public static function timeRange2($start, $end, $by='30 mins') { 
-
-		$start_time = strtotime($start); 
-		$end_time   = strtotime($end); 
-
-		$current    = time(); 
-		$add_time   = strtotime('+'.$by, $current); 
-		$diff       = $add_time-$current; 
-
-		$times = array(); 
-		while ($start_time < $end_time) { 
-			$times[] = date('g:i', $start_time);
-			$start_time += $diff; 
-		} 
-		$times[] = date('g:i', $start_time);
-		return $times; 
-	}
 	public function getStudentIdentity()
 	{
         if ( $this->getFullname()) {
@@ -125,4 +90,14 @@ class Student extends \yii\db\ActiveRecord
 
         return $this->getFullName();
     }
+
+	public function getEnrolments()
+	{
+    	return $this->hasMany(Enrolment::className(), ['student_id' => 'id']);
+	}
+
+	public function getEnrolmentsCount()
+	{
+    	return $this->getEnrolments()->count();
+	}
 }
