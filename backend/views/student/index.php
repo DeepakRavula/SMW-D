@@ -41,6 +41,12 @@ $this->params['breadcrumbs'][] = $this->title;
 					return $fullName;
                 } 
 			],
+			[
+				'label' => 'Enrolments',
+				'value' => function($data) {
+					return $data->enrolmentsCount;
+                } 
+			],
         ],
     ]); ?>
 
