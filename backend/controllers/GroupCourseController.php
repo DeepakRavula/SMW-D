@@ -25,6 +25,7 @@ class GroupCourseController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                    'delete' => ['post'],
                 ],
             ],
         ];

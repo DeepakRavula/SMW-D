@@ -38,6 +38,7 @@ $lessonContent =  $this->render('_lesson', [
 
 $enrolmentContent =  $this->render('_enrolment', [
 	'studentDataProvider' => $studentDataProvider,
+	'model' => $model,
 ]);
 
 ?>
@@ -58,6 +59,6 @@ $enrolmentContent =  $this->render('_enrolment', [
  </div>
 <script type="text/javascript">
 jQuery(document).ready(function($) {
-    $('#undo_redo').multiselect();
+    $('#groupcourse-title').multiselect();
 });
 </script>
