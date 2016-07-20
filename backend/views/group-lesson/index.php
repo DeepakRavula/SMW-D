@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php echo Html::a('Create Group Lesson', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
+    <?php yii\widgets\Pjax::begin() ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -33,5 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+    <?php \yii\widgets\Pjax::end(); ?>
 
 </div>

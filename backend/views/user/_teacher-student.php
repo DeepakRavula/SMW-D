@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 ?>
+<?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
 'dataProvider' => $studentDataProvider,
@@ -20,9 +21,9 @@ echo GridView::widget([
 			return !empty($data->fullName) ? $data->fullName : null;
 		},
 	],
-	['class' => 'yii\grid\ActionColumn', 'controller' => 'student','template' => '{view}'],
 ],
 ]);
 ?>
+<?php \yii\widgets\Pjax::end(); ?>
 <div class="clearfix"></div>
 

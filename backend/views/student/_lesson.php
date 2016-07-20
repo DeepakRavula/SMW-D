@@ -8,6 +8,7 @@ use yii\grid\GridView;
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Lessons</h4>
 </div>
+<?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
 	'dataProvider' => $lessonDataProvider,
@@ -74,3 +75,4 @@ echo GridView::widget([
 	],
 ]);
 ?>
+<?php \yii\widgets\Pjax::end(); ?>

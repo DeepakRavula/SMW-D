@@ -45,9 +45,11 @@ $lessonContent =  $this->render('_lesson', [
      </div>
  </div>
 <script>
+$(document).ready(function() {
 	$('.add-new-program').click(function(){
 		$('.enrolment-create').show();
-	});
+  });
+});
 </script>
 
 
