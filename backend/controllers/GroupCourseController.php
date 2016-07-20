@@ -6,6 +6,7 @@ use Yii;
 use common\models\GroupCourse;
 use common\models\GroupLesson;
 use common\models\User;
+use common\models\Student;
 use yii\data\ActiveDataProvider;
 use backend\models\search\GroupCourseSearch;
 use yii\web\Controller;
@@ -59,9 +60,20 @@ class GroupCourseController extends Controller
 			$lessonDataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);	
+
+		$query = Student::find()
+				->joinWith(['customer c' => function($query) use($location_id){
+					$query->joinWith('userLocation ul')
+							->where(['ul.location_id' => $location_id]);
+				}])
+				->all();
+		$studentDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);		
         return $this->render('view', [
             'model' => $this->findModel($id),
 			'lessonDataProvider' => $lessonDataProvider,
+			'studentDataProvider' => $studentDataProvider,
         ]);
     }
 

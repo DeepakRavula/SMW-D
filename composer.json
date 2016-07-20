@@ -47,6 +47,7 @@
     "bower-asset/html5shiv": "^3.0",
     "bower-asset/jquery-slimscroll": "^1.3",
     "bower-asset/flot": "^0.8",
+    "bower-asset/multiselect-two-sides": "*",
     "symfony/process": "^3.0",
     "mdmsoft/yii2-admin": "~2.0",
     "kartik-v/yii2-widget-timepicker": "*",

@@ -36,6 +36,10 @@ $lessonContent =  $this->render('_lesson', [
 	'lessonDataProvider' => $lessonDataProvider,
 ]);
 
+$enrolmentContent =  $this->render('_enrolment', [
+	'studentDataProvider' => $studentDataProvider,
+]);
+
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -43,9 +47,17 @@ $lessonContent =  $this->render('_lesson', [
             'label' => 'Lessons',
             'content' => $lessonContent,
         ],
+		[
+            'label' => 'Enrolments',
+            'content' => $enrolmentContent,
+        ],
     ],
 ]);?>
 <div class="clearfix"></div>
      </div>
  </div>
-
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    $('#undo_redo').multiselect();
+});
+</script>
