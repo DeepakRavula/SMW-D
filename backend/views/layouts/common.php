@@ -262,8 +262,7 @@ $bundle = BackendAsset::register($this);
 									'label'=>Yii::t('backend', 'Pro-forma invoice'), 
 									'url'=>['/invoice/index','type' => INVOICE::TYPE_PRO_FORMA_INVOICE], 
 									'icon'=>'<i class="fa fa-angle-double-right"></i>',
-									'active'=>(isset(Yii::$app->request->queryParams['type']) && Yii::$app->request->queryParams['type']== INVOICE::TYPE_PRO_FORMA_INVOICE|| (isset(Yii::$app->request->queryParams['type']) && Yii::$app->request->queryParams['type']== INVOICE::TYPE_PRO_FORMA_INVOICE)) ? true : false,
-                        ],
+                                ],
                                 [
 									'label'=>Yii::t('backend', 'Invoice'), 
 									'url'=>['/invoice/index','type' => INVOICE::TYPE_INVOICE], 
