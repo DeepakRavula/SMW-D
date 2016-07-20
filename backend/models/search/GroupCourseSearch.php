@@ -41,7 +41,10 @@ class GroupCourseSearch extends GroupCourse
      */
     public function search($params)
     {
-        $query = GroupCourse::find();
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
+        $query = GroupCourse::find()
+				->where(['location_id' => $locationId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
