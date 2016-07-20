@@ -14,6 +14,7 @@ use common\models\Enrolment;
         'model' => $enrolmentModel,
     ]) ?>
 </div>
+<?php yii\widgets\Pjax::begin() ?>
 <?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
@@ -77,3 +78,4 @@ use common\models\Enrolment;
 		],
 	]);
 	?>
+<?php \yii\widgets\Pjax::end(); ?>

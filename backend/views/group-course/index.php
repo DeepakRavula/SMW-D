@@ -12,6 +12,7 @@ $this->params['subtitle'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="group-course-index">
+    <?php yii\widgets\Pjax::begin() ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -30,5 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
 			['class' => 'yii\grid\ActionColumn','template' => '{view}'],
         ],
     ]); ?>
+    <?php \yii\widgets\Pjax::end(); ?>
 
 </div>

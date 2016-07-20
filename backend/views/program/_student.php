@@ -1,8 +1,8 @@
 <?php 
 
-
 use yii\grid\GridView;
 ?>
+<?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
 'dataProvider' => $studentDataProvider,
@@ -24,5 +24,6 @@ echo GridView::widget([
 ],
 ]);
 ?>
+<?php \yii\widgets\Pjax::end(); ?>
 <div class="clearfix"></div>
 
