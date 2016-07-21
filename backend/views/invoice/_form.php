@@ -31,6 +31,7 @@ use yii\helpers\Url;
 </div>
 </div>
 <div class="clearfix"></div>
+	 <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 
     <?php $form = ActiveForm::begin(); ?>

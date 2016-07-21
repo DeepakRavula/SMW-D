@@ -11,6 +11,7 @@ use common\models\InvoiceLineItem;
  *
  * @property integer $id
  * @property integer $lesson_id
+ * @property integer $type
  * @property string $amount
  * @property string $date
  * @property integer $status
@@ -20,6 +21,9 @@ class Invoice extends \yii\db\ActiveRecord
 	const STATUS_PAID = 1; 
 	const STATUS_OWING = 2;
 	const STATUS_CREDIT = 3;
+
+	const TYPE_PRO_FORMA_INVOICE = 1;
+	const TYPE_INVOICE = 2;
 
 	public $customer_id;
 	
@@ -37,7 +41,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-			[['notes','internal_notes'],'safe']
+			[['type','notes','internal_notes'],'safe']
 		];
     }
 
@@ -52,7 +56,8 @@ class Invoice extends \yii\db\ActiveRecord
             'date' => 'Date',
             'status' => 'Status',
 			'notes' => 'Printed Notes',
-			'internal_notes' => 'Internal Notes'
+			'internal_notes' => 'Internal Notes',
+			'type' => 'Type'
         ];
     }
 
@@ -87,7 +92,7 @@ class Invoice extends \yii\db\ActiveRecord
 		}
 		return $status;
     }
-    
+   
     public static function lastInvoice($location_id){
         return $query = Invoice::find()->alias('i')
             ->joinwith(['lineItems' => function($query) use($location_id){
