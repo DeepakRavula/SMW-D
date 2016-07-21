@@ -62,12 +62,11 @@ class GroupCourseController extends Controller
 			'query' => $query,
 		]);
 
-		GroupEnrolment::deleteAll(['course_id' => $id]);
-		
 		$request = Yii::$app->request;
 		$groupEnrolment = $request->post('GroupEnrolment');
 		$studentIds = $groupEnrolment['studentIds']; 
 		if( ! empty($studentIds)){	
+			GroupEnrolment::deleteAll(['course_id' => $id]);
 			foreach($studentIds as $studentId){
 				$groupEnrolment = new GroupEnrolment();
 				$groupEnrolment->setAttributes([
