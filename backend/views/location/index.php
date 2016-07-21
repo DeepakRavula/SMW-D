@@ -21,18 +21,29 @@ $this->params['breadcrumbs'][] = $this->title;
             return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
         },
         'columns' => [
-
-             [
-             'attribute'=>'name',
-             'format' => 'raw',
-             'value'=>function ($data) {
-                        return Html::a($data->name, ['location/view', 'id' => $data->id]);
-                      },
-             ],
+            [
+	            'attribute'=>'name',
+				'label' => 'Name (Enrolments)',
+        	    'format' => 'raw',
+            	'value'=>function ($data) {
+             	   return Html::a($data->name . ' (' . $data->enrolmentsCount . ')', ['location/view', 'id' => $data->id]);
+                	},
+            ],
             'address',
+			[
+				'label' => 'From Time',
+				'value' => function($data) {
+					return !empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
+				},
+			],
+			[
+				'label' => 'To Time',
+				'value' => function($data) {
+					return !empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
+				},
+			],
 			'from_time',
 			'to_time',
-
         ],
     ]); ?>
 

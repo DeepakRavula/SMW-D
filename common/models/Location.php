@@ -96,4 +96,14 @@ class Location extends \yii\db\ActiveRecord {
 		}
 	}
 
+	public function getEnrolments()
+	{
+    	return $this->hasMany(Enrolment::className(), ['location_id' => 'id']);
+	}
+
+	public function getEnrolmentsCount()
+	{
+    	return $this->getEnrolments()->count();
+	}
+
 }
