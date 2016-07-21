@@ -14,8 +14,8 @@ use common\models\Invoice;
  */
 class InvoiceSearch extends Invoice
 {
-	public $fromDate = '2016-1-1';
-	public $toDate = '2016-12-31';
+	public $fromDate = '1-1-2016';
+	public $toDate = '31-12-2016';
 
     /**
      * @inheritdoc
@@ -23,7 +23,7 @@ class InvoiceSearch extends Invoice
     public function rules()
     {
         return [
-            [['fromDate', 'toDate'], 'safe'],
+            [['fromDate', 'toDate', 'type'], 'safe'],
         ];
     }
 
@@ -49,7 +49,9 @@ class InvoiceSearch extends Invoice
             'query' => $query,
         ]);
 
+		//print_r($params);die;
         if ( !($this->load($params) && $this->validate())) {
+			//print_r($this->errors);die;
             return $dataProvider;
         }
 
@@ -57,6 +59,8 @@ class InvoiceSearch extends Invoice
 		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
 		
 		$query->andWhere(['between','i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+
+        $query->andFilterWhere(['type' => $this->type]);
 
         return $dataProvider;
     }

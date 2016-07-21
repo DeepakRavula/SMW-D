@@ -72,21 +72,22 @@ class InvoiceController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Invoice();
+        $invoice = new Invoice();
 		$request = Yii::$app->request;
-		$invoice = $request->get('Invoice');
+		$invoiceRequest = $request->get('Invoice');
+		$invoice->type = $invoiceRequest['type'];
 		$unInvoicedLessonsDataProvider = null;
 		$location_id = Yii::$app->session->get('location_id');
 
-		if(isset($invoice['customer_id'])) {
-			$customer = User::findOne(['id' => $invoice['customer_id']]);
+		if(isset($invoiceRequest['customer_id'])) {
+			$customer = User::findOne(['id' => $invoiceRequest['customer_id']]);
 
 			if(empty($customer)) {
             	throw new NotFoundHttpException('The requested page does not exist.');
 			}
 			
 			$currentDate = new \DateTime();
-			$model->customer_id = $customer->id;
+			$invoice->customer_id = $customer->id;
        		$query = Lesson::find()
                 ->joinwith('invoiceLineItem ili')
 				->joinWith(['enrolment e' => function($query) use($customer,$location_id) {
@@ -106,7 +107,7 @@ class InvoiceController extends Controller
 
 		$post = $request->post();
         if ( ! empty($post['selection']) && is_array($post['selection'])) {
-			$invoice = new Invoice();
+			$invoice->type = $invoiceRequest->type;
 			$lastInvoice = Invoice::lastInvoice($location_id);
 
 			if(empty($lastInvoice)) {
@@ -154,7 +155,7 @@ class InvoiceController extends Controller
         else {
             
             return $this->render('create', [
-                'model' => $model,
+                'model' => $invoice,
 				'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
             ]);
         }

@@ -3,27 +3,20 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use common\models\Invoice;
+use backend\models\search\InvoiceSearch;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $searchModel backend\models\search\InvoiceSearch */
 
-$this->title = 'Invoices';
-$this->params['subtitle'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', ['invoice/create'], ['class' => 'btn btn-success']); 
+$this->title = (int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice';
+$this->params['subtitle'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', ['invoice/create', 'Invoice[type]' => $searchModel->type], ['class' => 'btn btn-success']); 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-index p-10">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-    <?php echo GridView::widget([
-        'dataProvider' => $dataProvider,
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
-        'rowOptions' => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
-        },
-        'columns' => [
-        'invoice_number',
+	<?php $columns = [
+			'invoice_number',
             [
 			'label' => 'Date',
 				'value' => function($data) {
@@ -55,7 +48,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
 			],
             'total',
-        ],
+        ];
+
+		if((int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE) {
+			array_shift($columns);			
+		}
+		?>
+    <?php echo GridView::widget([
+        'dataProvider' => $dataProvider,
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $u= \yii\helpers\StringHelper::basename(get_class($model));
+            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        },
+        'columns' => $columns,
     ]); ?>
 
 </div>

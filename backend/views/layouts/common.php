@@ -260,12 +260,12 @@ $bundle = BackendAsset::register($this);
 							'items'=>[
                                 [
 									'label'=>Yii::t('backend', 'Pro-forma invoice'), 
-									'url'=>['/invoice/index','type' => INVOICE::TYPE_PRO_FORMA_INVOICE], 
+									'url'=>['/invoice/index','InvoiceSearch[type]' => INVOICE::TYPE_PRO_FORMA_INVOICE], 
 									'icon'=>'<i class="fa fa-angle-double-right"></i>',
                                 ],
                                 [
 									'label'=>Yii::t('backend', 'Invoice'), 
-									'url'=>['/invoice/index','type' => INVOICE::TYPE_INVOICE], 
+									'url'=>['/invoice/index','InvoiceSearch[type]' => INVOICE::TYPE_INVOICE], 
 									'icon'=>'<i class="fa fa-angle-double-right"></i>'
 								],
                       		],

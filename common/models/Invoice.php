@@ -11,6 +11,7 @@ use common\models\InvoiceLineItem;
  *
  * @property integer $id
  * @property integer $lesson_id
+ * @property integer $type
  * @property string $amount
  * @property string $date
  * @property integer $status
@@ -21,8 +22,8 @@ class Invoice extends \yii\db\ActiveRecord
 	const STATUS_OWING = 2;
 	const STATUS_CREDIT = 3;
 
-	const TYPE_PRO_FORMA_INVOICE = 'pro-forma-invoice';
-	const TYPE_INVOICE = 'invoice';
+	const TYPE_PRO_FORMA_INVOICE = 1;
+	const TYPE_INVOICE = 2;
 
 	public $customer_id;
 	
