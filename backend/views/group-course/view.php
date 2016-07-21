@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
-
+use common\models\GroupEnrolment;
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
 
@@ -36,6 +36,11 @@ $lessonContent =  $this->render('_lesson', [
 	'lessonDataProvider' => $lessonDataProvider,
 ]);
 
+$enrolmentContent =  $this->render('_enrolment', [
+	'groupCourseModel' => $model,
+	'model' => new GroupEnrolment(),
+]);
+
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -43,9 +48,17 @@ $lessonContent =  $this->render('_lesson', [
             'label' => 'Lessons',
             'content' => $lessonContent,
         ],
+		[
+            'label' => 'Enrolments',
+            'content' => $enrolmentContent,
+        ],
     ],
 ]);?>
 <div class="clearfix"></div>
      </div>
  </div>
-
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    $('#groupenrolment-student_id').multiselect();
+});
+</script>
