@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
-	<?= $form->field($searchModel, 'enrolledStudent')->checkbox(['data-pjax' => true]); ?>
+	<?= $form->field($searchModel, 'enrolledStudent')->checkbox(['label' => 'Show Enrolled Students','data-pjax' => true]); ?>
 	<?php ActiveForm::end(); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 </div>
@@ -31,20 +31,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
-			'first_name',
-            'last_name',
+			[
+                'attribute' => 'first_name',
+				'label' => 'First Name (Enrolments)',
+				'value' => function($data) {
+					return ! (empty($data->first_name)) ? $data->first_name . ' (' . $data->enrolmentsCount . ')' : null;
+                } 
+			],
+			'last_name',
 			[
                 'attribute' => 'customer_id',
 				'label' => 'Customer Name',
 				'value' => function($data) {
 					$fullName = ! (empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;
 					return $fullName;
-                } 
-			],
-			[
-				'label' => 'Enrolments',
-				'value' => function($data) {
-					return $data->enrolmentsCount;
                 } 
 			],
         ],
