@@ -42,8 +42,6 @@ $this->params['breadcrumbs'][] = $this->title;
 					return !empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
 				},
 			],
-			'from_time',
-			'to_time',
         ],
     ]); ?>
 
