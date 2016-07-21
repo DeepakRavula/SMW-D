@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\query\StudentQuery;
 
 /**
  * This is the model class for table "student".
@@ -51,6 +52,16 @@ class Student extends \yii\db\ActiveRecord
             'notes' => 'Notes',
         ];
     }
+
+	/**
+     * @inheritdoc
+     * @return LessonQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new StudentQuery(get_called_class());
+    }
+
 	public function getCustomer()
     {
         return $this->hasOne(User::className(), ['id' => 'customer_id']);
@@ -64,6 +75,11 @@ class Student extends \yii\db\ActiveRecord
 	public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['student_id' => 'id']);
+    }
+
+	public function getGroupEnrolments()
+    {
+        return $this->hasMany(GroupEnrolment::className(), ['student_id' => 'id']);
     }
 	
 	public function getFullName()

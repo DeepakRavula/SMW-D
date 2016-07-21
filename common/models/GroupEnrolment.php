@@ -27,7 +27,7 @@ class GroupEnrolment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['course_id', 'student_id'], 'required'],
+            [['course_id'], 'required'],
             [['course_id', 'student_id'], 'integer'],
         ];
     }
@@ -39,8 +39,8 @@ class GroupEnrolment extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'course_id' => 'Course ID',
-            'student_id' => 'Student ID',
+            'course_id' => 'Course Name',
+            'student_id' => 'Student Name',
         ];
     }
 

@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
-
+use common\models\GroupEnrolment;
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
 
@@ -37,8 +37,8 @@ $lessonContent =  $this->render('_lesson', [
 ]);
 
 $enrolmentContent =  $this->render('_enrolment', [
-	'studentDataProvider' => $studentDataProvider,
-	'model' => $model,
+	'groupCourseModel' => $model,
+	'model' => new GroupEnrolment(),
 ]);
 
 ?>
@@ -59,6 +59,6 @@ $enrolmentContent =  $this->render('_enrolment', [
  </div>
 <script type="text/javascript">
 jQuery(document).ready(function($) {
-    $('#groupcourse-title').multiselect();
+    $('#groupenrolment-student_id').multiselect();
 });
 </script>

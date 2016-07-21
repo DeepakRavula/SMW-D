@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\GroupCourse;
 use common\models\GroupLesson;
+use common\models\GroupEnrolment;
 use common\models\User;
 use common\models\Student;
 use yii\data\ActiveDataProvider;
@@ -56,25 +57,29 @@ class GroupCourseController extends Controller
 		$location_id = Yii::$app->session->get('location_id');
 		$query = GroupLesson::find()
 				->joinWith('groupCourse')
-				->where(['location_id' => $location_id,'course_id' => $id]);
-				
+				->where(['location_id' => $location_id,'course_id' => $id]);				
 			$lessonDataProvider = new ActiveDataProvider([
 			'query' => $query,
-		]);	
+		]);
 
-		$query = Student::find()
-				->joinWith(['customer c' => function($query) use($location_id){
-					$query->joinWith('userLocation ul')
-							->where(['ul.location_id' => $location_id]);
-				}])
-				->all();
-		$studentDataProvider = new ActiveDataProvider([
-			'query' => $query,
-		]);		
+		GroupEnrolment::deleteAll(['course_id' => $id]);
+		
+		$request = Yii::$app->request;
+		$studentIds = $request->post('GroupEnrolment');
+		if( ! empty($studentIds['student_id'])){	
+			foreach($studentIds['student_id'] as $studentId){
+				$groupEnrolment = new GroupEnrolment();
+				$groupEnrolment->setAttributes([
+					'course_id'	 => $id,
+					'student_id' => $studentId,
+				]);
+				$groupEnrolment->save();
+			} 
+		}
+	 
         return $this->render('view', [
             'model' => $this->findModel($id),
 			'lessonDataProvider' => $lessonDataProvider,
-			'studentDataProvider' => $studentDataProvider,
         ]);
     }
 
