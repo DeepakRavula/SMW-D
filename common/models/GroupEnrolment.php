@@ -13,6 +13,7 @@ use Yii;
  */
 class GroupEnrolment extends \yii\db\ActiveRecord
 {
+	public $studentIds;
     /**
      * @inheritdoc
      */
@@ -41,6 +42,7 @@ class GroupEnrolment extends \yii\db\ActiveRecord
             'id' => 'ID',
             'course_id' => 'Course Name',
             'student_id' => 'Student Name',
+            'studentIds' => 'Enrolled Student Name',
         ];
     }
 

@@ -37,7 +37,7 @@ use common\models\Student;
 
     <div class="col-xs-5">
 		<?=
-		$form->field($model, "student_id")->dropDownList(
+		$form->field($model, "studentIds")->dropDownList(
 			ArrayHelper::map(
 					Student::find()
 					->location($locationId)
