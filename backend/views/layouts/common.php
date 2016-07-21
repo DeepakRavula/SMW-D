@@ -233,18 +233,20 @@ $bundle = BackendAsset::register($this);
                             'url' => '#',
                             'icon'=>'<i class="fa fa-music"></i>',
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='lesson')? true : false,
+                            'active'=>(Yii::$app->controller->id=='lesson' || Yii::$app->controller->id=='group-course')? true : false,
                             'options'=>['class'=>'treeview'],
                             'items'=>[
                                 [
 									'label'=>Yii::t('backend', 'Private Lessons'), 
 									'url'=>['/lesson/index'], 
-									'icon'=>'<i class="fa fa-angle-double-right"></i>'
+									'icon'=>'<i class="fa fa-angle-double-right"></i>',
+                                    'active'=>(Yii::$app->controller->id=='lesson')? true : false,
 								],
                                 [
 									'label'=>Yii::t('backend', 'Group Lessons'), 
 									'url'=>['/group-course/index'], 
-									'icon'=>'<i class="fa fa-angle-double-right"></i>'
+									'icon'=>'<i class="fa fa-angle-double-right"></i>',
+                                    'active'=>(Yii::$app->controller->id=='group-course')? true : false,
 								],
                       		],
 						],
