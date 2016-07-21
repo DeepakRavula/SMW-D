@@ -66,7 +66,7 @@ $(document).ready(function() {
         
         $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
     },
-     dayClick: function(date, allDay, jsEvent, view) {
+    dayClick: function(date, allDay, jsEvent, view) {
 
         if (allDay) {
             // Clicked on the entire day
@@ -138,12 +138,11 @@ $(document).ready(function() {
                 }
             }
         });
-        $(".fc-button-month").click(function(){
+        $(".fc-button-month, .fc-button-prev, .fc-button-next, .fc-button-today").click(function(){
             $(".fc-view-month .fc-event").hide();      
         })
   });
-  
-    $(".fc-button-month").click(function(){
+    $(".fc-button-month, .fc-button-prev, .fc-button-next, .fc-button-today").click(function(){
         $(".fc-view-month .fc-event").hide();      
     })
 });
