@@ -16,8 +16,8 @@ class InvoiceSearch extends Invoice
 {
 	public $fromDate = '1-1-2016';
 	public $toDate = '31-12-2016';
-
-    /**
+    public $type;
+	/**
      * @inheritdoc
      */
     public function rules()
