@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Holiday */
 
-$this->title = $model->id;
+$this->title = 'Holiday Details';
 $this->params['breadcrumbs'][] = ['label' => 'Holidays', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

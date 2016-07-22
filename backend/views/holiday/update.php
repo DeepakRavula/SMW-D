@@ -5,10 +5,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Holiday */
 
-$this->title = 'Update Holiday: ' . ' ' . $model->id;
+$this->title = 'Edit Holiday';
 $this->params['breadcrumbs'][] = ['label' => 'Holidays', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Edit';
 ?>
 <div class="holiday-update">
 

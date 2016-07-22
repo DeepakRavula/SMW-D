@@ -6,9 +6,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Holiday */
 
-$this->title = 'Create Holiday';
+$this->title = 'Add new Holiday';
 $this->params['breadcrumbs'][] = ['label' => 'Holidays', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'Create';
 ?>
 <div class="holiday-create">
 
