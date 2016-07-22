@@ -5,10 +5,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\ProfessionalDevelopmentDay */
 
-$this->title = 'Update Professional Development Day: ' . ' ' . $model->id;
+$this->title = 'Edit Professional Development Day';
 $this->params['breadcrumbs'][] = ['label' => 'Professional Development Days', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Edit';
 ?>
 <div class="professional-development-day-update">
 

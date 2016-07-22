@@ -26,7 +26,7 @@ class ProfessionalDevelopmentDay extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['date'], 'safe'],
+            [['id','date'], 'safe'],
         ];
     }
 
