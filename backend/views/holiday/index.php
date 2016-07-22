@@ -8,27 +8,35 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Holidays';
+$this->params['subtitle'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i>'), ['create'],['class' => 'btn btn-success pull-left']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="holiday-index">
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?php echo Html::a('Add new Holiday', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
+<?php yii\widgets\Pjax::begin(); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $u= \yii\helpers\StringHelper::basename(get_class($model));
+            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        },
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'date',
-
-            ['class' => 'yii\grid\ActionColumn'],
+			[
+                'attribute' => 'date',
+				'label' => 'Date',
+				'value' => function($data) {
+					return ! (empty($data->date)) ? Yii::$app->formatter->asDate($data->date) : null;
+                } 
+			],
         ],
     ]); ?>
+
+	<?php yii\widgets\Pjax::end(); ?>
 
 </div>
