@@ -317,6 +317,18 @@ $bundle = BackendAsset::register($this);
                             		'visible'=>Yii::$app->user->can('staffmember')
                         		],
 								[
+                            		'label'=>Yii::t('backend', 'Holidays'),
+                            		'icon'=>'<i class="fa fa-car"></i>',
+                            		'url'=>['/holiday/index'],
+                            		'visible'=>Yii::$app->user->can('staffmember')
+                        		],
+								[
+                            		'label'=>Yii::t('backend', 'PD Days'),
+                            		'icon'=>'<i class="fa fa-calendar-times-o"></i>',
+                            		'url'=>['/professional-development-day/index'],
+                            		'visible'=>Yii::$app->user->can('staffmember')
+                        		],
+								[
                             		'label'=>Yii::t('backend', 'Import'),
                             		'icon'=>'<i class="fa  fa-upload"></i>',
                             		'url'=>['/user/import'],
