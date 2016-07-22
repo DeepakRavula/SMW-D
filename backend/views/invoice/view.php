@@ -2,11 +2,12 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use backend\models\search\InvoiceSearch;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 
-$this->title = 'Invoice';
+$this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Add Pro-forma Invoice' : 'Add Invoice';
 $this->params['subtitle'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id]);
 $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
@@ -41,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
           <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
           <div class="pull-left invoice-address text-gray">
             <div class="row-fluid">
-              <h2 class="m-0 text-inverse"><strong>INVOICE </strong></h2>
+              <h2 class="m-0 text-inverse"><strong><?php echo (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
           </div>
           <small><?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address)): ?>
                 <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address?>
@@ -96,8 +97,8 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
         <!-- /.col -->
         <div class="col-sm-4 invoice-col m-t-10 text-right p-0">
             <div class="row-fluid  text-gray">
-              <div class="col-md-4 pull-right text-right p-r-0">#<?php echo $model->invoice_number;?></div>
-              <div class="col-md-2 pull-right">Number:</div> 
+              <div class="col-md-4 pull-right text-right p-r-0"><?php echo (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#' . $model->invoice_number?></div>
+              <div class="col-md-2 pull-right"><?php echo (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Number:'?> </div> 
               <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">

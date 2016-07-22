@@ -107,7 +107,7 @@ class InvoiceController extends Controller
 
 		$post = $request->post();
         if ( ! empty($post['selection']) && is_array($post['selection'])) {
-			$invoice->type = $invoiceRequest->type;
+			$invoice->type = $invoiceRequest['type'];
 			$lastInvoice = Invoice::lastInvoice($location_id);
 
 			if(empty($lastInvoice)) {
