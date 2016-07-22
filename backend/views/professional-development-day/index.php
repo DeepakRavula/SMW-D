@@ -8,27 +8,28 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Professional Development Days';
+$this->params['subtitle'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i>'), ['create'],['class' => 'btn btn-success pull-left']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="professional-development-day-index">
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?php echo Html::a('Create Professional Development Day', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
+   <?php yii\widgets\Pjax::begin(); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'date',
-
-            ['class' => 'yii\grid\ActionColumn'],
+			[
+                'attribute' => 'date',
+				'label' => 'Date',
+				'value' => function($data) {
+					return ! (empty($data->date)) ? Yii::$app->formatter->asDate($data->date) : null;
+                } 
+			],
+			['class' => 'yii\grid\ActionColumn','template' => '{view}'],
         ],
     ]); ?>
-
+	<?php yii\widgets\Pjax::end(); ?>
 </div>

@@ -49,4 +49,11 @@ class ProfessionalDevelopmentDay extends \yii\db\ActiveRecord
     {
         return new \common\models\query\ProfessionalDevelopmentDayQuery(get_called_class());
     }
+
+	public function beforeSave($insert) {
+	    $professionalDevelopmentDate = \DateTime::createFromFormat('d-m-Y', $this->date);
+    	$this->date = $professionalDevelopmentDate->format('Y-m-d');
+		
+		return parent::beforeSave($insert);
+	}
 }
