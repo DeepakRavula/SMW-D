@@ -69,7 +69,7 @@ $(document).ready(function() {
     dayClick: function(date, allDay, jsEvent, view) {
         if (allDay) {
             // Clicked on the entire day
-            $('#calendar').fullCalendar('changeView', 'agendaDay');
+            $('#calendar').fullCalendar('changeView', 'resourceDay');
             $('#calendar').fullCalendar('gotoDate', date);
         }
     }
@@ -127,7 +127,7 @@ $(document).ready(function() {
             dayClick: function(date, allDay, jsEvent, view) {
                 if (allDay) {
                     // Clicked on the entire day
-                    $('#calendar').fullCalendar('changeView', 'agendaDay');
+                    $('#calendar').fullCalendar('changeView', 'resourceDay');
                     $('#calendar').fullCalendar('gotoDate', date);
                 }
             }
