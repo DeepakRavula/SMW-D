@@ -7,7 +7,7 @@ use backend\models\search\InvoiceSearch;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 
-$this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Add Pro-forma Invoice' : 'Add Invoice';
+$this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice';
 $this->params['subtitle'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id]);
 $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
