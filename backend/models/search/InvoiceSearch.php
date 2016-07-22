@@ -49,9 +49,7 @@ class InvoiceSearch extends Invoice
             'query' => $query,
         ]);
 
-		//print_r($params);die;
         if ( !($this->load($params) && $this->validate())) {
-			//print_r($this->errors);die;
             return $dataProvider;
         }
 
