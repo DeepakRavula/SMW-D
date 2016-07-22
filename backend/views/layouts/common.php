@@ -234,7 +234,7 @@ $bundle = BackendAsset::register($this);
                             'url' => '#',
                             'icon'=>'<i class="fa fa-music"></i>',
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='lesson' || Yii::$app->controller->id=='group-course')? true : false,
+                            'active'=>(Yii::$app->controller->id=='lesson' || Yii::$app->controller->id=='group-course' || Yii::$app->controller->id=='group-lesson')? true : false,
                             'options'=>['class'=>'treeview'],
                             'items'=>[
                                 [
@@ -247,7 +247,7 @@ $bundle = BackendAsset::register($this);
 									'label'=>Yii::t('backend', 'Group Lessons'), 
 									'url'=>['/group-course/index'], 
 									'icon'=>'<i class="fa fa-angle-double-right"></i>',
-                                    'active'=>(Yii::$app->controller->id=='group-course')? true : false,
+                                    'active'=>(Yii::$app->controller->id=='group-course' || Yii::$app->controller->id=='group-lesson')? true : false,
 								],
                       		],
 						],
@@ -314,6 +314,18 @@ $bundle = BackendAsset::register($this);
                             		'label'=>Yii::t('backend', 'Locations'),
                             		'icon'=>'<i class="fa  fa-map-marker"></i>',
                             		'url'=>['/location/index'],
+                            		'visible'=>Yii::$app->user->can('staffmember')
+                        		],
+								[
+                            		'label'=>Yii::t('backend', 'Holidays'),
+                            		'icon'=>'<i class="fa fa-car"></i>',
+                            		'url'=>['/holiday/index'],
+                            		'visible'=>Yii::$app->user->can('staffmember')
+                        		],
+								[
+                            		'label'=>Yii::t('backend', 'PD Days'),
+                            		'icon'=>'<i class="fa fa-calendar-times-o"></i>',
+                            		'url'=>['/professional-development-day/index'],
                             		'visible'=>Yii::$app->user->can('staffmember')
                         		],
 								[

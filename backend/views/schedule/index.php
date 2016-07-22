@@ -65,9 +65,15 @@ $(document).ready(function() {
         });
         
         $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
+    },
+    dayClick: function(date, allDay, jsEvent, view) {
+        if (allDay) {
+            // Clicked on the entire day
+            $('#calendar').fullCalendar('changeView', 'resourceDay');
+            $('#calendar').fullCalendar('gotoDate', date);
+        }
     }
   });
-  
   
   $("#active").change(function() {
        var resources = <?php echo Json::encode($teachersWithClass); ?>;
@@ -117,8 +123,21 @@ $(document).ready(function() {
                 });
                 
                 $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
+            },
+            dayClick: function(date, allDay, jsEvent, view) {
+                if (allDay) {
+                    // Clicked on the entire day
+                    $('#calendar').fullCalendar('changeView', 'resourceDay');
+                    $('#calendar').fullCalendar('gotoDate', date);
+                }
             }
         });
+        $(".fc-button-month, .fc-button-prev, .fc-button-next, .fc-button-today").click(function(){
+            $(".fc-view-month .fc-event").hide();      
+        })
   });
+    $(".fc-button-month, .fc-button-prev, .fc-button-next, .fc-button-today").click(function(){
+        $(".fc-view-month .fc-event").hide();      
+    })
 });
 </script>
