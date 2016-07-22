@@ -67,13 +67,10 @@ $(document).ready(function() {
         $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
     },
     dayClick: function(date, allDay, jsEvent, view) {
-
         if (allDay) {
             // Clicked on the entire day
-            $('#calendar')
-                .fullCalendar('changeView', 'agendaDay')
-                .fullCalendar('gotoDate',
-                    date.getFullYear(), date.getMonth(), date.getDate());
+            $('#calendar').fullCalendar('changeView', 'agendaDay');
+            $('#calendar').fullCalendar('gotoDate', date);
         }
     }
   });
@@ -127,14 +124,11 @@ $(document).ready(function() {
                 
                 $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
             },
-             dayClick: function(date, allDay, jsEvent, view) {
-
+            dayClick: function(date, allDay, jsEvent, view) {
                 if (allDay) {
                     // Clicked on the entire day
-                    $('#calendar')
-                        .fullCalendar('changeView', 'agendaDay')
-                        .fullCalendar('gotoDate',
-                            date.getFullYear(), date.getMonth(), date.getDate());
+                    $('#calendar').fullCalendar('changeView', 'agendaDay');
+                    $('#calendar').fullCalendar('gotoDate', date);
                 }
             }
         });
