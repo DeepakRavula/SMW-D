@@ -26,8 +26,6 @@ class Holiday extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
-            [['id'], 'integer'],
             [['date'], 'safe'],
         ];
     }
@@ -51,4 +49,11 @@ class Holiday extends \yii\db\ActiveRecord
     {
         return new \common\models\query\HolidayQuery(get_called_class());
     }
+
+	public function beforeSave($insert) {
+	    $holidayDate = \DateTime::createFromFormat('d-m-Y', $this->date);
+    	$this->date = $holidayDate->format('Y-m-d');
+		
+		return parent::beforeSave($insert);
+	}
 }
