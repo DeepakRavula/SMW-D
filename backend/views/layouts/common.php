@@ -233,7 +233,7 @@ $bundle = BackendAsset::register($this);
                             'url' => '#',
                             'icon'=>'<i class="fa fa-music"></i>',
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='lesson' || Yii::$app->controller->id=='group-course')? true : false,
+                            'active'=>(Yii::$app->controller->id=='lesson' || Yii::$app->controller->id=='group-course' || Yii::$app->controller->id=='group-lesson')? true : false,
                             'options'=>['class'=>'treeview'],
                             'items'=>[
                                 [
@@ -246,7 +246,7 @@ $bundle = BackendAsset::register($this);
 									'label'=>Yii::t('backend', 'Group Lessons'), 
 									'url'=>['/group-course/index'], 
 									'icon'=>'<i class="fa fa-angle-double-right"></i>',
-                                    'active'=>(Yii::$app->controller->id=='group-course')? true : false,
+                                    'active'=>(Yii::$app->controller->id=='group-course' || Yii::$app->controller->id=='group-lesson')? true : false,
 								],
                       		],
 						],
