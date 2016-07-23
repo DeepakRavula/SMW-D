@@ -120,15 +120,28 @@ public $teacherId;
 		$start = new \DateTime($commencementDate);
 		$end = new \DateTime($renewalDate);
 		$period = new \DatePeriod($start, $interval, $end);
+		
+		$holidays = Holiday::find()->all();
+		$pdDays = ProfessionalDevelopmentDay::find()->all();
+		
+		foreach($holidays as $holiday){
+			$holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
+			$holiDays[] = $holiday->format('Y-m-d');
+		}
+
+		foreach($pdDays as $pdDay){
+			$pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
+			$professionalDays[] = $pdDay->format('Y-m-d');
+		}
+		$leaveDays = array_merge($holiDays,$professionalDays);
 
 		foreach($period as $day){
-			if($day->format('N') === $this->day) {
-				$professionalDevelopmentDay = clone $day;
-				$professionalDevelopmentDay->modify('last day of previous month');
-				$professionalDevelopmentDay->modify('fifth ' . $day->format('l'));
-				if($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-					continue;
+			foreach($leaveDays as $leaveDay){
+				if($day->format('Y-m-d') === $leaveDay){
+					continue 2;
 				}
+			}
+			if($day->format('N') === $this->day){
 				$lesson = new Lesson();
 				$lesson->setAttributes([
 					'enrolment_id'	 => $this->id,
