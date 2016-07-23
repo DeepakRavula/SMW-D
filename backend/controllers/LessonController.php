@@ -122,11 +122,15 @@ class LessonController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Lesson::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
+		$model = Lesson::find()->location($locationId)
+			->where(['lesson.id' => $id])->one();
+				if ($model !== null) {
+					return $model;
+				} else {
+					throw new NotFoundHttpException('The requested page does not exist.');
+				}
     }
 
 	public function actionInvoice($id) {

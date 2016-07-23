@@ -159,10 +159,14 @@ class GroupCourseController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = GroupCourse::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
+		$model = GroupCourse::find()
+			->where(['id' => $id,'location_id' => $locationId])->one();
+				if ($model !== null) {
+					return $model;
+				} else {
+					throw new NotFoundHttpException('The requested page does not exist.');
+				}
     }
 }

@@ -117,10 +117,14 @@ class GroupLessonController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = GroupLesson::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
+		$model = GroupLesson::find()->location($locationId)
+			->where(['group_lesson.id' => $id])->one();
+				if ($model !== null) {
+					return $model;
+				} else {
+					throw new NotFoundHttpException('The requested page does not exist.');
+				}
     }
 }

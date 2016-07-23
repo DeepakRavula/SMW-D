@@ -31,4 +31,12 @@ class GroupLessonQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+	public function location($locationId) {
+		$this->joinWith(['groupCourse gc' => function($query) use($locationId){
+			$query->andFilterWhere(['gc.location_id' => $locationId]);
+		}]);
+		
+		return $this;
+	}
 }
