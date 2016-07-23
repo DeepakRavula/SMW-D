@@ -54,7 +54,18 @@ class ScheduleController extends Controller
             ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->orderBy('id desc')
             ->all();
-            
+
+		$groupCourseTeachersWithClass = (new \yii\db\Query())
+            ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
+            ->from('teacher_availability_day ta')
+            ->join('Join', 'user_location ul', 'ul.id = ta.teacher_location_id')
+            ->join('Join', 'user_profile up', 'up.user_id = ul.user_id')
+            ->join('Join', 'group_lesson gl', 'gl.teacher_id = up.user_id')
+            ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+            ->orderBy('id desc')
+            ->all();
+           
+		$teachersWithClass = array_unique(array_merge($teachersWithClass,$groupCourseTeachersWithClass),SORT_REGULAR);
 			$allTeachers = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
@@ -73,6 +84,15 @@ class ScheduleController extends Controller
             ->join('Join', 'program p', 'p.id = e.program_id')
             ->where('e.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->all();
+
+		$groupLessonevents = (new \yii\db\Query())
+            ->select(['gl.teacher_id as resources', 'gl.id as id', 'gc.title as title, gc.day, gl.date as start, ADDTIME(gl.date, gc.length) as end'])
+            ->from('group_lesson gl')
+            ->join('Join', 'group_course gc', 'gc.id = gl.course_id')
+            ->where('gc.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+            ->all();
+
+		$events = array_merge($events,$groupLessonevents);
 
         $location = Location::findOne($id=Yii::$app->session->get('location_id'));
         $from_time = $location->from_time;
