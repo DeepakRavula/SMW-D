@@ -71,6 +71,8 @@ $(document).ready(function() {
             // Clicked on the entire day
             $('#calendar').fullCalendar('changeView', 'resourceDay');
             $('#calendar').fullCalendar('gotoDate', date);
+            $('#calendar').fullCalendar({resources:  <?php echo Json::encode($teachersWithClass); ?>,
+    events: <?php echo Json::encode($events); ?>,});
         }
     }
   });
@@ -129,6 +131,8 @@ $(document).ready(function() {
                     // Clicked on the entire day
                     $('#calendar').fullCalendar('changeView', 'resourceDay');
                     $('#calendar').fullCalendar('gotoDate', date);
+                    $('#calendar').fullCalendar({resources:  <?php echo Json::encode($teachersWithClass); ?>,
+    events: <?php echo Json::encode($events); ?>,});
                 }
             }
         });
