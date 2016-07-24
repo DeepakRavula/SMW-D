@@ -11,7 +11,11 @@ use kartik\datetime\DateTimePicker;
 ?>
 
 <div class="lesson-form">
-
+<?=
+	$this->render('view', [
+    	'model' => $model,
+    ]);
+?>
 <?php $form = ActiveForm::begin(); ?>
 
    	<div class="row">
