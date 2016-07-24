@@ -237,4 +237,23 @@ class InvoiceController extends Controller
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
         ]);
     }
+	public function actionSendMail($id) {
+		$model = $this->findModel($id);
+        $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
+        $invoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $invoiceLineItems,
+        ]);
+			$subject = 'From' . Yii::$app->name;
+		
+			Yii::$app->mailer->compose('generateInvoice', [
+			'model' => $model,
+			'toName' => $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity,
+			'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+			])
+			->setFrom(\Yii::$app->params['robotEmail'])   
+			->setTo($model->lineItems[0]->lesson->enrolment->student->customer->email) 
+			->setSubject($subject) 
+			->send();		
+		return $this->redirect(['view', 'id' => $model->id]);
+	}
 }
