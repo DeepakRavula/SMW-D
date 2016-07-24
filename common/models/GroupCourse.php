@@ -85,7 +85,6 @@ class GroupCourse extends \yii\db\ActiveRecord
                 'Thursday',
                 'Friday',
                 'Saturday',
-                'Sunday',
         ];
     }
 	public function beforeSave($insert) {

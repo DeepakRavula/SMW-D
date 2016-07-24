@@ -58,7 +58,6 @@ class TeacherAvailability extends \yii\db\ActiveRecord
                 'Thursday',
                 'Friday',
                 'Saturday',
-                'Sunday',
         ];
     }
 

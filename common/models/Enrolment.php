@@ -89,7 +89,6 @@ public $teacherId;
 				'Thursday',
 				'Friday',
 				'Saturday',
-				'Sunday',
 		];
 	}
 	
