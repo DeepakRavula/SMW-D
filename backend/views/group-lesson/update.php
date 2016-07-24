@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 $this->title = 'Edit Group Lesson';
 $this->params['breadcrumbs'][] = ['label' => 'Group Lessons', 'url' => ['group-course/view', 'id' => $model->groupCourse->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Edit';
 ?>
 <div class="group-lesson-update">
 
