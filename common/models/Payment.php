@@ -43,7 +43,7 @@ class Payment extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'payment_method_id' => 'Payment Method ID',
+            'payment_method_id' => 'Payment Method',
             'amount' => 'Amount',
         ];
     }

@@ -186,6 +186,9 @@ $this->params['breadcrumbs'][] = $this->title;
 	$('.add-new-student').click(function () {
 		$('.show-create-student-form').show();
 	});
+	$('.add-new-payment').click(function () {
+		$('.show-create-payment-form').show();
+	});
 	$('.add-address').bind('click', function () {
 		$('.address-fields').show();
 		$('.hr-ad').hide();

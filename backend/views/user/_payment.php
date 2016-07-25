@@ -1,11 +1,19 @@
 <?php
 
 use yii\grid\GridView;
-use common\models\Invoice;
+use common\models\Payment;
 ?>
 <div class="col-md-12">
-	<h4 class="pull-left m-r-20">Payments</h4>
+	<h4 class="pull-left m-r-20">Payments </h4> 
+	<a href="#" class="add-new-payment text-add-new"><i class="fa fa-plus"></i></a>
+	<div class="clearfix"></div>
 </div>
+<div class="dn show-create-payment-form">
+	<?php echo $this->render('_form-payment', [
+		'model' => new Payment(),
+	]) ?>
+</div>
+
 <?php yii\widgets\Pjax::begin() ?>
 <?php echo GridView::widget([
         'dataProvider' => $paymentDataProvider,
