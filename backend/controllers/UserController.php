@@ -184,13 +184,9 @@ class UserController extends Controller {
 			'query' => $invoiceQuery,
 		]);
 		$paymentsDataProvider = new ActiveDataProvider([
-			'query' => Payments::find()        
+			'query' => Payment::find()        
                 ->where(['user_id' => $id]),
 		]);
-        $payments = Payments::find()
-				->joinWith('invoice')
-				->where(['user_id' => $id])
-				->all();
         $paymentMethods = Payment::find()
 				->joinWith('paymentMethods')
 				->where(['user_id' => $id])

@@ -20,7 +20,7 @@ class Payment extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'payments';
+        return 'payment';
     }
 
     /**

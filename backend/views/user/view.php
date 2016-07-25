@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			'invoiceDataProvider' => $invoiceDataProvider,
 		]);
         
-        $paymentsContent = $this->render('_payments', [
+        $paymentsContent = $this->render('_payment', [
 			'paymentsDataProvider' => $paymentsDataProvider,
 		]);
 
