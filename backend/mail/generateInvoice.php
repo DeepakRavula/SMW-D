@@ -9,6 +9,7 @@ use common\models\Invoice;
 Dear <?php echo Html::encode($toName) ?>,<br>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
+			'summary' => '',
             'tableOptions' =>['class' => 'table table-bordered m-0'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
