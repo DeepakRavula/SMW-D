@@ -24,6 +24,7 @@ use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
 use common\models\Program;
+use common\models\Allocation;
 use yii\web\ForbiddenHttpException;
 
 /**
@@ -183,14 +184,12 @@ class UserController extends Controller {
 		$invoiceDataProvider = new ActiveDataProvider([
 			'query' => $invoiceQuery,
 		]);
-		$paymentsDataProvider = new ActiveDataProvider([
-			'query' => Payment::find()        
-                ->where(['user_id' => $id]),
+		$paymentDataProvider = new ActiveDataProvider([
+			'query' => Allocation::find()
+				->joinWith(['invoice i' => function($query) use($id){
+					$query->student($id);
+				}])
 		]);
-        $paymentMethods = Payment::find()
-				->joinWith('paymentMethods')
-				->where(['user_id' => $id])
-				->all();
 		return $this->render('view', [
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,
@@ -206,7 +205,7 @@ class UserController extends Controller {
 					'enrolmentDataProvider' => $enrolmentDataProvider,
 					'invoiceDataProvider' => $invoiceDataProvider,
 					'studentDataProvider' => $studentDataProvider,
-                    'paymentsDataProvider' => $paymentsDataProvider,
+                    'paymentDataProvider' => $paymentDataProvider,
 		]);
 	}
 

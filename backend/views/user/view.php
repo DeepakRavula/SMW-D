@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		]);
         
         $paymentsContent = $this->render('_payment', [
-			'paymentsDataProvider' => $paymentsDataProvider,
+			'paymentDataProvider' => $paymentDataProvider,
 		]);
 
 		$qualificationContent = $this->render('_view-qualification',[

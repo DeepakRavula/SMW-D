@@ -16,6 +16,9 @@ use Yii;
  */
 class Allocation extends \yii\db\ActiveRecord
 {
+	const TYPE_DEBIT = 1;
+	const TYPE_CREDIT = 2;
+	
     /**
      * @inheritdoc
      */
@@ -59,5 +62,15 @@ class Allocation extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\AllocationQuery(get_called_class());
+    }
+
+	public function getInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
+    }
+
+	public function getPayment()
+    {
+        return $this->hasOne(Payment::className(), ['id' => 'payment_id']);
     }
 }
