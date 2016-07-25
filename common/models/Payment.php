@@ -13,7 +13,7 @@ use Yii;
  * @property integer $payment_method_id
  * @property double $amount
  */
-class Payments extends \yii\db\ActiveRecord
+class Payment extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -29,8 +29,8 @@ class Payments extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'invoice_id', 'payment_method_id', 'amount'], 'required'],
-            [['user_id', 'invoice_id', 'payment_method_id'], 'integer'],
+            [['user_id', 'payment_method_id', 'amount'], 'required'],
+            [['user_id', 'payment_method_id'], 'integer'],
             [['amount'], 'number'],
         ];
     }
@@ -43,7 +43,6 @@ class Payments extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'invoice_id' => 'Invoice ID',
             'payment_method_id' => 'Payment Method ID',
             'amount' => 'Amount',
         ];
@@ -56,6 +55,6 @@ class Payments extends \yii\db\ActiveRecord
     
     public function getPaymentMethods()
     {
-        return $this->hasOne(PaymentMethods::className(), ['id' => 'payment_method_id']);
+        return $this->hasOne(PaymentMethod::className(), ['id' => 'payment_method_id']);
     }
 }

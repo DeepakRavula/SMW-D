@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\PaymentMethods;
+use common\models\Payment;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * PaymentMethodsController implements the CRUD actions for PaymentMethods model.
+ * PaymentsController implements the CRUD actions for Payments model.
  */
-class PaymentMethodsController extends Controller
+class PaymentController extends Controller
 {
     public function behaviors()
     {
@@ -27,13 +27,13 @@ class PaymentMethodsController extends Controller
     }
 
     /**
-     * Lists all PaymentMethods models.
+     * Lists all Payments models.
      * @return mixed
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => PaymentMethods::find(),
+            'query' => Payments::find(),
         ]);
 
         return $this->render('index', [
@@ -42,8 +42,8 @@ class PaymentMethodsController extends Controller
     }
 
     /**
-     * Displays a single PaymentMethods model.
-     * @param integer $id
+     * Displays a single Payments model.
+     * @param string $id
      * @return mixed
      */
     public function actionView($id)
@@ -54,13 +54,13 @@ class PaymentMethodsController extends Controller
     }
 
     /**
-     * Creates a new PaymentMethods model.
+     * Creates a new Payments model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new PaymentMethods();
+        $model = new Payments();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -72,9 +72,9 @@ class PaymentMethodsController extends Controller
     }
 
     /**
-     * Updates an existing PaymentMethods model.
+     * Updates an existing Payments model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     * @param string $id
      * @return mixed
      */
     public function actionUpdate($id)
@@ -91,9 +91,9 @@ class PaymentMethodsController extends Controller
     }
 
     /**
-     * Deletes an existing PaymentMethods model.
+     * Deletes an existing Payments model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     * @param string $id
      * @return mixed
      */
     public function actionDelete($id)
@@ -104,15 +104,15 @@ class PaymentMethodsController extends Controller
     }
 
     /**
-     * Finds the PaymentMethods model based on its primary key value.
+     * Finds the Payments model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return PaymentMethods the loaded model
+     * @param string $id
+     * @return Payments the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = PaymentMethods::findOne($id)) !== null) {
+        if (($model = Payments::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

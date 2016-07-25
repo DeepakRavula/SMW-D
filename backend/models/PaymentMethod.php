@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models;
+namespace app\models;
 
 use Yii;
 
@@ -10,7 +10,7 @@ use Yii;
  * @property integer $id
  * @property string $name
  */
-class PaymentMethods extends \yii\db\ActiveRecord
+class PaymentMethod extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc

@@ -1,7 +1,7 @@
 <?php
 
 namespace backend\controllers;
-use common\models\Payments;
+use common\models\Payment;
 use Yii;
 use common\models\User;
 use common\models\UserLocation;
@@ -191,7 +191,7 @@ class UserController extends Controller {
 				->joinWith('invoice')
 				->where(['user_id' => $id])
 				->all();
-        $paymentMethods = Payments::find()
+        $paymentMethods = Payment::find()
 				->joinWith('paymentMethods')
 				->where(['user_id' => $id])
 				->all();
