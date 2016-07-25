@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\filters\AccessControl;
 use common\models\TeacherAvailability;
+use yii\web\NotFoundHttpException;
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
@@ -41,7 +42,7 @@ class CalendarController extends Controller
      * Lists all Qualification models.
      * @return mixed
      */
-    public function actionIndex($id)
+    public function actionView($id)
     {  
         $teachersWithClass = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
@@ -93,12 +94,14 @@ class CalendarController extends Controller
             ->all();
 
 		$events = array_merge($events,$groupLessonevents);
-
-        $location = Location::findOne($id = $id);
-        $from_time = $location->from_time;
-        $to_time = $location->to_time;
-        
-		return $this->render('index', ['teachersWithClass'=>$teachersWithClass, 'allTeachers'=>$allTeachers, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
+		if($id <= 9){
+	        $location = Location::findOne($id = $id);
+    	    $from_time = $location->from_time;
+        	$to_time = $location->to_time;
+		}else{
+			throw new NotFoundHttpException('The requested page does not exist.');
+		}
+		return $this->render('view', ['teachersWithClass'=>$teachersWithClass, 'allTeachers'=>$allTeachers, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
     }
     
     public function actionUpdateEvents(){
