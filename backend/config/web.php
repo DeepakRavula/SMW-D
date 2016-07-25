@@ -79,6 +79,12 @@ $config = [
     'as globalAccess'=>[
         'class'=>'\common\behaviors\GlobalAccessBehavior',
         'rules'=>[
+			[
+                'controllers'=>['calendar'],
+                'allow' => true,
+                'roles' => ['?'],
+                'actions'=>['view']
+            ],
             [
                 'controllers'=>['sign-in'],
                 'allow' => true,

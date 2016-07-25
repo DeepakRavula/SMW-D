@@ -44,6 +44,7 @@ class CalendarController extends Controller
      */
     public function actionView($id)
     {  
+		$this->layout = 'guest';
         $teachersWithClass = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
