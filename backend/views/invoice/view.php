@@ -32,13 +32,14 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
     }
 </style>
 <div class="invoice-view p-50">
-    <div class="row">
-        <div class="col-xs-12 p-0">
+         <div class="row">
+		<div class="col-xs-12 p-0">
           <h2 class="m-0">
             <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo pull-left">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
+		<?php echo Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-right',]) ?>  
           <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
           <div class="pull-left invoice-address text-gray">
             <div class="row-fluid">
