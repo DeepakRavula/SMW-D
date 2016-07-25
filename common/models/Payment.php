@@ -57,4 +57,15 @@ class Payment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PaymentMethod::className(), ['id' => 'payment_method_id']);
     }
+
+	public function afterSave($insert, $changedAttributes)
+    {
+		$allocationModel = new Allocation();
+		$allocationModel->payment_id = $this->id;
+		$allocationModel->amount = $this->amount;
+		$allocationModel->type = Allocation::TYPE_DEBIT;
+		$currentDate = new \DateTime();
+		$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
+		$allocationModel->save();
+    } 
 }

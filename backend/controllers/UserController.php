@@ -190,6 +190,16 @@ class UserController extends Controller {
 					$query->student($id);
 				}])
 		]);
+		$paymentModel = new Payment();
+        if ($paymentModel->load(Yii::$app->request->post()) ) {
+			$paymentModel->user_id = $id;
+			$paymentModel->save();
+			    Yii::$app->session->setFlash('alert', [
+            	    'options' => ['class' => 'alert-success'],
+                	'body' => 'Payment has been created successfully'
+            ]);
+				return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id,'section' => 'payment']);
+        }
 		return $this->render('view', [
 					'student' => new Student(),
 					'dataProvider' => $dataProvider,

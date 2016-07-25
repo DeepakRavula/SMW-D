@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			'invoiceDataProvider' => $invoiceDataProvider,
 		]);
         
-        $paymentsContent = $this->render('_payment', [
+        $paymentContent = $this->render('_payment', [
 			'paymentDataProvider' => $paymentDataProvider,
 		]);
 
@@ -133,6 +133,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Students',
 				'content' => $teacherStudentContent,
+				'active' => $section === 'student',
 			],	
 			
 		];
@@ -146,14 +147,22 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Enrolments',
 				'content' => $enrolmentContent,
+				'active' => $section === 'enrolment',
 			],
 			[
 				'label' => 'Lessons',
 				'content' => $lessonContent,
+				'active' => $section === 'lesson',
 			],
 			[
 				'label' => 'Invoices',
 				'content' => $invoiceContent,
+				'active' => $section === 'invoice',
+			],
+			[
+				'label' => 'Payments',
+				'content' => $paymentContent,
+				'active' => $section === 'payment',
 			]
 		];
 		if (in_array($role->name, ['teacher'])) {
@@ -162,13 +171,6 @@ $this->params['breadcrumbs'][] = $this->title;
 		
 		if (in_array($role->name, ['customer'])) {
 			$items = array_merge($items,$customerItems);
-		}
-        if (in_array($role->name, ['customer'])) {
-			$items[] =
-			[
-				'label' => 'Payments',
-				'content' => $paymentsContent,
-			];
 		}
 		?>
 		<?php

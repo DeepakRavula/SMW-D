@@ -33,7 +33,7 @@ class Allocation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoice_id', 'payment_id', 'amount', 'type'], 'required'],
+            [['payment_id', 'amount', 'type'], 'required'],
             [['invoice_id', 'payment_id', 'type'], 'integer'],
             [['amount'], 'number'],
             [['date'], 'safe'],
