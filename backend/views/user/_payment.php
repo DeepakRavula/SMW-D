@@ -8,7 +8,7 @@ use common\models\Invoice;
 </div>
 <?php yii\widgets\Pjax::begin() ?>
 <?php echo GridView::widget([
-        'dataProvider' => $paymentsDataProvider,
+        'dataProvider' => $paymentDataProvider,
         'options' => ['class' => 'col-md-12'],
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
@@ -21,15 +21,16 @@ use common\models\Invoice;
             [
                 'label' => 'Invoice Number',
                 'value' => function($data) {
-                    return ! empty($data->invoice->invoice_number) ? $data->invoice->invoice_number : null;
+                    return ! empty($data->invoice_id) ? $data->invoice_id : null;
                 },
             ],
-            [
-			'label' => 'Payment Method',
-				'value' => function($data) {
-					return ! empty($data->paymentMethods->name) ? $data->paymentMethods->name : null;
+			[
+                'label' => 'Payment Method',
+                'value' => function($data) {
+                    return ! empty($data->payment->paymentMethod->name) ? $data->payment->paymentMethod->name : null;
                 },
-			],
+            ],
+			'date:date',
             'amount:currency',            
 	    ],
     ]); ?>
