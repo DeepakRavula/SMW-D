@@ -73,5 +73,10 @@ class Payment extends \yii\db\ActiveRecord
 		$currentDate = new \DateTime();
 		$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
 		$allocationModel->save();
+
+		$balanceLogModel = new BalanceLog();
+		$balanceLogModel->allocation_id = $allocationModel->id; 
+		$balanceLogModel->balance = $allocationModel->amount;
+		$balanceLogModel->save();
     } 
 }
