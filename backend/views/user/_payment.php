@@ -31,14 +31,14 @@ use common\models\Allocation;
             [
                 'label' => 'Date',
                 'value' => function($data) {
-					$date = \DateTime::createFromFormat('Y-m-d H:i:s',$data->allocation[0]->date);
-                    return ! empty($data->allocation[0]->date) ? $date->format('d M Y') : null;
+					$date = \DateTime::createFromFormat('Y-m-d H:i:s',$data->allocation->date);
+                    return ! empty($data->allocation->date) ? $date->format('d M Y') : null;
                 },
             ],
 			[
                 'label' => 'Description',
 				'value' => function($data){
-					switch($data->allocation[0]->type){
+					switch($data->allocation->type){
 						case Allocation::TYPE_OPENING_BALANCE:
 							$description = 'Opening Balance';
 						break;
@@ -57,16 +57,16 @@ use common\models\Allocation;
 			[
                 'label' => 'Debit',
 				'value' => function($data){
-					if($data->allocation[0]->type === Allocation::TYPE_OPENING_BALANCE || $data->allocation[0]->type === Allocation::TYPE_RECEIVABLE){
-						return ! empty($data->allocation[0]->amount) ? Yii::$app->formatter->asCurrency($data->allocation[0]->amount) : null;	
+					if($data->allocation->type === Allocation::TYPE_OPENING_BALANCE || $data->allocation->type === Allocation::TYPE_RECEIVABLE){
+						return ! empty($data->allocation->amount) ? Yii::$app->formatter->asCurrency($data->allocation->amount) : null;	
 					}
 				}
             ],
 			[
                 'label' => 'Credit',
 				'value' => function($data){
-					if($data->allocation[0]->type === Allocation::TYPE_PAID){
-						return ! empty($data->allocation[0]->amount) ? Yii::$app->formatter->asCurrency($data->allocation[0]->amount) : null;	
+					if($data->allocation->type === Allocation::TYPE_PAID){
+						return ! empty($data->allocation->amount) ? Yii::$app->formatter->asCurrency($data->allocation->amount) : null;	
 					}
 				}
             ],

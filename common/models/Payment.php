@@ -60,7 +60,7 @@ class Payment extends \yii\db\ActiveRecord
 
 	public function getAllocation()
     {
-        return $this->hasMany(Allocation::className(), ['payment_id' => 'id']);
+        return $this->hasOne(Allocation::className(), ['payment_id' => 'id']);
     }
 
 	public function afterSave($insert, $changedAttributes)
