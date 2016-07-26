@@ -1,6 +1,6 @@
 <?php
 use yii\grid\GridView;
-
+use common\models\Payment;
 ?>
 <?php yii\widgets\Pjax::begin() ?>
 <?php echo GridView::widget([
@@ -27,3 +27,13 @@ use yii\grid\GridView;
 	    ],
     ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
+<div class="col-md-12">
+	<h4 class="pull-left m-r-20">Payments </h4> 
+	<a href="#" class="add-new-payment text-add-new"><i class="fa fa-plus"></i></a>
+	<div class="clearfix"></div>
+</div>
+<div class="dn show-create-payment-form">
+	<?php echo $this->render('_form-payment', [
+		'model' => new Payment(),
+	]) ?>
+</div>

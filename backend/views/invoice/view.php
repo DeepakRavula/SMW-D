@@ -60,3 +60,10 @@ $paymentContent =  $this->render('_payment', [
         ],
     ],
 ]);?>
+</div>
+</div>
+<script>
+$('.add-new-payment').click(function () {
+		$('.show-create-payment-form').show();
+	});
+</script>
