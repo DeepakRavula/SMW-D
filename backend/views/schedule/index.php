@@ -102,10 +102,11 @@ $(document).ready(function() {
         }
     },
     eventAfterAllRender: function (view, element) {
+        var date = new Date($('#calendar').fullCalendar('getDate'));
         var count = 0;
         $('#calendar').fullCalendar('clientEvents', function(event) {
             var startTime = new Date(event.start);
-            var date = new Date($('#calendar').fullCalendar('getDate'));
+            //var date = new Date($('#calendar').fullCalendar('getDate'));
             var eventDate = startTime.getDate() + "/" + startTime.getMonth() + "/" + startTime.getFullYear();
             var currentDate = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
             if(eventDate == currentDate) {
@@ -114,7 +115,7 @@ $(document).ready(function() {
         });
         
         if(count==0){
-            $('#myflashinfo').html("No lessons scheduled for the day").fadeIn().delay(3000).fadeOut();
+            $('#myflashinfo').html("No lessons scheduled for the day").fadeIn().delay(1000).fadeOut();
         }
     },
   });
