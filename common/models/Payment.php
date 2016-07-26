@@ -43,7 +43,7 @@ class Payment extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'payment_method_id' => 'Payment Method ID',
+            'payment_method_id' => 'Payment Method',
             'amount' => 'Amount',
         ];
     }
@@ -57,4 +57,21 @@ class Payment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PaymentMethod::className(), ['id' => 'payment_method_id']);
     }
+
+	public function getAllocation()
+    {
+        return $this->hasOne(Allocation::className(), ['payment_id' => 'id']);
+    }
+
+	public function afterSave($insert, $changedAttributes)
+    {
+		$allocationModel = new Allocation();
+		$allocationModel->invoice_id = 1;	
+		$allocationModel->payment_id = $this->id;
+		$allocationModel->amount = $this->amount;
+		$allocationModel->type = Allocation::TYPE_OPENING_BALANCE;
+		$currentDate = new \DateTime();
+		$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
+		$allocationModel->save();
+    } 
 }

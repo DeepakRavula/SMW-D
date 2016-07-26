@@ -16,8 +16,9 @@ use Yii;
  */
 class Allocation extends \yii\db\ActiveRecord
 {
-	const TYPE_DEBIT = 1;
-	const TYPE_CREDIT = 2;
+	const TYPE_OPENING_BALANCE = 1;
+	const TYPE_RECEIVABLE = 2;
+	const TYPE_PAID = 3;
 	
     /**
      * @inheritdoc
@@ -33,7 +34,7 @@ class Allocation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoice_id', 'payment_id', 'amount', 'type'], 'required'],
+            [['payment_id', 'amount', 'type'], 'required'],
             [['invoice_id', 'payment_id', 'type'], 'integer'],
             [['amount'], 'number'],
             [['date'], 'safe'],
