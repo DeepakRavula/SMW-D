@@ -7,8 +7,9 @@ use backend\models\search\InvoiceSearch;
 /* @var $invoice common\models\Invoice */
 
 $this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Add Pro-forma Invoice' : 'Add Invoice';
-$this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice', 'url' => ['index', 'InvoiceSearch[type]' => $model->type]];
+;
+$this->params['breadcrumbs'][] = 'create';
 ?>
 <div class="invoice-create p-20">
 

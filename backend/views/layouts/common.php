@@ -255,7 +255,6 @@ $bundle = BackendAsset::register($this);
                             'label'=>Yii::t('backend', 'Invoices'),
                             'icon'=>'<i class="fa  fa-dollar"></i>',
                             'url' => '#',
-                            'url'=>['/invoice/index'],
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='invoice')? true : false,
                             'options'=>['class'=>'treeview'],
