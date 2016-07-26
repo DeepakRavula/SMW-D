@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
+use common\models\Allocation;
 use backend\models\search\InvoiceSearch;
 use common\models\User;
 use common\models\Tax;
@@ -58,10 +59,16 @@ class InvoiceController extends Controller
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
         ]);
-        
+       
+		$invoicePayments = Allocation::find()->where(['invoice_id' => $id]);
+		$invoicePaymentsDataProvider = new ActiveDataProvider([
+            'query' => $invoicePayments,
+        ]);
+		
         return $this->render('view', [
             'model' => $model,
-            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
+            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+			'invoicePayments' => $invoicePaymentsDataProvider,
         ]);
     }
 
