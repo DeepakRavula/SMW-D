@@ -583,7 +583,11 @@ Licensed under MIT
     font-size: 14px;
     top: 0;
 }
-
+.e1Div{
+      position: absolute;
+    right: 175px;
+    top: 18px;
+}
 @media print{
     .pull-left{
     float: left;
