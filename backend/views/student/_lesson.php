@@ -7,6 +7,17 @@ use yii\grid\GridView;
 ?>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Lessons</h4>
+ <a href="#" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
+ <div class="clearfix"></div>
+ </div>
+ <div class="dn lesson-create section-tab">
+     <?php echo $this->render('//lesson/_form', [
+         'model' => $lessonModel,
+         'studentModel' => $model,
+
+         ]) 
+             ?>
+
 </div>
 <?php yii\widgets\Pjax::begin() ?>
 <?php

@@ -25,6 +25,8 @@ $enrolmentContent =  $this->render('_enrolment', [
 
 $lessonContent =  $this->render('_lesson', [
 	'lessonDataProvider' => $lessonDataProvider,
+    'lessonModel' => $lessonModel,
+    'model' => $model,
 ]);
 
 ?>
@@ -40,7 +42,8 @@ $lessonContent =  $this->render('_lesson', [
             'content' => $lessonContent,
         ],
     ],
-]);?>
+]);
+?>
 <div class="clearfix"></div>
      </div>
  </div>
@@ -51,5 +54,13 @@ $(document).ready(function() {
   });
 });
 </script>
+<script>
+ $(document).ready(function() {
+     $('.add-new-lesson').click(function(){
+       $('.lesson-create').show();
+   });
+ });
+</script>
+
 
 
