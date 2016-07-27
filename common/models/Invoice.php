@@ -24,6 +24,9 @@ class Invoice extends \yii\db\ActiveRecord
 
 	const TYPE_PRO_FORMA_INVOICE = 1;
 	const TYPE_INVOICE = 2;
+	
+	const PAYMENT_METHOD_ACCOUNT = 1;
+	const PAYMENT_METHOD_CASH = 2;
 
 	public $customer_id;
 	
@@ -105,5 +108,13 @@ class Invoice extends \yii\db\ActiveRecord
             }])
             ->orderBy(['i.id' => SORT_DESC])
             ->one();
+    }
+
+	public static function paymentMethods()
+    {
+        return [
+            self::PAYMENT_METHOD_ACCOUNT => Yii::t('common', 'Account'),
+            self::PAYMENT_METHOD_CASH => Yii::t('common', 'Cash'),
+        ];
     }
 }

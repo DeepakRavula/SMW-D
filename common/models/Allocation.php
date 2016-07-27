@@ -18,7 +18,8 @@ class Allocation extends \yii\db\ActiveRecord
 {
 	const TYPE_OPENING_BALANCE = 1;
 	const TYPE_RECEIVABLE = 2;
-	const TYPE_PAID = 3;
+	const TYPE_PAYABLE= 3;
+	const TYPE_PAID = 4;
 	
     /**
      * @inheritdoc

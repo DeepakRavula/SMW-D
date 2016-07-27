@@ -23,7 +23,7 @@ use common\models\Payment;
                     return ! empty($data->payment->paymentMethod->name) ? $data->payment->paymentMethod->name : null;
                 },
             ],
-			'amount:currency',
+			'amount',
 	    ],
     ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>

@@ -15,6 +15,8 @@ use Yii;
  */
 class Payment extends \yii\db\ActiveRecord
 {
+	public $invoiceId;
+	public $allocationType;
     /**
      * @inheritdoc
      */
@@ -66,10 +68,10 @@ class Payment extends \yii\db\ActiveRecord
 	public function afterSave($insert, $changedAttributes)
     {
 		$allocationModel = new Allocation();
-		$allocationModel->invoice_id = 1;	
+		$allocationModel->invoice_id = $this->invoiceId;	
 		$allocationModel->payment_id = $this->id;
 		$allocationModel->amount = $this->amount;
-		$allocationModel->type = Allocation::TYPE_OPENING_BALANCE;
+		$allocationModel->type = $this->allocationType;
 		$currentDate = new \DateTime();
 		$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
 		$allocationModel->save();
@@ -78,5 +80,5 @@ class Payment extends \yii\db\ActiveRecord
 		$balanceLogModel->allocation_id = $allocationModel->id; 
 		$balanceLogModel->balance = $allocationModel->amount;
 		$balanceLogModel->save();
-    } 
+	}
 }

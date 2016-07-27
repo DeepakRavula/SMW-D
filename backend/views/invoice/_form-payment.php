@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
-use common\models\PaymentMethod;
+use common\models\Invoice;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -15,8 +15,7 @@ use common\models\PaymentMethod;
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
         <div class="col-xs-4">
-    		<?php echo $form->field($model, 'payment_method_id')->dropDownList(
-									ArrayHelper::map(PaymentMethod::find()->all(), 'id', 'name'))?>
+    		<?php echo $form->field($model, 'payment_method_id')->dropDownList(Invoice::paymentMethods())?>
         </div>
         <div class="col-xs-4">
    			<?php echo $form->field($model, 'amount')->textInput() ?>
