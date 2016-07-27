@@ -41,6 +41,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+			['user_id','required'],
 			[['type','notes','internal_notes'],'safe']
 		];
     }

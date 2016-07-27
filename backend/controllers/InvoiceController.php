@@ -122,7 +122,7 @@ class InvoiceController extends Controller
 			} else {
 				$invoiceNumber = $lastInvoice->invoice_number + 1;
 			}
-
+			$invoice->user_id = $customer->id; 
 			$invoice->invoice_number = $invoiceNumber;
 			$invoice->date = (new \DateTime())->format('Y-m-d');	
 			$invoice->status = Invoice::STATUS_OWING;

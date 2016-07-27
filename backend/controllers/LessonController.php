@@ -6,7 +6,7 @@ use Yii;
 use backend\models\search\LessonSearch;
 use common\models\Lesson;
 use common\models\Invoice;
-use common\models\Tax;
+use common\models\User;
 use common\models\InvoiceLineItem;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -146,7 +146,8 @@ class LessonController extends Controller
 		}
 
 		if($lessonDate <= $currentDate){
-			$invoice = new Invoice();	
+			$invoice = new Invoice();
+			$invoice->user_id = $model->enrolment->student->customer->id; 
 			$invoice->invoice_number = $invoiceNumber;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->status = Invoice::STATUS_OWING;
