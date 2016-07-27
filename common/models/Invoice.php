@@ -24,9 +24,11 @@ class Invoice extends \yii\db\ActiveRecord
 
 	const TYPE_PRO_FORMA_INVOICE = 1;
 	const TYPE_INVOICE = 2;
-	
-	const PAYMENT_METHOD_ACCOUNT = 1;
-	const PAYMENT_METHOD_CASH = 2;
+
+	const PAYMENT_METHOD_CASH = 1;
+	const PAYMENT_METHOD_CREDIT_CARD = 2;
+	const PAYMENT_METHOD_CHEQUE = 3;
+	const PAYMENT_METHOD_ACCOUNT = 4;
 
 	public $customer_id;
 	
@@ -78,7 +80,12 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
-   
+
+	public function getPayment()
+    {
+        return $this->hasMany(Payment::className(), ['user_id' => 'user_id']);
+    }
+  
 	public function status($data)
     {
 		$status = null;
@@ -113,8 +120,10 @@ class Invoice extends \yii\db\ActiveRecord
 	public static function paymentMethods()
     {
         return [
-            self::PAYMENT_METHOD_ACCOUNT => Yii::t('common', 'Account'),
             self::PAYMENT_METHOD_CASH => Yii::t('common', 'Cash'),
+            self::PAYMENT_METHOD_CREDIT_CARD => Yii::t('common', 'Credit Card'),
+            self::PAYMENT_METHOD_CHEQUE => Yii::t('common', 'Cheque'),
+            self::PAYMENT_METHOD_ACCOUNT => Yii::t('common', 'Account'),
         ];
     }
 }
