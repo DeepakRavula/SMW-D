@@ -17,7 +17,9 @@ class Program extends \yii\db\ActiveRecord
 {
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
-
+   
+	const TYPE_PRIVATE_PROGRAM = 1;
+	const TYPE_GROUP_PROGRAM = 2;
     /**
      * @inheritdoc
      */
@@ -43,6 +45,7 @@ class Program extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['rate', 'status'], 'integer'],
             [['name'], 'string', 'max' => 11],
+            [['type'], 'required'],
         ];
     }
 
@@ -56,6 +59,7 @@ class Program extends \yii\db\ActiveRecord
             'name' => 'Name',
             'rate' => 'Rate',
             'status' => 'Status',
+			'type' => 'Type',
         ];
     }
     

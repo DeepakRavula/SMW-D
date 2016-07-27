@@ -22,7 +22,7 @@ class ProgramSearch extends Program
     public function rules()
     {
         return [
-			[['name','rate','activeOnly'],'safe'],
+			[['name','rate','activeOnly','type'],'safe'],
         ];
     }
 
@@ -53,6 +53,8 @@ class ProgramSearch extends Program
 		if($this->activeOnly) {
 			$query->active();
 		}
+
+		$query->andWhere(['type' => $this->type]);
 
         return $dataProvider;
     }
