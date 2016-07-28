@@ -18,7 +18,7 @@ If you follow the link below you will be able to reset your password:
 <br>
 (NOTE:This link can be used just once and is scheduled to expire after 24 hours.)<br>
 <br>
-If you didn't make this request then you can safely ignored this email.<br>
+If you didn't make this request then you can safely ignore this email.<br>
 <br>
 Thank you<br>
 Arcadia Music Academy Team.<br>
