@@ -11,7 +11,6 @@ $this->title = 'Calendar';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="schedule-index">
-<div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div class="e1Div">
     <?= Html::checkbox('active', false, ['label' => 'Show All Teachers', 'id' => 'active' ]); ?>
 </div>
@@ -35,7 +34,7 @@ $(document).ready(function() {
     minTime: "<?php echo $from_time; ?>",
     maxTime: "<?php echo $to_time; ?>",
     slotDuration: "00:15:01",
-    editable: true,
+    editable: false,
     resources:  <?php echo Json::encode($teachersWithClass); ?>,
     events: <?php echo Json::encode($events); ?>,
     // the 'ev' parameter is the mouse event rather than the resource 'event'
@@ -73,7 +72,7 @@ $(document).ready(function() {
             minTime: "<?php echo $from_time; ?>",
             maxTime: "<?php echo $to_time; ?>",
             slotDuration: "00:15:01",
-            editable: true,
+            editable: false,
 			disableDragging: true,
             resources:  resources,
             events: <?php echo Json::encode($events); ?>,
