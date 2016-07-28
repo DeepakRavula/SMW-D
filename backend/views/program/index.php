@@ -26,11 +26,13 @@ $indexProgram =  $this->render('_index-program', [
             'label' => 'Private Program',
             'content' => $indexProgram,
 			'url'=>['/program/index','ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
+			'active' => (int) $searchModel->type === Program::TYPE_PRIVATE_PROGRAM,
         ],
 		[
             'label' => 'Group Program',
             'content' => $indexProgram,
 			'url'=>['/program/index','ProgramSearch[type]' => Program::TYPE_GROUP_PROGRAM],
+			'active' => (int) $searchModel->type === Program::TYPE_GROUP_PROGRAM,
         ],
     ],
 ]);?>
