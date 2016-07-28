@@ -92,6 +92,20 @@ class StudentController extends Controller
 		
         $model = $this->findModel($id);
 		$enrolmentModel = new Enrolment();
+        $lessonModel = new Lesson();
+        if($lessonModel->load(Yii::$app->request->post()) ){
+           $studentEnrolmentModel = Enrolment::findOne(['student_id'=>$id,'program_id'=>$lessonModel->program_id]);
+           $lessonModel->enrolment_id = $studentEnrolmentModel->id; 
+           $lessonModel->status = Lesson::STATUS_SCHEDULED;
+           $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
+           $lessonModel->date = $lessonDate->format('Y-m-d H:i:s');            
+           $lessonModel->save();
+           Yii::$app->session->setFlash('alert', [
+            	    'options' => ['class' => 'alert-success'],
+                	'body' => 'Program has been added successfully'
+            ]);
+            	return $this->redirect(['view', 'id' => $model->id,'section' => 'lesson']);
+        }
         if ($enrolmentModel->load(Yii::$app->request->post()) ) {
 			$enrolmentModel->student_id = $id;
 			$enrolmentModel->save();
@@ -105,6 +119,7 @@ class StudentController extends Controller
             	'model' => $model,
             	'dataProvider' => $dataProvider,
                 'enrolmentModel' => $enrolmentModel,
+                'lessonModel' => $lessonModel,
 				'lessonDataProvider' => $lessonDataProvider,
     			'addressDataProvider' => $addressDataProvider,
 			    'phoneDataProvider' => $phoneDataProvider,

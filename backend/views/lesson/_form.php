@@ -4,6 +4,10 @@ use common\models\Lesson;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
+use kartik\depdrop\DepDrop;
+use yii\helpers\ArrayHelper;
+use common\models\Program;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -11,15 +15,39 @@ use kartik\datetime\DateTimePicker;
 ?>
 
 <div class="lesson-form">
-<?=
-	$this->render('view', [
-    	'model' => $model,
-    ]);
-?>
 <?php $form = ActiveForm::begin(); ?>
 
    	<div class="row">
+        <div class="col-md-4">
+            <?php echo $form->field($model, 'program_id')->dropDownList(
+                     ArrayHelper::map(
+                            Program::find()
+                                   ->join('INNER JOIN', 'enrolment','enrolment.program_id = program.id')
+                                   ->join('INNER JOIN', 'student', 'student.id = enrolment.student_id')
+                                   ->where(['student.id' =>$studentModel->id])                             
+                              ->all(),
+                     'id','name'),['prompt'=>'Select Program'] )->label() 
+            ?>  
+        </div>
+        <div class="col-md-4">
+            <?php
+              // Dependent Dropdown
+              echo $form->field($model, 'teacher_id')->widget(DepDrop::classname(), [
+                  'options' => ['id' => 'lesson-teacher_id'],
+                 'pluginOptions' => [
+                     'depends' => ['lesson-program_id'],
+                     'placeholder' => 'Select...',
+                     'url' => Url::to(['/enrolment/teachers'])
+                 ]
+             ]);
+            ?>
+        </div>
 		<div class="col-xs-4">
+            <?php 
+              if($model->isNewRecord){
+                  $model->date = date('d-m-Y g:i A');
+              }
+            ?>
             <?php
             echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
                'options' => [
