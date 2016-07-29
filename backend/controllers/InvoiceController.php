@@ -8,7 +8,7 @@ use common\models\InvoiceLineItem;
 use common\models\Allocation;
 use backend\models\search\InvoiceSearch;
 use common\models\User;
-use common\models\Tax;
+use common\models\Payment;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -64,6 +64,19 @@ class InvoiceController extends Controller
 		$invoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $invoicePayments,
         ]);
+	
+		$paymentModel = new Payment();
+        if ($paymentModel->load(Yii::$app->request->post()) ) {
+			$paymentModel->user_id = $model->lineItems[0]->lesson->enrolment->student->customer->id;
+			$paymentModel->invoiceId = $id;
+			$paymentModel->allocationType = Allocation::TYPE_PAID;
+			$paymentModel->save();
+			    Yii::$app->session->setFlash('alert', [
+            	    'options' => ['class' => 'alert-success'],
+                	'body' => 'Payment has been created successfully'
+            ]);
+				return $this->redirect(['view','id' => $model->id]);
+        }
 		
         return $this->render('view', [
             'model' => $model,

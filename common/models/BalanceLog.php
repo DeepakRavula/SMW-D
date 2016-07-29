@@ -29,8 +29,8 @@ class BalanceLog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['balance'], 'required'],
-            [['balance'], 'number'],
+            [['amount'], 'required'],
+            [['amount'], 'number'],
         ];
     }
 
@@ -40,7 +40,7 @@ class BalanceLog extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'balance' => 'Balance',
+            'amount' => 'Amount',
         ];
     }
 }

@@ -45,8 +45,11 @@ use common\models\Allocation;
 						case Allocation::TYPE_RECEIVABLE:
 							$description = 'Payment Received';
 						break;
-						case Allocation::TYPE_PAID:
+						case Allocation::TYPE_PAYABLE:
 							$description = 'Invoice Generated';
+						break;
+						case Allocation::TYPE_PAID:
+							$description = 'Invoice Paid';
 						break;
 						default:
 							$description = null;
@@ -58,22 +61,22 @@ use common\models\Allocation;
                 'label' => 'Debit',
 				'value' => function($data){
 					if($data->allocation->type === Allocation::TYPE_OPENING_BALANCE || $data->allocation->type === Allocation::TYPE_RECEIVABLE){
-						return ! empty($data->allocation->amount) ? Yii::$app->formatter->asCurrency($data->allocation->amount) : null;	
+						return ! empty($data->allocation->amount) ? $data->allocation->amount : null;	
 					}
 				}
             ],
 			[
                 'label' => 'Credit',
 				'value' => function($data){
-					if($data->allocation->type === Allocation::TYPE_PAID){
-						return ! empty($data->allocation->amount) ? Yii::$app->formatter->asCurrency($data->allocation->amount) : null;	
+					if($data->allocation->type === Allocation::TYPE_PAYABLE || $data->allocation->type === Allocation::TYPE_PAID){
+						return ! empty($data->allocation->amount) ? $data->allocation->amount : null;	
 					}
 				}
             ],
 			[
                 'label' => 'Balance',
 				'value' => function($data){
-						return ! empty($data->allocation->amount) ? Yii::$app->formatter->asCurrency($data->allocation->amount) : null;	
+						return ! empty($data->allocation->balance->amount) ? Yii::$app->formatter->asCurrency($data->allocation->balance->amount) : null;	
 					}
             ],
 	    ],
