@@ -239,9 +239,9 @@ Resets
     -webkit-filter: invert(100%);
     cursor: pointer;
 }
-#timeline-notifications{
+/*#timeline-notifications{
   margin-left: 8px;
-}
+}*/
 /*.sidebar-menu, .sidebar-menu:hover{
   height: calc(100vh - 124px);
   display: block;
@@ -351,7 +351,6 @@ table tr td:last-of-type>a:nth-child(2)>span.glyphicon{
 .text-add-new{
     float: left;
     margin: 10px 0 0 0;
-    border-bottom: 1px solid;
 }
 .users-name{
   font-size: 18px;
@@ -586,7 +585,10 @@ Licensed under MIT
 .e1Div{
       position: absolute;
     right: 175px;
-    top: 18px;
+    top: 12px;
+}
+.schedule-index{
+  position: relative;
 }
 @media print{
     .pull-left{

@@ -77,6 +77,11 @@ $bundle = BackendAsset::register($this);
                         <?php endif;?>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
+                        <li class="notifications-menu">
+                            <a href="">
+                                <i class="fa fa-comment"></i>
+                            </a>
+                        </li>
                         <li id="timeline-notifications" class="notifications-menu">
                             <a href="<?php echo Url::to(['/timeline-event/index']) ?>">
                                 <i class="fa fa-bell"></i>

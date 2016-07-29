@@ -10,9 +10,9 @@ use yii\helpers\Url;
 $this->title = 'Schedule';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="schedule-index">
 <div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
+<div class="schedule-index">
 <div class="e1Div">
     <?= Html::checkbox('active', false, ['label' => 'Show All Teachers', 'id' => 'active' ]); ?>
 </div>
