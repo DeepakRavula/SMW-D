@@ -67,13 +67,13 @@ class InvoiceController extends Controller
 	
 		$paymentModel = new Payment();
         if ($paymentModel->load(Yii::$app->request->post()) ) {
-			$paymentModel->user_id = $model->lineItems[0]->lesson->enrolment->student->customer->id;
+			$paymentModel->user_id = $model->user_id;
 			$paymentModel->invoiceId = $id;
-			$paymentModel->allocationType = Allocation::TYPE_PAID;
+			$paymentModel->allocationType = Allocation::TYPE_RECEIVABLE;
 			$paymentModel->save();
 			    Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
-                	'body' => 'Payment has been created successfully'
+                	'body' => 'Payment has been recorded successfully'
             ]);
 				return $this->redirect(['view','id' => $model->id]);
         }
