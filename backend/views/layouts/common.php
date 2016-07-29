@@ -78,7 +78,7 @@ $bundle = BackendAsset::register($this);
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
                         <li class="notifications-menu">
-                            <a href="">
+                            <a href="" onclick="FreshWidget.show(); return false;">
                                 <i class="fa fa-comment"></i>
                             </a>
                         </li>
