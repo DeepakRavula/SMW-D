@@ -38,6 +38,7 @@ $config = [
 			'datetimeFormat' => 'php:d-m-Y H:i:s',
 			'timeFormat' => 'php:g:i a',
 			'currencyCode' => 'USD',
+			'nullDisplay' => '', 
         ],
 
         'glide' => [

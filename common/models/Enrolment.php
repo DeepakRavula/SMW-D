@@ -145,6 +145,7 @@ public $teacherId;
 				$lesson->setAttributes([
 					'enrolment_id'	 => $this->id,
 					'teacher_id' => $this->teacherId,
+					'program_id' => $this->program_id,
 					'status' => Lesson::STATUS_SCHEDULED,
 					'date' => $day->format('Y-m-d H:i:s'),
 				]);

@@ -24,9 +24,6 @@ use common\models\Invoice;
                     return ! empty($data->lineItems[0]->lesson->enrolment->student->fullName) ? $data->lineItems[0]->lesson->enrolment->student->fullName. ' (' .$data->lineItems[0]->lesson->enrolment->program->name. ')' : null;
                 },
             ],
-			'tax:currency',
-			'subTotal:currency',
-            'total:currency',
 			[
 			'label' => 'Date',
 				'value' => function($data) {
@@ -50,7 +47,7 @@ use common\models\Invoice;
 					return $status;
                 },
 			],
-            //['class' => 'yii\grid\ActionColumn','controller' => 'invoice','template' => '{view}{delete}']
+            'total:currency',
         ],
     ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>

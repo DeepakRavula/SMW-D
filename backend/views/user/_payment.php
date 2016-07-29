@@ -31,14 +31,14 @@ use common\models\Allocation;
             [
                 'label' => 'Date',
                 'value' => function($data) {
-					$date = \DateTime::createFromFormat('Y-m-d H:i:s',$data->allocation->date);
-                    return ! empty($data->allocation->date) ? $date->format('d M Y') : null;
+					$date = \DateTime::createFromFormat('Y-m-d H:i:s',$data->date);
+                    return ! empty($data->date) ? $date->format('d M Y') : null;
                 },
             ],
 			[
                 'label' => 'Description',
 				'value' => function($data){
-					switch($data->allocation->type){
+					switch($data->type){
 						case Allocation::TYPE_OPENING_BALANCE:
 							$description = 'Opening Balance';
 						break;
@@ -60,23 +60,23 @@ use common\models\Allocation;
 			[
                 'label' => 'Debit',
 				'value' => function($data){
-					if($data->allocation->type === Allocation::TYPE_OPENING_BALANCE || $data->allocation->type === Allocation::TYPE_RECEIVABLE){
-						return ! empty($data->allocation->amount) ? $data->allocation->amount : null;	
+					if($data->type === Allocation::TYPE_OPENING_BALANCE || $data->type === Allocation::TYPE_RECEIVABLE){
+						return ! empty($data->amount) ? $data->amount : null;	
 					}
 				}
             ],
 			[
                 'label' => 'Credit',
 				'value' => function($data){
-					if($data->allocation->type === Allocation::TYPE_PAYABLE || $data->allocation->type === Allocation::TYPE_PAID){
-						return ! empty($data->allocation->amount) ? $data->allocation->amount : null;	
+					if($data->type === Allocation::TYPE_PAYABLE || $data->type === Allocation::TYPE_PAID){
+						return ! empty($data->amount) ? $data->amount : null;	
 					}
 				}
             ],
 			[
                 'label' => 'Balance',
 				'value' => function($data){
-						return ! empty($data->allocation->balance->amount) ? Yii::$app->formatter->asCurrency($data->allocation->balance->amount) : null;	
+						return ! empty($data->balance->amount) ? Yii::$app->formatter->asCurrency($data->balance->amount) : null;	
 					}
             ],
 	    ],
