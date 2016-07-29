@@ -52,6 +52,7 @@ class Lesson extends \yii\db\ActiveRecord
             'status' => 'Status',
             'date' => 'Date',
             'notes' => 'Notes',
+			'program_id' => 'Program Name',
         ];
     }
 
