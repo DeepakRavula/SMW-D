@@ -36,6 +36,7 @@ $indexProgram =  $this->render('_index-program', [
         ],
     ],
 ]);?>
+<div class="clearfix"></div>
 </div>
 </div>
 <script>

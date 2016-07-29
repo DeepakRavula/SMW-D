@@ -87,7 +87,7 @@ class ProgramController extends Controller
         $model = new Program();
 		$model->status = Program::STATUS_ACTIVE;
 		$request = Yii::$app->request;
-		$programRequest = $request->post('Program');
+		$programRequest = $request->post('ProgramSearch');
 		$model->type = $programRequest['type'];
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			Yii::$app->session->setFlash('alert', [
