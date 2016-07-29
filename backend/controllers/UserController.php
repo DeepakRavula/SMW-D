@@ -191,6 +191,8 @@ class UserController extends Controller {
 		$paymentModel = new Payment();
         if ($paymentModel->load(Yii::$app->request->post()) ) {
 			$paymentModel->user_id = $id;
+			$paymentModel->invoiceId = Allocation::TYPE_OPENING_BALANCE;
+			$paymentModel->allocationType = Allocation::TYPE_OPENING_BALANCE;
 			$paymentModel->save();
 			    Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],

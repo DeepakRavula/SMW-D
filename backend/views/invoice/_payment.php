@@ -1,6 +1,8 @@
 <?php
 use yii\grid\GridView;
 use common\models\Payment;
+use common\models\Allocation;
+use common\models\Invoice;
 ?>
 <?php yii\widgets\Pjax::begin() ?>
 <?php echo GridView::widget([
@@ -23,10 +25,11 @@ use common\models\Payment;
                     return ! empty($data->payment->paymentMethod->name) ? $data->payment->paymentMethod->name : null;
                 },
             ],
-			'amount:currency',
+			'amount',
 	    ],
     ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
+
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Payments </h4> 
 	<a href="#" class="add-new-payment text-add-new"><i class="fa fa-plus"></i></a>
@@ -35,5 +38,6 @@ use common\models\Payment;
 <div class="dn show-create-payment-form">
 	<?php echo $this->render('_form-payment', [
 		'model' => new Payment(),
+		'invoiceModel' => $model,
 	]) ?>
 </div>

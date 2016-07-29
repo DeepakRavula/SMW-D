@@ -75,7 +75,12 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
-   
+
+	public function getPayment()
+    {
+        return $this->hasMany(Payment::className(), ['user_id' => 'user_id']);
+    }
+  
 	public function status($data)
     {
 		$status = null;
