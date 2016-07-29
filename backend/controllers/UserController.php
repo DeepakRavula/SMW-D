@@ -188,34 +188,34 @@ class UserController extends Controller {
 			'query' => Payment::find()
 				->where(['user_id' => $id])
 		]);
-		$paymentModel = new Payment();
-        if ($paymentModel->load(Yii::$app->request->post()) ) {
+ 		$paymentModel = new Payment();
+		if ($paymentModel->load(Yii::$app->request->post())) {
 			$paymentModel->user_id = $id;
 			$paymentModel->invoiceId = Allocation::TYPE_OPENING_BALANCE;
 			$paymentModel->allocationType = Allocation::TYPE_OPENING_BALANCE;
 			$paymentModel->save();
-			    Yii::$app->session->setFlash('alert', [
-            	    'options' => ['class' => 'alert-success'],
-                	'body' => 'Payment has been created successfully'
-            ]);
-				return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id,'section' => 'payment']);
-        }
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Payment has been created successfully'
+			]);
+			return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, 'section' => 'payment']);
+		}
 		return $this->render('view', [
-					'student' => new Student(),
-					'dataProvider' => $dataProvider,
-					'section' => $section,
-					'teacherDataProvider' => $teacherDataProvider,
-					'model' => $model,
-					'searchModel' => $searchModel,
-					'program' => $program,
-					'addressDataProvider' => $addressDataProvider,
-					'phoneDataProvider' => $phoneDataProvider,
-					'lessonDataProvider' => $lessonDataProvider,
-					'locationDataProvider' => $locationDataProvider,
-					'enrolmentDataProvider' => $enrolmentDataProvider,
-					'invoiceDataProvider' => $invoiceDataProvider,
-					'studentDataProvider' => $studentDataProvider,
-                    'paymentDataProvider' => $paymentDataProvider,
+			'student' => new Student(),
+			'dataProvider' => $dataProvider,
+			'section' => $section,
+			'teacherDataProvider' => $teacherDataProvider,
+			'model' => $model,
+			'searchModel' => $searchModel,
+			'program' => $program,
+			'addressDataProvider' => $addressDataProvider,
+			'phoneDataProvider' => $phoneDataProvider,
+			'lessonDataProvider' => $lessonDataProvider,
+			'locationDataProvider' => $locationDataProvider,
+			'enrolmentDataProvider' => $enrolmentDataProvider,
+			'invoiceDataProvider' => $invoiceDataProvider,
+			'studentDataProvider' => $studentDataProvider,
+			'paymentDataProvider' => $paymentDataProvider,
 		]);
 	}
 

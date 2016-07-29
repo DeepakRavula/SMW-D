@@ -75,4 +75,9 @@ class Allocation extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Payment::className(), ['id' => 'payment_id']);
     }
+
+	public function getBalance()
+    {
+        return $this->hasOne(BalanceLog::className(), ['allocation_id' => 'id']);
+    }
 }

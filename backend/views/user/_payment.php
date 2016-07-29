@@ -76,7 +76,7 @@ use common\models\Allocation;
 			[
                 'label' => 'Balance',
 				'value' => function($data){
-						return ! empty($data->allocation->amount) ? $data->allocation->amount : null;	
+						return ! empty($data->allocation->balance->amount) ? Yii::$app->formatter->asCurrency($data->allocation->balance->amount) : null;	
 					}
             ],
 	    ],
