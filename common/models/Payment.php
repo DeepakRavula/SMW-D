@@ -61,6 +61,10 @@ class Payment extends \yii\db\ActiveRecord {
 		return $this->hasOne(Allocation::className(), ['payment_id' => 'id']);
 	}
 
+	public function getAllocations() {
+		return $this->hasMany(Allocation::className(), ['payment_id' => 'id']);
+	}
+
 	public function afterSave($insert, $changedAttributes) {
 		$allocationModel = new Allocation();
 		$allocationModel->invoice_id = $this->invoiceId;
@@ -102,6 +106,7 @@ class Payment extends \yii\db\ActiveRecord {
 
 		$balanceLogModel->id = null;
 		$balanceLogModel->isNewRecord = true;
+		$balanceLogModel->allocation_id = $allocationModel->id;
 
 		$previousBalance = BalanceLog::find()
 						->orderBy(['id' => SORT_DESC])
