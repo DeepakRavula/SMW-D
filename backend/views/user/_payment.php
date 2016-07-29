@@ -120,9 +120,9 @@ $customerDebits = Allocation::find()
 	<table class="table-invoice-childtable">
 		<tr>
 		<td colspan="4">
-		<td><?php echo $debitTotal; ?></td>
-		<td><?php echo $creditTotal; ?></td>
-		<td><?php echo $customerBalance->amount; ?></td> 
+		<td><?php echo ! empty($debitTotal) ? $debitTotal : null; ?></td>
+		<td><?php echo ! empty($creditTotal) ? $creditTotal : null; ?></td>
+		<td><?php echo ! empty($customerBalance) ? $customerBalance->amount : null; ?></td> 
 		<td colspan="2">
 		</tr>
 	</table>
