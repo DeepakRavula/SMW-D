@@ -70,9 +70,6 @@ echo $invoiceModel->user_id . ' Balance: ' . $balance;
 </div>
     <div class="form-group">
        <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
-		<?php if($balance != 0) : ?>
-		<?php echo Html::submitButton(Yii::t('backend', 'Apply Credit'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
-		<?php endif; ?>
 			<?php 
 			if(! $model->isNewRecord){
 				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn']); 	
