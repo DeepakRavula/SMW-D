@@ -61,6 +61,10 @@ class Payment extends \yii\db\ActiveRecord {
 		return $this->hasOne(Allocation::className(), ['payment_id' => 'id']);
 	}
 
+	public function getAllocations() {
+		return $this->hasMany(Allocation::className(), ['payment_id' => 'id']);
+	}
+
 	public function afterSave($insert, $changedAttributes) {
 		$allocationModel = new Allocation();
 		$allocationModel->invoice_id = $this->invoiceId;
@@ -72,10 +76,10 @@ class Payment extends \yii\db\ActiveRecord {
 		$allocationModel->save();
 
 		$previousBalance = BalanceLog::find()
-				->orderBy(['id' => SORT_DESC])
-				->where(['user_id' => $this->user_id])->one();
+						->orderBy(['id' => SORT_DESC])
+						->where(['user_id' => $this->user_id])->one();
 
-		if( ! empty($previousBalance)) {
+		if (!empty($previousBalance)) {
 			$existingBalance = $previousBalance->amount;
 		} else {
 			$existingBalance = 0;
@@ -85,7 +89,35 @@ class Payment extends \yii\db\ActiveRecord {
 		$balanceLogModel->allocation_id = $allocationModel->id;
 		$balanceLogModel->user_id = $this->user_id;
 
-		if(in_array($this->allocationType, [Allocation::TYPE_OPENING_BALANCE, Allocation::TYPE_RECEIVABLE])) {
+		if (in_array($this->allocationType, [Allocation::TYPE_OPENING_BALANCE, Allocation::TYPE_RECEIVABLE])) {
+			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
+		} else {
+			$balanceLogModel->amount = $existingBalance - $allocationModel->amount;
+		}
+
+		$balanceLogModel->save();
+
+		$allocationModel->id = null;
+		$allocationModel->isNewRecord = true;
+		$allocationModel->type = Allocation::TYPE_PAID;
+		$allocationModel->save();
+
+
+
+		$balanceLogModel->id = null;
+		$balanceLogModel->isNewRecord = true;
+		$balanceLogModel->allocation_id = $allocationModel->id;
+
+		$previousBalance = BalanceLog::find()
+						->orderBy(['id' => SORT_DESC])
+						->where(['user_id' => $this->user_id])->one();
+
+		if (!empty($previousBalance)) {
+			$existingBalance = $previousBalance->amount;
+		} else {
+			$existingBalance = 0;
+		}
+		if (in_array($allocationModel->type, [Allocation::TYPE_OPENING_BALANCE, Allocation::TYPE_RECEIVABLE])) {
 			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
 		} else {
 			$balanceLogModel->amount = $existingBalance - $allocationModel->amount;

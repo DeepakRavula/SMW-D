@@ -73,17 +73,17 @@ $bundle = BackendAsset::register($this);
                         <?php
                             $userLocationId = Yii::$app->session->get('location_id');
                             $location = Location::findOne(['id' => $userLocationId]);
-                            echo $location->name;
+                            echo '<div class="p-t-15 pull-left" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i>'.$location->name.'</div>';
                         ?>
                         <?php endif;?>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
-                        <li class="notifications-menu">
+                        <li class="notifications-menu" data-toggle="tooltip" data-original-title="Give a feedback" data-placement="bottom">
                             <a href="" onclick="FreshWidget.show(); return false;">
                                 <i class="fa fa-comment"></i>
                             </a>
                         </li>
-                        <li id="timeline-notifications" class="notifications-menu">
+                        <li id="timeline-notifications" class="notifications-menu"  data-toggle="tooltip" data-original-title="Notifications" data-placement="bottom">
                             <a href="<?php echo Url::to(['/timeline-event/index']) ?>">
                                 <i class="fa fa-bell"></i>
                                 <span class="label label-success">

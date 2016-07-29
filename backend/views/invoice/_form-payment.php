@@ -14,48 +14,6 @@ use common\models\Payment;
 ?>
 
 <div class="payments-form">
-<?php
-	$payment = Payment::find()
-		->joinWith(['allocation a' => function($query){
-			$query->where(['a.invoice_id' => Allocation::TYPE_OPENING_BALANCE]);
-		}])
-		->where(['user_id' => $invoiceModel->user_id])
-		->one();
-		$openingBalance = 0;
-		if(! empty($payment)){
-			$openingBalance = $payment->amount;
-		}
-	$proformaPayments = Allocation::find()
-		->joinWith(['invoice i' => function($query) use($invoiceModel){
-			$query->where(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
-		}])
-		->joinWith(['payment p' => function($query) use($invoiceModel){
-			$query->where(['p.user_id' => $invoiceModel->user_id]);
-		}])
-		->all();
-		$proformaAmount = 0;
-		if(! empty($proformaPayments)){
-			foreach($proformaPayments as $proformaPayment){
-				$proformaAmount += $proformaPayment['amount'];	
-			}
-		}
-	$invoicePayments = Allocation::find()
-		->joinWith(['invoice i' => function($query) use($invoiceModel){
-			$query->where(['i.type' => Invoice::TYPE_INVOICE]);
-		}])
-		->joinWith(['payment p' => function($query) use($invoiceModel){
-			$query->where(['p.user_id' => $invoiceModel->user_id]);
-		}])
-		->all();
-		$invoiceAmount = 0;
-		if(! empty($invoicePayments)){
-			foreach($invoicePayments as $invoicePayment){
-				$invoiceAmount += $invoicePayment['amount'];	
-			}
-		}
-		$balance = ($openingBalance + $proformaAmount) - $invoiceAmount;
-echo $invoiceModel->user_id . ' Balance: ' . $balance; 
-?>
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
         <div class="col-xs-4">
