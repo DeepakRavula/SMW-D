@@ -8,7 +8,7 @@ use common\models\Student;
 
 <?php $form = ActiveForm::begin(); ?>
 <?php echo $form->errorSummary($model); ?>
-<div class="row">
+<div class="row p-10">
     <div class="col-xs-5">
 			<?php
 				$locationId = Yii::$app->session->get('location_id');
@@ -48,10 +48,11 @@ use common\models\Student;
 		['multiple' => 'multiple', 'id' => 'groupenrolment-student_id_to','size' => '14'])
 		?>
     </div>
-</div>
-<div class="form-group">
+    <div class="col-md-12 form-group">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>
+</div>
+
 
 <?php ActiveForm::end(); ?>
 

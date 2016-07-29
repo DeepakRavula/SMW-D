@@ -16,6 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
             'title',
             'rate',
