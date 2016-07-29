@@ -10,6 +10,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use common\models\User;
+use common\models\Program;
 use common\models\Location;
 use common\models\Invoice;
 use common\models\UserLocation;
@@ -230,7 +231,7 @@ $bundle = BackendAsset::register($this);
 						[
                             'label'=>Yii::t('backend', 'Programs'),
                             'icon'=>'<i class="fa fa-table"></i>',
-                            'url'=>['/program/index'],
+                            'url'=>['/program/index','ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='program')? true : false,
                         ],

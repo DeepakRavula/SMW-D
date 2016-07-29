@@ -11,7 +11,7 @@ use yii\bootstrap\ActiveForm;
 
 <div class="program-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin($model->isNewRecord ? ['action' => '/program/create'] : null); ?>
 
    	<div class="row">
 		<div class="col-md-4">
@@ -25,6 +25,7 @@ use yii\bootstrap\ActiveForm;
 			<?php echo $form->field($model, 'status')->dropDownList(Program::statuses()) ?>
 			<?php endif; ?>
 		</div>
+	        <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
 	</div>
 	<div class="row-fluid">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
