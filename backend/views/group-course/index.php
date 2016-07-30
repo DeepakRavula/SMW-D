@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\GroupCourseSearch */
@@ -11,6 +12,16 @@ $this->title = 'Group Courses';
 $this->params['subtitle'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', ['create'], ['class' => 'btn btn-success']); 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?php
+$this->registerJs("
+    $('td').click(function (e) {
+        var id = $(this).closest('tr').data('id');
+        if(e.target == this)
+            location.href = '" . Url::to(['group-course/view']) . "?id=' + id;
+    });
+
+");
+?>
 <div class="group-course-index">
     <?php yii\widgets\Pjax::begin() ?>
     <?php echo GridView::widget([
@@ -18,6 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
+		'rowOptions'   => function ($model, $key, $index, $grid) {
+        	return ['data-id' => $model->id];
+    	},
         'columns' => [
             'title',
             'rate',
@@ -29,8 +43,6 @@ $this->params['breadcrumbs'][] = $this->title;
 					return ! empty($data->length) ? $length->format('H:i') : null;
 				}
 			],
-            
-			['class' => 'yii\grid\ActionColumn','template' => '{view}'],
         ],
     ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
