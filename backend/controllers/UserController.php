@@ -25,6 +25,7 @@ use yii\data\ActiveDataProvider;
 use common\models\Student;
 use common\models\Program;
 use common\models\Allocation;
+use common\models\PaymentMethod;
 use yii\web\ForbiddenHttpException;
 
 /**
@@ -193,12 +194,13 @@ class UserController extends Controller {
  		$paymentModel = new Payment();
 		if ($paymentModel->load(Yii::$app->request->post())) {
 			$paymentModel->user_id = $id;
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT;
 			$paymentModel->invoiceId = Allocation::TYPE_OPENING_BALANCE;
 			$paymentModel->allocationType = Allocation::TYPE_OPENING_BALANCE;
 			$paymentModel->save();
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
-				'body' => 'Payment has been created successfully'
+				'body' => 'Opening balance has been recorded successfully'
 			]);
 			return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, 'section' => 'payment']);
 		}

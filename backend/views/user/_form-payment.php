@@ -15,12 +15,6 @@ use common\models\PaymentMethod;
 	<?php $form = ActiveForm::begin(); ?>
 	<div class="row">
         <div class="col-xs-4">
-			<?php
-			echo $form->field($model, 'payment_method_id')->dropDownList(
-					ArrayHelper::map(PaymentMethod::find()->all(), 'id', 'name'))
-			?>
-        </div>
-        <div class="col-xs-4">
 			<?php echo $form->field($model, 'amount')->textInput() ?>
         </div>
 	</div>
