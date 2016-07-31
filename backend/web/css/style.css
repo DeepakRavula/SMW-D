@@ -258,6 +258,9 @@ table tr td:last-of-type>a>i ,
 table tr td:last-of-type>a:nth-child(2)>span.glyphicon{
     margin: 0 7px;
 }*/
+table tr{
+  cursor: pointer;
+}
 .label {
   font-weight: normal;
     font-size: 100%;

@@ -10,12 +10,12 @@ use common\models\PaymentMethod;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="payments-form">
+<div class="form-well p-l-20 payments-form p-t-15">
 
 	<?php $form = ActiveForm::begin(); ?>
 	<div class="row">
         <div class="col-xs-4">
-			<?php echo $form->field($model, 'amount')->textInput() ?>
+			<?php echo $form->field($model, 'amount')->textInput(array('placeholder' => 'Amount'))->label(false); ?>
         </div>
 	</div>
 	<div class="form-group">

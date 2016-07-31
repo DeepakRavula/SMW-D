@@ -191,6 +191,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	});
 	$('.add-new-payment').click(function () {
 		$('.show-create-payment-form').show();
+		$('.hr-payment').hide();
 	});
 	$('.add-address').bind('click', function () {
 		$('.address-fields').show();

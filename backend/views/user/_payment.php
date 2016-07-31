@@ -10,6 +10,8 @@ use common\models\BalanceLog;
 	<a href="#" class="add-new-payment text-add-new"><i class="fa fa-plus"></i></a>
 	<div class="clearfix"></div>
 </div>
+<div class="clearfix"></div>
+<hr class="hr-ad right-side-faded hr-payment">
 <div class="dn show-create-payment-form">
 	<?php
 	echo $this->render('_form-payment', [
@@ -17,7 +19,7 @@ use common\models\BalanceLog;
 	])
 	?>
 </div>
-<center><b><h4 class="pull-left m-r-20 col-md-12"><?= 'Accounts Receivable Sub-Ledger for ' . $model->publicIdentity ?> </h4></b></center>
+<h4 class="pull-left m-r-20 col-md-12"><?= 'Accounts Receivable Sub-Ledger for <strong>' . $model->publicIdentity .'</strong>' ?> </h4>
 <?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
