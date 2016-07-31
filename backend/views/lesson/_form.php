@@ -23,7 +23,7 @@ use yii\helpers\Url;
 	?>
 <?php endif;?>
 <?php $form = ActiveForm::begin(); ?>
-<div class="row">
+<div class="row p-20">
 	<?php if($model->isNewRecord): ?>
         <div class="col-md-4">
             <?php echo $form->field($model, 'program_id')->dropDownList(
@@ -72,8 +72,9 @@ use yii\helpers\Url;
         <div class="col-md-4">
             <?php echo $form->field($model, 'notes')->textarea() ?>
         </div> 
+        <div class="clearfix"></div>
     </div>
-    <div class="form-group">
+    <div class="col-md-12 p-l-20 form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
         <?php
         if (!$model->isNewRecord) {

@@ -8,7 +8,7 @@ use common\models\Invoice;
 <?php echo GridView::widget([
         'dataProvider' => $invoicePayments,
         'options' => ['class' => 'col-md-12'],
-        'tableOptions' =>['class' => 'table table-bordered'],
+        'tableOptions' =>['class' => 'table table-bordered m-0'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
 		'formatter' => ['class' => 'yii\i18n\Formatter','nullDisplay' => ''],
         'columns' => [
@@ -30,9 +30,8 @@ use common\models\Invoice;
     ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
 
-<div class="col-md-12">
-	<h4 class="pull-left m-r-20">Payments </h4> 
-	<a href="#" class="add-new-payment text-add-new"><i class="fa fa-plus"></i></a>
+<div class="col-md-12 m-b-20">
+	<a href="#" class="add-new-payment text-add-new"><i class="fa fa-plus-circle"></i> Add Payment method</a>
 	<div class="clearfix"></div>
 </div>
 <div class="dn show-create-payment-form">

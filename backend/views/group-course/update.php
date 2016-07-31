@@ -9,7 +9,7 @@ $this->title = 'Edit Group Course';
 $this->params['breadcrumbs'][] = ['label' => 'Group Courses', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Edit';
 ?>
-<div class="group-course-update">
+<div class="group-course-update p-20">
 
     <?php echo $this->render('_form', [
         'model' => $model,

@@ -13,20 +13,20 @@ use common\models\Payment;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="payments-form">
+<div class="payments-form p-l-20">
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
-        <div class="col-xs-4">
+        <div class="col-xs-3">
     		<?php echo $form->field($model, 'payment_method_id')->dropDownList(
 									ArrayHelper::map(PaymentMethod::find()->all(), 'id', 'name'))?>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-3">
 			<?php $invoiceTotal = $model->isNewRecord ? $invoiceModel->total : null; ?> 
    			<?php echo $form->field($model, 'amount')->textInput(['value' => $invoiceTotal]) ?>
         </div>
 	</div>
 </div>
-    <div class="form-group">
+    <div class="form-group p-l-20">
        <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
 			<?php 
 			if(! $model->isNewRecord){

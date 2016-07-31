@@ -44,12 +44,16 @@ if(Yii::$app->controller->action->id === 'view'){
 		$toTime = \DateTime::createFromFormat('H:i:s',$model->to_time);
 		echo !empty($model->from_time && $model->to_time) ? $fromTime->format('g:i A') . ' - ' . $toTime->format('g:i A') : null;?>
 	</div>
-    <div class="col-md-12 m-t-20">
+    
         <?php 
-		if(Yii::$app->controller->action->id === 'view'){
+		if(Yii::$app->controller->action->id === 'view'){ ?>
+		<div class="col-md-12 m-t-20">
+			<?php 
 			echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']);
-		}?>
-    </div>
+		?>
+		</div>
+		<?php } ?>
+    
     <div class="clearfix"></div>
 </div>
 </div>

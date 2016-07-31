@@ -18,12 +18,13 @@ use kartik\time\TimePicker;
 ?>
 <?php $form = ActiveForm::begin(); ?>
 
-   	<div class="row">
+   	<div class="row p-20">
 		<?php
 		$fromTime = \DateTime::createFromFormat('H:i:s', $model->from_time);
 		$model->from_time = ! empty($model->from_time) ? $fromTime->format('g:i A') : null;
 		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s',$model->date);
 	?>
+    <div class="row-fluid">
 		<div class="col-md-4">
 		<?= $form->field($model, 'from_time')->widget(TimePicker::classname(), []); ?>
 		</div>
@@ -41,17 +42,20 @@ use kartik\time\TimePicker;
             ]);
             ?>
         </div>	
-        <div class="col-md-4">
+    </div>
+        <div class="col-md-8">
             <?php echo $form->field($model, 'notes')->textarea() ?>
         </div> 
     </div>
-    <div class="form-group">
+    <div class="row-fluid">
+    <div class="p-l-20 form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
         <?php
         if (!$model->isNewRecord) {
             echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
         }
         ?>
+    </div>
     </div>
 
 <?php ActiveForm::end(); ?>

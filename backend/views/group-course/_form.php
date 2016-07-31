@@ -70,7 +70,7 @@ use common\models\GroupCourse;
 	</div>
 	</div>
 </div>
-    <div class="form-group">
+    <div class="form-group p-l-20">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 	<?php
         if (!$model->isNewRecord) {

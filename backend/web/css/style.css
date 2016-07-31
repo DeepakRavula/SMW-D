@@ -349,8 +349,7 @@ table tr{
     border-bottom-left-radius: 0px;
     background: #F9F9F9;
     border-bottom: 1px solid #F3F3F3;
-}
-.lesson-view>.user-details-wrapper, 
+} 
 .location-view>.user-details-wrapper {
   background: transparent;
 }
