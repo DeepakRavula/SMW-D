@@ -8,7 +8,7 @@ use common\models\User;
 /* @var $model common\models\Program */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Programs', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Programs', 'url' => ['index', 'ProgramSearch[type]' => $model->type]];
 $this->params['breadcrumbs'][] = $this->title;
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 foreach($roles as $name => $description){

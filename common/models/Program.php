@@ -62,6 +62,14 @@ class Program extends \yii\db\ActiveRecord
 			'type' => 'Type',
         ];
     }
+
+    public function beforeSave($insert) {
+		if($this->isNewRecord) {
+			$this->status = self::STATUS_ACTIVE;
+		}
+        
+        return parent::beforeSave($insert);
+    }
     
     /**
      * Returns program statuses list

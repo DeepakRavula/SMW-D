@@ -11,7 +11,7 @@ use yii\bootstrap\ActiveForm;
 
 <div class="program-form">
 
-    <?php $form = ActiveForm::begin($model->isNewRecord ? ['action' => '/program/create'] : null); ?>
+    <?php $form = ActiveForm::begin(); ?>
 
    	<div class="row">
 		<div class="col-md-4">

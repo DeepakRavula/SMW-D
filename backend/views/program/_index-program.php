@@ -21,7 +21,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
 
 <div class="dn program-create section-tab">
     <?php echo $this->render('_form', [
-        'model' => $searchModel,
+        'model' => $model,
     ]) ?>
 </div>
 

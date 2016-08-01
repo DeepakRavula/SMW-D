@@ -14,6 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php 
 
 $indexProgram =  $this->render('_index-program', [
+    'model' => $model,
     'searchModel' => $searchModel,
     'dataProvider' => $dataProvider,
 ]);

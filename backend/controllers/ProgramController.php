@@ -37,8 +37,19 @@ class ProgramController extends Controller
     {   
         $searchModel = new ProgramSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $model = new Program();
+		$model->type = $searchModel->type;
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('alert', [
+        	    'options' => ['class' => 'alert-success'],
+            	'body' => 'Program has been created successfully'
+        ]);
+            return $this->redirect(['view', 'id' => $model->id]);
+        } 
+
 
         return $this->render('index', [
+            'model' => $model,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -87,7 +98,7 @@ class ProgramController extends Controller
         $model = new Program();
 		$model->status = Program::STATUS_ACTIVE;
 		$request = Yii::$app->request;
-		$programRequest = $request->post('ProgramSearch');
+		$programRequest = $request->get('ProgramSearch');
 		$model->type = $programRequest['type'];
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			Yii::$app->session->setFlash('alert', [
