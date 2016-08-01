@@ -60,7 +60,7 @@ class InvoiceController extends Controller {
 		]);
 
 		$invoicePayments = Allocation::find()
-				->where(['invoice_id' => $id,'type' => Allocation::TYPE_PAID]);
+				->where(['invoice_id' => $id, 'type' => Allocation::TYPE_PAID]);
 		$invoicePaymentsDataProvider = new ActiveDataProvider([
 			'query' => $invoicePayments,
 		]);
@@ -148,168 +148,167 @@ class InvoiceController extends Controller {
 			$query = Lesson::find()
 					->joinwith('invoiceLineItem ili')
 					->joinWith(['enrolment e' => function($query) use($customer, $location_id) {
-							$query->joinWith(['student s' => function($query) use($customer, $location_id) {
-									$query->where(['s.customer_id' => $customer->id]);
-								}])
-									->where(['e.location_id' => $location_id]);
-								}])
-									->where(['ili.id' => null])
-									->andWhere(['<=', 'lesson.date', $currentDate->format('Y:m:d')
-							]);
+						$query->joinWith(['student s' => function($query) use($customer, $location_id) {
+							$query->where(['s.customer_id' => $customer->id]);
+						}])
+					->where(['e.location_id' => $location_id]);
+					}])
+					->where(['ili.id' => null])
+					->andWhere(['<=', 'lesson.date', $currentDate->format('Y:m:d')
+					]);
 
-							$unInvoicedLessonsDataProvider = new ActiveDataProvider([
-								'query' => $query,
-							]);
-						}
+			$unInvoicedLessonsDataProvider = new ActiveDataProvider([
+				'query' => $query,
+			]);
+		}
 
-						$post = $request->post();
-						if (!empty($post['selection']) && is_array($post['selection'])) {
-							$invoice->type = $invoiceRequest['type'];
-							$lastInvoice = Invoice::lastInvoice($location_id);
+		$post = $request->post();
+		if (!empty($post['selection']) && is_array($post['selection'])) {
+			$invoice->type = $invoiceRequest['type'];
+			$lastInvoice = Invoice::lastInvoice($location_id);
 
-							if (empty($lastInvoice)) {
-								$invoiceNumber = 1;
-							} else {
-								$invoiceNumber = $lastInvoice->invoice_number + 1;
-							}
-							$invoice->user_id = $customer->id;
-							$invoice->invoice_number = $invoiceNumber;
-							$invoice->date = (new \DateTime())->format('Y-m-d');
-							$invoice->status = Invoice::STATUS_OWING;
-							$invoice->notes = $post['Invoice']['notes'];
-							$invoice->internal_notes = $post['Invoice']['internal_notes'];
+			if (empty($lastInvoice)) {
+				$invoiceNumber = 1;
+			} else {
+				$invoiceNumber = $lastInvoice->invoice_number + 1;
+			}
+			$invoice->user_id = $customer->id;
+			$invoice->invoice_number = $invoiceNumber;
+			$invoice->date = (new \DateTime())->format('Y-m-d');
+			$invoice->status = Invoice::STATUS_OWING;
+			$invoice->notes = $post['Invoice']['notes'];
+			$invoice->internal_notes = $post['Invoice']['internal_notes'];
+			$invoice->save();
+			
+			$subTotal = 0;
+			$taxAmount = 0;
+			foreach ($post['selection'] as $selection) {
+				$lesson = Lesson::findOne(['id' => $selection]);
+				$actualLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
+				$lessonDate = $actualLessonDate->format('Y-m-d');
+				$invoiceLineItem = new InvoiceLineItem();
+				$invoiceLineItem->invoice_id = $invoice->id;
+				$invoiceLineItem->lesson_id = $lesson->id;
+				$time = explode(':', $lesson->enrolment->duration);
+				$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
+				$invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
+				$invoiceLineItem->save();
+				$subTotal += $invoiceLineItem->amount;
+			}
+			$invoice = Invoice::findOne(['id' => $invoice->id]);
+			$invoice->subTotal = $subTotal;
+			$totalAmount = $subTotal + $taxAmount;
+			$invoice->tax = $taxAmount;
+			$invoice->total = $totalAmount;
+			$invoice->save();
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Invoice has been created successfully'
+			]);
 
-							$invoice->save();
-							$subTotal = 0;
-							$taxAmount = 0;
-							foreach ($post['selection'] as $selection) {
-								$lesson = Lesson::findOne(['id' => $selection]);
-								$actualLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
-								$lessonDate = $actualLessonDate->format('Y-m-d');
-								$invoiceLineItem = new InvoiceLineItem();
-								$invoiceLineItem->invoice_id = $invoice->id;
-								$invoiceLineItem->lesson_id = $lesson->id;
-								$time = explode(':', $lesson->enrolment->duration);
-								$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
-								$invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
-								$invoiceLineItem->save();
-								$subTotal += $invoiceLineItem->amount;
-							}
-							$invoice = Invoice::findOne(['id' => $invoice->id]);
-							$invoice->subTotal = $subTotal;
-							$totalAmount = $subTotal + $taxAmount;
-							$invoice->tax = $taxAmount;
-							$invoice->total = $totalAmount;
-							$invoice->save();
-							Yii::$app->session->setFlash('alert', [
-								'options' => ['class' => 'alert-success'],
-								'body' => 'Invoice has been created successfully'
-							]);
+			return $this->redirect(['view', 'id' => $invoice->id]);
+		} else {
+			return $this->render('create', [
+				'model' => $invoice,
+				'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+			]);
+		}
+	}
 
-							return $this->redirect(['view', 'id' => $invoice->id]);
-						} else {
+	/**
+	 * Updates an existing Invoice model.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $id
+	 * @return mixed
+	 */
+	public function actionUpdate($id) {
+		$model = $this->findModel($id);
 
-							return $this->render('create', [
-										'model' => $invoice,
-										'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
-							]);
-						}
-					}
+		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			return $this->redirect(['view', 'id' => $model->id]);
+		} else {
+			return $this->render('update', [
+						'model' => $model,
+			]);
+		}
+	}
 
-					/**
-					 * Updates an existing Invoice model.
-					 * If update is successful, the browser will be redirected to the 'view' page.
-					 * @param integer $id
-					 * @return mixed
-					 */
-					public function actionUpdate($id) {
-						$model = $this->findModel($id);
+	/**
+	 * Deletes an existing Invoice model.
+	 * If deletion is successful, the browser will be redirected to the 'index' page.
+	 * @param integer $id
+	 * @return mixed
+	 */
+	public function actionDelete($id) {
+		$this->findModel($id)->delete();
 
-						if ($model->load(Yii::$app->request->post()) && $model->save()) {
-							return $this->redirect(['view', 'id' => $model->id]);
-						} else {
-							return $this->render('update', [
-										'model' => $model,
-							]);
-						}
-					}
+		return $this->redirect(['index']);
+	}
 
-					/**
-					 * Deletes an existing Invoice model.
-					 * If deletion is successful, the browser will be redirected to the 'index' page.
-					 * @param integer $id
-					 * @return mixed
-					 */
-					public function actionDelete($id) {
-						$this->findModel($id)->delete();
+	/**
+	 * Finds the Invoice model based on its primary key value.
+	 * If the model is not found, a 404 HTTP exception will be thrown.
+	 * @param integer $id
+	 * @return Invoice the loaded model
+	 * @throws NotFoundHttpException if the model cannot be found
+	 */
+	protected function findModel($id) {
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
+		$model = Invoice::find()->location($locationId)
+						->where(['invoice.id' => $id])->one();
+		if ($model !== null) {
+			return $model;
+		} else {
+			throw new NotFoundHttpException('The requested page does not exist.');
+		}
+	}
 
-						return $this->redirect(['index']);
-					}
+	public function actionAddInvoice() {
+		$model = new User();
 
-					/**
-					 * Finds the Invoice model based on its primary key value.
-					 * If the model is not found, a 404 HTTP exception will be thrown.
-					 * @param integer $id
-					 * @return Invoice the loaded model
-					 * @throws NotFoundHttpException if the model cannot be found
-					 */
-					protected function findModel($id) {
-						$session = Yii::$app->session;
-						$locationId = $session->get('location_id');
-						$model = Invoice::find()->location($locationId)
-										->where(['invoice.id' => $id])->one();
-						if ($model !== null) {
-							return $model;
-						} else {
-							throw new NotFoundHttpException('The requested page does not exist.');
-						}
-					}
+		if (isset(Yii::$app->request->queryParams['User'])) {
+			$model->customer = Yii::$app->request->queryParams['User']["customer"];
+		}
 
-					public function actionAddInvoice() {
-						$model = new User();
+		return $this->render('create', [
+					'model' => $model,
+		]);
+	}
 
-						if (isset(Yii::$app->request->queryParams['User'])) {
-							$model->customer = Yii::$app->request->queryParams['User']["customer"];
-						}
+	public function actionPrint($id) {
 
-						return $this->render('create', [
-									'model' => $model,
-						]);
-					}
+		$model = $this->findModel($id);
+		$invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
+		$invoiceLineItemsDataProvider = new ActiveDataProvider([
+			'query' => $invoiceLineItems,
+		]);
+		$this->layout = "/print-invoice";
+		return $this->render('_print', [
+					'model' => $model,
+					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
+		]);
+	}
 
-					public function actionPrint($id) {
+	public function actionSendMail($id) {
+		$model = $this->findModel($id);
+		$invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
+		$invoiceLineItemsDataProvider = new ActiveDataProvider([
+			'query' => $invoiceLineItems,
+		]);
+		$subject = 'From' . Yii::$app->name;
 
-						$model = $this->findModel($id);
-						$invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
-						$invoiceLineItemsDataProvider = new ActiveDataProvider([
-							'query' => $invoiceLineItems,
-						]);
-						$this->layout = "/print-invoice";
-						return $this->render('_print', [
-									'model' => $model,
-									'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
-						]);
-					}
+		Yii::$app->mailer->compose('generateInvoice', [
+			'model' => $model,
+			'toName' => $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity,
+			'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+		])
+			->setFrom(\Yii::$app->params['robotEmail'])
+			->setTo($model->lineItems[0]->lesson->enrolment->student->customer->email)
+			->setSubject($subject)
+			->send();
+		return $this->redirect(['view', 'id' => $model->id]);
+	}
 
-					public function actionSendMail($id) {
-						$model = $this->findModel($id);
-						$invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
-						$invoiceLineItemsDataProvider = new ActiveDataProvider([
-							'query' => $invoiceLineItems,
-						]);
-						$subject = 'From' . Yii::$app->name;
-
-						Yii::$app->mailer->compose('generateInvoice', [
-									'model' => $model,
-									'toName' => $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity,
-									'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-								])
-								->setFrom(\Yii::$app->params['robotEmail'])
-								->setTo($model->lineItems[0]->lesson->enrolment->student->customer->email)
-								->setSubject($subject)
-								->send();
-						return $this->redirect(['view', 'id' => $model->id]);
-					}
-
-				}
+}
 				
