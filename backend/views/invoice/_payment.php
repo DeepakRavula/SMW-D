@@ -22,7 +22,11 @@ use common\models\Invoice;
 			[
                 'label' => 'Payment Method',
                 'value' => function($data) {
+					if($data->payment_id == Payment::PAYMENT_CREDIT){
+						return 'Credit Applied';
+					}else{
                     return ! empty($data->payment->paymentMethod->name) ? $data->payment->paymentMethod->name : null;
+					}
                 },
             ],
 			'amount',
