@@ -69,6 +69,8 @@ class InvoiceController extends Controller
         if ($paymentModel->load(Yii::$app->request->post()) ) {
 			$paymentModel->user_id = $model->user_id;
 			$paymentModel->invoiceId = $id;
+			$currentDate = new \DateTime();
+			$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
 			$paymentModel->allocationType = Allocation::TYPE_RECEIVABLE;
 			$paymentModel->save();
 			    Yii::$app->session->setFlash('alert', [

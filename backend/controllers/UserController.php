@@ -195,6 +195,8 @@ class UserController extends Controller {
 		if ($paymentModel->load(Yii::$app->request->post())) {
 			$paymentModel->user_id = $id;
 			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT;
+			$date = \DateTime::createFromFormat('d-m-Y', $paymentModel->date);
+    		$paymentModel->date = $date->format('Y-m-d H:i:s');
 			$paymentModel->invoiceId = Allocation::TYPE_OPENING_BALANCE;
 			$paymentModel->allocationType = Allocation::TYPE_OPENING_BALANCE;
 			$paymentModel->save();

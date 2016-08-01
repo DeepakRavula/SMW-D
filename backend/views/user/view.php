@@ -161,7 +161,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				'active' => $section === 'invoice',
 			],
 			[
-				'label' => 'Payments',
+				'label' => 'Accounts',
 				'content' => $paymentContent,
 				'active' => $section === 'payment',
 			]

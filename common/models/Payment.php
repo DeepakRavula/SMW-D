@@ -31,7 +31,7 @@ class Payment extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['user_id', 'payment_method_id', 'amount'], 'required'],
+			[['user_id', 'payment_method_id', 'amount','date'], 'required'],
 			[['user_id', 'payment_method_id'], 'integer'],
 			[['amount'], 'number'],
 		];
@@ -71,8 +71,7 @@ class Payment extends \yii\db\ActiveRecord {
 		$allocationModel->payment_id = $this->id;
 		$allocationModel->amount = $this->amount;
 		$allocationModel->type = $this->allocationType;
-		$currentDate = new \DateTime();
-		$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
+		$allocationModel->date = $this->date;
 		$allocationModel->save();
 
 		$previousBalance = BalanceLog::find()

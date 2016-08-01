@@ -79,7 +79,7 @@ return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'locati
 		[
 			'label' => 'Balance',
 			'value' => function($data) {
-				return !empty($data->balance->amount) ? Yii::$app->formatter->asCurrency($data->balance->amount) : null;
+				return !empty($data->balance->amount) ? $data->balance->amount : null;
 			}
 		],
 	],

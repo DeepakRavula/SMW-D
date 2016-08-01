@@ -17,6 +17,16 @@ use common\models\PaymentMethod;
         <div class="col-xs-4">
 			<?php echo $form->field($model, 'amount')->textInput(array('placeholder' => 'Amount'))->label(false); ?>
         </div>
+		<div class="col-xs-4">
+            <?php echo $form->field($model, 'date')->widget(\yii\jui\DatePicker::classname(), [
+                    'options' => ['class'=>'form-control'],
+                    'clientOptions' => [
+                        'changeMonth' => true,
+                        'changeYear' => true,
+                        'yearRange' => '-70:today' 
+                    ]
+                ]); ?>
+        </div>
 	</div>
 	<div class="form-group">
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
