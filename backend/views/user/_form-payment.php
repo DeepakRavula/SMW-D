@@ -15,7 +15,7 @@ use common\models\PaymentMethod;
 	<?php $form = ActiveForm::begin(); ?>
 	<div class="row">
         <div class="col-xs-4">
-			<?php echo $form->field($model, 'amount')->textInput(array('placeholder' => 'Amount'))->label(false); ?>
+			<?php echo $form->field($model, 'amount')->textInput(['placeholder' => 'Amount'])->label(false); ?>
         </div>
 		<div class="col-xs-4">
             <?php echo $form->field($model, 'date')->widget(\yii\jui\DatePicker::classname(), [
@@ -25,7 +25,7 @@ use common\models\PaymentMethod;
                         'changeYear' => true,
                         'yearRange' => '-70:today' 
                     ]
-                ]); ?>
+                ])->textInput(['placeholder' => 'Date'])->label(false); ?>
         </div>
 	</div>
 	<div class="form-group">
