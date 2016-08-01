@@ -51,8 +51,11 @@ return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'locati
 					case Allocation::TYPE_RECEIVABLE:
 						$description = 'Payment Received';
 						break;
-					case Allocation::TYPE_PAID:
+					case ($data->type == Allocation::TYPE_PAID) && ($data->invoice_id != Payment::PAYMENT_CREDIT) && ($data->payment_id != Payment::PAYMENT_CREDIT):
 						$description = 'Invoice Paid';
+						break;
+					case ($data->type == Allocation::TYPE_PAID) && ($data->invoice_id == Payment::PAYMENT_CREDIT):
+						$description = 'Credit Used';
 						break;
 					default:
 						$description = null;
@@ -106,6 +109,7 @@ $customerDebits = Allocation::find()
 						$query->where(['p.user_id' => $model->id]);
 				}])
 				->where(['allocation.type' => Allocation::TYPE_PAID])
+				->andWhere(['not',['allocation.invoice_id' => Payment::PAYMENT_CREDIT]])
 				->all();
 				$creditTotal = 0;
 				if (!empty($customerCredits)) {

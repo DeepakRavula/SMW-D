@@ -190,6 +190,8 @@ class UserController extends Controller {
 				->joinWith(['payment p' => function($query) use($id){
 					$query->where(['p.user_id' => $id]);
 				}])
+				->andWhere(['not',['allocation.payment_id' => Payment::PAYMENT_CREDIT]])
+				->orWhere(['allocation.invoice_id' => Payment::PAYMENT_CREDIT])
 		]);
  		$paymentModel = new Payment();
 		if ($paymentModel->load(Yii::$app->request->post())) {

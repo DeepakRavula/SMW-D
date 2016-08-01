@@ -59,7 +59,8 @@ class InvoiceController extends Controller {
 			'query' => $invoiceLineItems,
 		]);
 
-		$invoicePayments = Allocation::find()->where(['invoice_id' => $id,'type' => Allocation::TYPE_PAID]);
+		$invoicePayments = Allocation::find()
+				->where(['invoice_id' => $id,'type' => Allocation::TYPE_PAID]);
 		$invoicePaymentsDataProvider = new ActiveDataProvider([
 			'query' => $invoicePayments,
 		]);
@@ -82,37 +83,11 @@ class InvoiceController extends Controller {
 				$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
 				$allocationModel->save();
 
-				$previousBalance = BalanceLog::find()
-								->orderBy(['id' => SORT_DESC])
-								->where(['user_id' => $model->user_id])->one();
-
-				if (!empty($previousBalance)) {
-					$existingBalance = $previousBalance->amount;
-				} else {
-					$existingBalance = 0;
-				}
-
-				$balanceLogModel = new BalanceLog();
-				$balanceLogModel->allocation_id = $allocationModel->id;
-				$balanceLogModel->user_id = $model->user_id;
-
-				if (in_array($allocationModel->type, [Allocation::TYPE_OPENING_BALANCE, Allocation::TYPE_RECEIVABLE])) {
-					$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
-				} else {
-					$balanceLogModel->amount = $existingBalance - $allocationModel->amount;
-				}
-
-				$balanceLogModel->save();
-				
 				$allocationModel->id = null;
 				$allocationModel->isNewRecord = true;
 				$allocationModel->invoice_id = Payment::PAYMENT_CREDIT;
 				$allocationModel->save();
 
-				$balanceLogModel->id = null;
-				$balanceLogModel->isNewRecord = true;
-				$balanceLogModel->allocation_id = $allocationModel->id;
-
 				$previousBalance = BalanceLog::find()
 								->orderBy(['id' => SORT_DESC])
 								->where(['user_id' => $model->user_id])->one();
@@ -122,6 +97,10 @@ class InvoiceController extends Controller {
 				} else {
 					$existingBalance = 0;
 				}
+				$balanceLogModel = new BalanceLog();
+				$balanceLogModel->allocation_id = $allocationModel->id;
+				$balanceLogModel->user_id = $model->user_id;
+
 				if (in_array($allocationModel->type, [Allocation::TYPE_OPENING_BALANCE, Allocation::TYPE_RECEIVABLE])) {
 					$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
 				} else {
