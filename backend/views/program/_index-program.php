@@ -56,7 +56,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
 $(document).ready(function(){
   $("#programsearch-activeonly").on("change", function() {
       var activeOnly = $(this).is(":checked");
-      var url = "<?php echo Url::to(['program/index']);?>?ProgramSearch[activeOnly]=" + (activeOnly | 0);
+      var url = "<?php echo Url::to(['program/index']);?>?ProgramSearch[activeOnly]=" + (activeOnly | 0) + '&ProgramSearch[type]=' + <?php echo $searchModel->type;?>;
       $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
   });
 });
