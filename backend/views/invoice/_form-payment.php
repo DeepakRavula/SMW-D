@@ -6,7 +6,7 @@ use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
 use common\models\Invoice;
 use common\models\Allocation;
-use common\models\Payment;
+use common\models\BalanceLog;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -14,6 +14,12 @@ use common\models\Payment;
 ?>
 
 <div class="payments-form p-l-20">
+	<?php
+	$customerBalance = BalanceLog::find()
+			->orderBy(['id' => SORT_DESC])
+			->where(['user_id' => $invoiceModel->user_id])->one();
+	echo ! empty($customerBalance) ? $invoiceModel->user->publicIdentity . ' Balance: ' . $customerBalance->amount : null;
+	?>
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
         <div class="col-xs-3">
