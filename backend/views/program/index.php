@@ -24,13 +24,13 @@ $indexProgram =  $this->render('_index-program', [
     'items' => [
 		[
             'label' => 'Private Program',
-            'content' => $indexProgram,
+            'content' => (int) $searchModel->type === Program::TYPE_PRIVATE_PROGRAM ? $indexProgram : null,
 			'url'=>['/program/index','ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
 			'active' => (int) $searchModel->type === Program::TYPE_PRIVATE_PROGRAM,
         ],
 		[
             'label' => 'Group Program',
-            'content' => $indexProgram,
+            'content' => (int) $searchModel->type === Program::TYPE_GROUP_PROGRAM ? $indexProgram : null,
 			'url'=>['/program/index','ProgramSearch[type]' => Program::TYPE_GROUP_PROGRAM],
 			'active' => (int) $searchModel->type === Program::TYPE_GROUP_PROGRAM,
         ],
