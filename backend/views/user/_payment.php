@@ -103,8 +103,7 @@ $customerDebits = Allocation::find()
 				->joinWith(['payment p' => function($query) use($model) {
 						$query->where(['p.user_id' => $model->id]);
 				}])
-				->where(['allocation.type' => Allocation::TYPE_PAID])
-				->andWhere(['not',['allocation.invoice_id' => Payment::TYPE_CREDIT]])
+				->where(['allocation.type' => [Allocation::TYPE_PAID,Allocation::TYPE_CREDIT_USED]])
 				->all();
 				$creditTotal = 0;
 				if (!empty($customerCredits)) {
