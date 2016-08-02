@@ -77,7 +77,7 @@ class InvoiceController extends Controller {
 			} else {
 				$allocationModel = new Allocation();
 				$allocationModel->invoice_id = $id;
-				$allocationModel->payment_id = Payment::PAYMENT_CREDIT;
+				$allocationModel->payment_id = Payment::TYPE_CREDIT;
 				$allocationModel->amount = $paymentModel->amount;
 				$allocationModel->type = Allocation::TYPE_PAID;
 				$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
