@@ -187,9 +187,9 @@ class UserController extends Controller {
 		]);
 		$paymentDataProvider = new ActiveDataProvider([
 			'query' => Allocation::find()
-				->joinWith(['payment p' => function($query) use($id){
-					$query->where(['p.user_id' => $id]);
-				}])
+				->joinWith('payment p')
+				->where(['p.user_id' => $id])
+				->where(['not',['and',['allocation.payment_id' => Payment::PAYMENT_CREDIT],['<>','allocation.invoice_id',Payment::PAYMENT_CREDIT]]])
 		]);
  		$paymentModel = new Payment();
 		if ($paymentModel->load(Yii::$app->request->post())) {
