@@ -189,6 +189,7 @@ class UserController extends Controller {
 			'query' => Allocation::find()
 				->joinWith('payment p')
 				->where(['p.user_id' => $id])
+				->orderBy(['id' => SORT_DESC])
 		]);
  		$paymentModel = new Payment();
 		if ($paymentModel->load(Yii::$app->request->post())) {
