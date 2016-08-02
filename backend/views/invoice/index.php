@@ -33,18 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
-					switch($data->status){
-						case Invoice::STATUS_OWING:
-							$status = 'Owing';
-						break;
-						case Invoice::STATUS_PAID:
-							$status = 'Paid';
-						break;
-						case Invoice::STATUS_CREDIT:
-							$status = 'Credited';
-						break;
-					}
-					return $status;
+					$status = Invoice::getStatus($data);
+					return ! empty($status) ? $status : 'Owing';
                 },
 			],
             'total',

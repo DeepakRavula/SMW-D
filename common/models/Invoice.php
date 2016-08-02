@@ -26,7 +26,7 @@ class Invoice extends \yii\db\ActiveRecord
 	const TYPE_INVOICE = 2;
 
 	public $customer_id;
-	
+	public $status;	
     /**
      * @inheritdoc
      */
@@ -42,7 +42,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return [
 			['user_id','required'],
-			[['type','notes','internal_notes'],'safe']
+			[['type','notes','status','internal_notes'],'safe']
 		];
     }
 
@@ -100,6 +100,29 @@ class Invoice extends \yii\db\ActiveRecord
 			case Invoice::STATUS_CREDIT:
 				$status = 'Credited';
 			break;
+		}
+		return $status;
+    }
+
+	public static function getStatus($data)
+    {
+		$status = null;
+		$invoiceAmounts = Allocation::find()
+			->where(['invoice_id' => $data->id,'type' => Allocation::TYPE_PAID])
+			->all();
+		if(! empty($invoiceAmounts)){
+			$sumOfInvoicePayment = 0;
+			foreach($invoiceAmounts as $invoiceAmount){
+				$sumOfInvoicePayment += $invoiceAmount->amount; 
+			}
+			if($data->total == $sumOfInvoicePayment){
+				$status = 'Paid'; 
+			}
+			elseif($data->total > $sumOfInvoicePayment){
+				$status = 'Owing'; 
+			}else{
+				$status = 'Credit'; 	
+			}
 		}
 		return $status;
     }
