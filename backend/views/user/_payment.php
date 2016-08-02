@@ -49,7 +49,7 @@ echo GridView::widget([
 					case ($data->type == Allocation::TYPE_PAID) && ($data->invoice_id != Payment::PAYMENT_CREDIT) && ($data->payment_id != Payment::PAYMENT_CREDIT):
 						$description = 'Invoice Paid';
 						break;
-					case ($data->type == Allocation::TYPE_PAID) && ($data->invoice_id == Payment::PAYMENT_CREDIT):
+					case Allocation::TYPE_CREDIT_USED:
 						$description = 'Credit Used';
 						break;
 					default:
@@ -69,7 +69,7 @@ echo GridView::widget([
 		[
 			'label' => 'Credit',
 			'value' => function($data) {
-				if ($data->type === Allocation::TYPE_PAID) {
+				if ($data->type === Allocation::TYPE_PAID || $data->type === Allocation::TYPE_CREDIT_USED) {
 					return !empty($data->amount) ? $data->amount : null;
 				}
 			}
