@@ -189,6 +189,9 @@ class UserController extends Controller {
 			'query' => Allocation::find()
 				->joinWith('payment p')
 				->where(['p.user_id' => $id])
+				->joinWith('invoice i')
+				->orWhere(['i.user_id' => $id])
+				->andWhere(['not',['and',['allocation.type' => Allocation::TYPE_PAID,'allocation.payment_id' => Payment::TYPE_CREDIT]]])
 				->orderBy(['id' => SORT_DESC])
 		]);
  		$paymentModel = new Payment();

@@ -83,13 +83,8 @@ class InvoiceController extends Controller {
 				$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
 				$allocationModel->save();
 				
-				$previousCredit = Payment::find()
-								->orderBy(['id' => SORT_DESC])
-								->where(['user_id' => $model->user_id])->one();
-				
 				$allocationModel->id = null;
 				$allocationModel->isNewRecord = true;
-				$allocationModel->payment_id = $previousCredit->id;
 				$allocationModel->type = Allocation::TYPE_CREDIT_USED;
 				$allocationModel->save();
 
