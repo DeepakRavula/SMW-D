@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
-					return ! empty($data->status) ? $data->status : 'Owing';
+					return $data->status;
                 },
 			],
             'total',

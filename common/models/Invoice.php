@@ -88,10 +88,8 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
-
-	public function getStatus()
-    {
-		$status = null;
+	
+	public function getInvoiceTotal(){
 		$invoiceAmounts = $this->getAllocations()->paid()->all();
 		
 		if(! empty($invoiceAmounts)){
@@ -99,15 +97,22 @@ class Invoice extends \yii\db\ActiveRecord
 			foreach($invoiceAmounts as $invoiceAmount){
 				$sumOfInvoicePayment += $invoiceAmount->amount; 
 			}
-			if($this->total == $sumOfInvoicePayment){
-				$status = 'Paid'; 
-			}
-			elseif($this->total > $sumOfInvoicePayment){
-				$status = 'Owing'; 
-			}else{
-				$status = 'Credit'; 	
-			}
+		return $sumOfInvoicePayment;
 		}
+	}
+	
+	public function getStatus()
+    {
+		$status = null;	
+		if((int) $this->total === (int) $this->invoiceTotal){
+			$status = 'Paid'; 
+		}
+		elseif($this->total > $this->invoiceTotal){
+			$status = 'Owing'; 
+		}else{
+			$status = 'Credit'; 	
+		}
+		
 		return $status;
     }
    
