@@ -5,20 +5,6 @@ use common\models\Payment;
 use common\models\Allocation;
 use common\models\BalanceLog;
 ?>
-<div class="col-md-12">
-	<h4 class="pull-left m-r-20">Opening Balance </h4> 
-	<a href="#" class="add-new-payment text-add-new"><i class="fa fa-plus"></i></a>
-	<div class="clearfix"></div>
-</div>
-<div class="clearfix"></div>
-<hr class="hr-ad right-side-faded hr-payment">
-<div class="dn show-create-payment-form">
-	<?php
-	echo $this->render('_form-payment', [
-		'model' => new Payment(),
-	])
-	?>
-</div>
 <?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([

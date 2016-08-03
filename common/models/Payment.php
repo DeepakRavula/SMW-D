@@ -19,6 +19,7 @@ class Payment extends \yii\db\ActiveRecord {
 	public $invoiceId;
 	public $allocationType;
 	const TYPE_CREDIT = 1;
+	const TYPE_OPENING_BALANCE = 4;
 	/**
 	 * @inheritdoc
 	 */

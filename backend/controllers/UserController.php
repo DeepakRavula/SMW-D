@@ -209,6 +209,16 @@ class UserController extends Controller {
 			]);
 			return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, 'section' => 'payment']);
 		}
+
+		$openingBalancePaymentModel = Payment::find()
+				->with(['allocation' => function($query) {
+					$query->where(['type' => Allocation::TYPE_OPENING_BALANCE]);	
+				}])
+				->where([
+					'user_id' => $model->id
+			])->one();
+
+
 		return $this->render('view', [
 			'student' => new Student(),
 			'dataProvider' => $dataProvider,
@@ -225,6 +235,7 @@ class UserController extends Controller {
 			'invoiceDataProvider' => $invoiceDataProvider,
 			'studentDataProvider' => $studentDataProvider,
 			'paymentDataProvider' => $paymentDataProvider,
+			'openingBalancePaymentModel' => $openingBalancePaymentModel
 		]);
 	}
 

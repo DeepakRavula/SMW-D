@@ -110,6 +110,10 @@ $this->params['breadcrumbs'][] = $this->title;
 			'studentDataProvider' => $studentDataProvider,
 		]);
 
+		$openingBalanceContent = $this->render('_opening-balance',[
+			'openingBalancePaymentModel' => $openingBalancePaymentModel,
+		]);
+
 		?>
 		<?php
 		$items = [
@@ -164,7 +168,13 @@ $this->params['breadcrumbs'][] = $this->title;
 				'label' => 'Accounts',
 				'content' => $paymentContent,
 				'active' => $section === 'payment',
+			],
+			[
+				'label' => 'Opening Balance',
+				'content' => $openingBalanceContent,
+				'active' => $section === 'opening-balance',
 			]
+
 		];
 		if (in_array($role->name, ['teacher'])) {
 			$items = array_merge($items,$teacherItems);
@@ -188,10 +198,6 @@ $this->params['breadcrumbs'][] = $this->title;
 	});
 	$('.add-new-student').click(function () {
 		$('.show-create-student-form').show();
-	});
-	$('.add-new-payment').click(function () {
-		$('.show-create-payment-form').show();
-		$('.hr-payment').hide();
 	});
 	$('.add-address').bind('click', function () {
 		$('.address-fields').show();
