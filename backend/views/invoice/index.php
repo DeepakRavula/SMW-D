@@ -27,12 +27,13 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 			    'label' => 'Customer',
                 'value' => function($data) {
-                    return ! empty($data->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $data->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null;
+                    return ! empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                 },
             ],
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
+					$status = null;
 					switch($data->status){
 						case Invoice::STATUS_OWING:
 							$status = 'Owing';

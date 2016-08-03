@@ -56,7 +56,6 @@ $paymentContent =  $this->render('_payment', [
 		[
             'label' => 'Payments',
             'content' => $paymentContent,
-			'active' => true,
         ],
     ],
 ]);?>

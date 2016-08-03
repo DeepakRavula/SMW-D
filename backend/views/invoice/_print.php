@@ -54,11 +54,11 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row-fluid">
               <h2 class="m-0 text-inverse"><strong>INVOICE </strong></h2>
           </div>
-          <small><?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address)): ?>
-                <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->address?>
+          <small><?php if( ! empty($model->user->userLocation->location->address)): ?>
+                <?php echo $model->user->userLocation->location->address?>
       <?php endif;?>
-      <?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->phone_number)): ?><br>
-            <?php echo $model->lineItems[0]->lesson->enrolment->student->customer->userLocation->location->phone_number?>
+      <?php if( ! empty($model->user->userLocation->location->phone_number)): ?><br>
+            <?php echo $model->user->userLocation->location->phone_number?>
       <?php endif;?> 
       </small> 
       </div>
@@ -72,17 +72,17 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-sm-9 invoice-col m-b-20 pull-left p-0">
           <div class="row m-t-10">
             <div class="col-xs-12">
-                <h4 class="m-0 f-w-400"><strong><?php echo isset($model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity) ? $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity : null?></strong></h4>
+                <h4 class="m-0 f-w-400"><strong><?php echo isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?></strong></h4>
             <div class="text-gray">
             <?php
-                $addresses = $model->lineItems[0]->lesson->enrolment->student->customer->addresses;
+                $addresses = $model->user->addresses;
                 foreach($addresses as $address){
                   if($address->label === 'Billing'){
                     $billingAddress = $address;
                     break;
                   }
                 }
-                $phoneNumber = $model->lineItems[0]->lesson->enrolment->student->customer->phoneNumber; 
+                $phoneNumber = $model->user->phoneNumber; 
             
                 ?>
                 <!-- Billing address -->
@@ -93,8 +93,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         echo $billingAddress->postal_code;
                    } ?>
                 <div class="row-fluid m-t-20">
-                  <?php if( ! empty($model->lineItems[0]->lesson->enrolment->student->customer->email)): ?>
-                  <?php echo 'E: '; ?><?php echo $model->lineItems[0]->lesson->enrolment->student->customer->email?>
+                  <?php if( ! empty($model->user->email)): ?>
+                  <?php echo 'E: '; ?><?php echo $model->user->email?>
                   <?php endif;?>
                 </div>
               </div>
