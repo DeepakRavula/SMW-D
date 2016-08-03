@@ -26,7 +26,6 @@ class Invoice extends \yii\db\ActiveRecord
 	const TYPE_INVOICE = 2;
 
 	public $customer_id;
-	
     /**
      * @inheritdoc
      */
@@ -55,7 +54,6 @@ class Invoice extends \yii\db\ActiveRecord
             'id' => 'ID',
 			'invoice_number' => 'Invoice Number',
             'date' => 'Date',
-            'status' => 'Status',
 			'notes' => 'Printed Notes',
 			'internal_notes' => 'Internal Notes',
 			'type' => 'Type'
@@ -80,27 +78,41 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Payment::className(), ['user_id' => 'user_id']);
     }
-
+	
+	public function getAllocations()
+    {
+        return $this->hasMany(Allocation::className(), ['invoice_id' => 'id']);
+    }
+	
 	public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 	
-	public function status($data)
-    {
-		$status = null;
-
-        switch($data->status){
-			case Invoice::STATUS_OWING:
-				$status = 'Owing';
-			break;
-			case Invoice::STATUS_PAID:
-				$status = 'Paid';
-			break;
-			case Invoice::STATUS_CREDIT:
-				$status = 'Credited';
-			break;
+	public function getInvoiceTotal(){
+		$invoiceAmounts = $this->getAllocations()->paid()->all();
+		
+		if(! empty($invoiceAmounts)){
+			$sumOfInvoicePayment = 0;
+			foreach($invoiceAmounts as $invoiceAmount){
+				$sumOfInvoicePayment += $invoiceAmount->amount; 
+			}
+		return $sumOfInvoicePayment;
 		}
+	}
+	
+	public function getStatus()
+    {
+		$status = null;	
+		if((int) $this->total === (int) $this->invoiceTotal){
+			$status = 'Paid'; 
+		}
+		elseif($this->total > $this->invoiceTotal){
+			$status = 'Owing'; 
+		}else{
+			$status = 'Credit'; 	
+		}
+		
 		return $status;
     }
    

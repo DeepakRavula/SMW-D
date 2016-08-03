@@ -1,7 +1,7 @@
 <?php
 
 namespace common\models\query;
-
+use common\models\Allocation;
 /**
  * This is the ActiveQuery class for [[\common\models\Allocation]].
  *
@@ -31,4 +31,9 @@ class AllocationQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+	public function paid() {
+		$this->where(['type' => Allocation::TYPE_PAID]);
+		
+		return $this;
+	}
 }

@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use backend\models\search\InvoiceSearch;
-
+use common\models\Invoice;
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -76,12 +76,13 @@ use backend\models\search\InvoiceSearch;
               <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">
-              <div class="col-md-4 pull-right text-right p-r-0"><?php echo date("d/m/Y", strtotime($model->date));?></div>
+              <div class="col-md-4 pull-right text-right p-r-0"><?= date("d/m/Y", strtotime($model->date));?></div>
               <div class="col-md-2 pull-right">Date:</div>
               <div class="clearfix"></div>
           </div>
           <div class="row-fluid text-gray">
-              <div class="col-md-4 pull-right text-right p-r-0"><?php echo $model->status($model);?></div>
+              <div class="col-md-4 pull-right text-right p-r-0">
+			  <?= $model->status;?></div>
               <div class="col-md-2 pull-right">Status:</div>
               <div class="clearfix"></div>
             </div>
