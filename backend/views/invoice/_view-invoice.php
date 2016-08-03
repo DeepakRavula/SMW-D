@@ -8,21 +8,21 @@ use common\models\Invoice;
          <div class="row">
 		<div class="col-xs-12 p-0">
           <h2 class="m-0">
-            <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo pull-left">
+            <a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo pull-left">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-		<?php echo Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-right  m-l-20',]) ?>  
-          <?php echo Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
+		<?= Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-right  m-l-20',]) ?>  
+          <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
           <div class="pull-left invoice-address text-gray">
             <div class="row-fluid">
-              <h2 class="m-0 text-inverse"><strong><?php echo (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
+              <h2 class="m-0 text-inverse"><strong><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
           </div>
           <small><?php if( ! empty($model->user->userLocation->location->address)): ?>
-                <?php echo $model->user->userLocation->location->address?>
+                <?= $model->user->userLocation->location->address?>
 			<?php endif;?>
 			<?php if( ! empty($model->user->userLocation->location->phone_number)): ?><br>
-            <?php echo $model->user->userLocation->location->phone_number?>
+            <?= $model->user->userLocation->location->phone_number?>
 			<?php endif;?> 
       </small> 
       </div>
@@ -36,10 +36,10 @@ use common\models\Invoice;
         <div class="col-sm-8 invoice-col m-b-20 p-0">
           <div class="row m-t-10">
             <div class="col-xs-8">
-              <h4 class="m-0 f-w-400"><strong><?php echo isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?></strong></h4>
+              <h4 class="m-0 f-w-400"><strong><?= isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?></strong></h4>
               <div class="text-gray">
-	    <?php
-	                    $addresses = $model->user->addresses;
+	   		<?php
+	            $addresses = $model->user->addresses;
                 foreach($addresses as $address){
                   if($address->label === 'Billing'){
                     $billingAddress = $address;
@@ -56,14 +56,14 @@ use common\models\Invoice;
                     echo $billingAddress->postal_code;
                } ?>
             <div class="row-fluid m-t-20">
-              <?php if( ! empty($model->user->email)): ?>
-              <?php echo 'E: '; ?><?php echo $model->user->email?>
-              <?php endif;?>
+               <?php if( ! empty($model->user->email)): ?>
+               <?= 'E: '; ?><?= $model->user->email?>
+               <?php endif;?>
             </div>
             <!-- Phone number -->
             <div class="row-fluid">
-              <?php if(! empty($phoneNumber)){ ?><?php echo 'P: '; ?>
-              <?php echo $phoneNumber->number; } ?>
+              <?php if(! empty($phoneNumber)){ ?><?= 'P: '; ?>
+              <?= $phoneNumber->number; } ?>
             </div>
             </div></div>
           </div>
@@ -71,8 +71,8 @@ use common\models\Invoice;
         <!-- /.col -->
         <div class="col-sm-4 invoice-col m-t-10 text-right p-0">
             <div class="row-fluid  text-gray">
-              <div class="col-md-4 pull-right text-right p-r-0"><?php echo (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#' . $model->invoice_number?></div>
-              <div class="col-md-2 pull-right"><?php echo (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Number:'?> </div> 
+              <div class="col-md-4 pull-right text-right p-r-0"><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#' . $model->invoice_number?></div>
+              <div class="col-md-2 pull-right"><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Number:'?> </div> 
               <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">
@@ -117,7 +117,7 @@ use common\models\Invoice;
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center'],
             		'value' => function($data) {
-            			return !empty($data->lesson->enrolment->program->rate) ? $data->lesson->enrolment->program->rate : null;
+            		return !empty($data->lesson->enrolment->program->rate) ? $data->lesson->enrolment->program->rate : null;
             			},
             	],
                 [ 
@@ -146,7 +146,7 @@ use common\models\Invoice;
                     <?php if(! empty($model->notes)):?>
                     <div class="row-fluid m-t-20">
                       <em><strong>Printed Notes: </strong><Br>
-                        <?php echo $model->notes; ?></em>
+                        <?= $model->notes; ?></em>
                       </div>
                       <?php endif;?>
                       <?php if(! empty($model->notes) && ! empty($model->internal_notes)):?>
@@ -154,7 +154,7 @@ use common\models\Invoice;
                       <?php endif;?>
                       <?php if(! empty($model->internal_notes)):?>
                       <div class="row-fluid">
-                      <em><strong>Internal notes:</strong><Br> <?php echo $model->internal_notes; ?></em>
+                      <em><strong>Internal notes:</strong><Br> <?= $model->internal_notes; ?></em>
                     </div>
                     <?php endif;?>
                   </td>
@@ -162,23 +162,23 @@ use common\models\Invoice;
                     <table class="table-invoice-childtable">
 					           <tr>
                       <td>SubTotal</td>
-                      <td><?php echo $model->subTotal;?></td>
+                      <td><?= $model->subTotal;?></td>
                     </tr> 
                      <tr>
                       <td>Tax</td>
-                      <td><?php echo $model->tax;?></td>
+                      <td><?= $model->tax;?></td>
                     </tr>
-					           <tr>
+					<tr>
                       <td>Paid</td>
-                      <td><?php echo '0.00';?></td> 
+                      <td><?= $model->invoiceTotal;?></td> 
                     </tr>
 					           <tr>
                       <tr>
                       <td><strong>Total</strong></td>
-                      <td><strong><?php echo $model->total;?></strong></td> 
+                      <td><strong><?= $model->total;?></strong></td> 
                     </tr>
                       <td class="p-t-20">Balance</td>
-                      <td class="p-t-20"><?php echo $model->total;?></td> 
+                      <td class="p-t-20"><?= $model->invoiceBalance;?></td> 
                     </tr>
                     </table>
                   </td>

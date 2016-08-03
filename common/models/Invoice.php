@@ -100,6 +100,11 @@ class Invoice extends \yii\db\ActiveRecord
 		return $sumOfInvoicePayment;
 		}
 	}
+
+	public function getInvoiceBalance(){
+		$balance = $this->total - $this->invoiceTotal;
+		return $balance;
+	}
 	
 	public function getStatus()
     {
