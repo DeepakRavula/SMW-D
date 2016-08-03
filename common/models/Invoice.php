@@ -78,7 +78,12 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Payment::className(), ['user_id' => 'user_id']);
     }
-
+	
+	public function getAllocations()
+    {
+        return $this->hasMany(Allocation::className(), ['invoice_id' => 'id']);
+    }
+	
 	public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
@@ -87,9 +92,8 @@ class Invoice extends \yii\db\ActiveRecord
 	public function getStatus()
     {
 		$status = null;
-		$invoiceAmounts = Allocation::find()
-			->where(['invoice_id' => $this->id,'type' => Allocation::TYPE_PAID])
-			->all();
+		$invoiceAmounts = $this->getAllocations()->paid()->all();
+		
 		if(! empty($invoiceAmounts)){
 			$sumOfInvoicePayment = 0;
 			foreach($invoiceAmounts as $invoiceAmount){
