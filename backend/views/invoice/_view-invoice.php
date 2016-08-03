@@ -82,8 +82,7 @@ use common\models\Invoice;
           </div>
           <div class="row-fluid text-gray">
               <div class="col-md-4 pull-right text-right p-r-0"><?php 
-			  $status = Invoice::getStatus($model);
-			  echo !empty($status) ? $status : 'Owing';?></div>
+			  echo !empty($model->status) ? $model->status : 'Owing';?></div>
               <div class="col-md-2 pull-right">Status:</div>
               <div class="clearfix"></div>
             </div>

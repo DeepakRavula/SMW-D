@@ -26,7 +26,6 @@ class Invoice extends \yii\db\ActiveRecord
 	const TYPE_INVOICE = 2;
 
 	public $customer_id;
-	public $status;	
     /**
      * @inheritdoc
      */
@@ -42,7 +41,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return [
 			['user_id','required'],
-			[['type','notes','status','internal_notes'],'safe']
+			[['type','notes','internal_notes'],'safe']
 		];
     }
 
@@ -55,7 +54,6 @@ class Invoice extends \yii\db\ActiveRecord
             'id' => 'ID',
 			'invoice_number' => 'Invoice Number',
             'date' => 'Date',
-            'status' => 'Status',
 			'notes' => 'Printed Notes',
 			'internal_notes' => 'Internal Notes',
 			'type' => 'Type'
@@ -85,40 +83,22 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
-	
-	public function status($data)
-    {
-		$status = null;
 
-        switch($data->status){
-			case Invoice::STATUS_OWING:
-				$status = 'Owing';
-			break;
-			case Invoice::STATUS_PAID:
-				$status = 'Paid';
-			break;
-			case Invoice::STATUS_CREDIT:
-				$status = 'Credited';
-			break;
-		}
-		return $status;
-    }
-
-	public static function getStatus($data)
+	public function getStatus()
     {
 		$status = null;
 		$invoiceAmounts = Allocation::find()
-			->where(['invoice_id' => $data->id,'type' => Allocation::TYPE_PAID])
+			->where(['invoice_id' => $this->id,'type' => Allocation::TYPE_PAID])
 			->all();
 		if(! empty($invoiceAmounts)){
 			$sumOfInvoicePayment = 0;
 			foreach($invoiceAmounts as $invoiceAmount){
 				$sumOfInvoicePayment += $invoiceAmount->amount; 
 			}
-			if($data->total == $sumOfInvoicePayment){
+			if($this->total == $sumOfInvoicePayment){
 				$status = 'Paid'; 
 			}
-			elseif($data->total > $sumOfInvoicePayment){
+			elseif($this->total > $sumOfInvoicePayment){
 				$status = 'Owing'; 
 			}else{
 				$status = 'Credit'; 	

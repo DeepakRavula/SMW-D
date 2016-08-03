@@ -33,8 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
-					$status = Invoice::getStatus($data);
-					return ! empty($status) ? $status : 'Owing';
+					return ! empty($data->status) ? $data->status : 'Owing';
                 },
 			],
             'total',
