@@ -170,7 +170,7 @@ use common\models\Invoice;
                     </tr>
 					<tr>
                       <td>Paid</td>
-                      <td><?= $model->invoiceTotal;?></td> 
+                      <td><?= $model->invoicePaymentTotal;?></td> 
                     </tr>
 					           <tr>
                       <tr>

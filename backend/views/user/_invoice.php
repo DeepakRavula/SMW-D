@@ -33,6 +33,7 @@ use common\models\Invoice;
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
+					$status = null;
 					switch($data->status){
 						case Invoice::STATUS_OWING:
 							$status = 'Owing';

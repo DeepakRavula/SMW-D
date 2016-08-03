@@ -89,30 +89,30 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 	
-	public function getInvoiceTotal(){
+	public function getInvoicePaymentTotal(){
 		$invoiceAmounts = $this->getAllocations()->paid()->all();
 		
+		$sumOfInvoicePayment = 0;
 		if(! empty($invoiceAmounts)){
-			$sumOfInvoicePayment = 0;
 			foreach($invoiceAmounts as $invoiceAmount){
 				$sumOfInvoicePayment += $invoiceAmount->amount; 
 			}
-		return $sumOfInvoicePayment;
 		}
+		return $sumOfInvoicePayment;
 	}
 
 	public function getInvoiceBalance(){
-		$balance = $this->total - $this->invoiceTotal;
+		$balance = $this->total - $this->invoicePaymentTotal;
 		return $balance;
 	}
 	
 	public function getStatus()
     {
 		$status = null;	
-		if((int) $this->total === (int) $this->invoiceTotal){
+		if((int) $this->total === (int) $this->invoicePaymentTotal){
 			$status = 'Paid'; 
 		}
-		elseif($this->total > $this->invoiceTotal){
+		elseif($this->total > $this->invoicePaymentTotal){
 			$status = 'Owing'; 
 		}else{
 			$status = 'Credit'; 	
