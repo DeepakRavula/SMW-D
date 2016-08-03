@@ -19,7 +19,6 @@ use common\models\BalanceLog;
 	])
 	?>
 </div>
-<h4 class="pull-left m-r-20 col-md-12"><?= 'Accounts Receivable Sub-Ledger for <strong>' . $model->publicIdentity .'</strong>' ?> </h4>
 <?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
