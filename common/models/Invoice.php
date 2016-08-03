@@ -115,7 +115,10 @@ class Invoice extends \yii\db\ActiveRecord
 		elseif($this->total > $this->invoicePaymentTotal){
 			$status = 'Owing'; 
 		}else{
-			$status = 'Credit'; 	
+			$status = 'Paid'; 
+			if($this->type == self::TYPE_INVOICE) {
+				$status = 'Credit'; 	
+			}
 		}
 		
 		return $status;

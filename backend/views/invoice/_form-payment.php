@@ -14,12 +14,6 @@ use common\models\BalanceLog;
 ?>
 
 <div class="payments-form p-l-20">
-	<?php
-	$customerBalance = BalanceLog::find()
-			->orderBy(['id' => SORT_DESC])
-			->where(['user_id' => $invoiceModel->user_id])->one();
-	echo ! empty($customerBalance) ? $invoiceModel->user->publicIdentity . ' Balance: ' . $customerBalance->amount : null;
-	?>
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
         <div class="col-xs-3">
@@ -27,8 +21,7 @@ use common\models\BalanceLog;
 									ArrayHelper::map(PaymentMethod::find()->all(), 'id', 'name'))?>
         </div>
         <div class="col-xs-3">
-			<?php $invoiceTotal = $model->isNewRecord ? $invoiceModel->total : null; ?> 
-   			<?php echo $form->field($model, 'amount')->textInput(['value' => $invoiceTotal]) ?>
+   			<?php echo $form->field($model, 'amount')->textInput() ?>
         </div>
 	</div>
 </div>

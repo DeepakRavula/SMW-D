@@ -3,6 +3,7 @@ use yii\grid\GridView;
 use common\models\Payment;
 use common\models\Allocation;
 use common\models\Invoice;
+use common\models\BalanceLog;
 ?>
 <?php yii\widgets\Pjax::begin() ?>
 <?php echo GridView::widget([
@@ -34,13 +35,33 @@ use common\models\Invoice;
     ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
 
+
+	<?php
+	$customerBalance = BalanceLog::find()
+			->orderBy(['id' => SORT_DESC])
+			->where(['user_id' => $model->user_id])->one();
+	?>
+<div>
+	Customer Name: <?=$model->user->publicIdentity;?>
+</div>
+<div>
+	Customer Credits Available: <?= ! empty($customerBalance->amount) ? $customerBalance->amount : '0';?>
+</div>
+<div>
+	Invoice Total: <?= $model->total;?>
+</div>
+<div>
+	Invoice Paid: <?= $model->invoicePaymentTotal;?>
+</div>
+<div>
+	Invoice Balance: <?= $model->invoiceBalance;?>
+</div>
 <div class="col-md-12 m-b-20">
-	<a href="#" class="add-new-payment text-add-new"><i class="fa fa-plus-circle"></i> Add Payment method</a>
+	<a href="#" class="add-new-payment text-add-new"><i class="fa fa-plus-circle"></i> Add Payment</a>
 	<div class="clearfix"></div>
 </div>
 <div class="dn show-create-payment-form">
 	<?php echo $this->render('_form-payment', [
 		'model' => new Payment(),
-		'invoiceModel' => $model,
 	]) ?>
 </div>
