@@ -13,26 +13,26 @@ use common\models\Program;
 $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 'Private Programs' : 'Group Program'; 
 
 ?>
-<div class="col-md-12">
+<div class="col-md-5">
 <h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
-<a href="#" class="add-new-program text-add-new"><i class="fa fa-plus"></i></a>
+<div class="pull-left m-l-10 m-r-20">
+  <?php yii\widgets\Pjax::begin() ?>
+  <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
+  <?= $form->field($searchModel, 'activeOnly')->checkbox(['data-pjax' => true]); ?>
+  <?php ActiveForm::end(); ?>
+    <?php \yii\widgets\Pjax::end(); ?>
+</div>
+<a href="#" class="add-new-program pull-right text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add new program</a>
 <div class="clearfix"></div>
 </div>
-
-<div class="dn program-create section-tab">
+<div class="clearfix"></div>
+<div class="dn program-create section-tab form-well form-well-smw">
     <?php echo $this->render('_form', [
         'model' => $model,
     ]) ?>
 </div>
 
-<div class="program-index m-t-20">
-<div class="pull-right  m-r-20">
-	<?php yii\widgets\Pjax::begin() ?>
-	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
-	<?= $form->field($searchModel, 'activeOnly')->checkbox(['data-pjax' => true]); ?>
-	<?php ActiveForm::end(); ?>
-    <?php \yii\widgets\Pjax::end(); ?>
-</div>
+<div class="program-index">
 	<?php Pjax::begin(['id' => 'program-listing']) ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
