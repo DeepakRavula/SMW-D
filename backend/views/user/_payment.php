@@ -37,6 +37,9 @@ echo GridView::widget([
 					case Allocation::TYPE_CREDIT_USED:
 						$description = 'Credit Used';
 						break;
+					case Allocation::TYPE_ACCOUNT_CREDIT:
+						$description = 'Account Credit';
+						break;
 					default:
 						$description = null;
 				}
@@ -46,7 +49,7 @@ echo GridView::widget([
 		[
 			'label' => 'Debit',
 			'value' => function($data) {
-				if ($data->type === Allocation::TYPE_OPENING_BALANCE || $data->type === Allocation::TYPE_RECEIVABLE) {
+				if ($data->type === Allocation::TYPE_OPENING_BALANCE || $data->type === Allocation::TYPE_RECEIVABLE || $data->type === Allocation::TYPE_ACCOUNT_CREDIT) {
 					return !empty($data->amount) ? $data->amount : null;
 				}
 			}
@@ -70,7 +73,7 @@ echo GridView::widget([
 ?>
 <?php \yii\widgets\Pjax::end(); ?>
 <?php
-$debitTypes = [Allocation::TYPE_OPENING_BALANCE, Allocation::TYPE_RECEIVABLE];
+$debitTypes = [Allocation::TYPE_OPENING_BALANCE, Allocation::TYPE_RECEIVABLE,Allocation::TYPE_ACCOUNT_CREDIT];
 $customerDebits = Allocation::find()
 		->joinWith(['payment p' => function($query) use($model) {
 				$query->where(['p.user_id' => $model->id]);

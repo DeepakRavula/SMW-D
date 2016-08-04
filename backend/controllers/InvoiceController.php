@@ -60,7 +60,8 @@ class InvoiceController extends Controller {
 		]);
 
 		$invoicePayments = Allocation::find()
-				->where(['invoice_id' => $id, 'type' => Allocation::TYPE_PAID]);
+				->where(['invoice_id' => $model->id, 'type' => Allocation::TYPE_PAID]);
+		
 		$invoicePaymentsDataProvider = new ActiveDataProvider([
 			'query' => $invoicePayments,
 		]);

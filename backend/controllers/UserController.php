@@ -211,7 +211,7 @@ class UserController extends Controller {
 		}
 
 		$openingBalancePaymentModel = Payment::find()
-				->with(['allocation' => function($query) {
+				->joinWith(['allocation' => function($query) {
 					$query->where(['type' => Allocation::TYPE_OPENING_BALANCE]);	
 				}])
 				->where([
