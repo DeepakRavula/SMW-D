@@ -18,8 +18,8 @@ class GroupCourseSearch extends GroupCourse
     public function rules()
     {
         return [
-            [['id', 'rate'], 'integer'],
-            [['title', 'length'], 'safe'],
+            [['id'], 'integer'],
+            [['length'], 'safe'],
         ];
     }
 

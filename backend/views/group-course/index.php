@@ -26,21 +26,38 @@ $this->registerJs("
     <?php yii\widgets\Pjax::begin() ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
 		'rowOptions'   => function ($model, $key, $index, $grid) {
         	return ['data-id' => $model->id];
     	},
         'columns' => [
-            'title',
-            'rate',
 			[
-				'attribute' => 'length',
+				'attribute' => 'program_id',
+				'label' => 'Name',
+				'value' => function($data){
+					return ! empty($data->program->name) ? $data->program->name : null;
+				}
+			],
+			[
+				'attribute' => 'rate',
+				'label' => 'Rate',
+				'value' => function($data){
+					return ! empty($data->program->rate) ? $data->program->rate : null;
+				}
+			],
+			[
 				'label' => 'Length',
 				'value' => function($data){
 					$length = \DateTime::createFromFormat('H:i:s', $data->length);
 					return ! empty($data->length) ? $length->format('H:i') : null;
+				}
+			],
+			[
+				'attribute' => 'teacher_id',
+				'label' => 'Teacher Name',
+				'value' => function($data){
+					return ! empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
 				}
 			],
         ],

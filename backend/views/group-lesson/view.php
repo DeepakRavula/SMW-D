@@ -20,7 +20,7 @@ if(Yii::$app->controller->action->id === 'view'){
 		echo $length->format('d-m-Y g:i a'); ?>
     </div>
     <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
-			<i class="fa fa-music detail-icon"></i> <?php echo ! empty($model->groupCourse->title) ? $model->groupCourse->title : null ?>
+			<i class="fa fa-music detail-icon"></i> <?php echo ! empty($model->groupCourse->program->name) ? $model->groupCourse->program->name : null ?>
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
 		<i class="fa fa-info-circle detail-icon"></i> <?php 

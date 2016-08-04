@@ -4,6 +4,8 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\time\TimePicker;
 use common\models\GroupCourse;
+use common\models\Program;
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
@@ -16,7 +18,10 @@ use common\models\GroupCourse;
 
 <div class="row">
 	<div class="col-md-4">
-    <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'program_id')->dropDownList(
+				ArrayHelper::map(Program::find()->active()
+					->where(['type' => Program::TYPE_GROUP_PROGRAM])
+					->all(), 'id', 'name')) ?>
 	</div>
 	<div class="col-md-4">
     <?php echo $form->field($model, 'length')->widget(TimePicker::classname(), [
@@ -27,11 +32,12 @@ use common\models\GroupCourse;
 			]);?>
 
 	</div>
+	<div class="col-md-4">
+            <?php echo $form->field($model, 'teacher_id')->dropDownList($teacher) ?>
+	</div>
 	</div>
 	<div class="row">
-	    <div class="col-md-4">
-            <?php echo $form->field($model, 'teacher_id')->dropDownList($teacher) ?>
-		</div>
+	    
 		<div class="col-md-4">
             <?php echo $form->field($model, 'day')->dropdownList(GroupCourse::getWeekdaysList(),['prompt' => 'select day']) ?>
 		</div>
@@ -42,9 +48,7 @@ use common\models\GroupCourse;
 		<div class="col-md-4">
 		<?= $form->field($model, 'from_time')->widget(TimePicker::classname(), []); ?>
 		</div>
-		</div>
-		<div class="row">
-	    <div class="col-md-4">
+		<div class="col-md-4">
             <?php echo $form->field($model, 'start_date')->widget(\yii\jui\DatePicker::classname(), [
                     'options' => ['class'=>'form-control'],
                     'clientOptions' => [
@@ -54,6 +58,8 @@ use common\models\GroupCourse;
                     ]
                 ]); ?>
 		</div>
+		</div>
+		<div class="row">
 		<div class="col-md-4">
             <?php echo $form->field($model, 'end_date')->widget(\yii\jui\DatePicker::classname(), [
                     'options' => ['class'=>'form-control'],

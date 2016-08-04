@@ -31,10 +31,9 @@ class GroupCourse extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'rate', 'length','day','teacher_id','from_time','start_date','end_date'], 'required'],
-            [['rate','day','teacher_id'], 'integer'],
+            [['length','day','teacher_id','program_id','from_time','start_date','end_date'], 'required'],
+            [['program_id','day','teacher_id'], 'integer'],
             [['length'], 'safe'],
-            [['title'], 'string', 'max' => 255],
         ];
     }
 
@@ -45,9 +44,8 @@ class GroupCourse extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'rate' => 'Rate',
             'length' => 'Length',
+			'program_id' => 'Program Name',
 			'teacher_id' => 'Teacher Name',
 			'day' => 'Day',
 			'from_time' => 'From Time',
@@ -74,6 +72,11 @@ class GroupCourse extends \yii\db\ActiveRecord
 	public function getTeacher()
     {
         return $this->hasOne(User::className(), ['id' => 'teacher_id']);
+    }
+	
+	public function getProgram()
+    {
+        return $this->hasOne(Program::className(), ['id' => 'program_id']);
     }
 	
 	public static function getWeekdaysList()

@@ -86,9 +86,10 @@ class ScheduleController extends Controller
             ->all();
 
 		$groupLessonevents = (new \yii\db\Query())
-            ->select(['gl.teacher_id as resources', 'gl.id as id', 'gc.title as title, gc.day, gl.date as start, ADDTIME(gl.date, gc.length) as end'])
+            ->select(['gl.teacher_id as resources', 'gl.id as id', 'p.name as title, gc.day, gl.date as start, ADDTIME(gl.date, gc.length) as end'])
             ->from('group_lesson gl')
             ->join('Join', 'group_course gc', 'gc.id = gl.course_id')
+            ->join('Join', 'program p', 'p.id = gc.program_id')
             ->where('gc.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->all();
 

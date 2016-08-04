@@ -13,10 +13,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="group-course-view">
 	<div class="row-fluid user-details-wrapper">
     <div class="col-md-2">
-        	<i class="fa fa-music"></i> <?php echo $model->title; ?>
+        	<i class="fa fa-music"></i> <?php echo $model->program->name; ?>
     </div>
     <div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Rate">
-    	<i class="fa fa-money"></i> <?php echo $model->rate; ?>
+    	<i class="fa fa-money"></i> <?php echo $model->program->rate; ?>
     </div>
 	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="length">
     	<i class="fa fa-calendar"></i> <?php 
