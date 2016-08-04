@@ -19,9 +19,6 @@ use common\models\GroupCourse;
     <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 	</div>
 	<div class="col-md-4">
-    <?php echo $form->field($model, 'rate')->textInput() ?>
-	</div>
-	<div class="col-md-4">
     <?php echo $form->field($model, 'length')->widget(TimePicker::classname(), [
 				'pluginOptions' => [
 					'showMeridian' => false,
