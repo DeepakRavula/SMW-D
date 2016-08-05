@@ -100,6 +100,11 @@ class Payment extends \yii\db\ActiveRecord {
 		}
 
 		$balanceLogModel->save();
+
+		$invoice = Invoice::findOne(['id' => $this->invoiceId]);
+		$invoice->balance = $invoice->total - $allocationModel->amount;
+		$invoice->save();
+		
 		/*
 		if($this->payment_method_id == PaymentMethod::TYPE_CASH){
 			$invoice = Invoice::findOne(['id' => $this->invoiceId]);

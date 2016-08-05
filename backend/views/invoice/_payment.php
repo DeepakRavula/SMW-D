@@ -36,10 +36,10 @@ use common\models\BalanceLog;
 			[
                 'label' => 'Amount',
                 'value' => function($data) {
-					if($data->type === Allocation::TYPE_PAID || $data->type === Allocation::TYPE_CREDIT_APPLIED){
-                    	return ! empty($data->amount) ? $data->amount : null;
+					if($data->type === Allocation::TYPE_CREDIT_APPLIED){
+                    	return ! empty($data->amount) ? abs($data->amount) : null;
 					}else{
-	                    return ! empty($data->balance->amount) ? $data->balance->amount : null;
+                    	return ! empty($data->amount) ? $data->amount : null;
 					}
                 },
             ],

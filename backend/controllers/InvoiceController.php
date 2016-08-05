@@ -78,13 +78,25 @@ class InvoiceController extends Controller {
 			if ($paymentModel->payment_method_id != PaymentMethod::TYPE_CREDIT) {
 				$paymentModel->save();
 			} else {
+
+				$invoice = Invoice::find()
+						->where(['<>','balance',0])->one();
+				
+				if(abs($invoice->balance) > $model->total){
+					$invoiceModel = $this->findModel($invoice->id);
+				}else{
+					$invoiceModel = $this->findModel($model->id);
+				}
 				$allocationModel = new Allocation();
-				$allocationModel->invoice_id = $id;
+				$allocationModel->invoice_id = $invoice->id;
 				$allocationModel->payment_id = Payment::TYPE_CREDIT;
-				$allocationModel->amount = $model->total;
+				$allocationModel->amount = $invoice->balance;
 				$allocationModel->type = Allocation::TYPE_CREDIT_USED;
 				$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
 				$allocationModel->save();
+					
+				$invoiceModel->balance = $invoice->balance + $model->total;
+				$invoiceModel->save();
 				
 				$previousBalance = BalanceLog::find()
 								->orderBy(['id' => SORT_DESC])
