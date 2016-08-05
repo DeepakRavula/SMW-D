@@ -146,18 +146,16 @@ class InvoiceController extends Controller {
 
 			$currentDate = new \DateTime();
 			$invoice->customer_id = $customer->id;
-			$query = Lesson::find()
-					->joinwith('invoiceLineItem ili')
-					->joinWith(['enrolment e' => function($query) use($customer, $location_id) {
-						$query->joinWith(['student s' => function($query) use($customer, $location_id) {
-							$query->where(['s.customer_id' => $customer->id]);
-						}])
-					->where(['e.location_id' => $location_id]);
-					}])
-					->where(['ili.id' => null])
-					->andWhere(['<=', 'lesson.date', $currentDate->format('Y:m:d')
-					]);
-
+			$query = Lesson::find()->alias('l')
+					->location($location_id)
+					->student($customer->id)
+					->unInvoiced();
+				if((int) $invoice->type === Invoice::TYPE_PRO_FORMA_INVOICE){
+					$query->scheduled();
+				}else{
+					$query->completed();
+				}
+			
 			$unInvoicedLessonsDataProvider = new ActiveDataProvider([
 				'query' => $query,
 			]);
