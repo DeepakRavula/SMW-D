@@ -191,8 +191,8 @@ class UserController extends Controller {
 				->where(['p.user_id' => $id])
 				->joinWith('invoice i')
 				->orWhere(['i.user_id' => $id])
-				->andWhere(['not',['and',['allocation.type' => Allocation::TYPE_PAID,'allocation.payment_id' => Payment::TYPE_CREDIT]]])
-				->orderBy(['id' => SORT_DESC])
+				->andWhere(['not',['and',['allocation.type' => [Allocation::TYPE_CREDIT_USED,Allocation::TYPE_CREDIT_APPLIED]]]])
+			->orderBy(['id' => SORT_DESC])
 		]);
  		$paymentModel = new Payment();
 		if ($paymentModel->load(Yii::$app->request->post())) {

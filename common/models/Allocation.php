@@ -21,7 +21,8 @@ class Allocation extends \yii\db\ActiveRecord
 	const TYPE_PAID = 3;
 	const TYPE_CREDIT_USED = 4;
 	const TYPE_ACCOUNT_CREDIT = 5;
-	
+	const TYPE_INVOICE_GENERATED = 6;
+	const TYPE_CREDIT_APPLIED = 7;
     /**
      * @inheritdoc
      */

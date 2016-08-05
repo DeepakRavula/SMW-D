@@ -18,6 +18,7 @@ class Payment extends \yii\db\ActiveRecord {
 
 	public $invoiceId;
 	public $allocationType;
+	
 	const TYPE_CREDIT = 1;
 	const TYPE_OPENING_BALANCE = 4;
 	/**
@@ -92,13 +93,14 @@ class Payment extends \yii\db\ActiveRecord {
 		$balanceLogModel->allocation_id = $allocationModel->id;
 		$balanceLogModel->user_id = $this->user_id;
 
-		if (in_array($this->allocationType, [Allocation::TYPE_OPENING_BALANCE, Allocation::TYPE_RECEIVABLE])) {
+		if (in_array($this->allocationType, [Allocation::TYPE_OPENING_BALANCE])) {
 			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
 		} else {
 			$balanceLogModel->amount = $existingBalance - $allocationModel->amount;
 		}
 
 		$balanceLogModel->save();
+		/*
 		if($this->payment_method_id == PaymentMethod::TYPE_CASH){
 			$invoice = Invoice::findOne(['id' => $this->invoiceId]);
 			$invoicePaymentTotal = $invoice->invoicePaymentTotal;
@@ -163,5 +165,7 @@ class Payment extends \yii\db\ActiveRecord {
 				$balanceLogModel->save();
 			}
 		}
+		 * 
+		 */
 	}
 }

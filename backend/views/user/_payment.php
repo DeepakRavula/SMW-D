@@ -28,17 +28,17 @@ echo GridView::widget([
 					case Allocation::TYPE_OPENING_BALANCE:
 						$description = 'Opening Balance';
 						break;
-					case Allocation::TYPE_RECEIVABLE:
-						$description = 'Payment Received';
-						break;
 					case ($data->type == Allocation::TYPE_PAID) && ($data->invoice_id != Payment::TYPE_CREDIT) && ($data->payment_id != Payment::TYPE_CREDIT):
-						$description = 'Invoice Paid';
+						$description = 'Payment';
 						break;
 					case Allocation::TYPE_CREDIT_USED:
 						$description = 'Credit Used';
 						break;
 					case Allocation::TYPE_ACCOUNT_CREDIT:
 						$description = 'Account Credit';
+						break;
+					case Allocation::TYPE_INVOICE_GENERATED:
+						$description = 'Invoice Generated';
 						break;
 					default:
 						$description = null;
@@ -47,9 +47,15 @@ echo GridView::widget([
 			}
 		],
 		[
+			'label' => 'Source',
+            'value' => function($data) {
+                    return !empty($data->invoice->invoice_number) ? $data->invoice->invoice_number : null;
+                }
+        ],
+		[
 			'label' => 'Debit',
 			'value' => function($data) {
-				if ($data->type === Allocation::TYPE_OPENING_BALANCE || $data->type === Allocation::TYPE_RECEIVABLE || $data->type === Allocation::TYPE_ACCOUNT_CREDIT) {
+				if ($data->type === Allocation::TYPE_INVOICE_GENERATED) {	
 					return !empty($data->amount) ? $data->amount : null;
 				}
 			}
@@ -57,7 +63,7 @@ echo GridView::widget([
 		[
 			'label' => 'Credit',
 			'value' => function($data) {
-				if ($data->type === Allocation::TYPE_PAID || $data->type === Allocation::TYPE_CREDIT_USED) {
+				if ($data->type === Allocation::TYPE_PAID || $data->type === Allocation::TYPE_OPENING_BALANCE  || $data->type === Allocation::TYPE_ACCOUNT_CREDIT) {
 					return !empty($data->amount) ? $data->amount : null;
 				}
 			}

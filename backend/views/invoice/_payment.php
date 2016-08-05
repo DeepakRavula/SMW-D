@@ -23,14 +23,26 @@ use common\models\BalanceLog;
 			[
                 'label' => 'Payment Method',
                 'value' => function($data) {
-					if($data->payment_id == Payment::TYPE_CREDIT){
+					if($data->payment_id == Payment::TYPE_CREDIT && $data->type == Allocation::TYPE_CREDIT_APPLIED){
 						return 'Credit Applied';
+					}
+					elseif($data->payment_id == Payment::TYPE_CREDIT && $data->type == Allocation::TYPE_CREDIT_USED){
+						return 'Credit Used';
 					}else{
                     return ! empty($data->payment->paymentMethod->name) ? $data->payment->paymentMethod->name : null;
 					}
                 },
             ],
-			'amount',
+			[
+                'label' => 'Amount',
+                'value' => function($data) {
+					if($data->type === Allocation::TYPE_PAID || $data->type === Allocation::TYPE_CREDIT_APPLIED){
+                    	return ! empty($data->amount) ? $data->amount : null;
+					}else{
+	                    return ! empty($data->balance->amount) ? $data->balance->amount : null;
+					}
+                },
+            ],
 	    ],
     ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>

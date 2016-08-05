@@ -59,8 +59,10 @@ class InvoiceController extends Controller {
 			'query' => $invoiceLineItems,
 		]);
 
-		$invoicePayments = Allocation::find()
-				->where(['invoice_id' => $model->id, 'type' => Allocation::TYPE_PAID]);
+		$invoicePayments = Allocation::find()->alias('a')
+				->where(['a.type' => Allocation::TYPE_PAID])
+				->orWhere(['and',['a.type' => [Allocation::TYPE_CREDIT_USED,Allocation::TYPE_CREDIT_APPLIED]],'a.payment_id' => Payment::TYPE_CREDIT])
+				->andWhere(['invoice_id' => $model->id]);
 		
 		$invoicePaymentsDataProvider = new ActiveDataProvider([
 			'query' => $invoicePayments,
@@ -72,21 +74,37 @@ class InvoiceController extends Controller {
 			$paymentModel->invoiceId = $id;
 			$currentDate = new \DateTime();
 			$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
-			$paymentModel->allocationType = Allocation::TYPE_RECEIVABLE;
+			$paymentModel->allocationType = Allocation::TYPE_PAID;
 			if ($paymentModel->payment_method_id != PaymentMethod::TYPE_CREDIT) {
 				$paymentModel->save();
 			} else {
 				$allocationModel = new Allocation();
 				$allocationModel->invoice_id = $id;
 				$allocationModel->payment_id = Payment::TYPE_CREDIT;
-				$allocationModel->amount = $paymentModel->amount;
-				$allocationModel->type = Allocation::TYPE_PAID;
+				$allocationModel->amount = $model->total;
+				$allocationModel->type = Allocation::TYPE_CREDIT_USED;
 				$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
 				$allocationModel->save();
 				
+				$previousBalance = BalanceLog::find()
+								->orderBy(['id' => SORT_DESC])
+								->where(['user_id' => $model->user_id])->one();
+
+				if (!empty($previousBalance)) {
+					$existingBalance = $previousBalance->amount;
+				} else {
+					$existingBalance = 0;
+				}
+				$balanceLogModel = new BalanceLog();
+				$balanceLogModel->allocation_id = $allocationModel->id;
+				$balanceLogModel->user_id = $model->user_id;
+				$balanceLogModel->amount = $existingBalance - $allocationModel->amount;
+				$balanceLogModel->save();
+				
 				$allocationModel->id = null;
 				$allocationModel->isNewRecord = true;
-				$allocationModel->type = Allocation::TYPE_CREDIT_USED;
+				$allocationModel->invoice_id = $id;
+				$allocationModel->type = Allocation::TYPE_CREDIT_APPLIED;
 				$allocationModel->save();
 
 				$previousBalance = BalanceLog::find()
@@ -101,12 +119,7 @@ class InvoiceController extends Controller {
 				$balanceLogModel = new BalanceLog();
 				$balanceLogModel->allocation_id = $allocationModel->id;
 				$balanceLogModel->user_id = $model->user_id;
-
-				if (in_array($allocationModel->type, [Allocation::TYPE_OPENING_BALANCE, Allocation::TYPE_RECEIVABLE])) {
-					$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
-				} else {
-					$balanceLogModel->amount = $existingBalance - $allocationModel->amount;
-				}
+				$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
 
 				$balanceLogModel->save();
 			}
@@ -199,6 +212,31 @@ class InvoiceController extends Controller {
 			$invoice->tax = $taxAmount;
 			$invoice->total = $totalAmount;
 			$invoice->save();
+
+			$allocationModel = new Allocation();
+			$allocationModel->invoice_id = $invoice->id;
+			$allocationModel->payment_id = Payment::TYPE_CREDIT;
+			$allocationModel->amount = $invoice->total;
+			$allocationModel->type = Allocation::TYPE_INVOICE_GENERATED;
+			$allocationModel->date = $invoice->date;
+			$allocationModel->save();
+	
+			$previousBalance = BalanceLog::find()
+			->orderBy(['id' => SORT_DESC])
+			->where(['user_id' => $invoice->user_id])->one();
+			
+			if (!empty($previousBalance)) {
+				$existingBalance = $previousBalance->amount;
+			} else {
+				$existingBalance = 0;
+			}
+
+			$balanceLogModel = new BalanceLog();
+			$balanceLogModel->allocation_id = $allocationModel->id;
+			$balanceLogModel->user_id = $invoice->user_id;
+			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
+			$balanceLogModel->save();
+		
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Invoice has been created successfully'
