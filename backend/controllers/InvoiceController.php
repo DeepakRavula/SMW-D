@@ -99,10 +99,10 @@ class InvoiceController extends Controller {
 				$balanceLogModel = new BalanceLog();
 				$balanceLogModel->allocation_id = $allocationModel->id;
 				$balanceLogModel->user_id = $model->user_id;
-				if($existingBalance < $model->invoiceBalance){
+				if( ! empty($model->invoicePaymentTotal)){
 					$balanceLogModel->amount = $model->invoiceBalance;
 				}else{
-					$balanceLogModel->amount = $existingBalance + $model->total;
+					$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
 				}
 				$balanceLogModel->save();
 			}

@@ -96,7 +96,14 @@ class Payment extends \yii\db\ActiveRecord {
 		
 		$invoice = Invoice::findOne(['id' => $this->invoiceId]);
 		
-		$balanceLogModel->amount = $invoice->total - $allocationModel->amount;
+		if (in_array($this->allocationType, [Allocation::TYPE_OPENING_BALANCE])) {
+			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
+		} 
+		elseif(! empty($this->allocation->invoice->invoicePaymentTotal)){
+			$balanceLogModel->amount = $this->allocation->invoice->invoiceBalance;
+		}else{
+			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
+		}
 		$balanceLogModel->save();
 
 		$invoice->balance = $balanceLogModel->amount;
