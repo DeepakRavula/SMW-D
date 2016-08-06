@@ -26,8 +26,8 @@ use common\models\BalanceLog;
 					if($data->payment_id == Payment::TYPE_CREDIT && $data->type == Allocation::TYPE_CREDIT_APPLIED){
 						return 'Credit Applied';
 					}
-					elseif($data->payment_id == Payment::TYPE_CREDIT && $data->type == Allocation::TYPE_CREDIT_USED){
-						return 'Credit Used';
+					elseif($data->type == Allocation::TYPE_ACCOUNT_CREDIT){
+						return 'Account Credit';
 					}else{
                     return ! empty($data->payment->paymentMethod->name) ? $data->payment->paymentMethod->name : null;
 					}

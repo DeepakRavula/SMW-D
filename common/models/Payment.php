@@ -75,6 +75,7 @@ class Payment extends \yii\db\ActiveRecord {
 	}
 	
 	public function afterSave($insert, $changedAttributes) {
+		
 		$allocationModel = new Allocation();
 		$allocationModel->invoice_id = $this->invoiceId;
 		$allocationModel->payment_id = $this->id;
@@ -88,89 +89,28 @@ class Payment extends \yii\db\ActiveRecord {
 		} else {
 			$existingBalance = 0;
 		}
-
+		
 		$balanceLogModel = new BalanceLog();
 		$balanceLogModel->allocation_id = $allocationModel->id;
 		$balanceLogModel->user_id = $this->user_id;
-
-		if (in_array($this->allocationType, [Allocation::TYPE_OPENING_BALANCE])) {
-			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
-		} else {
-			$balanceLogModel->amount = $existingBalance - $allocationModel->amount;
-		}
-
+		
+		$invoice = Invoice::findOne(['id' => $this->invoiceId]);
+		
+		$balanceLogModel->amount = $invoice->total - $allocationModel->amount;
 		$balanceLogModel->save();
 
-		$invoice = Invoice::findOne(['id' => $this->invoiceId]);
-		$invoice->balance = $invoice->total - $allocationModel->amount;
+		$invoice->balance = $balanceLogModel->amount;
 		$invoice->save();
 		
-		/*
-		if($this->payment_method_id == PaymentMethod::TYPE_CASH){
-			$invoice = Invoice::findOne(['id' => $this->invoiceId]);
-			$invoicePaymentTotal = $invoice->invoicePaymentTotal;
-			
-			if(! empty($invoicePaymentTotal)){
-				$invoiceTotal = $invoicePaymentTotal; 
-			}else{
-				$invoiceTotal = $invoice->total;	
-			}
-			if($invoiceTotal < $allocationModel->amount){
-				$allocationModel->id = null;
-				$allocationModel->isNewRecord = true;
-				$allocationModel->amount = $invoiceTotal;
-				$allocationModel->type = Allocation::TYPE_PAID;
-				$allocationModel->save();
-			
-				$balanceLogModel->id = null;
-				$balanceLogModel->isNewRecord = true;
-				$balanceLogModel->allocation_id = $allocationModel->id;
-
-				if (!empty($this->previousBalance)) {
-					$existingBalance = $this->previousBalance->amount;
-				} else {
-					$existingBalance = 0;
-				}
-				$balanceLogModel->amount = $existingBalance - $invoiceTotal;
-				$balanceLogModel->save();
-
-				$allocationModel->id = null;
-				$allocationModel->isNewRecord = true;
-				$allocationModel->amount = $balanceLogModel->amount;
-				$allocationModel->type = Allocation::TYPE_ACCOUNT_CREDIT;
-				$allocationModel->save();
-
-				$balanceLogModel->id = null;
-				$balanceLogModel->isNewRecord = true;
-				$balanceLogModel->allocation_id = $allocationModel->id;
-
-				if (!empty($this->previousBalance)) {
-					$existingBalance = $this->previousBalance->amount;
-				} else {
-					$existingBalance = 0;
-				}
-				$balanceLogModel->amount = $existingBalance;
-				$balanceLogModel->save();
-			}else{
-				$allocationModel->id = null;
-				$allocationModel->isNewRecord = true;
-				$allocationModel->type = Allocation::TYPE_PAID;
-				$allocationModel->save();
-
-				$balanceLogModel->id = null;
-				$balanceLogModel->isNewRecord = true;
-				$balanceLogModel->allocation_id = $allocationModel->id;
-
-				if (!empty($this->previousBalance)) {
-					$existingBalance = $this->previousBalance->amount;
-				} else {
-					$existingBalance = 0;
-				}
-				$balanceLogModel->amount = $existingBalance - $allocationModel->amount;
-				$balanceLogModel->save();
-			}
+		if($invoice->total < $allocationModel->amount){
+			$allocationModel->id = null;
+			$allocationModel->isNewRecord = true;
+			$allocationModel->amount =  $invoice->total - $allocationModel->amount;
+			$allocationModel->type = Allocation::TYPE_ACCOUNT_CREDIT;
+			$allocationModel->save();
 		}
-		 * 
-		 */
+			
+		
 	}
 }
+

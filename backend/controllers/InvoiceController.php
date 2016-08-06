@@ -61,7 +61,7 @@ class InvoiceController extends Controller {
 
 		$invoicePayments = Allocation::find()->alias('a')
 				->where(['a.type' => Allocation::TYPE_PAID])
-				->orWhere(['and',['a.type' => [Allocation::TYPE_CREDIT_USED,Allocation::TYPE_CREDIT_APPLIED]],'a.payment_id' => Payment::TYPE_CREDIT])
+				->orWhere(['and',['a.type' => [Allocation::TYPE_ACCOUNT_CREDIT,Allocation::TYPE_CREDIT_APPLIED]],'a.payment_id' => Payment::TYPE_CREDIT])
 				->andWhere(['invoice_id' => $model->id]);
 		
 		$invoicePaymentsDataProvider = new ActiveDataProvider([
@@ -79,25 +79,14 @@ class InvoiceController extends Controller {
 				$paymentModel->save();
 			} else {
 
-				$invoice = Invoice::find()
-						->where(['<>','balance',0])->one();
-				
-				if(abs($invoice->balance) > $model->total){
-					$invoiceModel = $this->findModel($invoice->id);
-				}else{
-					$invoiceModel = $this->findModel($model->id);
-				}
 				$allocationModel = new Allocation();
-				$allocationModel->invoice_id = $invoice->id;
+				$allocationModel->invoice_id = $model->id;
 				$allocationModel->payment_id = Payment::TYPE_CREDIT;
-				$allocationModel->amount = $invoice->balance;
-				$allocationModel->type = Allocation::TYPE_CREDIT_USED;
+				$allocationModel->amount = $paymentModel->amount;
+				$allocationModel->type = Allocation::TYPE_CREDIT_APPLIED;
 				$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
 				$allocationModel->save();
 					
-				$invoiceModel->balance = $invoice->balance + $model->total;
-				$invoiceModel->save();
-				
 				$previousBalance = BalanceLog::find()
 								->orderBy(['id' => SORT_DESC])
 								->where(['user_id' => $model->user_id])->one();
@@ -110,29 +99,11 @@ class InvoiceController extends Controller {
 				$balanceLogModel = new BalanceLog();
 				$balanceLogModel->allocation_id = $allocationModel->id;
 				$balanceLogModel->user_id = $model->user_id;
-				$balanceLogModel->amount = $existingBalance - $allocationModel->amount;
-				$balanceLogModel->save();
-				
-				$allocationModel->id = null;
-				$allocationModel->isNewRecord = true;
-				$allocationModel->invoice_id = $id;
-				$allocationModel->type = Allocation::TYPE_CREDIT_APPLIED;
-				$allocationModel->save();
-
-				$previousBalance = BalanceLog::find()
-								->orderBy(['id' => SORT_DESC])
-								->where(['user_id' => $model->user_id])->one();
-
-				if (!empty($previousBalance)) {
-					$existingBalance = $previousBalance->amount;
-				} else {
-					$existingBalance = 0;
+				if($existingBalance < $model->invoiceBalance){
+					$balanceLogModel->amount = $model->invoiceBalance;
+				}else{
+					$balanceLogModel->amount = $existingBalance + $model->total;
 				}
-				$balanceLogModel = new BalanceLog();
-				$balanceLogModel->allocation_id = $allocationModel->id;
-				$balanceLogModel->user_id = $model->user_id;
-				$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
-
 				$balanceLogModel->save();
 			}
 			Yii::$app->session->setFlash('alert', [
@@ -232,22 +203,6 @@ class InvoiceController extends Controller {
 			$allocationModel->type = Allocation::TYPE_INVOICE_GENERATED;
 			$allocationModel->date = $invoice->date;
 			$allocationModel->save();
-	
-			$previousBalance = BalanceLog::find()
-			->orderBy(['id' => SORT_DESC])
-			->where(['user_id' => $invoice->user_id])->one();
-			
-			if (!empty($previousBalance)) {
-				$existingBalance = $previousBalance->amount;
-			} else {
-				$existingBalance = 0;
-			}
-
-			$balanceLogModel = new BalanceLog();
-			$balanceLogModel->allocation_id = $allocationModel->id;
-			$balanceLogModel->user_id = $invoice->user_id;
-			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
-			$balanceLogModel->save();
 		
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],

@@ -32,7 +32,7 @@ class AllocationQuery extends \yii\db\ActiveQuery
         return parent::one($db);
     }
 	public function paid() {
-		$this->where(['type' => Allocation::TYPE_PAID]);
+		$this->where(['type' => [Allocation::TYPE_PAID,Allocation::TYPE_CREDIT_APPLIED]]);
 		
 		return $this;
 	}
