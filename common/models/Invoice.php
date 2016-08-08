@@ -90,7 +90,10 @@ class Invoice extends \yii\db\ActiveRecord
     }
 	
 	public function getInvoicePaymentTotal(){
-		$invoiceAmounts = $this->getAllocations()->paid()->all();
+		$invoiceAmounts = Payment::find()
+				->joinWith('invoicePayment ip')
+				->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+				->all();
 		
 		$sumOfInvoicePayment = 0;
 		if(! empty($invoiceAmounts)){
@@ -100,7 +103,7 @@ class Invoice extends \yii\db\ActiveRecord
 		}
 		return $sumOfInvoicePayment;
 	}
-
+	
 	public function getInvoiceBalance(){
 		$balance = $this->total - $this->invoicePaymentTotal;
 		return $balance;

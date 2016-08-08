@@ -78,6 +78,11 @@ class InvoiceController extends Controller {
 				$paymentModel->amount = $paymentModel->amount;
 				$paymentModel->invoiceId = $model->id;
 				$paymentModel->save();
+			
+			if($model->total < $paymentModel->amount || $model->total > $paymentModel->amount){
+				$model->balance =  $model->total - $paymentModel->amount;
+				$model->save();
+			}
 				
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
