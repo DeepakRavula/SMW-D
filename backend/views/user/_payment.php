@@ -2,7 +2,7 @@
 
 use yii\grid\GridView;
 use common\models\Payment;
-use common\models\Allocation;
+use common\models\PaymentMethod;
 use common\models\BalanceLog;
 ?>
 <?php yii\widgets\Pjax::begin() ?>
@@ -24,18 +24,9 @@ echo GridView::widget([
 		[
 			'label' => 'Description',
 			'value' => function($data) {
-				switch ($data->type) {
-					case Allocation::TYPE_OPENING_BALANCE:
+				switch ($data->payment_method_id) {
+					case PaymentMethod::TYPE_ACCOUNT_ENTRY:
 						$description = 'Opening Balance';
-						break;
-					case ($data->type == Allocation::TYPE_PAID) && ($data->invoice_id != Payment::TYPE_CREDIT) && ($data->payment_id != Payment::TYPE_CREDIT):
-						$description = 'Invoice Paid';
-						break;
-					case $data->type == Allocation::TYPE_CREDIT_APPLIED:
-						$description = 'Invoice Paid';
-						break;
-					case Allocation::TYPE_INVOICE_GENERATED:
-						$description = 'Invoice Generated';
 						break;
 					default:
 						$description = null;
@@ -46,33 +37,24 @@ echo GridView::widget([
 		[
 			'label' => 'Source',
             'value' => function($data) {
-                    return !empty($data->invoice->invoice_number) ? $data->invoice->invoice_number : null;
+                    return !empty($data->invoicePayment->invoice->invoice_number) ? $data->invoicePayment->invoice->invoice_number : null;
                 }
         ],
 		[
 			'label' => 'Debit',
 			'value' => function($data) {
-				if ($data->type === Allocation::TYPE_INVOICE_GENERATED) {	
-					return !empty($data->amount) ? $data->amount : null;
-				}
 			}
 		],
 		[
 			'label' => 'Credit',
 			'value' => function($data) {
-				if ($data->type === Allocation::TYPE_PAID || $data->type === Allocation::TYPE_OPENING_BALANCE || $data->type === Allocation::TYPE_CREDIT_APPLIED) {
-					return !empty($data->amount) ? $data->amount : null;
-				}
+				
 			}
 		],
 		[
 			'label' => 'Balance',
 			'value' => function($data) {
-				if ($data->type === Allocation::TYPE_INVOICE_GENERATED) {	
-					return !empty($data->amount) ? $data->amount : null;
-				}else{
-					return !empty($data->balance->amount) ? $data->balance->amount : null;
-				}
+				return $data->amount;	
 			}
 		],
 	],

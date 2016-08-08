@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-use common\models\Allocation;
+use common\models\InvoicePayment;
 
 /**
  * This is the model class for table "payments".
@@ -74,50 +74,7 @@ class Payment extends \yii\db\ActiveRecord {
 		return $previousBalance;
 	}
 	
-	public function afterSave($insert, $changedAttributes) {
-		
-		$allocationModel = new Allocation();
-		$allocationModel->invoice_id = $this->invoiceId;
-		$allocationModel->payment_id = $this->id;
-		$allocationModel->amount = $this->amount;
-		$allocationModel->type = $this->allocationType;
-		$allocationModel->date = $this->date;
-		$allocationModel->save();
-
-		if (!empty($this->previousBalance)) {
-			$existingBalance = $this->previousBalance->amount;
-		} else {
-			$existingBalance = 0;
-		}
-		
-		$balanceLogModel = new BalanceLog();
-		$balanceLogModel->allocation_id = $allocationModel->id;
-		$balanceLogModel->user_id = $this->user_id;
-		
-		$invoice = Invoice::findOne(['id' => $this->invoiceId]);
-		
-		if (in_array($this->allocationType, [Allocation::TYPE_OPENING_BALANCE])) {
-			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
-		} 
-		elseif(! empty($this->allocation->invoice->invoicePaymentTotal)){
-			$balanceLogModel->amount = $this->allocation->invoice->invoiceBalance;
-		}else{
-			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
-		}
-		$balanceLogModel->save();
-
-		$invoice->balance = $balanceLogModel->amount;
-		$invoice->save();
-		
-		if($invoice->total < $allocationModel->amount){
-			$allocationModel->id = null;
-			$allocationModel->isNewRecord = true;
-			$allocationModel->amount =  $invoice->total - $allocationModel->amount;
-			$allocationModel->type = Allocation::TYPE_ACCOUNT_CREDIT;
-			$allocationModel->save();
-		}
-			
-		
+	public function getInvoicePayment() {
+		return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id']);
 	}
 }
-
