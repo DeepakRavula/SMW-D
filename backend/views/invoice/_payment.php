@@ -23,24 +23,13 @@ use common\models\BalanceLog;
 			[
                 'label' => 'Payment Method',
                 'value' => function($data) {
-					if($data->payment_id == Payment::TYPE_CREDIT && $data->type == Allocation::TYPE_CREDIT_APPLIED){
-						return 'Credit Applied';
-					}
-					elseif($data->type == Allocation::TYPE_ACCOUNT_CREDIT){
-						return 'Account Credit';
-					}else{
-                    return ! empty($data->payment->paymentMethod->name) ? $data->payment->paymentMethod->name : null;
-					}
-                },
+                    return ! empty($data->paymentMethod->name) ? $data->paymentMethod->name : null;
+				}
             ],
 			[
                 'label' => 'Amount',
                 'value' => function($data) {
-					if($data->type === Allocation::TYPE_CREDIT_APPLIED){
                     	return ! empty($data->amount) ? abs($data->amount) : null;
-					}else{
-                    	return ! empty($data->amount) ? $data->amount : null;
-					}
                 },
             ],
 	    ],

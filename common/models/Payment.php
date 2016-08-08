@@ -77,4 +77,13 @@ class Payment extends \yii\db\ActiveRecord {
 	public function getInvoicePayment() {
 		return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id']);
 	}
+
+	public function afterSave($insert, $changedAttributes) {
+		$invoicePaymentModel = new InvoicePayment();
+		$invoicePaymentModel->invoice_id = $this->invoiceId;
+		$invoicePaymentModel->payment_id = $this->id;
+		$invoicePaymentModel->save();
+		
+		parent::afterSave($insert, $changedAttributes);
+	}
 }
