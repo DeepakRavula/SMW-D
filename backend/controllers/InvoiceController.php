@@ -83,6 +83,28 @@ class InvoiceController extends Controller {
 				$model->balance =  $model->total - $paymentModel->amount;
 				$model->save();
 			}
+
+			if($model->type === Invoice::TYPE_INVOICE){
+				if($paymentModel->payment_method_id === PaymentMethod::TYPE_CREDIT){
+					$paymentModel->user_id = $model->user_id;
+					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+					$currentDate = new \DateTime();
+					$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
+					$paymentModel->amount = '-' . $paymentModel->amount;
+					$paymentModel->save();
+
+					$paymentModel->id = null;
+					$paymentModel->isNewRecord = true;
+					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+					$paymentModel->amount = $paymentModel->amount;
+					$paymentModel->save();
+
+					$invoicePaymentModel = new InvoicePayment();
+					$invoicePaymentModel->invoice_id = $model->id;
+					$invoicePaymentModel->payment_id = $paymentModel->id;
+					$invoicePaymentModel->save();
+				}
+			}
 				
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],

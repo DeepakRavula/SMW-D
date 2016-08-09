@@ -36,17 +36,11 @@ use common\models\BalanceLog;
     ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
 
-
-	<?php
-	$customerBalance = BalanceLog::find()
-			->orderBy(['id' => SORT_DESC])
-			->where(['user_id' => $model->user_id])->one();
-	?>
 <div>
 	Customer Name: <?=$model->user->publicIdentity;?>
 </div>
 <div>
-	Customer Credits Available: <?= ! empty($customerBalance->amount) ? $customerBalance->amount : '0';?>
+	Customer Credits Available: <?= ! empty($model->getCustomerBalance($model->user_id)) ? $model->getCustomerBalance($model->user_id) : '0';?>
 </div>
 <div>
 	Invoice Total: <?= $model->total;?>

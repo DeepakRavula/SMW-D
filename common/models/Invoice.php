@@ -108,6 +108,40 @@ class Invoice extends \yii\db\ActiveRecord
 		$balance = $this->total - $this->invoicePaymentTotal;
 		return $balance;
 	}
+
+	public function getSumOfPayment($customerId){
+		$customerPayments = Payment::find()
+				->where(['user_id' => $customerId])
+				->all();
+		$sumOfCustomerPayment = 0;
+		if(! empty($customerPayments)){
+			foreach($customerPayments as $customerPayment){
+				$sumOfCustomerPayment += $customerPayment->amount; 
+			}
+		}
+		return $sumOfCustomerPayment;	
+	}
+
+	public function getSumOfInvoice($customerId){
+		$customerInvoices = Invoice::find()
+				->where(['user_id' => $customerId, 'type' => Invoice::TYPE_INVOICE])
+				->all();
+		$sumOfInvoicePayment = 0;
+		if(! empty($customerInvoices)){
+			foreach($customerInvoices as $customerInvoice){
+				$sumOfInvoicePayment += $customerInvoice->total; 
+			}
+		}
+		return $sumOfInvoicePayment;	
+	}
+
+	public function getCustomerBalance($customerId){
+		$totalPayment = $this->getSumOfPayment($customerId);
+		$totalInvoice = $this->getSumOfInvoice($customerId);
+		$customerBalance = $totalInvoice - $totalPayment;
+
+		return $customerBalance;
+	}
 	
 	public function getStatus()
     {
