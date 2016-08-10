@@ -64,4 +64,6 @@ $creditDataProvider = new ArrayDataProvider([
     ]
 ]);
 ?>
-
+<?php echo $this->render('_form-credit', [
+		'model' => new Payment(),
+]) ?>
