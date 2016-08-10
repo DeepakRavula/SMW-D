@@ -6,6 +6,7 @@ $config = [
     'sourceLanguage'=>'en-US',
     'language'=>'en-US',
     'bootstrap' => ['log'],
+	'timeZone' => 'US/Eastern',
     'components' => [
 
         'authManager' => [
@@ -39,6 +40,7 @@ $config = [
 			'timeFormat' => 'php:g:i a',
 			'currencyCode' => 'USD',
 			'nullDisplay' => '', 
+			'timeZone' => 'US/Eastern',
         ],
 
         'glide' => [
