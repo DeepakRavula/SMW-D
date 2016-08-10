@@ -87,8 +87,10 @@ class Location extends \yii\db\ActiveRecord {
 		if (parent::beforeSave($insert)) {
 			$this->country_id = 1;
 			$fromTime = \DateTime::createFromFormat("g:i a", $this->from_time);
+            $fromTime->setTimeZone(new \DateTimeZone('UTC'));
 			$this->from_time = $fromTime->format("H:i");
 			$toTime = \DateTime::createFromFormat("g:i a", $this->to_time);
+            $toTime->setTimeZone(new \DateTimeZone('UTC'));
 			$this->to_time = $toTime->format("H:i");
 			return true;
 		} else {
