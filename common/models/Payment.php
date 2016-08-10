@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\InvoicePayment;
+use common\models\query\PaymentQuery;
 
 /**
  * This is the model class for table "payments".
@@ -51,6 +52,14 @@ class Payment extends \yii\db\ActiveRecord {
 		];
 	}
 
+	/**
+     * @return UserQuery
+     */
+    public static function find()
+    {
+        return new PaymentQuery(get_called_class());
+    }
+	
 	public function getInvoice() {
 		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
 	}
