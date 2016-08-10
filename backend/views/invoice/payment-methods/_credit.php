@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use common\models\Payment;
 use common\models\PaymentMethod;
 use yii\data\ArrayDataProvider;
+use yii\bootstrap\Modal;
 
 ?>
 <h3>Apply Credit</h3>
@@ -46,8 +47,18 @@ $creditDataProvider = new ArrayDataProvider([
     ],
 ]);
 ?>
-<?php echo GridView::widget([
+<?php
+Modal::begin([
+    'header' => '<h2>Apply Credit</h2>',
+    'id'=>'credit-modal',
+    'toggleButton' => ['label' => 'click me', 'class' => 'hide'],
+]);
+
+echo GridView::widget([
 	'dataProvider' => $creditDataProvider,
+    'rowOptions'   => function ($model, $key, $index, $grid) {
+        return ['data-amount' => $model['amount']];
+    },
 	'columns' => [
 		[
 		'label' => 'Id', 
@@ -63,7 +74,20 @@ $creditDataProvider = new ArrayDataProvider([
 		]
     ]
 ]);
+
+Modal::end();
 ?>
 <?php echo $this->render('_form-credit', [
 		'model' => new Payment(),
 ]) ?>
+
+<?php
+$this->registerJs("
+    $('td').click(function () {
+        var amount = $(this).closest('tr').data('amount');
+        $('#payment-credit').val(amount);
+        $('#credit-modal').modal('hide');
+    });
+
+");
+?>
