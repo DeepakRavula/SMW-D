@@ -46,8 +46,7 @@ use common\models\Enrolment;
 				'label' => 'From Time',
 				'value' => function($data) {
 					if(! empty($data->from_time)){
-						$fromTime = date("g:i a",strtotime($data->from_time));
-						return !empty($fromTime) ? $fromTime : null;
+						return ! empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
 					}
 					return null;
 				},
