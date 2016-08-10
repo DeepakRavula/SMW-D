@@ -13,27 +13,16 @@ use common\models\BalanceLog;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
+<h3>Cheque payment</h3>
 <div class="payments-form p-l-20">
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
-        <div class="col-xs-3">
-    		<?php echo $form->field($model, 'payment_method_id')->dropDownList(
-					ArrayHelper::map(PaymentMethod::find()
-						->where(['displayed' => 1])
-						->all(),
-					'id', 'name'))?>
-        </div>
         <div class="col-xs-3">
    			<?php echo $form->field($model, 'amount')->textInput() ?>
         </div>
 	</div>
     <div class="form-group p-l-20">
        <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
-			<?php 
-			if(! $model->isNewRecord){
-				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn']); 	
-			}
-		?>
     </div>
 
     <?php ActiveForm::end(); ?>
