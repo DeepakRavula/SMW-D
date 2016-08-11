@@ -15,6 +15,12 @@ echo GridView::widget([
 	'formatter' => ['class' => 'yii\i18n\Formatter', 'nullDisplay' => ''],
 	'columns' => [
 		[
+			'label' => 'Id',
+			'value' => function($data) {
+				return !empty($data->invoicePayment->invoice->id) ? $data->invoicePayment->invoice->id : null;
+			},
+		],
+		[
 			'label' => 'Date',
 			'value' => function($data) {
 				$date = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
@@ -22,37 +28,19 @@ echo GridView::widget([
 			},
 		],
 		[
-			'label' => 'Description',
+			'label' => 'Total',
 			'value' => function($data) {
-				switch ($data->payment_method_id) {
-					case PaymentMethod::TYPE_ACCOUNT_ENTRY:
-						$description = 'Opening Balance';
-						break;
-					default:
-						$description = null;
-				}
-				return $description;
+				return $data->invoicePayment->invoice->total;	
+			}
+		],	
+		[
+			'label' => 'Paid',
+			'value' => function($data) {
+				return $data->invoicePayment->invoice->invoicePaymentTotal;	
 			}
 		],
 		[
-			'label' => 'Source',
-            'value' => function($data) {
-                    return !empty($data->invoicePayment->invoice->invoice_number) ? $data->invoicePayment->invoice->invoice_number : null;
-                }
-        ],
-		[
-			'label' => 'Debit',
-			'value' => function($data) {
-			}
-		],
-		[
-			'label' => 'Credit',
-			'value' => function($data) {
-				
-			}
-		],
-		[
-			'label' => 'Balance',
+			'label' => 'Owing',
 			'value' => function($data) {
 				return $data->amount;	
 			}
