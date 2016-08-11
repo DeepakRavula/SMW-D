@@ -56,10 +56,8 @@ use kartik\time\TimePicker;
 		<div class="col-md-4">
 			<?php
 			if( ! $model->isNewRecord){
-				$fromTime = \DateTime::createFromFormat("H:i:s", $model->from_time);
-				$model->from_time = $fromTime->format("g:i a");
-				$toTime = \DateTime::createFromFormat("H:i:s", $model->to_time);
-				$model->to_time = $toTime->format("g:i a");
+				$model->from_time = Yii::$app->formatter->asTime($model->from_time);
+                $model->to_time = Yii::$app->formatter->asTime($model->to_time);
 			}
 			?>
 			<?php
