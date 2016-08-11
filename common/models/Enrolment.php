@@ -98,12 +98,12 @@ public $teacherId;
     public function beforeSave($insert)
     {   
       	$this->location_id = Yii::$app->session->get('location_id');
-        $secs = strtotime($this->from_time) - strtotime("00:00:00");
+        $fromTime = \DateTime::createFromFormat('h:i A',$this->from_time);
+    	$fromTime->setTimeZone(new \DateTimeZone('UTC'));
+        $this->from_time = $fromTime->format('H:i');
+		$secs = strtotime($this->from_time) - strtotime("00:00:00");
        	$renewalDate = \DateTime::createFromFormat('d-m-Y', $this->commencement_date);
         $this->commencement_date = date("Y-m-d H:i:s",strtotime($this->commencement_date) + $secs);
-       	$fromTime = \DateTime::createFromFormat('h:i A',$this->from_time);
-		$fromTime->setTimeZone(new \DateTimeZone('UTC'));
-       	$this->from_time = $fromTime->format('H:i');
 		$secs = strtotime($this->duration) - strtotime("00:00:00");
 		$toTime = date("H:i:s",strtotime($this->from_time) + $secs);
         $this->to_time = $toTime; 
