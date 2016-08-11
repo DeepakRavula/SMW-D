@@ -193,13 +193,14 @@ class TeacherAvailabilityController extends Controller
 		$availableHours = [];
 		if(! empty($availabilities)){
 			foreach($availabilities as $availability) {
+                date_default_timezone_set('UTC');
 				$start    = new \DateTime($availability->from_time);
 				$end      = new \DateTime($availability->to_time); // add 1 second because last one is not included in the loop
 				$interval = new \DateInterval('PT30M');
 				$hours   = new \DatePeriod($start, $interval, $end);
 
 				foreach($hours as $hour) {
-					$availableHours[] = $hour->format("h:ia");
+					$availableHours[] = Yii::$app->formatter->asTime($hour);
 				}
 		
 			}

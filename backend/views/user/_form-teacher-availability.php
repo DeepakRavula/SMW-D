@@ -70,10 +70,10 @@ $this->registerJs($js);
 	                    </div>
 	                    <div class="col-sm-4">
 <?php
-	$fromTime = \DateTime::createFromFormat('H:i:s', $availabilityModel->from_time);
-	$toTime = \DateTime::createFromFormat('H:i:s', $availabilityModel->to_time);
-	$availabilityModel->from_time = ! empty($availabilityModel->from_time) ? $fromTime->format('g:i A') : null;
-	$availabilityModel->to_time = ! empty($availabilityModel->to_time) ? $toTime->format('g:i A') : null;
+	$fromTime = Yii::$app->formatter->asTime($availabilityModel->from_time);
+    $toTime = Yii::$app->formatter->asTime($availabilityModel->to_time);
+	$availabilityModel->from_time = ! empty($availabilityModel->from_time) ? $fromTime : null;
+	$availabilityModel->to_time = ! empty($availabilityModel->to_time) ? $toTime : null;
 ?>
 	<?= $form->field($availabilityModel, "[{$index}]from_time")->widget(TimePicker::classname(), []); ?>
 	                    </div>
