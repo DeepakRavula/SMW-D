@@ -9,36 +9,42 @@ use yii\bootstrap\Modal;
 ?>
 <h3>Apply Credit</h3>
 <?php
-$creditsQuery = Payment::find()
-		->joinWith(['invoicePayment ip' => function($query){
-			$query->joinWith(['invoice i' => function($query){
-				$query->where(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);	
-			}]);
-		}])
-		->where(['payment.user_id' => $invoice->user_id])
-		->all();
-		//->orWhere(['like','payment.amoiunt','-']);
-		
-$invoiceCreditQuery = Invoice::find()
-		->where(['<>','balance',0])
+$invoiceCredits = Invoice::find()
+		->invoiceCredits($invoice->user_id)
 		->all();
 
 $results = [];
-foreach($creditsQuery as $credit){
+foreach($invoiceCredits as $invoiceCredit){
+	$lastInvoicePayment = $invoiceCredit->invoicePayments;
+	$lastInvoicePayment = end($lastInvoicePayment);
+	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$lastInvoicePayment->payment->date);
 	$results[] = [
-		'id' => $credit['id'],
-		'date' => $credit['date'],
-		'amount' => $credit['amount']
+		'id' => $invoiceCredit->id,
+		'date' => $paymentDate->format('d-m-Y'),
+		'amount' => abs($invoiceCredit->balance)
+	];
+}
+$proFormaInvoiceCredits = Invoice::find()->alias('i')
+		->joinWith(['invoicePayments ip' => function($query){
+			$query->joinWith(['payment p' => function($query){
+			}]);
+		}])
+		->where(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE, 'i.user_id' => $invoice->user_id])
+		->groupBy('i.id')
+		->all();
+
+		
+foreach($proFormaInvoiceCredits as $proFormaInvoiceCredit){
+	$results[] = [
+		'id' => $proFormaInvoiceCredit->id,
+		'date' => $proFormaInvoiceCredit->invoicePayments->payment->date,
+		'amount' => $proFormaInvoiceCredit
 	];
 }
 
-foreach($invoiceCreditQuery as $credit){
-	$results[] = [
-		'id' => $credit['id'],
-		'date' => $credit['date'],
-		'amount' => $credit['balance']
-	];
-}
+
+
+
 
 $creditDataProvider = new ArrayDataProvider([
     'allModels' => $results,

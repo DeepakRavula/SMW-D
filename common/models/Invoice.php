@@ -83,6 +83,11 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Allocation::className(), ['invoice_id' => 'id']);
     }
+
+	public function getInvoicePayments()
+    {
+        return $this->hasMany(InvoicePayment::className(), ['invoice_id' => 'id']);
+    }
 	
 	public function getUser()
     {
