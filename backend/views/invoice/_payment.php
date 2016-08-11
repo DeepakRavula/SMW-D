@@ -108,6 +108,9 @@ $(document).ready(function(){
   $('#payment-method-btn-section').on('click', '.btn', function() {
 	 $('.payment-method-section').hide();
 	 $('#' + $(this).data('payment-type') + '-section').show();
+     if($(this).data('payment-type') == 'credit'){
+         $('#credit-modal').modal('show');
+     }
   });
 });
 </script>
