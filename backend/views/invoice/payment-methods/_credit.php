@@ -10,7 +10,7 @@ use yii\bootstrap\Modal;
 <h3>Apply Credit</h3>
 <?php
 $invoiceCredits = Invoice::find()
-		->invoiceCredits($invoice->user_id)
+		->invoiceCredit($invoice->user_id)
 		->all();
 
 $results = [];
@@ -24,6 +24,20 @@ foreach($invoiceCredits as $invoiceCredit){
 		'amount' => abs($invoiceCredit->balance)
 	];
 }
+
+$openingBalanceCredit = Payment::find()
+		->where(['user_id' => $invoice->user_id, 'payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY])
+		->andWhere(['like', 'amount', '-'])
+		->one();
+if(! empty($openingBalanceCredit)){
+	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$openingBalanceCredit->date);
+	$results[] = [
+			'id' => $openingBalanceCredit->id,
+			'date' => $paymentDate->format('d-m-Y'),
+			'amount' => abs($openingBalanceCredit->amount)
+		];
+}
+
 $proFormaInvoiceCredits = Invoice::find()->alias('i')
 		->joinWith(['invoicePayments ip' => function($query){
 			$query->joinWith(['payment p' => function($query){
@@ -33,18 +47,13 @@ $proFormaInvoiceCredits = Invoice::find()->alias('i')
 		->groupBy('i.id')
 		->all();
 
-		
 foreach($proFormaInvoiceCredits as $proFormaInvoiceCredit){
 	$results[] = [
 		'id' => $proFormaInvoiceCredit->id,
-		'date' => $proFormaInvoiceCredit->invoicePayments->payment->date,
-		'amount' => $proFormaInvoiceCredit
+		'date' => $lastInvoicePayment->payment->date,
+		'amount' => $proFormaInvoiceCredit->amount
 	];
 }
-
-
-
-
 
 $creditDataProvider = new ArrayDataProvider([
     'allModels' => $results,
