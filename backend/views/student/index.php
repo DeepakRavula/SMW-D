@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
-	<?= $form->field($searchModel, 'enrolledStudent')->checkbox(['label' => 'Show Enrolled Students','data-pjax' => true]); ?>
+    <?= $form->field($searchModel, 'showAllStudent')->checkbox(['data-pjax' => true]); ?>
 	<?php ActiveForm::end(); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 </div>
@@ -54,9 +54,9 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <script>
 $(document).ready(function(){
-  $("#studentsearch-enrolledstudent").on("change", function() {
-      var enrolledStudent = $(this).is(":checked");
-      var url = "<?php echo Url::to(['student/index']);?>?StudentSearch[enrolledStudent]=" + (enrolledStudent | 0);
+  $("#studentsearch-showallstudent").on("change", function() {
+      var showAllStudent = $(this).is(":checked");
+      var url = "<?php echo Url::to(['student/index']);?>?StudentSearch[showAllStudent]=" + (showAllStudent | 0);
       $.pjax.reload({url:url,container:"#student-listing",replace:false,  timeout: 4000});  //Reload GridView
   });
 });
