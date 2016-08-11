@@ -72,10 +72,14 @@ class InvoiceController extends Controller {
 
 		$paymentModel = new Payment();
 		if ($paymentModel->load(Yii::$app->request->post())) {
+				$paymentMethodId = $paymentModel->payment_method_id; 
 				$paymentModel->user_id = $model->user_id;
 				$currentDate = new \DateTime();
 				$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
 				$paymentModel->amount = $paymentModel->amount;
+				if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_CREDIT){
+					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+				}
 				$paymentModel->invoiceId = $model->id;
 				$paymentModel->save();
 			
@@ -83,27 +87,14 @@ class InvoiceController extends Controller {
 				$model->balance =  $model->total - $paymentModel->amount;
 				$model->save();
 			}
-
-			if($model->type === Invoice::TYPE_INVOICE){
-				if($paymentModel->payment_method_id === PaymentMethod::TYPE_CREDIT){
-					$paymentModel->user_id = $model->user_id;
-					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-					$currentDate = new \DateTime();
-					$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
-					$paymentModel->amount = '-' . $paymentModel->amount;
-					$paymentModel->save();
-
-					$paymentModel->id = null;
-					$paymentModel->isNewRecord = true;
-					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-					$paymentModel->amount = $paymentModel->amount;
-					$paymentModel->save();
-
-					$invoicePaymentModel = new InvoicePayment();
-					$invoicePaymentModel->invoice_id = $model->id;
-					$invoicePaymentModel->payment_id = $paymentModel->id;
-					$invoicePaymentModel->save();
-				}
+			
+			if((int) $paymentMethodId === PaymentMethod::TYPE_CREDIT){
+				$paymentModel->id = null;
+				$paymentModel->isNewRecord = true;	
+				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+				$paymentModel->amount = -abs($paymentModel->amount);
+				$paymentModel->invoiceId = $paymentModel->sourceId;
+				$paymentModel->save();
 			}
 				
 			Yii::$app->session->setFlash('alert', [

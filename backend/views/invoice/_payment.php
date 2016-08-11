@@ -68,6 +68,7 @@ use yii\bootstrap\Button;
 				'class' => 'btn btn-default',
 				'id' => str_replace(' ', '-', trim(strtolower($method->name))) . '-btn',
 				'data-payment-type' => str_replace(' ', '-', trim(strtolower($method->name))),
+				'data-payment-type-id' => $method->id,
 			],
 	];?>
 <?php endforeach;?>
@@ -106,11 +107,24 @@ echo ButtonGroup::widget([
 <script type="text/javascript">
 $(document).ready(function(){
   $('#payment-method-btn-section').on('click', '.btn', function() {
+	 // debugger;
 	 $('.payment-method-section').hide();
 	 $('#' + $(this).data('payment-type') + '-section').show();
+	 console.log($('#payment-payment_method_id'));
+	 console.log($(this).data('payment-type-id'));
+	 $('input[name = Payment[payment_method_id]]').val($(this).data('payment-type-id'));
      if($(this).data('payment-type') == 'credit'){
          $('#credit-modal').modal('show');
      }
   });
+  $('td').click(function () {
+        var amount = $(this).closest('tr').data('amount');
+        var id = $(this).closest('tr').data('id');
+        var type = $(this).closest('tr').data('source');
+        $('#payment-credit').val(amount);
+		$('#payment-sourceid').val(id);
+		$('#payment-sourcetype').val(type);
+        $('#credit-modal').modal('hide');
+    });
 });
 </script>

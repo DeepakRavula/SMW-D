@@ -26,6 +26,8 @@ class Invoice extends \yii\db\ActiveRecord
 	const TYPE_INVOICE = 2;
 
 	public $customer_id;
+	public $credit;
+	
     /**
      * @inheritdoc
      */

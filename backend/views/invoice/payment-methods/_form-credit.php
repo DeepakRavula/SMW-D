@@ -26,6 +26,9 @@ use common\models\BalanceLog;
    			<?php echo $form->field($model, 'amount')->textInput()->label('Amount To Apply') ?>
         </div>
 	</div>
+	<?php echo $form->field($model, 'sourceType')->hiddenInput()->label(false); ?>
+	<?php echo $form->field($model, 'sourceId')->hiddenInput()->label(false); ?>
+	<?php echo $form->field($model, 'payment_method_id')->hiddenInput()->label(false); ?>
     <div class="form-group p-l-20">
        <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
 			<?php 

@@ -20,6 +20,8 @@ class Payment extends \yii\db\ActiveRecord {
 	public $invoiceId;
 	public $allocationType;
 	public $credit;
+	public $sourceType;
+	public $sourceId;
 	
 	const TYPE_CREDIT = 1;
 	const TYPE_OPENING_BALANCE = 4;
@@ -38,6 +40,7 @@ class Payment extends \yii\db\ActiveRecord {
 			[['user_id', 'payment_method_id', 'amount','date'], 'required'],
 			[['user_id', 'payment_method_id'], 'integer'],
 			[['amount'], 'number'],
+			[['sourceType','sourceId'],'safe']
 		];
 	}
 

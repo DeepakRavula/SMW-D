@@ -21,24 +21,29 @@ foreach($invoiceCredits as $invoiceCredit){
 	$results[] = [
 		'id' => $invoiceCredit->id,
 		'date' => $paymentDate->format('d-m-Y'),
-		'amount' => abs($invoiceCredit->balance)
+		'amount' => abs($invoiceCredit->balance),
+		'source' => 'Invoice',
+		'type' => 'invoice'
 	];
 }
 
 $openingBalanceCredit = Payment::find()
 		->where(['user_id' => $invoice->user_id, 'payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY])
-		->andWhere(['like', 'amount', '-'])
+		->andWhere(['<', 'amount', 0])
 		->one();
 if(! empty($openingBalanceCredit)){
 	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$openingBalanceCredit->date);
 	$results[] = [
 			'id' => $openingBalanceCredit->id,
 			'date' => $paymentDate->format('d-m-Y'),
-			'amount' => abs($openingBalanceCredit->amount)
+			'amount' => abs($openingBalanceCredit->amount),
+			'source' => 'Opening Balance',
+			'type' => 'account_entry'
 		];
 }
 
 $proFormaInvoiceCredits = Invoice::find()->alias('i')
+		->select(['i.id', 'i.date', 'SUM(p.amount) as credit'])
 		->joinWith(['invoicePayments ip' => function($query){
 			$query->joinWith(['payment p' => function($query){
 			}]);
@@ -46,19 +51,25 @@ $proFormaInvoiceCredits = Invoice::find()->alias('i')
 		->where(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE, 'i.user_id' => $invoice->user_id])
 		->groupBy('i.id')
 		->all();
-
+		
 foreach($proFormaInvoiceCredits as $proFormaInvoiceCredit){
+	if($proFormaInvoiceCredit->credit <= 0){
+		continue;
+	}
+	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$proFormaInvoiceCredit->date);
 	$results[] = [
 		'id' => $proFormaInvoiceCredit->id,
-		'date' => $lastInvoicePayment->payment->date,
-		'amount' => $proFormaInvoiceCredit->amount
+		'date' => $paymentDate->format('d-m-Y'),
+		'amount' => $proFormaInvoiceCredit->credit,
+		'source' => 'Pro-forma Invoice',
+		'type' => 'pro_forma_invoice'
 	];
 }
 
 $creditDataProvider = new ArrayDataProvider([
     'allModels' => $results,
     'sort' => [
-        'attributes' => ['id', 'date', 'amount'],
+        'attributes' => ['id', 'date', 'amount', 'source'],
     ],
 ]);
 ?>
@@ -72,12 +83,20 @@ Modal::begin([
 echo GridView::widget([
 	'dataProvider' => $creditDataProvider,
     'rowOptions'   => function ($model, $key, $index, $grid) {
-        return ['data-amount' => $model['amount']];
+        return [
+			'data-amount' => $model['amount'], 
+			'data-id' => $model['id'],
+			'data-source' => $model['type']
+		];
     },
 	'columns' => [
 		[
 		'label' => 'Id', 
 		'value' => 'id',
+		],
+		[
+		'label' => 'Source', 
+		'value' => 'source',
 		],
 		[
 		'label' => 'Date', 
@@ -96,13 +115,3 @@ Modal::end();
 		'model' => new Payment(),
 ]) ?>
 
-<?php
-$this->registerJs("
-    $('td').click(function () {
-        var amount = $(this).closest('tr').data('amount');
-        $('#payment-credit').val(amount);
-        $('#credit-modal').modal('hide');
-    });
-
-");
-?>
