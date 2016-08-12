@@ -23,8 +23,7 @@ class Payment extends \yii\db\ActiveRecord {
 	public $sourceType;
 	public $sourceId;
 	
-	const TYPE_CREDIT = 1;
-	const TYPE_OPENING_BALANCE = 4;
+	const TYPE_OPENING_BALANCE_CREDIT = 1;
 	/**
 	 * @inheritdoc
 	 */
@@ -92,11 +91,12 @@ class Payment extends \yii\db\ActiveRecord {
 	}
 
 	public function afterSave($insert, $changedAttributes) {
-		$invoicePaymentModel = new InvoicePayment();
-		$invoicePaymentModel->invoice_id = $this->invoiceId;
-		$invoicePaymentModel->payment_id = $this->id;
-		$invoicePaymentModel->save();
-		
+	if($this->payment_method_id !== PaymentMethod::TYPE_ACCOUNT_ENTRY){
+			$invoicePaymentModel = new InvoicePayment();
+			$invoicePaymentModel->invoice_id = $this->invoiceId;
+			$invoicePaymentModel->payment_id = $this->id;
+			$invoicePaymentModel->save();
+		}	
 		parent::afterSave($insert, $changedAttributes);
 	}
 }
