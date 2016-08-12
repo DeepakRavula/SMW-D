@@ -15,10 +15,10 @@ use common\models\BalanceLog;
 <?php if( ! empty($openingBalancePaymentModel->id)):?>
 <div>
 Opening Balance:
-<?php if($openingBalancePaymentModel->amount > 0) :?>
-	<?= -abs($openingBalancePaymentModel->amount);?>
+<?php if($remainingOpeningBalance > 0) :?>
+	<?= -abs($remainingOpeningBalance);?>
 <?php else:?>
- <?= abs($openingBalancePaymentModel->amount);?>
+ <?= abs($remainingOpeningBalance);?>
 <?php endif;?>
 </div>
 <div>

@@ -94,7 +94,7 @@ class InvoiceController extends Controller {
 				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
 				$paymentModel->amount = -abs($paymentModel->amount);
 				if($paymentModel->sourceType == 'account_entry'){
-					$paymentModel->invoiceId = 0;
+					$paymentModel->invoiceId = Payment::TYPE_OPENING_BALANCE_CREDIT;
 				}else{
 					$paymentModel->invoiceId = $paymentModel->sourceId;
 				}

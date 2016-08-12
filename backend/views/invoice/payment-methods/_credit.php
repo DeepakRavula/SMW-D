@@ -27,16 +27,30 @@ foreach($invoiceCredits as $invoiceCredit){
 	];
 }
 
-$openingBalanceCredit = Payment::find()
-		->where(['user_id' => $invoice->user_id, 'payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY])
-		->andWhere(['>', 'amount', 0])
-		->one();
-if(! empty($openingBalanceCredit)){
-	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$openingBalanceCredit->date);
+$openingBalancePaymentModel = Payment::find()
+				->where([
+					'user_id' => $invoice->user_id,
+					'payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY, ],
+			])->one();
+	
+		$remainingOpeningBalance = 0;
+		if(! empty($openingBalancePaymentModel->id)){
+			$openingBalanceCreditsUsed = Payment::find()
+					->joinWith(['invoicePayment ip' => function($query) use($model){
+						$query->where(['ip.invoice_id' => Payment::TYPE_OPENING_BALANCE_CREDIT]);	
+					}])
+					->where(['user_id' => $invoice->user_id])
+					->sum('amount');
+
+			$remainingOpeningBalance = $openingBalancePaymentModel->amount + $openingBalanceCreditsUsed;
+		}
+		
+if($remainingOpeningBalance > 0){
+	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$openingBalancePaymentModel->date);
 	$results[] = [
-			'id' => $openingBalanceCredit->id,
+			'id' => $openingBalancePaymentModel->id,
 			'date' => $paymentDate->format('d-m-Y'),
-			'amount' => abs($openingBalanceCredit->amount),
+			'amount' => abs($remainingOpeningBalance),
 			'source' => 'Opening Balance',
 			'type' => 'account_entry'
 		];

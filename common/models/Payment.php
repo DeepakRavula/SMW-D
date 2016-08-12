@@ -23,8 +23,7 @@ class Payment extends \yii\db\ActiveRecord {
 	public $sourceType;
 	public $sourceId;
 	
-	const TYPE_CREDIT = 1;
-	const TYPE_OPENING_BALANCE = 4;
+	const TYPE_OPENING_BALANCE_CREDIT = 1;
 	/**
 	 * @inheritdoc
 	 */
