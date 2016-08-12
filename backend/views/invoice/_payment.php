@@ -77,7 +77,7 @@ echo ButtonGroup::widget([
 			'id' => [4,5,6],
 		]) as $method):?>
 	<div id="<?= str_replace(' ', '-', trim(strtolower($method->name))) . '-section';?>" class="payment-method-section" style="display: none;">
-		<?php echo $this->render('payment-methods/_' . str_replace(' ', '-', trim(strtolower($method->name))),[
+		<?php echo $this->render('payment-method/_' . str_replace(' ', '-', trim(strtolower($method->name))),[
 				'model' => new Payment(),
 				'invoice' => $model,
 		]);?>	

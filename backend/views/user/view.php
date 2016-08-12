@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			'invoiceDataProvider' => $invoiceDataProvider,
 		]);
         
-        $paymentContent = $this->render('_payment', [
+        $paymentContent = $this->render('_account', [
 			'paymentDataProvider' => $paymentDataProvider,
 			'model' => $model,
 		]);
@@ -169,7 +169,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Accounts',
 				'content' => $paymentContent,
-				'active' => $section === 'payment',
+				'active' => $section === 'account',
 			],
 			[
 				'label' => 'Opening Balance',
