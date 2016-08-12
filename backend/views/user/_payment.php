@@ -17,26 +17,26 @@ echo GridView::widget([
 		[
 			'label' => 'Id',
 			'value' => function($data) {
-				return !empty($data->invoicePayment->invoice->id) ? $data->invoicePayment->invoice->id : null;
+				//return !empty($data->invoicePayment->invoice->id) ? $data->invoicePayment->invoice->id : null;
 			},
 		],
 		[
 			'label' => 'Date',
 			'value' => function($data) {
 				$date = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-				return !empty($data->date) ? $date->format('d M Y') : null;
+				//return !empty($data->date) ? $date->format('d M Y') : null;
 			},
 		],
 		[
 			'label' => 'Total',
 			'value' => function($data) {
-				return $data->invoicePayment->invoice->total;	
+				//return $data->invoicePayment->invoice->total;	
 			}
 		],	
 		[
 			'label' => 'Paid',
 			'value' => function($data) {
-				return $data->invoicePayment->invoice->invoicePaymentTotal;	
+				//return $data->invoicePayment->invoice->invoicePaymentTotal;	
 			}
 		],
 		[
