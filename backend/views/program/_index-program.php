@@ -18,7 +18,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
 <div class="pull-left m-l-10 m-r-20">
   <?php yii\widgets\Pjax::begin() ?>
   <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
-  <?= $form->field($searchModel, 'activeOnly')->checkbox(['data-pjax' => true]); ?>
+  <?= $form->field($searchModel, 'showAllPrograms')->checkbox(['data-pjax' => true]); ?>
   <?php ActiveForm::end(); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 </div>
@@ -54,9 +54,9 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
 </div>
   <script>
 $(document).ready(function(){
-  $("#programsearch-activeonly").on("change", function() {
-      var activeOnly = $(this).is(":checked");
-      var url = "<?php echo Url::to(['program/index']);?>?ProgramSearch[activeOnly]=" + (activeOnly | 0) + '&ProgramSearch[type]=' + <?php echo $searchModel->type;?>;
+  $("#programsearch-showallprograms").on("change", function() {
+      var showAllPrograms = $(this).is(":checked");
+      var url = "<?php echo Url::to(['program/index']);?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + <?php echo $searchModel->type;?>;
       $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
   });
 });

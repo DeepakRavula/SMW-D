@@ -5,7 +5,7 @@ use yii\bootstrap\Tabs;
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 $this->title = 'Student Details';
-$this->params['breadcrumbs'][] = ['label' => 'Students', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Students', 'url' => ['index','StudentSearch[showAllStudents]' => false]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
