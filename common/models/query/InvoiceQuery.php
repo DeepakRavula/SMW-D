@@ -1,7 +1,7 @@
 <?php
 
 namespace common\models\query;
-
+use common\models\Invoice;
 /**
  * This is the ActiveQuery class for [[Invoice]].
  *
@@ -53,5 +53,15 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 				}]);
 			}]);
 		return $this;
+	}
+
+	public function invoiceCredit($userId){
+		$this->where([
+			'user_id' => $userId,
+			'type' => Invoice::TYPE_INVOICE,
+		])
+		->andWhere(['<', 'balance', 0]);
+	
+		return $this;	
 	}
 }

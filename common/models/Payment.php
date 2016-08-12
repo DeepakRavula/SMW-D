@@ -3,7 +3,8 @@
 namespace common\models;
 
 use Yii;
-use common\models\Allocation;
+use common\models\InvoicePayment;
+use common\models\query\PaymentQuery;
 
 /**
  * This is the model class for table "payments".
@@ -18,6 +19,9 @@ class Payment extends \yii\db\ActiveRecord {
 
 	public $invoiceId;
 	public $allocationType;
+	public $credit;
+	public $sourceType;
+	public $sourceId;
 	
 	const TYPE_CREDIT = 1;
 	const TYPE_OPENING_BALANCE = 4;
@@ -36,6 +40,7 @@ class Payment extends \yii\db\ActiveRecord {
 			[['user_id', 'payment_method_id', 'amount','date'], 'required'],
 			[['user_id', 'payment_method_id'], 'integer'],
 			[['amount'], 'number'],
+			[['sourceType','sourceId'],'safe']
 		];
 	}
 
@@ -51,6 +56,14 @@ class Payment extends \yii\db\ActiveRecord {
 		];
 	}
 
+	/**
+     * @return UserQuery
+     */
+    public static function find()
+    {
+        return new PaymentQuery(get_called_class());
+    }
+	
 	public function getInvoice() {
 		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
 	}
@@ -74,50 +87,16 @@ class Payment extends \yii\db\ActiveRecord {
 		return $previousBalance;
 	}
 	
+	public function getInvoicePayment() {
+		return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id']);
+	}
+
 	public function afterSave($insert, $changedAttributes) {
+		$invoicePaymentModel = new InvoicePayment();
+		$invoicePaymentModel->invoice_id = $this->invoiceId;
+		$invoicePaymentModel->payment_id = $this->id;
+		$invoicePaymentModel->save();
 		
-		$allocationModel = new Allocation();
-		$allocationModel->invoice_id = $this->invoiceId;
-		$allocationModel->payment_id = $this->id;
-		$allocationModel->amount = $this->amount;
-		$allocationModel->type = $this->allocationType;
-		$allocationModel->date = $this->date;
-		$allocationModel->save();
-
-		if (!empty($this->previousBalance)) {
-			$existingBalance = $this->previousBalance->amount;
-		} else {
-			$existingBalance = 0;
-		}
-		
-		$balanceLogModel = new BalanceLog();
-		$balanceLogModel->allocation_id = $allocationModel->id;
-		$balanceLogModel->user_id = $this->user_id;
-		
-		$invoice = Invoice::findOne(['id' => $this->invoiceId]);
-		
-		if (in_array($this->allocationType, [Allocation::TYPE_OPENING_BALANCE])) {
-			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
-		} 
-		elseif(! empty($this->allocation->invoice->invoicePaymentTotal)){
-			$balanceLogModel->amount = $this->allocation->invoice->invoiceBalance;
-		}else{
-			$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
-		}
-		$balanceLogModel->save();
-
-		$invoice->balance = $balanceLogModel->amount;
-		$invoice->save();
-		
-		if($invoice->total < $allocationModel->amount){
-			$allocationModel->id = null;
-			$allocationModel->isNewRecord = true;
-			$allocationModel->amount =  $invoice->total - $allocationModel->amount;
-			$allocationModel->type = Allocation::TYPE_ACCOUNT_CREDIT;
-			$allocationModel->save();
-		}
-			
-		
+		parent::afterSave($insert, $changedAttributes);
 	}
 }
-

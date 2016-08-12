@@ -186,22 +186,15 @@ class UserController extends Controller {
 			'query' => $invoiceQuery,
 		]);
 		$paymentDataProvider = new ActiveDataProvider([
-			'query' => Allocation::find()
-				->joinWith('payment p')
-				->where(['p.user_id' => $id])
-				->joinWith('invoice i')
-				->orWhere(['i.user_id' => $id])
-				->andWhere(['not',['and',['allocation.type' => [Allocation::TYPE_ACCOUNT_CREDIT]]]])
-			->orderBy(['id' => SORT_DESC])
+			'query' => payment::find()
+				->where(['user_id' => $model->id])
 		]);
  		$paymentModel = new Payment();
 		if ($paymentModel->load(Yii::$app->request->post())) {
-			$paymentModel->user_id = $id;
-			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT;
+			$paymentModel->user_id = $model->id;
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
 			$date = \DateTime::createFromFormat('d-m-Y', $paymentModel->date);
     		$paymentModel->date = $date->format('Y-m-d H:i:s');
-			$paymentModel->invoiceId = Allocation::TYPE_OPENING_BALANCE;
-			$paymentModel->allocationType = Allocation::TYPE_OPENING_BALANCE;
 			$paymentModel->save();
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
@@ -211,11 +204,9 @@ class UserController extends Controller {
 		}
 
 		$openingBalancePaymentModel = Payment::find()
-				->joinWith(['allocation' => function($query) {
-					$query->where(['type' => Allocation::TYPE_OPENING_BALANCE]);	
-				}])
 				->where([
-					'user_id' => $model->id
+					'user_id' => $model->id,
+					'payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY,
 			])->one();
 
 

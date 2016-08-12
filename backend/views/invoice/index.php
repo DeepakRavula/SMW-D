@@ -30,10 +30,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     return ! empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                 },
             ],
+			[
+			    'label' => 'Phone',
+                'value' => function($data) {
+                    return ! empty($data->user->phoneNumber->number) ? $data->user->phoneNumber->number : null;
+                },
+            ],
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
-					return $data->status;
+					if($data->status === 'Paid'){
+						return $data->status . ' ' . $data->total;
+					}else{	
+						return $data->status . ' ' . $data->invoiceBalance;
+					}
                 },
 			],
             'total',

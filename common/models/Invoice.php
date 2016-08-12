@@ -26,6 +26,8 @@ class Invoice extends \yii\db\ActiveRecord
 	const TYPE_INVOICE = 2;
 
 	public $customer_id;
+	public $credit;
+	
     /**
      * @inheritdoc
      */
@@ -83,6 +85,11 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Allocation::className(), ['invoice_id' => 'id']);
     }
+
+	public function getInvoicePayments()
+    {
+        return $this->hasMany(InvoicePayment::className(), ['invoice_id' => 'id']);
+    }
 	
 	public function getUser()
     {
@@ -90,7 +97,10 @@ class Invoice extends \yii\db\ActiveRecord
     }
 	
 	public function getInvoicePaymentTotal(){
-		$invoiceAmounts = $this->getAllocations()->paid()->all();
+		$invoiceAmounts = Payment::find()
+				->joinWith('invoicePayment ip')
+				->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+				->all();
 		
 		$sumOfInvoicePayment = 0;
 		if(! empty($invoiceAmounts)){
@@ -100,10 +110,44 @@ class Invoice extends \yii\db\ActiveRecord
 		}
 		return $sumOfInvoicePayment;
 	}
-
+	
 	public function getInvoiceBalance(){
 		$balance = $this->total - $this->invoicePaymentTotal;
 		return $balance;
+	}
+
+	public function getSumOfPayment($customerId){
+		$customerPayments = Payment::find()
+				->where(['user_id' => $customerId])
+				->all();
+		$sumOfCustomerPayment = 0;
+		if(! empty($customerPayments)){
+			foreach($customerPayments as $customerPayment){
+				$sumOfCustomerPayment += $customerPayment->amount; 
+			}
+		}
+		return $sumOfCustomerPayment;	
+	}
+
+	public function getSumOfInvoice($customerId){
+		$customerInvoices = Invoice::find()
+				->where(['user_id' => $customerId, 'type' => Invoice::TYPE_INVOICE])
+				->all();
+		$sumOfInvoicePayment = 0;
+		if(! empty($customerInvoices)){
+			foreach($customerInvoices as $customerInvoice){
+				$sumOfInvoicePayment += $customerInvoice->total; 
+			}
+		}
+		return $sumOfInvoicePayment;	
+	}
+
+	public function getCustomerBalance($customerId){
+		$totalPayment = $this->getSumOfPayment($customerId);
+		$totalInvoice = $this->getSumOfInvoice($customerId);
+		$customerBalance = $totalInvoice - $totalPayment;
+
+		return $customerBalance;
 	}
 	
 	public function getStatus()

@@ -12,11 +12,16 @@ use Yii;
  */
 class PaymentMethod extends \yii\db\ActiveRecord
 {
-	const TYPE_CASH = 1;
-	const TYPE_CREDIT_CARD = 2;
-	const TYPE_CHEQUE = 3;
-	const TYPE_CREDIT = 4;
-	
+	const TYPE_ACCOUNT_ENTRY = 1;
+	const TYPE_CREDIT_USED = 2;
+	const TYPE_CREDIT_APPLIED = 3;
+	const TYPE_CASH = 4;
+	const TYPE_CHEQUE = 5;
+	const TYPE_CREDIT = 6;
+
+	const STATUS_ACTIVE = 1;
+	const STATUS_INACTIVE = 0;
+
     /**
      * @inheritdoc
      */
