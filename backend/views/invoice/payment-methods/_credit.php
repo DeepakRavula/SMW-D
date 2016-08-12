@@ -29,7 +29,7 @@ foreach($invoiceCredits as $invoiceCredit){
 
 $openingBalanceCredit = Payment::find()
 		->where(['user_id' => $invoice->user_id, 'payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY])
-		->andWhere(['<', 'amount', 0])
+		->andWhere(['>', 'amount', 0])
 		->one();
 if(! empty($openingBalanceCredit)){
 	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$openingBalanceCredit->date);

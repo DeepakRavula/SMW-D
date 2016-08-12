@@ -193,6 +193,11 @@ class UserController extends Controller {
 		if ($paymentModel->load(Yii::$app->request->post())) {
 			$paymentModel->user_id = $model->id;
 			$paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
+			if($paymentModel->amount < 0){
+				$paymentModel->amount = abs($paymentModel->amount);
+			}else{
+				$paymentModel->amount = -abs($paymentModel->amount);
+			}
 			$date = \DateTime::createFromFormat('d-m-Y', $paymentModel->date);
     		$paymentModel->date = $date->format('Y-m-d H:i:s');
 			$paymentModel->save();
@@ -200,16 +205,28 @@ class UserController extends Controller {
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Opening balance has been recorded successfully'
 			]);
-			return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, 'section' => 'payment']);
+			return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, 'section' => 'opening-balance']);
 		}
 
 		$openingBalancePaymentModel = Payment::find()
+				->select(['date', 'SUM(amount) as amount'])
+				->joinWith(['invoicePayment ip' => function($query) use($model){
+					$query->where(['ip.invoice_id' => 0]);	
+				}])
 				->where([
 					'user_id' => $model->id,
-					'payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY,
+					'payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY, PaymentMethod::TYPE_CREDIT_USED],
 			])->one();
 
-
+		$openingBalanceQuery = Payment::find()
+				->joinWith(['invoicePayment ip' => function($query) use($model){
+					$query->where(['ip.invoice_id' => 0]);	
+				}])
+				->where(['user_id' => $model->id]);
+		$openingBalanceDataProvider = new ActiveDataProvider([
+			'query' => $openingBalanceQuery, 
+		]);
+		
 		return $this->render('view', [
 			'student' => new Student(),
 			'dataProvider' => $dataProvider,
@@ -226,7 +243,8 @@ class UserController extends Controller {
 			'invoiceDataProvider' => $invoiceDataProvider,
 			'studentDataProvider' => $studentDataProvider,
 			'paymentDataProvider' => $paymentDataProvider,
-			'openingBalancePaymentModel' => $openingBalancePaymentModel
+			'openingBalancePaymentModel' => $openingBalancePaymentModel,
+			'openingBalanceDataProvider' => $openingBalanceDataProvider,
 		]);
 	}
 

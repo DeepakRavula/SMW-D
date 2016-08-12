@@ -112,6 +112,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 		$openingBalanceContent = $this->render('_opening-balance',[
 			'openingBalancePaymentModel' => $openingBalancePaymentModel,
+			'openingBalanceDataProvider' => $openingBalanceDataProvider,
 		]);
 
 		?>
