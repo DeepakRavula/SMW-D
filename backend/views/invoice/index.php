@@ -39,10 +39,15 @@ $this->params['breadcrumbs'][] = $this->title;
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
+						return $data->status;
+                },
+			],
+			[
+				'value' => function($data) {
 					if($data->status === 'Paid'){
-						return $data->status . ' ' . $data->total;
+						return $data->total;
 					}else{	
-						return $data->status . ' ' . $data->invoiceBalance;
+						return $data->invoiceBalance;
 					}
                 },
 			],
