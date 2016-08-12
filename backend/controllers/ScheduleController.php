@@ -84,7 +84,13 @@ class ScheduleController extends Controller
             ->join('Join', 'program p', 'p.id = e.program_id')
             ->where('e.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->all();
-
+		foreach ($events as &$event) {
+		$start = new \DateTime($event['start'], new \DateTimeZone('UTC'));	
+		$event['start'] = $start->format('Y-m-d H:i:s');	
+		$end = new \DateTime($event['end'], new \DateTimeZone('UTC'));	
+		$event['end'] = $end->format('Y-m-d H:i:s');
+		}
+		unset($event);
 		$groupLessonevents = (new \yii\db\Query())
             ->select(['gl.teacher_id as resources', 'gl.id as id', 'p.name as title, gc.day, gl.date as start, ADDTIME(gl.date, gc.length) as end'])
             ->from('group_lesson gl')
@@ -94,10 +100,18 @@ class ScheduleController extends Controller
             ->all();
 
 		$events = array_merge($events,$groupLessonevents);
-
+		
         $location = Location::findOne($id=Yii::$app->session->get('location_id'));
-        $from_time = $location->from_time;
-        $to_time = $location->to_time;
+		
+		$location->from_time = new \DateTime($location->from_time, new \DateTimeZone('UTC'));	
+        $fromTime = $location->from_time;
+		$fromTime->setTimezone(new \DateTimeZone('US/Eastern'));	
+        $from_time = $fromTime->format('H:i:s');
+		
+		$location->to_time = new \DateTime($location->to_time, new \DateTimeZone('UTC'));	
+        $toTime = $location->to_time;
+		$toTime->setTimezone(new \DateTimeZone('US/Eastern'));	
+        $to_time = $toTime->format('H:i:s');
         
 		return $this->render('index', ['teachersWithClass'=>$teachersWithClass, 'allTeachers'=>$allTeachers, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
     }
