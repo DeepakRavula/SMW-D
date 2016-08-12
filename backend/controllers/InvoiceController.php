@@ -16,6 +16,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\InvoicePayment;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -59,10 +60,11 @@ class InvoiceController extends Controller {
 			'query' => $invoiceLineItems,
 		]);
 
-		$invoicePayments = Allocation::find()->alias('a')
-				->where(['a.type' => Allocation::TYPE_PAID])
-				->orWhere(['and',['a.type' => [Allocation::TYPE_ACCOUNT_CREDIT,Allocation::TYPE_CREDIT_APPLIED]],'a.payment_id' => Payment::TYPE_CREDIT])
-				->andWhere(['invoice_id' => $model->id]);
+		$invoicePayments = Payment::find()
+				->joinWith(['invoicePayment ip' => function($query) use($model){
+					$query->where(['ip.invoice_id' => $model->id]);	
+				}])
+				->where(['user_id' => $model->user_id]);
 		
 		$invoicePaymentsDataProvider = new ActiveDataProvider([
 			'query' => $invoicePayments,
@@ -70,42 +72,31 @@ class InvoiceController extends Controller {
 
 		$paymentModel = new Payment();
 		if ($paymentModel->load(Yii::$app->request->post())) {
-			$paymentModel->user_id = $model->user_id;
-			$paymentModel->invoiceId = $id;
-			$currentDate = new \DateTime();
-			$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
-			$paymentModel->allocationType = Allocation::TYPE_PAID;
-			if ($paymentModel->payment_method_id != PaymentMethod::TYPE_CREDIT) {
+				$paymentMethodId = $paymentModel->payment_method_id; 
+				$paymentModel->user_id = $model->user_id;
+				$currentDate = new \DateTime();
+				$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
+				$paymentModel->amount = $paymentModel->amount;
+				if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_CREDIT){
+					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+				}
+				$paymentModel->invoiceId = $model->id;
 				$paymentModel->save();
-			} else {
-
-				$allocationModel = new Allocation();
-				$allocationModel->invoice_id = $model->id;
-				$allocationModel->payment_id = Payment::TYPE_CREDIT;
-				$allocationModel->amount = $paymentModel->amount;
-				$allocationModel->type = Allocation::TYPE_CREDIT_APPLIED;
-				$allocationModel->date = $currentDate->format('Y-m-d H:i:s');
-				$allocationModel->save();
-					
-				$previousBalance = BalanceLog::find()
-								->orderBy(['id' => SORT_DESC])
-								->where(['user_id' => $model->user_id])->one();
-
-				if (!empty($previousBalance)) {
-					$existingBalance = $previousBalance->amount;
-				} else {
-					$existingBalance = 0;
-				}
-				$balanceLogModel = new BalanceLog();
-				$balanceLogModel->allocation_id = $allocationModel->id;
-				$balanceLogModel->user_id = $model->user_id;
-				if( ! empty($model->invoicePaymentTotal)){
-					$balanceLogModel->amount = $model->invoiceBalance;
-				}else{
-					$balanceLogModel->amount = $existingBalance + $allocationModel->amount;
-				}
-				$balanceLogModel->save();
+			
+			if($model->total < $paymentModel->amount || $model->total > $paymentModel->amount){
+				$model->balance =  $model->total - $paymentModel->amount;
+				$model->save();
 			}
+			
+			if((int) $paymentMethodId === PaymentMethod::TYPE_CREDIT){
+				$paymentModel->id = null;
+				$paymentModel->isNewRecord = true;	
+				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+				$paymentModel->amount = -abs($paymentModel->amount);
+				$paymentModel->invoiceId = $paymentModel->sourceId;
+				$paymentModel->save();
+			}
+				
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Payment has been recorded successfully'
@@ -196,14 +187,6 @@ class InvoiceController extends Controller {
 			$invoice->total = $totalAmount;
 			$invoice->save();
 
-			$allocationModel = new Allocation();
-			$allocationModel->invoice_id = $invoice->id;
-			$allocationModel->payment_id = Payment::TYPE_CREDIT;
-			$allocationModel->amount = $invoice->total;
-			$allocationModel->type = Allocation::TYPE_INVOICE_GENERATED;
-			$allocationModel->date = $invoice->date;
-			$allocationModel->save();
-		
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Invoice has been created successfully'
