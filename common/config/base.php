@@ -41,6 +41,7 @@ $config = [
 			'currencyCode' => 'USD',
 			'nullDisplay' => '', 
 			'timeZone' => 'US/Eastern',
+			'defaultTimeZone' => 'US/Eastern',
         ],
 
         'glide' => [
