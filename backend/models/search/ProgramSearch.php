@@ -14,7 +14,7 @@ use common\models\Invoice;
  */
 class ProgramSearch extends Program
 {
-	    public $showAllProgram = false;
+	    public $showAllPrograms = false;
 
     /**
      * @inheritdoc
@@ -22,7 +22,7 @@ class ProgramSearch extends Program
     public function rules()
     {
         return [
-			[['name','rate','showAllProgram','type'],'safe'],
+			[['name','rate','showAllPrograms','type'],'safe'],
         ];
     }
 
@@ -50,7 +50,7 @@ class ProgramSearch extends Program
             return $dataProvider;
         }
 
-		if(! $this->showAllProgram) {
+		if(! $this->showAllPrograms) {
 			$query->active();
 		}
 

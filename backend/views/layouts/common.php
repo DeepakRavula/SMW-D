@@ -189,7 +189,7 @@ $bundle = BackendAsset::register($this);
 						[
                             'label'=>Yii::t('backend', 'Students'),
                             'icon'=>'<i class="fa fa-lg fa-fw fa-child"></i>',
-							'url'=>['/student/index','StudentSearch[showAllStudent]' => false],
+							'url'=>['/student/index','StudentSearch[showAllStudents]' => false],
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='student')? true : false,
                         ],

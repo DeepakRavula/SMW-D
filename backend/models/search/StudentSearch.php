@@ -12,7 +12,7 @@ use common\models\Student;
  */
 class StudentSearch extends Student
 {
-	public $showAllStudent;
+	public $showAllStudents;
 
     /**
      * @inheritdoc
@@ -20,7 +20,7 @@ class StudentSearch extends Student
     public function rules()
     {
         return [
-            [['first_name', 'last_name','customer_id','showAllStudent'], 'safe'],
+            [['first_name', 'last_name','customer_id','showAllStudents'], 'safe'],
         ];
     }
 
@@ -52,7 +52,7 @@ class StudentSearch extends Student
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-       	if(! $this->showAllStudent) {
+       	if(! $this->showAllStudents) {
 			$query->joinWith('enrolment e')
 				->andWhere(['not', ['e.student_id' => null]]);
 		} 
