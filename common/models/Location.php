@@ -34,12 +34,11 @@ class Location extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['name', 'address', 'city_id', 'province_id', 'postal_code', 'from_time', 'to_time'], 'required'],
+			[['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'from_time', 'to_time'], 'required'],
 			[['city_id', 'province_id', 'country_id'], 'integer'],
 			[['name'], 'string', 'max' => 32],
 			[['address'], 'string', 'max' => 64],
 			[['postal_code'], 'string', 'max' => 16],
-				// ['from_time', 'to_time', 'safe']
 		];
 	}
 
@@ -51,6 +50,7 @@ class Location extends \yii\db\ActiveRecord {
 			'id' => 'ID',
 			'name' => 'Name',
 			'address' => 'Address',
+			'phone_number' => 'Phone Number',
 			'city_id' => 'City',
 			'province_id' => 'Province',
 			'postal_code' => 'Postal Code',

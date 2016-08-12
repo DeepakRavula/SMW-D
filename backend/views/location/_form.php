@@ -24,24 +24,24 @@ use kartik\time\TimePicker;
 			<?php echo $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
 		</div>
 		<div class="col-md-4">
+			<?php echo $form->field($model, 'phone_number')->textInput() ?>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
 			<?php
 			echo $form->field($model, 'city_id')->dropDownList(ArrayHelper::map(
 							City::find()->all(), 'id', 'name'
 			))
 			?>
 		</div>
-	</div>
-	<div class="clearfix"></div>
-	<div class="row">
 		<div class="col-md-4">
 			<?php
 			echo $form->field($model, 'province_id')->dropDownList(ArrayHelper::map(
 							Province::find()->all(), 'id', 'name'
 			))
 			?>
-		</div>
-		<div class="col-md-4">
-			<?php echo $form->field($model, 'postal_code')->textInput(['maxlength' => true]) ?>
 		</div>
 		<div class="col-md-4">
 			<?php
@@ -53,6 +53,9 @@ use kartik\time\TimePicker;
 	</div>
 	<div class="clearfix"></div>
 	<div class="row">
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'postal_code')->textInput(['maxlength' => true]) ?>
+		</div>
 		<div class="col-md-4">
 			<?php
 			if( ! $model->isNewRecord){
