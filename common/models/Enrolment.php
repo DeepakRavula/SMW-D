@@ -99,7 +99,6 @@ public $teacherId;
     {   
       	$this->location_id = Yii::$app->session->get('location_id');
         $fromTime = \DateTime::createFromFormat('h:i A',$this->from_time);
-    	$fromTime->setTimeZone(new \DateTimeZone('UTC'));
         $this->from_time = $fromTime->format('H:i');
 		$secs = strtotime($this->from_time) - strtotime("00:00:00");
        	$renewalDate = \DateTime::createFromFormat('d-m-Y', $this->commencement_date);
