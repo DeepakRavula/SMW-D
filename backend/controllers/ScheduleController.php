@@ -105,12 +105,10 @@ class ScheduleController extends Controller
 		
 		$location->from_time = new \DateTime($location->from_time);	
         $fromTime = $location->from_time;
-		//$fromTime->setTimezone(new \DateTimeZone('US/Eastern'));	
         $from_time = $fromTime->format('H:i:s');
 		
 		$location->to_time = new \DateTime($location->to_time);	
         $toTime = $location->to_time;
-		//$toTime->setTimezone(new \DateTimeZone('US/Eastern'));	
         $to_time = $toTime->format('H:i:s');
         
 		return $this->render('index', ['teachersWithClass'=>$teachersWithClass, 'allTeachers'=>$allTeachers, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
