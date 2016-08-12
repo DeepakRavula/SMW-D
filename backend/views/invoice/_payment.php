@@ -84,15 +84,6 @@ echo ButtonGroup::widget([
 	</div>
 	<?php endforeach;?>
 
-<div class="col-md-12 m-b-20">
-	<a href="#" class="add-new-payment text-add-new"><i class="fa fa-plus-circle"></i> Add Payment</a>
-	<div class="clearfix"></div>
-</div>
-<div class="dn show-create-payment-form">
-	<?php echo $this->render('_form-payment', [
-		'model' => new Payment(),
-	]) ?>
-</div>
 <script type="text/javascript">
 $(document).ready(function(){
   $('#payment-method-btn-section').on('click', '.btn', function() {
