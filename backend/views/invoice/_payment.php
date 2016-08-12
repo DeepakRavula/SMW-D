@@ -41,27 +41,16 @@ use yii\bootstrap\Button;
     ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
 
-<div>
-	Customer Name: <?=$model->user->publicIdentity;?>
-</div>
-<div>
-	Customer Credits Available: <?= ! empty($model->getCustomerBalance($model->user_id)) ? $model->getCustomerBalance($model->user_id) : '0';?>
-</div>
-<div>
-	Invoice Total: <?= $model->total;?>
-</div>
-<div>
-	Invoice Paid: <?= $model->invoicePaymentTotal;?>
-</div>
-<div>
-	Invoice Balance: <?= $model->invoiceBalance;?>
-</div>
-
 <?php $buttons = [];?>
 <?php foreach(PaymentMethod::findAll([
 			'active' => PaymentMethod::STATUS_ACTIVE,
 			'displayed' => 1,
 		]) as $method):?>
+	<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
+	<?php if($method->name === 'Credit'):?>
+	<?php continue;?>
+	<?php endif;?>
+	<?php endif;?>
 	<?php $buttons[] = [
 			'label' => $method->name, 
 			'options' => [
@@ -112,7 +101,7 @@ $(document).ready(function(){
 	 $('#' + $(this).data('payment-type') + '-section').show();
 	 console.log($('#payment-payment_method_id'));
 	 console.log($(this).data('payment-type-id'));
-	 $('input[name = Payment[payment_method_id]]').val($(this).data('payment-type-id'));
+	 $('.payment-method-id').val($(this).data('payment-type-id'));
      if($(this).data('payment-type') == 'credit'){
          $('#credit-modal').modal('show');
      }
