@@ -137,6 +137,9 @@ use common\models\Invoice;
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
+		<div>
+		<button id="invoice-line-item">Add Misc</button>
+		</div>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
@@ -202,3 +205,11 @@ use common\models\Invoice;
 </div>
 </div>
 </div>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('#invoice-line-item').click(function () {
+        $('#invoice-line-item-modal')modal('show');
+		//alert('hi');
+  });
+});
+</script>
