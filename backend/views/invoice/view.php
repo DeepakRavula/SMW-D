@@ -52,12 +52,11 @@ $paymentContent =  $this->render('_payment', [
 		[
             'label' => 'Invoice',
             'content' => $invoiceContent,
-			'active' => false,
+			'active' => true,
         ],
 		[
             'label' => 'Payments',
             'content' => $paymentContent,
-			'active' => true,
         ],
     ],
 ]);?>
