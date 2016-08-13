@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use backend\models\search\InvoiceSearch;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -52,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </a>
           <div class="pull-left invoice-address  text-gray">
             <div class="row-fluid">
-              <h2 class="m-0 text-inverse"><strong>INVOICE </strong></h2>
+              <h2 class="m-0 text-inverse"><strong><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
           </div>
           <small><?php if( ! empty($model->user->userLocation->location->address)): ?>
                 <?php echo $model->user->userLocation->location->address?>
@@ -109,8 +110,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <!-- /.col -->
         <div class="col-sm-3 invoice-col m-t-10 text-right p-0">
             <div class="row-fluid  text-gray">
-              <div class="col-xs-4 pull-right text-right p-r-0">#<?php echo $model->invoice_number;?></div>
-              <div class="invoice-labels col-xs-2 pull-right">Number:</div> 
+              <div class="col-md-4 pull-right text-right p-r-0"><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#' . $model->invoice_number?></div>
+              <div class="col-md-2 pull-right"><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Number:'?> </div> 
               <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">
@@ -119,8 +120,11 @@ $this->params['breadcrumbs'][] = $this->title;
               <div class="clearfix"></div>
           </div>
           <div class="row-fluid text-gray">
-              <div class="col-xs-4 pull-right text-right p-r-0"><?php echo $model->status($model);?></div>
-              <div class="invoice-labels col-xs-2 pull-right">Status:</div>
+			  <?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
+				  <div class="col-md-4 pull-right text-right p-r-0">
+				  <?= $model->getStatus();?></div>
+				  <div class="col-md-2 pull-right">Status:</div>
+			<?php endif;?>
               <div class="clearfix"></div>
             </div>
           </div>
@@ -202,18 +206,23 @@ $this->params['breadcrumbs'][] = $this->title;
                       <td>Tax</td>
                       <td><?php echo $model->tax;?></td>
                     </tr>
-                     <tr>
+                     <?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
+					<tr>
                       <td>Paid</td>
-                      <td><?php echo '0.00';?></td> 
+                      <td><?= $model->invoicePaymentTotal;?></td> 
                     </tr>
+				<?php endif;?>
                      <tr>
                       <tr>
                       <td><strong>Total</strong></td>
                       <td><strong><?php echo $model->total;?></strong></td> 
                     </tr>
-                      <td class="p-t-20">Balance</td>
-                      <td class="p-t-20"><?php echo $model->total;?></td> 
+                     <?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
                     </tr>
+                      <td class="p-t-20">Balance</td>
+                      <td class="p-t-20"><?= $model->invoiceBalance;?></td> 
+                    </tr>
+				<?php endif;?>
                     </table>
                   </td>
                 </tr>
