@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				<?php endif;?>
 			</div>
     <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
-			<i class="fa fa-calendar"></i> <?php echo ! empty(date("d-m-Y", strtotime($model->date))) ? date("d-m-Y g:i a", strtotime($model->date)) : null ?>	
+			<i class="fa fa-calendar"></i> <?php echo ! empty( Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>	
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
 			<i class="fa fa-music detail-icon"></i> <?php echo ! empty($model->enrolment->program->name) ? $model->enrolment->program->name : null ?>

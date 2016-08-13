@@ -16,8 +16,8 @@ use common\models\TeacherAvailability;
     <?php 
 		$dayList = TeacherAvailability::getWeekdaysList();
         $day = $dayList[$model->day];
-	    $fromTime = date("g:i a",strtotime($model->from_time));
-	    $toTime = date("g:i a",strtotime($model->to_time));
+	    $fromTime = Yii::$app->formatter->asTime($model->from_time);
+	    $toTime = Yii::$app->formatter->asTime($model->to_time);
 	?>
     <?php echo DetailView::widget([
         'model' => $model,

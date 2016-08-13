@@ -59,7 +59,7 @@ use yii\helpers\Url;
             <?php
             echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
                'options' => [
-                    'value' => date("d-m-Y g:i A", strtotime($model->date)),
+                    'value' => Yii::$app->formatter->asDateTime($model->date),
                ],
                 'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
