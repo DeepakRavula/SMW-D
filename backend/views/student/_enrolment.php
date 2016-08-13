@@ -55,8 +55,9 @@ use common\models\Enrolment;
 				'label' => 'Duration',
 				'value' => function($data) {
 					if(! empty($data->duration)){
-                    	$duration = date("H:i",strtotime($data->duration));
-                    	return !empty($duration) ? $duration : null;
+						$duration = \DateTime::createFromFormat('h:i:s',$data->duration);
+       				    $data->duration = $duration->format('H:i');
+                    	return !empty($data->duration) ? $data->duration : null;
 					}
 					return null;
 				},

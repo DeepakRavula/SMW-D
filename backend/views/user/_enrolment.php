@@ -55,8 +55,9 @@ use common\models\Enrolment;
 				'label' => 'Duration',
 				'value' => function($data) {
 					if(! empty($data->duration)){
-                    	$duration = date("H:i",strtotime($data->duration));
-                    	return !empty($duration) ? $duration : null;
+                    	$duration = \DateTime::createFromFormat('h:i:s',$data->duration);
+       				    $data->duration = $duration->format('H:i');
+                    	return !empty($data->duration) ? $data->duration : null;
 					}
 					return null;
 				},
@@ -64,23 +65,13 @@ use common\models\Enrolment;
 			[
 				'label' => 'Commencement Date',
 				'value' => function($data) {
-					if(!empty($data->commencement_date)){
-					$date = $data->commencement_date;
-					$commencement_date = date('d-m-Y',strtotime($date));
-					return ! empty($commencement_date) ? $commencement_date : null;
-					}
-					return null;
+					return ! empty($data->commencement_date) ? Yii::$app->formatter->asDate($data->commencement_date) : null;
 				},
 			],
 			[
 				'label' => 'Renewal Date',
 				'value' => function($data) {
-					if(!empty($data->renewal_date)){
-					$date = $data->renewal_date;
-					$renewal_date = date('d-m-Y',strtotime($date));
-					return ! empty($renewal_date) ? $renewal_date : null;
-					}
-					return null;
+					return ! empty($data->renewal_date) ? Yii::$app->formatter->asDate($data->renewal_date) : null;
 				},
 			],
 		],
