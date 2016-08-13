@@ -79,7 +79,7 @@ echo GridView::widget([
 		[
 			'label' => 'Date',
 			'value' => function($data) {
-				$date = date("d-m-Y", strtotime($data->date));
+				$date = Yii::$app->formatter->asDate($data->date);
 				return !empty($date) ? $date : null;
 			},
 		],
