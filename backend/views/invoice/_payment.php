@@ -34,7 +34,11 @@ use yii\bootstrap\Button;
 			[
                 'label' => 'Amount',
                 'value' => function($data) {
+					if($data->invoicePayment->invoice->type === Invoice::TYPE_PRO_FORMA_INVOICE && (int) $data->paymentMethod->id === PaymentMethod::TYPE_CREDIT_USED){
+                    	return ! empty($data->amount) ? -abs($data->amount) : null;
+					}else{
                     	return ! empty($data->amount) ? abs($data->amount) : null;
+					}
                 },
             ],
 	    ],
