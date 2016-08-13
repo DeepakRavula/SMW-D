@@ -71,7 +71,7 @@ echo ButtonGroup::widget([
     'buttons' => $buttons,
 	'options' => [
 		'id' => 'payment-method-btn-section',
-		'class' => 'btn-group-vertical'
+		'class' => 'btn-group-horizontal'
 	]
 ]);?>
 
