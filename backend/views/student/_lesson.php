@@ -56,20 +56,8 @@ echo GridView::widget([
 		[
 			'label' => 'Invoice Status',
 			'value' => function($data) {
-				$status = null;
-
 				if (!empty($data->invoiceLineItem->invoice->status)) {
-					switch ($data->invoiceLineItem->invoice->status) {
-						case Invoice::STATUS_PAID:
-							$status = 'Paid';
-							break;
-						case Invoice::STATUS_OWING:
-							$status = 'Owing';
-							break;
-						case Invoice::STATUS_CREDIT:
-							$status = 'Credit';
-							break;
-					}
+					return $data->invoiceLineItem->invoice->status; 
 				} else {
 					$status = 'Not Invoiced';
 				}
