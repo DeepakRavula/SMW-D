@@ -12,6 +12,9 @@ use Yii;
  */
 class ItemType extends \yii\db\ActiveRecord
 {
+	const TYPE_LESSON = 1;
+	const TYPE_MISC = 2;
+	
     /**
      * @inheritdoc
      */

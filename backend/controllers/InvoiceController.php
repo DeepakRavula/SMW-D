@@ -5,17 +5,16 @@ namespace backend\controllers;
 use Yii;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
-use common\models\Allocation;
 use backend\models\search\InvoiceSearch;
 use common\models\User;
 use common\models\Payment;
-use common\models\BalanceLog;
 use common\models\Lesson;
 use common\models\PaymentMethod;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\ItemType;
 use common\models\InvoicePayment;
 
 /**
@@ -182,7 +181,10 @@ class InvoiceController extends Controller {
 				$lessonDate = $actualLessonDate->format('Y-m-d');
 				$invoiceLineItem = new InvoiceLineItem();
 				$invoiceLineItem->invoice_id = $invoice->id;
-				$invoiceLineItem->lesson_id = $lesson->id;
+				$invoiceLineItem->item_id = $lesson->id;
+            	$invoiceLineItem->item_type_id = ItemType::TYPE_LESSON;
+				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
+    	        $invoiceLineItem->description = $description;
 				$time = explode(':', $lesson->enrolment->duration);
 				$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
 				$invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
