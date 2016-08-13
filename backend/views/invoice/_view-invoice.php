@@ -81,9 +81,11 @@ use common\models\Invoice;
               <div class="clearfix"></div>
           </div>
           <div class="row-fluid text-gray">
-              <div class="col-md-4 pull-right text-right p-r-0">
-			  <?= $model->getStatus();?></div>
-              <div class="col-md-2 pull-right">Status:</div>
+			  <?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
+				  <div class="col-md-4 pull-right text-right p-r-0">
+				  <?= $model->getStatus();?></div>
+				  <div class="col-md-2 pull-right">Status:</div>
+			<?php endif;?>
               <div class="clearfix"></div>
             </div>
           </div>
@@ -168,18 +170,22 @@ use common\models\Invoice;
                       <td>Tax</td>
                       <td><?= $model->tax;?></td>
                     </tr>
+			  	<?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
 					<tr>
                       <td>Paid</td>
                       <td><?= $model->invoicePaymentTotal;?></td> 
                     </tr>
-					           <tr>
+				<?php endif;?>
+				    <tr>
                       <tr>
                       <td><strong>Total</strong></td>
                       <td><strong><?= $model->total;?></strong></td> 
+			  	<?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
                     </tr>
                       <td class="p-t-20">Balance</td>
                       <td class="p-t-20"><?= $model->invoiceBalance;?></td> 
                     </tr>
+				<?php endif;?>
                     </table>
                   </td>
                 </tr>
