@@ -115,7 +115,7 @@ $this->params['breadcrumbs'][] = $this->title;
               <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">
-              <div class="col-xs-4 pull-right text-right p-r-0"><?php echo date("d/m/Y", strtotime($model->date));?></div>
+              <div class="col-xs-4 pull-right text-right p-r-0"><?= Yii::$app->formatter->asDate($model->date);?></div>
               <div class="invoice-labels col-xs-2 pull-right">Date:</div>
               <div class="clearfix"></div>
           </div>
