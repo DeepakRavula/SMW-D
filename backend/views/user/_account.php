@@ -28,36 +28,6 @@ $results[] = [
 ];
 }
 
-$openingBalancePaymentModel = Payment::find()
-	->where([
-		'user_id' => $model->id,
-		'payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY, ],
-	])->one();
-
-$remainingOpeningBalance = 0;
-if(! empty($openingBalancePaymentModel->id)){
-	$openingBalanceCreditsUsed = Payment::find()
-			->joinWith(['invoicePayment ip' => function($query) use($model){
-				$query->where(['ip.invoice_id' => Payment::TYPE_OPENING_BALANCE_CREDIT]);	
-			}])
-			->where(['user_id' => $model->id])
-			->sum('amount');
-
-	$remainingOpeningBalance = $openingBalancePaymentModel->amount + $openingBalanceCreditsUsed;
-}
-
-if($remainingOpeningBalance > 0){
-	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$openingBalancePaymentModel->date);
-	$results[] = [
-		'id' => $openingBalancePaymentModel->id,
-		'date' => $paymentDate->format('d-m-Y'),
-		'total' => 0,
-		'paid' => 0, 
-		'owing' => -abs($remainingOpeningBalance),
-		'source' => 'Opening Balance',
-	];
-}
-
 $proFormaInvoiceCredits = Invoice::find()->alias('i')
 	->select(['i.id', 'i.date', 'SUM(p.amount) as credit', 'total'])
 	->joinWith(['invoicePayments ip' => function($query){
@@ -69,8 +39,6 @@ $proFormaInvoiceCredits = Invoice::find()->alias('i')
 	->all();
 
 foreach($proFormaInvoiceCredits as $proFormaInvoiceCredit){
-//$lastInvoicePayment = $invoiceCredit->invoicePayments;
-//$lastInvoicePayment = end($lastInvoicePayment);
 	if($proFormaInvoiceCredit->credit <= 0){
 		continue;
 	}
