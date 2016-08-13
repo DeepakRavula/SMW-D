@@ -70,7 +70,7 @@ class Lesson extends \yii\db\ActiveRecord
      */
     public function getInvoiceLineItem()
     {
-        return $this->hasOne(InvoiceLineItem::className(), ['lesson_id' => 'id']);
+        return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id']);
     }
 
 	    /**

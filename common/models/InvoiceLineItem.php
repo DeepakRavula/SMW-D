@@ -31,7 +31,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoice_id', 'lesson_id', 'unit', 'amount'], 'required'],
+            [['invoice_id', 'lesson_id', 'unit', 'amount','item_id','item_type_id','description'], 'required'],
             [['invoice_id', 'lesson_id'], 'integer'],
             [['unit', 'amount'], 'number'],
         ];
@@ -39,7 +39,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lesson_id']);
+        return $this->hasOne(Lesson::className(), ['id' => 'item_id']);
     }
 
     public function getInvoice()
@@ -57,6 +57,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'lesson_id' => 'Lesson ID',
             'unit' => 'Unit',
             'amount' => 'Amount',
+			'description' => 'Description'
         ];
     }
 }
