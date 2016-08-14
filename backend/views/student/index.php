@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
-    <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true]); ?>
+    <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
 	<?php ActiveForm::end(); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 </div>

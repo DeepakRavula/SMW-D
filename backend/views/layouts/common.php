@@ -402,16 +402,35 @@ $bundle = BackendAsset::register($this);
             <!-- Content Header (Page header) -->
             <section class="content-header">
                 <h1>
-                    <?php echo $this->title ?>
+                    <div class="pull-left"><?php echo $this->title ?></div>   
                     <?php if (isset($this->params['subtitle'])): ?>
-                        <small><?php echo $this->params['subtitle'] ?></small>
+                        
+                        <div class="pull-right">
+                            <div class="dropdown">
+                              <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                More
+                                <span class="caret"></span>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                              </ul>
+                            </div>
+                        </div>
+                        <div class="pull-right m-r-10">
+                            <?php echo $this->params['subtitle']; ?>
+                        </div>
                     <?php endif; ?>
+                    <div class="clearfix"></div>
                 </h1>
 
-                <?php echo Breadcrumbs::widget([
-                    'tag'=>'ol',
-                    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-                ]) ?>
+                <?php //echo Breadcrumbs::widget([
+                    // 'tag'=>'ol',
+                    // 'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                // ]) ?>
             </section>
 
             <!-- Main content -->
