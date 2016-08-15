@@ -122,9 +122,9 @@ class Lesson extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if( ! $insert) {
-            $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-            $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
 			if(! empty($this->teacher) && ! empty($this->enrolment->student->customer)){
+            	$toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+            	$fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
 	            $this->notifyReschedule($this->teacher, $this->enrolment->program, $fromDate, $toDate);
 				$this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
 			}
