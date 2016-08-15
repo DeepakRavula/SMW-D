@@ -2,18 +2,13 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;
-use common\models\PaymentMethod;
-use common\models\Invoice;
-use common\models\Allocation;
-use common\models\BalanceLog;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="invoice-line-item-form p-l-20">
+<div id="invoice-line-item-modal" class="invoice-line-item-form p-l-20">
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
         <div class="col-xs-3">
@@ -31,4 +26,3 @@ use common\models\BalanceLog;
     </div>
     <?php ActiveForm::end(); ?>
 </div>
-?>

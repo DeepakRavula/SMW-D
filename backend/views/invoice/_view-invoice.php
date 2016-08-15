@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use backend\models\search\InvoiceSearch;
-use common\models\Invoice;
+use common\models\InvoiceLineItem;
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -137,9 +137,17 @@ use common\models\Invoice;
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
-		<div>
-		<button id="invoice-line-item">Add Misc</button>
-		</div>
+	<div class="col-md-12">
+	<h4 class="pull-left m-r-20">Add Misc</h4>
+	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus"></i></a>
+	<div class="clearfix"></div>
+	</div>
+
+	<div class="dn misc-create section-tab">
+		<?php echo $this->render('_form-invoice-line-item', [
+			'model' => new InvoiceLineItem(),
+		]) ?>
+	</div>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
@@ -205,11 +213,10 @@ use common\models\Invoice;
 </div>
 </div>
 </div>
-<script type="text/javascript">
-$(document).ready(function(){
-  $('#invoice-line-item').click(function () {
-        $('#invoice-line-item-modal')modal('show');
-		//alert('hi');
+<script>
+$(document).ready(function() {
+	$('.add-new-misc').click(function(){
+		$('.misc-create').show();
   });
 });
 </script>

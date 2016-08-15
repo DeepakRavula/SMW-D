@@ -111,7 +111,25 @@ class InvoiceController extends Controller {
 			]);
 			return $this->redirect(['view', 'id' => $model->id]);
 		}
+		
+		$invoiceLineItemModel = new InvoiceLineItem();
+		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
+			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
+			$invoiceLineItemModel->invoice_id = $model->id; 
+			$invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
+			$invoiceLineItemModel->save();
 
+			$model = $this->findModel($id);
+			$model->subTotal = $model->total + $invoiceLineItemModel->amount;
+			$model->total = $model->subTotal;
+			$model->save();
+
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Misc has been added successfully'
+			]);
+			return $this->redirect(['view', 'id' => $model->id]);
+		}
 		return $this->render('view', [
 					'model' => $model,
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
