@@ -50,8 +50,19 @@ $this->params['breadcrumbs'][] = $this->title;
 						return $data->invoiceBalance;
 					}
                 },
+				'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right'],
+            	'enableSorting' => false,
 			],
-            'total',
+			[
+				'label' => 'Total',
+				'value' => function($data) {
+						return $data->total;
+                },
+				'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right'],
+				'enableSorting' => false,
+            ]
         ];
 
 		if((int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE) {
