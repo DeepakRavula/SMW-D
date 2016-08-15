@@ -3,6 +3,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use backend\models\search\InvoiceSearch;
 use common\models\InvoiceLineItem;
+use common\models\ItemType;
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -96,39 +97,40 @@ use common\models\InvoiceLineItem;
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
 				[
-					'label' => 'Student Name',
+					'label' => 'Code',
 					'value' => function($data) {
-						return !empty($data->lesson->enrolment->student->fullName) ? $data->lesson->enrolment->student->fullName : null;
-					},
+						if((int) $data->item_type_id === ItemType::TYPE_LESSON){
+							return 'LESSON';
+						}else{
+							return 'MISC';
+						}
+					}
 				],
 				[
-					'label' => 'Program Name',
+					'label' => 'Description',
 					'value' => function($data) {
-						return !empty($data->lesson->enrolment->program->name) ? $data->lesson->enrolment->program->name : null;
-					},
+							return $data->description;
+					}
 				],
                 [ 
                 	'attribute' => 'unit',
-	               	'label' => 'Unit',
+	               	'label' => 'Quantity',
 	                'headerOptions' => ['class' => 'text-center'],
     	            'contentOptions' => ['class' => 'text-center'],
         	        'enableSorting' => false,
                 ],
 				[
-            		'label' => 'Rate/hr',
+            		'label' => 'Price',
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center'],
             		'value' => function($data) {
-            		return !empty($data->lesson->enrolment->program->rate) ? $data->lesson->enrolment->program->rate : null;
-            			},
+						if($data->item_type_id === ItemType::TYPE_LESSON){
+							return $data->lesson->enrolment->program->rate;
+						}else{
+							return $data->amount;
+						}
+					}	
             	],
-                [ 
-            	    'attribute' => 'amount',
-                	'headerOptions' => ['class' => 'text-right'],
-	                'contentOptions' => ['class' => 'text-right'],
-    	            'label' => 'Amount',
-        	        'enableSorting' => false,
-                ],
                 [
 	                'attribute' => 'amount',
                 	'label' => 'Total',
