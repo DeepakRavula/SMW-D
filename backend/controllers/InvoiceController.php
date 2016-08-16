@@ -15,7 +15,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\ItemType;
-use common\models\InvoicePayment;
+use common\models\CreditUsage;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -92,6 +92,7 @@ class InvoiceController extends Controller {
 				$invoiceModel->balance = $invoiceModel->balance + $paymentModel->amount;
 				$invoiceModel->save();
 			}
+			$creditPaymentId = $paymentModel->id;
 			if((int) $paymentMethodId === PaymentMethod::TYPE_CREDIT){
 				$paymentModel->id = null;
 				$paymentModel->isNewRecord = true;	
@@ -103,8 +104,13 @@ class InvoiceController extends Controller {
 					$paymentModel->invoiceId = $paymentModel->sourceId;
 				}
 				$paymentModel->save();
+				$debitPaymentId = $paymentModel->id;
+				$creditUsageModel = new CreditUsage();
+				$creditUsageModel->credit_payment_id = $creditPaymentId;  
+				$creditUsageModel->debit_payment_id = $debitPaymentId;
+				$creditUsageModel->save();	
 			}
-				
+
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Payment has been recorded successfully'
