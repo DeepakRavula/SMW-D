@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use backend\models\search\InvoiceSearch;
+use common\models\ItemType;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -135,45 +136,45 @@ $this->params['breadcrumbs'][] = $this->title;
             'tableOptions' =>['class' => 'table table-bordered m-0'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
-                  [
-                    'label' => 'Student Name',
-                    'value' => function($data) {
-                      return !empty($data->lesson->enrolment->student->fullName) ? $data->lesson->enrolment->student->fullName : null;
-                    },
-                      ],
-                                [
-                    'label' => 'Program Name',
-                    'value' => function($data) {
-                      return !empty($data->lesson->enrolment->program->name) ? $data->lesson->enrolment->program->name : null;
-                    },
-                      ],
-  
+				[
+					'label' => 'Code',
+					'value' => function($data) {
+						if((int) $data->item_type_id === ItemType::TYPE_LESSON){
+							return 'LESSON';
+						}else{
+							return 'MISC';
+						}
+					}
+				],
+				[
+					'label' => 'Description',
+					'value' => function($data) {
+							return $data->description;
+					}
+				],
                 [ 
-                'attribute' => 'unit',
-                'label' => 'Unit',
-                'headerOptions' => ['class' => 'text-center'],
-                'contentOptions' => ['class' => 'text-center'],
-                'enableSorting' => false,
+                	'attribute' => 'unit',
+	               	'label' => 'Quantity',
+	                'headerOptions' => ['class' => 'text-center'],
+    	            'contentOptions' => ['class' => 'text-center'],
+        	        'enableSorting' => false,
                 ],
-                [
-                    'label' => 'Rate/hr',
+				[
+            		'label' => 'Price',
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center'],
-                    'value' => function($data) {
-                      return !empty($data->lesson->enrolment->program->rate) ? $data->lesson->enrolment->program->rate : null;
-                    },
-                ],
-                [ 
-                'attribute' => 'amount',
-                'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right'],
-                'label' => 'Amount',
-                'enableSorting' => false,
-                ],
+            		'value' => function($data) {
+						if($data->item_type_id === ItemType::TYPE_LESSON){
+							return $data->lesson->enrolment->program->rate;
+						}else{
+							return $data->amount;
+						}
+					}	
+            	],
                 [
-                'attribute' => 'amount',
-                'label' => 'Total',
-                'enableSorting' => false,
+	                'attribute' => 'amount',
+                	'label' => 'Total',
+            	    'enableSorting' => false,
                 ]
             ],
         ]); ?>
