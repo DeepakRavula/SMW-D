@@ -71,7 +71,7 @@ echo ButtonGroup::widget([
     'buttons' => $buttons,
 	'options' => [
 		'id' => 'payment-method-btn-section',
-		'class' => 'btn-group-vertical'
+		'class' => 'btn-group-horizontal'
 	]
 ]);?>
 
@@ -91,11 +91,8 @@ echo ButtonGroup::widget([
 <script type="text/javascript">
 $(document).ready(function(){
   $('#payment-method-btn-section').on('click', '.btn', function() {
-	 // debugger;
 	 $('.payment-method-section').hide();
 	 $('#' + $(this).data('payment-type') + '-section').show();
-	 console.log($('#payment-payment_method_id'));
-	 console.log($(this).data('payment-type-id'));
 	 $('.payment-method-id').val($(this).data('payment-type-id'));
      if($(this).data('payment-type') == 'credit'){
          $('#credit-modal').modal('show');

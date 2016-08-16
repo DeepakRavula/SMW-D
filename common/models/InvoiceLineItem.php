@@ -55,7 +55,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'id' => 'ID',
             'invoice_id' => 'Invoice ID',
             'lesson_id' => 'Lesson ID',
-            'unit' => 'Unit',
+            'unit' => 'Quantity',
             'amount' => 'Amount',
 			'description' => 'Description'
         ];

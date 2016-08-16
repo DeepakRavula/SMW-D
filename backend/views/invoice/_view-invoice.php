@@ -2,7 +2,8 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use backend\models\search\InvoiceSearch;
-use common\models\Invoice;
+use common\models\InvoiceLineItem;
+use common\models\ItemType;
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -89,6 +90,11 @@ use common\models\Invoice;
               <div class="clearfix"></div>
             </div>
           </div>
+	<div id="add-misc-item" class="col-md-12">
+	<h4 class="pull-left m-r-20">Add Misc</h4>
+	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus"></i></a>
+	<div class="clearfix"></div>
+	</div>
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
@@ -96,39 +102,40 @@ use common\models\Invoice;
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'columns' => [
 				[
-					'label' => 'Student Name',
+					'label' => 'Code',
 					'value' => function($data) {
-						return !empty($data->lesson->enrolment->student->fullName) ? $data->lesson->enrolment->student->fullName : null;
-					},
+						if((int) $data->item_type_id === ItemType::TYPE_LESSON){
+							return 'LESSON';
+						}else{
+							return 'MISC';
+						}
+					}
 				],
 				[
-					'label' => 'Program Name',
+					'label' => 'Description',
 					'value' => function($data) {
-						return !empty($data->lesson->enrolment->program->name) ? $data->lesson->enrolment->program->name : null;
-					},
+							return $data->description;
+					}
 				],
                 [ 
                 	'attribute' => 'unit',
-	               	'label' => 'Unit',
+	               	'label' => 'Quantity',
 	                'headerOptions' => ['class' => 'text-center'],
     	            'contentOptions' => ['class' => 'text-center'],
         	        'enableSorting' => false,
                 ],
 				[
-            		'label' => 'Rate/hr',
+            		'label' => 'Price',
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center'],
             		'value' => function($data) {
-            		return !empty($data->lesson->enrolment->program->rate) ? $data->lesson->enrolment->program->rate : null;
-            			},
+						if($data->item_type_id === ItemType::TYPE_LESSON){
+							return $data->lesson->enrolment->program->rate;
+						}else{
+							return $data->amount;
+						}
+					}	
             	],
-                [ 
-            	    'attribute' => 'amount',
-                	'headerOptions' => ['class' => 'text-right'],
-	                'contentOptions' => ['class' => 'text-right'],
-    	            'label' => 'Amount',
-        	        'enableSorting' => false,
-                ],
                 [
 	                'attribute' => 'amount',
                 	'label' => 'Total',
@@ -137,6 +144,8 @@ use common\models\Invoice;
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
+
+		<?php echo $this->render('_line-item') ?>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
@@ -202,3 +211,10 @@ use common\models\Invoice;
 </div>
 </div>
 </div>
+<script>
+$(document).ready(function() {
+	$('#add-misc-item').click(function(){
+		$('#invoice-line-item-modal').modal('show');
+  });
+});
+</script>
