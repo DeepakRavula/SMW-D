@@ -33,9 +33,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
 			[
                 'attribute' => 'first_name',
-				'label' => 'First Name (Enrolments)',
+				'label' => 'First Name',
 				'value' => function($data) {
-					return ! (empty($data->first_name)) ? $data->first_name . ' (' . $data->enrolmentsCount . ')' : null;
+					return ! (empty($data->first_name)) ? $data->first_name : null;
                 } 
 			],
 			'last_name',
