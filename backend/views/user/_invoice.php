@@ -4,7 +4,17 @@ use yii\grid\GridView;
 use common\models\Invoice;
 ?>
 <div class="col-md-12">
-	<h4 class="pull-left m-r-20">Invoices</h4>
+<h4 class="pull-left m-r-20">Invoices</h4>
+<a href="#" class="add-new-invoice text-add-new"><i class="fa fa-plus"></i></a>
+<div class="clearfix"></div>
+</div>
+<div class="dn invoice-create section-tab">
+    <?php echo $this->render('_uninvoiced_lessons', [
+		'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+		'model' => new Invoice(),
+		'searchModel' => $searchModel,
+		'userModel' => $userModel
+    ]) ?>
 </div>
 <?php yii\widgets\Pjax::begin() ?>
 <?php echo GridView::widget([
