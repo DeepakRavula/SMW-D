@@ -24,7 +24,8 @@ use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
 use common\models\Program;
-use common\models\Allocation;
+use common\models\InvoiceLineItem;
+use common\models\ItemType;
 use common\models\PaymentMethod;
 use yii\web\ForbiddenHttpException;
 
@@ -233,7 +234,15 @@ class UserController extends Controller {
 		$openingBalanceDataProvider = new ActiveDataProvider([
 			'query' => $openingBalanceQuery, 
 		]);
-		
+	
+		$query = Lesson::find()->alias('l')
+					->location($location_id)
+					->student($model->id)
+					->unInvoiced()
+					->completed();
+		$unInvoicedLessonsDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
 		return $this->render('view', [
 			'student' => new Student(),
 			'dataProvider' => $dataProvider,
@@ -252,7 +261,8 @@ class UserController extends Controller {
 			'paymentDataProvider' => $paymentDataProvider,
 			'openingBalancePaymentModel' => $openingBalancePaymentModel,
 			'openingBalanceDataProvider' => $openingBalanceDataProvider,
-			'remainingOpeningBalance' => $remainingOpeningBalance
+			'remainingOpeningBalance' => $remainingOpeningBalance,
+			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider
 		]);
 	}
 
@@ -624,5 +634,62 @@ class UserController extends Controller {
 				}
 			}
 
-		}
+	public function actionInvoice(){
+		$session = Yii::$app->session;
+		$location_id = $session->get('location_id');
+		$request = Yii::$app->request;
+		$customerId = $request->get('id');
+		$post = $request->post();
+		$invoice = new Invoice();
+		if (!empty($post['selection']) && is_array($post['selection'])) {
+			$lastInvoice = Invoice::lastInvoice($location_id);
+
+			if (empty($lastInvoice)) {
+				$invoiceNumber = 1;
+			} else {
+				$invoiceNumber = $lastInvoice->invoice_number + 1;
+			}
+			$invoice->user_id = $customerId;
+			$invoice->type = Invoice::TYPE_INVOICE;
+			$invoice->invoice_number = $invoiceNumber;
+			$invoice->date = (new \DateTime())->format('Y-m-d');
+			$invoice->notes = $post['Invoice']['notes'];
+			$invoice->internal_notes = $post['Invoice']['internal_notes'];
+			$invoice->save();
+			
+			$subTotal = 0;
+			$taxAmount = 0;
+			foreach ($post['selection'] as $selection) {
+				$lesson = Lesson::findOne(['id' => $selection]);
+				$actualLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
+				$lessonDate = $actualLessonDate->format('Y-m-d');
+				$invoiceLineItem = new InvoiceLineItem();
+				$invoiceLineItem->invoice_id = $invoice->id;
+				$invoiceLineItem->item_id = $lesson->id;
+            	$invoiceLineItem->item_type_id = ItemType::TYPE_LESSON;
+				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
+    	        $invoiceLineItem->description = $description;
+				$time = explode(':', $lesson->enrolment->duration);
+				$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
+				$invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
+				$invoiceLineItem->save();
+				$subTotal += $invoiceLineItem->amount;
+			}
+			$invoice = Invoice::findOne(['id' => $invoice->id]);
+			$invoice->subTotal = $subTotal;
+			$totalAmount = $subTotal + $taxAmount;
+			$invoice->tax = $taxAmount;
+			$invoice->total = $totalAmount;
+			$invoice->save();
+
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Invoice has been created successfully'
+			]);
+
+			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
+		} 	
+	}
+
+}
 		
