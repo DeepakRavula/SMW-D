@@ -53,10 +53,16 @@ $paymentContent =  $this->render('_payment', [
             'label' => 'Invoice',
             'content' => $invoiceContent,
 			'active' => true,
+			'options' => [
+                    'id' => 'invoice',
+            	],
         ],
 		[
             'label' => 'Payments',
             'content' => $paymentContent,
+			'options' => [
+                    'id' => 'payment',
+            	],
         ],
     ],
 ]);?>
