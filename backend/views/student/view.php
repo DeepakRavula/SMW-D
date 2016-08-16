@@ -35,11 +35,16 @@ $lessonContent =  $this->render('_lesson', [
 		[
             'label' => 'Enrolments',
             'content' => $enrolmentContent,
-			'active' => $section === 'enrolment',
+			'options' => [
+                    'id' => 'enroment',
+                ],
         ],
 		[
             'label' => 'Lessons',
             'content' => $lessonContent,
+			'options' => [
+                    'id' => 'lesson',
+                ],
         ],
     ],
 ]);

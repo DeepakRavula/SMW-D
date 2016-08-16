@@ -53,11 +53,6 @@ class StudentController extends Controller
      */
     public function actionView($id)
     {
-		$request = Yii::$app->request;
-		$section = $request->get('section');
-		if(empty($section)){
-			$section = 'enrolment';
-		}
 		$dataProvider = new ActiveDataProvider([
             'query' => Enrolment::find()->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
         ]);
@@ -104,7 +99,7 @@ class StudentController extends Controller
             	    'options' => ['class' => 'alert-success'],
                 	'body' => 'Program has been added successfully'
             ]);
-            	return $this->redirect(['view', 'id' => $model->id,'section' => 'lesson']);
+            	return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
         }
         if ($enrolmentModel->load(Yii::$app->request->post()) ) {
 			$enrolmentModel->student_id = $id;
@@ -113,7 +108,7 @@ class StudentController extends Controller
             	    'options' => ['class' => 'alert-success'],
                 	'body' => 'Program has been added successfully'
             ]);
-            	return $this->redirect(['view', 'id' => $model->id,'section' => 'enrolment']);
+            	return $this->redirect(['view', 'id' => $model->id,'#' => 'enrolment']);
         } else {
             return $this->render('view', [
             	'model' => $model,
@@ -123,7 +118,6 @@ class StudentController extends Controller
 				'lessonDataProvider' => $lessonDataProvider,
     			'addressDataProvider' => $addressDataProvider,
 			    'phoneDataProvider' => $phoneDataProvider,
-				'section' => $section
             ]);
         }
     }
