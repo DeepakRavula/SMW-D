@@ -90,6 +90,11 @@ use common\models\ItemType;
               <div class="clearfix"></div>
             </div>
           </div>
+	<div id="add-misc-item" class="col-md-12">
+	<h4 class="pull-left m-r-20">Add Misc</h4>
+	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus"></i></a>
+	<div class="clearfix"></div>
+	</div>
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
@@ -139,17 +144,8 @@ use common\models\ItemType;
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
-	<div id="add-misc-item" class="col-md-12">
-	<h4 class="pull-left m-r-20">Add Misc</h4>
-	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus"></i></a>
-	<div class="clearfix"></div>
-	</div>
 
-	<div class="dn misc-create section-tab">
-		<?php echo $this->render('_form-invoice-line-item', [
-			'model' => new InvoiceLineItem(),
-		]) ?>
-	</div>
+		<?php echo $this->render('_line-item') ?>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
