@@ -139,7 +139,7 @@ use common\models\ItemType;
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
-	<div class="col-md-12">
+	<div id="add-misc-item" class="col-md-12">
 	<h4 class="pull-left m-r-20">Add Misc</h4>
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus"></i></a>
 	<div class="clearfix"></div>
@@ -217,8 +217,8 @@ use common\models\ItemType;
 </div>
 <script>
 $(document).ready(function() {
-	$('.add-new-misc').click(function(){
-		$('.misc-create').show();
+	$('#add-misc-item').click(function(){
+		$('#invoice-line-item-modal').modal('show');
   });
 });
 </script>
