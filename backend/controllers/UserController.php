@@ -205,7 +205,7 @@ class UserController extends Controller {
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Opening balance has been recorded successfully'
 			]);
-			return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, 'section' => 'opening-balance']);
+			return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'opening-balance']);
 		}
 
 		$openingBalancePaymentModel = Payment::find()

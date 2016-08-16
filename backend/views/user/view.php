@@ -122,7 +122,9 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Contact Information',
 				'content' => $addressContent,
-				'active' => $section === 'contact',
+				'options' => [
+                    'id' => 'contact',
+                ],
 			],
 		];
 
@@ -130,51 +132,68 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Qualifications',
 				'content' => $qualificationContent,
-				'active' => $section === 'qualification',
+				'options' => [
+                    'id' => 'qualiication',
+                ],
 			],
 			[
 				'label' => 'Availability',
 				'content' => $teacherAvailabilityContent,
-				'active' => $section === 'availability',
+				'options' => [
+                    'id' => 'availability',
+                ],
 			],
-			[
-				'label' => 'Students',
-				'content' => $teacherStudentContent,
-				'active' => $section === 'student',
-			],	
-			
-		];
+            [
+                'label' => 'Students',
+                'content' => $teacherStudentContent,
+                'options' => [
+                    'id' => 'student',
+                ],
+            ],
+        ];
 		
 		$customerItems = [
 			[
 				'label' => 'Students',
 				'content' => $studentContent,
-				'active' => $section === 'student',
+				'options' => [
+                    'id' => 'student',
+                ],
 			],
 			[
 				'label' => 'Enrolments',
 				'content' => $enrolmentContent,
-				'active' => $section === 'enrolment',
+				'options' => [
+                    'id' => 'enrolment',
+                ],
 			],
 			[
 				'label' => 'Lessons',
 				'content' => $lessonContent,
-				'active' => $section === 'lesson',
+				'options' => [
+                    'id' => 'lesson',
+                ],
 			],
 			[
 				'label' => 'Invoices',
 				'content' => $invoiceContent,
-				'active' => $section === 'invoice',
+				'options' => [
+                    'id' => 'invoice',
+                ],
 			],
 			[
 				'label' => 'Accounts',
 				'content' => $paymentContent,
-				'active' => $section === 'account',
+				'options' => [
+                    'id' => 'account',
+                ],
 			],
 			[
 				'label' => 'Opening Balance',
 				'content' => $openingBalanceContent,
-				'active' => $section === 'opening-balance',
+				'options' => [
+                    'id' => 'opening-balance',
+                ],
 			]
 
 		];
