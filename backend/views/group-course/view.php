@@ -47,10 +47,16 @@ $enrolmentContent =  $this->render('_enrolment', [
 		[
             'label' => 'Lessons',
             'content' => $lessonContent,
+            'options' => [
+                      'id' => 'lesson',
+            ],
         ],
 		[
             'label' => 'Enrolments',
             'content' => $enrolmentContent,
+            'options' => [
+                      'id' => 'enrolment',
+            ],
         ],
     ],
 ]);?>

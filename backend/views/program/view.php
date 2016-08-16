@@ -58,11 +58,17 @@ foreach($roles as $name => $description){
 			[
 				'label' => 'Students',
 				'content' => $studentContent,
+                'options' => [
+                      'id' => 'student',
+                  ],
 				'active' => true,
 			],
 			[
 				'label' => 'Teachers',
 				'content' => $teacherContent,
+                'options' => [
+                      'id' => 'teacher',
+                  ],
 			],
 		];
 		?>
