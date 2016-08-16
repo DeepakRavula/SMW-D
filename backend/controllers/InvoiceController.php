@@ -311,7 +311,7 @@ class InvoiceController extends Controller {
 		$invoiceLineItemsDataProvider = new ActiveDataProvider([
 			'query' => $invoiceLineItems,
 		]);
-		$subject = 'From' . Yii::$app->name;
+		$subject = 'Invoice from ' . Yii::$app->name;
 
 		Yii::$app->mailer->compose('generateInvoice', [
 			'model' => $model,
