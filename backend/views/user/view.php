@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			<?php endif;?>
 		</div>	
         <div class="pull-left m-t-10">
-            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'section' => 'profile'], ['class' => 'm-r-20']) ?>
+            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'#' => 'profile'], ['class' => 'm-r-20']) ?>
 			<?php if($searchModel->role_name === 'staffmember'):?>
 			 <?php
             echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [

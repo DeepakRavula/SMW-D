@@ -34,7 +34,6 @@ use yii\bootstrap\Tabs;
 	<?php
 	$profileContent = $this->render('_form-profile', [
 		'model' => $model,
-		'section' => $section,
 		'form' => $form,
 		'programs' => $programs,
 		'roles' => $roles,
@@ -45,12 +44,10 @@ use yii\bootstrap\Tabs;
 		'addressModels' => $addressModels,
 		'phoneNumberModels' => $phoneNumberModels,
 		'form' => $form,
-		'section' => $section
 	]);
 
 	$qualificationContent = $this->render('_form-qualification', [
 		'model' => $model,
-		'section' => $section,
 		'form' => $form,
 		'programs' => $programs,
 		'roles' => $roles,
@@ -67,26 +64,34 @@ use yii\bootstrap\Tabs;
 		[
 			'label' => 'Profile',
 			'content' => $profileContent,
-			'active' => $section === 'profile',
+			'options' => [
+                    'id' => 'profile',
+                ],
 		],
 		[
 			'label' => 'Contact Information',
 			'content' => $addressContent,
-			'active' => $section === 'contact',
+			'options' => [
+                    'id' => 'contact',
+                ],
 		],
 	];
 	if (in_array($model->roles, ['teacher'])) {
 		$items[] = [
 			'label' => 'Qualifications',
 			'content' => $qualificationContent,
-			'active' => $section === 'qualification',
+			'options' => [
+                    'id' => 'qualification',
+                ],
 		];
 	}
 	if (in_array($model->roles, ['teacher'])) {
 		$items[] = [
 			'label' => 'Availability',
 			'content' => $teacherAvailabilityContent,
-			'active' => $section === 'availability',
+			'options' => [
+                    'id' => 'availability',
+                ],
 		];
 	}
 	?>
@@ -106,7 +111,7 @@ use yii\bootstrap\Tabs;
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 			<?php
 			if(! $model->getModel()->getIsNewRecord()){
-				echo Html::a('Cancel', ['view','UserSearch[role_name]' => $model->roles,'id' => $model->getModel()->id,'section' => $section], ['class'=>'btn']); 	
+				echo Html::a('Cancel', ['view','UserSearch[role_name]' => $model->roles,'id' => $model->getModel()->id], ['class'=>'btn']); 	
 			}
 		?>
 	</div>
