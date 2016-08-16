@@ -94,11 +94,6 @@ class UserController extends Controller {
 	 * @return mixed
 	 */
 	public function actionView($id) {
-		$request = Yii::$app->request;
-		$section = $request->get('section');
-		if(empty($section)){
-			$section = 'profile';
-		}
 		$session = Yii::$app->session;
 		$location_id = $session->get('location_id');
 		
@@ -237,7 +232,6 @@ class UserController extends Controller {
 		return $this->render('view', [
 			'student' => new Student(),
 			'dataProvider' => $dataProvider,
-			'section' => $section,
 			'teacherDataProvider' => $teacherDataProvider,
 			'model' => $model,
 			'searchModel' => $searchModel,
@@ -262,12 +256,6 @@ class UserController extends Controller {
 	 * @return mixed
 	 */
 	public function actionCreate() {
-		$request = Yii::$app->request;
-		$section = $request->get('section');
-		if(empty($section)){
-			$section = 'profile';
-		}
-		
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
 
@@ -349,7 +337,6 @@ class UserController extends Controller {
 
 		return $this->render('create', [
 					'model' => $model,
-					'section' => $section,
 					'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 					'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 					'availabilityModels' => (empty($availabilityModels)) ? [new TeacherAvailability] : $availabilityModels,
@@ -365,13 +352,8 @@ class UserController extends Controller {
 	 * @return mixed
 	 */
 	public function actionUpdate($id) {
-		$request = Yii::$app->request;
-		$section = $request->get('section');
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
-		if(empty($section)){
-			$section = 'profile';
-		}
 		
 		$model = new UserForm();
 		$model->setModel($this->findModel($id));
@@ -469,7 +451,7 @@ class UserController extends Controller {
 								'options' => ['class' => 'alert-success'],
 								'body' => ucwords($model->roles) . ' profile has been updated successfully'
 						]);
-					return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles,'section' => $section, 'id' => $model->getModel()->id]);
+					return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
 					}
 				} catch (Exception $e) {
 					$transaction->rollBack();
@@ -488,7 +470,6 @@ class UserController extends Controller {
 					'availabilityModels' => (empty($availabilityModels)) ? [new TeacherAvailability] : $availabilityModels,
 					'addressModels' => (empty($addressModels)) ? [new Address] : $addressModels,
 					'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber] : $phoneNumberModels,
-					'section' => $section
 		]);
 	}
 

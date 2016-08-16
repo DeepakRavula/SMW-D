@@ -42,5 +42,5 @@ echo GridView::widget([
 ?>
 <?php \yii\widgets\Pjax::end(); ?>
 <div class="col-md-12 m-b-20 m-t-20">
-		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit Availability', ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'section' => 'availability'], ['class' => 'm-r-20']) ?>
+		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit Availability', ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'#' => 'availability'], ['class' => 'm-r-20']) ?>
 </div>
