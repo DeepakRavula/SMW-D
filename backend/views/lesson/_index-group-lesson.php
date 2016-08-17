@@ -1,10 +1,23 @@
 <?php
 
 use yii\grid\GridView;
+use yii\helpers\Url;
+
 ?>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Lessons</h4>
 </div>
+<?php
+$this->registerJs("
+    $('.group-lesson-index td').click(function (e) {
+        var id = $(this).closest('tr').data('id');
+        if(e.target == this)
+            location.href = '" . Url::to(['group-lesson/view']) . "?id=' + id;
+    });
+
+");
+?>
+<div class="group-lesson-index p-10">
 <?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
@@ -13,9 +26,7 @@ echo GridView::widget([
 	'tableOptions' =>['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray' ],
 	'rowOptions' => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/group-lesson/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+            return ['data-id' => $model->id];
 	},
 	'columns' => [
 		[
@@ -46,3 +57,4 @@ echo GridView::widget([
 ]);
 ?>
 <?php \yii\widgets\Pjax::end(); ?>
+</div>

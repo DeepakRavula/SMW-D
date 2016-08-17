@@ -1,6 +1,7 @@
 <?php
 
 use yii\grid\GridView;
+use yii\helpers\Url;
 use common\models\Invoice;
 
 /* @var $this yii\web\View */
@@ -9,15 +10,23 @@ use common\models\Invoice;
 $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="lesson-index p-10">
+<?php
+$this->registerJs("
+    $('.private-lesson-index td').click(function (e) {
+        var id = $(this).closest('tr').data('id');
+        if(e.target == this)
+            location.href = '" . Url::to(['lesson/view']) . "?id=' + id;
+    });
+
+");
+?>
+<div class="private-lesson-index p-10">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
 		'rowOptions' => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+            return ['data-id' => $model->id];
         },
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
