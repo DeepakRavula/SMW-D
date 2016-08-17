@@ -1,55 +1,109 @@
 <?php
 use yii\grid\GridView;
 use common\models\Payment;
-use common\models\Allocation;
+use common\models\InvoicePayment;
 use common\models\Invoice;
-use common\models\BalanceLog;
-use yii\data\ActiveDataProvider;
 use common\models\PaymentMethod;
-use yii\widgets\ListView;
 use yii\bootstrap\ButtonGroup;
-use yii\bootstrap\Button;
+use yii\data\ArrayDataProvider;
 ?>
-<?php yii\widgets\Pjax::begin() ?>
-<?php echo GridView::widget([
-        'dataProvider' => $invoicePayments,
-        'options' => ['class' => 'col-md-12'],
-        'tableOptions' =>['class' => 'table table-bordered m-0'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
-		'formatter' => ['class' => 'yii\i18n\Formatter','nullDisplay' => ''],
-        'columns' => [
-            [
-                'label' => 'Date',
-                'value' => function($data) {
-					$date = \DateTime::createFromFormat('Y-m-d H:i:s',$data->date);
-                    return ! empty($data->date) ? $date->format('d M Y') : null;
-                },
-            ],
-			[
-                'label' => 'Payment Method',
-                'value' => function($data) {
-                    return ! empty($data->paymentMethod->name) ? $data->paymentMethod->name : null;
-				}
-            ],
-			[
-                'label' => 'Number',
-                'value' => function($data) {
-                    //return ! empty($data->paymentMethod->name) ? $data->paymentMethod->name : null;
-				}
-            ],
-			[
-                'label' => 'Amount',
-                'value' => function($data) {
-					if($data->invoicePayment->invoice->type === Invoice::TYPE_PRO_FORMA_INVOICE && (int) $data->paymentMethod->id === PaymentMethod::TYPE_CREDIT_USED){
-                    	return ! empty($data->amount) ? -abs($data->amount) : null;
-					}else{
-                    	return ! empty($data->amount) ? abs($data->amount) : null;
-					}
-                },
-            ],
-	    ],
-    ]); ?>
-<?php \yii\widgets\Pjax::end(); ?>
+<?php
+$creditPayments = Payment::find()
+		->innerJoinWith('creditUsage cu')
+		->joinWith(['invoicePayment ip' => function($query) use($model){
+			$query->where(['ip.invoice_id' => $model->id]);
+		}])
+		->all();
+
+$results = [];
+if(! empty($creditPayments)){
+	foreach($creditPayments as $creditPayment){
+		$debitInvoice = InvoicePayment::findOne(['payment_id' => $creditPayment->creditUsage->debit_payment_id]);
+		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$creditPayment->date);
+		$results[] = [
+			'date' => $paymentDate->format('d-m-Y'),
+			'paymentMethodName' => $creditPayment->paymentMethod->name,
+			'invoiceNumber' => $debitInvoice->invoice_id,
+			'amount' => $creditPayment->amount,
+		];
+	}
+}
+
+$debitPayments = Payment::find()
+		->innerJoinWith('debitUsage du')
+		->joinWith(['invoicePayment ip' => function($query) use($model){
+			$query->where(['ip.invoice_id' => $model->id]);
+		}])
+		->all();
+
+if(! empty($debitPayments)){
+	foreach($debitPayments as $debitPayment){
+		$creditInvoice = InvoicePayment::findOne(['payment_id' => $debitPayment->debitUsage->credit_payment_id]);
+		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$debitPayment->date);
+		$results[] = [
+			'date' => $paymentDate->format('d-m-Y'),
+			'paymentMethodName' => $debitPayment->paymentMethod->name,
+			'invoiceNumber' => $creditInvoice->invoice_id,
+			'amount' => $debitPayment->amount,
+		];
+	}
+}
+
+$otherPayments = Payment::find()
+		->joinWith(['invoicePayment ip' => function($query) use($model){
+			$query->where(['ip.invoice_id' => $model->id]);
+		}])
+		->where(['not in','payment_method_id',[PaymentMethod::TYPE_CREDIT_APPLIED, PaymentMethod::TYPE_CREDIT_USED]])
+		->all();
+
+if(! empty($otherPayments)){
+	foreach($otherPayments as $otherPayment){
+		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$otherPayment->date);
+		$invoiceNumber = 'NA';
+		if((int) $otherPayment->payment_method_id === PaymentMethod::TYPE_CHEQUE){
+			$invoiceNumber = 1234;
+		}
+		$results[] = [
+			'date' => $paymentDate->format('d-m-Y'),
+			'paymentMethodName' => $otherPayment->paymentMethod->name,
+			'invoiceNumber' => $invoiceNumber,
+			'amount' => $otherPayment->amount,
+		];
+	}
+}
+?>
+<?php
+$invoicePaymentDataProvider = new ArrayDataProvider([
+    'allModels' => $results,
+    'sort' => [
+        'attributes' => ['date', 'paymentMethodName', 'amount', 'invoiceNumber'],
+    ],
+]);
+?>
+<?php
+echo GridView::widget([
+	'dataProvider' => $invoicePaymentDataProvider,
+	'columns' => [
+		[
+		'label' => 'Date', 
+		'value' => 'date',
+		],
+		[
+		'label' => 'Payment Method',
+		'value' => 'paymentMethodName',
+		],
+		[
+		'label' => 'Number', 
+		'value' => 'invoiceNumber',
+		],
+		[
+		'label' => 'Amount', 
+		'value' => 'amount',
+		],
+    ]
+]);
+?>
+
 
 <?php $buttons = [];?>
 <?php foreach(PaymentMethod::findAll([
