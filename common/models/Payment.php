@@ -39,7 +39,7 @@ class Payment extends \yii\db\ActiveRecord {
 	public function rules() {
 		return [
 			[['user_id', 'payment_method_id', 'amount','date'], 'required'],
-			[['user_id', 'payment_method_id'], 'integer'],
+			[['user_id', 'amount', 'payment_method_id'], 'integer'],
 			[['amount'], 'number'],
 			[['sourceType','sourceId'],'safe']
 		];
@@ -92,13 +92,17 @@ class Payment extends \yii\db\ActiveRecord {
 		return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id']);
 	}
 
+	public function getPaymentCheque() {
+		return $this->hasOne(PaymentCheque::className(), ['payment_id' => 'id']);
+	}
+
 	public function afterSave($insert, $changedAttributes) {
 	if($this->payment_method_id !== PaymentMethod::TYPE_ACCOUNT_ENTRY){
 			$invoicePaymentModel = new InvoicePayment();
 			$invoicePaymentModel->invoice_id = $this->invoiceId;
 			$invoicePaymentModel->payment_id = $this->id;
 			$invoicePaymentModel->save();
-		}	
+	}
 		parent::afterSave($insert, $changedAttributes);
 	}
 }

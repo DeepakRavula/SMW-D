@@ -16,6 +16,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\ItemType;
 use common\models\CreditUsage;
+use common\models\PaymentCheque;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -70,6 +71,7 @@ class InvoiceController extends Controller {
 		]);
 
 		$paymentModel = new Payment();
+		
 		if ($paymentModel->load(Yii::$app->request->post())) {
 				$paymentMethodId = $paymentModel->payment_method_id; 
 				$paymentModel->user_id = $model->user_id;
@@ -81,6 +83,14 @@ class InvoiceController extends Controller {
 				}
 				$paymentModel->invoiceId = $model->id;
 				$paymentModel->save();
+				if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_CHEQUE){
+					$chequeModel = new PaymentCheque();
+					if ($chequeModel->load(Yii::$app->request->post())) {
+						$chequeModel->payment_id = $paymentModel->id;	
+						$chequeModel->save();
+					}
+				}
+				
 				if((int) $model->type === Invoice::TYPE_INVOICE){	
 					if($model->total < $paymentModel->amount){
 						$model->balance =  $model->total - $paymentModel->amount;

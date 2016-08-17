@@ -4,6 +4,7 @@ use common\models\Payment;
 use common\models\InvoicePayment;
 use common\models\Invoice;
 use common\models\PaymentMethod;
+use common\models\PaymentCheque;
 use yii\bootstrap\ButtonGroup;
 use yii\data\ArrayDataProvider;
 ?>
@@ -65,7 +66,8 @@ if(! empty($otherPayments)){
 		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$otherPayment->date);
 		$invoiceNumber = 'NA';
 		if((int) $otherPayment->payment_method_id === PaymentMethod::TYPE_CHEQUE){
-			$invoiceNumber = 1234;
+			$chequeModel = PaymentCheque::findOne(['payment_id' => $otherPayment->paymentCheque->payment_id]);	
+			$invoiceNumber = $chequeModel->number;
 		}
 		$results[] = [
 			'date' => $paymentDate->format('d-m-Y'),
@@ -148,6 +150,7 @@ echo ButtonGroup::widget([
 		<?php echo $this->render('payment-method/_' . str_replace(' ', '-', trim(strtolower($method->name))),[
 				'model' => new Payment(),
 				'invoice' => $model,
+				'chequeModel' => new PaymentCheque(),
 		]);?>	
 	</div>
 	<?php endforeach;?>
