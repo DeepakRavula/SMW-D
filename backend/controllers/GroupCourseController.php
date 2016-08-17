@@ -4,11 +4,8 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\GroupCourse;
-use common\models\GroupLesson;
 use common\models\GroupEnrolment;
 use common\models\User;
-use common\models\Student;
-use yii\data\ActiveDataProvider;
 use backend\models\search\GroupCourseSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -54,14 +51,6 @@ class GroupCourseController extends Controller
      */
     public function actionView($id)
     {
-		$location_id = Yii::$app->session->get('location_id');
-		$query = GroupLesson::find()
-				->joinWith('groupCourse')
-				->where(['location_id' => $location_id,'course_id' => $id]);				
-			$lessonDataProvider = new ActiveDataProvider([
-			'query' => $query,
-		]);
-
 		$request = Yii::$app->request;
 		$groupEnrolment = $request->post('GroupEnrolment');
 		$studentIds = $groupEnrolment['studentIds']; 
@@ -79,7 +68,6 @@ class GroupCourseController extends Controller
 	 
         return $this->render('view', [
             'model' => $this->findModel($id),
-			'lessonDataProvider' => $lessonDataProvider,
         ]);
     }
 
