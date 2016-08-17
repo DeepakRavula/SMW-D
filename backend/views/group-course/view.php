@@ -32,9 +32,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="tabbable-panel">
      <div class="tabbable-line">
 <?php 
-$lessonContent =  $this->render('_lesson', [
-	'lessonDataProvider' => $lessonDataProvider,
-]);
 
 $enrolmentContent =  $this->render('_enrolment', [
 	'groupCourseModel' => $model,
@@ -44,13 +41,6 @@ $enrolmentContent =  $this->render('_enrolment', [
 ?>
 <?php echo Tabs::widget([
     'items' => [
-		[
-            'label' => 'Lessons',
-            'content' => $lessonContent,
-            'options' => [
-                      'id' => 'lesson',
-            ],
-        ],
 		[
             'label' => 'Enrolments',
             'content' => $enrolmentContent,
