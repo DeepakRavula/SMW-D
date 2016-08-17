@@ -22,6 +22,8 @@ class Payment extends \yii\db\ActiveRecord {
 	public $credit;
 	public $sourceType;
 	public $sourceId;
+	public $paymentMethodName;
+	public $invoiceNumber;
 	
 	const TYPE_OPENING_BALANCE_CREDIT = 1;
 	/**
@@ -71,14 +73,14 @@ class Payment extends \yii\db\ActiveRecord {
 		return $this->hasOne(PaymentMethod::className(), ['id' => 'payment_method_id']);
 	}
 
-	public function getAllocation() {
-		return $this->hasOne(Allocation::className(), ['payment_id' => 'id']);
+	public function getCreditUsage() {
+		return $this->hasOne(CreditUsage::className(), ['credit_payment_id' => 'id']);
 	}
 
-	public function getAllocations() {
-		return $this->hasMany(Allocation::className(), ['payment_id' => 'id']);
+	public function getDebitUsage() {
+		return $this->hasOne(CreditUsage::className(), ['debit_payment_id' => 'id']);
 	}
-
+	
 	public function getPreviousBalance(){
 		$previousBalance = BalanceLog::find()
 			->orderBy(['id' => SORT_DESC])
