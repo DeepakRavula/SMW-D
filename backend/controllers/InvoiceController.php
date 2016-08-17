@@ -88,7 +88,7 @@ class InvoiceController extends Controller {
 					if ($chequeModel->load(Yii::$app->request->post())) {
 						$chequeModel->payment_id = $paymentModel->id;
 						$chequeDate = \DateTime::createFromFormat('d-m-Y',$chequeModel->date);
-						$chequeModel->date = $cheque->format('Y-m-d H:i:s');
+						$chequeModel->date = $chequeDate->format('Y-m-d H:i:s');
 						$chequeModel->save();
 					}
 				}
