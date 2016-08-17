@@ -215,10 +215,11 @@ class InvoiceController extends Controller {
 			$invoice->tax = $taxAmount;
 			$invoice->total = $totalAmount;
 			$invoice->save();
-
+            
+            $invoiceType = (int) $invoice->type === Invoice::TYPE_INVOICE ? 'Invoice' : 'Pro-forma invoice';
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
-				'body' => 'Invoice has been created successfully'
+				'body' => $invoiceType . ' ' . 'has been created successfully'
 			]);
 
 			return $this->redirect(['view', 'id' => $invoice->id]);

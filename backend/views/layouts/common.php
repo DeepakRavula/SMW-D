@@ -260,22 +260,10 @@ $bundle = BackendAsset::register($this);
 						[
                             'label'=>Yii::t('backend', 'Invoices'),
                             'icon'=>'<i class="fa  fa-dollar"></i>',
-                            'url' => '#',
+                            'url'=>['/invoice/index','InvoiceSearch[type]' => INVOICE::TYPE_INVOICE], 
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='invoice')? true : false,
-                            'options'=>['class'=>'treeview'],
-							'items'=>[
-                                [
-									'label'=>Yii::t('backend', 'Pro-forma invoice'), 
-									'url'=>['/invoice/index','InvoiceSearch[type]' => INVOICE::TYPE_PRO_FORMA_INVOICE], 
-									'icon'=>'<i class="fa fa-angle-double-right"></i>',
-                                ],
-                                [
-									'label'=>Yii::t('backend', 'Invoice'), 
-									'url'=>['/invoice/index','InvoiceSearch[type]' => INVOICE::TYPE_INVOICE], 
-									'icon'=>'<i class="fa fa-angle-double-right"></i>'
-								],
-                      		],
+							
                         ],
                         [
                             'label'=>Yii::t('backend', 'Release Notes'),
