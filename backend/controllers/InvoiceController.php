@@ -86,7 +86,9 @@ class InvoiceController extends Controller {
 				if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_CHEQUE){
 					$chequeModel = new PaymentCheque();
 					if ($chequeModel->load(Yii::$app->request->post())) {
-						$chequeModel->payment_id = $paymentModel->id;	
+						$chequeModel->payment_id = $paymentModel->id;
+						$chequeDate = \DateTime::createFromFormat('d-m-Y',$chequeModel->date);
+						$chequeModel->date = $cheque->format('Y-m-d H:i:s');
 						$chequeModel->save();
 					}
 				}
