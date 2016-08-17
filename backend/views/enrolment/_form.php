@@ -19,7 +19,7 @@ use yii\helpers\Url;
 	
     <div class="row">
 		<div class="col-md-4">
-			<?php echo $form->field($model, 'program_id')->dropDownList(ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'), ['prompt' => 'Select..']); ?>
+			<?php echo $form->field($model, 'program_id')->dropDownList(ArrayHelper::map(Program::find()->active()->where(['type' => Program::TYPE_PRIVATE_PROGRAM])->all(), 'id', 'name'), ['prompt' => 'Select..']); ?>
 		</div>
 		<div class="col-md-4">
 			<?php
