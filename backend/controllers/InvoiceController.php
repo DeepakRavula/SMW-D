@@ -81,12 +81,15 @@ class InvoiceController extends Controller {
 				}
 				$paymentModel->invoiceId = $model->id;
 				$paymentModel->save();
-			
-			if($model->total < $paymentModel->amount){
-				$model->balance =  $model->total - $paymentModel->amount;
-				$model->save();
-			}
-			
+				if((int) $model->type === Invoice::TYPE_INVOICE){	
+					if($model->total < $paymentModel->amount){
+						$model->balance =  $model->total - $paymentModel->amount;
+						$model->save();
+					}else{
+						$model->balance =  $model->invoiceBalance;
+						$model->save();	
+					}
+				}
 			if($paymentModel->sourceType == 'invoice'){
 				$invoiceModel = $this->findModel($paymentModel->sourceId);
 				$invoiceModel->balance = $invoiceModel->balance + $paymentModel->amount;

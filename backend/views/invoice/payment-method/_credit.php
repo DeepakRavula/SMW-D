@@ -14,19 +14,20 @@ $invoiceCredits = Invoice::find()
 		->all();
 
 $results = [];
-foreach($invoiceCredits as $invoiceCredit){
-	$lastInvoicePayment = $invoiceCredit->invoicePayments;
-	$lastInvoicePayment = end($lastInvoicePayment);
-	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$lastInvoicePayment->payment->date);
-	$results[] = [
-		'id' => $invoiceCredit->id,
-		'date' => $paymentDate->format('d-m-Y'),
-		'amount' => abs($invoiceCredit->balance),
-		'source' => 'Invoice',
-		'type' => 'invoice'
-	];
+if(! empty($invoiceCredits )){
+	foreach($invoiceCredits as $invoiceCredit){
+		$lastInvoicePayment = $invoiceCredit->invoicePayments;
+		$lastInvoicePayment = end($lastInvoicePayment);
+		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$lastInvoicePayment->payment->date);
+		$results[] = [
+			'id' => $invoiceCredit->id,
+			'date' => $paymentDate->format('d-m-Y'),
+			'amount' => abs($invoiceCredit->balance),
+			'source' => 'Invoice',
+			'type' => 'invoice'
+		];
+	}
 }
-
 $openingBalancePaymentModel = Payment::find()
 				->where([
 					'user_id' => $invoice->user_id,
