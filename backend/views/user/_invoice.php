@@ -6,8 +6,12 @@ use common\models\Invoice;
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Invoices</h4>
 <a href="#" class="add-new-invoice text-add-new"><i class="fa fa-plus"></i></a>
-<div class="clearfix"></div>
 </div>
+<div id="add-misc-item" class="col-md-12">
+	<h4 class="pull-left m-r-20">Add Misc</h4>
+	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus"></i></a>
+</div>
+<?php echo $this->render('_misc-line-item') ?>
 <div class="dn invoice-create section-tab">
     <?php echo $this->render('_uninvoiced_lessons', [
 		'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
