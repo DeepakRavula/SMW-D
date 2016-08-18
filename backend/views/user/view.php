@@ -240,4 +240,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	$('.add-new-invoice').click(function () {
 		$('.invoice-create').show();
 	});
+	$('#add-misc-item').click(function(){
+		$('#invoice-line-item-modal').modal('show');
+  	});
 </script>
