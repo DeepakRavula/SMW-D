@@ -595,6 +595,19 @@ Licensed under MIT
 .schedule-index{
   position: relative;
 }
+.search-field{
+    background: transparent;
+    border: 0;
+    outline: 0 none;
+    font-size: 16px;
+    margin-left: 5px;
+    color: #cca0a0;
+    border-bottom: 1px solid #cca0a0;
+}
+.fa-search{
+  color: #cca0a0;
+  margin-top: 8px;
+}
 @media print{
     .pull-left{
     float: left;
