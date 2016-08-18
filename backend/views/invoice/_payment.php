@@ -77,6 +77,13 @@ if(! empty($otherPayments)){
 		];
 	}
 }
+
+usort($results, function ($item1, $item2) {
+	$item1 = new \DateTime($item1['date']);
+	$item2 = new \DateTime($item2['date']);
+    if ($item1 == $item2) return 0;
+    return $item1 < $item2 ? 1 : -1;
+});
 ?>
 <?php
 $invoicePaymentDataProvider = new ArrayDataProvider([
