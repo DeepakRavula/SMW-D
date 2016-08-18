@@ -253,8 +253,6 @@ class UserController extends Controller {
 			$invoice->invoice_number = $invoiceNumber;
 			$invoice->type = Invoice::TYPE_INVOICE;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
-			//$invoice->notes = $post['Invoice']['notes'];
-			//$invoice->internal_notes = $post['Invoice']['internal_notes'];
 			$invoice->save();
 			
 			$subTotal = 0;
