@@ -382,7 +382,13 @@ $bundle = BackendAsset::register($this);
             <!-- Content Header (Page header) -->
             <section class="content-header">
                 <h1>
-                    <div class="pull-left"><?php echo $this->title ?></div>   
+                    <div class="pull-left">
+                        <?php echo $this->title ?>
+                    </div>
+                        <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
+                        <form action="" class="pull-left">
+                            <input type="search" class="search-field" placeholder="Search ...">
+                        </form>
                     <?php if (isset($this->params['subtitle'])): ?>
                         
                         <div class="pull-right">
