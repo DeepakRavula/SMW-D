@@ -1,14 +1,15 @@
 <?php
 
-use yii\helpers\Html;
-use common\models\Lesson;
-use common\models\Invoice;
 use yii\grid\GridView;
 use yii\helpers\Url;
+
 ?>
+<div class="col-md-12">
+	<h4 class="pull-left m-r-20">Lessons</h4>
+</div>
 <?php
 $this->registerJs("
-    $('td').click(function (e) {
+    $('.group-lesson-index td').click(function (e) {
         var id = $(this).closest('tr').data('id');
         if(e.target == this)
             location.href = '" . Url::to(['group-lesson/view']) . "?id=' + id;
@@ -16,18 +17,17 @@ $this->registerJs("
 
 ");
 ?>
-<div class="col-md-12">
-	<h4 class="pull-left m-r-20">Lessons</h4>
-</div>
+<div class="group-lesson-index p-10">
+<?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
 	'dataProvider' => $lessonDataProvider,
 	'options' => ['class' => 'col-md-12'],
 	'tableOptions' =>['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray' ],
-	'rowOptions'   => function ($model, $key, $index, $grid) {
-        	return ['data-id' => $model->id];
-    },
+	'rowOptions' => function ($model, $key, $index, $grid) {
+            return ['data-id' => $model->id];
+	},
 	'columns' => [
 		[
 			'label' => 'Teacher Name',
@@ -56,3 +56,5 @@ echo GridView::widget([
 	]
 ]);
 ?>
+<?php \yii\widgets\Pjax::end(); ?>
+</div>

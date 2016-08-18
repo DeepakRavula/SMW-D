@@ -5,10 +5,12 @@ namespace backend\controllers;
 use Yii;
 use backend\models\search\LessonSearch;
 use common\models\Lesson;
+use common\models\GroupLesson;
 use common\models\Invoice;
 use common\models\ItemType;
 use common\models\User;
 use common\models\InvoiceLineItem;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -39,9 +41,18 @@ class LessonController extends Controller
         $searchModel = new LessonSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+		$location_id = Yii::$app->session->get('location_id');
+		$query = GroupLesson::find()
+				->joinWith('groupCourse')
+				->where(['location_id' => $location_id]);				
+			$lessonDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+			'lessonDataProvider' => $lessonDataProvider,
         ]);
     }
 
