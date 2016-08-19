@@ -45,7 +45,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return [
 			['user_id','required'],
-			[['type','notes','internal_notes'],'safe']
+			[['type','notes','internal_notes', 'status'],'safe']
 		];
     }
 

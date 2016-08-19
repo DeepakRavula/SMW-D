@@ -102,11 +102,7 @@ class InvoiceController extends Controller {
 						$model->save();	
 					}
 				}
-			if($paymentModel->sourceType == 'invoice'){
-				$invoiceModel = $this->findModel($paymentModel->sourceId);
-				$invoiceModel->balance = $invoiceModel->balance + $paymentModel->amount;
-				$invoiceModel->save();
-			}
+			
 			$creditPaymentId = $paymentModel->id;
 			if((int) $paymentMethodId === PaymentMethod::TYPE_CREDIT){
 				$paymentModel->id = null;
@@ -123,14 +119,20 @@ class InvoiceController extends Controller {
 				$creditUsageModel = new CreditUsage();
 				$creditUsageModel->credit_payment_id = $creditPaymentId;  
 				$creditUsageModel->debit_payment_id = $debitPaymentId;
-				$creditUsageModel->save();	
+				$creditUsageModel->save();
+
+				if($paymentModel->sourceType == 'invoice'){
+					$invoiceModel = $this->findModel($paymentModel->sourceId);
+					$invoiceModel->balance = $invoiceModel->balance + abs($paymentModel->amount);
+					$invoiceModel->save();
+				}
 			}
 
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Payment has been recorded successfully'
 			]);
-			return $this->redirect(['view', 'id' => $model->id]);
+			return $this->redirect(['view', 'id' => $model->id, '#' => 'payment']);
 		}
 		
 		$invoiceLineItemModel = new InvoiceLineItem();
