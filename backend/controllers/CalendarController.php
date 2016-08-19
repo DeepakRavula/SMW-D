@@ -42,8 +42,11 @@ class CalendarController extends Controller
      * Lists all Qualification models.
      * @return mixed
      */
-    public function actionView($id)
-    {  
+    public function actionView($slug)
+    {
+		$location = Location::find()->where(['like', 'slug', $slug])->one();
+		$id = $location->id; 
+		
 		$this->layout = 'guest';
         $teachersWithClass = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])

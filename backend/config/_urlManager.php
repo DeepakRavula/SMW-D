@@ -5,5 +5,6 @@ return [
     'showScriptName'=>false,
     'rules'=>[
         // url rules
+		'calendar/<slug:[\w-]+>' => 'calendar/view',
     ]
 ];

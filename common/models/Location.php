@@ -6,6 +6,7 @@ use Yii;
 use common\models\City;
 use common\models\Country;
 use common\models\Province;
+use yii\behaviors\SluggableBehavior;
 
 /**
  * This is the model class for table "location".
@@ -25,6 +26,17 @@ class Location extends \yii\db\ActiveRecord {
 	/**
 	 * @inheritdoc
 	 */
+	 public function behaviors()
+    {
+        return [
+            [
+                'class' => SluggableBehavior::className(),
+                'attribute' => 'name',
+				//'slugAttribute' => slug,
+            ],
+        ];
+    }
+
 	public static function tableName() {
 		return '{{%location}}';
 	}
@@ -35,6 +47,7 @@ class Location extends \yii\db\ActiveRecord {
 	public function rules() {
 		return [
 			[['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'from_time', 'to_time'], 'required'],
+			[['slug'],'safe'],
 			[['city_id', 'province_id', 'country_id'], 'integer'],
 			[['name'], 'string', 'max' => 32],
 			[['address'], 'string', 'max' => 64],
@@ -57,6 +70,7 @@ class Location extends \yii\db\ActiveRecord {
 			'country_id' => 'Country',
 			'from_time' => 'From Time',
 			'to_time' => 'To Time',
+			'slug' => 'Slug',
 		];
 	}
 
