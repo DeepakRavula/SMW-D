@@ -62,7 +62,10 @@ class LessonSearch extends Lesson
 				$invoiceStatus = $this->invoiceStatus;
 				$query->joinWith(['invoiceLineItem' => function($query) use($invoiceStatus){
 					$query->joinWith('invoice');
-					$query->where(['invoice.status' => $invoiceStatus]);
+					$query->where([
+						'invoice.status' => $invoiceStatus,
+						'invoice.type' => Invoice::TYPE_INVOICE
+					]);
 				}]);
 			}
 		}

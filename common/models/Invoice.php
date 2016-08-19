@@ -83,11 +83,6 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasMany(Payment::className(), ['user_id' => 'user_id']);
     }
 	
-	public function getAllocations()
-    {
-        return $this->hasMany(Allocation::className(), ['invoice_id' => 'id']);
-    }
-
 	public function getInvoicePayments()
     {
         return $this->hasMany(InvoicePayment::className(), ['invoice_id' => 'id']);
@@ -184,4 +179,21 @@ class Invoice extends \yii\db\ActiveRecord
             ->orderBy(['i.id' => SORT_DESC])
             ->one();
     }
+
+	public function beforeSave($insert) {
+		if(! empty($this->invoicePaymentTotal)){
+			if((int) $this->total === (int) $this->invoicePaymentTotal){
+				$this->status = self::STATUS_PAID; 
+			}
+			elseif($this->total > $this->invoicePaymentTotal){
+				$this->status = self::STATUS_OWING; 
+			}else{
+				$this->status = self::STATUS_PAID; 
+				if($this->type == self::TYPE_INVOICE) {
+					$this->status = self::STATUS_CREDIT; 	
+				}
+			}
+		}
+		return parent::beforeSave($insert);
+	}
 }
