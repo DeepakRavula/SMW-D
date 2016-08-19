@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
      <div class="tabbable-line">
 <?php 
 
-$indexInvoice =  $this->render('_index-invoices', [    
+$indexInvoice =  $this->render('_index-invoice', [    
     'searchModel' => $searchModel,
     'dataProvider' => $dataProvider,
 ]);

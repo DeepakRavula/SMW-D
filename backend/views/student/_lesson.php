@@ -56,8 +56,9 @@ echo GridView::widget([
 		[
 			'label' => 'Invoice Status',
 			'value' => function($data) {
+				$status = null;
 				if (!empty($data->invoiceLineItem->invoice->status)) {
-					return $data->invoiceLineItem->invoice->status; 
+					return $data->invoiceLineItem->invoice->getStatus(); 
 				} else {
 					$status = 'Not Invoiced';
 				}

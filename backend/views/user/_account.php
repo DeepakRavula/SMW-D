@@ -59,7 +59,7 @@ $newInvoices = Invoice::find()
 	}])
 	->where(['user_id' => $model->id, 'type' => Invoice::TYPE_INVOICE])
 	->all();
-
+	
 foreach($newInvoices as $newInvoice){
 	$invoiceDate = \DateTime::createFromFormat('Y-m-d H:i:s',$newInvoice->date);
 		$results[] = [
@@ -74,7 +74,7 @@ foreach($newInvoices as $newInvoice){
 
 $invoices = Invoice::find()->alias('i')
 ->joinWith(['invoicePayments ip' => function($query){
-	$query->joinWith(['payment p' => function($query){
+	$query->innerjoinWith(['payment p' => function($query){
 	}]);
 }])
 ->where(['i.type' => Invoice::TYPE_INVOICE, 'i.user_id' => $model->id])
@@ -94,7 +94,6 @@ if(! empty($invoices)){
 		}
 	}
 }
-
 $creditDataProvider = new ArrayDataProvider([
 'allModels' => $results,
 'sort' => [

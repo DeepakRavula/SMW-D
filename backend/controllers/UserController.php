@@ -253,6 +253,7 @@ class UserController extends Controller {
 			$invoice->user_id = $model->id;
 			$invoice->invoice_number = $invoiceNumber;
 			$invoice->type = Invoice::TYPE_INVOICE;
+			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->save();
 			
@@ -275,7 +276,7 @@ class UserController extends Controller {
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Misc has been added successfully'
 			]);
-			return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'invoice']);
+			return $this->redirect(['invoice/view','id' => $invoice->id, '#' => 'invoice']);
 		}
 		return $this->render('view', [
 			'student' => new Student(),
@@ -672,6 +673,7 @@ class UserController extends Controller {
 			$invoice->user_id = $customerId;
 			$invoice->type = Invoice::TYPE_INVOICE;
 			$invoice->invoice_number = $invoiceNumber;
+			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->notes = $post['Invoice']['notes'];
 			$invoice->internal_notes = $post['Invoice']['internal_notes'];

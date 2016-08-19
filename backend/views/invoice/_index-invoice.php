@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
-						return $data->status;
+					return $data->getStatus(); 
                 },
 			],
 			[

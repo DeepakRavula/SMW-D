@@ -18,9 +18,10 @@ use common\models\InvoiceLineItem;
  */
 class Invoice extends \yii\db\ActiveRecord
 {
-	const STATUS_PAID = 1; 
-	const STATUS_OWING = 2;
+	const STATUS_OWING = 1;
+	const STATUS_PAID = 2; 
 	const STATUS_CREDIT = 3;
+	const STATUS_CANCEL = 4;
 
 	const TYPE_PRO_FORMA_INVOICE = 1;
 	const TYPE_INVOICE = 2;
@@ -154,18 +155,20 @@ class Invoice extends \yii\db\ActiveRecord
 	public function getStatus()
     {
 		$status = null;	
-		if((int) $this->total === (int) $this->invoicePaymentTotal){
-			$status = 'Paid'; 
+		switch($this->status){
+			case Invoice::STATUS_OWING:
+				$status = 'Owing';
+			break;
+			case Invoice::STATUS_PAID:
+					$status = 'Paid';
+			break;
+			case Invoice::STATUS_CREDIT:
+					$status = 'Credit';
+			break;
+			case Invoice::STATUS_CANCEL:
+					$status = 'Cancel';
+			break;
 		}
-		elseif($this->total > $this->invoicePaymentTotal){
-			$status = 'Owing'; 
-		}else{
-			$status = 'Paid'; 
-			if($this->type == self::TYPE_INVOICE) {
-				$status = 'Credit'; 	
-			}
-		}
-		
 		return $status;
     }
    
