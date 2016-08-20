@@ -131,7 +131,7 @@ echo GridView::widget([
 	<?php $buttons[] = [
 			'label' => $method->name, 
 			'options' => [
-				'class' => 'btn btn-default',
+				'class' => 'btn btn-outline-info',
 				'id' => str_replace(' ', '-', trim(strtolower($method->name))) . '-btn',
 				'data-payment-type' => str_replace(' ', '-', trim(strtolower($method->name))),
 				'data-payment-type-id' => $method->id,
@@ -147,6 +147,7 @@ echo ButtonGroup::widget([
 		'class' => 'btn-group-horizontal'
 	]
 ]);?>
+
 
 <?php foreach(PaymentMethod::findAll([
 			'active' => PaymentMethod::STATUS_ACTIVE,
@@ -168,6 +169,8 @@ $(document).ready(function(){
 	 $('.payment-method-section').hide();
 	 $('#' + $(this).data('payment-type') + '-section').show();
 	 $('.payment-method-id').val($(this).data('payment-type-id'));
+     $('#payment-method-btn-section .btn').removeClass('active');
+     $(this).addClass('active');
      if($(this).data('payment-type') == 'credit'){
          $('#credit-modal').modal('show');
      }

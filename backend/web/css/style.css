@@ -299,6 +299,21 @@ table tr{
   background-color: #a81010;
   border-color: #a81010;
 }
+
+.btn-outline-info {
+    color: #5bc0de;
+    background-image: none;
+    background-color: transparent;
+    border-color: #5bc0de;
+}
+
+.btn-outline-info:hover, .btn-outline-info.active {
+    color: #fff;
+    background-color: #5bc0de;
+    border-color: #5bc0de;
+    text-decoration: none;
+}
+
 .flex{
   display: -webkit-box;
   display: -ms-flexbox;
