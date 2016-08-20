@@ -29,7 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
-        	'filterModel' => $searchModel,
             'rowOptions' => function ($model, $key, $index, $grid) use ($roleName){
                 $u= \yii\helpers\StringHelper::basename(get_class($model));
                 $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
