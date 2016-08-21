@@ -4,7 +4,7 @@ use yii\bootstrap\Modal;
 use common\models\InvoiceLineItem;
 
 Modal::begin([
-    'header' => '<h2>Add Invoice Line Items</h2>',
+    'header' => '<h4 class="m-0">Add Invoice Line Items</h4>',
     'id'=>'invoice-line-item-modal',
 ]);
 echo $this->render('/invoice/_form-invoice-line-item', [

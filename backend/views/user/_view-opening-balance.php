@@ -35,3 +35,4 @@ use common\models\PaymentMethod;
 	    ],
     ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
+<div class="clearfix"></div>

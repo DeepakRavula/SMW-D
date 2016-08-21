@@ -10,7 +10,11 @@ use yii\helpers\Url;
 $this->title = 'Students';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
+<style>
+  .e1Div{
+    right: 0 !important;
+  }
+</style>
 <div class="student-index">
 <div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>

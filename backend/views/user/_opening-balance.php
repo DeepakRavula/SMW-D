@@ -13,23 +13,22 @@ use common\models\BalanceLog;
 	?>
 </div>
 <?php if( ! empty($openingBalancePaymentModel->id)):?>
-<div>
-Opening Balance:
-<?php if($remainingOpeningBalance > 0) :?>
-	<?= -abs($remainingOpeningBalance);?>
-<?php else:?>
- <?= abs($remainingOpeningBalance);?>
-<?php endif;?>
+<div class="p-t-20 p-b-20">
+	<div class="col-xs-2"><strong>Date:</strong> <?= Yii::$app->formatter->asDate($openingBalancePaymentModel->date);?></div>
+	<div class="col-xs-3">
+	<strong>Opening Balance:</strong>
+	<?php if($remainingOpeningBalance > 0) :?>
+		<?= -abs($remainingOpeningBalance);?>
+	<?php else:?>
+	 <?= abs($remainingOpeningBalance);?>
+	<?php endif;?>
+	</div>
+	<div class="clearfix"></div>
 </div>
-<div>
-Date: <?= Yii::$app->formatter->asDate($openingBalancePaymentModel->date);?>
-</div>
 <?php else:?>
-<div>
 	<?php
 	echo $this->render('_form-payment', [
 		'model' => new Payment(),
 	])
 	?>
-</div>
 <?php endif; ?>

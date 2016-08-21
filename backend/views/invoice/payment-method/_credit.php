@@ -89,7 +89,7 @@ $creditDataProvider = new ArrayDataProvider([
 ?>
 <?php
 Modal::begin([
-    'header' => '<h4>Apply Credit</h4>',
+    'header' => '<h4 class="m-0">Apply Credit</h4>',
     'id'=>'credit-modal',
     'toggleButton' => ['label' => 'click me', 'class' => 'hide'],
 ]);

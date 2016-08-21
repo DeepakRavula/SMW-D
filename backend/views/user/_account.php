@@ -104,6 +104,8 @@ $creditDataProvider = new ArrayDataProvider([
 <?php
 echo GridView::widget([
 'dataProvider' => $creditDataProvider,
+'tableOptions' =>['class' => 'table table-bordered m-0'],
+'headerRowOptions' => ['class' => 'bg-light-gray' ],
 'rowOptions'   => function ($model, $key, $index, $grid) {
 	return [
 		'data-id' => $model['id'],

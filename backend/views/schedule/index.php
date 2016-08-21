@@ -10,6 +10,11 @@ use yii\helpers\Url;
 $this->title = 'Schedule';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<style>
+  .e1Div{
+    right: 0 !important;
+  }
+</style>
 <div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
 <div class="schedule-index">

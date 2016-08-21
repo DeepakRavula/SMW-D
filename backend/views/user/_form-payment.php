@@ -9,9 +9,10 @@ use common\models\PaymentMethod;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<div class="clearfix"></div>
 
-<div class="form-well p-l-20 payments-form p-t-15">
-
+<div class="form-well p-l-20 payments-form p-t-15 m-t-20">
+	<h4>Add new opening balance</h4>
 	<?php $form = ActiveForm::begin(); ?>
 	<div class="row">
         <div class="col-xs-4">
