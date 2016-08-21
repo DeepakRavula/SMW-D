@@ -8,7 +8,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="invoice-form">
+<div class="invoice-form p-10">
 
     <?php $form = ActiveForm::begin(); ?>
 

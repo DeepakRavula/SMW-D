@@ -91,9 +91,10 @@ use common\models\ItemType;
             </div>
           </div>
 	<div id="add-misc-item" class="col-md-12">
-	<h4 class="pull-left m-r-20">Add Misc</h4>
-	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus"></i></a>
+    <div class="row m-b-20">
+	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>
 	<div class="clearfix"></div>
+  </div>
 	</div>
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([

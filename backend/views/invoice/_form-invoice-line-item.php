@@ -11,17 +11,17 @@ use yii\bootstrap\ActiveForm;
 <div id="invoice-line-item-modal" class="invoice-line-item-form">
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
-        <div class="col-xs-3">
+        <div class="col-xs-8">
     		<?php echo $form->field($model, 'description')->textInput()?>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-2">
    			<?php echo $form->field($model, 'unit')->textInput()?>
         </div>
-		<div class="col-xs-3">
+		<div class="col-xs-2">
    			<?php echo $form->field($model, 'amount')->textInput()?>
         </div>
 	</div>
-    <div class="form-group p-l-20">
+    <div class="form-group">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
     </div>
     <?php ActiveForm::end(); ?>
