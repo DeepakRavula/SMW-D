@@ -7,7 +7,6 @@ use yii\data\ArrayDataProvider;
 use yii\bootstrap\Modal;
 
 ?>
-<h3>Apply Credit</h3>
 <?php
 $invoiceCredits = Invoice::find()
 		->invoiceCredit($invoice->user_id)
@@ -90,13 +89,15 @@ $creditDataProvider = new ArrayDataProvider([
 ?>
 <?php
 Modal::begin([
-    'header' => '<h2>Apply Credit</h2>',
+    'header' => '<h4>Apply Credit</h4>',
     'id'=>'credit-modal',
     'toggleButton' => ['label' => 'click me', 'class' => 'hide'],
 ]);
 
 echo GridView::widget([
 	'dataProvider' => $creditDataProvider,
+	'tableOptions' =>['class' => 'table table-bordered'],
+	'headerRowOptions' => ['class' => 'bg-light-gray' ],
     'rowOptions'   => function ($model, $key, $index, $grid) {
         return [
 			'data-amount' => $model['amount'], 

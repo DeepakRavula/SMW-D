@@ -8,7 +8,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div id="invoice-line-item-modal" class="invoice-line-item-form p-l-20">
+<div id="invoice-line-item-modal" class="invoice-line-item-form">
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
         <div class="col-xs-3">

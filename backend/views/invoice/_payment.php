@@ -96,6 +96,9 @@ $invoicePaymentDataProvider = new ArrayDataProvider([
 <?php
 echo GridView::widget([
 	'dataProvider' => $invoicePaymentDataProvider,
+	'tableOptions' =>['class' => 'table table-bordered'],
+    'headerRowOptions' => ['class' => 'bg-light-gray' ],
+    'options' => ['class' => 'p-10'],
 	'columns' => [
 		[
 		'label' => 'Date', 
@@ -144,7 +147,7 @@ echo ButtonGroup::widget([
     'buttons' => $buttons,
 	'options' => [
 		'id' => 'payment-method-btn-section',
-		'class' => 'btn-group-horizontal'
+		'class' => 'btn-group-horizontal p-l-10'
 	]
 ]);?>
 
