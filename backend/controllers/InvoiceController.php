@@ -17,6 +17,7 @@ use yii\filters\VerbFilter;
 use common\models\ItemType;
 use common\models\CreditUsage;
 use common\models\PaymentCheque;
+use common\models\TaxCode;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -136,10 +137,31 @@ class InvoiceController extends Controller {
 		}
 		
 		$invoiceLineItemModel = new InvoiceLineItem();
+		$taxAmount = 0;
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
 			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
 			$invoiceLineItemModel->invoice_id = $model->id; 
 			$invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
+			if($invoiceLineItemModel->isTax == 1){
+				$taxPercentage = 0;
+				$provinceId = $model->lineItems[0]->lesson->enrolment->location->province->id;
+				$taxCodeModels = TaxCode::find()
+                   ->where(['province_id' => $provinceId]) 
+                   ->orderBy('start_date DESC')
+                   ->all();
+                    foreach ($taxCodeModels as $taxCodeModel) {
+						$currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+                        if ($taxCodeModel->start_date <= $currentDate) {
+                            $taxPercentage = $taxCodeModel->rate;
+                            break;
+							$invoiceLineItemModel->tax = $taxCodeModel->tax->name;
+							$invoiceLineItemModel->tax_rate = $taxCodeModel->rate;
+							$invoiceLineItemModel->tax_status = $taxCodeModel->tax->taxStatus->name;	
+                    	}
+	            	    $taxAmount += $invoiceLineItemModel->amount * $taxPercentage / 100;
+						$invoiceLineItemModel->amount = $taxAmount;
+					}
+			}
 			$invoiceLineItemModel->save();
 
 			$model = $this->findModel($id);
@@ -152,7 +174,7 @@ class InvoiceController extends Controller {
 				'body' => 'Misc has been added successfully'
 			]);
 			return $this->redirect(['view', 'id' => $model->id]);
-		}
+	}
 		return $this->render('view', [
 					'model' => $model,
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,

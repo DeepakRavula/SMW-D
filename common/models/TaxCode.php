@@ -58,4 +58,9 @@ class TaxCode extends \yii\db\ActiveRecord
     {
         return new \common\models\query\TaxCodeQuery(get_called_class());
     }
+
+	public function getTax()
+    {
+       return $this->hasMany(Tax::className(), ['id' => 'tax_id']);
+    }
 }

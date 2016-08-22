@@ -17,7 +17,7 @@ use common\models\Lesson;
  */
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
-	public $isTax;
+	public $taxStatus;
     /**
      * @inheritdoc
      */
@@ -35,6 +35,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             [['invoice_id', 'unit', 'amount','item_id','item_type_id','description'], 'required'],
             [['invoice_id', 'item_id'], 'integer'],
             [['unit', 'amount'], 'number'],
+            [['taxStatus'], 'safe'],
         ];
     }
 

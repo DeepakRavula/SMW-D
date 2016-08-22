@@ -49,4 +49,9 @@ class Tax extends \yii\db\ActiveRecord
     {
        return $this->hasOne(Province::className(), ['id' => 'province_id']);
     }
+
+	public function getTaxCode()
+    {
+       return $this->hasOne(TaxCode::className(), ['tax_id' => 'id']);
+    }
 }

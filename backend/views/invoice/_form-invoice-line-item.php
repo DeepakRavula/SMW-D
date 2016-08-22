@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\ArrayHelper;
+use common\models\TaxStatus;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -22,8 +24,12 @@ use yii\bootstrap\ActiveForm;
         </div>
 	</div>
  	<div class="row">
-		<div class="col-xs-2">
-   			<?php echo $form->field($model, 'isTax')->checkbox(['label' => 'Tax']);?>
+		<div class="col-xs-4">
+   			<?php
+			echo $form->field($model, 'taxStatus')->dropDownList(ArrayHelper::map(
+							TaxStatus::find()->all(), 'id', 'name'
+			))
+			?>
         </div>
 	</div>
     <div class="form-group">
