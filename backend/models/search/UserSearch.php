@@ -15,6 +15,7 @@ class UserSearch extends User
 	public $role_name;
     public $lastname;
     public $firstname;
+    public $query;
     /**
      * @inheritdoc
      */
@@ -22,7 +23,7 @@ class UserSearch extends User
     {
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'email','role_name','firstname','lastname'], 'safe'],
+            [['username', 'auth_key', 'password_hash', 'email','role_name','firstname','lastname', 'query'], 'safe'],
         ];
     }
 
@@ -41,6 +42,7 @@ class UserSearch extends User
      */
     public function search($params)
     {
+        
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
         $query = User::find()->alias('u');
@@ -65,14 +67,14 @@ class UserSearch extends User
  		$query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
  		$query->leftJoin(['user_location ul'], 'ul.user_id = u.id');
         $query->leftJoin(['user_profile uf'], 'uf.user_id = u.id');
-
+        $query->leftJoin(['phone_number pn'], 'pn.user_id = u.id');
+        
         $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
-            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
-            ->andFilterWhere(['like', 'email', $this->email])
+            ->orFilterWhere(['like', 'email', $this->query])
             ->andFilterWhere(['ai.name' => $this->role_name])
-            ->andFilterWhere(['like', 'uf.lastname' , $this->lastname])
-            ->andFilterWhere(['like', 'uf.firstname' , $this->firstname]);
+            ->orFilterWhere(['like', 'uf.lastname' , $this->query])
+            ->orFilterWhere(['like', 'uf.firstname' , $this->query])
+            ->orFilterWhere(['like', 'pn.number' , $this->query]);
 
 		if($this->role_name !== USER::ROLE_ADMINISTRATOR) {
             $query->andFilterWhere(['like', 'ul.location_id', $locationId]);
