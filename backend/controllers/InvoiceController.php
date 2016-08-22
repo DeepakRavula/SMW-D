@@ -337,16 +337,27 @@ class InvoiceController extends Controller {
 			'query' => $invoiceLineItems,
 		]);
 		$subject = 'Invoice from ' . Yii::$app->name;
+		if(! empty($model->user->email)){
+			Yii::$app->mailer->compose('generateInvoice', [
+				'model' => $model,
+				'toName' => $model->user->publicIdentity,
+				'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+			])
+				->setFrom(\Yii::$app->params['robotEmail'])
+				->setTo($model->user->email)
+				->setSubject($subject)
+				->send();
 
-		Yii::$app->mailer->compose('generateInvoice', [
-			'model' => $model,
-			'toName' => $model->lineItems[0]->lesson->enrolment->student->customer->publicIdentity,
-			'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-		])
-			->setFrom(\Yii::$app->params['robotEmail'])
-			->setTo($model->lineItems[0]->lesson->enrolment->student->customer->email)
-			->setSubject($subject)
-			->send();
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => ' Mail has been send successfully'
+			]);
+		}else{
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-danger'],
+				'body' => 'The customer doesn\'t have email id' 
+			]);	
+		}
 		return $this->redirect(['view', 'id' => $model->id]);
 	}
 
