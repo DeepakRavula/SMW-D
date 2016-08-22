@@ -45,4 +45,9 @@ class TaxTaxstatus extends \yii\db\ActiveRecord
             'exempt' => 'Exempt',
         ];
     }
+
+	public function getTaxStatus()
+    {
+       return $this->hasOne(TaxStatus::className(), ['id' => 'tax_status_id']);
+    }
 }

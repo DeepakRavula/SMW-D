@@ -52,6 +52,11 @@ class Tax extends \yii\db\ActiveRecord
 
 	public function getTaxCode()
     {
-       return $this->hasOne(TaxCode::className(), ['tax_id' => 'id']);
+       return $this->hasMany(TaxCode::className(), ['tax_id' => 'id']);
+    }
+
+	public function getTaxTaxstatus()
+    {
+       return $this->hasOne(TaxTaxstatus::className(), ['tax_id' => 'id']);
     }
 }

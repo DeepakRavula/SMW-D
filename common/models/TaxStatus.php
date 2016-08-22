@@ -12,6 +12,9 @@ use Yii;
  */
 class TaxStatus extends \yii\db\ActiveRecord
 {
+	const STATUS_DEFAULT = 1;
+	const STATUS_NO_TAX = 2;
+	
     /**
      * @inheritdoc
      */

@@ -18,6 +18,7 @@ use common\models\ItemType;
 use common\models\CreditUsage;
 use common\models\PaymentCheque;
 use common\models\TaxCode;
+use common\models\TaxStatus;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -137,12 +138,11 @@ class InvoiceController extends Controller {
 		}
 		
 		$invoiceLineItemModel = new InvoiceLineItem();
-		$taxAmount = 0;
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
 			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
 			$invoiceLineItemModel->invoice_id = $model->id; 
 			$invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
-			if($invoiceLineItemModel->isTax == 1){
+			if((int) $invoiceLineItemModel->taxStatus === TaxStatus::STATUS_DEFAULT){
 				$taxPercentage = 0;
 				$provinceId = $model->lineItems[0]->lesson->enrolment->location->province->id;
 				$taxCodeModels = TaxCode::find()
@@ -152,14 +152,13 @@ class InvoiceController extends Controller {
                     foreach ($taxCodeModels as $taxCodeModel) {
 						$currentDate = (new \DateTime())->format('Y-m-d H:i:s');
                         if ($taxCodeModel->start_date <= $currentDate) {
-                            $taxPercentage = $taxCodeModel->rate;
-                            break;
 							$invoiceLineItemModel->tax = $taxCodeModel->tax->name;
 							$invoiceLineItemModel->tax_rate = $taxCodeModel->rate;
-							$invoiceLineItemModel->tax_status = $taxCodeModel->tax->taxStatus->name;	
+							$invoiceLineItemModel->tax_status = $taxCodeModel->tax->taxTaxstatus->taxStatus->name;	
+	            	    	$taxAmount = $invoiceLineItemModel->amount * $taxCodeModel->rate;
+							$invoiceLineItemModel->amount += $taxAmount;
+                            break;
                     	}
-	            	    $taxAmount += $invoiceLineItemModel->amount * $taxPercentage / 100;
-						$invoiceLineItemModel->amount = $taxAmount;
 					}
 			}
 			$invoiceLineItemModel->save();
