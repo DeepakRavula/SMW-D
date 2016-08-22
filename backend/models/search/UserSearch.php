@@ -68,13 +68,14 @@ class UserSearch extends User
  		$query->leftJoin(['user_location ul'], 'ul.user_id = u.id');
         $query->leftJoin(['user_profile uf'], 'uf.user_id = u.id');
         $query->leftJoin(['phone_number pn'], 'pn.user_id = u.id');
-        
+		
         $query->andFilterWhere(['like', 'username', $this->username])
             ->orFilterWhere(['like', 'email', $this->query])
-            ->andFilterWhere(['ai.name' => $this->role_name])
             ->orFilterWhere(['like', 'uf.lastname' , $this->query])
             ->orFilterWhere(['like', 'uf.firstname' , $this->query])
             ->orFilterWhere(['like', 'pn.number' , $this->query]);
+		
+        $query->andFilterWhere(['ai.name' => $this->role_name]);
 
 		if($this->role_name !== USER::ROLE_ADMINISTRATOR) {
             $query->andFilterWhere(['like', 'ul.location_id', $locationId]);

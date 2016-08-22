@@ -21,7 +21,7 @@ use yii\bootstrap\ActiveForm;
 
 $bundle = BackendAsset::register($this);
 ?>
-<?$searchModel = isset($this->params['searchModel']) ? $this->params['searchModel'] : null;?>
+<?php $searchModel = isset($this->params['searchModel']) ? $this->params['searchModel'] : null;?>
 <?php $this->beginContent('@backend/views/layouts/base.php'); ?>
     <div class="wrapper">
         <!-- header logo: style can be found in header.less -->
