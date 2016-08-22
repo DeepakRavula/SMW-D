@@ -17,6 +17,7 @@ use common\models\Lesson;
  */
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
+	public $isTax;
     /**
      * @inheritdoc
      */
