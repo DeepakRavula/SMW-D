@@ -39,17 +39,25 @@ $this->params['breadcrumbs'][] = $this->title;
 	    	[
 				'label' => 'Status',
 				'value' => function($data) {
-					return $data->getStatus(); 
+					$status = null;
+					if((int) $data->type === Invoice::TYPE_PRO_FORMA_INVOICE){
+						$status = 'None';
+					}else{
+						$status = $data->getStatus();
+					}
+					return $status;
                 },
 			],
 			[
 				'value' => function($data) {
-					if($data->status === 'Paid'){
-						return $data->total;
-					}else{	
-						return $data->invoiceBalance;
-					}
-                },
+					if((int) $data->type === Invoice::TYPE_INVOICE){
+						if($data->status === 'Paid'){
+							return $data->total;
+						}else{	
+							return $data->invoiceBalance;
+						}
+                	}
+				},
 				'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
             	'enableSorting' => false,
