@@ -144,7 +144,13 @@ use common\models\ItemType;
                     'contentOptions' => ['class' => 'text-center'],
                     'enableSorting' => false,
                 ],
-
+				[ 
+                    'attribute' => 'tax_status',
+                    'label' => 'Tax Status',
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center'],
+                    'enableSorting' => false,
+                ],
                 [
 	                'attribute' => 'amount',
                 	'label' => 'Total',
