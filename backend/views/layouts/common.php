@@ -390,6 +390,7 @@ $bundle = BackendAsset::register($this);
                     <?php if($searchModel !== null):?>
                         <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
                         <?php $form = ActiveForm::begin([
+        					'action' => ['index'],
                             'method' => 'get',
                             'options' => ['class' => 'pull-left'],
                         ]); ?>
@@ -399,6 +400,13 @@ $bundle = BackendAsset::register($this);
                                     'class' => 'search-field',
                                 ],
                             ])->input('search')->label(false); ?>
+						<?php $queryParams = Yii::$app->request->queryParams;?> 
+						<?php foreach($queryParams as  $queryParam => $queryValues):?> 
+								<?php foreach($queryValues as  $param => $value):?> 
+									<?php if($param === 'query') continue; ?>
+									 <?=Html::input('hidden', $queryParam . '[' . $param . ']', $value, ['class'=>'form-control'])?>
+								<?php endforeach;?>
+						<?php endforeach;?>
                         <?php ActiveForm::end(); ?>
                     <?php endif; ?> 
                     <?php if (isset($this->params['subtitle'])): ?>
