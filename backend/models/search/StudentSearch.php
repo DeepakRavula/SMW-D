@@ -12,7 +12,8 @@ use common\models\Student;
  */
 class StudentSearch extends Student
 {
-	public $showAllStudents;
+	public $showAllStudents = false;
+	public $query;
 
     /**
      * @inheritdoc
@@ -20,7 +21,7 @@ class StudentSearch extends Student
     public function rules()
     {
         return [
-            [['first_name', 'last_name','customer_id','showAllStudents'], 'safe'],
+            [['first_name', 'last_name','customer_id','showAllStudents', 'query'], 'safe'],
         ];
     }
 
@@ -42,9 +43,11 @@ class StudentSearch extends Student
         $locationId = Yii::$app->session->get('location_id');
 		$query = Student::find()
 			->joinWith(['customer' => function($query) use($locationId){
-				$query->joinWith('userLocation ul')
-					->where(['ul.location_id' => $locationId]);
+				$query->joinWith(['userLocation ul'=> function($query) use($locationId){
+					$query->where(['ul.location_id' => $locationId]);
 			}]);
+			}]);
+		$query->joinWith('customerProfile cp');
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
@@ -56,10 +59,10 @@ class StudentSearch extends Student
 			$query->joinWith('enrolment e')
 				->andWhere(['not', ['e.student_id' => null]]);
 		} 
-        $query->andFilterWhere(['like', 'first_name', $this->first_name])
-              ->andFilterWhere(['like', 'last_name', $this->last_name])
-              ->andFilterWhere(['like', 'customer_id', $this->customer_id]);
-
+        $query->andFilterWhere(['like', 'first_name', $this->query])
+              ->orFilterWhere(['like', 'last_name', $this->query])
+              ->orFilterWhere(['like', 'cp.firstname', $this->query])
+              ->orFilterWhere(['like', 'cp.lastname', $this->query]);
         return $dataProvider;
     }
 }
