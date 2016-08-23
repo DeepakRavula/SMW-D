@@ -1,18 +1,18 @@
 <?php
 
 namespace backend\controllers;
-use common\models\Province;
+
 use Yii;
-use common\models\Tax;
-use backend\models\search\TaxSearch;
+use common\models\TaxStatus;
+use backend\models\search\TaxStatusSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * TaxController implements the CRUD actions for Tax model.
+ * TaxStatusController implements the CRUD actions for TaxStatus model.
  */
-class TaxController extends Controller
+class TaxStatusController extends Controller
 {
     public function behaviors()
     {
@@ -27,12 +27,12 @@ class TaxController extends Controller
     }
 
     /**
-     * Lists all Tax models.
+     * Lists all TaxStatus models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new TaxSearch();
+        $searchModel = new TaxStatusSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -42,41 +42,37 @@ class TaxController extends Controller
     }
 
     /**
-     * Displays a single Tax model.
+     * Displays a single TaxStatus model.
      * @param string $id
      * @return mixed
      */
     public function actionView($id)
-    { 
+    {
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new Tax model.
+     * Creates a new TaxStatus model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Tax();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) { 
-            Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Tax has been created successfully'
-        ]);
+        $model = new TaxStatus();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
-
             ]);
         }
     }
 
     /**
-     * Updates an existing Tax model.
+     * Updates an existing TaxStatus model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -85,11 +81,7 @@ class TaxController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) { 
-            Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Tax has been updated successfully'
-        ]); 
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -99,7 +91,7 @@ class TaxController extends Controller
     }
 
     /**
-     * Deletes an existing Tax model.
+     * Deletes an existing TaxStatus model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -107,25 +99,20 @@ class TaxController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-        
-        Yii::$app->session->setFlash('alert', [
-          	'options' => ['class' => 'alert-success'],
-           	'body' => 'Tax has been deleted successfully'
-        ]);
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Tax model based on its primary key value.
+     * Finds the TaxStatus model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return Tax the loaded model
+     * @return TaxStatus the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Tax::findOne($id)) !== null) {
+        if (($model = TaxStatus::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
