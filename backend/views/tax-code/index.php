@@ -1,0 +1,37 @@
+<?php
+
+use yii\helpers\Html;
+use yii\grid\GridView;
+
+/* @var $this yii\web\View */
+/* @var $searchModel backend\models\search\TaxCodeSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = 'Tax Codes';
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="tax-code-index">
+
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
+    <p>
+        <?php echo Html::a('Create Tax Code', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+
+    <?php echo GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'id',
+            'tax_id',
+            'province_id',
+            'rate',
+            'start_date',
+
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+
+</div>

@@ -133,10 +133,18 @@ use common\models\ItemType;
 						if($data->item_type_id === ItemType::TYPE_LESSON){
 							return $data->lesson->enrolment->program->rate;
 						}else{
-							return $data->amount;
+							return $data->amount - $data->tax_rate;
 						}
 					}	
             	],
+                [ 
+                    'attribute' => 'tax_rate',
+                    'label' => 'Tax',
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center'],
+                    'enableSorting' => false,
+                ],
+
                 [
 	                'attribute' => 'amount',
                 	'label' => 'Total',
@@ -178,7 +186,7 @@ use common\models\ItemType;
                     </tr> 
                      <tr>
                       <td>Tax</td>
-                      <td><?= $model->tax;?></td>
+                      <td><?= $model->sumOfLineItemTax;?></td>
                     </tr>
 			  	<?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
 					<tr>

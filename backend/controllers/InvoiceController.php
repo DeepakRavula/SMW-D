@@ -17,6 +17,9 @@ use yii\filters\VerbFilter;
 use common\models\ItemType;
 use common\models\CreditUsage;
 use common\models\PaymentCheque;
+use common\models\TaxCode;
+use common\models\Location;
+use yii\helpers\Json;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -140,6 +143,7 @@ class InvoiceController extends Controller {
 			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
 			$invoiceLineItemModel->invoice_id = $model->id; 
 			$invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
+	        $invoiceLineItemModel->amount = $invoiceLineItemModel->amount + $invoiceLineItemModel->tax_rate;
 			$invoiceLineItemModel->save();
 
 			$model = $this->findModel($id);
@@ -152,13 +156,32 @@ class InvoiceController extends Controller {
 				'body' => 'Misc has been added successfully'
 			]);
 			return $this->redirect(['view', 'id' => $model->id]);
-		}
+	}
 		return $this->render('view', [
 					'model' => $model,
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 					'invoicePayments' => $invoicePaymentsDataProvider,
 		]);
 	}
+
+	public function actionComputeTax() {
+		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $locationId = Yii::$app->session->get('location_id');
+		$locationModel = Location::findOne(['id' => $locationId]);
+        $today = (new \DateTime())->format('Y-m-d H:i:s');
+        $data = Yii::$app->request->rawBody;
+        $data = Json::decode($data, true);
+        $taxCode = TaxCode::find()->where(['<=', 'start_date', $today])->andWhere(['province_id'=> $locationModel->province_id])
+			->orderBy('start_date DESC')
+			->one();
+        $rate = $data['amount'] * $taxCode->rate/100;
+        return [
+			'tax_type' => $taxCode->taxType->name,
+			'code' => $taxCode->code,
+			'rate' => $rate,
+			'tax_status' => $data['taxStatus']
+		];
+    }
 
 	/**
 	 * Creates a new Invoice model.
@@ -225,6 +248,10 @@ class InvoiceController extends Controller {
 				$invoiceLineItem->invoice_id = $invoice->id;
 				$invoiceLineItem->item_id = $lesson->id;
             	$invoiceLineItem->item_type_id = ItemType::TYPE_LESSON;
+				$invoiceLineItem->tax_type = 'TAX';
+				$invoiceLineItem->tax_rate = 0.0;
+				$invoiceLineItem->tax_code = 'ON';
+				$invoiceLineItem->tax_status = 'NO TAX';
 				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
     	        $invoiceLineItem->description = $description;
 				$time = explode(':', $lesson->enrolment->duration);
@@ -255,6 +282,7 @@ class InvoiceController extends Controller {
 		}
 	}
 
+	
 	/**
 	 * Updates an existing Invoice model.
 	 * If update is successful, the browser will be redirected to the 'view' page.

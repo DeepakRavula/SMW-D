@@ -12,14 +12,14 @@ use Yii;
  * @property double $tax_rate
  * @property string $since
  */
-class Tax extends \yii\db\ActiveRecord
+class TaxType extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'tax';
+        return 'tax_type';
     }
 
     /**
@@ -28,10 +28,8 @@ class Tax extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['province_id', 'tax_rate'], 'required'],
-            [['tax_rate'], 'number'],
-            [['since'], 'safe'],
-            [['since'], 'required'],
+            [['name','compounded', 'sort_order'], 'required'],
+            [['status'], 'safe'],
         ];
     }
 
@@ -41,20 +39,19 @@ class Tax extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'province_id' => 'Province Name',
-            'tax_rate' => 'Tax Rate',
-            'since' => 'Since',
+            'id' => 'Id',
+            'name' => 'Name',
+            'status' => 'Status',
         ];
     } 
-    public function beforeSave($insert) {
-        $sinceDate = \DateTime::createFromFormat('d-m-Y', $this->since);
-        $this->since = $sinceDate->format('Y-m-d');
-        
-        return parent::beforeSave($insert);
-    }
+    
     public function getProvince()
     {
        return $this->hasOne(Province::className(), ['id' => 'province_id']);
+    }
+
+	public function getTaxCode()
+    {
+       return $this->hasMany(TaxCode::className(), ['tax_id' => 'id']);
     }
 }
