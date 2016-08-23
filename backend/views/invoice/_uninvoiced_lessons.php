@@ -29,7 +29,7 @@ use yii\grid\GridView;
 			[
 			    'label' => 'Date',
 			 	'value' => function($data){
-					$date = (new \DateTime($data->date))->format("m-d-Y");
+					$date = (new \DateTime($data->date))->format('d-m-Y');
 					return ! empty($date) ? $date : null;
 				}	
 			],
