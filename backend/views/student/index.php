@@ -26,6 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php yii\widgets\Pjax::begin(['id' => 'student-listing']); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
@@ -60,7 +61,7 @@ $(document).ready(function(){
   $("#studentsearch-showallstudents").on("change", function() {
       var showAllStudents = $(this).is(":checked");
       var url = "<?php echo Url::to(['student/index']);?>?StudentSearch[showAllStudents]=" + (showAllStudents | 0);
-      $.pjax.reload({url:url,container:"#student-listing",replace:true,  timeout: 4000});  //Reload GridView
+      $.pjax.reload({url:url,container:"#student-listing",replace:false,  timeout: 4000});  //Reload GridView
   });
 });
   </script>
