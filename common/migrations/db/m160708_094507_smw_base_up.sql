@@ -40,28 +40,19 @@ CREATE TABLE `country`(
 
 
 /* Create table in target */
-CREATE TABLE `enrolment`(
-	`id` int(10) unsigned NOT NULL  auto_increment , 
-	`student_id` int(10) unsigned NOT NULL  , 
-	`qualification_id` int(10) unsigned NOT NULL  , 
-	`commencement_date` timestamp(3) NOT NULL  DEFAULT CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3) , 
-	`renewal_date` timestamp NOT NULL  DEFAULT '0000-00-00 00:00:00' , 
-	`location_id` int(10) unsigned NOT NULL  , 
-	PRIMARY KEY (`id`) 
-) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
-
-
-/* Create table in target */
-CREATE TABLE `enrolment_schedule_day`(
-	`id` int(10) unsigned NOT NULL  auto_increment , 
-	`enrolment_id` int(10) unsigned NOT NULL  , 
-	`day` tinyint(3) unsigned NOT NULL  , 
-	`from_time` time NOT NULL  , 
-	`duration` time NOT NULL  , 
-	`to_time` time NOT NULL  , 
-	PRIMARY KEY (`id`) 
-) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
-
+CREATE TABLE `enrolment` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `student_id` int(10) NOT NULL,
+  `program_id` int(11) unsigned NOT NULL,
+  `commencement_date` timestamp NOT NULL,
+  `renewal_date` timestamp NOT NULL,
+  `day` int(11) NOT NULL,
+  `from_time` time NOT NULL,
+  `to_time` time NOT NULL,
+  `duration` time NOT NULL,
+  `location_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 
 /* Create table in target */
 CREATE TABLE `invoice`(
@@ -70,7 +61,6 @@ CREATE TABLE `invoice`(
 	`date` timestamp NULL  , 
 	`status` tinyint(3) unsigned NOT NULL  COMMENT '1 - paid,2 - owing,3 - credit' , 
 	`subTotal` decimal(10,2) NULL  , 
-	`tax` decimal(10,2) NULL  , 
 	`total` decimal(10,2) NULL  , 
 	`notes` text COLLATE utf8_unicode_ci NULL  , 
 	`internal_notes` text COLLATE utf8_unicode_ci NULL  , 
@@ -79,14 +69,20 @@ CREATE TABLE `invoice`(
 
 
 /* Create table in target */
-CREATE TABLE `invoice_line_item`(
-	`id` int(10) unsigned NOT NULL  auto_increment , 
-	`invoice_id` int(10) unsigned NOT NULL  , 
-	`lesson_id` int(10) unsigned NOT NULL  , 
-	`unit` float NOT NULL  , 
-	`amount` decimal(10,2) NOT NULL  , 
-	PRIMARY KEY (`id`) 
-) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+CREATE TABLE `invoice_line_item` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `item_id` int(10) unsigned NOT NULL,
+  `invoice_id` int(10) unsigned NOT NULL,
+  `item_type_id` int(10) unsigned NOT NULL,
+  `unit` float NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `description` text COLLATE utf8_unicode_ci NOT NULL,
+  `tax_type` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `tax_rate` decimal(4,2) NOT NULL,
+  `tax_status` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `tax_code` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 
 
 /* Create table in target */
@@ -117,22 +113,24 @@ CREATE TABLE `location`(
 
 
 /* Create table in target */
-CREATE TABLE `payment_methods`(
-	`id` tinyint(3) unsigned NOT NULL  auto_increment , 
-	`name` varchar(30) COLLATE latin1_swedish_ci NOT NULL  , 
-	PRIMARY KEY (`id`) 
-) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+CREATE TABLE `payment_method` (
+  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) CHARACTER SET latin1 NOT NULL,
+  `active` tinyint(3) unsigned NOT NULL,
+  `displayed` tinyint(3) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
 /* Create table in target */
-CREATE TABLE `payments`(
-	`id` int(10) unsigned NOT NULL  auto_increment , 
-	`user_id` int(10) unsigned NOT NULL  , 
-	`invoice_id` int(10) unsigned NOT NULL  COMMENT '1 - prepymanet - 2+ real invoices payment' , 
-	`payment_method_id` tinyint(3) unsigned NOT NULL  , 
-	`amount` double unsigned NOT NULL  , 
-	PRIMARY KEY (`id`) 
-) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+CREATE TABLE `payment` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `payment_method_id` tinyint(3) unsigned NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `date` timestamp NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 
 
 /* Create table in target */
@@ -157,27 +155,19 @@ CREATE TABLE `phone_number`(
 
 
 /* Create table in target */
-CREATE TABLE `program`(
-	`id` int(10) unsigned NOT NULL  auto_increment , 
-	`name` varchar(30) COLLATE utf8_unicode_ci NOT NULL  , 
-	`rate` int(11) NULL  , 
-	`status` tinyint(3) unsigned NULL  COMMENT '1 - active; 2 - inactive' , 
-	PRIMARY KEY (`id`) 
-) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+CREATE TABLE `program` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `rate` int(11) DEFAULT NULL,
+  `status` tinyint(3) unsigned DEFAULT NULL COMMENT '1 - active; 2 - inactive',
+  `type` tinyint(3) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+
 
 
 /* Create table in target */
 CREATE TABLE `province`(
-	`id` int(11) NOT NULL  auto_increment , 
-	`name` varchar(16) COLLATE utf8_general_ci NOT NULL  , 
-	`tax_rate` double NOT NULL  , 
-	`country_id` int(11) NOT NULL  , 
-	PRIMARY KEY (`id`) 
-) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_general_ci';
-
-
-/* Create table in target */
-CREATE TABLE `provinces`(
 	`id` int(11) NOT NULL  auto_increment , 
 	`name` varchar(16) COLLATE utf8_general_ci NOT NULL  , 
 	`tax_rate` double NOT NULL  , 
@@ -204,17 +194,6 @@ CREATE TABLE `student`(
 	`customer_id` int(11) NULL  , 
 	`notes` text COLLATE utf8_unicode_ci NULL  , 
 	PRIMARY KEY (`id`) 
-) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
-
-
-/* Create table in target */
-CREATE TABLE `tax`(
-	`id` int(11) NOT NULL  auto_increment , 
-	`province_id` int(11) NOT NULL  , 
-	`tax_rate` double NOT NULL  , 
-	`since` date NOT NULL  , 
-	PRIMARY KEY (`id`) , 
-	KEY `id`(`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
 
