@@ -10,7 +10,7 @@ use common\models\Tax;
 /**
  * TaxSearch represents the model behind the search form about `common\models\Tax`.
  */
-class TaxSearch extends Tax
+class TaxTypeSearch extends TaxType
 {
     /**
      * @inheritdoc

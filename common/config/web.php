@@ -29,7 +29,7 @@ $config = [
 			'location/*',
 			'city/*',
 			'province/*', 
-            'tax/*',
+            'tax-code/*',
 			'country/*',
             'system-information/*',
             'gii/*',
