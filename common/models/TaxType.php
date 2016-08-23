@@ -12,14 +12,14 @@ use Yii;
  * @property double $tax_rate
  * @property string $since
  */
-class Tax extends \yii\db\ActiveRecord
+class TaxType extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'tax';
+        return 'tax_type';
     }
 
     /**
@@ -28,7 +28,7 @@ class Tax extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['name','compounded', 'sort_order'], 'required'],
             [['status'], 'safe'],
         ];
     }
@@ -53,10 +53,5 @@ class Tax extends \yii\db\ActiveRecord
 	public function getTaxCode()
     {
        return $this->hasMany(TaxCode::className(), ['tax_id' => 'id']);
-    }
-
-	public function getTaxTaxstatus()
-    {
-       return $this->hasOne(TaxTaxstatus::className(), ['tax_id' => 'id']);
     }
 }

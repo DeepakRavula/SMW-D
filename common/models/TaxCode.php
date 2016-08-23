@@ -29,8 +29,8 @@ class TaxCode extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['tax_id', 'province_id', 'rate'], 'required'],
-            [['tax_id', 'province_id'], 'integer'],
+            [['tax_type_id', 'province_id', 'rate', 'code'], 'required'],
+            [['tax_type_id', 'province_id'], 'integer'],
             [['rate'], 'number'],
             [['start_date'], 'safe'],
         ];
@@ -59,8 +59,8 @@ class TaxCode extends \yii\db\ActiveRecord
         return new \common\models\query\TaxCodeQuery(get_called_class());
     }
 
-	public function getTax()
+	public function getTaxType()
     {
-       return $this->hasOne(Tax::className(), ['id' => 'tax_id']);
+       return $this->hasOne(TaxType::className(), ['id' => 'tax_type_id']);
     }
 }

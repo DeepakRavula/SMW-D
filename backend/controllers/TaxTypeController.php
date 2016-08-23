@@ -3,7 +3,7 @@
 namespace backend\controllers;
 use common\models\Province;
 use Yii;
-use common\models\Tax;
+use common\models\TaxType;
 use backend\models\search\TaxSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * TaxController implements the CRUD actions for Tax model.
  */
-class TaxController extends Controller
+class TaxTypeController extends Controller
 {
     public function behaviors()
     {

@@ -17,7 +17,6 @@ use common\models\Lesson;
  */
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
-	public $taxStatus;
     /**
      * @inheritdoc
      */
@@ -32,10 +31,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoice_id', 'unit', 'amount','item_id','item_type_id','description'], 'required'],
+            [['invoice_id', 'unit', 'amount','item_id','item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate', 'description'], 'required'],
             [['invoice_id', 'item_id'], 'integer'],
             [['unit', 'amount'], 'number'],
-            [['taxStatus'], 'safe'],
         ];
     }
 
