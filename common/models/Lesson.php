@@ -20,6 +20,8 @@ class Lesson extends \yii\db\ActiveRecord
 	const STATUS_COMPLETED = 2;
     const STATUS_RESCHEDULED = 3;
 	const STATUS_CANCELED = 4;
+
+	public $program_id;
     /**
      * @inheritdoc
      */

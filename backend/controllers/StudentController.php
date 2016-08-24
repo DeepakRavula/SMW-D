@@ -89,7 +89,7 @@ class StudentController extends Controller
 		$enrolmentModel = new Enrolment();
         $lessonModel = new Lesson();
         if($lessonModel->load(Yii::$app->request->post()) ){
-           $studentEnrolmentModel = Enrolment::findOne(['student_id'=>$id,'program_id'=>$lessonModel->program_id]);
+           $studentEnrolmentModel = Enrolment::findOne(['student_id' => $id,'program_id' => $lessonModel->program_id]);
            $lessonModel->enrolment_id = $studentEnrolmentModel->id; 
            $lessonModel->status = Lesson::STATUS_SCHEDULED;
            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
