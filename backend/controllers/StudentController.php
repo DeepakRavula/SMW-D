@@ -97,7 +97,7 @@ class StudentController extends Controller
            $lessonModel->save();
            Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
-                	'body' => 'Program has been added successfully'
+                	'body' => 'Lesson has been added successfully'
             ]);
             	return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
         }
