@@ -68,12 +68,4 @@ class TaxCode extends \yii\db\ActiveRecord
     {
        return $this->hasOne(Province::className(), ['id' => 'province_id']);
     }
-
-	public function beforeSave($insert) {
-		if(! empty($this->start_date)){
-	        $startDate = \DateTime::createFromFormat('d-m-Y', $this->start_date);
-    	    $this->start_date = $startDate->format('Y-m-d H:i:s');
-		}
-		parent::beforeSave($insert);
-	}
 }

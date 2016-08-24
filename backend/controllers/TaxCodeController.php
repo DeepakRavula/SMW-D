@@ -61,9 +61,10 @@ class TaxCodeController extends Controller
     public function actionCreate()
     {
         $model = new TaxCode();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			die('coming');
+        if ($model->load(Yii::$app->request->post())) {
+			$startDate = \DateTime::createFromFormat('d-m-Y', $model->start_date);
+    	    $model->start_date = $startDate->format('Y-m-d H:i:s');
+			$model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -82,7 +83,10 @@ class TaxCodeController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+			$startDate = \DateTime::createFromFormat('d-m-Y', $model->start_date);
+    	    $model->start_date = $startDate->format('Y-m-d H:i:s');
+			$model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
