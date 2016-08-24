@@ -251,10 +251,11 @@ class InvoiceController extends Controller {
 				$invoiceLineItem->invoice_id = $invoice->id;
 				$invoiceLineItem->item_id = $lesson->id;
             	$invoiceLineItem->item_type_id = ItemType::TYPE_LESSON;
-				$invoiceLineItem->tax_type = 'TAX';
+				$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
+				$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
 				$invoiceLineItem->tax_rate = 0.0;
-				$invoiceLineItem->tax_code = 'ON';
-				$invoiceLineItem->tax_status = 'No Tax';
+				$invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
+				$invoiceLineItem->tax_status = $taxStatus->name;
 				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
     	        $invoiceLineItem->description = $description;
 				$time = explode(':', $lesson->enrolment->duration);

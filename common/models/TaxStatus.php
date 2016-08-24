@@ -12,8 +12,8 @@ use Yii;
  */
 class TaxStatus extends \yii\db\ActiveRecord
 {
-	const STATUS_DEFAULT = 'Default';
-	const STATUS_NO_TAX = 'No Tax';
+	const STATUS_DEFAULT = 1;
+	const STATUS_NO_TAX = 2;
 	
     /**
      * @inheritdoc
@@ -53,4 +53,8 @@ class TaxStatus extends \yii\db\ActiveRecord
     {
         return new \common\models\query\TaxStatusQuery(get_called_class());
     }
+
+	public function getTaxTypeTaxStatusAssoc(){
+		return $this->hasOne(TaxTypeTaxStatusAssoc::className(), ['tax_status_id' => 'id']);	
+	}
 }

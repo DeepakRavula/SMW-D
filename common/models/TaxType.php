@@ -47,6 +47,6 @@ class TaxType extends \yii\db\ActiveRecord
     
 	public function getTaxCode()
     {
-       return $this->hasMany(TaxCode::className(), ['tax_id' => 'id']);
+       return $this->hasOne(TaxCode::className(), ['tax_type_id' => 'id']);
     }
 }
