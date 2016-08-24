@@ -402,10 +402,12 @@ $bundle = BackendAsset::register($this);
                             ])->input('search')->label(false); ?>
 						<?php $queryParams = Yii::$app->request->queryParams;?> 
 						<?php foreach($queryParams as  $queryParam => $queryValues):?> 
-								<?php foreach($queryValues as  $param => $value):?> 
+							<?php if(is_array($queryValues)) : ?>
+								 <?php foreach($queryValues as  $param => $value):?> 
 									<?php if($param === 'query') continue; ?>
-									 <?=Html::input('hidden', $queryParam . '[' . $param . ']', $value, ['class'=>'form-control'])?>
+								 	<?=Html::input('hidden', $queryParam . '[' . $param . ']', $value, ['class'=>'form-control'])?>
 								<?php endforeach;?>
+                    		<?php endif; ?> 
 						<?php endforeach;?>
                         <?php ActiveForm::end(); ?>
                     <?php endif; ?> 
