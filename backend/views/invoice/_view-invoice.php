@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use backend\models\search\InvoiceSearch;
-use common\models\InvoiceLineItem;
+use common\models\Invoice;
 use common\models\ItemType;
 ?>
 <div class="invoice-view p-50">
@@ -90,12 +90,14 @@ use common\models\ItemType;
               <div class="clearfix"></div>
             </div>
           </div>
+	<?php if($model->type === Invoice::TYPE_INVOICE):?>
 	<div id="add-misc-item" class="col-md-12">
     <div class="row m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>
 	<div class="clearfix"></div>
   </div>
 	</div>
+	<?php endif;?>
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
@@ -186,7 +188,8 @@ use common\models\ItemType;
                   </td>
                   <td colspan="2">
                     <table class="table-invoice-childtable">
-					           <tr>
+			  	<?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
+				    <tr>
                       <td>SubTotal</td>
                       <td><?= $model->subTotal;?></td>
                     </tr> 
@@ -194,7 +197,6 @@ use common\models\ItemType;
                       <td>Tax</td>
                       <td><?= $model->sumOfLineItemTax;?></td>
                     </tr>
-			  	<?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
 					<tr>
                       <td>Paid</td>
                       <td><?= $model->invoicePaymentTotal;?></td> 
