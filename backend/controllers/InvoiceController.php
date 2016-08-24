@@ -297,6 +297,10 @@ class InvoiceController extends Controller {
 		$model = $this->findModel($id);
 
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Invoice has been updated successfully'
+			]);
 			return $this->redirect(['view', 'id' => $model->id]);
 		} else {
 			return $this->render('update', [

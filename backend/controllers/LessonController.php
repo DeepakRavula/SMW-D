@@ -100,7 +100,10 @@ class LessonController extends Controller
 			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
    	   		$model->date = $lessonDate->format('Y-m-d H:i:s');
 			$model->save();
-		
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Lesson has been updated successfully'
+			]);	
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
