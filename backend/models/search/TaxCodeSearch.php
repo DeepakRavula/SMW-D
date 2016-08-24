@@ -18,7 +18,7 @@ class TaxCodeSearch extends TaxCode
     public function rules()
     {
         return [
-            [['id', 'tax_id', 'province_id'], 'integer'],
+            [['id', 'tax_type_id', 'province_id'], 'integer'],
             [['rate'], 'number'],
             [['start_date'], 'safe'],
         ];
@@ -54,7 +54,7 @@ class TaxCodeSearch extends TaxCode
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'tax_id' => $this->tax_id,
+            'tax_type_id' => $this->tax_id,
             'province_id' => $this->province_id,
             'rate' => $this->rate,
             'start_date' => $this->start_date,

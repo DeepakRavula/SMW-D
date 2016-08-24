@@ -63,6 +63,7 @@ class TaxCodeController extends Controller
         $model = new TaxCode();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			die('coming');
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
