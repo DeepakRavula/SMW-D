@@ -17,7 +17,7 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'id') ?>
 
-    <?php echo $form->field($model, 'tax_id') ?>
+    <?php echo $form->field($model, 'tax_type_id') ?>
 
     <?php echo $form->field($model, 'province_id') ?>
 

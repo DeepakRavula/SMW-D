@@ -336,7 +336,7 @@ $bundle = BackendAsset::register($this);
                                 [
 									'label' => Yii::t('backend', 'Taxes'),
 									'icon' => '<i class="fa  fa-cny"></i>',
-									'url' => ['/tax/index'],
+									'url' => ['/tax-code/index'],
 									'visible' => Yii::$app->user->can('staffmember')
 								],
 								[

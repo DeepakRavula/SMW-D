@@ -30,7 +30,7 @@ class TaxCode extends \yii\db\ActiveRecord
     {
         return [
             [['tax_type_id', 'province_id', 'rate', 'code'], 'required'],
-            [['tax_type_id', 'province_id'], 'integer'],
+            [['tax_type_id'], 'integer'],
             [['rate'], 'number'],
             [['start_date'], 'safe'],
         ];
@@ -43,8 +43,8 @@ class TaxCode extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'tax_id' => 'Tax ID',
-            'province_id' => 'Province ID',
+            'tax_type_id' => 'Tax Name',
+            'province_id' => 'Province Name',
             'rate' => 'Rate',
             'start_date' => 'Start Date',
         ];
@@ -62,5 +62,10 @@ class TaxCode extends \yii\db\ActiveRecord
 	public function getTaxType()
     {
        return $this->hasOne(TaxType::className(), ['id' => 'tax_type_id']);
+    }
+
+	public function getProvince()
+    {
+       return $this->hasOne(Province::className(), ['id' => 'province_id']);
     }
 }

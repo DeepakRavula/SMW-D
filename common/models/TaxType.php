@@ -45,11 +45,6 @@ class TaxType extends \yii\db\ActiveRecord
         ];
     } 
     
-    public function getProvince()
-    {
-       return $this->hasOne(Province::className(), ['id' => 'province_id']);
-    }
-
 	public function getTaxCode()
     {
        return $this->hasMany(TaxCode::className(), ['tax_id' => 'id']);
