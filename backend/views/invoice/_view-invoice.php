@@ -135,7 +135,7 @@ use common\models\ItemType;
 						if($data->item_type_id === ItemType::TYPE_LESSON){
 							return $data->lesson->enrolment->program->rate;
 						}else{
-							return $data->amount - $data->tax_rate;
+							return $data->amount;
 						}
 					}	
             	],
@@ -157,6 +157,13 @@ use common\models\ItemType;
 	                'attribute' => 'amount',
                 	'label' => 'Total',
             	    'enableSorting' => false,
+					'value' => function($data) {
+						if($data->item_type_id === ItemType::TYPE_LESSON){
+							return $data->amount;
+						}else{
+							return $data->amount + $data->tax_rate;
+						}
+					}	
                 ]
             ],
         ]); ?>

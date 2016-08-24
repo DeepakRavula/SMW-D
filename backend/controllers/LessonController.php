@@ -174,7 +174,7 @@ class LessonController extends Controller
 			$invoiceLineItem->tax_type = 'TAX';
 			$invoiceLineItem->tax_rate = 0.0;
 			$invoiceLineItem->tax_code = 'ON';
-			$invoiceLineItem->tax_status = 'NO TAX';
+			$invoiceLineItem->tax_status = 'No Tax';
 			$description = $model->enrolment->program->name . ' for ' . $model->enrolment->student->fullName . ' with ' . $model->teacher->publicIdentity;
             $invoiceLineItem->description = $description;
             $time = explode(':', $model->enrolment->duration);

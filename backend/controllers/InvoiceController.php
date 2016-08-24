@@ -19,6 +19,7 @@ use common\models\CreditUsage;
 use common\models\PaymentCheque;
 use common\models\TaxCode;
 use common\models\Location;
+use common\models\TaxStatus;
 use yii\helpers\Json;
 
 /**
@@ -143,12 +144,14 @@ class InvoiceController extends Controller {
 			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
 			$invoiceLineItemModel->invoice_id = $model->id; 
 			$invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
-	        $invoiceLineItemModel->amount = $invoiceLineItemModel->amount + $invoiceLineItemModel->tax_rate;
+			$taxStatus = TaxStatus::findOne(['id' => $invoiceLineItemModel->tax_status]);
+			$invoiceLineItemModel->tax_status = $taxStatus->name;
 			$invoiceLineItemModel->save();
 
 			$model = $this->findModel($id);
-			$model->subTotal = $model->total + $invoiceLineItemModel->amount;
-			$model->total = $model->subTotal;
+			$model->subTotal += $invoiceLineItemModel->amount;
+			$model->tax += $invoiceLineItemModel->tax_rate;
+			$model->total = $model->subTotal + $model->tax;
 			$model->save();
 
 			Yii::$app->session->setFlash('alert', [
@@ -251,7 +254,7 @@ class InvoiceController extends Controller {
 				$invoiceLineItem->tax_type = 'TAX';
 				$invoiceLineItem->tax_rate = 0.0;
 				$invoiceLineItem->tax_code = 'ON';
-				$invoiceLineItem->tax_status = 'NO TAX';
+				$invoiceLineItem->tax_status = 'No Tax';
 				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
     	        $invoiceLineItem->description = $description;
 				$time = explode(':', $lesson->enrolment->duration);
