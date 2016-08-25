@@ -16,6 +16,7 @@ class UserSearch extends User
     public $lastname;
     public $firstname;
     public $query;
+    public $showAllCustomers;
     /**
      * @inheritdoc
      */
@@ -23,7 +24,7 @@ class UserSearch extends User
     {
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'email','role_name','firstname','lastname', 'query'], 'safe'],
+            [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname', 'lastname', 'query', 'showAllCustomers'], 'safe'],
         ];
     }
 
@@ -80,6 +81,22 @@ class UserSearch extends User
 		if($this->role_name !== USER::ROLE_ADMINISTRATOR) {
             $query->andFilterWhere(['like', 'ul.location_id', $locationId]);
 		}
+        
+        if($this->role_name === USER::ROLE_CUSTOMER) {          
+            if( ! $this->showAllCustomers) {             
+               $currentDate = (new \DateTime())->format('Y-m-d H:i:s');            
+		       $query->joinWith(['student s'=>function($query) use($currentDate){			
+                    $query->joinWith(['groupEnrolments ge'=>function($query) use($currentDate){
+                        $query->joinWith('groupCourse gc'); 
+			        }])
+                    ->joinWith('enrolment e')
+                    ->andWhere(['and',['>=','e.renewal_date', $currentDate],['not', ['e.student_id' => null]]])
+                    ->orWhere(['and',['>=','gc.end_date', $currentDate],['not', ['ge.student_id' => null]]]); 
+                                   
+  			    }]);  
+                $query->andFilterWhere(['like', 'ul.location_id', $locationId]);             
+            }        
+  		} 
 
 		$query->active();
         return $dataProvider;

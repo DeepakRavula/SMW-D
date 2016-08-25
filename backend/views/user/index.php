@@ -4,6 +4,7 @@ use common\grid\EnumColumn;
 use common\models\User;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 
@@ -53,6 +54,16 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php endif; ?> 
     <?php endforeach; ?>
     <?php ActiveForm::end(); ?>
+    
+    <?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
+	<div class="pull-right  m-r-20">
+        <?php yii\widgets\Pjax::begin() ?>
+        <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
+        <?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
+        <?php ActiveForm::end(); ?>
+        <?php \yii\widgets\Pjax::end(); ?>
+    </div>
+    <?php endif;?>
     
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
@@ -109,3 +120,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="clearfix"></div>
 </div>
 </div>
+<script>
+$(document).ready(function(){
+  $("#usersearch-showallcustomers").on("change", function() {
+      var showAllCustomers = $(this).is(":checked");
+      var url = "<?php echo Url::to(['user/index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER ]);?>&UserSearch[query]=" + "<?php echo $searchModel->query;?>&UserSearch[showAllCustomers]=" + (showAllCustomers | 0);
+      $.pjax.reload({url:url,container:"#lesson-index",replace:false,  timeout: 4000});  //Reload GridView
+    });
+});
+</script>

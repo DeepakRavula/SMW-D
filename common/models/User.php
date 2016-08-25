@@ -201,6 +201,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasOne(Qualification::className(), ['teacher_id' => 'id']);
     }
+    
+    public function getStudent()
+    {
+        return $this->hasMany(Student::className(), ['customer_id' => 'id']);
+    }
 	
     /**
      * @inheritdoc
