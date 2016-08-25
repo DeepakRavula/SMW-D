@@ -3,7 +3,7 @@
 namespace common\models\query;
 
 use common\models\Lesson;
-
+use common\models\Invoice;
 /**
  * This is the ActiveQuery class for [[Lesson]].
  *
@@ -39,10 +39,8 @@ class LessonQuery extends \yii\db\ActiveQuery
      */
     public function unInvoiced()
     {
-		$this->joinWith(['invoiceLineItem' => function($query) {
-			$query->joinWith('invoice');
-			$query->where(['invoice.id' => null]);
-		}]);
+		$this->joinWith('invoice')
+			->where(['invoice.id' => null]);
 		
         return $this;
     }
