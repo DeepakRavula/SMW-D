@@ -35,13 +35,15 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
     <?php $queryParams = Yii::$app->request->queryParams; ?> 
     <?php foreach ($queryParams as $queryParam => $queryValues): ?> 
-        <?php foreach ($queryValues as $param => $value): ?> 
-            <?php if ($param === 'query') continue; ?>
-            <?= Html::input('hidden', $queryParam . '[' . $param . ']', $value, ['class' => 'form-control']) ?>
-        <?php endforeach; ?>
+        <?php if(is_array($queryValues)) : ?>
+            <?php foreach ($queryValues as $param => $value): ?> 
+                <?php if ($param === 'query') continue; ?>
+                <?= Html::input('hidden', $queryParam . '[' . $param . ']', $value, ['class' => 'form-control']) ?>
+            <?php endforeach; ?>
+        <?php endif; ?> 
     <?php endforeach; ?>
 <?php ActiveForm::end(); ?>
-<?php yii\widgets\Pjax::begin() ?>
+    
 <div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
