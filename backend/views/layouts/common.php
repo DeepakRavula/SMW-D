@@ -21,7 +21,6 @@ use yii\bootstrap\ActiveForm;
 
 $bundle = BackendAsset::register($this);
 ?>
-<?php $searchModel = isset($this->params['searchModel']) ? $this->params['searchModel'] : null;?>
 <?php $this->beginContent('@backend/views/layouts/base.php'); ?>
     <div class="wrapper">
         <!-- header logo: style can be found in header.less -->
@@ -387,30 +386,6 @@ $bundle = BackendAsset::register($this);
                     <div class="pull-left">
                         <?php echo $this->title ?>
                     </div>
-                    <?php if($searchModel !== null):?>
-                        <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
-                        <?php $form = ActiveForm::begin([
-        					'action' => ['index'],
-                            'method' => 'get',
-                            'options' => ['class' => 'pull-left'],
-                        ]); ?>
-                            <?= $form->field($searchModel, 'query', [
-                                'inputOptions' => [
-                                    'placeholder' => 'Search ...',
-                                    'class' => 'search-field',
-                                ],
-                            ])->input('search')->label(false); ?>
-						<?php $queryParams = Yii::$app->request->queryParams;?> 
-						<?php foreach($queryParams as  $queryParam => $queryValues):?> 
-							<?php if(is_array($queryValues)) : ?>
-								 <?php foreach($queryValues as  $param => $value):?> 
-									<?php if($param === 'query') continue; ?>
-								 	<?=Html::input('hidden', $queryParam . '[' . $param . ']', $value, ['class'=>'form-control'])?>
-								<?php endforeach;?>
-                    		<?php endif; ?> 
-						<?php endforeach;?>
-                        <?php ActiveForm::end(); ?>
-                    <?php endif; ?> 
                     <?php if (isset($this->params['subtitle'])): ?>
                         
                         <div class="pull-right">

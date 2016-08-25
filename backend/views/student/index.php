@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 /* @var $this yii\web\View */
@@ -15,7 +16,32 @@ $this->params['breadcrumbs'][] = $this->title;
     right: 0 !important;
   }
 </style>
-<div class="student-index">
+<div class="student-index">     
+    <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
+    <?php
+    $form = ActiveForm::begin([
+                'action' => ['index'],
+                'method' => 'get',
+                'options' => ['class' => 'pull-left'],
+    ]);
+    ?>
+    <?=
+    $form->field($searchModel, 'query', [
+        'inputOptions' => [
+            'placeholder' => 'Search ...',
+            'class' => 'search-field',
+        ],
+    ])->input('search')->label(false);
+    ?>
+    <?php $queryParams = Yii::$app->request->queryParams; ?> 
+    <?php foreach ($queryParams as $queryParam => $queryValues): ?> 
+        <?php foreach ($queryValues as $param => $value): ?> 
+            <?php if ($param === 'query') continue; ?>
+            <?= Html::input('hidden', $queryParam . '[' . $param . ']', $value, ['class' => 'form-control']) ?>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+<?php ActiveForm::end(); ?>
+<?php yii\widgets\Pjax::begin() ?>
 <div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
@@ -26,7 +52,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php yii\widgets\Pjax::begin(['id' => 'student-listing']); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
@@ -60,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $(document).ready(function(){
   $("#studentsearch-showallstudents").on("change", function() {
       var showAllStudents = $(this).is(":checked");
-      var url = "<?php echo Url::to(['student/index']);?>?StudentSearch[showAllStudents]=" + (showAllStudents | 0);
+      var url = "<?php echo Url::to(['student/index']);?>?StudentSearch[query]=" + "<?php echo $searchModel->query;?>&StudentSearch[showAllStudents]=" + (showAllStudents | 0);
       $.pjax.reload({url:url,container:"#student-listing",replace:false,  timeout: 4000});  //Reload GridView
   });
 });
