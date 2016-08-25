@@ -44,26 +44,14 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ])->input('search')->label(false);
     ?>
-    <?php $queryParams = Yii::$app->request->queryParams; ?> 
-    <?php foreach ($queryParams as $queryParam => $queryValues): ?> 
-         <?php if(is_array($queryValues)) : ?>
-            <?php foreach ($queryValues as $param => $value): ?> 
-                <?php if ($param === 'query') continue; ?>
-                <?= Html::input('hidden', $queryParam . '[' . $param . ']', $value, ['class' => 'form-control']) ?>
-            <?php endforeach; ?>
-        <?php endif; ?> 
-    <?php endforeach; ?>
-    <?php ActiveForm::end(); ?>
     
     <?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
 	<div class="pull-right  m-r-20">
-        <?php yii\widgets\Pjax::begin() ?>
-        <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
         <?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
-        <?php ActiveForm::end(); ?>
-        <?php \yii\widgets\Pjax::end(); ?>
     </div>
     <?php endif;?>
+        <?= $form->field($searchModel, 'role_name')->hiddenInput()->label(false); ?>
+    <?php ActiveForm::end(); ?>
     
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
