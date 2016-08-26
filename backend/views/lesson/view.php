@@ -33,27 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			<i class="fa fa-music detail-icon"></i> <?php echo ! empty($model->enrolment->program->name) ? $model->enrolment->program->name : null ?>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
-			<i class="fa fa-info-circle detail-icon"></i> <?php 
-					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-					$currentDate = new \DateTime();
-
-					switch ($model->status) {
-						case Lesson::STATUS_SCHEDULED:
-							if ($lessonDate >= $currentDate) {
-								$status = 'Scheduled';
-							} else {
-								$status = 'Completed';
-							}
-							break;
-						case Lesson::STATUS_COMPLETED;
-							$status = 'Completed';
-							break;
-						case Lesson::STATUS_CANCELED:
-							$status = 'Canceled';
-							break;
-					}
-
-					echo $status ?>
+			<i class="fa fa-info-circle detail-icon"></i> <?php echo ! empty($model->status) ? $model->getStatus() : null;?>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
 			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null;?>

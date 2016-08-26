@@ -99,20 +99,29 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(UserProfile::className(), ['user_id' => 'teacher_id']);
     }
 
-	public function status($data){
-		switch($data->status){
-			case Lesson::STATUS_SCHEDULED:
-				$status = 'Scheduled';
-			break;
-			case Lesson::STATUS_COMPLETED:
-				$status = 'Completed';
-			break;
-			case Lesson::STATUS_CANCELED:
-				$status = 'Canceled';
-			break;
-		}
+	public function getStatus(){
+		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+		$currentDate = new \DateTime();
+			$status = null;
+			switch ($this->status) {
+				case Lesson::STATUS_SCHEDULED:
+					if ($lessonDate >= $currentDate) {
+						$status = 'Scheduled';
+					} else {
+						$status = 'Completed';
+					}
+					break;
+				case Lesson::STATUS_COMPLETED;
+					$status = 'Completed';
+					break;
+				case Lesson::STATUS_CANCELED:
+					$status = 'Canceled';
+					break;
+			}
+			
+		return $status;
 	}
-	
+
 	public static function lessonStatuses() {
 		return [
             self::STATUS_COMPLETED => Yii::t('common', 'Completed'),

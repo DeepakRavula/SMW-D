@@ -54,26 +54,11 @@ $this->registerJs("
 			[
 				'label' => 'Lesson Status',
 				'value' => function($data) {
-					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-					$currentDate = new \DateTime();
 					$status = null;
-                    switch ($data->status) {
-                        case Lesson::STATUS_SCHEDULED:
-                            if ($lessonDate >= $currentDate) {
-                                $status = 'Schedule';
-                            } else {
-                                $status = 'Completed';
-                            }
-                            $status = 'Scheduled';
-                            break;
-                        case Lesson::STATUS_COMPLETED:
-                            $status = 'Completed';
-                            break;
-                        case Lesson::STATUS_CANCELED:
-                            $status = 'Canceled';
-                            break;
-                    }
-                    return $status;
+					if (!empty($data->status)) {
+					return $data->getStatus();
+					}
+				return $status;
                 },
 			],
 			[
