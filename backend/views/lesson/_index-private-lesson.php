@@ -3,6 +3,7 @@
 use yii\grid\GridView;
 use yii\helpers\Url;
 use common\models\Invoice;
+use common\models\Lesson;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -55,14 +56,24 @@ $this->registerJs("
 				'value' => function($data) {
 					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
 					$currentDate = new \DateTime();
-
-					if($lessonDate <= $currentDate) {
-						$status = 'Completed';
-					} else {
-						$status = 'Scheduled';
-					}
-
-					return $status;
+					$status = null;
+                    switch ($data->status) {
+                        case Lesson::STATUS_SCHEDULED:
+                            if ($lessonDate >= $currentDate) {
+                                $status = 'Schedule';
+                            } else {
+                                $status = 'Completed';
+                            }
+                            $status = 'Scheduled';
+                            break;
+                        case Lesson::STATUS_COMPLETED:
+                            $status = 'Completed';
+                            break;
+                        case Lesson::STATUS_CANCELED:
+                            $status = 'Canceled';
+                            break;
+                    }
+                    return $status;
                 },
 			],
 			[

@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use common\models\Lesson;
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
 
@@ -33,16 +34,26 @@ $this->params['breadcrumbs'][] = $this->title;
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
 			<i class="fa fa-info-circle detail-icon"></i> <?php 
-				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-				$currentDate = new \DateTime();
+					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+					$currentDate = new \DateTime();
 
-				if ($lessonDate <= $currentDate) {
-					$status = 'Completed';
-				} else {
-					$status = 'Scheduled';
-				}
+					switch ($model->status) {
+						case Lesson::STATUS_SCHEDULED:
+							if ($lessonDate >= $currentDate) {
+								$status = 'Scheduled';
+							} else {
+								$status = 'Completed';
+							}
+							break;
+						case Lesson::STATUS_COMPLETED;
+							$status = 'Completed';
+							break;
+						case Lesson::STATUS_CANCELED:
+							$status = 'Canceled';
+							break;
+					}
 
-			echo $status ?>
+					echo $status ?>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
 			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null;?>

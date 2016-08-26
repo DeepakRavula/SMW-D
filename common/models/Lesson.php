@@ -18,8 +18,7 @@ class Lesson extends \yii\db\ActiveRecord
 {
 	const STATUS_SCHEDULED = 1;
 	const STATUS_COMPLETED = 2;
-    const STATUS_RESCHEDULED = 3;
-	const STATUS_CANCELED = 4;
+	const STATUS_CANCELED = 3;
 
 	public $program_id;
     /**
@@ -108,9 +107,6 @@ class Lesson extends \yii\db\ActiveRecord
 			case Lesson::STATUS_COMPLETED:
 				$status = 'Completed';
 			break;
-			case Lesson::STATUS_RESCHEDULED:
-				$status = 'Rescheduled';
-			break;
 			case Lesson::STATUS_CANCELED:
 				$status = 'Canceled';
 			break;
@@ -121,7 +117,6 @@ class Lesson extends \yii\db\ActiveRecord
 		return [
             self::STATUS_COMPLETED => Yii::t('common', 'Completed'),
 			self::STATUS_SCHEDULED => Yii::t('common', 'Scheduled'),
-            self::STATUS_RESCHEDULED => Yii::t('common', 'Rescheduled'),
             self::STATUS_CANCELED => Yii::t('common', 'Canceled'),
 		];
 	}
