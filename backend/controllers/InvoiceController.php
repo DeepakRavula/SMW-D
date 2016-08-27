@@ -20,6 +20,9 @@ use common\models\PaymentCheque;
 use common\models\TaxCode;
 use common\models\Location;
 use common\models\TaxStatus;
+use common\models\Address;
+use common\models\UserAddress;
+use common\models\PhoneNumber;
 use yii\helpers\Json;
 
 /**
@@ -205,7 +208,7 @@ class InvoiceController extends Controller {
 			if (empty($customer)) {
 				throw new NotFoundHttpException('The requested page does not exist.');
 			}
-
+            
 			$currentDate = new \DateTime();
 			$invoice->customer_id = $customer->id;
 			$query = Lesson::find()->alias('l')
@@ -221,6 +224,7 @@ class InvoiceController extends Controller {
 			
 			$unInvoicedLessonsDataProvider = new ActiveDataProvider([
 				'query' => $query,
+                'pagination' => false,
 			]);
 		}
 
@@ -283,6 +287,7 @@ class InvoiceController extends Controller {
 			return $this->render('create', [
 				'model' => $invoice,
 				'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+                'customer' => (empty($customer)) ? [new User] : $customer,
 			]);
 		}
 	}

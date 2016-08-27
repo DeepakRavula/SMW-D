@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = 'create';
     <?php echo $this->render('_form', [
         'model' => $model,
 		'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+        'customer' => $customer,
     ]) ?>
 
 </div>

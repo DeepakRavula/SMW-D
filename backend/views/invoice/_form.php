@@ -5,6 +5,7 @@ use common\models\User;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use wbraganca\selectivity\SelectivityWidget;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -15,19 +16,29 @@ use yii\helpers\Url;
 
     <?php $form = ActiveForm::begin([
 		'method' => 'get',
+        'id' => 'customer-search-form',
 		'action' => Url::to('/invoice/create'),
 		]); ?>
 
 <div class="row">
 <div class="col-md-4">
-<?php echo $form->field($model, 'customer_id')->dropDownList(
-		ArrayHelper::map(
-				User::find()
-					->join('INNER JOIN','user_location','user_location.user_id = user.id')
-					->join('INNER JOIN','rbac_auth_assignment','rbac_auth_assignment.user_id = user.id')
-					->where(['user_location.location_id' => Yii::$app->session->get('location_id'),'rbac_auth_assignment.item_name' => 'customer'])			
-				->all(),
-		'id','userProfile.fullName' ), ['prompt'=>'Select Customer', 'onchange'=>'this.form.submit()'] )->label(false) ?>
+    <?php $programs = ArrayHelper::map(User::find()
+        ->join('INNER JOIN','user_location','user_location.user_id = user.id')
+        ->join('INNER JOIN','rbac_auth_assignment','rbac_auth_assignment.user_id = user.id')
+        ->where(['user_location.location_id' => Yii::$app->session->get('location_id'),'rbac_auth_assignment.item_name' => 'customer'])			
+        ->all(),'id','userProfile.fullName' );
+    ?>
+    <?=
+        $form->field($model, 'customer_id')->widget(SelectivityWidget::classname(), [
+            'pluginOptions' => [
+                'allowClear' => true,
+                'multiple' => false,
+                'items' => $programs,
+                'value' => (string)$customer->id,
+                'placeholder' => 'Select Customer',
+            ]
+        ]);
+    ?>
 </div>
 </div>
 <div class="clearfix"></div>
@@ -39,6 +50,7 @@ use yii\helpers\Url;
 		'model'=>$model,
 		'form'=>$form,
 		'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+        'customer' => $customer
     ]) ?>
 
     <div class="form-group">
@@ -47,3 +59,8 @@ use yii\helpers\Url;
     <?php ActiveForm::end(); ?>
 
 </div>
+<script>
+$(document).ready(function() {
+    $('#customer-search-form').on('change','#invoice-customer_id',  function(){ $('#customer-search-form').submit(); });
+});
+</script>
