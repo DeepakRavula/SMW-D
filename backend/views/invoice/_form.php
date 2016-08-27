@@ -34,7 +34,7 @@ use wbraganca\selectivity\SelectivityWidget;
                 'allowClear' => true,
                 'multiple' => false,
                 'items' => $programs,
-                'value' => (string)$customer->id,
+                'value' => (empty($customer->id)) ? null : (string)$customer->id,
                 'placeholder' => 'Select Customer',
             ]
         ]);
