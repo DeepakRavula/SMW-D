@@ -95,35 +95,13 @@ class LessonController extends Controller
      */
     public function actionUpdate($id)
    {
-       $model = $this->findModel($id);
-       $originalModel = clone $model;
-    
+        $model = $this->findModel($id);       
         if ($model->load(Yii::$app->request->post())) {           
             $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-            $model->date = $lessonDate->format('Y-m-d H:i:s');
-            if($originalModel->date !== $model->date)
-            {
-                $model->id = null;
-                $model->isNewRecord = true;
-                $model->status = Lesson::STATUS_SCHEDULED;               
-                $model->date = $lessonDate->format('Y-m-d H:i:s');
-                $model->save(); 
-
-                $lessonRescheduleModel = new LessonReschedule();
-                $lessonRescheduleModel->lesson_id = $id;        
-                $lessonRescheduleModel->lesson_reschedule_id = $model->id;
-                $lessonRescheduleModel->type = LessonReschedule::TYPE_PRIVATE_LESSON;
-                $lessonRescheduleModel->save();
-                $lessonRescheduleId = $model->id;
-
-                $model = $this->findModel($id);
-                $model->status = Lesson::STATUS_CANCELED;
-                $model->save();
-                
-                return $this->redirect(['view', 'id' => $lessonRescheduleId]);
-            }            
+            $model->date = $lessonDate->format('Y-m-d H:i:s');            
             $model->save();
-    return $this->redirect(['view', 'id' => $model->id]);
+            
+        return $this->redirect(['view', 'id' => $model->id]);
         } else {
            return $this->render('update', [
                'model' => $model,
