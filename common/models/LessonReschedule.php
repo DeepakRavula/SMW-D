@@ -10,7 +10,7 @@ use Yii;
  * @property string $id
  * @property string $name
  */
-class RescheduleLesson extends \yii\db\ActiveRecord
+class LessonReschedule extends \yii\db\ActiveRecord
 {
 	const TYPE_PRIVATE_LESSON = 1;
 	const TYPE_GROUP_LESSON = 2;
@@ -20,7 +20,7 @@ class RescheduleLesson extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'reschedule_lesson';
+        return 'lesson_reschedule';
     }
 
     /**
@@ -29,7 +29,7 @@ class RescheduleLesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['lesson_id', 'reschedule_lesson_id', 'type'], 'required'],
+            [['lesson_id', 'lesson_reschedule_id', 'type'], 'required'],
         ];
     }
 
@@ -41,7 +41,7 @@ class RescheduleLesson extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'lesson_id' => 'Lesson Id',
-            'reschedule_lesson_id' => 'Reschedule Lesson Id',
+            'lesson_reschedule_id' => 'Lesson Reschedule Id',
 			'type' => 'Type'
         ];
     }

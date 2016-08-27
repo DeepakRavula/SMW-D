@@ -10,7 +10,7 @@ use common\models\Invoice;
 use common\models\ItemType;
 use common\models\TaxStatus;
 use common\models\InvoiceLineItem;
-use common\models\RescheduleLesson;
+use common\models\LessonReschedule;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -109,18 +109,18 @@ class LessonController extends Controller
                 $model->date = $lessonDate->format('Y-m-d H:i:s');
                 $model->save(); 
 
-                $lessonRescheduleModel = new RescheduleLesson();
+                $lessonRescheduleModel = new LessonReschedule();
                 $lessonRescheduleModel->lesson_id = $id;        
-                $lessonRescheduleModel->reschedule_lesson_id = $model->id;
-                $lessonRescheduleModel->type = RescheduleLesson::TYPE_PRIVATE_LESSON;
+                $lessonRescheduleModel->lesson_reschedule_id = $model->id;
+                $lessonRescheduleModel->type = LessonReschedule::TYPE_PRIVATE_LESSON;
                 $lessonRescheduleModel->save();
-                $rescheduleLessonId = $model->id;
+                $lessonRescheduleId = $model->id;
 
                 $model = $this->findModel($id);
                 $model->status = Lesson::STATUS_CANCELED;
                 $model->save();
                 
-                return $this->redirect(['view', 'id' => $rescheduleLessonId]);
+                return $this->redirect(['view', 'id' => $lessonRescheduleId]);
             }            
             $model->save();
     return $this->redirect(['view', 'id' => $model->id]);
