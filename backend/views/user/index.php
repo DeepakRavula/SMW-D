@@ -25,9 +25,29 @@ $roleName = $searchModel->role_name;
 $this->title = Yii::t('backend',  ! isset($role) ? 'User' : $role.'s');
 $this->params['subtitle'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add new'), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
+print_r($searchModel->role_name);
+?>
+<?php if($searchModel->role_name == 'staffmember'){ ?>
+<style>
+	.smw-search{
+		left: 135px;
+	}
+</style>
+<?php 
+}
+?>
+<?php if($searchModel->role_name == 'administrator'){ ?>
+<style>
+	.smw-search{
+		left: 138px;
+	}
+</style>
+<?php 
+}
 ?>
 
 <div class="user-index"> 
+	<div class="smw-search">
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
     <?php
     $form = ActiveForm::begin([
@@ -44,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ])->input('search')->label(false);
     ?>
-    
+    </div>
     <?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
 	<div class="pull-right  m-r-20">
         <?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>

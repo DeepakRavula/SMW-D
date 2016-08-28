@@ -16,7 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
     right: 0 !important;
   }
 </style>
-<div class="student-index">     
+<div class="student-index">  
+    <div class="smw-search"> 
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
     <?php
     $form = ActiveForm::begin([
@@ -33,6 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ])->input('search')->label(false);
     ?>
+    </div>  
     <?php $queryParams = Yii::$app->request->queryParams; ?> 
     <?php foreach ($queryParams as $queryParam => $queryValues): ?> 
         <?php if(is_array($queryValues)) : ?>

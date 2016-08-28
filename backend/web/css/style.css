@@ -649,7 +649,11 @@ input[type="search"]:-ms-input-placeholder {
   color: #d89494;
   margin-top: 8px;
 }
-
+.smw-search{
+      position: absolute;
+    top: -45px;
+    left: 100px;
+}
 
 .schedule-index input[type="checkbox"]{
   -webkit-appearance: none;
