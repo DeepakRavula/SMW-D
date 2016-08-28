@@ -25,7 +25,6 @@ $roleName = $searchModel->role_name;
 $this->title = Yii::t('backend',  ! isset($role) ? 'User' : $role.'s');
 $this->params['subtitle'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add new'), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
-print_r($searchModel->role_name);
 ?>
 <?php if($searchModel->role_name == 'staffmember'){ ?>
 <style>
@@ -45,6 +44,11 @@ print_r($searchModel->role_name);
 <?php 
 }
 ?>
+<style>
+	.e1Div{
+		top: -61px;
+	}
+</style>
 
 <div class="user-index"> 
 	<div class="smw-search">
@@ -67,10 +71,14 @@ print_r($searchModel->role_name);
     </div>
     <?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
 	<div class="pull-right  m-r-20">
-        <?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
+		<div class="schedule-index">
+			<div class="e1Div">
+				<?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
+			</div>
+		</div>
     </div>
     <?php endif;?>
-        <?= $form->field($searchModel, 'role_name')->hiddenInput()->label(false); ?>
+        <?php //echo $form->field($searchModel, 'role_name')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
     
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>

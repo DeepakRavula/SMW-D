@@ -14,6 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <style>
   .e1Div{
     right: 0 !important;
+    top: -59px;
   }
 </style>
 <div class="student-index">  
@@ -49,7 +50,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
-    <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
+    <div class="schedule-index">
+        <div class="e1Div">
+        <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
+        </div>
+    </div>
+    
 	<?php ActiveForm::end(); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 </div>
