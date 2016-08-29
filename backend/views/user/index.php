@@ -73,12 +73,12 @@ $this->params['breadcrumbs'][] = $this->title;
 	<div class="pull-right  m-r-20">
 		<div class="schedule-index">
 			<div class="e1Div">
-				<?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
+				<?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true])->label('Show All'); ?>
 			</div>
 		</div>
     </div>
     <?php endif;?>
-        <?php //echo $form->field($searchModel, 'role_name')->hiddenInput()->label(false); ?>
+        <?php echo $form->field($searchModel, 'role_name')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
     
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
