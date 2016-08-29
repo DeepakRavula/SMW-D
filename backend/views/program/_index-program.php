@@ -15,22 +15,41 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
 ?>
 <style>
   .e1Div{
-    right: 0 !important;
-    top: -115px;
+		top: -61px;
   }
 </style>
 
-<div class="col-md-5">
-<h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
-<div class="pull-left m-l-10 m-r-20">
-<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
+<div class="program-index">
+<div class="smw-search">
+    <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
+    <?php
+    $form = ActiveForm::begin([
+                'action' => ['index'],
+                'method' => 'get',
+                'options' => ['class' => 'pull-left'],
+    ]);
+    ?>
+    <?=
+    $form->field($searchModel, 'query', [
+        'inputOptions' => [
+            'placeholder' => 'Search ...',
+            'class' => 'search-field',
+        ],
+    ])->input('search')->label(false);
+    ?>
+</div>
+<div class="pull-right  m-r-20">
 	<div class="schedule-index">
 		<div class="e1Div">
 			<?= $form->field($searchModel, 'showAllPrograms')->checkbox(['data-pjax' => true])->label('Show All'); ?>
 		</div>
-	</div>
- <?php ActiveForm::end(); ?>
+    </div>
 </div>
+    	<?php echo $form->field($searchModel, 'type')->hiddenInput()->label(false); ?>
+    <?php ActiveForm::end(); ?>
+	
+<div class="col-md-5">
+<h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
 <a href="#" class="add-new-program pull-right text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add</a>
 <div class="clearfix"></div>
 </div>
@@ -42,7 +61,6 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
     ]) ?>
 </div>
 
-<div class="program-index">
 	<?php Pjax::begin(['id' => 'program-listing']) ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
@@ -66,7 +84,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
 $(document).ready(function(){
   $("#programsearch-showallprograms").on("change", function() {
       var showAllPrograms = $(this).is(":checked");
-      var url = "<?php echo Url::to(['program/index']);?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + <?php echo $searchModel->type;?>;
+      var url = "<?php echo Url::to(['program/index']);?>?ProgramSearch[query]=" + "<?= $searchModel->query;?>&ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + "<?php echo $searchModel->type;?>";
       $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
   });
 });
