@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\GroupCourse;
+use common\models\LessonReschedule;
 
 /**
  * This is the model class for table "group_lesson".
@@ -79,18 +80,30 @@ class GroupLesson extends \yii\db\ActiveRecord
     }
 
 	public function getStatus(){
+		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+		$currentDate = new \DateTime();
 		$status = null;
-		switch($this->status){
-			case GroupLesson::STATUS_SCHEDULED:
-				$status = 'Scheduled';
-			break;
-			case GroupLesson::STATUS_COMPLETED:
-				$status = 'Completed';
-			break;
-			case GroupLesson::STATUS_CANCELED:
-				$status = 'Canceled';
-			break;
+		if ($lessonDate >= $currentDate) {
+			$status = 'Scheduled';
+		} else {
+			$status = 'Completed';
 		}
+		switch ($this->status) {
+			case Lesson::STATUS_SCHEDULED:
+				if ($lessonDate >= $currentDate) {
+					$status = 'Scheduled';
+				} else {
+					$status = 'Completed';
+				}
+				break;
+			case Lesson::STATUS_COMPLETED;
+				$status = 'Completed';
+				break;
+			case Lesson::STATUS_CANCELED:
+				$status = 'Canceled';
+				break;
+		}
+		
 		return $status;
 	}
 	
@@ -115,11 +128,18 @@ class GroupLesson extends \yii\db\ActiveRecord
 					'date' => $fromDate->format('Y-m-d H:i:s'),
 					'status' => self::STATUS_CANCELED	
 				]);
+				$originalLessonId = $this->id;
 				$this->id = null;
 				$this->isNewRecord = true;
 				$this->date = $toDate->format('Y-m-d H:i:s');
 				$this->status = self::STATUS_SCHEDULED;
 				$this->save();
+
+				$lessonRescheduleModel = new LessonReschedule();
+				$lessonRescheduleModel->lesson_id = $originalLessonId;
+				$lessonRescheduleModel->lesson_reschedule_id = $this->id;
+				$lessonRescheduleModel->type = LessonReschedule::TYPE_GROUP_LESSON;	
+				$lessonRescheduleModel->save();
             }
 		} 
 		
