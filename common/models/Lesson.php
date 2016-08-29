@@ -142,9 +142,17 @@ class Lesson extends \yii\db\ActiveRecord
                 if( ! empty($this->enrolment->student->customer->email)){
                     $this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
                 }
-            }
-		}
-
+                $this->updateAttributes(['date' => $fromDate->format('Y-m-d H:i:s'),
+                    'status' => self::STATUS_CANCELED,
+                ]);
+                $this->id = null;
+                $this->isNewRecord = true;
+                $this->status = self::STATUS_SCHEDULED;  
+                $this->date = $toDate->format('Y-m-d H:i:s');
+                $this->save();        
+            }           
+		} 
+            
         return parent::afterSave($insert, $changedAttributes);
     }
 
