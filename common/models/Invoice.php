@@ -60,7 +60,8 @@ class Invoice extends \yii\db\ActiveRecord
             'date' => 'Date',
 			'notes' => 'Printed Notes',
 			'internal_notes' => 'Internal Notes',
-			'type' => 'Type'
+			'type' => 'Type',
+			'customer_id' => 'Customer Name'
         ];
     }
 
@@ -177,7 +178,7 @@ class Invoice extends \yii\db\ActiveRecord
 			break;
 		}
 		if((int) $this->type === self::TYPE_PRO_FORMA_INVOICE){
-			$status = 'Not Invoiced';
+			$status = 'None';
 		}
 		return $status;
     }

@@ -89,7 +89,12 @@ $this->params['breadcrumbs'][] = $this->title;
 			'invoiceDataProvider' => $invoiceDataProvider,
 			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
 			'searchModel' => $searchModel,
-			'userModel' => $model
+			'userModel' => $model,
+            'invoice' => $invoice
+		]);
+
+		$proFormaInvoiceContent = $this->render('_pro-forma-invoice', [
+			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
 		]);
         
         $paymentContent = $this->render('_account', [
@@ -185,6 +190,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 			],
 			[
+				'label' => 'Pro Forma Invoices',
+				'content' => $proFormaInvoiceContent,
+				'options' => [
+                    'id' => 'pro-forma-invoice',
+                ],
+			],
+			[
 				'label' => 'Accounts',
 				'content' => $paymentContent,
 				'options' => [
@@ -236,9 +248,6 @@ $this->params['breadcrumbs'][] = $this->title;
 		setTimeout(function () {
 			$('.add-phone').addClass('add-item-phone');
 		}, 100);
-	});
-	$('.add-new-invoice').click(function () {
-		$('.invoice-create').show();
 	});
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');

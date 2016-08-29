@@ -165,6 +165,15 @@ class User extends ActiveRecord implements IdentityInterface
 		return $this->hasOne(Address::className(), ['id' => 'address_id'])
 		  ->viaTable('user_address', ['user_id' => 'id']);
 	}
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+	public function getBillingAddress() {
+		return $this->hasOne(Address::className(), ['id' => 'address_id'])
+		  ->viaTable('user_address', ['user_id' => 'id'])
+          ->onCondition(['label' => Address::LABEL_BILLING]);
+	}
 
 	/**
      * @return \yii\db\ActiveQuery
@@ -182,7 +191,16 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(PhoneNumber::className(), ['user_id' => 'id']);
     }
-
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPrimaryPhoneNumber()
+    {
+        return $this->hasOne(PhoneNumber::className(), ['user_id' => 'id'])
+                 ->onCondition(['is_primary' => true]);
+    }
+    
 	/**
      * @return \yii\db\ActiveQuery
      */

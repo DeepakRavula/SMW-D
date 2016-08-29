@@ -99,7 +99,12 @@ class UserController extends Controller {
 		$location_id = $session->get('location_id');
 		
 		$searchModel = new UserSearch();
-		$db = $searchModel->search(Yii::$app->request->queryParams);
+		$db = $searchModel->search(Yii::$app->request->queryParams);        
+        
+        $invoice = new Invoice();
+        $request = Yii::$app->request;
+		$invoiceRequest = $request->get('InvoiceSearch');
+		$invoice->type = $invoiceRequest['type'];
 
 		$dataProvider = new ActiveDataProvider([
 			'query' => Student::find()->where(['customer_id' => $id])
@@ -178,10 +183,26 @@ class UserController extends Controller {
 		
 		$invoiceQuery = Invoice::find()
 				->location($location_id)
-				->student($id);
+				->student($id)
+                ->where([
+					'invoice.type' => Invoice::TYPE_INVOICE
+				]);
+				
 		$invoiceDataProvider = new ActiveDataProvider([
 			'query' => $invoiceQuery,
 		]);
+
+		$proFormaInvoiceQuery = Invoice::find()
+				->location($location_id)
+				->student($id)
+                ->where([
+					'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE
+				]);
+				
+		$proFormaInvoiceDataProvider = new ActiveDataProvider([
+			'query' => $proFormaInvoiceQuery,
+		]);
+		
 		$paymentDataProvider = new ActiveDataProvider([
 			'query' => payment::find()
 				->where(['user_id' => $model->id])
@@ -242,7 +263,6 @@ class UserController extends Controller {
 
 		$invoiceLineItemModel = new InvoiceLineItem();
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
-			$invoice = new Invoice();
 			$lastInvoice = Invoice::lastInvoice($location_id);
 
 			if (empty($lastInvoice)) {
@@ -294,7 +314,9 @@ class UserController extends Controller {
 			'openingBalancePaymentModel' => $openingBalancePaymentModel,
 			'openingBalanceDataProvider' => $openingBalanceDataProvider,
 			'remainingOpeningBalance' => $remainingOpeningBalance,
-			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider
+			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+            'invoice' => $invoice,
+			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
 		]);
 	}
 
@@ -652,69 +674,5 @@ class UserController extends Controller {
 					throw new NotFoundHttpException('The requested page does not exist.');
 				}
 			}
-
-	public function actionInvoice(){
-		$session = Yii::$app->session;
-		$location_id = $session->get('location_id');
-		$request = Yii::$app->request;
-		$customerId = $request->get('id');
-		$post = $request->post();
-		$invoice = new Invoice();
-		if (!empty($post['selection']) && is_array($post['selection'])) {
-			$lastInvoice = Invoice::lastInvoice($location_id);
-
-			if (empty($lastInvoice)) {
-				$invoiceNumber = 1;
-			} else {
-				$invoiceNumber = $lastInvoice->invoice_number + 1;
-			}
-			$invoice->user_id = $customerId;
-			$invoice->type = Invoice::TYPE_INVOICE;
-			$invoice->invoice_number = $invoiceNumber;
-			$invoice->status = Invoice::STATUS_OWING;
-			$invoice->date = (new \DateTime())->format('Y-m-d');
-			$invoice->notes = $post['Invoice']['notes'];
-			$invoice->internal_notes = $post['Invoice']['internal_notes'];
-			$invoice->save();
-			
-			$subTotal = 0;
-			$taxAmount = 0;
-			foreach ($post['selection'] as $selection) {
-				$lesson = Lesson::findOne(['id' => $selection]);
-				$actualLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
-				$lessonDate = $actualLessonDate->format('Y-m-d');
-				$invoiceLineItem = new InvoiceLineItem();
-				$invoiceLineItem->invoice_id = $invoice->id;
-				$invoiceLineItem->item_id = $lesson->id;
-            	$invoiceLineItem->item_type_id = ItemType::TYPE_LESSON;
-				$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-				$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-				$invoiceLineItem->tax_rate = 0.0;
-				$invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-				$invoiceLineItem->tax_status = $taxStatus->name;
-				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
-    	        $invoiceLineItem->description = $description;
-				$time = explode(':', $lesson->enrolment->duration);
-				$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
-				$invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
-				$invoiceLineItem->save();
-				$subTotal += $invoiceLineItem->amount;
-			}
-			$invoice = Invoice::findOne(['id' => $invoice->id]);
-			$invoice->subTotal = $subTotal;
-			$totalAmount = $subTotal + $taxAmount;
-			$invoice->tax = $taxAmount;
-			$invoice->total = $totalAmount;
-			$invoice->save();
-
-			Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Invoice has been created successfully'
-			]);
-
-			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-		} 	
-	}
-
 }
 		
