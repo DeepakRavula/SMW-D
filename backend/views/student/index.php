@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
     <div class="schedule-index">
         <div class="e1Div">
-        <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
+        <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true])->label('Show All'); ?>
         </div>
     </div>
     

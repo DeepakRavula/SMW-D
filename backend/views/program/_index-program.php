@@ -18,7 +18,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
 <div class="pull-left m-l-10 m-r-20">
   <?php yii\widgets\Pjax::begin() ?>
   <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
-  <?= $form->field($searchModel, 'showAllPrograms')->checkbox(['data-pjax' => true]); ?>
+  <?= $form->field($searchModel, 'showAllPrograms')->checkbox(['data-pjax' => true])->label('Show All'); ?>
   <?php ActiveForm::end(); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 </div>
