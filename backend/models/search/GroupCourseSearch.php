@@ -11,7 +11,8 @@ use common\models\GroupCourse;
  * GroupCourseSearch represents the model behind the search form about `common\models\GroupCourse`.
  */
 class GroupCourseSearch extends GroupCourse
-{
+{ 
+    public $query;
     /**
      * @inheritdoc
      */
@@ -19,7 +20,7 @@ class GroupCourseSearch extends GroupCourse
     {
         return [
             [['id'], 'integer'],
-            [['length'], 'safe'],
+            [['length', 'query'], 'safe'],
         ];
     }
 
@@ -45,22 +46,28 @@ class GroupCourseSearch extends GroupCourse
 		$locationId = $session->get('location_id');
         $query = GroupCourse::find()
 				->where(['location_id' => $locationId]);
-
+            
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
-        }
+        } 
+        
+        $query->joinWith(['teacher' => function($query) use($locationId){				
+            $query->joinWith('userProfile up');                     
+        }]);
+        $query->joinWith('program');
 
         $query->andFilterWhere([
-            'id' => $this->id,
-            'rate' => $this->rate,
+            'id' => $this->id, 
             'length' => $this->length,
         ]);
-
-        $query->andFilterWhere(['like', 'title', $this->title]);
+        
+        $query->andFilterWhere(['like', 'program.name', $this->query]);        
+        $query->orFilterWhere(['like', 'up.firstname', $this->query]);
+        $query->orFilterWhere(['like', 'up.lastname', $this->query]);
 
         return $dataProvider;
     }
