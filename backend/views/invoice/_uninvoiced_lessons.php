@@ -5,8 +5,6 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-//$this->title = 'Lessons';
-//$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="lesson-index">
 <div class="row-fluid user-details-wrapper">
@@ -23,7 +21,7 @@ use yii\helpers\Html;
             <div data-key="351">
                 <div class="address p-t-6 p-b-6 relative  col-md-6">
                     <div><?= Html::encode( ! empty($customer->billingAddress->address) ? $customer->billingAddress->address : null) ?> </div>
-                    <div><?= Html::encode( ! empty($customer->billingAddress->city->name) ? $customer->billingAddress->city->name : null) ?>, <?= Html::encode( ! empty($customer->billingAddress->province->name) ? $customer->billingAddress->province->name : null) ?></div>
+                    <div><?= Html::encode( ! empty($customer->billingAddress->city->name) ? $customer->billingAddress->city->name : null) ?> <?= Html::encode( ! empty($customer->billingAddress->province->name) ? $customer->billingAddress->province->name : null) ?></div>
                     <div><?= Html::encode( ! empty($customer->billingAddress->country->name) ? $customer->billingAddress->country->name : null) ?> <?= Html::encode( ! empty($customer->billingAddress->postal_code) ? $customer->billingAddress->postal_code : null) ?></div>
                 </div>
                 <div class="address p-t-6 p-b-6 relative  col-md-6">
