@@ -99,7 +99,12 @@ class UserController extends Controller {
 		$location_id = $session->get('location_id');
 		
 		$searchModel = new UserSearch();
-		$db = $searchModel->search(Yii::$app->request->queryParams);
+		$db = $searchModel->search(Yii::$app->request->queryParams);        
+        
+        $invoice = new Invoice();
+        $request = Yii::$app->request;
+		$invoiceRequest = $request->get('InvoiceSearch');
+		$invoice->type = $invoiceRequest['type'];
 
 		$dataProvider = new ActiveDataProvider([
 			'query' => Student::find()->where(['customer_id' => $id])
@@ -179,6 +184,15 @@ class UserController extends Controller {
 		$invoiceQuery = Invoice::find()
 				->location($location_id)
 				->student($id);
+                if((int) $invoice->type === Invoice::TYPE_PRO_FORMA_INVOICE){
+					$invoiceQuery->where([
+						'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE
+					]);
+				}else{
+					$invoiceQuery->where([
+						'invoice.type' => Invoice::TYPE_INVOICE
+					]);
+				}
 		$invoiceDataProvider = new ActiveDataProvider([
 			'query' => $invoiceQuery,
 		]);
@@ -242,7 +256,6 @@ class UserController extends Controller {
 
 		$invoiceLineItemModel = new InvoiceLineItem();
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
-			$invoice = new Invoice();
 			$lastInvoice = Invoice::lastInvoice($location_id);
 
 			if (empty($lastInvoice)) {
@@ -294,7 +307,8 @@ class UserController extends Controller {
 			'openingBalancePaymentModel' => $openingBalancePaymentModel,
 			'openingBalanceDataProvider' => $openingBalanceDataProvider,
 			'remainingOpeningBalance' => $remainingOpeningBalance,
-			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider
+			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+            'invoice' => $invoice
 		]);
 	}
 

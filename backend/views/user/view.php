@@ -89,7 +89,8 @@ $this->params['breadcrumbs'][] = $this->title;
 			'invoiceDataProvider' => $invoiceDataProvider,
 			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
 			'searchModel' => $searchModel,
-			'userModel' => $model
+			'userModel' => $model,
+            'invoice' => $invoice
 		]);
         
         $paymentContent = $this->render('_account', [
@@ -236,9 +237,6 @@ $this->params['breadcrumbs'][] = $this->title;
 		setTimeout(function () {
 			$('.add-phone').addClass('add-item-phone');
 		}, 100);
-	});
-	$('.add-new-invoice').click(function () {
-		$('.invoice-create').show();
 	});
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');
