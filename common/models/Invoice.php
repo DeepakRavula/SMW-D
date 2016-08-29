@@ -178,7 +178,7 @@ class Invoice extends \yii\db\ActiveRecord
 			break;
 		}
 		if((int) $this->type === self::TYPE_PRO_FORMA_INVOICE){
-			$status = 'Not Invoiced';
+			$status = 'None';
 		}
 		return $status;
     }

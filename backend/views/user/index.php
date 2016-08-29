@@ -2,6 +2,7 @@
 
 use common\grid\EnumColumn;
 use common\models\User;
+use common\models\Invoice;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
@@ -22,6 +23,7 @@ foreach($roles as $name => $description){
 	}
 }
 $roleName = $searchModel->role_name;
+$originalInvoice = Invoice::TYPE_INVOICE;
 $this->title = Yii::t('backend',  ! isset($role) ? 'User' : $role.'s');
 $this->params['subtitle'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add new'), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
@@ -84,10 +86,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
-            'rowOptions' => function ($model, $key, $index, $grid) use ($roleName){
+            'rowOptions' => function ($model, $key, $index, $grid) use ($roleName, $originalInvoice){
                 $u= \yii\helpers\StringHelper::basename(get_class($model));
                 $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-                return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?UserSearch%5Brole_name%5D='.$roleName.'&id="+(this.id);'];
+                return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?UserSearch%5Brole_name%5D='.$roleName.'&InvoiceSearch%5Btype%5D='.$originalInvoice.'&id="+(this.id);'];
             },
             'tableOptions' =>['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
