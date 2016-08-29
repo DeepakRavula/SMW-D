@@ -45,6 +45,16 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+	public function unInvoicedProForma()
+    {
+		$this->joinWith(['invoiceLineItem' => function($query) {
+			$query->joinWith('invoice');
+			$query->where(['invoice.id' => null]);
+		}]);
+		
+        return $this;
+    }
+
 	public function completed() {
 		$this->andFilterWhere(['<=', 'l.date', (new \DateTime())->format('Y-m-d')]);
 		

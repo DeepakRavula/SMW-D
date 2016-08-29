@@ -213,12 +213,13 @@ class InvoiceController extends Controller {
 			$invoice->customer_id = $customer->id;
 			$query = Lesson::find()->alias('l')
 					->location($location_id)
-					->student($customer->id)
-					->unInvoiced();
+					->student($customer->id);
 				if((int) $invoice->type === Invoice::TYPE_PRO_FORMA_INVOICE){
-					$query->scheduled();
+					$query->unInvoicedProForma()
+						->scheduled();
 				}else{
-					$query->completed()
+					$query->unInvoiced()
+						->completed()
 						->orderBy('l.id ASC');
 				}
 			
