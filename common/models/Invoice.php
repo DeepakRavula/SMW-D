@@ -60,7 +60,8 @@ class Invoice extends \yii\db\ActiveRecord
             'date' => 'Date',
 			'notes' => 'Printed Notes',
 			'internal_notes' => 'Internal Notes',
-			'type' => 'Type'
+			'type' => 'Type',
+			'customer_id' => 'Customer Name'
         ];
     }
 
