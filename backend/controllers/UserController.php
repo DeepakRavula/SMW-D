@@ -183,19 +183,26 @@ class UserController extends Controller {
 		
 		$invoiceQuery = Invoice::find()
 				->location($location_id)
-				->student($id);
-                if((int) $invoice->type === Invoice::TYPE_PRO_FORMA_INVOICE){
-					$invoiceQuery->where([
-						'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE
-					]);
-				}else{
-					$invoiceQuery->where([
-						'invoice.type' => Invoice::TYPE_INVOICE
-					]);
-				}
+				->student($id)
+                ->where([
+					'invoice.type' => Invoice::TYPE_INVOICE
+				]);
+				
 		$invoiceDataProvider = new ActiveDataProvider([
 			'query' => $invoiceQuery,
 		]);
+
+		$proFormaInvoiceQuery = Invoice::find()
+				->location($location_id)
+				->student($id)
+                ->where([
+					'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE
+				]);
+				
+		$proFormaInvoiceDataProvider = new ActiveDataProvider([
+			'query' => $proFormaInvoiceQuery,
+		]);
+		
 		$paymentDataProvider = new ActiveDataProvider([
 			'query' => payment::find()
 				->where(['user_id' => $model->id])
@@ -308,7 +315,8 @@ class UserController extends Controller {
 			'openingBalanceDataProvider' => $openingBalanceDataProvider,
 			'remainingOpeningBalance' => $remainingOpeningBalance,
 			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
-            'invoice' => $invoice
+            'invoice' => $invoice,
+			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
 		]);
 	}
 

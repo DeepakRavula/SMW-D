@@ -92,6 +92,10 @@ $this->params['breadcrumbs'][] = $this->title;
 			'userModel' => $model,
             'invoice' => $invoice
 		]);
+
+		$proFormaInvoiceContent = $this->render('_pro-forma-invoice', [
+			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
+		]);
         
         $paymentContent = $this->render('_account', [
 			'paymentDataProvider' => $paymentDataProvider,
@@ -183,6 +187,13 @@ $this->params['breadcrumbs'][] = $this->title;
 				'content' => $invoiceContent,
 				'options' => [
                     'id' => 'invoice',
+                ],
+			],
+			[
+				'label' => 'Pro Forma Invoices',
+				'content' => $proFormaInvoiceContent,
+				'options' => [
+                    'id' => 'pro-forma-invoice',
                 ],
 			],
 			[
