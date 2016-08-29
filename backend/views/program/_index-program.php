@@ -13,19 +13,29 @@ use common\models\Program;
 $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 'Private Programs' : 'Group Program'; 
 
 ?>
+<style>
+  .e1Div{
+    right: 0 !important;
+    top: -115px;
+  }
+</style>
+
 <div class="col-md-5">
 <h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
 <div class="pull-left m-l-10 m-r-20">
-  <?php yii\widgets\Pjax::begin() ?>
-  <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
-  <?= $form->field($searchModel, 'showAllPrograms')->checkbox(['data-pjax' => true])->label('Show All'); ?>
-  <?php ActiveForm::end(); ?>
-    <?php \yii\widgets\Pjax::end(); ?>
+<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
+	<div class="schedule-index">
+		<div class="e1Div">
+			<?= $form->field($searchModel, 'showAllPrograms')->checkbox(['data-pjax' => true])->label('Show All'); ?>
+		</div>
+	</div>
+ <?php ActiveForm::end(); ?>
 </div>
-<a href="#" class="add-new-program pull-right text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add new program</a>
+<a href="#" class="add-new-program pull-right text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add</a>
 <div class="clearfix"></div>
 </div>
 <div class="clearfix"></div>
+
 <div class="dn program-create section-tab form-well form-well-smw">
     <?php echo $this->render('_form', [
         'model' => $model,

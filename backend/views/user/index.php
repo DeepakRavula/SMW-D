@@ -23,7 +23,7 @@ foreach($roles as $name => $description){
 }
 $roleName = $searchModel->role_name;
 $this->title = Yii::t('backend',  ! isset($role) ? 'User' : $role.'s');
-$this->params['subtitle'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add new'), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-primary btn-sm']);
+$this->params['subtitle'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php if($searchModel->role_name == 'staffmember'){ ?>
