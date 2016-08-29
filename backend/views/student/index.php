@@ -14,9 +14,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <style>
   .e1Div{
     right: 0 !important;
+    top: -59px;
   }
 </style>
-<div class="student-index">     
+<div class="student-index">  
+    <div class="smw-search"> 
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
     <?php
     $form = ActiveForm::begin([
@@ -33,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ])->input('search')->label(false);
     ?>
+    </div>  
     <?php $queryParams = Yii::$app->request->queryParams; ?> 
     <?php foreach ($queryParams as $queryParam => $queryValues): ?> 
         <?php if(is_array($queryValues)) : ?>
@@ -47,7 +50,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>
 	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
-    <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
+    <div class="schedule-index">
+        <div class="e1Div">
+        <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true, 'class'=>'adsf']); ?>
+        </div>
+    </div>
+    
 	<?php ActiveForm::end(); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 </div>

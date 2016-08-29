@@ -10,6 +10,7 @@ use common\models\Invoice;
 use common\models\ItemType;
 use common\models\TaxStatus;
 use common\models\InvoiceLineItem;
+use common\models\LessonReschedule;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -93,24 +94,20 @@ class LessonController extends Controller
      * @return mixed
      */
     public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-		
-        if ($model->load(Yii::$app->request->post())) {
-			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-   	   		$model->date = $lessonDate->format('Y-m-d H:i:s');
-			$model->save();
-			Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Lesson has been updated successfully'
-			]);	
-            return $this->redirect(['view', 'id' => $model->id]);
+   {
+        $model = $this->findModel($id);       
+        if ($model->load(Yii::$app->request->post())) {           
+            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+            $model->date = $lessonDate->format('Y-m-d H:i:s');            
+            $model->save();
+            
+        return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
+           return $this->render('update', [
+               'model' => $model,
+           ]);
+       }
+   }
 
     /**
      * Deletes an existing Lesson model.
