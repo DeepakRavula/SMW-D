@@ -92,36 +92,65 @@ class GroupCourse extends \yii\db\ActiveRecord
         ];
     }
 	public function beforeSave($insert) {
-	        $startDate = \DateTime::createFromFormat('d-m-Y', $this->start_date);
-	        $endDate = \DateTime::createFromFormat('d-m-Y', $this->end_date);
-    	    $this->start_date =  $startDate->format('Y-m-d H:i:s');
-    	    $this->end_date =  $endDate->format('Y-m-d H:i:s');
+		$fromTime = \DateTime::createFromFormat('h:i A',$this->from_time);
+		$this->from_time = $fromTime->format('H:i');
+		$secs = strtotime($this->from_time) - strtotime("00:00:00");
+		$this->start_date = date("Y-m-d H:i:s",strtotime($this->start_date) + $secs);
+		$secs = strtotime($this->length) - strtotime("00:00:00");
+		$toTime = date("H:i:s",strtotime($this->from_time) + $secs);
+		$this->to_time = $toTime;
+	    $endDate = \DateTime::createFromFormat('d-m-Y', $this->end_date);
+    	$this->end_date =  $endDate->format('Y-m-d H:i:s');
+		
 		return parent::beforeSave($insert);
 	}
 	public function afterSave($insert, $changedAttributes)
     {
 		if($insert){
-			$this->from_time = date("H:i:s",strtotime($this->from_time));
-			$secs = strtotime($this->length) - strtotime("00:00:00");
-			$toTime = date("H:i:s",strtotime($this->from_time) + $secs);
-    	    $this->to_time = $toTime; 
 			$interval = new \DateInterval('P1D');
 			$startDate = $this->start_date;
 			$endDate = $this->end_date;
 			$start = new \DateTime($startDate);
 			$end = new \DateTime($endDate);
 			$period = new \DatePeriod($start, $interval, $end);
+			
+			$holidays = Holiday::find()->all();
+			$pdDays = ProfessionalDevelopmentDay::find()->all();
+
+			foreach($holidays as $holiday){
+				$holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
+				$holiDays[] = $holiday->format('Y-m-d');
+			}
+
+			foreach($pdDays as $pdDay){
+				$pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
+				$professionalDays[] = $pdDay->format('Y-m-d');
+			}
+			$leaveDays = array_merge($holiDays,$professionalDays);
 
 			foreach($period as $day){
+				foreach($leaveDays as $leaveDay){
+					if($day->format('Y-m-d') === $leaveDay){
+						continue 2;
+					}
+				}
+			
+				$lessonDate = $day->format('Y-m-d');
+				$todayDate = new \DateTime();
+				$currentDate = $todayDate->format('Y-m-d');
+				if ($lessonDate <= $currentDate) {
+					$status = GroupLesson::STATUS_COMPLETED;
+				} else {
+					$status = GroupLesson::STATUS_SCHEDULED;
+				}
+				
 				if($day->format('N') === $this->day) {
 					$groupLesson = new GroupLesson();
 					$groupLesson->setAttributes([
 						'course_id'	 => $this->id,
 						'teacher_id' => $this->teacher_id,
-						'from_time' => $this->from_time,
-						'to_time' => $this->to_time,
 						'date' => $day->format('Y-m-d H:i:s'),
-						'status' => GroupLesson::STATUS_SCHEDULED,
+						'status' => $status,
 					]);
 					$groupLesson->save();
 				}

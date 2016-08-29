@@ -5,7 +5,7 @@ use yii\helpers\Url;
 use common\models\GroupLesson;
 ?>
 <div class="col-md-12">
-	<h4 class="pull-left m-r-20">Lessons</h4>
+	<h4 class="pull-left m-r-20">Group Lessons</h4>
 </div>
 <?php
 $this->registerJs("
@@ -36,42 +36,39 @@ echo GridView::widget([
 			},
 		],
 		[
-			'label' => 'From Time',
+			'label' => 'Program Name',
 			'value' => function($data) {
-				return !empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
+				return !empty($data->groupCourse->program->name) ? $data->groupCourse->program->name : null;
 			},
 		],
-		[
-			'label' => 'To Time',
-			'value' => function($data) {
-				return !empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
-			},
-		],
-		[
-			'label' => 'Status',
-			'value' => function($data) {
-				$status = null;
-				switch($data->status){
-					case GroupLesson::STATUS_SCHEDULED:
-						$status = 'Scheduled';
-					break;
-					case GroupLesson::STATUS_COMPLETED:
-						$status = 'Completed';
-					break;
-					case GroupLesson::STATUS_CANCELED:
-						$status = 'Canceled';
-					break;
-					
-				}
-				return $status;
-			},
-		],	
 		[
 			'label' => 'Date',
 			'value' => function($data) {
 				return !empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
 			},
 		],
+		[
+			'label' => 'From Time',
+			'value' => function($data) {
+				$fromTime = \DateTime::createFromFormat('Y-m-d H:i:s',$data->date);
+				return  Yii::$app->formatter->asTime($fromTime);
+			},
+		],
+		[
+			'label' => 'To Time',
+			'value' => function($data) {
+				$fromTime = \DateTime::createFromFormat('Y-m-d H:i:s',$data->date);
+				$secs = strtotime($data->groupCourse->length) - strtotime("00:00:00");
+				$toTime = date("H:i:s",strtotime($fromTime->format('H:i')) + $secs);
+				return Yii::$app->formatter->asTime($toTime);
+			},
+		],
+		[
+			'label' => 'Status',
+			'value' => function($data) {
+				return $data->getStatus();
+			},
+		],	
 	]
 ]);
 ?>

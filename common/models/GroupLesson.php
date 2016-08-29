@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\GroupCourse;
+use common\models\LessonReschedule;
 
 /**
  * This is the model class for table "group_lesson".
@@ -33,9 +34,9 @@ class GroupLesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['course_id', 'teacher_id','from_time','to_time'], 'required'],
+            [['course_id', 'teacher_id'], 'required'],
             [['course_id', 'teacher_id', 'status'], 'integer'],
-            [['date','from_time','to_time'], 'safe'],
+            [['date','notes'], 'safe'],
         ];
     }
 
@@ -77,6 +78,34 @@ class GroupLesson extends \yii\db\ActiveRecord
        return $this->hasMany(GroupEnrolment::className(), ['course_id' => 'id'])
             ->viaTable('group_course', ['id' => 'course_id']);
     }
+
+	public function getStatus(){
+		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+		$currentDate = new \DateTime();
+		$status = null;
+		if ($lessonDate >= $currentDate) {
+			$status = 'Scheduled';
+		} else {
+			$status = 'Completed';
+		}
+		switch ($this->status) {
+			case Lesson::STATUS_SCHEDULED:
+				if ($lessonDate >= $currentDate) {
+					$status = 'Scheduled';
+				} else {
+					$status = 'Completed';
+				}
+				break;
+			case Lesson::STATUS_COMPLETED;
+				$status = 'Completed';
+				break;
+			case Lesson::STATUS_CANCELED:
+				$status = 'Canceled';
+				break;
+		}
+		
+		return $status;
+	}
 	
 	public function afterSave($insert, $changedAttributes)
     {
@@ -95,9 +124,25 @@ class GroupLesson extends \yii\db\ActiveRecord
                 		}
 					}
 				}	
-            }
-		}
+				$this->updateAttributes([
+					'date' => $fromDate->format('Y-m-d H:i:s'),
+					'status' => self::STATUS_CANCELED	
+				]);
+				$originalLessonId = $this->id;
+				$this->id = null;
+				$this->isNewRecord = true;
+				$this->date = $toDate->format('Y-m-d H:i:s');
+				$this->status = self::STATUS_SCHEDULED;
+				$this->save();
 
+				$lessonRescheduleModel = new LessonReschedule();
+				$lessonRescheduleModel->lesson_id = $originalLessonId;
+				$lessonRescheduleModel->lesson_reschedule_id = $this->id;
+				$lessonRescheduleModel->type = LessonReschedule::TYPE_GROUP_LESSON;	
+				$lessonRescheduleModel->save();
+            }
+		} 
+		
         return parent::afterSave($insert, $changedAttributes);
     }
 
