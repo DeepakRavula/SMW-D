@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
-
+use common\models\Lesson;
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupLesson */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -33,7 +33,12 @@ use kartik\time\TimePicker;
                 ]
             ]);
             ?>
-        </div>	
+        </div>
+		<div class="col-md-4">
+            <?php echo $form->field($model, 'status')->dropDownList(
+                   Lesson::lessonStatuses())
+            ?>  
+        </div>
     </div>
         <div class="col-md-8">
             <?php echo $form->field($model, 'notes')->textarea() ?>

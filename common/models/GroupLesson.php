@@ -77,6 +77,22 @@ class GroupLesson extends \yii\db\ActiveRecord
        return $this->hasMany(GroupEnrolment::className(), ['course_id' => 'id'])
             ->viaTable('group_course', ['id' => 'course_id']);
     }
+
+	public function getStatus(){
+		$status = null;
+		switch($this->status){
+			case GroupLesson::STATUS_SCHEDULED:
+				$status = 'Scheduled';
+			break;
+			case GroupLesson::STATUS_COMPLETED:
+				$status = 'Completed';
+			break;
+			case GroupLesson::STATUS_CANCELED:
+				$status = 'Canceled';
+			break;
+		}
+		return $status;
+	}
 	
 	public function afterSave($insert, $changedAttributes)
     {

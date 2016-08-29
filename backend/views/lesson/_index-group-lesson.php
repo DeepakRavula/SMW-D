@@ -66,20 +66,7 @@ echo GridView::widget([
 		[
 			'label' => 'Status',
 			'value' => function($data) {
-				$status = null;
-				switch($data->status){
-					case GroupLesson::STATUS_SCHEDULED:
-						$status = 'Scheduled';
-					break;
-					case GroupLesson::STATUS_COMPLETED:
-						$status = 'Completed';
-					break;
-					case GroupLesson::STATUS_CANCELED:
-						$status = 'Canceled';
-					break;
-					
-				}
-				return $status;
+				return $data->getStatus();
 			},
 		],	
 	]
