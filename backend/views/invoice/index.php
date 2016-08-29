@@ -2,6 +2,7 @@
 
 use common\models\Invoice;
 use backend\models\search\InvoiceSearch;
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
 
@@ -9,17 +10,40 @@ $this->title = 'Invoices';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
+<style>
+	.smw-search{
+		left: 170px;
+	}
+</style>
+
 <div class="tabbable-panel">
      <div class="tabbable-line">
-<?php 
+            <div class="smw-search">
+    <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
+    <?php
+    $form = ActiveForm::begin([
+                'action' => ['index'],
+                'method' => 'get',
+                'options' => ['class' => 'pull-left'],
+    ]);
+    ?>    
+    <?=
+    $form->field($searchModel, 'query', [
+        'inputOptions' => [
+            'placeholder' => 'Search ...',
+            'class' => 'search-field',
+        ],
+    ])->input('search')->label(false);
+    ?>
+    </div>        
 
-$indexInvoice =  $this->render('_index-invoice', [    
-    'searchModel' => $searchModel,
-    'dataProvider' => $dataProvider,
-]);
-
-?>
-
+   <?php 
+    $indexInvoice =  $this->render('_index-invoice', [    
+        'searchModel' => $searchModel,
+        'dataProvider' => $dataProvider,
+    ]);
+    ?> 
+    
 <?php echo Tabs::widget([
     'items' => [
 		[
@@ -36,6 +60,8 @@ $indexInvoice =  $this->render('_index-invoice', [
         ],
     ],
 ]);?>
+         
+<?php ActiveForm::end(); ?>   
 <div class="clearfix"></div>
 </div>
 </div>

@@ -17,13 +17,14 @@ class InvoiceSearch extends Invoice
 	public $fromDate = '1-1-2016';
 	public $toDate = '31-12-2016';
     public $type;
+    public $query;
 	/**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['fromDate', 'toDate', 'type'], 'safe'],
+            [['fromDate', 'toDate', 'type', 'query'], 'safe'],
         ];
     }
 
@@ -53,11 +54,20 @@ class InvoiceSearch extends Invoice
             return $dataProvider;
         }
 
+        $query->joinWith(['user' => function($query) {				
+            $query->joinWith('userProfile up')
+                  ->joinWith('phoneNumber pn');                     
+        }]);
+        
+        $query->andFilterWhere(['like', 'up.firstname', $this->query])
+              ->orFilterWhere(['like', 'up.lastname', $this->query])
+              ->orFilterWhere(['like', 'pn.number', $this->query]);
+         
 		$this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);
 		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
-		
+        
 		$query->andWhere(['between','i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
-
+        
         $query->andFilterWhere(['type' => $this->type]);
 
         return $dataProvider;
