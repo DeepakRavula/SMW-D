@@ -73,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<div class="pull-right  m-r-20">
 		<div class="schedule-index">
 			<div class="e1Div">
-				<?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true]); ?>
+				<?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true])->label('Show All'); ?>
 			</div>
 		</div>
     </div>
