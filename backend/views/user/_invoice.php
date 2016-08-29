@@ -81,10 +81,3 @@ use yii\bootstrap\Tabs;
     ],
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
-
-<script>
-    $('.add-new-invoice').click(function(){
-        $(this).hide();
-        //$('.hr-ad-in').hide();
-    });
-</script>
