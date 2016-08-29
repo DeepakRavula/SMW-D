@@ -90,11 +90,11 @@ $this->params['breadcrumbs'][] = $this->title;
 			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
 			'searchModel' => $searchModel,
 			'userModel' => $model,
-            'invoice' => $invoice
 		]);
 
 		$proFormaInvoiceContent = $this->render('_pro-forma-invoice', [
 			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
+			'userModel' => $model,
 		]);
         
         $paymentContent = $this->render('_account', [

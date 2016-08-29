@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'rowOptions' => function ($model, $key, $index, $grid) use ($roleName, $originalInvoice){
                 $u= \yii\helpers\StringHelper::basename(get_class($model));
                 $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-                return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?UserSearch%5Brole_name%5D='.$roleName.'&InvoiceSearch%5Btype%5D='.$originalInvoice.'&id="+(this.id);'];
+                return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?UserSearch%5Brole_name%5D='.$roleName.'&id="+(this.id);'];
             },
             'tableOptions' =>['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],

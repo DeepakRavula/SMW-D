@@ -15,7 +15,7 @@ use yii\bootstrap\Tabs;
     <?php
         echo Html::a(
             Html::tag('i', '', ['class' => 'fa fa-plus-circle']),
-            Url::to(['/invoice/create','InvoiceSearch[type]' => INVOICE::TYPE_PRO_FORMA_INVOICE]), [
+            Url::to(['/invoice/create', 'Invoice[customer_id]' => $userModel->id, 'Invoice[type]' => INVOICE::TYPE_PRO_FORMA_INVOICE]), [
             'class' => 'add-new-invoice text-add-new',
             ]);
     ?>

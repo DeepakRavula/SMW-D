@@ -101,11 +101,6 @@ class UserController extends Controller {
 		$searchModel = new UserSearch();
 		$db = $searchModel->search(Yii::$app->request->queryParams);        
         
-        $invoice = new Invoice();
-        $request = Yii::$app->request;
-		$invoiceRequest = $request->get('InvoiceSearch');
-		$invoice->type = $invoiceRequest['type'];
-
 		$dataProvider = new ActiveDataProvider([
 			'query' => Student::find()->where(['customer_id' => $id])
 		]);
@@ -315,7 +310,6 @@ class UserController extends Controller {
 			'openingBalanceDataProvider' => $openingBalanceDataProvider,
 			'remainingOpeningBalance' => $remainingOpeningBalance,
 			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
-            'invoice' => $invoice,
 			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
 		]);
 	}
