@@ -20,6 +20,7 @@ class Payment extends \yii\db\ActiveRecord {
 	public $invoiceId;
 	public $allocationType;
 	public $credit;
+	public $amountNeeded;
 	public $sourceType;
 	public $sourceId;
 	public $paymentMethodName;

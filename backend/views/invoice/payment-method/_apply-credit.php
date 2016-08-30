@@ -87,6 +87,7 @@ $creditDataProvider = new ArrayDataProvider([
     ],
 ]);
 ?>
+<?php if($creditDataProvider->totalCount > 0):?>
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Apply Credit</h4>',
@@ -124,10 +125,10 @@ echo GridView::widget([
 		]
     ]
 ]);
-
+ echo $this->render('_form-credit', [
+		'model' => new Payment(),
+	 	'invoice' => $invoice
+]);
 Modal::end();
 ?>
-<?php echo $this->render('_form-credit', [
-		'model' => new Payment(),
-]) ?>
-
+<?php endif;?>

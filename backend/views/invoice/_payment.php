@@ -185,7 +185,6 @@ $(document).ready(function(){
         $('#payment-credit').val(amount);
 		$('#payment-sourceid').val(id);
 		$('#payment-sourcetype').val(type);
-        $('#credit-modal').modal('hide');
     });
 });
 </script>
