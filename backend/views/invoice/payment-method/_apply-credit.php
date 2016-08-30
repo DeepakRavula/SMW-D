@@ -124,10 +124,10 @@ echo GridView::widget([
 		]
     ]
 ]);
-
+ echo $this->render('_form-credit', [
+		'model' => new Payment(),
+]);
 Modal::end();
 ?>
-<?php echo $this->render('_form-credit', [
-		'model' => new Payment(),
-]) ?>
+
 
