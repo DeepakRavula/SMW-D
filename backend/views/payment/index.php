@@ -11,26 +11,42 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="payments-index">
 
-
-    <p>
-        <?php echo Html::a('Create Payments', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            [
-				'class' => 'yii\grid\SerialColumn',
-				'header' => 'Serial No.',
+			[
+				'label' => 'ID',
+				'value' => function($data){
+					return ! empty($data->invoicePayment->invoice->invoice_number) ? $data->invoicePayment->invoice->invoice_number : null;
+				}
 			],
-
-            'id',
-            'user_id',
-            'invoice_id',
-            'payment_method_id',
-            'amount',
-
-            ['class' => 'yii\grid\ActionColumn'],
+			[
+				'label' => 'Date',
+				'value' => function($data){
+					return Yii::$app->formatter->asDate($data->date);
+				}
+			],
+			[
+				'label' => 'Payment Method',
+				'value' => function($data){
+					return $data->paymentMethod->name;
+				}
+			],
+			[
+				'label' => 'Customer',
+				'value' => function($data){
+					return $data->user->publicIdentity;
+				}
+			],
+			[
+				'label' => 'Amount',
+				'value' => function($data) {
+						return $data->amount;
+                },
+				'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right'],
+				'enableSorting' => false,
+            ]
         ],
     ]); ?>
 
