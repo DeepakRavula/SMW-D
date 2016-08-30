@@ -33,7 +33,7 @@ class PaymentController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Payments::find(),
+            'query' => Payment::find(),
         ]);
 
         return $this->render('index', [
