@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Payment;
+use backend\models\search\PaymentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -32,13 +33,13 @@ class PaymentController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Payment::find(),
-        ]);
+        $searchModel = new PaymentSearch();
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+		return $this->render('index', [
+					'searchModel' => $searchModel,
+					'dataProvider' => $dataProvider,
+		]);
     }
 
     /**

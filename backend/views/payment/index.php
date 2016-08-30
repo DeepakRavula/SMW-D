@@ -8,11 +8,19 @@ use yii\grid\GridView;
 
 $this->title = 'Payments';
 $this->params['breadcrumbs'][] = $this->title;
+$total = 0;
+if (!empty($dataProvider->getModels())) {
+    foreach ($dataProvider->getModels() as $key => $val) {
+        $total += $val->amount;
+    }
+}
 ?>
-<div class="payments-index">
-
+<div class="payments-index p-10">
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'showFooter'=>TRUE,
+        'footerRowOptions'=>['style'=>'font-weight:bold;text-align: right;'],
         'columns' => [
 			[
 				'label' => 'ID',
@@ -46,6 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
 				'enableSorting' => false,
+                'footer' => Yii::$app->formatter->asCurrency($total),
             ]
         ],
     ]); ?>
