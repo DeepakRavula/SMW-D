@@ -47,13 +47,13 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php echo Tabs::widget([
     'items' => [
 		[
-            'label' => 'Invoice',
+            'label' => 'Invoices',
             'content' => (int) $searchModel->type === Invoice::TYPE_INVOICE  ? $indexInvoice : null,
 			'url'=>['/invoice/index','InvoiceSearch[type]' => Invoice::TYPE_INVOICE],
 			'active' => (int) $searchModel->type === Invoice::TYPE_INVOICE ,
         ],
 		[
-            'label' => 'Pro-forma Invoice',
+            'label' => 'Pro-forma Invoices',
             'content' => (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE  ? $indexInvoice : null,
 			'url'=>['/invoice/index','InvoiceSearch[type]' => Invoice::TYPE_PRO_FORMA_INVOICE ],
 			'active' => (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ,

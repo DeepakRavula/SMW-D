@@ -190,7 +190,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 			],
 			[
-				'label' => 'Pro Forma Invoices',
+				'label' => 'Pro-forma Invoices',
 				'content' => $proFormaInvoiceContent,
 				'options' => [
                     'id' => 'pro-forma-invoice',
