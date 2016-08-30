@@ -119,8 +119,12 @@ echo GridView::widget([
     ]
 ]);
 ?>
-
-
+<?php if((int) $model->type === Invoice::TYPE_INVOICE):?>
+<h5>
+Invoice Total: <?= $model->total;?></h5>
+<h5>Invoice Paid: <?= $model->invoicePaymentTotal;?></h5>
+<h5>Invoice Balance: <?= $model->invoiceBalance;?></h5>
+<?php endif;?>
 <?php $buttons = [];?>
 <?php foreach(PaymentMethod::findAll([
 			'active' => PaymentMethod::STATUS_ACTIVE,
