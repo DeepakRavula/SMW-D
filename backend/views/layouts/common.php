@@ -79,6 +79,11 @@ $bundle = BackendAsset::register($this);
                         <?php endif;?>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
+						 <li class="notifications-menu" data-toggle="tooltip" data-original-title="Blog" data-placement="bottom">
+                            <a href="<?php echo Url::to(['/blog/index']) ?>">
+                                <i class="fa fa-newspaper-o" aria-hidden="true"></i>
+                            </a>
+                        </li>
                         <li class="notifications-menu" data-toggle="tooltip" data-original-title="Give a feedback" data-placement="bottom">
                             <a href="" onclick="FreshWidget.show(); return false;">
                                 <i class="fa fa-comment"></i>
