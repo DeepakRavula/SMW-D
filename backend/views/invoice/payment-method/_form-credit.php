@@ -22,13 +22,12 @@ use common\models\BalanceLog;
         </div>
         <div class="col-xs-3">
 			<?php
-				$amount = null;
+				$amount = '0.00';
 				if($invoice->total > $invoice->invoicePaymentTotal){
 					$amount = $invoice->invoiceBalance;
 				}
-				$amountNeeded = $model->isNewRecord ? $amount : null; 
 			?>
-   			<?php echo $form->field($model, 'amountNeeded')->textInput(['value' => $amountNeeded])->label('Amount Needed') ?>
+   			<?php echo $form->field($model, 'amountNeeded')->textInput(['value' => $amount])->label('Amount Needed') ?>
         </div>
 		<div class="col-xs-3">
    			<?php echo $form->field($model, 'amount')->textInput()->label('Amount To Apply') ?>
