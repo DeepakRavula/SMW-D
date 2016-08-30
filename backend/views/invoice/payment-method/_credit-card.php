@@ -19,7 +19,14 @@ use common\models\BalanceLog;
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
         <div class="col-xs-3">
-   			<?php echo $form->field($model, 'amount')->textInput() ?>
+			<?php
+				$amount = null;
+				if($invoice->total > $invoice->invoicePaymentTotal){
+					$amount = $invoice->invoiceBalance;
+				}
+				$amountNeeded = $model->isNewRecord ? $amount : null; 
+			?>
+   			<?php echo $form->field($model, 'amount')->textInput(['value' => $amountNeeded])->label('Amount Needed') ?>
         </div>
 		<?php echo $form->field($model, 'payment_method_id')->hiddenInput(['class' => 'payment-method-id'])->label(false); ?>
 	</div>
