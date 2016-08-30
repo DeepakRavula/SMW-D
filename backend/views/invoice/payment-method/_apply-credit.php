@@ -126,6 +126,7 @@ echo GridView::widget([
 ]);
  echo $this->render('_form-credit', [
 		'model' => new Payment(),
+	 	'invoice' => $invoice
 ]);
 Modal::end();
 ?>
