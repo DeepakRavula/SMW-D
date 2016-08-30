@@ -264,7 +264,7 @@ $bundle = BackendAsset::register($this);
 							
                         ],
 						[
-                            'label'=>Yii::t('backend', 'Blog'),
+                            'label'=>Yii::t('backend', 'Blogs'),
                             'icon'=>'<i class="fa fa-newspaper-o"></i>',
 							'url'=>['/blog/index'],    
                             'visible'=>Yii::$app->user->can('administrator'),

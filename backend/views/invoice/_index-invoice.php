@@ -9,7 +9,7 @@ use backend\models\search\InvoiceSearch;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $searchModel backend\models\search\InvoiceSearch */
 
-$this->title = (int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice';
+$this->title = (int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoices' : 'Invoices';
 $this->params['subtitle'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', ['invoice/create', 'Invoice[type]' => $searchModel->type], ['class' => 'btn btn-success']); 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
