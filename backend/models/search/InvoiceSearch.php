@@ -58,7 +58,8 @@ class InvoiceSearch extends Invoice
             $query->joinWith('userProfile up')
                   ->joinWith('phoneNumber pn');                     
         }]);
-        
+        $query->groupBy('i.invoice_number');
+       
         $query->andFilterWhere(['like', 'up.firstname', $this->query])
               ->orFilterWhere(['like', 'up.lastname', $this->query])
               ->orFilterWhere(['like', 'pn.number', $this->query]);
@@ -69,7 +70,7 @@ class InvoiceSearch extends Invoice
 		$query->andWhere(['between','i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
         
         $query->andFilterWhere(['type' => $this->type]);
-
+        
         return $dataProvider;
     }
 
