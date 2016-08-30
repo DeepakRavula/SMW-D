@@ -85,7 +85,7 @@ class InvoiceController extends Controller {
 				$currentDate = new \DateTime();
 				$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
 				$paymentModel->amount = $paymentModel->amount;
-				if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_CREDIT){
+				if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_APPLY_CREDIT){
 					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
 				}
 				$paymentModel->invoiceId = $model->id;
@@ -111,7 +111,7 @@ class InvoiceController extends Controller {
 				}
 			
 			$creditPaymentId = $paymentModel->id;
-			if((int) $paymentMethodId === PaymentMethod::TYPE_CREDIT){
+			if((int) $paymentMethodId === PaymentMethod::TYPE_APPLY_CREDIT){
 				$paymentModel->id = null;
 				$paymentModel->isNewRecord = true;	
 				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;

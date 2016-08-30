@@ -65,8 +65,13 @@ class Payment extends \yii\db\ActiveRecord {
         return new PaymentQuery(get_called_class());
     }
 	
+	public function getUser() {
+		return $this->hasOne(User::className(), ['id' => 'user_id']);
+	}
+
 	public function getInvoice() {
-		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
+		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+			->viaTable('invoice_payment', ['payment_id' => 'id']);
 	}
 
 	public function getPaymentMethod() {

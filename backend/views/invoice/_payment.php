@@ -127,7 +127,7 @@ echo GridView::widget([
 			'displayed' => 1,
 		]) as $method):?>
 	<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
-	<?php if($method->name === 'Credit'):?>
+	<?php if($method->name === 'Apply Credit'):?>
 	<?php continue;?>
 	<?php endif;?>
 	<?php endif;?>
@@ -174,7 +174,7 @@ $(document).ready(function(){
 	 $('.payment-method-id').val($(this).data('payment-type-id'));
      $('#payment-method-btn-section .btn').removeClass('active');
      $(this).addClass('active');
-     if($(this).data('payment-type') == 'credit'){
+     if($(this).data('payment-type') == 'apply-credit'){
          $('#credit-modal').modal('show');
      }
   });
