@@ -45,6 +45,8 @@ class LessonSearch extends Lesson
      */
     public function search($params)
     {
+		$this->fromDate = date('1-m-Y');
+        $this->toDate = date('30-m-Y');
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
         $query = Lesson::find()->alias('l')->location($locationId);
