@@ -409,6 +409,7 @@ class InvoiceController extends Controller {
 		$invoiceModel = Invoice::findOne(['id' => $invoiceId]);
 		$invoiceModel->subTotal -= $lineItemModel->amount;
 		$invoiceModel->tax -= $lineItemModel->tax_rate;
+		$invoiceModel->total = $invoiceModel->subTotal + $invoiceModel->tax;
 		$invoiceModel->save();
 		$lineItemModel->delete();
 		Yii::$app->session->setFlash('alert', [
