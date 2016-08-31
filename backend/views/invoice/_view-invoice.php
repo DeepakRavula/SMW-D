@@ -163,8 +163,19 @@ use common\models\ItemType;
 						}else{
 							return $data->amount + $data->tax_rate;
 						}
-					}	
-                ]
+					},	
+					'headerOptions' => ['class' => 'text-right'],
+                    'contentOptions' => ['class' => 'text-right'],
+                ],
+				[
+					'class'=>'yii\grid\ActionColumn',
+					'template' => '{delete-line-item}',
+					'buttons' => [
+    					'delete-line-item' => function ($url, $model, $key) {
+  					      return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-line-item', 'id'=>$model->id]);
+    					},
+					]
+				]
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
