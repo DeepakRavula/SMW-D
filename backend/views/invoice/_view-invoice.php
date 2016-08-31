@@ -172,7 +172,7 @@ use common\models\ItemType;
 					'template' => '{delete-line-item}',
 					'buttons' => [
     					'delete-line-item' => function ($url, $model, $key) {
-  					      return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-line-item', 'id'=>$model->id]);
+  					      return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-line-item', 'id'=>$model->id, 'invoiceId' => $model->invoice->id]);
     					},
 					]
 				]
