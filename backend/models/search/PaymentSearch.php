@@ -45,6 +45,7 @@ class PaymentSearch extends Payment
         $query = Payment::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         if ( !($this->load($params) && $this->validate())) {
