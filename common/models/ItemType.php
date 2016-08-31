@@ -14,7 +14,7 @@ class ItemType extends \yii\db\ActiveRecord
 {
 	const TYPE_LESSON = 1;
 	const TYPE_MISC = 2;
-	
+	const TYPE_OPENING_BALANCE = 3;	
     /**
      * @inheritdoc
      */
