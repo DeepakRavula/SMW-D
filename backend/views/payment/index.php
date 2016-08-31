@@ -2,52 +2,29 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\bootstrap\Tabs;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Payments';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Reports';
 ?>
-<div class="payments-index">
+<div class="tabbable-panel">
+     <div class="tabbable-line">
+<?php 
 
-    <?php echo GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-			[
-				'label' => 'ID',
-				'value' => function($data){
-					return ! empty($data->invoicePayment->invoice->invoice_number) ? $data->invoicePayment->invoice->invoice_number : null;
-				}
-			],
-			[
-				'label' => 'Date',
-				'value' => function($data){
-					return Yii::$app->formatter->asDate($data->date);
-				}
-			],
-			[
-				'label' => 'Payment Method',
-				'value' => function($data){
-					return $data->paymentMethod->name;
-				}
-			],
-			[
-				'label' => 'Customer',
-				'value' => function($data){
-					return $data->user->publicIdentity;
-				}
-			],
-			[
-				'label' => 'Amount',
-				'value' => function($data) {
-						return $data->amount;
-                },
-				'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right'],
-				'enableSorting' => false,
-            ]
+$paymentContent =  $this->render('_index-payment', [
+    'searchModel' => $searchModel,
+    'dataProvider' => $dataProvider,
+]);
+
+?>
+
+<?php echo Tabs::widget([
+    'items' => [
+		[
+            'label' => 'Payments',
+            'content' => $paymentContent,
         ],
-    ]); ?>
-
-</div>
+    ],
+]);?>
