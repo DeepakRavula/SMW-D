@@ -52,7 +52,7 @@ $this->registerJs("
                 },
 			],
 			[
-				'label' => 'Lesson Status',
+				'label' => 'Status',
 				'value' => function($data) {
 					$status = null;
 					if (!empty($data->status)) {
@@ -62,13 +62,13 @@ $this->registerJs("
                 },
 			],
 			[
-				'label' => 'Invoice Status',
+				'label' => 'Invoiced ?',
 				'value' => function($data) {
 					$status = null;
 				if (!empty($data->invoice->status)) {
-					return $data->invoice->getStatus(); 
+					$status = 'Yes'; 
 				} else {
-					$status = 'Not Invoiced';
+					$status = 'No';
 				}
 				return $status;
 			},
