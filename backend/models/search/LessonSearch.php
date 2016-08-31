@@ -14,10 +14,9 @@ use common\models\Invoice;
  */
 class LessonSearch extends Lesson
 {
-	const INVOICE_STATUS_UNINVOICED = 'uninvoiced';
+	const STATUS_INVOICED = 'invoiced';
 
-	public $invoiceStatus = self::INVOICE_STATUS_UNINVOICED;
-	public $lessonStatus = Lesson::STATUS_COMPLETED;
+    public $lessonStatus = Lesson::STATUS_COMPLETED;
 
     /**
      * @inheritdoc
@@ -25,7 +24,7 @@ class LessonSearch extends Lesson
     public function rules()
     {
         return [
-            [['invoiceStatus', 'lessonStatus'], 'safe'],
+            [['lessonStatus'], 'safe'],
         ];
     }
 
@@ -54,46 +53,27 @@ class LessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
-		if( ! empty($this->invoiceStatus)) {
-			if($this->invoiceStatus === self::INVOICE_STATUS_UNINVOICED) {
-				$query->unInvoiced();
-			} else {
-				$invoiceStatus = $this->invoiceStatus;
-				$query->joinWith(['invoiceLineItem' => function($query) use($invoiceStatus){
-					$query->joinWith('invoice');
-					$query->where([
-						'invoice.status' => $invoiceStatus,
-						'invoice.type' => Invoice::TYPE_INVOICE
-					]);
-				}]);
-			}
-		}
-
-		if($this->lessonStatus == Lesson::STATUS_COMPLETED) {
+		
+        if($this->lessonStatus == Lesson::STATUS_COMPLETED) {
 			$query->completed();
 		} else if($this->lessonStatus === 'scheduled') {
 			$query->scheduled();
+		} else if($this->lessonStatus === self::STATUS_INVOICED) {
+			$query->invoiced();
+		} else if($this->lessonStatus === 'canceled') {
+			$query->andFilterWhere(['l.status' => Lesson::STATUS_CANCELED]);
 		}
 
         return $dataProvider;
     }
-
-	public static function invoiceStatuses() {
-		return [
-			'' => 'All',
-			self::INVOICE_STATUS_UNINVOICED => 'Not Invoiced',	
-			Invoice::STATUS_PAID => 'Paid',
-			Invoice::STATUS_OWING => 'Owing',
-
-		];
-	}
-
+	
 	public static function lessonStatuses() {
 		return [
-			'' => 'All',
+			'all' => 'All',
 			Lesson::STATUS_COMPLETED => 'Completed',
 			'scheduled' => 'Scheduled',
+            self::STATUS_INVOICED => 'Invoiced',
+            'canceled' => 'Canceled',
 		];
 	}
 }

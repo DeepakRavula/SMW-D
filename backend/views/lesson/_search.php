@@ -16,12 +16,9 @@ use yii\helpers\ArrayHelper;
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
-    <div class="row">
+    <div class="row">   
     <div class="col-md-3">
-        <?php echo $form->field($model, 'invoiceStatus')->dropDownList(LessonSearch::invoiceStatuses());?>
-    </div>
-    <div class="col-md-3">
-        <?php echo $form->field($model, 'lessonStatus')->dropDownList(LessonSearch::lessonStatuses());?>
+        <?php echo $form->field($model, 'lessonStatus')->dropDownList(LessonSearch::lessonStatuses())->label('Status');?>
     </div>
     
     <div class="col-md-3 form-group m-t-5">
