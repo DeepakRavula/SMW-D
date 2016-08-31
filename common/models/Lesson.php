@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use common\models\InvoiceType;
 use common\models\InvoiceLineItem;
+use common\models\LessonReschedule;
 use common\models\query\LessonQuery;
 /**
  * This is the model class for table "lesson".
@@ -145,11 +146,18 @@ class Lesson extends \yii\db\ActiveRecord
                 $this->updateAttributes(['date' => $fromDate->format('Y-m-d H:i:s'),
                     'status' => self::STATUS_CANCELED,
                 ]);
-                $this->id = null;
-                $this->isNewRecord = true;
-                $this->status = self::STATUS_SCHEDULED;  
-                $this->date = $toDate->format('Y-m-d H:i:s');
-                $this->save();        
+                $originalLessonId = $this->id;
+				$this->id = null;
+				$this->isNewRecord = true;
+				$this->date = $toDate->format('Y-m-d H:i:s');
+				$this->status = self::STATUS_SCHEDULED;
+				$this->save();
+
+				$lessonRescheduleModel = new LessonReschedule();
+				$lessonRescheduleModel->lesson_id = $originalLessonId;
+				$lessonRescheduleModel->lesson_reschedule_id = $this->id;
+				$lessonRescheduleModel->type = LessonReschedule::TYPE_PRIVATE_LESSON;	
+				$lessonRescheduleModel->save();
             }           
 		} 
             

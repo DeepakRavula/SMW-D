@@ -44,6 +44,14 @@ class LessonQuery extends \yii\db\ActiveQuery
 		
         return $this;
     }
+    
+    public function invoiced()
+    {
+		$this->joinWith('invoice')
+			->where(['not',['invoice.id' => null]]);
+		
+        return $this;
+    }
 
 	public function unInvoicedProForma()
     {
@@ -56,13 +64,15 @@ class LessonQuery extends \yii\db\ActiveQuery
     }
 
 	public function completed() {
-		$this->andFilterWhere(['<=', 'l.date', (new \DateTime())->format('Y-m-d')]);
+        $this->andFilterWhere(['<=', 'l.date', (new \DateTime())->format('Y-m-d')])
+             ->andFilterWhere(['not',['l.status' => Lesson::STATUS_CANCELED]]);
 		
 		return $this;
 	}
 
 	public function scheduled() {
-		$this->andFilterWhere(['>', 'l.date', (new \DateTime())->format('Y-m-d')]);
+		$this->andFilterWhere(['>', 'l.date', (new \DateTime())->format('Y-m-d')])
+             ->andFilterWhere(['not',['l.status' => Lesson::STATUS_CANCELED]]);
 		
 		return $this;
 	}
