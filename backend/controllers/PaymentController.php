@@ -123,6 +123,7 @@ class PaymentController extends Controller
 	public function actionPrint() {
 		$paymentDataProvider = new ActiveDataProvider([
 			'query' => Payment::find(),
+			'pagination' => false,
 		]);
 		$this->layout = "/print-invoice";
 		return $this->render('_print', [
