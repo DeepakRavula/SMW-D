@@ -5,6 +5,7 @@ use common\models\User;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use yii\jui\DatePicker;
 use wbraganca\selectivity\SelectivityWidget;
 
 /* @var $this yii\web\View */
@@ -43,9 +44,24 @@ use wbraganca\selectivity\SelectivityWidget;
 </div>
 <div class="clearfix"></div>
 	 <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
-    <?php ActiveForm::end(); ?>
-
-    <?php $form = ActiveForm::begin(); ?>
+    <div class="col-md-3">
+        <?php echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(), [
+            'options'=>[
+                'class' => 'form-control'
+            ]   
+        ]) ?>
+    </div>
+    <div class="col-md-3">
+        <?php echo $form->field($searchModel, 'toDate')->widget(DatePicker::classname(), [
+            'options'=>[
+                'class' => 'form-control'
+            ]
+        ]) ?>
+    </div>
+    <div class="col-md-3 form-group m-t-5">
+        <br>
+        <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
+    </div>
     <?php echo $this->render('_uninvoiced_lessons', [
 		'model'=>$model,
 		'form'=>$form,

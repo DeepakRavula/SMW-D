@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = 'create';
         'model' => $model,
 		'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
         'customer' => $customer,
+		'searchModel' => $searchModel,
     ]) ?>
 
 </div>

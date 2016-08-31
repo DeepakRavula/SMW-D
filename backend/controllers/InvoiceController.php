@@ -6,6 +6,7 @@ use Yii;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
+use backend\models\search\LessonSearch;
 use common\models\User;
 use common\models\Payment;
 use common\models\Lesson;
@@ -195,6 +196,8 @@ class InvoiceController extends Controller {
 	 * @return mixed
 	 */
 	public function actionCreate() {
+		$searchModel = new LessonSearch();
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);	
 		$invoice = new Invoice();
 		$request = Yii::$app->request;
 		$invoiceRequest = $request->get('Invoice');
@@ -296,6 +299,7 @@ class InvoiceController extends Controller {
 				'model' => $invoice,
 				'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
                 'customer' => (empty($customer)) ? [new User] : $customer,
+				'searchModel' => $searchModel,
 			]);
 		}
 	}
