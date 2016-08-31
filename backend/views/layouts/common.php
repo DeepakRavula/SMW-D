@@ -264,7 +264,7 @@ $bundle = BackendAsset::register($this);
 							
                         ],
 						[
-                            'label'=>Yii::t('backend', 'Payments'),
+                            'label'=>Yii::t('backend', 'Reports'),
                             'icon'=>'<i class="fa fa-money"></i>',
 							'url'=>['/payment/index'],    
                             'visible'=>Yii::$app->user->can('staffmember'),
