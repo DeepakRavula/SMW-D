@@ -17,6 +17,8 @@ class LessonSearch extends Lesson
 	const STATUS_INVOICED = 'invoiced';
 
     public $lessonStatus = Lesson::STATUS_COMPLETED;
+    public $fromDate = '1-1-2016';
+	public $toDate = '31-12-2016';
 
     /**
      * @inheritdoc
@@ -24,7 +26,7 @@ class LessonSearch extends Lesson
     public function rules()
     {
         return [
-            [['lessonStatus'], 'safe'],
+            [['lessonStatus', 'fromDate', 'toDate'], 'safe'],
         ];
     }
 
@@ -63,6 +65,11 @@ class LessonSearch extends Lesson
 		} else if($this->lessonStatus === 'canceled') {
 			$query->andFilterWhere(['l.status' => Lesson::STATUS_CANCELED]);
 		}
+        
+        $this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);
+		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
+        
+		$query->andWhere(['between','l.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 
         return $dataProvider;
     }
