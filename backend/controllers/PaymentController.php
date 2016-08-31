@@ -119,4 +119,14 @@ class PaymentController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+	public function actionPrint() {
+		$paymentDataProvider = new ActiveDataProvider([
+			'query' => Payment::find(),
+		]);
+		$this->layout = "/print-invoice";
+		return $this->render('_print', [
+			'paymentDataProvider' => $paymentDataProvider
+		]);
+	}
 }

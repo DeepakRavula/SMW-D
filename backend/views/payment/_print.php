@@ -4,20 +4,19 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $model common\models\Invoice */
 
 $total = 0;
-if (!empty($dataProvider->getModels())) {
-    foreach ($dataProvider->getModels() as $key => $val) {
+if (!empty($paymentDataProvider->getModels())) {
+    foreach ($paymentDataProvider->getModels() as $key => $val) {
         $total += $val->amount;
     }
 }
 ?>
-<div class="payments-index p-10">
-	<?= Html::a('<i class="fa fa-print"></i> Print', ['print'], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?> 
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-    <?php echo GridView::widget([
-        'dataProvider' => $dataProvider,
+<h3>Payments</h3>
+
+<?php echo GridView::widget([
+        'dataProvider' => $paymentDataProvider,
         'showFooter'=>TRUE,
         'footerRowOptions'=>['style'=>'font-weight:bold;text-align: right;'],
         'columns' => [
@@ -59,3 +58,9 @@ if (!empty($dataProvider->getModels())) {
     ]); ?>
 
 </div>
+
+<script>
+	$(document).ready(function(){
+		window.print();
+	});
+</script>
