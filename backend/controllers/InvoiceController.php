@@ -233,12 +233,19 @@ class InvoiceController extends Controller {
 		if (!empty($post['selection']) && is_array($post['selection'])) {
 			$invoice->type = $invoiceRequest['type'];
 			$lastInvoice = Invoice::lastInvoice($location_id);
-
-			if (empty($lastInvoice)) {
-				$invoiceNumber = 1;
-			} else {
-				$invoiceNumber = $lastInvoice->invoice_number + 1;
-			}
+			switch ($invoice->type) {
+                case Invoice::TYPE_PRO_FORMA_INVOICE:
+                    $invoiceNumber = 0;
+                    break;
+                case Invoice::TYPE_INVOICE:
+                    if (empty($lastInvoice)) {
+                        $invoiceNumber = 1;
+                    } else {
+                        $invoiceNumber = $lastInvoice->invoice_number + 1;
+                    }
+                    break;
+            }            
+			
 			$invoice->user_id = $customer->id;
 			$invoice->invoice_number = $invoiceNumber;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
