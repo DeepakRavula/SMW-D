@@ -225,6 +225,11 @@ class InvoiceController extends Controller {
 						->completed()
 						->orderBy('l.id ASC');
 				}
+                /*$date=date_create($searchModel->fromDate);
+                $searchModel->fromDate =  date_format($date,'Y-m-d');
+                $date=date_create($searchModel->toDate);
+                $searchModel->toDate =  date_format($date,'Y-m-d');
+                */
                 $query->andWhere(['between','l.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')]);
 			
 			$unInvoicedLessonsDataProvider = new ActiveDataProvider([

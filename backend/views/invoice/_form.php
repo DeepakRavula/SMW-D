@@ -11,6 +11,7 @@ use wbraganca\selectivity\SelectivityWidget;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 /* @var $form yii\bootstrap\ActiveForm */
+$customer_id = (empty($customer->id)) ? null : (string)$customer->id;
 ?>
 
 <div class="invoice-form">
@@ -66,7 +67,7 @@ use wbraganca\selectivity\SelectivityWidget;
     <?php $form = ActiveForm::begin([
 		'method' => 'post',
         'id' => 'customer-search-form',
-		'action' => Url::to('/invoice/create'),
+		'action' => Url::to('/invoice/create?Invoice%5Bcustomer_id%5D='.$customer_id.'&Invoice%5Btype%5D='.$model->type),
 	]); ?>
     <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
     <?php echo $this->render('_uninvoiced_lessons', [
