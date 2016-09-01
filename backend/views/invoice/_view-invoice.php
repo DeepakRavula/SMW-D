@@ -98,6 +98,7 @@ use common\models\ItemType;
   </div>
 	</div>
 	<?php endif;?>
+	<?php echo $this->render('_line-item') ?>
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
@@ -107,11 +108,19 @@ use common\models\ItemType;
 				[
 					'label' => 'Code',
 					'value' => function($data) {
-						if((int) $data->item_type_id === ItemType::TYPE_LESSON){
-							return 'LESSON';
-						}else{
-							return 'MISC';
+						$code = null;
+						switch($data->item_type_id){
+							case ItemType::TYPE_LESSON:
+								$code = 'LESSON';
+							break;
+							case ItemType::TYPE_MISC:
+								$code = 'MISC';
+							break;
+							case ItemType::TYPE_OPENING_BALANCE:
+								$code = 'Opening Balance';
+							break;
 						}
+						return $code;
 					}
 				],
 				[
@@ -163,13 +172,23 @@ use common\models\ItemType;
 						}else{
 							return $data->amount + $data->tax_rate;
 						}
-					}	
-                ]
+					},	
+					'headerOptions' => ['class' => 'text-right'],
+                    'contentOptions' => ['class' => 'text-right'],
+                ],
+				[
+					'class'=>'yii\grid\ActionColumn',
+					'template' => '{delete-line-item}',
+					'buttons' => [
+    					'delete-line-item' => function ($url, $model, $key) {
+  					      return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-line-item', 'id'=>$model->id, 'invoiceId' => $model->invoice->id]);
+    					},
+					]
+				]
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
 
-		<?php echo $this->render('_line-item') ?>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
@@ -202,7 +221,7 @@ use common\models\ItemType;
                     </tr> 
                      <tr>
                       <td>Tax</td>
-                      <td><?= $model->sumOfLineItemTax;?></td>
+                      <td><?= $model->tax;?></td>
                     </tr>
 					<tr>
                       <td>Paid</td>

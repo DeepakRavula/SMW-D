@@ -26,6 +26,7 @@ class Invoice extends \yii\db\ActiveRecord
 	const TYPE_PRO_FORMA_INVOICE = 1;
 	const TYPE_INVOICE = 2;
 	const ITEM_TYPE_MISC = 1;
+	const ITEM_TYPE_OPENING_BALANCE = 0;
 	
 	public $customer_id;
 	public $credit;
@@ -148,18 +149,6 @@ class Invoice extends \yii\db\ActiveRecord
 		return $customerBalance;
 	}
 
-	public function getSumOfLineItemTax(){
-		$lineItems = InvoiceLineItem::find()
-				->where(['invoice_id' => $this->id])
-				->all();
-		if(! empty($lineItems)){
-			$taxTotal = 0;
-			foreach($lineItems as $lineItem){
-				$taxTotal += $lineItem->tax_rate; 
-			}
-		}
-		return $taxTotal;
-	}
 	public function getStatus()
     {
 		$status = null;	
@@ -185,15 +174,9 @@ class Invoice extends \yii\db\ActiveRecord
    
     public static function lastInvoice($location_id){
         return $query = Invoice::find()->alias('i')
-            ->joinwith(['lineItems' => function($query) use($location_id){
-                $query->joinWith(['lesson' => function($query) use($location_id){
-                        $query->joinWith(['enrolment e' => function($query) use($location_id){
-                        	$query->where(['e.location_id' => $location_id]);
-						}]);
-                }]);
-            }])
-            ->orderBy(['i.id' => SORT_DESC])
-            ->one();
+                	->where(['i.location_id' => $location_id])
+	    	        ->orderBy(['i.id' => SORT_DESC])
+    	    	    ->one();
     }
 
 	public function beforeSave($insert) {

@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use common\models\InvoicePayment;
 use common\models\query\PaymentQuery;
+use common\models\Invoice;
 
 /**
  * This is the model class for table "payments".
@@ -103,12 +104,11 @@ class Payment extends \yii\db\ActiveRecord {
 	}
 
 	public function afterSave($insert, $changedAttributes) {
-	if($this->payment_method_id !== PaymentMethod::TYPE_ACCOUNT_ENTRY){
-			$invoicePaymentModel = new InvoicePayment();
-			$invoicePaymentModel->invoice_id = $this->invoiceId;
-			$invoicePaymentModel->payment_id = $this->id;
-			$invoicePaymentModel->save();
-	}
+		$invoicePaymentModel = new InvoicePayment();
+		$invoicePaymentModel->invoice_id = $this->invoiceId;
+		$invoicePaymentModel->payment_id = $this->id;
+		$invoicePaymentModel->save();
+		
 		parent::afterSave($insert, $changedAttributes);
 	}
 }

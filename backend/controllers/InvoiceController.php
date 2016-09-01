@@ -248,6 +248,7 @@ class InvoiceController extends Controller {
 			
 			$invoice->user_id = $customer->id;
 			$invoice->invoice_number = $invoiceNumber;
+			$invoice->location_id = $location_id;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->notes = $post['Invoice']['notes'];
@@ -345,8 +346,12 @@ class InvoiceController extends Controller {
 	protected function findModel($id) {
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
-		$model = Invoice::find()->location($locationId)
-						->where(['invoice.id' => $id])->one();
+		$model = Invoice::find()
+				->where([
+					'invoice.id' => $id,
+					'location_id' => $locationId,
+				])
+				->one();
 		if ($model !== null) {
 			return $model;
 		} else {
@@ -411,5 +416,19 @@ class InvoiceController extends Controller {
 		return $this->redirect(['view', 'id' => $model->id]);
 	}
 
+	public function actionDeleteLineItem($id, $invoiceId){
+		$lineItemModel = InvoiceLineItem::findOne(['id' => $id]);
+		$invoiceModel = Invoice::findOne(['id' => $invoiceId]);
+		$invoiceModel->subTotal -= $lineItemModel->amount;
+		$invoiceModel->tax -= $lineItemModel->tax_rate;
+		$invoiceModel->total = $invoiceModel->subTotal + $invoiceModel->tax;
+		$invoiceModel->save();
+		$lineItemModel->delete();
+		Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Line Item has been deleted successfully' 
+			]);	
+		return $this->redirect(['view', 'id' => $invoiceId]);	
+	}
 }
 				
