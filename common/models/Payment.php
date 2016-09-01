@@ -103,61 +103,13 @@ class Payment extends \yii\db\ActiveRecord {
 		return $this->hasOne(PaymentCheque::className(), ['payment_id' => 'id']);
 	}
 
-	public function beforeSave($insert) {
-		if((int) $this->payment_method_id === PaymentMethod::TYPE_ACCOUNT_ENTRY){
-			$session = Yii::$app->session;
-			$location_id = $session->get('location_id');
-			$lastInvoice = Invoice::lastInvoice($location_id);
-
-			if (empty($lastInvoice)) {
-				$invoiceNumber = 1;
-			} else {
-				$invoiceNumber = $lastInvoice->invoice_number + 1;
-			}
-			$invoice = new Invoice();
-			$invoice->user_id = $this->user_id;
-			$invoice->invoice_number = $invoiceNumber;
-			$invoice->type = Invoice::TYPE_INVOICE;
-			if($this->amount < 0){
-				$invoice->status = Invoice::STATUS_PAID;
-			} else {
-				$invoice->status = Invoice::STATUS_OWING;
-			}
-			$invoice->date = (new \DateTime())->format('Y-m-d');
-			$invoice->save();
-			
-			$subTotal = 0;
-			$taxAmount = 0;
-            $invoiceLineItem = new InvoiceLineItem();
-            $invoiceLineItem->invoice_id = $invoice->id;
-            $invoiceLineItem->item_id = ItemType::TYPE_OPENING_BALANCE;
-            $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
-			$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-			$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-			$invoiceLineItem->tax_rate = '0.00';
-			$invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-			$invoiceLineItem->tax_status = $taxStatus->name;
-            $invoiceLineItem->description = 'Opening Balance';
-            $invoiceLineItem->unit = '0.00';
-            $invoiceLineItem->amount = $this->amount;
-            $invoiceLineItem->save();
-            $subTotal += $invoiceLineItem->amount;                
-            $invoice = Invoice::findOne(['id' => $invoice->id]);
-            $invoice->subTotal = $subTotal;
-            $totalAmount = $subTotal + $taxAmount;
-            $invoice->tax = $taxAmount;
-            $invoice->total = $totalAmount;
-            $invoice->save();
-		}
-		parent::beforeSave($insert);
-	}
-	
 	public function afterSave($insert, $changedAttributes) {
-		$invoicePaymentModel = new InvoicePayment();
-		$invoicePaymentModel->invoice_id = $this->invoiceId;
-		$invoicePaymentModel->payment_id = $this->id;
-		$invoicePaymentModel->save();
-			
+		if((int) $this->payment_method_id === PaymentMethod::TYPE_ACCOUNT_ENTRY && $this->amount > 0){
+			$invoicePaymentModel = new InvoicePayment();
+			$invoicePaymentModel->invoice_id = $this->invoiceId;
+			$invoicePaymentModel->payment_id = $this->id;
+			$invoicePaymentModel->save();
+		}
 		parent::afterSave($insert, $changedAttributes);
 	}
 }

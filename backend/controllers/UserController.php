@@ -204,7 +204,48 @@ class UserController extends Controller {
 		]);
  		$paymentModel = new Payment();
 		if ($paymentModel->load(Yii::$app->request->post())) {
+			$lastInvoice = Invoice::lastInvoice($location_id);
+
+			if (empty($lastInvoice)) {
+				$invoiceNumber = 1;
+			} else {
+				$invoiceNumber = $lastInvoice->invoice_number + 1;
+			}
+			$invoice = new Invoice();
+			$invoice->user_id = $model->id;
+			$invoice->location_id = $location_id;
+			$invoice->invoice_number = $invoiceNumber;
+			$invoice->type = Invoice::TYPE_INVOICE;
+			if($paymentModel->amount < 0){
+				$invoice->status = Invoice::STATUS_CREDIT;
+			} else {
+				$invoice->status = Invoice::STATUS_OWING;
+			}
+			$invoice->date = (new \DateTime())->format('Y-m-d');
+			$invoice->save();
+
+            $invoiceLineItem = new InvoiceLineItem();
+            $invoiceLineItem->invoice_id = $invoice->id;
+            $invoiceLineItem->item_id = Invoice::ITEM_TYPE_OPENING_BALANCE;
+            $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
+			$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
+			$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
+			$invoiceLineItem->tax_rate = '0.00';
+			$invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
+			$invoiceLineItem->tax_status = $taxStatus->name;
+            $invoiceLineItem->description = 'Opening Balance';
+            $invoiceLineItem->unit = 1;
+            $invoiceLineItem->amount = abs($paymentModel->amount);
+            $invoiceLineItem->save();
+			
+            $invoice = Invoice::findOne(['id' => $invoice->id]);
+            $invoice->subTotal = $invoiceLineItem->amount;
+            $invoice->tax = $invoiceLineItem->tax_rate;
+            $invoice->total = $invoice->subTotal + $invoice->tax;
+            $invoice->save();
+			
 			$paymentModel->user_id = $model->id;
+			$paymentModel->invoiceId = $invoice->id;
 			$paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
 			if($paymentModel->amount < 0){
 				$paymentModel->amount = abs($paymentModel->amount);
@@ -216,9 +257,9 @@ class UserController extends Controller {
 			$paymentModel->save();
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
-				'body' => 'Opening balance has been recorded successfully'
+				'body' => 'Invoice has been created successfully'
 			]);
-			return $this->redirect(['view', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'opening-balance']);
+			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
 		}
 
 		$openingBalancePaymentModel = Payment::find()

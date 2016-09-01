@@ -26,6 +26,7 @@ class Invoice extends \yii\db\ActiveRecord
 	const TYPE_PRO_FORMA_INVOICE = 1;
 	const TYPE_INVOICE = 2;
 	const ITEM_TYPE_MISC = 1;
+	const ITEM_TYPE_OPENING_BALANCE = 0;
 	
 	public $customer_id;
 	public $credit;
