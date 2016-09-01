@@ -21,7 +21,7 @@ $this->registerJs("
 <?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
-	'dataProvider' => $lessonDataProvider,
+	'dataProvider' => $groupLessonDataProvider,
 	'options' => ['class' => 'col-md-12'],
 	'tableOptions' =>['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray' ],

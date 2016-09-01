@@ -16,7 +16,7 @@ $indexPrivateLesson =  $this->render('_index-private-lesson', [
 ]);
 
 $indexGroupLesson =  $this->render('_index-group-lesson', [
-			'lessonDataProvider' => $lessonDataProvider,
+			'groupLessonDataProvider' => $groupLessonDataProvider,
 ]);
 
 ?>

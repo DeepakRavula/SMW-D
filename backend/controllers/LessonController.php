@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\search\LessonSearch;
+use backend\models\search\GroupLessonSearch;
 use common\models\Lesson;
 use common\models\GroupLesson;
 use common\models\Invoice;
@@ -42,21 +43,16 @@ class LessonController extends Controller
         $searchModel = new LessonSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-		$location_id = Yii::$app->session->get('location_id');
-		$query = GroupLesson::find()
-				->joinWith('groupCourse')
-				->where(['location_id' => $location_id]);				
-			$lessonDataProvider = new ActiveDataProvider([
-			'query' => $query,
-		]);
+		$groupLessonSearchModel = new GroupLessonSearch();
+        $groupLessonDataProvider = $groupLessonSearchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-			'lessonDataProvider' => $lessonDataProvider,
+            'groupLessonSearchModel' => $groupLessonSearchModel,
+			'groupLessonDataProvider' =>  $groupLessonDataProvider,
         ]);
     }
-
     /**
      * Displays a single Lesson model.
      * @param integer $id

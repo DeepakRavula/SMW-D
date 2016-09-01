@@ -41,14 +41,17 @@ class GroupLessonSearch extends GroupLesson
      */
     public function search($params)
     {
-        $query = GroupLesson::find();
+        $location_id = Yii::$app->session->get('location_id');
+		$query = GroupLesson::find()
+				->joinWith('groupCourse')
+				->where(['location_id' => $location_id]);	
 
-        $dataProvider = new ActiveDataProvider([
+        $groupLessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         if (!($this->load($params) && $this->validate())) {
-            return $dataProvider;
+            return $groupLessonDataProvider;
         }
 
         $query->andFilterWhere([
@@ -59,6 +62,6 @@ class GroupLessonSearch extends GroupLesson
             'status' => $this->status,
         ]);
 
-        return $dataProvider;
+        return $groupLessonDataProvider;
     }
 }
