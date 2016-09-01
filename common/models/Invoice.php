@@ -148,18 +148,6 @@ class Invoice extends \yii\db\ActiveRecord
 		return $customerBalance;
 	}
 
-	public function getSumOfLineItemTax(){
-		$lineItems = InvoiceLineItem::find()
-				->where(['invoice_id' => $this->id])
-				->all();
-		if(! empty($lineItems)){
-			$taxTotal = 0;
-			foreach($lineItems as $lineItem){
-				$taxTotal += $lineItem->tax_rate; 
-			}
-		}
-		return $taxTotal;
-	}
 	public function getStatus()
     {
 		$status = null;	

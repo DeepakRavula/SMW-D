@@ -98,6 +98,7 @@ use common\models\ItemType;
   </div>
 	</div>
 	<?php endif;?>
+	<?php echo $this->render('_line-item') ?>
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
@@ -180,7 +181,6 @@ use common\models\ItemType;
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
 
-		<?php echo $this->render('_line-item') ?>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
@@ -213,7 +213,7 @@ use common\models\ItemType;
                     </tr> 
                      <tr>
                       <td>Tax</td>
-                      <td><?= $model->sumOfLineItemTax;?></td>
+                      <td><?= $model->tax;?></td>
                     </tr>
 					<tr>
                       <td>Paid</td>

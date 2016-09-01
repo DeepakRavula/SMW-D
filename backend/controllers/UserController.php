@@ -177,10 +177,10 @@ class UserController extends Controller {
 		]);
 		
 		$invoiceQuery = Invoice::find()
-				->location($location_id)
 				->student($id)
                 ->where([
-					'invoice.type' => Invoice::TYPE_INVOICE
+					'invoice.type' => Invoice::TYPE_INVOICE,
+					'invoice.location_id' => $location_id
 				]);
 				
 		$invoiceDataProvider = new ActiveDataProvider([
@@ -188,10 +188,10 @@ class UserController extends Controller {
 		]);
 
 		$proFormaInvoiceQuery = Invoice::find()
-				->location($location_id)
 				->student($id)
                 ->where([
-					'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE
+					'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
+					'invoice.location_id' => $location_id
 				]);
 				
 		$proFormaInvoiceDataProvider = new ActiveDataProvider([

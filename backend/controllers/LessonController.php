@@ -160,6 +160,7 @@ class LessonController extends Controller
 		if($lessonDate <= $currentDate){
 			$invoice = new Invoice();
 			$invoice->user_id = $model->enrolment->student->customer->id; 
+			$invoice->location_id = $location_id;
 			$invoice->invoice_number = $invoiceNumber;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->status = Invoice::STATUS_OWING;
