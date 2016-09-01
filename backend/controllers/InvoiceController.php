@@ -233,9 +233,14 @@ class InvoiceController extends Controller {
 		if (!empty($post['selection']) && is_array($post['selection'])) {
 			$invoice->type = $invoiceRequest['type'];
 			$lastInvoice = Invoice::lastInvoice($location_id);
+			$lastProFormaInvoice = Invoice::lastProFormaInvoice($location_id);
 			switch ($invoice->type) {
                 case Invoice::TYPE_PRO_FORMA_INVOICE:
-                    $invoiceNumber = 0;
+                    if (empty($lastProFormaInvoice)) {
+                        $invoiceNumber = 1;
+                    } else {
+                        $invoiceNumber = $lastProFormaInvoice->invoice_number + 1;
+                    }
                     break;
                 case Invoice::TYPE_INVOICE:
                     if (empty($lastInvoice)) {
