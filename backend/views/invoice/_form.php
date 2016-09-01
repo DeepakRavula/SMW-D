@@ -67,7 +67,7 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
     <?php $form = ActiveForm::begin([
 		'method' => 'post',
         'id' => 'customer-search-form',
-		'action' => Url::to('/invoice/create?Invoice%5Bcustomer_id%5D='.$customer_id.'&Invoice%5Btype%5D='.$model->type),
+		'action' => Url::to(['/invoice/create','Invoice[customer_id]' => $customer_id, 'Invoice[type]' => $model->type]),
 	]); ?>
     <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
     <?php echo $this->render('_uninvoiced_lessons', [
