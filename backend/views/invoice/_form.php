@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use common\models\User;
+use common\models\Invoice;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
@@ -24,7 +25,7 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
 
 <div class="row">
 <div class="col-md-4">
-    <?php $programs = ArrayHelper::map(User::find()
+    <?php $customers = ArrayHelper::map(User::find()
         ->join('INNER JOIN','user_location','user_location.user_id = user.id')
         ->join('INNER JOIN','rbac_auth_assignment','rbac_auth_assignment.user_id = user.id')
         ->where(['user_location.location_id' => Yii::$app->session->get('location_id'),'rbac_auth_assignment.item_name' => 'customer'])			
@@ -35,7 +36,7 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
             'pluginOptions' => [
                 'allowClear' => true,
                 'multiple' => false,
-                'items' => $programs,
+                'items' => $customers,
                 'value' => (empty($customer->id)) ? null : (string)$customer->id,
                 'placeholder' => 'Select Customer',
             ]
@@ -45,6 +46,7 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
 </div>
 <div class="clearfix"></div>
 	 <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
+<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
     <div class="col-md-3">
         <?php echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(), [
             'options'=>[
@@ -63,6 +65,7 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
         <br>
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>
+<?php endif;?>
     <?php ActiveForm::end(); ?>
     <?php $form = ActiveForm::begin([
 		'method' => 'post',
