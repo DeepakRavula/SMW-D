@@ -17,8 +17,9 @@ class LessonSearch extends Lesson
 	const STATUS_INVOICED = 'invoiced';
 
     public $lessonStatus = Lesson::STATUS_COMPLETED;
-    public $fromDate = '1-1-2016';
-	public $toDate = '31-12-2016';
+    public $fromDate;
+	public $toDate;
+    public $type;
 
     /**
      * @inheritdoc
@@ -26,7 +27,7 @@ class LessonSearch extends Lesson
     public function rules()
     {
         return [
-            [['lessonStatus', 'fromDate', 'toDate'], 'safe'],
+            [['lessonStatus', 'fromDate', 'toDate', 'type'], 'safe'],
         ];
     }
 
@@ -45,8 +46,12 @@ class LessonSearch extends Lesson
      */
     public function search($params)
     {
-		$this->fromDate = date('1-m-Y');
-        $this->toDate = date('30-m-Y');
+        $currentDate = new \DateTime();
+        $currentDate->modify('first day of this month');
+		$this->fromDate = $currentDate->format('d-m-Y');
+        $currentDate->modify('last day of this month');
+        $this->toDate = $currentDate->format('d-m-Y');
+        
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
         $query = Lesson::find()->alias('l')->location($locationId);

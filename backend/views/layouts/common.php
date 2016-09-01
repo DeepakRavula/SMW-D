@@ -11,6 +11,7 @@ use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use common\models\User;
 use common\models\Program;
+use common\models\LessonReschedule;
 use common\models\Location;
 use common\models\Invoice;
 use common\models\UserLocation;
@@ -250,7 +251,7 @@ $bundle = BackendAsset::register($this);
                         ],
 						[
                             'label'=>Yii::t('backend', 'Lessons'),
-                            'url' => '/lesson/index',
+                            'url' => ['/lesson/index','LessonSearch[type]' => LessonReschedule::TYPE_PRIVATE_LESSON],
                             'icon'=>'<i class="fa fa-music"></i>',
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='lesson') ? true : false,

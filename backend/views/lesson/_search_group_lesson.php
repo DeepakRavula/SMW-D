@@ -36,6 +36,7 @@ use backend\models\search\GroupLessonSearch;
     </div>
     <div class="col-md-3 form-group m-t-5">
         <br>
+        <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>
     </div>

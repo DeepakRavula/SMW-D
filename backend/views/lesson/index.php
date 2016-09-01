@@ -1,6 +1,7 @@
 <?php
 
 use yii\bootstrap\Tabs;
+use common\models\LessonReschedule;
 
 $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
@@ -26,17 +27,15 @@ $indexGroupLesson =  $this->render('_index-group-lesson', [
     'items' => [
 		[
             'label' => 'Private Lessons',
-            'content' => $indexPrivateLesson,
-			'options' => [
-				'id' => 'private-lesson',
-			]
+           'content' => (int) $searchModel->type === LessonReschedule::TYPE_PRIVATE_LESSON  ? $indexPrivateLesson : null,
+			'url'=>['/lesson/index','LessonSearch[type]' => LessonReschedule::TYPE_PRIVATE_LESSON],
+			'active' => (int) $searchModel->type === LessonReschedule::TYPE_PRIVATE_LESSON ,    
         ],
 		[
             'label' => 'Group Lessons',
-            'content' => $indexGroupLesson ,
-			'options' => [
-				'id' => 'group-lesson',
-			]
+            'content' => (int) $groupLessonSearchModel->type === LessonReschedule::TYPE_GROUP_LESSON  ? $indexGroupLesson : null,
+			'url'=>['/lesson/index','GroupLessonSearch[type]' => LessonReschedule::TYPE_GROUP_LESSON],
+			'active' => (int) $groupLessonSearchModel->type === LessonReschedule::TYPE_GROUP_LESSON ,            
         ],
     ],
 ]);?>

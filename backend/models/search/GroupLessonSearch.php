@@ -16,6 +16,7 @@ class GroupLessonSearch extends GroupLesson
     public $lessonStatus = Lesson::STATUS_COMPLETED;
     public $fromDate;
     public $toDate;
+    public $type;
     /**
      * @inheritdoc
      */
@@ -23,7 +24,7 @@ class GroupLessonSearch extends GroupLesson
     {
         return [
             [['id', 'course_id', 'teacher_id', 'status'], 'integer'],
-            [['date', 'fromDate', 'toDate', 'lessonStatus'], 'safe'],
+            [['date', 'fromDate', 'toDate', 'lessonStatus', 'type'], 'safe'],
         ];
     }
 
@@ -45,9 +46,12 @@ class GroupLessonSearch extends GroupLesson
      */
     public function search($params)
     { 
-        $currentMonth = new \DateTime();
-		$this->fromDate = $currentMonth->format('1-m-Y');
-        $this->toDate = $currentMonth->format('30-m-Y');
+        $currentDate = new \DateTime();
+        $currentDate->modify('first day of this month');
+		$this->fromDate = $currentDate->format('d-m-Y');
+        $currentDate->modify('last day of this month');
+        $this->toDate = $currentDate->format('d-m-Y');
+        
         $location_id = Yii::$app->session->get('location_id');
 		$query = GroupLesson::find()
 				->joinWith('groupCourse')
