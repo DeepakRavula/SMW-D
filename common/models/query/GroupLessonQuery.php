@@ -1,7 +1,7 @@
 <?php
 
 namespace common\models\query;
-
+use common\models\Lesson;
 /**
  * This is the ActiveQuery class for [[\common\models\GroupLesson]].
  *
@@ -31,6 +31,20 @@ class GroupLessonQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+    
+    public function completed() {
+        $this->andFilterWhere(['<=', 'date', (new \DateTime())->format('Y-m-d')])
+             ->andFilterWhere(['not',['status' => Lesson::STATUS_CANCELED]]);
+		
+		return $this;
+	}
+
+	public function scheduled() {
+		$this->andFilterWhere(['>', 'date', (new \DateTime())->format('Y-m-d')])
+             ->andFilterWhere(['not',['status' => Lesson::STATUS_CANCELED]]);
+		
+		return $this;
+	}
 
 	public function location($locationId) {
 		$this->joinWith(['groupCourse gc' => function($query) use($locationId){

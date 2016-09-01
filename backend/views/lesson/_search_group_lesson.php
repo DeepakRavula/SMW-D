@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
+use backend\models\search\GroupLessonSearch;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\UserSearch */
@@ -16,6 +17,9 @@ use yii\jui\DatePicker;
         'method' => 'get',
     ]); ?>
     <div class="row"> 
+    <div class="col-md-3">
+        <?php echo $form->field($model, 'lessonStatus')->dropDownList(GroupLessonSearch::lessonStatuses())->label('Status');?>
+    </div>
     <div class="col-md-3">
         <?php echo $form->field($model, 'fromDate')->widget(DatePicker::classname(), [
             'options'=>[
