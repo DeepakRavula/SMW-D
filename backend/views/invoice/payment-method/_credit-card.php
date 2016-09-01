@@ -27,6 +27,9 @@ use common\models\BalanceLog;
 			?>
    			<?php echo $form->field($model, 'amount')->textInput(['value' => $amount])->label('Amount Needed') ?>
         </div>
+		<div class="col-xs-3">
+   			<?php echo $form->field($model, 'reference')->textInput()->label('Reference Number') ?>
+        </div>
 		<?php echo $form->field($model, 'payment_method_id')->hiddenInput(['class' => 'payment-method-id'])->label(false); ?>
 	</div>
     <div class="form-group">

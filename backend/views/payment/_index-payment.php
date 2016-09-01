@@ -46,6 +46,12 @@ if (!empty($dataProvider->getModels())) {
 				}
 			],
 			[
+				'label' => 'Reference Number',
+				'value' => function($data){
+					return $data->reference;
+				}
+			],
+			[
 				'label' => 'Amount',
 				'value' => function($data) {
 						return $data->amount;

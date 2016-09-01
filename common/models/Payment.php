@@ -43,7 +43,7 @@ class Payment extends \yii\db\ActiveRecord {
 			[['user_id', 'payment_method_id', 'amount','date'], 'required'],
 			[['user_id', 'amount', 'payment_method_id'], 'integer'],
 			[['amount'], 'number'],
-			[['sourceType','sourceId'],'safe']
+			[['sourceType','sourceId', 'reference'],'safe']
 		];
 	}
 
