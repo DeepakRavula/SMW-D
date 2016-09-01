@@ -108,11 +108,19 @@ use common\models\ItemType;
 				[
 					'label' => 'Code',
 					'value' => function($data) {
-						if((int) $data->item_type_id === ItemType::TYPE_LESSON){
-							return 'LESSON';
-						}else{
-							return 'MISC';
+						$code = null;
+						switch($data->item_type_id){
+							case ItemType::TYPE_LESSON:
+								$code = 'LESSON';
+							break;
+							case ItemType::TYPE_MISC:
+								$code = 'MISC';
+							break;
+							case ItemType::TYPE_OPENING_BALANCE:
+								$code = 'Opening Balance';
+							break;
 						}
+						return $code;
 					}
 				],
 				[

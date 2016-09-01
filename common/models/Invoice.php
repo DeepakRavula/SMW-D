@@ -174,15 +174,9 @@ class Invoice extends \yii\db\ActiveRecord
    
     public static function lastInvoice($location_id){
         return $query = Invoice::find()->alias('i')
-            ->joinwith(['lineItems' => function($query) use($location_id){
-                $query->joinWith(['lesson' => function($query) use($location_id){
-                        $query->joinWith(['enrolment e' => function($query) use($location_id){
-                        	$query->where(['e.location_id' => $location_id]);
-						}]);
-                }]);
-            }])
-            ->orderBy(['i.id' => SORT_DESC])
-            ->one();
+                	->where(['i.location_id' => $location_id])
+	    	        ->orderBy(['i.id' => SORT_DESC])
+    	    	    ->one();
     }
 
 	public function beforeSave($insert) {

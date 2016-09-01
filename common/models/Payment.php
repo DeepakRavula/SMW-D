@@ -104,12 +104,11 @@ class Payment extends \yii\db\ActiveRecord {
 	}
 
 	public function afterSave($insert, $changedAttributes) {
-		if((int) $this->payment_method_id === PaymentMethod::TYPE_ACCOUNT_ENTRY && $this->amount > 0){
-			$invoicePaymentModel = new InvoicePayment();
-			$invoicePaymentModel->invoice_id = $this->invoiceId;
-			$invoicePaymentModel->payment_id = $this->id;
-			$invoicePaymentModel->save();
-		}
+		$invoicePaymentModel = new InvoicePayment();
+		$invoicePaymentModel->invoice_id = $this->invoiceId;
+		$invoicePaymentModel->payment_id = $this->id;
+		$invoicePaymentModel->save();
+		
 		parent::afterSave($insert, $changedAttributes);
 	}
 }

@@ -244,17 +244,15 @@ class UserController extends Controller {
             $invoice->total = $invoice->subTotal + $invoice->tax;
             $invoice->save();
 			
-			$paymentModel->user_id = $model->id;
-			$paymentModel->invoiceId = $invoice->id;
-			$paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
 			if($paymentModel->amount < 0){
+				$paymentModel->user_id = $model->id;
+				$paymentModel->invoiceId = $invoice->id;
+				$paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
 				$paymentModel->amount = abs($paymentModel->amount);
-			}else{
-				$paymentModel->amount = -abs($paymentModel->amount);
+				$date = \DateTime::createFromFormat('d-m-Y', $paymentModel->date);
+				$paymentModel->date = $date->format('Y-m-d H:i:s');
+				$paymentModel->save();
 			}
-			$date = \DateTime::createFromFormat('d-m-Y', $paymentModel->date);
-    		$paymentModel->date = $date->format('Y-m-d H:i:s');
-			$paymentModel->save();
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Invoice has been created successfully'
