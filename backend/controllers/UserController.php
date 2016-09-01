@@ -230,7 +230,7 @@ class UserController extends Controller {
             $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
 			$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
 			$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-			$invoiceLineItem->tax_rate = '0.00';
+			$invoiceLineItem->tax_rate = 0.00;
 			$invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
 			$invoiceLineItem->tax_status = $taxStatus->name;
             $invoiceLineItem->description = 'Opening Balance';
@@ -297,6 +297,7 @@ class UserController extends Controller {
 
 		$invoiceLineItemModel = new InvoiceLineItem();
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
+			$invoice = new Invoice();
 			$lastInvoice = Invoice::lastInvoice($location_id);
 
 			if (empty($lastInvoice)) {
@@ -306,6 +307,7 @@ class UserController extends Controller {
 			}
 			$invoice->user_id = $model->id;
 			$invoice->invoice_number = $invoiceNumber;
+			$invoice->location_id = $location_id;
 			$invoice->type = Invoice::TYPE_INVOICE;
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
