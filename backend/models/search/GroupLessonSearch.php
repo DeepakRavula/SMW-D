@@ -46,11 +46,12 @@ class GroupLessonSearch extends GroupLesson
      */
     public function search($params)
     { 
-        $currentDate = new \DateTime();
-        $currentDate->modify('first day of this month');
-		$this->fromDate = $currentDate->format('d-m-Y');
-        $currentDate->modify('last day of this month');
-        $this->toDate = $currentDate->format('d-m-Y');
+        $previousMonth = new \DateTime();
+        $previousMonth->modify('first day of last month');
+		$this->fromDate = $previousMonth->format('d-m-Y');
+        $currentMonth = new \DateTime();
+        $currentMonth->modify('last day of this month');
+        $this->toDate = $currentMonth->format('d-m-Y');
         
         $location_id = Yii::$app->session->get('location_id');
 		$query = GroupLesson::find()
