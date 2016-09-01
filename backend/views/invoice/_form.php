@@ -19,7 +19,7 @@ use wbraganca\selectivity\SelectivityWidget;
 		'method' => 'get',
         'id' => 'customer-search-form',
 		'action' => Url::to('/invoice/create'),
-		]); ?>
+	]); ?>
 
 <div class="row">
 <div class="col-md-4">
@@ -62,6 +62,13 @@ use wbraganca\selectivity\SelectivityWidget;
         <br>
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>
+    <?php ActiveForm::end(); ?>
+    <?php $form = ActiveForm::begin([
+		'method' => 'post',
+        'id' => 'customer-search-form',
+		'action' => Url::to('/invoice/create'),
+	]); ?>
+    <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
     <?php echo $this->render('_uninvoiced_lessons', [
 		'model'=>$model,
 		'form'=>$form,
