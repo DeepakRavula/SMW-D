@@ -31,10 +31,10 @@ use yii\helpers\Html;
         </div>		
     </div>
 </div>
-<?php if( ! empty($unInvoicedLessonsDataProvider)): ?>
+<?php if( ! empty($dataProvider)): ?>
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php echo GridView::widget([
-        'dataProvider' => $unInvoicedLessonsDataProvider,
+        'dataProvider' => $dataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [

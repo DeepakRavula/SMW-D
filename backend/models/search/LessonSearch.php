@@ -16,17 +16,18 @@ class LessonSearch extends Lesson
 {
 	const STATUS_INVOICED = 'invoiced';
 
-    public $lessonStatus = Lesson::STATUS_COMPLETED;
+    public $lessonStatus;
     public $fromDate = '1-1-2016';
 	public $toDate = '31-12-2016';
-
+	public $customerId;
+	public $invoiceType;
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['lessonStatus', 'fromDate', 'toDate'], 'safe'],
+            [['lessonStatus', 'fromDate', 'toDate', 'customerId', 'invoiceType'], 'safe'],
         ];
     }
 
@@ -58,6 +59,19 @@ class LessonSearch extends Lesson
             return $dataProvider;
         }
 		
+		if( ! empty($this->customerId)){
+			$query->student($this->customerId);
+		}
+		if( ! empty($this->invoiceType)){
+			if((int) $this->invoiceType === Invoice::TYPE_PRO_FORMA_INVOICE){
+				$query->unInvoicedProForma()
+					->scheduled();
+			}else{
+				$query->unInvoiced()
+					->completed()
+					->orderBy('l.id ASC');
+			}
+		}
         if($this->lessonStatus == Lesson::STATUS_COMPLETED) {
 			$query->completed();
 		} else if($this->lessonStatus === 'scheduled') {

@@ -197,12 +197,18 @@ class InvoiceController extends Controller {
 	 */
 	public function actionCreate() {
 		$searchModel = new LessonSearch();
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);	
+		$params = Yii::$app->request->queryParams;
+		if( ! empty($params['Invoice']['customer_id'])){
+			$params['LessonSearch']['customerId'] = $params['Invoice']['customer_id']; 
+		}
+		if( ! empty($params['Invoice']['type'])){
+			$params['LessonSearch']['invoiceType'] = $params['Invoice']['type']; 
+		}
+		$dataProvider = $searchModel->search($params);	
 		$invoice = new Invoice();
 		$request = Yii::$app->request;
 		$invoiceRequest = $request->get('Invoice');
 		$invoice->type = $invoiceRequest['type'];
-		$unInvoicedLessonsDataProvider = null;
 		$location_id = Yii::$app->session->get('location_id');
 
 		if (isset($invoiceRequest['customer_id'])) {
@@ -214,23 +220,10 @@ class InvoiceController extends Controller {
             
 			$currentDate = new \DateTime();
 			$invoice->customer_id = $customer->id;
-			$query = Lesson::find()->alias('l')
-					->location($location_id)
-					->student($customer->id);
-				if((int) $invoice->type === Invoice::TYPE_PRO_FORMA_INVOICE){
-					$query->unInvoicedProForma()
-						->scheduled()
-                		->andWhere(['between','l.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')]);
-				}else{
-					$query->unInvoiced()
-						->completed()
-						->orderBy('l.id ASC');
-				}
+			$searchModel->customerId = $customer->id; 
+			$searchModel->invoiceType = $invoice->type;	
 			
-			$unInvoicedLessonsDataProvider = new ActiveDataProvider([
-				'query' => $query,
-                'pagination' => false,
-			]);
+			
 		}
 
 		$post = $request->post();
@@ -298,7 +291,7 @@ class InvoiceController extends Controller {
 		} else {
 			return $this->render('create', [
 				'model' => $invoice,
-				'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+				'dataProvider' => $dataProvider,
                 'customer' => (empty($customer)) ? [new User] : $customer,
 				'searchModel' => $searchModel,
 			]);

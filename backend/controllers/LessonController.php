@@ -40,6 +40,7 @@ class LessonController extends Controller
     public function actionIndex()
     {
         $searchModel = new LessonSearch();
+		$searchModel->lessonStatus = Lesson::STATUS_COMPLETED;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		$location_id = Yii::$app->session->get('location_id');

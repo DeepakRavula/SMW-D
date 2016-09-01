@@ -76,7 +76,8 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
     <?php echo $this->render('_uninvoiced_lessons', [
 		'model'=>$model,
 		'form'=>$form,
-		'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+		'dataProvider' => $dataProvider,
+		'searchModel' => $searchModel,
         'customer' => $customer
     ]) ?>
 
