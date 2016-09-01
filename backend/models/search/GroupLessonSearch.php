@@ -11,7 +11,9 @@ use common\models\GroupLesson;
  * GroupLessonSearch represents the model behind the search form about `common\models\GroupLesson`.
  */
 class GroupLessonSearch extends GroupLesson
-{
+{ 
+    public $fromDate;
+    public $toDate;
     /**
      * @inheritdoc
      */
@@ -19,7 +21,7 @@ class GroupLessonSearch extends GroupLesson
     {
         return [
             [['id', 'course_id', 'teacher_id', 'status'], 'integer'],
-            [['date'], 'safe'],
+            [['date', 'fromDate', 'toDate'], 'safe'],
         ];
     }
 
@@ -40,7 +42,10 @@ class GroupLessonSearch extends GroupLesson
      * @return ActiveDataProvider
      */
     public function search($params)
-    {
+    { 
+        $currentMonth = new \DateTime();
+		$this->fromDate = $currentMonth->format('1-m-Y');
+        $this->toDate = $currentMonth->format('30-m-Y');
         $location_id = Yii::$app->session->get('location_id');
 		$query = GroupLesson::find()
 				->joinWith('groupCourse')
@@ -62,6 +67,11 @@ class GroupLessonSearch extends GroupLesson
             'status' => $this->status,
         ]);
 
+        $this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);
+		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
+        
+		$query->andWhere(['between','date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+        
         return $groupLessonDataProvider;
     }
 }

@@ -19,6 +19,7 @@ $this->registerJs("
 ?>
 <div class="group-lesson-index p-10">
 <?php yii\widgets\Pjax::begin() ?>
+<?php echo $this->render('_search_group_lesson', ['model' => $groupLessonSearchModel]); ?>
 <?php
 echo GridView::widget([
 	'dataProvider' => $groupLessonDataProvider,
