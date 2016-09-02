@@ -174,7 +174,14 @@ class Invoice extends \yii\db\ActiveRecord
    
     public static function lastInvoice($location_id){
         return $query = Invoice::find()->alias('i')
-                	->where(['i.location_id' => $location_id])
+                	->where(['i.location_id' => $location_id, 'i.type' => self::TYPE_INVOICE])
+	    	        ->orderBy(['i.id' => SORT_DESC])
+    	    	    ->one();
+    }
+
+	public static function lastProFormaInvoice($location_id){
+        return $query = Invoice::find()->alias('i')
+                	->where(['i.location_id' => $location_id, 'i.type' => self::TYPE_PRO_FORMA_INVOICE])
 	    	        ->orderBy(['i.id' => SORT_DESC])
     	    	    ->one();
     }
