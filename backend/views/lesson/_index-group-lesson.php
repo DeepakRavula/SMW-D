@@ -4,9 +4,7 @@ use yii\grid\GridView;
 use yii\helpers\Url;
 use common\models\GroupLesson;
 ?>
-<div class="col-md-12">
-	<h4 class="pull-left m-r-20">Group Lessons</h4>
-</div>
+
 <?php
 $this->registerJs("
     $('.group-lesson-index td').click(function (e) {

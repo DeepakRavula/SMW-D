@@ -29,7 +29,7 @@ class LessonSearch extends Lesson
     public function rules()
     {
         return [
-            [['lessonStatus', 'fromDate', 'toDate', 'customerId', 'invoiceType'], 'safe'],
+            [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 'invoiceType'], 'safe'],
         ];
     }
 
