@@ -17,7 +17,8 @@ class PaymentMethod extends \yii\db\ActiveRecord
 	const TYPE_CREDIT_APPLIED = 3;
 	const TYPE_CASH = 4;
 	const TYPE_CHEQUE = 5;
-	const TYPE_APPLY_CREDIT = 6;
+	const TYPE_CREDIT_CARD = 6;
+	const TYPE_APPLY_CREDIT = 7;
 
 	const STATUS_ACTIVE = 1;
 	const STATUS_INACTIVE = 0;
