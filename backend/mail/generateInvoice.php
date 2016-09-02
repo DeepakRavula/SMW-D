@@ -18,7 +18,7 @@ Dear <?php echo Html::encode($toName) ?>,<br>
 				[
 					'label' => 'Code',
 					'value' => function($data) {
-						if((int) $data->item_type_id === ItemType::TYPE_LESSON){
+						if((int) $data->item_type_id === ItemType::TYPE_PRIVATE_LESSON){
 							return 'LESSON';
 						}else{
 							return 'MISC';
@@ -43,7 +43,7 @@ Dear <?php echo Html::encode($toName) ?>,<br>
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center'],
             		'value' => function($data) {
-						if($data->item_type_id === ItemType::TYPE_LESSON){
+						if($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON){
 							return $data->lesson->enrolment->program->rate;
 						}else{
 							return $data->amount;

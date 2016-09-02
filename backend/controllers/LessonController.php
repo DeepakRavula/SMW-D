@@ -168,7 +168,7 @@ class LessonController extends Controller
             $invoiceLineItem = new InvoiceLineItem();
             $invoiceLineItem->invoice_id = $invoice->id;
             $invoiceLineItem->item_id = $model->id;
-            $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON;
+            $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
 			$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
 			$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
 			$invoiceLineItem->tax_rate = 0.0;
