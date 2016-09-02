@@ -210,7 +210,6 @@ class InvoiceController extends Controller {
 		$invoiceRequest = $request->get('Invoice');
 		$invoice->type = $invoiceRequest['type'];
 		$location_id = Yii::$app->session->get('location_id');
-
 		if (isset($invoiceRequest['customer_id'])) {
 			$customer = User::findOne(['id' => $invoiceRequest['customer_id']]);
 
@@ -222,12 +221,9 @@ class InvoiceController extends Controller {
 			$invoice->customer_id = $customer->id;
 			$searchModel->customerId = $customer->id; 
 			$searchModel->invoiceType = $invoice->type;	
-			
-			
 		}
-
 		$post = $request->post();
-		if (!empty($post['selection']) && is_array($post['selection'])) {
+		if (( ! empty($post['selection'])) && is_array($post['selection']) && (! empty($customer->id))) {
 			$invoice->type = $invoiceRequest['type'];
 			$lastInvoice = Invoice::lastInvoice($location_id);
 			switch ($invoice->type) {

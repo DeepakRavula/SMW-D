@@ -84,8 +84,10 @@ class LessonSearch extends Lesson
         
         $this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);
 		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
-        
-		$query->andWhere(['between','l.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+       	
+		if((int) $this->invoiceType !== Invoice::TYPE_INVOICE){
+			$query->andWhere(['between','l.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+		}
 
         return $dataProvider;
     }
