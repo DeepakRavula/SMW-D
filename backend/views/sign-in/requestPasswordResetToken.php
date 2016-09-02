@@ -10,13 +10,11 @@ $this->title =  Yii::t('frontend', 'Request password reset');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="login-box">
-    
     <div class="login-logo">
-        <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
-                <!-- Add the class icon to your logo image or logo icon to add the margining -->                
-                <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
-            </a>
-        <?php //echo Html::encode($this->title) ?>
+        <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">  
+            <!-- Add the class icon to your logo image or logo icon to add the margining -->            
+            <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
+        </a>
     </div><!-- /.login-logo -->
     <div class="header"></div>
     <?php if( ! $isEmailSent):?>
