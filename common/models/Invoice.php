@@ -171,7 +171,16 @@ class Invoice extends \yii\db\ActiveRecord
 		}
 		return $status;
     }
-   
+  
+	public function getInvoiceNumber(){
+		$invoiceNumber = str_pad($this->invoice_number, 5, 0, STR_PAD_LEFT);
+		if((int) $this->type === self::TYPE_INVOICE){
+			return 'I-' . $invoiceNumber;
+		} else {
+			return 'P-' . $invoiceNumber;
+		}
+	}
+	
     public static function lastInvoice($location_id){
         return $query = Invoice::find()->alias('i')
                 	->where(['i.location_id' => $location_id, 'i.type' => self::TYPE_INVOICE])

@@ -16,7 +16,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="invoice-index p-10">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 	<?php $columns = [
-			'invoice_number',
+			[
+			'label' => 'Invoice Number',
+				'value' => function($data) {
+					return $data->getInvoiceNumber();
+                },
+			],
             [
 			'label' => 'Date',
 				'value' => function($data) {
@@ -73,9 +78,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]
         ];
 
-		if((int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE) {
-			array_shift($columns);			
-		}
+		
 		?>
 	<?php yii\widgets\Pjax::begin() ?>
     <?php echo GridView::widget([

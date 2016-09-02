@@ -72,8 +72,8 @@ use common\models\ItemType;
         <!-- /.col -->
         <div class="col-sm-4 invoice-col m-t-10 text-right p-0">
             <div class="row-fluid  text-gray">
-              <div class="col-md-4 pull-right text-right p-r-0"><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#' . $model->invoice_number?></div>
-              <div class="col-md-2 pull-right"><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Number:'?> </div> 
+              <div class="col-md-4 pull-right text-right p-r-0"><?= '#' . $model->getInvoiceNumber()?></div>
+              <div class="col-md-2 pull-right"><?= 'Number:'?> </div> 
               <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">
@@ -82,11 +82,9 @@ use common\models\ItemType;
               <div class="clearfix"></div>
           </div>
           <div class="row-fluid text-gray">
-			  <?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
 				  <div class="col-md-4 pull-right text-right p-r-0">
-				  <?= $model->getStatus();?></div>
+				  <?= (int) $model->type === InvoiceSearch::TYPE_INVOICE ? $model->getStatus() : 'None';?></div>
 				  <div class="col-md-2 pull-right">Status:</div>
-			<?php endif;?>
               <div class="clearfix"></div>
             </div>
           </div>
