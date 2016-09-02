@@ -6,6 +6,7 @@ use Yii;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
+use backend\models\search\LessonSearch;
 use common\models\User;
 use common\models\Payment;
 use common\models\Lesson;
@@ -195,13 +196,20 @@ class InvoiceController extends Controller {
 	 * @return mixed
 	 */
 	public function actionCreate() {
+		$searchModel = new LessonSearch();
+		$params = Yii::$app->request->queryParams;
+		if( ! empty($params['Invoice']['customer_id'])){
+			$params['LessonSearch']['customerId'] = $params['Invoice']['customer_id']; 
+		}
+		if( ! empty($params['Invoice']['type'])){
+			$params['LessonSearch']['invoiceType'] = $params['Invoice']['type']; 
+		}
+		$dataProvider = $searchModel->search($params);	
 		$invoice = new Invoice();
 		$request = Yii::$app->request;
 		$invoiceRequest = $request->get('Invoice');
 		$invoice->type = $invoiceRequest['type'];
-		$unInvoicedLessonsDataProvider = null;
 		$location_id = Yii::$app->session->get('location_id');
-
 		if (isset($invoiceRequest['customer_id'])) {
 			$customer = User::findOne(['id' => $invoiceRequest['customer_id']]);
 
@@ -211,31 +219,21 @@ class InvoiceController extends Controller {
             
 			$currentDate = new \DateTime();
 			$invoice->customer_id = $customer->id;
-			$query = Lesson::find()->alias('l')
-					->location($location_id)
-					->student($customer->id);
-				if((int) $invoice->type === Invoice::TYPE_PRO_FORMA_INVOICE){
-					$query->unInvoicedProForma()
-						->scheduled();
-				}else{
-					$query->unInvoiced()
-						->completed()
-						->orderBy('l.id ASC');
-				}
-			
-			$unInvoicedLessonsDataProvider = new ActiveDataProvider([
-				'query' => $query,
-                'pagination' => false,
-			]);
+			$searchModel->customerId = $customer->id; 
+			$searchModel->invoiceType = $invoice->type;	
 		}
-
 		$post = $request->post();
-		if (!empty($post['selection']) && is_array($post['selection'])) {
+		if (( ! empty($post['selection'])) && is_array($post['selection']) && (! empty($customer->id))) {
 			$invoice->type = $invoiceRequest['type'];
 			$lastInvoice = Invoice::lastInvoice($location_id);
+			$lastProFormaInvoice = Invoice::lastProFormaInvoice($location_id);
 			switch ($invoice->type) {
                 case Invoice::TYPE_PRO_FORMA_INVOICE:
-                    $invoiceNumber = 0;
+                    if (empty($lastProFormaInvoice)) {
+                        $invoiceNumber = 1;
+                    } else {
+                        $invoiceNumber = $lastProFormaInvoice->invoice_number + 1;
+                    }
                     break;
                 case Invoice::TYPE_INVOICE:
                     if (empty($lastInvoice)) {
@@ -295,8 +293,9 @@ class InvoiceController extends Controller {
 		} else {
 			return $this->render('create', [
 				'model' => $invoice,
-				'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
+				'dataProvider' => $dataProvider,
                 'customer' => (empty($customer)) ? [new User] : $customer,
+				'searchModel' => $searchModel,
 			]);
 		}
 	}

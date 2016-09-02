@@ -265,7 +265,12 @@ class UserController extends Controller {
 					'user_id' => $model->id,
 					'payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY, ],
 			])->one();
-	
+
+		$positiveOpeningBalanceModel = Invoice::find()
+				->joinWith('lineItems')
+				->joinWith('payment')
+				->where(['invoice.user_id' => $model->id, 'payment.id' => null])
+				->one();
 		$remainingOpeningBalance = 0;
 		if(! empty($openingBalancePaymentModel->id)){
 			$openingBalanceCreditsUsed = Payment::find()
@@ -352,6 +357,7 @@ class UserController extends Controller {
 			'remainingOpeningBalance' => $remainingOpeningBalance,
 			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
 			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
+			'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel
 		]);
 	}
 

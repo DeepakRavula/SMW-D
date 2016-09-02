@@ -41,6 +41,7 @@ class LessonController extends Controller
     public function actionIndex()
     {
         $searchModel = new LessonSearch();
+		$searchModel->lessonStatus = Lesson::STATUS_COMPLETED;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
 		$groupLessonSearchModel = new GroupLessonSearch();
