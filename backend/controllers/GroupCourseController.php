@@ -5,12 +5,14 @@ namespace backend\controllers;
 use Yii;
 use common\models\GroupCourse;
 use common\models\GroupEnrolment;
+use common\models\Student;
 use common\models\User;
 use backend\models\search\GroupCourseSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\helpers\ArrayHelper;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 /**
  * GroupCourseController implements the CRUD actions for GroupCourse model.
  */
@@ -65,9 +67,15 @@ class GroupCourseController extends Controller
 				$groupEnrolment->save();
 			} 
 		}
+
+		$studentDataProvider = new ActiveDataProvider([
+			'query' => Student::find()
+				->enrolled($id),
+		]);
 	 
         return $this->render('view', [
             'model' => $this->findModel($id),
+			'studentDataProvider' => $studentDataProvider,
         ]);
     }
 

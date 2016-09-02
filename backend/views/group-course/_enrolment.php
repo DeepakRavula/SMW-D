@@ -51,9 +51,6 @@ use common\models\Student;
     <div class="col-md-12 form-group">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>
-</div>
-
-
 <?php ActiveForm::end(); ?>
 
 </div>
