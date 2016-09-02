@@ -27,7 +27,7 @@ class LessonSearch extends Lesson
     public function rules()
     {
         return [
-            [['lessonStatus', 'fromDate', 'toDate', 'type'], 'safe'],
+            [['lessonStatus', 'fromDate', 'toDate', 'customerId', 'invoiceType'], 'safe'],
         ];
     }
 
@@ -64,6 +64,19 @@ class LessonSearch extends Lesson
             return $dataProvider;
         }
 		
+		if( ! empty($this->customerId)){
+			$query->student($this->customerId);
+		}
+		if( ! empty($this->invoiceType)){
+			if((int) $this->invoiceType === Invoice::TYPE_PRO_FORMA_INVOICE){
+				$query->unInvoicedProForma()
+					->scheduled();
+			}else{
+				$query->unInvoiced()
+					->completed()
+					->orderBy('l.id ASC');
+			}
+		}
         if($this->lessonStatus == Lesson::STATUS_COMPLETED) {
 			$query->completed();
 		} else if($this->lessonStatus === 'scheduled') {
@@ -76,8 +89,10 @@ class LessonSearch extends Lesson
         
         $this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);
 		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
-        
-		$query->andWhere(['between','l.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+       	
+		if((int) $this->invoiceType !== Invoice::TYPE_INVOICE){
+			$query->andWhere(['between','l.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+		}
 
         return $dataProvider;
     }
