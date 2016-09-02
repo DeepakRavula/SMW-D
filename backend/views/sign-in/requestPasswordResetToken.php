@@ -43,8 +43,8 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <?php else:?>
     <div class="site-request-password-reset login-box-body">
-        <p>A password reset link has been sent to your email.
-        </p>
+        <p>A password reset link has been sent to your email.</p>
+        <?php echo Html::a('Login', ['/sign-in/login'], ['class' => 'btn btn-primary btn-flat btn-block']) ?>
     </div>
     <?php endif;?>
 </div>
