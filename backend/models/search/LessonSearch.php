@@ -16,7 +16,7 @@ class LessonSearch extends Lesson
 {
 	const STATUS_INVOICED = 'invoiced';
 
-    public $lessonStatus = Lesson::STATUS_COMPLETED;
+    public $lessonStatus;
     public $fromDate;
 	public $toDate;
     public $type;
