@@ -20,6 +20,8 @@ class LessonSearch extends Lesson
     public $fromDate;
 	public $toDate;
     public $type;
+	public $customerId;
+	public $invoiceType;
 
     /**
      * @inheritdoc
