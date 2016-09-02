@@ -25,6 +25,15 @@ use common\models\BalanceLog;
 	</div>
 	<div class="clearfix"></div>
 </div>
+<?php elseif(! empty($positiveOpeningBalanceModel->id)):?>
+<div class="p-t-20 p-b-20">
+	<div class="col-xs-2"><strong>Date:</strong> <?= Yii::$app->formatter->asDate($positiveOpeningBalanceModel->date);?></div>
+	<div class="col-xs-3">
+	<strong>Opening Balance:</strong>
+		<?= $positiveOpeningBalanceModel->total;?>
+	</div>
+	<div class="clearfix"></div>
+</div>
 <?php else:?>
 	<?php
 	echo $this->render('_form-payment', [
