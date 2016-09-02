@@ -82,7 +82,8 @@ class ScheduleController extends Controller
             ->join('Join', 'enrolment e', 'e.id = l.enrolment_id')
             ->join('Join', 'student s', 's.id = e.student_id')
             ->join('Join', 'program p', 'p.id = e.program_id')
-            ->where('e.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+            ->where(['not', ['l.status'  =>  Lesson::STATUS_CANCELED]])
+            ->andWhere('e.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->all();
 		foreach ($events as &$event) {
 		$start = new \DateTime($event['start']);	

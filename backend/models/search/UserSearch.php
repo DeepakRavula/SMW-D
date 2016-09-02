@@ -96,6 +96,7 @@ class UserSearch extends User
   			    }]);  
                 $query->andFilterWhere(['like', 'ul.location_id', $locationId]);             
             }        
+			$query->groupBy('u.id');
   		} 
 
 		$query->active();

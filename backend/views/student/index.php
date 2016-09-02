@@ -36,28 +36,17 @@ $this->params['breadcrumbs'][] = $this->title;
     ])->input('search')->label(false);
     ?>
     </div>  
-    <?php $queryParams = Yii::$app->request->queryParams; ?> 
-    <?php foreach ($queryParams as $queryParam => $queryValues): ?> 
-        <?php if(is_array($queryValues)) : ?>
-            <?php foreach ($queryValues as $param => $value): ?> 
-                <?php if ($param === 'query') continue; ?>
-                <?= Html::input('hidden', $queryParam . '[' . $param . ']', $value, ['class' => 'form-control']) ?>
-            <?php endforeach; ?>
-        <?php endif; ?> 
-    <?php endforeach; ?>
-<?php ActiveForm::end(); ?>
     
 <div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>
-	<?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
     <div class="schedule-index">
         <div class="e1Div">
         <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true])->label('Show All'); ?>
         </div>
     </div>
     
-	<?php ActiveForm::end(); ?>
     <?php \yii\widgets\Pjax::end(); ?>
+	<?php ActiveForm::end(); ?>
 </div>
 <?php yii\widgets\Pjax::begin(['id' => 'student-listing']); ?>
     <?php echo GridView::widget([
