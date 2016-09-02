@@ -120,10 +120,12 @@ echo GridView::widget([
 ]);
 ?>
 <?php if((int) $model->type === Invoice::TYPE_INVOICE):?>
-<h5>
-Invoice Total: <?= $model->total;?></h5>
+	<div class="smw-box col-md-3 m-l-10 m-b-20">
+<h5>Invoice Total: <?= $model->total;?></h5>
 <h5>Invoice Paid: <?= $model->invoicePaymentTotal;?></h5>
 <h5>Invoice Balance: <?= $model->invoiceBalance;?></h5>
+</div>
+<div class="clearfix"></div>
 <?php endif;?>
 <?php $buttons = [];?>
 <?php foreach(PaymentMethod::findAll([

@@ -9,7 +9,7 @@ use yii\bootstrap\Tabs;
 /* @var $model common\models\Invoice */
 
 $this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice';
-$this->params['subtitle'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id]);
+$this->params['subtitle'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
 ?>
@@ -30,6 +30,9 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
       font-size: 18px;
       font-weight: 400;
       padding: 5px 15px;
+    }
+    .smw-search{
+      left: 170px;
     }
 </style>
 <div class="tabbable-panel">

@@ -10,7 +10,7 @@ $this->title = 'Add new Group Course';
 $this->params['breadcrumbs'][] = ['label' => 'Group Courses', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Create';
 ?>
-<div class="group-course-create">
+<div class="group-course-create p-10">
 
     <?php echo $this->render('_form', [
         'model' => $model,

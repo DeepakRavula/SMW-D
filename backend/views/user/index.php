@@ -49,6 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <style>
 	.e1Div{
 		top: -61px;
+		right: 76px;
 	}
 </style>
 
