@@ -34,6 +34,7 @@ use common\models\ItemType;
       </div>
     <div class="row invoice-info m-t-20">
         <!-- /.col -->
+		<?php if( ! empty($model->user)):?>
         <div class="col-sm-8 invoice-col m-b-20 p-0">
           <div class="row m-t-10">
             <div class="col-xs-8">
@@ -69,6 +70,7 @@ use common\models\ItemType;
             </div></div>
           </div>
         </div>
+		<?php endif; ?>
         <!-- /.col -->
         <div class="col-sm-4 invoice-col m-t-10 text-right p-0">
             <div class="row-fluid  text-gray">
