@@ -61,9 +61,18 @@ class StudentSearch extends Student
                 ->orFilterWhere(['like', 'cp.firstname', $this->query])
                 ->orFilterWhere(['like', 'cp.lastname', $this->query]);
         
-       	if(! $this->showAllStudents) {
-			$query->joinWith('enrolment e')
-				->andWhere(['not', ['e.student_id' => null]]);
+       	if(! $this->showAllStudents) { 
+            $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+			$query->joinWith(['groupEnrolments ge'=>function($query) {
+                        $query->joinWith('groupCourse gc'); 
+			       }])
+                   ->joinWith('enrolment e')
+                   ->andWhere(['OR',[
+                       'NOT', ['e.student_id' => null]],['NOT', ['ge.student_id' => null]
+                       ]]) 
+                   ->andWhere(['OR',
+                       ['>=','e.renewal_date', $currentDate],['>=','gc.end_date', $currentDate]
+                       ]);
 		} 
         
         return $dataProvider;
