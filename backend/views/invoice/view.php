@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 use backend\models\search\InvoiceSearch;
 use yii\bootstrap\Tabs;
 
@@ -72,6 +73,6 @@ $paymentContent =  $this->render('_payment', [
 </div>
 <script>
     jQuery(document).ready(function(){
-    $('.go-back').html('<a href="javascript: history.back()">Go Back</a>');
+    $('.go-back').html('<a href="<?= Url::to(['index','InvoiceSearch[type]' => InvoiceSearch::TYPE_PRO_FORMA_INVOICE])?>">Go Back</a>');
     });
 </script>
