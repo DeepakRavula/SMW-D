@@ -91,6 +91,11 @@ class InvoiceController extends Controller {
 			'query' => $invoiceLineItems,
 		]);
 
+		$request = Yii::$app->request;
+		$invoiceRequest = $request->get('Invoice');
+		$customerId = $invoiceRequest['customer_id'];
+		$customer = User::findOne(['id' => $customerId]);
+
 		$invoicePayments = Payment::find()
 				->joinWith(['invoicePayment ip' => function($query) use($model){
 					$query->where(['ip.invoice_id' => $model->id]);	
@@ -191,6 +196,7 @@ class InvoiceController extends Controller {
 					'model' => $model,
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 					'invoicePayments' => $invoicePaymentsDataProvider,
+					'customer' => $customer,
 		]);
 	}
 

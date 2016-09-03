@@ -39,11 +39,41 @@ $this->params['breadcrumbs'][] = $this->title. '#' .$model->id;
      <div class="tabbable-line">
 <?php 
 
+$customerContent = $this->render('_customer', [
+	'model' => $model,
+	'customer' => $customer,
+]);
+$guestContent = null;
+?>
+<?php echo Tabs::widget([
+    'items' => [
+		[
+            'label' => 'Customer',
+            'content' => $customerContent,
+			'options' => [
+                    'id' => 'customer-tab',
+            	],
+        ],
+		[
+            'label' => 'Walk-in',
+            'content' => $guestContent,
+			'options' => [
+                    'id' => 'guest-tab',
+            	],
+        ],
+    ],
+]);?>
+</div>
+</div>
+<div class="tabbable-panel">
+     <div class="tabbable-line">
+<?php 
+
 $invoiceContent =  $this->render('_view-invoice', [
     'model' => $model,
+	'customer' => $customer,
     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 ]);
-
 $paymentContent =  $this->render('_payment', [
     'model' => $model,
     'invoicePayments' => $invoicePayments

@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use backend\models\search\InvoiceSearch;
 use common\models\Invoice;
 use common\models\ItemType;
+use yii\widgets\ActiveForm;
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -34,21 +35,21 @@ use common\models\ItemType;
       </div>
     <div class="row invoice-info m-t-20">
         <!-- /.col -->
-		<?php if( ! empty($model->user)):?>
+		<?php if( ! empty($customer)):?>
         <div class="col-sm-8 invoice-col m-b-20 p-0">
           <div class="row m-t-10">
             <div class="col-xs-8">
-              <h4 class="m-0 f-w-400"><strong><?= isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?></strong></h4>
+              <h4 class="m-0 f-w-400"><strong><?= isset($customer->publicIdentity) ? $customer->publicIdentity : null?></strong></h4>
               <div class="text-gray">
 	   		<?php
-	            $addresses = $model->user->addresses;
+	            $addresses = $customer->addresses;
                 foreach($addresses as $address){
                   if($address->label === 'Billing'){
                     $billingAddress = $address;
                     break;
                   }
                 }
-                $phoneNumber = $model->user->phoneNumber; 
+                $phoneNumber = $customer->phoneNumber; 
             ?>
             <!-- Billing address -->
             <?php if(! empty($billingAddress)){ ?>
@@ -58,8 +59,8 @@ use common\models\ItemType;
                     echo $billingAddress->postal_code;
                } ?>
             <div class="row-fluid m-t-20">
-               <?php if( ! empty($model->user->email)): ?>
-               <?= 'E: '; ?><?= $model->user->email?>
+               <?php if( ! empty($customer->email)): ?>
+               <?= 'E: '; ?><?= $customer->email?>
                <?php endif;?>
             </div>
             <!-- Phone number -->
@@ -248,6 +249,15 @@ use common\models\ItemType;
         <!-- /.col -->
         </div>
 <div class="clearfix"></div>
+<div>
+    <?php $form = ActiveForm::begin([
+        'id' => 'invoice-save-form',
+	]); ?>
+    <div class="form-group">
+        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    </div>
+<?php ActiveForm::end(); ?>
+</div>
 <div class="row no-print">
   <div class="col-xs-12">
   </div>
@@ -259,5 +269,5 @@ $(document).ready(function() {
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');
   });
-});
+  });
 </script>
