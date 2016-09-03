@@ -10,11 +10,24 @@ $this->title = 'Invoices';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
+<?php if( (int) $searchModel->type === Invoice::TYPE_INVOICE ){ ?>
 <style>
 	.smw-search{
 		left: 77px;
 	}
 </style>
+<?php 
+}
+?>
+<?php if( (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ){ ?>
+<style>
+	.smw-search{
+		left: 183px;
+	}
+</style>
+<?php 
+}
+?>
 
 <div class="tabbable-panel">
      <div class="tabbable-line">
