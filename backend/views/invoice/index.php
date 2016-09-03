@@ -9,29 +9,20 @@ use yii\bootstrap\Tabs;
 $this->title = 'Invoices';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
-<?php if( (int) $searchModel->type === Invoice::TYPE_INVOICE ){ ?>
-<style>
-	.smw-search{
-		left: 77px;
-	}
-</style>
 <?php 
-}
-?>
-<?php if( (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ){ ?>
-<style>
-	.smw-search{
-		left: 183px;
-	}
-</style>
-<?php 
-}
-?>
+ switch($searchModel->type){
+    case Invoice::TYPE_PRO_FORMA_INVOICE:
+    $invoiceTypeClassName  = 'pro-forma-invoice';
+    break;
+    case Invoice::TYPE_INVOICE:
+    $invoiceTypeClassName  = 'invoice';
+    break;
+ } 
+ ?>
 
 <div class="tabbable-panel">
      <div class="tabbable-line">
-            <div class="smw-search">
+            <div class="search-<?= $invoiceTypeClassName;?>">
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
     <?php
     $form = ActiveForm::begin([

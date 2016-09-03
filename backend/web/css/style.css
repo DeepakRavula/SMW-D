@@ -666,6 +666,18 @@ input[type="search"]:-ms-input-placeholder {
     left: 100px;
 }
 
+.search-invoice{
+      position: absolute;
+    top: -45px;
+    left: 77px;
+}
+
+.search-pro-forma-invoice{
+      position: absolute;
+    top: -45px;
+    left: 185px;
+}
+
 .schedule-index input[type="checkbox"]{
   -webkit-appearance: none;
   -moz-appearance: none;
