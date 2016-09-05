@@ -115,26 +115,31 @@ class InvoiceController extends Controller {
         $userModel = new UserProfile();
         
         if($request->isPost){
-            if ($model->load(Yii::$app->request->post())) {
+            if(isset($_POST['customer-invoice'])){
+                if ($model->load(Yii::$app->request->post())) {
                 $model->user_id = $customer->id;
                 $model->save();
             }
-            if ($customer->load(Yii::$app->request->post())) {
-                if($customer->save()){
-                    $model->user_id = $customer->id;
-                    $model->save();
+            }
+            if(isset($_POST['guest-invoice'])){
+                if ($customer->load(Yii::$app->request->post())) {
+                    if($customer->save()){
+                        $model->user_id = $customer->id;
+                        $model->save();
 
-                    if ($userModel->load(Yii::$app->request->post())) {
-                        $userModel->user_id = $customer->id;
-                        $userModel->save();
-                        
-                        Yii::$app->session->setFlash('alert', [
-                            'options' => ['class' => 'alert-success'],
-                            'body' => 'Invoice has been updated successfully'
-                        ]);
+                        if ($userModel->load(Yii::$app->request->post())) {
+                            $userModel->user_id = $customer->id;
+                            $userModel->save();
+                            
+                            Yii::$app->session->setFlash('alert', [
+                                'options' => ['class' => 'alert-success'],
+                                'body' => 'Invoice has been updated successfully'
+                            ]);
+                        }
                     }
                 }
             }
+            
         }
 		
 		if ($paymentModel->load(Yii::$app->request->post())) {

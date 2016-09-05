@@ -22,7 +22,7 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
 	]); ?>
 
 <div class="row">
-<?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary pull-right m-r-20']) ?>
+<?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary pull-right m-r-20', 'name' => 'customer-invoice']) ?>
 <div class="col-md-4">
     <?php $customers = ArrayHelper::map(User::find()
         ->join('INNER JOIN','user_location','user_location.user_id = user.id')
