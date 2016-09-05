@@ -6,5 +6,6 @@ return [
     'rules'=>[
         // url rules
 		'calendar/<slug:[\w-]+>' => 'calendar/view',
+        'group-course/<groupCourseId:\d+>/student/<studentId:\d+>' => 'group-course/view-student'
     ]
 ];

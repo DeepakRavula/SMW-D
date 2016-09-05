@@ -40,6 +40,7 @@ $enrolmentContent =  $this->render('_enrolment', [
 
 $studentContent =  $this->render('_student', [
 	'studentDataProvider' => $studentDataProvider,
+    'model' => $model,
 ]);
 
 ?>

@@ -82,6 +82,37 @@ class GroupCourseController extends Controller
 			'studentDataProvider' => $studentDataProvider,
         ]);
     }
+    
+    /**
+     * Displays a single GroupCourse model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionViewStudent($groupCourseId, $studentId)
+    {
+        $student_id = $studentId;
+		$request = Yii::$app->request;
+		$groupEnrolment = $request->post('GroupEnrolment');
+		$studentIds = $groupEnrolment['studentIds']; 
+		if( ! empty($studentIds)){	
+			GroupEnrolment::deleteAll(['course_id' => $groupCourseId]);
+			foreach($studentIds as $studentId){
+				$groupEnrolment = new GroupEnrolment();
+				$groupEnrolment->setAttributes([
+					'course_id'	 => $groupCourseId,
+					'student_id' => $studentId,
+				]);
+				$groupEnrolment->save();
+			} 
+		}
+
+		$studentModel = Student::findOne(['id' => $student_id]);
+	 
+        return $this->render('view_student', [
+            'model' => $this->findModel($groupCourseId),
+			'studentModel' => $studentModel,
+        ]);
+    }
 
     /**
      * Creates a new GroupCourse model.
@@ -204,8 +235,8 @@ class GroupCourseController extends Controller
 		$description = $model->program->name . ' for ' . $studentModel->fullName . ' with ' . $studentModel->groupCourse->teacher->publicIdentity;
 		$invoiceLineItem->description = $description;
 		$time = explode(':', $model->length);
-		$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
-		$invoiceLineItem->amount = $model->program->rate * $invoiceLineItem->unit;
+		$invoiceLineItem->unit = 1;
+		$invoiceLineItem->amount = $model->program->rate;
 		$invoiceLineItem->save();
 		$subTotal += $invoiceLineItem->amount;                
 		$invoice = Invoice::findOne(['id' => $invoice->id]);
