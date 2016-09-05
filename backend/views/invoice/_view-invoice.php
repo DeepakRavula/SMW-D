@@ -249,15 +249,6 @@ use yii\widgets\ActiveForm;
         <!-- /.col -->
         </div>
 <div class="clearfix"></div>
-<div>
-    <?php $form = ActiveForm::begin([
-        'id' => 'invoice-save-form',
-	]); ?>
-    <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
-<?php ActiveForm::end(); ?>
-</div>
 <div class="row no-print">
   <div class="col-xs-12">
   </div>

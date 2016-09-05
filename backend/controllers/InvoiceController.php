@@ -8,6 +8,7 @@ use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use backend\models\search\LessonSearch;
 use common\models\User;
+use common\models\UserProfile;
 use common\models\Payment;
 use common\models\Lesson;
 use common\models\PaymentMethod;
@@ -24,6 +25,7 @@ use common\models\TaxStatus;
 use common\models\Address;
 use common\models\UserAddress;
 use common\models\PhoneNumber;
+use backend\models\UserForm;
 use yii\helpers\Json;
 
 /**
@@ -92,9 +94,12 @@ class InvoiceController extends Controller {
 		]);
 
 		$request = Yii::$app->request;
-		$invoiceRequest = $request->get('Invoice');
+		$invoiceRequest = $request->post('Invoice');
 		$customerId = $invoiceRequest['customer_id'];
 		$customer = User::findOne(['id' => $customerId]);
+        if( empty($customer)){
+            $customer = new User();
+        }
 
 		$invoicePayments = Payment::find()
 				->joinWith(['invoicePayment ip' => function($query) use($model){
@@ -107,6 +112,30 @@ class InvoiceController extends Controller {
 		]);
 
 		$paymentModel = new Payment();
+        $userModel = new UserProfile();
+        
+        if($request->isPost){
+            if ($model->load(Yii::$app->request->post())) {
+                $model->user_id = $customer->id;
+                $model->save();
+            }
+            if ($customer->load(Yii::$app->request->post())) {
+                if($customer->save()){
+                    $model->user_id = $customer->id;
+                    $model->save();
+
+                    if ($userModel->load(Yii::$app->request->post())) {
+                        $userModel->user_id = $customer->id;
+                        $userModel->save();
+                        
+                        Yii::$app->session->setFlash('alert', [
+                            'options' => ['class' => 'alert-success'],
+                            'body' => 'Payment has been recorded successfully'
+                        ]);
+                    }
+                }
+            }
+        }
 		
 		if ($paymentModel->load(Yii::$app->request->post())) {
 				$paymentMethodId = $paymentModel->payment_method_id; 
@@ -197,7 +226,7 @@ class InvoiceController extends Controller {
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 					'invoicePayments' => $invoicePaymentsDataProvider,
 					'customer' => empty($customer) ? new User : $customer,
-					'userProfile' => new \common\models\UserProfile,
+					'userModel' => $userModel,
 		]);
 	}
 

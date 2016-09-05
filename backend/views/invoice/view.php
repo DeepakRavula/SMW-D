@@ -45,7 +45,8 @@ $customerContent = $this->render('_customer', [
 ]);
 $guestContent = $this->render('_guest', [
 	'model' => $model,
-	'userProfile' => $userProfile,
+	'userModel' => $userModel,
+    'customer' => $customer,
 ]);
 ?>
 <?php echo Tabs::widget([
