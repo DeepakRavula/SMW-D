@@ -130,7 +130,7 @@ class InvoiceController extends Controller {
                         
                         Yii::$app->session->setFlash('alert', [
                             'options' => ['class' => 'alert-success'],
-                            'body' => 'Payment has been recorded successfully'
+                            'body' => 'Invoice has been updated successfully'
                         ]);
                     }
                 }
