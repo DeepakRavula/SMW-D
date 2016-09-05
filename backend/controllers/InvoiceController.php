@@ -196,7 +196,8 @@ class InvoiceController extends Controller {
 					'model' => $model,
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 					'invoicePayments' => $invoicePaymentsDataProvider,
-					'customer' => $customer,
+					'customer' => empty($customer) ? new User : $customer,
+					'userProfile' => new \common\models\UserProfile,
 		]);
 	}
 
