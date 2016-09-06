@@ -70,4 +70,15 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 			->where(['invoice.type' => Invoice::TYPE_INVOICE]);
 		return $this;
 	}
+
+	public function proFormaInvoiceCredits($invoice){
+		$this->select(['i.id', 'i.date', 'SUM(p.amount) as credit'])
+			->joinWith(['invoicePayments ip' => function($query) use($invoice){
+				$query->joinWith(['payment p' => function($query) use($invoice){
+				}]);
+			}])
+			->where(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE, 'i.user_id' => $invoice->user_id])
+			->groupBy('i.id');
+		return $this;
+	}
 }
