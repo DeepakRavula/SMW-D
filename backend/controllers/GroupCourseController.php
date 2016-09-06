@@ -90,26 +90,11 @@ class GroupCourseController extends Controller
      */
     public function actionViewStudent($groupCourseId, $studentId)
     {
-        $student_id = $studentId;
-		$request = Yii::$app->request;
-		$groupEnrolment = $request->post('GroupEnrolment');
-		$studentIds = $groupEnrolment['studentIds']; 
-		if( ! empty($studentIds)){	
-			GroupEnrolment::deleteAll(['course_id' => $groupCourseId]);
-			foreach($studentIds as $studentId){
-				$groupEnrolment = new GroupEnrolment();
-				$groupEnrolment->setAttributes([
-					'course_id'	 => $groupCourseId,
-					'student_id' => $studentId,
-				]);
-				$groupEnrolment->save();
-			} 
-		}
-
-		$studentModel = Student::findOne(['id' => $student_id]);
+        $model = $this->findModel($groupCourseId);
+		$studentModel = Student::findOne(['id' => $studentId]);
 	 
         return $this->render('view_student', [
-            'model' => $this->findModel($groupCourseId),
+            'model' => $model,
 			'studentModel' => $studentModel,
         ]);
     }

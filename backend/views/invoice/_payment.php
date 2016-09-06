@@ -20,9 +20,13 @@ $results = [];
 if(! empty($creditPayments)){
 	foreach($creditPayments as $creditPayment){
 		$debitInvoice = InvoicePayment::findOne(['payment_id' => $creditPayment->creditUsage->debit_payment_id]);
-		$invoiceNumber = $debitInvoice->invoice_id;
-		if((int) $debitInvoice->invoice_id === Payment::TYPE_OPENING_BALANCE_CREDIT){
-			$invoiceNumber = 'NA';	
+		$invoiceNumber = null;
+		if(! empty($debitInvoice)){
+			if((int) $debitInvoice->invoice_id === Payment::TYPE_OPENING_BALANCE_CREDIT){
+				$invoiceNumber = 'NA';	
+			}else{
+				$invoiceNumber = $debitInvoice->invoice_id;
+			}
 		}
 		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$creditPayment->date);
 		$results[] = [

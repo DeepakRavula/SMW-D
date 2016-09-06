@@ -48,15 +48,6 @@ $this->registerJs("
 					return ! empty($data->groupCourse->teacher->publicIdentity) ? $data->groupCourse->teacher->publicIdentity : null;
 				}
 			],
-			[
-				'class'=>'yii\grid\ActionColumn',
-				'template' => '{invoice}',
-				'buttons' => [
-					'invoice' => function ($url, $model, $key) {
-					  return Html::a('<i class="fa fa-usd" aria-hidden="true"></i>', ['invoice', 'id'=>$model->groupCourse->id, 'studentId' => $model->id]);
-					},
-				]
-			]
         ],
     ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>

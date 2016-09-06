@@ -25,9 +25,15 @@ $this->params['breadcrumbs'][] = $this->title;
     	<i class="fa fa-money"></i> <?php echo $model->program->rate; ?>
     </div>
 	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="length">
-    	<i class="fa fa-calendar"></i> <?php 
+    	<i class="fa fa-clock-o"></i> <?php 
 		$length = \DateTime::createFromFormat('H:i:s', $model->length);
 		echo $length->format('H:i'); ?>
+    </div>
+	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Course Duration">
+    	<i class="fa fa-calendar"></i> <?php 
+		$startDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->start_date);
+		$endDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->end_date);
+		echo $startDate->format('d-m-Y') . ' to ' . $endDate->format('d-m-Y'); ?>
     </div>
     <div class="col-md-12 m-t-20">
         <?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Course</span>', ['invoice', 'id' => $model->id, 'studentId' => $studentModel->id], ['class' => 'm-r-20']) ?>
