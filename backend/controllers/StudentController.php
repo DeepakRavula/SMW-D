@@ -211,6 +211,7 @@ class StudentController extends Controller
         return $this->render('delete-enrolment-preview', [
 			'model' => $model,
 			'enrolmentId' => $enrolmentId,
+			'programType' => $programType,
 			'enrolmentModel' => $enrolmentModel,
         ]);
     }
