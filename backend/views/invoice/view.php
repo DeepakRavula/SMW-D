@@ -5,6 +5,7 @@ use yii\grid\GridView;
 use yii\helpers\Url;
 use backend\models\search\InvoiceSearch;
 use yii\bootstrap\Tabs;
+use common\models\Invoice;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -37,6 +38,7 @@ $this->params['breadcrumbs'][] = $this->title. 'invoice/index' .$model->id;
       left: 170px;
     }
 </style>
+<?php if((int) $model->user_id === Invoice::USER_UNASSINGED):?>
 <div class="tabbable-panel">
      <div class="tabbable-line">
 <?php 
@@ -71,6 +73,7 @@ $guestContent = $this->render('_guest', [
 ]);?>
 </div>
 </div>
+<?php endif;?>
 <div class="tabbable-panel">
      <div class="tabbable-line">
 <?php 
