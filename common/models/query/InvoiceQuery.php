@@ -53,4 +53,21 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 	
 		return $this;	
 	}
+
+	public function pendingInvoices($enrolmentId, $model) {
+		$this->joinWith(['lineItems li'=>function($query) use($enrolmentId, $model){
+			$query->joinWith(['lesson l'=>function($query) use($enrolmentId, $model){	
+				$query->joinWith(['enrolment e'=>function($query) use($enrolmentId, $model){
+					$query->joinWith('student s')
+						->where(['s.customer_id' => $model->customer->id, 's.id' => $model->id]);
+					}])
+					->where(['e.id' => $enrolmentId]);
+				}]);
+			}])
+			->joinWith(['invoicePayments ip' => function($query){
+				$query->where(['ip.id' => null]);
+			}])
+			->where(['invoice.type' => Invoice::TYPE_INVOICE]);
+		return $this;
+	}
 }

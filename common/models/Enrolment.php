@@ -80,17 +80,6 @@ class Enrolment extends \yii\db\ActiveRecord
 		return $this->hasOne(Program::className(), ['id' => 'program_id']);
 	}
 
-	public function getFutureLessons($id)
-	{
-    	return $this->hasMany(Lesson::className(), ['enrolment_id' => $id])
-			->where(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
-	}
-
-	public function getFutureLessonsCount($id)
-	{
-    	return $this->getFutureLessons($id)->count();
-	}
-	
 	public static function getWeekdaysList()
 	{
 		return [

@@ -35,7 +35,8 @@ if(! empty($privateLessons)){
 			'start_date' => Yii::$app->formatter->asDate($privateLesson->commencement_date),
 			'end_date' => Yii::$app->formatter->asDate($privateLesson->renewal_date),
 			'type' => Program::TYPE_PRIVATE_PROGRAM,
-			'id' => $model->id,
+			'studentId' => $model->id,
+			'enrolmentId' => $privateLesson->id,
 		];
 	}
 }
@@ -55,7 +56,8 @@ if(! empty($groupCourses)){
 			'start_date' => Yii::$app->formatter->asDate($groupCourse->start_date),
 			'end_date' => Yii::$app->formatter->asDate($groupCourse->end_date),
 			'type' => Program::TYPE_GROUP_PROGRAM,
-			'id' => $model->id,
+			'studentId' => $model->id,
+			'enrolmentId' => $groupCourse->id,
 		];
 	}
 }
@@ -105,10 +107,10 @@ echo GridView::widget([
 		],
 		[
 			'class'=>'yii\grid\ActionColumn',
-			'template' => '{delete-confirm}',
+			'template' => '{delete-enrolment-preview}',
 			'buttons' => [
-				'delete-confirm' => function ($url, $model, $key) {
-				  return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-confirm', 'programType' => $model['type'], 'studentId' => $model['id']]);
+				'delete-enrolment-preview' => function ($url, $model, $key) {
+				  return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-enrolment-preview', 'studentId' => $model['studentId'], 'enrolmentId' => $model['enrolmentId'], 'programType' => $model['type']]);
 				},
 			]
 		]

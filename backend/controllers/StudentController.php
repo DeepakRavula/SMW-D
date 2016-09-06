@@ -200,17 +200,17 @@ class StudentController extends Controller
         return $this->redirect(['index']);
     }
 
-	public function actionDeleteConfirm($programType, $studentId)
+	public function actionDeleteEnrolmentPreview($studentId, $enrolmentId, $programType)
     {
 		$model = $this->findModel($studentId);
-		if($programType === Program::TYPE_PRIVATE_PROGRAM){
+		if((int) $programType === Program::TYPE_PRIVATE_PROGRAM){
 			$enrolmentModel = Enrolment::findOne(['student_id' => $studentId]); 
 		} else {
 			$enrolmentModel = GroupEnrolment::findOne(['student_id' => $studentId]); 
 		}
-        return $this->render('delete-confirm', [
+        return $this->render('delete-enrolment-preview', [
 			'model' => $model,
-			'programType' => $programType,
+			'enrolmentId' => $enrolmentId,
 			'enrolmentModel' => $enrolmentModel,
         ]);
     }
