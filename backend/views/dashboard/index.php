@@ -61,5 +61,19 @@
             </div>
           <!-- /.box -->
         </div>
+        <div class="col-md-3">
+            <div class="box box-success box-solid">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Active Students</h3>
+                  <!-- /.box-tools -->
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                <span class="info-box-number text-center"><?= $students ?></span>
+                </div>
+            <!-- /.box-body -->
+            </div>
+          <!-- /.box -->
+        </div>
     </div>
 </div>
