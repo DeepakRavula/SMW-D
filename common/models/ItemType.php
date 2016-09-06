@@ -12,9 +12,10 @@ use Yii;
  */
 class ItemType extends \yii\db\ActiveRecord
 {
-	const TYPE_LESSON = 1;
-	const TYPE_MISC = 2;
-	const TYPE_OPENING_BALANCE = 3;	
+	const TYPE_PRIVATE_LESSON = 1;
+	const TYPE_GROUP_LESSON = 2;
+	const TYPE_MISC = 3;
+	const TYPE_OPENING_BALANCE = 4;	
     /**
      * @inheritdoc
      */

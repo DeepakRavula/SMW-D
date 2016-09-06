@@ -74,7 +74,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getInvoiceLineItem()
     {
         return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])
-				->where(['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON]);
+				->where(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
     }
 
 	public function getInvoice() {

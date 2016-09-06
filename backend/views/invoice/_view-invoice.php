@@ -108,8 +108,11 @@ use common\models\ItemType;
 					'value' => function($data) {
 						$code = null;
 						switch($data->item_type_id){
-							case ItemType::TYPE_LESSON:
-								$code = 'LESSON';
+							case ItemType::TYPE_PRIVATE_LESSON:
+								$code = 'PRIVATE LESSON';
+							break;
+							case ItemType::TYPE_GROUP_LESSON:
+								$code = 'GROUP LESSON';
 							break;
 							case ItemType::TYPE_MISC:
 								$code = 'MISC';
@@ -139,12 +142,8 @@ use common\models\ItemType;
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center'],
             		'value' => function($data) {
-						if($data->item_type_id === ItemType::TYPE_LESSON){
-							return $data->lesson->enrolment->program->rate;
-						}else{
 							return $data->amount;
-						}
-					}	
+						}	
             	],
                 [ 
                     'attribute' => 'tax_rate',
@@ -165,10 +164,10 @@ use common\models\ItemType;
                 	'label' => 'Total',
             	    'enableSorting' => false,
 					'value' => function($data) {
-						if($data->item_type_id === ItemType::TYPE_LESSON){
-							return $data->amount;
-						}else{
+						if($data->item_type_id === ItemType::TYPE_MISC){
 							return $data->amount + $data->tax_rate;
+						}else{
+							return $data->amount;
 						}
 					},	
 					'headerOptions' => ['class' => 'text-right'],

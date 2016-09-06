@@ -5,12 +5,18 @@ namespace backend\controllers;
 use Yii;
 use common\models\GroupCourse;
 use common\models\GroupEnrolment;
+use common\models\Student;
 use common\models\User;
+use common\models\InvoiceLineItem;
+use common\models\Invoice;
+use common\models\ItemType;
+use common\models\TaxStatus;
 use backend\models\search\GroupCourseSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\helpers\ArrayHelper;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 /**
  * GroupCourseController implements the CRUD actions for GroupCourse model.
  */
@@ -65,9 +71,31 @@ class GroupCourseController extends Controller
 				$groupEnrolment->save();
 			} 
 		}
+
+		$studentDataProvider = new ActiveDataProvider([
+			'query' => Student::find()
+				->enrolled($id),
+		]);
 	 
         return $this->render('view', [
             'model' => $this->findModel($id),
+			'studentDataProvider' => $studentDataProvider,
+        ]);
+    }
+    
+    /**
+     * Displays a single GroupCourse model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionViewStudent($groupCourseId, $studentId)
+    {
+        $model = $this->findModel($groupCourseId);
+		$studentModel = Student::findOne(['id' => $studentId]);
+	 
+        return $this->render('view_student', [
+            'model' => $model,
+			'studentModel' => $studentModel,
         ]);
     }
 
@@ -156,5 +184,57 @@ class GroupCourseController extends Controller
 				} else {
 					throw new NotFoundHttpException('The requested page does not exist.');
 				}
+    }
+
+	public function actionInvoice($id, $studentId) {
+		$model = GroupCourse::findOne(['id' => $id]);
+		$studentModel = Student::findOne(['id' => $studentId]);
+		$currentDate = new \DateTime();
+		$location_id = Yii::$app->session->get('location_id');
+		$lastInvoice = Invoice::lastInvoice($location_id);
+		if(empty($lastInvoice)) {
+			$invoiceNumber = 1;
+		} else {
+			$invoiceNumber = $lastInvoice->invoice_number + 1;
+		}
+
+		$invoice = new Invoice();
+		$invoice->user_id = $studentModel->customer->id; 
+		$invoice->location_id = $location_id;
+		$invoice->invoice_number = $invoiceNumber;
+		$invoice->date = (new \DateTime())->format('Y-m-d');
+		$invoice->status = Invoice::STATUS_OWING;
+		$invoice->type = INVOICE::TYPE_INVOICE;
+		$invoice->save();
+		$subTotal = 0;
+		$taxAmount = 0;
+		$invoiceLineItem = new InvoiceLineItem();
+		$invoiceLineItem->invoice_id = $invoice->id;
+		$invoiceLineItem->item_id = $model->id;
+		$invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
+		$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
+		$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
+		$invoiceLineItem->tax_rate = 0.0;
+		$invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
+		$invoiceLineItem->tax_status = $taxStatus->name;
+		$description = $model->program->name . ' for ' . $studentModel->fullName . ' with ' . $studentModel->groupCourse->teacher->publicIdentity;
+		$invoiceLineItem->description = $description;
+		$time = explode(':', $model->length);
+		$invoiceLineItem->unit = 1;
+		$invoiceLineItem->amount = $model->program->rate;
+		$invoiceLineItem->save();
+		$subTotal += $invoiceLineItem->amount;                
+		$invoice = Invoice::findOne(['id' => $invoice->id]);
+		$invoice->subTotal = $subTotal;
+		$totalAmount = $subTotal + $taxAmount;
+		$invoice->tax = $taxAmount;
+		$invoice->total = $totalAmount;
+		$invoice->save();
+		Yii::$app->session->setFlash('alert', [
+			'options' => ['class' => 'alert-success'],
+			'body' => 'Invoice has been generated successfully'
+		]); 
+
+		return $this->redirect(['invoice/view','id' => $invoice->id]);
     }
 }

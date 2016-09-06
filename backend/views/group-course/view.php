@@ -38,6 +38,11 @@ $enrolmentContent =  $this->render('_enrolment', [
 	'model' => new GroupEnrolment(),
 ]);
 
+$studentContent =  $this->render('_student', [
+	'studentDataProvider' => $studentDataProvider,
+    'model' => $model,
+]);
+
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -46,6 +51,13 @@ $enrolmentContent =  $this->render('_enrolment', [
             'content' => $enrolmentContent,
             'options' => [
                       'id' => 'enrolment',
+            ],
+        ],
+		[
+            'label' => 'Students',
+            'content' => $studentContent,
+            'options' => [
+                      'id' => 'student',
             ],
         ],
     ],
