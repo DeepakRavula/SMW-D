@@ -3,6 +3,8 @@ use yii\grid\GridView;
 use common\models\Payment;
 use common\models\InvoicePayment;
 use common\models\Invoice;
+use common\models\InvoiceLineItem;
+use common\models\ItemType;
 use common\models\PaymentMethod;
 use common\models\PaymentCheque;
 use yii\bootstrap\ButtonGroup;
@@ -131,12 +133,14 @@ echo GridView::widget([
 </div>
 <div class="clearfix"></div>
 <?php endif;?>
-<?php $buttons = [];?>
+<?php $buttons = [];
+	$lineItemModel = InvoiceLineItem::findOne(['invoice_id' => $model->id, 'item_type_id' => ItemType::TYPE_GROUP_LESSON]);
+?>
 <?php foreach(PaymentMethod::findAll([
 			'active' => PaymentMethod::STATUS_ACTIVE,
 			'displayed' => 1,
 		]) as $method):?>
-	<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
+	<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE || ! empty($lineItemModel->item_type_id)):?>
 	<?php if($method->name === 'Apply Credit'):?>
 	<?php continue;?>
 	<?php endif;?>
