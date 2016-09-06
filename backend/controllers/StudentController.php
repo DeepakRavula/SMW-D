@@ -64,27 +64,10 @@ class StudentController extends Controller
 				->joinWith(['enrolment' => function($query) use($location_id,$id){
 					$query->where(['location_id' => $location_id,'student_id' => $id]);
 				}]);
-			$lessonDataProvider = new ActiveDataProvider([
+		$lessonDataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);	
 
-		$query = Student::find()
-				->joinWith(['customer' => function($query){
-						$query->joinWith('addresses');	
-					}])
-				->where(['customer_id' => $id]);
-		$addressDataProvider = new ActiveDataProvider([
-			'query' => $query,
-		]);
-		$query = Student::find()
-			->joinWith(['customer' => function($query){
-					$query->joinWith('phoneNumbers');	
-				}])
-			->where(['customer_id' => $id]);
-		$phoneDataProvider = new ActiveDataProvider([
-			'query' => $query,
-		]);
-		
         $model = $this->findModel($id);
 		$enrolmentModel = new Enrolment();
         $lessonModel = new Lesson();
@@ -116,8 +99,6 @@ class StudentController extends Controller
                 'enrolmentModel' => $enrolmentModel,
                 'lessonModel' => $lessonModel,
 				'lessonDataProvider' => $lessonDataProvider,
-    			'addressDataProvider' => $addressDataProvider,
-			    'phoneDataProvider' => $phoneDataProvider,
             ]);
         }
     }
