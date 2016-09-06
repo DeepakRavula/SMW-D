@@ -1,14 +1,13 @@
 <?php
 
+use yii\helpers\Html;
 use yii\bootstrap\Tabs;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 $this->title = 'Student Details';
-$this->params['breadcrumbs'][] = ['label' => 'Students', 'url' => ['index','StudentSearch[showAllStudents]' => false]];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a>');
 ?>
-
 <?php
 echo $this->render('_profile', [
         'model' => $model,
@@ -67,6 +66,10 @@ $(document).ready(function() {
    });
  });
 </script>
-
+<script>
+   jQuery(document).ready(function(){
+   $('.go-back').html('<a href="javascript: history.back()"><i class="fa fa-angle-left"></i> Go Back</a>');
+   });
+</script>
 
 
