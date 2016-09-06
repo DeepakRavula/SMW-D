@@ -6,7 +6,9 @@ use Yii;
 use common\models\Student;
 use common\models\Enrolment;
 use common\models\Lesson;
+use common\models\Program;
 use common\models\GroupCourse;
+use common\models\GroupEnrolment;
 use backend\models\search\StudentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -196,6 +198,21 @@ class StudentController extends Controller
             'body' => 'Student profile has been deleted successfully'
         ]);
         return $this->redirect(['index']);
+    }
+
+	public function actionDeleteConfirm($programType, $studentId)
+    {
+		$model = $this->findModel($studentId);
+		if($programType === Program::TYPE_PRIVATE_PROGRAM){
+			$enrolmentModel = Enrolment::findOne(['student_id' => $studentId]); 
+		} else {
+			$enrolmentModel = GroupEnrolment::findOne(['student_id' => $studentId]); 
+		}
+        return $this->render('delete-confirm', [
+			'model' => $model,
+			'programType' => $programType,
+			'enrolmentModel' => $enrolmentModel,
+        ]);
     }
 
     /**
