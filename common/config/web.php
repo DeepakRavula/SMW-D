@@ -47,7 +47,8 @@ $config = [
 			'professional-development-day/*',
 			'calendar/*',
 			'blog/*',
-			'payment/*'
+			'payment/*',
+            'dashboard/*'
 			
             // The actions listed here will be allowed to everyone including guests.
             // So, 'admin/*' should not appear here in the production, of course.
