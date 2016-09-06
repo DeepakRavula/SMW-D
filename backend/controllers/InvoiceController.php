@@ -8,6 +8,7 @@ use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use backend\models\search\LessonSearch;
 use common\models\User;
+use common\models\UserProfile;
 use common\models\Payment;
 use common\models\Lesson;
 use common\models\PaymentMethod;
@@ -24,6 +25,7 @@ use common\models\TaxStatus;
 use common\models\Address;
 use common\models\UserAddress;
 use common\models\PhoneNumber;
+use backend\models\UserForm;
 use yii\helpers\Json;
 
 /**
@@ -61,12 +63,43 @@ class InvoiceController extends Controller {
 	 * @param integer $id
 	 * @return mixed
 	 */
-	public function actionView($id) {
+
+	public function actionBlankInvoice(){
+		$invoice = new Invoice();
+		$invoice->user_id = Invoice::USER_UNASSINGED;
+		$location_id = Yii::$app->session->get('location_id'); 
+		$invoice->location_id = $location_id;
+		$lastInvoice = Invoice::lastInvoice($location_id);
+		if (empty($lastInvoice)) {
+			$invoiceNumber = 1;
+		} else {
+			$invoiceNumber = $lastInvoice->invoice_number + 1;
+		}
+		$invoice->invoice_number = $invoiceNumber;
+		$invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
+		$invoice->type = Invoice::TYPE_INVOICE;
+		$invoice->subTotal = 0.0;
+		$invoice->tax = 0.0;
+		$invoice->total = 0.0;
+		$invoice->status = Invoice::STATUS_PAID;
+		$invoice->save();
+		return $this->redirect(['view', 'id' => $invoice->id]);
+			
+	}
+	public function actionView($id) {	
 		$model = $this->findModel($id);
 		$invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
 		$invoiceLineItemsDataProvider = new ActiveDataProvider([
 			'query' => $invoiceLineItems,
 		]);
+
+		$request = Yii::$app->request;
+		$invoiceRequest = $request->post('Invoice');
+		$customerId = $invoiceRequest['customer_id'];
+		$customer = User::findOne(['id' => $customerId]);
+        if( empty($customer)){
+            $customer = new User();
+        }
 
 		$invoicePayments = Payment::find()
 				->joinWith(['invoicePayment ip' => function($query) use($model){
@@ -79,6 +112,35 @@ class InvoiceController extends Controller {
 		]);
 
 		$paymentModel = new Payment();
+        $userModel = new UserProfile();
+        
+        if($request->isPost){
+            if(isset($_POST['customer-invoice'])){
+                if ($model->load(Yii::$app->request->post())) {
+                $model->user_id = $customer->id;
+                $model->save();
+            }
+            }
+            if(isset($_POST['guest-invoice'])){
+                if ($customer->load(Yii::$app->request->post())) {
+                    if($customer->save()){
+                        $model->user_id = $customer->id;
+                        $model->save();
+
+                        if ($userModel->load(Yii::$app->request->post())) {
+                            $userModel->user_id = $customer->id;
+                            $userModel->save();
+                            
+                            Yii::$app->session->setFlash('alert', [
+                                'options' => ['class' => 'alert-success'],
+                                'body' => 'Invoice has been updated successfully'
+                            ]);
+                        }
+                    }
+                }
+            }
+            
+        }
 		
 		if ($paymentModel->load(Yii::$app->request->post())) {
 				$paymentMethodId = $paymentModel->payment_method_id; 
@@ -168,6 +230,8 @@ class InvoiceController extends Controller {
 					'model' => $model,
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 					'invoicePayments' => $invoicePaymentsDataProvider,
+					'customer' => empty($customer) ? new User : $customer,
+					'userModel' => $userModel,
 		]);
 	}
 
