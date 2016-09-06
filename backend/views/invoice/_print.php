@@ -138,11 +138,22 @@ $this->params['breadcrumbs'][] = $this->title;
 				[
 					'label' => 'Code',
 					'value' => function($data) {
-						if((int) $data->item_type_id === ItemType::TYPE_PRIVATE_LESSON){
-							return 'LESSON';
-						}else{
-							return 'MISC';
+						$code = null;
+						switch($data->item_type_id){
+							case ItemType::TYPE_PRIVATE_LESSON:
+								$code = 'PRIVATE LESSON';
+							break;
+							case ItemType::TYPE_GROUP_LESSON:
+								$code = 'GROUP LESSON';
+							break;
+							case ItemType::TYPE_MISC:
+								$code = 'MISC';
+							break;
+							case ItemType::TYPE_OPENING_BALANCE:
+								$code = 'Opening Balance';
+							break;
 						}
+						return $code;
 					}
 				],
 				[

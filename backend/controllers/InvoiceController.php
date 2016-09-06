@@ -96,7 +96,12 @@ class InvoiceController extends Controller {
 		$request = Yii::$app->request;
 		$invoiceRequest = $request->post('Invoice');
 		$customerId = $invoiceRequest['customer_id'];
-		$customer = User::findOne(['id' => $customerId]);
+		if(! empty($model->user_id)){
+			$customer = User::findOne(['id' => $model->user_id]);
+		}
+		if(isset($customerId)){
+			$customer = User::findOne(['id' => $customerId]);
+		}
         if( empty($customer)){
             $customer = new User();
         }

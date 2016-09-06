@@ -91,7 +91,7 @@ use yii\widgets\ActiveForm;
               <div class="clearfix"></div>
             </div>
           </div>
-	<?php if($model->type === Invoice::TYPE_INVOICE):?>
+	<?php if((int) $model->user_id === Invoice::USER_UNASSINGED || (int) $model->total === 0):?>
 	<div id="add-misc-item" class="col-md-12">
     <div class="row m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>
