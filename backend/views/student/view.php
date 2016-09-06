@@ -19,8 +19,9 @@ echo $this->render('_profile', [
 <?php 
 
 $enrolmentContent =  $this->render('_enrolment', [
-	'dataProvider' => $dataProvider,
     'enrolmentModel' => $enrolmentModel,
+	'privateLessons' => $privateLessons,
+	'groupCourses' => $groupCourses
 ]);
 
 $lessonContent =  $this->render('_lesson', [

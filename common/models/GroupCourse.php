@@ -80,6 +80,11 @@ class GroupCourse extends \yii\db\ActiveRecord
 			->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
     }
 
+	public function getGroupEnrolments()
+    {
+        return $this->hasMany(GroupEnrolment::className(), ['course_id' => 'id']);
+    }
+
 	public static function getWeekdaysList()
     {
         return [

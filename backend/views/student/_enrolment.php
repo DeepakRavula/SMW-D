@@ -2,6 +2,8 @@
 
 use yii\grid\GridView;
 use common\models\Enrolment;
+use common\models\GroupCourse;
+use yii\data\ArrayDataProvider;
 ?>
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Enrolments</h4>
@@ -14,69 +16,87 @@ use common\models\Enrolment;
         'model' => $enrolmentModel,
     ]) ?>
 </div>
-<?php yii\widgets\Pjax::begin() ?>
 <?php
-	echo GridView::widget([
-		'dataProvider' => $dataProvider,
-		'options' => ['class' => 'col-md-12'],
-		'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
-		'columns' => [
-			[
-				'label' => 'Program Name',
-				'value' => function($data) {
-					return !empty($data->program->name) ? $data->program->name : null;
-				},
-			],
-			[
-				'label' => 'Teacher Name',
-				'value' => function($data) {
-					return !empty($data->lessons[0]->teacher->publicIdentity) ? $data->lessons[0]->teacher->publicIdentity : null;
-				},
-			],
-			[
-				'label' => 'Day',
-				'value' => function($data) {
-					if(! empty($data->day)){
-					$dayList = Enrolment::getWeekdaysList();
-					$day = $dayList[$data->day];
-					return ! empty($day) ? $day : null;
-					}
-					return null;
-				},
-			],
-			[
-				'label' => 'From Time',
-				'value' => function($data) {
-						return ! empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
-				}
-			],
-			[
-				'label' => 'Duration',
-				'value' => function($data) {
-					if(! empty($data->duration)){
-						$duration = \DateTime::createFromFormat('h:i:s',$data->duration);
-       				    $data->duration = $duration->format('H:i');
-                    	return !empty($data->duration) ? $data->duration : null;
-					}
-					return null;
-				},
-			],
-			[
-				'label' => 'Commencement Date',
-				'value' => function($data) {
-					return ! empty($data->commencement_date) ? Yii::$app->formatter->asDate($data->commencement_date) : null;
+$results = [];
+if(! empty($privateLessons)){
+	foreach($privateLessons as $privateLesson){
+		$dayList = Enrolment::getWeekdaysList();
+		$day = $dayList[$privateLesson->day];
+		$duration = \DateTime::createFromFormat('h:i:s', $privateLesson->duration);
+	    $privateLesson->duration = $duration->format('H:i');
+		$results[] = [
+			'program_id' => $privateLesson->program->name,
+			'teacher_id' => $privateLesson->lessons[0]->teacher->publicIdentity,
+			'day' => $day,
+			'from_time' => Yii::$app->formatter->asTime($privateLesson->from_time),
+			'duration' => $privateLesson->duration,
+			'start_date' => Yii::$app->formatter->asDate($privateLesson->commencement_date),
+			'end_date' => Yii::$app->formatter->asDate($privateLesson->renewal_date),
+		];
+	}
+}
 
-				}
-			],
-			[
-				'label' => 'Renewal Date',
-				'value' => function($data) {
-					return ! empty($data->renewal_date) ? Yii::$app->formatter->asDate($data->renewal_date) : null;
-
-				}
-			],
+if(! empty($groupCourses)){
+	foreach($groupCourses as $groupCourse){
+		$dayList = GroupCourse::getWeekdaysList();
+		$day = $dayList[$groupCourse->day];
+		$fromTime = \DateTime::createFromFormat('Y-m-d H:i:s', $groupCourse->start_date);
+		$duration = \DateTime::createFromFormat('h:i:s', $groupCourse->length);
+		$results[] = [
+			'program_id' => $groupCourse->program->name,
+			'teacher_id' => $groupCourse->teacher->publicIdentity,
+			'day' => $day,
+			'from_time' => $fromTime->format('h:i A'),
+			'duration' => $duration->format('H:i'),
+			'start_date' => Yii::$app->formatter->asDate($groupCourse->start_date),
+			'end_date' => Yii::$app->formatter->asDate($groupCourse->end_date),
+		];
+	}
+}
+?>
+<?php
+$enrolmentDataProvider = new ArrayDataProvider([
+    'allModels' => $results,
+    'sort' => [
+        'attributes' => ['program_id', 'teacher_id', 'day', 'from_time', 'duration', 'start_date', 'end_date'],
+    ],
+]);
+?>
+<?php
+echo GridView::widget([
+	'dataProvider' => $enrolmentDataProvider,
+	'tableOptions' =>['class' => 'table table-bordered'],
+    'headerRowOptions' => ['class' => 'bg-light-gray' ],
+    'options' => ['class' => 'p-10'],
+	'columns' => [
+		[
+		'label' => 'Program Name', 
+		'value' => 'program_id',
 		],
-	]);
-	?>
-<?php \yii\widgets\Pjax::end(); ?>
+		[
+		'label' => 'Teacher Name',
+		'value' => 'teacher_id',
+		],
+		[
+		'label' => 'Day', 
+		'value' => 'day',
+		],
+		[
+		'label' => 'From Time', 
+		'value' => 'from_time',
+		],
+		[
+		'label' => 'Duration', 
+		'value' => 'duration',
+		],
+		[
+		'label' => 'Start Date', 
+		'value' => 'start_date',
+		],
+		[
+		'label' => 'End Date', 
+		'value' => 'end_date',
+		],
+    ]
+]);
+?>

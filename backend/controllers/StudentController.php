@@ -6,7 +6,7 @@ use Yii;
 use common\models\Student;
 use common\models\Enrolment;
 use common\models\Lesson;
-use common\models\Qualification;
+use common\models\GroupCourse;
 use backend\models\search\StudentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -53,9 +53,15 @@ class StudentController extends Controller
      */
     public function actionView($id)
     {
-		$dataProvider = new ActiveDataProvider([
-            'query' => Enrolment::find()->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
-        ]);
+        $model = $this->findModel($id);
+		$privateLessons = Enrolment::find()
+				->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
+				->all();
+
+		$groupCourses = GroupCourse::find()
+				->joinWith('groupEnrolments')
+				->where(['student_id' => $model->id,'location_id' =>Yii::$app->session->get('location_id')])
+        		->all();
 		
 		$session = Yii::$app->session;
 		$location_id = $session->get('location_id');
@@ -68,7 +74,6 @@ class StudentController extends Controller
 			'query' => $query,
 		]);	
 
-        $model = $this->findModel($id);
 		$enrolmentModel = new Enrolment();
         $lessonModel = new Lesson();
         if($lessonModel->load(Yii::$app->request->post()) ){
@@ -95,10 +100,11 @@ class StudentController extends Controller
         } else {
             return $this->render('view', [
             	'model' => $model,
-            	'dataProvider' => $dataProvider,
+                'lessonDataProvider' => $lessonDataProvider,
                 'enrolmentModel' => $enrolmentModel,
                 'lessonModel' => $lessonModel,
-				'lessonDataProvider' => $lessonDataProvider,
+				'privateLessons' => $privateLessons,
+				'groupCourses' => $groupCourses
             ]);
         }
     }
