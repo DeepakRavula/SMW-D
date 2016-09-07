@@ -135,7 +135,9 @@ class InvoiceController extends Controller {
                         if ($userModel->load(Yii::$app->request->post())) {
                             $userModel->user_id = $customer->id;
                             $userModel->save();
-                            
+                            $auth = Yii::$app->authManager;
+            				$auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
+							
                             Yii::$app->session->setFlash('alert', [
                                 'options' => ['class' => 'alert-success'],
                                 'body' => 'Invoice has been updated successfully'
