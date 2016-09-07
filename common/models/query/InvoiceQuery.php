@@ -63,11 +63,8 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 					}])
 					->where(['e.id' => $enrolmentId]);
 				}]);
-			}])
-			->joinWith(['invoicePayments ip' => function($query){
-				$query->where(['ip.id' => null]);
-			}])
-			->where(['invoice.type' => Invoice::TYPE_INVOICE]);
+			}]);
+			
 		return $this;
 	}
 

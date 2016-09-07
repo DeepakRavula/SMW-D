@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-
+use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 /**
  * This is the model class for table "enrolment".
  *
@@ -27,6 +27,18 @@ class Enrolment extends \yii\db\ActiveRecord
     {
 		return 'enrolment';
 	}
+
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true
+                ],
+            ],
+        ];
+    }
 
 	/**
 	 * @inheritdoc

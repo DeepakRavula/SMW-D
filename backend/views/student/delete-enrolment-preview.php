@@ -7,7 +7,12 @@ use common\models\Program;
 <?php
 $pendingInvoices = Invoice::find()
 		->pendingInvoices($enrolmentId, $model)
+		->joinWith(['invoicePayments ip' => function($query){
+				$query->where(['ip.id' => null]);
+			}])
+		->where(['invoice.type' => Invoice::TYPE_INVOICE])
 		->all();
+			
 if( ! empty($pendingInvoices)){
 	$pendingInvoiceTotal = 0;
 	foreach($pendingInvoices as $pendingInvoice){
@@ -15,17 +20,34 @@ if( ! empty($pendingInvoices)){
 	}
 }
 
+$invoicePartialPayments = Invoice::find()
+		->pendingInvoices($enrolmentId, $model)
+		->where(['invoice.type' => Invoice::TYPE_INVOICE])
+		->all();
+if( ! empty($invoicePartialPayments)){
+	$count = 0;
+	foreach($invoicePartialPayments as $invoicePartialPayment){
+		if($invoicePartialPayment->invoiceBalance > 0){
+			$count += 1;
+		}
+	}
+}
+$invoiceCredits = Invoice::find()->alias('i')
+		->select(['i.id', 'i.date', 'SUM(i.balance) as credit'])
+		->pendingInvoices($enrolmentId, $model)
+		->where(['i.type' => Invoice::TYPE_INVOICE])
+		->andWhere(['<', 'balance', 0])
+		->all();
+if( ! empty($invoiceCredits)){
+	$originalInvoiceCredit = null;
+	foreach($invoiceCredits as $invoiceCredit){
+		$originalInvoiceCredit += $invoiceCredit->credit; 
+	}
+}
+
 $proFormaInvoiceCredits = Invoice::find()->alias('i')
 	->select(['i.id', 'i.date', 'SUM(p.amount) as credit'])
-	->joinWith(['lineItems li'=>function($query) use($enrolmentId, $model){
-			$query->joinWith(['lesson l'=>function($query) use($enrolmentId, $model){	
-				$query->joinWith(['enrolment e'=>function($query) use($enrolmentId, $model){
-					$query->joinWith('student s')
-						->where(['s.customer_id' => $model->customer->id, 's.id' => $model->id]);
-					}])
-					->where(['e.id' => $enrolmentId]);
-				}]);
-			}])
+	->pendingInvoices($enrolmentId, $model)
 	->joinWith(['invoicePayments ip' => function($query) use($model){
 		$query->joinWith(['payment p' => function($query) use($model){
 		}]);
@@ -78,13 +100,15 @@ if( ! empty($proFormaInvoiceCredits)){
 <?php endif;?>
 </h4>
 <h4>Pending Invoice Total : <?= ! empty($pendingInvoiceTotal) ? $pendingInvoiceTotal : 0;?></h4>
+<h4>Number Of Invoice Partial Payment : <?= ! empty($count) ? $count : 0;?></h4>
+<h4>Unused Invoice Credit : <?= ! empty($originalInvoiceCredit) ? abs($originalInvoiceCredit) : 0;?></h4>
 <?php if((int) $programType === Program::TYPE_PRIVATE_PROGRAM):?>
 <h4>Unused Pro Forma Invoice Credit: <?= ! empty($proFormaCredit) ? $proFormaCredit : 0;?></h4>
 <?php endif;?>
 </div>
 <div class="clearfix"></div>
 <div>
-<?= Html::a('Delete', ['delete', 'id' => $model->id], [
+<?= Html::a('Confirm', ['delete', 'enrolmentId' => $enrolmentModel->id, 'programType' => $programType, 'studentId' => $model->id], [
 		'class' => 'btn btn-danger',
 		'data' => [
 			'confirm' => 'Are you sure you want to delete this item?',
