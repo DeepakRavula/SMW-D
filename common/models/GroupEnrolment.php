@@ -42,7 +42,8 @@ class GroupEnrolment extends \yii\db\ActiveRecord
     {
         return [
             [['course_id'], 'required'],
-            [['course_id', 'student_id'], 'integer'],
+            [['course_id', 'student_id',], 'integer'],
+			[['isDeleted'], 'safe']
         ];
     }
 

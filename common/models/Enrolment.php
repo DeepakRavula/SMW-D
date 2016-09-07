@@ -48,7 +48,7 @@ class Enrolment extends \yii\db\ActiveRecord
 		return [
             [['student_id', 'program_id','commencement_date'], 'required'],
 			[['student_id', 'teacherId', 'program_id', 'day'], 'integer'],
-            [['commencement_date','teacherId', 'program_id', 'day', 'from_time','to_time','location_id', 'duration'], 'safe'],
+            [['commencement_date','teacherId', 'program_id', 'day', 'from_time','to_time','location_id', 'duration', 'isDeleted'], 'safe'],
 		];
 	}
 
@@ -176,6 +176,7 @@ class Enrolment extends \yii\db\ActiveRecord
 					'teacher_id' => $this->teacherId,
 					'status' => $status,
 					'date' => $day->format('Y-m-d H:i:s'),
+					'isDeleted' => 0,
 				]);
 				$lesson->save();
 			}

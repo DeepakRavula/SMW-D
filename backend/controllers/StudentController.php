@@ -93,6 +93,7 @@ class StudentController extends Controller
         }
         if ($enrolmentModel->load(Yii::$app->request->post()) ) {
 			$enrolmentModel->student_id = $id;
+			$enrolmentModel->isDeleted = 0;
 			$enrolmentModel->save();
 			    Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],

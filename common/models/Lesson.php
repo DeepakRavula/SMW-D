@@ -52,7 +52,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['enrolment_id','teacher_id','status'], 'required'],
             [['enrolment_id','program_id', 'status'], 'integer'],
             ['status', 'in', 'range' => array_keys(self::lessonStatuses())],
-            [['date','notes'], 'safe'],
+            [['date','notes', 'isDeleted'], 'safe'],
         ];
     }
 
