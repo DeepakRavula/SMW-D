@@ -69,7 +69,7 @@ if( ! empty($proFormaInvoiceCredits)){
     <div class="col-md-12 p-t-10">
         <p class="users-name pull-left"><?= $model->customer->publicidentity ?>
              <em>
-                <small><?php echo !empty($customer->email) ? $customer->email : null ?></small>
+                <small><?php echo !empty($model->customer->email) ? $model->customer->email : null ?></small>
             </em> 
         </p>
     </div>
