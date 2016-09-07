@@ -17,8 +17,7 @@ foreach ($roleNames as $name => $description) {
 	}
 }
 $this->title = Yii::t('backend', !($roleName) ? 'User' : $roleName . ' Details');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('backend', !$roleName ? 'User' : $roleName . 's'), 'url' => ['index', 'UserSearch[role_name]' =>$searchModel->role_name]];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a>');
 ?>
 
 <div class="row-fluid user-details-wrapper">
@@ -253,4 +252,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');
   	});
+   jQuery(document).ready(function(){
+   $('.go-back').html('<a href="javascript: history.back()"><i class="fa fa-angle-left"></i> Go Back</a>');
+   });
 </script>

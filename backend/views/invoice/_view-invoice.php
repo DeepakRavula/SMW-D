@@ -93,7 +93,7 @@ use yii\widgets\ActiveForm;
           </div>
 	<?php 
 	$lineItemModel = InvoiceLineItem::findOne(['invoice_id' => $model->id, 'item_type_id' => ItemType::TYPE_MISC]); ?>
-<?php if(! empty($lineItemModel->item_type_id)):?>
+<?php if(! empty($lineItemModel->item_type_id) || (int) $model->total === 0):?>
 	<div id="add-misc-item" class="col-md-12">
     <div class="row m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>

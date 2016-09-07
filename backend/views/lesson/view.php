@@ -7,8 +7,7 @@ use common\models\Lesson;
 /* @var $model common\models\Lesson */
 
 $this->title = 'Lesson Details';
-$this->params['breadcrumbs'][] = ['label' => 'Lessons', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a>');
 ?>
 <div class="lesson-view">
 	<div class="row-fluid user-details-wrapper">
@@ -51,3 +50,9 @@ $this->params['breadcrumbs'][] = $this->title;
 		<div class="clearfix"></div>
 </div>
 </div>
+<script>
+   jQuery(document).ready(function(){
+   $('.go-back').html('<a href="javascript: history.back()"><i class="fa fa-angle-left"></i> Go Back</a>');
+   });
+</script>
+

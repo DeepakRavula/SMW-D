@@ -12,9 +12,7 @@ use common\models\Invoice;
 
 $this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice';
 $this->params['subtitle'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-sm']);
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['index', 'InvoiceSearch[type]' => $model->type], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
-$this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title. 'invoice/index' .$model->id;
+$this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a>');
 ?>
 <style>
   .invoice-view .logo>img{
@@ -109,4 +107,8 @@ $paymentContent =  $this->render('_payment', [
 ]);?>
 </div>
 </div>
-
+<script>
+   jQuery(document).ready(function(){
+   $('.go-back').html('<a href="javascript: history.back()"><i class="fa fa-angle-left"></i> Go Back</a>');
+   });
+</script>
