@@ -26,8 +26,11 @@ class DashboardController extends \yii\web\Controller
         $payments = Payment::find()
                     ->where(['between','date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-t')])
                     ->sum('amount');
+        $students = Enrolment::find()
+                    ->where(['>','renewal_date', $currentDate->format('Y-m-d')])
+                    ->count('distinct student_id');
         
-        return $this->render('index', ['invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'payments' => $payments]);
+        return $this->render('index', ['invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'payments' => $payments, 'students' => $students]);
     }
 
 }
