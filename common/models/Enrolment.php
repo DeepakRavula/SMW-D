@@ -80,6 +80,12 @@ class Enrolment extends \yii\db\ActiveRecord
 		return $this->hasOne(Program::className(), ['id' => 'program_id']);
 	}
 
+	public function getTeacher()
+    {
+		return $this->hasOne(User::className(), ['id' => 'teacher_id'])
+			->viaTable('lesson',['enrolment_id' => 'id']);
+	}
+
 	public static function getWeekdaysList()
 	{
 		return [

@@ -70,4 +70,10 @@ class GroupEnrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Program::className(), ['id' => 'program_id'])
 			->viaTable('group_course',['id' => 'course_id']);
     }
+
+	public function getTeacher()
+    {
+		return $this->hasOne(User::className(), ['id' => 'teacher_id'])
+			->viaTable('group_course',['id' => 'course_id']);
+	}
 }
