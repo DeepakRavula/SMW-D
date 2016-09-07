@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "974058b684bf8802fb2d5c43d74f8324",
-    "content-hash": "918a5d86333feece5255714a4b1d8e97",
+    "hash": "6311c7f8bc0b1d18833cb78681032530",
+    "content-hash": "4d6cb76a053410cb85bd9d871bc6916a",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -682,6 +682,35 @@
             "description": "Parse and display moments in any timezone."
         },
         {
+            "name": "bower-asset/multiselect-two-sides",
+            "version": "v2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crlcu/multiselect.git",
+                "reference": "6f951752ce32fb3d3442651d61e99997e50661f9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/crlcu/multiselect/zipball/6f951752ce32fb3d3442651d61e99997e50661f9",
+                "reference": "6f951752ce32fb3d3442651d61e99997e50661f9",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/jquery": ">=1.7"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "js/multiselect.min.js"
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "jQuery multiselect plugin with two sides",
+            "keywords": [
+                "multiselect"
+            ]
+        },
+        {
             "name": "bower-asset/punycode",
             "version": "v1.3.2",
             "source": {
@@ -983,6 +1012,7 @@
                 "rest",
                 "web service"
             ],
+            "abandoned": "guzzlehttp/guzzle",
             "time": "2015-03-18 18:23:50"
         },
         {
@@ -1409,7 +1439,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-datepicker/zipball/4ccb7262716f405f51720956a453a61a1b48dd53",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-datepicker/zipball/52606c8764a174aa0d5e6483ed811f617c74ee4e",
                 "reference": "52606c8764a174aa0d5e6483ed811f617c74ee4e",
                 "shasum": ""
             },
@@ -3190,6 +3220,55 @@
                 "yii2-selectivity"
             ],
             "time": "2015-11-07 23:27:11"
+        },
+        {
+            "name": "yii2tech/ar-softdelete",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yii2tech/ar-softdelete.git",
+                "reference": "d9726a8ecff2059ef6dd02997dcd59bcdae41077"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yii2tech/ar-softdelete/zipball/d9726a8ecff2059ef6dd02997dcd59bcdae41077",
+                "reference": "d9726a8ecff2059ef6dd02997dcd59bcdae41077",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "yii2tech\\ar\\softdelete\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Paul Klimov",
+                    "email": "klimov.paul@gmail.com"
+                }
+            ],
+            "description": "Provides support for ActiveRecord soft delete in Yii2",
+            "keywords": [
+                "active",
+                "delete",
+                "record",
+                "smart",
+                "soft",
+                "yii2"
+            ],
+            "time": "2015-12-26 12:09:06"
         },
         {
             "name": "yiisoft/yii2",
