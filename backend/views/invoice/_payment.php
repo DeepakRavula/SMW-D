@@ -134,13 +134,12 @@ echo GridView::widget([
 <div class="clearfix"></div>
 <?php endif;?>
 <?php $buttons = [];
-	$lineItemModel = InvoiceLineItem::findOne(['invoice_id' => $model->id, 'item_type_id' => ItemType::TYPE_GROUP_LESSON]);
 ?>
 <?php foreach(PaymentMethod::findAll([
 			'active' => PaymentMethod::STATUS_ACTIVE,
 			'displayed' => 1,
 		]) as $method):?>
-	<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE || ! empty($lineItemModel->item_type_id)):?>
+	<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
 	<?php if($method->name === 'Apply Credit'):?>
 	<?php continue;?>
 	<?php endif;?>
