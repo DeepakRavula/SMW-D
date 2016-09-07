@@ -234,9 +234,13 @@ class StudentController extends Controller
 	public function actionDeleteStudentPreview($studentId)
     {
 		$model = $this->findModel($studentId);
-		
+	
+		$enrolments = Enrolment::findAll(['student_id' => $studentId]);
+		$groupEnrolments = GroupEnrolment::findAll(['student_id' => $studentId]);
         return $this->render('delete-student-preview', [
 			'model' => $model,
+			'enrolments' => $enrolments,
+			'groupEnrolments' => $groupEnrolments
         ]);
     }
 

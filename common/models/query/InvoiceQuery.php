@@ -78,4 +78,19 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 			->groupBy('i.id');
 		return $this;
 	}
+
+	public function privateLessonInvoices($studentId, $locationId, $customerId) {
+		$this->joinWith(['lineItems li'=>function($query) use($studentId, $locationId, $customerId){
+			$query->joinWith(['lesson l'=>function($query) use($studentId, $locationId, $customerId){	
+				$query->joinWith(['enrolment e'=>function($query) use($studentId, $locationId, $customerId){
+					$query->joinWith('student s')
+						->where(['s.customer_id' => $customerId, 's.id' => $studentId]);
+					}])
+					->where(['e.location_id' => $locationId]);
+				}]);
+			}])
+			->where(['invoice.type' => Invoice::TYPE_INVOICE]);	
+			
+		return $this;
+	}
 }
