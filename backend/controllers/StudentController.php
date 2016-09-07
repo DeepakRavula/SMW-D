@@ -233,6 +233,15 @@ class StudentController extends Controller
         ]);
     }
 
+	public function actionDeleteStudentPreview($studentId)
+    {
+		$model = $this->findModel($studentId);
+		
+        return $this->render('delete-student-preview', [
+			'model' => $model,
+        ]);
+    }
+
     /**
      * Finds the Student model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
