@@ -57,13 +57,11 @@ class StudentController extends Controller
     {
         $model = $this->findModel($id);
 		$privateLessons = Enrolment::find()
-				->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id'), 'isDeleted' => false])
+				->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
 				->all();
 
 		$groupCourses = GroupCourse::find()
-				->joinWith(['groupEnrolments' => function($query){
-					$query->where(['isDeleted' => false]);
-				}])
+				->joinWith('groupEnrolments')
 				->where(['student_id' => $model->id,'location_id' =>Yii::$app->session->get('location_id')])
         		->all();
 		
