@@ -6,6 +6,8 @@ use yii\helpers\Url;
 use backend\models\search\InvoiceSearch;
 use yii\bootstrap\Tabs;
 use common\models\Invoice;
+use common\models\InvoiceLineItem;
+use common\models\ItemType;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -36,7 +38,16 @@ $this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a
       left: 170px;
     }
 </style>
-<?php if((int) $model->user_id === Invoice::USER_UNASSINGED):?>
+<?php 
+$lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->id]);
+if( ! empty($lineItem)){
+	$itemTypeId = $lineItem->item_type_id;
+} else {
+	$itemTypeId = null;
+}
+
+?>
+<?php if((int) $model->user_id === Invoice::USER_UNASSINGED || (int)$model->total === 0 || (int) $itemTypeId === ItemType::TYPE_MISC):?>
 <div class="tabbable-panel">
      <div class="tabbable-line">
 <?php 
