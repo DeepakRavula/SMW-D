@@ -1,0 +1,36 @@
+<?php
+
+namespace backend\models\search;
+
+use Yii;
+use yii\base\Model;
+use yii\data\ActiveDataProvider;
+use common\models\Invoice;
+
+/**
+ * UserSearch represents the model behind the search form about `common\models\User`.
+ */
+class DashboardSearch extends Invoice
+{
+    
+    public $fromDate;
+	public $toDate;
+	/**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['fromDate', 'toDate'], 'safe'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function scenarios()
+    {
+        // bypass scenarios() implementation in the parent class
+        return Model::scenarios();
+    }
+}
