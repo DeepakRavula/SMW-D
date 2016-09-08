@@ -1,5 +1,11 @@
 <?php
 /* @var $this yii\web\View */
+
+use miloschuman\highcharts\Highcharts;
+use common\models\Dashboard;
+use common\models\Invoice;
+use common\models\Payment;
+
 ?>
 <div class="col-md-12">
     <h3>Dashboard</h3>
@@ -36,7 +42,7 @@
         <div class="col-md-3">
             <div class="box box-primary box-solid">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Enrolments</h3>
+                  <h3 class="box-title">Enrolled Students</h3>
                   <!-- /.box-tools -->
                 </div>
                 <!-- /.box-header -->
@@ -76,4 +82,21 @@
           <!-- /.box -->
         </div>
     </div>
+</div>
+
+<div class="col-md-6">
+<?= Highcharts::widget([
+   'options' => [
+      'title' => ['text' => 'Monthly Revenue'],
+      'xAxis' => [
+         'categories' => Dashboard::previousMonths()
+      ],
+      'yAxis' => [
+         'title' => ['text' => 'Income'],
+      ],
+      'series' => [
+         ['name' => 'Month', 'data' =>  Dashboard::income()]
+      ]
+   ]
+]);?>
 </div>
