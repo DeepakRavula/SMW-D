@@ -39,7 +39,8 @@ $this->title = 'Delete Student'
 			]); ?>
 		</div>
 	</div>
-	<div class="col-md-12 action-btns">
+	<div class="clearfix"></div>
+	<div class="p-10 text-center">
 <?= Html::a('Confirm', ['delete-student', 'studentId' => $model->id], [
 		'class' => 'btn btn-danger',
 		'data' => [
