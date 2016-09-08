@@ -100,9 +100,12 @@ class UserController extends Controller {
 		
 		$searchModel = new UserSearch();
 		$db = $searchModel->search(Yii::$app->request->queryParams);        
-        
+       	
+		$query = Student::find()
+			->where(['customer_id' => $id]) 
+			->notDeleted();
 		$dataProvider = new ActiveDataProvider([
-			'query' => Student::find()->where(['customer_id' => $id])
+			'query' => $query,
 		]);
 
 		$query = Student::find()
@@ -111,7 +114,8 @@ class UserController extends Controller {
 						->where(['teacher_id' => $id])
 						->groupBy('teacher_id');
 				}])
-				->where(['e.location_id' => $location_id]);
+				->where(['e.location_id' => $location_id])
+				->notDeleted();
 		$studentDataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
@@ -162,7 +166,8 @@ class UserController extends Controller {
 		$currentDate = new \DateTime();
 		$lessonQuery = Lesson::find()
 				->location($location_id)
-				->student($id);
+				->student($id)
+				->notDeleted();
 
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => $lessonQuery,
@@ -170,7 +175,8 @@ class UserController extends Controller {
 		
 		$enrolmentQuery = Enrolment::find()
 			->joinWith('student s')
-			->where(['location_id' => $location_id,'s.customer_id' => $id]);
+			->where(['location_id' => $location_id,'s.customer_id' => $id])
+			->notDeleted();
 		
 		$enrolmentDataProvider = new ActiveDataProvider([
 			'query' => $enrolmentQuery,
@@ -291,7 +297,7 @@ class UserController extends Controller {
 			'query' => $openingBalanceQuery, 
 		]);
 	
-		$query = Lesson::find()->alias('l')
+		$query = Lesson::find()
 					->location($location_id)
 					->student($model->id)
 					->unInvoiced()

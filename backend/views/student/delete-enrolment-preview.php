@@ -108,7 +108,7 @@ if( ! empty($proFormaInvoiceCredits)){
 </div>
 <div class="clearfix"></div>
 <div>
-<?= Html::a('Confirm', ['delete', 'enrolmentId' => $enrolmentModel->id, 'programType' => $programType, 'studentId' => $model->id], [
+<?= Html::a('Confirm', ['delete-enrolment', 'enrolmentId' => $enrolmentModel->id, 'programType' => $programType, 'studentId' => $model->id], [
 		'class' => 'btn btn-danger',
 		'data' => [
 			'confirm' => 'Are you sure you want to delete this item?',

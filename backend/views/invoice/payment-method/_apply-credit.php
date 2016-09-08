@@ -57,7 +57,7 @@ if($remainingOpeningBalance > 0){
 }
 
 $proFormaInvoiceCredits = Invoice::find()->alias('i')
-		->proFormaInvoiceCredits($invoice)
+		->proFormaInvoiceCredits($invoice->user_id)
 		->all();
 		
 foreach($proFormaInvoiceCredits as $proFormaInvoiceCredit){
