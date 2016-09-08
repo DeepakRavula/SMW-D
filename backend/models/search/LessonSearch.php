@@ -87,7 +87,7 @@ class LessonSearch extends Lesson
 		} else if($this->lessonStatus === self::STATUS_INVOICED) {
 			$query->invoiced();
 		} else if($this->lessonStatus === 'canceled') {
-			$query->andFilterWhere(['l.status' => Lesson::STATUS_CANCELED]);
+			$query->andFilterWhere(['lesson.status' => Lesson::STATUS_CANCELED]);
 		}
         
         $this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);

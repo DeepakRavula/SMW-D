@@ -191,7 +191,7 @@ class StudentController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($enrolmentId, $programType, $studentId)
+    public function actionDeleteEnrolment($enrolmentId, $programType, $studentId)
     {
         $this->findModel($studentId);
 		if((int) $programType === Program::TYPE_PRIVATE_PROGRAM){
@@ -216,9 +216,9 @@ class StudentController extends Controller
             return $this->redirect(['view', 'id' => $studentId,'#' => 'enrolment']);
     }
 
-	public function actionDeleteStudent($studentId)
+	public function actionDelete($id)
     {
-        $model = $this->findModel($studentId);
+        $model = $this->findModel($id);
 		$enrolments = Enrolment::findAll(['student_id' => $model->id]);
 		if( ! empty($enrolments)){
 			foreach($enrolments as $enrolment){
@@ -264,13 +264,13 @@ class StudentController extends Controller
         ]);
     }
 
-	public function actionDeleteStudentPreview($studentId)
+	public function actionDeletePreview($id)
     {
-		$model = $this->findModel($studentId);
+		$model = $this->findModel($id);
 	
-		$enrolments = Enrolment::findAll(['student_id' => $studentId]);
-		$groupEnrolments = GroupEnrolment::findAll(['student_id' => $studentId]);
-        return $this->render('delete-student-preview', [
+		$enrolments = Enrolment::findAll(['student_id' => $model->id]);
+		$groupEnrolments = GroupEnrolment::findAll(['student_id' => $model->id]);
+        return $this->render('delete-preview', [
 			'model' => $model,
 			'enrolments' => $enrolments,
 			'groupEnrolments' => $groupEnrolments

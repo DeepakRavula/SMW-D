@@ -297,7 +297,7 @@ class UserController extends Controller {
 			'query' => $openingBalanceQuery, 
 		]);
 	
-		$query = Lesson::find()->alias('l')
+		$query = Lesson::find()
 					->location($location_id)
 					->student($model->id)
 					->unInvoiced()

@@ -41,7 +41,7 @@ $this->title = 'Delete Student'
 	</div>
 	<div class="clearfix"></div>
 	<div class="p-10 text-center">
-<?= Html::a('Confirm', ['delete-student', 'studentId' => $model->id], [
+<?= Html::a('Confirm', ['delete', 'id' => $model->id], [
 		'class' => 'btn btn-danger',
 		'data' => [
 			'confirm' => 'Are you sure you want to delete this item?',
