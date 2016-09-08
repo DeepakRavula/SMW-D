@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Location;
 use common\models\Lesson;
+use common\models\GroupLesson;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
@@ -83,6 +84,7 @@ class ScheduleController extends Controller
             ->join('Join', 'student s', 's.id = e.student_id')
             ->join('Join', 'program p', 'p.id = e.program_id')
             ->where(['not', ['l.status'  =>  Lesson::STATUS_CANCELED]])
+            ->andWhere(['l.isDeleted'  => false])
             ->andWhere('e.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->all();
 		foreach ($events as &$event) {
@@ -97,6 +99,7 @@ class ScheduleController extends Controller
             ->from('group_lesson gl')
             ->join('Join', 'group_course gc', 'gc.id = gl.course_id')
             ->join('Join', 'program p', 'p.id = gc.program_id')
+			->where(['not', ['gl.status'  =>  GroupLesson::STATUS_CANCELED]])
             ->where('gc.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->all();
 

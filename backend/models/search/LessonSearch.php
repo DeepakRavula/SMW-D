@@ -57,7 +57,8 @@ class LessonSearch extends Lesson
         
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
-        $query = Lesson::find()->alias('l')->location($locationId);
+        $query = Lesson::find()->location($locationId)
+				->notDeleted();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -76,7 +77,7 @@ class LessonSearch extends Lesson
 			}else{
 				$query->unInvoiced()
 					->completed()
-					->orderBy('l.id ASC');
+					->orderBy('lesson.id ASC');
 			}
 		}
         if($this->lessonStatus == Lesson::STATUS_COMPLETED) {
@@ -86,14 +87,14 @@ class LessonSearch extends Lesson
 		} else if($this->lessonStatus === self::STATUS_INVOICED) {
 			$query->invoiced();
 		} else if($this->lessonStatus === 'canceled') {
-			$query->andFilterWhere(['l.status' => Lesson::STATUS_CANCELED]);
+			$query->andFilterWhere(['lesson.status' => Lesson::STATUS_CANCELED]);
 		}
         
         $this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);
 		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
        	
 		if((int) $this->invoiceType !== Invoice::TYPE_INVOICE){
-			$query->andWhere(['between','l.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+			$query->andWhere(['between','lesson.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 		}
 
         return $dataProvider;

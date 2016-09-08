@@ -2,7 +2,7 @@
 
 namespace common\models\query;
 
-use common\models\Student;
+use common\models\Invoice;
 use yii\db\ActiveQuery;
 
 /**
@@ -27,6 +27,12 @@ class StudentQuery extends ActiveQuery
         return parent::one($db);
     }
 
+	public function notDeleted() {
+		$this->andWhere(['student.isDeleted' => false]);
+		
+		return $this;
+	}
+	
 	public function location($locationId) {
 		$this->joinWith(['customer c' => function($query) use($locationId){
 				$query->joinWith('userLocation ul')
@@ -52,4 +58,6 @@ class StudentQuery extends ActiveQuery
 		
 		return $this;
 	}
+
+	
 }

@@ -124,6 +124,7 @@ class StudentController extends Controller
 		$user = $request->post('User');
         if ($model->load(Yii::$app->request->post())) {
 			$model->customer_id = $user['id'];
+			$model->isDeleted = 0;
 			$model->save();
 			Yii::$app->session->setFlash('alert', [
             	'options' => ['class' => 'alert-success'],
@@ -191,7 +192,7 @@ class StudentController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($enrolmentId, $programType, $studentId)
+    public function actionDeleteEnrolment($enrolmentId, $programType, $studentId)
     {
         $this->findModel($studentId);
 		if((int) $programType === Program::TYPE_PRIVATE_PROGRAM){
@@ -216,6 +217,38 @@ class StudentController extends Controller
             return $this->redirect(['view', 'id' => $studentId,'#' => 'enrolment']);
     }
 
+	public function actionDelete($id)
+    {
+        $model = $this->findModel($id);
+		$enrolments = Enrolment::findAll(['student_id' => $model->id]);
+		if( ! empty($enrolments)){
+			foreach($enrolments as $enrolment){
+				$lessons = Lesson::find()
+						->where(['enrolment_id' => $enrolment->id])
+						->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
+						->all();
+				foreach($lessons as $lesson){
+					$lesson->softDelete();
+				}
+				$enrolment->softDelete();
+			}
+		}
+		
+		$groupEnrolments = GroupEnrolment::findAll(['student_id' => $model->id]);
+		if( ! empty($groupEnrolments)){
+			foreach($groupEnrolments as $groupEnrolment){
+				$groupEnrolment->softDelete();
+			}
+		}
+		$model->softDelete();
+		
+ 		Yii::$app->session->setFlash('alert', [
+            'options' => ['class' => 'alert-success'],
+            'body' => 'Student has been deleted successfully'
+        ]);
+            return $this->redirect(['index','StudentSearch[showAllStudents]' => 0]);
+    }
+
 	public function actionDeleteEnrolmentPreview($studentId, $enrolmentId, $programType)
     {
 		$model = $this->findModel($studentId);
@@ -229,6 +262,19 @@ class StudentController extends Controller
 			'enrolmentId' => $enrolmentId,
 			'programType' => $programType,
 			'enrolmentModel' => $enrolmentModel,
+        ]);
+    }
+
+	public function actionDeletePreview($id)
+    {
+		$model = $this->findModel($id);
+	
+		$enrolments = Enrolment::findAll(['student_id' => $model->id]);
+		$groupEnrolments = GroupEnrolment::findAll(['student_id' => $model->id]);
+        return $this->render('delete-preview', [
+			'model' => $model,
+			'enrolments' => $enrolments,
+			'groupEnrolments' => $groupEnrolments
         ]);
     }
 
