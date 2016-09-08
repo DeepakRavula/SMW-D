@@ -3,7 +3,7 @@
 ?>
 <div class="col-md-12">
     <h3>Dashboard</h3>
-
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <div class="row">
         <div class="col-md-3">
             <div class="box box-info box-solid">
