@@ -2,6 +2,7 @@
 /* @var $this yii\web\View */
 
 use miloschuman\highcharts\Highcharts;
+use common\models\Dashboard;
 use common\models\Invoice;
 use common\models\Payment;
 
@@ -82,40 +83,19 @@ use common\models\Payment;
         </div>
     </div>
 </div>
-<div class="col-md-6">
-<?php
-	$start = new DateTime('first day of this month - 5 months');
-	$end = new DateTime();
-	$interval = new DateInterval('P1M');
 
-	$date_period = new DatePeriod($start, $interval, $end);
-	$months = [];
-	$payment = [];
-	foreach ($date_period as $dates) {
-		array_push($months, $dates->format('M'));
-	$fromDate = $dates->format('Y-m-d');
-	$toDate = $dates->format('Y-m-t');
-	 $locationId = Yii::$app->session->get('location_id');
-$monthlyPayment = Payment::find()
-                   ->joinWith(['invoice i' => function($query) use($locationId) {                        
-                            $query->where(['i.location_id' => $locationId]);                        
-                    }])
-                    ->andWhere(['between','payment.date', $fromDate, $toDate])
-                    ->sum('payment.amount');
-					array_push($payment,$monthlyPayment);
-	}
-;?>
-	<?= Highcharts::widget([
+<div class="col-md-6">
+<?= Highcharts::widget([
    'options' => [
       'title' => ['text' => 'Monthly Revenue'],
       'xAxis' => [
-         'categories' => $months
+         'categories' => Dashboard::previousMonths()
       ],
       'yAxis' => [
          'title' => ['text' => 'Income'],
       ],
       'series' => [
-         ['name' => 'Month', 'data' =>  $payment]
+         ['name' => 'Month', 'data' =>  Dashboard::income()]
       ]
    ]
 ]);?>
