@@ -12,9 +12,10 @@ class DashboardController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        $searchModel = new DashboardSearch();
-        $searchModel->fromDate =  date('1-m-Y');
-		$searchModel->toDate =  date('t-m-Y');
+        $searchModel = new DashboardSearch();        
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('1-m-Y');
+		$searchModel->toDate = $currentDate->format('t-m-Y');
         $request = Yii::$app->request;
         if($searchModel->load($request->get())){
             $dashboardRequest = $request->get('DashboardSearch');
@@ -22,22 +23,29 @@ class DashboardController extends \yii\web\Controller
             $searchModel->toDate = $dashboardRequest['toDate'];
         }
         $searchModel->fromDate =  \DateTime::createFromFormat('d-m-Y', $searchModel->fromDate);
-		$searchModel->toDate =  \DateTime::createFromFormat('d-m-Y', $searchModel->toDate);
-        $currentDate =  \DateTime::createFromFormat('d-m-Y', date('d-m-Y'));
+		$searchModel->toDate =  \DateTime::createFromFormat('d-m-Y', $searchModel->toDate);       
+        $locationId = Yii::$app->session->get('location_id');
         $invoiceTotal = Invoice::find()
-                        ->where(['between','date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-t')])
+                        ->where(['location_id' => $locationId])
+                        ->andWhere(['between','date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
                         ->sum('subTotal');
         $invoiceTaxTotal = Invoice::find()
-                        ->where(['between','date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-t')])
+                        ->where(['location_id' => $locationId])
+                        ->andWhere(['between','date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
                         ->sum('tax');
         $enrolments = Enrolment::find()
-                    ->where(['>','renewal_date', $currentDate->format('Y-m-d')])
+                    ->where(['location_id' => $locationId])
+                    ->andWhere(['>','renewal_date', $currentDate->format('Y-m-d')])
                     ->count('id');
         $payments = Payment::find()
-                    ->where(['between','date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-t')])
-                    ->sum('amount');
+                    ->joinWith(['invoice i' => function($payments) use($locationId) {                        
+                            $payments->where(['i.location_id' => $locationId]);                        
+                    }])
+                    ->andWhere(['between','payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->sum('payment.amount');
         $students = Enrolment::find()
-                    ->where(['>','renewal_date', $currentDate->format('Y-m-d')])
+                    ->where(['location_id' => $locationId])
+                    ->andWhere(['>','renewal_date', $currentDate->format('Y-m-d')])
                     ->count('distinct student_id');
         
         return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'payments' => $payments, 'students' => $students]);

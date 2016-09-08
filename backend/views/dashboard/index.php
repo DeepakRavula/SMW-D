@@ -13,7 +13,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                <span class="info-box-number text-center"><?= $invoiceTotal ?></span>
+                <span class="info-box-number text-center"><?= ! empty($invoiceTotal) ? $invoiceTotal : 0 ?></span>
                 </div>
             <!-- /.box-body -->
             </div>
@@ -27,7 +27,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                <span class="info-box-number text-center"><?= $invoiceTaxTotal ?></span>
+                <span class="info-box-number text-center"><?= ! empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></span>
                 </div>
             <!-- /.box-body -->
             </div>
@@ -55,7 +55,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                <span class="info-box-number text-center"><?= $payments ?></span>
+                <span class="info-box-number text-center"><?= ! empty($payments) ? $payments : 0 ?></span>
                 </div>
             <!-- /.box-body -->
             </div>
