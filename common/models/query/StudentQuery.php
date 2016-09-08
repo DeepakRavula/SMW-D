@@ -27,6 +27,12 @@ class StudentQuery extends ActiveQuery
         return parent::one($db);
     }
 
+	public function notDeleted() {
+		$this->andWhere(['student.isDeleted' => false]);
+		
+		return $this;
+	}
+	
 	public function location($locationId) {
 		$this->joinWith(['customer c' => function($query) use($locationId){
 				$query->joinWith('userLocation ul')

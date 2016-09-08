@@ -74,7 +74,8 @@ class GroupCourseController extends Controller
 
 		$studentDataProvider = new ActiveDataProvider([
 			'query' => Student::find()
-				->enrolled($id),
+				->enrolled($id)
+				->notDeleted(),
 		]);
 	 
         return $this->render('view', [

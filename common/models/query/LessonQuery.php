@@ -34,6 +34,12 @@ class LessonQuery extends \yii\db\ActiveQuery
         return parent::one($db);
     }
 
+	public function notDeleted() {
+		$this->andWhere(['lesson.isDeleted' => false]);
+		
+		return $this;
+	}
+	
     /**
      * @return $this
      */

@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use \yii2tech\ar\softdelete\SoftDeleteBehavior;
+use common\models\query\EnrolmentQuery;
 /**
  * This is the model class for table "enrolment".
  *
@@ -67,6 +68,15 @@ class Enrolment extends \yii\db\ActiveRecord
 		];
 	}
 
+	/**
+     * @inheritdoc
+     * @return EnrolmentQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new EnrolmentQuery(get_called_class());
+    }
+	
 	public function getLessons()
     {
 		return $this->hasMany(Lesson::className(), ['enrolment_id' => 'id']);

@@ -19,6 +19,7 @@ use common\models\Student;
 					Student::find()
 					->location($locationId)
 					->unenrolled($groupCourseModel->id)
+					->notDeleted()
 					->all(),
 				'id', 'fullName'
 				),
@@ -42,6 +43,7 @@ use common\models\Student;
 					Student::find()
 					->location($locationId)
 					->enrolled($groupCourseModel->id)
+					->notDeleted()
 					->all(),
 				'id', 'fullName'
 				),

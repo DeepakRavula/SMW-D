@@ -42,11 +42,9 @@ class StudentSearch extends Student
     {
         $locationId = Yii::$app->session->get('location_id');
 		$query = Student::find()
-			->joinWith(['customer' => function($query) use($locationId){				
-                $query->joinWith(['userLocation ul'=> function($query) use($locationId){
-                    $query->where(['ul.location_id' => $locationId]);
-                }]);
-            }]);
+				->location($locationId)
+				->notDeleted();
+		
         $query->joinWith('customerProfile cp');
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
