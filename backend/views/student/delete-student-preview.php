@@ -26,6 +26,14 @@ use yii\data\ArrayDataProvider;
 			]); ?>
 		</div>
 	</div>
+	<div class="col-xs-4">
+		<div class="row-fluid">
+		<p class="c-title m-0"></i> Unused Pro Forma Invoice Credits</p>
+		  <?= $this->render('_view-pro-forma-invoice',[
+			  	'model' => $model,
+			]); ?>
+		</div>
+	</div>
 	<div class="col-xs-8">
 		<div class="row-fluid">
 		<p class="c-title m-0"></i> Pending Invoices</p>
