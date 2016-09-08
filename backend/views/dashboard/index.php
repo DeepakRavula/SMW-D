@@ -3,6 +3,7 @@
 
 use miloschuman\highcharts\Highcharts;
 use common\models\Invoice;
+use common\models\Payment;
 
 ?>
 <div class="col-md-12">
@@ -89,11 +90,20 @@ use common\models\Invoice;
 
 	$date_period = new DatePeriod($start, $interval, $end);
 	$months = [];
+	$payment = [];
 	foreach ($date_period as $dates) {
 		array_push($months, $dates->format('M'));
+	$fromDate = $dates->format('Y-m-d');
+	$toDate = $dates->format('Y-m-t');
+	 $locationId = Yii::$app->session->get('location_id');
+$monthlyPayment = Payment::find()
+                   ->joinWith(['invoice i' => function($query) use($locationId) {                        
+                            $query->where(['i.location_id' => $locationId]);                        
+                    }])
+                    ->andWhere(['between','payment.date', $fromDate, $toDate])
+                    ->sum('payment.amount');
+					array_push($payment,$monthlyPayment);
 	}
-
-	
 ;?>
 	<?= Highcharts::widget([
    'options' => [
@@ -105,7 +115,7 @@ use common\models\Invoice;
          'title' => ['text' => 'Income'],
       ],
       'series' => [
-         ['name' => 'month', 'data' => [10500, 25800, 42275, 22389.5, 35000, 55555]]
+         ['name' => 'Month', 'data' =>  $payment]
       ]
    ]
 ]);?>
