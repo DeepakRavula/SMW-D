@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\query\StudentQuery;
+use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "student".
@@ -24,6 +25,18 @@ class Student extends \yii\db\ActiveRecord
 		return '{{%student}}';
     }
 
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true
+                ],
+            ],
+        ];
+    }
+	
     /**
      * @inheritdoc
      */
