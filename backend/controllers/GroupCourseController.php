@@ -67,6 +67,7 @@ class GroupCourseController extends Controller
 				$groupEnrolment->setAttributes([
 					'course_id'	 => $id,
 					'student_id' => $studentId,
+					'isDeleted' => 0,
 				]);
 				$groupEnrolment->save();
 			} 

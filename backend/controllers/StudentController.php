@@ -6,7 +6,9 @@ use Yii;
 use common\models\Student;
 use common\models\Enrolment;
 use common\models\Lesson;
+use common\models\Program;
 use common\models\GroupCourse;
+use common\models\GroupEnrolment;
 use backend\models\search\StudentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -91,6 +93,7 @@ class StudentController extends Controller
         }
         if ($enrolmentModel->load(Yii::$app->request->post()) ) {
 			$enrolmentModel->student_id = $id;
+			$enrolmentModel->isDeleted = 0;
 			$enrolmentModel->save();
 			    Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
@@ -188,14 +191,45 @@ class StudentController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete($enrolmentId, $programType, $studentId)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($studentId);
+		if((int) $programType === Program::TYPE_PRIVATE_PROGRAM){
+			$enrolment = Enrolment::findOne(['id' => $enrolmentId]);
+			$enrolment->softDelete();
+			
+			$lessons = Lesson::find()
+					->where(['enrolment_id' => $enrolmentId])
+					->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
+					->all();
+			foreach($lessons as $lesson){
+				$lesson->softDelete();
+			}
+		} else {
+			$groupEnrolment = GroupEnrolment::findOne(['id' => $enrolmentId]);
+			$groupEnrolment->softDelete();
+		}
  		Yii::$app->session->setFlash('alert', [
             'options' => ['class' => 'alert-success'],
-            'body' => 'Student profile has been deleted successfully'
+            'body' => 'Enrolment has been deleted successfully'
         ]);
-        return $this->redirect(['index']);
+            return $this->redirect(['view', 'id' => $studentId,'#' => 'enrolment']);
+    }
+
+	public function actionDeleteEnrolmentPreview($studentId, $enrolmentId, $programType)
+    {
+		$model = $this->findModel($studentId);
+		if((int) $programType === Program::TYPE_PRIVATE_PROGRAM){
+			$enrolmentModel = Enrolment::findOne(['student_id' => $studentId]); 
+		} else {
+			$enrolmentModel = GroupEnrolment::findOne(['student_id' => $studentId]); 
+		}
+        return $this->render('delete-enrolment-preview', [
+			'model' => $model,
+			'enrolmentId' => $enrolmentId,
+			'programType' => $programType,
+			'enrolmentModel' => $enrolmentModel,
+        ]);
     }
 
     /**

@@ -7,6 +7,7 @@ use common\models\InvoiceType;
 use common\models\InvoiceLineItem;
 use common\models\LessonReschedule;
 use common\models\query\LessonQuery;
+use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 /**
  * This is the model class for table "lesson".
  *
@@ -30,6 +31,18 @@ class Lesson extends \yii\db\ActiveRecord
         return 'lesson';
     }
 
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true
+                ],
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -39,7 +52,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['enrolment_id','teacher_id','status'], 'required'],
             [['enrolment_id','program_id', 'status'], 'integer'],
             ['status', 'in', 'range' => array_keys(self::lessonStatuses())],
-            [['date','notes'], 'safe'],
+            [['date','notes', 'isDeleted'], 'safe'],
         ];
     }
 

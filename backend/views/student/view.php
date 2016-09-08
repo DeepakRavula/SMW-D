@@ -18,6 +18,7 @@ echo $this->render('_profile', [
 <?php 
 
 $enrolmentContent =  $this->render('_enrolment', [
+    'model' => $model,
     'enrolmentModel' => $enrolmentModel,
 	'privateLessons' => $privateLessons,
 	'groupCourses' => $groupCourses

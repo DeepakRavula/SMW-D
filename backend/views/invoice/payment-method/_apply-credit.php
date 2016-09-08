@@ -57,13 +57,7 @@ if($remainingOpeningBalance > 0){
 }
 
 $proFormaInvoiceCredits = Invoice::find()->alias('i')
-		->select(['i.id', 'i.date', 'SUM(p.amount) as credit'])
-		->joinWith(['invoicePayments ip' => function($query){
-			$query->joinWith(['payment p' => function($query){
-			}]);
-		}])
-		->where(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE, 'i.user_id' => $invoice->user_id])
-		->groupBy('i.id')
+		->proFormaInvoiceCredits($invoice)
 		->all();
 		
 foreach($proFormaInvoiceCredits as $proFormaInvoiceCredit){

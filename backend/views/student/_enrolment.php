@@ -3,7 +3,9 @@
 use yii\grid\GridView;
 use common\models\Enrolment;
 use common\models\GroupCourse;
+use common\models\Program;
 use yii\data\ArrayDataProvider;
+use yii\helpers\Html;
 ?>
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Enrolments</h4>
@@ -32,6 +34,9 @@ if(! empty($privateLessons)){
 			'duration' => $privateLesson->duration,
 			'start_date' => Yii::$app->formatter->asDate($privateLesson->commencement_date),
 			'end_date' => Yii::$app->formatter->asDate($privateLesson->renewal_date),
+			'type' => Program::TYPE_PRIVATE_PROGRAM,
+			'studentId' => $model->id,
+			'enrolmentId' => $privateLesson->id,
 		];
 	}
 }
@@ -50,6 +55,9 @@ if(! empty($groupCourses)){
 			'duration' => $duration->format('H:i'),
 			'start_date' => Yii::$app->formatter->asDate($groupCourse->start_date),
 			'end_date' => Yii::$app->formatter->asDate($groupCourse->end_date),
+			'type' => Program::TYPE_GROUP_PROGRAM,
+			'studentId' => $model->id,
+			'enrolmentId' => $groupCourse->id,
 		];
 	}
 }
@@ -97,6 +105,15 @@ echo GridView::widget([
 		'label' => 'End Date', 
 		'value' => 'end_date',
 		],
+		[
+			'class'=>'yii\grid\ActionColumn',
+			'template' => '{delete-enrolment-preview}',
+			'buttons' => [
+				'delete-enrolment-preview' => function ($url, $model, $key) {
+				  return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-enrolment-preview', 'studentId' => $model['studentId'], 'enrolmentId' => $model['enrolmentId'], 'programType' => $model['type']]);
+				},
+			]
+		]
     ]
 ]);
 ?>

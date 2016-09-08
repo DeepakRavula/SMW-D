@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-
+use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 /**
  * This is the model class for table "enrolment".
  *
@@ -28,6 +28,18 @@ class Enrolment extends \yii\db\ActiveRecord
 		return 'enrolment';
 	}
 
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true
+                ],
+            ],
+        ];
+    }
+
 	/**
 	 * @inheritdoc
 	 */
@@ -36,7 +48,7 @@ class Enrolment extends \yii\db\ActiveRecord
 		return [
             [['student_id', 'program_id','commencement_date'], 'required'],
 			[['student_id', 'teacherId', 'program_id', 'day'], 'integer'],
-            [['commencement_date','teacherId', 'program_id', 'day', 'from_time','to_time','location_id', 'duration'], 'safe'],
+            [['commencement_date','teacherId', 'program_id', 'day', 'from_time','to_time','location_id', 'duration', 'isDeleted'], 'safe'],
 		];
 	}
 
@@ -78,6 +90,12 @@ class Enrolment extends \yii\db\ActiveRecord
 	public function getProgram()
     {
 		return $this->hasOne(Program::className(), ['id' => 'program_id']);
+	}
+
+	public function getTeacher()
+    {
+		return $this->hasOne(User::className(), ['id' => 'teacher_id'])
+			->viaTable('lesson',['enrolment_id' => 'id']);
 	}
 
 	public static function getWeekdaysList()
@@ -158,6 +176,7 @@ class Enrolment extends \yii\db\ActiveRecord
 					'teacher_id' => $this->teacherId,
 					'status' => $status,
 					'date' => $day->format('Y-m-d H:i:s'),
+					'isDeleted' => 0,
 				]);
 				$lesson->save();
 			}
