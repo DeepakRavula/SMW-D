@@ -37,12 +37,12 @@ class DashboardController extends \yii\web\Controller
                         ->sum('tax');
         $enrolments = Enrolment::find()
                     ->where(['location_id' => $locationId])                
-                    ->andWhere(['between','renewal_date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->andWhere(['>=','renewal_date', $currentDate->format('Y-m-d')])
                     ->count('student_id');
         $groupEnrolments = GroupCourse::find()
                     ->joinWith(['groupEnrolments'])
                     ->where(['location_id' => $locationId])
-                    ->andWhere(['between', 'end_date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->andWhere(['>=', 'end_date', $currentDate->format('Y-m-d')])
                     ->count('group_enrolment.student_id');
         $payments = Payment::find()
                     ->joinWith(['invoice i' => function($payments) use($locationId) {                        
@@ -55,12 +55,15 @@ class DashboardController extends \yii\web\Controller
                          $query->joinWith('groupCourse'); 
                     }])
                     ->joinWith('enrolment')
+                    ->andWhere(['OR',
+                        ['enrolment.location_id' => $locationId],['group_course.location_id' => $locationId],
+                        ])
                     ->andWhere(['OR',[
                         'NOT', ['enrolment.student_id' => null]],['NOT', ['group_enrolment.student_id' => null]
                         ]]) 
                     ->andWhere(['OR',
-                        ['between','enrolment.renewal_date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')],
-                        ['between','group_course.end_date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')]
+                        ['>=','enrolment.renewal_date', $currentDate->format('Y-m-d')],
+                        ['>=','group_course.end_date', $currentDate->format('Y-m-d')]
                         ])
                     ->distinct(['group_enrolment.student_id','enrolment.student_id'])
                     ->count();
