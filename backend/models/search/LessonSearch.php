@@ -57,7 +57,9 @@ class LessonSearch extends Lesson
         
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
-        $query = Lesson::find()->location($locationId)
+        $query = Lesson::find()
+				->location($locationId)
+				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
 				->notDeleted();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

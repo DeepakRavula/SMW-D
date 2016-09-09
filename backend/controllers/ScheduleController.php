@@ -83,7 +83,7 @@ class ScheduleController extends Controller
             ->join('Join', 'enrolment e', 'e.id = l.enrolment_id')
             ->join('Join', 'student s', 's.id = e.student_id')
             ->join('Join', 'program p', 'p.id = e.program_id')
-            ->where(['not', ['l.status'  =>  Lesson::STATUS_CANCELED]])
+            ->where(['not', ['l.status'  =>  [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->andWhere(['l.isDeleted'  => false])
             ->andWhere('e.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->all();
