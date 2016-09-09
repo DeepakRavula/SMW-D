@@ -97,7 +97,7 @@ class StudentController extends Controller
 			$enrolmentModel->save();
 			    Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
-                	'body' => 'Program has been added successfully'
+                	'body' => 'Student has been enrolled successfully'
             ]);
             	return $this->redirect(['lesson-review', 'id' => $model->id,'enrolmentId' => $enrolmentModel->id]);
         } else {
@@ -132,7 +132,7 @@ class StudentController extends Controller
 		
 		Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
-				'body' => 'Lessons has been confirmed successfully'
+				'body' => 'Lessons have been created successfully'
 		]);
         return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
 	}
