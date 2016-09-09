@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\query\EnrolmentQuery;
+use common\models\Lesson;
 /**
  * This is the model class for table "enrolment".
  *
@@ -171,20 +172,13 @@ class Enrolment extends \yii\db\ActiveRecord
 			}
 			
 			$lessonDate = $day->format('Y-m-d');
-			$todayDate = new \DateTime();
-			$currentDate = $todayDate->format('Y-m-d');
-			if ($lessonDate <= $currentDate) {
-				$status = Lesson::STATUS_COMPLETED;
-			} else {
-				$status = Lesson::STATUS_SCHEDULED;
-			}
-
+			
 			if ($day->format('N') === $this->day) {
 				$lesson = new Lesson();
 				$lesson->setAttributes([
 					'enrolment_id'	 => $this->id,
 					'teacher_id' => $this->teacherId,
-					'status' => $status,
+					'status' => Lesson::STATUS_DRAFTED,
 					'date' => $day->format('Y-m-d H:i:s'),
 					'isDeleted' => 0,
 				]);
