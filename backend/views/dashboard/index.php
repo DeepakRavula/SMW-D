@@ -42,7 +42,7 @@ use common\models\Payment;
         <div class="col-md-3">
             <div class="box box-primary box-solid">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Enrolled Students</h3>
+                  <h3 class="box-title">Private Enrolments</h3>
                   <!-- /.box-tools -->
                 </div>
                 <!-- /.box-header -->
@@ -54,7 +54,21 @@ use common\models\Payment;
           <!-- /.box -->
         </div>
         <div class="col-md-3">
-            <div class="box box-success box-solid">
+            <div class="box box-danger box-solid">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Group Enrolments</h3>
+                  <!-- /.box-tools -->
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                <span class="info-box-number text-center"><?= $groupEnrolments ?></span>
+                </div>
+            <!-- /.box-body -->
+            </div>
+          <!-- /.box -->
+        </div>
+        <div class="col-md-3">
+            <div class="box box-warning box-solid">
                 <div class="box-header with-border">
                   <h3 class="box-title">Payments</h3>
                   <!-- /.box-tools -->
