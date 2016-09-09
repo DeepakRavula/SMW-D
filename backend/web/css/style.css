@@ -69,6 +69,9 @@ a:hover, a:focus{
 .bg-red{
   background: #ea212c !important;
 }
+.fc{
+  background: #fff;
+}
 .fc-event {
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
