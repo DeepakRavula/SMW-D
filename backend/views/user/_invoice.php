@@ -22,15 +22,6 @@ use yii\bootstrap\Tabs;
 </div>
 <div class="p-10">
     <?php echo $this->render('_misc-line-item') ?>
-    <div class="dn invoice-create section-tab">
-        <?php echo $this->render('_uninvoiced_lessons', [
-            'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
-            'model' => new Invoice(),
-            'searchModel' => $searchModel,
-            'userModel' => $userModel
-        ]) ?>
-        <div class="clearfix"></div>
-    </div>
     <div class="clearfix"></div>
 </div>
 <hr class="hr-ad-in right-side-faded">

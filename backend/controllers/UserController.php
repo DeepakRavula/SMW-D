@@ -297,15 +297,6 @@ class UserController extends Controller {
 			'query' => $openingBalanceQuery, 
 		]);
 	
-		$query = Lesson::find()
-					->location($location_id)
-					->student($model->id)
-					->unInvoiced()
-					->completed();
-		$unInvoicedLessonsDataProvider = new ActiveDataProvider([
-			'query' => $query,
-		]);
-
 		$invoiceLineItemModel = new InvoiceLineItem();
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
 			$invoice = new Invoice();
@@ -361,7 +352,6 @@ class UserController extends Controller {
 			'openingBalancePaymentModel' => $openingBalancePaymentModel,
 			'openingBalanceDataProvider' => $openingBalanceDataProvider,
 			'remainingOpeningBalance' => $remainingOpeningBalance,
-			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
 			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
 			'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel
 		]);

@@ -86,7 +86,6 @@ $this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a
 
 		$invoiceContent = $this->render('_invoice', [
 			'invoiceDataProvider' => $invoiceDataProvider,
-			'unInvoicedLessonsDataProvider' => $unInvoicedLessonsDataProvider,
 			'searchModel' => $searchModel,
 			'userModel' => $model,
 		]);
