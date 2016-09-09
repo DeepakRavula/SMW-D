@@ -18,9 +18,10 @@ use \yii2tech\ar\softdelete\SoftDeleteBehavior;
  */
 class Lesson extends \yii\db\ActiveRecord
 {
-	const STATUS_SCHEDULED = 1;
-	const STATUS_COMPLETED = 2;
-	const STATUS_CANCELED = 3;
+	const STATUS_DRAFTED = 1;
+	const STATUS_SCHEDULED = 2;
+	const STATUS_COMPLETED = 3;
+	const STATUS_CANCELED = 4;
 
 	public $program_id;
     /**
@@ -51,7 +52,6 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['enrolment_id','teacher_id','status'], 'required'],
             [['enrolment_id','program_id', 'status'], 'integer'],
-            ['status', 'in', 'range' => array_keys(self::lessonStatuses())],
             [['date','notes', 'isDeleted'], 'safe'],
         ];
     }

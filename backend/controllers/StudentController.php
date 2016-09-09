@@ -81,7 +81,7 @@ class StudentController extends Controller
         if($lessonModel->load(Yii::$app->request->post()) ){
            $studentEnrolmentModel = Enrolment::findOne(['student_id' => $id,'program_id' => $lessonModel->program_id]);
            $lessonModel->enrolment_id = $studentEnrolmentModel->id; 
-           $lessonModel->status = Lesson::STATUS_SCHEDULED;
+           $lessonModel->status = Lesson::STATUS_DRAFTED;
            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
            $lessonModel->date = $lessonDate->format('Y-m-d H:i:s');            
            $lessonModel->save();
@@ -97,9 +97,9 @@ class StudentController extends Controller
 			$enrolmentModel->save();
 			    Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
-                	'body' => 'Program has been added successfully'
+                	'body' => 'Student has been enrolled successfully'
             ]);
-            	return $this->redirect(['view', 'id' => $model->id,'#' => 'enrolment']);
+            	return $this->redirect(['lesson-review', 'id' => $model->id,'enrolmentId' => $enrolmentModel->id]);
         } else {
             return $this->render('view', [
             	'model' => $model,
@@ -112,6 +112,30 @@ class StudentController extends Controller
         }
     }
 
+	public function actionLessonReview($id, $enrolmentId){
+		$model = $this->findModel($id);
+		$lessonDataProvider = new ActiveDataProvider([
+			'query' => Lesson::find()
+				->where(['enrolment_id' => $enrolmentId, 'status' => Lesson::STATUS_DRAFTED]),
+		]);
+		
+		return $this->render('lesson-review', [
+            	'model' => $model,
+				'enrolmentId' => $enrolmentId,
+                'lessonDataProvider' => $lessonDataProvider,
+            ]);	
+	}
+
+	public function actionLessonConfirm($id, $enrolmentId){
+		$model = $this->findModel($id);
+		Lesson::updateAll(['status' => Lesson::STATUS_SCHEDULED], ['enrolment_id' => $enrolmentId]);
+		
+		Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Lessons have been created successfully'
+		]);
+        return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
+	}
     /**
      * Creates a new Student model.
      * If creation is successful, the browser will be redirected to the 'view' page.
