@@ -18,10 +18,9 @@ use \yii2tech\ar\softdelete\SoftDeleteBehavior;
  */
 class Lesson extends \yii\db\ActiveRecord
 {
-	const STATUS_DRAFTED = 1;
-	const STATUS_SCHEDULED = 2;
-	const STATUS_COMPLETED = 3;
-	const STATUS_CANCELED = 4;
+	const STATUS_SCHEDULED = 1;
+	const STATUS_COMPLETED = 2;
+	const STATUS_CANCELED = 3;
 
 	public $program_id;
     /**
