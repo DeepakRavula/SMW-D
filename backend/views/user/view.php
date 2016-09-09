@@ -15,19 +15,17 @@ foreach ($roleNames as $name => $description) {
 	if ($name === $searchModel->role_name) {
 		$roleName = $description;
 	}
-}
-$this->title = Yii::t('backend', !($roleName) ? 'User' : $roleName . ' Details');
-$this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a>');
+} 
+$this->params['subtitle'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
 ?>
-
-<div class="row-fluid user-details-wrapper">
-    <div class="col-md-12 p-t-10">
+    <div class="title">
         <p class="users-name pull-left"><?php echo!empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
             <?php echo!empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?> 
              <em>
                 <small><?php echo !empty($model->email) ? $model->email : null ?></small>
             </em> 
         </p>
+    </div>
         <div class="clearfix"></div>
 		<div class="row-fluid"><?php if(! empty($model->userProfile->notes)) :?>
 			<h5 class="m-0"><em><i class="fa fa-info-circle"></i> Notes:
@@ -36,8 +34,7 @@ $this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a
 			<?php endif;?>
 		</div>	
         <div class="pull-left m-t-10">
-            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'#' => 'profile'], ['class' => 'm-r-20']) ?>
-			<?php if($searchModel->role_name === 'staffmember'):?>
+  			 <?php if($searchModel->role_name === 'staffmember'):?>
 			 <?php
             echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
                 'class' => '',
@@ -49,12 +46,10 @@ $this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a
             ?>
 			<?php endif;?>
             <div class="clearfix"></div>
-        </div>
-    </div>
+        </div>    
     <div class="clearfix"></div>
-</div>
 
-<div class="tabbable-panel">
+    <div class="tabbable-panel">
 	<div class="tabbable-line">
 
 		<?php $roles = Yii::$app->authManager->getRolesByUser($model->id);

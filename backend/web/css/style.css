@@ -678,6 +678,11 @@ input[type="search"]:-ms-input-placeholder {
     left: 185px;
 }
 
+.title{
+   position: absolute;
+   top: -45px;    
+}
+
 .schedule-index input[type="checkbox"]{
   -webkit-appearance: none;
   -moz-appearance: none;
