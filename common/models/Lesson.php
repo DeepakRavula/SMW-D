@@ -16,6 +16,13 @@ use Yii;
  */
 class Lesson extends \yii\db\ActiveRecord
 {
+
+	const TYPE_PRIVATE_LESSON = 1;
+	const TYPE_GROUP_LESSON = 2;
+	const STATUS_DRAFTED = 1;
+	const STATUS_SCHEDULED = 2;
+	const STATUS_COMPLETED = 3;
+	const STATUS_CANCELED = 4;
     /**
      * @inheritdoc
      */
@@ -59,4 +66,9 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return new \common\models\query\LessonQuery(get_called_class());
     }
+
+	public function getCourse() {
+		return $this->hasOne(Course::className(), ['id' => 'courseId'])
+			->viaTable('enrolment',['id' => 'enrolmentId']);
+	}
 }

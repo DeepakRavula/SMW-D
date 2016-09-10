@@ -54,4 +54,13 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return new \common\models\query\EnrolmentQuery(get_called_class());
     }
+	
+	public function getCourse() {
+		return $this->hasOne(Course::className(), ['id' => 'courseId']);
+	}
+
+	public function getProgram() {
+		return $this->hasOne(Program::className(), ['id' => 'programId'])
+			->viaTable('course',['id' => 'courseId']);
+	}
 }

@@ -6,7 +6,7 @@ use Yii;
 use common\models\Invoice;
 use common\models\Enrolment;
 use common\models\Payment;
-use common\models\GroupCourse;
+use common\models\Program;
 use common\models\Student;
 use backend\models\search\DashboardSearch;
 
@@ -36,39 +36,34 @@ class DashboardController extends \yii\web\Controller
                         ->andWhere(['between','date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
                         ->sum('tax');
         $enrolments = Enrolment::find()
-                    ->where(['location_id' => $locationId])                
-                    ->andWhere(['>=','renewal_date', $currentDate->format('Y-m-d')])
-                    ->count('student_id');
-        $groupEnrolments = GroupCourse::find()
-                    ->joinWith(['groupEnrolments'])
-                    ->where(['location_id' => $locationId])
-                    ->andWhere(['>=', 'end_date', $currentDate->format('Y-m-d')])
-                    ->count('group_enrolment.student_id');
+					->notDeleted()
+					->program($locationId, $currentDate)
+					->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM])
+                    ->count('studentId');
+					
+        $groupEnrolments = Enrolment::find()
+					->notDeleted()
+					->program($locationId, $currentDate)
+					->where(['program.type' => Program::TYPE_GROUP_PROGRAM])
+                    ->count('studentId');
+		
         $payments = Payment::find()
-                    ->joinWith(['invoice i' => function($payments) use($locationId) {                        
-                            $payments->where(['i.location_id' => $locationId]);                        
+                    ->joinWith(['invoice i' => function($query) use($locationId) {                        
+                            $query->where(['i.location_id' => $locationId]);                        
                     }])
                     ->andWhere(['between','payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
                     ->sum('payment.amount');
+					
          $students = Student::find()
-                    ->joinWith(['groupEnrolments'=>function($query) {
-                         $query->joinWith('groupCourse'); 
-                    }])
-                    ->joinWith('enrolment')
-                    ->andWhere(['OR',
-                        ['enrolment.location_id' => $locationId],['group_course.location_id' => $locationId],
-                        ])
-                    ->andWhere(['OR',[
-                        'NOT', ['enrolment.student_id' => null]],['NOT', ['group_enrolment.student_id' => null]
-                        ]]) 
-                    ->andWhere(['OR',
-                        ['>=','enrolment.renewal_date', $currentDate->format('Y-m-d')],
-                        ['>=','group_course.end_date', $currentDate->format('Y-m-d')]
-                        ])
-                    ->distinct(['group_enrolment.student_id','enrolment.student_id'])
-                    ->count();
+			->joinWith(['enrolment' => function($query) use($locationId, $currentDate){
+				 $query->joinWith(['course' => function($query) use($locationId, $currentDate){
+					$query->andWhere(['locationId' => $locationId, 'studentId' => null])
+						->andWhere(['>=','endDate', $currentDate->format('Y-m-d')]);
+				 }])
+				->distinct(['enrolment.studentId']);
+			}])
+			->count();
         
         return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students]);
-    }
-
+	}
 }

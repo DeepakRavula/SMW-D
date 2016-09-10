@@ -8,17 +8,13 @@ use common\models\TimelineEvent;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\Breadcrumbs;
 use common\models\User;
 use common\models\Program;
-use common\models\LessonReschedule;
+use common\models\Lesson;
 use common\models\Location;
 use common\models\Invoice;
 use common\models\UserLocation;
-use common\models\ReleaseNotes;
-use common\models\ReleaseNotesRead;
 use yii\web\JsExpression;
-use yii\bootstrap\ActiveForm;
 
 $bundle = BackendAsset::register($this);
 ?>
@@ -187,6 +183,13 @@ $bundle = BackendAsset::register($this);
                             'options' => ['class' => 'header']
                         ],
 						[
+                            'label'=>Yii::t('backend', 'Dashboard'),
+                            'icon'=>'<i class="fa fa-home""></i>',
+                            'url'=>['/dashboard/index'],
+                            'visible'=>Yii::$app->user->can('staffmember'),
+                            'active'=>(Yii::$app->controller->id=='dashboard')? true : false,
+                        ],
+						[
                             'label'=>Yii::t('backend', 'Schedule'),
                             'icon'=>'<i class="fa  fa-calendar"></i>',
                             'url'=>['/schedule/index'],
@@ -244,14 +247,14 @@ $bundle = BackendAsset::register($this);
                         ],
 						[
                             'label'=>Yii::t('backend', 'Group Courses'), 
-							'url'=>['/group-course/index'], 
+							'url'=>['/course/index'], 
 							'icon'=>'<i class="fa fa-book"></i>',
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='group-course') ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Lessons'),
-                            'url' => ['/lesson/index','LessonSearch[type]' => LessonReschedule::TYPE_PRIVATE_LESSON],
+                            'url' => ['/lesson/index','LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON],
                             'icon'=>'<i class="fa fa-music"></i>',
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='lesson') ? true : false,
@@ -259,14 +262,14 @@ $bundle = BackendAsset::register($this);
 						[
                             'label'=>Yii::t('backend', 'Invoices'),
                             'icon'=>'<i class="fa  fa-dollar"></i>',
-                            'url'=>['/invoice/index','InvoiceSearch[type]' => INVOICE::TYPE_INVOICE], 
+                            'url'=>['/invoice/index','InvoiceSearch[type]' => Invoice::TYPE_INVOICE], 
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='invoice')? true : false,
 							
                         ],
 						[
                             'label'=>Yii::t('backend', 'Reports'),
-                            'icon'=>'<i class="fa fa-money"></i>',
+                            'icon'=>'<i class="fa fa-line-chart""></i>',
 							'url'=>['/payment/index'],    
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='payment')? true : false,

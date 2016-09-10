@@ -87,25 +87,14 @@ class Student extends \yii\db\ActiveRecord
    
 	public function getEnrolment()
     {
-        return $this->hasOne(Enrolment::className(), ['student_id' => 'id']);
+        return $this->hasOne(Enrolment::className(), ['studentId' => 'id']);
     }
 
-	public function getGroupEnrolments()
-    {
-        return $this->hasMany(GroupEnrolment::className(), ['student_id' => 'id']);
-    }
-	
 	public function getLesson()
     {
 		return $this->hasOne(Lesson::className(), ['enrolment_id' => 'id'])
 			->viaTable('enrolment',['student_id' => 'id']);
 	}
-	
-	public function getGroupCourse()
-    {
-        return $this->hasOne(GroupCourse::className(), ['id' => 'course_id'])
-		  ->viaTable('group_enrolment', ['student_id' => 'id']);
-    }
 	
 	public function getFullName()
     {

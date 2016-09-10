@@ -28,36 +28,17 @@ class StudentQuery extends ActiveQuery
     }
 
 	public function notDeleted() {
-		$this->andWhere(['student.isDeleted' => false]);
+		$this->where(['student.isDeleted' => false]);
 		
 		return $this;
 	}
 	
 	public function location($locationId) {
-		$this->joinWith(['customer c' => function($query) use($locationId){
-				$query->joinWith('userLocation ul')
-					->where(['ul.location_id' => $locationId]);
+		$this->joinWith(['customer' => function($query) use($locationId){
+				$query->joinWith('userLocation')
+					->where(['user_location.location_id' => $locationId]);
 			}]);
 		
 		return $this;
 	}
-
-	public function unenrolled($courseId) {
-		$this->joinWith(['groupEnrolments' => function($query)  use($courseId){
-				$query->andWhere(['course_id' => null]);
-				$query->orWhere(['<>','course_id',$courseId]);
-			}]);
-		
-		return $this;
-	}
-
-	public function enrolled($courseId) {
-		$this->joinWith(['groupEnrolments' => function($query)  use($courseId){
-				$query->andWhere(['course_id' => $courseId]);
-			}]);
-		
-		return $this;
-	}
-
-	
 }

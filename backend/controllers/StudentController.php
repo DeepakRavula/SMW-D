@@ -56,21 +56,18 @@ class StudentController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-		$privateLessons = Enrolment::find()
-				->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
+		$locationId = Yii::$app->session->get('location_id'); 
+		$enrolments = Enrolment::find()
+				->joinWith(['course' => function($query) use($locationId){
+					$query->where(['locationId' => $locationId]);	
+				}])
+				->where(['studentId' => $model->id])
 				->all();
 
-		$groupCourses = GroupCourse::find()
-				->joinWith('groupEnrolments')
-				->where(['student_id' => $model->id,'location_id' =>Yii::$app->session->get('location_id')])
-        		->all();
-		
-		$session = Yii::$app->session;
-		$location_id = $session->get('location_id');
 		$currentDate = new \DateTime();
 		$query = Lesson::find()
-				->joinWith(['enrolment' => function($query) use($location_id,$id){
-					$query->where(['location_id' => $location_id,'student_id' => $id]);
+				->joinWith(['course' => function($query) use($location_id,$model){
+					$query->where(['course.locationId' => $locationId,'enrolment.studentId' => $model->id]);
 				}])
 				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
 				
@@ -81,9 +78,13 @@ class StudentController extends Controller
 		$enrolmentModel = new Enrolment();
         $lessonModel = new Lesson();
         if($lessonModel->load(Yii::$app->request->post()) ){
-           $studentEnrolmentModel = Enrolment::findOne(['student_id' => $id,'program_id' => $lessonModel->program_id]);
-           $lessonModel->enrolment_id = $studentEnrolmentModel->id; 
+           $studentEnrolmentModel = Enrolment::findOne([
+			   'studentId' => $model->id,
+			   'program_id' => $lessonModel->program_id
+		   ]);
+           $lessonModel->enrolmentId = $studentEnrolmentModel->id; 
            $lessonModel->status = Lesson::STATUS_DRAFTED;
+		   $lessonModel->isDeleted = 0;
            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
            $lessonModel->date = $lessonDate->format('Y-m-d H:i:s');            
            $lessonModel->save();
