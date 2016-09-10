@@ -5,12 +5,10 @@ namespace backend\controllers;
 use Yii;
 use common\models\Location;
 use common\models\Lesson;
-use common\models\GroupLesson;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\filters\AccessControl;
-use common\models\TeacherAvailability;
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */

@@ -290,7 +290,7 @@ class StudentController extends Controller
     {
 		$model = $this->findModel($studentId);
 		if((int) $programType === Program::TYPE_PRIVATE_PROGRAM){
-			$enrolmentModel = Enrolment::findOne(['student_id' => $studentId]); 
+			$enrolmentModel = Enrolment::findOne(['studentId' => $studentId]); 
 		} else {
 			$enrolmentModel = GroupEnrolment::findOne(['student_id' => $studentId]); 
 		}

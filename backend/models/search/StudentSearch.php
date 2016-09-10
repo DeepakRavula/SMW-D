@@ -61,9 +61,12 @@ class StudentSearch extends Student
         
        	if(! $this->showAllStudents) { 
             $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-			$query->joinWith('course')
-                   ->andWhere(['enrolment.studentId' => null]) 
-                   ->andWhere(['>=','course.endDate', $currentDate]);
+			$query->joinWith(['enrolment' => function($query) use($currentDate){
+				$query->joinWith(['course' => function($query) use($currentDate){
+                   $query->andWhere(['>=','course.endDate', $currentDate]);
+				}])
+            ->andWhere(['not', ['enrolment.studentId' => null]]);
+			}]);
 		} 
         
         return $dataProvider;
