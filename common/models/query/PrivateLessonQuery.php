@@ -3,11 +3,11 @@
 namespace common\models\query;
 
 /**
- * This is the ActiveQuery class for [[\common\models\GroupEnrolment]].
+ * This is the ActiveQuery class for [[\common\models\PrivateLesson]].
  *
- * @see \common\models\GroupEnrolment
+ * @see \common\models\PrivateLesson
  */
-class GroupEnrolmentQuery extends \yii\db\ActiveQuery
+class PrivateLessonQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,7 +16,7 @@ class GroupEnrolmentQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\GroupEnrolment[]|array
+     * @return \common\models\PrivateLesson[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +25,7 @@ class GroupEnrolmentQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\GroupEnrolment|array|null
+     * @return \common\models\PrivateLesson|array|null
      */
     public function one($db = null)
     {

@@ -3,17 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\RescheduleLesson;
-use common\models\GroupLesson;
-use backend\models\search\GroupLessonSearch;
+use common\models\PrivateLesson;
+use backend\models\search\PrivateLessonSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * GroupLessonController implements the CRUD actions for GroupLesson model.
+ * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
-class GroupLessonController extends Controller
+class PrivateLessonController extends Controller
 {
     public function behaviors()
     {
@@ -28,12 +27,12 @@ class GroupLessonController extends Controller
     }
 
     /**
-     * Lists all GroupLesson models.
+     * Lists all PrivateLesson models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new GroupLessonSearch();
+        $searchModel = new PrivateLessonSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -43,7 +42,7 @@ class GroupLessonController extends Controller
     }
 
     /**
-     * Displays a single GroupLesson model.
+     * Displays a single PrivateLesson model.
      * @param string $id
      * @return mixed
      */
@@ -55,13 +54,13 @@ class GroupLessonController extends Controller
     }
 
     /**
-     * Creates a new GroupLesson model.
+     * Creates a new PrivateLesson model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new GroupLesson();
+        $model = new PrivateLesson();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -73,7 +72,7 @@ class GroupLessonController extends Controller
     }
 
     /**
-     * Updates an existing GroupLesson model.
+     * Updates an existing PrivateLesson model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -81,11 +80,9 @@ class GroupLessonController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if ($model->load(Yii::$app->request->post())) {
-			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-            $model->date = $lessonDate->format('Y-m-d H:i:s');
-			$model->save();
-	        	return $this->redirect(['view', 'id' => $model->id]);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -94,7 +91,7 @@ class GroupLessonController extends Controller
     }
 
     /**
-     * Deletes an existing GroupLesson model.
+     * Deletes an existing PrivateLesson model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -107,22 +104,18 @@ class GroupLessonController extends Controller
     }
 
     /**
-     * Finds the GroupLesson model based on its primary key value.
+     * Finds the PrivateLesson model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return GroupLesson the loaded model
+     * @return PrivateLesson the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-		$session = Yii::$app->session;
-		$locationId = $session->get('location_id');
-		$model = GroupLesson::find()->location($locationId)
-			->where(['group_lesson.id' => $id])->one();
-				if ($model !== null) {
-					return $model;
-				} else {
-					throw new NotFoundHttpException('The requested page does not exist.');
-				}
+        if (($model = PrivateLesson::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 }

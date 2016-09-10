@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\GroupEnrolment;
-use backend\models\search\GroupEnrolmentSearch;
+use common\models\Course;
+use backend\models\search\CourseSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * GroupEnrolmentController implements the CRUD actions for GroupEnrolment model.
+ * CourseController implements the CRUD actions for Course model.
  */
-class GroupEnrolmentController extends Controller
+class CourseController extends Controller
 {
     public function behaviors()
     {
@@ -27,12 +27,12 @@ class GroupEnrolmentController extends Controller
     }
 
     /**
-     * Lists all GroupEnrolment models.
+     * Lists all Course models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new GroupEnrolmentSearch();
+        $searchModel = new CourseSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -42,7 +42,7 @@ class GroupEnrolmentController extends Controller
     }
 
     /**
-     * Displays a single GroupEnrolment model.
+     * Displays a single Course model.
      * @param string $id
      * @return mixed
      */
@@ -54,13 +54,13 @@ class GroupEnrolmentController extends Controller
     }
 
     /**
-     * Creates a new GroupEnrolment model.
+     * Creates a new Course model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new GroupEnrolment();
+        $model = new Course();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -72,7 +72,7 @@ class GroupEnrolmentController extends Controller
     }
 
     /**
-     * Updates an existing GroupEnrolment model.
+     * Updates an existing Course model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -91,7 +91,7 @@ class GroupEnrolmentController extends Controller
     }
 
     /**
-     * Deletes an existing GroupEnrolment model.
+     * Deletes an existing Course model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -104,15 +104,15 @@ class GroupEnrolmentController extends Controller
     }
 
     /**
-     * Finds the GroupEnrolment model based on its primary key value.
+     * Finds the Course model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return GroupEnrolment the loaded model
+     * @return Course the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = GroupEnrolment::findOne($id)) !== null) {
+        if (($model = Course::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

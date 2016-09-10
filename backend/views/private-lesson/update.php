@@ -3,14 +3,14 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\GroupEnrolment */
+/* @var $model common\models\PrivateLesson */
 
-$this->title = 'Update Group Enrolment: ' . ' ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Group Enrolments', 'url' => ['index']];
+$this->title = 'Update Private Lesson: ' . ' ' . $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Private Lessons', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="group-enrolment-update">
+<div class="private-lesson-update">
 
     <?php echo $this->render('_form', [
         'model' => $model,

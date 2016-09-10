@@ -49,25 +49,12 @@ class ScheduleController extends Controller
             ->from('teacher_availability_day ta')
             ->join('Join', 'user_location ul', 'ul.id = ta.teacher_location_id')
             ->join('Join', 'user_profile up', 'up.user_id = ul.user_id')
-            ->join('Join', 'qualification q', 'q.teacher_id = up.user_id')  
-            ->join('Join', 'enrolment e', 'e.program_id = q.program_id')
-            ->join('Join', 'lesson l', 'l.teacher_id = up.user_id')
+            ->join('Join', 'lesson l', 'l.teacherId = up.user_id')
             ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->orderBy('id desc')
             ->all();
 
-		$groupCourseTeachersWithClass = (new \yii\db\Query())
-            ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
-            ->from('teacher_availability_day ta')
-            ->join('Join', 'user_location ul', 'ul.id = ta.teacher_location_id')
-            ->join('Join', 'user_profile up', 'up.user_id = ul.user_id')
-            ->join('Join', 'group_lesson gl', 'gl.teacher_id = up.user_id')
-            ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
-            ->orderBy('id desc')
-            ->all();
-           
-		$teachersWithClass = array_unique(array_merge($teachersWithClass,$groupCourseTeachersWithClass),SORT_REGULAR);
-			$allTeachers = (new \yii\db\Query())
+		$allTeachers = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
             ->join('Join', 'user_location ul', 'ul.id = ta.teacher_location_id')
@@ -78,33 +65,24 @@ class ScheduleController extends Controller
         
         $events = array();
         $events = (new \yii\db\Query())
-            ->select(['l.teacher_id as resources', 'l.id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, e.day, l.date as start, ADDTIME(l.date, e.duration) as end'])
+            ->select(['l.teacherId as resources', 'l.id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, c.day, l.date as start, ADDTIME(l.date, c.duration) as end'])
             ->from('lesson l')
-            ->join('Join', 'enrolment e', 'e.id = l.enrolment_id')
-            ->join('Join', 'student s', 's.id = e.student_id')
-            ->join('Join', 'program p', 'p.id = e.program_id')
+            ->join('Join', 'enrolment e', 'e.id = l.enrolmentId')
+            ->join('Join', 'student s', 's.id = e.studentId')
+            ->join('Join', 'course c', 'e.courseId = c.id')
+            ->join('Join', 'program p', 'p.id = c.programId')
             ->where(['not', ['l.status'  =>  [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->andWhere(['l.isDeleted'  => false])
-            ->andWhere('e.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+            ->andWhere('c.locationId = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->all();
 		foreach ($events as &$event) {
-		$start = new \DateTime($event['start']);	
-		$event['start'] = $start->format('Y-m-d H:i:s');	
-		$end = new \DateTime($event['end']);	
-		$event['end'] = $end->format('Y-m-d H:i:s');
+			$start = new \DateTime($event['start']);	
+			$event['start'] = $start->format('Y-m-d H:i:s');	
+			$end = new \DateTime($event['end']);	
+			$event['end'] = $end->format('Y-m-d H:i:s');
 		}
 		unset($event);
-		$groupLessonevents = (new \yii\db\Query())
-            ->select(['gl.teacher_id as resources', 'gl.id as id', 'p.name as title, gc.day, gl.date as start, ADDTIME(gl.date, gc.length) as end'])
-            ->from('group_lesson gl')
-            ->join('Join', 'group_course gc', 'gc.id = gl.course_id')
-            ->join('Join', 'program p', 'p.id = gc.program_id')
-			->where(['not', ['gl.status'  =>  GroupLesson::STATUS_CANCELED]])
-            ->where('gc.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
-            ->all();
 
-		$events = array_merge($events,$groupLessonevents);
-		
         $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 		
 		$location->from_time = new \DateTime($location->from_time);	

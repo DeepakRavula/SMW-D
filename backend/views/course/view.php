@@ -4,13 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Lesson */
+/* @var $model common\models\Course */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Lessons', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Courses', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="lesson-view">
+<div class="course-view">
 
     <p>
         <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
@@ -27,11 +27,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'enrolmentId',
+            'programId',
             'teacherId',
-            'date',
-            'status',
-            'isDeleted',
+            'locationId',
+            'day',
+            'fromTime',
+            'duration',
+            'startDate',
+            'endDate',
         ],
     ]) ?>
 

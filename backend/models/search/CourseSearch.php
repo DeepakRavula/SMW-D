@@ -5,12 +5,12 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\GroupEnrolment;
+use common\models\Course;
 
 /**
- * GroupEnrolmentSearch represents the model behind the search form about `common\models\GroupEnrolment`.
+ * CourseSearch represents the model behind the search form about `common\models\Course`.
  */
-class GroupEnrolmentSearch extends GroupEnrolment
+class CourseSearch extends Course
 {
     /**
      * @inheritdoc
@@ -18,7 +18,8 @@ class GroupEnrolmentSearch extends GroupEnrolment
     public function rules()
     {
         return [
-            [['id', 'course_id', 'student_id'], 'integer'],
+            [['id', 'programId', 'teacherId', 'locationId', 'day'], 'integer'],
+            [['fromTime', 'duration', 'startDate', 'endDate'], 'safe'],
         ];
     }
 
@@ -40,7 +41,7 @@ class GroupEnrolmentSearch extends GroupEnrolment
      */
     public function search($params)
     {
-        $query = GroupEnrolment::find();
+        $query = Course::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -52,8 +53,14 @@ class GroupEnrolmentSearch extends GroupEnrolment
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'course_id' => $this->course_id,
-            'student_id' => $this->student_id,
+            'programId' => $this->programId,
+            'teacherId' => $this->teacherId,
+            'locationId' => $this->locationId,
+            'day' => $this->day,
+            'fromTime' => $this->fromTime,
+            'duration' => $this->duration,
+            'startDate' => $this->startDate,
+            'endDate' => $this->endDate,
         ]);
 
         return $dataProvider;

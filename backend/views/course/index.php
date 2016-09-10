@@ -4,21 +4,20 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\search\GroupLessonSearch */
+/* @var $searchModel backend\models\search\CourseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Group Lessons';
+$this->title = 'Courses';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="group-lesson-index">
+<div class="course-index">
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?php echo Html::a('Create Group Lesson', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php echo Html::a('Create Course', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php yii\widgets\Pjax::begin() ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -26,14 +25,17 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'course_id',
-            'teacher_id',
-            'date',
-            'status',
+            'programId',
+            'teacherId',
+            'locationId',
+            'day',
+            // 'fromTime',
+            // 'duration',
+            // 'startDate',
+            // 'endDate',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-    <?php \yii\widgets\Pjax::end(); ?>
 
 </div>

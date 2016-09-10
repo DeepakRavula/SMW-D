@@ -2,17 +2,22 @@
 
 namespace common\models\query;
 
-use common\models\Invoice;
-use yii\db\ActiveQuery;
-
 /**
- * This is the ActiveQuery class for [[\common\models\Student]].
+ * This is the ActiveQuery class for [[\common\models\Enrolment]].
  *
- * @see \common\models\Student
+ * @see \common\models\Enrolment
  */
-class EnrolmentQuery extends ActiveQuery
+class EnrolmentQuery extends \yii\db\ActiveQuery
 {
-    
+    /*public function active()
+    {
+        return $this->andWhere('[[status]]=1');
+    }*/
+
+    /**
+     * @inheritdoc
+     * @return \common\models\Enrolment[]|array
+     */
     public function all($db = null)
     {
         return parent::all($db);
@@ -20,16 +25,10 @@ class EnrolmentQuery extends ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\Student|array|null
+     * @return \common\models\Enrolment|array|null
      */
     public function one($db = null)
     {
         return parent::one($db);
     }
-
-	public function notDeleted() {
-		$this->andWhere(['enrolment.isDeleted' => false]);
-		
-		return $this;
-	}
 }

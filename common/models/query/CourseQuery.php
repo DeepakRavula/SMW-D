@@ -3,11 +3,11 @@
 namespace common\models\query;
 
 /**
- * This is the ActiveQuery class for [[\common\models\GroupCourse]].
+ * This is the ActiveQuery class for [[\common\models\Course]].
  *
- * @see \common\models\GroupCourse
+ * @see \common\models\Course
  */
-class GroupCourseQuery extends \yii\db\ActiveQuery
+class CourseQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,7 +16,7 @@ class GroupCourseQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\GroupCourse[]|array
+     * @return \common\models\Course[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +25,7 @@ class GroupCourseQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\GroupCourse|array|null
+     * @return \common\models\Course|array|null
      */
     public function one($db = null)
     {
