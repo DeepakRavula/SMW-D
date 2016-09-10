@@ -114,3 +114,23 @@ use common\models\Payment;
    ]
 ]);?>
 </div>
+<div class="col-md-6">
+<?php echo  $completedPrograms;?>
+<?=  Highcharts::widget([
+    'options' => [
+        'title' => ['text' => 'Sample title - pie chart'],
+        'plotOptions' => [
+            'pie' => [
+                'cursor' => 'pointer',
+            ],
+        ],
+        'series' => [
+            [ // new opening bracket
+                'type' => 'pie',
+                'name' => 'Elements',
+                'data' => $completedPrograms,
+            ] // new closing bracket
+        ],
+    ],
+]);?>
+</div>
