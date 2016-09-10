@@ -3,7 +3,6 @@
 namespace common\models;
 
 use Yii;
-use common\models\Allocation;
 
 /**
  * This is the model class for table "payments".
@@ -43,10 +42,6 @@ class InvoicePayment extends \yii\db\ActiveRecord {
 		];
 	}
 
-	/**
-     * @inheritdoc
-     * @return \common\models\query\AllocationQuery the active query used by this AR class.
-     */
     public static function find()
     {
         return new \common\models\query\InvoicePaymentQuery(get_called_class());
