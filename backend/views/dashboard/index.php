@@ -117,10 +117,14 @@ use common\models\Payment;
 <div class="col-md-6">
 <?=  Highcharts::widget([
     'options' => [
-        'title' => ['text' => 'Sample title - pie chart'],
+        'title' => ['text' => 'Instruction Hours'],
         'plotOptions' => [
             'pie' => [
                 'cursor' => 'pointer',
+                'dataLabels' => [
+                    'enabled' => true,
+                    'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+                ]
             ],
         ],
         'series' => [

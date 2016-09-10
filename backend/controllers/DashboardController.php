@@ -90,12 +90,10 @@ class DashboardController extends \yii\web\Controller
                     ->all();
         foreach($programs as $program){
             $array = array();
-            $array[]  =  $program->program_name;
-            $array[] =   floor(( (floor($program->hours / 3600)) / $totalHours ) * 100) ;//$program->hours;
-            array_push($completedPrograms,$array);
+            $array['name']  =  $program->program_name;
+            $array['y'] =   floor(( (floor($program->hours / 3600)) / $totalHours ) * 100) ;//$program->hours;
+            array_push($completedPrograms, $array);
         }
-        $completedPrograms =  json_encode($completedPrograms, true);
-        
         
         return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students, 'completedPrograms' => $completedPrograms]);
     }
