@@ -2,11 +2,7 @@
 
 namespace common\models\query;
 use common\models\InvoicePayment;
-/**
- * This is the ActiveQuery class for [[\common\models\Allocation]].
- *
- * @see \common\models\Allocation
- */
+
 class InvoicePaymentQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
