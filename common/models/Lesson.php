@@ -24,6 +24,8 @@ class Lesson extends \yii\db\ActiveRecord
 	const STATUS_CANCELED = 4;
 
 	public $program_id;
+    public $hours;
+    public $program_name;
     /**
      * @inheritdoc
      */

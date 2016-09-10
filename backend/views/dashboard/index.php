@@ -114,3 +114,26 @@ use common\models\Payment;
    ]
 ]);?>
 </div>
+<div class="col-md-6">
+<?=  Highcharts::widget([
+    'options' => [
+        'title' => ['text' => 'Instruction Hours'],
+        'plotOptions' => [
+            'pie' => [
+                'cursor' => 'pointer',
+                'dataLabels' => [
+                    'enabled' => true,
+                    'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+                ]
+            ],
+        ],
+        'series' => [
+            [ // new opening bracket
+                'type' => 'pie',
+                'name' => 'Elements',
+                'data' => $completedPrograms,
+            ] // new closing bracket
+        ],
+    ],
+]);?>
+</div>
