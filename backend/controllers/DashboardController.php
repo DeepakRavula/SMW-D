@@ -73,7 +73,7 @@ class DashboardController extends \yii\web\Controller
                     ->joinWith('enrolment')
                     ->where(['enrolment.location_id' => $locationId])
                     ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-                    ->where(['lesson.status' => 1])
+                    ->where(['lesson.status' => Lesson::STATUS_COMPLETED])
                     ->all();
         $totalHours = floor($programsHours[0]->hours / 3600);
         $completedPrograms = [];            
@@ -85,7 +85,7 @@ class DashboardController extends \yii\web\Controller
                         }]);
                     }])
                     ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-                    ->where(['lesson.status' => 1])
+                    ->where(['lesson.status' => Lesson::STATUS_COMPLETED])
                     ->groupBy(['enrolment.program_id'])
                     ->all();
         foreach($programs as $program){
