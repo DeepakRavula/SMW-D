@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Course;
+use common\models\Qualification;
 use backend\models\search\CourseSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -118,4 +119,35 @@ class CourseController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+	public function actionTeachers() {
+		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+		$session = Yii::$app->session;
+		$location_id = $session->get('location_id');
+		$programId = $_POST['depdrop_parents'][0];
+		$qualifications = Qualification::find()
+					->joinWith(['teacher' => function($query) use($location_id) {
+						$query->joinWith(['userLocation' => function($query) use($location_id){
+							$query->joinWith('teacherAvailability')
+						->where(['location_id' => $location_id]);
+						}]);
+					}])
+					->where(['program_id' => $programId])
+					->all();
+		$result = [];
+		$output = [];
+		foreach($qualifications as  $qualification) {
+			$output[] = [
+				'id' => $qualification->teacher->id,
+				'name' => $qualification->teacher->publicIdentity,
+			];
+		}
+		$result = [
+			'output' => $output,	
+			'selected' => '',
+		];
+		
+		return $result;
+	}
 }

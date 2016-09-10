@@ -7,8 +7,7 @@ use common\models\Student;
 use common\models\Enrolment;
 use common\models\Lesson;
 use common\models\Program;
-use common\models\GroupCourse;
-use common\models\GroupEnrolment;
+use common\models\Course;
 use backend\models\search\StudentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -61,21 +60,38 @@ class StudentController extends Controller
 				->joinWith(['course' => function($query) use($locationId){
 					$query->where(['locationId' => $locationId]);	
 				}])
-				->where(['studentId' => $model->id])
-				->all();
+				->where(['studentId' => $model->id]);
+
+		$enrolmentDataProvider = new ActiveDataProvider([
+			'query' => $enrolments,
+		]);
 
 		$currentDate = new \DateTime();
-		$query = Lesson::find()
-				->joinWith(['course' => function($query) use($location_id,$model){
+		$lessons = Lesson::find()
+				->joinWith(['course' => function($query) use($locationId,$model){
 					$query->where(['course.locationId' => $locationId,'enrolment.studentId' => $model->id]);
 				}])
 				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
 				
 		$lessonDataProvider = new ActiveDataProvider([
-			'query' => $query,
+			'query' => $lessons,
 		]);	
 
-		$enrolmentModel = new Enrolment();
+		$courseModel = new Course();
+		if ($courseModel->load(Yii::$app->request->post())) {
+			$courseModel->locationId = $locationId;
+			$courseModel->save();
+			$enrolmentModel = new Enrolment();
+			$enrolmentModel->courseId = $courseModel->id;	
+			$enrolmentModel->studentId = $model->id;
+			$enrolmentModel->isDeleted = 0;
+			$enrolmentModel->save();
+			    Yii::$app->session->setFlash('alert', [
+            	    'options' => ['class' => 'alert-success'],
+                	'body' => 'Student has been enrolled successfully'
+            ]);
+            	return $this->redirect(['lesson-review', 'id' => $model->id,'enrolmentId' => $enrolmentModel->id]);
+        }
         $lessonModel = new Lesson();
         if($lessonModel->load(Yii::$app->request->post()) ){
            $studentEnrolmentModel = Enrolment::findOne([
@@ -94,23 +110,12 @@ class StudentController extends Controller
             ]);
             	return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
         }
-        if ($enrolmentModel->load(Yii::$app->request->post()) ) {
-			$enrolmentModel->student_id = $id;
-			$enrolmentModel->isDeleted = 0;
-			$enrolmentModel->save();
-			    Yii::$app->session->setFlash('alert', [
-            	    'options' => ['class' => 'alert-success'],
-                	'body' => 'Student has been enrolled successfully'
-            ]);
-            	return $this->redirect(['lesson-review', 'id' => $model->id,'enrolmentId' => $enrolmentModel->id]);
-        } else {
+         else {
             return $this->render('view', [
             	'model' => $model,
                 'lessonDataProvider' => $lessonDataProvider,
-                'enrolmentModel' => $enrolmentModel,
                 'lessonModel' => $lessonModel,
-				'privateLessons' => $privateLessons,
-				'groupCourses' => $groupCourses
+				'enrolmentDataProvider' => $enrolmentDataProvider,
             ]);
         }
     }

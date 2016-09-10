@@ -6,6 +6,7 @@ use common\models\GroupCourse;
 use common\models\Program;
 use yii\data\ArrayDataProvider;
 use yii\helpers\Html;
+use common\models\Course;
 ?>
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Enrolments</h4>
@@ -14,8 +15,8 @@ use yii\helpers\Html;
 </div>
 
 <div class="dn enrolment-create section-tab">
-    <?php echo $this->render('//enrolment/_form', [
-        'model' => $enrolmentModel,
+    <?php echo $this->render('_form-enrolment', [
+        'model' => new Course(),
     ]) ?>
 </div>
 <?php

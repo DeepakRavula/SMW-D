@@ -46,9 +46,9 @@ class Course extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'programId' => 'Program ID',
-            'teacherId' => 'Teacher ID',
-            'locationId' => 'Location ID',
+            'programId' => 'Program Name',
+            'teacherId' => 'Teacher Name',
+            'locationId' => 'Location Name',
             'day' => 'Day',
             'fromTime' => 'From Time',
             'duration' => 'Duration',
@@ -65,4 +65,18 @@ class Course extends \yii\db\ActiveRecord
     {
         return new \common\models\query\CourseQuery(get_called_class());
     }
+
+	public function beforeSave($insert)
+    {  
+        $fromTime = \DateTime::createFromFormat('h:i A',$this->fromTime);
+		$this->fromTime = $fromTime->format('H:i');
+		$secs = strtotime($this->fromTime) - strtotime("00:00:00");
+		$endDate = \DateTime::createFromFormat('d-m-Y', $this->startDate);
+        $this->startDate = date("Y-m-d H:i:s",strtotime($this->startDate) + $secs);
+		$secs = strtotime($this->duration) - strtotime("00:00:00");
+		$endDate->add(new \DateInterval('P1Y'));
+		$this->endDate = $endDate->format('Y-m-d H:i:s');
+
+		return parent::beforeSave($insert);
+	}
 }
