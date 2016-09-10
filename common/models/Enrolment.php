@@ -3,7 +3,9 @@
 namespace common\models;
 
 use Yii;
-
+use common\models\Holiday;
+use common\models\ProfessionalDevelopmentDay;
+use common\models\Lesson;
 /**
  * This is the model class for table "enrolment".
  *
@@ -59,8 +61,58 @@ class Enrolment extends \yii\db\ActiveRecord
 		return $this->hasOne(Course::className(), ['id' => 'courseId']);
 	}
 
+	public function getStudent() {
+		return $this->hasOne(Student::className(), ['id' => 'studentId']);
+	}
+
 	public function getProgram() {
 		return $this->hasOne(Program::className(), ['id' => 'programId'])
 			->viaTable('course',['id' => 'courseId']);
+	}
+
+	public function afterSave($insert, $changedAttributes)
+    {
+		$interval = new \DateInterval('P1D');
+		$startDate = $this->course->startDate;
+		$endDate = $this->course->endDate;
+		$start = new \DateTime($startDate);
+		$end = new \DateTime($endDate);
+		$period = new \DatePeriod($start, $interval, $end);
+
+		$holidays = Holiday::find()->all();
+		$pdDays = ProfessionalDevelopmentDay::find()->all();
+
+		foreach($holidays as $holiday){
+			$holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
+			$holiDays[] = $holiday->format('Y-m-d');
+		}
+
+		foreach($pdDays as $pdDay){
+			$pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
+			$professionalDays[] = $pdDay->format('Y-m-d');
+		}
+		$leaveDays = array_merge($holiDays,$professionalDays);
+
+		foreach($period as $day){
+			foreach($leaveDays as $leaveDay){
+				if($day->format('Y-m-d') === $leaveDay){
+					continue 2;
+				}
+			}
+			
+			$lessonDate = $day->format('Y-m-d');
+			
+			if ($day->format('N') === $this->course->day) {
+				$lesson = new Lesson();
+				$lesson->setAttributes([
+					'enrolmentId'	 => $this->course->id,
+					'teacherId' => $this->course->teacherId,
+					'status' => Lesson::STATUS_DRAFTED,
+					'date' => $day->format('Y-m-d H:i:s'),
+					'isDeleted' => 0,
+				]);
+				$lesson->save();
+			}
+		}
 	}
 }

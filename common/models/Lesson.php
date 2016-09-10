@@ -67,8 +67,18 @@ class Lesson extends \yii\db\ActiveRecord
         return new \common\models\query\LessonQuery(get_called_class());
     }
 
+	public function getEnrolment() {
+		return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
+	}
+
 	public function getCourse() {
 		return $this->hasOne(Course::className(), ['id' => 'courseId'])
 			->viaTable('enrolment',['id' => 'enrolmentId']);
+	}
+
+	public function getInvoice() {
+		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+			->viaTable('invoice_line_item', ['item_id' => 'id'])
+			->onCondition(['invoice.type' => Invoice::TYPE_INVOICE]);
 	}
 }

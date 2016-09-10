@@ -35,7 +35,7 @@ echo GridView::widget([
 		[
 			'label' => 'Program Name',
 			'value' => function($data) {
-				return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
+				return !empty($data->course->program->name) ? $data->course->program->name : null;
 			},
 		],
 		[
@@ -65,13 +65,7 @@ echo GridView::widget([
 				return $status;
 			},
 		],
-		[
-			'label' => 'Date',
-			'value' => function($data) {
-				$date = Yii::$app->formatter->asDate($data->date);
-				return !empty($date) ? $date : null;
-			},
-		],
+		'date:date'
 	],
 ]);
 ?>

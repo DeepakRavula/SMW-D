@@ -66,6 +66,33 @@ class Course extends \yii\db\ActiveRecord
         return new \common\models\query\CourseQuery(get_called_class());
     }
 
+	public static function getWeekdaysList()
+	{
+		return [
+		1	=>	'Monday',
+			'Tuesday',
+			'Wednesday',
+			'Thursday',
+			'Friday',
+			'Saturday',
+		];
+	}
+	
+	public function getTeacher()
+    {
+        return $this->hasOne(User::className(), ['id' => 'teacherId']);
+    }
+
+	public function getProgram()
+    {
+        return $this->hasOne(Program::className(), ['id' => 'programId']);
+    }
+
+	public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['id' => 'courseId']);
+    }
+	
 	public function beforeSave($insert)
     {  
         $fromTime = \DateTime::createFromFormat('h:i A',$this->fromTime);

@@ -68,10 +68,13 @@ class StudentController extends Controller
 
 		$currentDate = new \DateTime();
 		$lessons = Lesson::find()
-				->joinWith(['course' => function($query) use($locationId,$model){
-					$query->where(['course.locationId' => $locationId,'enrolment.studentId' => $model->id]);
+			->joinWith(['enrolment' => function($query) use($locationId,$model){
+				$query->joinWith(['course' => function($query) use($locationId,$model){
+					$query->where(['course.locationId' => $locationId]);
 				}])
-				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
+			->where(['enrolment.studentId' => $model->id]);
+			}])
+			->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
 				
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => $lessons,
@@ -122,21 +125,23 @@ class StudentController extends Controller
 
 	public function actionLessonReview($id, $enrolmentId){
 		$model = $this->findModel($id);
+		$enrolmentModel = Enrolment::findOne(['id' => $enrolmentId]);
+		$courseModel = Course::findOne(['id' => $enrolmentModel->courseId]);
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => Lesson::find()
-				->where(['enrolment_id' => $enrolmentId, 'status' => Lesson::STATUS_DRAFTED]),
+				->where(['enrolmentId' => $enrolmentId, 'status' => Lesson::STATUS_DRAFTED]),
 		]);
 		
 		return $this->render('lesson-review', [
             	'model' => $model,
-				'enrolmentId' => $enrolmentId,
+				'courseModel' => $courseModel,
                 'lessonDataProvider' => $lessonDataProvider,
             ]);	
 	}
 
 	public function actionLessonConfirm($id, $enrolmentId){
 		$model = $this->findModel($id);
-		Lesson::updateAll(['status' => Lesson::STATUS_SCHEDULED], ['enrolment_id' => $enrolmentId]);
+		Lesson::updateAll(['status' => Lesson::STATUS_SCHEDULED, 'enrolmentId' => $enrolmentId]);
 		
 		Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
