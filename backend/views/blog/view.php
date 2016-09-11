@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="box-body p-10">
               <?= ! empty($model->content) ? $model->content : null ?> 
               <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
-              <span class="pull-right text-muted"><i class="fa fa-comment"></i> 3 comments</span>
+              <span class="pull-right text-muted"><i class="fa fa-comment"></i> 2 comments</span>
             </div>
             <!-- /.box-body -->
             <div class="box-footer box-comments">
