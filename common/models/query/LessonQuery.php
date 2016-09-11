@@ -34,7 +34,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     }
 
 	public function notDeleted() {
-		$this->where(['lesson.isDeleted' => false]);
+		$this->andWhere(['lesson.isDeleted' => false]);
 		
 		return $this;
 	}

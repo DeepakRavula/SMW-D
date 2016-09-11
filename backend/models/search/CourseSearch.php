@@ -12,6 +12,7 @@ use common\models\Course;
  */
 class CourseSearch extends Course
 {
+	public $query;
     /**
      * @inheritdoc
      */
@@ -41,7 +42,9 @@ class CourseSearch extends Course
      */
     public function search($params)
     {
-        $query = Course::find();
+		$locationId = Yii::$app->session->get('location_id');
+        $query = Course::find()
+				->groupProgram($locationId);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

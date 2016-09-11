@@ -63,7 +63,7 @@ $this->title = 'Review Lessons';
 		</div>
 	<div class="form-group">
 	<div class="p-10 text-center">
-		<?= Html::a('Confirm', ['lesson-confirm', 'id' => $model->id, 'enrolmentId' => $courseModel->id], [
+		<?= Html::a('Confirm', ['lesson-confirm', 'id' => $model->id, 'enrolmentId' => $enrolmentId], [
 		'class' => 'btn btn-danger',
 		'data' => [
 			'method' => 'post',

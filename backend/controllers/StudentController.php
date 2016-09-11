@@ -68,6 +68,7 @@ class StudentController extends Controller
 
 		$currentDate = new \DateTime();
 		$lessons = Lesson::find()
+			->notDeleted()
 			->joinWith(['enrolment' => function($query) use($locationId,$model){
 				$query->joinWith(['course' => function($query) use($locationId,$model){
 					$query->where(['course.locationId' => $locationId]);
@@ -135,6 +136,7 @@ class StudentController extends Controller
 		return $this->render('lesson-review', [
             	'model' => $model,
 				'courseModel' => $courseModel,
+				'enrolmentId' => $enrolmentId,
                 'lessonDataProvider' => $lessonDataProvider,
             ]);	
 	}

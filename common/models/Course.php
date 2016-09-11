@@ -98,12 +98,66 @@ class Course extends \yii\db\ActiveRecord
         $fromTime = \DateTime::createFromFormat('h:i A',$this->fromTime);
 		$this->fromTime = $fromTime->format('H:i');
 		$secs = strtotime($this->fromTime) - strtotime("00:00:00");
-		$endDate = \DateTime::createFromFormat('d-m-Y', $this->startDate);
+		
+		if((int) $this->program->type === Program::TYPE_GROUP_PROGRAM){
         $this->startDate = date("Y-m-d H:i:s",strtotime($this->startDate) + $secs);
-		$secs = strtotime($this->duration) - strtotime("00:00:00");
-		$endDate->add(new \DateInterval('P1Y'));
-		$this->endDate = $endDate->format('Y-m-d H:i:s');
-
+			$endDate = \DateTime::createFromFormat('d-m-Y', $this->endDate);
+			$this->endDate = $endDate->format('Y-m-d H:i:s');
+		} else {
+			$endDate = \DateTime::createFromFormat('d-m-Y', $this->startDate);
+			$this->startDate = date("Y-m-d H:i:s",strtotime($this->startDate) + $secs);
+			$secs = strtotime($this->duration) - strtotime("00:00:00");
+			$endDate->add(new \DateInterval('P1Y'));
+			$this->endDate = $endDate->format('Y-m-d H:i:s');
+		}
 		return parent::beforeSave($insert);
+	}
+
+	public function afterSave($insert, $changedAttributes)
+    {
+		if((int) $this->program->type === Program::TYPE_GROUP_PROGRAM){
+			$interval = new \DateInterval('P1D');
+			$startDate = $this->startDate;
+			$endDate = $this->endDate;
+			$start = new \DateTime($startDate);
+			$end = new \DateTime($endDate);
+			$period = new \DatePeriod($start, $interval, $end);
+
+			$holidays = Holiday::find()->all();
+			$pdDays = ProfessionalDevelopmentDay::find()->all();
+
+			foreach($holidays as $holiday){
+				$holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
+				$holiDays[] = $holiday->format('Y-m-d');
+			}
+
+			foreach($pdDays as $pdDay){
+				$pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
+				$professionalDays[] = $pdDay->format('Y-m-d');
+			}
+			$leaveDays = array_merge($holiDays,$professionalDays);
+
+			foreach($period as $day){
+				foreach($leaveDays as $leaveDay){
+					if($day->format('Y-m-d') === $leaveDay){
+						continue 2;
+					}
+				}
+
+				$lessonDate = $day->format('Y-m-d');
+
+				if ($day->format('N') === $this->day) {
+					$lesson = new Lesson();
+					$lesson->setAttributes([
+						'enrolmentId'	 => $this->id,
+						'teacherId' => $this->teacherId,
+						'status' => Lesson::STATUS_DRAFTED,
+						'date' => $day->format('Y-m-d H:i:s'),
+						'isDeleted' => 0,
+					]);
+					$lesson->save();
+				}
+			}
+		}
 	}
 }

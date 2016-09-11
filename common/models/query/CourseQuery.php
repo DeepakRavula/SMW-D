@@ -2,6 +2,7 @@
 
 namespace common\models\query;
 
+use common\models\Program;
 /**
  * This is the ActiveQuery class for [[\common\models\Course]].
  *
@@ -31,4 +32,12 @@ class CourseQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+	public function groupProgram($locationId){
+		$this->joinWith(['program' => function($query) use($locationId){
+			$query->where(['type' => Program::TYPE_GROUP_PROGRAM]);
+		}]);
+			
+		return $this;
+	}
 }

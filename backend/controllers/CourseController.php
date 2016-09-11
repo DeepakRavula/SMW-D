@@ -9,6 +9,10 @@ use backend\models\search\CourseSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use common\models\User;
+use common\models\Student;
+use yii\data\ActiveDataProvider;
 
 /**
  * CourseController implements the CRUD actions for Course model.
@@ -49,8 +53,32 @@ class CourseController extends Controller
      */
     public function actionView($id)
     {
+		$request = Yii::$app->request;
+		$enrolment = $request->post('Enrolment');
+		$studentIds = $enrolment['studentIds']; 
+		if( ! empty($studentIds)){	
+			Enrolment::deleteAll(['courseId' => $id]);
+			foreach($studentIds as $studentId){
+				$enrolment = new Enrolment();
+				$enrolment->setAttributes([
+					'courseId'	 => $id,
+					'studentId' => $studentId,
+					'isDeleted' => 0,
+				]);
+				$enrolment->save();
+			} 
+		}
+
+		$studentDataProvider = new ActiveDataProvider([
+			'query' => Student::find()
+				->notDeleted()
+				->enrolled($id),
+		]);
+	 
         return $this->render('view', [
             'model' => $this->findModel($id),
+			'courseId' => $id,
+			'studentDataProvider' => $studentDataProvider,
         ]);
     }
 
@@ -62,12 +90,21 @@ class CourseController extends Controller
     public function actionCreate()
     {
         $model = new Course();
-
+		$teacherModel = ArrayHelper::map(User::find()
+					->joinWith('userLocation ul')
+					->join('INNER JOIN','rbac_auth_assignment raa','raa.user_id = user.id')
+					->where(['raa.item_name' => 'teacher'])
+					->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+					->all(),
+				'id','userProfile.fullName'		
+			);
+		$model->locationId = Yii::$app->session->get('location_id');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+				'teacher' => $teacherModel,
             ]);
         }
     }
@@ -81,12 +118,20 @@ class CourseController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+		$teacherModel = ArrayHelper::map(User::find()
+					->joinWith('userLocation ul')
+					->join('INNER JOIN','rbac_auth_assignment raa','raa.user_id = user.id')
+					->where(['raa.item_name' => 'teacher'])
+					->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+					->all(),
+				'id','userProfile.fullName'		
+			);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+				'teacher' => $teacherModel,
             ]);
         }
     }

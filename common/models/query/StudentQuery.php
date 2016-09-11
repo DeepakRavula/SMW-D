@@ -52,6 +52,13 @@ class StudentQuery extends ActiveQuery
 		
 		return $this;
 	}
+
+	public function unenrolled() {
+		$this->joinWith('enrolment')
+			->where(['studentId' => null]);
+		
+		return $this;
+	}
 	
 	public function teacherStudents($locationId, $id) {
 		$this->joinWith(['enrolment' => function($query) use($id, $locationId){

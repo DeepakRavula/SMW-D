@@ -161,10 +161,10 @@ class UserController extends Controller {
 
 		$currentDate = new \DateTime();
 		$lessonQuery = Lesson::find()
+				->notDeleted()
 				->location($locationId)
 				->student($id)
-				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
-				->notDeleted();
+				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
 
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => $lessonQuery,

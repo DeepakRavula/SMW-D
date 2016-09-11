@@ -16,6 +16,7 @@ use common\models\Lesson;
  */
 class Enrolment extends \yii\db\ActiveRecord
 {
+	public $studentIds;
     /**
      * @inheritdoc
      */
@@ -115,7 +116,7 @@ class Enrolment extends \yii\db\ActiveRecord
 			if ($day->format('N') === $this->course->day) {
 				$lesson = new Lesson();
 				$lesson->setAttributes([
-					'enrolmentId'	 => $this->course->id,
+					'enrolmentId'	 => $this->id,
 					'teacherId' => $this->course->teacherId,
 					'status' => Lesson::STATUS_DRAFTED,
 					'date' => $day->format('Y-m-d H:i:s'),
