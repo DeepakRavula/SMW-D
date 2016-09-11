@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
 use common\models\Invoice;
+use common\models\Program;
 
 /**
  * LessonSearch represents the model behind the search form about `common\models\Lesson`.
@@ -62,9 +63,25 @@ class LessonSearch extends Lesson
         $session = Yii::$app->session;
 		$locationId = $session->get('location_id');
         $query = Lesson::find()
+				->notDeleted()
 				->location($locationId)
-				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
-				->notDeleted();
+				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
+		
+		if((int) $this->type === Lesson::TYPE_PRIVATE_LESSON){
+			$query->joinWith(['enrolment' => function($query){
+				$query->joinWith(['course' => function($query){
+					$query->joinWith('program')
+						->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+				}]);
+			}]);
+		} else {
+			$query->joinWith(['enrolment' => function($query){
+				$query->joinWith(['course' => function($query){
+					$query->joinWith('program')
+						->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+				}]);	
+			}]);	
+		}
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
