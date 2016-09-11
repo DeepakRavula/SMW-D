@@ -8,97 +8,62 @@ use common\models\Payment;
 
 ?>
 <div class="col-md-12">
-    <h3>Dashboard</h3>
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-    <div class="row">
-        <div class="col-md-3">
-            <div class="box box-info box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">Invoice Total</h3>
-                  <!-- /.box-tools -->
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                <span class="info-box-number text-center"><?= ! empty($invoiceTotal) ? $invoiceTotal : 0 ?></span>
-                </div>
-            <!-- /.box-body -->
+    <h3 class="pull-left">Dashboard</h3>
+    <div class="pull-right col-xs-7 p-10"><?php echo $this->render('_search', ['model' => $searchModel]); ?></div>
+    <div class="clearfix"></div>
+    <div class="row text-center bg-gray disabled color-palette">
+        <div class="col-md-2 p-0">
+          <div class="small-box">
+            <div class="inner">
+              <h3><?= ! empty($invoiceTotal) ? $invoiceTotal : 0 ?></h3>
+              <p>Invoice Total</p>
             </div>
-          <!-- /.box -->
+          </div>
         </div>
-        <div class="col-md-3">
-            <div class="box box-default box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">Invoice Tax Total</h3>
-                  <!-- /.box-tools -->
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                <span class="info-box-number text-center"><?= ! empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></span>
-                </div>
-            <!-- /.box-body -->
+        <div class="col-md-2 p-0">
+          <div class="small-box">
+            <div class="inner">
+              <h3><?= ! empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h3>
+              <p>Invoice Tax Total</p>
             </div>
-          <!-- /.box -->
+          </div>
         </div>
-        <div class="col-md-3">
-            <div class="box box-primary box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">Private Enrolments</h3>
-                  <!-- /.box-tools -->
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                <span class="info-box-number text-center"><?= $enrolments ?></span>
-                </div>
-            <!-- /.box-body -->
+        <div class="col-md-2 p-0">
+          <div class="small-box">
+            <div class="inner">
+              <h3><?= $enrolments ?></h3>
+              <p>Private Enrolments</p>
             </div>
-          <!-- /.box -->
+          </div>
         </div>
-        <div class="col-md-3">
-            <div class="box box-danger box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">Group Enrolments</h3>
-                  <!-- /.box-tools -->
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                <span class="info-box-number text-center"><?= $groupEnrolments ?></span>
-                </div>
-            <!-- /.box-body -->
+        <div class="col-md-2 p-0">
+          <div class="small-box">
+            <div class="inner">
+              <h3><?= $groupEnrolments ?></h3>
+              <p>Group Enrolments</p>
             </div>
-          <!-- /.box -->
+          </div>
         </div>
-        <div class="col-md-3">
-            <div class="box box-warning box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">Payments</h3>
-                  <!-- /.box-tools -->
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                <span class="info-box-number text-center"><?= ! empty($payments) ? $payments : 0 ?></span>
-                </div>
-            <!-- /.box-body -->
+        <div class="col-md-2 p-0">
+          <div class="small-box">
+            <div class="inner">
+              <h3><?= ! empty($payments) ? $payments : 0 ?></h3>
+              <p>Payments</p>
             </div>
-          <!-- /.box -->
+          </div>
         </div>
-        <div class="col-md-3">
-            <div class="box box-success box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">Active Students</h3>
-                  <!-- /.box-tools -->
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                <span class="info-box-number text-center"><?= $students ?></span>
-                </div>
-            <!-- /.box-body -->
+        <div class="col-md-2 p-0">
+          <div class="small-box">
+            <div class="inner">
+              <h3><?= $students ?></h3>
+              <p>Active Students</p>
             </div>
-          <!-- /.box -->
+          </div>
         </div>
     </div>
 </div>
 
-<div class="col-md-6">
+<div class="col-md-6 m-t-20">
 <?= Highcharts::widget([
    'options' => [
       'title' => ['text' => 'Monthly Revenue'],
@@ -114,7 +79,7 @@ use common\models\Payment;
    ]
 ]);?>
 </div>
-<div class="col-md-6">
+<div class="col-md-6 m-t-20">
 <?=  Highcharts::widget([
     'options' => [
         'title' => ['text' => 'Instruction Hours'],
