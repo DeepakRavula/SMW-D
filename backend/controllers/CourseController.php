@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\Student;
+use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -72,7 +73,7 @@ class CourseController extends Controller
 		$studentDataProvider = new ActiveDataProvider([
 			'query' => Student::find()
 				->notDeleted()
-				->enrolled($id),
+				->groupCourseEnrolled($id),
 		]);
 	 
         return $this->render('view', [
@@ -82,6 +83,17 @@ class CourseController extends Controller
         ]);
     }
 
+	public function actionViewStudent($groupCourseId, $studentId)
+    {
+        $model = $this->findModel($groupCourseId);
+		$studentModel = Student::findOne(['id' => $studentId]);
+	 
+        return $this->render('view_student', [
+            'model' => $model,
+			'studentModel' => $studentModel,
+        ]);
+    }
+	
     /**
      * Creates a new Course model.
      * If creation is successful, the browser will be redirected to the 'view' page.

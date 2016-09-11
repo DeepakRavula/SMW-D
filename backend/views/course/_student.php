@@ -15,7 +15,7 @@ $this->registerJs("
     $('.group-course-student-index td').click(function (e) {
         var id = $(this).closest('tr').data('id');
         if(e.target == this)
-            location.href = '" . Url::to(['group-course/'.$model->id.'/student']) . "/' +id;
+            location.href = '" . Url::to(['course/'.$model->id.'/student']) . "/' +id;
     });
 
 ");
@@ -45,7 +45,7 @@ $this->registerJs("
 			[
 				'label' => 'Teacher Name',
 				'value' => function($data){
-					return ! empty($data->groupCourse->teacher->publicIdentity) ? $data->groupCourse->teacher->publicIdentity : null;
+					return ! empty($data->course->teacher->publicIdentity) ? $data->course->teacher->publicIdentity : null;
 				}
 			],
         ],

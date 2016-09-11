@@ -143,7 +143,11 @@ class StudentController extends Controller
 
 	public function actionLessonConfirm($id, $enrolmentId){
 		$model = $this->findModel($id);
-		Lesson::updateAll(['status' => Lesson::STATUS_SCHEDULED, 'enrolmentId' => $enrolmentId]);
+		$lessons = Lesson::findAll(['enrolmentId' => $enrolmentId]);
+		foreach($lessons as $lesson){
+			$lesson->status = Lesson::STATUS_SCHEDULED;
+			$lesson->save();
+		}
 		
 		Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],

@@ -31,7 +31,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['courseId', 'studentId', 'isDeleted'], 'required'],
+            [['courseId', 'isDeleted'], 'required'],
             [['courseId', 'studentId', 'isDeleted'], 'integer'],
         ];
     }
@@ -44,7 +44,8 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'courseId' => 'Course ID',
-            'studentId' => 'Student ID',
+            'studentId' => 'Student Name',
+            'studentIds' => 'Enrolled Student Name',
             'isDeleted' => 'Is Deleted',
         ];
     }

@@ -1,38 +1,43 @@
 <?php
 
-use yii\helpers\Html;
-use yii\grid\GridView;
-
-/* @var $this yii\web\View */
-/* @var $searchModel backend\models\search\LessonSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+use yii\bootstrap\Tabs;
+use common\models\LessonReschedule;
 
 $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="lesson-index">
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<div class="tabbable-panel">
+     <div class="tabbable-line">
+<?php 
 
-    <p>
-        <?php echo Html::a('Create Lesson', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+$indexPrivateLesson =  $this->render('_index-private-lesson', [
+    'searchModel' => $searchModel,
+    'dataProvider' => $dataProvider,
+]);
 
-    <?php echo GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+$indexGroupLesson =  $this->render('_index-group-lesson', [
+	'groupLessonDataProvider' =>  $groupLessonDataProvider,
+]);
 
-            'id',
-            'enrolmentId',
-            'teacherId',
-            'date',
-            'status',
-            // 'isDeleted',
+?>
 
-            ['class' => 'yii\grid\ActionColumn'],
+<?php echo Tabs::widget([
+    'items' => [
+		[
+            'label' => 'Private Lessons',
+           'content' => (int) $searchModel->type === LessonReschedule::TYPE_PRIVATE_LESSON  ? $indexPrivateLesson : null,
+			'url'=>['/lesson/index','LessonSearch[type]' => LessonReschedule::TYPE_PRIVATE_LESSON],
+			'active' => (int) $searchModel->type === LessonReschedule::TYPE_PRIVATE_LESSON ,    
         ],
-    ]); ?>
-
+		[
+            'label' => 'Group Lessons',
+            'content' => (int) $groupLessonSearchModel->type === LessonReschedule::TYPE_GROUP_LESSON  ? $indexGroupLesson : null,
+			'url'=>['/lesson/index','GroupLessonSearch[type]' => LessonReschedule::TYPE_GROUP_LESSON],
+			'active' => (int) $groupLessonSearchModel->type === LessonReschedule::TYPE_GROUP_LESSON ,            
+        ],
+    ],
+]);?>
+<div class="clearfix"></div>
+</div>
 </div>

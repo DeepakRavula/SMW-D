@@ -23,7 +23,7 @@ $this->title = 'Review Lessons';
 			<i class="fa fa-calendar"></i> <?php echo Yii::$app->formatter->asDate($courseModel->endDate)?>	
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Time">
-		<i class="fa fa-calendar"></i> <?php 
+		<i class="fa fa-clock-o"></i> <?php 
 		$fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->fromTime);
 		echo $fromTime->format('h:i A');?>	
 	</div>

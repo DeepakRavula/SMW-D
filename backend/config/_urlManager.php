@@ -6,7 +6,7 @@ return [
     'rules'=>[
         // url rules
 		'calendar/<slug:[\w-]+>' => 'calendar/view',
-        'group-course/<groupCourseId:\d+>/student/<studentId:\d+>' => 'group-course/view-student',
+        'course/<groupCourseId:\d+>/student/<studentId:\d+>' => 'course/view-student',
         'student/<studentId:\d+>/enrolment/<enrolmentId:\d+>/program-type/<programType:\d+>/delete-preview' => 'student/delete-enrolment-preview',
         'student/<id:\d+>/enrolment/<enrolmentId:\d+>/lesson-review' => 'student/lesson-review',
         'student/<id:\d+>/enrolment/<enrolmentId:\d+>/lesson-confirm' => 'student/lesson-confirm',

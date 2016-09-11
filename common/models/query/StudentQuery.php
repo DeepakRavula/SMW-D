@@ -2,7 +2,7 @@
 
 namespace common\models\query;
 
-use common\models\Invoice;
+use common\models\Program;
 use yii\db\ActiveQuery;
 
 /**
@@ -53,9 +53,18 @@ class StudentQuery extends ActiveQuery
 		return $this;
 	}
 
-	public function unenrolled() {
+	public function groupCourseEnrolled($courseId) {
+		$this->joinWith(['enrolment' => function($query)  use($courseId){
+				$query->andWhere(['courseId' => $courseId])
+					->where(['not',['studentId' => null]]);
+			}]);
+		
+		return $this;
+	}
+	
+	public function unenrolled($courseId) {
 		$this->joinWith('enrolment')
-			->where(['studentId' => null]);
+				->andWhere(['studentId' => null]);
 		
 		return $this;
 	}
