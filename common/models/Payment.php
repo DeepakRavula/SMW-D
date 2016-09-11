@@ -19,7 +19,6 @@ use common\models\Invoice;
 class Payment extends \yii\db\ActiveRecord {
 
 	public $invoiceId;
-	public $allocationType;
 	public $credit;
 	public $amountNeeded;
 	public $sourceType;
@@ -86,13 +85,6 @@ class Payment extends \yii\db\ActiveRecord {
 
 	public function getDebitUsage() {
 		return $this->hasOne(CreditUsage::className(), ['debit_payment_id' => 'id']);
-	}
-	
-	public function getPreviousBalance(){
-		$previousBalance = BalanceLog::find()
-			->orderBy(['id' => SORT_DESC])
-			->where(['user_id' => $this->user_id])->one();
-		return $previousBalance;
 	}
 	
 	public function getInvoicePayment() {

@@ -17,6 +17,7 @@ foreach ($roleNames as $name => $description) {
 	}
 } 
 $this->params['subtitle'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
 ?>
     <div class="title">
         <p class="users-name pull-left"><?php echo!empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
@@ -245,8 +246,5 @@ $this->params['subtitle'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['updat
 	});
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');
-  	});
-   jQuery(document).ready(function(){
-   $('.go-back').html('<a href="javascript: history.back()"><i class="fa fa-angle-left"></i> Go Back</a>');
-   });
+  	});   
 </script>

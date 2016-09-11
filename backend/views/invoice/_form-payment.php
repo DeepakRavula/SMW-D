@@ -2,11 +2,6 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;
-use common\models\PaymentMethod;
-use common\models\Invoice;
-use common\models\Allocation;
-use common\models\BalanceLog;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */

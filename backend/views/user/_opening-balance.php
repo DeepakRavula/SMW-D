@@ -2,8 +2,6 @@
 
 use yii\grid\GridView;
 use common\models\Payment;
-use common\models\Allocation;
-use common\models\BalanceLog;
 ?>
 <div>
 	<?php

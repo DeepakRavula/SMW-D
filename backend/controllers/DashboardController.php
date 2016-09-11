@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Invoice;
+use common\models\Lesson;
 use common\models\Enrolment;
 use common\models\Payment;
 use common\models\GroupCourse;
@@ -67,8 +68,34 @@ class DashboardController extends \yii\web\Controller
                         ])
                     ->distinct(['group_enrolment.student_id','enrolment.student_id'])
                     ->count();
+        $programsHours = Lesson::find()
+                    ->select(['sum(enrolment.duration) as hours'])
+                    ->joinWith('enrolment')
+                    ->where(['enrolment.location_id' => $locationId])
+                    ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->where(['lesson.status' => Lesson::STATUS_COMPLETED])
+                    ->all();
+        $totalHours = floor($programsHours[0]->hours / 3600);
+        $completedPrograms = [];            
+        $programs = Lesson::find()
+                    ->select(['sum(enrolment.duration) as hours, program.name as program_name'])
+                    ->joinWith(['enrolment' => function($query) use($locationId) {                     
+                        $query->where(['enrolment.location_id' => $locationId]) ;                   
+                        $query->joinWith(['program' => function($query){   
+                        }]);
+                    }])
+                    ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->where(['lesson.status' => Lesson::STATUS_COMPLETED])
+                    ->groupBy(['enrolment.program_id'])
+                    ->all();
+        foreach($programs as $program){
+            $array = array();
+            $array['name']  =  $program->program_name;
+            $array['y'] =   floor(( (floor($program->hours / 3600)) / $totalHours ) * 100) ;//$program->hours;
+            array_push($completedPrograms, $array);
+        }
         
-        return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students]);
+        return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students, 'completedPrograms' => $completedPrograms]);
     }
 
 }
