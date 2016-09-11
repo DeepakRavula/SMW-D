@@ -403,14 +403,12 @@ $bundle = BackendAsset::register($this);
             <!-- Content Header (Page header) -->
             <section class="content-header">
                 <h1>
-                    <div class="pull-left">
-                        <?php echo $this->title ?>
+                    <?php if (isset($this->params['goback'])): ?>  
+                    <div class="pull-left m-r-10">
+                        <?php echo $this->params['goback']; ?>
                     </div>
-                    <?php if (isset($this->params['goback'])): ?>                        
-                        <div class="pull-right m-r-10">
-                            <?php echo $this->params['goback']; ?>
-                        </div>
                     <?php endif; ?>
+                    <?php echo $this->title ?>
                     
                     <?php if (isset($this->params['subtitle'])): ?>
                         

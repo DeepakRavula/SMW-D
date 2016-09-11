@@ -688,6 +688,11 @@ input[type="search"]:-ms-input-placeholder {
 .title{
    position: absolute;
    top: -45px;    
+   left: 69px;
+}
+.abs-delete{
+    position: absolute;
+    right: 11px;
 }
 
 .schedule-index input[type="checkbox"]{

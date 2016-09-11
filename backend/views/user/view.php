@@ -38,7 +38,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['
   			 <?php if($searchModel->role_name === 'staffmember'):?>
 			 <?php
             echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
-                'class' => '',
+                'class' => 'abs-delete',
                 'data' => [
                     'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
                     'method' => 'post',

@@ -71,6 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ])->input('search')->label(false);
     ?>
+    <?php echo $form->field($searchModel, 'role_name')->hiddenInput()->label(false); ?>
     </div>
     <?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
 	<div class="pull-right  m-r-20">
@@ -81,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		</div>
     </div>
     <?php endif;?>
-        <?php echo $form->field($searchModel, 'role_name')->hiddenInput()->label(false); ?>
+        
     <?php ActiveForm::end(); ?>
     
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
