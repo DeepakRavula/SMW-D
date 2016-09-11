@@ -56,6 +56,12 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return new \common\models\query\EnrolmentQuery(get_called_class());
     }
+
+	public function notDeleted() {
+		$this->where(['enrolment.isDeleted' => false]);
+		
+		return $this;
+	}
 	
 	public function getCourse() {
 		return $this->hasOne(Course::className(), ['id' => 'courseId']);
@@ -69,7 +75,11 @@ class Enrolment extends \yii\db\ActiveRecord
 		return $this->hasOne(Program::className(), ['id' => 'programId'])
 			->viaTable('course',['id' => 'courseId']);
 	}
-
+	
+	public function getLessons() {
+		return $this->hasMany(Lesson::className(), ['enrolmentId' => 'id']);
+	}
+	
 	public function afterSave($insert, $changedAttributes)
     {
 		$interval = new \DateInterval('P1D');

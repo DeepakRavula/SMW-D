@@ -33,9 +33,17 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     }
 	
 	public function notDeleted() {
-		return $this->where(['isDeleted' => false]);
+		return $this->where(['enrolment.isDeleted' => false]);
 	}
 
+	public function location($locationId) {
+		$this->joinWith(['course' => function($query) use($locationId){
+			$query->where(['locationId' => $locationId]);
+		}]);
+		
+		return $this;
+	}
+	
 	public function program($locationId, $currentDate){
 		$this->joinWith(['program' => function($query) use($locationId, $currentDate){
 			$query->where(['course.locationId' => $locationId])                

@@ -86,13 +86,7 @@ class UserSearch extends User
             if( ! $this->showAllCustomers) {             
                $currentDate = (new \DateTime())->format('Y-m-d H:i:s');            
 		       $query->joinWith(['student s'=>function($query) use($currentDate){			
-                    $query->joinWith(['groupEnrolments ge'=>function($query) use($currentDate){
-                        $query->joinWith('groupCourse gc'); 
-			        }])
-                    ->joinWith('enrolment e')
-                    ->andWhere(['and',['>=','e.renewal_date', $currentDate],['not', ['e.student_id' => null]]])
-                    ->orWhere(['and',['>=','gc.end_date', $currentDate],['not', ['ge.student_id' => null]]]); 
-                                   
+                    $query->enrolled($currentDate);       
   			    }]);  
                 $query->andFilterWhere(['like', 'ul.location_id', $locationId]);             
             }        

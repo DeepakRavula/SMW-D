@@ -2,6 +2,7 @@
 
 namespace common\models\query;
 
+use common\models\Lesson;
 /**
  * This is the ActiveQuery class for [[\common\models\Lesson]].
  *
@@ -31,4 +32,71 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+	public function notDeleted() {
+		$this->where(['lesson.isDeleted' => false]);
+		
+		return $this;
+	}
+
+	public function location($locationId) {
+		$this->joinWith(['enrolment' => function($query) use($locationId){
+			$query->joinWith(['course' => function($query) use($locationId){
+				$query->andFilterWhere(['locationId' => $locationId]);
+			}]);
+		}]);
+		
+		return $this;
+	}
+
+	public function student($id) {
+		$this->joinWith(['enrolment' => function($query) use($id){
+			$query->joinWith('student')
+				->where(['customer_id' => $id]);
+			}]);
+		return $this;
+	}
+
+	public function unInvoiced()
+    {
+		$this->joinWith('invoice')
+			->where(['invoice.id' => null]);
+		
+        return $this;
+    }
+
+	public function invoiced()
+    {
+		$this->joinWith('invoice')
+			->where(['not',['invoice.id' => null]]);
+		
+        return $this;
+    }
+
+	public function unInvoicedProForma()
+    {
+		$this->joinWith(['invoiceLineItem' => function($query) {
+			$query->joinWith('invoice');
+			$query->where(['invoice.id' => null]);
+		}]);
+		
+        return $this;
+    }
+
+	public function completed() {
+        $this->joinWith('invoice')
+			->where(['invoice.id' => null]);
+        $this->andFilterWhere(['<=', 'lesson.date', (new \DateTime())->format('Y-m-d')])
+             ->andFilterWhere(['not',['lesson.status' => Lesson::STATUS_CANCELED]]);
+		
+		return $this;
+	}
+
+	public function scheduled() {
+		$this->andFilterWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d')])
+             ->andFilterWhere(['not',['lesson.status' => Lesson::STATUS_CANCELED]]);
+		
+		return $this;
+	}
+	
 }

@@ -1,6 +1,6 @@
 <?php
 use yii\grid\GridView;
-use common\models\Enrolment;
+use common\models\Course;
 ?>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Enrolments</h4>
@@ -34,44 +34,40 @@ use common\models\Enrolment;
 			[
 				'label' => 'Day',
 				'value' => function($data) {
-					if(! empty($data->day)){
-					$dayList = Enrolment::getWeekdaysList();
-					$day = $dayList[$data->day];
-					return ! empty($day) ? $day : null;
+					if(! empty($data->course->day)){
+						$dayList = Course::getWeekdaysList();
+						$day = $dayList[$data->course->day];
+						return ! empty($day) ? $day : null;
 					}
-					return null;
 				},
 			],
 			[
 				'label' => 'From Time',
 				'value' => function($data) {
-					if(! empty($data->from_time)){
-						return ! empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
+					if(! empty($data->course->fromTime)){
+						return ! empty($data->course->fromTime) ? Yii::$app->formatter->asTime($data->course->fromTime) : null;
 					}
-					return null;
 				},
 			],
 			[
 				'label' => 'Duration',
 				'value' => function($data) {
-					if(! empty($data->duration)){
-                    	$duration = \DateTime::createFromFormat('h:i:s',$data->duration);
-       				    $data->duration = $duration->format('H:i');
-                    	return !empty($data->duration) ? $data->duration : null;
+					if(! empty($data->course->duration)){
+                    	$duration = \DateTime::createFromFormat('h:i:s',$data->course->duration);
+                    	return !empty($duration) ? $duration->format('H:i') : null;
 					}
-					return null;
 				},
 			],
 			[
-				'label' => 'Commencement Date',
+				'label' => 'Start Date',
 				'value' => function($data) {
-					return ! empty($data->commencement_date) ? Yii::$app->formatter->asDate($data->commencement_date) : null;
+					return ! empty($data->course->startDate) ? Yii::$app->formatter->asDate($data->course->startDate) : null;
 				},
 			],
 			[
 				'label' => 'Renewal Date',
 				'value' => function($data) {
-					return ! empty($data->renewal_date) ? Yii::$app->formatter->asDate($data->renewal_date) : null;
+					return ! empty($data->course->endDate) ? Yii::$app->formatter->asDate($data->course->endDate) : null;
 				},
 			],
 		],

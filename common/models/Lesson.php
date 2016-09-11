@@ -85,6 +85,17 @@ class Lesson extends \yii\db\ActiveRecord
 			->onCondition(['invoice.type' => Invoice::TYPE_INVOICE]);
 	}
 
+	public function getInvoiceLineItem()
+    {
+        return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])
+				->where(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+    }
+
+	public function getTeacher()
+    {
+        return $this->hasOne(User::className(), ['id' => 'teacherId']);
+    }
+	
 	public static function lessonStatuses() {
 		return [
             self::STATUS_COMPLETED => Yii::t('common', 'Completed'),

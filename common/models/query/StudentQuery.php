@@ -41,4 +41,29 @@ class StudentQuery extends ActiveQuery
 		
 		return $this;
 	}
+	
+	public function enrolled($currentDate) {
+		$this->joinWith(['enrolment' => function($query) use($currentDate){
+				$query->joinWith(['course' => function($query) use($currentDate){
+                   $query->andWhere(['>=','course.endDate', $currentDate]);
+				}])
+            ->andWhere(['not', ['enrolment.studentId' => null]]);
+			}]);
+		
+		return $this;
+	}
+	
+	public function teacherStudents($locationId, $id) {
+		$this->joinWith(['enrolment' => function($query) use($id, $locationId){
+			$query->joinWith(['lessons' => function($query) use($id){
+				$query->where(['lesson.teacherId' => $id])
+					->groupBy('lesson.teacherId');	
+			}])
+			->joinWith(['course' => function($query) use($locationId){	
+				$query->where(['locationId' => $locationId]);
+			}]);
+		}]);
+		
+		return $this;
+	}
 }
