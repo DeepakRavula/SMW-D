@@ -97,11 +97,13 @@ class StudentController extends Controller
         }
         $lessonModel = new Lesson();
         if($lessonModel->load(Yii::$app->request->post()) ){
-           $studentEnrolmentModel = Enrolment::findOne([
-			   'studentId' => $model->id,
-			   'program_id' => $lessonModel->program_id
-		   ]);
-           $lessonModel->enrolmentId = $studentEnrolmentModel->id; 
+           $studentEnrolment = Enrolment::find()
+				   ->joinWith(['course' => function($query) use($lessonModel){
+					   $query->where(['course.programId' => $lessonModel->programId]);
+				   }])
+			  		->where(['studentId' => $model->id])
+					->one();
+           $lessonModel->enrolmentId = $studentEnrolment->id; 
            $lessonModel->status = Lesson::STATUS_DRAFTED;
 		   $lessonModel->isDeleted = 0;
            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
@@ -109,15 +111,13 @@ class StudentController extends Controller
            $lessonModel->save();
            Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
-                	'body' => 'Lesson has been added successfully'
+                	'body' => 'Lesson has been created successfully'
             ]);
             	return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
-        }
-         else {
+        } else {
             return $this->render('view', [
             	'model' => $model,
                 'lessonDataProvider' => $lessonDataProvider,
-                'lessonModel' => $lessonModel,
 				'enrolmentDataProvider' => $enrolmentDataProvider,
             ]);
         }

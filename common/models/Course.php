@@ -90,7 +90,7 @@ class Course extends \yii\db\ActiveRecord
 
 	public function getEnrolment()
     {
-        return $this->hasOne(Enrolment::className(), ['id' => 'courseId']);
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
     }
 	
 	public function beforeSave($insert)

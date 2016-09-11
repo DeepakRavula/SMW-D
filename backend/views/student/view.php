@@ -24,7 +24,6 @@ $enrolmentContent =  $this->render('_enrolment', [
 
 $lessonContent =  $this->render('_lesson', [
 	'lessonDataProvider' => $lessonDataProvider,
-    'lessonModel' => $lessonModel,
     'model' => $model,
 ]);
 

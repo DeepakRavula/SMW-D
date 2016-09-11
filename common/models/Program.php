@@ -87,4 +87,9 @@ class Program extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Qualification::className(), ['program_id' => 'id']);
     }
+
+	public function getCourse()
+    {
+        return $this->hasMany(Course::className(), ['programId' => 'id']);
+    }
 }

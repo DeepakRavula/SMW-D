@@ -12,7 +12,7 @@ use yii\grid\GridView;
  </div>
  <div class="dn lesson-create section-tab">
      <?php echo $this->render('//lesson/_form', [
-         'model' => $lessonModel,
+         'model' => new Lesson(),
          'studentModel' => $model,
 
          ]) 

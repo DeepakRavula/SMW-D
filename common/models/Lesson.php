@@ -23,6 +23,8 @@ class Lesson extends \yii\db\ActiveRecord
 	const STATUS_SCHEDULED = 2;
 	const STATUS_COMPLETED = 3;
 	const STATUS_CANCELED = 4;
+
+	public $programId;
     /**
      * @inheritdoc
      */
@@ -39,7 +41,7 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['enrolmentId', 'teacherId', 'status', 'isDeleted'], 'required'],
             [['enrolmentId', 'teacherId', 'status', 'isDeleted'], 'integer'],
-            [['date'], 'safe'],
+            [['date', 'programId', 'notes'], 'safe'],
         ];
     }
 
@@ -50,8 +52,9 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'programId' => 'Program Name',
             'enrolmentId' => 'Enrolment ID',
-            'teacherId' => 'Teacher ID',
+            'teacherId' => 'Teacher Name',
             'date' => 'Date',
             'status' => 'Status',
             'isDeleted' => 'Is Deleted',
@@ -80,5 +83,13 @@ class Lesson extends \yii\db\ActiveRecord
 		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
 			->viaTable('invoice_line_item', ['item_id' => 'id'])
 			->onCondition(['invoice.type' => Invoice::TYPE_INVOICE]);
+	}
+
+	public static function lessonStatuses() {
+		return [
+            self::STATUS_COMPLETED => Yii::t('common', 'Completed'),
+			self::STATUS_SCHEDULED => Yii::t('common', 'Scheduled'),
+            self::STATUS_CANCELED => Yii::t('common', 'Canceled'),
+		];
 	}
 }
