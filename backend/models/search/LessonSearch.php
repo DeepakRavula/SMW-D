@@ -64,21 +64,23 @@ class LessonSearch extends Lesson
         $query = Lesson::find()
 				->notDeleted()
 				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
-		
-		if((int) $this->type === Lesson::TYPE_PRIVATE_LESSON){
-			$query->joinWith(['enrolment' => function($query) use($locationId){
-				$query->joinWith(['course' => function($query) use($locationId){
+	
+		if(! empty($this->type)){
+			if((int) $this->type === Lesson::TYPE_PRIVATE_LESSON){
+				$query->joinWith(['enrolment' => function($query) use($locationId){
+					$query->joinWith(['course' => function($query) use($locationId){
+						$query->joinWith('program')
+							->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+					}])
+					->where(['course.locationId' => $locationId]);
+				}]);
+			} else {
+				$query->joinWith(['course' => function($query){
 					$query->joinWith('program')
-						->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
-				}])
+						->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+				}])	
 				->where(['course.locationId' => $locationId]);
-			}]);
-		} else {
-			$query->joinWith(['course' => function($query){
-				$query->joinWith('program')
-					->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
-			}])	
-			->where(['course.locationId' => $locationId]);
+			}
 		}
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
