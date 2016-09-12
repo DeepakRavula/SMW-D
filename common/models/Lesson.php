@@ -3,7 +3,10 @@
 namespace common\models;
 
 use Yii;
-
+use common\models\InvoiceLineItem;
+use common\models\LessonReschedule;
+use common\models\query\LessonQuery;
+use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 /**
  * This is the model class for table "lesson".
  *
@@ -33,6 +36,18 @@ class Lesson extends \yii\db\ActiveRecord
         return 'lesson';
     }
 
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true
+                ],
+            ],
+        ];
+    }
+	
     /**
      * @inheritdoc
      */
@@ -79,6 +94,10 @@ class Lesson extends \yii\db\ActiveRecord
 			->viaTable('enrolment',['id' => 'enrolmentId']);
 	}
 
+	public function getGroupCourse() {
+		return $this->hasOne(Course::className(), ['id' => 'enrolmentId']);
+	}
+
 	public function getInvoice() {
 		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
 			->viaTable('invoice_line_item', ['item_id' => 'id'])
@@ -99,23 +118,23 @@ class Lesson extends \yii\db\ActiveRecord
 	public function getStatus(){
 		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
 		$currentDate = new \DateTime();
-			$status = null;
-			switch ($this->status) {
-				case Lesson::STATUS_SCHEDULED:
-					if ($lessonDate >= $currentDate) {
-						$status = 'Scheduled';
-					} else {
-						$status = 'Completed';
-					}
-					break;
-				case Lesson::STATUS_COMPLETED;
+		$status = null;
+		switch ($this->status) {
+			case Lesson::STATUS_SCHEDULED:
+				if ($lessonDate >= $currentDate) {
+					$status = 'Scheduled';
+				} else {
 					$status = 'Completed';
-					break;
-				case Lesson::STATUS_CANCELED:
-					$status = 'Canceled';
-					break;
-			}
-			
+				}
+			break;
+			case Lesson::STATUS_COMPLETED;
+				$status = 'Completed';
+			break;
+			case Lesson::STATUS_CANCELED:
+				$status = 'Canceled';
+			break;
+		}
+
 		return $status;
 	}
 	
@@ -125,5 +144,53 @@ class Lesson extends \yii\db\ActiveRecord
 			self::STATUS_SCHEDULED => Yii::t('common', 'Scheduled'),
             self::STATUS_CANCELED => Yii::t('common', 'Canceled'),
 		];
+	}
+
+	public function afterSave($insert, $changedAttributes)
+    {
+        if( ! $insert) {
+            if(isset($changedAttributes['date'])){
+                $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+                $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
+                if(! empty($this->teacher->email)){
+                    $this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
+                }
+                if( ! empty($this->enrolment->student->customer->email)){
+                    $this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
+                }
+                $this->updateAttributes(['date' => $fromDate->format('Y-m-d H:i:s'),
+                    'status' => self::STATUS_CANCELED,
+                ]);
+                $originalLessonId = $this->id;
+				$this->id = null;
+				$this->isNewRecord = true;
+				$this->date = $toDate->format('Y-m-d H:i:s');
+				$this->status = self::STATUS_SCHEDULED;
+				$this->save();
+
+				$lessonRescheduleModel = new LessonReschedule();
+				$lessonRescheduleModel->lessonId = $originalLessonId;
+				$lessonRescheduleModel->rescheduledLessonId = $this->id;
+				$lessonRescheduleModel->save();
+            }           
+		} 
+            
+        return parent::afterSave($insert, $changedAttributes);
+    }
+
+	public function notifyReschedule($user, $program, $fromDate, $toDate) {
+        $subject = Yii::$app->name . ' - ' . $program->name 
+				. ' lesson rescheduled from ' . $fromDate->format('d-m-Y h:i a') . ' to ' . $toDate->format('d-m-Y h:i a');
+
+		Yii::$app->mailer->compose('lessonReschedule', [
+			'program' => $program->name,
+			'toName' => $user->userProfile->firstname,
+			'fromDate' => $fromDate->format('d-m-Y h:i a'),
+			'toDate' => $toDate->format('d-m-Y h:i a'), 
+			])
+			->setFrom(\Yii::$app->params['robotEmail'])   
+			->setTo($user->email) 
+			->setSubject($subject) 
+			->send();	
 	}
 }

@@ -36,12 +36,12 @@ $this->registerJs("
 				'label' => 'Student Name',
 				'value' => function($data) {
 					return ! empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
-                },
+					}
 			],
 			[
 				'label' => 'Program Name',
 				'value' => function($data) {
-					return ! empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
+					return ! empty($data->course->program->name) ? $data->course->program->name : null;
                 },
 			],
 			[

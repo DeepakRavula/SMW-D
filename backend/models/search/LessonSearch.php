@@ -59,28 +59,26 @@ class LessonSearch extends Lesson
         $currentMonth = new \DateTime();
         $currentMonth->modify('last day of this month');
         $this->toDate = $currentMonth->format('d-m-Y');
-		
         $session = Yii::$app->session;
 		$locationId = $session->get('location_id');
         $query = Lesson::find()
 				->notDeleted()
-				->location($locationId)
 				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
 		
 		if((int) $this->type === Lesson::TYPE_PRIVATE_LESSON){
-			$query->joinWith(['enrolment' => function($query){
-				$query->joinWith(['course' => function($query){
+			$query->joinWith(['enrolment' => function($query) use($locationId){
+				$query->joinWith(['course' => function($query) use($locationId){
 					$query->joinWith('program')
 						->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
-				}]);
+				}])
+				->where(['course.locationId' => $locationId]);
 			}]);
 		} else {
-			$query->joinWith(['enrolment' => function($query){
-				$query->joinWith(['course' => function($query){
-					$query->joinWith('program')
-						->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
-				}]);	
-			}]);	
+			$query->joinWith(['course' => function($query){
+				$query->joinWith('program')
+					->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+			}])	
+			->where(['course.locationId' => $locationId]);
 		}
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

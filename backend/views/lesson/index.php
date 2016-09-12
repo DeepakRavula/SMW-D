@@ -34,7 +34,7 @@ $indexGroupLesson =  $this->render('_index-lesson', [
 		[
             'label' => 'Group Lessons',
             'content' => (int) $searchModel->type === Lesson::TYPE_GROUP_LESSON  ? $indexGroupLesson : null,
-			'url'=>['/lesson/index','GroupLessonSearch[type]' => Lesson::TYPE_GROUP_LESSON],
+			'url'=>['/lesson/index','LessonSearch[type]' => Lesson::TYPE_GROUP_LESSON],
 			'active' => (int) $searchModel->type === Lesson::TYPE_GROUP_LESSON ,            
         ],
     ],

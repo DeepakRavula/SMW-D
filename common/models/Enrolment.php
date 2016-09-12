@@ -84,46 +84,48 @@ class Enrolment extends \yii\db\ActiveRecord
 	
 	public function afterSave($insert, $changedAttributes)
     {
-		$interval = new \DateInterval('P1D');
-		$startDate = $this->course->startDate;
-		$endDate = $this->course->endDate;
-		$start = new \DateTime($startDate);
-		$end = new \DateTime($endDate);
-		$period = new \DatePeriod($start, $interval, $end);
+		if((int) $this->course->program->type === Program::TYPE_PRIVATE_PROGRAM){
+			$interval = new \DateInterval('P1D');
+			$startDate = $this->course->startDate;
+			$endDate = $this->course->endDate;
+			$start = new \DateTime($startDate);
+			$end = new \DateTime($endDate);
+			$period = new \DatePeriod($start, $interval, $end);
 
-		$holidays = Holiday::find()->all();
-		$pdDays = ProfessionalDevelopmentDay::find()->all();
+			$holidays = Holiday::find()->all();
+			$pdDays = ProfessionalDevelopmentDay::find()->all();
 
-		foreach($holidays as $holiday){
-			$holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
-			$holiDays[] = $holiday->format('Y-m-d');
-		}
-
-		foreach($pdDays as $pdDay){
-			$pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
-			$professionalDays[] = $pdDay->format('Y-m-d');
-		}
-		$leaveDays = array_merge($holiDays,$professionalDays);
-
-		foreach($period as $day){
-			foreach($leaveDays as $leaveDay){
-				if($day->format('Y-m-d') === $leaveDay){
-					continue 2;
-				}
+			foreach($holidays as $holiday){
+				$holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
+				$holiDays[] = $holiday->format('Y-m-d');
 			}
-			
-			$lessonDate = $day->format('Y-m-d');
-			
-			if ($day->format('N') === $this->course->day) {
-				$lesson = new Lesson();
-				$lesson->setAttributes([
-					'enrolmentId'	 => $this->id,
-					'teacherId' => $this->course->teacherId,
-					'status' => Lesson::STATUS_DRAFTED,
-					'date' => $day->format('Y-m-d H:i:s'),
-					'isDeleted' => 0,
-				]);
-				$lesson->save();
+
+			foreach($pdDays as $pdDay){
+				$pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
+				$professionalDays[] = $pdDay->format('Y-m-d');
+			}
+			$leaveDays = array_merge($holiDays,$professionalDays);
+
+			foreach($period as $day){
+				foreach($leaveDays as $leaveDay){
+					if($day->format('Y-m-d') === $leaveDay){
+						continue 2;
+					}
+				}
+
+				$lessonDate = $day->format('Y-m-d');
+
+				if ($day->format('N') === $this->course->day) {
+					$lesson = new Lesson();
+					$lesson->setAttributes([
+						'enrolmentId'	 => $this->id,
+						'teacherId' => $this->course->teacherId,
+						'status' => Lesson::STATUS_DRAFTED,
+						'date' => $day->format('Y-m-d H:i:s'),
+						'isDeleted' => 0,
+					]);
+					$lesson->save();
+				}
 			}
 		}
 	}
