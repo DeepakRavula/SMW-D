@@ -76,15 +76,9 @@ class LessonSearch extends Lesson
 		
 		if(! empty($this->type)){
 			if((int) $this->type === Lesson::TYPE_PRIVATE_LESSON){
-					$query->joinWith(['course' => function($query) use($locationId){
-						$query->joinWith('program')
-							->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
-					}]);
+				$query->privateLessons();
 			} else {
-				$query->joinWith(['course' => function($query){
-					$query->joinWith('program')
-						->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
-				}]);	
+				$query->groupLessons();
 			}
 		}
 		
@@ -94,6 +88,7 @@ class LessonSearch extends Lesson
 		if( ! empty($this->invoiceType)){
 			if((int) $this->invoiceType === Invoice::TYPE_PRO_FORMA_INVOICE){
 				$query->unInvoicedProForma()
+					->privateLessons()
 					->scheduled();
 			}else{
 				$query->unInvoiced()

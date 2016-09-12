@@ -3,6 +3,7 @@
 namespace common\models\query;
 
 use common\models\Lesson;
+use common\models\Program;
 /**
  * This is the ActiveQuery class for [[\common\models\Lesson]].
  *
@@ -81,6 +82,24 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+	public function privateLessons() {
+		$this->joinWith(['course' => function($query){
+			$query->joinWith('program')
+				->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+			}]);
+		
+		return $this;
+	}
+
+	public function groupLessons() {
+		$this->joinWith(['course' => function($query){
+			$query->joinWith('program')
+				->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+		}]);
+
+		return $this;
+	}
+	
 	public function completed() {
         $this->joinWith('invoice')
 			->where(['invoice.id' => null])
