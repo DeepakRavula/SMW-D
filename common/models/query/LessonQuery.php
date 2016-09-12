@@ -40,11 +40,9 @@ class LessonQuery extends \yii\db\ActiveQuery
 	}
 
 	public function location($locationId) {
-		$this->joinWith(['enrolment' => function($query) use($locationId){
-			$query->joinWith(['course' => function($query) use($locationId){
+		$this->joinWith(['course' => function($query) use($locationId){
 				$query->andFilterWhere(['locationId' => $locationId]);
 			}]);
-		}]);
 		
 		return $this;
 	}

@@ -62,24 +62,10 @@ class LessonSearch extends Lesson
         $session = Yii::$app->session;
 		$locationId = $session->get('location_id');
         $query = Lesson::find()
+				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
 				->notDeleted()
-				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
+				->location($locationId);
 	
-		if(! empty($this->type)){
-			if((int) $this->type === Lesson::TYPE_PRIVATE_LESSON){
-					$query->joinWith(['course' => function($query) use($locationId){
-						$query->joinWith('program')
-							->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
-					}])
-					->where(['course.locationId' => $locationId]);
-			} else {
-				$query->joinWith(['course' => function($query){
-					$query->joinWith('program')
-						->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
-				}])	
-				->where(['course.locationId' => $locationId]);
-			}
-		}
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -87,6 +73,20 @@ class LessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
+		
+		if(! empty($this->type)){
+			if((int) $this->type === Lesson::TYPE_PRIVATE_LESSON){
+					$query->joinWith(['course' => function($query) use($locationId){
+						$query->joinWith('program')
+							->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+					}]);
+			} else {
+				$query->joinWith(['course' => function($query){
+					$query->joinWith('program')
+						->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+				}]);	
+			}
+		}
 		
 		if( ! empty($this->customerId)){
 			$query->student($this->customerId);
