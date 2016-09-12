@@ -55,9 +55,11 @@ class StudentQuery extends ActiveQuery
 
 	public function groupCourseEnrolled($courseId) {
 		$this->joinWith(['enrolment' => function($query)  use($courseId){
-				$query->andWhere(['courseId' => $courseId])
-					->where(['not',['studentId' => null]]);
-			}]);
+			$query->joinWith(['course' => function($query)  use($courseId){
+				$query->where(['course.id' => $courseId]);
+			}])
+			->where(['not',['studentId' => null]]);
+		}]);
 		
 		return $this;
 	}
