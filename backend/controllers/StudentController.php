@@ -94,7 +94,7 @@ class StudentController extends Controller
             	    'options' => ['class' => 'alert-success'],
                 	'body' => 'Student has been enrolled successfully'
             ]);
-            	return $this->redirect(['lesson-review', 'id' => $model->id,'enrolmentId' => $enrolmentModel->id]);
+            	return $this->redirect(['lesson-review', 'id' => $model->id,'courseId' => $enrolmentModel->courseId]);
         }
         $lessonModel = new Lesson();
         if($lessonModel->load(Yii::$app->request->post()) ){
@@ -124,10 +124,9 @@ class StudentController extends Controller
         }
     }
 
-	public function actionLessonReview($id, $enrolmentId){
+	public function actionLessonReview($id, $courseId){
 		$model = $this->findModel($id);
-		$enrolmentModel = Enrolment::findOne(['id' => $enrolmentId]);
-		$courseModel = Course::findOne(['id' => $enrolmentModel->courseId]);
+		$courseModel = Course::findOne(['id' => $courseId]);
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),
@@ -136,15 +135,14 @@ class StudentController extends Controller
 		return $this->render('lesson-review', [
             	'model' => $model,
 				'courseModel' => $courseModel,
-				'enrolmentId' => $enrolmentId,
+				'courseId' => $courseId,
                 'lessonDataProvider' => $lessonDataProvider,
             ]);	
 	}
 
-	public function actionLessonConfirm($id, $enrolmentId){
+	public function actionLessonConfirm($id, $courseId){
 		$model = $this->findModel($id);
-		$enrolmentModel = Enrolment::findOne(['id' => $enrolmentId]);
-		$lessons = Lesson::findAll(['courseId' => $enrolmentModel->courseId]);
+		$lessons = Lesson::findAll(['courseId' => $courseId]);
 		foreach($lessons as $lesson){
 			$lesson->status = Lesson::STATUS_SCHEDULED;
 			$lesson->save();
