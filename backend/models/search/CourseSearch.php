@@ -20,7 +20,7 @@ class CourseSearch extends Course
     {
         return [
             [['id', 'programId', 'teacherId', 'locationId', 'day'], 'integer'],
-            [['fromTime', 'duration', 'startDate', 'endDate'], 'safe'],
+            [['fromTime', 'duration', 'startDate', 'endDate', 'query'], 'safe'],
         ];
     }
 
@@ -54,6 +54,11 @@ class CourseSearch extends Course
             return $dataProvider;
         }
 
+        $query->joinWith(['teacher' => function($query) use($locationId){                
+           $query->joinWith('userProfile up');                     
+        }]);
+        $query->joinWith('program'); 
+
         $query->andFilterWhere([
             'id' => $this->id,
             'programId' => $this->programId,
@@ -64,7 +69,11 @@ class CourseSearch extends Course
             'duration' => $this->duration,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
-        ]);
+        ]);       
+        
+       $query->andFilterWhere(['like', 'program.name', $this->query]);        
+       $query->orFilterWhere(['like', 'up.firstname', $this->query]);
+       $query->orFilterWhere(['like', 'up.lastname', $this->query]);
 
         return $dataProvider;
     }
