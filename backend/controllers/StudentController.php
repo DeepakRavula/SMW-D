@@ -69,11 +69,11 @@ class StudentController extends Controller
 		$currentDate = new \DateTime();
 		$lessons = Lesson::find()
 			->notDeleted()
-			->joinWith(['enrolment' => function($query) use($locationId,$model){
-				$query->joinWith(['course' => function($query) use($locationId,$model){
-					$query->where(['course.locationId' => $locationId]);
+			->joinWith(['course' => function($query) use($locationId,$model){
+				$query->joinWith(['enrolment' => function($query) use($locationId,$model){
+					$query->where(['enrolment.studentId' => $model->id]);
 				}])
-			->where(['enrolment.studentId' => $model->id]);
+			->where(['course.locationId' => $locationId]);	
 			}])
 			->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
 				
@@ -104,7 +104,7 @@ class StudentController extends Controller
 				   }])
 			  		->where(['studentId' => $model->id])
 					->one();
-           $lessonModel->enrolmentId = $studentEnrolment->id; 
+           $lessonModel->courseId = $studentEnrolment->courseId; 
            $lessonModel->status = Lesson::STATUS_DRAFTED;
 		   $lessonModel->isDeleted = 0;
            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
@@ -130,7 +130,7 @@ class StudentController extends Controller
 		$courseModel = Course::findOne(['id' => $enrolmentModel->courseId]);
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => Lesson::find()
-				->where(['enrolmentId' => $enrolmentId, 'status' => Lesson::STATUS_DRAFTED]),
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),
 		]);
 		
 		return $this->render('lesson-review', [
@@ -143,7 +143,8 @@ class StudentController extends Controller
 
 	public function actionLessonConfirm($id, $enrolmentId){
 		$model = $this->findModel($id);
-		$lessons = Lesson::findAll(['enrolmentId' => $enrolmentId]);
+		$enrolmentModel = Enrolment::findOne(['id' => $enrolmentId]);
+		$lessons = Lesson::findAll(['courseId' => $enrolmentModel->courseId]);
 		foreach($lessons as $lesson){
 			$lesson->status = Lesson::STATUS_SCHEDULED;
 			$lesson->save();

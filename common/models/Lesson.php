@@ -54,8 +54,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['enrolmentId', 'teacherId', 'status', 'isDeleted'], 'required'],
-            [['enrolmentId', 'teacherId', 'status', 'isDeleted'], 'integer'],
+            [['courseId', 'teacherId', 'status', 'isDeleted'], 'required'],
+            [['courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'programId', 'notes'], 'safe'],
         ];
     }
@@ -68,7 +68,7 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'programId' => 'Program Name',
-            'enrolmentId' => 'Enrolment ID',
+            'courseId' => 'Course ID',
             'teacherId' => 'Teacher Name',
             'date' => 'Date',
             'status' => 'Status',
@@ -86,16 +86,11 @@ class Lesson extends \yii\db\ActiveRecord
     }
 
 	public function getEnrolment() {
-		return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
+		return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
 	}
 
 	public function getCourse() {
-		return $this->hasOne(Course::className(), ['id' => 'courseId'])
-			->viaTable('enrolment',['id' => 'enrolmentId']);
-	}
-
-	public function getGroupCourse() {
-		return $this->hasOne(Course::className(), ['id' => 'enrolmentId']);
+		return $this->hasOne(Course::className(), ['id' => 'courseId']);
 	}
 
 	public function getInvoice() {

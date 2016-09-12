@@ -35,7 +35,7 @@ $this->registerJs("
 			[
 				'label' => 'Student Name',
 				'value' => function($data) {
-					return ! empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
+					return ! empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
 					}
 			],
 			[

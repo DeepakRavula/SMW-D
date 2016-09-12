@@ -149,7 +149,7 @@ class Course extends \yii\db\ActiveRecord
 				if ($day->format('N') === $this->day) {
 					$lesson = new Lesson();
 					$lesson->setAttributes([
-						'enrolmentId'	 => $this->id,
+						'courseId'	 => $this->id,
 						'teacherId' => $this->teacherId,
 						'status' => Lesson::STATUS_DRAFTED,
 						'date' => $day->format('Y-m-d H:i:s'),

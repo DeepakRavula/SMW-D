@@ -79,7 +79,7 @@ class Enrolment extends \yii\db\ActiveRecord
 	}
 	
 	public function getLessons() {
-		return $this->hasMany(Lesson::className(), ['enrolmentId' => 'id']);
+		return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
 	}
 	
 	public function afterSave($insert, $changedAttributes)
@@ -118,7 +118,7 @@ class Enrolment extends \yii\db\ActiveRecord
 				if ($day->format('N') === $this->course->day) {
 					$lesson = new Lesson();
 					$lesson->setAttributes([
-						'enrolmentId'	 => $this->id,
+						'courseId'	 => $this->course->id,
 						'teacherId' => $this->course->teacherId,
 						'status' => Lesson::STATUS_DRAFTED,
 						'date' => $day->format('Y-m-d H:i:s'),
