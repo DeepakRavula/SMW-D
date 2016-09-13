@@ -24,14 +24,7 @@ $this->registerJs("
 <div class="private-lesson-index p-10">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-    <?php echo GridView::widget([
-        'dataProvider' => $dataProvider,
-		'rowOptions' => function ($model, $key, $index, $grid) {
-            return ['data-id' => $model->id];
-        },
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
-        'columns' => [
+    <?php $columns = [
 			[
 				'label' => 'Student Name',
 				'value' => function($data) {
@@ -73,7 +66,20 @@ $this->registerJs("
 				return $status;
 			},
 			],
-        ],
+        ];
+            
+        if((int) $searchModel->type ===  Lesson::TYPE_GROUP_LESSON) {
+            array_shift($columns);            
+        }
+     ?>   
+    <?php echo GridView::widget([
+        'dataProvider' => $dataProvider,
+		'rowOptions' => function ($model, $key, $index, $grid) {
+            return ['data-id' => $model->id];
+        },
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
+        'columns' => $columns,
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>
 
