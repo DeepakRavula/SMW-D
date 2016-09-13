@@ -61,9 +61,9 @@ class DashboardController extends \yii\web\Controller
 					$query->andWhere(['locationId' => $locationId])
                         ->andWhere(['NOT', ['studentId' => null]])
 						->andWhere(['>=','endDate', $currentDate->format('Y-m-d')]);
-				 }])
-				->distinct(['enrolment.studentId']);
+				 }]);				
 			}])
+            ->distinct(['enrolment.studentId'])
 			->count();
        
 		$programsHours = Lesson::find()
