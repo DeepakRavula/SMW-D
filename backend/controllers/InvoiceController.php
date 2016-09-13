@@ -342,7 +342,7 @@ class InvoiceController extends Controller {
 				$invoiceLineItem->tax_status = $taxStatus->name;
 				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
     	        $invoiceLineItem->description = $description;
-				$time = explode(':', $lesson->enrolment->duration);
+				$time = explode(':', $lesson->course->duration);
 				$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
 				$invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
 				$invoiceLineItem->save();
