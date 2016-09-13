@@ -57,7 +57,8 @@ class DashboardController extends \yii\web\Controller
          $students = Student::find()
 			->joinWith(['enrolment' => function($query) use($locationId, $currentDate){
 				 $query->joinWith(['course' => function($query) use($locationId, $currentDate){
-					$query->andWhere(['locationId' => $locationId, 'studentId' => null])
+					$query->andWhere(['locationId' => $locationId])
+                        ->andWhere(['NOT', ['studentId' => null]])
 						->andWhere(['>=','endDate', $currentDate->format('Y-m-d')]);
 				 }])
 				->distinct(['enrolment.studentId']);
