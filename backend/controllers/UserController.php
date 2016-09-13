@@ -95,27 +95,24 @@ class UserController extends Controller {
 	 * @return mixed
 	 */
 	public function actionView($id) {
+		$model = $this->findModel($id);
 		$session = Yii::$app->session;
-		$location_id = $session->get('location_id');
+		$locationId = $session->get('location_id');
 		
 		$searchModel = new UserSearch();
 		$db = $searchModel->search(Yii::$app->request->queryParams);        
        	
 		$query = Student::find()
-			->where(['customer_id' => $id]) 
-			->notDeleted();
+			->notDeleted()
+			->where(['customer_id' => $id]);
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
 
 		$query = Student::find()
-				->joinWith(['enrolment e' => function($query) use($id){
-                    $query->joinWith('lessons')
-						->where(['teacher_id' => $id])
-						->groupBy('teacher_id');
-				}])
-				->where(['e.location_id' => $location_id])
+				->teacherStudents($locationId, $model->id)
 				->notDeleted();
+		
 		$studentDataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
@@ -127,7 +124,6 @@ class UserController extends Controller {
 			'query' => $query,
 		]);
 				
-		$model = $this->findModel($id);
 
 		$query = TeacherAvailability::find()
 				->joinWith('userLocation')
@@ -165,18 +161,20 @@ class UserController extends Controller {
 
 		$currentDate = new \DateTime();
 		$lessonQuery = Lesson::find()
-				->location($location_id)
+				->notDeleted()
+				->location($locationId)
 				->student($id)
-				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
-				->notDeleted();
+				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
 
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => $lessonQuery,
 		]);
 		
 		$enrolmentQuery = Enrolment::find()
-			->joinWith('student s')
-			->where(['location_id' => $location_id,'s.customer_id' => $id])
+			->location($locationId)
+			->joinWith(['student' => function($query) use($model){
+				$query->where(['customer_id' => $model->id]);
+			}])
 			->notDeleted();
 		
 		$enrolmentDataProvider = new ActiveDataProvider([
@@ -187,7 +185,7 @@ class UserController extends Controller {
 				->student($id)
                 ->where([
 					'invoice.type' => Invoice::TYPE_INVOICE,
-					'invoice.location_id' => $location_id
+					'invoice.location_id' => $locationId
 				]);
 				
 		$invoiceDataProvider = new ActiveDataProvider([
@@ -198,7 +196,7 @@ class UserController extends Controller {
 				->student($id)
                 ->where([
 					'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
-					'invoice.location_id' => $location_id
+					'invoice.location_id' => $locationId
 				]);
 				
 		$proFormaInvoiceDataProvider = new ActiveDataProvider([
@@ -220,7 +218,7 @@ class UserController extends Controller {
 			}
 			$invoice = new Invoice();
 			$invoice->user_id = $model->id;
-			$invoice->location_id = $location_id;
+			$invoice->location_id = $locationId;
 			$invoice->invoice_number = $invoiceNumber;
 			$invoice->type = Invoice::TYPE_INVOICE;
 			if($paymentModel->amount < 0){

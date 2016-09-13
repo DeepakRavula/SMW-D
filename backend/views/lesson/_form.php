@@ -26,12 +26,14 @@ use yii\helpers\Url;
 <div class="row p-20">
 	<?php if($model->isNewRecord): ?>
         <div class="col-md-4">
-            <?php echo $form->field($model, 'program_id')->dropDownList(
+            <?php echo $form->field($model, 'programId')->dropDownList(
                     ArrayHelper::map(
                         Program::find()
-                        ->join('INNER JOIN', 'enrolment','enrolment.program_id = program.id')
-                        ->join('INNER JOIN', 'student', 'student.id = enrolment.student_id')
-                        ->where(['student.id' =>$studentModel->id])                             
+							->joinWith(['course' => function($query) use($studentModel){
+								$query->joinWith(['enrolment' => function($query) use($studentModel){
+									$query->where(['studentId' => $studentModel->id]);	
+								}]);
+							}])
                         ->all(),
                      'id','name'),['prompt'=>'Select Program'] )->label() 
             ?>  
@@ -39,12 +41,12 @@ use yii\helpers\Url;
     	<div class="col-md-4">
         <?php
         // Dependent Dropdown
-        echo $form->field($model, 'teacher_id')->widget(DepDrop::classname(), [
-        	'options' => ['id' => 'lesson-teacher_id'],
+        echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
+        	'options' => ['id' => 'lesson-teacherid'],
             'pluginOptions' => [
-                'depends' => ['lesson-program_id'],
+                'depends' => ['lesson-programid'],
                 'placeholder' => 'Select...',
-                'url' => Url::to(['/enrolment/teachers'])
+                'url' => Url::to(['/course/teachers'])
             ]
         ]);
         ?>
@@ -53,7 +55,7 @@ use yii\helpers\Url;
 		<div class="col-md-4">
             <?php 
               if($model->isNewRecord){
-                  $model->date = date('d-m-Y g:i A');
+                  $model->date = (new \DateTime())->format('d-m-Y g:i A');
               }
             ?>
             <?php

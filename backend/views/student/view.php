@@ -19,14 +19,11 @@ echo $this->render('_profile', [
 
 $enrolmentContent =  $this->render('_enrolment', [
     'model' => $model,
-    'enrolmentModel' => $enrolmentModel,
-	'privateLessons' => $privateLessons,
-	'groupCourses' => $groupCourses
+	'enrolmentDataProvider' => $enrolmentDataProvider,
 ]);
 
 $lessonContent =  $this->render('_lesson', [
 	'lessonDataProvider' => $lessonDataProvider,
-    'lessonModel' => $lessonModel,
     'model' => $model,
 ]);
 

@@ -172,7 +172,7 @@ class TeacherAvailabilityController extends Controller
 		$request = Yii::$app->request;
 		$session = Yii::$app->session;
 		$depDrop = $request->post('depdrop_all_params');
-		$teacherId = $depDrop['enrolment-teacherId'];
+		$teacherId = $depDrop['course-teacherid'];
 		$day = $depDrop['teacher-availability-day'];
 		$location_id = $session->get('location_id');
 		$teacherLocation = UserLocation::findOne([

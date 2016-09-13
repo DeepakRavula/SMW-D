@@ -18,8 +18,7 @@ class EnrolmentSearch extends Enrolment
     public function rules()
     {
         return [
-            [['id', 'student_id', 'qualification_id', 'preferred_day'], 'integer'],
-            [['preferred_time', 'length'], 'safe'],
+            [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
         ];
     }
 
@@ -53,11 +52,9 @@ class EnrolmentSearch extends Enrolment
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'student_id' => $this->student_id,
-            'qualification_id' => $this->qualification_id,
-            'preferred_day' => $this->preferred_day,
-            'preferred_time' => $this->preferred_time,
-            'length' => $this->length,
+            'courseId' => $this->courseId,
+            'studentId' => $this->studentId,
+            'isDeleted' => $this->isDeleted,
         ]);
 
         return $dataProvider;

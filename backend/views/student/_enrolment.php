@@ -6,6 +6,7 @@ use common\models\GroupCourse;
 use common\models\Program;
 use yii\data\ArrayDataProvider;
 use yii\helpers\Html;
+use common\models\Course;
 ?>
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Enrolments</h4>
@@ -14,106 +15,74 @@ use yii\helpers\Html;
 </div>
 
 <div class="dn enrolment-create section-tab">
-    <?php echo $this->render('//enrolment/_form', [
-        'model' => $enrolmentModel,
+    <?php echo $this->render('_form-enrolment', [
+        'model' => new Course(),
     ]) ?>
 </div>
-<?php
-$results = [];
-if(! empty($privateLessons)){
-	foreach($privateLessons as $privateLesson){
-		$dayList = Enrolment::getWeekdaysList();
-		$day = $dayList[$privateLesson->day];
-		$duration = \DateTime::createFromFormat('h:i:s', $privateLesson->duration);
-	    $privateLesson->duration = $duration->format('H:i');
-		$results[] = [
-			'program_id' => $privateLesson->program->name,
-			'teacher_id' => $privateLesson->lessons[0]->teacher->publicIdentity,
-			'day' => $day,
-			'from_time' => Yii::$app->formatter->asTime($privateLesson->from_time),
-			'duration' => $privateLesson->duration,
-			'start_date' => Yii::$app->formatter->asDate($privateLesson->commencement_date),
-			'end_date' => Yii::$app->formatter->asDate($privateLesson->renewal_date),
-			'type' => Program::TYPE_PRIVATE_PROGRAM,
-			'studentId' => $model->id,
-			'enrolmentId' => $privateLesson->id,
-		];
-	}
-}
 
-if(! empty($groupCourses)){
-	foreach($groupCourses as $groupCourse){
-		$dayList = GroupCourse::getWeekdaysList();
-		$day = $dayList[$groupCourse->day];
-		$fromTime = \DateTime::createFromFormat('Y-m-d H:i:s', $groupCourse->start_date);
-		$duration = \DateTime::createFromFormat('h:i:s', $groupCourse->length);
-		$results[] = [
-			'program_id' => $groupCourse->program->name,
-			'teacher_id' => $groupCourse->teacher->publicIdentity,
-			'day' => $day,
-			'from_time' => $fromTime->format('h:i A'),
-			'duration' => $duration->format('H:i'),
-			'start_date' => Yii::$app->formatter->asDate($groupCourse->start_date),
-			'end_date' => Yii::$app->formatter->asDate($groupCourse->end_date),
-			'type' => Program::TYPE_GROUP_PROGRAM,
-			'studentId' => $model->id,
-			'enrolmentId' => $groupCourse->id,
-		];
-	}
-}
-?>
-<?php
-$enrolmentDataProvider = new ArrayDataProvider([
-    'allModels' => $results,
-    'sort' => [
-        'attributes' => ['program_id', 'teacher_id', 'day', 'from_time', 'duration', 'start_date', 'end_date'],
-    ],
-]);
-?>
+<?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
 	'dataProvider' => $enrolmentDataProvider,
+	'options' => ['class' => 'col-md-12'],
 	'tableOptions' =>['class' => 'table table-bordered'],
-    'headerRowOptions' => ['class' => 'bg-light-gray' ],
-    'options' => ['class' => 'p-10'],
+	'headerRowOptions' => ['class' => 'bg-light-gray' ],
 	'columns' => [
 		[
-		'label' => 'Program Name', 
-		'value' => 'program_id',
+			'label' => 'Program Name',
+			'value' => function($data) {
+				return !empty($data->course->program->name) ? $data->course->program->name : null;
+			},
 		],
 		[
-		'label' => 'Teacher Name',
-		'value' => 'teacher_id',
+			'label' => 'Teacher Name',
+			'value' => function($data) {
+				return !empty($data->course->teacher->publicIdentity) ? $data->course->teacher->publicIdentity : null;
+			},
 		],
 		[
-		'label' => 'Day', 
-		'value' => 'day',
+			'label' => 'Day',
+			'value' => function($data) {
+				$dayList = Course::getWeekdaysList();
+				$day = $dayList[$data->course->day];	
+				return ! empty($day) ? $day : null;
+			},
 		],
 		[
-		'label' => 'From Time', 
-		'value' => 'from_time',
+			'label' => 'From Time',
+			'value' => function($data) {
+				return ! empty($data->course->fromTime) ? Yii::$app->formatter->asTime($data->course->fromTime) : null;
+			},
 		],
 		[
-		'label' => 'Duration', 
-		'value' => 'duration',
+			'label' => 'Duration',
+			'value' => function($data) {
+				$duration = \DateTime::createFromFormat('h:i:s', $data->course->duration);
+				return ! empty($duration) ? $duration->format('H:i') : null;
+			},
 		],
 		[
-		'label' => 'Start Date', 
-		'value' => 'start_date',
+			'label' => 'Start Date',
+			'value' => function($data) {
+				return ! empty($data->course->startDate) ? Yii::$app->formatter->asDate($data->course->startDate) : null;
+			},
 		],
 		[
-		'label' => 'End Date', 
-		'value' => 'end_date',
+			'label' => 'End Date',
+			'value' => function($data) {
+				return ! empty($data->course->endDate) ? Yii::$app->formatter->asDate($data->course->endDate) : null;
+			},
 		],
 		[
 			'class'=>'yii\grid\ActionColumn',
 			'template' => '{delete-enrolment-preview}',
 			'buttons' => [
 				'delete-enrolment-preview' => function ($url, $model, $key) {
-				  return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-enrolment-preview', 'studentId' => $model['studentId'], 'enrolmentId' => $model['enrolmentId'], 'programType' => $model['type']]);
+				  return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-enrolment-preview', 'studentId' => $model->student->id, 'enrolmentId' => $model->id, 'programType' => $model->course->program->type]);
 				},
 			]
 		]
-    ]
+	],
 ]);
 ?>
+<?php \yii\widgets\Pjax::end(); ?>

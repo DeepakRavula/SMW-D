@@ -3,11 +3,11 @@
 namespace common\models\query;
 
 use common\models\Lesson;
-use common\models\Invoice;
+use common\models\Program;
 /**
- * This is the ActiveQuery class for [[Lesson]].
+ * This is the ActiveQuery class for [[\common\models\Lesson]].
  *
- * @see Lesson
+ * @see \common\models\Lesson
  */
 class LessonQuery extends \yii\db\ActiveQuery
 {
@@ -18,7 +18,7 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return Lesson[]|array
+     * @return \common\models\Lesson[]|array
      */
     public function all($db = null)
     {
@@ -27,7 +27,7 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return Lesson|array|null
+     * @return \common\models\Lesson|array|null
      */
     public function one($db = null)
     {
@@ -39,19 +39,32 @@ class LessonQuery extends \yii\db\ActiveQuery
 		
 		return $this;
 	}
-	
-    /**
-     * @return $this
-     */
-    public function unInvoiced()
+
+	public function location($locationId) {
+		$this->joinWith(['course' => function($query) use($locationId){
+				$query->andFilterWhere(['locationId' => $locationId]);
+			}]);
+		
+		return $this;
+	}
+
+	public function student($id) {
+		$this->joinWith(['enrolment' => function($query) use($id){
+			$query->joinWith('student')
+				->where(['customer_id' => $id]);
+			}]);
+		return $this;
+	}
+
+	public function unInvoiced()
     {
 		$this->joinWith('invoice')
 			->where(['invoice.id' => null]);
 		
         return $this;
     }
-    
-    public function invoiced()
+
+	public function invoiced()
     {
 		$this->joinWith('invoice')
 			->where(['not',['invoice.id' => null]]);
@@ -69,35 +82,38 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+	public function privateLessons() {
+		$this->joinWith(['course' => function($query){
+			$query->joinWith('program')
+				->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+			}]);
+		
+		return $this;
+	}
+
+	public function groupLessons() {
+		$this->joinWith(['course' => function($query){
+			$query->joinWith('program')
+				->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+		}]);
+
+		return $this;
+	}
+	
 	public function completed() {
         $this->joinWith('invoice')
-			->where(['invoice.id' => null]);
-        $this->andFilterWhere(['<=', 'lesson.date', (new \DateTime())->format('Y-m-d')])
-             ->andFilterWhere(['not',['lesson.status' => Lesson::STATUS_CANCELED]]);
+			->where(['invoice.id' => null])
+	        ->andFilterWhere(['<=', 'lesson.date', (new \DateTime())->format('Y-m-d')])
+             ->andFilterWhere(['not',['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
 		
 		return $this;
 	}
 
 	public function scheduled() {
 		$this->andFilterWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d')])
-             ->andFilterWhere(['not',['lesson.status' => Lesson::STATUS_CANCELED]]);
+             ->andFilterWhere(['not',['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
 		
 		return $this;
 	}
-
-	public function location($locationId) {
-		$this->joinWith(['enrolment' => function($query) use($locationId){
-			$query->andFilterWhere(['enrolment.location_id' => $locationId]);
-		}]);
-		
-		return $this;
-	}
-
-	public function student($id) {
-		$this->joinWith(['enrolment e' => function($query) use($id){
-			$query->joinWith('student s')
-				->where(['s.customer_id' => $id]);
-			}]);
-		return $this;
-	}
+	
 }

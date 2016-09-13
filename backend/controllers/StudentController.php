@@ -7,8 +7,7 @@ use common\models\Student;
 use common\models\Enrolment;
 use common\models\Lesson;
 use common\models\Program;
-use common\models\GroupCourse;
-use common\models\GroupEnrolment;
+use common\models\Course;
 use backend\models\search\StudentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -56,81 +55,98 @@ class StudentController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-		$privateLessons = Enrolment::find()
-				->where(['student_id' => $id,'location_id' =>Yii::$app->session->get('location_id')])
-				->all();
-
-		$groupCourses = GroupCourse::find()
-				->joinWith('groupEnrolments')
-				->where(['student_id' => $model->id,'location_id' =>Yii::$app->session->get('location_id')])
-        		->all();
-		
-		$session = Yii::$app->session;
-		$location_id = $session->get('location_id');
-		$currentDate = new \DateTime();
-		$query = Lesson::find()
-				->joinWith(['enrolment' => function($query) use($location_id,$id){
-					$query->where(['location_id' => $location_id,'student_id' => $id]);
+		$locationId = Yii::$app->session->get('location_id'); 
+		$enrolments = Enrolment::find()
+				->joinWith(['course' => function($query) use($locationId){
+					$query->where(['locationId' => $locationId]);	
 				}])
-				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
+				->where(['studentId' => $model->id]);
+
+		$enrolmentDataProvider = new ActiveDataProvider([
+			'query' => $enrolments,
+		]);
+
+		$currentDate = new \DateTime();
+		$lessons = Lesson::find()
+			->notDeleted()
+			->joinWith(['course' => function($query) use($locationId,$model){
+				$query->joinWith(['enrolment' => function($query) use($locationId,$model){
+					$query->where(['enrolment.studentId' => $model->id]);
+				}])
+			->where(['course.locationId' => $locationId]);	
+			}])
+			->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
 				
 		$lessonDataProvider = new ActiveDataProvider([
-			'query' => $query,
+			'query' => $lessons,
 		]);	
 
-		$enrolmentModel = new Enrolment();
-        $lessonModel = new Lesson();
-        if($lessonModel->load(Yii::$app->request->post()) ){
-           $studentEnrolmentModel = Enrolment::findOne(['student_id' => $id,'program_id' => $lessonModel->program_id]);
-           $lessonModel->enrolment_id = $studentEnrolmentModel->id; 
-           $lessonModel->status = Lesson::STATUS_DRAFTED;
-           $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
-           $lessonModel->date = $lessonDate->format('Y-m-d H:i:s');            
-           $lessonModel->save();
-           Yii::$app->session->setFlash('alert', [
-            	    'options' => ['class' => 'alert-success'],
-                	'body' => 'Lesson has been added successfully'
-            ]);
-            	return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
-        }
-        if ($enrolmentModel->load(Yii::$app->request->post()) ) {
-			$enrolmentModel->student_id = $id;
+		$courseModel = new Course();
+		if ($courseModel->load(Yii::$app->request->post())) {
+			$courseModel->locationId = $locationId;
+			$courseModel->save();
+			$enrolmentModel = new Enrolment();
+			$enrolmentModel->courseId = $courseModel->id;	
+			$enrolmentModel->studentId = $model->id;
 			$enrolmentModel->isDeleted = 0;
 			$enrolmentModel->save();
 			    Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
                 	'body' => 'Student has been enrolled successfully'
             ]);
-            	return $this->redirect(['lesson-review', 'id' => $model->id,'enrolmentId' => $enrolmentModel->id]);
+            	return $this->redirect(['lesson-review', 'id' => $model->id,'courseId' => $enrolmentModel->courseId]);
+        }
+        $lessonModel = new Lesson();
+        if($lessonModel->load(Yii::$app->request->post()) ){
+           $studentEnrolment = Enrolment::find()
+				   ->joinWith(['course' => function($query) use($lessonModel){
+					   $query->where(['course.programId' => $lessonModel->programId]);
+				   }])
+			  		->where(['studentId' => $model->id])
+					->one();
+           $lessonModel->courseId = $studentEnrolment->courseId; 
+           $lessonModel->status = Lesson::STATUS_DRAFTED;
+		   $lessonModel->isDeleted = 0;
+           $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
+           $lessonModel->date = $lessonDate->format('Y-m-d H:i:s');            
+           $lessonModel->save();
+           Yii::$app->session->setFlash('alert', [
+            	    'options' => ['class' => 'alert-success'],
+                	'body' => 'Lesson has been created successfully'
+            ]);
+            	return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
         } else {
             return $this->render('view', [
             	'model' => $model,
                 'lessonDataProvider' => $lessonDataProvider,
-                'enrolmentModel' => $enrolmentModel,
-                'lessonModel' => $lessonModel,
-				'privateLessons' => $privateLessons,
-				'groupCourses' => $groupCourses
+				'enrolmentDataProvider' => $enrolmentDataProvider,
             ]);
         }
     }
 
-	public function actionLessonReview($id, $enrolmentId){
+	public function actionLessonReview($id, $courseId){
 		$model = $this->findModel($id);
+		$courseModel = Course::findOne(['id' => $courseId]);
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => Lesson::find()
-				->where(['enrolment_id' => $enrolmentId, 'status' => Lesson::STATUS_DRAFTED]),
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),
 		]);
 		
 		return $this->render('lesson-review', [
             	'model' => $model,
-				'enrolmentId' => $enrolmentId,
+				'courseModel' => $courseModel,
+				'courseId' => $courseId,
                 'lessonDataProvider' => $lessonDataProvider,
             ]);	
 	}
 
-	public function actionLessonConfirm($id, $enrolmentId){
+	public function actionLessonConfirm($id, $courseId){
 		$model = $this->findModel($id);
-		Lesson::updateAll(['status' => Lesson::STATUS_SCHEDULED], ['enrolment_id' => $enrolmentId]);
+		$lessons = Lesson::findAll(['courseId' => $courseId]);
+		foreach($lessons as $lesson){
+			$lesson->status = Lesson::STATUS_SCHEDULED;
+			$lesson->save();
+		}
 		
 		Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
@@ -191,26 +207,6 @@ class StudentController extends Controller
             ]);
         }
     }
-
-    /**
-     * Enrols a student to the chosen program
-     * If update is successful, the browser will be redirected to the student's 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionEnrol($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
-
 
     /**
      * Deletes an existing Student model.
@@ -279,7 +275,7 @@ class StudentController extends Controller
     {
 		$model = $this->findModel($studentId);
 		if((int) $programType === Program::TYPE_PRIVATE_PROGRAM){
-			$enrolmentModel = Enrolment::findOne(['student_id' => $studentId]); 
+			$enrolmentModel = Enrolment::findOne(['studentId' => $studentId]); 
 		} else {
 			$enrolmentModel = GroupEnrolment::findOne(['student_id' => $studentId]); 
 		}

@@ -11,21 +11,21 @@ $this->title = 'Review Lessons';
 		<p class="users-name"><?php echo $model->fullName; ?></p>
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program Name">
-		<i class="fa fa-music detail-icon"></i> <?= $model->enrolment->program->name; ?>
+		<i class="fa fa-music detail-icon"></i> <?=	$courseModel->program->name; ?>
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
-		<i class="fa fa-graduation-cap"></i> <?php echo $model->enrolment->teacher->publicIdentity;?>
+		<i class="fa fa-graduation-cap"></i> <?php echo $courseModel->teacher->publicIdentity;?>
 	</div>	
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Commencement Date">
-			<i class="fa fa-calendar"></i> <?php echo Yii::$app->formatter->asDate($model->enrolment->commencement_date)?>	
+			<i class="fa fa-calendar"></i> <?php echo Yii::$app->formatter->asDate($courseModel->startDate)?>	
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Renewal Date">
-			<i class="fa fa-calendar"></i> <?php echo Yii::$app->formatter->asDate($model->enrolment->renewal_date)?>	
+			<i class="fa fa-calendar"></i> <?php echo Yii::$app->formatter->asDate($courseModel->endDate)?>	
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Time">
-		<i class="fa fa-calendar"></i> <?php 
-		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->lesson->date);
-		echo $lessonDate->format('h:i A');?>	
+		<i class="fa fa-clock-o"></i> <?php 
+		$fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->fromTime);
+		echo $fromTime->format('h:i A');?>	
 	</div>
 	</div>
     </div>
@@ -48,7 +48,7 @@ $this->title = 'Review Lessons';
 			[
 				'label' => 'Teacher Name',
 				'value' => function($data) {
-					return $data->enrolment->teacher->publicIdentity;	
+					return $data->course->teacher->publicIdentity;	
                 } 
 			],
 			[
@@ -63,7 +63,7 @@ $this->title = 'Review Lessons';
 		</div>
 	<div class="form-group">
 	<div class="p-10 text-center">
-		<?= Html::a('Confirm', ['lesson-confirm', 'id' => $model->id, 'enrolmentId' => $enrolmentId], [
+		<?= Html::a('Confirm', ['lesson-confirm', 'id' => $model->id, 'courseId' => $courseId], [
 		'class' => 'btn btn-danger',
 		'data' => [
 			'method' => 'post',

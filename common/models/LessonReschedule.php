@@ -5,16 +5,14 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "item_type".
+ * This is the model class for table "lesson_reschedule".
  *
  * @property string $id
- * @property string $name
+ * @property string $lessonId
+ * @property string $rescheduledLessonId
  */
 class LessonReschedule extends \yii\db\ActiveRecord
 {
-	const TYPE_PRIVATE_LESSON = 1;
-	const TYPE_GROUP_LESSON = 2;
-	
     /**
      * @inheritdoc
      */
@@ -29,7 +27,8 @@ class LessonReschedule extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['lesson_id', 'lesson_reschedule_id', 'type'], 'required'],
+            [['lessonId', 'rescheduledLessonId'], 'required'],
+            [['lessonId', 'rescheduledLessonId'], 'integer'],
         ];
     }
 
@@ -40,9 +39,8 @@ class LessonReschedule extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'lesson_id' => 'Lesson Id',
-            'lesson_reschedule_id' => 'Lesson Reschedule Id',
-			'type' => 'Type'
+            'lessonId' => 'Lesson ID',
+            'rescheduledLessonId' => 'Rescheduled Lesson ID',
         ];
     }
 }

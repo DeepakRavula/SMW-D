@@ -37,4 +37,4 @@ class UserQuery extends ActiveQuery
     /**
      * @return $this
      */
-}
+	}

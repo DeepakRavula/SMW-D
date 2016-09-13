@@ -3,7 +3,6 @@
 namespace common\models;
 
 use Yii;
-use common\models\InvoiceType;
 use common\models\InvoiceLineItem;
 use common\models\LessonReschedule;
 use common\models\query\LessonQuery;
@@ -11,18 +10,24 @@ use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 /**
  * This is the model class for table "lesson".
  *
- * @property integer $id
- * @property integer $enrolment_schedule_day_id
- * @property integer $status
+ * @property string $id
+ * @property string $enrolmentId
+ * @property string $teacherId
  * @property string $date
+ * @property integer $status
+ * @property integer $isDeleted
  */
 class Lesson extends \yii\db\ActiveRecord
 {
+
+	const TYPE_PRIVATE_LESSON = 1;
+	const TYPE_GROUP_LESSON = 2;
 	const STATUS_DRAFTED = 1;
 	const STATUS_SCHEDULED = 2;
 	const STATUS_COMPLETED = 3;
 	const STATUS_CANCELED = 4;
 
+	public $programId;
 	public $program_id;
     public $hours;
     public $program_name;
@@ -45,16 +50,16 @@ class Lesson extends \yii\db\ActiveRecord
             ],
         ];
     }
-
+	
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['enrolment_id','teacher_id','status'], 'required'],
-            [['enrolment_id','program_id', 'status'], 'integer'],
-            [['date','notes', 'isDeleted'], 'safe'],
+            [['courseId', 'teacherId', 'status', 'isDeleted'], 'required'],
+            [['courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
+            [['date', 'programId', 'notes'], 'safe'],
         ];
     }
 
@@ -65,79 +70,72 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'enrolment_id' => 'Enrolment',
-			'teacher_id' => 'Teacher Name',
-            'status' => 'Status',
+            'programId' => 'Program Name',
+            'courseId' => 'Course ID',
+            'teacherId' => 'Teacher Name',
             'date' => 'Date',
-            'notes' => 'Notes',
-			'program_id' => 'Program Name',
+            'status' => 'Status',
+            'isDeleted' => 'Is Deleted',
         ];
     }
 
     /**
      * @inheritdoc
-     * @return LessonQuery the active query used by this AR class.
+     * @return \common\models\query\LessonQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new LessonQuery(get_called_class());
+        return new \common\models\query\LessonQuery(get_called_class());
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getInvoiceLineItem()
-    {
-        return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])
-				->where(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
-    }
+	public function getEnrolment() {
+		return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
+	}
+
+	public function getCourse() {
+		return $this->hasOne(Course::className(), ['id' => 'courseId']);
+	}
 
 	public function getInvoice() {
 		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
 			->viaTable('invoice_line_item', ['item_id' => 'id'])
 			->onCondition(['invoice.type' => Invoice::TYPE_INVOICE]);
 	}
-	    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getEnrolment()
+
+	public function getInvoiceLineItem()
     {
-        return $this->hasOne(Enrolment::className(), ['id' => 'enrolment_id']);
-    }
-    
-    public function getTeacher()
-    {
-        return $this->hasOne(User::className(), ['id' => 'teacher_id']);
-    }
-    
-    public function getTeacherProfile()
-    {
-        return $this->hasOne(UserProfile::className(), ['user_id' => 'teacher_id']);
+        return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])
+				->where(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
     }
 
+	public function getTeacher()
+    {
+        return $this->hasOne(User::className(), ['id' => 'teacherId']);
+    }
+	
 	public function getStatus(){
 		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
 		$currentDate = new \DateTime();
-			$status = null;
-			switch ($this->status) {
-				case Lesson::STATUS_SCHEDULED:
-					if ($lessonDate >= $currentDate) {
-						$status = 'Scheduled';
-					} else {
-						$status = 'Completed';
-					}
-					break;
-				case Lesson::STATUS_COMPLETED;
+		$status = null;
+		switch ($this->status) {
+			case Lesson::STATUS_SCHEDULED:
+				if ($lessonDate >= $currentDate) {
+					$status = 'Scheduled';
+				} else {
 					$status = 'Completed';
-					break;
-				case Lesson::STATUS_CANCELED:
-					$status = 'Canceled';
-					break;
-			}
-			
+				}
+			break;
+			case Lesson::STATUS_COMPLETED;
+				$status = 'Completed';
+			break;
+			case Lesson::STATUS_CANCELED:
+				$status = 'Canceled';
+			break;
+		}
+
 		return $status;
 	}
-
+	
 	public static function lessonStatuses() {
 		return [
             self::STATUS_COMPLETED => Yii::t('common', 'Completed'),
@@ -146,14 +144,14 @@ class Lesson extends \yii\db\ActiveRecord
 		];
 	}
 
-    public function afterSave($insert, $changedAttributes)
+	public function afterSave($insert, $changedAttributes)
     {
         if( ! $insert) {
             if(isset($changedAttributes['date'])){
                 $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
                 $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
                 if(! empty($this->teacher->email)){
-                    $this->notifyReschedule($this->teacher, $this->enrolment->program, $fromDate, $toDate);
+                    $this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
                 }
                 if( ! empty($this->enrolment->student->customer->email)){
                     $this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
@@ -169,9 +167,8 @@ class Lesson extends \yii\db\ActiveRecord
 				$this->save();
 
 				$lessonRescheduleModel = new LessonReschedule();
-				$lessonRescheduleModel->lesson_id = $originalLessonId;
-				$lessonRescheduleModel->lesson_reschedule_id = $this->id;
-				$lessonRescheduleModel->type = LessonReschedule::TYPE_PRIVATE_LESSON;	
+				$lessonRescheduleModel->lessonId = $originalLessonId;
+				$lessonRescheduleModel->rescheduledLessonId = $this->id;
 				$lessonRescheduleModel->save();
             }           
 		} 

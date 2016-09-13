@@ -1,7 +1,7 @@
 <?php
 
 use yii\bootstrap\Tabs;
-use common\models\LessonReschedule;
+use common\models\Lesson;
 
 $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
@@ -11,14 +11,14 @@ $this->params['breadcrumbs'][] = $this->title;
      <div class="tabbable-line">
 <?php 
 
-$indexPrivateLesson =  $this->render('_index-private-lesson', [
+$indexPrivateLesson =  $this->render('_index-lesson', [
     'searchModel' => $searchModel,
     'dataProvider' => $dataProvider,
 ]);
 
-$indexGroupLesson =  $this->render('_index-group-lesson', [
-	'groupLessonSearchModel' => $groupLessonSearchModel,
-	'groupLessonDataProvider' =>  $groupLessonDataProvider,
+$indexGroupLesson =  $this->render('_index-lesson', [
+	'searchModel' => $searchModel,
+    'dataProvider' => $dataProvider,
 ]);
 
 ?>
@@ -27,15 +27,15 @@ $indexGroupLesson =  $this->render('_index-group-lesson', [
     'items' => [
 		[
             'label' => 'Private Lessons',
-           'content' => (int) $searchModel->type === LessonReschedule::TYPE_PRIVATE_LESSON  ? $indexPrivateLesson : null,
-			'url'=>['/lesson/index','LessonSearch[type]' => LessonReschedule::TYPE_PRIVATE_LESSON],
-			'active' => (int) $searchModel->type === LessonReschedule::TYPE_PRIVATE_LESSON ,    
+           'content' => (int) $searchModel->type === Lesson::TYPE_PRIVATE_LESSON  ? $indexPrivateLesson : null,
+			'url'=>['/lesson/index','LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON],
+			'active' => (int) $searchModel->type === Lesson::TYPE_PRIVATE_LESSON ,    
         ],
 		[
             'label' => 'Group Lessons',
-            'content' => (int) $groupLessonSearchModel->type === LessonReschedule::TYPE_GROUP_LESSON  ? $indexGroupLesson : null,
-			'url'=>['/lesson/index','GroupLessonSearch[type]' => LessonReschedule::TYPE_GROUP_LESSON],
-			'active' => (int) $groupLessonSearchModel->type === LessonReschedule::TYPE_GROUP_LESSON ,            
+            'content' => (int) $searchModel->type === Lesson::TYPE_GROUP_LESSON  ? $indexGroupLesson : null,
+			'url'=>['/lesson/index','LessonSearch[type]' => Lesson::TYPE_GROUP_LESSON],
+			'active' => (int) $searchModel->type === Lesson::TYPE_GROUP_LESSON ,            
         ],
     ],
 ]);?>
