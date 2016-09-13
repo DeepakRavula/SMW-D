@@ -209,7 +209,7 @@ class UserController extends Controller {
 		]);
  		$paymentModel = new Payment();
 		if ($paymentModel->load(Yii::$app->request->post())) {
-			$lastInvoice = Invoice::lastInvoice($location_id);
+			$lastInvoice = Invoice::lastInvoice($locationId);
 
 			if (empty($lastInvoice)) {
 				$invoiceNumber = 1;
@@ -299,7 +299,7 @@ class UserController extends Controller {
 		$invoiceLineItemModel = new InvoiceLineItem();
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
 			$invoice = new Invoice();
-			$lastInvoice = Invoice::lastInvoice($location_id);
+			$lastInvoice = Invoice::lastInvoice($locationId);
 
 			if (empty($lastInvoice)) {
 				$invoiceNumber = 1;
@@ -308,7 +308,7 @@ class UserController extends Controller {
 			}
 			$invoice->user_id = $model->id;
 			$invoice->invoice_number = $invoiceNumber;
-			$invoice->location_id = $location_id;
+			$invoice->location_id = $locationId;
 			$invoice->type = Invoice::TYPE_INVOICE;
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->date = (new \DateTime())->format('Y-m-d');
