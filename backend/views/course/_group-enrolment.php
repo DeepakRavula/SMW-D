@@ -18,10 +18,11 @@ use common\models\Student;
 				ArrayHelper::map(
 					Student::find()
 					->notDeleted()
-					->location($locationId)
-					->unenrolled($courseId)
+					->unenrolled($courseId, $locationId)
 					->all(),
-				'id', 'fullName'
+				'id', function($model){
+					return $model->first_name . ' ' . $model->last_name;
+				}
 				),
 			['multiple' => 'multiple','size' => '14'])
 			?>

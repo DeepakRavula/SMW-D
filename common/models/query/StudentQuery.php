@@ -2,7 +2,7 @@
 
 namespace common\models\query;
 
-use common\models\Program;
+use common\models\Student;
 use yii\db\ActiveQuery;
 
 /**
@@ -64,13 +64,28 @@ class StudentQuery extends ActiveQuery
 		return $this;
 	}
 
-	public function unenrolled($courseId) {
-		$this->joinWith(['enrolment' => function($query)  use($courseId){
-				$query->where(['courseId' => $courseId])
-					->where(['studentId' => null]);
+	public function unenrolled($courseId, $locationId) {
+		$studentLocation = Student::find()
+			->select(['student.id', 'student.first_name', 'student.last_name'])
+			->innerjoinWith(['customer' => function($query) use($locationId){
+				$query->innerjoinWith('userLocation')
+					->where(['user_location.location_id' => $locationId]);
+			}]);
+			
+		$enrolledStudents = Student::find()
+			->select(['student.id', 'student.first_name', 'student.last_name'])
+			->joinWith(['enrolment' => function($query)  use($courseId){
+				$query->joinWith(['course' => function($query)  use($courseId){
+					$query->where(['course.id' => $courseId]);
+				}]);
 			}]);
 		
-		return $this;
+		$query = Student::find()
+			->select(['loc_student.id','loc_student.first_name', 'loc_student.last_name'])->from(['loc_student' => $studentLocation])
+			->leftJoin(['enrolled_student' => $enrolledStudents], 'loc_student.id = enrolled_student.id')
+			->where(['enrolled_student.id' => null]);
+		
+		return $query;
 	}
 	
 	public function teacherStudents($locationId, $id) {

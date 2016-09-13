@@ -101,7 +101,7 @@ class Student extends \yii\db\ActiveRecord
 		return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
 			->viaTable('enrolment',['studentId' => 'id']);
 	}
-	
+
 	public function getFullName()
     {
 		if ($this->first_name || $this->last_name) {
