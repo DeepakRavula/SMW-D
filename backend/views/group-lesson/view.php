@@ -3,13 +3,13 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use common\models\GroupLesson;
+use common\models\LessonReschedule;
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupLesson */
 
 if(Yii::$app->controller->action->id === 'view'){
 	$this->title = 'Group Lesson Details';
-	$this->params['breadcrumbs'][] = ['label' => 'Group Lessons', 'url' => ['group-course/view', 'id' => $model->groupCourse->id]];
-	$this->params['breadcrumbs'][] = $this->title;
+	$this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['lesson/index','GroupLessonSearch[type]' => LessonReschedule::TYPE_GROUP_LESSON], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
 }
 ?>
 <div class="group-lesson-view">

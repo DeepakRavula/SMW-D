@@ -7,7 +7,7 @@ use common\models\GroupEnrolment;
 /* @var $model common\models\GroupCourse */
 
 $this->title = 'Group Course Details';
-$this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a>');
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['index'], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
 ?>
 <div class="group-course-view">
 	<div class="row-fluid user-details-wrapper">
@@ -68,7 +68,4 @@ $studentContent =  $this->render('_student', [
 jQuery(document).ready(function($) {
     $('#groupenrolment-student_id').multiselect();
 });
-   jQuery(document).ready(function(){
-   $('.go-back').html('<a href="javascript: history.back()"><i class="fa fa-angle-left"></i> Go Back</a>');
-   });
 </script>

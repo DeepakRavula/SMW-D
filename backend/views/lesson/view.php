@@ -3,11 +3,12 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Lesson;
+use common\models\LessonReschedule;
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
 
 $this->title = 'Lesson Details';
-$this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a>');
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['index','LessonSearch[type]' => LessonReschedule::TYPE_PRIVATE_LESSON], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
 ?>
 <div class="lesson-view">
 	<div class="row-fluid user-details-wrapper">
@@ -50,9 +51,3 @@ $this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a
 		<div class="clearfix"></div>
 </div>
 </div>
-<script>
-   jQuery(document).ready(function(){
-   $('.go-back').html('<a href="javascript: history.back()"><i class="fa fa-angle-left"></i> Go Back</a>');
-   });
-</script>
-

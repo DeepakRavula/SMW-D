@@ -8,7 +8,7 @@ use common\models\User;
 /* @var $model common\models\Program */
 
 $this->title = $model->name;
-$this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a>');
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['index', 'ProgramSearch[type]' => $model->type], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 foreach($roles as $name => $description){
 	$role = $name;
@@ -79,8 +79,3 @@ foreach($roles as $name => $description){
 		<div class="clearfix"></div>
 	</div>
 </div>
-<script>
-   jQuery(document).ready(function(){
-   $('.go-back').html('<a href="javascript: history.back()"><i class="fa fa-angle-left"></i> Go Back</a>');
-   });
-</script>

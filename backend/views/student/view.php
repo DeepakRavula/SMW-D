@@ -6,7 +6,7 @@ use yii\bootstrap\Tabs;
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 $this->title = 'Student Details';
-$this->params['goback'] = Html::a('<a href="#" class="go-back f-s-14 m-r-10"></a>');
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['index', 'StudentSearch[showAllStudents]' => false], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
 ?>
 <?php
 echo $this->render('_profile', [
@@ -66,11 +66,6 @@ $(document).ready(function() {
        $('.lesson-create').show();
    });
  });
-</script>
-<script>
-   jQuery(document).ready(function(){
-   $('.go-back').html('<a href="javascript: history.back()"><i class="fa fa-angle-left"></i> Go Back</a>');
-   });
 </script>
 
 
