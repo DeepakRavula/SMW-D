@@ -65,7 +65,33 @@ class DashboardController extends \yii\web\Controller
 				->distinct(['enrolment.studentId']);
 			}])
 			->count();
-        
-        return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students]);
+       
+		$programsHours = Lesson::find()
+                   ->select(['sum(course.duration) as hours'])
+                   ->joinWith('course')
+                   ->where(['course.locationId' => $locationId])
+                   ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                   ->where(['lesson.status' => Lesson::STATUS_COMPLETED])
+                   ->all();
+       $totalHours = floor($programsHours[0]->hours / 3600);
+       $completedPrograms = [];            
+       $programs = Lesson::find()
+                   ->select(['sum(course.duration) as hours, program.name as program_name'])
+                   ->joinWith(['course' => function($query) use($locationId) {                     
+                       $query->where(['course.locationId' => $locationId]) ;                   
+                       $query->joinWith(['program' => function($query){   
+                       }]);
+                   }])
+                   ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                   ->where(['lesson.status' => Lesson::STATUS_COMPLETED])
+                   ->groupBy(['course.programId'])
+                   ->all();
+       foreach($programs as $program){
+           $array = array();
+           $array['name']  =  $program->program_name;
+           $array['y'] =   floor(( (floor($program->hours / 3600)) / $totalHours ) * 100) ;//$program->hours;
+           array_push($completedPrograms, $array);
+       }
+        return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students, 'completedPrograms' => $completedPrograms]);
 	}
 }

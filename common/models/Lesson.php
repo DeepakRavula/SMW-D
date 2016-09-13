@@ -28,7 +28,6 @@ class Lesson extends \yii\db\ActiveRecord
 	const STATUS_CANCELED = 4;
 
 	public $programId;
-	public $program_id;
     public $hours;
     public $program_name;
     /**
