@@ -223,6 +223,7 @@ class StudentController extends Controller
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Student has been enrolled successfully'
             ]);	
+            return $this->redirect(['view', 'id' => $model->id]);
 		}
 		
 		$groupEnrolments = Enrolment::find()
