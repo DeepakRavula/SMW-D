@@ -107,17 +107,24 @@ class Enrolment extends \yii\db\ActiveRecord
 
 			$holidays = Holiday::find()->all();
 			$pdDays = ProfessionalDevelopmentDay::find()->all();
-
-			foreach($holidays as $holiday){
-				$holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
-				$holiDays[] = $holiday->format('Y-m-d');
+			$holidayDays = [];
+			$professionalDays = [];
+			$leaveDays = [];
+			if(! empty($holidays)){
+				foreach($holidays as $holiday){
+					$holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
+					$holidayDays[] = $holiday->format('Y-m-d');
+				}
 			}
 
-			foreach($pdDays as $pdDay){
-				$pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
-				$professionalDays[] = $pdDay->format('Y-m-d');
+			if(! empty($pdDays)){
+				foreach($pdDays as $pdDay){
+					$pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
+					$professionalDays[] = $pdDay->format('Y-m-d');
+				}
 			}
-			$leaveDays = array_merge($holiDays,$professionalDays);
+			
+			$leaveDays = array_merge($holidayDays,$professionalDays);
 
 			foreach($period as $day){
 				foreach($leaveDays as $leaveDay){
@@ -126,9 +133,7 @@ class Enrolment extends \yii\db\ActiveRecord
 					}
 				}
 
-				$lessonDate = $day->format('Y-m-d');
-
-				if ($day->format('N') === $this->course->day) {
+				if ((int) $day->format('N') === $this->course->day) {
 					$lesson = new Lesson();
 					$lesson->setAttributes([
 						'courseId'	 => $this->course->id,
