@@ -10,14 +10,8 @@ use common\models\Course;
 ?>
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Enrolments</h4>
-<a href="#" class="add-new-program text-add-new"><i class="fa fa-plus"></i></a>
+<?= Html::a('<i class="fa fa-plus"></i>', ['enrolment', 'id' => $model->id,]);?>
 <div class="clearfix"></div>
-</div>
-
-<div class="dn enrolment-create section-tab">
-    <?php echo $this->render('_form-enrolment', [
-        'model' => new Course(),
-    ]) ?>
 </div>
 
 <?php yii\widgets\Pjax::begin() ?>

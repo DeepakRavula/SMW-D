@@ -81,21 +81,7 @@ class StudentController extends Controller
 			'query' => $lessons,
 		]);	
 
-		$courseModel = new Course();
-		if ($courseModel->load(Yii::$app->request->post())) {
-			$courseModel->locationId = $locationId;
-			$courseModel->save();
-			$enrolmentModel = new Enrolment();
-			$enrolmentModel->courseId = $courseModel->id;	
-			$enrolmentModel->studentId = $model->id;
-			$enrolmentModel->isDeleted = 0;
-			$enrolmentModel->save();
-			    Yii::$app->session->setFlash('alert', [
-            	    'options' => ['class' => 'alert-success'],
-                	'body' => 'Student has been enrolled successfully'
-            ]);
-            	return $this->redirect(['lesson-review', 'id' => $model->id,'courseId' => $enrolmentModel->courseId]);
-        }
+		
         $lessonModel = new Lesson();
         if($lessonModel->load(Yii::$app->request->post()) ){
            $studentEnrolment = Enrolment::find()
@@ -206,6 +192,59 @@ class StudentController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+	public function actionEnrolment($id)
+    {
+        $model = $this->findModel($id);
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
+		$request = Yii::$app->request;
+		$post = $request->post();
+		$courseModel = new Course();
+		if ($courseModel->load($post)) {
+			$courseModel->locationId = $locationId;
+			$courseModel->save();
+			$enrolmentModel = new Enrolment();
+			$enrolmentModel->courseId = $courseModel->id;	
+			$enrolmentModel->studentId = $model->id;
+			$enrolmentModel->isDeleted = 0;
+			$enrolmentModel->save();
+			    Yii::$app->session->setFlash('alert', [
+            	    'options' => ['class' => 'alert-success'],
+                	'body' => 'Student has been enrolled successfully'
+            ]);
+            	return $this->redirect(['lesson-review', 'id' => $model->id,'courseId' => $enrolmentModel->courseId]);
+        }
+		if (( ! empty($post['courseId'])) && is_array($post['courseId'])) {
+			$enrolmentModel = new Enrolment();
+			$enrolmentModel->courseId = $post['courseId'][0];	
+			$enrolmentModel->studentId = $model->id;
+			$enrolmentModel->isDeleted = 0;
+			$enrolmentModel->save();
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Student has been enrolled successfully'
+            ]);	
+		}
+		
+		$groupEnrolments = Enrolment::find()
+				->select(['courseId'])
+				->joinWith(['course' => function($query) use($locationId){
+					$query->groupProgram($locationId);
+				}])
+				->where(['enrolment.studentId' => $model->id]);
+		$groupCourses = Course::find()
+				->groupProgram($locationId)
+				->where(['not in', 'course.id', $groupEnrolments]);
+		$groupCourseDataProvider = new ActiveDataProvider([
+			'query' => $groupCourses,
+		]);
+		
+		return $this->render('_course', [
+			'model' => $model,
+			'groupCourseDataProvider' => $groupCourseDataProvider,
+		]);
     }
 
     /**
