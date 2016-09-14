@@ -47,8 +47,12 @@ use common\models\Payment;
         <div class="col-md-2 p-0">
           <div class="small-box">
             <div class="inner">
-              <h3><?= ! empty($payments) ? $payments : 0 ?></h3>
-              <p>Payments</p>
+
+              <p>Payment Received : <?= ! empty($payments) ? $payments : 0 ?></p>
+              <p>Tax Collected : - <?= ! empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></p>
+              <p>Royalty Free Items : - 0</p>
+			     <?php $total = $payments - $invoiceTaxTotal; ?>
+              <p>Total : <?= ! empty($total) ? $total : 0 ?></p>
             </div>
           </div>
         </div>
