@@ -120,7 +120,7 @@ class Enrolment extends \yii\db\ActiveRecord
 					}
 				}
 
-				if ($day->format('N') === $this->course->day) {
+				if ((int) $day->format('N') === $this->course->day) {
 					$lesson = new Lesson();
 					$lesson->setAttributes([
 						'courseId'	 => $this->course->id,
