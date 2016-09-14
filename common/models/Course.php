@@ -19,6 +19,7 @@ use Yii;
  */
 class Course extends \yii\db\ActiveRecord
 {
+	public $studentId;
     /**
      * @inheritdoc
      */
@@ -115,6 +116,13 @@ class Course extends \yii\db\ActiveRecord
 
 	public function afterSave($insert, $changedAttributes)
     {
+		if((int) $this->program->type === Program::TYPE_PRIVATE_PROGRAM){
+			$enrolmentModel = new Enrolment();
+			$enrolmentModel->courseId = $this->id;	
+			$enrolmentModel->studentId = $this->studentId;
+			$enrolmentModel->isDeleted = 0;
+			$enrolmentModel->save();	
+		}
 		if((int) $this->program->type === Program::TYPE_GROUP_PROGRAM){
 			$interval = new \DateInterval('P1D');
 			$startDate = $this->startDate;
