@@ -233,8 +233,11 @@ class StudentController extends Controller
 				}])
 				->where(['enrolment.studentId' => $model->id]);
 		$groupCourses = Course::find()
-				->groupProgram($locationId)
-				->where(['not in', 'course.id', $groupEnrolments]);
+				->joinWith(['program' => function($query){
+					$query->where(['type' => Program::TYPE_GROUP_PROGRAM]);
+				}])
+				->where(['NOT IN', 'course.id', $groupEnrolments])
+				->andWhere(['locationId' => $locationId]);
 		$groupCourseDataProvider = new ActiveDataProvider([
 			'query' => $groupCourses,
 		]);
