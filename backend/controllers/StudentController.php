@@ -60,7 +60,8 @@ class StudentController extends Controller
 				->joinWith(['course' => function($query) use($locationId){
 					$query->where(['locationId' => $locationId]);	
 				}])
-				->where(['studentId' => $model->id]);
+				->where(['studentId' => $model->id])
+				->notDeleted();
 
 		$enrolmentDataProvider = new ActiveDataProvider([
 			'query' => $enrolments,
@@ -68,14 +69,14 @@ class StudentController extends Controller
 
 		$currentDate = new \DateTime();
 		$lessons = Lesson::find()
-			->notDeleted()
 			->joinWith(['course' => function($query) use($locationId,$model){
 				$query->joinWith(['enrolment' => function($query) use($locationId,$model){
 					$query->where(['enrolment.studentId' => $model->id]);
 				}])
 			->where(['course.locationId' => $locationId]);	
 			}])
-			->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
+			->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
+			->notDeleted();
 				
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => $lessons,
@@ -217,21 +218,18 @@ class StudentController extends Controller
     public function actionDeleteEnrolment($enrolmentId, $programType, $studentId)
     {
         $this->findModel($studentId);
-		if((int) $programType === Program::TYPE_PRIVATE_PROGRAM){
 			$enrolment = Enrolment::findOne(['id' => $enrolmentId]);
 			$enrolment->softDelete();
 			
+		if((int) $programType === Program::TYPE_PRIVATE_PROGRAM){
 			$lessons = Lesson::find()
-					->where(['enrolment_id' => $enrolmentId])
+					->where(['courseId' => $enrolment->courseId])
 					->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
 					->all();
 			foreach($lessons as $lesson){
 				$lesson->softDelete();
 			}
-		} else {
-			$groupEnrolment = GroupEnrolment::findOne(['id' => $enrolmentId]);
-			$groupEnrolment->softDelete();
-		}
+		} 
  		Yii::$app->session->setFlash('alert', [
             'options' => ['class' => 'alert-success'],
             'body' => 'Enrolment has been deleted successfully'
@@ -273,7 +271,7 @@ class StudentController extends Controller
 	public function actionDeleteEnrolmentPreview($studentId, $enrolmentId, $programType)
     {
 		$model = $this->findModel($studentId);
-		$enrolmentModel = Enrolment::findOne(['studentId' => $studentId]); 
+		$enrolmentModel = Enrolment::findOne(['id' => $enrolmentId]); 
 			
         return $this->render('delete-enrolment-preview', [
 			'model' => $model,
