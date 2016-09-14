@@ -218,6 +218,7 @@ class StudentController extends Controller
 			$enrolmentModel->courseId = $post['courseId'][0];	
 			$enrolmentModel->studentId = $model->id;
 			$enrolmentModel->isDeleted = 0;
+			$enrolmentModel->paymentFrequency = Enrolment::TYPE_FULL;
 			$enrolmentModel->save();
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],

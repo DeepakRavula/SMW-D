@@ -20,6 +20,7 @@ use Yii;
 class Course extends \yii\db\ActiveRecord
 {
 	public $studentId;
+	public $paymentFrequency;
     /**
      * @inheritdoc
      */
@@ -36,7 +37,7 @@ class Course extends \yii\db\ActiveRecord
         return [
             [['programId', 'teacherId', 'locationId', 'day', 'fromTime', 'duration'], 'required'],
             [['programId', 'teacherId', 'locationId', 'day'], 'integer'],
-            [['fromTime', 'duration', 'startDate', 'endDate'], 'safe'],
+            [['fromTime', 'duration', 'startDate', 'endDate', 'paymentFrequency'], 'safe'],
         ];
     }
 
@@ -55,6 +56,7 @@ class Course extends \yii\db\ActiveRecord
             'duration' => 'Duration',
             'startDate' => 'Start Date',
             'endDate' => 'End Date',
+			'paymentFrequency' => 'Payment Frequency'
         ];
     }
 
@@ -121,6 +123,7 @@ class Course extends \yii\db\ActiveRecord
 			$enrolmentModel->courseId = $this->id;	
 			$enrolmentModel->studentId = $this->studentId;
 			$enrolmentModel->isDeleted = 0;
+			$enrolmentModel->paymentFrequency = $this->paymentFrequency;
 			$enrolmentModel->save();	
 		}
 		if((int) $this->program->type === Program::TYPE_GROUP_PROGRAM){
