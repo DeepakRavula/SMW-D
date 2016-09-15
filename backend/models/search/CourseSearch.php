@@ -22,6 +22,7 @@ class CourseSearch extends Course
         return [
             [['id', 'programId', 'teacherId', 'locationId', 'day'], 'integer'],
             [['fromTime', 'duration', 'startDate', 'endDate', 'query', 'showAllCourses'], 'safe'],
+            ['showAllCourses', 'boolean'],
         ];
     }
 
