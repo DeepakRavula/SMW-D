@@ -91,13 +91,9 @@ if( ! empty($proFormaInvoiceCredits)){
 <div class="clearfix"></div>
 <h4>Student Name : <?= $enrolmentModel->student->fullName;?></h4>
 <h4>Program Name : <?= $enrolmentModel->program->name;?></h4>
-<h4>Teacher Name : <?= $enrolmentModel->teacher->publicIdentity;?></h4>
+<h4>Teacher Name : <?= $enrolmentModel->course->teacher->publicIdentity;?></h4>
 <h4>Duration: 
-<?php if((int) $programType === Program::TYPE_PRIVATE_PROGRAM):?>
-<?= Yii::$app->formatter->asDate($enrolmentModel->commencement_date) . ' to ' . Yii::$app->formatter->asDate($enrolmentModel->renewal_date);?>
-<?php else:?>
-<?= Yii::$app->formatter->asDate($enrolmentModel->groupCourse->start_date) . ' to ' . Yii::$app->formatter->asDate($enrolmentModel->groupCourse->end_date);?>
-<?php endif;?>
+<?= Yii::$app->formatter->asDate($enrolmentModel->course->startDate) . ' to ' . Yii::$app->formatter->asDate($enrolmentModel->course->endDate);?>
 </h4>
 <h4>Pending Invoice Total : <?= ! empty($pendingInvoiceTotal) ? $pendingInvoiceTotal : 0;?></h4>
 <h4>Number Of Invoice Partial Payment : <?= ! empty($count) ? $count : 0;?></h4>
