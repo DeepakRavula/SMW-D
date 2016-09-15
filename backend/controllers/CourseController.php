@@ -117,7 +117,7 @@ class CourseController extends Controller
 			);
 		$model->locationId = Yii::$app->session->get('location_id');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['lesson/review', 'courseId' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
