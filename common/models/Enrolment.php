@@ -19,7 +19,7 @@ class Enrolment extends \yii\db\ActiveRecord
 {
 	public $studentIds;
 	const TYPE_FULL = 1;
-	const TYPE_MONTHLY = 0;
+	const TYPE_MONTHLY = 2;
     /**
      * @inheritdoc
      */

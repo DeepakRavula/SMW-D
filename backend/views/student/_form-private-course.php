@@ -99,9 +99,10 @@ use yii\helpers\Url;
 			?>
 		</div>
 		<div class="col-md-4">
-			<strong>Payment Frequency</strong>
-        	<?= $form->field($model, 'paymentFrequency')->radio(['value' => Enrolment::TYPE_MONTHLY])->label('Monthly');?>
-        	<?= $form->field($model, 'paymentFrequency')->radio(['value' => Enrolment::TYPE_FULL])->label('Full');?>
+        	<?= $form->field($model, 'paymentFrequency')->radioList([
+				'1' => 'Full',
+				'2' => 'Monthly'
+			])?>
 		</div>
 	</div>
     <div class="form-group">
