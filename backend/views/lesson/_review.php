@@ -2,14 +2,17 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use common\models\Program;
 
 $this->title = 'Review Lessons';
 ?>
 <div class="user-details-wrapper">
 	<div class="row">
+    <?php if((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>  
 	<div class="col-md-12">
-		<p class="users-name"><?php echo $studentModel->fullName; ?></p>
+		<p class="users-name"><?php echo $courseModel->enrolment->student->fullName; ?></p>
 	</div>
+    <?php endif; ?>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program Name">
 		<i class="fa fa-music detail-icon"></i> <?=	$courseModel->program->name; ?>
 	</div>
@@ -63,13 +66,18 @@ $this->title = 'Review Lessons';
 		</div>
 	<div class="form-group">
 	<div class="p-10 text-center">
-		<?= Html::a('Confirm', ['confirm', 'studentId' => $studentModel->id, 'courseId' => $courseId], [
+		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId], [
 		'class' => 'btn btn-danger',
 		'data' => [
 			'method' => 'post',
 		],
-]) ?>
-		<?= Html::a('Cancel', ['student/view','id' => $studentModel->id], ['class'=>'btn']); 	
+    ]) ?> 
+        <?php if((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>
+		<?= Html::a('Cancel', ['student/view','id' => $courseModel->enrolment->studentId], ['class'=>'btn']); 	
 		?>
+        <?php else :?>
+        <?= Html::a('Cancel', ['course/view','id' => $courseModel->id], ['class'=>'btn']); 	
+		?>
+       <?php endif; ?>
     </div>
 </div>

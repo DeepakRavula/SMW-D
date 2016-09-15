@@ -8,7 +8,7 @@ return [
 		'calendar/<slug:[\w-]+>' => 'calendar/view',
         'course/<groupCourseId:\d+>/student/<studentId:\d+>' => 'course/view-student',
         'student/<studentId:\d+>/enrolment/<enrolmentId:\d+>/program-type/<programType:\d+>/delete-preview' => 'student/delete-enrolment-preview',
-        'student/<studentId:\d+>/course/<courseId:\d+>/lesson-review' => 'lesson/review',
+        'course/<courseId:\d+>/lesson-review' => 'lesson/review',
         'student/<id:\d+>/enrolment' => 'student/enrolment',
     ]
 ];
