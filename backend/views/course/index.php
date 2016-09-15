@@ -127,7 +127,7 @@ $(document).ready(function(){
  $("#coursesearch-showallcourses").on("change", function() {
      var showAllCourses = $(this).is(":checked");
      var url = "<?php echo Url::to(['course/index']);?>?CourseSearch[query]=" + "<?php echo $searchModel->query;?>&CourseSearch[showAllCourses]=" + (showAllCourses | 0);
-     $.pjax.reload({url:url,container:"#group-courses",replace:true,  timeout: 4000});  //Reload GridView
+     $.pjax.reload({url:url,container:"#group-courses",replace:false,  timeout: 4000});  //Reload GridView
  });
 });
  </script>
