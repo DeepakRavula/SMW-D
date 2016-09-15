@@ -1,6 +1,7 @@
 <?php
 
 use common\models\Program;
+use common\models\Enrolment;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
@@ -96,6 +97,9 @@ use yii\helpers\Url;
 				]
 			]);
 			?>
+		</div>
+		<div class="col-md-4">
+        	<?= $form->field($model, 'paymentFrequency')->radioList(Enrolment::paymentFrequencies())?>
 		</div>
 	</div>
     <div class="form-group">

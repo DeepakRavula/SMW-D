@@ -178,7 +178,6 @@ class StudentController extends Controller
 			$courseModel->locationId = $locationId;
 			$courseModel->studentId = $model->id;
 			$courseModel->save();
-			
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Student has been enrolled successfully'
@@ -190,6 +189,7 @@ class StudentController extends Controller
 			$enrolmentModel->courseId = $post['courseId'][0];	
 			$enrolmentModel->studentId = $model->id;
 			$enrolmentModel->isDeleted = 0;
+			$enrolmentModel->paymentFrequency = Enrolment::PAYMENT_FREQUENCY_FULL;
 			$enrolmentModel->save();
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
