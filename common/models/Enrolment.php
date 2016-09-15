@@ -18,8 +18,8 @@ use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 class Enrolment extends \yii\db\ActiveRecord
 {
 	public $studentIds;
-	const TYPE_FULL = 1;
-	const TYPE_MONTHLY = 2;
+	const PAYMENT_FREQUENCY_FULL = 1;
+	const PAYMENT_FREQUENCY_MONTHLY = 2;
     /**
      * @inheritdoc
      */
@@ -47,7 +47,8 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return [
             [['courseId', 'isDeleted'], 'required'],
-            [['courseId', 'studentId', 'isDeleted', 'paymentFrequency'], 'integer'],
+            [['courseId', 'studentId', 'isDeleted',], 'integer'],
+            [['paymentFrequency'], 'safe'],
         ];
     }
 
@@ -97,7 +98,13 @@ class Enrolment extends \yii\db\ActiveRecord
 	public function getLessons() {
 		return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
 	}
-	
+
+	public static function paymentFrequencies(){
+		return [
+            self::PAYMENT_FREQUENCY_FULL => Yii::t('common', 'Full'),
+			self::PAYMENT_FREQUENCY_MONTHLY => Yii::t('common', 'Monthly'),
+		];
+	}
 	public function afterSave($insert, $changedAttributes)
     {
 		if((int) $this->course->program->type === Program::TYPE_PRIVATE_PROGRAM){

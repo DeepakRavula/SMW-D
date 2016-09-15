@@ -36,8 +36,8 @@ class Course extends \yii\db\ActiveRecord
     {
         return [
             [['programId', 'teacherId', 'locationId', 'day', 'fromTime', 'duration'], 'required'],
-            [['programId', 'teacherId', 'locationId', 'day'], 'integer'],
-            [['fromTime', 'duration', 'startDate', 'endDate', 'paymentFrequency'], 'safe'],
+            [['programId', 'teacherId', 'locationId', 'day', 'paymentFrequency'], 'integer'],
+            [['fromTime', 'duration', 'startDate', 'endDate'], 'safe'],
         ];
     }
 
@@ -124,7 +124,7 @@ class Course extends \yii\db\ActiveRecord
 			$enrolmentModel->studentId = $this->studentId;
 			$enrolmentModel->isDeleted = 0;
 			$enrolmentModel->paymentFrequency = $this->paymentFrequency;
-			$enrolmentModel->save();	
+			$enrolmentModel->save();
 		}
 		if((int) $this->program->type === Program::TYPE_GROUP_PROGRAM){
 			$interval = new \DateInterval('P1D');
