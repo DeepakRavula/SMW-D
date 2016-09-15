@@ -1,7 +1,6 @@
 <?php
-use yii\grid\GridView;
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\widgets\Pjax;
 
 $this->title = 'Review Lessons';
 ?>
@@ -31,33 +30,56 @@ $this->title = 'Review Lessons';
     </div>
 	<div class="clearfix"></div>	
 	<div class="user-details-wrapper">
-	<?php yii\widgets\Pjax::begin(); ?>
-    <?php echo GridView::widget([
-        'dataProvider' => $lessonDataProvider,
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
-        'columns' => [
-			'date:date',
-			[
-				'label' => 'Time',
-				'value' => function($data) {
-					$time = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-					return $time->format('h:i A');
-                } 
-			],
-			[
-				'label' => 'Teacher Name',
-				'value' => function($data) {
-					return $data->course->teacher->publicIdentity;	
-                } 
-			],
-			[
-				'label' => 'Conflict',
-				'value' => function($data) {
-                } 
-			],
-        ],
-    ]); ?>
+	<?php
+	$columns = [
+		[
+			'class'=>'kartik\grid\EditableColumn',
+			'attribute'=>'date',    
+			'format'=>'date',
+			'headerOptions'=>['class'=>'kv-sticky-column'],
+			'contentOptions'=>['class'=>'kv-sticky-column'],
+			'editableOptions'=>[
+				'header'=>'Lesson Date', 
+				'size'=>'md',
+				'inputType'=>\kartik\editable\Editable::INPUT_WIDGET,
+				'widgetClass'=> 'kartik\datecontrol\DateControl',
+				'options'=>[
+						'type'=>\kartik\datecontrol\DateControl::FORMAT_DATE,
+						'displayFormat'=>'dd-MM-yyyy',
+						'saveFormat'=>'php:Y-m-d H:i:s',
+						'options'=>[
+							'pluginOptions'=>[
+							'autoclose'=>true
+						]
+					]
+				]
+    		],
+		],
+		
+		[
+			'label' => 'Time',
+			'value' => function($data) {
+				$time = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+				return $time->format('h:i A');
+			} 
+		],
+		[
+			'label' => 'Teacher Name',
+			'value' => function($data) {
+				return $data->course->teacher->publicIdentity;	
+			} 
+		],
+		[
+			'label' => 'Conflict',
+			'value' => function($data) {
+			} 
+		],
+	];?>
+	<?php Pjax::begin(); ?>
+    <?= \kartik\grid\GridView::widget([
+		'dataProvider'=>$lessonDataProvider,
+		'columns'=>$columns
+	]); ?>
 
 	<?php yii\widgets\Pjax::end(); ?>
 		</div>

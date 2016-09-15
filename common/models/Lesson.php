@@ -57,8 +57,8 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             [['courseId', 'teacherId', 'status', 'isDeleted'], 'required'],
-            [['courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
-            [['date', 'programId', 'notes'], 'safe'],
+            [['courseId', 'status', 'isDeleted'], 'integer'],
+            [['date', 'programId', 'notes','teacherId'], 'safe'],
         ];
     }
 

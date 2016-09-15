@@ -15,7 +15,7 @@ use backend\models\search\LessonSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\helpers\Json;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -141,6 +141,22 @@ class LessonController extends Controller
 	public function actionReview($studentId, $courseId){
 		$studentModel = Student::findOne(['id' => $studentId]);
 		$courseModel = Course::findOne(['id' => $courseId]);
+    	if (Yii::$app->request->post('hasEditable')) {
+			print_r($_POST);die;
+        	$lessonId = Yii::$app->request->post('editableKey');
+        	$model = Lesson::findOne(['id' => $lessonId]);
+			$out = Json::encode(['output'=>'', 'message'=>'']);
+			$post = [];
+			$posted = current($_POST['Lesson']);
+        	$post = ['Lesson' => $posted];
+			if ($model->load($post)) {
+	        $model->save();
+			$output = '';
+			$out = Json::encode(['output'=>$output, 'message'=>'']);
+        	}
+        	echo $out;
+        	return;
+		}
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),
@@ -155,6 +171,7 @@ class LessonController extends Controller
 	}
 
 	public function actionConfirm($studentId, $courseId){
+		
 		$studentModel = Student::findOne(['id' => $studentId]);
 		$lessons = Lesson::findAll(['courseId' => $courseId]);
 		foreach($lessons as $lesson){
