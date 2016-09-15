@@ -20,6 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	}
 </style>
 
+
 <?php
 $this->registerJs("
     $('td').click(function (e) {
@@ -49,10 +50,17 @@ $this->registerJs("
     ])->input('search')->label(false);
     ?>
     </div>  	
+	<div class="pull-right  m-r-20">    
+		<div class="schedule-index">
+			<div class="e1Div">
+				<?= $form->field($searchModel, 'showAllCourses')->checkbox(['data-pjax' => true])->label('Show All'); ?>
+			</div>
+		</div> 
+	</div>
            
     <?php ActiveForm::end(); ?>
     
-    <?php yii\widgets\Pjax::begin() ?>
+    <?php yii\widgets\Pjax::begin(['id' => 'group-courses']) ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],
@@ -114,3 +122,12 @@ $this->registerJs("
     <?php \yii\widgets\Pjax::end(); ?>
 
 </div>
+<script>
+$(document).ready(function(){
+ $("#coursesearch-showallcourses").on("change", function() {
+     var showAllCourses = $(this).is(":checked");
+     var url = "<?php echo Url::to(['course/index']);?>?CourseSearch[query]=" + "<?php echo $searchModel->query;?>&CourseSearch[showAllCourses]=" + (showAllCourses | 0);
+     $.pjax.reload({url:url,container:"#group-courses",replace:true,  timeout: 4000});  //Reload GridView
+ });
+});
+ </script>
