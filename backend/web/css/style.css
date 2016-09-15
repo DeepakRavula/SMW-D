@@ -785,6 +785,15 @@ input[type="search"]:-ms-input-placeholder {
 .small-box:hover{
   color: #000;
 }
+.description-block>.description-header{
+  font-size: 40px;
+}
+.description-block{
+  margin: 50px 0;
+}
+.box-body .box-pane-right{
+  border-radius: 0;
+}
 @media print{
     .pull-left{
     float: left;

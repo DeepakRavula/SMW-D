@@ -11,8 +11,9 @@ use common\models\Payment;
     <h3 class="pull-left">Dashboard</h3>
     <div class="pull-right col-xs-7 p-10"><?php echo $this->render('_search', ['model' => $searchModel]); ?></div>
     <div class="clearfix"></div>
+    <div class="col-md-10 p-0">
     <div class="row text-center bg-gray disabled color-palette">
-        <div class="col-md-2 p-0">
+        <div class="col-md-3 p-0">
           <div class="small-box">
             <div class="inner">
               <h3><?= ! empty($invoiceTotal) ? $invoiceTotal : 0 ?></h3>
@@ -20,7 +21,7 @@ use common\models\Payment;
             </div>
           </div>
         </div>
-        <div class="col-md-2 p-0">
+        <div class="col-md-3 p-0">
           <div class="small-box">
             <div class="inner">
               <h3><?= ! empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h3>
@@ -47,27 +48,14 @@ use common\models\Payment;
         <div class="col-md-2 p-0">
           <div class="small-box">
             <div class="inner">
-
-              <p>Payment Received : <?= ! empty($payments) ? $payments : 0 ?></p>
-              <p>Tax Collected : - <?= ! empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></p>
-              <p>Royalty Free Items : - 0</p>
-			     <?php $total = $payments - $invoiceTaxTotal; ?>
-              <p>Total : <?= ! empty($total) ? $total : 0 ?></p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-2 p-0">
-          <div class="small-box">
-            <div class="inner">
               <h3><?= $students ?></h3>
               <p>Active Students</p>
             </div>
           </div>
         </div>
     </div>
-</div>
 
-<div class="col-md-6 m-t-20">
+<div class="col-md-5 m-t-20">
 <?= Highcharts::widget([
    'options' => [
       'title' => ['text' => 'Monthly Revenue'],
@@ -83,7 +71,7 @@ use common\models\Payment;
    ]
 ]);?>
 </div>
-<div class="col-md-6 m-t-20">
+<div class="col-md-5 m-t-20">
 <?=  Highcharts::widget([
     'options' => [
         'title' => ['text' => 'Instruction Hours'],
@@ -106,3 +94,28 @@ use common\models\Payment;
     ],
 ]);?>
 </div>
+</div>
+<div class="col-md-2 col-sm-4 p-r-0">
+                  <div class="pad box-pane-right bg-green" style="min-height: 280px">
+                    <div class="description-block margin-bottom">
+                      <h5 class="description-header"><?= ! empty($payments) ? $payments : 0 ?></h5>
+                      <span class="description-text">Payment Received</span>
+                    </div>
+                    <!-- /.description-block -->
+                    <div class="description-block margin-bottom">
+                      <h5 class="description-header"><?= ! empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h5>
+                      <span class="description-text">Tax Collected</span>
+                    </div>
+                    <!-- /.description-block -->
+                    <div class="description-block">
+                      <h5 class="description-header">0</h5>
+                      <span class="description-text">Royalty Free Items</span>
+                    </div>
+                    <!-- /.description-block -->
+                    <div class="description-block">
+                      <h5 class="description-header"><?php $total = $payments - $invoiceTaxTotal; ?>  <?= ! empty($total) ? $total : 0 ?></h5>
+                      <span class="description-text">Total</span>
+                    </div>
+                    <!-- /.description-block -->
+                  </div>
+                </div>
