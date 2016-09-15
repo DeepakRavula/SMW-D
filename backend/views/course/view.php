@@ -38,9 +38,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['
 			<i class="fa fa-calendar"></i> <?php echo Yii::$app->formatter->asDate($model->endDate)?>	
 	</div>
 		</div>
-    <div class="col-md-12 m-t-20">
-        <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
-    </div>
     <div class="clearfix"></div>
 </div>
 </div>
