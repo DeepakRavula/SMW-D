@@ -242,26 +242,25 @@ class StudentController extends Controller
 	public function actionDelete($id)
     {
         $model = $this->findModel($id);
-		$enrolments = Enrolment::findAll(['student_id' => $model->id]);
+		$enrolments = Enrolment::find()
+					->notDeleted()
+					->where(['studentId' => $model->id])
+					->all();
 		if( ! empty($enrolments)){
 			foreach($enrolments as $enrolment){
-				$lessons = Lesson::find()
-						->where(['enrolment_id' => $enrolment->id])
-						->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
-						->all();
-				foreach($lessons as $lesson){
-					$lesson->softDelete();
+				if((int)$enrolment->course->program->type === Program::TYPE_PRIVATE_PROGRAM){
+					$lessons = Lesson::find()
+							->where(['courseId' => $enrolment->courseId])
+							->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
+							->all();
+					foreach($lessons as $lesson){
+						$lesson->softDelete();
+					}
 				}
 				$enrolment->softDelete();
 			}
 		}
 		
-		$groupEnrolments = GroupEnrolment::findAll(['student_id' => $model->id]);
-		if( ! empty($groupEnrolments)){
-			foreach($groupEnrolments as $groupEnrolment){
-				$groupEnrolment->softDelete();
-			}
-		}
 		$model->softDelete();
 		
  		Yii::$app->session->setFlash('alert', [
@@ -291,12 +290,14 @@ class StudentController extends Controller
     {
 		$model = $this->findModel($id);
 	
-		$enrolments = Enrolment::findAll(['student_id' => $model->id]);
-		$groupEnrolments = GroupEnrolment::findAll(['student_id' => $model->id]);
+		$enrolments = Enrolment::find(['studentId' => $model->id]);
+		$enrolmentDataProvider = new ActiveDataProvider([
+			'query' => $enrolments,
+		]);
+		
         return $this->render('delete-preview', [
 			'model' => $model,
-			'enrolments' => $enrolments,
-			'groupEnrolments' => $groupEnrolments
+			'enrolmentDataProvider' => $enrolmentDataProvider,
         ]);
     }
 

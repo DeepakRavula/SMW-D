@@ -17,6 +17,7 @@ use common\models\InvoiceLineItem;
 		->joinWith(['invoicePayments ip' => function($query){
 			$query->joinWith(['payment p' => function($query){
 			}]);
+			$query->where(['not', ['ip.id' => null]]);
 		}])
 		->where(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE])
 		->groupBy('i.id');

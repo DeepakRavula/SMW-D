@@ -6,6 +6,7 @@ use Yii;
 use common\models\Holiday;
 use common\models\ProfessionalDevelopmentDay;
 use common\models\Lesson;
+use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 /**
  * This is the model class for table "enrolment".
  *
@@ -25,6 +26,18 @@ class Enrolment extends \yii\db\ActiveRecord
         return 'enrolment';
     }
 
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true
+                ],
+            ],
+        ];
+    }
+	
     /**
      * @inheritdoc
      */

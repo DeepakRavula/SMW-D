@@ -21,8 +21,7 @@ $this->title = 'Delete Student'
 		<p class="c-title m-0"></i> Enrolments </p>
 		  <?= $this->render('_view-enrolment',[
 			  	'model' => $model,
-				'enrolments' => $enrolments,
-				'groupEnrolments' => $groupEnrolments
+				'enrolmentDataProvider' => $enrolmentDataProvider,
 			]); ?>
 	</div>
 	<div class="col-xs-4">

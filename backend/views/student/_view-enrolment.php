@@ -3,59 +3,43 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\data\ArrayDataProvider;
 ?>
-<?php
-	$results = [];
-	if( ! empty($enrolments)){
-		foreach($enrolments as $enrolment){
-			$results[] = [
-				'programName' => $enrolment->program->name,
-				'teacherName' => $enrolment->teacher->publicIdentity,
-				'startDate' => Yii::$app->formatter->asDate($enrolment->commencement_date),
-				'endDate' => Yii::$app->formatter->asDate($enrolment->renewal_date),
-			];
-		}
-	}
 
-	if( ! empty($groupEnrolments)){
-		foreach($groupEnrolments as $groupEnrolment){
-			$results[] = [
-				'programName' => $groupEnrolment->program->name,
-				'teacherName' => $groupEnrolment->teacher->publicIdentity,
-				'startDate' => Yii::$app->formatter->asDate($groupEnrolment->groupCourse->start_date),
-				'endDate' => Yii::$app->formatter->asDate($groupEnrolment->groupCourse->end_date),
-			];
-		}
-	}
-	$enrolmentDataProvider = new ArrayDataProvider([
-    'allModels' => $results,
-    'sort' => [
-        'attributes' => ['programName', 'teacherName', 'startDate','endDate'],
-    ],
-]);
-?>
-<?php
-echo GridView::widget([
-	'dataProvider' => $enrolmentDataProvider,
-	'tableOptions' =>['class' => 'table table-bordered'],
-    'headerRowOptions' => ['class' => 'bg-light-gray' ],
-    'options' => ['class' => 'p-10'],
-	'columns' => [
-		[
-		'label' => 'Program Name', 
-		'value' => 'programName',
-		],
-		[
-		'label' => 'Teacher Name',
-		'value' => 'teacherName',
-		],
-		[
-		'label' => 'Start Date', 
-		'value' => 'startDate',
-		],
-		[
-		'label' => 'End Date', 
-		'value' => 'endDate',
-		],
-    ]
-]);
-?>
+<?php yii\widgets\Pjax::begin(['id' => 'student-listing']); ?>
+    <?php echo GridView::widget([
+        'dataProvider' => $enrolmentDataProvider,
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $u= \yii\helpers\StringHelper::basename(get_class($model));
+            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        },
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
+        'columns' => [
+			[
+				'label' => 'Program Name',
+				'value' => function($data) {
+					return ! (empty($data->course->program->name)) ? $data->course->program->name : null;
+                } 
+			],
+			[
+				'label' => 'Teacher Name',
+				'value' => function($data) {
+					return ! (empty($data->student->customer->publicIdentity)) ? $data->student->customer->publicIdentity : null;
+                } 
+			],
+			[
+				'label' => 'Start Date',
+				'value' => function($data) {
+					return ! (empty($data->course->startDate)) ? Yii::$app->formatter->asDate($data->course->endDate) : null;
+                } 
+			],
+			[
+				'label' => 'End Date',
+				'value' => function($data) {
+					return ! (empty($data->course->endDate)) ? Yii::$app->formatter->asDate($data->course->endDate) : null;
+                } 
+			],
+        ],
+    ]); ?>
+
+	<?php yii\widgets\Pjax::end(); ?>
