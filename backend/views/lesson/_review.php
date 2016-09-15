@@ -8,7 +8,7 @@ $this->title = 'Review Lessons';
 <div class="user-details-wrapper">
 	<div class="row">
 	<div class="col-md-12">
-		<p class="users-name"><?php echo $model->fullName; ?></p>
+		<p class="users-name"><?php echo $studentModel->fullName; ?></p>
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program Name">
 		<i class="fa fa-music detail-icon"></i> <?=	$courseModel->program->name; ?>
@@ -63,13 +63,13 @@ $this->title = 'Review Lessons';
 		</div>
 	<div class="form-group">
 	<div class="p-10 text-center">
-		<?= Html::a('Confirm', ['lesson-confirm', 'id' => $model->id, 'courseId' => $courseId], [
+		<?= Html::a('Confirm', ['confirm', 'studentId' => $studentModel->id, 'courseId' => $courseId], [
 		'class' => 'btn btn-danger',
 		'data' => [
 			'method' => 'post',
 		],
 ]) ?>
-		<?= Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn']); 	
+		<?= Html::a('Cancel', ['student/view','id' => $studentModel->id], ['class'=>'btn']); 	
 		?>
     </div>
 </div>

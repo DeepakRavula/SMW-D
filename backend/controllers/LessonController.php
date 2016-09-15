@@ -4,10 +4,13 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Lesson;
+use common\models\Course;
+use common\models\Student;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use common\models\ItemType;
 use common\models\TaxStatus;
+use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -135,6 +138,37 @@ class LessonController extends Controller
 		}
 	}
 
+	public function actionReview($studentId, $courseId){
+		$studentModel = Student::findOne(['id' => $studentId]);
+		$courseModel = Course::findOne(['id' => $courseId]);
+		$lessonDataProvider = new ActiveDataProvider([
+			'query' => Lesson::find()
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),
+		]);
+		
+		return $this->render('_review', [
+				'studentModel' => $studentModel,
+				'courseModel' => $courseModel,
+				'courseId' => $courseId,
+                'lessonDataProvider' => $lessonDataProvider,
+            ]);	
+	}
+
+	public function actionConfirm($studentId, $courseId){
+		$studentModel = Student::findOne(['id' => $studentId]);
+		$lessons = Lesson::findAll(['courseId' => $courseId]);
+		foreach($lessons as $lesson){
+			$lesson->status = Lesson::STATUS_SCHEDULED;
+			$lesson->save();
+		}
+		
+		Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Lessons have been created successfully'
+		]);
+        return $this->redirect(['student/view', 'id' => $studentModel->id,'#' => 'lesson']);
+	}
+	
 	public function actionInvoice($id) {
 		$model = Lesson::findOne(['id' => $id]);
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);

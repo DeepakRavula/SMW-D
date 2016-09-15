@@ -110,36 +110,7 @@ class StudentController extends Controller
         }
     }
 
-	public function actionLessonReview($id, $courseId){
-		$model = $this->findModel($id);
-		$courseModel = Course::findOne(['id' => $courseId]);
-		$lessonDataProvider = new ActiveDataProvider([
-			'query' => Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),
-		]);
-		
-		return $this->render('lesson-review', [
-            	'model' => $model,
-				'courseModel' => $courseModel,
-				'courseId' => $courseId,
-                'lessonDataProvider' => $lessonDataProvider,
-            ]);	
-	}
-
-	public function actionLessonConfirm($id, $courseId){
-		$model = $this->findModel($id);
-		$lessons = Lesson::findAll(['courseId' => $courseId]);
-		foreach($lessons as $lesson){
-			$lesson->status = Lesson::STATUS_SCHEDULED;
-			$lesson->save();
-		}
-		
-		Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Lessons have been created successfully'
-		]);
-        return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
-	}
+	
     /**
      * Creates a new Student model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -211,7 +182,7 @@ class StudentController extends Controller
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Student has been enrolled successfully'
             ]);
-            	return $this->redirect(['lesson-review', 'id' => $model->id,'courseId' => $courseModel->id]);
+            	return $this->redirect(['lesson/review', 'studentId' => $model->id, 'courseId' => $courseModel->id]);
         }
 		if (( ! empty($post['courseId'])) && is_array($post['courseId'])) {
 			$enrolmentModel = new Enrolment();
