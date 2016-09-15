@@ -273,11 +273,8 @@ class StudentController extends Controller
 	public function actionDeleteEnrolmentPreview($studentId, $enrolmentId, $programType)
     {
 		$model = $this->findModel($studentId);
-		if((int) $programType === Program::TYPE_PRIVATE_PROGRAM){
-			$enrolmentModel = Enrolment::findOne(['studentId' => $studentId]); 
-		} else {
-			$enrolmentModel = GroupEnrolment::findOne(['student_id' => $studentId]); 
-		}
+		$enrolmentModel = Enrolment::findOne(['studentId' => $studentId]); 
+			
         return $this->render('delete-enrolment-preview', [
 			'model' => $model,
 			'enrolmentId' => $enrolmentId,
