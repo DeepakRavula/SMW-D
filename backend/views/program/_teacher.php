@@ -2,7 +2,9 @@
 
 use yii\grid\GridView;
 ?>
-<?php yii\widgets\Pjax::begin() ?>
+<?php yii\widgets\Pjax::begin([
+	'timeout' => 6000,
+]) ?>
 <?php
 echo GridView::widget([
 'dataProvider' => $teacherDataProvider,
