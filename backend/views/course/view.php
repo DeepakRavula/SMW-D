@@ -41,6 +41,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['
     <div class="clearfix"></div>
 </div>
 </div>
+<div class="row-fluid">
+    <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-left', 'target'=>'_blank',]) ?>  
+    <div class="clearfix"></div>
+</div>
 <div class="tabbable-panel">
      <div class="tabbable-line">
 <?php 

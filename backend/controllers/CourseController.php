@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Course;
+use common\models\Lesson;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use common\models\ItemType;
@@ -264,4 +265,19 @@ class CourseController extends Controller
 
 		return $this->redirect(['invoice/view','id' => $invoice->id]);
     }
+    
+    public function actionPrint($id) {
+
+		$model = $this->findModel($id);		
+		$lessonDataProvider = new ActiveDataProvider([
+            'query' => Lesson::find()
+                ->where(['courseId' => $model->id]),
+        ]);
+
+		$this->layout = "/print-invoice";
+		return $this->render('_print', [
+					'model' => $model,
+					'lessonDataProvider' => $lessonDataProvider
+		]);
+	}
 }
