@@ -60,7 +60,10 @@
     "wbraganca/yii2-dynamicform": "dev-master",
     "2amigos/yii2-ckeditor-widget": "~1.0",
     "kartik-v/yii2-widget-datetimepicker": "*",
-    "miloschuman/yii2-highcharts-widget": "*"
+    "miloschuman/yii2-highcharts-widget": "*",
+    "kartik-v/yii2-grid": "@dev",
+    "kartik-v/yii2-editable": "*",
+    "kartik-v/yii2-datecontrol": "dev-master"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",

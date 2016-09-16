@@ -52,6 +52,12 @@ $config = [
                     'searchClass' => 'backend\models\search\UserSearch'
                 ],
         ],
+		'gridview' =>  [
+			'class' => '\kartik\grid\Module'
+		],
+		'datecontrol' =>  [
+        	'class' => '\kartik\datecontrol\Module'
+    	]
     ],
 	'on beforeAction' => function ($event) {
 		$location_id = Yii::$app->session->get('location_id');

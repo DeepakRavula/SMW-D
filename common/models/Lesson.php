@@ -57,8 +57,8 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             [['courseId', 'teacherId', 'status', 'isDeleted'], 'required'],
-            [['courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
-            [['date', 'programId', 'notes'], 'safe'],
+            [['courseId', 'status', 'isDeleted'], 'integer'],
+            [['date', 'programId', 'notes','teacherId'], 'safe'],
         ];
     }
 
@@ -155,6 +155,7 @@ class Lesson extends \yii\db\ActiveRecord
                 if( ! empty($this->enrolment->student->customer->email)){
                     $this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
                 }
+			if((int)$this->status !== (int) self::STATUS_DRAFTED){
                 $this->updateAttributes(['date' => $fromDate->format('Y-m-d H:i:s'),
                     'status' => self::STATUS_CANCELED,
                 ]);
@@ -169,11 +170,12 @@ class Lesson extends \yii\db\ActiveRecord
 				$lessonRescheduleModel->lessonId = $originalLessonId;
 				$lessonRescheduleModel->rescheduledLessonId = $this->id;
 				$lessonRescheduleModel->save();
-            }           
-		} 
+            }
+		}
+	} 
             
-        return parent::afterSave($insert, $changedAttributes);
-    }
+       return parent::afterSave($insert, $changedAttributes);
+}
 
 	public function notifyReschedule($user, $program, $fromDate, $toDate) {
         $subject = Yii::$app->name . ' - ' . $program->name 
