@@ -103,7 +103,7 @@ class Course extends \yii\db\ActiveRecord
 		$secs = strtotime($this->fromTime) - strtotime("00:00:00");
 		
 		if((int) $this->program->type === Program::TYPE_GROUP_PROGRAM){
-        $this->startDate = date("Y-m-d H:i:s",strtotime($this->startDate) + $secs);
+        	$this->startDate = date("Y-m-d H:i:s",strtotime($this->startDate) + $secs);
 			$endDate = \DateTime::createFromFormat('d-m-Y', $this->endDate);
 			$this->endDate = $endDate->format('Y-m-d H:i:s');
 		} else {

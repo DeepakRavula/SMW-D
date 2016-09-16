@@ -46,17 +46,7 @@ $this->title = 'Review Lessons';
 				'header'=>'Lesson Date', 
 				'size'=>'md',
 				'inputType'=>\kartik\editable\Editable::INPUT_WIDGET,
-				'widgetClass'=> 'kartik\datecontrol\DateControl',
-				'options'=>[
-						'type'=>\kartik\datecontrol\DateControl::FORMAT_DATE,
-						'displayFormat'=>'dd-MM-yyyy',
-						'saveFormat'=>'php:Y-m-d H:i:s',
-						'options'=>[
-							'pluginOptions'=>[
-							'autoclose'=>true
-						]
-					]
-				]
+				'widgetClass'=> '\yii\jui\DatePicker',
     		],
 		],
 		

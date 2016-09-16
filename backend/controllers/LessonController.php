@@ -143,7 +143,6 @@ class LessonController extends Controller
 	public function actionReview($courseId){		
 		$courseModel = Course::findOne(['id' => $courseId]);
     	if (Yii::$app->request->post('hasEditable')) {
-			print_r($_POST);die;
         	$lessonId = Yii::$app->request->post('editableKey');
         	$model = Lesson::findOne(['id' => $lessonId]);
 			$out = Json::encode(['output'=>'', 'message'=>'']);
@@ -151,9 +150,12 @@ class LessonController extends Controller
 			$posted = current($_POST['Lesson']);
         	$post = ['Lesson' => $posted];
 			if ($model->load($post)) {
-	        $model->save();
-			$output = '';
-			$out = Json::encode(['output'=>$output, 'message'=>'']);
+        		$fromTime = \DateTime::createFromFormat('H:i:s',$model->course->fromTime);
+				$secs = strtotime($model->course->fromTime) - strtotime("00:00:00");
+        		$model->date = date("Y-m-d H:i:s",strtotime($model->date) + $secs);
+	        	$model->save();
+				$output = Yii::$app->formatter->asDate($model->date);
+				$out = Json::encode(['output'=>$output, 'message'=>'']);
         	}
         	echo $out;
         	return;
