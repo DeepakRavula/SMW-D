@@ -22,19 +22,12 @@ $results = [];
 if(! empty($creditPayments)){
 	foreach($creditPayments as $creditPayment){
 		$debitInvoice = InvoicePayment::findOne(['payment_id' => $creditPayment->creditUsage->debit_payment_id]);
-		$invoiceNumber = null;
-		if(! empty($debitInvoice)){
-			if((int) $debitInvoice->invoice_id === Payment::TYPE_OPENING_BALANCE_CREDIT){
-				$invoiceNumber = 'NA';	
-			}else{
-				$invoiceNumber = $debitInvoice->invoice_id;
-			}
-		}
+		
 		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$creditPayment->date);
 		$results[] = [
 			'date' => $paymentDate->format('d-m-Y'),
 			'paymentMethodName' => $creditPayment->paymentMethod->name,
-			'invoiceNumber' => $invoiceNumber,
+			'invoiceNumber' => $debitInvoice->invoice->getInvoiceNumber(),
 			'amount' => $creditPayment->amount,
 		];
 	}
@@ -54,7 +47,7 @@ if(! empty($debitPayments)){
 		$results[] = [
 			'date' => $paymentDate->format('d-m-Y'),
 			'paymentMethodName' => $debitPayment->paymentMethod->name,
-			'invoiceNumber' => $creditInvoice->invoice_id,
+			'invoiceNumber' => $creditInvoice->invoice->getInvoiceNumber(),
 			'amount' => $debitPayment->amount,
 		];
 	}
@@ -74,6 +67,8 @@ if(! empty($otherPayments)){
 		if((int) $otherPayment->payment_method_id === PaymentMethod::TYPE_CHEQUE){
 			$chequeModel = PaymentCheque::findOne(['payment_id' => $otherPayment->paymentCheque->payment_id]);	
 			$invoiceNumber = $chequeModel->number;
+		} elseif((int)$otherPayment->payment_method_id === PaymentMethod::TYPE_CREDIT_CARD){
+			$invoiceNumber = $otherPayment->reference;
 		}
 		$results[] = [
 			'date' => $paymentDate->format('d-m-Y'),

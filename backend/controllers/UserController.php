@@ -223,6 +223,7 @@ class UserController extends Controller {
 			$invoice->type = Invoice::TYPE_INVOICE;
 			if($paymentModel->amount < 0){
 				$invoice->status = Invoice::STATUS_CREDIT;
+				$invoice->balance = $paymentModel->amount; 
 			} else {
 				$invoice->status = Invoice::STATUS_OWING;
 			}

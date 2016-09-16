@@ -2,7 +2,7 @@
 use common\models\Invoice;
 use yii\grid\GridView;
 use common\models\Payment;
-use common\models\PaymentMethod;
+use common\models\ItemType;
 use yii\data\ArrayDataProvider;
 use yii\bootstrap\Modal;
 
@@ -17,43 +17,24 @@ if(! empty($invoiceCredits )){
 	foreach($invoiceCredits as $invoiceCredit){
 		$lastInvoicePayment = $invoiceCredit->invoicePayments;
 		$lastInvoicePayment = end($lastInvoicePayment);
+		$lineItems = $invoiceCredit->lineItems;
+		$lineItem = end($lineItems);
+		if((int) $lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE){
+			$source = 'Opening Balance';
+			$type = 'account_entry';
+		} else {
+			$source = 'Invoice';
+			$type = 'invoice';	
+		}
 		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$lastInvoicePayment->payment->date);
 		$results[] = [
 			'id' => $invoiceCredit->id,
 			'date' => $paymentDate->format('d-m-Y'),
 			'amount' => abs($invoiceCredit->balance),
-			'source' => 'Invoice',
-			'type' => 'invoice'
+			'source' => $source,
+			'type' => $type,
 		];
 	}
-}
-$openingBalancePaymentModel = Payment::find()
-				->where([
-					'user_id' => $invoice->user_id,
-					'payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY, ],
-			])->one();
-	
-		$remainingOpeningBalance = 0;
-		if(! empty($openingBalancePaymentModel->id)){
-			$openingBalanceCreditsUsed = Payment::find()
-					->joinWith(['invoicePayment ip' => function($query) use($model){
-						$query->where(['ip.invoice_id' => Payment::TYPE_OPENING_BALANCE_CREDIT]);	
-					}])
-					->where(['user_id' => $invoice->user_id])
-					->sum('amount');
-
-			$remainingOpeningBalance = $openingBalancePaymentModel->amount + $openingBalanceCreditsUsed;
-		}
-		
-if($remainingOpeningBalance > 0){
-	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$openingBalancePaymentModel->date);
-	$results[] = [
-			'id' => $openingBalancePaymentModel->id,
-			'date' => $paymentDate->format('d-m-Y'),
-			'amount' => abs($remainingOpeningBalance),
-			'source' => 'Opening Balance',
-			'type' => 'account_entry'
-		];
 }
 
 $proFormaInvoiceCredits = Invoice::find()->alias('i')
