@@ -8,7 +8,7 @@ use common\models\User;
 /* @var $model common\models\Program */
 
 $this->title = $model->name;
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['index', 'ProgramSearch[type]' => $model->type], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'ProgramSearch[type]' => $model->type], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 foreach($roles as $name => $description){
 	$role = $name;

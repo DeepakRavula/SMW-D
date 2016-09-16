@@ -21,7 +21,7 @@ use dosamigos\ckeditor\CKEditor;
     ]) ?>
 
     <div class="form-group"> 
-        <?php echo Html::submitButton($model->isNewRecord ? 'Save & Publish' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?> 
+        <?php echo Html::submitButton($model->isNewRecord ? 'Save & Publish' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary btn-sm' : 'btn btn-primary btn-sm']) ?> 
     </div> 
 
     <?php ActiveForm::end(); ?> 

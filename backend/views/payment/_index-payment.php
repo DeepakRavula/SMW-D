@@ -20,6 +20,8 @@ if (!empty($dataProvider->getModels())) {
         'dataProvider' => $dataProvider,
         'showFooter'=>TRUE,
         'footerRowOptions'=>['style'=>'font-weight:bold;text-align: right;'],
+        'tableOptions' =>['class' => 'table table-bordered m-0'],
+            'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => [
 			[
 				'label' => 'ID',

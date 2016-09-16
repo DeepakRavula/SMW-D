@@ -14,6 +14,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'tableOptions' =>['class' => 'table table-bordered m-0'],
+            'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'rowOptions' => function ($model, $key, $index, $grid) {
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);

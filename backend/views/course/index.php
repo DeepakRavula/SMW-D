@@ -18,6 +18,10 @@ $this->params['breadcrumbs'][] = $this->title;
 	.smw-search{
 		left: 135px;
 	}
+	.e1Div {
+	    right: 85px;
+	    top: -60px;
+	}
 </style>
 
 

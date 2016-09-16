@@ -16,6 +16,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
 <style>
   .e1Div{
 		top: -61px;
+        right: 0;
   }
 </style>
 

@@ -8,7 +8,7 @@ use common\models\Lesson;
 /* @var $model common\models\Lesson */
 
 $this->title = 'Lesson Details';
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['index','LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index','LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
 <div class="lesson-view">
 	<div class="row-fluid user-details-wrapper">

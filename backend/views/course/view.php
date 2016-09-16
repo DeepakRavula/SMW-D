@@ -7,7 +7,7 @@ use common\models\Enrolment;
 /* @var $model common\models\GroupCourse */
 
 $this->title = 'Group Course Details';
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left"></i> Go Back', ['index'], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back text-add-new f-s-14 m-r-10']);
 ?>
 <div class="group-course-view">
 	<div class="row-fluid user-details-wrapper">
