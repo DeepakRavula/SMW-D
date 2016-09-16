@@ -101,6 +101,9 @@ $creditDataProvider = new ArrayDataProvider([
 ],
 ]);
 ?>
+<?php yii\widgets\Pjax::begin([
+	'timeout' => 6000,
+]) ?>
 <?php
 echo GridView::widget([
 'dataProvider' => $creditDataProvider,
@@ -139,3 +142,4 @@ echo GridView::widget([
 ]
 ]);
 ?>
+<?php \yii\widgets\Pjax::end(); ?>

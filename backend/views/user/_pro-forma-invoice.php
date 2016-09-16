@@ -20,7 +20,9 @@ use yii\bootstrap\Tabs;
             ]);
     ?>
 </div>
-<?php yii\widgets\Pjax::begin() ?>
+<?php yii\widgets\Pjax::begin([
+	'timeout' => 6000,
+]) ?>
 <?php echo GridView::widget([
     'dataProvider' => $proFormaInvoiceDataProvider,
     'options' => ['class' => 'col-md-12'],

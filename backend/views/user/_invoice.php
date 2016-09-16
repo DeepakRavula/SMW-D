@@ -32,7 +32,9 @@ use yii\bootstrap\Tabs;
 </div>
 <div class="clearfix"></div>
 <hr class="hr-ad right-side-faded">
-<?php yii\widgets\Pjax::begin() ?>
+<?php yii\widgets\Pjax::begin([
+	'timeout' => 6000,
+]) ?>
 <?php echo  GridView::widget([
     'dataProvider' => $invoiceDataProvider,
     'options' => ['class' => 'col-md-12'],

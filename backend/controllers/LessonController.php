@@ -17,7 +17,7 @@ use backend\models\search\LessonSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\helpers\Json;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -142,6 +142,24 @@ class LessonController extends Controller
 
 	public function actionReview($courseId){		
 		$courseModel = Course::findOne(['id' => $courseId]);
+    	if (Yii::$app->request->post('hasEditable')) {
+        	$lessonId = Yii::$app->request->post('editableKey');
+        	$model = Lesson::findOne(['id' => $lessonId]);
+			$out = Json::encode(['output'=>'', 'message'=>'']);
+			$post = [];
+			$posted = current($_POST['Lesson']);
+        	$post = ['Lesson' => $posted];
+			if ($model->load($post)) {
+        		$fromTime = \DateTime::createFromFormat('H:i:s',$model->course->fromTime);
+				$secs = strtotime($model->course->fromTime) - strtotime("00:00:00");
+        		$model->date = date("Y-m-d H:i:s",strtotime($model->date) + $secs);
+	        	$model->save();
+				$output = Yii::$app->formatter->asDate($model->date);
+				$out = Json::encode(['output'=>$output, 'message'=>'']);
+        	}
+        	echo $out;
+        	return;
+		}
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),

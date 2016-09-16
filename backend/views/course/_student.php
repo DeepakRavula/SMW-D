@@ -21,7 +21,9 @@ $this->registerJs("
 ");
 ?>
 <div class="group-course-student-index"> 
-    <?php yii\widgets\Pjax::begin() ?>
+    <?php yii\widgets\Pjax::begin([
+		'timeout' => 6000,
+	]) ?>
     <?php echo GridView::widget([
         'dataProvider' => $studentDataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],

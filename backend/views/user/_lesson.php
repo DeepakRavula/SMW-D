@@ -6,7 +6,9 @@ use yii\grid\GridView;
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Lessons</h4>
 </div>
-<?php yii\widgets\Pjax::begin() ?>
+<?php yii\widgets\Pjax::begin([
+	'timeout' => 6000,
+]) ?>
 <?php
 echo GridView::widget([
 	'dataProvider' => $lessonDataProvider,
