@@ -45,6 +45,7 @@ class UserForm extends Model
 	public $teacherAvailabilityDay;
 	public $fromTime;
 	public $toTime;
+	public $section;
 	
     /**
      * @inheritdoc
@@ -78,7 +79,7 @@ class UserForm extends Model
             ['roles','required'],
 			['notes','safe'],
            	['locations','safe'],    
-			[['phonelabel', 'phoneextension', 'phonenumber', 'address'], 'safe'],
+			[['phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
             [['addresslabel', 'postalcode', 'province', 'city', 'country'],'safe'],
 			[['teacherAvailabilityDay','fromTime','toTime'],'safe']
         ];
