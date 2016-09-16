@@ -15,6 +15,7 @@ use wbraganca\selectivity\SelectivityWidget;
 $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
 ?>
 
+<div class="guest-form p-10">
 
     <?php $form = ActiveForm::begin([
 		'method' => 'post',
@@ -33,6 +34,7 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
     <?= $form->field($userModel, 'firstname');?>
     <?= $form->field($userModel, 'lastname');?>
     <?= $form->field($customer, 'email');?>
+</div>
 </div>
 </div>
 <?php ActiveForm::end(); ?>
