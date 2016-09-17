@@ -125,7 +125,7 @@ class PaymentController extends Controller
 			'query' => Payment::find(),
 			'pagination' => false,
 		]);
-		$this->layout = "/print-invoice";
+		$this->layout = "/print";
 		return $this->render('_print', [
 			'paymentDataProvider' => $paymentDataProvider
 		]);

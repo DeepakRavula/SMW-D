@@ -449,7 +449,7 @@ class InvoiceController extends Controller {
 		$invoiceLineItemsDataProvider = new ActiveDataProvider([
 			'query' => $invoiceLineItems,
 		]);
-		$this->layout = "/print-invoice";
+		$this->layout = "/print";
 		return $this->render('_print', [
 					'model' => $model,
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
