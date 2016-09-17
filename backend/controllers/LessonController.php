@@ -145,21 +145,23 @@ class LessonController extends Controller
     	if (Yii::$app->request->post('hasEditable')) {
         	$lessonId = Yii::$app->request->post('editableKey');
         	$model = Lesson::findOne(['id' => $lessonId]);
-			$out = Json::encode(['output'=>'', 'message'=>'']);
-			$post = [];
-			$posted = current($_POST['Lesson']);
-        	$post = ['Lesson' => $posted];
-			if ($model->load($post)) {
-        		$fromTime = \DateTime::createFromFormat('H:i:s',$model->course->fromTime);
-				$secs = strtotime($model->course->fromTime) - strtotime("00:00:00");
-        		$model->date = date("Y-m-d H:i:s",strtotime($model->date) + $secs);
-	        	$model->save();
-				$output = Yii::$app->formatter->asDate($model->date);
-				$out = Json::encode(['output'=>$output, 'message'=>'']);
-        	}
-        	echo $out;
-        	return;
-		}
+			$result = Json::encode(['output'=>'', 'message'=>'']);
+			$post = Yii::$app->request->post();
+			if(isset($post['Lesson'][0]['date'])){
+				$existingDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+				$lessonTime = $existingDate->format('H:i:s');
+				$timebits = explode(":", $lessonTime);
+				$changedDate = new \DateTime($post['Lesson'][0]['date']);
+				$changedDate->add(new \DateInterval('PT' . $timebits[0]. 'H' . $timebits[1] . 'M'));
+				$model->date = $changedDate->format('Y-m-d H:i:s');
+			}
+			
+			$model->save();
+			$output = Yii::$app->formatter->asDate($model->date);
+			$result = Json::encode(['output'=>$output, 'message'=>'']);
+		 	echo $result;
+		 	return;
+		}	
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),
