@@ -3,8 +3,6 @@ use yii\grid\GridView;
 use common\models\Payment;
 use common\models\InvoicePayment;
 use common\models\Invoice;
-use common\models\InvoiceLineItem;
-use common\models\ItemType;
 use common\models\PaymentMethod;
 use common\models\PaymentCheque;
 use yii\bootstrap\ButtonGroup;

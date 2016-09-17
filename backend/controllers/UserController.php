@@ -266,12 +266,13 @@ class UserController extends Controller {
 			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
 		}
 
-		$openingBalancePaymentModel = Payment::find()
-				->where([
-					'user_id' => $model->id,
-					'payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY],
-			])->one();
-
+		$openingBalanceCredit = Invoice::find()
+				->joinWith(['lineItems' => function($query){
+					$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+				}])
+				->where(['invoice.user_id' => $model->id,])
+				->andWhere(['<', 'invoice.balance', 0])
+				->one();
 		$positiveOpeningBalanceModel = Invoice::find()
 				->joinWith(['lineItems' => function($query){
 					$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
@@ -279,21 +280,7 @@ class UserController extends Controller {
 				->joinWith('payment')
 				->where(['invoice.user_id' => $model->id, 'payment.id' => null])
 				->one();
-		$remainingOpeningBalance = 0;
-		if(! empty($openingBalancePaymentModel->id)){
-			$openingBalanceCreditsUsed = Payment::find()
-				->joinWith(['invoicePayment ip' => function($query) use($model){
-					$query->joinWith(['invoice' => function($query){
-						$query->joinWith(['lineItems' => function($query){
-							$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
-						}]);
-					}]);
-				}])
-				->where(['payment.user_id' => $model->id])
-				->sum('payment.amount');
-
-			$remainingOpeningBalance = $openingBalancePaymentModel->amount + $openingBalanceCreditsUsed;
-		}
+				
 		$openingBalanceQuery = Payment::find()
 				->joinWith(['invoicePayment ip' => function($query){
 					$query->joinWith(['invoice' => function($query){
@@ -302,7 +289,7 @@ class UserController extends Controller {
 						}]);
 					}]);
 				}])
-				->where(['payment.user_id' => $model->id]);
+				->where(['payment.user_id' => $model->id, 'payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
 				
 		$openingBalanceDataProvider = new ActiveDataProvider([
 			'query' => $openingBalanceQuery, 
@@ -360,9 +347,8 @@ class UserController extends Controller {
 			'invoiceDataProvider' => $invoiceDataProvider,
 			'studentDataProvider' => $studentDataProvider,
 			'paymentDataProvider' => $paymentDataProvider,
-			'openingBalancePaymentModel' => $openingBalancePaymentModel,
 			'openingBalanceDataProvider' => $openingBalanceDataProvider,
-			'remainingOpeningBalance' => $remainingOpeningBalance,
+			'openingBalanceCredit' => $openingBalanceCredit,
 			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
 			'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel
 		]);

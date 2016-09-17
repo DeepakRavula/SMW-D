@@ -10,16 +10,18 @@ use common\models\Payment;
 	])
 	?>
 </div>
-<?php if( ! empty($openingBalancePaymentModel->id)):?>
+<?php if( ! empty($openingBalanceCredit->id)):?>
+<?php $paymentModel = Payment::find()
+		->joinWith(['invoicePayment' => function($query) use($openingBalanceCredit){
+			$query->where(['invoice_id' => $openingBalanceCredit->id]);
+		}])
+		->one();
+?>
 <div class="p-t-20 p-b-20">
-	<div class="col-xs-2"><strong>Date:</strong> <?= Yii::$app->formatter->asDate($openingBalancePaymentModel->date);?></div>
+	<div class="col-xs-2"><strong>Date:</strong> <?= Yii::$app->formatter->asDate($paymentModel->date);?></div>
 	<div class="col-xs-3">
 	<strong>Opening Balance:</strong>
-	<?php if($remainingOpeningBalance > 0) :?>
-		<?= -abs($remainingOpeningBalance);?>
-	<?php else:?>
-	 <?= abs($remainingOpeningBalance);?>
-	<?php endif;?>
+	 <?= $openingBalanceCredit->balance;?>
 	</div>
 	<div class="clearfix"></div>
 </div>

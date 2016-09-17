@@ -15,12 +15,6 @@ $results = [];
 foreach($invoiceCredits as $invoiceCredit){
 $lastInvoicePayment = $invoiceCredit->invoicePayments;
 $lastInvoicePayment = end($lastInvoicePayment);
-$invoiceLineItem = InvoiceLineItem::findOne(['invoice_id' => $invoiceCredit->id]);
-if((int) $invoiceLineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE){
-	$source = 'Opening Balance Credit';
-} else {
-	$source = 'Invoice Credit';
-}
 $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$lastInvoicePayment->payment->date);
 $results[] = [
 	'id' => $invoiceCredit->getInvoiceNumber(),
@@ -28,7 +22,7 @@ $results[] = [
 	'total' => $invoiceCredit->total,
 	'paid' => $invoiceCredit->invoicePaymentTotal,
 	'owing' => -abs($invoiceCredit->invoiceBalance),
-	'source' => $source,
+	'source' => 'Invoice Credit',
 ];
 }
 
