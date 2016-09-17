@@ -274,7 +274,7 @@ class CourseController extends Controller
                 ->where(['courseId' => $model->id]),
         ]);
 
-		$this->layout = "/print-invoice";
+		$this->layout = "/print";
 		return $this->render('_print', [
 					'model' => $model,
 					'lessonDataProvider' => $lessonDataProvider
