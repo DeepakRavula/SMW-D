@@ -63,7 +63,8 @@
     "miloschuman/yii2-highcharts-widget": "*",
     "kartik-v/yii2-grid": "@dev",
     "kartik-v/yii2-editable": "*",
-    "kartik-v/yii2-datecontrol": "dev-master"
+    "kartik-v/yii2-datecontrol": "dev-master",
+    "2amigos/yii2-date-time-picker-widget": "~1.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",
