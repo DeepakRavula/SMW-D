@@ -100,16 +100,18 @@ class Course extends \yii\db\ActiveRecord
     {  
         $fromTime = \DateTime::createFromFormat('h:i A',$this->fromTime);
 		$this->fromTime = $fromTime->format('H:i');
-		$secs = strtotime($this->fromTime) - strtotime("00:00:00");
-		
+		$timebits = explode(':', $this->fromTime);
 		if((int) $this->program->type === Program::TYPE_GROUP_PROGRAM){
-        	$this->startDate = date("Y-m-d H:i:s",strtotime($this->startDate) + $secs);
-			$endDate = \DateTime::createFromFormat('d-m-Y', $this->endDate);
+			$startDate = new \DateTime($this->startDate);
+			$startDate->add(new \DateInterval('PT' . $timebits[0]. 'H' . $timebits[1] . 'M'));
+        	$this->startDate = $startDate->format('Y-m-d H:i:s');
+			$endDate = new \DateTime($this->endDate);
 			$this->endDate = $endDate->format('Y-m-d H:i:s');
 		} else {
 			$endDate = \DateTime::createFromFormat('d-m-Y', $this->startDate);
-			$this->startDate = date("Y-m-d H:i:s",strtotime($this->startDate) + $secs);
-			$secs = strtotime($this->duration) - strtotime("00:00:00");
+			$startDate = new \DateTime($this->startDate);
+			$startDate->add(new \DateInterval('PT' . $timebits[0]. 'H' . $timebits[1] . 'M'));
+        	$this->startDate = $startDate->format('Y-m-d H:i:s');
 			$endDate->add(new \DateInterval('P1Y'));
 			$this->endDate = $endDate->format('Y-m-d H:i:s');
 		}
