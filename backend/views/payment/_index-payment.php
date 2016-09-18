@@ -2,7 +2,9 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-
+use common\models\PaymentMethod;
+use common\models\InvoicePayment;
+use common\models\Invoice;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -26,7 +28,7 @@ if (!empty($dataProvider->getModels())) {
 			[
 				'label' => 'ID',
 				'value' => function($data){
-					return ! empty($data->invoicePayment->invoice->invoice_number) ? $data->invoicePayment->invoice->invoice_number : null;
+					return $data->invoicePayment->invoice->getInvoiceNumber();
 				}
 			],
 			[
@@ -50,7 +52,17 @@ if (!empty($dataProvider->getModels())) {
 			[
 				'label' => 'Reference Number',
 				'value' => function($data){
-					return $data->reference;
+					if((int) $data->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_USED){
+						$invoiceNumber = str_pad($data->reference, 5, 0, STR_PAD_LEFT);
+						$invoicePayment = InvoicePayment::findOne(['payment_id' => $data->id]);
+						if((int) $invoicePayment->invoice->type === Invoice::TYPE_INVOICE){
+							return 'I - ' . $invoiceNumber;
+						} else {
+							return 'P - ' . $invoiceNumber;
+						}
+					} else {
+						return $data->reference;
+					}
 				}
 			],
 			[

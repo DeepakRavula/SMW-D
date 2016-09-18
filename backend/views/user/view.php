@@ -113,9 +113,8 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		]);
 
 		$openingBalanceContent = $this->render('_opening-balance',[
-			'openingBalancePaymentModel' => $openingBalancePaymentModel,
 			'openingBalanceDataProvider' => $openingBalanceDataProvider,
-			'remainingOpeningBalance' => $remainingOpeningBalance,
+			'openingBalanceCredit' => $openingBalanceCredit,
 			'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel
 		]);
 

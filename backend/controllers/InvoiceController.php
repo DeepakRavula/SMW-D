@@ -155,6 +155,7 @@ class InvoiceController extends Controller {
 				$currentDate = new \DateTime();
 				$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
 				$paymentModel->amount = $paymentModel->amount;
+				$paymentModel->reference = $paymentModel->sourceId;
 				if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_APPLY_CREDIT){
 					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
 				}
@@ -186,19 +187,17 @@ class InvoiceController extends Controller {
 				$paymentModel->isNewRecord = true;	
 				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
 				$paymentModel->amount = -abs($paymentModel->amount);
-				if($paymentModel->sourceType == 'account_entry'){
-					$paymentModel->invoiceId = Payment::TYPE_OPENING_BALANCE_CREDIT;
-				}else{
-					$paymentModel->invoiceId = $paymentModel->sourceId;
-				}
+				$paymentModel->invoiceId = $paymentModel->sourceId;
+				$paymentModel->reference = $model->id;
 				$paymentModel->save();
+				
 				$debitPaymentId = $paymentModel->id;
 				$creditUsageModel = new CreditUsage();
 				$creditUsageModel->credit_payment_id = $creditPaymentId;  
 				$creditUsageModel->debit_payment_id = $debitPaymentId;
 				$creditUsageModel->save();
 
-				if($paymentModel->sourceType == 'invoice'){
+				if($paymentModel->sourceType != 'pro_forma_invoice'){
 					$invoiceModel = $this->findModel($paymentModel->sourceId);
 					$invoiceModel->balance = $invoiceModel->balance + abs($paymentModel->amount);
 					$invoiceModel->save();
