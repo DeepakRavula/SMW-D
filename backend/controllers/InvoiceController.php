@@ -276,7 +276,7 @@ class InvoiceController extends Controller {
 		if( ! empty($params['Invoice']['type'])){
 			$params['LessonSearch']['invoiceType'] = $params['Invoice']['type']; 
 		}
-		$dataProvider = $searchModel->search($params);	
+		$dataProvider = null;	
 		$invoice = new Invoice();
 		$request = Yii::$app->request;
 		$invoiceRequest = $request->get('Invoice');
@@ -284,7 +284,8 @@ class InvoiceController extends Controller {
 		$location_id = Yii::$app->session->get('location_id');
 		if (isset($invoiceRequest['customer_id'])) {
 			$customer = User::findOne(['id' => $invoiceRequest['customer_id']]);
-
+            $dataProvider = $searchModel->search($params);
+            
 			if (empty($customer)) {
 				throw new NotFoundHttpException('The requested page does not exist.');
 			}
