@@ -3,6 +3,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Program;
 use yii\widgets\Pjax;
+use dosamigos\datetimepicker\DateTimePicker;
 
 $this->title = 'Review Lessons';
 ?>
@@ -49,14 +50,32 @@ $this->title = 'Review Lessons';
 				'widgetClass'=> '\yii\jui\DatePicker',
     		],
 		],
-		
-		[
-			'label' => 'Time',
-			'value' => function($data) {
-				$time = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-				return $time->format('h:i A');
-			} 
-		],
+	[
+			'class'=>'kartik\grid\EditableColumn',
+			'attribute'=>'time',  
+			'value' => function ($model, $key, $index, $widget) {
+				$lessonTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date)->format('H:i:s');
+        		return Yii::$app->formatter->asTime($lessonTime);
+		    },
+			'headerOptions'=>['class'=>'kv-sticky-column'],
+			'contentOptions'=>['class'=>'kv-sticky-column'],
+			'editableOptions'=>[
+				'header'=>'Lesson Time', 
+				'size'=>'md',
+				'inputType'=>\kartik\editable\Editable::INPUT_WIDGET,
+				'widgetClass'=> 'dosamigos\datetimepicker\DateTimePicker',
+				'options' => [
+                    'clientOptions' => [
+						'startView' => 1,
+						'minView' => 0,
+						'maxView' => 1,
+						'pickDate' => false,
+						'autoclose' => true,
+						'format' => 'HH:ii P', 
+					]
+               	],
+    		],
+		],	
 		[
 			'label' => 'Conflict',
 			'value' => function($data) {
