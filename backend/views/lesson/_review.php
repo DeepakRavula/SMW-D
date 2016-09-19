@@ -4,7 +4,7 @@ use yii\bootstrap\ActiveForm;
 use common\models\Program;
 use yii\widgets\Pjax;
 use dosamigos\datetimepicker\DateTimePicker;
-
+use yii\helpers\Url;
 $this->title = 'Review Lessons';
 ?>
 <div class="user-details-wrapper">
@@ -37,50 +37,56 @@ $this->title = 'Review Lessons';
 	<div class="user-details-wrapper">
 	<?php
 	$columns = [
-		[
-			'class'=>'kartik\grid\EditableColumn',
-			'attribute'=>'date',    
-			'format'=>'date',
-			'headerOptions'=>['class'=>'kv-sticky-column'],
-			'contentOptions'=>['class'=>'kv-sticky-column'],
-			'editableOptions'=>[
-				'header'=>'Lesson Date', 
-				'size'=>'md',
-				'inputType'=>\kartik\editable\Editable::INPUT_WIDGET,
-				'widgetClass'=> '\yii\jui\DatePicker',
-    		],
-		],
-	[
-			'class'=>'kartik\grid\EditableColumn',
-			'attribute'=>'time',  
-			'value' => function ($model, $key, $index, $widget) {
-				$lessonTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date)->format('H:i:s');
-        		return Yii::$app->formatter->asTime($lessonTime);
-		    },
-			'headerOptions'=>['class'=>'kv-sticky-column'],
-			'contentOptions'=>['class'=>'kv-sticky-column'],
-			'editableOptions'=>[
-				'header'=>'Lesson Time', 
-				'size'=>'md',
-				'inputType'=>\kartik\editable\Editable::INPUT_WIDGET,
-				'widgetClass'=> 'dosamigos\datetimepicker\DateTimePicker',
-				'options' => [
-                    'clientOptions' => [
-						'startView' => 1,
-						'minView' => 0,
-						'maxView' => 1,
-						'pickDate' => false,
-						'autoclose' => true,
-						'format' => 'HH:ii P', 
-					]
-               	],
-    		],
-		],	
-		[
-			'label' => 'Conflict',
-			'value' => function($data) {
-			} 
-		],
+            [
+                'class'=>'kartik\grid\EditableColumn',
+                'attribute'=>'date',    
+                'format'=>'date',
+                'headerOptions'=>['class'=>'kv-sticky-column'],
+                'contentOptions'=>['class'=>'kv-sticky-column'],
+                'editableOptions'=> function ($model, $key, $index) {	
+                    return [
+                        'header'=>'Lesson Date', 
+                        'size'=>'md',
+                        'inputType'=>\kartik\editable\Editable::INPUT_WIDGET,
+                        'widgetClass'=> '\yii\jui\DatePicker',
+                        'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                    ];
+                }
+            ],
+            [
+                'class'=>'kartik\grid\EditableColumn',
+                'attribute'=>'time',  
+                'value' => function ($model, $key, $index, $widget) {
+                    $lessonTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date)->format('H:i:s');
+                    return Yii::$app->formatter->asTime($lessonTime);
+                 },
+                'headerOptions'=>['class'=>'kv-sticky-column'],
+                'contentOptions'=>['class'=>'kv-sticky-column'],
+                'editableOptions'=> function ($model, $key, $index) {	
+                    return [
+                        'header'=>'Lesson Time', 
+                        'size'=>'md',
+                        'inputType'=>\kartik\editable\Editable::INPUT_WIDGET,
+                        'widgetClass'=> 'dosamigos\datetimepicker\DateTimePicker',
+                        'options' => [
+                            'clientOptions' => [
+                                'startView' => 1,
+                                'minView' => 0,
+                                'maxView' => 1,
+                                'pickDate' => false,
+                                'autoclose' => true,
+                                'format' => 'HH:ii P', 
+                            ]
+                        ],
+                        'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                    ];
+                }
+            ],	
+            [
+                'label' => 'Conflict',
+                'value' => function($data) {
+                } 
+            ],
 	];?>
 	<?php Pjax::begin(); ?>
     <?= \kartik\grid\GridView::widget([
