@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Blogs';
-$this->params['subtitle'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Create', ['create'], ['class' => 'btn btn-primary btn-sm']);
+$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Create', ['create'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="blog-index p-20">

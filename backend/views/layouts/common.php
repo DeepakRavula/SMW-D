@@ -413,10 +413,10 @@ $bundle = BackendAsset::register($this);
                     <?php endif; ?>
                     <?php echo $this->title ?>
                     
-                    <?php if (isset($this->params['subtitle'])): ?>
+                    <?php if (isset($this->params['action-button'])): ?>
                         
                         <div class="pull-right m-r-10">
-                            <?php echo $this->params['subtitle']; ?>
+                            <?php echo $this->params['action-button']; ?>
                         </div>
                     <?php endif; ?>
                     <div class="clearfix"></div>

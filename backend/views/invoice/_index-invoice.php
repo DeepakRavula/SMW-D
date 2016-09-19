@@ -10,7 +10,7 @@ use backend\models\search\InvoiceSearch;
 /* @var $searchModel backend\models\search\InvoiceSearch */
 
 $this->title = (int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoices' : 'Invoices';
-$this->params['subtitle'] = (int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['invoice/create', 'Invoice[type]' => $searchModel->type], ['class' => 'btn btn-primary btn-sm']) : Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['invoice/blank-invoice',], ['class' => 'btn btn-primary btn-sm']); 
+$this->params['action-button'] = (int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['invoice/create', 'Invoice[type]' => $searchModel->type], ['class' => 'btn btn-primary btn-sm']) : Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['invoice/blank-invoice',], ['class' => 'btn btn-primary btn-sm']); 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-index p-10">
