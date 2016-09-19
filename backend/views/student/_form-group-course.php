@@ -85,9 +85,9 @@ use yii\helpers\Html;
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
-	$('.courseId').on('change', function(){
+	$('#group-course').on('change', '.courseId', function(){
 		var checked = $(this).prop('checked');
-		$('.courseId').prop('checked', false);
+		$('#group-course .courseId').prop('checked', false);
 
 		if(checked) {
 			$(this).prop('checked', true);
