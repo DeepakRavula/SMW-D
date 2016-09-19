@@ -18,6 +18,13 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
+
+use IntervalTree\IntervalTree;
+use IntervalTree\DateRangeInclusive;
+use IntervalTree\NumericRangeInclusive;
+use IntervalTree\DateRangeExclusive;
+use IntervalTree\NumericRangeExclusive;
+
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -175,10 +182,29 @@ class LessonController extends Controller
 		 	echo $result;
 		 	return;
 		}	
-		$lessonDataProvider = new ActiveDataProvider([
-			'query' => Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),
-		]);
+
+		$draftLessons = Lesson::find()
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+				->all();
+
+		$leaveDays = [];
+		$otherEnrolments = [];
+		$teacherLessons = [];
+		$professionalDevelopmentDays = [];
+		
+
+		$intervals = [
+			new DateRangeExclusive(new \DateTime('last friday'), new \DateTime('next friday')),
+			new DateRangeExclusive(new \DateTime('last thursday'), new \DateTime('last sunday')),
+		];
+
+		$tree = new IntervalTree($intervals);
+
+		foreach($draftLessons as $draftLesson) {
+			$results = $tree->search(new \DateTime($draftLesson->date));
+		}
+
+		echo count($results);die;
 		
 		return $this->render('_review', [				
 				'courseModel' => $courseModel,
