@@ -51,16 +51,14 @@ class EnrolmentController extends Controller
      */
     public function actionView($id)
     {
-        $model = $this->findModel($id);
-        $courseModel = Course::findOne(['id' => $model->courseId]);
+        $model = $this->findModel($id);        
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),                
+                ->where(['courseId' => $model->course->id]),                
         ]);        
        
         return $this->render('view', [ 
-                'model' => $model,
-                'courseModel' => $courseModel,
+                'model' => $model,                
                 'lessonDataProvider' => $lessonDataProvider,
             ]); 
     }
@@ -132,11 +130,10 @@ class EnrolmentController extends Controller
     }
     
     public function actionSendMail($id) {
-		$model = $this->findModel($id);
-        $courseModel = Course::findOne(['id' => $model->courseId]);
+		$model = $this->findModel($id);        
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->where(['courseId' => $courseModel->id]), 
+                ->where(['courseId' => $model->course->id]), 
             'pagination' => [
                 'pageSize' => 60,
              ],
@@ -164,5 +161,5 @@ class EnrolmentController extends Controller
 			]);	
 		}
 		return $this->redirect(['view', 'id' => $model->id]);
-	}
+	} 
 }
