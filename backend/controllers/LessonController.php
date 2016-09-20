@@ -18,7 +18,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
-
+use common\models\Holiday;
 use IntervalTree\IntervalTree;
 use IntervalTree\DateRangeInclusive;
 use IntervalTree\NumericRangeInclusive;
@@ -183,28 +183,26 @@ class LessonController extends Controller
 		 	return;
 		}	
 
+		$holidays = Holiday::find()
+			->all();
 		$draftLessons = Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
 				->all();
 
-		$leaveDays = [];
 		$otherEnrolments = [];
 		$teacherLessons = [];
 		$professionalDevelopmentDays = [];
-		
-
-		$intervals = [
-			new DateRangeExclusive(new \DateTime('last friday'), new \DateTime('next friday')),
-			new DateRangeExclusive(new \DateTime('last thursday'), new \DateTime('last sunday')),
-		];
-
-		$tree = new IntervalTree($intervals);
-
-		foreach($draftLessons as $draftLesson) {
-			$results = $tree->search(new \DateTime($draftLesson->date));
+	
+		$intervals = [];
+		foreach($holidays as $holiday){
+			$intervals[] = new DateRangeInclusive(new \DateTime($holiday->date), new \DateTime($holiday->date));
 		}
-
-		echo count($results);die;
+		$tree = new IntervalTree($intervals);
+		$results = [];
+		foreach($draftLessons as $draftLesson) {
+			$results[$draftLesson->id]['Holiday'] = $tree->search(new \DateTime($draftLesson->date));
+		}
+	
 		
 		return $this->render('_review', [				
 				'courseModel' => $courseModel,
