@@ -4,6 +4,9 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Enrolment;
+use common\models\Course;
+use common\models\Lesson;
+use yii\data\ActiveDataProvider;
 use backend\models\search\EnrolmentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -48,9 +51,18 @@ class EnrolmentController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $model = $this->findModel($id);
+        $courseModel = Course::findOne(['id' => $model->courseId]);
+        $lessonDataProvider = new ActiveDataProvider([
+            'query' => Lesson::find()
+                ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),                
+        ]);        
+       
+        return $this->render('view', [ 
+                'model' => $model,
+                'courseModel' => $courseModel,
+                'lessonDataProvider' => $lessonDataProvider,
+            ]); 
     }
 
     /**
