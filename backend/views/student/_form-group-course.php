@@ -26,6 +26,7 @@ use yii\helpers\Html;
 				'class' => 'yii\grid\CheckboxColumn',
 				'multiple' => false,
 				'name' => 'courseId',
+                'checkboxOptions' => ['class' => 'courseId' ], 
 				// you may configure additional properties here
 			],
 			[
@@ -78,7 +79,28 @@ use yii\helpers\Html;
     ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 	<div class="form-group">
-		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary group-course-save', 'name' => 'signup-button']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#group-course').on('change', '.courseId', function(){
+		var checked = $(this).prop('checked');
+		$('#group-course .courseId').prop('checked', false);
+
+		if(checked) {
+			$(this).prop('checked', true);
+		} else {
+			$(this).prop('checked', false);
+		}
+	});
+    $('.group-course-save').on('click', function(event){
+        var count = $(".courseId:checked").length;
+        if(count==0){
+            event.preventDefault();
+            $('#notification').html("No group course selected").fadeIn().delay(1000).fadeOut();
+        }
+    });
+});
+</script>
