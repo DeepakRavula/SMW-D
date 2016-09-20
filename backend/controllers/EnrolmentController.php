@@ -140,7 +140,7 @@ class EnrolmentController extends Controller
         ]);
 		$subject = 'Schedule for ' . $model->student->fullName;
 		if(! empty($model->student->customer->email)){
-			Yii::$app->mailer->compose('lessonSchedule', [
+			Yii::$app->mailer->compose('lesson-schedule', [
 				'model' => $model,
 				'toName' => $model->student->customer->publicidentity,
 				'lessonDataProvider' => $lessonDataProvider,
