@@ -4,12 +4,14 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Program;
 use common\models\Lesson;
+use common\models\PrivateLesson;
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
 
 $this->title = 'Lesson Details';
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index','LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
+
 <div class="lesson-view">
 	<div class="row-fluid user-details-wrapper">
     <div class="col-md-12 p-t-10">
@@ -49,8 +51,18 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		<?php endif;?>
 		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		</div>
+		<?php echo Html::a('<i class="fa fa-plus"></i> qualify for reschedule', ['missed', 'id' => $model->id], ['class' => 'eligible']) ?>
 		<?php endif;?>
 
 <div class="clearfix"></div>
 </div>
 </div>
+
+<script>
+ $(document).ready(function() {
+     $('.eligible').click(function(){
+       $('.lesson-qualify').show();
+   });
+ });
+</script>
+

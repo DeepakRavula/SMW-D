@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Lesson;
+use common\models\PrivateLesson;
 use common\models\Enrolment;
 use common\models\Program;
 use common\models\Course;
@@ -139,6 +140,28 @@ class LessonController extends Controller
 			throw new NotFoundHttpException('The requested page does not exist.');
 		}
 	}
+
+	public function actionMissed($id)
+    {
+        $model = $this->findModel($id);
+		$privateLessonModel = new PrivateLesson(); 
+		
+		if ($privateLessonModel->load(Yii::$app->request->post())) {
+			$privateLessonModel->lessonId = $id;
+			$privateLessonModel->expiryDate = $model->date ;
+			$privateLessonModel->isEligible = 1;
+			$privateLessonModel->save();
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Eligiblity added successfully'
+            ]);
+            return $this->redirect(['view', 'id' => $id]);   
+		}
+        return $this->render('_form-private-lesson-reschedule', [
+            'model' => $model,
+			'privateLessonModel' => $privateLessonModel, 
+        ]);
+    }
 
 	public function actionReview($courseId){		
 		$courseModel = Course::findOne(['id' => $courseId]);
