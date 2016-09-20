@@ -36,7 +36,9 @@ $this->title = $model->student->fullName;
     <div class="clearfix"></div>
 </div>
 </div>
-<div class="row-fluid">
+<div class="row-fluid p-10">
+    
     <?= Html::a('<i class="fa fa-print"></i> Print', ['course/print', 'id' => $courseModel->id], ['class' => 'btn btn-default pull-left', 'target'=>'_blank',]) ?>  
+    <?= Html::a('<i class="fa fa-envelope-o"></i> Email Lessons', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-left  m-l-20',]) ?>  
     <div class="clearfix"></div>
 </div>

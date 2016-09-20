@@ -130,4 +130,39 @@ class EnrolmentController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionSendMail($id) {
+		$model = $this->findModel($id);
+        $courseModel = Course::findOne(['id' => $model->courseId]);
+        $lessonDataProvider = new ActiveDataProvider([
+            'query' => Lesson::find()
+                ->where(['courseId' => $courseModel->id]), 
+            'pagination' => [
+                'pageSize' => 60,
+             ],
+        ]);
+		$subject = 'Schedule for ' . $model->student->fullName;
+		if(! empty($model->student->customer->email)){
+			Yii::$app->mailer->compose('lessonSchedule', [
+				'model' => $model,
+				'toName' => $model->student->customer->publicidentity,
+				'lessonDataProvider' => $lessonDataProvider,
+			])
+				->setFrom(\Yii::$app->params['robotEmail'])
+				->setTo($model->student->customer->email)
+				->setSubject($subject)
+				->send();
+
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => ' Mail has been send successfully'
+			]);
+		}else{
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-danger'],
+				'body' => 'The customer doesn\'t have email id' 
+			]);	
+		}
+		return $this->redirect(['view', 'id' => $model->id]);
+	}
 }
