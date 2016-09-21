@@ -16,18 +16,10 @@ foreach ($roleNames as $name => $description) {
 		$roleName = $description;
 	}
 } 
-$this->params['subtitle'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
+$this->title = $model->publicIdentity . ' - ' . ucwords($searchModel->role_name);
+$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
-    <div class="title">
-        <p class="users-name pull-left"><?php echo!empty($model->userProfile->firstname) ? $model->userProfile->firstname : null ?>
-            <?php echo!empty($model->userProfile->lastname) ? $model->userProfile->lastname : null ?> 
-             <em>
-                <small><?php echo !empty($model->email) ? $model->email : null ?></small>
-            </em> 
-        </p>
-    </div>
-        <div class="clearfix"></div>
 		<div class="row-fluid"><?php if(! empty($model->userProfile->notes)) :?>
 			<h5 class="m-0"><em><i class="fa fa-info-circle"></i> Notes:
 				<?php echo ! empty($model->userProfile->notes) ? $model->userProfile->notes : null; ?></em>

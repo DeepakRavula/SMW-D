@@ -11,7 +11,7 @@ use common\models\Course;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Group Courses';
-$this->params['subtitle'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']); 
+$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']); 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <style>
