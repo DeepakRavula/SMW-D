@@ -269,6 +269,12 @@ class InvoiceController extends Controller {
 	 */
 	public function actionCreate() {
 		$searchModel = new LessonSearch();
+        $previousMonth = new \DateTime();
+        $previousMonth->modify('first day of this month');
+		$searchModel->fromDate = $previousMonth->format('d-m-Y');
+        $currentMonth = new \DateTime();
+        $currentMonth->modify('last day of next month');
+        $searchModel->toDate = $currentMonth->format('d-m-Y');
 		$params = Yii::$app->request->queryParams;
 		if( ! empty($params['Invoice']['customer_id'])){
 			$params['LessonSearch']['customerId'] = $params['Invoice']['customer_id']; 
