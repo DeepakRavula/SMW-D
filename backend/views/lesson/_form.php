@@ -51,6 +51,7 @@ use yii\helpers\Url;
         ]);
         ?>
         </div>
+		<?php endif;?>
 		<div class="col-md-4">
             <?php 
               if($model->isNewRecord){
@@ -70,7 +71,6 @@ use yii\helpers\Url;
             ]);
             ?>
         </div>
-		<?php endif;?>
         <div class="col-md-4">			
 			<?php echo $form->field($model, 'status')->dropDownList(Lesson::lessonStatuses()) ?>
 		</div>

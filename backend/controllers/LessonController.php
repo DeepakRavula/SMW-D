@@ -159,7 +159,7 @@ class LessonController extends Controller
 					
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
-				'body' => 'Missed Lesson added successfully'
+				'body' => 'Lesson has been marked as missed successfully'
             ]);
             return $this->redirect(['view', 'id' => $model->id]);   
 		}

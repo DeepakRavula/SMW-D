@@ -10,13 +10,11 @@ use kartik\datetime\DateTimePicker;
 ?>
 <div class="lesson-qualify p-10">
 
-<?php if(Yii::$app->controller->id === 'lesson'): ?>
 	<?=
 		$this->render('view', [
     		'model' => $model,
     	]);
 	?>
-<?php endif;?>
 <?php $this->title = 'Missed Lesson';?>
 
 <?php $form = ActiveForm::begin(); ?>
@@ -24,7 +22,7 @@ use kartik\datetime\DateTimePicker;
 		<div class="col-xs-4">
 			<?php
 			    $date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-			    $date->modify('90 days');
+			    $date->add(new DateInterval('P3M'));
 			    $expiryDate = $date->format('d-m-Y');?>
 			
 			<?= $form->field($privateLessonModel, 'isEligible')->checkbox();?>
