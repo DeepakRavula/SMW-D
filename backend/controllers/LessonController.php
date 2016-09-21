@@ -186,8 +186,8 @@ class LessonController extends Controller
 		$holidays = Holiday::find()
 			->all();
 		$draftLessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
-				->all();
+			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+			->all();
 
 		$otherEnrolments = [];
 		$teacherLessons = [];
@@ -198,8 +198,13 @@ class LessonController extends Controller
 			$holidayIntervals[] = new DateRangeInclusive(new \DateTime($holiday->date), new \DateTime($holiday->date));
 		}
 		$tree = new IntervalTree($holidayIntervals);
-		$results = [];
+		$searchLessons = [];
 		foreach($draftLessons as $draftLesson) {
+			$searchLessons[] = [
+				'id' => $draftLesson->id,
+				'type' => 'holiday',
+				'data' => $tree->search(new \DateTime($draftLesson->date)),
+			];
 			$results[$draftLesson->id]['holiday'] = $tree->search(new \DateTime($draftLesson->date));
 		}
 		if((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM){	
@@ -222,16 +227,25 @@ class LessonController extends Controller
 				$studentGroupLessonIntervals[] = new DateRangeInclusive(new \DateTime($studentGroupLesson->date), new \DateTime($studentGroupLesson->date), new \DateInterval('PT' . $timebits[1] .'M'));
 			}
 			$tree = new IntervalTree($studentGroupLessonIntervals);
-			$results = [];
 			foreach($draftLessons as $draftLesson) {
-				$results[$draftLesson->id]['group_lesson'] = $tree->search(new \DateTime($draftLesson->date));
+				$searchLessons[] = [
+					'id' => $draftLesson->id,
+					'type' => 'group_lesson',
+					'data' => $tree->search(new \DateTime($draftLesson->date)),
+				];
 			}
+			print_r($searchLessons);die;
 		}
 		
+		$lessonDataProvider = new ActiveDataProvider([
+            'query' => Lesson::find()
+                ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),
+        ]);
 		return $this->render('_review', [				
 				'courseModel' => $courseModel,
 				'courseId' => $courseId,
                 'lessonDataProvider' => $lessonDataProvider,
+				'searchLessons' => $searchLessons 
             ]);	
 	}
 
