@@ -147,8 +147,42 @@ class LessonController extends Controller
 		}
 	}
 
+    public function actionUpdateField($id){
+        if (Yii::$app->request->post('hasEditable')) {
+            $lessonIndex = Yii::$app->request->post('editableIndex');
+            $model = Lesson::findOne(['id' => $id]);
+            $result = Json::encode(['output'=>'', 'message'=>'']);
+            $post = Yii::$app->request->post();
+            if(isset($post['Lesson'][$lessonIndex]['date'])){
+                $existingDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+                $lessonTime = $existingDate->format('H:i:s');
+                $timebits = explode(":", $lessonTime);
+                $changedDate = new \DateTime($post['Lesson'][$lessonIndex]['date']);
+                $changedDate->add(new \DateInterval('PT' . $timebits[0]. 'H' . $timebits[1] . 'M'));
+                $model->date = $changedDate->format('Y-m-d H:i:s');
+                $output = Yii::$app->formatter->asDate($model->date);
+            }
+            if(isset($post['Lesson'][$lessonIndex]['time'])){
+                $existingDate = (new \DateTime($model->date))->format('Y-m-d');
+                $existingDate = new \DateTime($existingDate);
+                $changedTime = new \DateTime($post['Lesson'][$lessonIndex]['time']);
+                $lessonTime = $changedTime->format('H:i:s');
+                $timebits = explode(":", $lessonTime);
+                $existingDate->add(new \DateInterval('PT' . $timebits[0]. 'H' . $timebits[1] . 'M'));
+                $model->date = $existingDate->format('Y-m-d H:i:s');
+                $newTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+                $output = Yii::$app->formatter->asTime($newTime);
+            }
+
+            $model->save();
+            $result = Json::encode(['output'=>$output, 'message'=>'']);
+            echo $result;
+            return;
+        }	
+    }
 	public function actionReview($courseId){		
 		$courseModel = Course::findOne(['id' => $courseId]);
+    	
     	if (Yii::$app->request->post('hasEditable')) {
         	$lessonId = Yii::$app->request->post('editableKey');
         	$lessonIndex = Yii::$app->request->post('editableIndex');

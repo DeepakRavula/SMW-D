@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\filters\AccessControl;
+use common\models\Program;
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
@@ -71,15 +72,28 @@ class ScheduleController extends Controller
             ->join('Join', 'program p', 'p.id = c.programId')
             ->where(['not', ['l.status'  =>  [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->andWhere(['l.isDeleted'  => false])
+            ->andWhere(['p.type'  => Program::TYPE_PRIVATE_PROGRAM])
             ->andWhere('c.locationId = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
             ->all();
-		foreach ($events as &$event) {
-			$start = new \DateTime($event['start']);	
-			$event['start'] = $start->format('Y-m-d H:i:s');	
-			$end = new \DateTime($event['end']);	
-			$event['end'] = $end->format('Y-m-d H:i:s');
-		}
-		unset($event);
+        
+        $groupLessonEvents = (new \yii\db\Query())
+            ->select(['l.teacherId as resources', 'l.id as id', 'p.name as title, c.day, l.date as start, ADDTIME(l.date, c.duration) as end'])
+            ->from('lesson l')
+            ->join('Join', 'course c', 'c.id = l.courseId')
+            ->join('Join', 'program p', 'p.id = c.programId')
+            ->where(['not', ['l.status'  =>  [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+            ->andWhere(['p.type'  => Program::TYPE_GROUP_PROGRAM])
+            ->andWhere(['l.isDeleted'  => false])
+            ->andWhere('c.locationId = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+            ->all();
+        $events = array_merge($events, $groupLessonEvents);
+        foreach ($events as &$event) {
+                $start = new \DateTime($event['start']);	
+                $event['start'] = $start->format('Y-m-d H:i:s');	
+                $end = new \DateTime($event['end']);	
+                $event['end'] = $end->format('Y-m-d H:i:s');
+        }
+        unset($event);
 
         $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 		

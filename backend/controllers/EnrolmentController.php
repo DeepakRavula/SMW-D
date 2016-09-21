@@ -4,6 +4,9 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Enrolment;
+use common\models\Course;
+use common\models\Lesson;
+use yii\data\ActiveDataProvider;
 use backend\models\search\EnrolmentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -48,9 +51,16 @@ class EnrolmentController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $model = $this->findModel($id);        
+        $lessonDataProvider = new ActiveDataProvider([
+            'query' => Lesson::find()
+                ->where(['courseId' => $model->course->id]),                
+        ]);        
+       
+        return $this->render('view', [ 
+                'model' => $model,                
+                'lessonDataProvider' => $lessonDataProvider,
+            ]); 
     }
 
     /**
@@ -118,4 +128,38 @@ class EnrolmentController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionSendMail($id) {
+		$model = $this->findModel($id);        
+        $lessonDataProvider = new ActiveDataProvider([
+            'query' => Lesson::find()
+                ->where(['courseId' => $model->course->id]), 
+            'pagination' => [
+                'pageSize' => 60,
+             ],
+        ]);
+		$subject = 'Schedule for ' . $model->student->fullName;
+		if(! empty($model->student->customer->email)){
+			Yii::$app->mailer->compose('lesson-schedule', [
+				'model' => $model,
+				'toName' => $model->student->customer->publicidentity,
+				'lessonDataProvider' => $lessonDataProvider,
+			])
+				->setFrom(\Yii::$app->params['robotEmail'])
+				->setTo($model->student->customer->email)
+				->setSubject($subject)
+				->send();
+
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => ' Mail has been send successfully'
+			]);
+		}else{
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-danger'],
+				'body' => 'The customer doesn\'t have email id' 
+			]);	
+		}
+		return $this->redirect(['view', 'id' => $model->id]);
+	} 
 }

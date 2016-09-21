@@ -8,7 +8,7 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Professional Development Days';
-$this->params['subtitle'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i>'), ['create'],['class' => 'btn btn-success pull-left']);
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i>'), ['create'],['class' => 'btn btn-success pull-left']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="professional-development-day-index">

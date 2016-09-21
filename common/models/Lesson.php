@@ -181,7 +181,7 @@ class Lesson extends \yii\db\ActiveRecord
         $subject = Yii::$app->name . ' - ' . $program->name 
 				. ' lesson rescheduled from ' . $fromDate->format('d-m-Y h:i a') . ' to ' . $toDate->format('d-m-Y h:i a');
 
-		Yii::$app->mailer->compose('lessonReschedule', [
+		Yii::$app->mailer->compose('lesson-reschedule', [
 			'program' => $program->name,
 			'toName' => $user->userProfile->firstname,
 			'fromDate' => $fromDate->format('d-m-Y h:i a'),
