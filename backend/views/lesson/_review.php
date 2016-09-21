@@ -79,6 +79,7 @@ $this->title = 'Review Lessons';
 		[
 			'label' => 'Conflict',
 			'value' => function($data) {
+				return $data->conflict;
 			} 
 		],
 	];?>
@@ -99,10 +100,10 @@ $this->title = 'Review Lessons';
 		],
     ]) ?> 
         <?php if((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>
-		<?= Html::a('Cancel', ['student/view','id' => $courseModel->enrolment->studentId], ['class'=>'btn']); 	
+			<?= Html::a('Cancel', ['student/view','id' => $courseModel->enrolment->studentId], ['class'=>'btn']); 	
 		?>
         <?php else :?>
-        <?= Html::a('Cancel', ['course/view','id' => $courseModel->id], ['class'=>'btn']); 	
+        	<?= Html::a('Cancel', ['course/view','id' => $courseModel->id], ['class'=>'btn']); 	
 		?>
        <?php endif; ?>
     </div>
