@@ -24,7 +24,6 @@ use IntervalTree\DateRangeInclusive;
 use IntervalTree\NumericRangeInclusive;
 use IntervalTree\DateRangeExclusive;
 use IntervalTree\NumericRangeExclusive;
-use yii\data\ArrayDataProvider;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -150,7 +149,6 @@ class LessonController extends Controller
 
 	public function actionReview($courseId){		
 		$courseModel = Course::findOne(['id' => $courseId]);
-		$lessons = Lesson::findAll(['courseId' => $courseId, 'status' => Lesson::STATUS_DRAFTED]);
     	if (Yii::$app->request->post('hasEditable')) {
         	$lessonId = Yii::$app->request->post('editableKey');
         	$lessonIndex = Yii::$app->request->post('editableIndex');
@@ -232,19 +230,11 @@ class LessonController extends Controller
 					'data' => $tree->search(new \DateTime($draftLesson->date)),
 				];
 			}
-			foreach($lessons as $lesson){
-			foreach($searchLessons as $searchLesson){
-				if(($searchLesson['id'] == $lesson->id) && ( ! empty ($searchLesson['data']))){
-					$lesson->conflict = $searchLesson['type'];
-					$lesson->save();
-				}
-			}
-			}
 		}
-		$lessonDataProvider = new ArrayDataProvider([
-    'allModels' => $lessons,
-    
-]);	
+		$lessonDataProvider = new ActiveDataProvider([
+		    'query' => Lesson::find()
+            ->where(['courseId' => $courseId, 'status' => Lesson::STATUS_DRAFTED]),
+		]);	
 		
 		return $this->render('_review', [				
 				'courseModel' => $courseModel,

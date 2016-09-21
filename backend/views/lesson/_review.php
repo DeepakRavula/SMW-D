@@ -1,9 +1,7 @@
 <?php
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
 use common\models\Program;
 use yii\widgets\Pjax;
-use dosamigos\datetimepicker\DateTimePicker;
 
 $this->title = 'Review Lessons';
 ?>
@@ -78,12 +76,16 @@ $this->title = 'Review Lessons';
 		],	
 		[
 			'label' => 'Conflict',
-			'value' => function($data) {
-				return $data->conflict;
+			'value' => function($data) use($searchLessons) {
+				foreach($searchLessons as $searchLesson){
+					if(((int) $searchLesson['id'] === (int)$data->id) && ( ! empty ($searchLesson['data']))){
+						return $searchLesson['type'];
+					}
+				}
 			} 
 		],
 	];?>
-	<?php Pjax::begin(); ?>
+	<?php Pjax::begin() ?>
     <?= \kartik\grid\GridView::widget([
 		'dataProvider'=>$lessonDataProvider,
 		'columns'=>$columns

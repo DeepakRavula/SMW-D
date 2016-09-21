@@ -5,7 +5,6 @@ namespace common\models;
 use Yii;
 use common\models\InvoiceLineItem;
 use common\models\LessonReschedule;
-use common\models\query\LessonQuery;
 use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 /**
  * This is the model class for table "lesson".
@@ -28,7 +27,6 @@ class Lesson extends \yii\db\ActiveRecord
 	const STATUS_CANCELED = 4;
 
 	public $programId;
-	public $conflict;
     public $time;
     public $hours;
     public $program_name;
