@@ -199,6 +199,8 @@ class LessonController extends Controller
 			$holidayResults[$draftLesson->id]['holiday'] = $tree->search(new \DateTime($draftLesson->date));
 		}
 		
+		$studentGroupLessonResults = [];
+
 		if((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM){	
 			$studentModel = Student::findOne(['id' => $courseModel->enrolment->studentId]);
 			$locationId = Yii::$app->session->get('location_id');
@@ -219,7 +221,6 @@ class LessonController extends Controller
 				$studentGroupLessonIntervals[] = new DateRangeInclusive(new \DateTime($studentGroupLesson->date), new \DateTime($studentGroupLesson->date), new \DateInterval('PT' . $timebits[1] .'M'));
 			}
 			$tree = new IntervalTree($studentGroupLessonIntervals);
-			$studentGroupLessonResults = [];
 			foreach($draftLessons as $draftLesson) {
 				$studentGroupLessonResults[$draftLesson->id]['group_lesson'] = $tree->search(new \DateTime($draftLesson->date));
 			}
