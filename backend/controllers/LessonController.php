@@ -144,19 +144,26 @@ class LessonController extends Controller
 	public function actionMissed($id)
     {
         $model = $this->findModel($id);
-		$privateLessonModel = new PrivateLesson(); 
 		
-		if ($privateLessonModel->load(Yii::$app->request->post())) {
-			$privateLessonModel->lessonId = $id;
-			$privateLessonModel->expiryDate = $model->date ;
-			$privateLessonModel->isEligible = 1;
+		$privateLessonModel = new PrivateLesson(); 
+		if ($privateLessonModel->load(Yii::$app->request->post()) ) {
+			$privateLessonModel->lessonId = $model->id;
+			$expiryDate = \DateTime::createFromFormat('d-m-Y g:i A', $privateLessonModel->expiryDate);
+			$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
 			$privateLessonModel->save();
+		}
+		if($model->load(Yii::$app->request->post())){	
+			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+			$model->date = $lessonDate->format('Y-m-d H:i:s');
+			$model->save();
+					
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
-				'body' => 'Eligiblity added successfully'
+				'body' => 'Missed Lesson added successfully'
             ]);
-            return $this->redirect(['view', 'id' => $id]);   
+            return $this->redirect(['view', 'id' => $model->id]);   
 		}
+		
         return $this->render('_form-private-lesson-reschedule', [
             'model' => $model,
 			'privateLessonModel' => $privateLessonModel, 
