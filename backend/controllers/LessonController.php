@@ -149,7 +149,6 @@ class LessonController extends Controller
 
 	public function actionReview($courseId){		
 		$courseModel = Course::findOne(['id' => $courseId]);
-		$studentModel = Student::findOne(['id' => $courseModel->enrolment->studentId]);
     	if (Yii::$app->request->post('hasEditable')) {
         	$lessonId = Yii::$app->request->post('editableKey');
         	$lessonIndex = Yii::$app->request->post('editableIndex');
@@ -203,27 +202,30 @@ class LessonController extends Controller
 		foreach($draftLessons as $draftLesson) {
 			$results[$draftLesson->id]['holiday'] = $tree->search(new \DateTime($draftLesson->date));
 		}
-	
-		$locationId = Yii::$app->session->get('location_id');
-		
-		$studentGroupLessons = Lesson::find()
-		    ->notDeleted()
-		    ->joinWith(['course' => function($query) use($locationId, $studentModel){
-			    $query->joinWith(['enrolment' => function($query) use($studentModel){
-				    $query->where(['studentId' => $studentModel->id]);
+		if((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM){	
+			$studentModel = Student::findOne(['id' => $courseModel->enrolment->studentId]);
+			$locationId = Yii::$app->session->get('location_id');
+			$studentGroupLessons = Lesson::find()
+			    ->notDeleted()
+			    ->joinWith(['course' => function($query) use($locationId, $studentModel){
+				    $query->joinWith(['enrolment' => function($query) use($studentModel){
+					    $query->where(['studentId' => $studentModel->id]);
+				    }])
+				    ->groupProgram($locationId);
 			    }])
-			    ->groupProgram($locationId);
-		    }])
-			->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
-			->all();
-		    
-		$studentGroupLessonsIntervals = [];
-		foreach($studentGroupLessons as $studentGroupLesson){
-			$studentGroupLessonsIntervals[] = new \DateTime($studentGroupLesson->date);
-		}
-		$range = new DateRangeInclusive($studentGroupLessonsIntervals[0],end($studentGroupLessonsIntervals), new \DateInterval('PT30M'));
-		foreach ($range->iterable() as $value) {
-			$results[$draftLesson->id]['group_lesson'] = assertEquals(array_shift($studentGroupLessonsIntervals), $value);
+				->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
+				->all();
+		
+			$timebits  = explode(':', $courseModel->duration);
+			$studentGroupLessonIntervals = [];
+			foreach($studentGroupLessons as $studentGroupLesson){
+				$studentGroupLessonIntervals[] = new DateRangeInclusive(new \DateTime($studentGroupLesson->date), new \DateTime($studentGroupLesson->date), new \DateInterval('PT' . $timebits[1] .'M'));
+			}
+			$tree = new IntervalTree($studentGroupLessonIntervals);
+			$results = [];
+			foreach($draftLessons as $draftLesson) {
+				$results[$draftLesson->id]['group_lesson'] = $tree->search(new \DateTime($draftLesson->date));
+			}
 		}
 		
 		return $this->render('_review', [				
