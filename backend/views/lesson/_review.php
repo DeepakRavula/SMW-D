@@ -100,6 +100,18 @@ $this->title = 'Review Lessons';
 	<?php Pjax::begin() ?>
     <?= \kartik\grid\GridView::widget([
 		'dataProvider'=>$lessonDataProvider,
+		'rowOptions' => function ($model, $key, $index, $grid) use($studentGroupLessonResults, $holidayResults) {
+			foreach($studentGroupLessonResults as $key => $studentGroupLessonResult){
+					if(((int) $key === (int)$model->id) && ( ! empty ($studentGroupLessonResult['group_lesson']))){
+						return ['class' => 'danger']; 
+					}
+				}
+				foreach($holidayResults as $key => $holidayResults){
+					if(((int) $key === (int)$model->id) && ( ! empty ($holidayResults['holiday']))){
+						return ['class' => 'danger']; 
+					}
+				}
+			},
 		'pjax' => true,
 		'pjaxSettings'=>[
         	'neverTimeout'=>true,
