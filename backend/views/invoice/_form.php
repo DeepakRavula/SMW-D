@@ -47,7 +47,7 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
 <div class="clearfix"></div>
 	 <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
 <?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
-    <div class="col-md-3">
+    <div class="col-md-3">        
         <?php echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(), [
             'options'=>[
                 'class' => 'form-control'
