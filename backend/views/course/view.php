@@ -41,7 +41,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
     <div class="clearfix"></div>
 </div>
 </div>
-<div class="row-fluid">
+<div class="row-fluid p-10">
     <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-left', 'target'=>'_blank',]) ?>  
     <div class="clearfix"></div>
 </div>
