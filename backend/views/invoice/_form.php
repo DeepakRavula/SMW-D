@@ -48,6 +48,13 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
 	 <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
 <?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
     <div class="col-md-3">
+        <?php $previousMonth = new \DateTime();
+        $previousMonth->modify('first day of this month');
+		$searchModel->fromDate = $previousMonth->format('d-m-Y');
+        $currentMonth = new \DateTime();
+        $currentMonth->modify('last day of next month');
+        $searchModel->toDate = $currentMonth->format('d-m-Y');?>
+        
         <?php echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(), [
             'options'=>[
                 'class' => 'form-control'
