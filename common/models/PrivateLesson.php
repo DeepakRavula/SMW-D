@@ -17,6 +17,8 @@ class PrivateLesson extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+	public $isEligible = true;
+	
     public static function tableName()
     {
         return 'private_lesson';

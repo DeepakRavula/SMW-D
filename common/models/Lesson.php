@@ -96,6 +96,10 @@ class Lesson extends \yii\db\ActiveRecord
 		return $this->hasOne(Course::className(), ['id' => 'courseId']);
 	}
 
+	public function getPrivateLesson() {
+		return $this->hasOne(PrivateLesson::className(), ['lessonId' => 'id']);
+	}
+	
 	public function getInvoice() {
 		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
 			->viaTable('invoice_line_item', ['item_id' => 'id'])

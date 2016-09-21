@@ -43,6 +43,11 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
 			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null;?>
 		</div>
+		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Expiry Date">
+			<?php if(! empty($model->privateLesson->expiryDate)) :?>
+				<i class="fa fa-calendar-plus-o"></i> <?php echo ! empty( Yii::$app->formatter->asDateTime($model->privateLesson->expiryDate)) ? ( Yii::$app->formatter->asDate($model->privateLesson->expiryDate)) : null;?>
+		    <?php endif;?>
+		</div>
 			
 		<?php if(Yii::$app->controller->action->id === 'view'):?>
 	<div class="col-md-12 action-btns m-b-20">
@@ -57,12 +62,3 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 <div class="clearfix"></div>
 </div>
 </div>
-
-<script>
- $(document).ready(function() {
-     $('.eligible').click(function(){
-       $('.lesson-qualify').show();
-   });
- });
-</script>
-
