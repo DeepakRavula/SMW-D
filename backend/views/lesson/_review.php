@@ -83,19 +83,32 @@ $this->title = 'Review Lessons';
            	],
 			[
 				'label' => 'Conflict',
-				'value' => function($data) use($searchLessons) {
-					foreach($searchLessons as $searchLesson){
-						if(((int) $searchLesson['id'] === (int)$data->id) && ( ! empty ($searchLesson['data']))){
-							return $searchLesson['type'];
+				'value' => function($data) use($studentGroupLessonResults, $holidayResults) {
+					foreach($studentGroupLessonResults as $key => $studentGroupLessonResult){
+						if(((int) $key === (int)$data->id) && ( ! empty ($studentGroupLessonResult['group_lesson']))){
+							return 'Group Lesson'; 
 						}
 					}
-				} 
+					foreach($holidayResults as $key => $holidayResults){
+						if(((int) $key === (int)$data->id) && ( ! empty ($holidayResults['holiday']))){
+							return 'Holiday'; 
+						}
+					}
+				},
 			],
 	];?>
 	<?php Pjax::begin() ?>
     <?= \kartik\grid\GridView::widget([
 		'dataProvider'=>$lessonDataProvider,
-		'columns'=>$columns
+		'pjax' => true,
+		'pjaxSettings'=>[
+        	'neverTimeout'=>true,
+			'options' => [
+				'id' => 'lesson-review-listing',
+			]
+    	],
+		'columns'=>$columns,
+		'showPageSummary' => true,
 	]); ?>
 
 	<?php yii\widgets\Pjax::end(); ?>
@@ -117,3 +130,8 @@ $this->title = 'Review Lessons';
        <?php endif; ?>
     </div>
 </div>
+<script>
+$(document).ready(function(){
+$.pjax.reload({container:"#lesson-review-listing",});  //Reload GridView
+  });
+</script>

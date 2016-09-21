@@ -134,7 +134,7 @@ class Lesson extends \yii\db\ActiveRecord
 
 		return $status;
 	}
-	
+
 	public static function lessonStatuses() {
 		return [
             self::STATUS_COMPLETED => Yii::t('common', 'Completed'),
