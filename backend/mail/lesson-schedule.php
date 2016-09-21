@@ -7,7 +7,7 @@ Dear <?php echo Html::encode($toName) ?>,<br>
    <div class="invoice-view p-10">
     <div class="row-fluid user-details-wrapper">
         <div class="row-fluid p-10">
-            <h4 class="m-0 f-w-400"><strong><?= 'Please find the lesson schedule for the program you enrolled on ' . $model->course->startDate ?> </strong></h4>
+            <h4 class="m-0 f-w-400"><strong><?= 'Please find the lesson schedule for the program you enrolled on ' . Yii::$app->formatter->asDate($model->course->startDate) ?> </strong></h4>
         </div> 
         <div class="col-md-2 pull-left">
             <?= 'Teacher Name: ' ?> <?= $model->course->teacher->publicIdentity; ?>
