@@ -4,11 +4,10 @@ namespace common\components\intervalTree;
 
 use DateTime;
 use DateInterval;
-
 /**
  * Date range which excludes intersecting dates.
  */
-class DateRangeExclusive implements RangeInterface
+class DateRangeExclusive extends \IntervalTree\DateRangeExclusive 
 {
 	public $id;
     /**

@@ -189,7 +189,7 @@ class LessonController extends Controller
 		$errors = [];
 		foreach($draftLessons as $draftLesson){
 			$errors[] = $draftLesson->getErrors('date');
-		}	
+		}
 		$lessonDataProvider = new ActiveDataProvider([
 		    'query' => Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
