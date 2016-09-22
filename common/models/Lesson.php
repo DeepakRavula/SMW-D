@@ -8,7 +8,7 @@ use common\models\LessonReschedule;
 use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\Holiday;
 use common\models\ProfessionalDevelopmentDay;
-use common\components\intervalTree\IntervalTree;
+use IntervalTree\IntervalTree;
 use common\components\intervalTree\DateRangeInclusive;
 
 /**
