@@ -59,22 +59,69 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted'], 'required'],
             [['courseId', 'status', 'isDeleted'], 'integer'],
             [['date', 'programId', 'notes','teacherId'], 'safe'],
-            [['date'], 'checkConflict'],
+            [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
         ];
     }
 
     public function checkConflict($attribute, $params)
     {
+		$holidays = Holiday::find()
+			->all();
+		$intervals = [];
+		foreach($holidays as $holiday){
+			$intervals[] = new DateRangeInclusive($this->id, new \DateTime($holiday->date), new \DateTime($holiday->date));
+		}
+
+		//Fill other full days
+		$tree = new IntervalTree($intervals);
+		$conflictedDatesResults = $tree->search(new \DateTime($this->date));
+
+		if(count($conflictedDatesResults) > 0) {
+			//extracts conflicted dates into $conflictedDates
+		}
+
+
+	$otherLessons = [];
+	$studentLessons = self::find()
+		->notDeleted()
+		->joinWith(['course' => function($query) use($locationId, $studentModel){
+			$query->joinWith(['enrolment' => function($query) use($studentModel){
+				$query->where(['studentId' => $studentModel->id]);
+			}]);
+		}])
+		->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
+		->all();
+	foreach($studentLessons as $studentLesson) {
+		$otherLessons[] = $studentLesson->date;
+	}
+	$teacherLessons = self::find()
+		->notDeleted()
+		->joinWith(['course' => function($query) use($locationId, $studentModel){
+			$query->joinWith(['enrolment' => function($query) use($studentModel){
+				$query->where(['teacherId' => $teacherId->id]);
+			}]);
+		}])
+		->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
+		->all();
+
+	foreach($teacherLessons as $teacherLesson) {
+		$otherLessons[] = $teacherLesson->date;
+	}
+
+		foreach($otherLessons as $otherLesson){
+			$intervals[] = new DateRangeInclusive(new \DateTime($otherLesson->date), new \DateTime($otherLesson->date));
+		}
+
+		$tree = new IntervalTree($intervals);
+		$conflictedDatesResults = $tree->search(new \DateTime($this->date));
+
+		if(count($conflictedDatesResults) > 0) {
+			//extracts conflicted dates into $conflictedDates
+		}
+
        $this->addError($attribute, [
-		   'date1' => [
-			   'holiday',
-			   'pdDays',
-			   'group'
-		   ],
-		   'date2' => [
-			   'another_private',
-			   'group'
-		   ]
+		   'lessonIds' => [43, 45, 78],
+		   'dates' => ['3rd Oct', '7th Dec']
 	   ]);
     }
 
