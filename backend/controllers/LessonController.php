@@ -180,6 +180,32 @@ class LessonController extends Controller
             return;
         }	
     }
+
+	public function actionCheckConflict($courseId) {
+		// retrieve items to be updated in a batch mode assuming each item 
+		// is of model class 'Item'. 
+		// Note the getItemsToUpdate method is an example method, where you 
+		// fetch the valid models to update in your tabular form. You need
+		// to write such a method OR directly call your code to get the models.
+		$courseModel = Course::findOne(['id' => $courseId]);
+		$draftLessons = Lesson::find()
+			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+			->all();
+		$_POST = [
+			'Lesson' => [
+				'id' => 23,
+				'date' => 'July 23',
+			],
+		];
+		if (Model::loadMultiple($draftLessons, Yii::$app->request->post()) && 
+			Model::validateMultiple($draftLessons)) {
+			$errors = $draftLessons[0]->getError('date');
+			print_r($errors);
+			return $this->render('update', [
+				'items' =>$$draftLessons,
+			]);
+		}
+	}
     
 	public function actionReview($courseId){		
 		$courseModel = Course::findOne(['id' => $courseId]);

@@ -59,7 +59,23 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted'], 'required'],
             [['courseId', 'status', 'isDeleted'], 'integer'],
             [['date', 'programId', 'notes','teacherId'], 'safe'],
+            [['date'], 'checkConflict'],
         ];
+    }
+
+    public function checkConflict($attribute, $params)
+    {
+       $this->addError($attribute, [
+		   'date1' => [
+			   'holiday',
+			   'pdDays',
+			   'group'
+		   ],
+		   'date2' => [
+			   'another_private',
+			   'group'
+		   ]
+	   ]);
     }
 
     /**
