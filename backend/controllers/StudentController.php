@@ -182,7 +182,7 @@ class StudentController extends Controller
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Student has been enrolled successfully'
             ]);
-        return $this->redirect(['lesson/check-conflict', 'courseId' => $courseModel->id]);
+        return $this->redirect(['lesson/review', 'courseId' => $courseModel->id]);
         }
 		if (( ! empty($post['courseId'])) && is_array($post['courseId'])) {
 			$enrolmentModel = new Enrolment();

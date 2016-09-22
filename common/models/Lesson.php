@@ -8,9 +8,8 @@ use common\models\LessonReschedule;
 use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\Holiday;
 use common\models\ProfessionalDevelopmentDay;
-use IntervalTree\IntervalTree;
-use IntervalTree\DateRangeInclusive;
-use IntervalTree\DateRangeExclusive;
+use common\components\intervalTree\IntervalTree;
+use common\components\intervalTree\DateRangeInclusive;
 
 /**
  * This is the model class for table "lesson".
@@ -83,22 +82,28 @@ class Lesson extends \yii\db\ActiveRecord
     {
 		$intervals = $this->dateIntervals();
 		$tree = new IntervalTree($intervals);
+		$conflictedDates = [];
 		$conflictedDatesResults = $tree->search(new \DateTime($this->date));
 		if(count($conflictedDatesResults) > 0) {
-			//extracts conflicted dates into $conflictedDates
+			foreach($conflictedDatesResults as $conflictedDatesResult){
+				$startDate = $conflictedDatesResult->getStart(); 
+				$conflictedDates[] = $startDate->format('Y-m-d');
+			}
 		}
-
-		$lessonIntervals[] = new DateRangeInclusive(new \DateTime($lessonIntervals[0]), new \DateTime($lessonIntervals[1]),new \DateInterval('PT15M'),1);
+		
+		$lessonIntervals = $this->lessonIntervals();
 		$tree = new IntervalTree($lessonIntervals);
-		$conflictedLessonsResults = $tree->search(new \DateTime('2016-11-09 09:30:00'));
-print_r($conflictedLessonsResults);die;
-		if(count($conflictedDatesResults) > 0) {
-			//extracts conflicted dates into $conflictedDates
+		$conflictedLessonIds = [];
+		$conflictedLessonsResults = $tree->search(new \DateTime($this->date));
+		if(count($conflictedLessonsResults) > 0) {
+			foreach($conflictedLessonsResults as $conflictedLessonsResult){
+				$conflictedLessonIds[] = $conflictedLessonsResult->id; 
+			}
 		}
 
 	   $this->addError($attribute, [
-		   'lessonIds' => [43, 45, 78],
-		   'dates' => ['3rd Oct', '7th Dec']
+		   'lessonIds' => $conflictedLessonIds,
+		   'dates' => $conflictedDates
 	   ]);
     }
 
@@ -111,7 +116,7 @@ print_r($conflictedLessonsResults);die;
 
 		$intervals = [];
 		foreach($holidays as $holiday){
-			$intervals[] = new DateRangeInclusive(new \DateTime($holiday->date), new \DateTime($holiday->date), null, $this->id);
+			$intervals[] = new DateRangeInclusive(new \DateTime($holiday->date), new \DateTime($holiday->date));
 		}
 		foreach($professionalDevelopmentDays as $professionalDevelopmentDay){
 			$intervals[] = new DateRangeInclusive(new \DateTime($professionalDevelopmentDay->date), new \DateTime($professionalDevelopmentDay->date), null, $this->id);
@@ -128,24 +133,27 @@ print_r($conflictedLessonsResults);die;
 				->all();
 
 		foreach($studentLessons as $studentLesson) {
-			$otherLessons[] = $studentLesson->date;
+			$otherLessons[] = [
+				'id' => $studentLesson->id,
+				'date' =>  $studentLesson->date, 
+				'duration' => $studentLesson->course->duration
+			];
 		}
 		$teacherLessons = self::find()
-			->teacherLessons()
+			->teacherLessons($this->teacherId)
 			->all();
 
 		foreach($teacherLessons as $teacherLesson) {
-			$otherLessons[] = $teacherLesson->date;
+			$otherLessons[] = [
+				'id' => $teacherLesson->id,
+				'date' =>  $teacherLesson->date,
+				'duration' => $teacherLesson->course->duration
+			];
 		}
-
 		foreach($otherLessons as $otherLesson){
-			if( empty($otherLesson->date)){
-				continue;
-			}
-			
-			//$intervals[] = new DateRangeInclusive(new \DateTime($otherLesson->date), new \DateTime($otherLesson->date),null,$otherLesson->id);
+			$timebits = explode(':',$otherLesson['duration']);
+			$intervals[] = new DateRangeInclusive(new \DateTime($otherLesson['date']), new \DateTime($otherLesson['date']), new \DateInterval('PT' . $timebits[0] . 'H' . $timebits[1] .'M'), $otherLesson['id']);
 		}
-	print_r($intervals);die;	
 		return $intervals;
 	}
     /**

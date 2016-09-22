@@ -128,11 +128,11 @@ class LessonQuery extends \yii\db\ActiveQuery
 		return $this;
 	}
 
-	public function teacherLessons(){
+	public function teacherLessons($teacherId){
 		$this->notDeleted()
 			->where([
 				'lesson.status' => Lesson::STATUS_SCHEDULED,
-				'teacherId' => 472,
+				'teacherId' => $teacherId,
 			]);
 				
 		return $this;

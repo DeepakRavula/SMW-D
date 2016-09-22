@@ -188,9 +188,8 @@ class LessonController extends Controller
 		Model::validateMultiple($draftLessons);
 		$errors = [];
 		foreach($draftLessons as $draftLesson){
-			$errors[] = $draftLesson->getErrors();
+			$errors[] = $draftLesson->getErrors('date');
 		}	
-				//print_r($errors);die;
 		$lessonDataProvider = new ActiveDataProvider([
 		    'query' => Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
