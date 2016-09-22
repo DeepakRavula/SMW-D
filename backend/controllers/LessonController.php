@@ -14,16 +14,12 @@ use common\models\ItemType;
 use common\models\TaxStatus;
 use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
+use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
-use common\models\Holiday;
-use IntervalTree\IntervalTree;
-use IntervalTree\DateRangeInclusive;
-use IntervalTree\NumericRangeInclusive;
-use IntervalTree\DateRangeExclusive;
-use IntervalTree\NumericRangeExclusive;
+
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -181,88 +177,30 @@ class LessonController extends Controller
         }	
     }
 
-	public function actionCheckConflict($courseId) {
-		// retrieve items to be updated in a batch mode assuming each item 
-		// is of model class 'Item'. 
-		// Note the getItemsToUpdate method is an example method, where you 
-		// fetch the valid models to update in your tabular form. You need
-		// to write such a method OR directly call your code to get the models.
-		$courseModel = Course::findOne(['id' => $courseId]);
-		$draftLessons = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
-			->all();
-		$_POST = [
-			'Lesson' => [
-				'id' => 23,
-				'date' => 'July 23',
-			],
-		];
-		if (Model::loadMultiple($draftLessons, Yii::$app->request->post()) && 
-			Model::validateMultiple($draftLessons)) {
-			$errors = $draftLessons[0]->getError('date');
-			print_r($errors);
-			return $this->render('update', [
-				'items' =>$$draftLessons,
-			]);
-		}
-	}
-    
 	public function actionReview($courseId){		
 		$courseModel = Course::findOne(['id' => $courseId]);
-    	
-		$holidays = Holiday::find()
-			->all();
 		$draftLessons = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
 			->all();
-
-		$holidayIntervals = [];
-		foreach($holidays as $holiday){
-			$holidayIntervals[] = new DateRangeInclusive(new \DateTime($holiday->date), new \DateTime($holiday->date));
+		foreach($draftLessons as $draftLesson){
+			$draftLesson->setScenario('review');
 		}
-		$tree = new IntervalTree($holidayIntervals);
-		foreach($draftLessons as $draftLesson) {
-			$holidayResults[$draftLesson->id]['holiday'] = $tree->search(new \DateTime($draftLesson->date));
-		}
-		
-		$studentGroupLessonResults = [];
-
-		if((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM){	
-			$studentModel = Student::findOne(['id' => $courseModel->enrolment->studentId]);
-			$locationId = Yii::$app->session->get('location_id');
-			$studentGroupLessons = Lesson::find()
-			    ->notDeleted()
-			    ->joinWith(['course' => function($query) use($locationId, $studentModel){
-				    $query->joinWith(['enrolment' => function($query) use($studentModel){
-					    $query->where(['studentId' => $studentModel->id]);
-				    }])
-				    ->groupProgram($locationId);
-			    }])
-				->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
-				->all();
-		
-			$timebits  = explode(':', $courseModel->duration);
-			$studentGroupLessonIntervals = [];
-			foreach($studentGroupLessons as $studentGroupLesson){
-				$studentGroupLessonIntervals[] = new DateRangeInclusive(new \DateTime($studentGroupLesson->date), new \DateTime($studentGroupLesson->date), new \DateInterval('PT' . $timebits[1] .'M'));
-			}
-			$tree = new IntervalTree($studentGroupLessonIntervals);
-			foreach($draftLessons as $draftLesson) {
-				$studentGroupLessonResults[$draftLesson->id]['group_lesson'] = $tree->search(new \DateTime($draftLesson->date));
-			}
-		}
+		Model::validateMultiple($draftLessons);
+		$errors = [];
+		foreach($draftLessons as $draftLesson){
+			$errors[] = $draftLesson->getErrors();
+		}	
+				//print_r($errors);die;
 		$lessonDataProvider = new ActiveDataProvider([
 		    'query' => Lesson::find()
-            ->where(['courseId' => $courseId, 'status' => Lesson::STATUS_DRAFTED]),
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
 		]);	
 		
 		return $this->render('_review', [				
-				'courseModel' => $courseModel,
-				'courseId' => $courseId,
-                'lessonDataProvider' => $lessonDataProvider,
-				'holidayResults' => $holidayResults, 
-				'studentGroupLessonResults' => $studentGroupLessonResults 
-            ]);	
+			'courseModel' => $courseModel,
+			'courseId' => $courseId,
+			'lessonDataProvider' => $lessonDataProvider,
+        ]);	
 	}
 
 	public function actionConfirm($courseId){        

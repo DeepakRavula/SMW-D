@@ -6,6 +6,12 @@ use Yii;
 use common\models\InvoiceLineItem;
 use common\models\LessonReschedule;
 use \yii2tech\ar\softdelete\SoftDeleteBehavior;
+use common\models\Holiday;
+use common\models\ProfessionalDevelopmentDay;
+use IntervalTree\IntervalTree;
+use IntervalTree\DateRangeInclusive;
+use IntervalTree\DateRangeExclusive;
+
 /**
  * This is the model class for table "lesson".
  *
@@ -25,6 +31,8 @@ class Lesson extends \yii\db\ActiveRecord
 	const STATUS_SCHEDULED = 2;
 	const STATUS_COMPLETED = 3;
 	const STATUS_CANCELED = 4;
+
+	const SCENARIO_REVIEW = 'review';
 
 	public $programId;
     public $time;
@@ -49,6 +57,14 @@ class Lesson extends \yii\db\ActiveRecord
             ],
         ];
     }
+
+	public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_REVIEW] = ['date'];
+        return $scenarios;
+    }
+	
 	
     /**
      * @inheritdoc
@@ -65,66 +81,73 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function checkConflict($attribute, $params)
     {
-		$holidays = Holiday::find()
-			->all();
-		$intervals = [];
-		foreach($holidays as $holiday){
-			$intervals[] = new DateRangeInclusive($this->id, new \DateTime($holiday->date), new \DateTime($holiday->date));
-		}
-
-		//Fill other full days
+		$intervals = $this->dateIntervals();
 		$tree = new IntervalTree($intervals);
 		$conflictedDatesResults = $tree->search(new \DateTime($this->date));
-
 		if(count($conflictedDatesResults) > 0) {
 			//extracts conflicted dates into $conflictedDates
 		}
 
-
-	$otherLessons = [];
-	$studentLessons = self::find()
-		->notDeleted()
-		->joinWith(['course' => function($query) use($locationId, $studentModel){
-			$query->joinWith(['enrolment' => function($query) use($studentModel){
-				$query->where(['studentId' => $studentModel->id]);
-			}]);
-		}])
-		->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
-		->all();
-	foreach($studentLessons as $studentLesson) {
-		$otherLessons[] = $studentLesson->date;
-	}
-	$teacherLessons = self::find()
-		->notDeleted()
-		->joinWith(['course' => function($query) use($locationId, $studentModel){
-			$query->joinWith(['enrolment' => function($query) use($studentModel){
-				$query->where(['teacherId' => $teacherId->id]);
-			}]);
-		}])
-		->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
-		->all();
-
-	foreach($teacherLessons as $teacherLesson) {
-		$otherLessons[] = $teacherLesson->date;
-	}
-
-		foreach($otherLessons as $otherLesson){
-			$intervals[] = new DateRangeInclusive(new \DateTime($otherLesson->date), new \DateTime($otherLesson->date));
-		}
-
-		$tree = new IntervalTree($intervals);
-		$conflictedDatesResults = $tree->search(new \DateTime($this->date));
-
+		$lessonIntervals[] = new DateRangeInclusive(new \DateTime($lessonIntervals[0]), new \DateTime($lessonIntervals[1]),new \DateInterval('PT15M'),1);
+		$tree = new IntervalTree($lessonIntervals);
+		$conflictedLessonsResults = $tree->search(new \DateTime('2016-11-09 09:30:00'));
+print_r($conflictedLessonsResults);die;
 		if(count($conflictedDatesResults) > 0) {
 			//extracts conflicted dates into $conflictedDates
 		}
 
-       $this->addError($attribute, [
+	   $this->addError($attribute, [
 		   'lessonIds' => [43, 45, 78],
 		   'dates' => ['3rd Oct', '7th Dec']
 	   ]);
     }
 
+	public function dateIntervals()
+	{
+		$holidays = Holiday::find()
+			->all();
+		$professionalDevelopmentDays = ProfessionalDevelopmentDay::find()
+			->all();
+
+		$intervals = [];
+		foreach($holidays as $holiday){
+			$intervals[] = new DateRangeInclusive(new \DateTime($holiday->date), new \DateTime($holiday->date), null, $this->id);
+		}
+		foreach($professionalDevelopmentDays as $professionalDevelopmentDay){
+			$intervals[] = new DateRangeInclusive(new \DateTime($professionalDevelopmentDay->date), new \DateTime($professionalDevelopmentDay->date), null, $this->id);
+		}
+		return $intervals;
+	}
+
+	public function lessonIntervals(){
+		$locationId = Yii::$app->session->get('location_id');
+		$otherLessons = [];
+		$intervals = [];
+		$studentLessons = self::find()
+				->studentLessons($locationId, $this->course->enrolment->student)
+				->all();
+
+		foreach($studentLessons as $studentLesson) {
+			$otherLessons[] = $studentLesson->date;
+		}
+		$teacherLessons = self::find()
+			->teacherLessons()
+			->all();
+
+		foreach($teacherLessons as $teacherLesson) {
+			$otherLessons[] = $teacherLesson->date;
+		}
+
+		foreach($otherLessons as $otherLesson){
+			if( empty($otherLesson->date)){
+				continue;
+			}
+			
+			//$intervals[] = new DateRangeInclusive(new \DateTime($otherLesson->date), new \DateTime($otherLesson->date),null,$otherLesson->id);
+		}
+	print_r($intervals);die;	
+		return $intervals;
+	}
     /**
      * @inheritdoc
      */
