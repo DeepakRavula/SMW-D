@@ -233,7 +233,7 @@ class LessonController extends Controller
 			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
 		}
 		$lessonDataProvider = new ActiveDataProvider([
-		    'query' => Lesson::find()
+		    'query' => Lesson::find()->indexBy('id')
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
 		]);	
 		
