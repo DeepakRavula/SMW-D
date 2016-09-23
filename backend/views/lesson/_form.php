@@ -54,13 +54,14 @@ use yii\helpers\Url;
 		<?php endif;?>
 		<div class="col-md-4">
             <?php 
-              if($model->isNewRecord){
+              if($model->isNewRecord || (int)$model->course->program->type === (int)Program::TYPE_GROUP_PROGRAM){
                   $model->date = (new \DateTime())->format('d-m-Y g:i A');
               }
             ?>
             <?php
-            echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-               'options' => [
+              if($model->isNewRecord || (int)$model->course->program->type === (int)Program::TYPE_GROUP_PROGRAM){
+            	echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
+               		'options' => [
                     'value' => Yii::$app->formatter->asDateTime($model->date),
                ],
                 'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
@@ -68,7 +69,7 @@ use yii\helpers\Url;
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy HH:ii P'
                 ]
-            ]);
+			  ]);}
             ?>
         </div>
         <div class="col-md-4">			

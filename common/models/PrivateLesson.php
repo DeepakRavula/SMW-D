@@ -28,8 +28,8 @@ class PrivateLesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['lessonId', 'isElgible'], 'required'],
-            [['lessonId', 'isElgible'], 'integer'],
+            [['lessonId', 'isEligible'], 'required'],
+            [['lessonId', 'isEligible'], 'integer'],
             [['expiryDate'], 'safe'],
         ];
     }
@@ -43,7 +43,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
             'id' => 'ID',
             'lessonId' => 'Lesson ID',
             'expiryDate' => 'Expiry Date',
-            'isElgible' => 'Is Elgible',
+            'isEligible' => 'Is Eligible',
         ];
     }
 

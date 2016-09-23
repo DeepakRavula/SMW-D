@@ -4,12 +4,14 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Program;
 use common\models\Lesson;
+use common\models\PrivateLesson;
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
 
 $this->title = 'Lesson Details';
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index','LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
+
 <div class="lesson-view">
 	<div class="row-fluid user-details-wrapper">
     <div class="col-md-12 p-t-10">
@@ -41,11 +43,17 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
 			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null;?>
 		</div>
+		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Expiry Date">
+			<?php if(! empty($model->privateLesson->expiryDate)) :?>
+				<i class="fa fa-calendar-plus-o"></i> <?php echo ! empty( Yii::$app->formatter->asDateTime($model->privateLesson->expiryDate)) ? ( Yii::$app->formatter->asDate($model->privateLesson->expiryDate)) : null;?>
+		    <?php endif;?>
+		</div>
 			
 		<?php if(Yii::$app->controller->action->id === 'view'):?>
 	<div class="col-md-12 action-btns m-b-20">
 		<?php if((int)$model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
+		<?php echo Html::a('<i class="fa fa-plus"></i> Missed Lesson ', ['missed', 'id' => $model->id], ['class' => 'eligible']) ?>
 		<?php endif;?>
 		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		</div>

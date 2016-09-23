@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Lesson;
+use common\models\PrivateLesson;
 use common\models\Enrolment;
 use common\models\Program;
 use common\models\Course;
@@ -97,9 +98,11 @@ class LessonController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
-           	$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-            $model->date = $lessonDate->format('Y-m-d H:i:s');            
-            $model->save();
+			if(empty($model->date)){
+				$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+				$model->date = $lessonDate->format('Y-m-d H:i:s');            
+			}
+			$model->save();
             
         	return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -142,6 +145,40 @@ class LessonController extends Controller
 		}
 	}
 
+	public function actionMissed($id)
+    {
+        $model = $this->findModel($id);
+
+		if( ! empty($model->privateLesson->id)) {
+            $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
+        } else {
+		$privateLessonModel = new PrivateLesson();
+		}
+		
+		if ($privateLessonModel->load(Yii::$app->request->post()) ) {
+			$privateLessonModel->lessonId = $model->id;
+			$expiryDate = \DateTime::createFromFormat('d-m-Y g:i A', $privateLessonModel->expiryDate);
+			$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+			$privateLessonModel->save();
+		}
+		if($model->load(Yii::$app->request->post())){	
+			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+			$model->date = $lessonDate->format('Y-m-d H:i:s');
+			$model->save();
+					
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Lesson has been marked as missed successfully'
+            ]);
+            return $this->redirect(['view', 'id' => $model->id]);   
+		}
+		
+        return $this->render('_form-private-lesson', [
+            'model' => $model,
+			'privateLessonModel' => $privateLessonModel, 
+        ]);
+	}
+	
     public function actionUpdateField($id){
 		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if (Yii::$app->request->post('hasEditable')) {
