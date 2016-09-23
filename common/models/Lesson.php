@@ -7,6 +7,7 @@ use common\models\InvoiceLineItem;
 use common\models\LessonReschedule;
 use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\Holiday;
+use common\models\Program;
 use common\models\ProfessionalDevelopmentDay;
 use IntervalTree\IntervalTree;
 use common\components\intervalTree\DateRangeInclusive;
@@ -88,7 +89,6 @@ class Lesson extends \yii\db\ActiveRecord
 			$startDate = $conflictedDatesResult->getStart(); 
 			$conflictedDates[] = $startDate->format('Y-m-d');
 		}
-
 		$lessonIntervals = $this->lessonIntervals();
 		$tree = new IntervalTree($lessonIntervals);
 		$conflictedLessonIds = [];
@@ -124,21 +124,23 @@ class Lesson extends \yii\db\ActiveRecord
 		$locationId = Yii::$app->session->get('location_id');
 		$otherLessons = [];
 		$intervals = [];
-		$studentLessons = self::find()
-				->studentLessons($locationId, $this->course->enrolment->student)
-				->all();
 
-		foreach($studentLessons as $studentLesson) {
-			$otherLessons[] = [
-				'id' => $studentLesson->id,
-				'date' =>  $studentLesson->date, 
-				'duration' => $studentLesson->course->duration
-			];
+		if((int) $this->course->program->type === (int)Program::TYPE_PRIVATE_PROGRAM){
+			$studentLessons = self::find()
+					->studentLessons($locationId, $this->course->enrolment->student)
+					->all();
+
+			foreach($studentLessons as $studentLesson) {
+				$otherLessons[] = [
+					'id' => $studentLesson->id,
+					'date' =>  $studentLesson->date, 
+					'duration' => $studentLesson->course->duration
+				];
+			}
 		}
 		$teacherLessons = self::find()
 			->teacherLessons($this->teacherId)
 			->all();
-
 		foreach($teacherLessons as $teacherLesson) {
 			$otherLessons[] = [
 				'id' => $teacherLesson->id,
