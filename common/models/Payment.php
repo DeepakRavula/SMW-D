@@ -40,7 +40,7 @@ class Payment extends \yii\db\ActiveRecord {
 	public function rules() {
 		return [
 			[['user_id', 'payment_method_id', 'amount','date'], 'required'],
-			[['user_id', 'amount', 'payment_method_id'], 'integer'],
+			[['user_id', 'payment_method_id'], 'integer'],
 			[['amount'], 'number'],
 			[['sourceType','sourceId', 'reference'],'safe']
 		];
