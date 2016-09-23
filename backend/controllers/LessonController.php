@@ -178,6 +178,8 @@ class LessonController extends Controller
             'model' => $model,
 			'privateLessonModel' => $privateLessonModel, 
         ]);
+	}
+	
     public function actionUpdateField($id){
         if (Yii::$app->request->post('hasEditable')) {
             $lessonIndex = Yii::$app->request->post('editableIndex');
