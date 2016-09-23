@@ -186,9 +186,9 @@ class LessonController extends Controller
 			$draftLesson->setScenario('review');
 		}
 		Model::validateMultiple($draftLessons);
-		$errors = [];
+		$conflicts = [];
 		foreach($draftLessons as $draftLesson){
-			$errors[] = $draftLesson->getErrors('date');
+			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
 		}
 		$lessonDataProvider = new ActiveDataProvider([
 		    'query' => Lesson::find()
@@ -199,6 +199,7 @@ class LessonController extends Controller
 			'courseModel' => $courseModel,
 			'courseId' => $courseId,
 			'lessonDataProvider' => $lessonDataProvider,
+			'conflicts' => $conflicts
         ]);	
 	}
 

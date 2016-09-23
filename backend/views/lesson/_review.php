@@ -83,14 +83,29 @@ $this->title = 'Review Lessons';
            	],
 			[
 				'label' => 'Conflict',
-				'value' => function($data) {
-					
+				'value' => function($data) use($conflicts){
+					foreach($conflicts as $key => $conflict){
+						foreach($conflict as $lessonConflict){
+							if( (int)$key === (int) $data->id && ((! empty($lessonConflict['lessonIds'])) || ( ! empty($lessonConflict['dates'])))){
+								return 'Conflict';
+							}
+						}
+					}
 				},
 			],
 	];?>
 	<?php Pjax::begin() ?>
     <?= \kartik\grid\GridView::widget([
 		'dataProvider'=>$lessonDataProvider,
+		'rowOptions' => function ($model, $key, $index, $grid) use($conflicts) {
+			foreach($conflicts as $key => $conflict){
+					foreach($conflict as $lessonConflict){
+						if( (int)$key === (int) $model->id && ((! empty($lessonConflict['lessonIds'])) || ( ! empty($lessonConflict['dates'])))){
+							return ['class' => 'danger'];
+						}
+					}
+				}	
+		},
 		'pjax' => true,
 		'pjaxSettings'=>[
         	'neverTimeout'=>true,

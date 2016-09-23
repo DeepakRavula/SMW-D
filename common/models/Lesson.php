@@ -84,21 +84,17 @@ class Lesson extends \yii\db\ActiveRecord
 		$tree = new IntervalTree($intervals);
 		$conflictedDates = [];
 		$conflictedDatesResults = $tree->search(new \DateTime($this->date));
-		if(count($conflictedDatesResults) > 0) {
-			foreach($conflictedDatesResults as $conflictedDatesResult){
-				$startDate = $conflictedDatesResult->getStart(); 
-				$conflictedDates[] = $startDate->format('Y-m-d');
-			}
+		foreach($conflictedDatesResults as $conflictedDatesResult){
+			$startDate = $conflictedDatesResult->getStart(); 
+			$conflictedDates[] = $startDate->format('Y-m-d');
 		}
-		
+
 		$lessonIntervals = $this->lessonIntervals();
 		$tree = new IntervalTree($lessonIntervals);
 		$conflictedLessonIds = [];
 		$conflictedLessonsResults = $tree->search(new \DateTime($this->date));
-		if(count($conflictedLessonsResults) > 0) {
-			foreach($conflictedLessonsResults as $conflictedLessonsResult){
-				$conflictedLessonIds[] = $conflictedLessonsResult->id; 
-			}
+		foreach($conflictedLessonsResults as $conflictedLessonsResult){
+			$conflictedLessonIds[] = $conflictedLessonsResult->id; 
 		}
 
 	   $this->addError($attribute, [
