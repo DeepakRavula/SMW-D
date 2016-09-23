@@ -21,14 +21,17 @@ use kartik\datetime\DateTimePicker;
    <div class="row">
 		<div class="col-xs-4">
 			<?php
-			    $date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-			    $date->modify('90 days');
-			    $expiryDate = $date->format('d-m-Y H:i:s');?>
+				if($privateLessonModel->isNewRecord){
+					$date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+					$date->modify('90 days');
+					$privateLessonModel->expiryDate = $date->format('d-m-Y H:i:s');
+				}
+			?>
 			
 			<?= $form->field($privateLessonModel, 'isEligible')->checkbox();?>
 			<?= $form->field($privateLessonModel, 'expiryDate')->widget(DateTimePicker::classname(), [
 				'options' => [
-					'value' => Yii::$app->formatter->asDateTime($expiryDate),
+					'value' => Yii::$app->formatter->asDateTime($privateLessonModel->expiryDate),
 				],
 				'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
 				'pluginOptions' => [
