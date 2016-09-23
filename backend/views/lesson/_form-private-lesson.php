@@ -23,7 +23,7 @@ use kartik\datetime\DateTimePicker;
 			<?php
 			    $date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
 			    $date->modify('90 days');
-			    $expiryDate = $date->format('d-m-Y');?>
+			    $expiryDate = $date->format('d-m-Y H:i:s');?>
 			
 			<?= $form->field($privateLessonModel, 'isEligible')->checkbox();?>
 			<?= $form->field($privateLessonModel, 'expiryDate')->widget(DateTimePicker::classname(), [

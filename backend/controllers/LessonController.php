@@ -96,9 +96,11 @@ class LessonController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
-           	$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-            $model->date = $lessonDate->format('Y-m-d H:i:s');            
-            $model->save();
+			if(empty($model->date)){
+				$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+				$model->date = $lessonDate->format('Y-m-d H:i:s');            
+			}
+			$model->save();
             
         	return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -144,8 +146,13 @@ class LessonController extends Controller
 	public function actionMissed($id)
     {
         $model = $this->findModel($id);
+
+		if( ! empty($model->privateLesson->id)) {
+            $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
+        } else {
+		$privateLessonModel = new PrivateLesson();
+		}
 		
-		$privateLessonModel = new PrivateLesson(); 
 		if ($privateLessonModel->load(Yii::$app->request->post()) ) {
 			$privateLessonModel->lessonId = $model->id;
 			$expiryDate = \DateTime::createFromFormat('d-m-Y g:i A', $privateLessonModel->expiryDate);
@@ -164,7 +171,7 @@ class LessonController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);   
 		}
 		
-        return $this->render('_form-private-lesson-reschedule', [
+        return $this->render('_form-private-lesson', [
             'model' => $model,
 			'privateLessonModel' => $privateLessonModel, 
         ]);
