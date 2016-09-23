@@ -18,7 +18,6 @@ use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\Json;
 
 
 /**
@@ -144,10 +143,14 @@ class LessonController extends Controller
 	}
 
     public function actionUpdateField($id){
+		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if (Yii::$app->request->post('hasEditable')) {
             $lessonIndex = Yii::$app->request->post('editableIndex');
             $model = Lesson::findOne(['id' => $id]);
-            $result = Json::encode(['output'=>'', 'message'=>'']);
+            $result = [
+				'output' => '',
+				'message' => ''
+			];
             $post = Yii::$app->request->post();
             if(isset($post['Lesson'][$lessonIndex]['date'])){
                 $existingDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
@@ -171,9 +174,11 @@ class LessonController extends Controller
             }
 
             $model->save();
-            $result = Json::encode(['output'=>$output, 'message'=>'']);
-            echo $result;
-            return;
+            $result = [
+				'output' => $output,
+				'message' => ''
+			];
+            return $result;
         }	
     }
 

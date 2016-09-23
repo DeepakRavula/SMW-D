@@ -138,6 +138,6 @@ $this->title = 'Review Lessons';
 </div>
 <script>
 $(document).ready(function(){
-$.pjax.reload({container:"#lesson-review-listing",});  //Reload GridView
-  });
+	$.pjax.reload({container:"#lesson-review-listing",});  //Reload GridView
+});
 </script>
