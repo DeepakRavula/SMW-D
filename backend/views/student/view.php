@@ -27,6 +27,10 @@ $lessonContent =  $this->render('_lesson', [
     'model' => $model,
 ]);
 
+$unscheduledLessonContent =  $this->render('_unscheduledLesson', [
+	'dataProvider' => $unscheduledLessonDataProvider,
+]);
+
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -42,6 +46,13 @@ $lessonContent =  $this->render('_lesson', [
             'content' => $lessonContent,
 			'options' => [
                     'id' => 'lesson',
+                ],
+        ],
+        [
+            'label' => 'Unscheduled Lessons',
+            'content' => $unscheduledLessonContent,
+			'options' => [
+                    'id' => 'unscheduledLesson',
                 ],
         ],
     ],
