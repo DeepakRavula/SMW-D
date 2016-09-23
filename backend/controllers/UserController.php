@@ -12,6 +12,7 @@ use common\models\Qualification;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
+use common\models\LessonReschedule;
 use common\models\Location;
 use common\models\Invoice;
 use backend\models\UserImportForm;
@@ -198,8 +199,20 @@ class UserController extends Controller {
 					'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
 					'invoice.location_id' => $locationId
 				]);
-				
-		$proFormaInvoiceDataProvider = new ActiveDataProvider([
+        
+        $rescheduledLessons = LessonReschedule::find()->all(); 
+        $query = Lesson::find()
+                ->where([
+					'teacherId' => $id,
+					'status' => Lesson::STATUS_CANCELED
+				])
+                ->andWhere(['not', ['id' => $rescheduledLessons]]);
+                
+        $unscheduledLessonDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+        
+        $proFormaInvoiceDataProvider = new ActiveDataProvider([
 			'query' => $proFormaInvoiceQuery,
 		]);
 		
@@ -350,6 +363,7 @@ class UserController extends Controller {
 			'openingBalanceDataProvider' => $openingBalanceDataProvider,
 			'openingBalanceCredit' => $openingBalanceCredit,
 			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
+            'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
 			'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel
 		]);
 	}
