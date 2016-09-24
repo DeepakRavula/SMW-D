@@ -36,7 +36,7 @@ Dear <?php echo Html::encode($toName) ?>,<br>
     </div> 
     <div class="clearfix"></div>
     <div class="row-fluid p-10">
-        <h4 class="m-0 f-w-400"><strong><?= 'Lessons' ?> </strong></h4>
+        <h4 class="m-0 f-w-400"><strong><?= 'Schedule of Lessons' ?> </strong></h4>
     </div>      
     <div class="row-fluid p-10">      
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
@@ -45,30 +45,14 @@ Dear <?php echo Html::encode($toName) ?>,<br>
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
 	    'summary' => '',
-        'columns' => [
-            [
-				'label' => 'Teacher Name',
-				'value' => function($data) {            
-					return ! empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
-                },
-			],
-			[
-				'label' => 'Date',
+        'columns' => [            
+			[				
 				'value' => function($data) {
-					$date = Yii::$app->formatter->asDate($data->date); 
+					$lessonDate =  \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+                    $date = $lessonDate->format('l, F jS, Y @ g:i a');    
 					return ! empty($date) ? $date : null;
                 },
-			],
-			[
-				'label' => 'Status',
-				'value' => function($data) {
-					$status = null;
-					if (!empty($data->status)) {
-					return $data->getStatus();
-					}
-				return $status;
-                },
-			],
+			],			
         ],
 	    ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
