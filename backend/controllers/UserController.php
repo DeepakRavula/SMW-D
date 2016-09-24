@@ -207,7 +207,7 @@ class UserController extends Controller {
             ->andWhere(['teacherId' => $id])
             ->andWhere(['lesson_reschedule.lessonId' => null])
             ->joinWith(['privateLesson']) 
-            ->andWhere(['private_lesson.isEligible' => PrivateLesson::ELIGIBLE])
+            ->andWhere(['private_lesson.isEligible' => true])
             ->orderBy('private_lesson.expiryDate desc');    
 
         $unscheduledLessonDataProvider = new ActiveDataProvider([

@@ -14,8 +14,6 @@ use Yii;
  */
 class PrivateLesson extends \yii\db\ActiveRecord
 {
-    const ELIGIBLE = 1;
-    const NOT_ELIGIBLE = 0;
     /**
      * @inheritdoc
      */
