@@ -1,8 +1,8 @@
 <?php
 use yii\helpers\Html;
 use common\models\Program;
-use yii\widgets\Pjax;
 use yii\helpers\Url;
+use kartik\grid\GridView;
 
 $this->title = 'Review Lessons';
 ?>
@@ -86,24 +86,32 @@ $this->title = 'Review Lessons';
 			[
 				'label' => 'Conflict',
 				'value' => function($data) use($conflicts){
-					foreach($conflicts as $key => $conflict){
-						foreach($conflict as $lessonConflict){
-							if( (int)$key === (int) $data->id && ((! empty($lessonConflict['lessonIds'])) || ( ! empty($lessonConflict['dates'])))){
-								return 'Conflict';
-							}
+					foreach($conflicts[$data->id] as $conflict){
+						if((! empty($conflict['lessonIds'])) || ( ! empty($conflict['dates']))){
+							return 'Conflict';
 						}
 					}
 				},
+			],
+			[
+				'class'=>'kartik\grid\ExpandRowColumn',
+				'width'=>'50px',
+				'value'=>function ($model, $key, $index, $column) {
+					return GridView::ROW_COLLAPSED;
+				},
+				'detail'=>function ($model, $key, $index, $column) use($conflicts) {
+					return Yii::$app->controller->renderPartial('_conflict-lesson', ['model' => $model, 'conflicts' => $conflicts[$model->id]]);
+				},
+				'headerOptions'=>['class'=>'kartik-sheet-style'], 
+				'expandOneOnly'=>true
 			],
 	];?>
     <?= \kartik\grid\GridView::widget([
 		'dataProvider' => $lessonDataProvider,
 		'rowOptions' => function ($model, $key, $index, $grid) use($conflicts) {
-			foreach($conflicts as $key => $conflict){
-				foreach($conflict as $lessonConflict){
-					if( (int)$key === (int) $model->id && ((! empty($lessonConflict['lessonIds'])) || ( ! empty($lessonConflict['dates'])))){
-						return ['class' => 'danger'];
-					}
+			foreach($conflicts[$model->id] as $conflict){
+				if((! empty($conflict['lessonIds'])) || ( ! empty($conflict['dates']))){
+					return ['class' => 'danger'];
 				}
 			}	
 		},
