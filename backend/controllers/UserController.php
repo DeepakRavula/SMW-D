@@ -13,6 +13,7 @@ use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
 use common\models\LessonReschedule;
+use common\models\PrivateLesson;
 use common\models\Location;
 use common\models\Invoice;
 use backend\models\UserImportForm;
@@ -204,7 +205,10 @@ class UserController extends Controller {
             ->joinWith(['lessonReschedule'])
             ->andWhere(['status' => Lesson::STATUS_CANCELED])
             ->andWhere(['teacherId' => $id])
-            ->andWhere(['lessonId' => null ]);
+            ->andWhere(['lesson_reschedule.lessonId' => null])
+            ->joinWith(['privateLesson']) 
+            ->andWhere(['private_lesson.isEligible' => PrivateLesson::ELIGIBLE])
+            ->orderBy('private_lesson.expiryDate desc');    
 
         $unscheduledLessonDataProvider = new ActiveDataProvider([
 			'query' => $unscheduledLessons,
