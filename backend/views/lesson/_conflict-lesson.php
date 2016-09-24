@@ -3,7 +3,6 @@
 use yii\grid\GridView;
 use yii\helpers\Url;
 use common\models\Lesson;
-use common\models\Program;
 use yii\data\ActiveDataProvider;
 use common\models\Holiday;
 use common\models\ProfessionalDevelopmentDay;
@@ -22,24 +21,17 @@ $this->registerJs("
 ");
 ?>
 <?php
-	foreach($conflicts as $key => $conflict){
-		foreach($conflict as $allConflict){
-			if( (int)$key === (int) $model->id){
-				$conflictedLessonIds = [];
-				$conflictedDates = [];
-				if(! empty($allConflict['lessonIds'])){
-					$lessonConflicts = $allConflict['lessonIds'];
-					foreach($lessonConflicts as $lessonConflict){
-						$conflictedLessonIds[] = $lessonConflict;
-					}
-				}
-				if(! empty($allConflict['dates'])){
-					$dateConflicts = $allConflict['dates'];
-					foreach($dateConflicts as $dateConflict){
-						$conflictedDates[] = $dateConflict;
-					}
-				}
-			}
+	$conflicts = current($conflicts);
+	$conflictedLessonIds = [];
+	$conflictedDates = [];
+	if(! empty($conflicts['lessonIds'])){
+		foreach($conflicts['lessonIds'] as $lessonConflict){
+			$conflictedLessonIds[] = $lessonConflict;
+		}
+	}
+	if(! empty($conflicts['dates'])){
+		foreach($conflicts['dates'] as $dateConflict){
+			$conflictedDates[] = $dateConflict;
 		}
 	}
 	$holidays = Holiday::find()
@@ -145,4 +137,3 @@ $this->registerJs("
 	<?= 'No conflict'; ?>
 <?php endif;?>
 </div>
-
