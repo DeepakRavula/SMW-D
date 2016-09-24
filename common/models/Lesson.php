@@ -194,7 +194,11 @@ class Lesson extends \yii\db\ActiveRecord
 			->viaTable('invoice_line_item', ['item_id' => 'id'])
 			->onCondition(['invoice.type' => Invoice::TYPE_INVOICE]);
 	}
-
+    
+    public function getLessonReschedule() {
+        return $this->hasOne(LessonReschedule::className(), ['lessonId' => 'id']);
+    }
+    
 	public function getInvoiceLineItem()
     {
         return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])

@@ -4,7 +4,6 @@ namespace backend\controllers;
 use common\models\Payment;
 use Yii;
 use common\models\User;
-use yii\data\ArrayDataProvider;
 use common\models\UserLocation;
 use common\models\Address;
 use common\models\PhoneNumber;
@@ -201,30 +200,14 @@ class UserController extends Controller {
 					'invoice.location_id' => $locationId
 				]);
         
-        $rescheduledLessons = LessonReschedule::find()->all(); 
-        $rescheduledLessonIds = [];
-        foreach ($rescheduledLessons as $rescheduledLesson) {
-            $rescheduledLessonIds[] = $rescheduledLesson->lessonId;
-        }
-         
         $unscheduledLessons = Lesson::find()
-                ->where([
-					'teacherId' => $id,
-					'status' => Lesson::STATUS_CANCELED
-				])
-                ->all();
-        
-        foreach ($unscheduledLessons as $j => $list) {
-            if (in_array($list->id, $rescheduledLessonIds)) {
-                unset($unscheduledLessons[$j]);
-            }
-        }
-         
-        $unscheduledLessonDataProvider = new ArrayDataProvider([
-			'allModels' => $unscheduledLessons,
-            'sort' => [
-                'attributes' => ['id', 'courseId', 'teacherId', 'date', 'status'],
-            ],
+            ->joinWith(['lessonReschedule'])
+            ->andWhere(['status' => Lesson::STATUS_CANCELED])
+            ->andWhere(['teacherId' => $id])
+            ->andWhere(['lessonId' => null ]);
+
+        $unscheduledLessonDataProvider = new ActiveDataProvider([
+			'query' => $unscheduledLessons,
 		]);
         
         $proFormaInvoiceDataProvider = new ActiveDataProvider([
