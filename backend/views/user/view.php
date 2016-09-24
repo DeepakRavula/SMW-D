@@ -109,6 +109,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'openingBalanceCredit' => $openingBalanceCredit,
 			'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel
 		]);
+        
+        $unscheduledLessonContent = $this->render('_teacher-unscheduled-lesson',[
+			'dataProvider' => $unscheduledLessonDataProvider,
+		]);
 
 		?>
 		<?php
@@ -144,6 +148,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                     'id' => 'student',
                 ],
             ],
+            [
+				'label' => 'Unscheduled Lesson',
+				'content' => $unscheduledLessonContent,
+				'options' => [
+                    'id' => 'unscheduled',
+                ],
+			],
         ];
 		
 		$customerItems = [
