@@ -202,6 +202,10 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])
 				->where(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
     }
+    
+    public function getLessonReschedule() {
+        return $this->hasOne(LessonReschedule::className(), ['lessonId' => 'id']);
+    }
 
 	public function getTeacher()
     {

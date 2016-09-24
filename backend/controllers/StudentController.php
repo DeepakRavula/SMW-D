@@ -8,6 +8,8 @@ use common\models\Enrolment;
 use common\models\Lesson;
 use common\models\Program;
 use common\models\Course;
+use common\models\LessonReschedule;
+use common\models\PrivateLesson;
 use backend\models\search\StudentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -81,9 +83,27 @@ class StudentController extends Controller
 		$lessonDataProvider = new ActiveDataProvider([
 			'query' => $lessons,
 		]);	
+        
+        $unscheduledLessons = Lesson::find()
+			->joinWith(['course' => function($query) use($locationId,$model){
+				$query->joinWith(['enrolment' => function($query) use($locationId,$model){
+					$query->where(['enrolment.studentId' => $model->id]);
+				}])
+			->where(['course.locationId' => $locationId]);	
+			}])
+			->joinWith(['lessonReschedule'])
+            ->andWhere(['lesson_reschedule.lessonId' => null])
+            ->joinWith(['privateLesson'])
+            ->andWhere(['private_lesson.isEligible' => true])
+            ->orderBy('private_lesson.expiryDate DESC')  
+            ->andWhere(['status' => Lesson::STATUS_CANCELED])
+            ->notDeleted();
+            
+        $unscheduledLessonDataProvider = new ActiveDataProvider([
+            'query' => $unscheduledLessons,
+        ]);    
 
-		
-        $lessonModel = new Lesson();
+		$lessonModel = new Lesson();
         if($lessonModel->load(Yii::$app->request->post()) ){
            $studentEnrolment = Enrolment::find()
 				   ->joinWith(['course' => function($query) use($lessonModel){
@@ -107,6 +127,7 @@ class StudentController extends Controller
             	'model' => $model,
                 'lessonDataProvider' => $lessonDataProvider,
 				'enrolmentDataProvider' => $enrolmentDataProvider,
+                'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
             ]);
         }
     }
