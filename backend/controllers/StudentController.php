@@ -9,7 +9,6 @@ use common\models\Lesson;
 use common\models\Program;
 use common\models\Course;
 use common\models\LessonReschedule;
-use yii\data\ArrayDataProvider;
 use backend\models\search\StudentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -84,12 +83,6 @@ class StudentController extends Controller
 			'query' => $lessons,
 		]);	
         
-        $rescheduledLessons = LessonReschedule::find()->all();
-        $rescheduledLessonIds = [];
-        foreach ($rescheduledLessons as $rescheduledLesson) {
-            $rescheduledLessonIds[] = $rescheduledLesson->lessonId;
-        }
-            
         $unscheduledLessons = Lesson::find()
 			->joinWith(['course' => function($query) use($locationId,$model){
 				$query->joinWith(['enrolment' => function($query) use($locationId,$model){
@@ -97,21 +90,13 @@ class StudentController extends Controller
 				}])
 			->where(['course.locationId' => $locationId]);	
 			}])
-			->where(['lesson.status' => Lesson::STATUS_CANCELED])
-			->notDeleted()
-            ->all();
+			->joinWith(['lessonReschedule'])
+            ->andWhere(['status' => Lesson::STATUS_CANCELED])
+            ->andWhere(['lessonId' => null ])
+			->notDeleted();
             
-        foreach ($unscheduledLessons as $j => $list) {
-           if (in_array($list->id, $rescheduledLessonIds)) {
-                unset($unscheduledLessons[$j]);
-            }
-        }
-
-        $unscheduledLessonDataProvider = new ArrayDataProvider([
-            'allModels' => $unscheduledLessons,
-            'sort' => [
-                'attributes' => ['id', 'courseId', 'teacherId', 'date', 'status'],
-            ],
+        $unscheduledLessonDataProvider = new ActiveDataProvider([
+            'query' => $unscheduledLessons,
         ]);    
 
 		$lessonModel = new Lesson();
