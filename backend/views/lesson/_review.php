@@ -1,8 +1,8 @@
 <?php
 use yii\helpers\Html;
 use common\models\Program;
-use yii\widgets\Pjax;
 use yii\helpers\Url;
+use kartik\grid\GridView;
 
 $this->title = 'Review Lessons';
 ?>
@@ -94,6 +94,18 @@ $this->title = 'Review Lessons';
 						}
 					}
 				},
+			],
+			[
+				'class'=>'kartik\grid\ExpandRowColumn',
+				'width'=>'50px',
+				'value'=>function ($model, $key, $index, $column) {
+					return GridView::ROW_COLLAPSED;
+				},
+				'detail'=>function ($model, $key, $index, $column) use($conflicts) {
+					return Yii::$app->controller->renderPartial('_conflict-lesson', ['model' => $model, 'conflicts' => $conflicts]);
+				},
+				'headerOptions'=>['class'=>'kartik-sheet-style'], 
+				'expandOneOnly'=>true
 			],
 	];?>
     <?= \kartik\grid\GridView::widget([

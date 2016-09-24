@@ -160,7 +160,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => 'Lesson ID',
             'programId' => 'Program Name',
             'courseId' => 'Course ID',
             'teacherId' => 'Teacher Name',
