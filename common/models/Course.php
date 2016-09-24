@@ -162,7 +162,7 @@ class Course extends \yii\db\ActiveRecord
 						continue 2;
 					}
 				}
-				if ($day->format('N') === $this->day) {
+				if ((int)$day->format('N') === (int)$this->day) {
 					$lesson = new Lesson();
 					$lesson->setAttributes([
 						'courseId'	 => $this->id,

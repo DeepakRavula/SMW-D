@@ -117,7 +117,11 @@ class InvoiceController extends Controller {
 		]);
 
 		$paymentModel = new Payment();
-        $userModel = new UserProfile();
+        if(! empty($model->user->userProfile->user_id)){
+            $userModel = UserProfile::findOne(['user_id' => $customer->id]); 
+        }else{
+            $userModel = new UserProfile();
+        }
         
         if($request->isPost){
             if(isset($_POST['customer-invoice'])){
@@ -126,7 +130,7 @@ class InvoiceController extends Controller {
                 $model->save();
             }
             }
-            if(isset($_POST['guest-invoice'])){
+            if(isset($_POST['guest-invoice'])){                
                 if ($customer->load(Yii::$app->request->post())) {
                     if($customer->save()){
                         $model->user_id = $customer->id;
@@ -134,19 +138,19 @@ class InvoiceController extends Controller {
 
                         if ($userModel->load(Yii::$app->request->post())) {
                             $userModel->user_id = $customer->id;
-                            $userModel->save();
+                            $userModel->save();                            
                             $auth = Yii::$app->authManager;
-            				$auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
-							
+                            if(empty($customer->id)){
+                                $auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
+                            }
                             Yii::$app->session->setFlash('alert', [
                                 'options' => ['class' => 'alert-success'],
                                 'body' => 'Invoice has been updated successfully'
                             ]);
-                        }
-                    }
-                }
+                        }                     
+                    }                   
+                }                
             }
-            
         }
 		
 		if ($paymentModel->load(Yii::$app->request->post())) {

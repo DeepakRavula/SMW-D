@@ -40,6 +40,7 @@ $this->title = 'Review Lessons';
 			'class'=>'kartik\grid\EditableColumn',
 			'attribute'=>'date',    
 			'format'=>'date',
+			'refreshGrid' => true,
 			'headerOptions'=>['class'=>'kv-sticky-column'],
 			'contentOptions'=>['class'=>'kv-sticky-column'],
 			'editableOptions'=> function ($model, $key, $index) {    
@@ -55,6 +56,7 @@ $this->title = 'Review Lessons';
            [
                'class'=>'kartik\grid\EditableColumn',
                'attribute'=>'time',  
+			   'refreshGrid' => true,
                'value' => function ($model, $key, $index, $widget) {
                    $lessonTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date)->format('H:i:s');
                    return Yii::$app->formatter->asTime($lessonTime);
@@ -94,30 +96,22 @@ $this->title = 'Review Lessons';
 				},
 			],
 	];?>
-	<?php Pjax::begin() ?>
     <?= \kartik\grid\GridView::widget([
-		'dataProvider'=>$lessonDataProvider,
+		'dataProvider' => $lessonDataProvider,
 		'rowOptions' => function ($model, $key, $index, $grid) use($conflicts) {
 			foreach($conflicts as $key => $conflict){
-					foreach($conflict as $lessonConflict){
-						if( (int)$key === (int) $model->id && ((! empty($lessonConflict['lessonIds'])) || ( ! empty($lessonConflict['dates'])))){
-							return ['class' => 'danger'];
-						}
+				foreach($conflict as $lessonConflict){
+					if( (int)$key === (int) $model->id && ((! empty($lessonConflict['lessonIds'])) || ( ! empty($lessonConflict['dates'])))){
+						return ['class' => 'danger'];
 					}
-				}	
+				}
+			}	
 		},
 		'pjax' => true,
-		'pjaxSettings'=>[
-        	'neverTimeout'=>true,
-			'options' => [
-				'id' => 'lesson-review-listing',
-			]
-    	],
 		'columns'=>$columns,
 		'showPageSummary' => true,
 	]); ?>
 
-	<?php yii\widgets\Pjax::end(); ?>
 		</div>
 	<div class="form-group">
 	<div class="p-10 text-center">
@@ -136,8 +130,3 @@ $this->title = 'Review Lessons';
        <?php endif; ?>
     </div>
 </div>
-<script>
-$(document).ready(function(){
-$.pjax.reload({container:"#lesson-review-listing",});  //Reload GridView
-  });
-</script>
