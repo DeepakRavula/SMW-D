@@ -94,7 +94,7 @@ class StudentController extends Controller
 			->joinWith(['lessonReschedule'])
             ->andWhere(['lesson_reschedule.lessonId' => null])
             ->joinWith(['privateLesson'])
-            ->andWhere(['private_lesson.isEligible' => PrivateLesson::ELIGIBLE])
+            ->andWhere(['private_lesson.isEligible' => true])
             ->orderBy('private_lesson.expiryDate desc')  
             ->andWhere(['status' => Lesson::STATUS_CANCELED])
             ->notDeleted();
