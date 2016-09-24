@@ -24,15 +24,11 @@ $this->registerJs("
 	$conflicts = current($conflicts);
 	$conflictedLessonIds = [];
 	$conflictedDates = [];
-	if(! empty($conflicts['lessonIds'])){
-		foreach($conflicts['lessonIds'] as $lessonConflict){
-			$conflictedLessonIds[] = $lessonConflict;
-		}
+	foreach($conflicts['lessonIds'] as $lessonConflict){
+		$conflictedLessonIds[] = $lessonConflict;
 	}
-	if(! empty($conflicts['dates'])){
-		foreach($conflicts['dates'] as $dateConflict){
-			$conflictedDates[] = $dateConflict;
-		}
+	foreach($conflicts['dates'] as $dateConflict){
+		$conflictedDates[] = $dateConflict;
 	}
 	$holidays = Holiday::find()
 		->all();
