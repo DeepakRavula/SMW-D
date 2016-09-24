@@ -9,6 +9,7 @@ use common\models\Lesson;
 use common\models\Program;
 use common\models\Course;
 use common\models\LessonReschedule;
+use common\models\PrivateLesson;
 use backend\models\search\StudentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -91,9 +92,12 @@ class StudentController extends Controller
 			->where(['course.locationId' => $locationId]);	
 			}])
 			->joinWith(['lessonReschedule'])
+            ->andWhere(['lesson_reschedule.lessonId' => null])
+            ->joinWith(['privateLesson'])
+            ->andWhere(['private_lesson.isEligible' => PrivateLesson::ELIGIBLE])
+            ->orderBy('private_lesson.expiryDate desc')  
             ->andWhere(['status' => Lesson::STATUS_CANCELED])
-            ->andWhere(['lessonId' => null ])
-			->notDeleted();
+            ->notDeleted();
             
         $unscheduledLessonDataProvider = new ActiveDataProvider([
             'query' => $unscheduledLessons,
