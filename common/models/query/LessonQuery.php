@@ -93,6 +93,21 @@ class LessonQuery extends \yii\db\ActiveQuery
 		return $this;
 	}
 
+	public function activePrivateLessons() {
+		$this->joinWith(['course' => function($query){
+				$query->joinWith(['program' => function($query){
+					$query->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+				}])
+			->joinWith(['enrolment' => function($query){
+				$query->joinWith(['student' => function($query){
+					$query->active();
+				}]);
+			}]);
+		}]);
+		
+		return $this;
+	}
+
 	public function groupLessons() {
 		$this->joinWith(['course' => function($query){
 			$query->joinWith('program')

@@ -75,7 +75,8 @@ class LessonSearch extends Lesson
 		
 		if(! empty($this->type)){
 			if((int) $this->type === Lesson::TYPE_PRIVATE_LESSON){
-				$query->privateLessons();
+				$query->activePrivateLessons()
+					;
 			} else {
 				$query->groupLessons();
 			}
