@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use backend\models\search\DashboardSearch;
 use yii\helpers\ArrayHelper;
-use yii\jui\DatePicker;
+use kartik\daterange\DateRangePicker;;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\UserSearch */
@@ -18,25 +18,21 @@ use yii\jui\DatePicker;
         'method' => 'get',
     ]); ?>
     <div class="row">
-    <div class="col-md-3">
-        <?php echo $form->field($model, 'fromDate')->widget(DatePicker::classname(), [
-            'options'=>[
-                'class' => 'form-control'
-            ]
-    //'language' => 'ru',
-    //'dateFormat' => 'yyyy-MM-dd',
-]) ?>
-    </div>
-    <div class="col-md-3">
-        <?php echo $form->field($model, 'toDate')->widget(DatePicker::classname(), [
-            'options'=>[
-                'class' => 'form-control'
-            ]
-    //'language' => 'ru',
-    //'dateFormat' => 'yyyy-MM-dd',
-]) ?>
-    </div>
-    
+    <div class="col-md-6">
+   <?php 
+   echo '<label>Date Range</label>';
+   echo DateRangePicker::widget([
+    'model'=>$model,
+    'attribute'=>'dateRange',
+    'convertFormat'=>true,    
+    'pluginOptions'=>[ 
+            'locale'=>[        
+            'format'=>'d-m-Y'
+        ]
+    ]
+    ]);
+   ?>
+   </div>    
     <div class="col-md-3 form-group m-t-20">
         <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
         <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>

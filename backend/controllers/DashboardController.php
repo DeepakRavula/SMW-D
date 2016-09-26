@@ -17,24 +17,25 @@ class DashboardController extends \yii\web\Controller
     {
         $searchModel = new DashboardSearch();        
         $currentDate = new \DateTime();
-        $searchModel->fromDate = $currentDate->format('1-m-Y');
-		$searchModel->toDate = $currentDate->format('t-m-Y');
+        $fromDate = $currentDate->format('1-m-Y');
+		$toDate = $currentDate->format('t-m-Y');
+        $searchModel->dateRange = $fromDate . ' - ' . $toDate;
         $request = Yii::$app->request;
         if($searchModel->load($request->get())){
             $dashboardRequest = $request->get('DashboardSearch');
-            $searchModel->fromDate = $dashboardRequest['fromDate'];
-            $searchModel->toDate = $dashboardRequest['toDate'];
-        }
-        $searchModel->fromDate =  \DateTime::createFromFormat('d-m-Y', $searchModel->fromDate);
-		$searchModel->toDate =  \DateTime::createFromFormat('d-m-Y', $searchModel->toDate);       
+            $searchModel->dateRange = $dashboardRequest['dateRange']; 
+        }      
+        $dateRange = explode(" - ",$searchModel->dateRange);
+        $fromDate = \DateTime::createFromFormat('d-m-Y',  $dateRange[0]);
+        $toDate = \DateTime::createFromFormat('d-m-Y',  $dateRange[1]);        
         $locationId = Yii::$app->session->get('location_id');
         $invoiceTotal = Invoice::find()
                         ->where(['location_id' => $locationId])
-                        ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                        ->andWhere(['between', 'date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
                         ->sum('subTotal');
         $invoiceTaxTotal = Invoice::find()
                         ->where(['location_id' => $locationId])
-                        ->andWhere(['between','date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                        ->andWhere(['between','date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
                         ->sum('tax');
         $enrolments = Enrolment::find()
 					->notDeleted()
@@ -52,7 +53,7 @@ class DashboardController extends \yii\web\Controller
                     ->joinWith(['invoice i' => function($query) use($locationId) {                        
                             $query->where(['i.location_id' => $locationId]);                        
                     }])
-                    ->andWhere(['between','payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->andWhere(['between','payment.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
                     ->sum('payment.amount');
 					
          $students = Student::find()
@@ -70,7 +71,7 @@ class DashboardController extends \yii\web\Controller
                    ->select(['sum(course.duration) as hours'])
                    ->joinWith('course')
                    ->where(['course.locationId' => $locationId])
-                   ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                   ->andWhere(['between','lesson.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
                    ->where(['lesson.status' => Lesson::STATUS_COMPLETED])
                    ->all();
        $totalHours = floor($programsHours[0]->hours / 3600);
@@ -82,7 +83,7 @@ class DashboardController extends \yii\web\Controller
                        $query->joinWith(['program' => function($query){   
                        }]);
                    }])
-                   ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                   ->andWhere(['between','lesson.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
                    ->where(['lesson.status' => Lesson::STATUS_COMPLETED])
                    ->groupBy(['course.programId'])
                    ->all();

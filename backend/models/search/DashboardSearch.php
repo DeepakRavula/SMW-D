@@ -12,16 +12,15 @@ use common\models\Invoice;
  */
 class DashboardSearch extends Invoice
 {
-    
-    public $fromDate;
-	public $toDate;
+    public $dateRange; 
+   
 	/**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['fromDate', 'toDate'], 'safe'],
+            [['dateRange'], 'safe'],
         ];
     }
 
