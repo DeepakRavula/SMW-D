@@ -175,7 +175,8 @@ class UserController extends Controller {
 		$enrolmentQuery = Enrolment::find()
 			->location($locationId)
 			->joinWith(['student' => function($query) use($model){
-				$query->where(['customer_id' => $model->id]);
+				$query->where(['customer_id' => $model->id])
+				->active();
 			}])
 			->notDeleted();
 		

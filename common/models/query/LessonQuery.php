@@ -50,9 +50,11 @@ class LessonQuery extends \yii\db\ActiveQuery
 
 	public function student($id) {
 		$this->joinWith(['enrolment' => function($query) use($id){
-			$query->joinWith('student')
-				->where(['customer_id' => $id]);
+			$query->joinWith(['student' => function($query) use($id){
+				$query->where(['customer_id' => $id])
+				->active();
 			}]);
+		}]);
 		return $this;
 	}
 
