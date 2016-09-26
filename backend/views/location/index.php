@@ -23,10 +23,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             [
 	            'attribute'=>'name',
-				'label' => 'Name (Enrolments)',
+				'label' => 'Name',
         	    'format' => 'raw',
             	'value'=>function ($data) {
-             	   return Html::a($data->name . ' (' . $data->enrolmentsCount . ')', ['location/view', 'id' => $data->id]);
+             	   return Html::a($data->name, ['location/view', 'id' => $data->id]);
                 	},
             ],
             'address',

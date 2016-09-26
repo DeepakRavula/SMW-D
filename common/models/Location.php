@@ -86,10 +86,6 @@ class Location extends \yii\db\ActiveRecord {
 		return $this->hasOne(Province::className(), ['id' => 'province_id']);
 	}
 
-	public function getEnrolment() {
-		return $this->hasMany(Enrolment::className(), ['location_id' => 'id']);
-	}
-
 	public function getUserLocations() {
 		return $this->hasMany(UserLocation::className(), ['location_id' => 'id']);
 	}
@@ -109,15 +105,4 @@ class Location extends \yii\db\ActiveRecord {
 			return false;
 		}
 	}
-
-	public function getEnrolments()
-	{
-    	return $this->hasMany(Enrolment::className(), ['location_id' => 'id']);
-	}
-
-	public function getEnrolmentsCount()
-	{
-    	return $this->getEnrolments()->count();
-	}
-
 }
