@@ -109,7 +109,9 @@ class CourseController extends Controller
     {
         $model = new Course();
 		$teacherModel = ArrayHelper::map(User::find()
-					->joinWith('userLocation ul')
+					->joinWith(['userLocation ul' => function($query){
+						$query->joinWith('teacherAvailability');
+					}])
 					->join('INNER JOIN','rbac_auth_assignment raa','raa.user_id = user.id')
 					->where(['raa.item_name' => 'teacher'])
 					->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])

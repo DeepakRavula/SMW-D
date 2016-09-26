@@ -50,9 +50,9 @@ class ScheduleController extends Controller
             ->join('Join', 'user_profile up', 'up.user_id = ul.user_id')
             ->join('Join', 'lesson l', 'l.teacherId = up.user_id')
             ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
+            ->andWhere(['not', ['l.status'  =>  [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->orderBy('id desc')
             ->all();
-
 		$allTeachers = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
