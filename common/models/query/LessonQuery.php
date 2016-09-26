@@ -50,9 +50,11 @@ class LessonQuery extends \yii\db\ActiveQuery
 
 	public function student($id) {
 		$this->joinWith(['enrolment' => function($query) use($id){
-			$query->joinWith('student')
-				->where(['customer_id' => $id]);
+			$query->joinWith(['student' => function($query) use($id){
+				$query->where(['customer_id' => $id])
+				->active();
 			}]);
+		}]);
 		return $this;
 	}
 
@@ -87,6 +89,21 @@ class LessonQuery extends \yii\db\ActiveQuery
 			$query->joinWith('program')
 				->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
 			}]);
+		
+		return $this;
+	}
+
+	public function activePrivateLessons() {
+		$this->joinWith(['course' => function($query){
+				$query->joinWith(['program' => function($query){
+					$query->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+				}])
+			->joinWith(['enrolment' => function($query){
+				$query->joinWith(['student' => function($query){
+					$query->active();
+				}]);
+			}]);
+		}]);
 		
 		return $this;
 	}

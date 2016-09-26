@@ -46,7 +46,7 @@ class UserSearch extends User
         
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
-        $query = User::find()->alias('u');
+        $query = User::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -64,11 +64,11 @@ class UserSearch extends User
             'logged_at' => $this->logged_at
         ]);
 
- 		$query->leftJoin(['rbac_auth_assignment aa'], 'u.id = aa.user_id');
+ 		$query->leftJoin(['rbac_auth_assignment aa'], 'user.id = aa.user_id');
  		$query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
- 		$query->leftJoin(['user_location ul'], 'ul.user_id = u.id');
-        $query->leftJoin(['user_profile uf'], 'uf.user_id = u.id');
-        $query->leftJoin(['phone_number pn'], 'pn.user_id = u.id');
+ 		$query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
+        $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
+        $query->leftJoin(['phone_number pn'], 'pn.user_id = user.id');
 		
         $query->andFilterWhere(['like', 'username', $this->username])
             ->orFilterWhere(['like', 'email', $this->query])
@@ -85,12 +85,12 @@ class UserSearch extends User
         if($this->role_name === USER::ROLE_CUSTOMER) {          
             if( ! $this->showAllCustomers) {             
                $currentDate = (new \DateTime())->format('Y-m-d H:i:s');            
-		       $query->joinWith(['student s'=>function($query) use($currentDate){			
+		       $query->joinWith(['student' => function($query) use($currentDate){			
                     $query->enrolled($currentDate);       
   			    }]);  
                 $query->andFilterWhere(['like', 'ul.location_id', $locationId]);             
             }        
-			$query->groupBy('u.id');
+			$query->groupBy('user.id');
   		} 
 
 		$query->active();

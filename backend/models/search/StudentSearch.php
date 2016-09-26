@@ -43,7 +43,7 @@ class StudentSearch extends Student
         $locationId = Yii::$app->session->get('location_id');
 		$query = Student::find()
 				->location($locationId)
-				->notDeleted();
+				->active();
 		
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,

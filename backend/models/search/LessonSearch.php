@@ -7,7 +7,6 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
 use common\models\Invoice;
-use common\models\Program;
 
 /**
  * LessonSearch represents the model behind the search form about `common\models\Lesson`.
@@ -76,7 +75,8 @@ class LessonSearch extends Lesson
 		
 		if(! empty($this->type)){
 			if((int) $this->type === Lesson::TYPE_PRIVATE_LESSON){
-				$query->privateLessons();
+				$query->activePrivateLessons()
+					;
 			} else {
 				$query->groupLessons();
 			}

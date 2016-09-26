@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-
+use common\models\Student;
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -35,6 +35,11 @@ use yii\bootstrap\ActiveForm;
                     ]
                 ]); ?>
         </div>
+			<div class="col-xs-4">
+				<?php if (!$model->isNewRecord) : ?>
+					<?php echo $form->field($model, 'status')->dropDownList(Student::statuses()) ?>
+				<?php endif; ?>
+			</div>
             <div class="clearfix"></div>
         <div class="col-md-4">
               <?php echo $form->field($model, 'notes')->textarea()?>

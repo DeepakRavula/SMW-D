@@ -27,8 +27,8 @@ class StudentQuery extends ActiveQuery
         return parent::one($db);
     }
 
-	public function notDeleted() {
-		$this->where(['student.isDeleted' => false]);
+	public function active() {
+		$this->andWhere(['student.status' => Student::STATUS_ACTIVE]);
 		
 		return $this;
 	}

@@ -105,15 +105,15 @@ class UserController extends Controller {
 		$db = $searchModel->search(Yii::$app->request->queryParams);        
        	
 		$query = Student::find()
-			->notDeleted()
-			->where(['customer_id' => $id]);
+			->where(['customer_id' => $id])
+			->active();
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
 
 		$query = Student::find()
 				->teacherStudents($locationId, $model->id)
-				->notDeleted();
+				->active();
 		
 		$studentDataProvider = new ActiveDataProvider([
 			'query' => $query,
@@ -175,7 +175,8 @@ class UserController extends Controller {
 		$enrolmentQuery = Enrolment::find()
 			->location($locationId)
 			->joinWith(['student' => function($query) use($model){
-				$query->where(['customer_id' => $model->id]);
+				$query->where(['customer_id' => $model->id])
+				->active();
 			}])
 			->notDeleted();
 		

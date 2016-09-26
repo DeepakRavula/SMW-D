@@ -4,7 +4,6 @@ namespace common\models;
 
 use Yii;
 use common\models\query\StudentQuery;
-use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "student".
@@ -17,6 +16,8 @@ use \yii2tech\ar\softdelete\SoftDeleteBehavior;
  */
 class Student extends \yii\db\ActiveRecord
 {
+	const STATUS_ACTIVE = 1;
+	const STATUS_INACTIVE = 2;
     /**
      * @inheritdoc
      */
@@ -25,17 +26,6 @@ class Student extends \yii\db\ActiveRecord
 		return '{{%student}}';
     }
 
-	public function behaviors()
-    {
-        return [
-            'softDeleteBehavior' => [
-                'class' => SoftDeleteBehavior::className(),
-                'softDeleteAttributeValues' => [
-                    'isDeleted' => true
-                ],
-            ],
-        ];
-    }
 	
     /**
      * @inheritdoc
@@ -45,7 +35,7 @@ class Student extends \yii\db\ActiveRecord
         return [
             [['first_name', 'last_name'], 'required'],
             [['birth_date','notes'], 'safe'],
-            [['customer_id'], 'integer'],
+            [['customer_id', 'status'], 'integer'],
             [['first_name', 'last_name'], 'string', 'max' => 30],
 			[['birth_date'], 'date', 'format' => 'php:d-m-Y']
         ];
@@ -127,13 +117,11 @@ class Student extends \yii\db\ActiveRecord
         return $this->getFullName();
     }
 
-	public function getEnrolments()
-	{
-    	return $this->hasMany(Enrolment::className(), ['student_id' => 'id']);
-	}
-
-	public function getEnrolmentsCount()
-	{
-    	return $this->getEnrolments()->count();
-	}
+	public static function statuses()
+    {
+        return [
+            self::STATUS_ACTIVE => Yii::t('common', 'Active'),
+            self::STATUS_INACTIVE => Yii::t('common', 'Inactive'),
+        ];
+    }
 }

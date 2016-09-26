@@ -8,8 +8,6 @@ use common\models\Enrolment;
 use common\models\Lesson;
 use common\models\Program;
 use common\models\Course;
-use common\models\LessonReschedule;
-use common\models\PrivateLesson;
 use backend\models\search\StudentSearch;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -145,7 +143,7 @@ class StudentController extends Controller
 		$user = $request->post('User');
         if ($model->load(Yii::$app->request->post())) {
 			$model->customer_id = $user['id'];
-			$model->isDeleted = 0;
+			$model->status = Student::STATUS_ACTIVE;
 			$model->save();
 			Yii::$app->session->setFlash('alert', [
             	'options' => ['class' => 'alert-success'],
@@ -268,38 +266,7 @@ class StudentController extends Controller
         ]);
             return $this->redirect(['view', 'id' => $studentId,'#' => 'enrolment']);
     }
-
-	public function actionDelete($id)
-    {
-        $model = $this->findModel($id);
-		$enrolments = Enrolment::find()
-					->notDeleted()
-					->where(['studentId' => $model->id])
-					->all();
-		if( ! empty($enrolments)){
-			foreach($enrolments as $enrolment){
-				if((int)$enrolment->course->program->type === Program::TYPE_PRIVATE_PROGRAM){
-					$lessons = Lesson::find()
-							->where(['courseId' => $enrolment->courseId])
-							->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
-							->all();
-					foreach($lessons as $lesson){
-						$lesson->softDelete();
-					}
-				}
-				$enrolment->softDelete();
-			}
-		}
-		
-		$model->softDelete();
-		
- 		Yii::$app->session->setFlash('alert', [
-            'options' => ['class' => 'alert-success'],
-            'body' => 'Student has been deleted successfully'
-        ]);
-            return $this->redirect(['index','StudentSearch[showAllStudents]' => 0]);
-    }
-
+	
 	public function actionDeleteEnrolmentPreview($studentId, $enrolmentId, $programType)
     {
 		$model = $this->findModel($studentId);
@@ -310,21 +277,6 @@ class StudentController extends Controller
 			'enrolmentId' => $enrolmentId,
 			'programType' => $programType,
 			'enrolmentModel' => $enrolmentModel,
-        ]);
-    }
-
-	public function actionDeletePreview($id)
-    {
-		$model = $this->findModel($id);
-	
-		$enrolments = Enrolment::find(['studentId' => $model->id]);
-		$enrolmentDataProvider = new ActiveDataProvider([
-			'query' => $enrolments,
-		]);
-		
-        return $this->render('delete-preview', [
-			'model' => $model,
-			'enrolmentDataProvider' => $enrolmentDataProvider,
         ]);
     }
 
