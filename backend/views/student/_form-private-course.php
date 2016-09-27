@@ -17,7 +17,6 @@ use yii\helpers\Url;
 
 <div class="enrolment-form form-well form-well-smw">
 	<?php $form = ActiveForm::begin(); ?>
-	
     <div class="row">
 		<div class="col-md-4">
 			<?php echo $form->field($model, 'programId')->dropDownList(
@@ -44,7 +43,7 @@ use yii\helpers\Url;
 			<?php
 			// Dependent Dropdown
 			echo $form->field($model, 'day')->widget(DepDrop::classname(), [
-				'options' => ['id' => 'teacher-availability-day'],
+				'options' => ['id' => 'course-day'],
 				'pluginOptions' => [
 					'depends' => ['course-teacherid'],
 					'placeholder' => 'Select...',
@@ -59,9 +58,9 @@ use yii\helpers\Url;
 			<?php
 			// Dependent Dropdown
 			echo $form->field($model, 'fromTime')->widget(DepDrop::classname(), [
-				'options' => ['id' => 'fromTime-id'],
+				'options' => ['id' => 'course-fromtime'],
 				'pluginOptions' => [
-					'depends' => ['course-teacherid', 'teacher-availability-day'],
+					'depends' => ['course-teacherid', 'course-day'],
 					'placeholder' => 'Select...',
 					'url' => Url::to(['/teacher-availability/available-hours'])
 				]
@@ -73,7 +72,7 @@ use yii\helpers\Url;
 			echo $form->field($model, 'duration')->widget(TimePicker::classname(), [
 				'pluginOptions' => [
 					'showMeridian' => false,
-					'defaultTime' => date('H:i', strtotime('00:45')),
+					'defaultTime' => date('H:i', strtotime('00:30')),
 				]
 			]);
 			?>
