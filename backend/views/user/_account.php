@@ -19,7 +19,7 @@ $lastInvoicePayment = $invoiceCredit->invoicePayments;
 $lastInvoicePayment = end($lastInvoicePayment);
 $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$lastInvoicePayment->payment->date);
 $results[] = [
-	'id' => $invoiceCredit->id,
+	'id' => $invoiceCredit->getInvoiceNumber(),
 	'date' => $paymentDate->format('d-m-Y'),
 	'total' => $invoiceCredit->total,
 	'paid' => $invoiceCredit->invoicePaymentTotal,
@@ -44,7 +44,7 @@ foreach($proFormaInvoiceCredits as $proFormaInvoiceCredit){
 	}
 	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$proFormaInvoiceCredit->date);
 	$results[] = [
-		'id' => $proFormaInvoiceCredit->id,
+		'id' => $proFormaInvoiceCredit->getInvoiceNumber(),
 		'date' => $paymentDate->format('d-m-Y'),
 		'total' => $proFormaInvoiceCredit->total,
 		'paid' => $proFormaInvoiceCredit->total,
@@ -63,7 +63,7 @@ $newInvoices = Invoice::find()
 foreach($newInvoices as $newInvoice){
 	$invoiceDate = \DateTime::createFromFormat('Y-m-d H:i:s',$newInvoice->date);
 		$results[] = [
-			'id' => $newInvoice->id,
+			'id' => $newInvoice->getInvoiceNumber(),
 			'date' => $invoiceDate->format('d-m-Y'),
 			'total' => $newInvoice->total,
 			'paid' => $newInvoice->invoicePaymentTotal,
@@ -84,7 +84,7 @@ if(! empty($invoices)){
 		if($invoice->total > $invoice->invoicePaymentTotal){
 			$invoiceDate = \DateTime::createFromFormat('Y-m-d H:i:s',$invoice->date);
 	$results[] = [
-		'id' => $invoice->id,
+		'id' => $invoice->getInvoiceNumber(),
 		'date' => $invoiceDate->format('d-m-Y'),
 		'total' => $invoice->total,
 		'paid' => $invoice->invoicePaymentTotal,
@@ -113,7 +113,7 @@ echo GridView::widget([
 },
 'columns' => [
 	[
-	'label' => 'Id', 
+	'label' => 'Invoice Number', 
 	'value' => 'id',
 	],
 	[

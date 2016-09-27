@@ -44,6 +44,12 @@ use yii\bootstrap\Tabs;
         return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
     },
     'columns' => [
+		[
+			'label' => 'Invoice Number',
+			'value' => function($data) {
+				return $data->getInvoiceNumber();
+			},
+		],
         [
             'label' => 'Student Name',
             'value' => function($data) {

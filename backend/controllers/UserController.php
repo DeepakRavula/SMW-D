@@ -268,30 +268,41 @@ class UserController extends Controller {
 		$openingBalancePaymentModel = Payment::find()
 				->where([
 					'user_id' => $model->id,
-					'payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY, ],
+					'payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY],
 			])->one();
 
 		$positiveOpeningBalanceModel = Invoice::find()
-				->joinWith('lineItems')
+				->joinWith(['lineItems' => function($query){
+					$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+				}])
 				->joinWith('payment')
 				->where(['invoice.user_id' => $model->id, 'payment.id' => null])
 				->one();
 		$remainingOpeningBalance = 0;
 		if(! empty($openingBalancePaymentModel->id)){
 			$openingBalanceCreditsUsed = Payment::find()
-					->joinWith(['invoicePayment ip' => function($query) use($model){
-						$query->where(['ip.invoice_id' => Payment::TYPE_OPENING_BALANCE_CREDIT]);	
-					}])
-					->where(['user_id' => $model->id])
-					->sum('amount');
+				->joinWith(['invoicePayment ip' => function($query) use($model){
+					$query->joinWith(['invoice' => function($query){
+						$query->joinWith(['lineItems' => function($query){
+							$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+						}]);
+					}]);
+				}])
+				->where(['payment.user_id' => $model->id])
+				->sum('payment.amount');
 
 			$remainingOpeningBalance = $openingBalancePaymentModel->amount + $openingBalanceCreditsUsed;
 		}
 		$openingBalanceQuery = Payment::find()
-				->joinWith(['invoicePayment ip' => function($query) use($model){
-					$query->where(['ip.invoice_id' => Payment::TYPE_OPENING_BALANCE_CREDIT]);	
+				->joinWith(['invoicePayment ip' => function($query){
+					$query->joinWith(['invoice' => function($query){
+						$query->joinWith(['lineItems' => function($query){
+							$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+						}]);
+					}]);
 				}])
-				->where(['user_id' => $model->id]);
+				->where(['payment.user_id' => $model->id]);
+				
 		$openingBalanceDataProvider = new ActiveDataProvider([
 			'query' => $openingBalanceQuery, 
 		]);
