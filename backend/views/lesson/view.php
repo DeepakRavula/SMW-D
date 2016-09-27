@@ -52,10 +52,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		<?php if(Yii::$app->controller->action->id === 'view'):?>
 	<div class="col-md-12 action-btns m-b-20">
 		<?php if((int)$model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>
+		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 		<?php echo Html::a('<i class="fa fa-plus"></i> Missed Lesson ', ['missed', 'id' => $model->id], ['class' => 'eligible']) ?>
 		<?php endif;?>
 		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
-		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 		</div>
 		<?php endif;?>
 

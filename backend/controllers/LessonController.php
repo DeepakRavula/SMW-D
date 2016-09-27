@@ -295,18 +295,7 @@ class LessonController extends Controller
             $invoiceLineItem = new InvoiceLineItem();
             $invoiceLineItem->invoice_id = $invoice->id;
             $invoiceLineItem->item_id = $model->id;
-			if((int) $model->course->program->type === (int) Program::TYPE_GROUP_PROGRAM){
-	        	$invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-				$courseFee = $model->course->program->rate;
-				$courseCount = Lesson::find()
-					->where(['courseId' => $model->courseId])
-					->count('id');
-				$lessonAmount = $model->course->program->rate / $courseCount;
-            	$invoiceLineItem->amount = $lessonAmount;
-			} else {
-		        $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;				
-            	$invoiceLineItem->amount = $model->course->program->rate * $invoiceLineItem->unit;
-			}
+	        $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
 			$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
 			$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
 			$invoiceLineItem->tax_rate = 0.0;
@@ -314,8 +303,9 @@ class LessonController extends Controller
 			$invoiceLineItem->tax_status = $taxStatus->name;
 			$description = $model->enrolment->program->name . ' for ' . $model->enrolment->student->fullName . ' with ' . $model->teacher->publicIdentity;
             $invoiceLineItem->description = $description;
-			$time = explode(':', $model->course->duration);
+            $time = explode(':', $model->course->duration);
             $invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
+            $invoiceLineItem->amount = $model->course->program->rate * $invoiceLineItem->unit;
             $invoiceLineItem->save();
             $subTotal += $invoiceLineItem->amount;                
             $invoice = Invoice::findOne(['id' => $invoice->id]);

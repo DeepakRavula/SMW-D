@@ -22,7 +22,7 @@ use common\models\PaymentCheque;
 use common\models\TaxCode;
 use common\models\Location;
 use common\models\TaxStatus;
-use common\models\Program;
+use common\models\Address;
 use common\models\UserAddress;
 use common\models\PhoneNumber;
 use backend\models\UserForm;
@@ -342,18 +342,7 @@ class InvoiceController extends Controller {
 				$invoiceLineItem = new InvoiceLineItem();
 				$invoiceLineItem->invoice_id = $invoice->id;
 				$invoiceLineItem->item_id = $lesson->id;
-				if((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM){
-            		$invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-					$courseFee = $lesson->course->program->rate;
-					$courseCount = Lesson::find()
-						->where(['courseId' => $lesson->courseId])
-						->count('id');
-					$lessonAmount = $lesson->course->program->rate / $courseCount;
-					$invoiceLineItem->amount = $lessonAmount;
-				} else {
-            		$invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-					$invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
-				}
+            	$invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
 				$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
 				$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
 				$invoiceLineItem->tax_rate = 0.0;
@@ -363,6 +352,7 @@ class InvoiceController extends Controller {
     	        $invoiceLineItem->description = $description;
 				$time = explode(':', $lesson->course->duration);
 				$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
+				$invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
 				$invoiceLineItem->save();
 				$subTotal += $invoiceLineItem->amount;
 			}

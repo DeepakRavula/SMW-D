@@ -88,6 +88,7 @@ class LessonSearch extends Lesson
 		if( ! empty($this->invoiceType)){
 			if((int) $this->invoiceType === Invoice::TYPE_PRO_FORMA_INVOICE){
 				$query->unInvoicedProForma()
+					->privateLessons()
 					->scheduled();
 			}else{
 				$query->unInvoiced()

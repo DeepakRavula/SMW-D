@@ -67,12 +67,6 @@ use yii\helpers\Html;
                     return ! empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
                 },
             ],
-			[
-			    'label' => 'Program Name',
-                'value' => function($data) {
-                    return $data->course->program->name;
-                },
-            ],
         ],
     ]); ?>
  <?php yii\widgets\Pjax::end(); ?>
