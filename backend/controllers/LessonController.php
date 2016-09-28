@@ -236,7 +236,20 @@ class LessonController extends Controller
 		    'query' => Lesson::find()->indexBy('id')
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
 		]);	
-		
+	
+		$model = Lesson::findOne(['courseId' => $courseId]);
+		$post = Yii::$app->request->post('Lesson');
+		if(isset($post)){
+			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A',$post['date']);
+			$model->id = null;
+			$model->isNewRecord = true;
+			$model->date = $lessonDate->format('Y-m-d H:i:s');
+			$model->save();
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Lesson has been created successfully'
+			]);
+		}
 		return $this->render('_review', [				
 			'courseModel' => $courseModel,
 			'courseId' => $courseId,

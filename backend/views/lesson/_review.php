@@ -31,8 +31,8 @@ $this->title = 'Review Lessons';
 		echo $fromTime->format('h:i A');?>	
 	</div>
 	<div class="col-md-2">
-	<div id="add-new-lesson" class="col-md-12">
-		<a href="#" class="add-lesson text-add-new"><i class="fa fa-plus-circle"></i> Add</a>
+	<div id="add-lesson" class="col-md-12">
+		<a href="#" class="add-review-lesson text-add-new"><i class="fa fa-plus-circle"></i> Add</a>
 	<div class="clearfix"></div>
 	</div>
 	</div>
@@ -145,8 +145,9 @@ $this->title = 'Review Lessons';
 	</div>
 <script>
 $(document).ready(function() {
-	$('#add-new-lesson').click(function(){
+	$('#add-lesson').click(function(){
 		$('#add-review-lesson-modal').modal('show');
-  });
-  });
+			return false;
+  	});
+});
 </script>
