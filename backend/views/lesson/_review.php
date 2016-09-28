@@ -30,10 +30,15 @@ $this->title = 'Review Lessons';
 		$fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->fromTime);
 		echo $fromTime->format('h:i A');?>	
 	</div>
+	<div class="col-md-2">
+	<div id="add-new-lesson" class="col-md-12">
+		<a href="#" class="add-lesson text-add-new"><i class="fa fa-plus-circle"></i> Add</a>
+	<div class="clearfix"></div>
 	</div>
-    </div>
+	</div>
+	</div>
 	<div class="clearfix"></div>	
-	<div class="user-details-wrapper">
+	<?php echo $this->render('_review-lesson') ?>
 	<?php
 	$columns = [
 		[
@@ -120,7 +125,6 @@ $this->title = 'Review Lessons';
 		'showPageSummary' => true,
 	]); ?>
 
-		</div>
 	<div class="form-group">
 	<div class="p-10 text-center">
 		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId], [
@@ -138,3 +142,11 @@ $this->title = 'Review Lessons';
        <?php endif; ?>
     </div>
 </div>
+	</div>
+<script>
+$(document).ready(function() {
+	$('#add-new-lesson').click(function(){
+		$('#add-review-lesson-modal').modal('show');
+  });
+  });
+</script>
