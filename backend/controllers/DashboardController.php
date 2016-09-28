@@ -19,14 +19,15 @@ class DashboardController extends \yii\web\Controller
         $currentDate = new \DateTime();
         $searchModel->fromDate = $currentDate->format('1-m-Y');
 		$searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $request = Yii::$app->request;
         if($searchModel->load($request->get())){
             $dashboardRequest = $request->get('DashboardSearch');
-            $searchModel->fromDate = $dashboardRequest['fromDate'];
-            $searchModel->toDate = $dashboardRequest['toDate'];
-        }
-        $searchModel->fromDate =  \DateTime::createFromFormat('d-m-Y', $searchModel->fromDate);
-		$searchModel->toDate =  \DateTime::createFromFormat('d-m-Y', $searchModel->toDate);       
+            $searchModel->dateRange = $dashboardRequest['dateRange']; 
+        }      
+        $dateRange = explode(" - ",$searchModel->dateRange);
+        $searchModel->fromDate = \DateTime::createFromFormat('d-m-Y',  $dateRange[0]);
+        $searchModel->toDate = \DateTime::createFromFormat('d-m-Y',  $dateRange[1]);        
         $locationId = Yii::$app->session->get('location_id');
         $invoiceTotal = Invoice::find()
                         ->where(['location_id' => $locationId])

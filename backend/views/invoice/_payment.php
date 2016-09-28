@@ -171,7 +171,12 @@ echo ButtonGroup::widget([
 		]);?>	
 	</div>
 	<?php endforeach;?>
-
+    <?php
+        $amount = 0.0;        
+	    if($model->total > $model->invoicePaymentTotal){
+            $amount = $model->invoiceBalance;
+		}
+	?>
 <script type="text/javascript">
 $(document).ready(function(){
   $('#payment-method-btn-section').on('click', '.btn', function() {
@@ -187,7 +192,10 @@ $(document).ready(function(){
   $('td').click(function () {
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
-        var type = $(this).closest('tr').data('source');
+        var type = $(this).closest('tr').data('source');    
+        var amountNeeded = '<?= $amount;?>';        
+        $('input[name="Payment[amount]"]').val(amountNeeded);  
+        $('input[name="Payment[amountNeeded]"]').val(amountNeeded);          
         $('#payment-credit').val(amount);
 		$('#payment-sourceid').val(id);
 		$('#payment-sourcetype').val(type);
