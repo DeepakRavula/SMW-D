@@ -38,7 +38,9 @@ $this->title = 'Review Lessons';
 	</div>
 	</div>
 	<div class="clearfix"></div>	
-	<?php echo $this->render('_review-lesson') ?>
+	<?php echo $this->render('_review-lesson',[
+			'teachers' => $teachers,
+	]); ?>
 	<?php
 	$columns = [
 		[

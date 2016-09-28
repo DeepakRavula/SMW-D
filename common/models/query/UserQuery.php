@@ -30,11 +30,18 @@ class UserQuery extends ActiveQuery
         return $this;
     }
 
-	public function teachers() {
-		return $this->byRole(User::ROLE_TEACHER);
+	public function teachers($programId, $locationId) {
+		$this->joinWith(['userLocation ul' => function($query) use($programId){
+				$query->joinWith('teacherAvailability');
+				$query->joinWith(['qualification' => function($query) use($programId){
+					$query->joinWith(['program' => function($query) use($programId){
+						$query->where(['program.id' => $programId]);
+					}]);
+				}]);
+			}])
+			->join('INNER JOIN','rbac_auth_assignment raa','raa.user_id = user.id')
+			->where(['raa.item_name' => 'teacher'])
+			->andWhere(['ul.location_id' => $locationId ]);
+		return $this;
 	}
-
-    /**
-     * @return $this
-     */
-	}
+}
