@@ -109,12 +109,17 @@ class StudentController extends Controller
 				   }])
 			  		->where(['studentId' => $model->id])
 					->one();
-           $lessonModel->courseId = $studentEnrolment->courseId; 
-           $lessonModel->status = Lesson::STATUS_DRAFTED;
-		   $lessonModel->isDeleted = 0;
-           $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
-           $lessonModel->date = $lessonDate->format('Y-m-d H:i:s');            
-           $lessonModel->save();
+            $lessonModel->courseId = $studentEnrolment->courseId;
+            $lessonModel->status = Lesson::STATUS_SCHEDULED;
+		    $lessonModel->isDeleted = 0;
+            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
+            $lessonModel->date = $lessonDate->format('Y-m-d H:i:s');            
+			$fromTime = $lessonDate->format('H:i:s');
+			$fromTime = new \DateTime($fromTime);
+			$length = explode(':', $studentEnrolment->course->duration);
+			$fromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
+            $lessonModel->toTime = $fromTime->format('H:i:s');
+            $lessonModel->save();
            Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
                 	'body' => 'Lesson has been created successfully'
