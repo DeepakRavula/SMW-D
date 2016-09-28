@@ -94,6 +94,22 @@ $this->title = 'Review Lessons';
 				},
 			],
 			[
+				'class'=>'kartik\grid\ActionColumn',
+				'template' => '{delete}',
+				'buttons' => [
+					'delete' => function ($url, $model, $key) {
+					  return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', [
+						  'delete', 'id' => $model->id
+						],
+						[
+							'data' => [
+								'method' => 'post',
+							],
+						]);
+					},
+				]
+			],
+			[
 				'class'=>'kartik\grid\ExpandRowColumn',
 				'width'=>'50px',
 				'value'=>function ($model, $key, $index, $column) {
