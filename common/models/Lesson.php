@@ -178,6 +178,8 @@ class Lesson extends \yii\db\ActiveRecord
             'date' => 'Date',
             'status' => 'Status',
             'isDeleted' => 'Is Deleted',
+			'time' => 'From Time',
+			'toTime' => 'To time'
         ];
     }
 

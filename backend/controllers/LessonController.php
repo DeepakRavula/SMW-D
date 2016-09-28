@@ -209,6 +209,11 @@ class LessonController extends Controller
                 $newTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
                 $output = Yii::$app->formatter->asTime($newTime);
             }
+			if(isset($post['Lesson'][$lessonIndex]['toTime'])){
+               	$toTime = \DateTime::createFromFormat('h:i A', $post['Lesson'][$lessonIndex]['toTime']);
+                $model->toTime = $toTime->format('H:i:s');
+                $output = Yii::$app->formatter->asTime($model->toTime);
+            }
 
             $model->save();
             $result = [
