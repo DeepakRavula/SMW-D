@@ -60,8 +60,8 @@ class StudentController extends Controller
 				->joinWith(['course' => function($query) use($locationId){
 					$query->where(['locationId' => $locationId]);	
 				}])
-				->where(['studentId' => $model->id])
-				->notDeleted();
+				->notDeleted()
+				->andWhere(['studentId' => $model->id]);
 
 		$enrolmentDataProvider = new ActiveDataProvider([
 			'query' => $enrolments,
