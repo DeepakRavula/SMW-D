@@ -150,7 +150,7 @@ class Lesson extends \yii\db\ActiveRecord
 		}
 		$draftLessons = self::find()
 			->where(['courseId' => $this->courseId, 'status' => self::STATUS_DRAFTED])
-			->andWhere(['not', ['id' => $this->id]])
+			->andWhere(['NOT', ['id' => $this->id]])
 			->all();
 		foreach($draftLessons as $draftLesson) {
 			$otherLessons[] = [
