@@ -172,7 +172,7 @@ echo ButtonGroup::widget([
 	</div>
 	<?php endforeach;?>
     <?php
-        $amount = '0.00';        
+        $amount = 0.0;        
 	    if($model->total > $model->invoicePaymentTotal){
             $amount = $model->invoiceBalance;
 		}
@@ -193,7 +193,7 @@ $(document).ready(function(){
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
         var type = $(this).closest('tr').data('source');    
-        var amountNeeded = '<?php echo $amount;?>';        
+        var amountNeeded = '<?= $amount;?>';        
         $('input[name="Payment[amount]"]').val(amountNeeded);  
         $('input[name="Payment[amountNeeded]"]').val(amountNeeded);          
         $('#payment-credit').val(amount);
