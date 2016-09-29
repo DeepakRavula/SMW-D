@@ -14,6 +14,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use common\models\Invoice;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -215,11 +216,18 @@ class StudentController extends Controller
 			$enrolmentModel->isDeleted = 0;
 			$enrolmentModel->paymentFrequency = Enrolment::PAYMENT_FREQUENCY_FULL;
 			$enrolmentModel->save();
-			Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Student has been enrolled successfully'
-            ]);	
-            return $this->redirect(['view', 'id' => $model->id]);
+			$courseStartDate = new \DateTime($enrolmentModel->course->startDate);
+			$courseStartDate = $courseStartDate->format('d-m-Y');
+			$courseEndDate = new \DateTime($enrolmentModel->course->endDate);
+			$courseEndDate = $courseEndDate->format('d-m-Y');
+            return $this->redirect([
+				'/invoice/create',
+				'Invoice[customer_id]' => $model->customer->id,
+				'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
+				'LessonSearch[fromDate]' => $courseStartDate,
+				'LessonSearch[toDate]' => $courseEndDate,
+				'LessonSearch[courseId]' => $enrolmentModel->courseId
+			]);
 		}
 		
 		$groupEnrolments = Enrolment::find()
