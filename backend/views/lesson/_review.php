@@ -94,7 +94,7 @@ $this->title = 'Review Lessons';
 				},
 			],
 			[
-				'class'=>'kartik\grid\ActionColumn',
+				'class' => kartik\grid\ActionColumn::classname(),
 				'template' => '{delete}',
 				'buttons' => [
 					'delete' => function ($url, $model, $key) {
