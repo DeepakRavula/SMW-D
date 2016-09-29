@@ -190,7 +190,7 @@ class LessonController extends Controller
 				'message' => ''
 			];
             $post = Yii::$app->request->post();
-            if(isset($post['Lesson'][$lessonIndex]['date'])){
+            if( ! empty($post['Lesson'][$lessonIndex]['date'])){
                 $existingDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
                 $lessonTime = $existingDate->format('H:i:s');
                 $timebits = explode(":", $lessonTime);
@@ -199,7 +199,7 @@ class LessonController extends Controller
                 $model->date = $changedDate->format('Y-m-d H:i:s');
                 $output = Yii::$app->formatter->asDate($model->date);
             }
-            if(isset($post['Lesson'][$lessonIndex]['time'])){
+            if(! empty($post['Lesson'][$lessonIndex]['time'])){
                 $existingDate = (new \DateTime($model->date))->format('Y-m-d');
                 $existingDate = new \DateTime($existingDate);
                 $changedTime = new \DateTime($post['Lesson'][$lessonIndex]['time']);
@@ -209,6 +209,11 @@ class LessonController extends Controller
                 $model->date = $existingDate->format('Y-m-d H:i:s');
                 $newTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
                 $output = Yii::$app->formatter->asTime($newTime);
+            }
+			if(! empty($post['Lesson'][$lessonIndex]['toTime'])){
+               	$toTime = \DateTime::createFromFormat('h:i A', $post['Lesson'][$lessonIndex]['toTime']);
+                $model->toTime = $toTime->format('H:i:s');
+                $output = Yii::$app->formatter->asTime($model->toTime);
             }
 
             $model->save();

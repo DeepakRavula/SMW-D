@@ -72,7 +72,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['courseId', 'teacherId', 'status', 'isDeleted'], 'required'],
+            [['courseId', 'teacherId', 'status', 'isDeleted', 'toTime'], 'required'],
             [['courseId', 'status', 'isDeleted'], 'integer'],
             [['date', 'programId', 'notes','teacherId'], 'safe'],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
@@ -178,6 +178,8 @@ class Lesson extends \yii\db\ActiveRecord
             'date' => 'Date',
             'status' => 'Status',
             'isDeleted' => 'Is Deleted',
+			'time' => 'From Time',
+			'toTime' => 'To time'
         ];
     }
 
