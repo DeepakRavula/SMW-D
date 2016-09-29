@@ -135,7 +135,11 @@ class Course extends \yii\db\ActiveRecord
 			$start = new \DateTime($startDate);
 			$end = new \DateTime($endDate);
 			$period = new \DatePeriod($start, $interval, $end);
-
+			$fromTime = new \DateTime($this->fromTime);
+			$length = explode(':', $this->duration);
+			$fromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
+			$toTime = $fromTime->format('H:i:s');
+			
 			$holidays = Holiday::find()->all();
 			$pdDays = ProfessionalDevelopmentDay::find()->all();
 
@@ -169,6 +173,7 @@ class Course extends \yii\db\ActiveRecord
 						'teacherId' => $this->teacherId,
 						'status' => Lesson::STATUS_DRAFTED,
 						'date' => $day->format('Y-m-d H:i:s'),
+						'toTime' => $toTime, 
 						'isDeleted' => 0,
 					]);
 					$lesson->save();

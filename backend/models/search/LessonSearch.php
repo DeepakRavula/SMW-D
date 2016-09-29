@@ -95,6 +95,9 @@ class LessonSearch extends Lesson
 					->orderBy('lesson.id ASC');
 			}
 		}
+		if( ! empty($this->courseId)){
+			$query->andFilterWhere(['lesson.courseId' => $this->courseId]);
+		}
         if($this->lessonStatus == Lesson::STATUS_COMPLETED) {
 			$query->completed();
 		} else if($this->lessonStatus === 'scheduled') {
