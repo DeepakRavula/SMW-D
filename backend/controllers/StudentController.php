@@ -220,7 +220,14 @@ class StudentController extends Controller
 			$courseStartDate = $courseStartDate->format('d-m-Y');
 			$courseEndDate = new \DateTime($enrolmentModel->course->endDate);
 			$courseEndDate = $courseEndDate->format('d-m-Y');
-            return $this->redirect(['/invoice/create','Invoice[customer_id]' => $model->customer->id, 'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,'LessonSearch[fromDate]' => $courseStartDate, 'LessonSearch[toDate]' => $courseEndDate, 'LessonSearch[courseId]' => $enrolmentModel->courseId]);
+            return $this->redirect([
+				'/invoice/create',
+				'Invoice[customer_id]' => $model->customer->id,
+				'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
+				'LessonSearch[fromDate]' => $courseStartDate,
+				'LessonSearch[toDate]' => $courseEndDate,
+				'LessonSearch[courseId]' => $enrolmentModel->courseId
+			]);
 		}
 		
 		$groupEnrolments = Enrolment::find()
