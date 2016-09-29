@@ -342,6 +342,11 @@ class InvoiceController extends Controller {
 				$invoiceLineItem = new InvoiceLineItem();
 				$invoiceLineItem->invoice_id = $invoice->id;
 				$invoiceLineItem->item_id = $lesson->id;
+				$lessonStartTime = $lessonDate->format('H:i:s');
+				$lessonStartTime = new \DateTime($lessonStartTime);
+				$lessonEndTime = new \DateTime($model->toTime);
+				$duration = $lessonStartTime->diff($lessonEndTime);
+				$invoiceLineItem->unit = (($duration->h * 60) + ($duration->i)) / 60;
 				if((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM){
             		$invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
 					$courseFee = $lesson->course->program->rate;
@@ -361,8 +366,6 @@ class InvoiceController extends Controller {
 				$invoiceLineItem->tax_status = $taxStatus->name;
 				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
     	        $invoiceLineItem->description = $description;
-				$time = explode(':', $lesson->course->duration);
-				$invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
 				$invoiceLineItem->save();
 				$subTotal += $invoiceLineItem->amount;
 			}
