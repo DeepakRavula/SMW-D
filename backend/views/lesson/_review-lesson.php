@@ -9,6 +9,7 @@ Modal::begin([
 ]);
 echo $this->render('_form-review-lesson', [
 		'model' => new Lesson(),
+		'teachers' => $teachers,
 ]);
 Modal::end();
 ?>

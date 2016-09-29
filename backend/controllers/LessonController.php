@@ -19,7 +19,8 @@ use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\helpers\ArrayHelper;
+use common\models\User;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -242,14 +243,27 @@ class LessonController extends Controller
 		    'query' => Lesson::find()->indexBy('id')
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
 		]);	
-	
-		$model = Lesson::findOne(['courseId' => $courseId]);
-		$post = Yii::$app->request->post('Lesson');
-		if(isset($post)){
-			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A',$post['date']);
-			$model->id = null;
-			$model->isNewRecord = true;
+		$locationId = Yii::$app->session->get('location_id');
+		$teachers = ArrayHelper::map(User::find()
+				->teachers($courseModel->program->id, $locationId)
+				->all(),
+			'id', function($model){
+				return $model->publicIdentity;
+			}		
+			);
+		$model = new Lesson();
+		$post = Yii::$app->request->post();
+		if($model->load($post)){
+			$model->courseId = $courseId;
+			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A',$model->date);
 			$model->date = $lessonDate->format('Y-m-d H:i:s');
+			$model->status = Lesson::STATUS_DRAFTED;
+			$model->isDeleted = 0;
+            $fromTime = $lessonDate->format('H:i:s');
+            $fromTime = new \DateTime($fromTime);
+            $length = explode(':', $model->course->duration);
+            $fromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
+            $toTime = $fromTime->format('H:i:s');
 			$model->save();
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
@@ -260,7 +274,8 @@ class LessonController extends Controller
 			'courseModel' => $courseModel,
 			'courseId' => $courseId,
 			'lessonDataProvider' => $lessonDataProvider,
-			'conflicts' => $conflicts
+			'conflicts' => $conflicts,
+			'teachers' => $teachers,
         ]);	
 	}
 

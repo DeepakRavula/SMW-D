@@ -17,6 +17,9 @@ use yii\helpers\Url;
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
         <div class="col-xs-8">
+			<?php echo $form->field($model, 'teacherId')->dropDownList($teachers,['prompt' => 'Select']) ?>
+        </div>
+        <div class="col-xs-8">
     		<?= $form->field($model, 'date')->widget(DateTimePicker::classname(), [
 				'options' => [
 				'value' => Yii::$app->formatter->asDateTime($model->date),
