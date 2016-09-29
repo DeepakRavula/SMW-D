@@ -90,12 +90,25 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+		$courseModel = $model->course;
+        if ($courseModel->load(Yii::$app->request->post())) {
+			$lessons = $courseModel->lessons;
+			foreach($lessons as $lesson){
+				$currentDate = new \DateTime();
+				if(new \DateTime($lesson->date) >= $currentDate){
+					$fromTime = \DateTime::createFromFormat('h:i A', $courseModel->fromTime);
+					$fromTime = $fromTime->format('H:i:s');
+					$timebits = explode(':', $fromTime);
+					$lessonDate = new \DateTime($lesson->date);
+					$lessonDate->add(new \DateInterval('PT' . $timebits[0]. 'H' . $timebits[1] . 'M'));
+        			$lesson->date = $lessonDate->format('Y-m-d H:i:s');
+					$lesson->save();
+				}
+			}
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                'model' => $model->course,
             ]);
         }
     }

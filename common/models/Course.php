@@ -96,6 +96,11 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
     }
 
+	public function getLessons()
+	{
+        return $this->hasMany(Lesson::className(), ['courseId' => 'id']);
+	}
+	
 	public function beforeSave($insert)
     {  
         $fromTime = \DateTime::createFromFormat('h:i A',$this->fromTime);
