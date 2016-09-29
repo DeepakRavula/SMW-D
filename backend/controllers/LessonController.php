@@ -241,7 +241,9 @@ class LessonController extends Controller
 		$teachers = ArrayHelper::map(User::find()
 				->teachers($courseModel->program->id, $locationId)
 				->all(),
-			'id','userProfile.fullName'		
+			'id', function($model){
+				return $model->publicIdentity;
+			}		
 			);
 		$model = new Lesson();
 		$post = Yii::$app->request->post();
@@ -251,6 +253,11 @@ class LessonController extends Controller
 			$model->date = $lessonDate->format('Y-m-d H:i:s');
 			$model->status = Lesson::STATUS_DRAFTED;
 			$model->isDeleted = 0;
+            $fromTime = $lessonDate->format('H:i:s');
+            $fromTime = new \DateTime($fromTime);
+            $length = explode(':', $model->course->duration);
+            $fromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
+            $toTime = $fromTime->format('H:i:s');
 			$model->save();
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
