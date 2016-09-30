@@ -41,6 +41,14 @@ echo GridView::widget([
 			},
 		],
 		[
+			'label' => 'Time',
+			'value' => function($data){
+				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+				$startTime = $lessonDate->format('H:i:s');
+					return Yii::$app->formatter->asTime($startTime) . ' to ' . Yii::$app->formatter->asTime($data->toTime);
+			}
+		],
+		[
 			'label' => 'Lesson Status',
 			'value' => function($data) {
 				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);

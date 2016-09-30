@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Enrolment;
-use common\models\Course;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use backend\models\search\EnrolmentSearch;
@@ -92,20 +91,37 @@ class EnrolmentController extends Controller
         $model = $this->findModel($id);
 		$courseModel = $model->course;
         if ($courseModel->load(Yii::$app->request->post())) {
-			$lessons = $courseModel->lessons;
+			$fromTime = \DateTime::createFromFormat('h:i A',$courseModel->fromTime);
+			$courseModel->fromTime = $fromTime->format('H:i:s');
+			$courseModel->save();
+			$courseDate = \DateTime::createFromFormat('d-m-Y',$courseModel->rescheduleDate);
+			$courseDate = $courseDate->format('Y-m-d H:i:s');
+			$lessons = Lesson::find()
+				->where(['courseId' => $courseModel->id])
+				->andWhere(['>=', 'date', $courseDate])
+				->all();
 			foreach($lessons as $lesson){
-				$currentDate = new \DateTime();
-				if(new \DateTime($lesson->date) >= $currentDate){
-					$fromTime = \DateTime::createFromFormat('h:i A', $courseModel->fromTime);
-					$fromTime = $fromTime->format('H:i:s');
-					$timebits = explode(':', $fromTime);
-					$lessonDate = new \DateTime($lesson->date);
-					$lessonDate->add(new \DateInterval('PT' . $timebits[0]. 'H' . $timebits[1] . 'M'));
-        			$lesson->date = $lessonDate->format('Y-m-d H:i:s');
-					$lesson->save();
+//				$lesson->setScenario('review');
+//				$lesson->validate();
+//				$error = $lesson->getErrors();
+//				print_r($error);die;
+				$changedFromTime = new \DateTime($courseModel->fromTime);
+				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
+				$lessonTime = $lessonDate->format('H:i:s');
+                $lessonStartTime = new \DateTime($lessonTime);
+                $duration = $changedFromTime->diff($lessonStartTime);
+				if($changedFromTime > $lessonStartTime){
+					$lessonDate->add(new \DateInterval('PT' . $duration->h. 'H' . $duration->i . 'M'));	
+				} else {
+					$lessonDate->sub(new \DateInterval('PT' . $duration->h. 'H' . $duration->i . 'M'));	
 				}
+				$lesson->date = $lessonDate->format('Y-m-d H:i:s');
+            	$length = explode(':', $model->course->duration);
+            	$changedFromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
+            	$lesson->toTime = $changedFromTime->format('H:i:s');
+				$lesson->save();
 			}
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'id' => $model->id, '#' => 'lesson']);
         } else {
             return $this->render('update', [
                 'model' => $model->course,

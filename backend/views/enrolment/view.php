@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use common\models\Program;
 
 $this->title = $model->student->fullName;
 ?>
@@ -10,7 +11,9 @@ $this->title = $model->student->fullName;
 <div class="row-fluid p-10">
     
     <?= Html::a('<i class="fa fa-print"></i> Print', ['course/print', 'id' => $model->course->id], ['class' => 'btn btn-default pull-left', 'target'=>'_blank',]) ?>  
-    <?= Html::a('<i class="fa fa-envelope-o"></i> Email Lessons', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-left  m-l-20',]) ?> 
-	<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => ' m-l-20']) ?>
+    <?= Html::a('<i class="fa fa-envelope-o"></i> Email Lessons', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-left  m-l-20',]) ?>
+	<?php if((int) $model->course->program->type !== (int) Program::TYPE_GROUP_PROGRAM) : ?>
+		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => ' m-l-20']) ?>
+	<?php endif; ?>
     <div class="clearfix"></div>
 </div>

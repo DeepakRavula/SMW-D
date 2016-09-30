@@ -21,6 +21,8 @@ class Course extends \yii\db\ActiveRecord
 {
 	public $studentId;
 	public $paymentFrequency;
+	public $rescheduleDate;
+	
     /**
      * @inheritdoc
      */
@@ -37,7 +39,7 @@ class Course extends \yii\db\ActiveRecord
         return [
             [['programId', 'teacherId', 'locationId', 'day', 'fromTime', 'duration'], 'required'],
             [['programId', 'teacherId', 'locationId', 'day', 'paymentFrequency'], 'integer'],
-            [['fromTime', 'duration', 'startDate', 'endDate'], 'safe'],
+            [['fromTime', 'duration', 'startDate', 'endDate', 'rescheduleDate'], 'safe'],
         ];
     }
 
@@ -102,9 +104,10 @@ class Course extends \yii\db\ActiveRecord
 	}
 	
 	public function beforeSave($insert)
-    {  
+    { 
+		if(Yii::$app->controller->id != 'enrolment'){
         $fromTime = \DateTime::createFromFormat('h:i A',$this->fromTime);
-		$this->fromTime = $fromTime->format('H:i');
+		$this->fromTime = $fromTime->format('H:i:s');
 		$timebits = explode(':', $this->fromTime);
 		if((int) $this->program->type === Program::TYPE_GROUP_PROGRAM){
 			$startDate = new \DateTime($this->startDate);
@@ -120,11 +123,13 @@ class Course extends \yii\db\ActiveRecord
 			$endDate->add(new \DateInterval('P1Y'));
 			$this->endDate = $endDate->format('Y-m-d H:i:s');
 		}
+		}
 		return parent::beforeSave($insert);
 	}
 
 	public function afterSave($insert, $changedAttributes)
     {
+		if(Yii::$app->controller->id != 'enrolment'){
 		if((int) $this->program->type === Program::TYPE_PRIVATE_PROGRAM){
 			$enrolmentModel = new Enrolment();
 			$enrolmentModel->courseId = $this->id;	
@@ -180,5 +185,6 @@ class Course extends \yii\db\ActiveRecord
 				}
 			}
 		}
+	}
 	}
 }

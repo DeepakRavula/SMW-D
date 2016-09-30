@@ -1,14 +1,9 @@
 <?php
 
-use common\models\Course;
-use common\models\Enrolment;
 use yii\helpers\Html;
-use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use kartik\time\TimePicker;
 use kartik\date\DatePicker;
-use kartik\depdrop\DepDrop;
-use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
@@ -26,6 +21,12 @@ use yii\helpers\Url;
 		?>
 		<div class="col-md-4">
 			<?= $form->field($model,'fromTime')->widget(TimePicker::classname(), []); ?>
+		</div>
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'rescheduleDate')->widget(\yii\jui\DatePicker::classname(), [
+                    'options' => ['class'=>'form-control'],
+					'value' => (new \DateTime())->format('d-m-Y'),
+            ])->label('Reschedule Future Lessons From'); ?>
 		</div>
 	</div>
     <div class="form-group">
