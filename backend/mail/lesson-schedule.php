@@ -2,8 +2,16 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 ?>
-
-Dear <?php echo Html::encode($toName) ?>,<br>
+<style>
+.table{
+    margin-bottom: 0;
+}
+    .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td{
+        border-top: 0;
+    }
+</style>
+Dear <?php echo Html::encode($toName) ?>,
+<br><br>
    <div class="invoice-view p-10">
     <div class="row-fluid user-details-wrapper">
         <div class="row-fluid p-10">
