@@ -23,7 +23,7 @@ use kartik\date\DatePicker;
 			<?= $form->field($model,'fromTime')->widget(TimePicker::classname(), []); ?>
 		</div>
 		<div class="col-md-4">
-			<?php echo $form->field($model, 'rescheduleDate')->widget(\yii\jui\DatePicker::classname(), [
+			<?php echo $form->field($model, 'rescheduleBeginingDate')->widget(\yii\jui\DatePicker::classname(), [
                     'options' => ['class'=>'form-control'],
 					'value' => (new \DateTime())->format('d-m-Y'),
             ])->label('Reschedule Future Lessons From'); ?>

@@ -91,7 +91,7 @@ class EnrolmentController extends Controller
         $model = $this->findModel($id);
 		$courseModel = $model->course;
         if ($courseModel->load(Yii::$app->request->post())) {
-			$courseDate = \DateTime::createFromFormat('d-m-Y',$courseModel->rescheduleDate);
+			$courseDate = \DateTime::createFromFormat('d-m-Y',$courseModel->rescheduleBeginingDate);
 			$courseDate = $courseDate->format('Y-m-d H:i:s');
 			$lessons = Lesson::find()
 				->where(['courseId' => $courseModel->id])
@@ -113,9 +113,10 @@ class EnrolmentController extends Controller
 				$lesson->updateAttributes([
 					'date' => $lessonDate->format('Y-m-d H:i:s'),
 					'toTime' => $changedFromTime->format('H:i:s'),
+					'status' => Lesson::STATUS_DRAFTED,
 				]);
 			}
-            return $this->redirect(['view', 'id' => $model->id, '#' => 'lesson']);
+            return $this->redirect(['/lesson/review', 'courseId' => $model->course->id]);
         } else {
             return $this->render('update', [
                 'model' => $model->course,
