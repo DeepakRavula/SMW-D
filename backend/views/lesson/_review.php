@@ -180,13 +180,13 @@ $this->title = 'Review Lessons';
 			'method' => 'post',
 		],
     ]) ?> 
-        <?php if((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>
+	<?php if((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>
 			<?= Html::a('Cancel', ['student/view','id' => $courseModel->enrolment->studentId], ['class'=>'btn']); 	
-		?>
-        <?php else :?>
-        	<?= Html::a('Cancel', ['course/view','id' => $courseModel->id], ['class'=>'btn']); 	
-		?>
-       <?php endif; ?>
+			?>
+		<?php else :?>
+		<?= Html::a('Cancel', ['course/view','id' => $courseModel->id], ['class'=>'btn']); 	
+	?>
+   <?php endif; ?>
     </div>
 </div>
 	</div>

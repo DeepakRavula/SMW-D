@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Enrolment;
 use common\models\Lesson;
+use common\models\Course;
 use yii\data\ActiveDataProvider;
 use backend\models\search\EnrolmentSearch;
 use yii\web\Controller;

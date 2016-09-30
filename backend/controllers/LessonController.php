@@ -281,7 +281,7 @@ class LessonController extends Controller
 
 	public function actionConfirm($courseId){        
         $courseModel = Course::findOne(['id' => $courseId]);
-		$lessons = Lesson::findAll(['courseId' => $courseId]);
+		$lessons = $courseModel->lessons;
 		foreach($lessons as $lesson){
 			$lesson->status = Lesson::STATUS_SCHEDULED;
 			$lesson->save();
