@@ -73,7 +73,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             [['courseId', 'teacherId', 'status', 'isDeleted', 'toTime'], 'required'],
-            [['courseId', 'status', 'isDeleted'], 'integer'],
+            [['courseId', 'status'], 'integer'],
             [['date', 'programId', 'notes','teacherId'], 'safe'],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
         ];

@@ -111,11 +111,16 @@ class EnrolmentController extends Controller
 				}
             	$length = explode(':', $model->course->duration);
             	$changedFromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
-				$lesson->updateAttributes([
+				$newLessonModel = new Lesson();
+				$newLessonModel->setAttributes([
+					'courseId' => $model->course->id,
+					'teacherId' => $model->course->teacherId,
 					'date' => $lessonDate->format('Y-m-d H:i:s'),
 					'toTime' => $changedFromTime->format('H:i:s'),
 					'status' => Lesson::STATUS_DRAFTED,
+					'isDeleted' => false,
 				]);
+				$newLessonModel->save();
 			}
             return $this->redirect(['/lesson/review', 'courseId' => $model->course->id]);
         } else {
