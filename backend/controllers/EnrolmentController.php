@@ -91,9 +91,6 @@ class EnrolmentController extends Controller
         $model = $this->findModel($id);
 		$courseModel = $model->course;
         if ($courseModel->load(Yii::$app->request->post())) {
-			$fromTime = \DateTime::createFromFormat('h:i A',$courseModel->fromTime);
-			$courseModel->fromTime = $fromTime->format('H:i:s');
-			$courseModel->save();
 			$courseDate = \DateTime::createFromFormat('d-m-Y',$courseModel->rescheduleDate);
 			$courseDate = $courseDate->format('Y-m-d H:i:s');
 			$lessons = Lesson::find()
@@ -101,10 +98,6 @@ class EnrolmentController extends Controller
 				->andWhere(['>=', 'date', $courseDate])
 				->all();
 			foreach($lessons as $lesson){
-//				$lesson->setScenario('review');
-//				$lesson->validate();
-//				$error = $lesson->getErrors();
-//				print_r($error);die;
 				$changedFromTime = new \DateTime($courseModel->fromTime);
 				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
 				$lessonTime = $lessonDate->format('H:i:s');
@@ -115,11 +108,12 @@ class EnrolmentController extends Controller
 				} else {
 					$lessonDate->sub(new \DateInterval('PT' . $duration->h. 'H' . $duration->i . 'M'));	
 				}
-				$lesson->date = $lessonDate->format('Y-m-d H:i:s');
             	$length = explode(':', $model->course->duration);
             	$changedFromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
-            	$lesson->toTime = $changedFromTime->format('H:i:s');
-				$lesson->save();
+				$lesson->updateAttributes([
+					'date' => $lessonDate->format('Y-m-d H:i:s'),
+					'toTime' => $changedFromTime->format('H:i:s'),
+				]);
 			}
             return $this->redirect(['view', 'id' => $model->id, '#' => 'lesson']);
         } else {

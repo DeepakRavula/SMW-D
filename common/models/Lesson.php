@@ -259,7 +259,6 @@ class Lesson extends \yii\db\ActiveRecord
 	public function afterSave($insert, $changedAttributes)
     {
 		if((int)$this->status !== (int) self::STATUS_DRAFTED){
-			if(Yii::$app->controller->id != 'enrolment'){
 			if( ! $insert) {
 				if(isset($changedAttributes['date'])){
 					$toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
@@ -285,7 +284,6 @@ class Lesson extends \yii\db\ActiveRecord
 					$lessonRescheduleModel->rescheduledLessonId = $this->id;
 					$lessonRescheduleModel->save();
 				}
-			}
 			}
 		} 
             
