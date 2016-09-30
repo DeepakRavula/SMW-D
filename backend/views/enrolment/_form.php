@@ -2,28 +2,37 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use kartik\time\TimePicker;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-
-<div class="enrolment-form">
-
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?php echo $form->errorSummary($model); ?>
-
-    <?php echo $form->field($model, 'courseId')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'studentId')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'isDeleted')->textInput() ?>
-
+<?= $this->render('_view-enrolment',[
+	'model' => $model->enrolment,
+]);?>
+<div class="enrolment-form form-well form-well-smw">
+	<?php $form = ActiveForm::begin(); ?>
+    <div class="row">
+		<?php
+			$fromTime = Yii::$app->formatter->asTime($model->fromTime);
+			$model->fromTime = ! empty($model->fromTime) ? $fromTime : null;
+		?>
+		<div class="col-md-4">
+			<?= $form->field($model,'fromTime')->widget(TimePicker::classname(), []); ?>
+		</div>
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'rescheduleBeginingDate')->widget(\yii\jui\DatePicker::classname(), [
+                    'options' => ['class'=>'form-control'],
+					'value' => (new \DateTime())->format('d-m-Y'),
+            ])->label('Reschedule Future Lessons From'); ?>
+		</div>
+	</div>
     <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+	<?php ActiveForm::end(); ?>
 
 </div>

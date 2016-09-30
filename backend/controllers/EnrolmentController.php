@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Enrolment;
-use common\models\Course;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use backend\models\search\EnrolmentSearch;
@@ -90,12 +89,37 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+		$courseModel = $model->course;
+        if ($courseModel->load(Yii::$app->request->post())) {
+			$courseDate = \DateTime::createFromFormat('d-m-Y',$courseModel->rescheduleBeginingDate);
+			$courseDate = $courseDate->format('Y-m-d H:i:s');
+			$lessons = Lesson::find()
+				->where(['courseId' => $courseModel->id])
+				->andWhere(['>=', 'date', $courseDate])
+				->all();
+			foreach($lessons as $lesson){
+				$changedFromTime = new \DateTime($courseModel->fromTime);
+				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
+				$lessonTime = $lessonDate->format('H:i:s');
+                $lessonStartTime = new \DateTime($lessonTime);
+                $duration = $changedFromTime->diff($lessonStartTime);
+				if($changedFromTime > $lessonStartTime){
+					$lessonDate->add(new \DateInterval('PT' . $duration->h. 'H' . $duration->i . 'M'));	
+				} else {
+					$lessonDate->sub(new \DateInterval('PT' . $duration->h. 'H' . $duration->i . 'M'));	
+				}
+            	$length = explode(':', $model->course->duration);
+            	$changedFromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
+				$lesson->updateAttributes([
+					'date' => $lessonDate->format('Y-m-d H:i:s'),
+					'toTime' => $changedFromTime->format('H:i:s'),
+					'status' => Lesson::STATUS_DRAFTED,
+				]);
+			}
+            return $this->redirect(['/lesson/review', 'courseId' => $model->course->id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                'model' => $model->course,
             ]);
         }
     }

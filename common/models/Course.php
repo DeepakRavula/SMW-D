@@ -21,6 +21,8 @@ class Course extends \yii\db\ActiveRecord
 {
 	public $studentId;
 	public $paymentFrequency;
+	public $rescheduleBeginingDate;
+	
     /**
      * @inheritdoc
      */
@@ -37,7 +39,7 @@ class Course extends \yii\db\ActiveRecord
         return [
             [['programId', 'teacherId', 'locationId', 'day', 'fromTime', 'duration'], 'required'],
             [['programId', 'teacherId', 'locationId', 'day', 'paymentFrequency'], 'integer'],
-            [['fromTime', 'duration', 'startDate', 'endDate'], 'safe'],
+            [['fromTime', 'duration', 'startDate', 'endDate', 'rescheduleBeginingDate'], 'safe'],
         ];
     }
 
@@ -96,10 +98,15 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
     }
 
+	public function getLessons()
+	{
+        return $this->hasMany(Lesson::className(), ['courseId' => 'id']);
+	}
+	
 	public function beforeSave($insert)
-    {  
+    { 
         $fromTime = \DateTime::createFromFormat('h:i A',$this->fromTime);
-		$this->fromTime = $fromTime->format('H:i');
+		$this->fromTime = $fromTime->format('H:i:s');
 		$timebits = explode(':', $this->fromTime);
 		if((int) $this->program->type === Program::TYPE_GROUP_PROGRAM){
 			$startDate = new \DateTime($this->startDate);
