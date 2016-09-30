@@ -9,8 +9,7 @@ use common\models\Payment;
 ?>
 <div class="col-md-12">
     <h3 class="pull-left">Dashboard</h3>
-    <div class="clearfix"></div>
-    <div class="pull-left col-xs-7 p-10"><?php echo $this->render('_search', ['model' => $searchModel]); ?></div>
+    <div class="pull-right col-xs-5 p-10"><?php echo $this->render('_search', ['model' => $searchModel]); ?></div>
     <div class="clearfix"></div>
     <div class="col-md-10 p-0">
     <div class="row text-center bg-gray disabled color-palette">

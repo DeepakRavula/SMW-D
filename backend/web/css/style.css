@@ -789,6 +789,30 @@ input[type="search"]:-ms-input-placeholder {
 .box-body .box-pane-right{
   border-radius: 0;
 }
+/*Date range picker*/
+.daterangepicker.dropdown-menu{
+      box-shadow: 0px 2px 30px rgba(179, 179, 179, 0.3);
+    padding: 7px;
+    border: 0;
+}
+.daterangepicker .ranges li.active, .daterangepicker .ranges li:hover {
+    background: #e12e2b;
+    border: 1px solid #e12e2b;
+    color: #fff;
+}
+.daterangepicker .ranges li{
+    border-radius: 2px;
+    color: #676767;
+}
+.daterangepicker td.in-range {
+    background: rgba(225, 46, 43, 0.07) !important;
+}
+.daterangepicker td.active, .daterangepicker td.active:hover {
+    background-color: #e12e2b !important;
+    border-color: #e12e2b !important;
+    color: #fff !important;
+}
+
 @media print{
     .pull-left{
     float: left;
