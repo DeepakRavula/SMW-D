@@ -10,10 +10,9 @@ use common\models\Course;
 ?>
 <div class="col-md-12">
 <h4 class="pull-left m-r-20">Enrolments</h4>
-<?= Html::a('<i class="fa fa-plus"></i>', ['enrolment', 'id' => $model->id,]);?>
+<?= Html::a('<i class="fa fa-plus"></i>', ['enrolment', 'id' => $model->id], ['class' => 'add-new-lesson text-add-new']);?>
 <div class="clearfix"></div>
 </div>
-
 <?php yii\widgets\Pjax::begin([
 	'timeout' => 6000,
 ]) ?>
