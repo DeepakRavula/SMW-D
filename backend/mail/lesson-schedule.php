@@ -348,7 +348,7 @@ use yii\grid\GridView;
               </table>
 
             <!-- START FOOTER -->
-           <!--  <div class="footer">
+            <div class="footer">
               <table border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td class="content-block">
@@ -362,7 +362,7 @@ use yii\grid\GridView;
                   </td>
                 </tr>
               </table>
-            </div> -->
+            </div>
 
             <!-- END FOOTER -->
             
