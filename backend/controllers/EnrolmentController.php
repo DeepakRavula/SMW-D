@@ -90,16 +90,19 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$courseModel = $model->course;
-        if ($courseModel->load(Yii::$app->request->post())) {
-			$courseDate = \DateTime::createFromFormat('d-m-Y',$courseModel->rescheduleBeginingDate);
+        if ($model->load(Yii::$app->request->post())) {
+			$courseDate = \DateTime::createFromFormat('d-m-Y',$model->rescheduleBeginingDate);
 			$courseDate = $courseDate->format('Y-m-d H:i:s');
+			Lesson::deleteAll([
+				'courseId' => $model->course->id,
+				'status' => Lesson::STATUS_DRAFTED,
+			]);
 			$lessons = Lesson::find()
-				->where(['courseId' => $courseModel->id])
+				->where(['courseId' => $model->course->id])
 				->andWhere(['>=', 'date', $courseDate])
 				->all();
 			foreach($lessons as $lesson){
-				$changedFromTime = new \DateTime($courseModel->fromTime);
+				$changedFromTime = new \DateTime($model->fromTime);
 				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
 				$lessonTime = $lessonDate->format('H:i:s');
                 $lessonStartTime = new \DateTime($lessonTime);
@@ -122,10 +125,10 @@ class EnrolmentController extends Controller
 				]);
 				$newLessonModel->save();
 			}
-            return $this->redirect(['/lesson/review', 'courseId' => $model->course->id]);
+            return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Enrolment[rescheduleBeginingDate]' => $model->rescheduleBeginingDate]);
         } else {
             return $this->render('update', [
-                'model' => $model->course,
+                'model' => $model,
             ]);
         }
     }

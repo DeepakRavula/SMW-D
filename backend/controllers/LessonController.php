@@ -226,7 +226,10 @@ class LessonController extends Controller
         }	
     }
 
-	public function actionReview($courseId){		
+	public function actionReview($courseId){	
+		$request = Yii::$app->request;
+		$enrolmentRequest = $request->get('Enrolment'); 
+		$rescheduleBeginingDate = $enrolmentRequest['rescheduleBeginingDate'];
 		$courseModel = Course::findOne(['id' => $courseId]);
 		$draftLessons = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
@@ -276,6 +279,7 @@ class LessonController extends Controller
 			'lessonDataProvider' => $lessonDataProvider,
 			'conflicts' => $conflicts,
 			'teachers' => $teachers,
+			'rescheduleBeginingDate' => $rescheduleBeginingDate,
         ]);	
 	}
 
@@ -283,8 +287,30 @@ class LessonController extends Controller
         $courseModel = Course::findOne(['id' => $courseId]);
 		$lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
 		foreach($lessons as $lesson){
-			$lesson->status = Lesson::STATUS_SCHEDULED;
-			$lesson->save();
+			$lesson->updateAttributes([
+				'status' => Lesson::STATUS_SCHEDULED,
+			]);
+		}
+		$request = Yii::$app->request;
+		$enrolmentRequest = $request->get('Enrolment'); 
+		$rescheduleBeginingDate = $enrolmentRequest['rescheduleBeginingDate'];
+		if( ! empty($rescheduleBeginingDate)) {
+			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginingDate);
+			$courseDate = $courseDate->format('Y-m-d H:i:s');
+			$oldLessons = Lesson::find()
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
+				->andWhere(['>=', 'date', $courseDate])
+				->all();
+			$oldLessonIds = [];
+			foreach($oldLessons as $oldLesson){
+				$oldLessonIds[] = $oldLesson->id;
+				$oldLesson->delete();
+			}	
+			foreach($lessons as $lesson){
+				$lesson->updateAttributes([
+					'status' => Lesson::STATUS_SCHEDULED,
+				]);
+			}
 		}
 		
 		Yii::$app->session->setFlash('alert', [
@@ -292,10 +318,7 @@ class LessonController extends Controller
 				'body' => 'Lessons have been created successfully'
 		]);
         if((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) { 
-            $enrolmentModel = Enrolment::findOne(['courseId' => $courseId]);
-            $studentModel = Student::findOne(['id' => $enrolmentModel->studentId]);
-        
-            return $this->redirect(['student/view', 'id' => $studentModel->id, '#' => 'lesson']);
+            return $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'lesson']);
         }
         else {
             return $this->redirect(['course/view', 'id' => $courseId]);   

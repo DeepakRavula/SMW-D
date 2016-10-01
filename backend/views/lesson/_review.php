@@ -174,12 +174,21 @@ $this->title = 'Review Lessons';
 
 	<div class="form-group">
 	<div class="p-10 text-center">
+		<?php if( ! empty($rescheduleBeginingDate)):?>
+			<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Enrolment[rescheduleBeginingDate]' => $rescheduleBeginingDate], [
+				'class' => 'btn btn-danger',
+				'data' => [
+					'method' => 'post',
+				],
+    		]) ?> 
+		<?php else :?>
 		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId], [
-		'class' => 'btn btn-danger',
-		'data' => [
-			'method' => 'post',
-		],
-    ]) ?> 
+			'class' => 'btn btn-danger',
+			'data' => [
+				'method' => 'post',
+			],
+   		]) ?>
+		<?php endif; ?>
 	<?php if((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>
 			<?= Html::a('Cancel', ['student/view','id' => $courseModel->enrolment->studentId], ['class'=>'btn']); 	
 			?>
