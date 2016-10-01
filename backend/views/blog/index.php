@@ -21,8 +21,20 @@ $this->params['breadcrumbs'][] = $this->title;
 					return $data->user->publicIdentity;
 				}
 			],
-            'title',
-            'content:raw',
+			[
+				'label' => 'Title',
+				'format' => 'raw',
+				'value' => function($data){
+					return substr($data->title,0,25) . ' ...';
+				}
+			],
+			[
+				'label' => 'Content',
+				'format' => 'raw',
+				'value' => function($data){
+					return substr($data->content,0,25) . ' ...';
+				}
+			],
             'date:date',
 
             ['class' => 'yii\grid\ActionColumn'],

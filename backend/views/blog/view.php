@@ -22,18 +22,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
-
-    <?php echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            [
-				'label' => 'User Name',
-				'value' => $model->user->publicIdentity,
-			],
-            'title',
-            'content:raw',
-            'date:date',
-        ],
-    ]) ?>
+<h2>Title:<?= ! empty($model->title) ? $model->title : null ?></h2>
+<div class="author">
+  Date:<?php  
+	$postDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+	echo $postDate->format('F j, Y'); ?>
+</div>
+<div>
+	Content:<?= ! empty($model->content) ? $model->content : null ?> 
+</div>
 
 </div>

@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 
 ?>
-<header><strong><?= ! empty($model->title) ? $model->title : null ?></strong> </header>
+<h2><strong><?= ! empty($model->title) ? $model->title : null ?></strong> </h2>
 <div class="author">
 	Posted on <?php 
 	$postDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
