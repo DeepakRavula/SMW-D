@@ -215,7 +215,8 @@ class InvoiceController extends Controller {
 				if((int) $invoice->type === Invoice::TYPE_PRO_FORMA_INVOICE){
 					$query->scheduled();
 				}else{
-					$query->completed();
+					$query->completed()
+						->orderBy('l.id ASC');
 				}
 			
 			$unInvoicedLessonsDataProvider = new ActiveDataProvider([

@@ -69,25 +69,13 @@ $this->registerJs("
 				'label' => 'Invoice Status',
 				'value' => function($data) {
 					$status = null;
-
-					if( ! empty($data->invoiceLineItem->invoice->status)) {
-						switch($data->invoiceLineItem->invoice->status){
-							case Invoice::STATUS_PAID:
-								$status = 'Paid';
-							break;
-							case Invoice::STATUS_OWING:
-								$status = 'Owing';
-							break;
-							case Invoice::STATUS_CREDIT:
-								$status = 'Credit';
-							break;
-						}
-					}
-					else {
-						$status = 'Not Invoiced';	
-					}
-					return $status;
-                },
+				if (!empty($data->invoice->status)) {
+					return $data->invoice->getStatus(); 
+				} else {
+					$status = 'Not Invoiced';
+				}
+				return $status;
+			},
 			],
         ],
     ]); ?>
