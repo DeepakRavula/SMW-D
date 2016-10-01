@@ -43,10 +43,15 @@ class Blog extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
+            'user_id' => 'User Name',
             'title' => 'Title',
             'content' => 'Content',
             'date' => 'Date',
         ];
+    }
+
+	public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 }

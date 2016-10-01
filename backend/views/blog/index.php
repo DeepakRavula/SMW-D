@@ -7,25 +7,23 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Blogs';
+$this->params['subtitle'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i> Create', ['create'], ['class' => 'btn btn-success']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="blog-index">
 
-
-    <p>
-        <?php echo Html::a('Create Blog', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'user_id',
-            'title:ntext',
-            'content:ntext',
-            'date',
+			[
+				'label' => 'User Name',
+				'value' => function($data){
+					return $data->user->publicIdentity;
+				}
+			],
+            'title',
+            'content:raw',
+            'date:date',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

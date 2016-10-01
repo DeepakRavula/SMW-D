@@ -41,6 +41,20 @@ class BlogController extends Controller
         ]);
     }
 
+	/**
+     * Lists all Blog models.
+     * @return mixed
+     */
+    public function actionList()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => Blog::find(),
+        ]);
+
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
     /**
      * Displays a single Blog model.
      * @param string $id
@@ -62,7 +76,11 @@ class BlogController extends Controller
     {
         $model = new Blog();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+			$model->user_id = Yii::$app->user->id;
+			$currentDate = new \DateTime();
+			$model->date = $currentDate->format('Y-m-d H:i:s');
+			$model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [

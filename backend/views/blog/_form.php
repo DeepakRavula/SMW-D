@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use dosamigos\ckeditor\CKEditor;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -14,16 +15,15 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->errorSummary($model); ?>
 
-    <?php echo $form->field($model, 'user_id')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'title')->textarea(['rows' => 6]) ?>
-
-    <?php echo $form->field($model, 'content')->textarea(['rows' => 6]) ?>
-
-    <?php echo $form->field($model, 'date')->textInput() ?>
+    <?php echo $form->field($model, 'title')->textInput() ?>
+	
+	<?= $form->field($model, 'content')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'full'
+    ]) ?>
 
     <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php echo Html::submitButton($model->isNewRecord ? 'Save' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

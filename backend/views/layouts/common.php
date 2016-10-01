@@ -80,7 +80,7 @@ $bundle = BackendAsset::register($this);
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
 						 <li class="notifications-menu" data-toggle="tooltip" data-original-title="Blog" data-placement="bottom">
-                            <a href="<?php echo Url::to(['/blog/index']) ?>">
+                            <a href="<?php echo Url::to(['/blog/list']) ?>">
                                 <i class="fa fa-newspaper-o" aria-hidden="true"></i>
                             </a>
                         </li>
@@ -262,6 +262,13 @@ $bundle = BackendAsset::register($this);
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='invoice')? true : false,
 							
+                        ],
+						[
+                            'label'=>Yii::t('backend', 'Blog'),
+                            'icon'=>'<i class="fa fa-newspaper-o"></i>',
+							'url'=>['/blog/index'],    
+                            'visible'=>Yii::$app->user->can('administrator'),
+                            'active'=>(Yii::$app->controller->id=='blog')? true : false,
                         ],
                         [
                             'label'=>Yii::t('backend', 'Release Notes'),
