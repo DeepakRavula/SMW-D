@@ -73,7 +73,7 @@ use yii\helpers\ArrayHelper;
 	</div>
 </div>
     <div class="form-group p-l-10">
-       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 	<?php
         if (!$model->isNewRecord) {
             echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
