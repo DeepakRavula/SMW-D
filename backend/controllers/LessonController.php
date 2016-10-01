@@ -278,11 +278,6 @@ class LessonController extends Controller
 	public function actionConfirm($courseId){        
         $courseModel = Course::findOne(['id' => $courseId]);
 		$lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
-		foreach($lessons as $lesson){
-			$lesson->updateAttributes([
-				'status' => Lesson::STATUS_SCHEDULED,
-			]);
-		}
 		$request = Yii::$app->request;
 		$enrolmentRequest = $request->get('Enrolment'); 
 		$rescheduleBeginDate = $enrolmentRequest['rescheduleBeginDate'];
@@ -298,6 +293,13 @@ class LessonController extends Controller
 				$oldLessonIds[] = $oldLesson->id;
 				$oldLesson->delete();
 			}	
+			foreach($lessons as $i => $lesson){
+				$lesson->updateAttributes([
+					'id' => $oldLessonIds[$i],
+					'status' => Lesson::STATUS_SCHEDULED,
+				]);
+			}
+		} else {
 			foreach($lessons as $lesson){
 				$lesson->updateAttributes([
 					'status' => Lesson::STATUS_SCHEDULED,
