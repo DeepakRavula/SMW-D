@@ -229,7 +229,7 @@ class LessonController extends Controller
 	public function actionReview($courseId){	
 		$request = Yii::$app->request;
 		$enrolmentRequest = $request->get('Enrolment'); 
-		$rescheduleBeginingDate = $enrolmentRequest['rescheduleBeginingDate'];
+		$rescheduleBeginDate = $enrolmentRequest['rescheduleBeginDate'];
 		$courseModel = Course::findOne(['id' => $courseId]);
 		$draftLessons = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
@@ -246,14 +246,7 @@ class LessonController extends Controller
 		    'query' => Lesson::find()->indexBy('id')
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
 		]);	
-		$locationId = Yii::$app->session->get('location_id');
-		$teachers = ArrayHelper::map(User::find()
-				->teachers($courseModel->program->id, $locationId)
-				->all(),
-			'id', function($model){
-				return $model->publicIdentity;
-			}		
-			);
+		
 		$model = new Lesson();
 		$post = Yii::$app->request->post();
 		if($model->load($post)){
@@ -278,8 +271,7 @@ class LessonController extends Controller
 			'courseId' => $courseId,
 			'lessonDataProvider' => $lessonDataProvider,
 			'conflicts' => $conflicts,
-			'teachers' => $teachers,
-			'rescheduleBeginingDate' => $rescheduleBeginingDate,
+			'rescheduleBeginDate' => $rescheduleBeginDate,
         ]);	
 	}
 
@@ -293,9 +285,9 @@ class LessonController extends Controller
 		}
 		$request = Yii::$app->request;
 		$enrolmentRequest = $request->get('Enrolment'); 
-		$rescheduleBeginingDate = $enrolmentRequest['rescheduleBeginingDate'];
-		if( ! empty($rescheduleBeginingDate)) {
-			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginingDate);
+		$rescheduleBeginDate = $enrolmentRequest['rescheduleBeginDate'];
+		if( ! empty($rescheduleBeginDate)) {
+			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);
 			$courseDate = $courseDate->format('Y-m-d H:i:s');
 			$oldLessons = Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])

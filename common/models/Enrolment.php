@@ -19,7 +19,7 @@ class Enrolment extends \yii\db\ActiveRecord
 {
 	public $studentIds;
 	public $fromTime;
-	public $rescheduleBeginingDate;
+	public $rescheduleBeginDate;
 	
 	const PAYMENT_FREQUENCY_FULL = 1;
 	const PAYMENT_FREQUENCY_MONTHLY = 2;
@@ -51,7 +51,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             [['courseId', 'isDeleted'], 'required'],
             [['courseId', 'studentId', 'isDeleted',], 'integer'],
-            [['paymentFrequency', 'fromTime', 'rescheduleBeginingDate'], 'safe'],
+            [['paymentFrequency', 'fromTime', 'rescheduleBeginDate'], 'safe'],
         ];
     }
 
@@ -110,7 +110,7 @@ class Enrolment extends \yii\db\ActiveRecord
 	}
 	public function afterSave($insert, $changedAttributes)
     {
-		if(((int) $this->course->program->type !== (int)Program::TYPE_GROUP_PROGRAM) && (empty($this->rescheduleBeginingDate))){
+		if(((int) $this->course->program->type !== (int)Program::TYPE_GROUP_PROGRAM) && (empty($this->rescheduleBeginDate))){
 			$interval = new \DateInterval('P1D');
 			$startDate = $this->course->startDate;
 			$endDate = $this->course->endDate;

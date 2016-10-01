@@ -30,17 +30,8 @@ $this->title = 'Review Lessons';
 		$fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->fromTime);
 		echo $fromTime->format('h:i A');?>	
 	</div>
-	<div class="col-md-2">
-	<div id="add-lesson" class="col-md-12">
-		<a href="#" class="add-review-lesson text-add-new"><i class="fa fa-plus-circle"></i> Add</a>
-	<div class="clearfix"></div>
-	</div>
-	</div>
 	</div>
 	<div class="clearfix"></div>	
-	<?php echo $this->render('_review-lesson',[
-			'teachers' => $teachers,
-	]); ?>
 	<?php
 	$columns = [
 		[
@@ -130,22 +121,6 @@ $this->title = 'Review Lessons';
 				},
 			],
 			[
-				'class' => kartik\grid\ActionColumn::classname(),
-				'template' => '{delete}',
-				'buttons' => [
-					'delete' => function ($url, $model, $key) {
-					  return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', [
-						  'delete', 'id' => $model->id
-						],
-						[
-							'data' => [
-								'method' => 'post',
-							],
-						]);
-					},
-				]
-			],
-			[
 				'class'=>'kartik\grid\ExpandRowColumn',
 				'width'=>'50px',
 				'value'=>function ($model, $key, $index, $column) {
@@ -174,8 +149,8 @@ $this->title = 'Review Lessons';
 
 	<div class="form-group">
 	<div class="p-10 text-center">
-		<?php if( ! empty($rescheduleBeginingDate)):?>
-			<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Enrolment[rescheduleBeginingDate]' => $rescheduleBeginingDate], [
+		<?php if( ! empty($rescheduleBeginDate)):?>
+			<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Enrolment[rescheduleBeginDate]' => $rescheduleBeginDate], [
 				'class' => 'btn btn-danger',
 				'data' => [
 					'method' => 'post',
@@ -199,11 +174,3 @@ $this->title = 'Review Lessons';
     </div>
 </div>
 	</div>
-<script>
-$(document).ready(function() {
-	$('#add-lesson').click(function(){
-		$('#add-review-lesson-modal').modal('show');
-			return false;
-  	});
-});
-</script>

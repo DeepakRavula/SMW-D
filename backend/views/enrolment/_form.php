@@ -23,7 +23,7 @@ use kartik\date\DatePicker;
 			<?= $form->field($model,'fromTime')->widget(TimePicker::classname(), []); ?>
 		</div>
 		<div class="col-md-4">
-			<?php echo $form->field($model, 'rescheduleBeginingDate')->widget(DatePicker::classname(), [
+			<?php echo $form->field($model, 'rescheduleBeginDate')->widget(DatePicker::classname(), [
                		'options' => [
                     'value' => (new \DateTime())->format('d-m-Y'),
                ],
