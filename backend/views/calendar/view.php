@@ -10,6 +10,7 @@ use yii\helpers\Url;
 $this->title = 'Calendar';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
 <div class="schedule-index">
 <div class="e1Div">
     <?= Html::checkbox('active', false, ['label' => 'Show All Teachers', 'id' => 'active' ]); ?>
@@ -18,10 +19,10 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <script type="text/javascript">
 $(document).ready(function() { 
-  var date = new Date();
-  var d = date.getDate();
-  var m = date.getMonth();
-  var y = date.getFullYear();
+    var date = new Date();
+    var d = date.getDate();
+    var m = date.getMonth();
+    var y = date.getFullYear();
   
   $('#calendar').fullCalendar({
     header: {
@@ -50,9 +51,25 @@ $(document).ready(function() {
         if (allDay) {
             // Clicked on the entire day
             $('#calendar').fullCalendar('changeView', 'resourceDay');
-            $('#calendar').fullCalendar('gotoDate', date);
+            $('#calendar').fullCalendar('gotoDate', date);           
         }
-    }
+    },
+    eventAfterAllRender: function (view, element) {
+        var date = new Date($('#calendar').fullCalendar('getDate'));
+        var count = 0;
+        $('#calendar').fullCalendar('clientEvents', function(event) {
+            var startTime = new Date(event.start);
+            var eventDate = startTime.getDate() + "/" + startTime.getMonth() + "/" + startTime.getFullYear();
+            var currentDate = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
+            if(eventDate == currentDate) {
+               count++;
+            }
+        });
+        
+        if(count==0){
+            $('#myflashinfo').html("No lessons scheduled for the day").fadeIn().delay(1000).fadeOut();
+        }
+    },
   });
   
   $("#active").change(function() {
@@ -89,9 +106,25 @@ $(document).ready(function() {
                 if (allDay) {
                     // Clicked on the entire day
                     $('#calendar').fullCalendar('changeView', 'resourceDay');
-                    $('#calendar').fullCalendar('gotoDate', date);
+                    $('#calendar').fullCalendar('gotoDate', date);             
                 }
-            }
+            },
+            eventAfterAllRender: function (view, element) {
+                var count = 0;
+                var date = new Date($('#calendar').fullCalendar('getDate'));
+                $('#calendar').fullCalendar('clientEvents', function(event) {
+                    var startTime = new Date(event.start);
+                    var eventDate = startTime.getDate() + "/" + startTime.getMonth() + "/" + startTime.getFullYear();
+                    var currentDate = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
+                    if(eventDate == currentDate) {
+                       count++;
+                    }
+                    
+                });
+                if(count==0){
+                    $('#myflashinfo').html("No lessons scheduled for the day").fadeIn().delay(3000).fadeOut();
+                }
+            },
         });
         $(".fc-button-month, .fc-button-prev, .fc-button-next, .fc-button-today").click(function(){
             $(".fc-view-month .fc-event").hide();      
