@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use kartik\datetime\DateTimePicker;
+use kartik\date\DatePicker;
 use kartik\time\TimePicker;
 
 /* @var $this yii\web\View */
@@ -30,14 +30,14 @@ use kartik\time\TimePicker;
 		</div>
 		<div class="col-md-4">
             <?php
-            echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
+            echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                'options' => [
-                    'value' => $lessonDate->format('d-m-Y g:i A'),
+                    'value' => $lessonDate->format('d-m-Y'),
                ],
-                'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+                'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy HH:ii P'
+                    'format' => 'dd-mm-yyyy'
                 ]
             ]);
             ?>
