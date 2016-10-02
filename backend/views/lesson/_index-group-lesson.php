@@ -2,7 +2,7 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
-
+use common\models\GroupLesson;
 ?>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Lessons</h4>
@@ -47,6 +47,25 @@ echo GridView::widget([
 				return !empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
 			},
 		],
+		[
+			'label' => 'Status',
+			'value' => function($data) {
+				$status = null;
+				switch($data->status){
+					case GroupLesson::STATUS_SCHEDULED:
+						$status = 'Scheduled';
+					break;
+					case GroupLesson::STATUS_COMPLETED:
+						$status = 'Completed';
+					break;
+					case GroupLesson::STATUS_CANCELED:
+						$status = 'Canceled';
+					break;
+					
+				}
+				return $status;
+			},
+		],	
 		[
 			'label' => 'Date',
 			'value' => function($data) {
