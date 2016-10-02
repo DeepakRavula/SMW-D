@@ -59,4 +59,9 @@ class GroupEnrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(GroupCourse::className(), ['id' => 'course_id']);
     }
+
+	public function getStudent()
+    {
+        return $this->hasOne(Student::className(), ['id' => 'student_id']);
+    }
 }

@@ -76,9 +76,10 @@ class GroupCourse extends \yii\db\ActiveRecord
 	
 	public function getProgram()
     {
-        return $this->hasOne(Program::className(), ['id' => 'program_id']);
+        return $this->hasOne(Program::className(), ['id' => 'program_id'])
+			->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
     }
-	
+
 	public static function getWeekdaysList()
     {
         return [
