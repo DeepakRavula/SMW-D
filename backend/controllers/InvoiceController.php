@@ -23,6 +23,9 @@ use common\models\TaxCode;
 use common\models\Location;
 use common\models\TaxStatus;
 use common\models\Program;
+use common\models\UserAddress;
+use common\models\PhoneNumber;
+use backend\models\UserForm;
 use yii\helpers\Json;
 
 /**
@@ -339,9 +342,9 @@ class InvoiceController extends Controller {
 				$invoiceLineItem = new InvoiceLineItem();
 				$invoiceLineItem->invoice_id = $invoice->id;
 				$invoiceLineItem->item_id = $lesson->id;
-				$lessonStartTime = $actualLessonDate->format('H:i:s');
+				$lessonStartTime = $lessonDate->format('H:i:s');
 				$lessonStartTime = new \DateTime($lessonStartTime);
-				$lessonEndTime = new \DateTime($lesson->toTime);
+				$lessonEndTime = new \DateTime($model->toTime);
 				$duration = $lessonStartTime->diff($lessonEndTime);
 				$invoiceLineItem->unit = (($duration->h * 60) + ($duration->i)) / 60;
 				if((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM){
