@@ -62,6 +62,7 @@ class StudentController extends Controller
 					$query->where(['locationId' => $locationId]);	
 				}])
 				->notDeleted()
+                ->isConfirmed()        
 				->andWhere(['studentId' => $model->id]);
 
 		$enrolmentDataProvider = new ActiveDataProvider([
@@ -192,7 +193,7 @@ class StudentController extends Controller
     }
 
 	public function actionEnrolment($id)
-    {
+    { 
         $model = $this->findModel($id);
 		$session = Yii::$app->session;
 		$locationId = $session->get('location_id');
