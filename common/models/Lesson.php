@@ -214,7 +214,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
             ->viaTable('invoice_line_item', ['item_id' => 'id'])
-            ->where(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+            ->onCondition(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
     }
 
     public function getLessonReschedule() {
