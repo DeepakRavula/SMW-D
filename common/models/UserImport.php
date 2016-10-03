@@ -67,7 +67,6 @@ class UserImport extends Model {
 				->one();
 
 			if ( ! empty($user)) {
-				$errors[] = $row['Billing First Name'] . ' ' . $row['Billing Last Name'] . ' has two children';
 				$student = new Student();
 				$student->first_name = $row['First Name'];
 				$student->last_name = $row['Last Name'];
