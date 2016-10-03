@@ -56,6 +56,7 @@ class UserImport extends Model {
 		$successCount = 0;
 		$studentCount = 0;
 		$customerCount = 0;
+		set_time_limit(1000);
 		foreach ($rows as $i => $row) {
 			if(empty($row['Billing Home Tel'])) {
 				continue;
