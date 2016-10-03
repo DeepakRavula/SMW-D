@@ -28,7 +28,6 @@ class UserImport extends Model {
 	private function parseCSV() {
 		$rows = $fields = [];
 		$i = 0;
-
 		ini_set("auto_detect_line_endings", "1");
 		$handle = $this->file->readStream();
 		if ($handle) {
@@ -68,6 +67,7 @@ class UserImport extends Model {
 				->one();
 
 			if ( ! empty($user)) {
+				$errors[] = $row['Billing First Name'] . ' ' . $row['Billing Last Name'] . ' has two children';
 				$student = new Student();
 				$student->first_name = $row['First Name'];
 				$student->last_name = $row['Last Name'];
@@ -89,8 +89,7 @@ class UserImport extends Model {
 
 			try {
 				$user = new User();
-				$user->email = $row['Billing Email Address'];
-
+				$user->email = $row['Email Address'];
 				$user->password = Yii::$app->security->generateRandomString(8);
 				$user->status = User::STATUS_ACTIVE;
 				if( ! $user->validate(['email'])) {
@@ -100,7 +99,6 @@ class UserImport extends Model {
 				if($user->save()) {
 					$customerCount++;
 				}
-
 				$userProfile = new UserProfile();
 				$userProfile->user_id = $user->id;
 				$userProfile->firstname = $row['Billing First Name'];
@@ -156,12 +154,8 @@ class UserImport extends Model {
 					$errors[] = 'Error on Line ' . ($i + 1) . ': Address is missing. Skipping  address for customer named, "' . $row['Billing First Name'] . '"';
 				}
 				$address->save();
-				
-				$userAddress = new UserAddress();
-				$userAddress->user_id = $user->id;
-				$userAddress->address_id = $address->address;
-				$userAddress->save();
-				//$user->link('addresses', $address);
+			
+				$user->link('addresses', $address);
 
 				if (!empty($row['Billing Home Tel'])) {
 					$phoneNumber = $row['Billing Home Tel'];
@@ -191,6 +185,11 @@ class UserImport extends Model {
 					$phone->number = $phoneNumber;
 					$phone->label_id = PhoneNumber::LABEL_OTHER;
 					$phone->user_id = $user->id;
+
+					if (!empty($row['Billing Other Tel Ext.'])) {
+						$phone->extension = $row['Billing Other Tel Ext.'];
+					}
+					
 					$phone->save();
 				}
 
@@ -207,7 +206,7 @@ class UserImport extends Model {
 			'studentCount' => $studentCount,
 			'customerCount' => $customerCount,
 			'errors' => $errors,
-			'totalRows' => count($rows),
+			'totalRows' => count($rows) / 2,
 		];
 	}
 }
