@@ -57,16 +57,43 @@ class UserImport extends Model {
 		$studentCount = 0;
 		$customerCount = 0;
 		foreach ($rows as $i => $row) {
-
-			$user = User::findOne(['email' => $row['Billing Email Address']]);
+			if(empty($row['First Name'])) {
+				continue;
+			}
+			//print_r($rows);die;
+			//print_r($rows[1]['Billing Home Tel']);die;
+			$user = User::find()
+				->joinWith(['phoneNumber' => function($query) use($row) {
+					$query->where(['number' => $row['Billing Home Tel']]);
+				}])
+				->one();
 
 			/* @todo - recognize parent and associate, if billing email already exists
 			 * 
 			 */
+				/*
 			if (!empty($user)) {
 				$errors[] = 'Error on Line ' . ($i + 1) . ': User email already exists at another location. Removing email address from profile.';
 				continue;
 			}
+				 * 
+				 */
+			if (!empty($user)) {
+				$student = new Student();
+				$student->first_name = $row['First Name'];
+				$student->last_name = $row['Last Name'];
+				$student->birth_date = $row['Date of Birth'];
+				$student->customer_id = $user->id;
+
+				if( ! $student->validate(['birth_date'])) {
+					$student->birth_date = null;
+					$errors[] = 'Error on Line ' . ($i + 1) . ': Incorrect Date format. Skipping DOB for student named, "' . $student->first_name . '"';
+				}
+				
+				if($student->save()) {
+					$studentCount++;	
+				}
+			}	
 			
 			$transaction = \Yii::$app->db->beginTransaction();
 
@@ -124,7 +151,7 @@ class UserImport extends Model {
 				$city = City::findOne(['name' => $cityName]);
 
 				if (empty($city)) {
-					$city = new Cities;
+					$city = new City;
 					$city->name = $row['City'];
 					$city->province_id = 1;
 					$city->save();
