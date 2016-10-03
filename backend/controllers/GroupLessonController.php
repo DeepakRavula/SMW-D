@@ -81,33 +81,11 @@ class GroupLessonController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post())) {
-			$length = $model->groupCourse->length;
-			$model->id = null;
-           	$model->isNewRecord = true;
-			$fromTime = \DateTime::createFromFormat('g:i A',$model->from_time);
-			$model->from_time = $fromTime->format('H:i:s');
-			$secs = strtotime($length) - strtotime("00:00:00");
-			$toTime = date("H:i:s",strtotime($model->from_time) + $secs);
-    	    $model->to_time = $toTime; 
-			$lessonDate = \DateTime::createFromFormat('d-m-Y', $model->date);
+			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
-           	$model->status = GroupLesson::STATUS_SCHEDULED; 
-            $model->save();
-			
-			$lessonRescheduleModel = new RescheduleLesson();
-            $lessonRescheduleModel->lesson_id = $id;
-            $lessonRescheduleModel->reschedule_lesson_id = $model->id;    
-            $lessonRescheduleModel->type = RescheduleLesson::TYPE_GROUP_LESSON;    
-            $lessonRescheduleModel->save();
-			$rescheduleLessonId = $model->id;
-			
-			$model = $this->findModel($id);
-            $model->status = GroupLesson::STATUS_CANCELED;
-            $model->save();
-			
-        	return $this->redirect(['view', 'id' => $rescheduleLessonId]);
+			$model->save();
+	        	return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,

@@ -33,9 +33,9 @@ class GroupLesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['course_id', 'teacher_id','from_time','to_time'], 'required'],
+            [['course_id', 'teacher_id'], 'required'],
             [['course_id', 'teacher_id', 'status'], 'integer'],
-            [['date','from_time','to_time'], 'safe'],
+            [['date','notes'], 'safe'],
         ];
     }
 
@@ -95,9 +95,18 @@ class GroupLesson extends \yii\db\ActiveRecord
                 		}
 					}
 				}	
+				$this->updateAttributes([
+					'date' => $fromDate->format('Y-m-d H:i:s'),
+					'status' => self::STATUS_CANCELED	
+				]);
+				$this->id = null;
+				$this->isNewRecord = true;
+				$this->date = $toDate->format('Y-m-d H:i:s');
+				$this->status = self::STATUS_SCHEDULED;
+				$this->save();
             }
-		}
-
+		} 
+		
         return parent::afterSave($insert, $changedAttributes);
     }
 
