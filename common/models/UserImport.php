@@ -9,6 +9,7 @@ use yii\base\Exception;
 use yii\base\Model;
 use Yii;
 use yii\helpers\ArrayHelper;
+use common\models\Student;
 
 /**
  * Create user form
@@ -67,15 +68,20 @@ class UserImport extends Model {
 				->one();
 
 			if ( ! empty($user)) {
+				$studentModel = Student::findOne(['last_name' => $row['Last Name']]);
+				if( ! empty($studentModel)) {
+					continue;
+				}
 				$student = new Student();
 				$student->first_name = $row['First Name'];
 				$student->last_name = $row['Last Name'];
 				$student->birth_date = $row['Date of Birth'];
 				$student->customer_id = $user->id;
+				$student->status = Student::STATUS_ACTIVE;
 
 				if( ! $student->validate(['birth_date'])) {
 					$student->birth_date = null;
-					$errors[] = 'Error on Line ' . ($i + 1) . ': Incorrect Date format. Skipping DOB for student named, "' . $student->first_name . '"';
+					$errors[] = 'Error on Line ' . ($i + 2) . ': Incorrect Date format. Skipping DOB for student named, "' . $student->first_name . '"';
 				}
 				
 				if($student->save()) {
@@ -93,7 +99,7 @@ class UserImport extends Model {
 				$user->status = User::STATUS_ACTIVE;
 				if( ! $user->validate(['email'])) {
 					$user->email = null;
-					$errors[] = 'Error on Line ' . ($i + 1) . ': Invalid Email address. Skipping email address for customer named, "' . $row['Billing First Name'] . '"';
+					$errors[] = 'Error on Line ' . ($i + 2) . ': Invalid Email address. Skipping email address for customer named, "' . $row['Billing First Name'] . '"';
 				}	
 				if($user->save()) {
 					$customerCount++;
@@ -117,10 +123,11 @@ class UserImport extends Model {
 				$student->last_name = $row['Last Name'];
 				$student->birth_date = $row['Date of Birth'];
 				$student->customer_id = $user->id;
+				$student->status = Student::STATUS_ACTIVE;
 				
 				if( ! $student->validate(['birth_date'])) {
 					$student->birth_date = null;
-					$errors[] = 'Error on Line ' . ($i + 1) . ': Incorrect Date format. Skipping DOB for student named, "' . $student->first_name . '"';
+					$errors[] = 'Error on Line ' . ($i + 2) . ': Incorrect Date format. Skipping DOB for student named, "' . $student->first_name . '"';
 				}
 				
 				if($student->save()) {
@@ -150,7 +157,7 @@ class UserImport extends Model {
 				$address->postal_code = $pincodeName;
 				if( ! $address->validate(['address'])) {
 					$address->address = null;
-					$errors[] = 'Error on Line ' . ($i + 1) . ': Address is missing. Skipping  address for customer named, "' . $row['Billing First Name'] . '"';
+					$errors[] = 'Error on Line ' . ($i + 2) . ': Address is missing. Skipping  address for customer named, "' . $row['Billing First Name'] . '"';
 				}
 				$address->save();
 			
@@ -196,7 +203,7 @@ class UserImport extends Model {
 				$successCount++;
 			} catch (\Exception $e) {
 				$transaction->rollBack();
-				$errors[] = 'Error on Line ' . ($i + 1) . ': ' . $e->getMessage();
+				$errors[] = 'Error on Line ' . ($i + 2) . ': ' . $e->getMessage();
 			}
 		}
 
