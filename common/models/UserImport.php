@@ -57,28 +57,17 @@ class UserImport extends Model {
 		$studentCount = 0;
 		$customerCount = 0;
 		foreach ($rows as $i => $row) {
-			if(empty($row['First Name'])) {
+			if(empty($row['Billing Home Tel'])) {
 				continue;
 			}
-			//print_r($rows);die;
-			//print_r($rows[1]['Billing Home Tel']);die;
+
 			$user = User::find()
 				->joinWith(['phoneNumber' => function($query) use($row) {
 					$query->where(['number' => $row['Billing Home Tel']]);
 				}])
 				->one();
 
-			/* @todo - recognize parent and associate, if billing email already exists
-			 * 
-			 */
-				/*
-			if (!empty($user)) {
-				$errors[] = 'Error on Line ' . ($i + 1) . ': User email already exists at another location. Removing email address from profile.';
-				continue;
-			}
-				 * 
-				 */
-			if (!empty($user)) {
+			if ( ! empty($user)) {
 				$student = new Student();
 				$student->first_name = $row['First Name'];
 				$student->last_name = $row['Last Name'];
@@ -92,6 +81,7 @@ class UserImport extends Model {
 				
 				if($student->save()) {
 					$studentCount++;	
+					continue;
 				}
 			}	
 			
