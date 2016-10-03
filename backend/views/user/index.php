@@ -121,7 +121,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	]); ?>
 <?php yii\widgets\Pjax::end(); ?>
 <div class="p-l-20 m-b-20">
-<?php if($searchModel->role_name === User::ROLE_CUSTOMER):?>
+<?php if($searchModel->role_name === User::ROLE_CUSTOMER && YII_ENV !== 'prod'):?>
 	<?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
 		'modelClass' => 'User',
 		]), 
@@ -129,7 +129,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		['class' => 'btn pull-left']) 
 	?>
 <?php endif;?>
-<?php if($searchModel->role_name === User::ROLE_STAFFMEMBER):?>
+<?php if($searchModel->role_name === User::ROLE_STAFFMEMBER && YII_ENV !== 'prod'):?>
 	<?php echo Html::a(Yii::t('backend', 'Delete All Staff Members', [
 		'modelClass' => 'User',
 		]), 
