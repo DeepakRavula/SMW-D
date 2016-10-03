@@ -260,7 +260,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
 		if((int)$this->status !== (int) self::STATUS_DRAFTED){
 			if( ! $insert) {
-				if(isset($changedAttributes['date'])){
+				if(isset($changedAttributes['date']) && ! empty($this->date)){
 					$toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
 					$fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
 					if(! empty($this->teacher->email)){
