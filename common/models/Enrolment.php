@@ -23,8 +23,6 @@ class Enrolment extends \yii\db\ActiveRecord
 	
 	const PAYMENT_FREQUENCY_FULL = 1;
 	const PAYMENT_FREQUENCY_MONTHLY = 2;
-    const IS_CONFIRMED = 1;
-    const IS_NOT_CONFIRMED = 0;
     /**
      * @inheritdoc
      */
