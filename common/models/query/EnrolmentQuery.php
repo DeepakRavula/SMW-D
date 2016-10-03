@@ -35,6 +35,10 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
 	public function notDeleted() {
 		return $this->where(['enrolment.isDeleted' => false]);
 	}
+    
+    public function isConfirmed() {
+		return $this->where(['enrolment.isConfirmed' => true]);
+	}
 
 	public function location($locationId) {
 		$this->joinWith(['course' => function($query) use($locationId){

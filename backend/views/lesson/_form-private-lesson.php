@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
+use common\models\Lesson;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -28,7 +29,7 @@ use kartik\datetime\DateTimePicker;
 				}
 			?>
 			
-			<?= $form->field($privateLessonModel, 'isEligible')->checkbox();?>
+			<?= $form->field($privateLessonModel, 'isEligible')->checkbox()->label('Not Qualify for Reschedule');?>
 			<?= $form->field($privateLessonModel, 'expiryDate')->widget(DateTimePicker::classname(), [
 				'options' => [
 					'value' => Yii::$app->formatter->asDateTime($privateLessonModel->expiryDate),
@@ -43,7 +44,7 @@ use kartik\datetime\DateTimePicker;
 			<?php
 			echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
 				'options' => [
-					'value' => Yii::$app->formatter->asDateTime($model->date),
+					'value' => $model->status === Lesson::STATUS_CANCELED ? '' : Yii::$app->formatter->asDateTime($model->date),
 				],
 				'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
 				'pluginOptions' => [
@@ -58,3 +59,16 @@ use kartik\datetime\DateTimePicker;
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>
+<script>
+	$(document).ready(function(){
+    $('#privatelesson-iseligible').change(function(){
+        if($(this).is(':checked')) {
+            $('#lesson-date').prop('disabled', true);
+            $('#privatelesson-expirydate').prop('disabled', true);
+        } else {
+            $('#lesson-date').prop('disabled', false);
+            $('#privatelesson-expirydate').prop('disabled', false);
+        }
+    });
+});
+</script>

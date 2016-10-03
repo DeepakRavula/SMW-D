@@ -159,13 +159,23 @@ class LessonController extends Controller
 		
 		if ($privateLessonModel->load(Yii::$app->request->post()) ) {
 			$privateLessonModel->lessonId = $model->id;
-			$expiryDate = \DateTime::createFromFormat('d-m-Y g:i A', $privateLessonModel->expiryDate);
-			$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+			if(! empty($privateLessonModel->expiryDate)){
+				$expiryDate = \DateTime::createFromFormat('d-m-Y g:i A', $privateLessonModel->expiryDate);
+				$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+			} else {
+				$privateLessonModel->expiryDate = $model->date;	
+            	return $this->redirect(['view', 'id' => $model->id]);   
+			}
 			$privateLessonModel->save();
 		}
 		if($model->load(Yii::$app->request->post())){	
+			if(empty($model->date)){
+				$model->date = $model->getOldAttribute('date');
+				$model->status = Lesson::STATUS_CANCELED;
+			} else {
 			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
 			$model->date = $lessonDate->format('Y-m-d H:i:s');
+			}
 			$model->save();
 					
 			Yii::$app->session->setFlash('alert', [
@@ -279,7 +289,10 @@ class LessonController extends Controller
         $courseModel = Course::findOne(['id' => $courseId]);
 		$lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
 		$request = Yii::$app->request;
-		$enrolmentRequest = $request->get('Enrolment'); 
+        $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]); 
+        $enrolmentModel->isConfirmed = true;
+        $enrolmentModel->save();
+		$enrolmentRequest = $request->get('Enrolment');
 		$rescheduleBeginDate = $enrolmentRequest['rescheduleBeginDate'];
 		if( ! empty($rescheduleBeginDate)) {
 			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);

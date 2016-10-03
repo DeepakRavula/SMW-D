@@ -84,7 +84,7 @@ class Enrolment extends \yii\db\ActiveRecord
 		
 		return $this;
 	}
-	
+    
 	public function getCourse() {
 		return $this->hasOne(Course::className(), ['id' => 'courseId']);
 	}
