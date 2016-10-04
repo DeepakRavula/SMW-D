@@ -41,7 +41,7 @@ class Payment extends \yii\db\ActiveRecord {
 		return [
 			[['user_id', 'payment_method_id', 'amount','date'], 'required'],
 			[['user_id', 'payment_method_id'], 'integer'],
-			[['amount'], 'number'],
+			[['amount'], 'number', 'min' => 1, 'message' => 'Please choose valid amount'],
 			[['sourceType','sourceId', 'reference'],'safe']
 		];
 	}

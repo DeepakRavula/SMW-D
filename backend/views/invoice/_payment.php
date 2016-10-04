@@ -193,8 +193,12 @@ $(document).ready(function(){
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
         var type = $(this).closest('tr').data('source');    
-        var amountNeeded = '<?= $amount;?>';        
-        $('input[name="Payment[amount]"]').val(amountNeeded);  
+        var amountNeeded = '<?= $amount;?>';  
+        if(amount > amountNeeded) {
+            $('input[name="Payment[amount]"]').val(amountNeeded);          
+        } else {
+            $('input[name="Payment[amount]"]').val(amount);          
+        }
         $('input[name="Payment[amountNeeded]"]').val(amountNeeded);          
         $('#payment-credit').val(amount);
 		$('#payment-sourceid').val(id);
