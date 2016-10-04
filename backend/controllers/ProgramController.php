@@ -132,7 +132,7 @@ class ProgramController extends Controller
             	'options' => ['class' => 'alert-success'],
             	'body' => 'Program has been updated successfully'
        		]);
-				return $this->redirect(['index']);
+				return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
 			}
 			else{
 				Yii::$app->session->setFlash('alert', [
@@ -156,12 +156,13 @@ class ProgramController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->delete();
 		Yii::$app->session->setFlash('alert', [
            	'options' => ['class' => 'alert-success'],
            	'body' => 'Program has been deleted successfully'
         ]);
-        return $this->redirect(['index']);
+        return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
     }
 
     /**
