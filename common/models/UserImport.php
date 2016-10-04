@@ -76,7 +76,7 @@ class UserImport extends Model {
 				$student = new Student();
 				$student->first_name = $row['First Name'];
 				$student->last_name = $row['Last Name'];
-				$student->birth_date = $row['Date of Birth'];
+				$student->birth_date = date('d-m-Y', strtotime($row['Date of Birth']));
 				$student->customer_id = $user->id;
 				$student->status = Student::STATUS_ACTIVE;
 
@@ -122,7 +122,7 @@ class UserImport extends Model {
 				$student = new Student();
 				$student->first_name = $row['First Name'];
 				$student->last_name = $row['Last Name'];
-				$student->birth_date = $row['Date of Birth'];
+				$student->birth_date = date('d-m-Y', strtotime($row['Date of Birth']));
 				$student->customer_id = $user->id;
 				$student->status = Student::STATUS_ACTIVE;
 				
