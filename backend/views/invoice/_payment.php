@@ -65,7 +65,8 @@ if(! empty($otherPayments)){
 		if((int) $otherPayment->payment_method_id === PaymentMethod::TYPE_CHEQUE){
 			$chequeModel = PaymentCheque::findOne(['payment_id' => $otherPayment->paymentCheque->payment_id]);	
 			$invoiceNumber = $chequeModel->number;
-		} elseif((int)$otherPayment->payment_method_id === PaymentMethod::TYPE_CREDIT_CARD){
+		} 
+		if((int)$otherPayment->payment_method_id !== PaymentMethod::TYPE_APPLY_CREDIT && (int) $otherPayment->payment_method_id !== (int) PaymentMethod::TYPE_CHEQUE){
 			$invoiceNumber = $otherPayment->reference;
 		}
 		$results[] = [
