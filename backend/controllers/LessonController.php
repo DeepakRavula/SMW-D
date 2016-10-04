@@ -290,10 +290,9 @@ class LessonController extends Controller
 		$lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
 		$request = Yii::$app->request;
         $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]); 
-        $enrolmentModel->updateAttributes([
-					'isConfirmed' => true,
-				]);
-		$enrolmentRequest = $request->get('Enrolment');
+        $enrolmentModel->isConfirmed = true;
+        $enrolmentModel->save();
+        $enrolmentRequest = $request->get('Enrolment');
 		$rescheduleBeginDate = $enrolmentRequest['rescheduleBeginDate'];
 		if( ! empty($rescheduleBeginDate)) {
 			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);
