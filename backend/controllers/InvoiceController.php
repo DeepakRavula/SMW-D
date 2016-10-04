@@ -175,14 +175,12 @@ class InvoiceController extends Controller {
 					}
 				}
 				
-				if((int) $model->type === Invoice::TYPE_INVOICE){	
-					if($model->total < $paymentModel->amount){
-						$model->balance =  $model->total - $paymentModel->amount;
-						$model->save();
-					}else{
-						$model->balance =  $model->invoiceBalance;
-						$model->save();	
-					}
+				if($model->total < $paymentModel->amount){
+					$model->balance =  $model->total - $paymentModel->amount;
+					$model->save();
+				}else{
+					$model->balance =  $model->invoiceBalance;
+					$model->save();	
 				}
 			
 			$creditPaymentId = $paymentModel->id;

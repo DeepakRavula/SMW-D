@@ -75,7 +75,17 @@ echo GridView::widget([
 				return $status;
 			},
 		],
-		'date:date'
+		'date:date',
+		[
+            'label' => 'Prepaid?',
+            'value' => function($data){
+                if( ! empty($data->proFormaInvoice->status) && ((int)$data->proFormaInvoice->status === (int) Invoice::STATUS_PAID || (int)$data->proFormaInvoice->status === (int) Invoice::STATUS_CREDIT)){
+                    return 'Yes';
+                }
+                return 'No';
+            }
+        ],
+
 	],
 ]);
 ?>
