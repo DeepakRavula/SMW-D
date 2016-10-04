@@ -128,21 +128,29 @@ echo GridView::widget([
 <?php endif;?>
 <?php $buttons = [];
 ?>
-<?php foreach(PaymentMethod::findAll([
+<?php foreach(PaymentMethod::find()
+	->where([
 			'active' => PaymentMethod::STATUS_ACTIVE,
 			'displayed' => 1,
-		]) as $method):?>
+		])
+	->orderBy(['sortOrder' => SORT_ASC])->all() as $method):?>
 	<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
-	<?php if($method->name === 'Apply Credit'):?>
-	<?php continue;?>
+		<?php if($method->name === 'Apply Credit'):?>
+			<?php continue;?>
+		<?php endif;?>
 	<?php endif;?>
-	<?php endif;?>
+	<?php 
+	$paymentType = $method->name;
+	if(in_array($method->id, [8,9,10])) {
+		$paymentType = 'Credit Card';	
+	}?>
+	<?php $paymentType = str_replace(' ', '-', trim(strtolower($paymentType)));?>
 	<?php $buttons[] = [
 			'label' => $method->name, 
 			'options' => [
 				'class' => 'btn btn-outline-info',
 				'id' => str_replace(' ', '-', trim(strtolower($method->name))) . '-btn',
-				'data-payment-type' => str_replace(' ', '-', trim(strtolower($method->name))),
+				'data-payment-type' => $paymentType,
 				'data-payment-type-id' => $method->id,
 			],
 	];?>
@@ -171,6 +179,14 @@ echo ButtonGroup::widget([
 		]);?>	
 	</div>
 	<?php endforeach;?>
+
+	<div id="credit-card-section" class="payment-method-section" style="display: none;">
+		<?php echo $this->render('payment-method/_credit-card',[
+				'model' => new Payment(),
+				'invoice' => $model,
+				'chequeModel' => new PaymentCheque(),
+		]);?>	
+	</div>
     <?php
         $amount = 0.0;        
 	    if($model->total > $model->invoicePaymentTotal){
