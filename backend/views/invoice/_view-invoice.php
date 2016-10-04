@@ -2,9 +2,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use backend\models\search\InvoiceSearch;
-use common\models\InvoiceLineItem;
 use common\models\ItemType;
-use yii\widgets\ActiveForm;
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -97,7 +95,9 @@ use yii\widgets\ActiveForm;
 	<div class="clearfix"></div>
   </div>
 	</div>
-	<?php echo $this->render('_line-item') ?>
+	<?php echo $this->render('_line-item', [
+		'invoiceModel' => $model,
+	]) ?>
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
