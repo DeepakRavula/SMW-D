@@ -9,6 +9,7 @@ use yii\base\Exception;
 use yii\base\Model;
 use Yii;
 use yii\helpers\ArrayHelper;
+use common\models\Student;
 
 /**
  * Create user form
@@ -28,7 +29,6 @@ class UserImport extends Model {
 	private function parseCSV() {
 		$rows = $fields = [];
 		$i = 0;
-
 		ini_set("auto_detect_line_endings", "1");
 		$handle = $this->file->readStream();
 		if ($handle) {
@@ -56,34 +56,55 @@ class UserImport extends Model {
 		$successCount = 0;
 		$studentCount = 0;
 		$customerCount = 0;
+		set_time_limit(1000);
 		foreach ($rows as $i => $row) {
-
-			$user = User::findOne(['email' => $row['Billing Email Address']]);
-
-			/* @todo - recognize parent and associate, if billing email already exists
-			 * 
-			 */
-			if (!empty($user)) {
-				$errors[] = 'Error on Line ' . ($i + 1) . ': User email already exists at another location. Removing email address from profile.';
+			if(empty($row['Billing Home Tel'])) {
 				continue;
 			}
+
+			$user = User::find()
+				->joinWith(['phoneNumber' => function($query) use($row) {
+					$query->where(['number' => $row['Billing Home Tel']]);
+				}])
+				->one();
+
+			if ( ! empty($user)) {
+				$studentModel = Student::findOne(['last_name' => $row['Last Name']]);
+				if( ! empty($studentModel)) {
+					continue;
+				}
+				$student = new Student();
+				$student->first_name = $row['First Name'];
+				$student->last_name = $row['Last Name'];
+				$student->birth_date = $row['Date of Birth'];
+				$student->customer_id = $user->id;
+				$student->status = Student::STATUS_ACTIVE;
+
+				if( ! $student->validate(['birth_date'])) {
+					$student->birth_date = null;
+					$errors[] = 'Error on Line ' . ($i + 2) . ': Incorrect Date format. Skipping DOB for student named, "' . $student->first_name . '"';
+				}
+				
+				if($student->save()) {
+					$studentCount++;	
+					continue;
+				}
+			}	
 			
 			$transaction = \Yii::$app->db->beginTransaction();
 
 			try {
 				$user = new User();
-				$user->email = $row['Billing Email Address'];
-
+				$user->email = $row['Email Address'];
 				$user->password = Yii::$app->security->generateRandomString(8);
 				$user->status = User::STATUS_ACTIVE;
 				if( ! $user->validate(['email'])) {
 					$user->email = null;
-					$errors[] = 'Error on Line ' . ($i + 1) . ': Invalid Email address. Skipping email address for customer named, "' . $row['Billing First Name'] . '"';
+					$errors[] = 'Error on Line ' . ($i + 2) . ': Invalid Email address. Skipping email address for customer named, "' . $row['Billing First Name'] . '"';
 				}	
 				if($user->save()) {
 					$customerCount++;
 				}
-
 				$userProfile = new UserProfile();
 				$userProfile->user_id = $user->id;
 				$userProfile->firstname = $row['Billing First Name'];
@@ -103,10 +124,11 @@ class UserImport extends Model {
 				$student->last_name = $row['Last Name'];
 				$student->birth_date = $row['Date of Birth'];
 				$student->customer_id = $user->id;
+				$student->status = Student::STATUS_ACTIVE;
 				
 				if( ! $student->validate(['birth_date'])) {
 					$student->birth_date = null;
-					$errors[] = 'Error on Line ' . ($i + 1) . ': Incorrect Date format. Skipping DOB for student named, "' . $student->first_name . '"';
+					$errors[] = 'Error on Line ' . ($i + 2) . ': Incorrect Date format. Skipping DOB for student named, "' . $student->first_name . '"';
 				}
 				
 				if($student->save()) {
@@ -124,7 +146,7 @@ class UserImport extends Model {
 				$city = City::findOne(['name' => $cityName]);
 
 				if (empty($city)) {
-					$city = new Cities;
+					$city = new City;
 					$city->name = $row['City'];
 					$city->province_id = 1;
 					$city->save();
@@ -136,15 +158,11 @@ class UserImport extends Model {
 				$address->postal_code = $pincodeName;
 				if( ! $address->validate(['address'])) {
 					$address->address = null;
-					$errors[] = 'Error on Line ' . ($i + 1) . ': Address is missing. Skipping  address for customer named, "' . $row['Billing First Name'] . '"';
+					$errors[] = 'Error on Line ' . ($i + 2) . ': Address is missing. Skipping  address for customer named, "' . $row['Billing First Name'] . '"';
 				}
 				$address->save();
-				
-				$userAddress = new UserAddress();
-				$userAddress->user_id = $user->id;
-				$userAddress->address_id = $address->address;
-				$userAddress->save();
-				//$user->link('addresses', $address);
+			
+				$user->link('addresses', $address);
 
 				if (!empty($row['Billing Home Tel'])) {
 					$phoneNumber = $row['Billing Home Tel'];
@@ -174,6 +192,11 @@ class UserImport extends Model {
 					$phone->number = $phoneNumber;
 					$phone->label_id = PhoneNumber::LABEL_OTHER;
 					$phone->user_id = $user->id;
+
+					if (!empty($row['Billing Other Tel Ext.'])) {
+						$phone->extension = $row['Billing Other Tel Ext.'];
+					}
+					
 					$phone->save();
 				}
 
@@ -181,7 +204,7 @@ class UserImport extends Model {
 				$successCount++;
 			} catch (\Exception $e) {
 				$transaction->rollBack();
-				$errors[] = 'Error on Line ' . ($i + 1) . ': ' . $e->getMessage();
+				$errors[] = 'Error on Line ' . ($i + 2) . ': ' . $e->getMessage();
 			}
 		}
 
@@ -190,7 +213,7 @@ class UserImport extends Model {
 			'studentCount' => $studentCount,
 			'customerCount' => $customerCount,
 			'errors' => $errors,
-			'totalRows' => count($rows),
+			'totalRows' => count($rows) / 2,
 		];
 	}
 }
