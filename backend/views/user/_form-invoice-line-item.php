@@ -15,7 +15,6 @@ use yii\helpers\Url;
 <div id="invoice-line-item-modal" class="invoice-line-item-form">
     <?php $form = ActiveForm::begin([
 		'id' => 'add-misc-item-form',
-		'action' => Url::to(['/invoice/add-misc', 'id' => $invoiceModel->id])
 	]); ?>
  	<div class="row">
         <div class="col-xs-8">

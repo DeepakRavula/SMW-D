@@ -1,10 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;
-use common\models\PaymentMethod;
-use common\models\Invoice;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -12,7 +9,10 @@ use common\models\Invoice;
 ?>
 
 <div class="payments-form p-l-20 form-well-smw form-well m-t-10 m-b-0">
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+		'id' => 'apply-credit-form',
+		'enableAjaxValidation' => true,
+	]); ?>
  	<div class="row">
         <div class="col-xs-3">
     		<?php echo $form->field($model, 'credit')->textInput()->label('Available Credit')?>
