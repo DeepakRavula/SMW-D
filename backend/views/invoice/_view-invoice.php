@@ -251,6 +251,9 @@ use common\models\ItemType;
   </div>
 </div>
 </div>
+<div>
+    <?php echo $remainderNotes->text; ?>
+</div>
 </div>
 <script>
 $(document).ready(function() {
