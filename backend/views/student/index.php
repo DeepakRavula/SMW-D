@@ -63,10 +63,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 }else if($model->status === Student::STATUS_ACTIVE){
                     $data = array_merge($data, ['class' => 'info active']);
                 } 
-                return $data;
-            }else{
-                return $data;
-            }
+            }  
+                return $data;            
         },
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
