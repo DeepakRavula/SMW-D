@@ -27,6 +27,9 @@ use yii\helpers\Url;
 		<div class="col-xs-2">
    			<?php echo $form->field($model, 'amount')->textInput()?>
         </div>
+		<div class="col-xs-8">
+   			<?php echo $form->field($model, 'isRoyalty')->checkbox()?>
+        </div>
 	</div>
 	    <div class="row hide tax-compute">
         <div class="col-xs-8">
