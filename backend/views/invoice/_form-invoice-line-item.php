@@ -62,7 +62,7 @@ $(document).ready(function() {
 			$('#invoicelineitem-tax_code').val('ON');
 			$('#invoicelineitem-tax_rate').val(0.00);
 		}
-		if(taxStatusId && parseInt(taxStatusId) === 1){	
+		if(taxStatusId && parseInt(taxStatusId) === 1 || taxStatusId && parseInt(taxStatusId) === 3){	
 			var amount = $('#invoicelineitem-amount').val();
 			var taxStatus = $(this).children("option").filter(":selected").text();
 			$.ajax({
