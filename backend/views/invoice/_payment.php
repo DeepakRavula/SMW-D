@@ -93,6 +93,9 @@ $invoicePaymentDataProvider = new ArrayDataProvider([
     ],
 ]);
 ?>
+<?php yii\widgets\Pjax::begin([
+	'id' => 'payment-listing'
+]); ?>
 <?php
 echo GridView::widget([
 	'dataProvider' => $invoicePaymentDataProvider,
@@ -119,6 +122,7 @@ echo GridView::widget([
     ]
 ]);
 ?>
+<?php yii\widgets\Pjax::end(); ?>
 <?php if((int) $model->type === Invoice::TYPE_INVOICE):?>
 	<div class="smw-box col-md-3 m-l-10 m-b-20">
 <h5>Invoice Total: <?= $model->total;?></h5>

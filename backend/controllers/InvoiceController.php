@@ -23,11 +23,9 @@ use common\models\TaxCode;
 use common\models\Location;
 use common\models\TaxStatus;
 use common\models\Program;
-use common\models\UserAddress;
-use common\models\PhoneNumber;
-use backend\models\UserForm;
 use yii\helpers\Json;
-
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
@@ -154,34 +152,42 @@ class InvoiceController extends Controller {
         }
 		
 		if ($paymentModel->load(Yii::$app->request->post())) {
-				$paymentMethodId = $paymentModel->payment_method_id; 
-				$paymentModel->user_id = $model->user_id;
-				$currentDate = new \DateTime();
-				$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
-				$paymentModel->amount = $paymentModel->amount;
-				if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_APPLY_CREDIT){
-					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-					$paymentModel->reference = $paymentModel->sourceId;
+			if((int) $paymentModel->payment_method_id === (int) PaymentMethod::TYPE_APPLY_CREDIT){
+				$paymentModel->setScenario('apply-credit');
+			}
+			$paymentModelErrors = ActiveForm::validate($paymentModel);	
+			if(Yii::$app->request->isAjax){
+				Yii::$app->response->format = Response::FORMAT_JSON;
+    			return $paymentModelErrors;
+			}
+			$paymentMethodId = $paymentModel->payment_method_id; 
+			$paymentModel->user_id = $model->user_id;
+			$currentDate = new \DateTime();
+			$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
+			$paymentModel->amount = $paymentModel->amount;
+			if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_APPLY_CREDIT){
+				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+				$paymentModel->reference = $paymentModel->sourceId;
+			}
+			$paymentModel->invoiceId = $model->id;
+			$paymentModel->save();
+			if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_CHEQUE){
+				$chequeModel = new PaymentCheque();
+				if ($chequeModel->load(Yii::$app->request->post())) {
+					$chequeModel->payment_id = $paymentModel->id;
+					$chequeDate = \DateTime::createFromFormat('d-m-Y',$chequeModel->date);
+					$chequeModel->date = $chequeDate->format('Y-m-d H:i:s');
+					$chequeModel->save();
 				}
-				$paymentModel->invoiceId = $model->id;
-				$paymentModel->save();
-				if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_CHEQUE){
-					$chequeModel = new PaymentCheque();
-					if ($chequeModel->load(Yii::$app->request->post())) {
-						$chequeModel->payment_id = $paymentModel->id;
-						$chequeDate = \DateTime::createFromFormat('d-m-Y',$chequeModel->date);
-						$chequeModel->date = $chequeDate->format('Y-m-d H:i:s');
-						$chequeModel->save();
-					}
-				}
-				
-				if($model->total < $paymentModel->amount){
-					$model->balance =  $model->total - $paymentModel->amount;
-					$model->save();
-				}else{
-					$model->balance =  $model->invoiceBalance;
-					$model->save();	
-				}
+			}
+
+			if($model->total < $paymentModel->amount){
+				$model->balance =  $model->total - $paymentModel->amount;
+				$model->save();
+			}else{
+				$model->balance =  $model->invoiceBalance;
+				$model->save();	
+			}	
 			
 			$creditPaymentId = $paymentModel->id;
 			if((int) $paymentMethodId === PaymentMethod::TYPE_APPLY_CREDIT){
@@ -204,7 +210,7 @@ class InvoiceController extends Controller {
 					$invoiceModel->save();
 				}
 			}
-
+			
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Payment has been recorded successfully'
