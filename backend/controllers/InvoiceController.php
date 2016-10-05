@@ -212,6 +212,18 @@ class InvoiceController extends Controller {
 			return $this->redirect(['view', 'id' => $model->id, '#' => 'payment']);
 		}
 		
+
+		return $this->render('view', [
+					'model' => $model,
+					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+					'invoicePayments' => $invoicePaymentsDataProvider,
+					'customer' => empty($customer) ? new User : $customer,
+					'userModel' => $userModel,
+		]);
+	}
+
+	public function actionAddMisc($id) {
+		$model = $this->findModel($id);
 		$invoiceLineItemModel = new InvoiceLineItem();
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
 			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
@@ -221,7 +233,6 @@ class InvoiceController extends Controller {
 			$invoiceLineItemModel->tax_status = $taxStatus->name;
 			$invoiceLineItemModel->save();
 
-			$model = $this->findModel($id);
 			$model->subTotal += $invoiceLineItemModel->amount;
 			$model->tax += $invoiceLineItemModel->tax_rate;
 			$model->total = $model->subTotal + $model->tax;
@@ -233,16 +244,9 @@ class InvoiceController extends Controller {
 				'body' => 'Misc has been added successfully'
 			]);
 			return $this->redirect(['view', 'id' => $model->id]);
+		}	
 	}
-		return $this->render('view', [
-					'model' => $model,
-					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-					'invoicePayments' => $invoicePaymentsDataProvider,
-					'customer' => empty($customer) ? new User : $customer,
-					'userModel' => $userModel,
-		]);
-	}
-
+	
 	public function actionComputeTax() {
 		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $locationId = Yii::$app->session->get('location_id');
