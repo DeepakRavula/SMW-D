@@ -56,14 +56,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'rowOptions'   => function ($model, $key, $index, $grid) use($searchModel) {
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            if($searchModel->showAllStudents == true){
+            $data = ['data-id' => $model->id, 'data-url' => $u];
+            if($searchModel->showAllStudents){
                 if($model->status === Student::STATUS_INACTIVE){
-                    return ['data-id' => $model->id, 'data-url' => $u, 'class' => 'danger inactive'];
+                    $data = array_merge($data, ['class' => 'danger inactive']);
                 }else if($model->status === Student::STATUS_ACTIVE){
-                    return ['data-id' => $model->id, 'data-url' => $u, 'class' => 'info active'];
+                    $data = array_merge($data, ['class' => 'info active']);
                 } 
+                return $data;
             }else{
-                 return ['data-id' => $model->id, 'data-url' => $u];
+                return $data;
             }
         },
         'tableOptions' =>['class' => 'table table-bordered'],
