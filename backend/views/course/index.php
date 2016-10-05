@@ -24,17 +24,6 @@ $this->params['breadcrumbs'][] = $this->title;
 	}
 </style>
 
-
-<?php
-$this->registerJs("
-    $('td').click(function (e) {
-        var id = $(this).closest('tr').data('id');
-        if(e.target == this)
-            location.href = '" . Url::to(['course/view']) . "?id=' + id;
-    });
-
-");
-?>
 <div class="group-course-index"> 
     <div class="smw-search">
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
@@ -63,14 +52,16 @@ $this->registerJs("
 	</div>
            
     <?php ActiveForm::end(); ?>
-    
+    <div class="grid-row-open">  
     <?php yii\widgets\Pjax::begin(['id' => 'group-courses']) ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
-		'rowOptions'   => function ($model, $key, $index, $grid) {
-        	return ['data-id' => $model->id];
+        'rowOptions'   => function ($model, $key, $index, $grid) {
+            $u= \yii\helpers\StringHelper::basename(get_class($model));
+            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+        	return ['data-id' => $model->id, 'data-url' => $u];
     	},
         'columns' => [
 			[
@@ -124,7 +115,7 @@ $this->registerJs("
         ],
     ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
-
+</div>
 </div>
 <script>
 $(document).ready(function(){
