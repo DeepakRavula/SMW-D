@@ -15,7 +15,6 @@ use yii\helpers\Url;
 <div id="invoice-line-item-modal" class="invoice-line-item-form">
     <?php $form = ActiveForm::begin([
 		'id' => 'add-misc-item-form',
-		'action' => Url::to(['/invoice/add-misc', 'id' => $invoiceModel->id])
 	]); ?>
  	<div class="row">
         <div class="col-xs-8">
@@ -26,9 +25,6 @@ use yii\helpers\Url;
         </div>
 		<div class="col-xs-2">
    			<?php echo $form->field($model, 'amount')->textInput()?>
-        </div>
-		<div class="col-xs-8">
-   			<?php echo $form->field($model, 'isRoyalty')->checkbox()?>
         </div>
 	</div>
 	    <div class="row hide tax-compute">
@@ -68,7 +64,7 @@ $(document).ready(function() {
 			$('#invoicelineitem-tax_code').val('ON');
 			$('#invoicelineitem-tax_rate').val(0.00);
 		}
-		if(taxStatusId && parseInt(taxStatusId) === 1 || taxStatusId && parseInt(taxStatusId) === 3){	
+		if(taxStatusId && parseInt(taxStatusId) === 1){	
 			var amount = $('#invoicelineitem-amount').val();
 			var taxStatus = $(this).children("option").filter(":selected").text();
 			$.ajax({

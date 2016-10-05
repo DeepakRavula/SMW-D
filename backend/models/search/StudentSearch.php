@@ -58,6 +58,7 @@ class StudentSearch extends Student
                 ->orFilterWhere(['like', 'last_name', $this->query])
                 ->orFilterWhere(['like', 'cp.firstname', $this->query])
                 ->orFilterWhere(['like', 'cp.lastname', $this->query]);
+        $query->groupBy('student.id');
         
        	if(! $this->showAllStudents) { 
             $currentDate = (new \DateTime())->format('Y-m-d H:i:s');

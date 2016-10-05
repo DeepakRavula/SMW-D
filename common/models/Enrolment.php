@@ -110,59 +110,61 @@ class Enrolment extends \yii\db\ActiveRecord
 	}
 	public function afterSave($insert, $changedAttributes)
     {
-		if(((int) $this->course->program->type !== (int)Program::TYPE_GROUP_PROGRAM) && (empty($this->rescheduleBeginDate))){
-			$interval = new \DateInterval('P1D');
-			$startDate = $this->course->startDate;
-			$endDate = $this->course->endDate;
-			$start = new \DateTime($startDate);
-			$end = new \DateTime($endDate);
-			$period = new \DatePeriod($start, $interval, $end);
-			$fromTime = new \DateTime($this->course->fromTime);
-			$length = explode(':', $this->course->duration);
-			$fromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
-			$toTime = $fromTime->format('H:i:s');
-			
-			$holidays = Holiday::find()->all();
-			$pdDays = ProfessionalDevelopmentDay::find()->all();
-			$holidayDays = [];
-			$professionalDays = [];
-			$leaveDays = [];
-			if(! empty($holidays)){
-				foreach($holidays as $holiday){
-					$holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
-					$holidayDays[] = $holiday->format('Y-m-d');
-				}
-			}
+		$isGroupProgram = (int) $this->course->program->type === (int)Program::TYPE_GROUP_PROGRAM; 
+        if($isGroupProgram || (! empty($this->rescheduleBeginDate)) || (! $insert)) {
+            return true;
+        }
+        $interval = new \DateInterval('P1D');
+        $startDate = $this->course->startDate;
+        $endDate = $this->course->endDate;
+        $start = new \DateTime($startDate);
+        $end = new \DateTime($endDate);
+        $period = new \DatePeriod($start, $interval, $end);
+        $fromTime = new \DateTime($this->course->fromTime);
+        $length = explode(':', $this->course->duration);
+        $fromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
+        $toTime = $fromTime->format('H:i:s');
 
-			if(! empty($pdDays)){
-				foreach($pdDays as $pdDay){
-					$pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
-					$professionalDays[] = $pdDay->format('Y-m-d');
-				}
-			}
-			
-			$leaveDays = array_merge($holidayDays,$professionalDays);
+        $holidays = Holiday::find()->all();
+        $pdDays = ProfessionalDevelopmentDay::find()->all();
+        $holidayDays = [];
+        $professionalDays = [];
+        $leaveDays = [];
+        if(! empty($holidays)){
+            foreach($holidays as $holiday){
+                $holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
+                $holidayDays[] = $holiday->format('Y-m-d');
+            }
+        }
 
-			foreach($period as $day){
-				foreach($leaveDays as $leaveDay){
-					if($day->format('Y-m-d') === $leaveDay){
-						continue 2;
-					}
-				}
+        if(! empty($pdDays)){
+            foreach($pdDays as $pdDay){
+                $pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
+                $professionalDays[] = $pdDay->format('Y-m-d');
+            }
+        }
 
-				if ((int) $day->format('N') === (int) $this->course->day) {
-					$lesson = new Lesson();
-					$lesson->setAttributes([
-						'courseId'	 => $this->course->id,
-						'teacherId' => $this->course->teacherId,
-						'status' => Lesson::STATUS_DRAFTED,
-						'date' => $day->format('Y-m-d H:i:s'),
-						'toTime' => $toTime, 
-						'isDeleted' => 0,
-					]);
-					$lesson->save();
-				}
-			}
-		}
+        $leaveDays = array_merge($holidayDays,$professionalDays);
+
+        foreach($period as $day){
+            foreach($leaveDays as $leaveDay){
+                if($day->format('Y-m-d') === $leaveDay){
+                    continue 2;
+                }
+            }
+
+            if ((int) $day->format('N') === (int) $this->course->day) {
+                $lesson = new Lesson();
+                $lesson->setAttributes([
+                    'courseId'	 => $this->course->id,
+                    'teacherId' => $this->course->teacherId,
+                    'status' => Lesson::STATUS_DRAFTED,
+                    'date' => $day->format('Y-m-d H:i:s'),
+                    'toTime' => $toTime, 
+                    'isDeleted' => 0,
+                ]);
+                $lesson->save();
+            }
+        }
 	}
 }

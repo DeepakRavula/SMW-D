@@ -9,6 +9,7 @@ Modal::begin([
 ]);
 echo $this->render('_form-invoice-line-item', [
 		'model' => new InvoiceLineItem(),
+		'invoiceModel' => $invoiceModel,
 ]);
 Modal::end();
 ?>

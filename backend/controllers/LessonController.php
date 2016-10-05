@@ -292,7 +292,7 @@ class LessonController extends Controller
         $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]); 
         $enrolmentModel->isConfirmed = true;
         $enrolmentModel->save();
-		$enrolmentRequest = $request->get('Enrolment');
+        $enrolmentRequest = $request->get('Enrolment');
 		$rescheduleBeginDate = $enrolmentRequest['rescheduleBeginDate'];
 		if( ! empty($rescheduleBeginDate)) {
 			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);
