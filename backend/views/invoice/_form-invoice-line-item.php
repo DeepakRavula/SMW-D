@@ -67,10 +67,9 @@ $(document).ready(function() {
 			$('#invoicelineitem-tax_type').val('TAX');
 			$('#invoicelineitem-tax_code').val('ON');
 			$('#invoicelineitem-tax_rate').val(0.00);
-		}
-		if(taxStatusId && parseInt(taxStatusId) === 1){	
+		} else {
 			var amount = $('#invoicelineitem-amount').val();
-			var taxStatus = $(this).children("option").filter(":selected").text();
+			var taxStatusName = $(this).children("option").filter(":selected").text();
 			$.ajax({
 				url: "<?php echo Url::to(['invoice/compute-tax']);?>",
 				type: "POST",
@@ -78,7 +77,8 @@ $(document).ready(function() {
 				dataType: "json",
 				data: JSON.stringify({
 					"amount":amount,
-					"taxStatus":taxStatus,
+					"taxStatusName":taxStatusName,
+					"taxStatusId":taxStatusId,
 				}),
 				success: function(response) {
 					var response =  jQuery.parseJSON(JSON.stringify(response));

@@ -260,15 +260,20 @@ class InvoiceController extends Controller {
         $today = (new \DateTime())->format('Y-m-d H:i:s');
         $data = Yii::$app->request->rawBody;
         $data = Json::decode($data, true);
-        $taxCode = TaxCode::find()->where(['<=', 'start_date', $today])->andWhere(['province_id'=> $locationModel->province_id])
+        $taxCode = TaxCode::find()
+			->joinWith(['taxStatus' => function($query) use($data){
+				$query->where(['tax_status.id' => $data['taxStatusId']]);
+			}])
+			->where(['<=', 'start_date', $today])
+			->andWhere(['province_id'=> $locationModel->province_id])
 			->orderBy('start_date DESC')
 			->one();
-        $rate = $data['amount'] * $taxCode->rate/100;
+        $rate = $data['amount'] * $taxCode->rate / 100;
         return [
 			'tax_type' => $taxCode->taxType->name,
 			'code' => $taxCode->code,
 			'rate' => $rate,
-			'tax_status' => $data['taxStatus']
+			'tax_status' => $data['taxStatusName']
 		];
     }
 

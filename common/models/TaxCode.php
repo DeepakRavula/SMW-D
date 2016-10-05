@@ -68,4 +68,10 @@ class TaxCode extends \yii\db\ActiveRecord
     {
        return $this->hasOne(Province::className(), ['id' => 'province_id']);
     }
+
+	public function getTaxStatus()
+    {
+       return $this->hasOne(TaxStatus::className(), ['id' => 'tax_status_id'])
+		->viaTable('tax_type_tax_status_assoc', ['tax_type_id' => 'tax_type_id']);
+    }
 }
