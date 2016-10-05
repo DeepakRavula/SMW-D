@@ -54,7 +54,8 @@ class EnrolmentController extends Controller
         $model = $this->findModel($id);        
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->where(['courseId' => $model->course->id]),                
+                ->where(['courseId' => $model->course->id]),
+            'pagination' => false,
         ]);        
        
         return $this->render('view', [ 
