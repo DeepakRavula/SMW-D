@@ -27,6 +27,8 @@ class Payment extends \yii\db\ActiveRecord {
 	public $invoiceNumber;
 	
 	const TYPE_OPENING_BALANCE_CREDIT = 1;
+	const SCENARIO_APPLY_CREDIT = 'apply-credit';
+	
 	/**
 	 * @inheritdoc
 	 */
@@ -39,13 +41,19 @@ class Payment extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['user_id', 'payment_method_id', 'amount','date'], 'required'],
+			[['payment_method_id', 'amount'], 'required'],
 			[['user_id', 'payment_method_id'], 'integer'],
 			[['amount'], 'number', 'min' => 1, 'message' => 'Please choose valid amount'],
-			[['sourceType','sourceId', 'reference'],'safe']
+			[['user_id', 'date', 'sourceType','sourceId', 'reference', 'credit'],'safe'],
+			[['amount'], 'validateLessThanCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
 		];
 	}
 
+	public function validateLessThanCredit($attributes){
+		if((double) $this->credit < (double) $this->amount){
+			return $this->addError($attributes,'Insufficient Credit');	
+		}
+	}
 	/**
 	 * @inheritdoc
 	 */
