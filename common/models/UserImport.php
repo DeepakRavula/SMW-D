@@ -5,10 +5,8 @@ namespace common\models;
 use common\models\User;
 use common\models\Address;
 use common\models\PhoneNumber;
-use yii\base\Exception;
 use yii\base\Model;
 use Yii;
-use yii\helpers\ArrayHelper;
 use common\models\Student;
 
 /**
@@ -76,7 +74,8 @@ class UserImport extends Model {
 				$student = new Student();
 				$student->first_name = $row['First Name'];
 				$student->last_name = $row['Last Name'];
-				$student->birth_date = date('d-m-Y', strtotime($row['Date of Birth']));
+				$birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
+				$student->birth_date = $birthDate->format('d-m-Y');
 				$student->customer_id = $user->id;
 				$student->status = Student::STATUS_ACTIVE;
 
@@ -122,7 +121,8 @@ class UserImport extends Model {
 				$student = new Student();
 				$student->first_name = $row['First Name'];
 				$student->last_name = $row['Last Name'];
-				$student->birth_date = date('d-m-Y', strtotime($row['Date of Birth']));
+				$birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
+				$student->birth_date = $birthDate->format('d-m-Y');
 				$student->customer_id = $user->id;
 				$student->status = Student::STATUS_ACTIVE;
 				
