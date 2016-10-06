@@ -185,11 +185,11 @@ class StudentController extends Controller
                 'body' => 'Student profile has been updated successfully'
             ]);
             if ((int) $model->status === (int) Student::STATUS_INACTIVE) {
-                $redirect = $this->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
-	    } else {
-                $redirect = $this->redirect(['view', 'id' => $model->id]);
-	    }
-        return $redirect;
+                $url = ['index', 'StudentSearch[showAllStudents]' => false];
+            } else {
+                $url = ['view', 'id' => $model->id];
+            }
+            return $this->redirect($url);
         } else {
             return $this->render('update', [
                 'model' => $model,
