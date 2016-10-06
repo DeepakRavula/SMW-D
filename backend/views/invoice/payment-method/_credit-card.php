@@ -11,16 +11,9 @@ use yii\bootstrap\ActiveForm;
 
 
 <div class="payments-form p-l-20 form-well-smw form-well m-t-10 m-b-0">
-  <h4 class="m-t-0 m-b-20">Credit Card payment</h4>
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
         <div class="col-xs-3">
-			<?php
-				$amount = '0.00';
-				if($invoice->total > $invoice->invoicePaymentTotal){
-					$amount = $invoice->invoiceBalance;
-				}
-			?>
    			<?php echo $form->field($model, 'amount')->textInput(['value' => $amount])->label('Amount Needed') ?>
         </div>
 		<div class="col-xs-3">

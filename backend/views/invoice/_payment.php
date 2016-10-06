@@ -142,7 +142,7 @@ echo GridView::widget([
 	<?php endif;?>
 	<?php 
 	$paymentType = $method->name;
-	if(in_array($method->id, [8,9,10])) {
+	if(in_array($method->id, [8,9,10,11])) {
 		$paymentType = 'Credit Card';	
 	}?>
 	<?php $paymentType = str_replace(' ', '-', trim(strtolower($paymentType)));?>
