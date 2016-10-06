@@ -8,7 +8,7 @@ use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use backend\models\search\LessonSearch;
 use common\models\User;
-use common\models\RemainderNotes;
+use common\models\ReminderNotes;
 use common\models\UserProfile;
 use common\models\Payment;
 use common\models\Lesson;
@@ -213,16 +213,13 @@ class InvoiceController extends Controller {
 			return $this->redirect(['view', 'id' => $model->id, '#' => 'payment']);
 		}
 		
-        $remainderNotes = $this->remainderNotes();
-        
-		return $this->render('view', [
+        return $this->render('view', [
 					'model' => $model,
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 					'invoicePayments' => $invoicePaymentsDataProvider,
 					'customer' => empty($customer) ? new User : $customer,
 					'userModel' => $userModel,
-                    'remainderNotes' => $remainderNotes,
-		]);
+        ]);
 	}
 
 	public function actionAddMisc($id) {
@@ -378,6 +375,8 @@ class InvoiceController extends Controller {
 			$totalAmount = $subTotal + $taxAmount;
 			$invoice->tax = $taxAmount;
 			$invoice->total = $totalAmount;
+            $reminderNotes = ReminderNotes::find()->one();
+            $invoice->reminder_notes = $reminderNotes->notes;
 			$invoice->save();
             
             $invoiceType = (int) $invoice->type === Invoice::TYPE_INVOICE ? 'Invoice' : 'Pro-forma invoice';
@@ -474,12 +473,11 @@ class InvoiceController extends Controller {
 		$invoiceLineItemsDataProvider = new ActiveDataProvider([
 			'query' => $invoiceLineItems,
 		]);
-        $remainderNotes = $this->remainderNotes();
-		$this->layout = "/print";
+        
+        $this->layout = "/print";
 		return $this->render('_print', [
 					'model' => $model,
-                    'remainderNotes' => $remainderNotes,
-					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
+                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
 		]);
 	}
 
@@ -529,12 +527,10 @@ class InvoiceController extends Controller {
 		return $this->redirect(['view', 'id' => $invoiceId]);	
 	}
     
-    public function remainderNotes(){
-        $remainderNotes = RemainderNotes::find()
-                ->where(['user_id' => Yii::$app->user->id])
-                ->one();
+    public function reminderNotes(){
+        $reminderNotes = ReminderNotes::find()->one();
         
-        return $remainderNotes;
+        return $reminderNotes;
     }    
 }
 				

@@ -3,14 +3,14 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\RemainderNotes */
+/* @var $model common\models\ReminderNotes */
 
-$this->title = 'Update Remainder Notes';
-$this->params['breadcrumbs'][] = ['label' => 'Remainder Notes', 'url' => ['index']];
+$this->title = 'Update Reminder Notes';
+$this->params['breadcrumbs'][] = ['label' => 'Reminder Notes', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="remainder-notes-update">
+<div class="reminder-notes-update">
 
     <?php echo $this->render('_form', [
         'model' => $model,

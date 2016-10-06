@@ -90,7 +90,6 @@ $invoiceContent =  $this->render('_view-invoice', [
     'model' => $model,
 	'customer' => $customer,
     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-    'remainderNotes' => $remainderNotes,
 ]);
 $paymentContent =  $this->render('_payment', [
     'model' => $model,

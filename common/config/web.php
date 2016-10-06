@@ -26,7 +26,7 @@ $config = [
 			'lesson/*',
 			'invoice/*',
             'release-notes/*',
-            'remainder-notes/*',
+            'reminder-notes/*',
 			'location/*',
 			'city/*',
 			'province/*', 

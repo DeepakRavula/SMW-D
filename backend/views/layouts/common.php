@@ -289,11 +289,11 @@ $bundle = BackendAsset::register($this);
                             'active'=>(Yii::$app->controller->id=='release-notes')? true : false,
                         ],
                         [
-                            'label'=>Yii::t('backend', 'Remainder Notes'),
-                            'icon'=>'<i class="fa  fa-map-marker"></i>',
-                            'url'=>['/remainder-notes/index'],
-                            'visible'=>Yii::$app->user->can('administrator'),
-                            'active'=>(Yii::$app->controller->id=='remainder-notes')? true : false,
+                            'label'=>Yii::t('backend', 'Reminder Notes'),
+                            'icon'=>'<i class="fa  fa-bell"></i>',
+                            'url'=>['/reminder-notes/index'],
+                            'visible'=>Yii::$app->user->can('staffmember'),
+                            'active'=>(Yii::$app->controller->id=='reminder-notes')? true : false,
                         ],
                         [
                             'label'=>Yii::t('backend', 'System'),

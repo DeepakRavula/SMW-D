@@ -47,6 +47,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return [
 			['user_id','required'],
+            [['reminder_notes'], 'string'],
 			[['type','notes','internal_notes', 'status'],'safe']
 		];
     }
@@ -63,6 +64,7 @@ class Invoice extends \yii\db\ActiveRecord
 			'notes' => 'Printed Notes',
 			'internal_notes' => 'Internal Notes',
 			'type' => 'Type',
+            'reminder_notes' => 'Reminder Notes',
 			'customer_id' => 'Customer Name'
         ];
     }

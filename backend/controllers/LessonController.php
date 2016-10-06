@@ -9,6 +9,7 @@ use common\models\Enrolment;
 use common\models\Program;
 use common\models\Course;
 use common\models\Student;
+use \common\models\ReminderNotes;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use common\models\ItemType;
@@ -353,6 +354,8 @@ class LessonController extends Controller
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->type = INVOICE::TYPE_INVOICE;
+            $reminderNotes = ReminderNotes::find()->one();
+            $invoice->reminder_notes = $reminderNotes->notes;
 			$invoice->save();
        		$subTotal = 0;
 			$taxAmount = 0;

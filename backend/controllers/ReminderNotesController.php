@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\RemainderNotes;
+use common\models\ReminderNotes;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * RemainderNotesController implements the CRUD actions for RemainderNotes model.
+ * ReminderNotesController implements the CRUD actions for ReminderNotes model.
  */
-class RemainderNotesController extends Controller
+class ReminderNotesController extends Controller
 {
     public function behaviors()
     {
@@ -27,19 +27,16 @@ class RemainderNotesController extends Controller
     }
 
     /**
-     * Lists all RemainderNotes models.
+     * Lists all ReminderNotes models.
      * @return mixed
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => RemainderNotes::find()
-                ->where(['user_id' => Yii::$app->user->id])
+            'query' => ReminderNotes::find()
         ]);
-        $notes = RemainderNotes::find()
-                ->where(['user_id' => Yii::$app->user->id])
-                ->one();
-        if (! empty($notes->user_id)) {
+        $notes = ReminderNotes::find()->one();
+        if ( ! empty($notes)) {
             return $this->render('index', [
                 'dataProvider' => $dataProvider,
             ]);
@@ -50,16 +47,14 @@ class RemainderNotesController extends Controller
     }
 
     /**
-     * Creates a new RemainderNotes model.
+     * Creates a new ReminderNotes model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new RemainderNotes();
-        $currentDate = new \DateTime();
-        $model->date =  $currentDate->format('Y-m-d H:i:s');
-        $model->user_id = Yii::$app->user->id;
+        $model = new ReminderNotes();
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
         } else {
@@ -70,7 +65,7 @@ class RemainderNotesController extends Controller
     }
 
     /**
-     * Updates an existing RemainderNotes model.
+     * Updates an existing ReminderNotes model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -78,8 +73,7 @@ class RemainderNotesController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $currentDate = new \DateTime();
-        $model->date =  $currentDate->format('Y-m-d H:i:s');
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
         } else {
@@ -90,7 +84,7 @@ class RemainderNotesController extends Controller
     }
 
     /**
-     * Deletes an existing RemainderNotes model.
+     * Deletes an existing ReminderNotes model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -103,15 +97,15 @@ class RemainderNotesController extends Controller
     }
 
     /**
-     * Finds the RemainderNotes model based on its primary key value.
+     * Finds the ReminderNotes model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return RemainderNotes the loaded model
+     * @return ReminderNotes the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = RemainderNotes::findOne($id)) !== null) {
+        if (($model = ReminderNotes::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
