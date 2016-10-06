@@ -105,6 +105,8 @@ Dear <?php echo Html::encode($toName) ?>,<br>
           </div>
         <!-- /.col -->
         </div>
+<div>
+    <?php echo $model->reminderNotes; ?>
 </div>
 <br>
 Thank you<br>

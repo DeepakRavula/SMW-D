@@ -213,8 +213,10 @@ class Invoice extends \yii\db\ActiveRecord
 				}
 			}
 		}
-        $reminderNotes = ReminderNote::find()->one();
-        $this->reminderNotes = $reminderNotes->notes;
+        if ($insert) {
+            $reminderNotes = ReminderNote::find()->one();
+            $this->reminderNotes = $reminderNotes->notes;
+        }    
         
         return parent::beforeSave($insert);
 	}
