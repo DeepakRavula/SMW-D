@@ -178,13 +178,17 @@ class StudentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			Yii::$app->session->setFlash('alert', [
+            Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Student profile has been updated successfully'
             ]);
-            return $this->redirect(['view', 'id' => $model->id]);
+            if((int) $model->status === (int) Student::STATUS_INACTIVE){
+                return $this->redirect(['index','StudentSearch[showAllStudents]' => false]);
+	    }else{		
+                return $this->redirect(['view', 'id' => $model->id]);
+	    }
         } else {
             return $this->render('update', [
                 'model' => $model,
