@@ -383,6 +383,7 @@ class LessonController extends Controller
 			$invoiceLineItem->tax_status = $taxStatus->name;
 			$description = $model->enrolment->program->name . ' for ' . $model->enrolment->student->fullName . ' with ' . $model->teacher->publicIdentity;
             $invoiceLineItem->description = $description;
+			$invoiceLineItem->isRoyalty = InvoiceLineItem::ROYALTY_PAYMENT;	
             $invoiceLineItem->save();
             $subTotal += $invoiceLineItem->amount;                
             $invoice = Invoice::findOne(['id' => $invoice->id]);
