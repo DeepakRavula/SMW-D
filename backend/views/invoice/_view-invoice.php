@@ -1,9 +1,9 @@
 <?php
 use yii\helpers\Html;
-use yii\grid\GridView;
 use backend\models\search\InvoiceSearch;
 use common\models\ItemType;
 use common\models\InvoiceLineItem;
+use yii\helpers\Url;
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -99,110 +99,101 @@ use common\models\InvoiceLineItem;
 	<?php echo $this->render('_line-item', [
 		'invoiceModel' => $model,
 	]) ?>
-    <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
-        <?php echo GridView::widget([
-            'dataProvider' => $invoiceLineItemsDataProvider,
-            'tableOptions' =>['class' => 'table table-bordered m-0'],
-            'headerRowOptions' => ['class' => 'bg-light-gray' ],
-            'columns' => [
-				[
-					'label' => 'Code',
-					'value' => function($data) {
-						$code = null;
-						switch($data->item_type_id){
-							case ItemType::TYPE_PRIVATE_LESSON:
-								$code = 'PRIVATE LESSON';
-							break;
-							case ItemType::TYPE_GROUP_LESSON:
-								$code = 'GROUP LESSON';
-							break;
-							case ItemType::TYPE_MISC:
-								$code = 'MISC';
-							break;
-							case ItemType::TYPE_OPENING_BALANCE:
-								$code = 'Opening Balance';
-							break;
-						}
-						return $code;
-					}
-				],
-				[
-					'label' => 'R',
-					'value' => function($data) {
-						$royalty = null;
-						switch($data->isRoyalty){
-							case InvoiceLineItem::ROYALTY_PAYMENT:
-								$royalty = 'Yes'; 
-							break;
-							case InvoiceLineItem::EXEMPT_ROYALTY:
-								$royalty = 'No';
-							break;
-						}
-						return $royalty;
-					}
-				],
-				[
-					'label' => 'Description',
-					'value' => function($data) {
-							return $data->description;
-					}
-				],
-                [ 
-                	'attribute' => 'unit',
-	               	'label' => 'Quantity',
-	                'headerOptions' => ['class' => 'text-center'],
-    	            'contentOptions' => ['class' => 'text-center'],
-        	        'enableSorting' => false,
-                ],
-				[
-            		'label' => 'Price',
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center'],
-            		'value' => function($data) {
-							return $data->amount;
-						}	
-            	],
-                [ 
-                    'attribute' => 'tax_rate',
-                    'label' => 'Tax',
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center'],
-                    'enableSorting' => false,
-                ],
-				[ 
-                    'attribute' => 'tax_status',
-                    'label' => 'Tax Status',
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center'],
-                    'enableSorting' => false,
-                ],
-                [
-	                'attribute' => 'amount',
-                	'label' => 'Total',
-            	    'enableSorting' => false,
-					'value' => function($data) {
-						if($data->item_type_id === ItemType::TYPE_MISC){
-							return $data->amount + $data->tax_rate;
-						}else{
-							return $data->amount;
-						}
-					},	
-					'headerOptions' => ['class' => 'text-right'],
-                    'contentOptions' => ['class' => 'text-right'],
-                ],
-				[
-					'class'=>'yii\grid\ActionColumn',
-					'template' => '{delete-line-item}',
-					'buttons' => [
-    					'delete-line-item' => function ($url, $model, $key) {
-  					      return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-line-item', 'id'=>$model->id, 'invoiceId' => $model->invoice->id]);
-    					},
-					]
-				]
-            ],
-        ]); ?>
-    <?php yii\widgets\Pjax::end(); ?>
-
+	<?php
+	$columns = [
+		[
+			'label' => 'Code',
+			'value' => function($data) {
+				return $data->itemType->itemCode;
+			}
+		],
+		[
+			'label' => 'R',
+			'value' => function($data) {
+				if((int) $data->isRoyalty === (int) InvoiceLineItem::ROYALTY_PAYMENT) {
+					return 'Yes';
+				}
+				return 'No';
+			}
+		],
+		[
+			'class'=>'kartik\grid\EditableColumn',
+			'attribute'=>'description',
+			'refreshGrid' => true,
+			'value' => function ($model, $key, $index, $widget) {
+				return $model->description;
+			},
+			'editableOptions'=> function ($model, $key, $index) {
+			   return [
+				   'header'=>'Description',
+				   'size'=>'md',
+				   'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+				   //'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+			   ];
+	   		}
+		],
+		[
+			'label' => 'Description',
+			'value' => function($data) {
+					return $data->description;
+			}
+		],
+		[
+			'attribute' => 'unit',
+			'headerOptions' => ['class' => 'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
+			'enableSorting' => false,
+		],
+		[
+			'label' => 'Price',
+			'headerOptions' => ['class' => 'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
+			'value' => function($data) {
+				return $data->amount;
+			}
+		],
+		[
+			'attribute' => 'tax_rate',
+			'headerOptions' => ['class' => 'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
+			'enableSorting' => false,
+		],
+		[
+			'attribute' => 'tax_status',
+			'headerOptions' => ['class' => 'text-center'],
+			'contentOptions' => ['class' => 'text-center'],
+			'enableSorting' => false,
+		],
+		[
+			'attribute' => 'amount',
+			'enableSorting' => false,
+			'value' => function($data) {
+				$amount = null;
+				if ((int) $data->item_type_id === (int) ItemType::TYPE_MISC) {
+					$amount = $data->amount + $data->tax_rate;
+				} else {
+					$amount = $data->amount;
+				}
+				return $amount;
+			},
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right'],
+		],
+		[
+			'class' => kartik\grid\ActionColumn::className(),
+			'template' => '{delete-line-item}',
+			'buttons' => [
+				'delete-line-item' => function ($url, $model, $key) {
+				  return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-line-item', 'id'=>$model->id, 'invoiceId' => $model->invoice->id]);
+				},
+			]
+		]
+	]; ?>
+ 	<?= \kartik\grid\GridView::widget([
+		'dataProvider' => $invoiceLineItemsDataProvider,
+		'pjax' => true,
+		'columns' => $columns,
+	]); ?>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
