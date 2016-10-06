@@ -5,12 +5,13 @@ use yii\widgets\Pjax;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use common\models\Student;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Students';
 $this->params['breadcrumbs'][] = $this->title;
-?>
+?> 
 <style>
   .e1Div{
     right: 0 !important;
@@ -48,13 +49,22 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php \yii\widgets\Pjax::end(); ?>
 	<?php ActiveForm::end(); ?>
 </div>
+<div class="grid-row-open"> 
 <?php yii\widgets\Pjax::begin(['id' => 'student-listing']); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'rowOptions' => function ($model, $key, $index, $grid) {
+        'rowOptions'   => function ($model, $key, $index, $grid) use($searchModel) {
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+            $data = ['data-id' => $model->id, 'data-url' => $u];
+            if($searchModel->showAllStudents){
+                if($model->status === Student::STATUS_INACTIVE){
+                    $data = array_merge($data, ['class' => 'danger inactive']);
+                }else if($model->status === Student::STATUS_ACTIVE){
+                    $data = array_merge($data, ['class' => 'info active']);
+                } 
+            }  
+                return $data;            
         },
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
@@ -79,6 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 
 	<?php yii\widgets\Pjax::end(); ?>
+    </div>
 </div>
 <script>
 $(document).ready(function(){
@@ -86,6 +97,6 @@ $(document).ready(function(){
       var showAllStudents = $(this).is(":checked");
       var url = "<?php echo Url::to(['student/index']);?>?StudentSearch[query]=" + "<?php echo $searchModel->query;?>&StudentSearch[showAllStudents]=" + (showAllStudents | 0);
       $.pjax.reload({url:url,container:"#student-listing",replace:false,  timeout: 4000});  //Reload GridView
-  });
+  });  
 });
   </script>
