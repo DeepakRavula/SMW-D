@@ -252,7 +252,7 @@ use common\models\ItemType;
 </div>
 </div>
 <div>
-    <?php echo $model->reminder_notes; ?>
+    <?php echo $model->reminderNotes; ?>
 </div>
 </div>
 <script>

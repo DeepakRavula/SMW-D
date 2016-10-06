@@ -8,7 +8,6 @@ use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use backend\models\search\LessonSearch;
 use common\models\User;
-use common\models\ReminderNotes;
 use common\models\UserProfile;
 use common\models\Payment;
 use common\models\Lesson;
@@ -375,9 +374,7 @@ class InvoiceController extends Controller {
 			$totalAmount = $subTotal + $taxAmount;
 			$invoice->tax = $taxAmount;
 			$invoice->total = $totalAmount;
-            $reminderNotes = ReminderNotes::find()->one();
-            $invoice->reminder_notes = $reminderNotes->notes;
-			$invoice->save();
+            $invoice->save();
             
             $invoiceType = (int) $invoice->type === Invoice::TYPE_INVOICE ? 'Invoice' : 'Pro-forma invoice';
 			Yii::$app->session->setFlash('alert', [
@@ -527,10 +524,5 @@ class InvoiceController extends Controller {
 		return $this->redirect(['view', 'id' => $invoiceId]);	
 	}
     
-    public function reminderNotes(){
-        $reminderNotes = ReminderNotes::find()->one();
-        
-        return $reminderNotes;
-    }    
 }
 				

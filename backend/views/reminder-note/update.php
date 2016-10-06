@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\ReminderNotes */
+/* @var $model common\models\ReminderNote */
 
 $this->title = 'Update Reminder Notes';
 $this->params['breadcrumbs'][] = ['label' => 'Reminder Notes', 'url' => ['index']];

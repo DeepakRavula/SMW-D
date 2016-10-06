@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\ReminderNotes;
+use common\models\ReminderNote;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ReminderNotesController implements the CRUD actions for ReminderNotes model.
+ * ReminderNoteController implements the CRUD actions for ReminderNote model.
  */
-class ReminderNotesController extends Controller
+class ReminderNoteController extends Controller
 {
     public function behaviors()
     {
@@ -27,15 +27,15 @@ class ReminderNotesController extends Controller
     }
 
     /**
-     * Lists all ReminderNotes models.
+     * Lists all ReminderNote models.
      * @return mixed
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => ReminderNotes::find()
+            'query' => ReminderNote::find()
         ]);
-        $notes = ReminderNotes::find()->one();
+        $notes = ReminderNote::find()->one();
         if ( ! empty($notes)) {
             return $this->render('index', [
                 'dataProvider' => $dataProvider,
@@ -47,13 +47,13 @@ class ReminderNotesController extends Controller
     }
 
     /**
-     * Creates a new ReminderNotes model.
+     * Creates a new ReminderNote model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new ReminderNotes();
+        $model = new ReminderNote();
         
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
@@ -65,7 +65,7 @@ class ReminderNotesController extends Controller
     }
 
     /**
-     * Updates an existing ReminderNotes model.
+     * Updates an existing ReminderNote model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -84,7 +84,7 @@ class ReminderNotesController extends Controller
     }
 
     /**
-     * Deletes an existing ReminderNotes model.
+     * Deletes an existing ReminderNote model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -97,15 +97,15 @@ class ReminderNotesController extends Controller
     }
 
     /**
-     * Finds the ReminderNotes model based on its primary key value.
+     * Finds the ReminderNote model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return ReminderNotes the loaded model
+     * @return ReminderNote the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = ReminderNotes::findOne($id)) !== null) {
+        if (($model = ReminderNote::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
