@@ -61,7 +61,14 @@ $(document).ready(function(){
         } else {
             window.location.hash = e.target.hash; //Polyfill for old browsers
         }
-    })
+    });
+	
+    $('.grid-row-open').on('click','td',function (e) {
+        var id = $(this).closest('tr').data('id');
+        var url = $(this).closest('tr').data('url');
+        if (e.target === this)
+           location.href =  url + '?id=' + id;
+    });
 
 });
 

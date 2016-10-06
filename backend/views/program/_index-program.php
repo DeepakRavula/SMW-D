@@ -61,7 +61,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
         'model' => $model,
     ]) ?>
 </div>
-
+    <div class="grid-row-open">
 	<?php Pjax::begin(['id' => 'program-listing']) ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
@@ -71,7 +71,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
             'rowOptions' => function ($model, $key, $index, $grid) {
                 $u= \yii\helpers\StringHelper::basename(get_class($model));
                 $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-                return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+                return ['data-id' => $model->id, 'data-url' => $u];
             },
             'columns' => [
                 'name',
@@ -79,6 +79,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
             ],
         ]); ?>
     <?php Pjax::end(); ?>
+    </div>
     <div class="clearfix"></div>
 </div>
   <script>

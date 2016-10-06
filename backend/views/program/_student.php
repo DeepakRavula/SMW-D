@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 ?>
+<div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
 	'timeout' => 6000,
 ]) ?>
@@ -11,7 +12,7 @@ echo GridView::widget([
 'rowOptions' => function ($model, $key, $index, $grid) {
             $u= \yii\helpers\StringHelper::basename(get_class($model));
             $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+            return ['data-id' => $model->id, 'data-url' => $u];
         },
 'tableOptions' =>['class' => 'table table-bordered'],
 'headerRowOptions' => ['class' => 'bg-light-gray' ],
@@ -27,5 +28,6 @@ echo GridView::widget([
 ]);
 ?>
 <?php \yii\widgets\Pjax::end(); ?>
+</div>
 <div class="clearfix"></div>
 

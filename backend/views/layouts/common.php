@@ -450,19 +450,7 @@ $bundle = BackendAsset::register($this);
                     ])?>
                 <?php endif; ?>
                 <?php echo $content ?>
-            </section><!-- /.content -->
-            <div class="grid-view">
-            <?php
-            $this->registerJs("
-                $('.grid-row-open').on('click','td',function (e) {
-                    var id = $(this).closest('tr').data('id');
-                    var url = $(this).closest('tr').data('url');
-                    if(e.target == this)
-                        location.href =  url + '?id=' + id;
-                });
-            ");
-            ?> 
-            </div>
+            </section><!-- /.content -->           
         </aside><!-- /.right-side -->
     </div><!-- ./wrapper -->
 
