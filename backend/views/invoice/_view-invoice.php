@@ -3,6 +3,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use backend\models\search\InvoiceSearch;
 use common\models\ItemType;
+use common\models\InvoiceLineItem;
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -123,6 +124,21 @@ use common\models\ItemType;
 							break;
 						}
 						return $code;
+					}
+				],
+				[
+					'label' => 'R',
+					'value' => function($data) {
+						$royalty = null;
+						switch($data->isRoyalty){
+							case InvoiceLineItem::ROYALTY_PAYMENT:
+								$royalty = 'Yes'; 
+							break;
+							case InvoiceLineItem::EXEMPT_ROYALTY:
+								$royalty = 'No';
+							break;
+						}
+						return $royalty;
 					}
 				],
 				[
