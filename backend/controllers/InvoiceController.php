@@ -171,15 +171,6 @@ class InvoiceController extends Controller {
 			}
 			$paymentModel->invoiceId = $model->id;
 			$paymentModel->save();
-			if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_CHEQUE){
-				$chequeModel = new PaymentCheque();
-				if ($chequeModel->load(Yii::$app->request->post())) {
-					$chequeModel->payment_id = $paymentModel->id;
-					$chequeDate = \DateTime::createFromFormat('d-m-Y',$chequeModel->date);
-					$chequeModel->date = $chequeDate->format('Y-m-d H:i:s');
-					$chequeModel->save();
-				}
-			}
 
 			if($model->total < $paymentModel->amount){
 				$model->balance =  $model->total - $paymentModel->amount;
@@ -354,9 +345,9 @@ class InvoiceController extends Controller {
 				$invoiceLineItem = new InvoiceLineItem();
 				$invoiceLineItem->invoice_id = $invoice->id;
 				$invoiceLineItem->item_id = $lesson->id;
-				$lessonStartTime = $lessonDate->format('H:i:s');
+				$lessonStartTime = $actualLessonDate->format('H:i:s');
 				$lessonStartTime = new \DateTime($lessonStartTime);
-				$lessonEndTime = new \DateTime($model->toTime);
+				$lessonEndTime = new \DateTime($lesson->toTime);
 				$duration = $lessonStartTime->diff($lessonEndTime);
 				$invoiceLineItem->unit = (($duration->h * 60) + ($duration->i)) / 60;
 				if((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM){

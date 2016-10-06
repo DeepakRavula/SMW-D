@@ -62,11 +62,7 @@ if(! empty($otherPayments)){
 	foreach($otherPayments as $otherPayment){
 		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$otherPayment->date);
 		$invoiceNumber = 'NA';
-		if((int) $otherPayment->payment_method_id === PaymentMethod::TYPE_CHEQUE){
-			$chequeModel = PaymentCheque::findOne(['payment_id' => $otherPayment->paymentCheque->payment_id]);	
-			$invoiceNumber = $chequeModel->number;
-		} 
-		if((int)$otherPayment->payment_method_id !== PaymentMethod::TYPE_APPLY_CREDIT && (int) $otherPayment->payment_method_id !== (int) PaymentMethod::TYPE_CHEQUE){
+		if((int)$otherPayment->payment_method_id !== PaymentMethod::TYPE_APPLY_CREDIT){
 			$invoiceNumber = $otherPayment->reference;
 		}
 		$results[] = [
@@ -170,7 +166,12 @@ echo ButtonGroup::widget([
 	]
 ]);?>
 
-
+<?php
+	$amount = 0.0;        
+	if($model->total > $model->invoicePaymentTotal){
+		$amount = $model->invoiceBalance;
+	}
+?>
 <?php foreach(PaymentMethod::findAll([
 			'active' => PaymentMethod::STATUS_ACTIVE,
 			'displayed' => 1,
@@ -180,7 +181,7 @@ echo ButtonGroup::widget([
 		<?php echo $this->render('payment-method/_' . str_replace(' ', '-', trim(strtolower($method->name))),[
 				'model' => new Payment(),
 				'invoice' => $model,
-				'chequeModel' => new PaymentCheque(),
+				'amount' => $amount,
 		]);?>	
 	</div>
 	<?php endforeach;?>
@@ -189,15 +190,10 @@ echo ButtonGroup::widget([
 		<?php echo $this->render('payment-method/_credit-card',[
 				'model' => new Payment(),
 				'invoice' => $model,
-				'chequeModel' => new PaymentCheque(),
+				'amount' => $amount,
 		]);?>	
 	</div>
-    <?php
-        $amount = 0.0;        
-	    if($model->total > $model->invoicePaymentTotal){
-            $amount = $model->invoiceBalance;
-		}
-	?>
+
 <script type="text/javascript">
 $(document).ready(function(){
   $('#payment-method-btn-section').on('click', '.btn', function() {

@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use kartik\date\DatePicker;
 
 
 /* @var $this yii\web\View */
@@ -15,29 +16,31 @@ use yii\bootstrap\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
  	<div class="row">
 		<div class="col-xs-3">
-   			<?php echo $form->field($model, 'amount')->textInput(['placeholder' => 'Amount'])->label(false); ?>
+   			<?php echo $form->field($model, 'amount')->textInput([
+				'value' => $amount,
+				'placeholder' => 'Amount'
+			])->label(false); ?>
         </div>
 		<div class="col-xs-3">
-   			<?php echo $form->field($chequeModel, 'number')->textInput(['placeholder' => 'Cheque Number'])->label(false); ?>
+   			<?php echo $form->field($model, 'reference')->textInput(['placeholder' => 'Cheque Number'])->label(false); ?>
         </div>
 		<div class="col-xs-3">
-   			<?php echo $form->field($chequeModel, 'date')->widget(\yii\jui\DatePicker::classname(), [
-                    'options' => ['class'=>'form-control'],
-                    'clientOptions' => [
-                        'changeMonth' => true,
-                        'changeYear' => true,
-                        'yearRange' => '-70:today' 
-                    ]
-                ])->textInput(['placeholder' => 'Date'])->label(false); ?>
+   			<?php
+            $currentDate = (new \DateTime())->format('d-m-Y');
+			echo $form->field($model, 'date')->widget(DatePicker::classname(), [
+				'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'options' => [
+                    'value' => $currentDate,                      
+				],
+				'pluginOptions' => [
+					'format' => 'dd-mm-yyyy',
+					'todayHighlight' => true,
+					'autoclose' => true
+				]
+			])->label(false); ?>
         </div>
 	</div>
 	<div class="row">
-		<div class="col-xs-3">
-   			<?php echo $form->field($chequeModel, 'bank_name')->textInput(['placeholder' => 'Bank Name'])->label(false); ?>
-        </div>
-        <div class="col-xs-3">
-   			<?php echo $form->field($chequeModel, 'bank_branch_name')->textInput(['placeholder' => 'Branch Name'])->label(false); ?>
-        </div>
 		<?php echo $form->field($model, 'payment_method_id')->hiddenInput(['class' => 'payment-method-id'])->label(false); ?>
 	</div>
     <div class="form-group">

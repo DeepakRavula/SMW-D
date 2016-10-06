@@ -64,7 +64,7 @@ $(document).ready(function() {
 		var taxStatusId = $(this).val();
 		if(taxStatusId && parseInt(taxStatusId) === 2){
 			$('.tax-compute').removeClass('hide');
-			$('#invoicelineitem-tax_type').val('TAX');
+			$('#invoicelineitem-tax_type').val('NO TAX');
 			$('#invoicelineitem-tax_code').val('ON');
 			$('#invoicelineitem-tax_rate').val(0.00);
 		} else {
