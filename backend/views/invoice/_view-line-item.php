@@ -16,10 +16,7 @@ $columns = [
 	[
 		'label' => 'R',
 		'value' => function($data) {
-			if($data->isRoyalty) {
-				return 'Yes';
-			}
-			return 'No';
+			return $data->isRoyalty ? 'Yes' : 'No';
 		}
 	],
 	[
