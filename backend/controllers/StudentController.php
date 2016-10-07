@@ -209,11 +209,8 @@ class StudentController extends Controller
 			$courseModel->locationId = $locationId;
 			$courseModel->studentId = $model->id;
 			$courseModel->save();
-			Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Student has been enrolled successfully'
-            ]);
-        return $this->redirect(['lesson/review', 'courseId' => $courseModel->id]);
+			
+        	return $this->redirect(['lesson/review', 'courseId' => $courseModel->id]);
         }
 		if (( ! empty($post['courseId'])) && is_array($post['courseId'])) {
 			$enrolmentModel = new Enrolment();
