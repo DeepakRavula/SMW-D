@@ -88,7 +88,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'unit' => 'Quantity',
             'amount' => 'Total',
 			'description' => 'Description',
-			'isRoyalty' => 'Exempt from Royalty',
 			'tax_rate' => 'Tax',
 			'tax_status' => 'Tax Status',
 			'isRoyaltyExempted' => 'Exempt from Royalty'

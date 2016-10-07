@@ -174,6 +174,7 @@ use yii\helpers\Url;
 $(document).ready(function() {
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');
+  		return false;
   });
   });
 </script>

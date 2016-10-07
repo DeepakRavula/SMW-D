@@ -16,7 +16,7 @@ $columns = [
 	[
 		'label' => 'R',
 		'value' => function($data) {
-			if((int) $data->isRoyalty === (int) InvoiceLineItem::ROYALTY_PAYMENT) {
+			if($data->isRoyalty) {
 				return 'Yes';
 			}
 			return 'No';
