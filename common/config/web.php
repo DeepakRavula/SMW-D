@@ -25,6 +25,7 @@ $config = [
 	    	'qualification/*',
 			'lesson/*',
 			'invoice/*',
+			'invoice-line-item/*',
             'release-notes/*',
 			'location/*',
 			'city/*',
