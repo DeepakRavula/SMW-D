@@ -108,12 +108,12 @@ use common\models\Payment;
                     </div>
                     <!-- /.description-block -->
                     <div class="description-block">
-                      <h5 class="description-header">0</h5>
+                      <h5 class="description-header"><?= ! empty($royaltyPayment) ? $royaltyPayment: 0 ?></h5>
                       <span class="description-text">Royalty Free Items</span>
                     </div>
                     <!-- /.description-block -->
                     <div class="description-block">
-                      <h5 class="description-header"><?php $total = $payments - $invoiceTaxTotal; ?>  <?= ! empty($total) ? $total : 0 ?></h5>
+                      <h5 class="description-header"><?php $total = $payments - ($invoiceTaxTotal + $royaltyPayment); ?>  <?= ! empty($total) ? $total : 0 ?></h5>
                       <span class="description-text">Total</span>
                     </div>
                     <!-- /.description-block -->
