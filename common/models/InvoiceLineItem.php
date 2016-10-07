@@ -36,7 +36,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             [['invoice_id', 'unit', 'amount','item_id','item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate', 'description'], 'required'],
             [['invoice_id', 'item_id'], 'integer'],
             [['unit', 'amount'], 'number'],
-			[['isRoyalty'], 'boolean'],
+			[['isRoyalty'], 'safe'],
 			[['isRoyaltyExempted'], 'boolean'],
         ];
     }
