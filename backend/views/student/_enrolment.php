@@ -1,6 +1,7 @@
 <?php
 
 use yii\grid\GridView;
+use yii\helpers\Url;
 use common\models\Enrolment;
 use common\models\GroupCourse;
 use common\models\Program;
@@ -19,9 +20,9 @@ use common\models\Course;
 <?php
 echo GridView::widget([
 	'dataProvider' => $enrolmentDataProvider,
-    'rowOptions' => function ($model, $key, $index, $grid) {		
-		$u= yii\helpers\Url::toRoute(['/enrolment/view']);
-		return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::toRoute(['/enrolment/view','id' => $model->id]);
+        return ['data-url' => $url];
 	},
 	'options' => ['class' => 'col-md-12'],
 	'tableOptions' =>['class' => 'table table-bordered'],

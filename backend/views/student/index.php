@@ -54,9 +54,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions'   => function ($model, $key, $index, $grid) use($searchModel) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            $data = ['data-id' => $model->id, 'data-url' => $u];
+            $url = Url::toRoute(['student/view','id' => $model->id]);
+            $data = ['data-url' => $url];
             if($searchModel->showAllStudents){
                 if($model->status === Student::STATUS_INACTIVE){
                     $data = array_merge($data, ['class' => 'danger inactive']);
