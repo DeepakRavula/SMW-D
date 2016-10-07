@@ -84,14 +84,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php endif;?>
         
     <?php ActiveForm::end(); ?>
-    
+<div class="grid-row-open">
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
             'rowOptions' => function ($model, $key, $index, $grid) use ($roleName, $originalInvoice){
-                $u= \yii\helpers\StringHelper::basename(get_class($model));
-                $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-                return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?UserSearch%5Brole_name%5D='.$roleName.'&id="+(this.id);'];
+                $url = Url::toRoute(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);
+            return ['data-url' => $url];
             },
             'tableOptions' =>['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
@@ -120,6 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
 		],
 	]); ?>
 <?php yii\widgets\Pjax::end(); ?>
+</div>
 <div class="p-l-20 m-b-20">
 <?php if($searchModel->role_name === User::ROLE_CUSTOMER && YII_ENV !== 'prod'):?>
 	<?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
