@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\grid\GridView;
 use common\models\Invoice;
 use backend\models\search\InvoiceSearch;
@@ -86,17 +87,17 @@ $this->params['breadcrumbs'][] = $this->title;
 		
 		?>
 	<?php yii\widgets\Pjax::begin() ?>
+    <div class="grid-row-open">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'rowOptions' => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+            $url =  Url::to(['invoice/view' . '?id=' .$model->id]);
+        return ['data-url' => $url];
         },
         'columns' => $columns,
     ]); ?>
 	<?php \yii\widgets\Pjax::end(); ?>
-
+    </div>
 </div>
