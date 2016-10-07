@@ -131,6 +131,12 @@ $config = [
                 'actions'=>['index', 'view']
             ],
 			[
+                'controllers'=>['blog'],
+                'allow' => true,
+                'roles' => ['staffmember'],
+                'actions'=>['list']
+            ],
+			[
                 'controllers'=>['user'],
                 'allow' => false,
             ],
