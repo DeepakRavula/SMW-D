@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -11,13 +12,12 @@ $this->title = 'Countries';
 $this->params['action-button'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', ['create'], ['class' => 'btn btn-success']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="country-index">
+<div class="grid-row-open">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-		'rowOptions' => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['country/view', 'id' => $model->id]);
+        return ['data-url' => $url];
         },
         //'filterModel' => $searchModel,
         'columns' => [

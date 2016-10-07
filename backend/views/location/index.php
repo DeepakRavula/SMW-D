@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -10,15 +11,14 @@ $this->title = 'Locations';
 $this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="location-index p-10">
+<div class="grid-row-open p-10">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
-		'rowOptions' => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+	'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['location/view', 'id' => $model->id]);
+        return ['data-url' => $url];
         },
         'columns' => [
             [

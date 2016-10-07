@@ -1,7 +1,9 @@
 <?php 
 
 use yii\grid\GridView;
+use yii\helpers\Url;
 ?>
+<div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
 	'timeout' => 6000,
 ]) ?>
@@ -11,10 +13,9 @@ echo GridView::widget([
 'tableOptions' =>['class' => 'table table-bordered'],
 'headerRowOptions' => ['class' => 'bg-light-gray' ],
 'rowOptions' => function ($model, $key, $index, $grid){
-                $u= \yii\helpers\StringHelper::basename(get_class($model));
-                $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-                return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?UserSearch%5Brole_name%5D=teacher'.'&id="+(this.id);'];
-            },
+    $url = Url::to(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]);
+return ['data-url' => $url];
+},
 'options' => ['class' => 'col-md-4'],
 'columns' => [
 	[
@@ -28,4 +29,4 @@ echo GridView::widget([
 ?>
 <?php \yii\widgets\Pjax::end(); ?>
 <div class="clearfix"></div>
-
+</div>
