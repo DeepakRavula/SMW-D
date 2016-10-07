@@ -28,7 +28,10 @@ class DashboardController extends \yii\web\Controller
         }      
         $dateRange = explode(" - ",$searchModel->dateRange);
         $searchModel->fromDate = \DateTime::createFromFormat('d-m-Y',  $dateRange[0]);
-        $searchModel->toDate = \DateTime::createFromFormat('d-m-Y',  $dateRange[1]);        
+        $searchModel->toDate = \DateTime::createFromFormat('d-m-Y',  $dateRange[1]);
+        if ($searchModel->toDate > $currentDate) {
+            $searchModel->toDate = $currentDate;
+        }
         $locationId = Yii::$app->session->get('location_id');
         $invoiceTotal = Invoice::find()
                         ->where(['location_id' => $locationId])
@@ -65,43 +68,35 @@ class DashboardController extends \yii\web\Controller
 					->andWhere(['invoice_line_item.isRoyalty' => false])
 					->sum('invoice_line_item.amount');
 
-         $students = Student::find()
+        $students = Student::find()
 			->joinWith(['enrolment' => function($query) use($locationId, $currentDate){
-				 $query->joinWith(['course' => function($query) use($locationId, $currentDate){
+                $query->joinWith(['course' => function($query) use($locationId, $currentDate){
 					$query->andWhere(['locationId' => $locationId])
                         ->andWhere(['NOT', ['studentId' => null]])
 						->andWhere(['>=','endDate', $currentDate->format('Y-m-d')]);
-				 }]);				
+                }]);
 			}])
             ->distinct(['enrolment.studentId'])
 			->count();
        
-		$programsHours = Lesson::find()
-                   ->select(['sum(course.duration) as hours'])
-                   ->joinWith('course')
-                   ->where(['course.locationId' => $locationId])
-                   ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-                   ->where(['lesson.status' => Lesson::STATUS_COMPLETED])
-                   ->all();
-       $totalHours = floor($programsHours[0]->hours / 3600);
-       $completedPrograms = [];            
-       $programs = Lesson::find()
-                   ->select(['sum(course.duration) as hours, program.name as program_name'])
-                   ->joinWith(['course' => function($query) use($locationId) {                     
-                       $query->where(['course.locationId' => $locationId]) ;                   
-                       $query->joinWith(['program' => function($query){   
-                       }]);
-                   }])
-                   ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-                   ->where(['lesson.status' => Lesson::STATUS_COMPLETED])
-                   ->groupBy(['course.programId'])
-                   ->all();
-       foreach($programs as $program){
-           $array = array();
-           $array['name']  =  $program->program_name;
-           $array['y'] =   floor(( (floor($program->hours / 3600)) / $totalHours ) * 100) ;//$program->hours;
-           array_push($completedPrograms, $array);
-       }
+		$completedPrograms = [];            
+        $programs = Lesson::find()
+                    ->select(['sum(course.duration) as hours, program.name as program_name'])
+                    ->joinWith(['course' => function($query) use($locationId) {
+                        $query->where(['course.locationId' => $locationId]) ;
+                        $query->joinWith(['program' => function($query){
+                        }]);
+                    }])
+                    ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED, 'lesson.isDeleted' => false])
+                    ->groupBy(['course.programId'])
+                    ->all();
+        foreach($programs as $program){
+            $completedProgram = [];
+            $completedProgram['name']  =  $program->program_name;
+            $completedProgram['y'] = $program->hours / 6000;
+            array_push($completedPrograms, $completedProgram);
+        }
         return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students, 'completedPrograms' => $completedPrograms, 'royaltyPayment' => $royaltyPayment]);
 	}
 }
