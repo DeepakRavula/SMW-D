@@ -7,7 +7,6 @@ use common\models\InvoiceLineItem;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use common\models\Invoice;
-use common\models\ItemType;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -39,24 +38,21 @@ class InvoiceLineItemController extends Controller {
 			if (!empty($post['InvoiceLineItem'][$lineItemIndex]['description'])) {
 				$model->description	 = $post['InvoiceLineItem'][$lineItemIndex]['description'];
 				$output				 = $model->description;
-				$model->save();
 			}
 			if (!empty($post['InvoiceLineItem'][$lineItemIndex]['unit'])) {
+				$invoicePayment				 = null;
 				$oldQuantity				 = $model->unit;
 				$invoicePayment				 = $model->invoice->invoicePaymentTotal;
 				$model->unit				 = $post['InvoiceLineItem'][$lineItemIndex]['unit'];
-				if ((int) $model->item_type_id === (int) ItemType::TYPE_MISC) {
-					$model->amount = ($model->amount / $oldQuantity) * $model->unit;
-				} else {
-					$model->amount = $model->unit * $model->lesson->course->program->rate;
-				}
-				$model->save();
-				$output						 = $model->unit;
-				$model->invoice->subTotal	 = $model->invoice->lineItemTotal;
+				$model->amount				 = $model->unit * $model->lesson->course->program->rate;
+				$model->invoice->subTotal	 = $model->amount;
 				$model->invoice->total		 = $model->invoice->subTotal + $model->invoice->tax;
 				$model->invoice->status		 = $this->getInvoiceStatus($model, $oldQuantity, $invoicePayment);
 				$model->invoice->save();
+				$output						 = $model->unit;
 			}
+
+			$model->save();
 			$result = [
 				'output' => $output,
 				'message' => ''
