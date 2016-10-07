@@ -368,7 +368,7 @@ class InvoiceController extends Controller {
 				$invoiceLineItem->tax_status = $taxStatus->name;
 				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
     	        $invoiceLineItem->description = $description;
-				$invoiceLineItem->isRoyalty = InvoiceLineItem::ROYALTY_PAYMENT;	
+				$invoiceLineItem->isRoyalty = true;	
 				$invoiceLineItem->save();
 				$subTotal += $invoiceLineItem->amount;
 			}

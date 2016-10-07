@@ -17,9 +17,7 @@ use common\models\Lesson;
  */
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
-	
-	const ROYALTY_PAYMENT = 0;
-	const EXEMPT_ROYALTY = 1;
+	private $isRoyaltyExempted;
 	
     /**
      * @inheritdoc
@@ -38,7 +36,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             [['invoice_id', 'unit', 'amount','item_id','item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate', 'description'], 'required'],
             [['invoice_id', 'item_id'], 'integer'],
             [['unit', 'amount'], 'number'],
-			[['isRoyalty'], 'boolean'],
+			[['isRoyalty'], 'safe'],
+			[['isRoyaltyExempted'], 'boolean'],
         ];
     }
 
@@ -62,6 +61,21 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
 				->where(['invoice.type' => Invoice::TYPE_INVOICE]);
     }
+
+	public function getIsRoyaltyExempted() 
+	{
+ 		return $this->isRoyaltyExempted;
+	}
+
+	public function setIsRoyaltyExempted($isRoyaltyExempted) 
+	{
+    	$this->isRoyalty = ! $isRoyaltyExempted;
+	}
+
+	public function getIsRoyalty() 
+	{
+    	return $this->isRoyalty;
+	}
     /**
      * @inheritdoc
      */
@@ -74,9 +88,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'unit' => 'Quantity',
             'amount' => 'Total',
 			'description' => 'Description',
-			'isRoyalty' => 'Exempt from Royalty',
 			'tax_rate' => 'Tax',
 			'tax_status' => 'Tax Status',
+			'isRoyaltyExempted' => 'Exempt from Royalty'
         ];
     }
 }

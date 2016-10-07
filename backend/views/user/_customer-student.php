@@ -2,6 +2,7 @@
 
 
 use yii\grid\GridView;
+use yii\helpers\Url;
 ?>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Students </h4> 
@@ -15,15 +16,14 @@ use yii\grid\GridView;
 		'customer' => $model,
 	]) ?>
 </div>
-
+<div class="grid-row-open">
 <?php yii\widgets\Pjax::begin() ?>
 <?php
 echo GridView::widget([
 'dataProvider' => $dataProvider,
 'rowOptions' => function ($model, $key, $index, $grid) {
-	$u= \yii\helpers\StringHelper::basename(get_class($model));
-	$u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-	return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+    $url = Url::to(['student/view', 'id' => $model->id]);
+return ['data-url' => $url];
 },
 'options' => ['class'=>'col-md-12'],
 'tableOptions' =>['class' => 'table table-bordered'],
@@ -48,4 +48,4 @@ echo GridView::widget([
 ?>
 <?php \yii\widgets\Pjax::end(); ?>
 <div class="clearfix"></div>
-
+</div>

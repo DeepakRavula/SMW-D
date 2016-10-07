@@ -63,11 +63,10 @@ $(document).ready(function(){
         }
     });
 	
-    $('.grid-row-open').on('click','td',function (e) {
-        var id = $(this).closest('tr').data('id');
+    $('.grid-row-open').on('click','td',function (e) {        
         var url = $(this).closest('tr').data('url');
         if (e.target === this)
-           location.href =  url + '?id=' + id;
+           location.href =  url;
     });
 
 });

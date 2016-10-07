@@ -20,6 +20,7 @@ use yii\bootstrap\Tabs;
             ]);
     ?>
 </div>
+<div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
 	'timeout' => 6000,
 ]) ?>
@@ -29,9 +30,8 @@ use yii\bootstrap\Tabs;
     'tableOptions' =>['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray' ],
     'rowOptions' => function ($model, $key, $index, $grid) {
-        $u= \yii\helpers\StringHelper::basename(get_class($model));
-        $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-        return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        $url = Url::to(['invoice/view', 'id' => $model->id]);
+    return ['data-url' => $url];
     },
     'columns' => [
         [
@@ -62,6 +62,7 @@ use yii\bootstrap\Tabs;
     ],
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
+</div>
 <script>
     $('.add-new-invoice').click(function(){
         $(this).hide();

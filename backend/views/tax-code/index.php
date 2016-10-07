@@ -12,21 +12,12 @@ $this->title = 'Tax Codes';
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add new'), ['create'],['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<?php
-$this->registerJs("
-    $('td').click(function (e) {
-        var id = $(this).closest('tr').data('id');
-        if(e.target == this)
-            location.href = '" . Url::to(['tax-code/view']) . "?id=' + id;
-    });
-
-");
-?>
-<div class="tax-code-index">
+<div class="grid-row-open">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-		'rowOptions'   => function ($model, $key, $index, $grid) {
-        	return ['data-id' => $model->id];
+	'rowOptions'   => function ($model, $key, $index, $grid) {
+        	$url = Url::to(['tax-code/view', 'id' => $model->id]);
+        return ['data-url' => $url];
     	},
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
