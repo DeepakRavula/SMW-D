@@ -77,7 +77,7 @@ $bundle = BackendAsset::register($this);
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
 						 <li class="notifications-menu" data-toggle="tooltip" data-original-title="Blog" data-placement="bottom">
-                            <a href="<?php echo Url::to(['/blog/list']) ?>">
+                            <a href="<?php echo Url::to(['blog/list']) ?>">
                                 <i class="fa fa-newspaper-o" aria-hidden="true"></i>
                             </a>
                         </li>
@@ -87,7 +87,7 @@ $bundle = BackendAsset::register($this);
                             </a>
                         </li>
                         <li id="timeline-notifications" class="notifications-menu"  data-toggle="tooltip" data-original-title="Notifications" data-placement="bottom">
-                            <a href="<?php echo Url::to(['/timeline-event/index']) ?>">
+                            <a href="<?php echo Url::to(['timeline-event/index']) ?>">
                                 <i class="fa fa-bell"></i>
                                 <span class="label label-success">
                                     <?php echo TimelineEvent::find()->today()->count() ?>
@@ -109,7 +109,7 @@ $bundle = BackendAsset::register($this);
                                     <ul class="menu">
                                         <?php foreach(\backend\models\SystemLog::find()->orderBy(['log_time'=>SORT_DESC])->limit(5)->all() as $logEntry): ?>
                                             <li>
-                                                <a href="<?php echo Yii::$app->urlManager->createUrl(['/log/view', 'id'=>$logEntry->id]) ?>">
+                                                <a href="<?php echo Yii::$app->urlManager->createUrl(['log/view', 'id'=>$logEntry->id]) ?>">
                                                     <i class="fa fa-warning <?php echo $logEntry->level == \yii\log\Logger::LEVEL_ERROR ? 'text-red' : 'text-yellow' ?>"></i>
                                                     <?php echo $logEntry->category ?>
                                                 </a>
@@ -118,7 +118,7 @@ $bundle = BackendAsset::register($this);
                                     </ul>
                                 </li>
                                 <li class="footer">
-                                    <?php echo Html::a(Yii::t('backend', 'View all'), ['/log/index']) ?>
+                                    <?php echo Html::a(Yii::t('backend', 'View all'), ['log/index']) ?>
                                 </li>
                             </ul>
                         </li>
@@ -139,16 +139,16 @@ $bundle = BackendAsset::register($this);
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <?php echo Html::a(Yii::t('backend', 'Profile'), ['/sign-in/profile'], ['class'=>'btn btn-default btn-flat']) ?>
+                                        <?php echo Html::a(Yii::t('backend', 'Profile'), ['sign-in/profile'], ['class'=>'btn btn-default btn-flat']) ?>
                                     </div>
                                     <div class="pull-right">
-                                        <?php echo Html::a(Yii::t('backend', 'Logout'), ['/sign-in/logout'], ['class'=>'btn btn-default btn-flat', 'data-method' => 'post']) ?>
+                                        <?php echo Html::a(Yii::t('backend', 'Logout'), ['sign-in/logout'], ['class'=>'btn btn-default btn-flat', 'data-method' => 'post']) ?>
                                     </div>
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <?php echo Html::a('<i class="fa fa-cogs"></i>', ['/site/settings'])?>
+                            <?php echo Html::a('<i class="fa fa-cogs"></i>', ['site/settings'])?>
                         </li>
                     </ul>
                 </div>
@@ -165,7 +165,7 @@ $bundle = BackendAsset::register($this);
                     </div>
                     <div class="pull-left info">
                         <p><?php echo Yii::t('backend', '{username}', ['username'=>Yii::$app->user->identity->userProfile->fullName]) ?></p>
-                        <a href="<?php echo Url::to(['/sign-in/profile']) ?>">
+                        <a href="<?php echo Url::to(['sign-in/profile']) ?>">
                             <i class="fa fa-circle text-success"></i>
                             <?php echo Yii::$app->formatter->asDatetime(time()) ?>
                         </a>
@@ -185,108 +185,108 @@ $bundle = BackendAsset::register($this);
 						[
                             'label'=>Yii::t('backend', 'Dashboard'),
                             'icon'=>'<i class="fa fa-home""></i>',
-                            'url'=>['/dashboard/index'],
+                            'url'=>['dashboard/index'],
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='dashboard')? true : false,
+                            'active'=>(Yii::$app->controller->id === 'dashboard')? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Schedule'),
                             'icon'=>'<i class="fa  fa-calendar"></i>',
-                            'url'=>['/schedule/index'],
+                            'url'=>['schedule/index'],
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='schedule')? true : false,
+                            'active'=>(Yii::$app->controller->id === 'schedule')? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Students'),
                             'icon'=>'<i class="fa fa-lg fa-fw fa-child"></i>',
-							'url'=>['/student/index','StudentSearch[showAllStudents]' => false],
+							'url'=>['student/index','StudentSearch[showAllStudents]' => false],
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='student')? true : false,
+                            'active'=>(Yii::$app->controller->id === 'student')? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Customers'),
                             'icon'=>'<i class="fa fa-lg fa-fw fa-male"></i>',
-                            'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER],
+                            'url'=>['user/index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER],
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_CUSTOMER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_CUSTOMER)) ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Teachers'),
                             'icon'=>'<i class="fa fa-graduation-cap"></i>',
-                            'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_TEACHER],	
+                            'url'=>['user/index', 'UserSearch[role_name]' => User::ROLE_TEACHER],	
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_TEACHER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_TEACHER)) ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Staff Members'),
                             'icon'=>'<i class="fa fa-users"></i>',
-							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],    
+							'url'=>['user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],    
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_STAFFMEMBER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_STAFFMEMBER)) ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Owners'),
                             'icon'=>'<i class="fa fa-user"></i>',
-							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],    
+							'url'=>['user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],    
                             'visible'=>Yii::$app->user->can('administrator'),
                             'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_OWNER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_OWNER)) ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Administrators'),
                             'icon'=>'<i class="fa fa-user-secret"></i>',
-							'url'=>['/user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR],    
+							'url'=>['user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR],    
                             'visible'=>Yii::$app->user->can('administrator'),
                             'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_ADMINISTRATOR || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_ADMINISTRATOR)) ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Programs'),
                             'icon'=>'<i class="fa fa-table"></i>',
-                            'url'=>['/program/index','ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
+                            'url'=>['program/index','ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='program')? true : false,
+                            'active'=>(Yii::$app->controller->id === 'program')? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Group Courses'), 
-							'url'=>['/course/index','CourseSearch[showAllCourses]' => false], 
+							'url'=>['course/index','CourseSearch[showAllCourses]' => false], 
 							'icon'=>'<i class="fa fa-book"></i>',
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='group-course') ? true : false,
+                            'active'=>(Yii::$app->controller->id === 'group-course') ? true : false,
                         ],
 						[
                             'label'=>Yii::t('backend', 'Lessons'),
-                            'url' => ['/lesson/index','LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON],
+                            'url' => ['lesson/index','LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON],
                             'icon'=>'<i class="fa fa-music"></i>',
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='lesson') ? true : false,
+                            'active'=>(Yii::$app->controller->id === 'lesson') ? true : false,
 						],
 						[
                             'label'=>Yii::t('backend', 'Invoices'),
                             'icon'=>'<i class="fa  fa-dollar"></i>',
-                            'url'=>['/invoice/index','InvoiceSearch[type]' => Invoice::TYPE_INVOICE], 
+                            'url'=>['invoice/index','InvoiceSearch[type]' => Invoice::TYPE_INVOICE], 
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='invoice')? true : false,
+                            'active'=>(Yii::$app->controller->id === 'invoice')? true : false,
 							
                         ],
 						[
                             'label'=>Yii::t('backend', 'Reports'),
                             'icon'=>'<i class="fa fa-line-chart""></i>',
-							'url'=>['/payment/index'],    
+							'url'=>['payment/index'],    
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='payment')? true : false,
+                            'active'=>(Yii::$app->controller->id === 'payment')? true : false,
                         ],
                         [
                             'label'=>Yii::t('backend', 'Release Notes'),
                             'icon'=>'<i class="fa fa-sticky-note"></i>',
-							'url'=>['/release-notes/index'],    
+							'url'=>['release-notes/index'],    
                             'visible'=>Yii::$app->user->can('administrator'),
-                            'active'=>(Yii::$app->controller->id=='release-notes')? true : false,
+                            'active'=>(Yii::$app->controller->id === 'release-notes')? true : false,
                         ],
                         [
                             'label'=>Yii::t('backend', 'Reminder Notes'),
                             'icon'=>'<i class="fa  fa-bell"></i>',
-                            'url'=>['/reminder-note/index'],
+                            'url'=>['reminder-note/index'],
                             'visible'=>Yii::$app->user->can('staffmember'),
-                            'active'=>(Yii::$app->controller->id=='reminder-note')? true : false,
+                            'active'=>(Yii::$app->controller->id === 'reminder-note')? true : false,
                         ],
                         [
                             'label'=>Yii::t('backend', 'System'),
@@ -299,17 +299,17 @@ $bundle = BackendAsset::register($this);
                             'visible'=>Yii::$app->user->can('administrator'),
                             'options'=>['class'=>'treeview'],
                             'items'=>[
-                                ['label'=>Yii::t('backend', 'Roles'), 'url'=>['/admin/role'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'Permissions'), 'url'=>['/admin/permission'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'Assignments'), 'url'=>['/admin/assignment'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'Routes'), 'url'=>['/admin/route'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
-                                ['label'=>Yii::t('backend', 'Rules'), 'url'=>['/admin/rule'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                ['label'=>Yii::t('backend', 'Roles'), 'url'=>['admin/role'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                ['label'=>Yii::t('backend', 'Permissions'), 'url'=>['admin/permission'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                ['label'=>Yii::t('backend', 'Assignments'), 'url'=>['admin/assignment'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                ['label'=>Yii::t('backend', 'Routes'), 'url'=>['admin/route'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
+                                ['label'=>Yii::t('backend', 'Rules'), 'url'=>['admin/rule'], 'icon'=>'<i class="fa fa-angle-double-right"></i>'],
                             ]
                         ],
                         [
                             'label'=>Yii::t('backend', 'Timeline'),
                             'icon'=>'<i class="fa fa-bar-chart-o"></i>',
-                            'url'=>['/timeline-event/index'],
+                            'url'=>['timeline-event/index'],
                             'badge'=> TimelineEvent::find()->today()->count(),
                             'badgeBgClass'=>'label-success',
                         ],
@@ -322,79 +322,79 @@ $bundle = BackendAsset::register($this);
 								[
 									'label'=>Yii::t('backend', 'Blogs'),
 									'icon'=>'<i class="fa fa-newspaper-o"></i>',
-									'url'=>['/blog/index'],
+									'url'=>['blog/index'],
 									'visible'=>Yii::$app->user->can('administrator'),
-									'active'=>(Yii::$app->controller->id=='blog')? true : false,
 								],
 								[
                             		'label'=>Yii::t('backend', 'Locations'),
                             		'icon'=>'<i class="fa  fa-map-marker"></i>',
-                            		'url'=>['/location/index'],
-                            		'visible'=>Yii::$app->user->can('staffmember')
+                            		'url'=>['location/index'],
+                            		'visible'=>Yii::$app->user->can('staffmember'),
                         		],
 								[
                             		'label'=>Yii::t('backend', 'Holidays'),
                             		'icon'=>'<i class="fa fa-car"></i>',
-                            		'url'=>['/holiday/index'],
-                            		'visible'=>Yii::$app->user->can('staffmember')
+                            		'url'=>['holiday/index'],
+                            		'visible'=>Yii::$app->user->can('staffmember'),
                         		],
 								[
                             		'label'=>Yii::t('backend', 'PD Days'),
                             		'icon'=>'<i class="fa fa-calendar-times-o"></i>',
-                            		'url'=>['/professional-development-day/index'],
-                            		'visible'=>Yii::$app->user->can('staffmember')
+                            		'url'=>['professional-development-day/index'],
+                            		'visible'=>Yii::$app->user->can('staffmember'),
                         		],
 								[
                             		'label'=>Yii::t('backend', 'Import'),
                             		'icon'=>'<i class="fa  fa-upload"></i>',
-                            		'url'=>['/user/import'],
-                            		'visible'=>Yii::$app->user->can('staffmember')
+                            		'url'=>['user/import'],
+                            		'visible'=>Yii::$app->user->can('staffmember'),
                         		],
 								[
 									'label' => Yii::t('backend', 'Cities'),
 									'icon' => '<i class="fa fa-building"></i>',
-									'url' => ['/city/index'],
-									'visible' => Yii::$app->user->can('staffmember')
+									'url' => ['city/index'],
+									'visible' => Yii::$app->user->can('staffmember'),
+
 								],
 								[
 									'label' => Yii::t('backend', 'Provinces'),
 									'icon' => '<i class="fa  fa-upload"></i>',
-									'url' => ['/province/index'],
-									'visible' => Yii::$app->user->can('staffmember')
+									'url' => ['province/index'],
+									'visible' => Yii::$app->user->can('staffmember'),
 								], 
                                 [
 									'label' => Yii::t('backend', 'Taxes'),
 									'icon' => '<i class="fa  fa-cny"></i>',
-									'url' => ['/tax-code/index'],
-									'visible' => Yii::$app->user->can('staffmember')
+									'url' => ['tax-code/index'],
+									'visible' => Yii::$app->user->can('staffmember'),
 								],
 								[
 									'label' => Yii::t('backend', 'Countries'),
 									'icon' => '<i class="fa fa-globe"></i>',
-									'url' => ['/country/index'],
-									'visible' => Yii::$app->user->can('staffmember')
+									'url' => ['country/index'],
+									'visible' => Yii::$app->user->can('staffmember'),
 								],
                                 [
 									'label'=>Yii::t('backend', 'Key-Value Storage'),
-									'url'=>['/key-storage/index'],
+									'url'=>['key-storage/index'],
 									'icon'=>'<i class="fa fa-angle-double-right"></i>',
 									'visible'=>Yii::$app->user->can('administrator')
 								],
                                 [
 									'label'=>Yii::t('backend', 'Cache'),
-									'url'=>['/cache/index'],
+									'url'=>['cache/index'],
 									'icon'=>'<i class="fa fa-angle-double-right"></i>',
 									'visible'=>Yii::$app->user->can('administrator')
 								],
                                 [
                                     'label'=>Yii::t('backend', 'System Information'),
-                                    'url'=>['/system-information/index'],
+                                    'url'=>['system-information/index'],
                                     'icon'=>'<i class="fa fa-angle-double-right"></i>',
 									'visible'=>Yii::$app->user->can('administrator')
                                 ],
                                 [
                                     'label'=>Yii::t('backend', 'Logs'),
-                                    'url'=>['/log/index'],
+                                    'url'=>['log/index'],
                                     'icon'=>'<i class="fa fa-angle-double-right"></i>',
                                     'badge'=>\backend\models\SystemLog::find()->count(),
                                     'badgeBgClass'=>'label-danger',
