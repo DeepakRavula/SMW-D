@@ -267,6 +267,9 @@ use common\models\InvoiceLineItem;
   </div>
 </div>
 </div>
+<div>
+    <?php echo $model->reminderNotes; ?>
+</div>
 </div>
 <script>
 $(document).ready(function() {

@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use common\models\query\InvoiceQuery;
 use common\models\InvoiceLineItem;
+use common\models\ReminderNote;
 
 /**
  * This is the model class for table "invoice".
@@ -47,6 +48,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return [
 			['user_id','required'],
+            [['reminderNotes'], 'string'],
 			[['type','notes','internal_notes', 'status'],'safe']
 		];
     }
@@ -63,6 +65,7 @@ class Invoice extends \yii\db\ActiveRecord
 			'notes' => 'Printed Notes',
 			'internal_notes' => 'Internal Notes',
 			'type' => 'Type',
+            'reminderNotes' => 'Reminder Notes',
 			'customer_id' => 'Customer Name'
         ];
     }
@@ -210,6 +213,11 @@ class Invoice extends \yii\db\ActiveRecord
 				}
 			}
 		}
-		return parent::beforeSave($insert);
+        if ($insert) {
+            $reminderNotes = ReminderNote::find()->one();
+            $this->reminderNotes = $reminderNotes->notes;
+        }    
+        
+        return parent::beforeSave($insert);
 	}
 }

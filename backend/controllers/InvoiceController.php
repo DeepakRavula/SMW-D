@@ -209,14 +209,13 @@ class InvoiceController extends Controller {
 			return $this->redirect(['view', 'id' => $model->id, '#' => 'payment']);
 		}
 		
-
-		return $this->render('view', [
+        return $this->render('view', [
 					'model' => $model,
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 					'invoicePayments' => $invoicePaymentsDataProvider,
 					'customer' => empty($customer) ? new User : $customer,
 					'userModel' => $userModel,
-		]);
+        ]);
 	}
 
 	public function actionAddMisc($id) {
@@ -378,7 +377,7 @@ class InvoiceController extends Controller {
 			$totalAmount = $subTotal + $taxAmount;
 			$invoice->tax = $taxAmount;
 			$invoice->total = $totalAmount;
-			$invoice->save();
+            $invoice->save();
             
             $invoiceType = (int) $invoice->type === Invoice::TYPE_INVOICE ? 'Invoice' : 'Pro-forma invoice';
 			Yii::$app->session->setFlash('alert', [
@@ -474,10 +473,11 @@ class InvoiceController extends Controller {
 		$invoiceLineItemsDataProvider = new ActiveDataProvider([
 			'query' => $invoiceLineItems,
 		]);
-		$this->layout = "/print";
+        
+        $this->layout = "/print";
 		return $this->render('_print', [
 					'model' => $model,
-					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
+                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
 		]);
 	}
 
@@ -526,5 +526,6 @@ class InvoiceController extends Controller {
 			]);	
 		return $this->redirect(['view', 'id' => $invoiceId]);	
 	}
+    
 }
 				

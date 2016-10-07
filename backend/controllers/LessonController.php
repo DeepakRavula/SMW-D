@@ -355,7 +355,7 @@ class LessonController extends Controller
 			$invoice->date = (new \DateTime())->format('Y-m-d');
 			$invoice->status = Invoice::STATUS_OWING;
 			$invoice->type = INVOICE::TYPE_INVOICE;
-			$invoice->save();
+            $invoice->save();
        		$subTotal = 0;
 			$taxAmount = 0;
             $invoiceLineItem = new InvoiceLineItem();

@@ -242,6 +242,9 @@ $this->params['breadcrumbs'][] = $this->title;
           </div>
         <!-- /.col -->
         </div>
+    <div>
+        <?php echo $model->reminderNotes; ?>
+    </div>
 </div>
 <script>
 	$(document).ready(function(){
