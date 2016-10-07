@@ -45,4 +45,23 @@ class ItemType extends \yii\db\ActiveRecord
             'name' => 'Name',
         ];
     }
+
+	public function getItemCode(){
+		$code = null;
+		switch($this->id){
+			case self::TYPE_PRIVATE_LESSON:
+				$code = 'PRIVATE LESSON';
+			break;
+			case self::TYPE_GROUP_LESSON:
+				$code = 'GROUP LESSON';
+			break;
+			case self::TYPE_MISC:
+				$code = 'MISC';
+			break;
+			case self::TYPE_OPENING_BALANCE:
+				$code = 'Opening Balance';
+			break;
+		}
+		return $code;
+	}
 }
