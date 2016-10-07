@@ -289,9 +289,11 @@ class LessonController extends Controller
         $courseModel = Course::findOne(['id' => $courseId]);
 		$lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
 		$request = Yii::$app->request;
-        $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]); 
-        $enrolmentModel->isConfirmed = true;
-        $enrolmentModel->save();
+        if (! empty($courseModel->enrolment)) {
+            $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]); 
+            $enrolmentModel->isConfirmed = true;
+            $enrolmentModel->save();
+        }
         $enrolmentRequest = $request->get('Enrolment');
 		$rescheduleBeginDate = $enrolmentRequest['rescheduleBeginDate'];
 		if( ! empty($rescheduleBeginDate)) {
