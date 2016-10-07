@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::toRoute(['city/view', 'id' => $model->id]);
+            $url = Url::to(['city/view', 'id' => $model->id]);
         return ['data-url' => $url];
         },
         'columns' => [

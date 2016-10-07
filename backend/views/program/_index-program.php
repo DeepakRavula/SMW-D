@@ -69,7 +69,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
             'tableOptions' =>['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray' ],
             'rowOptions' => function ($model, $key, $index, $grid) {
-               $url = Url::toRoute(['program/view', 'id' => $model->id]);
+               $url = Url::to(['program/view', 'id' => $model->id]);
             return ['data-url' => $url];
             },
             'columns' => [

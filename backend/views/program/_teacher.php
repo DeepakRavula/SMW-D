@@ -13,7 +13,7 @@ echo GridView::widget([
 'tableOptions' =>['class' => 'table table-bordered'],
 'headerRowOptions' => ['class' => 'bg-light-gray' ],
 'rowOptions' => function ($model, $key, $index, $grid){
-    $url = Url::toRoute(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]);
+    $url = Url::to(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]);
 return ['data-url' => $url];
 },
 'options' => ['class' => 'col-md-4'],

@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
             'rowOptions' => function ($model, $key, $index, $grid) use ($roleName, $originalInvoice){
-                $url = Url::toRoute(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);
+                $url = Url::to(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);
             return ['data-url' => $url];
             },
             'tableOptions' =>['class' => 'table table-bordered'],

@@ -11,7 +11,7 @@ use yii\helpers\Url;
 echo GridView::widget([
 'dataProvider' => $studentDataProvider,
 'rowOptions' => function ($model, $key, $index, $grid) {
-    $url = Url::toRoute(['student/view', 'id' => $model->id]);
+    $url = Url::to(['student/view', 'id' => $model->id]);
 return ['data-url' => $url];
         },
 'tableOptions' =>['class' => 'table table-bordered'],
