@@ -139,7 +139,7 @@ $config = [
                 'roles' => ['administrator'],
             ],
             [
-                'controllers'=>['release-notes'],
+                'controllers'=>['release-notes', 'reminder-note'],
                 'allow' => true,
                 'roles' => ['administrator'],
             ]

@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            'notes:ntext',
+            'notes:raw',
             
             ['class' => 'yii\grid\ActionColumn', 'template' => '{update} {delete}'],
         ],
