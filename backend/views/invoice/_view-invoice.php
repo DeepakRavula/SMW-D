@@ -129,18 +129,14 @@ use common\models\InvoiceLineItem;
 				[
 					'label' => 'R',
 					'value' => function($data) {
-						$royalty = null;
-						switch($data->isRoyalty){
-							case InvoiceLineItem::ROYALTY_PAYMENT:
-								$royalty = 'Yes'; 
-							break;
-							case InvoiceLineItem::EXEMPT_ROYALTY:
-								$royalty = 'No';
-							break;
+						if($data->isRoyalty){
+							$royalty = 'Yes'; 	
+						} else {
+							$royalty = 'No'; 
 						}
 						return $royalty;
 					}
-				],
+					],
 				[
 					'label' => 'Description',
 					'value' => function($data) {

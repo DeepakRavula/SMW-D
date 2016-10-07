@@ -228,6 +228,11 @@ class InvoiceController extends Controller {
 			$invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
 			$taxStatus = TaxStatus::findOne(['id' => $invoiceLineItemModel->tax_status]);
 			$invoiceLineItemModel->tax_status = $taxStatus->name;
+			if($invoiceLineItemModel->isRoyalty) {
+			$invoiceLineItemModel->isRoyalty = 0; 
+			} else {
+				$invoiceLineItemModel->isRoyalty = 1; 
+			}	
 			$invoiceLineItemModel->save();
 
 			$model->subTotal += $invoiceLineItemModel->amount;
@@ -369,7 +374,7 @@ class InvoiceController extends Controller {
 				$invoiceLineItem->tax_status = $taxStatus->name;
 				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
     	        $invoiceLineItem->description = $description;
-				$invoiceLineItem->isRoyalty = InvoiceLineItem::ROYALTY_PAYMENT;	
+				$invoiceLineItem->isRoyalty = InvoiceLineItem::EXEMPT_ROYALTY;	
 				$invoiceLineItem->save();
 				$subTotal += $invoiceLineItem->amount;
 			}

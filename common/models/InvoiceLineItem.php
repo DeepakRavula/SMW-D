@@ -18,9 +18,6 @@ use common\models\Lesson;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
 	
-	const ROYALTY_PAYMENT = 0;
-	const EXEMPT_ROYALTY = 1;
-	
     /**
      * @inheritdoc
      */
