@@ -59,9 +59,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'rowOptions'   => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-        	return ['data-id' => $model->id, 'data-url' => $u];
+            $url = Url::to(['course/view', 'id' => $model->id]);
+        return ['data-url' => $url];
     	},
         'columns' => [
 			[

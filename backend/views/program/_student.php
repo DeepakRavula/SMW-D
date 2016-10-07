@@ -1,6 +1,7 @@
 <?php 
 
 use yii\grid\GridView;
+use yii\helpers\Url;
 ?>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
@@ -10,9 +11,8 @@ use yii\grid\GridView;
 echo GridView::widget([
 'dataProvider' => $studentDataProvider,
 'rowOptions' => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['data-id' => $model->id, 'data-url' => $u];
+    $url = Url::to(['student/view', 'id' => $model->id]);
+return ['data-url' => $url];
         },
 'tableOptions' =>['class' => 'table table-bordered'],
 'headerRowOptions' => ['class' => 'bg-light-gray' ],

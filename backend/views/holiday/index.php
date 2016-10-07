@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -11,7 +12,7 @@ $this->title = 'Holidays';
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i>'), ['create'],['class' => 'btn btn-success pull-left']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="holiday-index">
+<div class="grid-row-open">
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
@@ -20,9 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'rowOptions' => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+            $url = Url::to(['holiday/view', 'id' => $model->id]);
+        return ['data-url' => $url];
         },
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
