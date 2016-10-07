@@ -98,7 +98,13 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
-	
+
+	public function getLineItemTotal()
+	{
+		return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id'])
+				->sum('invoice_line_item.amount');
+	}
+
 	public function getInvoicePaymentTotal(){
 		$invoiceAmounts = Payment::find()
 				->joinWith('invoicePayment ip')
