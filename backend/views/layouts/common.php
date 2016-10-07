@@ -274,13 +274,6 @@ $bundle = BackendAsset::register($this);
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='payment')? true : false,
                         ],
-						[
-                            'label'=>Yii::t('backend', 'Blogs'),
-                            'icon'=>'<i class="fa fa-newspaper-o"></i>',
-							'url'=>['/blog/index'],    
-                            'visible'=>Yii::$app->user->can('administrator'),
-                            'active'=>(Yii::$app->controller->id=='blog')? true : false,
-                        ],
                         [
                             'label'=>Yii::t('backend', 'Release Notes'),
                             'icon'=>'<i class="fa fa-sticky-note"></i>',
@@ -326,6 +319,13 @@ $bundle = BackendAsset::register($this);
                             'icon'=>'<i class="fa fa-cogs"></i>',
                             'options'=>['class'=>'treeview'],
                             'items'=>[
+								[
+									'label'=>Yii::t('backend', 'Blogs'),
+									'icon'=>'<i class="fa fa-newspaper-o"></i>',
+									'url'=>['/blog/index'],
+									'visible'=>Yii::$app->user->can('administrator'),
+									'active'=>(Yii::$app->controller->id=='blog')? true : false,
+								],
 								[
                             		'label'=>Yii::t('backend', 'Locations'),
                             		'icon'=>'<i class="fa  fa-map-marker"></i>',
