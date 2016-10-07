@@ -6,16 +6,6 @@ use common\models\Invoice;
 use common\models\Lesson;
 use common\models\PrivateLesson;
 ?>
-<?php
-$this->registerJs("
-    $('.private-lesson-index td').click(function (e) {
-        var id = $(this).closest('tr').data('id');
-        if(e.target == this)
-            location.href = '" . Url::to(['lesson/view']) . "?id=' + id;
-    });
-
-");
-?>
 <div class="private-lesson-index p-10">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php $columns = [
@@ -69,18 +59,20 @@ $this->registerJs("
 			],
         ];
             
-    ?>   
+    ?>
+    <div class="grid-row-open">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-		'rowOptions' => function ($model, $key, $index, $grid) {
-            return ['data-id' => $model->id];
+	'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['lesson/view', 'id' => $model->id]);
+        return ['data-url' => $url];
         },
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => $columns,
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>
-
+    </div>
 </div><?php
 
 /* 
