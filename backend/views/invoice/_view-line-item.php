@@ -23,9 +23,6 @@ $columns = [
 		'class'=>'kartik\grid\EditableColumn',
 		'attribute'=>'description',
 		'refreshGrid' => true,
-		'value' => function ($model, $key, $index, $widget) {
-			return $model->description;
-		},
 		'editableOptions'=> function ($model, $key, $index) {
 		   return [
 			   'header'=>'Description',
@@ -36,11 +33,21 @@ $columns = [
 		}
 	],
 	[
-		'attribute' => 'unit',
-		'headerOptions' => ['class' => 'text-center'],
-		'contentOptions' => ['class' => 'text-center'],
-		'enableSorting' => false,
-	],
+        'class'=>'kartik\grid\EditableColumn',
+        'attribute' => 'unit',
+        'refreshGrid' => true,
+        'headerOptions' => ['class' => 'text-center'],
+        'contentOptions' => ['class' => 'text-center'],
+        'enableSorting' => false,
+        'editableOptions'=> function ($model, $key, $index) {
+           return [
+               'header'=>'Quantity',
+               'size'=>'md',
+               'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+               'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+           ];
+        }
+    ],
 	[
 		'label' => 'Price',
 		'headerOptions' => ['class' => 'text-center'],
