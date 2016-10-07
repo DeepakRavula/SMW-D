@@ -229,9 +229,9 @@ class InvoiceController extends Controller {
 			$taxStatus = TaxStatus::findOne(['id' => $invoiceLineItemModel->tax_status]);
 			$invoiceLineItemModel->tax_status = $taxStatus->name;
 			if($invoiceLineItemModel->isRoyalty) {
-			$invoiceLineItemModel->isRoyalty = 0; 
+			$invoiceLineItemModel->isRoyalty = false; 
 			} else {
-				$invoiceLineItemModel->isRoyalty = 1; 
+				$invoiceLineItemModel->isRoyalty = true; 
 			}	
 			$invoiceLineItemModel->save();
 
