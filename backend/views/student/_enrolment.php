@@ -21,7 +21,7 @@ use common\models\Course;
 echo GridView::widget([
 	'dataProvider' => $enrolmentDataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::toRoute(['/enrolment/view','id' => $model->id]);
+            $url = Url::to(['enrolment/view', 'id' => $model->id]);
         return ['data-url' => $url];
 	},
 	'options' => ['class' => 'col-md-12'],

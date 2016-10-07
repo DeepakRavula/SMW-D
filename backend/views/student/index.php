@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions'   => function ($model, $key, $index, $grid) use($searchModel) {
-            $url = Url::toRoute(['student/view','id' => $model->id]);
+            $url = Url::toRoute(['student/view', 'id' => $model->id]);
             $data = ['data-url' => $url];
             if($searchModel->showAllStudents){
                 if($model->status === Student::STATUS_INACTIVE){
