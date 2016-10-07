@@ -14,6 +14,7 @@ use common\models\Course;
 <?= Html::a('<i class="fa fa-plus"></i>', ['enrolment', 'id' => $model->id], ['class' => 'add-new-lesson text-add-new']);?>
 <div class="clearfix"></div>
 </div>
+<div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
 	'timeout' => 6000,
 ]) ?>
@@ -86,3 +87,4 @@ echo GridView::widget([
 ]);
 ?>
 <?php \yii\widgets\Pjax::end(); ?>
+</div>
