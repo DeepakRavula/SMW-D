@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Invoice;
+use common\models\InvoiceLineItem;
 use common\models\Lesson;
 use common\models\Enrolment;
 use common\models\Payment;
@@ -55,7 +56,15 @@ class DashboardController extends \yii\web\Controller
                     }])
                     ->andWhere(['between','payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
                     ->sum('payment.amount');
-					
+
+		$royaltyPayment = InvoiceLineItem::find()
+					->joinWith(['invoice i' => function($query) use($locationId) {
+						  $query->where(['i.location_id' => $locationId, 'i.status' => Invoice::STATUS_PAID]);
+					}])
+                    ->andWhere(['between','i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+					->andWhere(['invoice_line_item.isRoyalty' => false])
+					->sum('invoice_line_item.amount');
+
          $students = Student::find()
 			->joinWith(['enrolment' => function($query) use($locationId, $currentDate){
 				 $query->joinWith(['course' => function($query) use($locationId, $currentDate){
@@ -93,6 +102,6 @@ class DashboardController extends \yii\web\Controller
            $array['y'] =   floor(( (floor($program->hours / 3600)) / $totalHours ) * 100) ;//$program->hours;
            array_push($completedPrograms, $array);
        }
-        return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students, 'completedPrograms' => $completedPrograms]);
+        return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students, 'completedPrograms' => $completedPrograms, 'royaltyPayment' => $royaltyPayment]);
 	}
 }
