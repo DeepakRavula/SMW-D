@@ -11,17 +11,8 @@ use common\models\Lesson;
 $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<?php
-$this->registerJs("
-    $('.private-lesson-index td').click(function (e) {
-        var id = $(this).closest('tr').data('id');
-        if(e.target == this)
-            location.href = '" . Url::to(['lesson/view']) . "?id=' + id;
-    });
 
-");
-?>
-<div class="private-lesson-index p-10">
+<div class="grid-row-open p-10">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php $columns = [
@@ -74,8 +65,9 @@ $this->registerJs("
      ?>   
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-		'rowOptions' => function ($model, $key, $index, $grid) {
-            return ['data-id' => $model->id];
+	'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['lesson/view', 'id' => $model->id]);
+        return ['data-url' => $url];
         },
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],

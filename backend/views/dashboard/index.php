@@ -77,6 +77,7 @@ use common\models\Payment;
         'title' => ['text' => 'Instruction Hours'],
         'plotOptions' => [
             'pie' => [
+                'size' => '80%',
                 'cursor' => 'pointer',
                 'dataLabels' => [
                     'enabled' => true,
@@ -87,7 +88,7 @@ use common\models\Payment;
         'series' => [
             [ // new opening bracket
                 'type' => 'pie',
-                'name' => 'Elements',
+                'name' => 'Hours',
                 'data' => $completedPrograms,
             ] // new closing bracket
         ],
