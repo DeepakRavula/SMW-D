@@ -2,19 +2,16 @@
 
 use yii\db\Migration;
 
-class m160711_154809_rbac_auth_item_master_data extends Migration
+class m161008_071409_admin_user extends Migration
 {
     public function up()
     {
-		$sql = file_get_contents(dirname(__FILE__).'/' . get_class($this) . '_' . __FUNCTION__ . '.sql');
-        
-		return $this->execute($sql);
 
     }
 
     public function down()
     {
-        echo "m160711_154809_rbac_auth_item_master_data cannot be reverted.\n";
+        echo "m161008_071409_admin_user cannot be reverted.\n";
 
         return false;
     }
