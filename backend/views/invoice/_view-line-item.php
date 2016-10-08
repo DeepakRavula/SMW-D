@@ -1,8 +1,6 @@
 <?php
 use yii\helpers\Html;
-use backend\models\search\InvoiceSearch;
 use common\models\ItemType;
-use common\models\InvoiceLineItem;
 use yii\helpers\Url;
 ?>
 <?php
@@ -49,13 +47,22 @@ $columns = [
         }
     ],
 	[
+        'class'=>'kartik\grid\EditableColumn',
+        'attribute' => 'amount',
 		'label' => 'Price',
-		'headerOptions' => ['class' => 'text-center'],
-		'contentOptions' => ['class' => 'text-center'],
-		'value' => function($data) {
-			return $data->amount;
-		}
-	],
+        'refreshGrid' => true,
+        'headerOptions' => ['class' => 'text-center'],
+        'contentOptions' => ['class' => 'text-center'],
+        'enableSorting' => false,
+        'editableOptions'=> function ($model, $key, $index) {
+           return [
+               'header'=>'Price',
+               'size'=>'md',
+               'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
+               'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+           ];
+        }
+    ],
 	[
 		'attribute' => 'tax_rate',
 		'headerOptions' => ['class' => 'text-center'],
