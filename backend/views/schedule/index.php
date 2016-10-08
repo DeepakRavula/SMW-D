@@ -47,6 +47,10 @@ $(document).ready(function() {
     droppable: true,
     resources:  <?php echo Json::encode($teachersWithClass); ?>,
     events: <?php echo Json::encode($events); ?>,
+    eventClick: function(event) {        
+        var url = "<?php echo Url::to(['lesson/view']);?>" + '?id=' + event.id;
+        window.open(url, "_blank");
+    },
     // the 'ev' parameter is the mouse event rather than the resource 'event'
     // the ev.data is the resource column clicked upon
     selectable: true,
