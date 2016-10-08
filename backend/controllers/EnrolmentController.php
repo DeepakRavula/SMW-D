@@ -114,14 +114,26 @@ class EnrolmentController extends Controller
                 $dayDifference = (int) $model->course->day - (int) $model->course->oldAttributes['day'];
                 $endDate = $endDate->add(new \DateInterval('P' . $dayDifference . 'D'));
                 $modifiedEndDate  = $endDate->format('Y-m-d H:i:s');
-                $end = new \DateTime($modifiedEndDate);
+                $endDate = new \DateTime($modifiedEndDate);
             } else {
-                $dayDifference = (int) $model->course->oldAttributes['day'] - (int) $model->course->day;
-                $addDifference = 7 - $dayDifference;
-                $endDate = $endDate->add(new \DateInterval('P' . $addDifference . 'D'));
-                $modifiedEndDate  = $endDate->format('Y-m-d H:i:s');
-                $end = new \DateTime($modifiedEndDate);    
-            }
+				$chosenDate = new \DateTime($courseDate);
+				$firstLessonDate = new \DateTime($lessons[0]->date);
+				if ($chosenDate < $firstLessonDate) {
+					$period			 = new \DatePeriod($chosenDate, $interval, $firstLessonDate);
+					foreach ($period as $day) {
+						if ((int) $day->format('N') === (int) $model->course->day) {
+							$endDate = new \DateTime(end($lessons)->date);
+							break;
+						} else {
+							$dayDifference = (int) $model->course->oldAttributes['day'] - (int) $model->course->day;
+							$addDifference = 7 - $dayDifference;
+							$endDate = $endDate->add(new \DateInterval('P' . $addDifference . 'D'));
+							$modifiedEndDate  = $endDate->format('Y-m-d H:i:s');
+							$endDate = new \DateTime($modifiedEndDate);
+            			}
+					}	
+				} 
+			}
 			//calculate lesson totime.
 			$length			 = explode(':', $model->course->duration);
 			$changedFromTime = new \DateTime($model->course->fromTime);
