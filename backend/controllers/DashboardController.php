@@ -22,15 +22,13 @@ class DashboardController extends \yii\web\Controller
 		$searchModel->toDate = $currentDate->format('t-m-Y');
         $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $request = Yii::$app->request;
-        if($searchModel->load($request->get())){
+        if ($searchModel->load($request->get())) {
             $dashboardRequest = $request->get('DashboardSearch');
             $searchModel->dateRange = $dashboardRequest['dateRange']; 
-        }      
-        $dateRange = explode(" - ",$searchModel->dateRange);
-        $searchModel->fromDate = \DateTime::createFromFormat('d-m-Y',  $dateRange[0]);
-        $searchModel->toDate = \DateTime::createFromFormat('d-m-Y',  $dateRange[1]);
-        if ($searchModel->toDate > $currentDate) {
-            $searchModel->toDate = $currentDate;
+        }
+        $toDate = $searchModel->toDate;
+        if ($toDate > $currentDate) {
+            $toDate = $currentDate;
         }
         $locationId = Yii::$app->session->get('location_id');
         $invoiceTotal = Invoice::find()
@@ -87,8 +85,9 @@ class DashboardController extends \yii\web\Controller
                         $query->joinWith(['program' => function($query){
                         }]);
                     }])
-                    ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-                    ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED, 'lesson.isDeleted' => false])
+                    ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+                    ->andWhere(['not',['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+                    ->notDeleted()
                     ->groupBy(['course.programId'])
                     ->all();
         foreach($programs as $program){
