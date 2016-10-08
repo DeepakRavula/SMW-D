@@ -93,7 +93,6 @@ class EnrolmentController extends Controller
         $model = $this->findModel($id);
 		if ($model->course->load(Yii::$app->request->post())) {
 			$courseDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
-
 			$courseDate		 = $courseDate->format('Y-m-d H:i:s');
 			Lesson::deleteAll([
 				'courseId' => $model->course->id,
@@ -103,20 +102,27 @@ class EnrolmentController extends Controller
 				->where(['courseId' => $model->course->id])
 				->andWhere(['>=', 'date', $courseDate])
 				->all();
+			//lesson start date
 			$changedFromTime = (new \DateTime($model->course->fromTime))->format('H:i:s');
 			$duration		 = explode(':', $changedFromTime);
 			$interval		 = new \DateInterval('P1D');
-			$startDate		 = new \DateTime($model->course->rescheduleFromDate);
+			$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
 			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+			//lesson end date
 			$endDate		 = new \DateTime(end($lessons)->date);
-			/*if ((int) $model->course->day > (int) $model->course->oldAttributes['day']) {
-	            $dayDifference = (int) $model->course->day - $model->course->oldAttributes['day'];
+			if((int) $model->course->oldAttributes['day'] < (int) $model->course->day) {
+                $dayDifference = (int) $model->course->day - (int) $model->course->oldAttributes['day'];
                 $endDate = $endDate->add(new \DateInterval('P' . $dayDifference . 'D'));
                 $modifiedEndDate  = $endDate->format('Y-m-d H:i:s');
-                $endDate = new \DateTime($modifiedEndDate);
-			}
-			 * 
-			 */
+                $end = new \DateTime($modifiedEndDate);
+            } else {
+                $dayDifference = (int) $model->course->oldAttributes['day'] - (int) $model->course->day;
+                $addDifference = 7 - $dayDifference;
+                $endDate = $endDate->add(new \DateInterval('P' . $addDifference . 'D'));
+                $modifiedEndDate  = $endDate->format('Y-m-d H:i:s');
+                $end = new \DateTime($modifiedEndDate);    
+            }
+			//calculate lesson totime.
 			$length			 = explode(':', $model->course->duration);
 			$changedFromTime = new \DateTime($model->course->fromTime);
 			$changedFromTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));

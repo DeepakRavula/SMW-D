@@ -39,21 +39,6 @@ use common\models\Course;
                 ]
 			  ]); ?>
 		</div>
-		<div class="col-md-4">
-			<?php
-			echo $form->field($model, 'rescheduleFromDate')->widget(DatePicker::classname(),
-				[
-				'options' => [
-					'value' => (new \DateTime())->format('d-m-Y'),
-				],
-				'type' => DatePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'autoclose' => true,
-					'format' => 'dd-mm-yyyy'
-				]
-			]);
-			?>
-        </div>
 	</div>
     <div class="form-group">
 		<?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
