@@ -238,8 +238,8 @@ class LessonController extends Controller
 
 	public function actionReview($courseId){	
 		$request = Yii::$app->request;
-		$courseRequest = $request->get('Course');
-		$rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
+		$enrolmentRequest = $request->get('Enrolment'); 
+		$rescheduleBeginDate = $enrolmentRequest['rescheduleBeginDate'];
 		$courseModel = Course::findOne(['id' => $courseId]);
 		$draftLessons = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
@@ -294,8 +294,8 @@ class LessonController extends Controller
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
         }
-        $courseRequest = $request->get('Course');
-		$rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
+        $enrolmentRequest = $request->get('Enrolment');
+		$rescheduleBeginDate = $enrolmentRequest['rescheduleBeginDate'];
 		if( ! empty($rescheduleBeginDate)) {
 			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);
 			$courseDate = $courseDate->format('Y-m-d H:i:s');
@@ -309,9 +309,10 @@ class LessonController extends Controller
 				$oldLesson->delete();
 			}	
 			foreach($lessons as $i => $lesson){
-				$lesson->id = $oldLessonIds[$i];
-				$lesson->status = Lesson::STATUS_SCHEDULED;
-				$lesson->save();
+				$lesson->updateAttributes([
+					'id' => $oldLessonIds[$i],
+					'status' => Lesson::STATUS_SCHEDULED,
+				]);
 			}
 		} else {
 			foreach($lessons as $lesson){

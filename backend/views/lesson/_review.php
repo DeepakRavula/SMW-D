@@ -150,7 +150,7 @@ $this->title = 'Review Lessons';
 	<div class="form-group">
 	<div class="p-10 text-center">
 		<?php if( ! empty($rescheduleBeginDate)):?>
-			<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[rescheduleBeginDate]' => $rescheduleBeginDate], [
+			<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Enrolment[rescheduleBeginDate]' => $rescheduleBeginDate], [
 				'class' => 'btn btn-danger',
 				'data' => [
 					'method' => 'post',
