@@ -91,48 +91,58 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if ($model->load(Yii::$app->request->post())) {
-			$courseDate = \DateTime::createFromFormat('d-m-Y',$model->rescheduleBeginDate);
-			$courseDate = $courseDate->format('Y-m-d H:i:s');
+		if ($model->course->load(Yii::$app->request->post())) {
+			$courseDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
+
+			$courseDate		 = $courseDate->format('Y-m-d H:i:s');
 			Lesson::deleteAll([
 				'courseId' => $model->course->id,
 				'status' => Lesson::STATUS_DRAFTED,
 			]);
-			$lessons = Lesson::find()
+			$lessons		 = Lesson::find()
 				->where(['courseId' => $model->course->id])
 				->andWhere(['>=', 'date', $courseDate])
 				->all();
-			foreach($lessons as $lesson){
-				$changedFromTime = new \DateTime($model->fromTime);
-				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
-				$lessonTime = $lessonDate->format('H:i:s');
-                $lessonStartTime = new \DateTime($lessonTime);
-                $duration = $changedFromTime->diff($lessonStartTime);
-				if($changedFromTime > $lessonStartTime){
-					$lessonDate->add(new \DateInterval('PT' . $duration->h. 'H' . $duration->i . 'M'));	
-				} else {
-					$lessonDate->sub(new \DateInterval('PT' . $duration->h. 'H' . $duration->i . 'M'));	
-				}
-            	$length = explode(':', $model->course->duration);
-            	$changedFromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
-				$newLessonModel = new Lesson();
-				$newLessonModel->setAttributes([
-					'courseId' => $model->course->id,
-					'teacherId' => $model->course->teacherId,
-					'date' => $lessonDate->format('Y-m-d H:i:s'),
-					'toTime' => $changedFromTime->format('H:i:s'),
-					'status' => Lesson::STATUS_DRAFTED,
-					'isDeleted' => false,
-				]);
-				$newLessonModel->save();
+			$changedFromTime = (new \DateTime($model->course->fromTime))->format('H:i:s');
+			$duration		 = explode(':', $changedFromTime);
+			$interval		 = new \DateInterval('P1D');
+			$startDate		 = new \DateTime($model->course->rescheduleFromDate);
+			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+			$endDate		 = new \DateTime(end($lessons)->date);
+			/*if ((int) $model->course->day > (int) $model->course->oldAttributes['day']) {
+	            $dayDifference = (int) $model->course->day - $model->course->oldAttributes['day'];
+                $endDate = $endDate->add(new \DateInterval('P' . $dayDifference . 'D'));
+                $modifiedEndDate  = $endDate->format('Y-m-d H:i:s');
+                $endDate = new \DateTime($modifiedEndDate);
 			}
-            return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Enrolment[rescheduleBeginDate]' => $model->rescheduleBeginDate]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
+			 * 
+			 */
+			$length			 = explode(':', $model->course->duration);
+			$changedFromTime = new \DateTime($model->course->fromTime);
+			$changedFromTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+			$toTime			 = $changedFromTime->format('H:i:s');
+			$period			 = new \DatePeriod($startDate, $interval, $endDate);
+			foreach ($period as $day) {
+				if ((int) $day->format('N') === (int) $model->course->day) {
+					$lesson = new Lesson();
+					$lesson->setAttributes([
+						'courseId' => $model->course->id,
+						'teacherId' => $model->course->teacherId,
+						'status' => Lesson::STATUS_DRAFTED,
+						'date' => $day->format('Y-m-d H:i:s'),
+						'toTime' => $toTime,
+						'isDeleted' => false,
+					]);
+					$lesson->save();
+				}
+			}
+			return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Course[rescheduleBeginDate]' => $model->course->rescheduleBeginDate]);
+		} else {
+			return $this->render('update', [
+					'model' => $model->course,
+			]);
+		}
+	}
 
     /**
      * Deletes an existing Enrolment model.
