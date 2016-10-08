@@ -6,7 +6,9 @@ class m161008_071409_admin_user extends Migration
 {
     public function up()
     {
+		$sql = file_get_contents(dirname(__FILE__).'/' . get_class($this) . '_' . __FUNCTION__ . '.sql');
 
+		return $this->execute($sql);
     }
 
     public function down()

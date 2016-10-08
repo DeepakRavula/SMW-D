@@ -17,7 +17,7 @@ CREATE TABLE `address` (
   PRIMARY KEY (`id`),
   KEY `city_id` (`city_id`),
   KEY `city_id_2` (`city_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `blog`
@@ -48,7 +48,7 @@ CREATE TABLE `address` (
   PRIMARY KEY (`id`),
   KEY `city_id` (`city_id`),
   KEY `city_id_2` (`city_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `blog`
@@ -61,7 +61,7 @@ CREATE TABLE `blog` (
   `content` text COLLATE utf8_unicode_ci NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `city`
@@ -73,7 +73,7 @@ CREATE TABLE `city` (
   `province_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `country`
@@ -83,7 +83,7 @@ CREATE TABLE `country` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `course`
@@ -100,7 +100,7 @@ CREATE TABLE `course` (
   `startDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `endDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `credit_usage`
@@ -111,7 +111,7 @@ CREATE TABLE `credit_usage` (
   `credit_payment_id` int(10) unsigned NOT NULL,
   `debit_payment_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `enrolment`
@@ -125,7 +125,7 @@ CREATE TABLE `enrolment` (
   `paymentFrequency` tinyint(4) unsigned NOT NULL COMMENT '1 - Full, 2 - Monthly',
   `isConfirmed` tinyint(4) unsigned NOT NULL COMMENT '0 - unConfirmed, 1 - confirmed',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `file_storage_item`
@@ -142,7 +142,7 @@ CREATE TABLE `file_storage_item` (
   `upload_ip` varchar(15) DEFAULT NULL,
   `created_at` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `holiday`
@@ -152,7 +152,7 @@ CREATE TABLE `holiday` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `i18n_message`
@@ -164,7 +164,7 @@ CREATE TABLE `i18n_message` (
   `translation` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`,`language`),
   CONSTRAINT `fk_i18n_message_source_message` FOREIGN KEY (`id`) REFERENCES `i18n_source_message` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `i18n_source_message`
@@ -175,7 +175,7 @@ CREATE TABLE `i18n_source_message` (
   `category` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `message` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `invoice`
@@ -197,7 +197,7 @@ CREATE TABLE `invoice` (
   `status` tinyint(3) unsigned NOT NULL,
   `reminderNotes` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `invoice_line_item`
@@ -217,7 +217,7 @@ CREATE TABLE `invoice_line_item` (
   `tax_status` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   `tax_code` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `invoice_payment`
@@ -228,7 +228,7 @@ CREATE TABLE `invoice_payment` (
   `invoice_id` int(10) unsigned NOT NULL,
   `payment_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `item_type`
@@ -238,7 +238,7 @@ CREATE TABLE `item_type` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `key_storage_item`
@@ -252,7 +252,7 @@ CREATE TABLE `key_storage_item` (
   `created_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`key`),
   UNIQUE KEY `idx_key_storage_item_key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `lesson`
@@ -268,7 +268,7 @@ CREATE TABLE `lesson` (
   `isDeleted` tinyint(1) NOT NULL,
   `notes` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `lesson_reschedule`
@@ -279,7 +279,7 @@ CREATE TABLE `lesson_reschedule` (
   `lessonId` int(10) unsigned NOT NULL,
   `rescheduledLessonId` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `location`
@@ -298,7 +298,7 @@ CREATE TABLE `location` (
   `to_time` time NOT NULL,
   `slug` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `page`
@@ -314,7 +314,7 @@ CREATE TABLE `page` (
   `created_at` int(11) DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `payment`
@@ -328,7 +328,7 @@ CREATE TABLE `payment` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `reference` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `payment_method`
@@ -341,7 +341,7 @@ CREATE TABLE `payment_method` (
   `displayed` tinyint(3) unsigned NOT NULL,
   `sortOrder` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `phone_label`
@@ -351,7 +351,7 @@ CREATE TABLE `phone_label` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `phone_number`
@@ -366,7 +366,7 @@ CREATE TABLE `phone_number` (
   `is_primary` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `private_lesson`
@@ -378,7 +378,7 @@ CREATE TABLE `private_lesson` (
   `expiryDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `isEligible` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `professional_development_day`
@@ -388,7 +388,7 @@ CREATE TABLE `professional_development_day` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `program`
@@ -401,7 +401,7 @@ CREATE TABLE `program` (
   `status` tinyint(3) unsigned DEFAULT NULL COMMENT '1 - active; 2 - inactive',
   `type` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `province`
@@ -413,7 +413,7 @@ CREATE TABLE `province` (
   `tax_rate` double NOT NULL,
   `country_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `qualification`
@@ -424,7 +424,7 @@ CREATE TABLE `qualification` (
   `teacher_id` int(11) unsigned NOT NULL,
   `program_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `rbac_auth_assignment`
@@ -436,50 +436,7 @@ CREATE TABLE `rbac_auth_assignment` (
   `created_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`item_name`,`user_id`),
   CONSTRAINT `rbac_auth_assignment_ibfk_1` FOREIGN KEY (`item_name`) REFERENCES `rbac_auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
-
--- ----------------------------
---  Table structure for `rbac_auth_item`
--- ----------------------------
-DROP TABLE IF EXISTS `rbac_auth_item`;
-CREATE TABLE `rbac_auth_item` (
-  `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `type` int(11) NOT NULL,
-  `description` text COLLATE utf8_unicode_ci,
-  `rule_name` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `data` text COLLATE utf8_unicode_ci,
-  `created_at` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL,
-  PRIMARY KEY (`name`),
-  KEY `rule_name` (`rule_name`),
-  KEY `idx-auth_item-type` (`type`),
-  CONSTRAINT `rbac_auth_item_ibfk_1` FOREIGN KEY (`rule_name`) REFERENCES `rbac_auth_rule` (`name`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
-
--- ----------------------------
---  Table structure for `rbac_auth_item_child`
--- ----------------------------
-DROP TABLE IF EXISTS `rbac_auth_item_child`;
-CREATE TABLE `rbac_auth_item_child` (
-  `parent` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `child` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`parent`,`child`),
-  KEY `child` (`child`),
-  CONSTRAINT `rbac_auth_item_child_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `rbac_auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `rbac_auth_item_child_ibfk_2` FOREIGN KEY (`child`) REFERENCES `rbac_auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
-
--- ----------------------------
---  Table structure for `rbac_auth_rule`
--- ----------------------------
-DROP TABLE IF EXISTS `rbac_auth_rule`;
-CREATE TABLE `rbac_auth_rule` (
-  `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `data` text COLLATE utf8_unicode_ci,
-  `created_at` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL,
-  PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `release_notes`
@@ -491,7 +448,7 @@ CREATE TABLE `release_notes` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `release_notes_read`
@@ -502,7 +459,7 @@ CREATE TABLE `release_notes_read` (
   `release_note_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `reminder_note`
@@ -527,7 +484,7 @@ CREATE TABLE `student` (
   `notes` text COLLATE utf8_unicode_ci,
   `status` tinyint(3) unsigned NOT NULL COMMENT '1 - Active,2 - Inactive',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `system_log`
@@ -543,7 +500,7 @@ CREATE TABLE `system_log` (
   PRIMARY KEY (`id`),
   KEY `idx_log_level` (`level`),
   KEY `idx_log_category` (`category`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `tax_code`
@@ -557,7 +514,7 @@ CREATE TABLE `tax_code` (
   `start_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `code` varchar(5) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `tax_status`
@@ -567,7 +524,7 @@ CREATE TABLE `tax_status` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `tax_type`
@@ -580,7 +537,7 @@ CREATE TABLE `tax_type` (
   `sort_order` tinyint(3) unsigned NOT NULL,
   `compounded` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `tax_type_tax_status_assoc`
@@ -592,7 +549,7 @@ CREATE TABLE `tax_type_tax_status_assoc` (
   `tax_status_id` int(10) unsigned NOT NULL,
   `exempt` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `teacher_availability_day`
@@ -605,7 +562,7 @@ CREATE TABLE `teacher_availability_day` (
   `from_time` time NOT NULL,
   `to_time` time NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `timeline_event`
@@ -620,7 +577,7 @@ CREATE TABLE `timeline_event` (
   `created_at` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_created_at` (`created_at`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user`
@@ -640,7 +597,7 @@ CREATE TABLE `user` (
   `updated_at` int(11) DEFAULT NULL,
   `logged_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user_address`
@@ -651,7 +608,7 @@ CREATE TABLE `user_address` (
   `user_id` int(10) unsigned NOT NULL,
   `address_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user_location`
@@ -662,7 +619,7 @@ CREATE TABLE `user_location` (
   `user_id` int(10) unsigned NOT NULL,
   `location_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user_profile`
@@ -680,7 +637,7 @@ CREATE TABLE `user_profile` (
   `gender` smallint(1) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user_token`
@@ -695,10 +652,9 @@ CREATE TABLE `user_token` (
   `created_at` int(11) DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
- ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 --  Table structure for `city`
@@ -710,7 +666,7 @@ CREATE TABLE `city` (
   `province_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `country`
@@ -720,7 +676,7 @@ CREATE TABLE `country` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `course`
@@ -737,7 +693,7 @@ CREATE TABLE `course` (
   `startDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `endDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `credit_usage`
@@ -748,7 +704,7 @@ CREATE TABLE `credit_usage` (
   `credit_payment_id` int(10) unsigned NOT NULL,
   `debit_payment_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `enrolment`
@@ -762,7 +718,7 @@ CREATE TABLE `enrolment` (
   `paymentFrequency` tinyint(4) unsigned NOT NULL COMMENT '1 - Full, 2 - Monthly',
   `isConfirmed` tinyint(4) unsigned NOT NULL COMMENT '0 - unConfirmed, 1 - confirmed',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `file_storage_item`
@@ -779,7 +735,7 @@ CREATE TABLE `file_storage_item` (
   `upload_ip` varchar(15) DEFAULT NULL,
   `created_at` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `holiday`
@@ -789,7 +745,7 @@ CREATE TABLE `holiday` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `i18n_message`
@@ -801,7 +757,7 @@ CREATE TABLE `i18n_message` (
   `translation` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`,`language`),
   CONSTRAINT `fk_i18n_message_source_message` FOREIGN KEY (`id`) REFERENCES `i18n_source_message` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `i18n_source_message`
@@ -812,7 +768,7 @@ CREATE TABLE `i18n_source_message` (
   `category` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `message` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
 
 -- ----------------------------
 --  Table structure for `invoice`
@@ -834,7 +790,7 @@ CREATE TABLE `invoice` (
   `status` tinyint(3) unsigned NOT NULL,
   `reminderNotes` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `invoice_line_item`
@@ -854,7 +810,7 @@ CREATE TABLE `invoice_line_item` (
   `tax_status` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   `tax_code` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `invoice_payment`
@@ -865,7 +821,7 @@ CREATE TABLE `invoice_payment` (
   `invoice_id` int(10) unsigned NOT NULL,
   `payment_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `item_type`
@@ -875,7 +831,7 @@ CREATE TABLE `item_type` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `key_storage_item`
@@ -889,7 +845,7 @@ CREATE TABLE `key_storage_item` (
   `created_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`key`),
   UNIQUE KEY `idx_key_storage_item_key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `lesson`
@@ -905,7 +861,7 @@ CREATE TABLE `lesson` (
   `isDeleted` tinyint(1) NOT NULL,
   `notes` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `lesson_reschedule`
@@ -916,7 +872,7 @@ CREATE TABLE `lesson_reschedule` (
   `lessonId` int(10) unsigned NOT NULL,
   `rescheduledLessonId` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `location`
@@ -935,7 +891,7 @@ CREATE TABLE `location` (
   `to_time` time NOT NULL,
   `slug` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `page`
@@ -951,7 +907,7 @@ CREATE TABLE `page` (
   `created_at` int(11) DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `payment`
@@ -965,7 +921,7 @@ CREATE TABLE `payment` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `reference` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `payment_method`
@@ -978,7 +934,7 @@ CREATE TABLE `payment_method` (
   `displayed` tinyint(3) unsigned NOT NULL,
   `sortOrder` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `phone_label`
@@ -988,7 +944,7 @@ CREATE TABLE `phone_label` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `phone_number`
@@ -1003,7 +959,7 @@ CREATE TABLE `phone_number` (
   `is_primary` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `private_lesson`
@@ -1015,7 +971,7 @@ CREATE TABLE `private_lesson` (
   `expiryDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `isEligible` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `professional_development_day`
@@ -1025,7 +981,7 @@ CREATE TABLE `professional_development_day` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `program`
@@ -1038,7 +994,7 @@ CREATE TABLE `program` (
   `status` tinyint(3) unsigned DEFAULT NULL COMMENT '1 - active; 2 - inactive',
   `type` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `province`
@@ -1050,7 +1006,7 @@ CREATE TABLE `province` (
   `tax_rate` double NOT NULL,
   `country_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `qualification`
@@ -1061,7 +1017,7 @@ CREATE TABLE `qualification` (
   `teacher_id` int(11) unsigned NOT NULL,
   `program_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `rbac_auth_assignment`
@@ -1073,50 +1029,7 @@ CREATE TABLE `rbac_auth_assignment` (
   `created_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`item_name`,`user_id`),
   CONSTRAINT `rbac_auth_assignment_ibfk_1` FOREIGN KEY (`item_name`) REFERENCES `rbac_auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
-
--- ----------------------------
---  Table structure for `rbac_auth_item`
--- ----------------------------
-DROP TABLE IF EXISTS `rbac_auth_item`;
-CREATE TABLE `rbac_auth_item` (
-  `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `type` int(11) NOT NULL,
-  `description` text COLLATE utf8_unicode_ci,
-  `rule_name` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `data` text COLLATE utf8_unicode_ci,
-  `created_at` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL,
-  PRIMARY KEY (`name`),
-  KEY `rule_name` (`rule_name`),
-  KEY `idx-auth_item-type` (`type`),
-  CONSTRAINT `rbac_auth_item_ibfk_1` FOREIGN KEY (`rule_name`) REFERENCES `rbac_auth_rule` (`name`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
-
--- ----------------------------
---  Table structure for `rbac_auth_item_child`
--- ----------------------------
-DROP TABLE IF EXISTS `rbac_auth_item_child`;
-CREATE TABLE `rbac_auth_item_child` (
-  `parent` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `child` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`parent`,`child`),
-  KEY `child` (`child`),
-  CONSTRAINT `rbac_auth_item_child_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `rbac_auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `rbac_auth_item_child_ibfk_2` FOREIGN KEY (`child`) REFERENCES `rbac_auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
-
--- ----------------------------
---  Table structure for `rbac_auth_rule`
--- ----------------------------
-DROP TABLE IF EXISTS `rbac_auth_rule`;
-CREATE TABLE `rbac_auth_rule` (
-  `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `data` text COLLATE utf8_unicode_ci,
-  `created_at` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL,
-  PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `release_notes`
@@ -1128,7 +1041,7 @@ CREATE TABLE `release_notes` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `release_notes_read`
@@ -1139,7 +1052,7 @@ CREATE TABLE `release_notes_read` (
   `release_note_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `reminder_note`
@@ -1164,7 +1077,7 @@ CREATE TABLE `student` (
   `notes` text COLLATE utf8_unicode_ci,
   `status` tinyint(3) unsigned NOT NULL COMMENT '1 - Active,2 - Inactive',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `system_log`
@@ -1180,7 +1093,7 @@ CREATE TABLE `system_log` (
   PRIMARY KEY (`id`),
   KEY `idx_log_level` (`level`),
   KEY `idx_log_category` (`category`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `tax_code`
@@ -1194,7 +1107,7 @@ CREATE TABLE `tax_code` (
   `start_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `code` varchar(5) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `tax_status`
@@ -1204,7 +1117,7 @@ CREATE TABLE `tax_status` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `tax_type`
@@ -1217,7 +1130,7 @@ CREATE TABLE `tax_type` (
   `sort_order` tinyint(3) unsigned NOT NULL,
   `compounded` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `tax_type_tax_status_assoc`
@@ -1229,7 +1142,7 @@ CREATE TABLE `tax_type_tax_status_assoc` (
   `tax_status_id` int(10) unsigned NOT NULL,
   `exempt` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `teacher_availability_day`
@@ -1242,7 +1155,7 @@ CREATE TABLE `teacher_availability_day` (
   `from_time` time NOT NULL,
   `to_time` time NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `timeline_event`
@@ -1257,7 +1170,7 @@ CREATE TABLE `timeline_event` (
   `created_at` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_created_at` (`created_at`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user`
@@ -1277,7 +1190,7 @@ CREATE TABLE `user` (
   `updated_at` int(11) DEFAULT NULL,
   `logged_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user_address`
@@ -1288,7 +1201,7 @@ CREATE TABLE `user_address` (
   `user_id` int(10) unsigned NOT NULL,
   `address_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user_location`
@@ -1299,7 +1212,7 @@ CREATE TABLE `user_location` (
   `user_id` int(10) unsigned NOT NULL,
   `location_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user_profile`
@@ -1317,7 +1230,7 @@ CREATE TABLE `user_profile` (
   `gender` smallint(1) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user_token`
@@ -1332,6 +1245,6 @@ CREATE TABLE `user_token` (
   `created_at` int(11) DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8  ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
