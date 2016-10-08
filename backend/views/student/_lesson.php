@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use common\models\Lesson;
 use common\models\Invoice;
 use yii\grid\GridView;
@@ -19,6 +20,7 @@ use yii\grid\GridView;
              ?>
 
 </div>
+<div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
 	'timeout' => 6000,
 ]) ?>
@@ -26,9 +28,8 @@ use yii\grid\GridView;
 echo GridView::widget([
 	'dataProvider' => $lessonDataProvider,
 	'rowOptions' => function ($model, $key, $index, $grid) {
-		$u= \yii\helpers\StringHelper::basename(get_class($model));
-		$u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-		return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+            $url = Url::to(['lesson/view', 'id' => $model->id]);
+        return ['data-url' => $url];
 	},
 	'options' => ['class' => 'col-md-12'],
 	'tableOptions' =>['class' => 'table table-bordered'],
@@ -89,4 +90,5 @@ echo GridView::widget([
 	],
 ]);
 ?>
+</div>
 <?php \yii\widgets\Pjax::end(); ?>

@@ -11,16 +11,6 @@ use common\models\ProfessionalDevelopmentDay;
 
 ?>
 <?php
-$this->registerJs("
-    $('.private-lesson-index td').click(function (e) {
-        var id = $(this).closest('tr').data('id');
-        if(e.target == this)
-            location.href = '" . Url::to(['lesson/view'],['class' => 'private-lesson-index','target' => '_blank']) . "?id=' + id;
-    });
-
-");
-?>
-<?php
 	$conflicts = current($conflicts);
 	$conflictedLessonIds = [];
 	$conflictedDates = [];
@@ -111,16 +101,19 @@ $this->registerJs("
                 },
 			],
         ];
-     ?>   
+     ?>
+    <div class="grid-row-open">
     <?php echo GridView::widget([
         'dataProvider' => $conflictedLessonDataProvider,
-		'rowOptions' => function ($model, $key, $index, $grid) {
-            return ['data-id' => $model->id];
+	'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['lesson/view', 'id' => $model->id]);
+        return ['data-url' => $url];
         },
         'tableOptions' =>['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray' ],
         'columns' => $columns,
     ]); ?>
+    </div>
 	<?php yii\widgets\Pjax::end(); ?>
 <?php elseif( ! empty($results)):?>
 	<?php
