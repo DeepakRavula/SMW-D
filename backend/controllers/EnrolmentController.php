@@ -110,8 +110,8 @@ class EnrolmentController extends Controller
 			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 			//lesson end date
 			$endDate		 = new \DateTime(end($lessons)->date);
+            $dayDifference = (int) $model->course->day - (int) $model->course->oldAttributes['day'];
 			if((int) $model->course->oldAttributes['day'] < (int) $model->course->day) {
-                $dayDifference = (int) $model->course->day - (int) $model->course->oldAttributes['day'];
                 $endDate = $endDate->add(new \DateInterval('P' . $dayDifference . 'D'));
                 $modifiedEndDate  = $endDate->format('Y-m-d H:i:s');
                 $endDate = new \DateTime($modifiedEndDate);
@@ -125,7 +125,6 @@ class EnrolmentController extends Controller
 							$endDate = new \DateTime(end($lessons)->date);
 							break;
 						} else {
-							$dayDifference = (int) $model->course->oldAttributes['day'] - (int) $model->course->day;
 							$addDifference = 7 - $dayDifference;
 							$endDate = $endDate->add(new \DateInterval('P' . $addDifference . 'D'));
 							$modifiedEndDate  = $endDate->format('Y-m-d H:i:s');
