@@ -18,8 +18,6 @@ use \yii2tech\ar\softdelete\SoftDeleteBehavior;
 class Enrolment extends \yii\db\ActiveRecord
 {
 	public $studentIds;
-	public $fromTime;
-	public $rescheduleBeginDate;
 	
 	const PAYMENT_FREQUENCY_FULL = 1;
 	const PAYMENT_FREQUENCY_MONTHLY = 2;
@@ -51,7 +49,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             [['courseId', 'isDeleted'], 'required'],
             [['courseId', 'studentId', 'isDeleted',], 'integer'],
-            [['paymentFrequency', 'fromTime', 'rescheduleBeginDate'], 'safe'],
+            [['paymentFrequency'], 'safe'],
         ];
     }
 
