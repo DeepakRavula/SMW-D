@@ -27,9 +27,8 @@ use kartik\daterange\DateRangePicker;;
     'convertFormat'=>true, 
     'initRangeExpr' => true,
     'pluginOptions' => [
-        'ranges' => [
-            Yii::t('kvdrp', "Today") => ["moment().startOf('day')", "moment()"],
-            Yii::t('kvdrp', "Yesterday") => ["moment().startOf('day').subtract(1,'days')", "moment().endOf('day').subtract(1,'days')"],
+        'autoApply' => true,
+        'ranges' => [            
             Yii::t('kvdrp', "Last {n} Days", ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", "moment()"],
             Yii::t('kvdrp', "Last {n} Days", ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", "moment()"],
             Yii::t('kvdrp', "This Month") => ["moment().startOf('month')", "moment().endOf('month')"],
@@ -38,9 +37,7 @@ use kartik\daterange\DateRangePicker;;
         'locale'=>[        
             'format'=>'d-m-Y'
         ],
-        'opens'=>'left',
-        'applyClass'=>'btn btn-primary',
-        'cancelClass'=>'btn btn-default',
+        'opens'=>'left',        
         ]
 
     ]);
