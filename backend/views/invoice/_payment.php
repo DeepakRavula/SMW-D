@@ -25,7 +25,7 @@ if(! empty($creditPayments)){
 		$results[] = [
 			'date' => $paymentDate->format('d-m-Y'),
 			'paymentMethodName' => $creditPayment->paymentMethod->name,
-			'invoiceNumber' => $debitInvoice->invoice->getInvoiceNumber(),
+			'invoiceNumber' => ! empty($debitInvoice->invoice) ? $debitInvoice->invoice->getInvoiceNumber() : null,
 			'amount' => $creditPayment->amount,
 		];
 	}
