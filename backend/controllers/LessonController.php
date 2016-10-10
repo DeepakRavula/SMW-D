@@ -8,7 +8,6 @@ use common\models\PrivateLesson;
 use common\models\Enrolment;
 use common\models\Program;
 use common\models\Course;
-use common\models\Student;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use common\models\ItemType;
@@ -19,8 +18,6 @@ use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\ArrayHelper;
-use common\models\User;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -382,7 +379,7 @@ class LessonController extends Controller
 			$invoiceLineItem->tax_rate = 0.0;
 			$invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
 			$invoiceLineItem->tax_status = $taxStatus->name;
-			$description = $model->enrolment->program->name . ' for ' . $model->enrolment->student->fullName . ' with ' . $model->teacher->publicIdentity;
+			$description = $model->enrolment->program->name . ' for ' . $model->enrolment->student->fullName . ' with ' . $model->teacher->publicIdentity . ' on ' . $lessonDate->format('M. jS, Y');
             $invoiceLineItem->description = $description;
 			$invoiceLineItem->isRoyalty = true;	
             $invoiceLineItem->save();

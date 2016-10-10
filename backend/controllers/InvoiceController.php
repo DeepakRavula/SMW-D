@@ -18,7 +18,6 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\ItemType;
 use common\models\CreditUsage;
-use common\models\PaymentCheque;
 use common\models\TaxCode;
 use common\models\Location;
 use common\models\TaxStatus;
@@ -366,7 +365,7 @@ class InvoiceController extends Controller {
 				$invoiceLineItem->tax_rate = 0.0;
 				$invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
 				$invoiceLineItem->tax_status = $taxStatus->name;
-				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity;
+				$description = $lesson->enrolment->program->name . ' for ' . $lesson->enrolment->student->fullName . ' with ' . $lesson->teacher->publicIdentity . ' on ' . $actualLessonDate->format('M. jS, Y');
     	        $invoiceLineItem->description = $description;
 				$invoiceLineItem->isRoyalty = true;	
 				$invoiceLineItem->save();
