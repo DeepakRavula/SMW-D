@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\filters\AccessControl;
 use common\models\Program;
+use yii\helpers\Url;
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
@@ -92,8 +93,10 @@ class ScheduleController extends Controller
                 $event['start'] = $start->format('Y-m-d H:i:s');	
                 $end = new \DateTime($event['end']);	
                 $event['end'] = $end->format('Y-m-d H:i:s');
+				$event['url'] = Url::to(['lesson/view', 'id' => $event['id']]);
         }
         unset($event);
+
 
         $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 		
