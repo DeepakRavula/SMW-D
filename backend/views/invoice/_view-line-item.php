@@ -32,22 +32,6 @@ $columns = [
 	],
 	[
         'class'=>'kartik\grid\EditableColumn',
-        'attribute' => 'unit',
-        'refreshGrid' => true,
-        'headerOptions' => ['class' => 'text-center'],
-        'contentOptions' => ['class' => 'text-center'],
-        'enableSorting' => false,
-        'editableOptions'=> function ($model, $key, $index) {
-           return [
-               'header'=>'Quantity',
-               'size'=>'md',
-               'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
-               'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
-           ];
-        }
-    ],
-	[
-        'class'=>'kartik\grid\EditableColumn',
         'attribute' => 'amount',
 		'label' => 'Price',
         'refreshGrid' => true,
@@ -63,33 +47,6 @@ $columns = [
            ];
         }
     ],
-	[
-		'attribute' => 'tax_rate',
-		'headerOptions' => ['class' => 'text-center'],
-		'contentOptions' => ['class' => 'text-center'],
-		'enableSorting' => false,
-	],
-	[
-		'attribute' => 'tax_status',
-		'headerOptions' => ['class' => 'text-center'],
-		'contentOptions' => ['class' => 'text-center'],
-		'enableSorting' => false,
-	],
-	[
-		'attribute' => 'amount',
-		'enableSorting' => false,
-		'value' => function($data) {
-			$amount = null;
-			if ((int) $data->item_type_id === (int) ItemType::TYPE_MISC) {
-				$amount = $data->amount + $data->tax_rate;
-			} else {
-				$amount = $data->amount;
-			}
-			return $amount;
-		},
-		'headerOptions' => ['class' => 'text-right'],
-		'contentOptions' => ['class' => 'text-right'],
-	],
 	[
 		'class' => kartik\grid\ActionColumn::className(),
 		'template' => '{delete-line-item}',

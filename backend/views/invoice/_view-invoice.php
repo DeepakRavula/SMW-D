@@ -1,9 +1,6 @@
 <?php
 use yii\helpers\Html;
 use backend\models\search\InvoiceSearch;
-use common\models\ItemType;
-use common\models\InvoiceLineItem;
-use yii\helpers\Url;
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -90,12 +87,14 @@ use yii\helpers\Url;
               <div class="clearfix"></div>
             </div>
           </div>
+<?php if ((int) $model->type === (int) InvoiceSearch::TYPE_INVOICE) : ?>
 	<div id="add-misc-item" class="col-md-12">
     <div class="row m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>
 	<div class="clearfix"></div>
   </div>
 	</div>
+<?php endif; ?>
 	<?php echo $this->render('_line-item', [
 		'invoiceModel' => $model,
 	]) ?>
@@ -127,7 +126,6 @@ use yii\helpers\Url;
                   </td>
                   <td colspan="2">
                     <table class="table-invoice-childtable">
-			  	<?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
 				    <tr>
                       <td>SubTotal</td>
                       <td><?= $model->subTotal;?></td>
@@ -140,17 +138,14 @@ use yii\helpers\Url;
                       <td>Paid</td>
                       <td><?= $model->invoicePaymentTotal;?></td> 
                     </tr>
-				<?php endif;?>
 				    <tr>
                       <tr>
                       <td><strong>Total</strong></td>
                       <td><strong><?= $model->total;?></strong></td> 
-			  	<?php if((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
                     </tr>
                       <td class="p-t-20">Balance</td>
                       <td class="p-t-20"><?= $model->invoiceBalance;?></td> 
                     </tr>
-				<?php endif;?>
                     </table>
                   </td>
                 </tr>
