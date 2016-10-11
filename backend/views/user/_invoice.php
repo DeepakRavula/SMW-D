@@ -13,11 +13,13 @@ use yii\bootstrap\Tabs;
 <div class="col-md-12">
     <h4 class="pull-left m-r-20">Invoices</h4>
     <?php
-        echo Html::a(
-            Html::tag('i', ' Add', ['class' => 'fa fa-plus-circle']),
-            Url::to(['invoice/blank-invoice','Invoice[customer_id]' => $userModel->id, 'Invoice[type]' => INVOICE::TYPE_INVOICE]), [
-            'class' => 'btn btn-primary btn-sm',
-            ]);
+    echo Html::a(
+        Html::tag('i', ' Add', ['class' => 'fa fa-plus-circle']),
+        Url::to(['invoice/blank-invoice', 'Invoice[customer_id]' => $userModel->id,
+            'Invoice[type]' => INVOICE::TYPE_INVOICE]),
+        [
+        'class' => 'btn btn-primary btn-sm',
+    ]);
     ?>
 </div>
 <div class="clearfix"></div>

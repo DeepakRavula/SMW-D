@@ -61,38 +61,38 @@ class InvoiceController extends Controller {
 	 * @return mixed
 	 */
 
-	public function actionBlankInvoice(){
-        $invoice = new Invoice();
-        $request = Yii::$app->request;
-		$invoiceRequest = $request->get('Invoice');
-        $params = Yii::$app->request->queryParams;
+	public function actionBlankInvoice()
+    {
+        $invoice        = new Invoice();
+        $request        = Yii::$app->request;
+        $invoiceRequest = $request->get('Invoice');
         if (empty($invoiceRequest['customer_id'])) {
             $invoice->user_id = Invoice::USER_UNASSINGED;
-            $invoice->type = Invoice::TYPE_INVOICE;
+            $invoice->type    = Invoice::TYPE_INVOICE;
         }
-        if (! empty($invoiceRequest['customer_id'])) {
+        if (!empty($invoiceRequest['customer_id'])) {
             $invoice->user_id = $invoiceRequest['customer_id'];
-            $invoice->type = $invoiceRequest['type'];
+            $invoice->type    = $invoiceRequest['type'];
         }
-		$location_id = Yii::$app->session->get('location_id'); 
-		$invoice->location_id = $location_id;
-		$lastInvoice = Invoice::lastInvoice($location_id);
-		if (empty($lastInvoice)) {
-			$invoiceNumber = 1;
-		} else {
-			$invoiceNumber = $lastInvoice->invoice_number + 1;
-		}
-		$invoice->invoice_number = $invoiceNumber;
-		$invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
-		$invoice->subTotal = 0.0;
-		$invoice->tax = 0.0;
-		$invoice->total = 0.0;
-		$invoice->status = Invoice::STATUS_PAID;
-		$invoice->save();
-		return $this->redirect(['view', 'id' => $invoice->id]);
-			
-	}
-	public function actionView($id) {	
+        $location_id          = Yii::$app->session->get('location_id');
+        $invoice->location_id = $location_id;
+        $lastInvoice          = Invoice::lastInvoice($location_id);
+        if (empty($lastInvoice)) {
+            $invoiceNumber = 1;
+        } else {
+            $invoiceNumber = $lastInvoice->invoice_number + 1;
+        }
+        $invoice->invoice_number = $invoiceNumber;
+        $invoice->date           = (new \DateTime())->format('Y-m-d H:i:s');
+        $invoice->subTotal       = 0.0;
+        $invoice->tax            = 0.0;
+        $invoice->total          = 0.0;
+        $invoice->status         = Invoice::STATUS_PAID;
+        $invoice->save();
+        return $this->redirect(['view', 'id' => $invoice->id]);
+    }
+
+    public function actionView($id) {
 		$model = $this->findModel($id);
 		$invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
 		$invoiceLineItemsDataProvider = new ActiveDataProvider([
