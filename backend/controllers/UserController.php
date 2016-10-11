@@ -311,43 +311,6 @@ class UserController extends Controller {
 			'query' => $openingBalanceQuery, 
 		]);
 	
-		$invoiceLineItemModel = new InvoiceLineItem();
-		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
-			$invoice = new Invoice();
-			$lastInvoice = Invoice::lastInvoice($locationId);
-
-			if (empty($lastInvoice)) {
-				$invoiceNumber = 1;
-			} else {
-				$invoiceNumber = $lastInvoice->invoice_number + 1;
-			}
-			$invoice->user_id = $model->id;
-			$invoice->invoice_number = $invoiceNumber;
-			$invoice->location_id = $locationId;
-			$invoice->type = Invoice::TYPE_INVOICE;
-			$invoice->status = Invoice::STATUS_OWING;
-			$invoice->date = (new \DateTime())->format('Y-m-d');
-			$invoice->save();
-			
-			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
-			$invoiceLineItemModel->invoice_id = $invoice->id; 
-			$invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
-			$taxStatus = TaxStatus::findOne(['id' => $invoiceLineItemModel->tax_status]);
-			$invoiceLineItemModel->tax_status = $taxStatus->name;
-			$invoiceLineItemModel->save();
-
-			$invoice = Invoice::findOne(['id' => $invoice->id]);
-			$invoice->subTotal += $invoiceLineItemModel->amount;
-			$invoice->tax += $invoiceLineItemModel->tax_rate;
-			$invoice->total = $invoice->subTotal + $invoice->tax ;
-			$invoice->save();
-
-			Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Misc has been added successfully'
-			]);
-			return $this->redirect(['invoice/view','id' => $invoice->id, '#' => 'invoice']);
-		}
 		return $this->render('view', [
 			'student' => new Student(),
 			'dataProvider' => $dataProvider,
