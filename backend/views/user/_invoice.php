@@ -15,7 +15,7 @@ use yii\bootstrap\Tabs;
     <?php
         echo Html::a(
             Html::tag('i', ' Add', ['class' => 'fa fa-plus-circle']),
-            Url::to(['blank-invoice','Invoice[customer_id]' => $userModel->id, 'Invoice[type]' => INVOICE::TYPE_INVOICE]), [
+            Url::to(['invoice/blank-invoice','Invoice[customer_id]' => $userModel->id, 'Invoice[type]' => INVOICE::TYPE_INVOICE]), [
             'class' => 'btn btn-primary btn-sm',
             ]);
     ?>

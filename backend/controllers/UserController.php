@@ -276,40 +276,7 @@ class UserController extends Controller {
 		]);
 	}
 
-    public function actionBlankInvoice()
-    {
-        $request = Yii::$app->request;
-		$invoiceRequest = $request->get('Invoice');
-        $params = Yii::$app->request->queryParams;
-        if( ! empty($params['Invoice']['customer_id'])){
-            $params['LessonSearch']['customerId'] = $params['Invoice']['customer_id'];
-        }
-        if( ! empty($params['Invoice']['type'])){
-            $params['LessonSearch']['invoiceType'] = $params['Invoice']['type'];
-        }
-        
-        $invoice = new Invoice();
-		$invoice->user_id = $invoiceRequest['customer_id'];
-		$location_id = Yii::$app->session->get('location_id');
-		$invoice->location_id = $location_id;
-		$lastInvoice = Invoice::lastInvoice($location_id);
-		if (empty($lastInvoice)) {
-			$invoiceNumber = 1;
-		} else {
-			$invoiceNumber = $lastInvoice->invoice_number + 1;
-		}
-		$invoice->invoice_number = $invoiceNumber;
-		$invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
-		$invoice->type = $invoiceRequest['type'];
-		$invoice->subTotal = 0.0;
-		$invoice->tax = 0.0;
-		$invoice->total = 0.0;
-		$invoice->status = Invoice::STATUS_PAID;
-		$invoice->save();
-		return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-    }
-    
-	/**
+    /**
 	 * Creates a new User model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 * @return mixed

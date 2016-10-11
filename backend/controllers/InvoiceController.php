@@ -62,8 +62,18 @@ class InvoiceController extends Controller {
 	 */
 
 	public function actionBlankInvoice(){
-		$invoice = new Invoice();
-		$invoice->user_id = Invoice::USER_UNASSINGED;
+        $invoice = new Invoice();
+        $request = Yii::$app->request;
+		$invoiceRequest = $request->get('Invoice');
+        $params = Yii::$app->request->queryParams;
+        if (empty($invoiceRequest['customer_id'])) {
+            $invoice->user_id = Invoice::USER_UNASSINGED;
+            $invoice->type = Invoice::TYPE_INVOICE;
+        }
+        if (! empty($invoiceRequest['customer_id'])) {
+            $invoice->user_id = $invoiceRequest['customer_id'];
+            $invoice->type = $invoiceRequest['type'];
+        }
 		$location_id = Yii::$app->session->get('location_id'); 
 		$invoice->location_id = $location_id;
 		$lastInvoice = Invoice::lastInvoice($location_id);
@@ -74,7 +84,6 @@ class InvoiceController extends Controller {
 		}
 		$invoice->invoice_number = $invoiceNumber;
 		$invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
-		$invoice->type = Invoice::TYPE_INVOICE;
 		$invoice->subTotal = 0.0;
 		$invoice->tax = 0.0;
 		$invoice->total = 0.0;
