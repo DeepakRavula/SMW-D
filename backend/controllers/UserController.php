@@ -223,66 +223,8 @@ class UserController extends Controller {
 			'query' => payment::find()
 				->where(['user_id' => $model->id])
 		]);
- 		$paymentModel = new Payment();
-		if ($paymentModel->load(Yii::$app->request->post())) {
-			$lastInvoice = Invoice::lastInvoice($locationId);
 
-			if (empty($lastInvoice)) {
-				$invoiceNumber = 1;
-			} else {
-				$invoiceNumber = $lastInvoice->invoice_number + 1;
-			}
-			$invoice = new Invoice();
-			$invoice->user_id = $model->id;
-			$invoice->location_id = $locationId;
-			$invoice->invoice_number = $invoiceNumber;
-			$invoice->type = Invoice::TYPE_INVOICE;
-			if($paymentModel->amount < 0){
-				$invoice->status = Invoice::STATUS_CREDIT;
-				$invoice->balance = $paymentModel->amount; 
-			} else {
-				$invoice->status = Invoice::STATUS_OWING;
-			}
-			$invoice->date = (new \DateTime())->format('Y-m-d');
-			$invoice->save();
-
-            $invoiceLineItem = new InvoiceLineItem();
-            $invoiceLineItem->invoice_id = $invoice->id;
-            $invoiceLineItem->item_id = Invoice::ITEM_TYPE_OPENING_BALANCE;
-            $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
-			$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-			$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-			$invoiceLineItem->tax_rate = 0.00;
-			$invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-			$invoiceLineItem->tax_status = $taxStatus->name;
-            $invoiceLineItem->description = 'Opening Balance';
-            $invoiceLineItem->unit = 1;
-            $invoiceLineItem->amount = abs($paymentModel->amount);
-            $invoiceLineItem->save();
-			
-            $invoice = Invoice::findOne(['id' => $invoice->id]);
-            $invoice->subTotal = $invoiceLineItem->amount;
-            $invoice->tax = $invoiceLineItem->tax_rate;
-            $invoice->total = $invoice->subTotal + $invoice->tax;
-            $invoice->save();
-			
-			if($paymentModel->amount < 0){
-				$paymentModel->user_id = $model->id;
-				$paymentModel->invoiceId = $invoice->id;
-				$paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
-				$paymentModel->amount = abs($paymentModel->amount);
-				$date = \DateTime::createFromFormat('d-m-Y', $paymentModel->date);
-				$paymentModel->date = $date->format('Y-m-d H:i:s');
-				$paymentModel->save();
-			}
-			Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Invoice has been created successfully'
-			]);
-			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-		}
-
-		$openingBalanceCredit = Invoice::find()
+        $openingBalanceCredit = Invoice::find()
 				->joinWith(['lineItems' => function($query){
 					$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
 				}])
@@ -334,6 +276,39 @@ class UserController extends Controller {
 		]);
 	}
 
+    public function actionBlankInvoice()
+    {
+        $request = Yii::$app->request;
+		$invoiceRequest = $request->get('Invoice');
+        $params = Yii::$app->request->queryParams;
+        if( ! empty($params['Invoice']['customer_id'])){
+            $params['LessonSearch']['customerId'] = $params['Invoice']['customer_id'];
+        }
+        if( ! empty($params['Invoice']['type'])){
+            $params['LessonSearch']['invoiceType'] = $params['Invoice']['type'];
+        }
+        
+        $invoice = new Invoice();
+		$invoice->user_id = $invoiceRequest['customer_id'];
+		$location_id = Yii::$app->session->get('location_id');
+		$invoice->location_id = $location_id;
+		$lastInvoice = Invoice::lastInvoice($location_id);
+		if (empty($lastInvoice)) {
+			$invoiceNumber = 1;
+		} else {
+			$invoiceNumber = $lastInvoice->invoice_number + 1;
+		}
+		$invoice->invoice_number = $invoiceNumber;
+		$invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
+		$invoice->type = $invoiceRequest['type'];
+		$invoice->subTotal = 0.0;
+		$invoice->tax = 0.0;
+		$invoice->total = 0.0;
+		$invoice->status = Invoice::STATUS_PAID;
+		$invoice->save();
+		return $this->redirect(['invoice/view', 'id' => $invoice->id]);
+    }
+    
 	/**
 	 * Creates a new User model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
