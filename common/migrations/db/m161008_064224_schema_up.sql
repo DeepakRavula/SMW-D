@@ -30,37 +30,6 @@ CREATE TABLE `blog` (
   `content` text COLLATE utf8_unicode_ci NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 SET NAMES utf8;
-
--- ----------------------------
---  Table structure for `address`
--- ----------------------------
-DROP TABLE IF EXISTS `address`;
-CREATE TABLE `address` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `label` varchar(32) NOT NULL,
-  `address` varchar(64) DEFAULT NULL,
-  `city_id` int(11) NOT NULL,
-  `province_id` int(11) NOT NULL,
-  `postal_code` varchar(16) DEFAULT NULL,
-  `country_id` int(11) NOT NULL,
-  `is_primary` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `city_id` (`city_id`),
-  KEY `city_id_2` (`city_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- ----------------------------
---  Table structure for `blog`
--- ----------------------------
-DROP TABLE IF EXISTS `blog`;
-CREATE TABLE `blog` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) unsigned NOT NULL,
-  `title` text COLLATE utf8_unicode_ci NOT NULL,
-  `content` text COLLATE utf8_unicode_ci NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
