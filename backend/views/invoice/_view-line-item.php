@@ -1,6 +1,5 @@
 <?php
 use yii\helpers\Html;
-use common\models\ItemType;
 use yii\helpers\Url;
 ?>
 <?php
@@ -60,6 +59,12 @@ $columns = [
 <?= \kartik\grid\GridView::widget([
 	'dataProvider' => $invoiceLineItemsDataProvider,
 	'pjax' => true,
+	'pjaxSettings' =>[
+        'neverTimeout'=>true,
+        'options'=>[
+            'id'=>'line-item-listing',
+        ]
+    ],
 	'columns' => $columns,
 	'responsive' => false
 ]); ?>

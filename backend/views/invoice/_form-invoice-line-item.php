@@ -15,7 +15,7 @@ use yii\helpers\Url;
 <div id="invoice-line-item-modal" class="invoice-line-item-form">
     <?php $form = ActiveForm::begin([
 		'id' => 'add-misc-item-form',
-		'action' => Url::to(['/invoice/add-misc', 'id' => $invoiceModel->id])
+		'action' => Url::to(['invoice/add-misc', 'id' => $invoiceModel->id]),
 	]); ?>
  	<div class="row">
         <div class="col-xs-8">
@@ -59,7 +59,6 @@ use yii\helpers\Url;
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
-	
 	$('#invoicelineitem-tax_status').change(function(){
 		var taxStatusId = $(this).val();
 		if(taxStatusId && parseInt(taxStatusId) === 2){
@@ -92,5 +91,29 @@ $(document).ready(function() {
 			});	
 		}
 	});
+});
+</script>
+<script>
+$(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
+	$.ajax({
+		url    : $('#add-misc-item-form').attr('action'),
+		type   : 'post',
+		data   : $('#add-misc-item-form').serialize(),
+		success: function(response)
+		{
+		   if(response.status == 'true')
+		   {
+				$.pjax.reload({container : '#line-item-listing'});
+				$('#invoice-line-item-modal').modal('hide');
+			}
+			else
+			{
+			 	$('#add-misc-item-form').yiiActiveForm('updateMessages',
+				   response.errors
+				, true);
+			}
+		}
+		});
+		return false;
 });
 </script>

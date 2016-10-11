@@ -221,25 +221,35 @@ class InvoiceController extends Controller {
 		$model = $this->findModel($id);
 		$invoiceLineItemModel = new InvoiceLineItem();
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
+			\Yii::$app->response->format = Response::FORMAT_JSON;
 			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
 			$invoiceLineItemModel->invoice_id = $model->id; 
 			$invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
 			$taxStatus = TaxStatus::findOne(['id' => $invoiceLineItemModel->tax_status]);
 			$invoiceLineItemModel->tax_status = $taxStatus->name;
-			$invoiceLineItemModel->save();
-
-			$model->subTotal += $invoiceLineItemModel->amount;
-			$model->tax += $invoiceLineItemModel->tax_rate;
-			$model->total = $model->subTotal + $model->tax;
-			$model->status = Invoice::STATUS_OWING;
-			$model->save();
-
+			if ($invoiceLineItemModel->validate()) {
+				$invoiceLineItemModel->save();
+				$model->subTotal += $invoiceLineItemModel->amount;
+				$model->tax += $invoiceLineItemModel->tax_rate;
+				$model->total	 = $model->subTotal + $model->tax;
+				$model->status	 = Invoice::STATUS_OWING;
+				$model->save();
+				return [
+					'status' => 'true',
+					'message' => 'Misc has been added successfully',
+				];
+			} else {
+				$invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);
+				return [
+					'status' => 'false',
+					'errors' => $invoiceLineItemModel->getErrors()
+				];
+			}
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Misc has been added successfully'
 			]);
-			return $this->redirect(['view', 'id' => $model->id]);
-		}	
+		} 
 	}
 	
 	public function actionComputeTax() {
