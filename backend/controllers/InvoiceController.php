@@ -11,13 +11,11 @@ use common\models\User;
 use common\models\UserProfile;
 use common\models\Payment;
 use common\models\Lesson;
-use common\models\PaymentMethod;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\ItemType;
-use common\models\CreditUsage;
 use common\models\TaxCode;
 use common\models\Location;
 use common\models\TaxStatus;
@@ -122,7 +120,6 @@ class InvoiceController extends Controller {
 			'query' => $invoicePayments,
 		]);
 
-		$paymentModel = new Payment();
         if(! empty($model->user->userProfile->user_id)){
             $userModel = UserProfile::findOne(['user_id' => $customer->id]); 
         }else{
@@ -158,68 +155,6 @@ class InvoiceController extends Controller {
                 }                
             }
         }
-		$transaction = \Yii::$app->db->beginTransaction();
-		if ($paymentModel->load(Yii::$app->request->post())) {
-			try {
-				if((int) $paymentModel->payment_method_id === (int) PaymentMethod::TYPE_APPLY_CREDIT){
-					$paymentModel->setScenario('apply-credit');
-				}
-				$paymentModelErrors = ActiveForm::validate($paymentModel);
-				if(Yii::$app->request->isAjax){
-					Yii::$app->response->format = Response::FORMAT_JSON;
-					return $paymentModelErrors;
-				}
-				$paymentMethodId = $paymentModel->payment_method_id;
-				$paymentModel->user_id = $model->user_id;
-				$currentDate = new \DateTime();
-				$paymentModel->date = $currentDate->format('Y-m-d H:i:s');
-				$paymentModel->amount = $paymentModel->amount;
-				if((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_APPLY_CREDIT){
-					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-					$paymentModel->reference = $paymentModel->sourceId;
-				}
-				$paymentModel->invoiceId = $model->id;
-				$paymentModel->save();
-
-				if($model->total < $paymentModel->amount){
-					$model->balance =  $model->total - $paymentModel->amount;
-					$model->save();
-				}else{
-					$model->balance =  $model->invoiceBalance;
-					$model->save();
-				}
-
-				$creditPaymentId = $paymentModel->id;
-				if((int) $paymentMethodId === PaymentMethod::TYPE_APPLY_CREDIT){
-					$paymentModel->id = null;
-					$paymentModel->isNewRecord = true;
-					$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-					$paymentModel->invoiceId = $paymentModel->sourceId;
-					$paymentModel->reference = $model->id;
-					$paymentModel->save();
-
-					$debitPaymentId = $paymentModel->id;
-					$creditUsageModel = new CreditUsage();
-					$creditUsageModel->credit_payment_id = $creditPaymentId;
-					$creditUsageModel->debit_payment_id = $debitPaymentId;
-					$creditUsageModel->save();
-
-					if($paymentModel->sourceType != 'pro_forma_invoice'){
-						$invoiceModel = $this->findModel($paymentModel->sourceId);
-						$invoiceModel->balance = $invoiceModel->balance + abs($paymentModel->amount);
-						$invoiceModel->save();
-					}
-				}
-				$transaction->commit();
-			} catch (\Exception $e) {
-				$transaction->rollBack();
-			}
-			Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Payment has been recorded successfully'
-			]);
-			return $this->redirect(['view', 'id' => $model->id, '#' => 'payment']);
-		}
 		
         return $this->render('view', [
 					'model' => $model,

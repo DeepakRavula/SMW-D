@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -12,6 +13,7 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin([
 		'id' => 'apply-credit-form',
 		'enableAjaxValidation' => true,
+		'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id])
 	]); ?>
  	<div class="row">
         <div class="col-xs-3">
