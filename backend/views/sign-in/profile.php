@@ -15,11 +15,6 @@ $this->title = Yii::t('backend', 'Edit Profile')
 
     <?php $form = ActiveForm::begin(); ?>
     <div class="row-fluid">
-        <div class="col-md-2 flex">
-        <?php echo $form->field($model, 'picture')->widget(\trntv\filekit\widget\Upload::classname(), [
-            'url'=>['avatar-upload']
-        ]) ?>
-        </div>
         <div class="col-md-3">
             <?php echo $form->field($model, 'firstname')->textInput(['maxlength' => 255]) ?>
         </div>

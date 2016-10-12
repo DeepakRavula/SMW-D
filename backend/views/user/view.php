@@ -107,7 +107,8 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$openingBalanceContent = $this->render('_opening-balance',[
 			'openingBalanceDataProvider' => $openingBalanceDataProvider,
 			'openingBalanceCredit' => $openingBalanceCredit,
-			'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel
+			'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
+			'model' => $model,
 		]);
         
         $unscheduledLessonContent = $this->render('_teacher-unscheduled-lesson',[

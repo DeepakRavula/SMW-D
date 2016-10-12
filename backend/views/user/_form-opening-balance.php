@@ -2,9 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;
-use common\models\PaymentMethod;
-
+use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -13,7 +11,10 @@ use common\models\PaymentMethod;
 
 <div class="form-well p-l-20 payments-form p-t-15 m-t-20">
 	<h4>Add new opening balance</h4>
-	<?php $form = ActiveForm::begin(); ?>
+	<?php $form = ActiveForm::begin([
+		'id' => 'opening-balance',
+		'action' => Url::to(['user/add-opening-balance', 'id' => $userModel->id])
+	]); ?>
 	<div class="row">
         <div class="col-xs-4">
 			<?php echo $form->field($model, 'amount')->textInput(['placeholder' => 'Amount'])->label(false); ?>
