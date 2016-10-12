@@ -181,6 +181,20 @@ class Invoice extends \yii\db\ActiveRecord
 		}
 		return $status;
     }
+
+    public function getStatusClass(){			
+        if ((int) $this->type === self::TYPE_INVOICE) {
+			if ((int) $this->status === (int)self::STATUS_PAID) {
+				$statusClass = ['class' => 'bg-green'];
+			} else {
+				$statusClass = ['class' => 'bg-gray'];
+			}
+		} else if ((int) $this->type === self::TYPE_PRO_FORMA_INVOICE) {
+			$statusClass = ['class' => 'bg-white'];
+        }
+		
+		return $statusClass;
+    }
   
 	public function getInvoiceNumber(){
 		$invoiceNumber = str_pad($this->invoice_number, 5, 0, STR_PAD_LEFT);
