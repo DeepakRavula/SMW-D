@@ -12,7 +12,6 @@ use yii\helpers\Url;
 <div class="form-well p-l-20 payments-form p-t-15 m-t-20">
 	<h4>Add new opening balance</h4>
 	<?php $form = ActiveForm::begin([
-		'id' => 'opening-balance',
 		'action' => Url::to(['user/add-opening-balance', 'id' => $userModel->id])
 	]); ?>
 	<div class="row">
