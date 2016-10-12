@@ -245,9 +245,9 @@ class InvoiceController extends Controller {
 				$model->subTotal += $invoiceLineItemModel->amount;
 				$model->tax += $invoiceLineItemModel->tax_rate;
 				$model->total	 = $model->subTotal + $model->tax;
-				$model->status	 = Invoice::STATUS_OWING;
 				$model->save();
 				return [
+					'invoiceStatus' => $model->getStatus(),
 					'status' => 'true',
 					'message' => 'Misc has been added successfully',
 				];

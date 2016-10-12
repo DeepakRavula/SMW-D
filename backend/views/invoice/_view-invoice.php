@@ -80,8 +80,8 @@ use backend\models\search\InvoiceSearch;
               <div class="col-md-2 pull-right">Date:</div>
               <div class="clearfix"></div>
           </div>
-          <div class="row-fluid text-gray">
-				  <div class="col-md-4 pull-right text-right p-r-0">
+          <div  class="row-fluid text-gray">
+				  <div id="invoice-status" class="col-md-4 pull-right text-right p-r-0">
 				  <?= (int) $model->type === InvoiceSearch::TYPE_INVOICE ? $model->getStatus() : 'None';?></div>
 				  <div class="col-md-2 pull-right">Status:</div>
               <div class="clearfix"></div>
@@ -168,7 +168,7 @@ use backend\models\search\InvoiceSearch;
 <script>
 $(document).ready(function() {
 	$('#add-misc-item').click(function(){
-		$('#invoice-line-item-modal').modal('show');
+	$('#invoice-line-item-modal').modal('show');
   		return false;
   });
   });

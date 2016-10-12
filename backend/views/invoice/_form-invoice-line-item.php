@@ -98,12 +98,14 @@ $(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
 	$.ajax({
 		url    : $('#add-misc-item-form').attr('action'),
 		type   : 'post',
+		dataType: "json",
 		data   : $('#add-misc-item-form').serialize(),
 		success: function(response)
 		{
 		   if(response.status == 'true')
 		   {
 				$.pjax.reload({container : '#line-item-listing'});
+				$('#invoice-status').text(response.invoiceStatus);
 				$('#invoice-line-item-modal').modal('hide');
 			}
 			else
