@@ -58,6 +58,9 @@ $this->params['breadcrumbs'][] = $this->title;
 					}
 					return $status;
                 },
+				'contentOptions' => function($data) {
+                    return $data->getStatusClass();
+                },
 			],
 			[
 				'value' => function($data) {
@@ -70,7 +73,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 	}
 				},
 				'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right'],
+                'contentOptions' => function($data) {
+                    return $data->getStatusClass();
+                },
             	'enableSorting' => false,
 			],
 			[
