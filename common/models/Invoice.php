@@ -185,12 +185,14 @@ class Invoice extends \yii\db\ActiveRecord
     public function getStatusClass(){			
         if ((int) $this->type === self::TYPE_INVOICE) {
 			if ((int) $this->status === (int)self::STATUS_PAID) {
-				$statusClass = ['class' => 'bg-green'];
+				$statusClass = ['class' => 'invoice-paid'];
+			} else if ((int) $this->status === (int)self::STATUS_OWING) {
+				$statusClass = ['class' => 'invoice-owing'];
 			} else {
-				$statusClass = ['class' => 'bg-gray'];
+				$statusClass = ['class' => 'invoice-credit'];
 			}
 		} else if ((int) $this->type === self::TYPE_PRO_FORMA_INVOICE) {
-			$statusClass = ['class' => 'bg-white'];
+			$statusClass = ['class' => 'proforma-invoice'];
         }
 		
 		return $statusClass;
