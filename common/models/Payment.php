@@ -43,7 +43,6 @@ class Payment extends \yii\db\ActiveRecord {
 		return [
 			[['payment_method_id', 'amount'], 'required'],
 			[['user_id', 'payment_method_id'], 'integer'],
-			[['amount'], 'number', 'min' => 1, 'message' => 'Please choose valid amount'],
 			[['user_id', 'date', 'sourceType','sourceId', 'reference', 'credit'],'safe'],
 			[['amount'], 'validateLessThanCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
 		];
