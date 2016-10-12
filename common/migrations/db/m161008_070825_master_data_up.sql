@@ -99,4 +99,18 @@ BEGIN;
 insert  into `location`(`id`,`name`,`address`,`phone_number`,`city_id`,`province_id`,`postal_code`,`country_id`,`from_time`,`to_time`,`slug`) values (1,'Arcadia Corporate','205 Marycroft Ave., Unit 6, Woodbridge','905-254-3424',1,1,'L4L 5X8',1,'08:00:00','22:15:00','arcadia-corporate'),(2,'Newmarket','1670 Bayview Ave. Unit B102-105, Newmarket','417-254-3425',1,1,'L3X 1W1',1,'09:00:00','22:15:00','newmarket'),(3,'South Brampton','16700 Bayview Ave. Unit B102-105, Newmarket','(905)254-3424',1,1,'L3X 1W1',1,'06:00:00','22:15:00','south-brampton'),(4,'Bolton','12 Parr Blvd., Unit 7 & 8, Bolton','805-254-3424',1,1,'L7E 4H1',1,'07:30:00','22:15:00','bolton'),(5,'North Brampton','9960 McVean Rd., Unit 4, Brampton','705-254-3424',1,1,'L6P 2S5',1,'08:30:00','22:15:00','north-brampton'),(6,'West Brampton','10625 Creditview Rd., Unit 3-C, Brampton','(678) 254-3424',1,1,'L7A 3A4',1,'10:00:00','22:15:00','west-brampton'),(7,'Maple','2620 Rutherford Rd., Unit 5,6,7, Vibrant Square, Maple','905-254-9673',1,1,'L4K 0H1',1,'06:00:00','22:15:00','maple'),(8,'Richmond Hill','10909 Yonge St., Unit 8, Richmond Hill','978-254-3424',1,1,'L4C 3E3',1,'07:00:00','22:15:00','richmond-hill'),(9,'Woodbridge','205 Marycroft Ave., Unit 6, Woodbridge','587-254-3424',1,1,'L4L 5X8',1,'08:00:00','22:15:00','woodbridge');
 COMMIT;
 
+-- ----------------------------
+--  Master rows of `user`
+-- ----------------------------
+BEGIN;
+insert  into `user`(`id`,`username`,`auth_key`,`access_token`,`password_hash`,`oauth_client`,`oauth_client_user_id`,`email`,`status`,`created_at`,`updated_at`,`logged_at`) values (1,'webmaster','k8K70rZiG4h4Q226Yld4q6qullXDHRED','QuYNM0UsI1rWWWr2ru6Zy6pJAOHP4i1XYL5havfM','$2y$13$0TRiIVj0s9zHE311.iUG3OHu0CliHOs2pAzsW6YA4wE0MWE.vSoZ.',NULL,NULL,'senguttuvang@gmail.com',2,1461825793,1467730273,1476176094);
+COMMIT;
+
+-- ----------------------------
+--  Master rows of `user_profile`
+-- ----------------------------
+BEGIN;
+insert  into `user_profile`(`user_id`,`firstname`,`middlename`,`lastname`,`notes`,`avatar_path`,`avatar_base_url`,`locale`,`gender`) values (1,'Kristin','','Green','',NULL,NULL,'en-US',1);
+COMMIT;
+
 SET FOREIGN_KEY_CHECKS = 1;
