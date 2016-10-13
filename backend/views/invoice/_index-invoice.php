@@ -61,7 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				'contentOptions' => function($data) {
                     $options = [];
                     $type = (int) $data->type === Invoice::TYPE_INVOICE ? 'invoice' : 'pro-forma-invoice';
-                    Html::addCssClass($options, strtolower($type . '-' .$data->getStatus()));                    
+                    Html::addCssClass($options, $type . '-' . strtolower($data->getStatus()));                    
                     return $options;
                 },
 			],
@@ -80,7 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $options = [];
                     $type = (int) $data->type === Invoice::TYPE_INVOICE ? 'invoice' : 'pro-forma-invoice';
                     Html::addCssClass($options, 'text-right');
-                    Html::addCssClass($options, strtolower($type . '-' .$data->getStatus()));                    
+                    Html::addCssClass($options, $type . '-' . strtolower($data->getStatus()));                    
                     return $options;
                 },
             	'enableSorting' => false,
