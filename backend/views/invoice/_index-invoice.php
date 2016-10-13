@@ -59,7 +59,8 @@ $this->params['breadcrumbs'][] = $this->title;
 					return $status;
                 },
 				'contentOptions' => function($data) {
-                    return $data->getStatusClass();
+                    $type = (int) $data->type === Invoice::TYPE_INVOICE ? 'Invoice' : 'Pro-forma-invoice';
+                    return ['class' => $type . '-' . $data->getStatus()];
                 },
 			],
 			[
@@ -74,7 +75,8 @@ $this->params['breadcrumbs'][] = $this->title;
 				},
 				'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => function($data) {
-                    return $data->getStatusClass();
+                    $type = (int) $data->type === Invoice::TYPE_INVOICE ? 'Invoice' : 'Pro-forma-invoice';
+                    return ['class' => 'text-right' . ' ' . $type . '-' . $data->getStatus()];
                 },
             	'enableSorting' => false,
 			],
