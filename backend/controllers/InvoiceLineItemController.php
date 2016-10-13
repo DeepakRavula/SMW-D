@@ -6,8 +6,7 @@ use Yii;
 use common\models\InvoiceLineItem;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use common\models\Invoice;
-use common\models\ItemType;
+use yii\web\NotFoundHttpException;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -54,6 +53,38 @@ class InvoiceLineItemController extends Controller {
 				'message' => ''
 			];
 			return $result;
+		}
+	}
+
+	public function actionDelete($id){
+		$model = $this->findModel($id);
+		$model->invoice->subTotal -= $model->amount;
+		$model->invoice->tax -= $model->tax_rate;
+		$model->invoice->total = $model->invoice->subTotal + $model->invoice->tax;
+		$model->invoice->save();
+		$model->delete();
+		Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Line Item has been deleted successfully'
+			]);
+		return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
+	}
+
+	protected function findModel($id) {
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
+		$model = InvoiceLineItem::find()
+				->joinWith(['invoice' => function($query) use($locationId) {
+					$query->where(['location_id' => $locationId]);
+				}])
+				->where([
+					'invoice_line_item.id' => $id,
+				])
+				->one();
+		if ($model !== null) {
+			return $model;
+		} else {
+			throw new NotFoundHttpException('The requested page does not exist.');
 		}
 	}
 }

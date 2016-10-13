@@ -485,21 +485,5 @@ class InvoiceController extends Controller {
 		}
 		return $this->redirect(['view', 'id' => $model->id]);
 	}
-
-	public function actionDeleteLineItem($id, $invoiceId){
-		$lineItemModel = InvoiceLineItem::findOne(['id' => $id]);
-		$invoiceModel = Invoice::findOne(['id' => $invoiceId]);
-		$invoiceModel->subTotal -= $lineItemModel->amount;
-		$invoiceModel->tax -= $lineItemModel->tax_rate;
-		$invoiceModel->total = $invoiceModel->subTotal + $invoiceModel->tax;
-		$invoiceModel->save();
-		$lineItemModel->delete();
-		Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Line Item has been deleted successfully' 
-			]);	
-		return $this->redirect(['view', 'id' => $invoiceId]);	
-	}
-    
 }
 				

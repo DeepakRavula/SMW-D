@@ -52,10 +52,15 @@ $columns = [
     ],
 	[
 		'class' => kartik\grid\ActionColumn::className(),
-		'template' => '{delete-line-item}',
+		'template' => '{delete}',
 		'buttons' => [
-			'delete-line-item' => function ($url, $model, $key) {
-			  return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-line-item', 'id'=>$model->id, 'invoiceId' => $model->invoice->id]);
+			'delete' => function ($url, $model, $key) {
+			  return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['invoice-line-item/delete', 'id' => $model->id], [
+		  'data' => [
+			'confirm' => 'Are you sure you want to delete this item?',
+			'method' => 'post',
+		],
+			  ]);
 			},
 		]
 	]
