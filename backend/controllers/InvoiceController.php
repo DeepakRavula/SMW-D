@@ -166,10 +166,11 @@ class InvoiceController extends Controller {
 	}
 
 	public function actionAddMisc($id) {
+		$response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
 		$model = $this->findModel($id);
 		$invoiceLineItemModel = new InvoiceLineItem();
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
-			\Yii::$app->response->format = Response::FORMAT_JSON;
 			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
 			$invoiceLineItemModel->invoice_id = $model->id; 
 			$invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
@@ -199,9 +200,25 @@ class InvoiceController extends Controller {
 			]);
 		} 
 	}
-	
+
+	public function actionFetchSummaryAndStatus($id)
+	{
+		$response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+		$model						 = $this->findModel($id);
+		$summary					 = $this->renderPartial('_view-bottom-summary', [
+			'model' => $model,
+		]);
+		$status						 = $model->getStatus();
+		return [
+			'summary' => $summary,
+			'status' => $status
+		];
+	}
+
 	public function actionComputeTax() {
-		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		$response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
         $locationId = Yii::$app->session->get('location_id');
 		$locationModel = Location::findOne(['id' => $locationId]);
         $today = (new \DateTime())->format('Y-m-d H:i:s');

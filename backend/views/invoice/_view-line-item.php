@@ -43,6 +43,10 @@ $columns = [
                'size'=>'md',
                'inputType'=>\kartik\editable\Editable::INPUT_TEXT,
                'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+               'pluginEvents' => [
+                    'editableSuccess' => "invoice.onEditableGridSuccess",
+                ],
+
            ];
         }
     ],

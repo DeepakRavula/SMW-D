@@ -1,6 +1,8 @@
 <?php
 use yii\helpers\Html;
 use backend\models\search\InvoiceSearch;
+use yii\helpers\Url;
+
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -125,27 +127,11 @@ use backend\models\search\InvoiceSearch;
                     <?php endif;?>
                   </td>
                   <td colspan="2">
-                    <table class="table-invoice-childtable">
-				    <tr>
-                      <td>SubTotal</td>
-                      <td><?= $model->subTotal;?></td>
-                    </tr> 
-                     <tr>
-                      <td>Tax</td>
-                      <td><?= $model->tax;?></td>
-                    </tr>
-					<tr>
-                      <td>Paid</td>
-                      <td><?= $model->invoicePaymentTotal;?></td> 
-                    </tr>
-				    <tr>
-                      <tr>
-                      <td><strong>Total</strong></td>
-                      <td><strong><?= $model->total;?></strong></td> 
-                    </tr>
-                      <td class="p-t-20">Balance</td>
-                      <td class="p-t-20"><?= $model->invoiceBalance;?></td> 
-                    </tr>
+                    <table id="invoice-summary-section" class="table-invoice-childtable">
+					<?php
+						echo $this->render('_view-bottom-summary', [
+							'model' => $model,
+					]);?>
                     </table>
                   </td>
                 </tr>
@@ -166,8 +152,33 @@ use backend\models\search\InvoiceSearch;
 </div>
 </div>
 <script>
+var invoice = {
+    onEditableGridSuccess : function(event, val, form, data) {
+        invoice.updateSummarySectionAndStatus();
+    },
+    updateInvoiceStatus : function(status){
+        $('#invoice-status').text(status);
+
+    },
+    updateSummarySectionAndStatus : function() {
+        $.ajax({
+            url    : '<?= Url::to(["invoice/fetch-summary-and-status", "id" => $model->id]) ?>',
+            type   : 'GET',
+            dataType: "json",
+            success: function(response)
+            {
+                $('#invoice-summary-section').html(response.summary);
+                invoice.updateInvoiceStatus(response.status);
+            }
+        });
+        return false;
+    }
+}
 $(document).ready(function() {
 	$('#add-misc-item').click(function(){
+    $('input[type="text"]').val('');
+    $('.tax-compute').hide();
+    $('#invoicelineitem-tax_status').val('');
 	$('#invoice-line-item-modal').modal('show');
   		return false;
   });

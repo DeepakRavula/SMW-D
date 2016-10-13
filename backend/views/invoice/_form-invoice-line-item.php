@@ -31,7 +31,7 @@ use yii\helpers\Url;
    			<?php echo $form->field($model, 'isRoyaltyExempted')->checkbox()?>
         </div>
 	</div>
-	    <div class="row hide tax-compute">
+	    <div class="row tax-compute">
         <div class="col-xs-8">
             <?php echo $form->field($model, 'tax_type')->textInput(['readonly' => true])?>
         </div>
@@ -62,7 +62,7 @@ $(document).ready(function() {
 	$('#invoicelineitem-tax_status').change(function(){
 		var taxStatusId = $(this).val();
 		if(taxStatusId && parseInt(taxStatusId) === 2){
-			$('.tax-compute').removeClass('hide');
+		    $('.tax-compute').show();
 			$('#invoicelineitem-tax_type').val('NO TAX');
 			$('#invoicelineitem-tax_code').val('ON');
 			$('#invoicelineitem-tax_rate').val(0.00);
@@ -81,7 +81,7 @@ $(document).ready(function() {
 				}),
 				success: function(response) {
 					var response =  jQuery.parseJSON(JSON.stringify(response));
-					$('.tax-compute').removeClass('hide');
+		            $('.tax-compute').show();
 					$('#invoicelineitem-tax_type').val(response.tax_type);
 					$('#invoicelineitem-tax_code').val(response.code);
 					$('#invoicelineitem-tax_rate').val(response.rate);
@@ -102,17 +102,11 @@ $(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
 		data   : $('#add-misc-item-form').serialize(),
 		success: function(response)
 		{
-		   if(response.status == 'true')
+		   if(response.status)
 		   {
 				$.pjax.reload({container : '#line-item-listing'});
-				$('#invoice-status').text(response.invoiceStatus);
+                invoice.updateSummarySectionAndStatus();
 				$('#invoice-line-item-modal').modal('hide');
-			}
-			else
-			{
-			 	$('#add-misc-item-form').yiiActiveForm('updateMessages',
-				   response.errors
-				, true);
 			}
 		}
 		});
