@@ -104,14 +104,14 @@ class LessonQuery extends \yii\db\ActiveQuery
         $this->joinWith('invoice')
 			->where(['invoice.id' => null])
 	        ->andFilterWhere(['<=', 'lesson.date', (new \DateTime())->format('Y-m-d')])
-             ->andFilterWhere(['not',['lesson.status' => Lesson::STATUS_CANCELED]]);
+             ->andFilterWhere(['not',['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
 		
 		return $this;
 	}
 
 	public function scheduled() {
 		$this->andFilterWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d')])
-             ->andFilterWhere(['not',['lesson.status' => Lesson::STATUS_CANCELED]]);
+             ->andFilterWhere(['not',['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
 		
 		return $this;
 	}

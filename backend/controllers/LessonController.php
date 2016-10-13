@@ -137,7 +137,6 @@ class LessonController extends Controller
 
 	public function actionInvoice($id) {
 		$model = Lesson::findOne(['id' => $id]);
-		$lessonType = $model->course->program->type;
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
 		$currentDate = new \DateTime();
 		$location_id = Yii::$app->session->get('location_id');
@@ -162,11 +161,7 @@ class LessonController extends Controller
             $invoiceLineItem = new InvoiceLineItem();
             $invoiceLineItem->invoice_id = $invoice->id;
             $invoiceLineItem->item_id = $model->id;
-			if( (int)$lessonType === Lesson::TYPE_PRIVATE_LESSON){
-	            $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-			} else {
-	            $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-			}
+	        $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
 			$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
 			$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
 			$invoiceLineItem->tax_rate = 0.0;
@@ -176,11 +171,7 @@ class LessonController extends Controller
             $invoiceLineItem->description = $description;
             $time = explode(':', $model->course->duration);
             $invoiceLineItem->unit = (($time[0] * 60) + ($time[1])) / 60;
-			if( (int)$lessonType === Lesson::TYPE_PRIVATE_LESSON){
-            	$invoiceLineItem->amount = $model->course->program->rate * $invoiceLineItem->unit;
-			} else {
-            	$invoiceLineItem->amount = $model->course->program->rate;
-			}
+            $invoiceLineItem->amount = $model->course->program->rate * $invoiceLineItem->unit;
             $invoiceLineItem->save();
             $subTotal += $invoiceLineItem->amount;                
             $invoice = Invoice::findOne(['id' => $invoice->id]);

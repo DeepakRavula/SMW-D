@@ -42,12 +42,6 @@ $this->registerJs("
 					return ! empty($data->customer->publicIdentity) ? $data->customer->publicIdentity : null;
 				}
 			],
-			[
-				'label' => 'Teacher Name',
-				'value' => function($data){
-					return ! empty($data->course->teacher->publicIdentity) ? $data->course->teacher->publicIdentity : null;
-				}
-			],
         ],
     ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
