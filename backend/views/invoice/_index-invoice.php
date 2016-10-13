@@ -59,8 +59,10 @@ $this->params['breadcrumbs'][] = $this->title;
 					return $status;
                 },
 				'contentOptions' => function($data) {
+                    $options = [];
                     $type = (int) $data->type === Invoice::TYPE_INVOICE ? 'invoice' : 'pro-forma-invoice';
-                    return ['class' => $type . '-' . lcfirst($data->getStatus())];
+                    Html::addCssClass($options, strtolower($type . '-' .$data->getStatus()));                    
+                    return $options;
                 },
 			],
 			[
@@ -75,8 +77,11 @@ $this->params['breadcrumbs'][] = $this->title;
 				},
 				'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => function($data) {
+                    $options = [];
                     $type = (int) $data->type === Invoice::TYPE_INVOICE ? 'invoice' : 'pro-forma-invoice';
-                    return ['class' => 'text-right' . ' ' . $type . '-' . lcfirst($data->getStatus())];
+                    Html::addCssClass($options, 'text-right');
+                    Html::addCssClass($options, strtolower($type . '-' .$data->getStatus()));                    
+                    return $options;
                 },
             	'enableSorting' => false,
 			],
