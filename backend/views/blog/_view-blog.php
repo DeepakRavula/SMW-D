@@ -9,11 +9,5 @@ use yii\helpers\Html;
 	echo $postDate->format('F j, Y'); ?>
 </div>
 <div>
-	<a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo pull-left">
-    <!-- Add the class icon to your logo image or logo icon to add the margining -->                
-    <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
-    </a>
-</div>
-<div>
 	<?= ! empty($model->content) ? $model->content : null ?> 
 </div>
