@@ -153,28 +153,12 @@ class Course extends \yii\db\ActiveRecord
 			$holidays = Holiday::find()->all();
 			$pdDays = ProfessionalDevelopmentDay::find()->all();
 
-			$holidayDays = [];
-			$professionalDays = [];
-			$leaveDays = [];
-			if(! empty($holidays)){
-				foreach($holidays as $holiday){
-					$holiday = \DateTime::createFromFormat('Y-m-d H:i:s',$holiday->date);
-					$holidayDays[] = $holiday->format('Y-m-d');
-				}
-			}
-
-			if(! empty($pdDays)){
-				foreach($pdDays as $pdDay){
-					$pdDay = \DateTime::createFromFormat('Y-m-d H:i:s',$pdDay->date);
-					$professionalDays[] = $pdDay->format('Y-m-d');
-				}
-			}
-			$leaveDays = array_merge($holidayDays,$professionalDays);
 			foreach($period as $day){
-				foreach($leaveDays as $leaveDay){
-					if($day->format('Y-m-d') === $leaveDay){
-						continue 2;
-					}
+				$professionalDevelopmentDay = clone $day;
+                $professionalDevelopmentDay->modify('last day of previous month');
+                $professionalDevelopmentDay->modify('fifth ' . $day->format('l'));
+                if($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+                    continue;
 				}
 				if ((int)$day->format('N') === (int)$this->day) {
 					$lesson = new Lesson();
