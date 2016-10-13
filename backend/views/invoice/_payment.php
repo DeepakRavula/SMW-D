@@ -223,3 +223,27 @@ $(document).ready(function(){
     });
 });
 </script>
+<script>
+$('#apply-credit-form').on('beforeSubmit', function (e) {
+	$.ajax({
+		url    : $('#apply-credit-form').attr('action'),
+		type   : 'post',
+		dataType: "json",
+		data   : $('#apply-credit-form').serialize(),
+		success: function(response)
+		{
+		   if(response.status === 'true')
+		   {
+				$.pjax.reload({container : '#payment-listing'});
+				$('#credit-modal').modal('hide');
+			}else
+			{
+			 $('#apply-credit-form').yiiActiveForm('updateMessages',
+				   response.errors
+				, true);
+			}
+		}
+		});
+		return false;
+});
+</script>
