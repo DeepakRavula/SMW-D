@@ -48,8 +48,7 @@ $(document).ready(function() {
     resources:  <?php echo Json::encode($teachersWithClass); ?>,
     events: <?php echo Json::encode($events); ?>,
     eventClick: function(event) {        
-        window.open(event.url, "_blank");
-		return false;
+        $(location).attr('href', event.url);		
     },
     // the 'ev' parameter is the mouse event rather than the resource 'event'
     // the ev.data is the resource column clicked upon
