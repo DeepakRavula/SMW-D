@@ -32,14 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
 				'label' => 'Date',
 				'value' => function($data) {
 					$date = Yii::$app->formatter->asDate($data->date); 
-					return ! empty($date) ? $date : null;
-                },
-			],
-			[
-				'label' => 'Time',
-				'value' => function($data) {
 					$lessonTime = (new \DateTime($data->date))->format('H:i:s');
-					return Yii::$app->formatter->asTime($lessonTime);
+					return ! empty($date) ? $date . ' @ ' . Yii::$app->formatter->asTime($lessonTime) : null;
                 },
 			],
 			[
