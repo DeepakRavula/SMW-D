@@ -228,7 +228,7 @@ $('#apply-credit-form').on('beforeSubmit', function (e) {
 	$.ajax({
 		url    : $('#apply-credit-form').attr('action'),
 		type   : 'post',
-		dataType: "json",
+		dataType: 'json',
 		data   : $('#apply-credit-form').serialize(),
 		success: function(response)
 		{

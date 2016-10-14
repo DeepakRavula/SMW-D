@@ -137,37 +137,23 @@ class PaymentController extends Controller
 	}
 
 	public function actionInvoicePayment($id) {
-		$model = Invoice::findOne(['id' => $id]);
 		$paymentModel = new Payment();
 		$db = \Yii::$app->db;
 		$transaction = $db->beginTransaction();
-		if ($paymentModel->load(Yii::$app->request->post())) {
-			$paymentMethodId		 = $paymentModel->payment_method_id;
-			$paymentModel->user_id	 = $model->user_id;
-			$paymentModel->date		 = (new \DateTime())->format('Y-m-d H:i:s');
-			$paymentModel->invoiceId = $model->id;
+		$request = Yii::$app->request;
+		if ($paymentModel->load($request->post())) {
+			$paymentModel->invoiceId = $id;
 			$paymentModel->save();
-			$model->balance = $this->getInvoiceBalance($model, $paymentModel);
-			$model->save();			
 			$transaction->commit();
 			Yii::$app->session->setFlash('alert',
 				[
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Payment has been recorded successfully'
 			]);
-			return $this->redirect(['invoice/view', 'id' => $model->id, '#' => 'payment']);
+			return $this->redirect(['invoice/view', 'id' => $id, '#' => 'payment']);
 		}
 	}
 
-	public function getInvoiceBalance($model, $paymentModel) {
-		if ($model->total < $paymentModel->amount) {
-			$invoiceBalance = $model->total - $paymentModel->amount;
-		} else {
-			$invoiceBalance = $model->invoiceBalance;
-		}
-		return $invoiceBalance;
-	}
-	
 	public function actionCreditPayment($id) {
 		$model = Invoice::findOne(['id' => $id]);
 		$paymentModel = new Payment();
@@ -175,18 +161,12 @@ class PaymentController extends Controller
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
 		$request = Yii::$app->request;
-		if ($paymentModel->load(Yii::$app->request->post())) {
-			$paymentModel->user_id	 = $model->user_id;
-			$paymentModel->date		 = (new \DateTime())->format('Y-m-d H:i:s');
+		if ($paymentModel->load($request->post())) {
 			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
 			$paymentModel->reference		 = $paymentModel->sourceId;
 			$paymentModel->invoiceId = $model->id;
 			if ($request->isAjax && $paymentModel->validate()) {
 				$paymentModel->save();
-				
-				$model->balance = $this->getInvoiceBalance($model, $paymentModel);
-				$model->save();
-
 				$creditPaymentId = $paymentModel->id;
 				$paymentModel->id				 = null;
 				$paymentModel->isNewRecord		 = true;
@@ -200,29 +180,17 @@ class PaymentController extends Controller
 				$creditUsageModel->debit_payment_id	 = $debitPaymentId;
 				$creditUsageModel->save();
 
-				if ($paymentModel->sourceType != 'pro_forma_invoice') {
-					$invoiceModel			 = Invoice::findOne(['id' => $paymentModel->sourceId]);
-					$invoiceModel->balance	 = $invoiceModel->balance + abs($paymentModel->amount);
-					$invoiceModel->save();
-				}
-				return [
+				$response = [
 					'status' => 'true',
-					'message' => 'Misc has been added successfully',
 				];
 			} else {
 				$paymentModel = ActiveForm::validate($paymentModel);
-                return [
+                $response = [
 					'status' => 'false',
 					'errors' => $paymentModel
 				];
 			}
-
-			Yii::$app->session->setFlash('alert',
-				[
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Payment has been recorded successfully'
-			]);
-			return $this->redirect(['invoice/view', 'id' => $model->id, '#' => 'payment']);
+			return $response;
 		}
 	}
 }

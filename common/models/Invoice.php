@@ -105,23 +105,63 @@ class Invoice extends \yii\db\ActiveRecord
 				->sum('invoice_line_item.amount');
 	}
 
-	public function getInvoicePaymentTotal(){
-		$invoiceAmounts = Payment::find()
-				->joinWith('invoicePayment ip')
-				->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
-				->all();
-		
+	public function getCreditUsageTotal()
+	{
+		$invoiceAmounts		 = Payment::find()
+			->joinWith('invoicePayment ip')
+			->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+			->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED])
+			->all();
 		$sumOfInvoicePayment = 0;
-		if(! empty($invoiceAmounts)){
-			foreach($invoiceAmounts as $invoiceAmount){
-				$sumOfInvoicePayment += $invoiceAmount->amount; 
-			}
+		foreach ($invoiceAmounts as $invoiceAmount) {
+			$sumOfInvoicePayment += $invoiceAmount->amount;
 		}
 		return $sumOfInvoicePayment;
 	}
-	
-	public function getInvoiceBalance(){
-		$balance = $this->total - $this->invoicePaymentTotal;
+
+	public function getPaymentTotal()
+	{
+		$invoiceAmounts		 = Payment::find()
+			->joinWith('invoicePayment ip')
+			->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+			->andWhere(['Not', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
+			->all();
+		$sumOfInvoicePayment = 0;
+		foreach ($invoiceAmounts as $invoiceAmount) {
+			$sumOfInvoicePayment += $invoiceAmount->amount;
+		}
+		return $sumOfInvoicePayment;
+	}
+
+	public function getInvoicePaymentTotal()
+	{
+		$invoiceAmounts		 = Payment::find()
+			->joinWith('invoicePayment ip')
+			->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+			->all();
+		$sumOfInvoicePayment = 0;
+		foreach ($invoiceAmounts as $invoiceAmount) {
+			$sumOfInvoicePayment += $invoiceAmount->amount;
+		}
+		return $sumOfInvoicePayment;
+	}
+
+	public function getInvoiceBalance()
+	{
+		if ((int) $this->type === (int) self::TYPE_PRO_FORMA_INVOICE) {
+			if (!empty($this->invoicePaymentTotal)) {
+				if ((float) $this->paymentTotal == (float) abs($this->creditUsageTotal)) {
+					die('coming');
+					$balance = 0;
+				} else {
+					$balance = -abs($this->invoicePaymentTotal);
+				}
+			} else {
+				$balance = !empty($this->total) ? $this->total : 0;
+			}
+		} else {
+			$balance = $this->total - $this->invoicePaymentTotal;
+		}
 		return $balance;
 	}
 
@@ -208,15 +248,19 @@ class Invoice extends \yii\db\ActiveRecord
 	public function beforeSave($insert)
 	{
 		if ((float) $this->total === (float) $this->invoicePaymentTotal) {
-			$this->status = self::STATUS_PAID;
+			if ((int) $this->type === (int) self::TYPE_INVOICE) {
+				$this->status = self::STATUS_PAID;
+			} else {
+				$this->status = self::STATUS_CREDIT;
+			}
 		} elseif ($this->total > $this->invoicePaymentTotal) {
 			$this->status = self::STATUS_OWING;
 		} else {
-			$this->status = self::STATUS_PAID;
 			if ((int) $this->type === (int) self::TYPE_INVOICE) {
 				$this->status = self::STATUS_CREDIT;
 			}
 		}
+		$this->balance = $this->invoiceBalance;
 		if ($insert) {
 			$reminderNotes = ReminderNote::find()->one();
 			if (!empty($reminderNotes)) {
