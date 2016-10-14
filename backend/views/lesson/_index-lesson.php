@@ -38,7 +38,8 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'label' => 'Time',
 				'value' => function($data) {
-					return (new \DateTime($data->date))->format('h:i A');
+					$lessonTime = (new \DateTime($data->date))->format('H:i:s');
+					return Yii::$app->formatter->asTime($lessonTime);
                 },
 			],
 			[
