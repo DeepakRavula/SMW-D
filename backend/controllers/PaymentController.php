@@ -165,7 +165,7 @@ class PaymentController extends Controller
 			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
 			$paymentModel->reference		 = $paymentModel->sourceId;
 			$paymentModel->invoiceId = $model->id;
-			if ($request->isAjax && $paymentModel->validate()) {
+			if ($paymentModel->validate()) {
 				$paymentModel->save();
 				$creditPaymentId = $paymentModel->id;
 				$paymentModel->id				 = null;
@@ -181,12 +181,12 @@ class PaymentController extends Controller
 				$creditUsageModel->save();
 
 				$response = [
-					'status' => 'true',
+					'status' => true,
 				];
 			} else {
 				$paymentModel = ActiveForm::validate($paymentModel);
                 $response = [
-					'status' => 'false',
+					'status' => false,
 					'errors' => $paymentModel
 				];
 			}

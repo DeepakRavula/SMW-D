@@ -120,8 +120,7 @@ class Payment extends \yii\db\ActiveRecord {
 		$invoicePaymentModel->invoice_id = $this->invoiceId;
 		$invoicePaymentModel->payment_id = $this->id;
 		$invoicePaymentModel->save();
-		$invoiceModel					 = Invoice::findOne(['id' => $this->invoiceId]);
-		$invoiceModel->save();
+		$this->invoice->save();
 		
 		return parent::afterSave($insert, $changedAttributes);
 	}

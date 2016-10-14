@@ -107,43 +107,34 @@ class Invoice extends \yii\db\ActiveRecord
 
 	public function getCreditUsageTotal()
 	{
-		$invoiceAmounts		 = Payment::find()
+		$creditUsageTotal = Payment::find()
 			->joinWith('invoicePayment ip')
 			->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
 			->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED])
-			->all();
-		$sumOfInvoicePayment = 0;
-		foreach ($invoiceAmounts as $invoiceAmount) {
-			$sumOfInvoicePayment += $invoiceAmount->amount;
-		}
-		return $sumOfInvoicePayment;
+			->sum('payment.amount');
+		
+		return $creditUsageTotal;
 	}
 
 	public function getPaymentTotal()
 	{
-		$invoiceAmounts		 = Payment::find()
+		$paymentTotal		 = Payment::find()
 			->joinWith('invoicePayment ip')
 			->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
-			->andWhere(['Not', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
-			->all();
-		$sumOfInvoicePayment = 0;
-		foreach ($invoiceAmounts as $invoiceAmount) {
-			$sumOfInvoicePayment += $invoiceAmount->amount;
-		}
-		return $sumOfInvoicePayment;
+			->andWhere(['NOT', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
+			->sum('payment.amount');
+			
+		return $paymentTotal;
 	}
 
 	public function getInvoicePaymentTotal()
 	{
-		$invoiceAmounts		 = Payment::find()
+		$invoicePaymentTotal		 = Payment::find()
 			->joinWith('invoicePayment ip')
 			->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
-			->all();
-		$sumOfInvoicePayment = 0;
-		foreach ($invoiceAmounts as $invoiceAmount) {
-			$sumOfInvoicePayment += $invoiceAmount->amount;
-		}
-		return $sumOfInvoicePayment;
+			->sum('payment.amount');
+			
+		return $invoicePaymentTotal;
 	}
 
 	public function getInvoiceBalance()
@@ -151,7 +142,6 @@ class Invoice extends \yii\db\ActiveRecord
 		if ((int) $this->type === (int) self::TYPE_PRO_FORMA_INVOICE) {
 			if (!empty($this->invoicePaymentTotal)) {
 				if ((float) $this->paymentTotal == (float) abs($this->creditUsageTotal)) {
-					die('coming');
 					$balance = 0;
 				} else {
 					$balance = -abs($this->invoicePaymentTotal);
@@ -166,29 +156,19 @@ class Invoice extends \yii\db\ActiveRecord
 	}
 
 	public function getSumOfPayment($customerId){
-		$customerPayments = Payment::find()
+		$sumOfPayment = Payment::find()
 				->where(['user_id' => $customerId])
-				->all();
-		$sumOfCustomerPayment = 0;
-		if(! empty($customerPayments)){
-			foreach($customerPayments as $customerPayment){
-				$sumOfCustomerPayment += $customerPayment->amount; 
-			}
-		}
-		return $sumOfCustomerPayment;	
+				->sum('payment.amount');
+		
+		return $sumOfPayment;
 	}
 
 	public function getSumOfInvoice($customerId){
-		$customerInvoices = Invoice::find()
+		$sumOfInvoice = Invoice::find()
 				->where(['user_id' => $customerId, 'type' => Invoice::TYPE_INVOICE])
-				->all();
-		$sumOfInvoicePayment = 0;
-		if(! empty($customerInvoices)){
-			foreach($customerInvoices as $customerInvoice){
-				$sumOfInvoicePayment += $customerInvoice->total; 
-			}
-		}
-		return $sumOfInvoicePayment;	
+				->sum('invoice.total');
+		
+		return $sumOfInvoice;
 	}
 
 	public function getCustomerBalance($customerId){

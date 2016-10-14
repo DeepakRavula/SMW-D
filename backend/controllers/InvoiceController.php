@@ -181,22 +181,18 @@ class InvoiceController extends Controller {
 				$model->tax += $invoiceLineItemModel->tax_rate;
 				$model->total	 = $model->subTotal + $model->tax;
 				$model->save();
-				return [
+				$response = [
 					'invoiceStatus' => $model->getStatus(),
-					'status' => 'true',
-					'message' => 'Misc has been added successfully',
+					'status' => true,
 				];
 			} else {
 				$invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);
-				return [
+				$response = [
 					'status' => 'false',
 					'errors' => $invoiceLineItemModel->getErrors()
 				];
 			}
-			Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Misc has been added successfully'
-			]);
+			return $response;
 		} 
 	}
 
