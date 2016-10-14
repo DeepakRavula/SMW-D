@@ -85,7 +85,6 @@ class InvoiceController extends Controller {
         $invoice->subTotal       = 0.0;
         $invoice->tax            = 0.0;
         $invoice->total          = 0.0;
-        $invoice->status         = Invoice::STATUS_PAID;
         $invoice->save();
         return $this->redirect(['view', 'id' => $invoice->id]);
     }

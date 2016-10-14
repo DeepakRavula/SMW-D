@@ -206,17 +206,15 @@ class Invoice extends \yii\db\ActiveRecord
     }
 
 	public function beforeSave($insert) {
-		if(! empty($this->invoicePaymentTotal)){
-			if((int) $this->total === (int) $this->invoicePaymentTotal){
-				$this->status = self::STATUS_PAID; 
-			}
-			elseif($this->total > $this->invoicePaymentTotal){
-				$this->status = self::STATUS_OWING; 
-			}else{
-				$this->status = self::STATUS_PAID; 
-				if($this->type == self::TYPE_INVOICE) {
-					$this->status = self::STATUS_CREDIT; 	
-				}
+		if((int) $this->total === (int) $this->invoicePaymentTotal){
+			$this->status = self::STATUS_PAID;
+		}
+		elseif($this->total > $this->invoicePaymentTotal){
+			$this->status = self::STATUS_OWING;
+		}else{
+			$this->status = self::STATUS_PAID;
+			if($this->type == self::TYPE_INVOICE) {
+				$this->status = self::STATUS_CREDIT;
 			}
 		}
         if ($insert) {
