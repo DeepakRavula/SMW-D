@@ -205,25 +205,25 @@ class Invoice extends \yii\db\ActiveRecord
     	    	    ->one();
     }
 
-	public function beforeSave($insert) {
-		if((int) $this->total === (int) $this->invoicePaymentTotal){
+	public function beforeSave($insert)
+	{
+		if ((int) $this->total === (int) $this->invoicePaymentTotal) {
 			$this->status = self::STATUS_PAID;
-		}
-		elseif($this->total > $this->invoicePaymentTotal){
+		} elseif ($this->total > $this->invoicePaymentTotal) {
 			$this->status = self::STATUS_OWING;
-		}else{
+		} else {
 			$this->status = self::STATUS_PAID;
-			if($this->type == self::TYPE_INVOICE) {
+			if ($this->type == self::TYPE_INVOICE) {
 				$this->status = self::STATUS_CREDIT;
 			}
 		}
-        if ($insert) {
-            $reminderNotes = ReminderNote::find()->one();
-            if ( ! empty($reminderNotes)) {
-                $this->reminderNotes = $reminderNotes->notes;
-            }
-        }    
-        
-        return parent::beforeSave($insert);
+		if ($insert) {
+			$reminderNotes = ReminderNote::find()->one();
+			if (!empty($reminderNotes)) {
+				$this->reminderNotes = $reminderNotes->notes;
+			}
+		}
+
+		return parent::beforeSave($insert);
 	}
 }
