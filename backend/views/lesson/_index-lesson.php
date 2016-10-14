@@ -36,6 +36,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
 			],
 			[
+				'label' => 'Time',
+				'value' => function($data) {
+					return (new \DateTime($data->date))->format('h:i A');
+                },
+			],
+			[
 				'label' => 'Status',
 				'value' => function($data) {
 					$status = null;

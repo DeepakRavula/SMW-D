@@ -273,7 +273,8 @@ class CourseController extends Controller
 		$model = $this->findModel($id);		
 		$lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->where(['courseId' => $model->id]),
+                ->where(['courseId' => $model->id])
+				->orderBy('date ASC'),
         ]);
 
 		$this->layout = "/print";

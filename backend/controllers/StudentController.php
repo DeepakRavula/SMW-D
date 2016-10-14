@@ -78,6 +78,7 @@ class StudentController extends Controller
 			->where(['course.locationId' => $locationId]);	
 			}])
 			->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
+			->orderBy('date ASC')
 			->notDeleted();
 				
 		$lessonDataProvider = new ActiveDataProvider([

@@ -53,7 +53,8 @@ use common\models\ProfessionalDevelopmentDay;
 	}
 	$conflictedLessonDataProvider = new ActiveDataProvider([
 		'query' => Lesson::find()
-			->where(['IN', 'id', $conflictedLessonIds]),
+			->where(['IN', 'id', $conflictedLessonIds])
+			->orderBy('lesson.date ASC'),
 	]);	
 ?>
 <div class="private-lesson-index p-10">

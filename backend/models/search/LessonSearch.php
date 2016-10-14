@@ -62,6 +62,7 @@ class LessonSearch extends Lesson
 		$locationId = $session->get('location_id');
         $query = Lesson::find()
 				->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
+				->orderBy('lesson.date ASC')
 				->notDeleted()
 				->location($locationId);
 	

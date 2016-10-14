@@ -136,7 +136,8 @@ class LessonController extends Controller
       $session = Yii::$app->session;
 		$locationId = $session->get('location_id');
 		$model = Lesson::find()->location($locationId)
-			->where(['lesson.id' => $id])->one();
+			->where(['lesson.id' => $id])->one()
+			->orderBy('date ASC');
 		if ($model !== null) {
 			return $model;
 		} else {
@@ -252,6 +253,7 @@ class LessonController extends Controller
 		$lessonDataProvider = new ActiveDataProvider([
 		    'query' => Lesson::find()->indexBy('id')
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+				->orderBy('date ASC')
 		]);	
 		
 		$model = new Lesson();

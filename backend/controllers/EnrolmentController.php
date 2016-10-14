@@ -54,7 +54,8 @@ class EnrolmentController extends Controller
         $model = $this->findModel($id);        
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->where(['courseId' => $model->course->id]),
+                ->where(['courseId' => $model->course->id])
+				->orderBy('date ASC'),
             'pagination' => false,
         ]);        
        
@@ -194,7 +195,8 @@ class EnrolmentController extends Controller
 		$model = $this->findModel($id);        
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->where(['courseId' => $model->course->id]), 
+                ->where(['courseId' => $model->course->id])
+				->orderBy('date ASC'),
             'pagination' => [
                 'pageSize' => 60,
              ],
