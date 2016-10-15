@@ -1,11 +1,11 @@
 <?php
-use yii\grid\GridView;
 use common\models\Payment;
 use common\models\Invoice;
 use common\models\PaymentMethod;
 use yii\bootstrap\ButtonGroup;
 ?>
-<?php $columns = [
+<?php
+$columns = [
 	'date:date',
 	'paymentMethod.name',
 	[
@@ -13,25 +13,41 @@ use yii\bootstrap\ButtonGroup;
 		'value' => function($data) {
 			if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
 				$invoice = Invoice::findOne(['id' => $data->reference]);
-				$number = $invoice->getInvoiceNumber();
+				$number	 = $invoice->getInvoiceNumber();
 			} else {
 				$number = $data->reference;
 			}
 			return $number;
 		}
-	],
-	'amount'
-	];
+		],
+		[
+			'class' => 'kartik\grid\EditableColumn',
+			'attribute' => 'amount',
+			'refreshGrid' => true,
+			'editableOptions' => function ($model, $key, $index) {
+				return [
+					'header' => 'Amount',
+					'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+					//'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+				];
+			}
+			],
+		];
 		?>
-	<?php yii\widgets\Pjax::begin([
-		'id' => 'payment-listing',
-	]) ?>
-    <?php echo GridView::widget([
-        'dataProvider' => $invoicePaymentsDataProvider,
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
-        'columns' => $columns,
-    ]); ?>
+		<?=
+		\kartik\grid\GridView::widget([
+			'dataProvider' => $invoicePaymentsDataProvider,
+			'pjax' => true,
+			'pjaxSettings' => [
+				'neverTimeout' => true,
+				'options' => [
+					'id' => 'line-item-listing',
+				]
+			],
+			'columns' => $columns,
+			'responsive' => false
+		]);
+		?>
 <?php if((int) $model->type === Invoice::TYPE_INVOICE):?>
 	<div class="smw-box col-md-3 m-l-10 m-b-20">
 <h5>Invoice Total: <?= $model->total;?></h5>
@@ -40,7 +56,6 @@ use yii\bootstrap\ButtonGroup;
 </div>
 <div class="clearfix"></div>
 <?php endif;?>
-<?php yii\widgets\Pjax::end(); ?>
 <?php $buttons = [];
 ?>
 <?php foreach(PaymentMethod::find()
