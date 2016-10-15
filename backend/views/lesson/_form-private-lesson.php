@@ -16,31 +16,10 @@ use common\models\Lesson;
     		'model' => $model,
     	]);
 	?>
-<?php $this->title = 'Missed Lesson';?>
 
 <?php $form = ActiveForm::begin(); ?>
    <div class="row">
-		<div class="col-xs-4">
-			<?php
-				if($privateLessonModel->isNewRecord){
-					$date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-					$date->modify('90 days');
-					$privateLessonModel->expiryDate = $date->format('d-m-Y H:i:s');
-				}
-			?>
-			
-			<?= $form->field($privateLessonModel, 'isEligible')->checkbox()->label('Not Qualify for Reschedule');?>
-			<?= $form->field($privateLessonModel, 'expiryDate')->widget(DateTimePicker::classname(), [
-				'options' => [
-					'value' => Yii::$app->formatter->asDateTime($privateLessonModel->expiryDate),
-				],
-				'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'autoclose' => true,
-					'format' => 'dd-mm-yyyy HH:ii P'
-				]
-			]);
-			?>
+	   <div class="col-md-4">
 			<?php
 			echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
 				'options' => [
@@ -53,22 +32,39 @@ use common\models\Lesson;
 				]
 			])->label('Reschedule Date');
 			?>
-			<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
         </div>
+	   <div class="col-md-4">
+			<?php echo $form->field($model, 'status')->dropDownList(Lesson::lessonStatuses()) ?>
+		</div>
+		<div class="col-md-4">
+			<?php
+				if($privateLessonModel->isNewRecord){
+					$date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+					$date->modify('90 days');
+					$privateLessonModel->expiryDate = $date->format('d-m-Y H:i:s');
+				}
+			?>
+			<?= $form->field($privateLessonModel, 'expiryDate')->widget(DateTimePicker::classname(), [
+				'options' => [
+					'value' => Yii::$app->formatter->asDateTime($privateLessonModel->expiryDate),
+				],
+				'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+				'pluginOptions' => [
+					'autoclose' => true,
+					'format' => 'dd-mm-yyyy HH:ii P'
+				]
+			]);
+			?>
+		</div>
+	   <div class="col-md-4">
+            <?php echo $form->field($model, 'notes')->textarea() ?>
+        </div>
+    <div class="col-md-12 p-l-20 form-group">
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
+		<?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+        ?>
 		<div class="clearfix"></div>
+	</div>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>
-<script>
-	$(document).ready(function(){
-    $('#privatelesson-iseligible').change(function(){
-        if($(this).is(':checked')) {
-            $('#lesson-date').prop('disabled', true);
-            $('#privatelesson-expirydate').prop('disabled', true);
-        } else {
-            $('#lesson-date').prop('disabled', false);
-            $('#privatelesson-expirydate').prop('disabled', false);
-        }
-    });
-});
-</script>
