@@ -252,6 +252,7 @@ class LessonController extends Controller
 		$lessonDataProvider = new ActiveDataProvider([
 		    'query' => Lesson::find()->indexBy('id')
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+				->orderBy(['lesson.date' => SORT_ASC]),
 		]);	
 		
 		$model = new Lesson();
