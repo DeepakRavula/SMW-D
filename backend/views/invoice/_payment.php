@@ -1,122 +1,37 @@
 <?php
 use yii\grid\GridView;
 use common\models\Payment;
-use common\models\InvoicePayment;
 use common\models\Invoice;
 use common\models\PaymentMethod;
 use yii\bootstrap\ButtonGroup;
-use yii\data\ArrayDataProvider;
 ?>
-<?php
-$creditPayments = Payment::find()
-		->innerJoinWith('creditUsage cu')
-		->joinWith(['invoicePayment ip' => function($query) use($model){
-			$query->where(['ip.invoice_id' => $model->id]);
-		}])
-		->all();
-
-$results = [];
-if(! empty($creditPayments)){
-	foreach($creditPayments as $creditPayment){
-		$debitInvoice = InvoicePayment::findOne(['payment_id' => $creditPayment->creditUsage->debit_payment_id]);
-		
-		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$creditPayment->date);
-		$results[] = [
-			'date' => $paymentDate->format('d-m-Y'),
-			'paymentMethodName' => $creditPayment->paymentMethod->name,
-			'invoiceNumber' => ! empty($debitInvoice->invoice) ? $debitInvoice->invoice->getInvoiceNumber() : null,
-			'amount' => $creditPayment->amount,
-		];
-	}
-}
-
-$debitPayments = Payment::find()
-		->innerJoinWith('debitUsage du')
-		->joinWith(['invoicePayment ip' => function($query) use($model){
-			$query->where(['ip.invoice_id' => $model->id]);
-		}])
-		->all();
-
-if(! empty($debitPayments)){
-	foreach($debitPayments as $debitPayment){
-		$creditInvoice = InvoicePayment::findOne(['payment_id' => $debitPayment->debitUsage->credit_payment_id]);
-		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$debitPayment->date);
-		$results[] = [
-			'date' => $paymentDate->format('d-m-Y'),
-			'paymentMethodName' => $debitPayment->paymentMethod->name,
-			'invoiceNumber' => $creditInvoice->invoice->getInvoiceNumber(),
-			'amount' => $debitPayment->amount,
-		];
-	}
-}
-
-$otherPayments = Payment::find()
-		->joinWith(['invoicePayment ip' => function($query) use($model){
-			$query->where(['ip.invoice_id' => $model->id]);
-		}])
-		->where(['not in','payment_method_id',[PaymentMethod::TYPE_CREDIT_APPLIED, PaymentMethod::TYPE_CREDIT_USED]])
-		->all();
-
-if(! empty($otherPayments)){
-	foreach($otherPayments as $otherPayment){
-		$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$otherPayment->date);
-		$invoiceNumber = 'NA';
-		if((int)$otherPayment->payment_method_id !== PaymentMethod::TYPE_APPLY_CREDIT){
-			$invoiceNumber = $otherPayment->reference;
+<?php $columns = [
+	'date:date',
+	'paymentMethod.name',
+	[
+		'label' => 'Number',
+		'value' => function($data) {
+			if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
+				$invoice = Invoice::findOne(['id' => $data->reference]);
+				$number = $invoice->getInvoiceNumber();
+			} else {
+				$number = $data->reference;
+			}
+			return $number;
 		}
-		$results[] = [
-			'date' => $paymentDate->format('d-m-Y'),
-			'paymentMethodName' => $otherPayment->paymentMethod->name,
-			'invoiceNumber' => $invoiceNumber,
-			'amount' => $otherPayment->amount,
-		];
-	}
-}
-
-usort($results, function ($item1, $item2) {
-	$item1 = new \DateTime($item1['date']);
-	$item2 = new \DateTime($item2['date']);
-    if ($item1 == $item2) return 0;
-    return $item1 < $item2 ? 1 : -1;
-});
-?>
-<?php
-$invoicePaymentDataProvider = new ArrayDataProvider([
-    'allModels' => $results,
-    'sort' => [
-        'attributes' => ['date', 'paymentMethodName', 'amount', 'invoiceNumber'],
-    ],
-]);
-?>
-<?php yii\widgets\Pjax::begin([
-	'id' => 'payment-listing'
-]); ?>
-<?php
-echo GridView::widget([
-	'dataProvider' => $invoicePaymentDataProvider,
-	'tableOptions' =>['class' => 'table table-bordered'],
-    'headerRowOptions' => ['class' => 'bg-light-gray' ],
-    'options' => ['class' => 'p-10'],
-	'columns' => [
-		[
-		'label' => 'Date', 
-		'value' => 'date',
-		],
-		[
-		'label' => 'Payment Method',
-		'value' => 'paymentMethodName',
-		],
-		[
-		'label' => 'Number', 
-		'value' => 'invoiceNumber',
-		],
-		[
-		'label' => 'Amount', 
-		'value' => 'amount',
-		],
-    ]
-]);
-?>
+	],
+	'amount'
+	];
+		?>
+	<?php yii\widgets\Pjax::begin([
+		'id' => 'payment-listing',
+	]) ?>
+    <?php echo GridView::widget([
+        'dataProvider' => $invoicePaymentsDataProvider,
+        'tableOptions' =>['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray' ],
+        'columns' => $columns,
+    ]); ?>
 <?php if((int) $model->type === Invoice::TYPE_INVOICE):?>
 	<div class="smw-box col-md-3 m-l-10 m-b-20">
 <h5>Invoice Total: <?= $model->total;?></h5>

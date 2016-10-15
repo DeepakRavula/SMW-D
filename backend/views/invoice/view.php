@@ -93,7 +93,8 @@ $invoiceContent =  $this->render('_view-invoice', [
 ]);
 $paymentContent =  $this->render('_payment', [
     'model' => $model,
-    'invoicePayments' => $invoicePayments
+    'invoicePayments' => $invoicePayments,
+	'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
 ]);
 
 ?>

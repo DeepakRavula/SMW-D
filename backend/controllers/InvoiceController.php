@@ -109,12 +109,22 @@ class InvoiceController extends Controller {
             $customer = new User();
         }
 
-		$invoicePayments = Payment::find()
+		$customerInvoicePayments = Payment::find()
 				->joinWith(['invoicePayment ip' => function($query) use($model){
 					$query->where(['ip.invoice_id' => $model->id]);	
 				}])
 				->where(['user_id' => $model->user_id]);
 		
+		$customerInvoicePaymentsDataProvider = new ActiveDataProvider([
+			'query' => $customerInvoicePayments,
+		]);
+
+		$invoicePayments = Payment::find()
+				->joinWith(['invoicePayment ip' => function($query) use($model){
+					$query->where(['ip.invoice_id' => $model->id]);
+				}])
+				->orderBy(['date' => SORT_DESC]);
+
 		$invoicePaymentsDataProvider = new ActiveDataProvider([
 			'query' => $invoicePayments,
 		]);
@@ -158,9 +168,10 @@ class InvoiceController extends Controller {
         return $this->render('view', [
 					'model' => $model,
 					'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-					'invoicePayments' => $invoicePaymentsDataProvider,
+					'invoicePayments' => $customerInvoicePaymentsDataProvider,
 					'customer' => empty($customer) ? new User : $customer,
 					'userModel' => $userModel,
+					'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
         ]);
 	}
 
