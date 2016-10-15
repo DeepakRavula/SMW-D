@@ -12,8 +12,6 @@ $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="lesson-update">
 
-    <?php echo $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+    <?php echo $this->render($view, $data); ?>
 
 </div>

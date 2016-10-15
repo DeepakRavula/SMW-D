@@ -91,26 +91,50 @@ class LessonController extends Controller
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
+	public function actionUpdate($id)
+	{
+		$model	 = $this->findModel($id);
+		$data	 = ['model' => $model];
+		$view	 = '_form';
+		if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM) {
+			$view = '_form-private-lesson';
+			if (!empty($model->privateLesson->id)) {
+				$privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
+			} else {
+				$privateLessonModel = new PrivateLesson();
+			}
 
-        if ($model->load(Yii::$app->request->post())) {
-			if(empty($model->date)){
-				$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-				$model->date = $lessonDate->format('Y-m-d H:i:s');            
+			if ($privateLessonModel->load(Yii::$app->request->post())) {
+				$privateLessonModel->lessonId = $model->id;
+				if (!empty($privateLessonModel->expiryDate)) {
+					$expiryDate						 = \DateTime::createFromFormat('d-m-Y g:i A', $privateLessonModel->expiryDate);
+					$privateLessonModel->expiryDate	 = $expiryDate->format('Y-m-d H:i:s');
+				} else {
+					$privateLessonModel->expiryDate = $model->date;
+					$privateLessonModel->save();
+					return $this->redirect(['view', 'id' => $model->id]);
+				}
+				$privateLessonModel->save();
+			}
+			$data = ['model' => $model, 'privateLessonModel' => $privateLessonModel];
+		}
+		if ($model->load(Yii::$app->request->post())) {
+			if (empty($model->date)) {
+				$model->date	 = $model->getOldAttribute('date');
+				$model->status	 = Lesson::STATUS_CANCELED;
+			} else {
+				$lessonDate	 = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+				$model->date = $lessonDate->format('Y-m-d H:i:s');
 			}
 			$model->save();
-            
-        	return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
 
-    /**
+			return $this->redirect(['view', 'id' => $model->id]);
+		}
+
+		return $this->render($view, $data);
+	}
+
+	/**
      * Deletes an existing Lesson model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
@@ -142,50 +166,6 @@ class LessonController extends Controller
 		} else {
 			throw new NotFoundHttpException('The requested page does not exist.');
 		}
-	}
-
-	public function actionMissed($id)
-    {
-        $model = $this->findModel($id);
-
-		if( ! empty($model->privateLesson->id)) {
-            $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
-        } else {
-		$privateLessonModel = new PrivateLesson();
-		}
-		
-		if ($privateLessonModel->load(Yii::$app->request->post()) ) {
-			$privateLessonModel->lessonId = $model->id;
-			if(! empty($privateLessonModel->expiryDate)){
-				$expiryDate = \DateTime::createFromFormat('d-m-Y g:i A', $privateLessonModel->expiryDate);
-				$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-			} else {
-				$privateLessonModel->expiryDate = $model->date;	
-            	return $this->redirect(['view', 'id' => $model->id]);   
-			}
-			$privateLessonModel->save();
-		}
-		if($model->load(Yii::$app->request->post())){	
-			if(empty($model->date)){
-				$model->date = $model->getOldAttribute('date');
-				$model->status = Lesson::STATUS_CANCELED;
-			} else {
-			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-			$model->date = $lessonDate->format('Y-m-d H:i:s');
-			}
-			$model->save();
-					
-			Yii::$app->session->setFlash('alert', [
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Lesson has been marked as missed successfully'
-            ]);
-            return $this->redirect(['view', 'id' => $model->id]);   
-		}
-		
-        return $this->render('_form-private-lesson', [
-            'model' => $model,
-			'privateLessonModel' => $privateLessonModel, 
-        ]);
 	}
 	
     public function actionUpdateField($id){

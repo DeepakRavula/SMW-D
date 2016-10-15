@@ -31,9 +31,11 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			</h5>
 				<?php endif;?>
 			</div>
-    <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
-			<i class="fa fa-calendar"></i> <?php echo ! empty( Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>	
-		</div>
+		<?php if ((int) $model->status !== Lesson::STATUS_CANCELED) : ?>
+			<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
+			<i class="fa fa-calendar"></i> <?php echo ! empty( Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>
+			</div>
+		<?php endif; ?>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
 			<i class="fa fa-music detail-icon"></i> <?php echo ! empty($model->course->program->name) ? $model->course->program->name : null ?>
 		</div>
@@ -51,9 +53,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			
 		<?php if(Yii::$app->controller->action->id === 'view'):?>
 	<div class="col-md-12 action-btns m-b-20">
-		<?php if((int)$model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>
-		<?php echo Html::a('<i class="fa fa-plus-circle"></i> Missed Lesson ', ['missed', 'id' => $model->id], ['class' => 'eligible m-r-20']) ?>
-		<?php endif;?>
 		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 		</div>
