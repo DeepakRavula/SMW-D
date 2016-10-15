@@ -54,6 +54,18 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 		return $this;	
 	}
 
+	public function proFormaCredit($lessonId)
+	{
+		$this->joinWith(['lineItems' => function($query) use($lessonId) {
+				$query->where(['item_id' => $lessonId]);
+			}])
+			->joinWith(['invoicePayments' => function($query) {
+					$query->joinWith('payment');
+				}])
+			->where(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+			return $this;
+		}
+
 	public function pendingInvoices($enrolmentId, $model) {
 		$this->joinWith(['lineItems li'=>function($query) use($enrolmentId, $model){
 			$query->joinWith(['lesson l'=>function($query) use($enrolmentId, $model){	
