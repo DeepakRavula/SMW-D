@@ -234,7 +234,7 @@ $(document).on('beforeSubmit', '#apply-credit-form', function (e) {
 		{
 		   if(response.status)
 		   {
-				$.pjax.reload({container : '#payment-listing'});
+				$.pjax.reload({container : '#payment-listing', timeout : 4000});
 				$('#credit-modal').modal('hide');
 			}else
 			{
