@@ -259,7 +259,6 @@ class Lesson extends \yii\db\ActiveRecord
 		return [
             self::STATUS_COMPLETED => Yii::t('common', 'Completed'),
 			self::STATUS_SCHEDULED => Yii::t('common', 'Scheduled'),
-            self::STATUS_CANCELED => Yii::t('common', 'Canceled'),
 		];
 	}
 

@@ -31,7 +31,9 @@ use common\models\PrivateLesson;
             [
 				'label' => 'Expiry Date',
 				'value' => function($data) {
-					$date = Yii::$app->formatter->asDate($data->privateLesson->expiryDate); 
+					if (!empty($data->privateLesson->expiryDate)) {
+						$date = Yii::$app->formatter->asDate($data->privateLesson->expiryDate);
+					}
 					return ! empty($date) ? $date : null;
                 },
 			],            
