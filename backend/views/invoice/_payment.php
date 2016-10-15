@@ -3,6 +3,7 @@ use common\models\Payment;
 use common\models\Invoice;
 use common\models\PaymentMethod;
 use yii\bootstrap\ButtonGroup;
+use yii\helpers\Url;
 ?>
 <?php
 $columns = [
@@ -28,7 +29,7 @@ $columns = [
 				return [
 					'header' => 'Amount',
 					'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-					//'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+					'formOptions' => ['action' => Url::to(['payment/edit', 'id' => $model->id])],
 				];
 			}
 			],

@@ -198,4 +198,36 @@ class PaymentController extends Controller
 			return $response;
 		}
 	}
+
+	public function actionEdit($id)
+	{
+		$request = Yii::$app->request;
+		$response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+		$post			 = Yii::$app->request->post();
+		if (Yii::$app->request->post('hasEditable')) {
+			$lineItemIndex	 = $request->post('editableIndex');
+			$model			 = Payment::findOne(['id' => $id]);
+			$isOpeningBalance = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_ACCOUNT_ENTRY;
+			$isCreditUsed = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_USED;
+			$isCreditApplied = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_APPLIED;
+			$result			 = [
+				'output' => '',
+				'message' => ''
+			];
+			if (!empty($post['Payment'][$lineItemIndex]['amount'])) {
+				$model->amount	 = $post['Payment'][$lineItemIndex]['amount'];
+				$output				 = $model->amount;
+				if (! $isOpeningBalance && ! $isCreditUsed && ! $isCreditApplied) {
+					$model->invoice->save();
+				}
+				$model->save();
+			}
+			$result = [
+				'output' => $output,
+				'message' => ''
+			];
+			return $result;
+		}
+	}
 }
