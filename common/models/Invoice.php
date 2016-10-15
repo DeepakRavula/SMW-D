@@ -143,8 +143,8 @@ class Invoice extends \yii\db\ActiveRecord
 			$balance = $this->total - $this->invoicePaymentTotal;
 		} else {
 			$balance = $this->total - $this->invoicePaymentTotal;
-			if ((!empty($this->paymentTotal)) && (empty($this->creditUsageTotal))) {
-				$balance = -abs($this->paymentTotal);
+			if (!empty($this->paymentTotal)) {
+				$balance = -abs($this->paymentTotal - abs($this->creditUsageTotal));
 			}
 		}
 

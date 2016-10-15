@@ -18,6 +18,9 @@ use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\Payment;
+use common\models\PaymentMethod;
+use common\models\CreditUsage;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -391,13 +394,44 @@ class LessonController extends Controller
             $invoice->tax = $taxAmount;
             $invoice->total = $totalAmount;
             $invoice->save();
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Invoice has been generated successfully'
-            ]); 
-            
-            return $this->redirect(['invoice/view','id' => $invoice->id]);
-	
+			$proFormaInvoice				 = Invoice::find()
+				->select(['invoice.id', 'SUM(payment.amount) as credit'])
+				->proFormaCredit($model->id)
+				->one();
+				
+			if (!empty($proFormaInvoice)) {
+				if ((float) $proFormaInvoice->credit > (float) $invoice->total) {
+					$paymentAmount = $invoice->total;
+				} else {
+					$paymentAmount = $proFormaInvoice->credit;
+				}
+				$paymentModel = new Payment();
+				$paymentModel->amount		 = $paymentAmount;
+				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+				$paymentModel->reference		 = $proFormaInvoice->id;
+				$paymentModel->invoiceId = $invoice->id;
+				$paymentModel->save();
+				
+				$creditPaymentId = $paymentModel->id;
+				$paymentModel->id				 = null;
+				$paymentModel->isNewRecord		 = true;
+				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+				$paymentModel->invoiceId		 = $proFormaInvoice->id;
+				$paymentModel->reference		 = $invoice->id;
+				$paymentModel->save();
+
+				$debitPaymentId						 = $paymentModel->id;
+				$creditUsageModel					 = new CreditUsage();
+				$creditUsageModel->credit_payment_id = $creditPaymentId;
+				$creditUsageModel->debit_payment_id	 = $debitPaymentId;
+				$creditUsageModel->save();
+			}
+			Yii::$app->session->setFlash('alert', [
+				'options' => ['class' => 'alert-success'],
+				'body' => 'Invoice has been generated successfully'
+			]);
+
+			return $this->redirect(['invoice/view','id' => $invoice->id]);
 		}
         else {
             Yii::$app->session->setFlash('alert', [
