@@ -4,7 +4,6 @@ use common\models\Payment;
 use common\models\InvoicePayment;
 use common\models\Invoice;
 use common\models\PaymentMethod;
-use common\models\PaymentCheque;
 use yii\bootstrap\ButtonGroup;
 use yii\data\ArrayDataProvider;
 ?>
@@ -203,7 +202,8 @@ $(document).ready(function(){
      $('#payment-method-btn-section .btn').removeClass('active');
      $(this).addClass('active');
      if($(this).data('payment-type') == 'apply-credit'){
-         $('#credit-modal').modal('show');
+    	$('input[type="text"]').val('');
+        $('#credit-modal').modal('show');
      }
   });
   $('td').click(function () {
@@ -221,5 +221,29 @@ $(document).ready(function(){
 		$('#payment-sourceid').val(id);
 		$('#payment-sourcetype').val(type);
     });
+});
+</script>
+<script>
+$(document).on('beforeSubmit', '#apply-credit-form', function (e) {
+	$.ajax({
+		url    : $(this).attr('action'),
+		type   : 'post',
+		dataType: 'json',
+		data   : $(this).serialize(),
+		success: function(response)
+		{
+		   if(response.status)
+		   {
+				$.pjax.reload({container : '#payment-listing'});
+				$('#credit-modal').modal('hide');
+			}else
+			{
+			 $('#apply-credit-form').yiiActiveForm('updateMessages',
+				   response.errors
+				, true);
+			}
+		}
+		});
+		return false;
 });
 </script>

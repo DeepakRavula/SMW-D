@@ -12,8 +12,7 @@ use yii\helpers\Url;
 <div class="payments-form p-l-20 form-well-smw form-well m-t-10 m-b-0">
     <?php $form = ActiveForm::begin([
 		'id' => 'apply-credit-form',
-		'enableAjaxValidation' => true,
-		'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id])
+		'action' => Url::to(['payment/credit-payment', 'id' => $invoice->id])
 	]); ?>
  	<div class="row">
         <div class="col-xs-3">

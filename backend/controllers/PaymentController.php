@@ -137,64 +137,60 @@ class PaymentController extends Controller
 	}
 
 	public function actionInvoicePayment($id) {
-		$model = Invoice::findOne(['id' => $id]);
 		$paymentModel = new Payment();
 		$db = \Yii::$app->db;
 		$transaction = $db->beginTransaction();
-		if ($paymentModel->load(Yii::$app->request->post())) {
-			if ((int) $paymentModel->payment_method_id === (int) PaymentMethod::TYPE_APPLY_CREDIT) {
-				$paymentModel->setScenario('apply-credit');
-			}
-			$paymentModelErrors = ActiveForm::validate($paymentModel);
-			if (Yii::$app->request->isAjax) {
-				Yii::$app->response->format = Response::FORMAT_JSON;
-				return $paymentModelErrors;
-			}
-			$paymentMethodId		 = $paymentModel->payment_method_id;
-			$paymentModel->user_id	 = $model->user_id;
-			$paymentModel->date		 = (new \DateTime())->format('Y-m-d H:i:s');
-			if ((int) $paymentModel->payment_method_id === PaymentMethod::TYPE_APPLY_CREDIT) {
-				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-				$paymentModel->reference		 = $paymentModel->sourceId;
-			}
-			$paymentModel->invoiceId = $model->id;
+		$request = Yii::$app->request;
+		if ($paymentModel->load($request->post())) {
+			$paymentModel->invoiceId = $id;
 			$paymentModel->save();
-			if ($model->total < $paymentModel->amount) {
-				$model->balance = $model->total - $paymentModel->amount;
-				$model->save();
-			} else {
-				$model->balance = $model->invoiceBalance;
-				$model->save();
-			}
-
-			$creditPaymentId = $paymentModel->id;
-			if ((int) $paymentMethodId === PaymentMethod::TYPE_APPLY_CREDIT) {
-				$paymentModel->id				 = null;
-				$paymentModel->isNewRecord		 = true;
-				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-				$paymentModel->invoiceId		 = $paymentModel->sourceId;
-				$paymentModel->reference		 = $model->id;
-				$paymentModel->save();
-
-				$debitPaymentId						 = $paymentModel->id;
-				$creditUsageModel					 = new CreditUsage();
-				$creditUsageModel->credit_payment_id = $creditPaymentId;
-				$creditUsageModel->debit_payment_id	 = $debitPaymentId;
-				$creditUsageModel->save();
-
-				if ($paymentModel->sourceType != 'pro_forma_invoice') {
-					$invoiceModel			 = Invoice::findOne(['id' => $paymentModel->sourceId]);
-					$invoiceModel->balance	 = $invoiceModel->balance + abs($paymentModel->amount);
-					$invoiceModel->save();
-				}
-			}
 			$transaction->commit();
 			Yii::$app->session->setFlash('alert',
 				[
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Payment has been recorded successfully'
 			]);
-			return $this->redirect(['invoice/view', 'id' => $model->id, '#' => 'payment']);
+			return $this->redirect(['invoice/view', 'id' => $id, '#' => 'payment']);
+		}
+	}
+
+	public function actionCreditPayment($id) {
+		$model = Invoice::findOne(['id' => $id]);
+		$paymentModel = new Payment();
+		$paymentModel->setScenario('apply-credit');
+		$response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+		$request = Yii::$app->request;
+		if ($paymentModel->load($request->post())) {
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+			$paymentModel->reference		 = $paymentModel->sourceId;
+			$paymentModel->invoiceId = $model->id;
+			if ($paymentModel->validate()) {
+				$paymentModel->save();
+				$creditPaymentId = $paymentModel->id;
+				$paymentModel->id				 = null;
+				$paymentModel->isNewRecord		 = true;
+				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+				$paymentModel->invoiceId		 = $paymentModel->sourceId;
+				$paymentModel->reference		 = $model->id;
+				$paymentModel->save();
+				$debitPaymentId						 = $paymentModel->id;
+				$creditUsageModel					 = new CreditUsage();
+				$creditUsageModel->credit_payment_id = $creditPaymentId;
+				$creditUsageModel->debit_payment_id	 = $debitPaymentId;
+				$creditUsageModel->save();
+
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$paymentModel = ActiveForm::validate($paymentModel);
+                $response = [
+					'status' => false,
+					'errors' => $paymentModel
+				];
+			}
+			return $response;
 		}
 	}
 }

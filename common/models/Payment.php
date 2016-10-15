@@ -102,19 +102,25 @@ class Payment extends \yii\db\ActiveRecord {
 		return $this->hasOne(PaymentCheque::className(), ['payment_id' => 'id']);
 	}
 
-	public function beforeSave($insert) {
-		if((int) $this->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED){
+	public function beforeSave($insert)
+	{
+		$model = Invoice::findOne(['id' => $this->invoiceId]);
+		$this->user_id	 = $model->user_id;
+		$this->date		 = (new \DateTime())->format('Y-m-d H:i:s');
+		if ((int) $this->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
 			$this->amount = -abs($this->amount);
-		}	
-		
+		}
+
 		return parent::beforeSave($insert);
 	}
-	
-	public function afterSave($insert, $changedAttributes) {
-		$invoicePaymentModel = new InvoicePayment();
+
+	public function afterSave($insert, $changedAttributes)
+	{
+		$invoicePaymentModel			 = new InvoicePayment();
 		$invoicePaymentModel->invoice_id = $this->invoiceId;
 		$invoicePaymentModel->payment_id = $this->id;
 		$invoicePaymentModel->save();
+		$this->invoice->save();
 		
 		return parent::afterSave($insert, $changedAttributes);
 	}

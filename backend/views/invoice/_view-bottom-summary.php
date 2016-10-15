@@ -8,7 +8,7 @@
 </tr>
 <tr>
 	<td>Paid</td>
-	<td><?= $model->invoicePaymentTotal; ?></td>
+	<td><?= $model->paymentTotal; ?></td>
 </tr>
 <tr>
 <tr>
