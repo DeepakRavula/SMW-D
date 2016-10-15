@@ -117,7 +117,6 @@ echo GridView::widget([
     ]
 ]);
 ?>
-<?php yii\widgets\Pjax::end(); ?>
 <?php if((int) $model->type === Invoice::TYPE_INVOICE):?>
 	<div class="smw-box col-md-3 m-l-10 m-b-20">
 <h5>Invoice Total: <?= $model->total;?></h5>
@@ -126,6 +125,7 @@ echo GridView::widget([
 </div>
 <div class="clearfix"></div>
 <?php endif;?>
+<?php yii\widgets\Pjax::end(); ?>
 <?php $buttons = [];
 ?>
 <?php foreach(PaymentMethod::find()
@@ -235,6 +235,7 @@ $(document).on('beforeSubmit', '#apply-credit-form', function (e) {
 		   if(response.status)
 		   {
 				$.pjax.reload({container : '#payment-listing', timeout : 4000});
+                invoice.updateSummarySectionAndStatus();
 				$('#credit-modal').modal('hide');
 			}else
 			{
