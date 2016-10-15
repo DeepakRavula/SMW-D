@@ -124,7 +124,7 @@ class Invoice extends \yii\db\ActiveRecord
 			->andWhere(['NOT', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
 			->sum('payment.amount');
 			
-		return $paymentTotal;
+		return ! empty($paymentTotal) ? $paymentTotal : 0;
 	}
 
 	public function getInvoicePaymentTotal()
@@ -139,19 +139,15 @@ class Invoice extends \yii\db\ActiveRecord
 
 	public function getInvoiceBalance()
 	{
-		if ((int) $this->type === (int) self::TYPE_PRO_FORMA_INVOICE) {
-			if (!empty($this->invoicePaymentTotal)) {
-				if ((float) $this->paymentTotal == (float) abs($this->creditUsageTotal)) {
-					$balance = 0;
-				} else {
-					$balance = -abs($this->invoicePaymentTotal);
-				}
-			} else {
-				$balance = !empty($this->total) ? $this->total : 0;
-			}
+		if ((int) $this->type === (int) self::TYPE_INVOICE) {
+			$balance = $this->total - $this->invoicePaymentTotal;
 		} else {
 			$balance = $this->total - $this->invoicePaymentTotal;
+			if ((!empty($this->paymentTotal)) && (empty($this->creditUsageTotal))) {
+				$balance = -abs($this->paymentTotal);
+			}
 		}
+
 		return $balance;
 	}
 

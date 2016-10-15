@@ -167,6 +167,7 @@ class PaymentController extends Controller
 			$paymentModel->invoiceId = $model->id;
 			if ($paymentModel->validate()) {
 				$paymentModel->save();
+
 				$creditPaymentId = $paymentModel->id;
 				$paymentModel->id				 = null;
 				$paymentModel->isNewRecord		 = true;
@@ -174,12 +175,16 @@ class PaymentController extends Controller
 				$paymentModel->invoiceId		 = $paymentModel->sourceId;
 				$paymentModel->reference		 = $model->id;
 				$paymentModel->save();
+
 				$debitPaymentId						 = $paymentModel->id;
 				$creditUsageModel					 = new CreditUsage();
 				$creditUsageModel->credit_payment_id = $creditPaymentId;
 				$creditUsageModel->debit_payment_id	 = $debitPaymentId;
 				$creditUsageModel->save();
 
+				$invoiceModel			 = Invoice::findOne(['id' => $paymentModel->sourceId]);
+				$invoiceModel->balance	 = $invoiceModel->balance + abs($paymentModel->amount);
+				$invoiceModel->save();
 				$response = [
 					'status' => true,
 				];
