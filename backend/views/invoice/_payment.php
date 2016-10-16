@@ -31,13 +31,13 @@ $columns = [
 					'inputType' => \kartik\editable\Editable::INPUT_TEXT,
 					'formOptions' => ['action' => Url::to(['payment/edit', 'id' => $model->id])],
 					'pluginEvents' => [
-                  	  'editableSuccess' => "invoice.onEditableGridSuccess",
-                ],
+						'editableSuccess' => "invoice.onEditableGridSuccess",
+					],
+					'asPopover' => false,
 				];
 			}
-			],
-		];
-		?>
+		],
+];?>
 		<?=
 		\kartik\grid\GridView::widget([
 			'dataProvider' => $invoicePaymentsDataProvider,
