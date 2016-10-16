@@ -205,7 +205,7 @@ class PaymentController extends Controller
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
 		$post			 = Yii::$app->request->post();
-		if (Yii::$app->request->post('hasEditable')) {
+		if ($request->post('hasEditable')) {
 			$lineItemIndex	 = $request->post('editableIndex');
 			$model			 = Payment::findOne(['id' => $id]);
 			$isOpeningBalance = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_ACCOUNT_ENTRY;
@@ -218,10 +218,10 @@ class PaymentController extends Controller
 			if (!empty($post['Payment'][$lineItemIndex]['amount'])) {
 				$model->amount	 = $post['Payment'][$lineItemIndex]['amount'];
 				$output				 = $model->amount;
+				$model->save();
 				if (! $isOpeningBalance && ! $isCreditUsed && ! $isCreditApplied) {
 					$model->invoice->save();
 				}
-				$model->save();
 			}
 			$result = [
 				'output' => $output,

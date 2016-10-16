@@ -105,7 +105,7 @@ class Payment extends \yii\db\ActiveRecord {
 	public function beforeSave($insert)
 	{
 		if (!$insert) {
-			return parent::afterSave($insert, $changedAttributes);
+			return parent::beforeSave($insert);
 		}
 		$model = Invoice::findOne(['id' => $this->invoiceId]);
 		$this->user_id	 = $model->user_id;

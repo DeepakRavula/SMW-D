@@ -45,7 +45,7 @@ $columns = [
 			'pjaxSettings' => [
 				'neverTimeout' => true,
 				'options' => [
-					'id' => 'line-item-listing',
+					'id' => 'invoice-payment-listing',
 				]
 			],
 			'columns' => $columns,
@@ -53,9 +53,11 @@ $columns = [
 		]);
 		?>
 <?php if((int) $model->type === Invoice::TYPE_INVOICE):?>
+<div id="invoice-payment-detail" class="smw-box col-md-3 m-l-10 m-b-20">
 <?php echo $this->render('_invoice-summary', [
     	'model' => $model,
 	]) ?>
+</div>
 <div class="clearfix"></div>
 <?php endif;?>
 <?php $buttons = [];

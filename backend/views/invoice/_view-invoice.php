@@ -167,9 +167,9 @@ var invoice = {
             dataType: "json",
             success: function(response)
             {
-                $('#invoice-payment-detail').html(response.details);
                 $('#invoice-summary-section').html(response.summary);
                 invoice.updateInvoiceStatus(response.status);
+                $('#invoice-payment-detail').html(response.details);
             }
         });
         return false;
