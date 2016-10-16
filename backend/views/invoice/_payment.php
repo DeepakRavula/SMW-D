@@ -30,6 +30,9 @@ $columns = [
 					'header' => 'Amount',
 					'inputType' => \kartik\editable\Editable::INPUT_TEXT,
 					'formOptions' => ['action' => Url::to(['payment/edit', 'id' => $model->id])],
+					'pluginEvents' => [
+                  	  'editableSuccess' => "invoice.onEditableGridSuccess",
+                ],
 				];
 			}
 			],
@@ -50,11 +53,9 @@ $columns = [
 		]);
 		?>
 <?php if((int) $model->type === Invoice::TYPE_INVOICE):?>
-	<div class="smw-box col-md-3 m-l-10 m-b-20">
-<h5>Invoice Total: <?= $model->total;?></h5>
-<h5>Invoice Paid: <?= $model->paymentTotal;?></h5>
-<h5>Invoice Balance: <?= $model->invoiceBalance;?></h5>
-</div>
+<?php echo $this->render('_invoice-summary', [
+    	'model' => $model,
+	]) ?>
 <div class="clearfix"></div>
 <?php endif;?>
 <?php $buttons = [];

@@ -215,10 +215,14 @@ class InvoiceController extends Controller {
 		$summary					 = $this->renderPartial('_view-bottom-summary', [
 			'model' => $model,
 		]);
+		$InvoicePaymentDetails = $this->renderPartial('_invoice-summary', [
+			'model' => $model,
+		]);
 		$status						 = $model->getStatus();
 		return [
 			'summary' => $summary,
-			'status' => $status
+			'status' => $status,
+			'details' => $InvoicePaymentDetails,
 		];
 	}
 
