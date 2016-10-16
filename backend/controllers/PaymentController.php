@@ -14,6 +14,7 @@ use common\models\PaymentMethod;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
 use common\models\CreditUsage;
+use common\models\InvoiceLineItem;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -206,7 +207,7 @@ class PaymentController extends Controller
 		$response->format = Response::FORMAT_JSON;
 		$post			 = Yii::$app->request->post();
 		if ($request->post('hasEditable')) {
-			$lineItemIndex	 = $request->post('editableIndex');
+			$paymentIndex	 = $request->post('editableIndex');
 			$model			 = Payment::findOne(['id' => $id]);
 			$isOpeningBalance = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_ACCOUNT_ENTRY;
 			$isCreditUsed = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_USED;
@@ -215,11 +216,19 @@ class PaymentController extends Controller
 				'output' => '',
 				'message' => ''
 			];
-			if (!empty($post['Payment'][$lineItemIndex]['amount'])) {
-				$model->amount	 = $post['Payment'][$lineItemIndex]['amount'];
+			if (!empty($post['Payment'][$paymentIndex]['amount'])) {
+				$model->amount	 = $post['Payment'][$paymentIndex]['amount'];
 				$output				 = $model->amount;
 				$model->save();
 				if (! $isOpeningBalance && ! $isCreditUsed && ! $isCreditApplied) {
+					$model->invoice->save();
+				}
+				if ($isOpeningBalance) {
+					$lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
+					$lineItem->amount = $model->amount;
+					$model->invoice->subTotal = $lineItem->amount;
+					$model->invoice->total = $model->invoice->subTotal + $model->invoice->tax;
+					$lineItem->save();
 					$model->invoice->save();
 				}
 			}
