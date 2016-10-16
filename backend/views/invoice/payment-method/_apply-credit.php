@@ -37,24 +37,6 @@ if(! empty($invoiceCredits )){
 	}
 }
 
-$proFormaInvoiceCredits = Invoice::find()->alias('i')
-		->proFormaInvoiceCredits($invoice->user_id)
-		->all();
-		
-foreach($proFormaInvoiceCredits as $proFormaInvoiceCredit){
-	if($proFormaInvoiceCredit->credit <= 0){
-		continue;
-	}
-	$paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s',$proFormaInvoiceCredit->date);
-	$results[] = [
-		'id' => $proFormaInvoiceCredit->id,
-		'date' => $paymentDate->format('d-m-Y'),
-		'amount' => $proFormaInvoiceCredit->credit,
-		'source' => 'Pro-forma Invoice',
-		'type' => 'pro_forma_invoice'
-	];
-}
-
 $creditDataProvider = new ArrayDataProvider([
     'allModels' => $results,
     'sort' => [
