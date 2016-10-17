@@ -11,6 +11,7 @@ use yii\helpers\Json;
 use yii\filters\AccessControl;
 use common\models\Program;
 use yii\helpers\Url;
+use common\models\TeacherAvailability;
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
@@ -44,16 +45,28 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {  
-        $teachersWithClass = (new \yii\db\Query())
-            ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
-            ->from('teacher_availability_day ta')
-            ->join('Join', 'user_location ul', 'ul.id = ta.teacher_location_id')
-            ->join('Join', 'user_profile up', 'up.user_id = ul.user_id')
-            ->join('Join', 'lesson l', 'l.teacherId = up.user_id')
-            ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
-            ->andWhere(['not', ['l.status'  =>  [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
-            ->orderBy('id desc')
-            ->all();
+		$locationId = Yii::$app->session->get('location_id');
+		$teachersWithClass = TeacherAvailability::find()
+			->distinct('user_location.user_id')
+			->joinWith(['userLocation' => function($query) use($locationId){
+				$query->joinWith(['userProfile' => function($query) {
+					$query->joinWith(['lesson' => function($query){
+						$query->andWhere(['NOT', ['lesson.status'  => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
+					}]);
+				}])
+				->where(['user_location.location_id' => $locationId]);
+			}])
+            ->orderBy(['teacher_availability_day.id' => SORT_DESC])
+			->all();
+
+		$activeTeachers = [];
+		foreach ($teachersWithClass as $teacherWithClass) {
+            $activeTeachers[] = [
+                'id' => $teacherWithClass->userLocation->user_id,
+                'name' => $teacherWithClass->teacher->publicIdentity,
+            ];
+		}
+
 		$allTeachers = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
             ->from('teacher_availability_day ta')
@@ -108,7 +121,7 @@ class ScheduleController extends Controller
         $toTime = $location->to_time;
         $to_time = $toTime->format('H:i:s');
         
-		return $this->render('index', ['teachersWithClass'=>$teachersWithClass, 'allTeachers'=>$allTeachers, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
+		return $this->render('index', ['teachersWithClass' => $activeTeachers, 'allTeachers'=>$allTeachers, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
     }
     
     public function actionUpdateEvents(){
