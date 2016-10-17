@@ -32,9 +32,7 @@ $columns = [
 					'formOptions' => ['action' => Url::to(['payment/edit', 'id' => $model->id])],
 					'pluginEvents' => [
                   	  'editableSuccess' => "payment.onEditableGridSuccess",
-                ],
-						'editableSuccess' => "invoice.onEditableGridSuccess",
-					],
+                	],
 					'asPopover' => false,
 				];
 			}
