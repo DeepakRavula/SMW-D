@@ -31,8 +31,8 @@ $columns = [
 					'inputType' => \kartik\editable\Editable::INPUT_TEXT,
 					'formOptions' => ['action' => Url::to(['payment/edit', 'id' => $model->id])],
 					'pluginEvents' => [
-						'editableSuccess' => "invoice.onEditableGridSuccess",
-					],
+                  	  'editableSuccess' => "payment.onEditableGridSuccess",
+                	],
 					'asPopover' => false,
 				];
 			}

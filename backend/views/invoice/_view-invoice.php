@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use backend\models\search\InvoiceSearch;
 use yii\helpers\Url;
-
+use common\models\ItemType;
 ?>
 <div class="invoice-view p-50">
          <div class="row">
@@ -89,7 +89,7 @@ use yii\helpers\Url;
               <div class="clearfix"></div>
             </div>
           </div>
-<?php if ((int) $model->type === (int) InvoiceSearch::TYPE_INVOICE) : ?>
+<?php if ((int) $model->type === (int) InvoiceSearch::TYPE_INVOICE && (int) $model->lineItems[0]->item_type_id !== (int) ItemType::TYPE_OPENING_BALANCE) : ?>
 	<div id="add-misc-item" class="col-md-12">
     <div class="row m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>
@@ -174,6 +174,12 @@ var invoice = {
         });
         return false;
     }
+}
+var payment = {
+	onEditableGridSuccess :function(event, val, form, data) {
+		$.pjax.reload({container : '#line-item-listing', timeout : 4000});
+        invoice.updateSummarySectionAndStatus();
+    },
 }
 $(document).ready(function() {
 	$('#add-misc-item').click(function(){
