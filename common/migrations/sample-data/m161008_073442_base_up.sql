@@ -110,7 +110,7 @@ COMMIT;
 --  Master rows of `private_lesson`
 -- ----------------------------
 BEGIN;
-INSERT  INTO `private_lesson`(`id`,`lessonId`,`expiryDate`,`isEligible`) VALUES (1,67,'2016-12-25 09:00:00',0),(2,329,'2016-12-26 13:00:00',1),(3,1474,'2017-01-05 12:30:00',0);
+INSERT  INTO `private_lesson`(`id`,`lessonId`,`expiryDate`) VALUES (1,67,'2016-12-25 09:00:00'),(2,329,'2016-12-26 13:00:00'),(3,1474,'2017-01-05 12:30:00');
 COMMIT;
 
 -- ----------------------------
