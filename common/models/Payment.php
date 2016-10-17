@@ -120,6 +120,7 @@ class Payment extends \yii\db\ActiveRecord {
 	public function afterSave($insert, $changedAttributes)
 	{
 		if (!$insert) {
+            $this->invoice->save();
 			return parent::afterSave($insert, $changedAttributes);
 		}
 		$invoicePaymentModel			 = new InvoicePayment();
