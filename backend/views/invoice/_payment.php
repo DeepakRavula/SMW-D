@@ -33,11 +33,13 @@ $columns = [
 					'pluginEvents' => [
                   	  'editableSuccess' => "payment.onEditableGridSuccess",
                 ],
+						'editableSuccess' => "invoice.onEditableGridSuccess",
+					],
+					'asPopover' => false,
 				];
 			}
-			],
-		];
-		?>
+		],
+];?>
 		<?=
 		\kartik\grid\GridView::widget([
 			'dataProvider' => $invoicePaymentsDataProvider,
