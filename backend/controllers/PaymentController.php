@@ -231,6 +231,20 @@ class PaymentController extends Controller
 					$lineItem->save();
 					$model->invoice->save();
 				}
+                if ($isCreditApplied) {
+                    $creditUsedPaymentModel         = $this->findModel($model->creditUsage->debit_payment_id);
+                    $creditUsedPaymentModel->amount = -abs($model->amount);
+                    $creditUsedPaymentModel->save();
+                    $creditUsedPaymentModel->invoice->save();
+                    $model->invoice->save();
+				}
+                if ($isCreditUsed) {
+                    $creditAppliedPaymentModel         = $this->findModel($model->debitUsage->credit_payment_id);
+                    $creditAppliedPaymentModel->amount = abs($model->amount);
+                    $creditAppliedPaymentModel->save();
+                    $creditAppliedPaymentModel->invoice->save();
+                    $model->invoice->save();
+				}
 			}
 			$result = [
 				'output' => $output,
