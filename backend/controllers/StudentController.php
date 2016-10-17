@@ -15,6 +15,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use common\models\Invoice;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -104,7 +106,13 @@ class StudentController extends Controller
         ]);    
 
 		$lessonModel = new Lesson();
-        if($lessonModel->load(Yii::$app->request->post()) ){
+		$request = Yii::$app->request;
+		$response = Yii::$app->response;
+        if($lessonModel->load($request->post())) {
+			if($request->isAjax) {
+				$response->format = Response::FORMAT_JSON;
+				return ActiveForm::validate($lessonModel);
+			}
            $studentEnrolment = Enrolment::find()
 				   ->joinWith(['course' => function($query) use($lessonModel){
 					   $query->where(['course.programId' => $lessonModel->programId]);
@@ -122,19 +130,19 @@ class StudentController extends Controller
 			$fromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
             $lessonModel->toTime = $fromTime->format('H:i:s');
             $lessonModel->save();
-           Yii::$app->session->setFlash('alert', [
+			Yii::$app->session->setFlash('alert', [
             	    'options' => ['class' => 'alert-success'],
                 	'body' => 'Lesson has been created successfully'
             ]);
             	return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
         } else {
-            return $this->render('view', [
-            	'model' => $model,
-                'lessonDataProvider' => $lessonDataProvider,
+			return $this->render('view', [
+				'model' => $model,
+				'lessonDataProvider' => $lessonDataProvider,
 				'enrolmentDataProvider' => $enrolmentDataProvider,
-                'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
-            ]);
-        }
+				'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
+			]);
+		}
     }
 
 	
