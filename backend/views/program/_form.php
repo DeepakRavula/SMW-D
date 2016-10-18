@@ -39,23 +39,27 @@ use yii\bootstrap\ActiveForm;
 
 </div>
 
-<div id="lesson-per-month">
-            <strong>What's that per month</strong>
-            <div>
-				Four 30mins Lessons @ <span id="rate-30-min"><?= ($model->rate)/2;?></span> each = $ <span id="rate-month-30-min"><?=(($model->rate)/2)*4;?></span> /mn;?>
-            </div>
-            <div>
-            <?php echo 'Four 45mins Lessons @ ' . ($model->rate)/3 . 'each = $'  . (($model->rate)/3)*4 . '/mn';?>
-            </div>
-            <div>
-            <?php echo 'Four 60mins Lessons @ ' . $model->rate . 'each = $'  . ($model->rate)*4 . '/mn';?>
-            </div>
+<div id="program-rate-per-month">
+	<strong>What's that per month</strong>
+	<div>
+		Four 30mins Lessons @ <span id="rate-30-min"><?= ($model->rate)/2;?></span> each = $ <span id="rate-month-30-min"><?=(($model->rate)/2)*4;?></span> /mn;?>
+	</div>
+	<div>
+		Four 45mins Lessons @ <span id="rate-45-min"><?= ($model->rate)/3;?></span> each = $ <span id="rate-month-45-min"><?=(($model->rate)/2)*4;?></span> /mn;?>
+	</div>
+	<div>
+		Four 60mins Lessons @ <span id="rate-60-min"><?= $model->rate;?></span> each = $ <span id="rate-month-60-min"><?=($model->rate)*4;?></span> /mn;?>
+	</div>
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
 $("#program-rate").on('change keyup paste', function() {
 		$('#rate-30-min').text($('#program-rate').val() / 2);
 		$('#rate-month-30-min').text(($('#program-rate').val() / 2) * 4);
+		$('#rate-45-min').text($('#program-rate').val() / 3);
+		$('#rate-month-45-min').text(($('#program-rate').val() / 3) * 4);
+		$('#rate-60-min').text($('#program-rate').val());
+		$('#rate-month-60-min').text($('#program-rate').val() * 4);
 	});
 });
 </script>
