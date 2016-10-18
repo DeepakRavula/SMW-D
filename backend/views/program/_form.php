@@ -41,6 +41,7 @@ use yii\bootstrap\ActiveForm;
 </div>
 
 <div id="program-rate-per-month">
+	<?php if ((int)$model->type === Program::TYPE_PRIVATE_PROGRAM) : ?>
 	<strong>What's that per month</strong>
 	<div>
 		Four 30mins Lessons @ <span id="rate-30-min"><?= ($model->rate)/2;?></span> each = $ <span id="rate-month-30-min"><?=(($model->rate)/2)*4;?></span> /mn;?>
@@ -51,6 +52,7 @@ use yii\bootstrap\ActiveForm;
 	<div>
 		Four 60mins Lessons @ <span id="rate-60-min"><?= $model->rate;?></span> each = $ <span id="rate-month-60-min"><?=($model->rate)*4;?></span> /mn;?>
 	</div>
+    <?php endif;?>
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
