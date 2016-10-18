@@ -45,39 +45,49 @@ class ScheduleController extends Controller
      * @return mixed
      */
     public function actionIndex()
-    {  
+	{
 		$locationId			 = Yii::$app->session->get('location_id');
 		$teachersWithClass	 = TeacherAvailability::find()
 			->distinct('user_location.user_id')
 			->joinWith(['userLocation' => function($query) use($locationId) {
 				$query->joinWith(['userProfile' => function($query) {
 					$query->joinWith(['lesson' => function($query) {
-							$query->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
-						}]);
-					}])
+						$query->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
+					}]);
+				}])
+				->where(['user_location.location_id' => $locationId]);
+			}])
+			->orderBy(['teacher_availability_day.id' => SORT_DESC])
+			->all();
+
+			$activeTeachers = [];
+			foreach ($teachersWithClass as $teacherWithClass) {
+				$activeTeachers[] = [
+					'id' => $teacherWithClass->userLocation->user_id,
+					'name' => $teacherWithClass->teacher->publicIdentity,
+				];
+			}
+
+			$allTeachers = TeacherAvailability::find()
+				->distinct('user_location.user_id')
+				->joinWith(['userLocation' => function($query) use($locationId) {
+					$query->joinWith(['userProfile' => function($query) {
+
+						}])
 					->where(['user_location.location_id' => $locationId]);
 				}])
 				->orderBy(['teacher_availability_day.id' => SORT_DESC])
 				->all();
 
-				$activeTeachers = [];
-				foreach ($teachersWithClass as $teacherWithClass) {
-					$activeTeachers[] = [
-						'id' => $teacherWithClass->userLocation->user_id,
-						'name' => $teacherWithClass->teacher->publicIdentity,
+				$availableTeachers = [];
+				foreach ($allTeachers as $allTeacher) {
+					$availableTeachers[] = [
+						'id' => $allTeacher->userLocation->user_id,
+						'name' => $allTeacher->teacher->publicIdentity,
 					];
 				}
 
-		$allTeachers = (new \yii\db\Query())
-            ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
-            ->from('teacher_availability_day ta')
-            ->join('Join', 'user_location ul', 'ul.id = ta.teacher_location_id')
-            ->join('Join', 'user_profile up', 'up.user_id = ul.user_id')
-            ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
-            ->orderBy('id desc')
-            ->all();
-        
-        $lessons =[];
+		$lessons =[];
         $lessons = Lesson::find()
             ->joinWith(['enrolment' => function($query) {
 				$query->joinWith(['course' => function($query) {
@@ -87,7 +97,8 @@ class ScheduleController extends Controller
                 ->joinWith(['student']);
 			}])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
-            ->all();                
+            ->all();
+
        $events = [];
         foreach ($lessons as &$lesson) {
             $toTime = new \DateTime($lesson->date);
@@ -117,7 +128,7 @@ class ScheduleController extends Controller
         $toTime = $location->to_time;
         $to_time = $toTime->format('H:i:s');
         
-		return $this->render('index', ['teachersWithClass' => $activeTeachers, 'allTeachers'=>$allTeachers, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
+		return $this->render('index', ['teachersWithClass' => $activeTeachers, 'allTeachers' => $availableTeachers, 'events' => $events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
     }
     
     public function actionUpdateEvents(){
