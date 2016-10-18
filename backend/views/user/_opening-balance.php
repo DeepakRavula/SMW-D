@@ -37,7 +37,7 @@ use common\models\Payment;
 <?php else:?>
 	<?php
 	echo $this->render('_form-opening-balance', [
-		'model' => new Payment(),
+		'model' => new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]),
 		'userModel' => $model,
 	])
 	?>
