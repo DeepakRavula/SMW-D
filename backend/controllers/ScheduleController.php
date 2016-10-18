@@ -48,7 +48,8 @@ class ScheduleController extends Controller
 	{
 		$locationId			 = Yii::$app->session->get('location_id');
 		$teachersWithClass	 = TeacherAvailability::find()
-			->distinct('user_location.user_id')
+			->select(['user_location.user_id as id', "CONCAT(user_profile.firstname, ' ', user_profile.lastname) as name"])
+			->distinct()
 			->joinWith(['userLocation' => function($query) use($locationId) {
 				$query->joinWith(['userProfile' => function($query) {
 					$query->joinWith(['lesson' => function($query) {
@@ -63,16 +64,16 @@ class ScheduleController extends Controller
 			$activeTeachers = [];
 			foreach ($teachersWithClass as $teacherWithClass) {
 				$activeTeachers[] = [
-					'id' => $teacherWithClass->userLocation->user_id,
-					'name' => $teacherWithClass->teacher->publicIdentity,
+					'id' => $teacherWithClass->id,
+					'name' => $teacherWithClass->name,
 				];
 			}
-
+			
 			$allTeachers = TeacherAvailability::find()
-				->distinct('user_location.user_id')
+				->select(['user_location.user_id as id', "CONCAT(user_profile.firstname, ' ', user_profile.lastname) as name"])
+				->distinct()
 				->joinWith(['userLocation' => function($query) use($locationId) {
 					$query->joinWith(['userProfile' => function($query) {
-
 						}])
 					->where(['user_location.location_id' => $locationId]);
 				}])
@@ -82,32 +83,28 @@ class ScheduleController extends Controller
 				$availableTeachers = [];
 				foreach ($allTeachers as $allTeacher) {
 					$availableTeachers[] = [
-						'id' => $allTeacher->userLocation->user_id,
-						'name' => $allTeacher->teacher->publicIdentity,
+						'id' => $allTeacher->id,
+						'name' => $allTeacher->name,
 					];
 				}
 
 		$lessons =[];
         $lessons = Lesson::find()
-            ->joinWith(['enrolment' => function($query) {
-				$query->joinWith(['course' => function($query) {
-				    $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
-                    $query->joinWith(['program']);
-			    }])
-                ->joinWith(['student']);
+			->joinWith(['course' => function($query) {
+			    $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
 			}])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->all();
-
        $events = [];
         foreach ($lessons as &$lesson) {
             $toTime = new \DateTime($lesson->date);
             $length = explode(':', $lesson->course->duration);
 		    $toTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
-            $title = $lesson->enrolment->student->fullName . ' ( ' .$lesson->course->program->name . ' ) ';
             if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {                
                 $title = $lesson->course->program->name . ' ( ' . $lesson->course->getEnrolmentsCount() . ' ) ';
-            }
+            } else {
+            	$title = $lesson->enrolment->student->fullName . ' ( ' .$lesson->course->program->name . ' ) ';
+			}
             $events[]= [
                 'resources' => $lesson->teacherId,
                 'title' => $title,

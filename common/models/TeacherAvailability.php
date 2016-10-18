@@ -15,6 +15,7 @@ use Yii;
  */
 class TeacherAvailability extends \yii\db\ActiveRecord
 {
+	public $name;
 	/**
      * @inheritdoc
      */
