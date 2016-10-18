@@ -76,10 +76,23 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'status'], 'integer'],
             [['date', 'programId', 'notes','teacherId'], 'safe'],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
+			[['date'], 'checkTime'],
         ];
     }
 
-    public function checkConflict($attribute, $params)
+	public function checkTime($attribute, $params)
+	{
+		$locationId	 = Yii::$app->session->get('location_id');
+		$location	 = Location::findOne(['id' => $locationId]);
+		$lessonTime	 = (new \DateTime($this->date))->format('H:i:s');
+		$locationFromTime = Yii::$app->formatter->asTime($location->from_time);
+		$locationToTme = Yii::$app->formatter->asTime($location->to_time);
+		if ($lessonTime < $location->from_time || $lessonTime > $location->to_time) {
+			$this->addError($attribute, 'Please choose the lesson time within the operating hours ' . $locationFromTime . ' to ' . $locationToTme);
+		}
+	}
+
+	public function checkConflict($attribute, $params)
     {
 		$intervals = $this->dateIntervals();
 		$tree = new IntervalTree($intervals);

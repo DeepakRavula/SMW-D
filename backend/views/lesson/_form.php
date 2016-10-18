@@ -22,8 +22,9 @@ use yii\helpers\Url;
     	]);
 	?>
 <?php endif;?>
-<?php $form = ActiveForm::begin(); ?>
-<?php if ($model->isNewRecord || (int)$model->course->program->type === Program::TYPE_GROUP_PROGRAM):?>
+<?php $form = ActiveForm::begin([
+	'enableAjaxValidation' => true,
+]); ?>
 <div class="row p-20">
 	<?php if($model->isNewRecord): ?>
         <div class="col-md-4">
@@ -60,7 +61,6 @@ use yii\helpers\Url;
               }
             ?>
             <?php
-              if($model->isNewRecord || (int)$model->course->program->type === (int)Program::TYPE_GROUP_PROGRAM){
             	echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
                		'options' => [
                     'value' => Yii::$app->formatter->asDateTime($model->date),
@@ -70,7 +70,7 @@ use yii\helpers\Url;
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy HH:ii P'
                 ]
-			  ]);}
+			  ]);
             ?>
         </div>
         <div class="col-md-4">			
@@ -89,7 +89,6 @@ use yii\helpers\Url;
         }
         ?>
     </div>
-<?php endif ;?>
 <?php ActiveForm::end(); ?>
 
 </div>
