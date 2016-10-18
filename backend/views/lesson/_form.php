@@ -68,7 +68,9 @@ use yii\helpers\Url;
                 'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy HH:ii P'
+                    'format' => 'dd-mm-yyyy HH:ii P',
+                    'showMeridian' => true,
+                    'minuteStep' => 15
                 ]
 			  ]);}
             ?>
