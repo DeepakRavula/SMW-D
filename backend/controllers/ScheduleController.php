@@ -46,27 +46,27 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {  
-		$locationId = Yii::$app->session->get('location_id');
-		$teachersWithClass = TeacherAvailability::find()
+		$locationId			 = Yii::$app->session->get('location_id');
+		$teachersWithClass	 = TeacherAvailability::find()
 			->distinct('user_location.user_id')
-			->joinWith(['userLocation' => function($query) use($locationId){
+			->joinWith(['userLocation' => function($query) use($locationId) {
 				$query->joinWith(['userProfile' => function($query) {
-					$query->joinWith(['lesson' => function($query){
-						$query->andWhere(['NOT', ['lesson.status'  => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
-					}]);
+					$query->joinWith(['lesson' => function($query) {
+							$query->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
+						}]);
+					}])
+					->where(['user_location.location_id' => $locationId]);
 				}])
-				->where(['user_location.location_id' => $locationId]);
-			}])
-            ->orderBy(['teacher_availability_day.id' => SORT_DESC])
-			->all();
+				->orderBy(['teacher_availability_day.id' => SORT_DESC])
+				->all();
 
-		$activeTeachers = [];
-		foreach ($teachersWithClass as $teacherWithClass) {
-            $activeTeachers[] = [
-                'id' => $teacherWithClass->userLocation->user_id,
-                'name' => $teacherWithClass->teacher->publicIdentity,
-            ];
-		}
+				$activeTeachers = [];
+				foreach ($teachersWithClass as $teacherWithClass) {
+					$activeTeachers[] = [
+						'id' => $teacherWithClass->userLocation->user_id,
+						'name' => $teacherWithClass->teacher->publicIdentity,
+					];
+				}
 
 		$allTeachers = (new \yii\db\Query())
             ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
@@ -86,16 +86,16 @@ class ScheduleController extends Controller
 			    }])
                 ->joinWith(['student']);
 			}])
-            ->andWhere(['not', ['lesson.status'  =>  [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+            ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->all();                
-        
+       $events = [];
         foreach ($lessons as &$lesson) {
             $toTime = new \DateTime($lesson->date);
             $length = explode(':', $lesson->course->duration);
 		    $toTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
             $title = $lesson->enrolment->student->fullName . ' ( ' .$lesson->course->program->name . ' ) ';
             if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {                
-                $title = $lesson->course->program->name; 
+                $title = $lesson->course->program->name . ' ( ' . $lesson->course->getEnrolmentsCount() . ' ) ';
             }
             $events[]= [
                 'resources' => $lesson->teacherId,
@@ -103,8 +103,7 @@ class ScheduleController extends Controller
                 'start' => $lesson->date,
                 'end' => $toTime->format('Y-m-d H:i:s'),
                 'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
-            ];
-           
+            ];   
         }
         unset($lesson);
         
