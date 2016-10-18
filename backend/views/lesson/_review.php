@@ -74,42 +74,16 @@ $this->title = 'Review Lessons';
                                'maxView' => 1,
                                'pickDate' => false,
                                'autoclose' => true,
-                               'format' => 'HH:ii P', 
+                               'format' => 'HH:ii P',
+                               'showMeridian' => true,
+                               'minuteStep' => 15
                            ]
                        ],
                        'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
                    ];
                }
            	],
-			[
-               'class'=>'kartik\grid\EditableColumn',
-               'attribute'=>'toTime',  
-			   'refreshGrid' => true,
-               'value' => function ($model, $key, $index, $widget) {
-                   return Yii::$app->formatter->asTime($model->toTime);
-                },
-               'headerOptions'=>['class'=>'kv-sticky-column'],
-               'contentOptions'=>['class'=>'kv-sticky-column'],
-               'editableOptions'=> function ($model, $key, $index) {    
-                   return [
-                       'header'=>'Lesson To Time', 
-                       'size'=>'md',
-                       'inputType'=>\kartik\editable\Editable::INPUT_WIDGET,
-                       'widgetClass'=> 'dosamigos\datetimepicker\DateTimePicker',
-                       'options' => [
-                           'clientOptions' => [
-                               'startView' => 1,
-                               'minView' => 0,
-                               'maxView' => 1,
-                               'pickDate' => false,
-                               'autoclose' => true,
-                               'format' => 'HH:ii P', 
-                           ]
-                       ],
-                       'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
-                   ];
-               }
-           	],
+			'toTime:time',
 			[
 				'label' => 'Conflict',
 				'value' => function($data) use($conflicts){

@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\filters\AccessControl;
 use common\models\Program;
+use common\models\Course;
 use yii\helpers\Url;
 use common\models\TeacherAvailability;
 /**
@@ -44,73 +45,77 @@ class ScheduleController extends Controller
      * @return mixed
      */
     public function actionIndex()
-    {  
-		$locationId = Yii::$app->session->get('location_id');
-		$teachersWithClass = TeacherAvailability::find()
-			->distinct('user_location.user_id')
-			->joinWith(['userLocation' => function($query) use($locationId){
+	{
+		$locationId			 = Yii::$app->session->get('location_id');
+		$teachersWithClass	 = TeacherAvailability::find()
+			->select(['user_location.user_id as id', "CONCAT(user_profile.firstname, ' ', user_profile.lastname) as name"])
+			->distinct()
+			->joinWith(['userLocation' => function($query) use($locationId) {
 				$query->joinWith(['userProfile' => function($query) {
-					$query->joinWith(['lesson' => function($query){
-						$query->andWhere(['NOT', ['lesson.status'  => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
+					$query->joinWith(['lesson' => function($query) {
+						$query->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
 					}]);
 				}])
 				->where(['user_location.location_id' => $locationId]);
 			}])
-            ->orderBy(['teacher_availability_day.id' => SORT_DESC])
+			->orderBy(['teacher_availability_day.id' => SORT_DESC])
 			->all();
 
-		$activeTeachers = [];
-		foreach ($teachersWithClass as $teacherWithClass) {
-            $activeTeachers[] = [
-                'id' => $teacherWithClass->userLocation->user_id,
-                'name' => $teacherWithClass->teacher->publicIdentity,
-            ];
-		}
+			$activeTeachers = [];
+			foreach ($teachersWithClass as $teacherWithClass) {
+				$activeTeachers[] = [
+					'id' => $teacherWithClass->id,
+					'name' => $teacherWithClass->name,
+				];
+			}
+			
+			$allTeachers = TeacherAvailability::find()
+				->select(['user_location.user_id as id', "CONCAT(user_profile.firstname, ' ', user_profile.lastname) as name"])
+				->distinct()
+				->joinWith(['userLocation' => function($query) use($locationId) {
+					$query->joinWith(['userProfile' => function($query) {
+						}])
+					->where(['user_location.location_id' => $locationId]);
+				}])
+				->orderBy(['teacher_availability_day.id' => SORT_DESC])
+				->all();
 
-		$allTeachers = (new \yii\db\Query())
-            ->select(['distinct(ul.user_id) as id', 'concat(up.firstname,\' \',up.lastname) as name'])
-            ->from('teacher_availability_day ta')
-            ->join('Join', 'user_location ul', 'ul.id = ta.teacher_location_id')
-            ->join('Join', 'user_profile up', 'up.user_id = ul.user_id')
-            ->where('ul.location_id = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
-            ->orderBy('id desc')
+				$availableTeachers = [];
+				foreach ($allTeachers as $allTeacher) {
+					$availableTeachers[] = [
+						'id' => $allTeacher->id,
+						'name' => $allTeacher->name,
+					];
+				}
+
+		$lessons =[];
+        $lessons = Lesson::find()
+			->indexBy('id')
+			->joinWith(['course' => function($query) {
+			    $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
+			}])
+            ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->all();
-        
-        $events = array();
-        $events = (new \yii\db\Query())
-            ->select(['l.teacherId as resources', 'l.id as id', 'concat(s.first_name,\' \',s.last_name,\' (\',p.name,\' )\') as title, c.day, l.date as start, ADDTIME(l.date, c.duration) as end'])
-            ->from('lesson l')
-            ->join('Join', 'course c', 'c.id = l.courseId')
-            ->join('Join', 'enrolment e', 'e.courseId = l.courseId')
-            ->join('Join', 'student s', 's.id = e.studentId')
-            ->join('Join', 'program p', 'p.id = c.programId')
-            ->where(['not', ['l.status'  =>  [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
-            ->andWhere(['l.isDeleted'  => false])
-            ->andWhere(['p.type'  => Program::TYPE_PRIVATE_PROGRAM])
-            ->andWhere('c.locationId = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
-            ->all();
-        
-        $groupLessonEvents = (new \yii\db\Query())
-            ->select(['l.teacherId as resources', 'l.id as id', 'p.name as title, c.day, l.date as start, ADDTIME(l.date, c.duration) as end'])
-            ->from('lesson l')
-            ->join('Join', 'course c', 'c.id = l.courseId')
-            ->join('Join', 'program p', 'p.id = c.programId')
-            ->where(['not', ['l.status'  =>  [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
-            ->andWhere(['p.type'  => Program::TYPE_GROUP_PROGRAM])
-            ->andWhere(['l.isDeleted'  => false])
-            ->andWhere('c.locationId = :location_id', [':location_id'=>Yii::$app->session->get('location_id')])
-            ->all();
-        $events = array_merge($events, $groupLessonEvents);
-        foreach ($events as &$event) {
-                $start = new \DateTime($event['start']);	
-                $event['start'] = $start->format('Y-m-d H:i:s');	
-                $end = new \DateTime($event['end']);	
-                $event['end'] = $end->format('Y-m-d H:i:s');
-				$event['url'] = Url::to(['lesson/view', 'id' => $event['id']]);
+       $events = [];
+        foreach ($lessons as &$lesson) {
+            $toTime = new \DateTime($lesson->date);
+            $length = explode(':', $lesson->course->duration);
+		    $toTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
+            if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {                
+                $title = $lesson->course->program->name . ' ( ' . $lesson->course->getEnrolmentsCount() . ' ) ';
+            } else {
+            	$title = $lesson->enrolment->student->fullName . ' ( ' .$lesson->course->program->name . ' ) ';
+			}
+            $events[]= [
+                'resources' => $lesson->teacherId,
+                'title' => $title,
+                'start' => $lesson->date,
+                'end' => $toTime->format('Y-m-d H:i:s'),
+                'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
+            ];   
         }
-        unset($event);
-
-
+        unset($lesson);
+        
         $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 		
 		$location->from_time = new \DateTime($location->from_time);	
@@ -121,7 +126,7 @@ class ScheduleController extends Controller
         $toTime = $location->to_time;
         $to_time = $toTime->format('H:i:s');
         
-		return $this->render('index', ['teachersWithClass' => $activeTeachers, 'allTeachers'=>$allTeachers, 'events'=>$events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
+		return $this->render('index', ['teachersWithClass' => $activeTeachers, 'allTeachers' => $availableTeachers, 'events' => $events, 'from_time'=>$from_time, 'to_time'=>$to_time]);
     }
     
     public function actionUpdateEvents(){

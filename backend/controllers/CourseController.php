@@ -216,58 +216,6 @@ class CourseController extends Controller
 		return $result;
 	}
 
-	public function actionInvoice($id, $studentId) {
-		$model = Course::findOne(['id' => $id]);
-		$studentModel = Student::findOne(['id' => $studentId]);
-		$currentDate = new \DateTime();
-		$location_id = Yii::$app->session->get('location_id');
-		$lastInvoice = Invoice::lastInvoice($location_id);
-		if(empty($lastInvoice)) {
-			$invoiceNumber = 1;
-		} else {
-			$invoiceNumber = $lastInvoice->invoice_number + 1;
-		}
-
-		$invoice = new Invoice();
-		$invoice->user_id = $studentModel->customer->id; 
-		$invoice->location_id = $location_id;
-		$invoice->invoice_number = $invoiceNumber;
-		$invoice->date = (new \DateTime())->format('Y-m-d');
-		$invoice->status = Invoice::STATUS_OWING;
-		$invoice->type = INVOICE::TYPE_INVOICE;
-		$invoice->save();
-		$subTotal = 0;
-		$taxAmount = 0;
-		$invoiceLineItem = new InvoiceLineItem();
-		$invoiceLineItem->invoice_id = $invoice->id;
-		$invoiceLineItem->item_id = $model->id;
-		$invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-		$taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-		$invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-		$invoiceLineItem->tax_rate = 0.0;
-		$invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-		$invoiceLineItem->tax_status = $taxStatus->name;
-		$description = $model->program->name . ' for ' . $studentModel->fullName . ' with ' . $model->teacher->publicIdentity;
-		$invoiceLineItem->description = $description;
-		$time = explode(':', $model->duration);
-		$invoiceLineItem->unit = 1;
-		$invoiceLineItem->amount = $model->program->rate;
-		$invoiceLineItem->save();
-		$subTotal += $invoiceLineItem->amount;                
-		$invoice = Invoice::findOne(['id' => $invoice->id]);
-		$invoice->subTotal = $subTotal;
-		$totalAmount = $subTotal + $taxAmount;
-		$invoice->tax = $taxAmount;
-		$invoice->total = $totalAmount;
-		$invoice->save();
-		Yii::$app->session->setFlash('alert', [
-			'options' => ['class' => 'alert-success'],
-			'body' => 'Invoice has been generated successfully'
-		]); 
-
-		return $this->redirect(['invoice/view','id' => $invoice->id]);
-    }
-    
     public function actionPrint($id) {
 
 		$model = $this->findModel($id);		

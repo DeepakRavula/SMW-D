@@ -104,6 +104,15 @@ class Course extends \yii\db\ActiveRecord
 	{
         return $this->hasMany(Lesson::className(), ['courseId' => 'id']);
 	}
+
+	public function getEnrolments()
+	{
+    	return $this->hasMany(Enrolment::className(), ['courseId' => 'id']);
+	}
+	public function getEnrolmentsCount()
+	{
+    	return $this->getEnrolments()->count();
+	}
 	
 	public function beforeSave($insert)
     { 
