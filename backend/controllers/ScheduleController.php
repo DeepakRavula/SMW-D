@@ -90,6 +90,7 @@ class ScheduleController extends Controller
 
 		$lessons =[];
         $lessons = Lesson::find()
+			->indexBy('lesson.id')
 			->joinWith(['course' => function($query) {
 			    $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
 			}])
