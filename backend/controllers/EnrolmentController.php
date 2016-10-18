@@ -134,11 +134,6 @@ class EnrolmentController extends Controller
 					}	
 				} 
 			}
-			//calculate lesson totime.
-			$length			 = explode(':', $model->course->duration);
-			$changedFromTime = new \DateTime($model->course->fromTime);
-			$changedFromTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-			$toTime			 = $changedFromTime->format('H:i:s');
 			$period			 = new \DatePeriod($startDate, $interval, $endDate);
 			foreach ($period as $day) {
 				if ((int) $day->format('N') === (int) $model->course->day) {
@@ -148,7 +143,7 @@ class EnrolmentController extends Controller
 						'teacherId' => $model->course->teacherId,
 						'status' => Lesson::STATUS_DRAFTED,
 						'date' => $day->format('Y-m-d H:i:s'),
-						'toTime' => $toTime,
+						'duration' => $model->course->duration,
 						'isDeleted' => false,
 					]);
 					$lesson->save();

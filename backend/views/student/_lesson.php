@@ -42,14 +42,6 @@ echo GridView::widget([
 			},
 		],
 		[
-			'label' => 'Time',
-			'value' => function($data){
-				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-				$startTime = $lessonDate->format('H:i:s');
-					return Yii::$app->formatter->asTime($startTime) . ' to ' . Yii::$app->formatter->asTime($data->toTime);
-			}
-		],
-		[
 			'label' => 'Lesson Status',
 			'value' => function($data) {
 				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
@@ -76,7 +68,12 @@ echo GridView::widget([
 				return $status;
 			},
 		],
-		'date:date',
+		[
+            'label' => 'Date',
+            'value' => function($data) {
+                return Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
+            }
+        ],
 		[
             'label' => 'Prepaid?',
             'value' => function($data){

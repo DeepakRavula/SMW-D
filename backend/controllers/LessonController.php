@@ -201,13 +201,11 @@ class LessonController extends Controller
                 $newTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
                 $output = Yii::$app->formatter->asTime($newTime);
             }
-			if(! empty($post['Lesson'][$lessonIndex]['toTime'])){
-               	$toTime = \DateTime::createFromFormat('h:i A', $post['Lesson'][$lessonIndex]['toTime']);
-                $model->toTime = $toTime->format('H:i:s');
-                $output = Yii::$app->formatter->asTime($model->toTime);
-            }
-
-            $model->save();
+			if (!empty($post['Lesson'][$lessonIndex]['duration'])) {
+				$model->duration = $post['Lesson'][$lessonIndex]['duration'];
+				$output			 = $model->duration;
+			}
+			$model->save();
             $result = [
 				'output' => $output,
 				'message' => ''
@@ -245,12 +243,8 @@ class LessonController extends Controller
 			$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A',$model->date);
 			$model->date = $lessonDate->format('Y-m-d H:i:s');
 			$model->status = Lesson::STATUS_DRAFTED;
-			$model->isDeleted = 0;
-            $fromTime = $lessonDate->format('H:i:s');
-            $fromTime = new \DateTime($fromTime);
-            $length = explode(':', $model->course->duration);
-            $fromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
-            $toTime = $fromTime->format('H:i:s');
+			$model->isDeleted = false;
+            $model->duration = $model->course->duration;
 			$model->save();
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
@@ -343,9 +337,8 @@ class LessonController extends Controller
             $invoiceLineItem->item_id = $model->id;
 			$lessonStartTime = $lessonDate->format('H:i:s');
 			$lessonStartTime = new \DateTime($lessonStartTime);
-			$lessonEndTime = new \DateTime($model->toTime);
-			$duration = $lessonStartTime->diff($lessonEndTime);
-            $invoiceLineItem->unit = (($duration->h * 60) + ($duration->i)) / 60;
+			$duration = explode(':', $model->duration);
+            $invoiceLineItem->unit = (($duration[0] * 60) + ($duration[1])) / 60;
 			if((int) $model->course->program->type === (int) Program::TYPE_GROUP_PROGRAM){
 	        	$invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
 				$courseFee = $model->course->program->rate;
