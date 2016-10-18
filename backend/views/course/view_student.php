@@ -35,9 +35,5 @@ $this->params['breadcrumbs'][] = $this->title;
 		$endDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->endDate);
 		echo $startDate->format('d-m-Y') . ' to ' . $endDate->format('d-m-Y'); ?>
     </div>
-    <div class="col-md-12 m-t-20">
-        <?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Course</span>', ['invoice', 'id' => $model->id, 'studentId' => $studentModel->id], ['class' => 'm-r-20']) ?>
-    </div>
-    <div class="clearfix"></div>
 </div>
 </div>
