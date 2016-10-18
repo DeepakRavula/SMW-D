@@ -18,7 +18,8 @@ use yii\bootstrap\ActiveForm;
 			<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 		</div>
 		<div class="col-md-4">
-			<?php echo $form->field($model, 'rate')->textInput() ?>
+			<?php $rateLabel = (int)$model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour($)' : 'Rate Per Course';?>
+			<?php echo $form->field($model, 'rate')->textInput()->label($rateLabel); ?>
 		</div>
 		<div class="col-md-4">
 			<?php if (!$model->getIsNewRecord()) : ?>
@@ -38,3 +39,28 @@ use yii\bootstrap\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<div id="program-rate-per-month">
+	<strong>What's that per month</strong>
+	<div>
+		Four 30mins Lessons @ <span id="rate-30-min"><?= ($model->rate)/2;?></span> each = $ <span id="rate-month-30-min"><?=(($model->rate)/2)*4;?></span> /mn;?>
+	</div>
+	<div>
+		Four 45mins Lessons @ <span id="rate-45-min"><?= ($model->rate)/(4/3);?></span> each = $ <span id="rate-month-45-min"><?=(($model->rate)/(4/3))*4;?></span> /mn;?>
+	</div>
+	<div>
+		Four 60mins Lessons @ <span id="rate-60-min"><?= $model->rate;?></span> each = $ <span id="rate-month-60-min"><?=($model->rate)*4;?></span> /mn;?>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+$("#program-rate").on('change keyup paste', function() {
+		$('#rate-30-min').text($('#program-rate').val() / 2);
+		$('#rate-month-30-min').text(($('#program-rate').val() / 2) * 4);
+		$('#rate-45-min').text($('#program-rate').val() / (4/3));
+		$('#rate-month-45-min').text(($('#program-rate').val() / (4/3)) * 4);
+		$('#rate-60-min').text($('#program-rate').val());
+		$('#rate-month-60-min').text($('#program-rate').val() * 4);
+	});
+});
+</script>
