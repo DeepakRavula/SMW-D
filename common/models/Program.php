@@ -43,7 +43,8 @@ class Program extends \yii\db\ActiveRecord
     {
         return [
             [['name'], 'required'],
-            [['rate', 'status'], 'integer'],
+            [['status'], 'integer'],
+			[['rate'], 'number'],
             [['name'], 'string', 'max' => 255],
             [['type'], 'required'],
         ];
