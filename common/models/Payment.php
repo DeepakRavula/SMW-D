@@ -28,6 +28,7 @@ class Payment extends \yii\db\ActiveRecord {
 	
 	const TYPE_OPENING_BALANCE_CREDIT = 1;
 	const SCENARIO_APPLY_CREDIT = 'apply-credit';
+    const SCENARIO_OPENING_BALANCE = 'opening-balance';
 	
 	/**
 	 * @inheritdoc
@@ -45,6 +46,7 @@ class Payment extends \yii\db\ActiveRecord {
 			[['user_id', 'payment_method_id'], 'integer'],
 			[['user_id', 'date', 'sourceType','sourceId', 'reference', 'credit'],'safe'],
 			[['amount'], 'validateLessThanCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
+            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => self::SCENARIO_OPENING_BALANCE],
 		];
 	}
 
