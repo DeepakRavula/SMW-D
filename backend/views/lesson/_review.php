@@ -74,7 +74,9 @@ $this->title = 'Review Lessons';
                                'maxView' => 1,
                                'pickDate' => false,
                                'autoclose' => true,
-                               'format' => 'HH:ii P', 
+                               'format' => 'HH:ii P',
+                               'showMeridian' => true,
+                               'minuteStep' => 15
                            ]
                        ],
                        'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
