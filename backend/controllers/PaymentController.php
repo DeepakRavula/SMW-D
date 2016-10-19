@@ -202,49 +202,91 @@ class PaymentController extends Controller
 
 	public function actionEdit($id)
 	{
-		$request = Yii::$app->request;
+        $request = Yii::$app->request;
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
 		$post			 = Yii::$app->request->post();
 		if ($request->post('hasEditable')) {
 			$paymentIndex	 = $request->post('editableIndex');
 			$model			 = Payment::findOne(['id' => $id]);
-			$isOpeningBalance = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_ACCOUNT_ENTRY;
+            $lastAmount = $model->amount;
+            $isOtherPayments = (int) $model->payment_method_id !== (int)PaymentMethod::TYPE_ACCOUNT_ENTRY && (int)PaymentMethod::TYPE_CREDIT_USED && (int)PaymentMethod::TYPE_CREDIT_APPLIED;
+            $isAccountEntry = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_ACCOUNT_ENTRY;
 			$isCreditUsed = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_USED;
 			$isCreditApplied = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_APPLIED;
-			$result			 = [
-				'output' => '',
-				'message' => ''
-			];
 			if (!empty($post['Payment'][$paymentIndex]['amount'])) {
 				$model->amount	 = $post['Payment'][$paymentIndex]['amount'];
-				$output				 = $model->amount;
-				$model->save();
-				if ($isOpeningBalance) {
-					$lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
-					$lineItem->amount = $model->amount;
-					$model->invoice->subTotal = $lineItem->amount;
-					$model->invoice->total = $model->invoice->subTotal + $model->invoice->tax;
-					$lineItem->save();
-				}
-                if ($isCreditApplied) {
-                    $creditUsedPaymentModel         = $this->findModel($model->creditUsage->debit_payment_id);
-                    $creditUsedPaymentModel->amount = -abs($model->amount);
-                    $creditUsedPaymentModel->save();
-                    $creditUsedPaymentModel->invoice->save();
+				if ($isOtherPayments) {
+                    $output				 = $model->amount;
+                    $model->save();
+
+                    $result = [
+                        'output' => $output,
+                        'message' => ''
+                    ];
                 }
+				if ($isAccountEntry) {
+                        $model->save();
+                        $output = $model->amount;
+                        $lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
+                        $lineItem->amount = $model->amount;
+                        $model->invoice->subTotal = $lineItem->amount;
+                        $model->invoice->total = $model->invoice->subTotal + $model->invoice->tax;
+                        $lineItem->save();
+
+                        $result = [
+                            'output' => $output,
+                            'message' => ''
+                        ];
+                }
+                if ($isCreditApplied) {
+                    $model->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
+                    $model->last_amount = $lastAmount;
+                    $model->differnce = $model->amount - $lastAmount;
+                    if ($model->validate()) {
+                        $model->save();
+                        $output				 = $model->amount;
+
+                        $result = [
+                            'output' => $output,
+                            'message' => ''
+                        ];
+                    }
+                    else {
+                        $model = ActiveForm::validate($model);
+
+                        $result = [
+                            'output' => false,
+                            'message' => $model['payment-amount'],
+                        ];
+
+                    }
+                }
+
                 if ($isCreditUsed) {
-                    $creditAppliedPaymentModel         = $this->findModel($model->debitUsage->credit_payment_id);
-                    $creditAppliedPaymentModel->amount = abs($model->amount);
-                    $creditAppliedPaymentModel->save();
-                    $creditAppliedPaymentModel->invoice->save();
+                    $model->setScenario(Payment::SCENARIO_CREDIT_USED);
+                    $model->last_amount = $lastAmount;
+                    $model->differnce = $model->amount - $lastAmount;
+                    if ($model->validate()) {
+                        $model->save();
+                        $output				 = $model->amount;
+
+                        $result = [
+                            'output' => $output,
+                            'message' => ''
+                        ];
+                    }
+                    else {
+                        $model = ActiveForm::validate($model);
+
+                        $result = [
+                            'output' => false,
+                            'message' => $model['payment-amount'],
+                        ];
+                    }
                 }
 			}
-			$result = [
-				'output' => $output,
-				'message' => ''
-			];
-			return $result;
+            return $result;
 		}
 	}
 }

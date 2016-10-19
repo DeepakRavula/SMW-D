@@ -25,11 +25,17 @@ class Payment extends \yii\db\ActiveRecord {
 	public $sourceId;
 	public $paymentMethodName;
 	public $invoiceNumber;
-	
+    public $last_amount;
+    public $differnce;
+
 	const TYPE_OPENING_BALANCE_CREDIT = 1;
 	const SCENARIO_APPLY_CREDIT = 'apply-credit';
-    const SCENARIO_OPENING_BALANCE = 'opening-balance';
-	
+    const SCENARIO_CREDIT_APPLIED = 'credit-applied';
+    const SCENARIO_ALLOW_NEGATIVE_PAYMENTS = 'allow-negative-payments';
+    const SCENARIO_ALLOW_NEGATIVE_PAYMENTS_ONLY = 'allow-negative-payments-only';
+    const SCENARIO_CREDIT_USED = 'credit-used';
+    const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
+
 	/**
 	 * @inheritdoc
 	 */
@@ -46,16 +52,36 @@ class Payment extends \yii\db\ActiveRecord {
 			[['user_id', 'payment_method_id'], 'integer'],
 			[['user_id', 'date', 'sourceType','sourceId', 'reference', 'credit'],'safe'],
 			[['amount'], 'validateLessThanCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
-            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => self::SCENARIO_OPENING_BALANCE],
+            [['amount'], 'validateCreditApplied', 'on' => self::SCENARIO_CREDIT_APPLIED],
+            [['amount'], 'validateCreditUsed', 'on' => self::SCENARIO_CREDIT_USED],
+            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => self::SCENARIO_ALLOW_NEGATIVE_PAYMENTS],
+            ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_ALLOW_NEGATIVE_PAYMENTS_ONLY],
 		];
 	}
 
 	public function validateLessThanCredit($attributes){
 		if((double) $this->credit < (double) $this->amount){
-			return $this->addError($attributes,'Insufficient Credit');	
+			return $this->addError($attributes,'Insufficient Credit');
 		}
 	}
-	/**
+
+    public function validateCreditApplied($attributes){
+		if($this->amount > $this->last_amount){
+            if ($this->creditAppliedInvoice->balance >= 0 || abs($this->creditAppliedInvoice->balance) < abs($this->differnce)) {
+                return $this->addError($attributes,'Insufficient Credit');
+            }
+		}
+	}
+
+    public function validateCreditUsed($attributes){
+		if(abs($this->amount) > abs($this->last_amount)) {
+            if ($this->balance >= 0 || abs($this->balance) < abs($this->differnce)) {
+                return $this->addError($attributes,'Insufficient Credit');
+            }
+		}
+	}
+
+    /**
 	 * @inheritdoc
 	 */
 	public function attributeLabels() {
@@ -74,7 +100,7 @@ class Payment extends \yii\db\ActiveRecord {
     {
         return new PaymentQuery(get_called_class());
     }
-	
+
 	public function getUser() {
 		return $this->hasOne(User::className(), ['id' => 'user_id']);
 	}
@@ -88,6 +114,10 @@ class Payment extends \yii\db\ActiveRecord {
 		return $this->hasOne(PaymentMethod::className(), ['id' => 'payment_method_id']);
 	}
 
+    public function getCreditAppliedInvoice() {
+		return $this->hasOne(Invoice::className(), ['id' => 'reference']);
+	}
+
 	public function getCreditUsage() {
 		return $this->hasOne(CreditUsage::className(), ['credit_payment_id' => 'id']);
 	}
@@ -95,7 +125,7 @@ class Payment extends \yii\db\ActiveRecord {
 	public function getDebitUsage() {
 		return $this->hasOne(CreditUsage::className(), ['debit_payment_id' => 'id']);
 	}
-	
+
 	public function getInvoicePayment() {
 		return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id']);
 	}
@@ -107,7 +137,7 @@ class Payment extends \yii\db\ActiveRecord {
 	public function beforeSave($insert)
 	{
 		if (!$insert) {
-			return parent::beforeSave($insert);
+            return parent::beforeSave($insert);
 		}
 		$model = Invoice::findOne(['id' => $this->invoiceId]);
 		$this->user_id	 = $model->user_id;
@@ -122,6 +152,20 @@ class Payment extends \yii\db\ActiveRecord {
 	public function afterSave($insert, $changedAttributes)
 	{
 		if (!$insert) {
+            $isCreditUsed = (int) $this->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_USED;
+			$isCreditApplied = (int) $this->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_APPLIED;
+            if ($isCreditApplied) {
+                $creditUsedPaymentModel         = Payment::findOne(['id' => $this->creditUsage->debit_payment_id]);
+                $creditUsedPaymentModel->amount = -abs($this->amount);
+                $creditUsedPaymentModel->save();
+                $creditUsedPaymentModel->invoice->save();
+            }
+            if ($isCreditUsed) {
+                $creditAppliedPaymentModel         = Payment::findOne(['id' => $this->debitUsage->credit_payment_id]);
+                $creditAppliedPaymentModel->amount = abs($this->amount);
+                $creditAppliedPaymentModel->save();
+                $creditAppliedPaymentModel->invoice->save();
+            }
             $this->invoice->save();
 			return parent::afterSave($insert, $changedAttributes);
 		}
