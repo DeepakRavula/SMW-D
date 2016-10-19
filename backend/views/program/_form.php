@@ -21,7 +21,7 @@ $this->title = $title;}
 			<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 		</div>
 		<div class="col-md-4">
-			<?php $rateLabel = (int)$model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour($)' : 'Rate Per Course';?>
+			<?php $rateLabel = (int)$model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour($)' : 'Rate Per Course($)';?>
 			<?php echo $form->field($model, 'rate')->textInput()->label($rateLabel); ?>
 		</div>
 		<div class="col-md-4">

@@ -21,7 +21,7 @@ foreach($roles as $name => $description){
     <div class="col-xs-2">
         	<i class="fa fa-music"></i> <?php echo $model->name; ?>
     </div>
-	<?php $rate = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour($)' : 'Rate Per Course'; ?>
+	<?php $rate = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour($)' : 'Rate Per Course($)'; ?>
 	<div class="col-xs-2" data-toggle="tooltip" data-placement="bottom" title= "<?= $rate; ?>" >
 		<i class="fa fa-money"></i> <?php echo $model->rate; ?>
 	</div>
