@@ -40,18 +40,20 @@ use yii\bootstrap\ActiveForm;
 
 </div>
 
-<div id="program-rate-per-month">
-	<strong>What's that per month</strong>
-	<div>
-		Four 30mins Lessons @ <span id="rate-30-min"><?= ($model->rate)/2;?></span> each = $ <span id="rate-month-30-min"><?=(($model->rate)/2)*4;?></span> /mn;?>
+<?php if ((int) $model->type === Program::TYPE_PRIVATE_PROGRAM) : ?>
+	<div id="program-rate-per-month">
+		<strong>What's that per month</strong>
+		<div>
+			Four 30mins Lessons @ <span id="rate-30-min"><?= ($model->rate) / 2; ?></span> each = $ <span id="rate-month-30-min"><?= (($model->rate)/ 2) * 4; ?></span> /mn;?>
+		</div>
+		<div>
+			Four 45mins Lessons @ <span id="rate-45-min"><?= ($model->rate) / (4 / 3); ?></span> each = $ <span id="rate-month-45-min"><?= (($model->rate)	/ (4 / 3)) * 4; ?></span> /mn;?>
+		</div>
+		<div>
+			Four 60mins Lessons @ <span id="rate-60-min"><?= $model->rate; ?></span> each = $ <span id="rate-month-60-min"><?= ($model->rate) * 4; ?></span> /mn;?>
+		</div>
 	</div>
-	<div>
-		Four 45mins Lessons @ <span id="rate-45-min"><?= ($model->rate)/(4/3);?></span> each = $ <span id="rate-month-45-min"><?=(($model->rate)/(4/3))*4;?></span> /mn;?>
-	</div>
-	<div>
-		Four 60mins Lessons @ <span id="rate-60-min"><?= $model->rate;?></span> each = $ <span id="rate-month-60-min"><?=($model->rate)*4;?></span> /mn;?>
-	</div>
-</div>
+<?php endif; ?>
 <script type="text/javascript">
 $(document).ready(function(){
 $("#program-rate").on('change keyup paste', function() {

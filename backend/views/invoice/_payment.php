@@ -26,7 +26,11 @@ $columns = [
 			'attribute' => 'amount',
 			'refreshGrid' => true,
 			'editableOptions' => function ($model, $key, $index) {
-				return [
+            if ((int)$model->payment_method_id === (int)PaymentMethod::TYPE_ACCOUNT_ENTRY) {
+               $model->setScenario(Payment::SCENARIO_OPENING_BALANCE);
+            }
+			
+            return [
 					'header' => 'Amount',
 					'inputType' => \kartik\editable\Editable::INPUT_TEXT,
 					'formOptions' => ['action' => Url::to(['payment/edit', 'id' => $model->id])],
