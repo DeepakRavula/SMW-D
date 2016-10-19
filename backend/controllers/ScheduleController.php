@@ -106,7 +106,7 @@ class ScheduleController extends Controller
             } else {
             	$title = $lesson->enrolment->student->fullName . ' ( ' .$lesson->course->program->name . ' ) ';
 			}
-            $class = 'null';
+            $class = null;
             if (! empty($lesson->proFormaInvoice)) { 
                 if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
                     $class = 'proforma-paid';
