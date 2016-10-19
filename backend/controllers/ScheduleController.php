@@ -10,7 +10,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\filters\AccessControl;
 use common\models\Program;
-use common\models\Course;
+use common\models\Invoice;
 use yii\helpers\Url;
 use common\models\TeacherAvailability;
 /**
@@ -106,12 +106,17 @@ class ScheduleController extends Controller
             } else {
             	$title = $lesson->enrolment->student->fullName . ' ( ' .$lesson->course->program->name . ' ) ';
 			}
+            $class = 'proforma-unpaid';
+            if(isset($lesson->proFormaInvoice->status) && $lesson->proFormaInvoice->status === (int) Invoice::STATUS_PAID) {
+                $class = 'proforma-paid';
+            }  
             $events[]= [
                 'resources' => $lesson->teacherId,
                 'title' => $title,
                 'start' => $lesson->date,
                 'end' => $toTime->format('Y-m-d H:i:s'),
                 'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
+                'className' => $class,
             ];   
         }
         unset($lesson);
