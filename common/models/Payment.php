@@ -31,7 +31,7 @@ class Payment extends \yii\db\ActiveRecord {
 	const TYPE_OPENING_BALANCE_CREDIT = 1;
 	const SCENARIO_APPLY_CREDIT = 'apply-credit';
     const SCENARIO_CREDIT_APPLIED = 'credit-applied';
-    const SCENARIO_ALLOW_NEGATIVE_PAYMENTS = 'allow-negative-payments';
+    const SCENARIO_OPENING_BALANCE = 'allow-negative-payments';
     const SCENARIO_CREDIT_USED = 'credit-used';
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
 
@@ -53,7 +53,7 @@ class Payment extends \yii\db\ActiveRecord {
 			[['amount'], 'validateLessThanCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'validateCreditApplied', 'on' => self::SCENARIO_CREDIT_APPLIED],
             [['amount'], 'validateCreditUsed', 'on' => self::SCENARIO_CREDIT_USED],
-            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_ALLOW_NEGATIVE_PAYMENTS, self::SCENARIO_CREDIT_USED]],
+            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE, self::SCENARIO_CREDIT_USED]],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
         ];
 	}

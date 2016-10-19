@@ -29,7 +29,7 @@ $columns = [
             $isAccountEntry = ((int)$model->payment_method_id === (int)PaymentMethod::TYPE_ACCOUNT_ENTRY);
             $isCreditUsed = ((int)$model->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_USED);
             if ($isAccountEntry) {
-               $model->setScenario(Payment::SCENARIO_ALLOW_NEGATIVE_PAYMENTS);
+               $model->setScenario(Payment::SCENARIO_OPENING_BALANCE);
             }elseif ($isCreditUsed) {
                     $model->setScenario(Payment::SCENARIO_CREDIT_USED);
                 }
