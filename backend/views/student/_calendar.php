@@ -67,7 +67,7 @@ $(document).ready(function() {
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
-	
+
   $('#calendar').fullCalendar({
     header: {
       left: 'prev,next today',
@@ -84,10 +84,21 @@ $(document).ready(function() {
     resources:  <?php echo Json::encode($teachersWithClass); ?>,
     events: <?php echo Json::encode($events); ?>,
 	select: function(start, end, allDay) {
-//		$('#course-detail').show();
-		$('#course-day').val(moment(start).format('d'));
+		$('#course-day').val(moment(start).format('dddd'));
 		$('#course-fromtime').val(moment(start).format('h:mm A'));
 		$('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
+		var title = 1;
+		if (title) {
+			$('#calendar').fullCalendar('renderEvent',
+				{
+					title: title,
+					start: start,
+					end: end,
+					allDay: false
+				},
+				true // make the event "stick"
+			);
+		}
 		$('#calendar').fullCalendar('unselect');
 	},
     selectable: true,

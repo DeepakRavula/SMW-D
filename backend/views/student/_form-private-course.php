@@ -53,10 +53,10 @@ use yii\helpers\Url;
 	</div>
 	<div id="course-detail" class="row">
 		<div class="col-md-4">
-        	<?= $form->field($model, 'day')->textInput()?>
+        	<?= $form->field($model, 'day')->textInput(['readonly' => true])?>
 		</div>
 		<div class="col-md-4">
-        	<?= $form->field($model, 'fromTime')->textInput()?>
+        	<?= $form->field($model, 'fromTime')->textInput(['readonly' => true])?>
 		</div>
 		<div class="col-md-4">
 			<?php
@@ -67,7 +67,7 @@ use yii\helpers\Url;
 					'todayHighlight' => true,
 					'autoclose' => true
 				]
-			]);
+			])->textInput(['readonly' => true]);
 			?>
 		</div>
 	</div>
