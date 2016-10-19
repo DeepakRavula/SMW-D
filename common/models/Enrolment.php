@@ -118,10 +118,6 @@ class Enrolment extends \yii\db\ActiveRecord
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
         $period = new \DatePeriod($start, $interval, $end);
-        $fromTime = new \DateTime($this->course->fromTime);
-        $length = explode(':', $this->course->duration);
-        $fromTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
-        $toTime = $fromTime->format('H:i:s');
 
         foreach($period as $day){
             if ((int) $day->format('N') === (int) $this->course->day) {
@@ -137,8 +133,8 @@ class Enrolment extends \yii\db\ActiveRecord
                     'teacherId' => $this->course->teacherId,
                     'status' => Lesson::STATUS_DRAFTED,
                     'date' => $day->format('Y-m-d H:i:s'),
-                    'toTime' => $toTime, 
-                    'isDeleted' => 0,
+                    'duration' => $this->course->duration,
+                    'isDeleted' => false,
                 ]);
                 $lesson->save();
             }

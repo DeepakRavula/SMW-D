@@ -51,15 +51,8 @@ use yii\helpers\Html;
 			[
 			    'label' => 'Date',
 			 	'value' => function($data){
-					$date = (new \DateTime($data->date))->format('d-m-Y');
-					return ! empty($date) ? $date : null;
+				    return Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
 				}	
-			],
-			[
-			    'label' => 'Time',
-			 	'value' => function($data){
-					return (new \DateTime($data->date))->format('h:i A');
-				}
 			],
             [
 			    'label' => 'Customer Name',

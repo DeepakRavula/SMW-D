@@ -90,7 +90,6 @@ class ScheduleController extends Controller
 
 		$lessons =[];
         $lessons = Lesson::find()
-			->indexBy('id')
 			->joinWith(['course' => function($query) {
 			    $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
 			}])
@@ -99,7 +98,7 @@ class ScheduleController extends Controller
        $events = [];
         foreach ($lessons as &$lesson) {
             $toTime = new \DateTime($lesson->date);
-            $length = explode(':', $lesson->course->duration);
+            $length = explode(':', $lesson->duration);
 		    $toTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
             if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {                
                 $title = $lesson->course->program->name . ' ( ' . $lesson->course->getEnrolmentsCount() . ' ) ';
