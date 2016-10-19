@@ -62,6 +62,7 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
     ]) ?>
 </div>
     <div class="grid-row-open">
+	<?php $rateLabel = (int)$model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour' : 'Rate Per Course';?>
 	<?php Pjax::begin(['id' => 'program-listing']) ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
@@ -74,7 +75,12 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
             },
             'columns' => [
                 'name',
-                'rate:currency',
+                [
+				'label' => $rateLabel,
+				'value' => function($data) {
+					return ! empty($data->rate) ? Yii::$app->formatter->asCurrency($data->rate) : null;
+                },
+			],
             ],
         ]); ?>
     <?php Pjax::end(); ?>
