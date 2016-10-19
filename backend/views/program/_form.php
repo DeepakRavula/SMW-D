@@ -60,10 +60,14 @@ $this->title = $title;}
 <script type="text/javascript">
 $(document).ready(function(){
 $("#program-rate").on('change keyup paste', function() {
-		$('#rate-30-min').text($('#program-rate').val() / 2);
-		$('#rate-month-30-min').text(($('#program-rate').val() / 2) * 4);
-		$('#rate-45-min').text($('#program-rate').val() / (4/3));
-		$('#rate-month-45-min').text(($('#program-rate').val() / (4/3)) * 4);
+	    var rate30 = ($('#program-rate').val() / 2).toFixed(2);
+		$('#rate-30-min').text(rate30);
+		var ratePerMonth30 = (($('#program-rate').val() / 2) * 4).toFixed(2);
+		$('#rate-month-30-min').text(ratePerMonth30);
+	 	var rate45 = ($('#program-rate').val() / (4/3)).toFixed(2);
+		$('#rate-45-min').text(rate45);
+		var ratePerMonth30 = (($('#program-rate').val() / (4/3)) * 4).toFixed(2);
+		$('#rate-month-45-min').text(ratePerMonth30);
 		$('#rate-60-min').text($('#program-rate').val());
 		$('#rate-month-60-min').text($('#program-rate').val() * 4);
 	});
