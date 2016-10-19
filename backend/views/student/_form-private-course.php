@@ -51,6 +51,26 @@ use yii\helpers\Url;
 			?>
 		</div>
 	</div>
+	<div id="course-detail" class="row">
+		<div class="col-md-4">
+        	<?= $form->field($model, 'day')->textInput()?>
+		</div>
+		<div class="col-md-4">
+        	<?= $form->field($model, 'fromTime')->textInput()?>
+		</div>
+		<div class="col-md-4">
+			<?php
+			echo $form->field($model, 'startDate')->widget(DatePicker::classname(), [
+				'type' => DatePicker::TYPE_COMPONENT_APPEND,
+       				'pluginOptions' => [
+					'format' => 'dd-mm-yyyy',
+					'todayHighlight' => true,
+					'autoclose' => true
+				]
+			]);
+			?>
+		</div>
+	</div>
 	<div class="row">
 		<div class="col-md-4">
         	<?= $form->field($model, 'paymentFrequency')->radioList(Enrolment::paymentFrequencies())?>
@@ -68,8 +88,3 @@ use yii\helpers\Url;
 		'model' =>  $model,
     ]) ?>
 </div>
-<script type="text/javascript">
-   	$('#course-teacherid').change(function() {
-	  $('#calendar').show();
-	});
-</script>

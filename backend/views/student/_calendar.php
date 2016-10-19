@@ -2,7 +2,9 @@
 use common\models\Location;
 use common\models\TeacherAvailability;
 use common\models\Lesson;
-
+use common\models\Program;
+use yii\helpers\Json;
+use yii\helpers\Url;
 ?>
 <?php
 $location = Location::findOne($id=Yii::$app->session->get('location_id'));
@@ -15,7 +17,7 @@ $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 			->joinWith(['userLocation' => function($query) use($locationId, $model) {
 				$query->joinWith(['userProfile' => function($query) use($model){
 					$query->joinWith(['lesson' => function($query) use($model){
-						$query->where(['teacherId' => $model->teacherId])
+						$query->where(['teacherId' => '470'])
 							->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
 					}]);
 				}])
@@ -34,7 +36,7 @@ $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 			->joinWith(['course' => function($query) {
 			    $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
 			}])
-			->where(['teacherId' => $model->teacherId])
+			->where(['lesson.teacherId' => '470'])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->all();
        $events = [];
@@ -65,65 +67,31 @@ $(document).ready(function() {
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
-
+	
   $('#calendar').fullCalendar({
     header: {
       left: 'prev,next today',
       center: 'title',
-      right: 'month,agendaWeek,resourceDay'
+      right: 'agendaWeek,resourceDay'
     },
 	titleFormat: 'DD-MMM-YYYY, dddd',
-    defaultView: 'resourceDay',
+    defaultView: 'agendaWeek',
     minTime: "<?php echo $from_time; ?>",
     maxTime: "<?php echo $to_time; ?>",
     slotDuration: "00:15:01",
-    editable: false,
+	allowCalEventOverlap: true,
+    overlapEventsSeparate: true,
     resources:  <?php echo Json::encode($teachersWithClass); ?>,
     events: <?php echo Json::encode($events); ?>,
-    eventClick: function(event) {
-        $(location).attr('href', event.url);
-    },
-    // the 'ev' parameter is the mouse event rather than the resource 'event'
-    // the ev.data is the resource column clicked upon
+	select: function(start, end, allDay) {
+//		$('#course-detail').show();
+		$('#course-day').val(moment(start).format('d'));
+		$('#course-fromtime').val(moment(start).format('h:mm A'));
+		$('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
+		$('#calendar').fullCalendar('unselect');
+	},
     selectable: true,
     selectHelper: true,
-    select: function(start, end, ev) {
-      console.log(start);
-      console.log(end);
-      console.log(ev.data); // resources
-    },
-    dayClick: function(date, allDay, jsEvent, view) {
-        if (allDay) {
-            // Clicked on the entire day
-            $('#calendar').fullCalendar('changeView', 'resourceDay');
-            $('#calendar').fullCalendar('gotoDate', date);
-            $('#calendar').fullCalendar(
-                {
-                    resources:  <?php echo Json::encode($teachersWithClass); ?>,
-                    events: <?php echo Json::encode($events); ?>,
-                }
-            );
-        }
-    },
-    eventAfterAllRender: function (view, element) {
-        var date = new Date($('#calendar').fullCalendar('getDate'));
-        var count = 0;
-        $('#calendar').fullCalendar('clientEvents', function(event) {
-            var startTime = new Date(event.start);
-            var eventDate = startTime.getDate() + "/" + startTime.getMonth() + "/" + startTime.getFullYear();
-            var currentDate = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
-            if(eventDate == currentDate) {
-               count++;
-            }
-        });
-
-        if(count==0){
-            $('#myflashinfo').html("No lessons scheduled for the day").fadeIn().delay(1000).fadeOut();
-        }
-    },
   });
-    $(".fc-button-month, .fc-button-prev, .fc-button-next, .fc-button-today").click(function(){
-        $(".fc-view-month .fc-event").hide();
-    })
 });
 </script>
