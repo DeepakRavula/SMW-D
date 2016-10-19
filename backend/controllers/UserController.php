@@ -278,7 +278,7 @@ class UserController extends Controller {
 	public function actionAddOpeningBalance($id) {
 		$model = $this->findModel($id);
 		$locationId = Yii::$app->session->get('location_id');
-		$paymentModel = new Payment();
+		$paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
         if ($paymentModel->load(Yii::$app->request->post())) {
             $lastInvoice = Invoice::lastInvoice($locationId);
 
