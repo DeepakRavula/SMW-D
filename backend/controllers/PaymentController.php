@@ -210,17 +210,9 @@ class PaymentController extends Controller
             $paymentIndex    = $request->post('editableIndex');
             $model           = Payment::findOne(['id' => $id]);
             $lastAmount      = $model->amount;
-            $isOtherPayments = ((int) $model->payment_method_id !== (int) PaymentMethod::TYPE_ACCOUNT_ENTRY)
-                &&
-                ((int) $model->payment_method_id !== (int) PaymentMethod::TYPE_CREDIT_USED)
-                &&
-                ((int) $model->payment_method_id !== (int) PaymentMethod::TYPE_CREDIT_APPLIED);
-            $isAccountEntry  = (int) $model->payment_method_id === (int) PaymentMethod::TYPE_ACCOUNT_ENTRY;
-            $isCreditUsed    = (int) $model->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED;
-            $isCreditApplied = (int) $model->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED;
             if (!empty($post['Payment'][$paymentIndex]['amount'])) {
                 $model->amount = $post['Payment'][$paymentIndex]['amount'];
-                if ($isOtherPayments) {
+                if ($model->isOtherPayments()) {
                     $output = $model->amount;
                     $model->save();
 
@@ -229,7 +221,7 @@ class PaymentController extends Controller
                         'message' => ''
                     ];
                 }
-                if ($isAccountEntry) {
+                if ($model->isAccountEntry()) {
                     $model->save();
                     $output                   = $model->amount;
                     $lineItem                 = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
@@ -243,7 +235,7 @@ class PaymentController extends Controller
                         'message' => ''
                     ];
                 }
-                if ($isCreditApplied) {
+                if ($model->isCreditApplied()) {
                     $model->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
                     $model->last_amount = $lastAmount;
                     $model->differnce   = $model->amount - $lastAmount;
@@ -256,16 +248,16 @@ class PaymentController extends Controller
                             'message' => ''
                         ];
                     } else {
-                        $model = ActiveForm::validate($model);
+                        $error = ActiveForm::validate($model);
 
                         $result = [
                             'output' => false,
-                            'message' => $model['payment-amount'],
+                            'message' => $error['payment-amount'],
                         ];
                     }
                 }
 
-                if ($isCreditUsed) {
+                if ($model->isCreditUsed()) {
                     $model->setScenario(Payment::SCENARIO_CREDIT_USED);
                     $model->last_amount = $lastAmount;
                     $model->differnce   = $model->amount - $lastAmount;
@@ -278,11 +270,11 @@ class PaymentController extends Controller
                             'message' => ''
                         ];
                     } else {
-                        $model = ActiveForm::validate($model);
+                        $error = ActiveForm::validate($model);
 
                         $result = [
                             'output' => false,
-                            'message' => $model['payment-amount'],
+                            'message' => $error['payment-amount'],
                         ];
                     }
                 }

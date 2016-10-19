@@ -155,16 +155,14 @@ class Payment extends \yii\db\ActiveRecord {
 	public function afterSave($insert, $changedAttributes)
 	{
 		if (!$insert) {
-            $isCreditUsed    = (int) $this->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED;
-            $isCreditApplied = (int) $this->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED;
-            if ($isCreditApplied) {
+            if ($this->isCreditApplied()) {
                 $creditUsedPaymentModel = Payment::findOne(['id' => $this->creditUsage->debit_payment_id]);
                 $creditUsedPaymentModel->updateAttributes([
                     'amount' => -abs($this->amount)
                 ]);
                 $creditUsedPaymentModel->invoice->save();
             }
-            if ($isCreditUsed) {
+            if ($this->isCreditUsed()) {
                 $creditAppliedPaymentModel = Payment::findOne(['id' => $this->debitUsage->credit_payment_id]);
                 $creditAppliedPaymentModel->updateAttributes([
                     'amount' => abs($this->amount)
@@ -184,4 +182,45 @@ class Payment extends \yii\db\ActiveRecord {
 
 		return parent::afterSave($insert, $changedAttributes);
 	}
+
+    public function isOtherPayments()
+    {
+        $otherPayments = ((int) $this->payment_method_id !== (int) PaymentMethod::TYPE_ACCOUNT_ENTRY)
+            &&
+            ((int) $this->payment_method_id !== (int) PaymentMethod::TYPE_CREDIT_USED)
+            &&
+            ((int) $this->payment_method_id !== (int) PaymentMethod::TYPE_CREDIT_APPLIED);
+        if ($otherPayments) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isCreditApplied()
+    {
+        if ((int) $this->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isCreditUsed()
+    {
+        if ((int) $this->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isAccountEntry()
+    {
+        if ((int) $this->payment_method_id === (int) PaymentMethod::TYPE_ACCOUNT_ENTRY) {
+            return true;
+        }
+
+        return false;
+    }
 }
