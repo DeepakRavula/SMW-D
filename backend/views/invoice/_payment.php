@@ -31,9 +31,10 @@ $columns = [
             if ($isAccountEntry) {
                $model->setScenario(Payment::SCENARIO_ALLOW_NEGATIVE_PAYMENTS);
             }elseif ($isCreditUsed) {
-                    $model->setScenario(Payment::SCENARIO_ALLOW_NEGATIVE_PAYMENTS_ONLY);
+                    $model->setScenario(Payment::SCENARIO_CREDIT_USED);
                 }
-			
+
+
             return [
 					'header' => 'Amount',
 					'inputType' => \kartik\editable\Editable::INPUT_TEXT,

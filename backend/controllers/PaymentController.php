@@ -201,23 +201,27 @@ class PaymentController extends Controller
 	}
 
 	public function actionEdit($id)
-	{
-        $request = Yii::$app->request;
-		$response = \Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
-		$post			 = Yii::$app->request->post();
-		if ($request->post('hasEditable')) {
-			$paymentIndex	 = $request->post('editableIndex');
-			$model			 = Payment::findOne(['id' => $id]);
-            $lastAmount = $model->amount;
-            $isOtherPayments = (int) $model->payment_method_id !== (int)PaymentMethod::TYPE_ACCOUNT_ENTRY && (int)PaymentMethod::TYPE_CREDIT_USED && (int)PaymentMethod::TYPE_CREDIT_APPLIED;
-            $isAccountEntry = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_ACCOUNT_ENTRY;
-			$isCreditUsed = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_USED;
-			$isCreditApplied = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_APPLIED;
-			if (!empty($post['Payment'][$paymentIndex]['amount'])) {
-				$model->amount	 = $post['Payment'][$paymentIndex]['amount'];
-				if ($isOtherPayments) {
-                    $output				 = $model->amount;
+    {
+        $request          = Yii::$app->request;
+        $response         = \Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        $post             = Yii::$app->request->post();
+        if ($request->post('hasEditable')) {
+            $paymentIndex    = $request->post('editableIndex');
+            $model           = Payment::findOne(['id' => $id]);
+            $lastAmount      = $model->amount;
+            $isOtherPayments = ((int) $model->payment_method_id !== (int) PaymentMethod::TYPE_ACCOUNT_ENTRY)
+                &&
+                ((int) $model->payment_method_id !== (int) PaymentMethod::TYPE_CREDIT_USED)
+                &&
+                ((int) $model->payment_method_id !== (int) PaymentMethod::TYPE_CREDIT_APPLIED);
+            $isAccountEntry  = (int) $model->payment_method_id === (int) PaymentMethod::TYPE_ACCOUNT_ENTRY;
+            $isCreditUsed    = (int) $model->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED;
+            $isCreditApplied = (int) $model->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED;
+            if (!empty($post['Payment'][$paymentIndex]['amount'])) {
+                $model->amount = $post['Payment'][$paymentIndex]['amount'];
+                if ($isOtherPayments) {
+                    $output = $model->amount;
                     $model->save();
 
                     $result = [
@@ -225,58 +229,55 @@ class PaymentController extends Controller
                         'message' => ''
                     ];
                 }
-				if ($isAccountEntry) {
-                        $model->save();
-                        $output = $model->amount;
-                        $lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
-                        $lineItem->amount = $model->amount;
-                        $model->invoice->subTotal = $lineItem->amount;
-                        $model->invoice->total = $model->invoice->subTotal + $model->invoice->tax;
-                        $lineItem->save();
+                if ($isAccountEntry) {
+                    $model->save();
+                    $output                   = $model->amount;
+                    $lineItem                 = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
+                    $lineItem->amount         = $model->amount;
+                    $model->invoice->subTotal = $lineItem->amount;
+                    $model->invoice->total    = $model->invoice->subTotal + $model->invoice->tax;
+                    $lineItem->save();
 
-                        $result = [
-                            'output' => $output,
-                            'message' => ''
-                        ];
+                    $result = [
+                        'output' => $output,
+                        'message' => ''
+                    ];
                 }
                 if ($isCreditApplied) {
                     $model->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
                     $model->last_amount = $lastAmount;
-                    $model->differnce = $model->amount - $lastAmount;
+                    $model->differnce   = $model->amount - $lastAmount;
                     if ($model->validate()) {
                         $model->save();
-                        $output				 = $model->amount;
+                        $output = $model->amount;
 
                         $result = [
                             'output' => $output,
                             'message' => ''
                         ];
-                    }
-                    else {
+                    } else {
                         $model = ActiveForm::validate($model);
 
                         $result = [
                             'output' => false,
                             'message' => $model['payment-amount'],
                         ];
-
                     }
                 }
 
                 if ($isCreditUsed) {
                     $model->setScenario(Payment::SCENARIO_CREDIT_USED);
                     $model->last_amount = $lastAmount;
-                    $model->differnce = $model->amount - $lastAmount;
+                    $model->differnce   = $model->amount - $lastAmount;
                     if ($model->validate()) {
                         $model->save();
-                        $output				 = $model->amount;
+                        $output = $model->amount;
 
                         $result = [
                             'output' => $output,
                             'message' => ''
                         ];
-                    }
-                    else {
+                    } else {
                         $model = ActiveForm::validate($model);
 
                         $result = [
@@ -285,8 +286,8 @@ class PaymentController extends Controller
                         ];
                     }
                 }
-			}
+            }
             return $result;
-		}
-	}
+        }
+    }
 }
