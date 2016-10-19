@@ -108,7 +108,7 @@ class ScheduleController extends Controller
 			}
             $class = 'null';
             if (! empty($lesson->proFormaInvoice)) { 
-                if ((int) $lesson->proFormaInvoice->status !== Invoice::STATUS_OWING) {
+                if ((int) $lesson->proFormaInvoice->status === Invoice::STATUS_PAID || (int) $lesson->proFormaInvoice->status === Invoice::STATUS_CREDIT) {
                     $class = 'proforma-paid';
                 } else {
                     $class = 'proforma-unpaid'; 
