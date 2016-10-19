@@ -113,7 +113,7 @@ $this->title = 'Review Lessons';
 					   'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
 				   ];
 			   }
-			,
+			],
 			[
 				'label' => 'Conflict',
 				'value' => function($data) use($conflicts){
