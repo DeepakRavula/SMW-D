@@ -76,9 +76,13 @@ a:hover, a:focus{
 .fc{
   background: #fff;
 }
-.fc-event {
+.proforma-unpaid, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .proforma-unpaid a{
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
+}
+.proforma-paid, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .proforma-paid a{
+    border: 1px solid  #378006 !important;
+    background-color:  #378006 !important;
 }
 .bg-light-blue, .label-primary, .modal-primary .modal-body {
     background-color: transparent !important;
