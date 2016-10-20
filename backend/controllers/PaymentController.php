@@ -209,77 +209,107 @@ class PaymentController extends Controller
         if ($request->post('hasEditable')) {
             $paymentIndex    = $request->post('editableIndex');
             $model           = Payment::findOne(['id' => $id]);
-            $lastAmount      = $model->amount;
             if (!empty($post['Payment'][$paymentIndex]['amount'])) {
-                $model->amount = $post['Payment'][$paymentIndex]['amount'];
+                $newAmount = $post['Payment'][$paymentIndex]['amount'];
                 if ($model->isOtherPayments()) {
-                    $output = $model->amount;
-                    $model->save();
-
-                    $result = [
-                        'output' => $output,
-                        'message' => ''
-                    ];
+                    $response = Yii::$app->runAction('payment/edit-other-payments', ['model' => $model, 'newAmount' => $newAmount]);
                 }
                 if ($model->isAccountEntry()) {
-                    $model->save();
-                    $output                   = $model->amount;
-                    $lineItem                 = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
-                    $lineItem->amount         = $model->amount;
-                    $model->invoice->subTotal = $lineItem->amount;
-                    $model->invoice->total    = $model->invoice->subTotal + $model->invoice->tax;
-                    $lineItem->save();
-
-                    $result = [
-                        'output' => $output,
-                        'message' => ''
-                    ];
+                    $response = Yii::$app->runAction('payment/edit-account-entry', ['model' => $model, 'newAmount' => $newAmount]);
                 }
                 if ($model->isCreditApplied()) {
-                    $model->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
-                    $model->last_amount = $lastAmount;
-                    $model->differnce   = $model->amount - $lastAmount;
-                    if ($model->validate()) {
-                        $model->save();
-                        $output = $model->amount;
-
-                        $result = [
-                            'output' => $output,
-                            'message' => ''
-                        ];
-                    } else {
-                        $error = ActiveForm::validate($model);
-
-                        $result = [
-                            'output' => false,
-                            'message' => $error['payment-amount'],
-                        ];
-                    }
+                    $response = Yii::$app->runAction('payment/edit-credit-applied', ['model' => $model, 'newAmount' => $newAmount]);
                 }
 
                 if ($model->isCreditUsed()) {
-                    $model->setScenario(Payment::SCENARIO_CREDIT_USED);
-                    $model->last_amount = $lastAmount;
-                    $model->differnce   = $model->amount - $lastAmount;
-                    if ($model->validate()) {
-                        $model->save();
-                        $output = $model->amount;
-
-                        $result = [
-                            'output' => $output,
-                            'message' => ''
-                        ];
-                    } else {
-                        $error = ActiveForm::validate($model);
-
-                        $result = [
-                            'output' => false,
-                            'message' => $error['payment-amount'],
-                        ];
-                    }
+                    $response = Yii::$app->runAction('payment/edit-credit-used', ['model' => $model, 'newAmount' => $newAmount]);
                 }
+
+                return $response;
             }
-            return $result;
         }
+    }
+    
+    public function actionEditOtherPayments($model, $newAmount)
+    {
+        $model->amount = $newAmount;
+        $model->save();
+
+        $result = [
+            'output' => $newAmount,
+            'message' => ''
+        ];
+
+        return $result;
+    }
+    
+    public function actionEditAccountEntry($model, $newAmount)
+    {   
+        $model->amount = $newAmount;
+        $model->save();
+        $lineItem                 = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
+        $lineItem->amount         = $model->amount;
+        $model->invoice->subTotal = $lineItem->amount;
+        $model->invoice->total    = $model->invoice->subTotal + $model->invoice->tax;
+        $lineItem->save();
+
+        $result = [
+            'output' => $newAmount,
+            'message' => ''
+        ];
+
+        return $result;
+    }
+    
+    public function actionEditCreditApplied($model, $newAmount)
+    {
+        $lastAmount      = $model->amount;
+        $model->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
+        $model->amount = $newAmount;
+        $model->last_amount = $lastAmount;
+        $model->differnce   = $model->amount - $lastAmount;
+        if ($model->validate()) {
+            $model->save();
+
+            $result = [
+                'output' => $newAmount,
+                'message' => ''
+            ];
+        } else {
+            $error = ActiveForm::validate($model);
+
+            $result = [
+                'output' => false,
+                'message' => $error['payment-amount'],
+            ];
+        }
+
+        return $result;
+    }
+    
+    public function actionEditCreditUsed($model, $newAmount)
+    {
+        $lastAmount      = $model->amount;
+        $model->setScenario(Payment::SCENARIO_CREDIT_USED);
+        $model->amount = $newAmount;
+        $model->last_amount = $lastAmount;
+        $model->differnce   = $model->amount - $lastAmount;
+        if ($model->validate()) {
+            $model->save();
+
+            $result = [
+                'output' => $newAmount,
+                'message' => ''
+            ];
+        } else {
+            $error = ActiveForm::validate($model);
+
+            $result = [
+                'output' => false,
+                'message' => $error['payment-amount'],
+            ];
+        }
+
+        return $result;
     }
 }
