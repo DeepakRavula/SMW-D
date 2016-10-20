@@ -279,11 +279,11 @@ class PaymentController extends Controller
                 'message' => ''
             ];
         } else {
-            $error = ActiveForm::validate($model);
+            $errors = ActiveForm::validate($model);
 
             $result = [
                 'output' => false,
-                'message' => $error['payment-amount'],
+                'message' => $errors['payment-amount'],
             ];
         }
 
@@ -304,11 +304,11 @@ class PaymentController extends Controller
                 'message' => ''
             ];
         } else {
-            $error = ActiveForm::validate($model);
+            $errors = ActiveForm::validate($model);
 
             $result = [
                 'output' => false,
-                'message' => $error['payment-amount'],
+                'message' => $errors['payment-amount'],
             ];
         }
 

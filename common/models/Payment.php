@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use yii\db\ActiveRecord;
 use Yii;
 use common\models\InvoicePayment;
 use common\models\query\PaymentQuery;
@@ -16,7 +17,7 @@ use common\models\Invoice;
  * @property integer $payment_method_id
  * @property double $amount
  */
-class Payment extends \yii\db\ActiveRecord
+class Payment extends ActiveRecord
 {
     public $invoiceId;
     public $credit;
@@ -27,7 +28,7 @@ class Payment extends \yii\db\ActiveRecord
     public $invoiceNumber;
     public $lastAmount;
     public $differnce;
-
+    
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_APPLY_CREDIT       = 'apply-credit';
     const SCENARIO_CREDIT_APPLIED     = 'credit-applied';
