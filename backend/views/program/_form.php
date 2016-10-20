@@ -56,7 +56,7 @@ $this->title = $title;}
 			Four 45min Lessons @  $<span id="rate-45-min"><?= Yii::$app->formatter->asDecimal((($model->rate) / (4 / 3)),2); ?></span> each = $<span id="rate-month-45-min"><?= Yii::$app->formatter->asDecimal(((($model->rate) / (4 / 3)) * 4),2); ?></span>/mn
 	</div>
 	<div>
-			Four 60min Lessons @  $<span id="rate-60-min"><?= Yii::$app->formatter->asDecimal(($model->rate),2); ?></span> each = $<span id="rate-month-60-min"><?= Yii::$app->formatter->asDecimal((($model->rate) * 4),2); ?></span>/mn
+			Four 60min Lessons @  $<span id="rate-60-min"><?= Yii::$app->formatter->asDecimal(($model->rate),2); ?></span> each = $<span id="rate-month-60-min"><?= Yii::$app->formatter->asDecimal((($model->rate / 1) * 4),2); ?></span>/mn
 	</div>
 	</div>
 </div>
@@ -68,14 +68,16 @@ $(document).ready(function(){
 $("#program-rate").on('change keyup paste', function() {
 	    var rate30 = ($('#program-rate').val() / 2).toFixed(2);
 		$('#rate-30-min').text(rate30);
-		var ratePerMonth30 = (($('#program-rate').val() / 2) * 4).toFixed(2);
+		var ratePerMonth30 = ((rate30) * 4).toFixed(2);
 		$('#rate-month-30-min').text(ratePerMonth30);
 	 	var rate45 = ($('#program-rate').val() / (4/3)).toFixed(2);
 		$('#rate-45-min').text(rate45);
-		var ratePerMonth30 = (($('#program-rate').val() / (4/3)) * 4).toFixed(2);
-		$('#rate-month-45-min').text(ratePerMonth30);
-		$('#rate-60-min').text($('#program-rate').val());
-		$('#rate-month-60-min').text($('#program-rate').val() * 4);
+		var ratePerMonth45 = ((rate45) * 4).toFixed(2);
+		$('#rate-month-45-min').text(ratePerMonth45);
+	    var rate60 = ($('#program-rate').val() / 1).toFixed(2);
+		$('#rate-60-min').text(rate60);
+		var ratePerMonth60 = ((rate60) * 4).toFixed(2);
+		$('#rate-month-60-min').text(ratePerMonth60);
 	});
 });
 </script>
