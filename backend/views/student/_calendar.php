@@ -86,13 +86,13 @@ $(document).ready(function() {
     header: {
       left: 'prev,next today',
       center: 'title',
-      right: 'agendaWeek,resourceDay'
+      right: 'agendaWeek,agendaDay'
     },
+	slotDuration: '00:15:00',
 	titleFormat: 'DD-MMM-YYYY, dddd',
     defaultView: 'agendaWeek',
     minTime: "<?php echo $from_time; ?>",
     maxTime: "<?php echo $to_time; ?>",
-    slotDuration: "00:15:01",
 	selectConstraint: 'businessHours',
     eventConstraint: 'businessHours',
 	businessHours: <?php echo Json::encode($availableHours); ?>,
