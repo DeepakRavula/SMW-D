@@ -42,21 +42,27 @@ $this->title = $title;}
     <?php ActiveForm::end(); ?>
 
 </div>
-
+<div class="row">
+		<div class="col-md-12">
+<div class="smw-box col-md-4 m-l-20 m-b-30 monthly-estimate">
 <?php if ((int) $model->type === Program::TYPE_PRIVATE_PROGRAM) : ?>
-	<div id="program-rate-per-month">
-		<strong>What's that per month</strong>
-		<div>
-			Four 30mins Lessons @ <span id="rate-30-min"><?= round((($model->rate) / 2),2); ?></span> each = $ <span id="rate-month-30-min"><?= round(((($model->rate)/ 2) * 4),2); ?></span> /mn
-		</div>
-		<div>
-			Four 45mins Lessons @ <span id="rate-45-min"><?= round((($model->rate) / (4 / 3)),2); ?></span> each = $ <span id="rate-month-45-min"><?= round((($model->rate) / (4 / 3)) * 4); ?></span> /mn
-		</div>
-		<div>
-			Four 60mins Lessons @ <span id="rate-60-min"><?= round(($model->rate),2); ?></span> each = $ <span id="rate-month-60-min"><?= round((($model->rate) * 4),2); ?></span> /mn
-		</div>
+	<div id="program-rate-per-month" >
+		<p class="text-info">
+			<strong>What's that per month?</strong></p>
+	<div>
+			Four 30min Lessons @  $<span id="rate-30-min"><?= Yii::$app->formatter->asDecimal((($model->rate) / 2),2); ?></span> each = $<span id="rate-month-30-min"><?= Yii::$app->formatter->asDecimal(((($model->rate)/ 2) * 4),2); ?></span>/mn
+	</div>
+	<div>
+			Four 45min Lessons @  $<span id="rate-45-min"><?= Yii::$app->formatter->asDecimal((($model->rate) / (4 / 3)),2); ?></span> each = $<span id="rate-month-45-min"><?= Yii::$app->formatter->asDecimal(((($model->rate) / (4 / 3)) * 4),2); ?></span>/mn
+	</div>
+	<div>
+			Four 60min Lessons @  $<span id="rate-60-min"><?= Yii::$app->formatter->asDecimal(($model->rate),2); ?></span> each = $<span id="rate-month-60-min"><?= Yii::$app->formatter->asDecimal((($model->rate) * 4),2); ?></span>/mn
+	</div>
 	</div>
 <?php endif; ?>
+</div>
+</div>
+</div>
 <script type="text/javascript">
 $(document).ready(function(){
 $("#program-rate").on('change keyup paste', function() {
