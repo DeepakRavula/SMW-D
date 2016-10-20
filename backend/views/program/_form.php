@@ -44,8 +44,8 @@ $this->title = $title;}
 </div>
 <div class="row">
 		<div class="col-md-12">
-<div class="smw-box col-md-4 m-l-20 m-b-30 monthly-estimate">
 <?php if ((int) $model->type === Program::TYPE_PRIVATE_PROGRAM) : ?>
+<div class="smw-box col-md-4 m-l-20 m-b-30 monthly-estimate">
 	<div id="program-rate-per-month" >
 		<p class="text-info">
 			<strong>What's that per month?</strong></p>
@@ -59,8 +59,8 @@ $this->title = $title;}
 			Four 60min Lessons @  $<span id="rate-60-min"><?= Yii::$app->formatter->asDecimal(($model->rate),2); ?></span> each = $<span id="rate-month-60-min"><?= Yii::$app->formatter->asDecimal((($model->rate) * 4),2); ?></span>/mn
 	</div>
 	</div>
-<?php endif; ?>
 </div>
+<?php endif; ?>
 </div>
 </div>
 <script type="text/javascript">
