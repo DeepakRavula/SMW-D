@@ -44,20 +44,20 @@ $this->title = $title;}
 </div>
 <div class="row">
 		<div class="col-md-12">
-<div class="smw-box col-md-4 m-l-20 m-b-30">
+<div class="smw-box col-md-4 m-l-20 m-b-30 monthly-estimate">
 <?php if ((int) $model->type === Program::TYPE_PRIVATE_PROGRAM) : ?>
 	<div id="program-rate-per-month" >
 		<p class="text-info">
 			<strong>What's that per month?</strong></p>
-		<div>
+	<div>
 			Four 30min Lessons @  $<span id="rate-30-min"><?= Yii::$app->formatter->asDecimal((($model->rate) / 2),2); ?></span> each = $<span id="rate-month-30-min"><?= Yii::$app->formatter->asDecimal(((($model->rate)/ 2) * 4),2); ?></span>/mn
-		</div>
-		<div>
+	</div>
+	<div>
 			Four 45min Lessons @  $<span id="rate-45-min"><?= Yii::$app->formatter->asDecimal((($model->rate) / (4 / 3)),2); ?></span> each = $<span id="rate-month-45-min"><?= Yii::$app->formatter->asDecimal(((($model->rate) / (4 / 3)) * 4),2); ?></span>/mn
-		</div>
-		<div>
+	</div>
+	<div>
 			Four 60min Lessons @  $<span id="rate-60-min"><?= Yii::$app->formatter->asDecimal(($model->rate),2); ?></span> each = $<span id="rate-month-60-min"><?= Yii::$app->formatter->asDecimal((($model->rate) * 4),2); ?></span>/mn
-		</div>
+	</div>
 	</div>
 <?php endif; ?>
 </div>

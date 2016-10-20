@@ -876,3 +876,7 @@ input[type="search"]:-ms-input-placeholder {
     width: 100px;
     }
 }
+
+.monthly-estimate {
+	margin: 40px;
+}
