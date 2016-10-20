@@ -201,50 +201,117 @@ class PaymentController extends Controller
 	}
 
 	public function actionEdit($id)
-	{
-		$request = Yii::$app->request;
-		$response = \Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
-		$post			 = Yii::$app->request->post();
-		if ($request->post('hasEditable')) {
-			$paymentIndex	 = $request->post('editableIndex');
-			$model			 = Payment::findOne(['id' => $id]);
-			$isOpeningBalance = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_ACCOUNT_ENTRY;
-			$isCreditUsed = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_USED;
-			$isCreditApplied = (int) $model->payment_method_id === (int)PaymentMethod::TYPE_CREDIT_APPLIED;
-			$result			 = [
-				'output' => '',
-				'message' => ''
-			];
-			if (!empty($post['Payment'][$paymentIndex]['amount'])) {
-				$model->amount	 = $post['Payment'][$paymentIndex]['amount'];
-				$output				 = $model->amount;
-				$model->save();
-				if ($isOpeningBalance) {
-					$lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
-					$lineItem->amount = $model->amount;
-					$model->invoice->subTotal = $lineItem->amount;
-					$model->invoice->total = $model->invoice->subTotal + $model->invoice->tax;
-					$lineItem->save();
-				}
-                if ($isCreditApplied) {
-                    $creditUsedPaymentModel         = $this->findModel($model->creditUsage->debit_payment_id);
-                    $creditUsedPaymentModel->amount = -abs($model->amount);
-                    $creditUsedPaymentModel->save();
-                    $creditUsedPaymentModel->invoice->save();
+    {
+        $request          = Yii::$app->request;
+        $response         = \Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        $post             = $request->post();
+        if ($request->post('hasEditable')) {
+            $paymentIndex = $request->post('editableIndex');
+            $model        = Payment::findOne(['id' => $id]);
+            if (!empty($post['Payment'][$paymentIndex]['amount'])) {
+                $newAmount = $post['Payment'][$paymentIndex]['amount'];
+                if ($model->isOtherPayments()) {
+                    $response = Yii::$app->runAction('payment/edit-other-payments',
+                        ['model' => $model, 'newAmount' => $newAmount]);
                 }
-                if ($isCreditUsed) {
-                    $creditAppliedPaymentModel         = $this->findModel($model->debitUsage->credit_payment_id);
-                    $creditAppliedPaymentModel->amount = abs($model->amount);
-                    $creditAppliedPaymentModel->save();
-                    $creditAppliedPaymentModel->invoice->save();
+                if ($model->isAccountEntry()) {
+                    $response = Yii::$app->runAction('payment/edit-account-entry',
+                        ['model' => $model, 'newAmount' => $newAmount]);
                 }
-			}
-			$result = [
-				'output' => $output,
-				'message' => ''
-			];
-			return $result;
-		}
-	}
+                if ($model->isCreditApplied()) {
+                    $response = Yii::$app->runAction('payment/edit-credit-applied',
+                        ['model' => $model, 'newAmount' => $newAmount]);
+                }
+
+                if ($model->isCreditUsed()) {
+                    $response = Yii::$app->runAction('payment/edit-credit-used',
+                        ['model' => $model, 'newAmount' => $newAmount]);
+                }
+
+                return $response;
+            }
+        }
+    }
+
+    public function actionEditOtherPayments($model, $newAmount)
+    {
+        $model->amount = $newAmount;
+        $model->save();
+
+        $result = [
+            'output' => $newAmount,
+            'message' => ''
+        ];
+
+        return $result;
+    }
+
+    public function actionEditAccountEntry($model, $newAmount)
+    {
+        $model->amount            = $newAmount;
+        $model->save();
+        $lineItem                 = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
+        $lineItem->amount         = $model->amount;
+        $model->invoice->subTotal = $lineItem->amount;
+        $model->invoice->total    = $model->invoice->subTotal + $model->invoice->tax;
+        $lineItem->save();
+
+        $result = [
+            'output' => $newAmount,
+            'message' => ''
+        ];
+
+        return $result;
+    }
+
+    public function actionEditCreditApplied($model, $newAmount)
+    {
+        $model->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
+        $model->lastAmount = $model->amount;
+        $model->amount     = $newAmount;
+        $model->differnce  = $model->amount - $model->lastAmount;
+        if ($model->validate()) {
+            $model->save();
+
+            $result = [
+                'output' => $newAmount,
+                'message' => ''
+            ];
+        } else {
+            $errors = ActiveForm::validate($model);
+
+            $result = [
+                'output' => false,
+                'message' => $errors['payment-amount'],
+            ];
+        }
+
+        return $result;
+    }
+
+    public function actionEditCreditUsed($model, $newAmount)
+    {
+        $model->setScenario(Payment::SCENARIO_CREDIT_USED);
+        $model->lastAmount = $model->amount;
+        $model->amount     = $newAmount;
+        $model->differnce  = $model->amount - $model->lastAmount;
+        if ($model->validate()) {
+            $model->save();
+
+            $result = [
+                'output' => $newAmount,
+                'message' => ''
+            ];
+        } else {
+            $errors = ActiveForm::validate($model);
+
+            $result = [
+                'output' => false,
+                'message' => $errors['payment-amount'],
+            ];
+        }
+
+        return $result;
+    }
 }

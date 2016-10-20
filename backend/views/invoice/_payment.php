@@ -12,7 +12,7 @@ $columns = [
 	[
 		'label' => 'Number',
 		'value' => function($data) {
-			if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
+			if ($data->isCreditApplied() || $data->isCreditUsed()) {
 				$invoice = Invoice::findOne(['id' => $data->reference]);
 				$number	 = $invoice->getInvoiceNumber();
 			} else {
@@ -26,10 +26,13 @@ $columns = [
 			'attribute' => 'amount',
 			'refreshGrid' => true,
 			'editableOptions' => function ($model, $key, $index) {
-            if ((int)$model->payment_method_id === (int)PaymentMethod::TYPE_ACCOUNT_ENTRY) {
+            if ($model->isAccountEntry()) {
                $model->setScenario(Payment::SCENARIO_OPENING_BALANCE);
-            }
-			
+            }elseif ($model->isCreditUsed()) {
+                    $model->setScenario(Payment::SCENARIO_CREDIT_USED);
+                }
+
+
             return [
 					'header' => 'Amount',
 					'inputType' => \kartik\editable\Editable::INPUT_TEXT,
