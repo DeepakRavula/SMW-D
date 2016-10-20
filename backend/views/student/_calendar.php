@@ -6,6 +6,8 @@ use common\models\Program;
 use yii\helpers\Json;
 use yii\helpers\Url;
 ?>
+<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <?php
 $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 	$from_time = (new \DateTime($location->from_time))->format('H:i:s');
@@ -17,7 +19,7 @@ $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 			->joinWith(['userLocation' => function($query) use($locationId, $model) {
 				$query->joinWith(['userProfile' => function($query) use($model){
 					$query->joinWith(['lesson' => function($query) use($model){
-						$query->where(['teacherId' => '470'])
+						$query->where(['teacherId' => '636'])
 							->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
 					}]);
 				}])
@@ -36,7 +38,7 @@ $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 			->joinWith(['course' => function($query) {
 			    $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
 			}])
-			->where(['lesson.teacherId' => '470'])
+			->where(['lesson.teacherId' => '636'])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->all();
        $events = [];
@@ -44,21 +46,33 @@ $location = Location::findOne($id=Yii::$app->session->get('location_id'));
             $toTime = new \DateTime($lesson->date);
             $length = explode(':', $lesson->duration);
 		    $toTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
-            if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                $title = $lesson->course->program->name . ' ( ' . $lesson->course->getEnrolmentsCount() . ' ) ';
-            } else {
-            	$title = $lesson->enrolment->student->fullName . ' ( ' .$lesson->course->program->name . ' ) ';
-			}
+            
             $events[]= [
-                'resources' => $lesson->teacherId,
-                'title' => $title,
                 'start' => $lesson->date,
                 'end' => $toTime->format('Y-m-d H:i:s'),
+				'className' => 'teacher-lesson'
             ];
         }
         unset($lesson);
+
+	$teacherAvailabilityDays = TeacherAvailability::find()
+		->joinWith(['userLocation' => function($query) {
+			$query->joinWith(['userProfile' => function($query){
+				$query->where(['user_profile.user_id' => '636']);
+			}]);
+		}])
+		->all();
+		$availableHours = [];
+	foreach($teacherAvailabilityDays as $teacherAvailabilityDay) {
+		$availableHours[] = [
+			'start' => $teacherAvailabilityDay->from_time,
+			'end' => $teacherAvailabilityDay->to_time,
+			'dow' => [$teacherAvailabilityDay->day],
+			'className' => 'teacher-available'
+		];
+	}
 ?>
-<div class="schedule-index">
+<div class="calendar">
 <div id='calendar' class="p-10"></div>
 </div>
 <script type="text/javascript">
@@ -79,11 +93,15 @@ $(document).ready(function() {
     minTime: "<?php echo $from_time; ?>",
     maxTime: "<?php echo $to_time; ?>",
     slotDuration: "00:15:01",
+	selectConstraint: 'businessHours',
+    eventConstraint: 'businessHours',
+	businessHours: <?php echo Json::encode($availableHours); ?>,
 	allowCalEventOverlap: true,
     overlapEventsSeparate: true,
     resources:  <?php echo Json::encode($teachersWithClass); ?>,
     events: <?php echo Json::encode($events); ?>,
 	select: function(start, end, allDay) {
+		$('#calendar').fullCalendar('removeEvents', 'newEnrolment');
 		$('#course-day').val(moment(start).format('dddd'));
 		$('#course-fromtime').val(moment(start).format('h:mm A'));
 		$('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
@@ -91,6 +109,7 @@ $(document).ready(function() {
 		if (title) {
 			$('#calendar').fullCalendar('renderEvent',
 				{
+					id : 'newEnrolment',
 					title: title,
 					start: start,
 					end: end,
@@ -99,7 +118,6 @@ $(document).ready(function() {
 				true // make the event "stick"
 			);
 		}
-		$('#calendar').fullCalendar('unselect');
 	},
     selectable: true,
     selectHelper: true,

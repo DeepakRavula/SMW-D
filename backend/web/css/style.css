@@ -76,6 +76,11 @@ a:hover, a:focus{
 .fc{
   background: #fff;
 }
+.teacher-lesson, .fc-event .fc-event-vert .fc-event-start .fc-event-end {
+  border: 1px solid #FF69B4 !important;
+  background-color: #FF69B4 !important;
+}
+
 .proforma-unpaid, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .proforma-unpaid a{
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
@@ -701,6 +706,11 @@ input[type="search"]:-ms-input-placeholder {
   margin-left: 0;
 }
 
+.calendar {
+	width: 43px;
+  	height: 26px;
+  	margin: 6px 10px 0 0;
+}
 .schedule-index input[type="checkbox"]{
   -webkit-appearance: none;
   -moz-appearance: none;

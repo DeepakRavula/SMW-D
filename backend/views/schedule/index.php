@@ -10,6 +10,8 @@ use yii\helpers\Url;
 $this->title = 'Schedule';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<link type="text/css" href="/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar/fullcalendar.js"></script>
 <style>
   .e1Div{
     right: 0 !important;

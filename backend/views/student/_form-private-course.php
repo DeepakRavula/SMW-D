@@ -53,10 +53,10 @@ use yii\helpers\Url;
 	</div>
 	<div id="course-detail" class="row">
 		<div class="col-md-4">
-        	<?= $form->field($model, 'day')->textInput(['readonly' => true])?>
+        	<?= $form->field($model, 'day')->hiddenInput()->label(false)?>
 		</div>
 		<div class="col-md-4">
-        	<?= $form->field($model, 'fromTime')->textInput(['readonly' => true])?>
+        	<?= $form->field($model, 'fromTime')->hiddenInput()->label(false)?>
 		</div>
 		<div class="col-md-4">
 			<?php
@@ -67,9 +67,14 @@ use yii\helpers\Url;
 					'todayHighlight' => true,
 					'autoclose' => true
 				]
-			])->textInput(['readonly' => true]);
+			])->hiddenInput()->label(false);
 			?>
 		</div>
+	</div>
+	<div id="calendar" class="row">
+    <?php echo $this->render('_calendar', [
+		'model' =>  $model,
+    ]) ?>
 	</div>
 	<div class="row">
 		<div class="col-md-4">
@@ -82,9 +87,4 @@ use yii\helpers\Url;
 <div class="clearfix"></div>
 	<?php ActiveForm::end(); ?>
 
-</div>
-<div id="calendar" class="row">
-    <?php echo $this->render('_calendar', [
-		'model' =>  $model,
-    ]) ?>
 </div>
