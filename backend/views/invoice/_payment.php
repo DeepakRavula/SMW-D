@@ -12,7 +12,7 @@ $columns = [
 	[
 		'label' => 'Number',
 		'value' => function($data) {
-			if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
+			if ($data->isCreditApplied() || (int) $data->isCreditUsed()) {
 				$invoice = Invoice::findOne(['id' => $data->reference]);
 				$number	 = $invoice->getInvoiceNumber();
 			} else {

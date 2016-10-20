@@ -205,31 +205,35 @@ class PaymentController extends Controller
         $request          = Yii::$app->request;
         $response         = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $post             = Yii::$app->request->post();
+        $post             = $request->post();
         if ($request->post('hasEditable')) {
-            $paymentIndex    = $request->post('editableIndex');
-            $model           = Payment::findOne(['id' => $id]);
+            $paymentIndex = $request->post('editableIndex');
+            $model        = Payment::findOne(['id' => $id]);
             if (!empty($post['Payment'][$paymentIndex]['amount'])) {
                 $newAmount = $post['Payment'][$paymentIndex]['amount'];
                 if ($model->isOtherPayments()) {
-                    $response = Yii::$app->runAction('payment/edit-other-payments', ['model' => $model, 'newAmount' => $newAmount]);
+                    $response = Yii::$app->runAction('payment/edit-other-payments',
+                        ['model' => $model, 'newAmount' => $newAmount]);
                 }
                 if ($model->isAccountEntry()) {
-                    $response = Yii::$app->runAction('payment/edit-account-entry', ['model' => $model, 'newAmount' => $newAmount]);
+                    $response = Yii::$app->runAction('payment/edit-account-entry',
+                        ['model' => $model, 'newAmount' => $newAmount]);
                 }
                 if ($model->isCreditApplied()) {
-                    $response = Yii::$app->runAction('payment/edit-credit-applied', ['model' => $model, 'newAmount' => $newAmount]);
+                    $response = Yii::$app->runAction('payment/edit-credit-applied',
+                        ['model' => $model, 'newAmount' => $newAmount]);
                 }
 
                 if ($model->isCreditUsed()) {
-                    $response = Yii::$app->runAction('payment/edit-credit-used', ['model' => $model, 'newAmount' => $newAmount]);
+                    $response = Yii::$app->runAction('payment/edit-credit-used',
+                        ['model' => $model, 'newAmount' => $newAmount]);
                 }
 
                 return $response;
             }
         }
     }
-    
+
     public function actionEditOtherPayments($model, $newAmount)
     {
         $model->amount = $newAmount;
@@ -242,10 +246,10 @@ class PaymentController extends Controller
 
         return $result;
     }
-    
+
     public function actionEditAccountEntry($model, $newAmount)
-    {   
-        $model->amount = $newAmount;
+    {
+        $model->amount            = $newAmount;
         $model->save();
         $lineItem                 = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
         $lineItem->amount         = $model->amount;
@@ -260,14 +264,13 @@ class PaymentController extends Controller
 
         return $result;
     }
-    
+
     public function actionEditCreditApplied($model, $newAmount)
     {
-        $lastAmount      = $model->amount;
         $model->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
-        $model->amount = $newAmount;
-        $model->last_amount = $lastAmount;
-        $model->differnce   = $model->amount - $lastAmount;
+        $model->lastAmount = $model->amount;
+        $model->amount     = $newAmount;
+        $model->differnce  = $model->amount - $model->lastAmount;
         if ($model->validate()) {
             $model->save();
 
@@ -286,14 +289,13 @@ class PaymentController extends Controller
 
         return $result;
     }
-    
+
     public function actionEditCreditUsed($model, $newAmount)
     {
-        $lastAmount      = $model->amount;
         $model->setScenario(Payment::SCENARIO_CREDIT_USED);
-        $model->amount = $newAmount;
-        $model->last_amount = $lastAmount;
-        $model->differnce   = $model->amount - $lastAmount;
+        $model->lastAmount = $model->amount;
+        $model->amount     = $newAmount;
+        $model->differnce  = $model->amount - $model->lastAmount;
         if ($model->validate()) {
             $model->save();
 
