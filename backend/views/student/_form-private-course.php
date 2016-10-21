@@ -96,6 +96,7 @@ use common\models\Location;
 ?>
 <script type="text/javascript">
 function refreshCalendar(availableHours, events) {
+//$('#calendar').html('');
 $('#calendar').unbind().removeData().fullCalendar({
     header: {
       left: 'prev,next today',
@@ -105,8 +106,8 @@ $('#calendar').unbind().removeData().fullCalendar({
     slotDuration: '00:15:00',
     titleFormat: 'DD-MMM-YYYY, dddd',
     defaultView: 'agendaWeek',
-    minTime: "08:00:00",
-    maxTime: "22:15:00",
+    minTime: "<?php echo $from_time; ?>",
+    maxTime: "<?php echo $to_time; ?>",
     selectConstraint: 'businessHours',
     eventConstraint: 'businessHours',
     businessHours: availableHours,
@@ -136,14 +137,12 @@ $(document).ready(function() {
 $(document).on('change', '#course-teacherid', function() {
 	var events, availableHours;
 	var teacherId = $('#course-teacherid').val();
-	console.log(teacherId);
     $.ajax({
         url    : '/teacher-availability/availability-with-events?id=' + teacherId,
         type   : 'get',
         dataType: "json",
         success: function(response)
         {
-			$('#calendar').unbind().removeData();
 			events = response.events;
 			availableHours = response.availableHours;	
 			refreshCalendar(availableHours, events);
