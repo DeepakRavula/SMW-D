@@ -40,6 +40,11 @@ class Course extends \yii\db\ActiveRecord
             [['programId', 'teacherId', 'locationId', 'day', 'fromTime', 'duration'], 'required'],
             [['programId', 'teacherId', 'locationId', 'day', 'paymentFrequency'], 'integer'],
 		    [['fromTime', 'duration', 'startDate', 'endDate', 'rescheduleBeginDate'], 'safe'],
+            [['paymentFrequency'], 'required', 'when'=>function ($model, $attribute) 
+                {
+                    return ((int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM);
+                }
+            ],
         ];
     }
 
