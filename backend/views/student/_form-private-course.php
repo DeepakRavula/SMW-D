@@ -88,3 +88,61 @@ use yii\helpers\Url;
 	<?php ActiveForm::end(); ?>
 
 </div>
+<script type="text/javascript">
+function refreshCalendar(availableHours, events) {
+$('#calendar').unbind().removeData().fullCalendar({
+    header: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'agendaWeek,agendaDay'
+    },
+    slotDuration: '00:15:00',
+    titleFormat: 'DD-MMM-YYYY, dddd',
+    defaultView: 'agendaWeek',
+    minTime: "08:00:00",
+    maxTime: "22:15:00",
+    selectConstraint: 'businessHours',
+    eventConstraint: 'businessHours',
+    businessHours: availableHours,
+    allowCalEventOverlap: true,
+    overlapEventsSeparate: true,
+    events: events,
+    select: function(start, end, allDay) {
+        $('#calendar').fullCalendar('removeEvents', 'newEnrolment');
+        $('#course-day').val(moment(start).format('dddd'));
+        $('#course-fromtime').val(moment(start).format('h:mm A'));
+        $('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
+		$('#calendar').fullCalendar('renderEvent',
+			{
+				id : 'newEnrolment',
+				start: start,
+				end: end,
+				allDay: false
+			},
+			true // make the event "stick"
+		);
+    },
+    selectable: true,
+    selectHelper: true,
+  });
+}
+$(document).ready(function() {
+$(document).on('change', '#course-teacherid', function() {
+	var events, availableHours;
+    $.ajax({
+        url    : '/teacher-availability/availability-with-events',
+        type   : 'get',
+        dataType: "json",
+        data   : {"id" : "470"},
+        success: function(response)
+        {
+			$('#calendar').unbind().removeData();
+			events = response.events;
+			availableHours = response.availableHours;	
+			refreshCalendar(availableHours, events);
+        }
+        });
+});
+});
+</script>
+

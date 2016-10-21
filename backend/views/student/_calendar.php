@@ -13,32 +13,13 @@ $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 	$from_time = (new \DateTime($location->from_time))->format('H:i:s');
 	$to_time = (new \DateTime($location->to_time))->format('H:i:s');
 	$locationId			 = Yii::$app->session->get('location_id');
-		$teachersWithClass	 = TeacherAvailability::find()
-			->select(['user_location.user_id as id', "CONCAT(user_profile.firstname, ' ', user_profile.lastname) as name"])
-			->distinct()
-			->joinWith(['userLocation' => function($query) use($locationId, $model) {
-				$query->joinWith(['userProfile' => function($query) use($model){
-					$query->joinWith(['lesson' => function($query) use($model){
-						$query->where(['teacherId' => '636'])
-							->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
-					}]);
-				}])
-				->where(['user_location.location_id' => $locationId]);
-			}])
-			->orderBy(['teacher_availability_day.id' => SORT_DESC])
-			->one();
-
-		$activeTeachers = [
-			'id' => $teachersWithClass->id,
-			'name' => $teachersWithClass->name,
-		];
 
 		$lessons =[];
         $lessons = Lesson::find()
 			->joinWith(['course' => function($query) {
 			    $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
 			}])
-			->where(['lesson.teacherId' => '636'])
+			->where(['lesson.teacherId' => '470'])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->all();
        $events = [];
@@ -58,7 +39,7 @@ $location = Location::findOne($id=Yii::$app->session->get('location_id'));
 	$teacherAvailabilityDays = TeacherAvailability::find()
 		->joinWith(['userLocation' => function($query) {
 			$query->joinWith(['userProfile' => function($query){
-				$query->where(['user_profile.user_id' => '636']);
+				$query->where(['user_profile.user_id' => '470']);
 			}]);
 		}])
 		->all();
@@ -98,7 +79,6 @@ $(document).ready(function() {
 	businessHours: <?php echo Json::encode($availableHours); ?>,
 	allowCalEventOverlap: true,
     overlapEventsSeparate: true,
-    resources:  <?php echo Json::encode($teachersWithClass); ?>,
     events: <?php echo Json::encode($events); ?>,
 	select: function(start, end, allDay) {
 		$('#calendar').fullCalendar('removeEvents', 'newEnrolment');

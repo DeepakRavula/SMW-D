@@ -166,8 +166,8 @@ class TeacherAvailabilityController extends Controller
 
 		return $result;
 	}
-	
-	public function actionAvailableHours() {
+
+	public function actionAvailabilityWithEvents() {
 		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 		$request = Yii::$app->request;
 		$session = Yii::$app->session;
@@ -201,21 +201,39 @@ class TeacherAvailabilityController extends Controller
 				foreach($hours as $hour) {
 					$availableHours[] = Yii::$app->formatter->asTime($hour);
 				}
-		
+
 			}
 		}
 
-		foreach($availableHours as $id => $availableHour) {
-			$output[] = [
-				'id' => $availableHour,
-				'name' => $availableHour,
-			];
-		}
-		$result = [
-			'output' => $output,	
-			'selected' => '',
+		$availableHours = [
+			[
+				'start' => '15:30:00',
+				'end' => '21:30:00',
+				'dow' => [1]
+			],
+			[
+				'start' => '10:30:00',
+				'end' => '12:30:00',
+				'dow' => [1]
+			],
 		];
 
-		return $result;
+		$events = [
+			[
+				'start' => '2016-10-03 10:00:00',
+				'end' => '2016-10-03 11:30:00',
+				'className' => 'teacher-lesson',
+			],
+			[
+				'start' => '2016-10-04 14:00:00',
+				'end' => '2016-10-04 16:30:00',
+				'className' => 'teacher-lesson',
+			],
+		];
+
+		return [
+			'availableHours' => $availableHours,
+			'events' => $events,
+		];
 	}
 }
