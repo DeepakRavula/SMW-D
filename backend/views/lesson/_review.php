@@ -153,9 +153,21 @@ $this->title = 'Review Lessons';
 
 	<div class="form-group">
 	<div class="p-10 text-center">
+        <?php 
+        $hasConflict = false;
+        foreach ($conflicts as $conflictLessons) {
+            foreach ($conflictLessons as $conflictLesson) {
+                if((! empty($conflictLesson['lessonIds'])) || ( ! empty($conflictLesson['dates']))){
+				    $hasConflict = true;
+                    break;
+			    } 
+            }
+        }
+        ?>
 		<?php if( ! empty($rescheduleBeginDate)):?>
 		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[rescheduleBeginDate]' => $rescheduleBeginDate], [
-				'class' => 'btn btn-danger',
+				'class' => 'btn btn-danger', 
+                'disabled' => $hasConflict,
 				'data' => [
 					'method' => 'post',
 				],
@@ -163,6 +175,7 @@ $this->title = 'Review Lessons';
 		<?php else :?>
 		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId], [
 			'class' => 'btn btn-danger',
+            'disabled' => $hasConflict,
 			'data' => [
 				'method' => 'post',
 			],
