@@ -13,45 +13,6 @@ use yii\helpers\Url;
 	$location = Location::findOne(['id' => $locationId]);
 	$from_time = (new \DateTime($location->from_time))->format('H:i:s');
 	$to_time = (new \DateTime($location->to_time))->format('H:i:s');
-
-	$lessons = [];
-	$lessons = Lesson::find()
-		->joinWith(['course' => function($query) {
-			$query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
-		}])
-		->where(['lesson.teacherId' => '636'])
-		->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
-		->all();
-   $events = [];
-	foreach ($lessons as &$lesson) {
-		$toTime = new \DateTime($lesson->date);
-		$length = explode(':', $lesson->duration);
-		$toTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
-
-		$events[]= [
-			'start' => $lesson->date,
-			'end' => $toTime->format('Y-m-d H:i:s'),
-			'className' => 'teacher-lesson'
-		];
-	}
-	unset($lesson);
-
-	$teacherAvailabilityDays = TeacherAvailability::find()
-		->joinWith(['userLocation' => function($query) {
-			$query->joinWith(['userProfile' => function($query){
-				$query->where(['user_profile.user_id' => '636']);
-			}]);
-		}])
-		->all();
-		$availableHours = [];
-	foreach($teacherAvailabilityDays as $teacherAvailabilityDay) {
-		$availableHours[] = [
-			'start' => $teacherAvailabilityDay->from_time,
-			'end' => $teacherAvailabilityDay->to_time,
-			'dow' => [$teacherAvailabilityDay->day],
-			'className' => 'teacher-available'
-		];
-	}
 ?>
 <div class="calendar">
 <div id='calendar' class="p-10"></div>
@@ -71,10 +32,10 @@ $(document).ready(function() {
     maxTime: "<?php echo $to_time; ?>",
 	selectConstraint: 'businessHours',
     eventConstraint: 'businessHours',
-	businessHours: <?php echo Json::encode($availableHours); ?>,
+	businessHours: [],
 	allowCalEventOverlap: true,
     overlapEventsSeparate: true,
-    events: <?php echo Json::encode($events); ?>,
+    events: [],
 	select: function(start, end, allDay) {
 		$('#calendar').fullCalendar('removeEvents', 'newEnrolment');
 		$('#course-day').val(moment(start).format('dddd'));

@@ -96,8 +96,8 @@ use common\models\Location;
 ?>
 <script type="text/javascript">
 function refreshCalendar(availableHours, events) {
-//$('#calendar').html('');
-$('#calendar').unbind().removeData().fullCalendar({
+$('#calendar').fullCalendar('destroy');
+$('#calendar').fullCalendar({
     header: {
       left: 'prev,next today',
       center: 'title',
