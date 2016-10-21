@@ -292,12 +292,6 @@ class UserController extends Controller {
             $invoice->location_id = $locationId;
             $invoice->invoice_number = $invoiceNumber;
             $invoice->type = Invoice::TYPE_INVOICE;
-            if($paymentModel->amount < 0){
-                $invoice->status = Invoice::STATUS_CREDIT;
-                $invoice->balance = $paymentModel->amount;
-            } else {
-                $invoice->status = Invoice::STATUS_OWING;
-            }
             $invoice->date = (new \DateTime())->format('Y-m-d');
             $invoice->save();
 
@@ -316,13 +310,17 @@ class UserController extends Controller {
             $invoiceLineItem->amount = $paymentModel->amount;
             $invoiceLineItem->save();
 
+            $invoice = Invoice::findOne(['id' => $invoice->id]);
             if($paymentModel->amount > 0){
-                $invoice = Invoice::findOne(['id' => $invoice->id]);
                 $invoice->subTotal = $invoiceLineItem->amount;
                 $invoice->tax = $invoiceLineItem->tax_rate;
                 $invoice->total = $invoice->subTotal + $invoice->tax;
-                $invoice->save();
+            }else{
+                $invoice->subTotal = 0.00;
+                $invoice->tax = $invoiceLineItem->tax_rate;
+                $invoice->total = $invoice->subTotal + $invoice->tax;
             }
+            $invoice->save();
 
             if($paymentModel->amount < 0){
                 $paymentModel->user_id = $model->id;
