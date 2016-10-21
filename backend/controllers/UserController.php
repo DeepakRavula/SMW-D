@@ -313,14 +313,16 @@ class UserController extends Controller {
             $invoiceLineItem->tax_status = $taxStatus->name;
             $invoiceLineItem->description = 'Opening Balance';
             $invoiceLineItem->unit = 1;
-            $invoiceLineItem->amount = abs($paymentModel->amount);
+            $invoiceLineItem->amount = $paymentModel->amount;
             $invoiceLineItem->save();
 
-            $invoice = Invoice::findOne(['id' => $invoice->id]);
-            $invoice->subTotal = $invoiceLineItem->amount;
-            $invoice->tax = $invoiceLineItem->tax_rate;
-            $invoice->total = $invoice->subTotal + $invoice->tax;
-            $invoice->save();
+            if($paymentModel->amount > 0){
+                $invoice = Invoice::findOne(['id' => $invoice->id]);
+                $invoice->subTotal = $invoiceLineItem->amount;
+                $invoice->tax = $invoiceLineItem->tax_rate;
+                $invoice->total = $invoice->subTotal + $invoice->tax;
+                $invoice->save();
+            }
 
             if($paymentModel->amount < 0){
                 $paymentModel->user_id = $model->id;
