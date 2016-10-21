@@ -313,13 +313,11 @@ class UserController extends Controller {
             $invoice = Invoice::findOne(['id' => $invoice->id]);
             if($paymentModel->amount > 0){
                 $invoice->subTotal = $invoiceLineItem->amount;
-                $invoice->tax = $invoiceLineItem->tax_rate;
-                $invoice->total = $invoice->subTotal + $invoice->tax;
             }else{
                 $invoice->subTotal = 0.00;
-                $invoice->tax = $invoiceLineItem->tax_rate;
-                $invoice->total = $invoice->subTotal + $invoice->tax;
             }
+            $invoice->tax = $invoiceLineItem->tax_rate;
+            $invoice->total = $invoice->subTotal + $invoice->tax;
             $invoice->save();
 
             if($paymentModel->amount < 0){
