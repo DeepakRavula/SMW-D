@@ -292,12 +292,6 @@ class UserController extends Controller {
             $invoice->location_id = $locationId;
             $invoice->invoice_number = $invoiceNumber;
             $invoice->type = Invoice::TYPE_INVOICE;
-            if($paymentModel->amount < 0){
-                $invoice->status = Invoice::STATUS_CREDIT;
-                $invoice->balance = $paymentModel->amount;
-            } else {
-                $invoice->status = Invoice::STATUS_OWING;
-            }
             $invoice->date = (new \DateTime())->format('Y-m-d');
             $invoice->save();
 
@@ -313,11 +307,15 @@ class UserController extends Controller {
             $invoiceLineItem->tax_status = $taxStatus->name;
             $invoiceLineItem->description = 'Opening Balance';
             $invoiceLineItem->unit = 1;
-            $invoiceLineItem->amount = abs($paymentModel->amount);
+            $invoiceLineItem->amount = $paymentModel->amount;
             $invoiceLineItem->save();
 
             $invoice = Invoice::findOne(['id' => $invoice->id]);
-            $invoice->subTotal = $invoiceLineItem->amount;
+            if($paymentModel->amount > 0){
+                $invoice->subTotal = $invoiceLineItem->amount;
+            }else{
+                $invoice->subTotal = 0.00;
+            }
             $invoice->tax = $invoiceLineItem->tax_rate;
             $invoice->total = $invoice->subTotal + $invoice->tax;
             $invoice->save();
