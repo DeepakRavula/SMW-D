@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
 use common\models\Invoice;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
-
+use common\models\TeacherAvailability;
 /**
  * StudentController implements the CRUD actions for Student model.
  */
@@ -210,8 +210,10 @@ class StudentController extends Controller
 		$post = $request->post();
 		$courseModel = new Course();
 		if ($courseModel->load($post)) {
+			$dayList = TeacherAvailability::getWeekdaysList();
 			$courseModel->locationId = $locationId;
 			$courseModel->studentId = $model->id;
+			$courseModel->day = array_search($courseModel->day, $dayList);
 			$courseModel->save();
 			
         	return $this->redirect(['lesson/review', 'courseId' => $courseModel->id]);

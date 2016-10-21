@@ -38,7 +38,7 @@ class Course extends \yii\db\ActiveRecord
     {
         return [
             [['programId', 'teacherId', 'locationId', 'day', 'fromTime', 'duration'], 'required'],
-            [['programId', 'teacherId', 'locationId', 'day', 'paymentFrequency'], 'integer'],
+            [['programId', 'teacherId', 'locationId', 'paymentFrequency'], 'integer'],
 		    [['fromTime', 'duration', 'startDate', 'endDate', 'rescheduleBeginDate'], 'safe'],
         ];
     }
