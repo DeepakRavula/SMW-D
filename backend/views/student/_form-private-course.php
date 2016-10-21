@@ -9,7 +9,7 @@ use kartik\time\TimePicker;
 use kartik\date\DatePicker;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
-
+use common\models\Location;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
@@ -88,6 +88,12 @@ use yii\helpers\Url;
 	<?php ActiveForm::end(); ?>
 
 </div>
+<?php
+	$locationId			 = Yii::$app->session->get('location_id');
+	$location = Location::findOne(['id' => $locationId]);
+	$from_time = (new \DateTime($location->from_time))->format('H:i:s');
+	$to_time = (new \DateTime($location->to_time))->format('H:i:s');
+?>
 <script type="text/javascript">
 function refreshCalendar(availableHours, events) {
 $('#calendar').unbind().removeData().fullCalendar({
@@ -129,11 +135,12 @@ $('#calendar').unbind().removeData().fullCalendar({
 $(document).ready(function() {
 $(document).on('change', '#course-teacherid', function() {
 	var events, availableHours;
+	var teacherId = $('#course-teacherid').val();
+	console.log(teacherId);
     $.ajax({
-        url    : '/teacher-availability/availability-with-events',
+        url    : '/teacher-availability/availability-with-events?id=' + teacherId,
         type   : 'get',
         dataType: "json",
-        data   : {"id" : "470"},
         success: function(response)
         {
 			$('#calendar').unbind().removeData();

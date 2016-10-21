@@ -10,7 +10,8 @@ use yii\web\Controller;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\web\Response;
+use common\models\Lesson;
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
@@ -167,69 +168,50 @@ class TeacherAvailabilityController extends Controller
 		return $result;
 	}
 
-	public function actionAvailabilityWithEvents() {
-		\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-		$request = Yii::$app->request;
+	public function actionAvailabilityWithEvents($id) {
 		$session = Yii::$app->session;
-		$depDrop = $request->post('depdrop_all_params');
-		$teacherId = $depDrop['course-teacherid'];
-		$day = $depDrop['course-day'];
-		$location_id = $session->get('location_id');
-		$teacherLocation = UserLocation::findOne([
-			'user_id' => $teacherId,
-			'location_id' => $location_id,
-		]);
-		if(! empty($teacherLocation)){
-			$availabilities = TeacherAvailability::find()
-				->where([
-					'teacher_location_id' => $teacherLocation->id,
-					'day' =>  $day,
-					])
-				->all();
-		}
-		$result = [];
-		$output = [];
-
+		$request = Yii::$app->request;
+		$response = Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+		$locationId = $session->get('location_id');
+		$teacherAvailabilities = TeacherAvailability::find()
+		->joinWith(['userLocation' => function($query) use($id) {
+			$query->joinWith(['userProfile' => function($query) use($id){
+				$query->where(['user_profile.user_id' => $id]);
+			}]);
+		}])
+		->all();
 		$availableHours = [];
-		if(! empty($availabilities)){
-			foreach($availabilities as $availability) {
-				$start    = new \DateTime($availability->from_time);
-				$end      = new \DateTime($availability->to_time); // add 1 second because last one is not included in the loop
-				$interval = new \DateInterval('PT30M');
-				$hours   = new \DatePeriod($start, $interval, $end);
-
-				foreach($hours as $hour) {
-					$availableHours[] = Yii::$app->formatter->asTime($hour);
-				}
-
-			}
+		foreach($teacherAvailabilities as $teacherAvailability) {
+			$availableHours[] = [
+				'start' => $teacherAvailability->from_time,
+				'end' => $teacherAvailability->to_time,
+				'dow' => [$teacherAvailability->day],
+				'className' => 'teacher-available'
+			];
 		}
 
-		$availableHours = [
-			[
-				'start' => '15:30:00',
-				'end' => '21:30:00',
-				'dow' => [1]
-			],
-			[
-				'start' => '10:30:00',
-				'end' => '12:30:00',
-				'dow' => [1]
-			],
-		];
+		$lessons = [];
+		$lessons = Lesson::find()
+			->joinWith(['course' => function($query) {
+				$query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
+			}])
+			->where(['lesson.teacherId' => $id])
+			->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+			->all();
+	   $events = [];
+		foreach ($lessons as &$lesson) {
+			$toTime = new \DateTime($lesson->date);
+			$length = explode(':', $lesson->duration);
+			$toTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
 
-		$events = [
-			[
-				'start' => '2016-10-03 10:00:00',
-				'end' => '2016-10-03 11:30:00',
-				'className' => 'teacher-lesson',
-			],
-			[
-				'start' => '2016-10-04 14:00:00',
-				'end' => '2016-10-04 16:30:00',
-				'className' => 'teacher-lesson',
-			],
-		];
+			$events[]= [
+				'start' => $lesson->date,
+				'end' => $toTime->format('Y-m-d H:i:s'),
+				'className' => 'teacher-lesson'
+			];
+		}
+		unset($lesson);
 
 		return [
 			'availableHours' => $availableHours,
