@@ -64,13 +64,13 @@ use yii\helpers\Url;
 <div id="calendar" class="p-10"></div>
 </div>
 <script type="text/javascript">
-$(document).ready(function() {
   $('#calendar').fullCalendar({
     header: {
       left: 'prev,next today',
       center: 'title',
-      right: 'agendaWeek,agendaDay'
+      right: 'agendaWeek'
     },
+	allDaySlot : false,
 	slotDuration: '00:15:00',
 	titleFormat: 'DD-MMM-YYYY, dddd',
     defaultView: 'agendaWeek',
@@ -83,5 +83,4 @@ $(document).ready(function() {
     overlapEventsSeparate: true,
     events: <?php echo Json::encode($events); ?>,
   });
-});
 </script>

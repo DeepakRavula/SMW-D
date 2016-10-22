@@ -260,5 +260,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	});
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');
-  	});   
+  	});
+	$(document).ready(function(){
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    	$('#calendar').fullCalendar('render');
+	});
+});
 </script>
