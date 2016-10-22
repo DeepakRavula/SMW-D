@@ -1,13 +1,29 @@
 <?php
 use common\models\Location;
+use yii\bootstrap\ActiveForm;
 use common\models\TeacherAvailability;
 use common\models\Lesson;
 use common\models\Program;
 use yii\helpers\Json;
+use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
+use common\models\User;
 ?>
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
+<?php $form = ActiveForm::begin(); ?>
+<div class="col-md-4">
+	<?php
+		$session = Yii::$app->session;
+		$programId = $session->get('programId');
+		$locationId = $session->get('location_id');
+		$teachers = User::find()
+			->teachers($programId, $locationId)
+			->all();
+		echo $form->field($model, 'teacherId')->dropDownList($teachers,['prompt'=>'Select Teacher'] )->label()
+            ?>
+	</div>
+	<?php ActiveForm::end(); ?>
 <?php
 	$locationId			 = Yii::$app->session->get('location_id');
 	$location = Location::findOne(['id' => $locationId]);
