@@ -890,3 +890,12 @@ input[type="search"]:-ms-input-placeholder {
 .monthly-estimate {
 	margin: 40px;
 }
+.invoice-paid {
+    background-color:  #8cf64f;   
+}
+.invoice-owing {
+    background-color:  #c0c0c0;   
+}
+.invoice-credit {
+    background-color:  #c0c0c0;   
+}
