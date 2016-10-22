@@ -103,6 +103,7 @@ $('#calendar').fullCalendar({
       center: 'title',
       right: 'agendaWeek,agendaDay'
     },
+	allDaySlot:false,
     slotDuration: '00:15:00',
     titleFormat: 'DD-MMM-YYYY, dddd',
     defaultView: 'agendaWeek',
