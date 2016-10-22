@@ -891,11 +891,11 @@ input[type="search"]:-ms-input-placeholder {
 	margin: 40px;
 }
 .invoice-paid {
-    background-color:  #8cf64f !important;   
+    background-color:  #8cf64f;   
 }
 .invoice-owing {
-    background-color:  #c0c0c0 !important;   
+    background-color:  #c0c0c0;   
 }
 .invoice-credit {
-    background-color:  #c0c0c0 !important;   
+    background-color:  #c0c0c0;   
 }
