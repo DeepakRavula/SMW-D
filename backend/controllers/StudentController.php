@@ -324,4 +324,11 @@ class StudentController extends Controller
 					throw new NotFoundHttpException('The requested page does not exist.');
 				}
 			}
+
+	public function actionFetchProgramRate($id) {
+		$response = Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+		$program = Program::findOne(['id' => $id]);
+		return $program->rate;
+	}
 	}
