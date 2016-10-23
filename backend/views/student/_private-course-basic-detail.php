@@ -41,7 +41,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 				[
 				'pluginOptions' => [
 					'showMeridian' => false,
-					'defaultTime' => date('H:i', strtotime('00:30')),
+					'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
 				]
 			]);
 			?>

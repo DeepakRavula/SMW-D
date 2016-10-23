@@ -91,18 +91,5 @@ $to_time	 = (new \DateTime($location->to_time))->format('H:i:s');
                 }
             });
         });
-        $(document).on('click', '#stepwizard_step2_save', function () {
-            $.ajax({
-                url: '/teacher-availability/availability-with-events?id=' + teacherId,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    events = response.events;
-                    availableHours = response.availableHours;
-                    refreshCalendar(availableHours, events);
-                }
-            });
-        });
     });
 </script>
