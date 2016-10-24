@@ -173,7 +173,7 @@ class TeacherAvailabilityController extends Controller
 		$response = Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = User::findOne(['id' => $id]);
-        $result = $model->teacherAvailabilityWithEvents($id);
+        $result = $model->teacherAvailabilityWithLessons($id);
 
         return $result;
 	}

@@ -278,8 +278,8 @@ class LessonController extends Controller
 			$lessonFromDate = \DateTime::createFromFormat('d-m-Y',$lessonFromDate);
             $lessonToDate = \DateTime::createFromFormat('d-m-Y',$lessonToDate);
 			$oldLessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
-				->andWhere(['between','lesson.date', $lessonFromDate->format('Y-m-d 00:00:00'), $lessonToDate->format('Y-m-d 23:59:59')])
+				->where(['courseId' => $courseModel->id])
+                ->scheduledBetween($lessonFromDate, $lessonToDate)
 				->all();
             $oldLessonIds = [];
 			foreach($oldLessons as $oldLesson){

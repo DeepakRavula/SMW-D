@@ -35,7 +35,7 @@ $this->title = 'Bulk Reschedule';
         <div class="col-md-4">
 			<?php echo $form->field($model, 'lessonToDate')->widget(DatePicker::classname(), [
                		'options' => [
-                    'value' => $lastLessonDate->format('d-m-Y'),
+                    'value' => Yii::$app->formatter->asDate($lastLessonDate),
                ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [

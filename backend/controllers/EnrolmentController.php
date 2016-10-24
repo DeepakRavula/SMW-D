@@ -97,7 +97,7 @@ class EnrolmentController extends Controller
         $post           = $request->post();
         $model          = $this->findModel($id);
         $teacher        = User::findOne(['id' => $model->course->teacherId]);
-        $teacherDetails = $teacher->teacherAvailabilityWithEvents($model->course->teacherId);
+        $teacherDetails = $teacher->teacherAvailabilityWithLessons($model->course->teacherId);
         $lessons        = Lesson::find()
             ->where(['courseId' => $model->course->id])
             ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
@@ -117,8 +117,7 @@ class EnrolmentController extends Controller
             ]);
             $rescheduleLessons     = Lesson::find()
                 ->where(['courseId' => $model->course->id])
-                ->andWhere(['between', 'lesson.date', $lessonFromDate->format('Y-m-d 00:00:00'),
-                    $lessonToDate->format('Y-m-d 23:59:59')])
+                ->scheduledBetween($lessonFromDate, $lessonToDate)
                 ->all();
             //lesson start date
             $changedFromTime       = (new \DateTime($model->course->fromTime))->format('H:i:s');
@@ -147,7 +146,7 @@ class EnrolmentController extends Controller
                     $lesson->save();
                 }
             }
-            return $this->redirect(['/lesson/review', 'courseId' => $model->course->id,
+            return $this->redirect(['lesson/review', 'courseId' => $model->course->id,
                     'Course[lessonFromDate]' => $lessonFromDate->format('d-m-Y'),
                     'Course[lessonToDate]' => $lessonToDate->format('d-m-Y')]);
         } else {

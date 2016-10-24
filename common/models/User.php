@@ -386,7 +386,7 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->email;
     }
 
-    public function teacherAvailabilityWithEvents($id)
+    public function teacherAvailabilityWithLessons($id)
     {
         $teacherAvailabilities = TeacherAvailability::find()
 		->joinWith(['userLocation' => function($query) use($id) {
