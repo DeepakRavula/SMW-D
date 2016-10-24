@@ -76,12 +76,11 @@ a:hover, a:focus{
 .fc{
   background: #fff;
 }
-.teacher-lesson, .fc-event .fc-event-vert .fc-event-start .fc-event-end {
-  border: 1px solid #808080 !important;
-  background-color: #808080 !important;
+#calendar .fc-today {
+    background: #FFF !important;
 }
 .fc-nonbusiness {
-  background-color: #FFA500 !important;
+  background-color: #FFFF00 !important;
 }
 .proforma-unpaid, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .proforma-unpaid a{
     border: 1px solid #da0f0f !important;
