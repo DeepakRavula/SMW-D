@@ -21,7 +21,9 @@ class Course extends \yii\db\ActiveRecord
 {
 	public $studentId;
 	public $paymentFrequency;
-    public $rescheduleBeginDate;
+    public $goToDate;
+    public $lessonFromDate;
+    public $lessonToDate;
 	
     /**
      * @inheritdoc
@@ -39,7 +41,7 @@ class Course extends \yii\db\ActiveRecord
         return [
             [['programId', 'teacherId', 'locationId', 'day', 'fromTime', 'duration'], 'required'],
             [['programId', 'teacherId', 'locationId', 'paymentFrequency'], 'integer'],
-		    [['fromTime', 'duration', 'startDate', 'endDate', 'rescheduleBeginDate'], 'safe'],
+		    [['fromTime', 'duration', 'startDate', 'endDate', 'goToDate', 'lessonFromDate', 'lessonToDate'], 'safe'],
             [['paymentFrequency'], 'required', 'when'=>function ($model, $attribute) 
                 {
                     return ((int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM);

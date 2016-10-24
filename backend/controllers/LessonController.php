@@ -217,7 +217,8 @@ class LessonController extends Controller
 	public function actionReview($courseId){	
 		$request = Yii::$app->request;
         $courseRequest = $request->get('Course');
-        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
+        $lessonFromDate = $courseRequest['lessonFromDate'];
+        $lessonToDate = $courseRequest['lessonToDate'];
 		$courseModel = Course::findOne(['id' => $courseId]);
 		$draftLessons = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
@@ -256,7 +257,8 @@ class LessonController extends Controller
 			'courseId' => $courseId,
 			'lessonDataProvider' => $lessonDataProvider,
 			'conflicts' => $conflicts,
-			'rescheduleBeginDate' => $rescheduleBeginDate,
+			'lessonFromDate' => $lessonFromDate,
+            'lessonToDate' => $lessonToDate,
         ]);	
 	}
 
@@ -270,15 +272,16 @@ class LessonController extends Controller
             $enrolmentModel->save();
         }
         $courseRequest = $request->get('Course');
-        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
-		if( ! empty($rescheduleBeginDate)) {
-			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);
-			$courseDate = $courseDate->format('Y-m-d H:i:s');
+        $lessonFromDate = $courseRequest['lessonFromDate'];
+        $lessonToDate = $courseRequest['lessonToDate'];
+		if( ! (empty($lessonFromDate) && empty($lessonToDate))) {
+			$lessonFromDate = \DateTime::createFromFormat('d-m-Y',$lessonFromDate);
+            $lessonToDate = \DateTime::createFromFormat('d-m-Y',$lessonToDate);
 			$oldLessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
-				->andWhere(['>=', 'date', $courseDate])
+				->where(['courseId' => $courseModel->id])
+                ->scheduledBetween($lessonFromDate, $lessonToDate)
 				->all();
-			$oldLessonIds = [];
+            $oldLessonIds = [];
 			foreach($oldLessons as $oldLesson){
 				$oldLessonIds[] = $oldLesson->id;
 				$oldLesson->delete();

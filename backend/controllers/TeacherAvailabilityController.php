@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\User;
 use common\models\UserLocation;
 use common\models\TeacherAvailability;
 use backend\models\TeacherAvailabilitySearch;
@@ -171,8 +172,6 @@ class TeacherAvailabilityController extends Controller
 	}
 
 	public function actionAvailabilityWithEvents($id) {
-		$session = Yii::$app->session;
-		$request = Yii::$app->request;
 		$response = Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
 		$locationId = $session->get('location_id');
