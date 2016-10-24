@@ -172,7 +172,8 @@ class TeacherAvailabilityController extends Controller
 	}
 
 	public function actionAvailabilityWithEvents($id) {
-		$response = Yii::$app->response;
+		$session = Yii::$app->session;
+        $response = Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
 		$locationId = $session->get('location_id');
 		$teacherAvailabilities = TeacherAvailability::find()
