@@ -217,7 +217,8 @@ class LessonController extends Controller
 	public function actionReview($courseId){	
 		$request = Yii::$app->request;
         $courseRequest = $request->get('Course');
-        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
+        $startDate = $courseRequest['startDate'];
+        $endDate = $courseRequest['endDate'];
 		$courseModel = Course::findOne(['id' => $courseId]);
 		$draftLessons = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
@@ -256,7 +257,8 @@ class LessonController extends Controller
 			'courseId' => $courseId,
 			'lessonDataProvider' => $lessonDataProvider,
 			'conflicts' => $conflicts,
-			'rescheduleBeginDate' => $rescheduleBeginDate,
+			'startDate' => $startDate,
+            'endDate' => $endDate,
         ]);	
 	}
 
@@ -270,13 +272,14 @@ class LessonController extends Controller
             $enrolmentModel->save();
         }
         $courseRequest = $request->get('Course');
-        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
-		if( ! empty($rescheduleBeginDate)) {
-			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);
-			$courseDate = $courseDate->format('Y-m-d H:i:s');
+        $startDate = $courseRequest['startDate'];
+        $endDate = $courseRequest['endDate'];
+		if( ! (empty($startDate) && empty($startDate))) {
+			$startDate = \DateTime::createFromFormat('d-m-Y',$startDate);
+            $endDate = \DateTime::createFromFormat('d-m-Y',$endDate);
 			$oldLessons = Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
-				->andWhere(['>=', 'date', $courseDate])
+				->andWhere(['between','lesson.date', $startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
 				->all();
 			$oldLessonIds = [];
 			foreach($oldLessons as $oldLesson){

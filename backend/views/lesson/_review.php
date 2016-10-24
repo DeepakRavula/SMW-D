@@ -164,8 +164,8 @@ $this->title = 'Review Lessons';
             }
         }
         ?>
-		<?php if( ! empty($rescheduleBeginDate)):?>
-		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[rescheduleBeginDate]' => $rescheduleBeginDate], [
+		<?php if( ! (empty($startDate) && empty($startDate))):?>
+		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[startDate]' => $startDate, 'Course[endDate]' => $endDate], [
 				'class' => 'btn btn-danger', 
                 'disabled' => $hasConflict,
 				'data' => [
