@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\User;
+use common\models\TeacherAvailability;
 use common\models\Enrolment;
 use common\models\Lesson;
 use common\models\Course;
@@ -156,6 +158,68 @@ class EnrolmentController extends Controller
 			]);
 		}
 	}
+
+    public function actionVacationReschedule($id)
+    {
+        $request = Yii::$app->request;
+        $post = $request->post();
+        $model = $this->findModel($id);
+        $teacher = User::findOne(['id' => $model->course->teacherId]);
+        $teacherDetails = $teacher->teacherAvailabilityWithEvents($model->course->teacherId);
+        $lessons		 = Lesson::find()
+				->where(['courseId' => $model->course->id])
+				->andWhere(['status' => Lesson::STATUS_SCHEDULED])
+				->all();
+        $lastLessonDate = new \DateTime(end($lessons)->date);
+        if ($model->course->load($post)) {
+            $dayList = TeacherAvailability::getWeekdaysList();
+            $model->course->day = array_search($model->course->day, $dayList);
+			$lessonFromDate = \DateTime::createFromFormat('d-m-Y', $model->course->lessonFromDate);
+			$lessonToDate = \DateTime::createFromFormat('d-m-Y', $model->course->lessonToDate);
+			Lesson::deleteAll([
+				'courseId' => $model->course->id,
+				'status' => Lesson::STATUS_DRAFTED,
+			]);
+			$rescheduleLessons		 = Lesson::find()
+				->where(['courseId' => $model->course->id])
+				->andWhere(['between','lesson.date', $lessonFromDate->format('Y-m-d'), $lessonToDate->format('Y-m-d')])
+				->all();
+			
+			$changedFromTime = (new \DateTime($model->course->fromTime))->format('H:i:s');
+			$duration		 = explode(':', $changedFromTime);
+			$interval		 = new \DateInterval('P1D');
+            //lesson start date
+			$startDate		 = new \DateTime($model->course->startDate);
+			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+            //lesson end date
+            $addDays = count($rescheduleLessons) * 7;
+			$endDate		 = new \DateTime($model->course->startDate);
+            $endDate->add(new \DateInterval('P'.$addDays.'D'));
+            $endDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+            $period			 = new \DatePeriod($startDate, $interval, $endDate);
+			foreach ($period as $day) {
+				if ((int) $day->format('N') === (int) $model->course->day) {
+					$lesson = new Lesson();
+					$lesson->setAttributes([
+						'courseId' => $model->course->id,
+						'teacherId' => $model->course->teacherId,
+						'status' => Lesson::STATUS_DRAFTED,
+						'date' => $day->format('Y-m-d H:i:s'),
+						'duration' => $model->course->duration,
+						'isDeleted' => false,
+					]);
+					$lesson->save();
+				}
+			}
+			return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Course[rescheduleBeginDate]' => $model->course->rescheduleBeginDate]);
+		} else {
+            return $this->render('_vacation-reschedule', [
+					'model' => $model->course,
+                    'lastLessonDate' => $lastLessonDate,
+                    'teacherDetails' => $teacherDetails,
+			]);
+        }
+    }
 
     /**
      * Deletes an existing Enrolment model.

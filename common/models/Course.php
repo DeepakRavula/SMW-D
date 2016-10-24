@@ -22,6 +22,8 @@ class Course extends \yii\db\ActiveRecord
 	public $studentId;
 	public $paymentFrequency;
     public $rescheduleBeginDate;
+    public $lessonFromDate;
+    public $lessonToDate;
 	
     /**
      * @inheritdoc
@@ -39,7 +41,7 @@ class Course extends \yii\db\ActiveRecord
         return [
             [['programId', 'teacherId', 'locationId', 'day', 'fromTime', 'duration'], 'required'],
             [['programId', 'teacherId', 'locationId', 'paymentFrequency'], 'integer'],
-		    [['fromTime', 'duration', 'startDate', 'endDate', 'rescheduleBeginDate'], 'safe'],
+		    [['fromTime', 'duration', 'startDate', 'endDate', 'rescheduleBeginDate', 'lessonFromDate', 'lessonToDate'], 'safe'],
         ];
     }
 
