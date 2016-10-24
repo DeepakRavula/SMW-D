@@ -164,8 +164,8 @@ $this->title = 'Review Lessons';
             }
         }
         ?>
-		<?php if( ! (empty($startDate) && empty($startDate))):?>
-		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[startDate]' => $startDate, 'Course[endDate]' => $endDate], [
+		<?php if( ! (empty($lessonFromDate) && empty($lessonToDate))):?>
+		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[lessonFromDate]' => $lessonFromDate, 'Course[lessonToDate]' => $lessonToDate], [
 				'class' => 'btn btn-danger', 
                 'disabled' => $hasConflict,
 				'data' => [
