@@ -6,7 +6,7 @@ use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
 use kartik\date\DatePicker;
 use common\models\Location;
-
+use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -34,8 +34,6 @@ $privatePrograms = ArrayHelper::map(Program::find()
 				]
 			]);
 			?>
-		</div>
-		<div class="col-md-4">
 			<?php
 			echo $form->field($model, 'duration')->widget(TimePicker::classname(),
 				[
@@ -45,8 +43,6 @@ $privatePrograms = ArrayHelper::map(Program::find()
 				]
 			]);
 			?>
-		</div>
-		<div class="col-md-4">
 			<?php
 			echo $form->field($model, 'programId')->dropDownList(
 				ArrayHelper::map(Program::find()
@@ -54,24 +50,19 @@ $privatePrograms = ArrayHelper::map(Program::find()
 						->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
 						->all(), 'id', 'name'), ['prompt' => 'Select..']);
 			?>
-		</div>
-
-	</div>
-	<div class="row">
-		<div class="col-md-4">
+			
 <?= $form->field($model, 'paymentFrequency')->radioList(Enrolment::paymentFrequencies()) ?>
-		</div>
-		<div id="course-rate-estimation" class="col-md-8">
+	</div>
+		<div id="course-rate-estimation" class="col-md-4">
 			<p class="text-info">
 			<strong>What's that per month?</strong></p>
-			<div class="smw-box col-md-6 m-l-20 m-b-30 monthly-estimate">
+			<div class="smw-box col-md-12 m-l-20 m-b-30 course-monthly-estimate">
 				<div>
-			Four <span id="duration"></span> min Lessons @  $<span id="rate-30-min"></span> each = $<span id="rate-month-30-min"></span>/mn
+			Four <span id="duration"></span>min Lessons @ $<span id="rate-30-min"></span> each = $<span id="rate-month-30-min"></span>/mn
 				</div>
 			</div>
 		</div>
 	</div>
-
 </div>
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
@@ -87,6 +78,7 @@ $to_time		 = (new \DateTime($location->to_time))->format('H:i:s');
     	var hours = parseInt(timeArray[0]);
     	var minutes = parseInt(timeArray[1]);
 		var unit = ((hours * 60) + (minutes)) / 60;
+		var duration = (hours * 60) + minutes;
 		$('#duration').text(duration);
 		var amount = (programRate * unit).toFixed(2);
 		$('#rate-30-min').text(amount);
@@ -94,21 +86,31 @@ $to_time		 = (new \DateTime($location->to_time))->format('H:i:s');
 		$('#rate-month-30-min').text(ratePerMonth30);
 		$('#course-rate-estimation').show();
 	}
+	function fetchProgram(duration, programId) {
+		$.ajax({
+			url: '<?= Url::to(["student/fetch-program-rate"]); ?>' + '?id=' + programId,
+			type: 'get',
+			dataType: "json",
+			success: function (response)
+			{
+				programRate = response;
+				rateEstimation(duration,programRate);
+			}
+		});
+	}
     $(document).ready(function () {
 		$('#course-rate-estimation').hide();
 		$(document).on('change', '#course-programid', function(){
 			var duration = $('#course-duration').val();
 			var programId = $('#course-programid').val();
-			 $.ajax({
-                url: '/student/fetch-program-rate?id=' + programId,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    programRate = response;
-                    rateEstimation(duration,programRate);
-                }
-            });
+			fetchProgram(duration, programId);
+		});
+		$(document).on('change', '#course-duration', function(){
+			var duration = $('#course-duration').val();
+			var programId = $('#course-programid').val();
+			if (duration && programId) {
+				fetchProgram(duration, programId);
+			}
 		});
         $('#stepwizard_step2_save').click(function () {
             $('#enrolment-form').submit();

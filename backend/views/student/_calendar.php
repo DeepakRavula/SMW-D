@@ -14,7 +14,7 @@ use yii\helpers\Url;
 		'pluginOptions' => [
 			'depends' => ['course-programid'],
 			'placeholder' => 'Select...',
-			'url' => Url::to(['/course/teachers']),
+			'url' => Url::to(['course/teachers']),
 		]
 	]);
 	?>
