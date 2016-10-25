@@ -5,6 +5,7 @@ use common\models\Lesson;
 use common\models\Program;
 use yii\helpers\Json;
 use yii\helpers\Url;
+use common\models\Invoice;
 ?>
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
@@ -49,12 +50,20 @@ use yii\helpers\Url;
             } else {
             	$title = $lesson->enrolment->student->fullName . ' ( ' .$lesson->course->program->name . ' ) ';
 		}
+		$class = null;
+		if (! empty($lesson->proFormaInvoice)) {
+			if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
+				$class = 'proforma-paid';
+			} else {
+				$class = 'proforma-unpaid';
+			}
+		}
 		$events[]= [
             'title' => $title,
 			'start' => $lesson->date,
 			'end' => $toTime->format('Y-m-d H:i:s'),
             'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
-			'className' => 'teacher-lesson'
+			'className' => $class,
 		];
 	}
 	unset($lesson);
