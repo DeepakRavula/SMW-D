@@ -10,7 +10,8 @@ use yii\bootstrap\ActiveForm;
 ?>
 <?php
 $form					 = ActiveForm::begin([
-		'id' => 'enrolment-form'
+	'id' => 'enrolment-form',
+	'enableAjaxValidation' => true,
 	]);
 ?>
 
@@ -35,14 +36,6 @@ $wizard_config	 = [
 			'title' => 'Step 1 - Choose Program',
 			'icon' => 'glyphicon glyphicon-music',
 			'content' => $programDetailContent,
-			'buttons' => [
-				'next' => [
-					'title' => 'Next',
-					'options' => [
-						'class' => 'disabled'
-					],
-				],
-			],
 		],
 		2 => [
 			'title' => 'Step 2 - Choose Teacher',
@@ -54,4 +47,3 @@ $wizard_config	 = [
 ?>
 <?= WizardWidget::widget($wizard_config); ?>
 <?php ActiveForm::end(); ?>
-

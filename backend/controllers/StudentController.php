@@ -211,14 +211,20 @@ class StudentController extends Controller
 		$post = $request->post();
 		$courseModel = new Course();
 		if ($courseModel->load($post)) {
+			/*if($request->isAjax){
+				$errors = ActiveForm::validate($courseModel);
+				return $errors;
+			}
+			 * 
+			 */
 			$dayList = TeacherAvailability::getWeekdaysList();
 			$courseModel->locationId = $locationId;
 			$courseModel->studentId = $model->id;
 			$courseModel->day = array_search($courseModel->day, $dayList);
 			$courseModel->save();
-			
+
         	return $this->redirect(['lesson/review', 'courseId' => $courseModel->id]);
-        }
+		}
 		if (( ! empty($post['courseId'])) && is_array($post['courseId'])) {
 			$enrolmentModel = new Enrolment();
 			$enrolmentModel->courseId = $post['courseId'][0];	
