@@ -117,11 +117,9 @@ $this->title = 'Review Lessons';
 			[
 				'label' => 'Conflict',
 				'value' => function($data) use($conflicts){
-					foreach($conflicts[$data->id] as $conflict){
-						if((! empty($conflict['lessonIds'])) || ( ! empty($conflict['dates']))){
+						if(! empty($conflicts[$data->id])){
 							return 'Conflict';
 						}
-					}
 				},
 			],
 			[
@@ -140,11 +138,9 @@ $this->title = 'Review Lessons';
     <?= \kartik\grid\GridView::widget([
 		'dataProvider' => $lessonDataProvider,
 		'rowOptions' => function ($model, $key, $index, $grid) use($conflicts) {
-			foreach($conflicts[$model->id] as $conflict){
-				if((! empty($conflict['lessonIds'])) || ( ! empty($conflict['dates']))){
-					return ['class' => 'danger'];
-				}
-			}	
+			if (!empty($conflicts[$model->id])) {
+				return ['class' => 'danger'];
+			}
 		},
 		'pjax' => true,
 		'columns'=>$columns,
