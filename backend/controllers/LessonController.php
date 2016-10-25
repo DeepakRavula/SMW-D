@@ -300,7 +300,18 @@ class LessonController extends Controller
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Lessons have been created successfully'
 		]);
-        if((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) { 
+        if((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
+			$lessonDate = (new \DateTime($lessons[0]->date))->format('d-m-Y');
+			$lessonStartDate = new \DateTime($lessons[0]->date);
+			$lessonEndDate = $lessonStartDate->modify('+1 month');
+			return $this->redirect([
+				'invoice/create',
+				'Invoice[customer_id]' => $courseModel->enrolment->student->customer->id,
+				'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
+				'LessonSearch[fromDate]' => $lessonDate,
+				'LessonSearch[toDate]' => $lessonEndDate->format('d-m-Y'),
+				'LessonSearch[courseId]' => $courseModel->id
+			]);
             return $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'lesson']);
         }
         else {
