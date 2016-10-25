@@ -385,4 +385,51 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return $this->email;
     }
+
+    public function teacherAvailabilityWithLessons($id)
+    {
+        $teacherAvailabilities = TeacherAvailability::find()
+		->joinWith(['userLocation' => function($query) use($id) {
+			$query->joinWith(['userProfile' => function($query) use($id){
+				$query->where(['user_profile.user_id' => $id]);
+			}]);
+		}])
+		->all();
+		$availableHours = [];
+		foreach($teacherAvailabilities as $teacherAvailability) {
+			$availableHours[] = [
+				'start' => $teacherAvailability->from_time,
+				'end' => $teacherAvailability->to_time,
+				'dow' => [$teacherAvailability->day],
+				'className' => 'teacher-available'
+			];
+		}
+
+		$lessons = [];
+		$lessons = Lesson::find()
+			->joinWith(['course' => function($query) {
+				$query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
+			}])
+			->where(['lesson.teacherId' => $id])
+			->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+			->all();
+	   $events = [];
+		foreach ($lessons as &$lesson) {
+			$toTime = new \DateTime($lesson->date);
+			$length = explode(':', $lesson->duration);
+			$toTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
+
+			$events[]= [
+				'start' => $lesson->date,
+				'end' => $toTime->format('Y-m-d H:i:s'),
+				'className' => 'teacher-lesson'
+			];
+		}
+		unset($lesson);
+
+		return [
+			'availableHours' => $availableHours,
+			'events' => $events,
+		];
+    }
 }

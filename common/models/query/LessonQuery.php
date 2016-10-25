@@ -133,6 +133,13 @@ class LessonQuery extends \yii\db\ActiveQuery
 		return $this;
 	}
 
+    public function scheduledBetween($fromDate, $toDate) {
+		$this->andFilterWhere(['between','lesson.date', $fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
+             ->andFilterWhere(['status' => Lesson::STATUS_SCHEDULED]);
+
+		return $this;
+	}
+
 	public function studentLessons($locationId, $studentId){
 		$this->notDeleted()
 			->joinWith(['course' => function($query) use($locationId, $studentId){

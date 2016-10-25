@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\User;
+use common\models\TeacherAvailability;
 use common\models\Enrolment;
 use common\models\Lesson;
 use common\models\Course;
@@ -91,71 +93,71 @@ class EnrolmentController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-		if ($model->course->load(Yii::$app->request->post())) {
-			$courseDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
-			$courseDate		 = $courseDate->format('Y-m-d H:i:s');
-			Lesson::deleteAll([
-				'courseId' => $model->course->id,
-				'status' => Lesson::STATUS_DRAFTED,
-			]);
-			$lessons		 = Lesson::find()
-				->where(['courseId' => $model->course->id])
-				->andWhere(['>=', 'date', $courseDate])
-				->all();
-			//lesson start date
-			$changedFromTime = (new \DateTime($model->course->fromTime))->format('H:i:s');
-			$duration		 = explode(':', $changedFromTime);
-			$interval		 = new \DateInterval('P1D');
-			$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
-			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
-			//lesson end date
-			$endDate		 = new \DateTime(end($lessons)->date);
-            $dayDifference = (int) $model->course->day - (int) $model->course->oldAttributes['day'];
-			if((int) $model->course->oldAttributes['day'] < (int) $model->course->day) {
-                $endDate = $endDate->add(new \DateInterval('P' . $dayDifference . 'D'));
-                $modifiedEndDate  = $endDate->format('Y-m-d H:i:s');
-                $endDate = new \DateTime($modifiedEndDate);
-            } else {
-				$chosenDate = new \DateTime($courseDate);
-				$firstLessonDate = new \DateTime($lessons[0]->date);
-				if ($chosenDate < $firstLessonDate) {
-					$period			 = new \DatePeriod($chosenDate, $interval, $firstLessonDate);
-					foreach ($period as $day) {
-						if ((int) $day->format('N') === (int) $model->course->day) {
-							$endDate = new \DateTime(end($lessons)->date);
-							break;
-						} else {
-							$addDifference = 7 - $dayDifference;
-							$endDate = $endDate->add(new \DateInterval('P' . $addDifference . 'D'));
-							$modifiedEndDate  = $endDate->format('Y-m-d H:i:s');
-							$endDate = new \DateTime($modifiedEndDate);
-            			}
-					}	
-				} 
-			}
-			$period			 = new \DatePeriod($startDate, $interval, $endDate);
-			foreach ($period as $day) {
-				if ((int) $day->format('N') === (int) $model->course->day) {
-					$lesson = new Lesson();
-					$lesson->setAttributes([
-						'courseId' => $model->course->id,
-						'teacherId' => $model->course->teacherId,
-						'status' => Lesson::STATUS_DRAFTED,
-						'date' => $day->format('Y-m-d H:i:s'),
-						'duration' => $model->course->duration,
-						'isDeleted' => false,
-					]);
-					$lesson->save();
-				}
-			}
-			return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Course[rescheduleBeginDate]' => $model->course->rescheduleBeginDate]);
-		} else {
-			return $this->render('update', [
-					'model' => $model->course,
-			]);
-		}
-	}
+        $request        = Yii::$app->request;
+        $post           = $request->post();
+        $model          = $this->findModel($id);
+        $teacher        = User::findOne(['id' => $model->course->teacherId]);
+        $teacherDetails = $teacher->teacherAvailabilityWithLessons($model->course->teacherId);
+        $lessons        = Lesson::find()
+            ->where(['courseId' => $model->course->id])
+            ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
+            ->all();
+        $lastLessonDate = new \DateTime(end($lessons)->date);
+        if ($model->course->load(Yii::$app->request->post())) {
+            $dayList               = TeacherAvailability::getWeekdaysList();
+            (int) $model->course->day    = array_search($model->course->day,
+                $dayList);
+            $lessonFromDate        = \DateTime::createFromFormat('d-m-Y',
+                    $model->course->lessonFromDate);
+            $lessonToDate          = \DateTime::createFromFormat('d-m-Y',
+                    $model->course->lessonToDate);
+            Lesson::deleteAll([
+                'courseId' => $model->course->id,
+                'status' => Lesson::STATUS_DRAFTED,
+            ]);
+            $rescheduleLessons     = Lesson::find()
+                ->where(['courseId' => $model->course->id])
+                ->scheduledBetween($lessonFromDate, $lessonToDate)
+                ->all();
+            //lesson start date
+            $changedFromTime       = (new \DateTime($model->course->fromTime))->format('H:i:s');
+            $duration              = explode(':', $changedFromTime);
+            $interval              = new \DateInterval('P1D');
+            $startDate             = new \DateTime($model->course->startDate);
+            $startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+            //lesson end date
+            $rescheduleLessonsDays = count($rescheduleLessons) * 7;
+            $endDate               = new \DateTime($model->course->startDate);
+            $endDate->add(new \DateInterval('P'.$rescheduleLessonsDays.'D'));
+            $endDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+            $period                = new \DatePeriod($startDate, $interval,
+                $endDate);
+            foreach ($period as $day) {
+                if ((int) $day->format('N') === (int) $model->course->day) {
+                    $lesson = new Lesson();
+                    $lesson->setAttributes([
+                        'courseId' => $model->course->id,
+                        'teacherId' => $model->course->teacherId,
+                        'status' => Lesson::STATUS_DRAFTED,
+                        'date' => $day->format('Y-m-d H:i:s'),
+                        'duration' => $model->course->duration,
+                        'isDeleted' => false,
+                    ]);
+                    $lesson->save();
+                }
+            }
+            return $this->redirect(['lesson/review', 'courseId' => $model->course->id,
+                    'Course[lessonFromDate]' => $lessonFromDate->format('d-m-Y'),
+                    'Course[lessonToDate]' => $lessonToDate->format('d-m-Y')]);
+        } else {
+            return $this->render('update',
+                    [
+                    'model' => $model->course,
+                    'lastLessonDate' => $lastLessonDate,
+                    'teacherDetails' => $teacherDetails,
+            ]);
+        }
+    }
 
     /**
      * Deletes an existing Enrolment model.
