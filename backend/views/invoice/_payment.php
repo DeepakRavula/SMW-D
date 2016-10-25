@@ -175,7 +175,7 @@ $(document).on('beforeSubmit', '#apply-credit-form', function (e) {
 		{
 		   if(response.status)
 		   {
-				$.pjax.reload({container : '#payment-listing', timeout : 4000});
+				$.pjax.reload({container : '#invoice-payment-listing', timeout : 4000});
                 invoice.updateSummarySectionAndStatus();
 				$('#credit-modal').modal('hide');
 			}else
