@@ -11,16 +11,20 @@ use common\models\ProfessionalDevelopmentDay;
 
 ?>
 <?php
-	$conflicts = current($conflicts);
-	$conflictedLessonIds = [];
-	$conflictedDates = [];
-	foreach($conflicts['lessonIds'] as $lessonConflict){
-		$conflictedLessonIds[] = $lessonConflict;
+$conflicts = current($conflicts);
+$conflictedLessonIds = [];
+$conflictedDates	 = [];
+	if (!empty($conflicts['lessonIds'])) {
+		foreach ($conflicts['lessonIds'] as $lessonConflict) {
+			$conflictedLessonIds[] = $lessonConflict;
+		}
 	}
-	foreach($conflicts['dates'] as $dateConflict){
-		$conflictedDates[] = $dateConflict;
+	if (!empty($conflicts['dates'])) {
+		foreach ($conflicts['dates'] as $dateConflict) {
+			$conflictedDates[] = $dateConflict;
+		}
 	}
-	$holidays = Holiday::find()
+$holidays = Holiday::find()
 		->all();
 	$professionalDevelopmentDays = ProfessionalDevelopmentDay::find()
 		->all();
@@ -59,7 +63,6 @@ use common\models\ProfessionalDevelopmentDay;
 ?>
 <div class="private-lesson-index p-10">
 	<?php if($conflictedLessonDataProvider->getCount() > 0) :?>
-<?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php $columns = [
 			'id',
 			[
@@ -104,6 +107,7 @@ use common\models\ProfessionalDevelopmentDay;
         ];
      ?>
     <div class="grid-row-open">
+<?php yii\widgets\Pjax::begin(['id' => 'conflict-lesson-index']); ?>
     <?php echo GridView::widget([
         'dataProvider' => $conflictedLessonDataProvider,
 	'rowOptions' => function ($model, $key, $index, $grid) {

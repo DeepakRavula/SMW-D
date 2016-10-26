@@ -125,18 +125,34 @@ class LessonController extends Controller
 			if (empty($model->date)) {
 				$model->date	 = $model->getOldAttribute('date');
 				$model->status	 = Lesson::STATUS_CANCELED;
+				$model->save();
+				$redirectionLink = $this->redirect(['view', 'id' => $model->id]);
 			} else {
-				$lessonDate	 = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-				$model->date = $lessonDate->format('Y-m-d H:i:s');
+				$oldDate = $model->getOldAttribute('date');
+				if (new \DateTime($oldDate) != new \DateTime($model->date)) {
+					$model->setScenario(Lesson::SCENARIO_REVIEW);
+					$validate = $model->validate();
+				}
+				$lessonConflicts = [];
+				$lessonConflicts = $model->getErrors('date');
+				if (!empty($lessonConflicts)) {
+					Yii::$app->session->setFlash('alert',
+						[
+						'options' => ['class' => 'alert-danger'],
+						'body' => 'Reschedule Date / time conflict with another lesson',
+					]);
+					$redirectionLink = $this->redirect(['update', 'id' => $model->id]);
+				} else {
+					$lessonDate		 = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+					$model->date	 = $lessonDate->format('Y-m-d H:i:s');
+					$model->save();
+					$redirectionLink = $this->redirect(['view', 'id' => $model->id]);
+				}
 			}
-			$model->save();
-
-			return $this->redirect(['view', 'id' => $model->id]);
+			return $redirectionLink;
 		}
-
 		return $this->render($view, $data);
 	}
-
 	/**
      * Deletes an existing Lesson model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -303,7 +319,18 @@ class LessonController extends Controller
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Lessons have been created successfully'
 		]);
-        if((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) { 
+        if((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
+			$lessonDate = (new \DateTime($lessons[0]->date))->format('d-m-Y');
+			$lessonStartDate = new \DateTime($lessons[0]->date);
+			$lessonEndDate = $lessonStartDate->modify('+1 month');
+			return $this->redirect([
+				'invoice/create',
+				'Invoice[customer_id]' => $courseModel->enrolment->student->customer->id,
+				'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
+				'LessonSearch[fromDate]' => $lessonDate,
+				'LessonSearch[toDate]' => $lessonEndDate->format('d-m-Y'),
+				'LessonSearch[courseId]' => $courseModel->id
+			]);
             return $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'lesson']);
         }
         else {

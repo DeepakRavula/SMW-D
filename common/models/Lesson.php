@@ -109,11 +109,12 @@ class Lesson extends \yii\db\ActiveRecord
 		foreach($conflictedLessonsResults as $conflictedLessonsResult){
 			$conflictedLessonIds[] = $conflictedLessonsResult->id; 
 		}
-
-	   $this->addError($attribute, [
-		   'lessonIds' => $conflictedLessonIds,
-		   'dates' => $conflictedDates
-	   ]);
+		if ((! empty($conflictedDates)) || (! empty($conflictedLessonIds))) {
+		   $this->addError($attribute, [
+			   'lessonIds' => $conflictedLessonIds,
+			   'dates' => $conflictedDates
+		   ]);
+		}
     }
 
 	public function dateIntervals()
