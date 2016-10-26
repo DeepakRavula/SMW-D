@@ -11,9 +11,9 @@ use common\models\ProfessionalDevelopmentDay;
 
 ?>
 <?php
+$conflicts = current($conflicts);
 $conflictedLessonIds = [];
 $conflictedDates	 = [];
-if (!empty($conflicts)) {
 	if (!empty($conflicts['lessonIds'])) {
 		foreach ($conflicts['lessonIds'] as $lessonConflict) {
 			$conflictedLessonIds[] = $lessonConflict;
@@ -24,7 +24,6 @@ if (!empty($conflicts)) {
 			$conflictedDates[] = $dateConflict;
 		}
 	}
-}
 $holidays = Holiday::find()
 		->all();
 	$professionalDevelopmentDays = ProfessionalDevelopmentDay::find()
