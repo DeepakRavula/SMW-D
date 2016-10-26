@@ -112,16 +112,30 @@ $to_time		 = (new \DateTime($location->to_time))->format('H:i:s');
 				fetchProgram(duration, programId);
 			}
 		});
-		$('#stepwizard_step1_next').click(function() {
+		$('#stepwizard_step1_next').unbind().click(function() {
+			
 			$('#enrolment-form').yiiActiveForm('validateAttribute', 'course-programid');
 			$('#enrolment-form').yiiActiveForm('validateAttribute', 'course-paymentfrequency');
-			if($.isEmptyObject()){
-				var $active = $('.wizard .nav-tabs li.active');
-				$active.removeClass('active').addClass('disabled');
-				//$('#enrolment-form').data('yiiActiveForm').submitting = false;
-			}
+			$('#enrolment-form').yiiActiveForm('validateAttribute', 'course-startdate');
+        		if(!  isStep1valid ) {
+					var $active = $('.wizard .nav-tabs li.active');
+					$active.removeClass('active').addClass('disabled');
+				} 
 		});
-        
+		var isStep1valid;
+        $('#enrolment-form').on('afterValidateAttribute', function (event, attribute, messages) {
+			//console.log(event);
+			console.log(attribute.status);
+			console.log(messages.length);
+           if (attribute.name === 'programId' && attribute.name === 'paymentFrequency') {
+                if( messages.length > 0) {
+                isStep1valid = false;
+            }  else{
+			   console.log('come');
+                isStep1valid = true;
+            }
+		}
+        });
         $('#stepwizard_step2_save').click(function () {
             $('#enrolment-form').submit();
         });

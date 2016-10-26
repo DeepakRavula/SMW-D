@@ -11,7 +11,6 @@ use yii\bootstrap\ActiveForm;
 <?php
 $form					 = ActiveForm::begin([
 	'id' => 'enrolment-form',
-	'enableAjaxValidation' => true,
 	]);
 ?>
 

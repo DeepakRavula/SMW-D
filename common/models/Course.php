@@ -39,9 +39,10 @@ class Course extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['programId', 'teacherId', 'locationId', 'day', 'fromTime', 'duration'], 'required'],
+            [['programId', 'day', 'fromTime', 'duration'], 'required'],
             [['programId', 'teacherId', 'locationId', 'paymentFrequency'], 'integer'],
 		    [['fromTime', 'duration', 'startDate', 'endDate', 'goToDate', 'lessonFromDate', 'lessonToDate'], 'safe'],
+			[['startDate'], 'checkDate'],
             [['paymentFrequency'], 'required', 'when'=>function ($model, $attribute) 
                 {
                     return ((int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM);
@@ -50,6 +51,11 @@ class Course extends \yii\db\ActiveRecord
         ];
     }
 
+	public function checkDate($attribute,$params){
+		if(new \DateTime($this->startDate) == (new \DateTime())){
+			$this->addError($attribute,'Please choose future date');
+		}
+	}
     /**
      * @inheritdoc
      */
