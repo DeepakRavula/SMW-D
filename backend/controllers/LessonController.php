@@ -125,18 +125,34 @@ class LessonController extends Controller
 			if (empty($model->date)) {
 				$model->date	 = $model->getOldAttribute('date');
 				$model->status	 = Lesson::STATUS_CANCELED;
+				$model->save();
+				$redirectionLink = $this->redirect(['view', 'id' => $model->id]);
 			} else {
-				$lessonDate	 = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-				$model->date = $lessonDate->format('Y-m-d H:i:s');
+				$oldDate = $model->getOldAttribute('date');
+				if (new \DateTime($oldDate) != new \DateTime($model->date)) {
+					$model->setScenario(Lesson::SCENARIO_REVIEW);
+					$validate = $model->validate();
+				}
+				$lessonConflicts = [];
+				$lessonConflicts = $model->getErrors('date');
+				if (!empty($lessonConflicts)) {
+					Yii::$app->session->setFlash('alert',
+						[
+						'options' => ['class' => 'alert-danger'],
+						'body' => 'Reschedule Date / time conflict with another lesson',
+					]);
+					$redirectionLink = $this->redirect(['update', 'id' => $model->id]);
+				} else {
+					$lessonDate		 = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+					$model->date	 = $lessonDate->format('Y-m-d H:i:s');
+					$model->save();
+					$redirectionLink = $this->redirect(['view', 'id' => $model->id]);
+				}
 			}
-			$model->save();
-
-			return $this->redirect(['view', 'id' => $model->id]);
+			return $redirectionLink;
 		}
-
 		return $this->render($view, $data);
 	}
-
 	/**
      * Deletes an existing Lesson model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

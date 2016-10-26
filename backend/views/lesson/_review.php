@@ -6,19 +6,6 @@ use kartik\grid\GridView;
 
 $this->title = 'Review Lessons';
 ?>
-<html>
-	<head>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<script type="text/javascript">
-			$(window).load(function() {
-			$(".loader").fadeOut("slow");
-			})
-		</script>
-	</head>
-	<body>
-		<div class="loader"></div>
-	</body>
-</html>
 <div class="user-details-wrapper">
 	<div class="row">
     <?php if((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>  
@@ -130,11 +117,9 @@ $this->title = 'Review Lessons';
 			[
 				'label' => 'Conflict',
 				'value' => function($data) use($conflicts){
-					foreach($conflicts[$data->id] as $conflict){
-						if((! empty($conflict['lessonIds'])) || ( ! empty($conflict['dates']))){
+						if(! empty($conflicts[$data->id])){
 							return 'Conflict';
 						}
-					}
 				},
 			],
 			[
@@ -153,11 +138,9 @@ $this->title = 'Review Lessons';
     <?= \kartik\grid\GridView::widget([
 		'dataProvider' => $lessonDataProvider,
 		'rowOptions' => function ($model, $key, $index, $grid) use($conflicts) {
-			foreach($conflicts[$model->id] as $conflict){
-				if((! empty($conflict['lessonIds'])) || ( ! empty($conflict['dates']))){
-					return ['class' => 'danger'];
-				}
-			}	
+			if (!empty($conflicts[$model->id])) {
+				return ['class' => 'danger'];
+			}
 		},
 		'pjax' => true,
 		'columns'=>$columns,
