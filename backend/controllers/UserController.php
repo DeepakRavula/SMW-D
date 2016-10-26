@@ -485,7 +485,7 @@ class UserController extends Controller {
 			$availabilityModels = UserForm::createMultiple(TeacherAvailability::classname(), $availabilityModels);
 			Model::loadMultiple($availabilityModels, Yii::$app->request->post());
 			$deletedAvailabilityIDs = array_diff($oldAvailabilityIDs, array_filter(ArrayHelper::map($availabilityModels, 'id', 'id')));
-
+//            print_r($model);die;
 			$valid = $model->validate();
 			$valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels) || Model::validateMultiple($availabilityModels)) && $valid;
 

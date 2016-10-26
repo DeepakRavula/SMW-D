@@ -9,6 +9,7 @@ use common\models\PhoneNumber;
 use common\models\Program;
 use common\models\Qualification;
 use common\models\UserLocation;
+use common\models\Location;
 use common\models\TeacherAvailability;
 use yii\base\Exception;
 use yii\base\Model;
@@ -81,7 +82,17 @@ class UserForm extends Model
            	['locations','safe'],    
 			[['phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
             [['addresslabel', 'postalcode', 'province', 'city', 'country'],'safe'],
-			[['teacherAvailabilityDay','fromTime','toTime'],'safe']
+			[['teacherAvailabilityDay','fromTime','toTime'],'safe'],
+                [['fromTime'], 'required', 'when' => function ($availabilityModel, $attribute) {
+                        $locationId	 = Yii::$app->session->get('location_id');
+                        $location	 = Location::findOne(['id' => $locationId]);
+                        $fromTime = (new \DateTime($availabilityModel->availabilities[0]->from_time))->format("H:i:s");
+                        print_r($fromTime);die;
+                        if ($fromTime < $location->from_time) {
+                            echo "coming";die;
+                            return $availabilityModel->addError($attribute, 'Operating hours start time ' . $location->from_time);
+                        }
+                }],
         ];
     }
 
@@ -267,6 +278,7 @@ public static function createMultiple($modelClass, $multipleModels = [])
 			}
 
 			$fromTime = new \DateTime($this->fromTime);
+//            print_r($fromTime);die;
 			$toTime = new \DateTime($this->toTime);
 			if(! empty($userLocationModel)){
 				$teacherAvailabilityModel = TeacherAvailability::findOne(['teacher_location_id' => $userLocationModel->id]);

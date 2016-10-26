@@ -33,9 +33,19 @@ class TeacherAvailability extends \yii\db\ActiveRecord
             [['teacher_location_id','day', 'from_time', 'to_time'], 'required'],
             [['teacher_location_id','day'], 'integer'],
             [['from_time', 'to_time'], 'safe'],
+//            [['from_time'], 'checkFromTime'],
         ];
     }
-
+    public function checkFromTime($attribute, $params) {
+		$locationId	 = Yii::$app->session->get('location_id');
+		$location	 = Location::findOne(['id' => $locationId]);
+		$fromTime = new \DateTime($this->from_time);
+//        print_r($fromTime);die;
+		if ($fromTime < $location->from_time) {
+//            echo "coming";die;
+			return $this->addError($attribute, 'Operating hours start time ' . $location->from_time);
+		}
+	}
     /**
      * @inheritdoc
      */
