@@ -89,14 +89,12 @@ use common\models\ItemType;
               <div class="clearfix"></div>
             </div>
           </div>
-<?php if ((int) $model->type === (int) InvoiceSearch::TYPE_INVOICE && (int) $model->lineItems[0]->item_type_id !== (int) ItemType::TYPE_OPENING_BALANCE) : ?>
 	<div id="add-misc-item" class="col-md-12">
     <div class="row m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>
 	<div class="clearfix"></div>
   </div>
 	</div>
-<?php endif; ?>
 	<?php echo $this->render('_line-item', [
 		'invoiceModel' => $model,
 	]) ?>

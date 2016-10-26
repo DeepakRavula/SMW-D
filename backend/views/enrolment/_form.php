@@ -58,9 +58,7 @@ $this->title = 'Bulk Reschedule';
 			  ]); ?>
 		</div>
 		</div>
-    <div class="form-group">
-		<?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-    </div>
+    
 </div>
 <div id="course-detail" class="row">
 		<div class="col-md-4">
@@ -87,7 +85,9 @@ $this->title = 'Bulk Reschedule';
             'teacherDetails' => $teacherDetails,
     ]) ?>
 </div>
-
+<div class="form-group">
+		<?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+</div>
 <?php ActiveForm::end(); ?>
 <?php
 	$locationId			 = Yii::$app->session->get('location_id');
