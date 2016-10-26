@@ -43,15 +43,21 @@ $to_time    = (new \DateTime($location->to_time))->format('H:i:s');
                 $('#course-day').val(moment(start).format('dddd'));
                 $('#course-fromtime').val(moment(start).format('h:mm A'));
                 $('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
+                var endtime = start.clone();
+                moment(endtime.add(30, 'minutes'));
                 $('#calendar').fullCalendar('renderEvent',
-                        {
-                            id: 'newEnrolment',
-                            start: start,
-                            end: end,
-                            allDay: false
-                        },
+                    {
+                        id: 'newEnrolment',
+                        start: start,
+                        end: endtime,
+                        allDay: false
+                    },
                 true // make the event "stick"
-                        );
+                );
+                $('#calendar').fullCalendar('unselect');
+            },
+            eventAfterAllRender: function (view) {
+                $('.fc-short').removeClass('fc-short');
             },
             selectable: true,
             selectHelper: true,
