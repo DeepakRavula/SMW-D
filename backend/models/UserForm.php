@@ -43,9 +43,6 @@ class UserForm extends Model
 	public $phoneNumbers;
 	public $addresses;
 	public $availabilities;
-	public $teacherAvailabilityDay;
-	public $fromTime;
-	public $toTime;
 	public $section;
 	
     /**
@@ -82,17 +79,6 @@ class UserForm extends Model
            	['locations','safe'],    
 			[['phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
             [['addresslabel', 'postalcode', 'province', 'city', 'country'],'safe'],
-			[['teacherAvailabilityDay','fromTime','toTime'],'safe'],
-                [['fromTime'], 'required', 'when' => function ($availabilityModel, $attribute) {
-                        $locationId	 = Yii::$app->session->get('location_id');
-                        $location	 = Location::findOne(['id' => $locationId]);
-                        $fromTime = (new \DateTime($availabilityModel->availabilities[0]->from_time))->format("H:i:s");
-                        print_r($fromTime);die;
-                        if ($fromTime < $location->from_time) {
-                            echo "coming";die;
-                            return $availabilityModel->addError($attribute, 'Operating hours start time ' . $location->from_time);
-                        }
-                }],
         ];
     }
 
@@ -277,19 +263,6 @@ public static function createMultiple($modelClass, $multipleModels = [])
                 $userLocationModel->save();
 			}
 
-			$fromTime = new \DateTime($this->fromTime);
-//            print_r($fromTime);die;
-			$toTime = new \DateTime($this->toTime);
-			if(! empty($userLocationModel)){
-				$teacherAvailabilityModel = TeacherAvailability::findOne(['teacher_location_id' => $userLocationModel->id]);
-				if(empty($teacherAvailabilityModel)){
-					$teacherAvailabilityModel = new TeacherAvailability;
-					$teacherAvailabilityModel->day = $this->teacherAvailabilityDay;
-					$teacherAvailabilityModel->from_time = $fromTime->format("H:i:s");
-					$teacherAvailabilityModel->to_time = $toTime->format("H:i:s");
-				}
-				$teacherAvailabilityModel->save();
-			}
             $userProfileModel = UserProfile::findOne(['user_id' => $model->getId()]);
 			if(empty($userProfileModel)) {
 				$userProfileModel = new UserProfile();

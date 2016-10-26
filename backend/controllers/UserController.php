@@ -31,6 +31,7 @@ use common\models\ItemType;
 use common\models\TaxStatus;
 use common\models\PaymentMethod;
 use yii\web\ForbiddenHttpException;
+use yii\web\Response;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -487,8 +488,14 @@ class UserController extends Controller {
 			$deletedAvailabilityIDs = array_diff($oldAvailabilityIDs, array_filter(ArrayHelper::map($availabilityModels, 'id', 'id')));
 //            print_r($model);die;
 			$valid = $model->validate();
-			$valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels) || Model::validateMultiple($availabilityModels)) && $valid;
+			$valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels) && Model::validateMultiple($availabilityModels)) && $valid;
 
+			//print_r($availabilityModels[0]->getErrors());die;
+
+			if (Yii::$app->request->isAjax) {
+				Yii::$app->response->format = Response::FORMAT_JSON;
+				return \yii\widgets\ActiveForm::validateMultiple($availabilityModels);
+			}
 			if ($valid) {
 				$transaction = \Yii::$app->db->beginTransaction();
 				try {

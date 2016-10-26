@@ -30,7 +30,8 @@ use yii\bootstrap\Tabs;
 
 <div class="user-form">   
 
-	<?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
+	<?php $form = ActiveForm::begin(['id' => 'dynamic-form',
+		'enableAjaxValidation' => true]); ?>
 	<?php
 	$profileContent = $this->render('_form-profile', [
 		'model' => $model,
