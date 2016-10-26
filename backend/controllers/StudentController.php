@@ -211,12 +211,6 @@ class StudentController extends Controller
 		$post = $request->post();
 		$courseModel = new Course();
 		if ($courseModel->load($post)) {
-			/*if($request->isAjax){
-				$errors = ActiveForm::validate($courseModel);
-				return $errors;
-			}
-			 * 
-			 */
 			$dayList = TeacherAvailability::getWeekdaysList();
 			$courseModel->locationId = $locationId;
 			$courseModel->studentId = $model->id;

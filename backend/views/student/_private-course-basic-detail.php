@@ -112,34 +112,16 @@ $to_time		 = (new \DateTime($location->to_time))->format('H:i:s');
 				fetchProgram(duration, programId);
 			}
 		});
-
-        $('#stepwizard_step1_next').click(function () {
+		$('#stepwizard_step1_next').click(function() {
 			$('#enrolment-form').yiiActiveForm('validateAttribute', 'course-programid');
 			$('#enrolment-form').yiiActiveForm('validateAttribute', 'course-paymentfrequency');
-    	});
-		/*
-		 $.ajax({
-
-				url    : $(this).attr('action'),
-				type   : 'post',
-				dataType: 'json',
-				data   : $(this).serialize(),
-				success: function(response)
-				{
-				   if(response.status)
-				   {
-						
-					}else
-					{
-					 $('#enrolment-form').yiiActiveForm('updateMessages',
-						   response.errors
-						, true);
-					}
-				}
-				});
-				return false;
-			*/
-		
+			if($.isEmptyObject()){
+				var $active = $('.wizard .nav-tabs li.active');
+				$active.removeClass('active').addClass('disabled');
+				//$('#enrolment-form').data('yiiActiveForm').submitting = false;
+			}
+		});
+        
         $('#stepwizard_step2_save').click(function () {
             $('#enrolment-form').submit();
         });
