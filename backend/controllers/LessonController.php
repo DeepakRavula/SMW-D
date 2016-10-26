@@ -128,8 +128,11 @@ class LessonController extends Controller
 				$model->save();
 				$redirectionLink = $this->redirect(['view', 'id' => $model->id]);
 			} else {
-				$model->setScenario('review');
-				$validate		 = $model->validate();
+				$oldDate = $model->getOldAttribute('date');
+				if (new \DateTime($oldDate) != new \DateTime($model->date)) {
+					$model->setScenario('review');
+					$validate = $model->validate();
+				}
 				$lessonConflicts = [];
 				$lessonConflicts = $model->getErrors('date');
 				if (!empty($lessonConflicts)) {
