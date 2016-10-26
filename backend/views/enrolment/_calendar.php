@@ -24,8 +24,9 @@ $to_time    = (new \DateTime($location->to_time))->format('H:i:s');
             header: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'agendaWeek,agendaDay'
+                right: 'agendaWeek'
             },
+			allDaySlot:false,
             slotDuration: '00:15:00',
             titleFormat: 'DD-MMM-YYYY, dddd',
             defaultView: 'agendaWeek',

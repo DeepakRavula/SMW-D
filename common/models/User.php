@@ -418,11 +418,24 @@ class User extends ActiveRecord implements IdentityInterface
 			$toTime = new \DateTime($lesson->date);
 			$length = explode(':', $lesson->duration);
 			$toTime->add(new \DateInterval('PT' . $length[0] . 'H' . $length[1] . 'M'));
-
+			if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+				$title = $lesson->course->program->name . ' ( ' . $lesson->course->getEnrolmentsCount() . ' ) ';
+			} else {
+				$title = $lesson->enrolment->student->fullName . ' ( ' .$lesson->course->program->name . ' ) ';
+			}
+			$class = null;
+			if (! empty($lesson->proFormaInvoice)) {
+				if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
+					$class = 'proforma-paid';
+				} else {
+					$class = 'proforma-unpaid';
+				}
+			}
 			$events[]= [
 				'start' => $lesson->date,
 				'end' => $toTime->format('Y-m-d H:i:s'),
-				'className' => 'teacher-lesson'
+				'className' => $class,
+                'title' => $title,
 			];
 		}
 		unset($lesson);
