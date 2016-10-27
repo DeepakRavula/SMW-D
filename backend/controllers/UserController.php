@@ -361,18 +361,21 @@ class UserController extends Controller {
 				throw new ForbiddenHttpException;
 			}
 		}
-		if ($model->load(Yii::$app->request->post())) {
+        
+        $request = Yii::$app->request;
+        $response = Yii::$app->response;
+		if ($model->load($request->post())) {
 			$addressModels = UserForm::createMultiple(Address::classname());
-			Model::loadMultiple($addressModels, Yii::$app->request->post());
+			Model::loadMultiple($addressModels, $request->post());
 
 			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
-			Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
+			Model::loadMultiple($phoneNumberModels, $request->post());
 
 			$availabilityModels = UserForm::createMultiple(TeacherAvailability::classname());
-			Model::loadMultiple($availabilityModels, Yii::$app->request->post());
+			Model::loadMultiple($availabilityModels, $request->post());
             
-            if (Yii::$app->request->isAjax) {
-                Yii::$app->response->format = Response::FORMAT_JSON;
+            if ($request->isAjax) {
+                $response->format = Response::FORMAT_JSON;
                 return ArrayHelper::merge(
                     ActiveForm::validateMultiple($addressModels),
                     ActiveForm::validateMultiple($phoneNumberModels),
@@ -480,24 +483,26 @@ class UserController extends Controller {
 		$phoneNumberModels = $model->phoneNumbers;
 		$availabilityModels = $model->availabilities;
 		
-		if ($model->load(Yii::$app->request->post())) {
+        $request = Yii::$app->request;
+        $response = Yii::$app->response;
+		if ($model->load($request->post())) {
 			$oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
 			$addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
-			Model::loadMultiple($addressModels, Yii::$app->request->post());
+			Model::loadMultiple($addressModels, $request->post());
 			$deletedAddressIDs = array_diff($oldAddressIDs, array_filter(ArrayHelper::map($addressModels, 'id', 'id')));
 
 			$oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
 			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
-			Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
+			Model::loadMultiple($phoneNumberModels, $request->post());
 			$deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
 			
 			$oldAvailabilityIDs = ArrayHelper::map($availabilityModels, 'id', 'id');
 			$availabilityModels = UserForm::createMultiple(TeacherAvailability::classname(), $availabilityModels);
-			Model::loadMultiple($availabilityModels, Yii::$app->request->post());
+			Model::loadMultiple($availabilityModels, $request->post());
 			$deletedAvailabilityIDs = array_diff($oldAvailabilityIDs, array_filter(ArrayHelper::map($availabilityModels, 'id', 'id')));
             
-            if (Yii::$app->request->isAjax) {
-                Yii::$app->response->format = Response::FORMAT_JSON;
+            if ($request->isAjax) {
+                $response->format = Response::FORMAT_JSON;
                 return ArrayHelper::merge(
                     ActiveForm::validateMultiple($addressModels),
                     ActiveForm::validateMultiple($phoneNumberModels),
@@ -507,7 +512,6 @@ class UserController extends Controller {
 			$valid = $model->validate();
 			$valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels) && Model::validateMultiple($availabilityModels)) && $valid;
 
-			//print_r($availabilityModels[0]->getErrors());die;
 			if ($valid) {
 				$transaction = \Yii::$app->db->beginTransaction();
 				try {
