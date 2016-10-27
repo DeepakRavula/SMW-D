@@ -116,20 +116,21 @@ $to_time		 = (new \DateTime($location->to_time))->format('H:i:s');
 			var $active = $('.wizard .nav-tabs li.active');
 			$active.removeClass('active').addClass('disabled');
 			$('#enrolment-form').data('yiiActiveForm').submitting = true;
-			$('#enrolment-form').yiiActiveForm('remove', 'course-teacherid');
 			$('#enrolment-form').yiiActiveForm('remove', 'course-day');
 			$('#enrolment-form').yiiActiveForm('remove', 'course-fromtime');
 			$('#enrolment-form').yiiActiveForm('validate');
+			$('#notification').remove();
 		});
         $('#enrolment-form').on('afterValidate', function (event, messages) {
 			if(messages["course-programid"].length || messages["course-paymentfrequency"].length) {
 			}  else{
 				var $active = $('.wizard .nav-tabs li:first');
-			   $active.next().removeClass('disabled');
-			   nextTab($active);
+				$active.removeClass('disabled');
+			   	$active.next().removeClass('disabled');
+			   	nextTab($active);
+			   	$('#notification').remove();
 			}
         });
-		
         $('#stepwizard_step2_save').click(function () {
             $('#enrolment-form').submit();
         });
