@@ -3,13 +3,17 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
+$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+foreach ($roles as $name => $description) {
+	$role = $name;
+}
 $this->title = 'Locations';
-$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']);
-$this->params['breadcrumbs'][] = $this->title;
+$addButton = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']);
+$this->params['action-button'] = $role === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
 <div class="grid-row-open p-10">
     <?php echo GridView::widget([
