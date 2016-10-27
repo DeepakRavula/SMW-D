@@ -7,11 +7,11 @@ use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+$this->title = 'Locations';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 foreach ($roles as $name => $description) {
 	$role = $name;
 }
-$this->title = 'Locations';
 $addButton = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['action-button'] = $role === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
