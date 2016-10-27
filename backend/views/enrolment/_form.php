@@ -82,6 +82,7 @@ $this->title = 'Bulk Reschedule';
 	</div>
 <div id="calendar" class="row">
     <?php echo $this->render('_calendar', [
+            'durationMinutes' => $durationMinutes,
             'teacherDetails' => $teacherDetails,
     ]) ?>
 </div>
@@ -117,20 +118,27 @@ $('#calendar').fullCalendar({
     allowCalEventOverlap: true,
     overlapEventsSeparate: true,
     events: <?php echo Json::encode($teacherDetails['events']); ?>,
-    select: function(start, end, allDay) {
+    select: function (start, end, allDay) {
         $('#calendar').fullCalendar('removeEvents', 'newEnrolment');
         $('#course-day').val(moment(start).format('dddd'));
         $('#course-fromtime').val(moment(start).format('h:mm A'));
         $('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
-		$('#calendar').fullCalendar('renderEvent',
-			{
-				id : 'newEnrolment',
-				start: start,
-				end: end,
-				allDay: false
-			},
-			true // make the event "stick"
-		);
+        var endtime = start.clone();
+        var durationMinutes = <?php echo $durationMinutes; ?>;
+        moment(endtime.add(durationMinutes, 'minutes'));
+        $('#calendar').fullCalendar('renderEvent',
+            {
+                id: 'newEnrolment',
+                start: start,
+                end: endtime,
+                allDay: false
+            },
+        true // make the event "stick"
+        );
+        $('#calendar').fullCalendar('unselect');
+    },
+    eventAfterAllRender: function (view) {
+        $('.fc-short').removeClass('fc-short');
     },
     selectable: true,
     selectHelper: true,

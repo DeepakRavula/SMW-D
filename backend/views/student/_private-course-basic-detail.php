@@ -37,7 +37,8 @@ $privatePrograms = ArrayHelper::map(Program::find()
 			<?php
 			echo $form->field($model, 'duration')->widget(TimePicker::classname(),
 				[
-				'pluginOptions' => [
+				'options' => ['id' => 'course-duration'],
+                'pluginOptions' => [
 					'showMeridian' => false,
 					'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
 				]
