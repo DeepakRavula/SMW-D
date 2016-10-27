@@ -39,7 +39,7 @@ class Course extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['programId', 'day', 'fromTime', 'duration'], 'required'],
+            [['programId', 'teacherId', 'day', 'fromTime', 'duration'], 'required'],
             [['programId', 'teacherId', 'locationId', 'paymentFrequency'], 'integer'],
 		    [['fromTime', 'duration', 'startDate', 'endDate', 'goToDate', 'lessonFromDate', 'lessonToDate'], 'safe'],
 			[['startDate'], 'checkDate'],

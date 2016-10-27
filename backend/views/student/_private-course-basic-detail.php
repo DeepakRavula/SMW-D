@@ -112,24 +112,24 @@ $to_time		 = (new \DateTime($location->to_time))->format('H:i:s');
 				fetchProgram(duration, programId);
 			}
 		});
-
 		$('#stepwizard_step1_next').click(function() {
 			var $active = $('.wizard .nav-tabs li.active');
 			$active.removeClass('active').addClass('disabled');
 			$('#enrolment-form').data('yiiActiveForm').submitting = true;
+			$('#enrolment-form').yiiActiveForm('remove', 'course-teacherid');
+			$('#enrolment-form').yiiActiveForm('remove', 'course-day');
+			$('#enrolment-form').yiiActiveForm('remove', 'course-fromtime');
 			$('#enrolment-form').yiiActiveForm('validate');
 		});
         $('#enrolment-form').on('afterValidate', function (event, messages) {
-				console.log('coming');
-				debugger;
-				if(messages["course-programid"].length || messages["course-paymentfrequency"].length) {
-				}  else{
-					var $active = $('.wizard .nav-tabs li:first');
-					$active.addClass('disabled');
-				   $active.next().removeClass('disabled');
-				   nextTab($active);
-				}
+			if(messages["course-programid"].length || messages["course-paymentfrequency"].length) {
+			}  else{
+				var $active = $('.wizard .nav-tabs li:first');
+			   $active.next().removeClass('disabled');
+			   nextTab($active);
+			}
         });
+		
         $('#stepwizard_step2_save').click(function () {
             $('#enrolment-form').submit();
         });
