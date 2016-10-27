@@ -6,12 +6,16 @@ use yii\widgets\Pjax;
 use yii\bootstrap\ActiveForm;
 use backend\models\search\ProgramSearch;
 use common\models\Program;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 'Private Programs' : 'Group Programs'; 
-
+$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+foreach($roles as $name => $description){
+	$role = $name;
+}
 ?>
 <style>
   .e1Div{
@@ -49,11 +53,13 @@ $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 
     	<?php echo $form->field($searchModel, 'type')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 	
+<?php if($role === User::ROLE_ADMINISTRATOR):?>
 <div class="col-md-5">
 <h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
 <a href="#" class="add-new-program pull-right text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add</a>
 <div class="clearfix"></div>
 </div>
+<?php endif;?>
 <div class="clearfix"></div>
 
 <div class="dn program-create section-tab form-well form-well-smw">
