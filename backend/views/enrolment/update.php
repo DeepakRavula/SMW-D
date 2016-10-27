@@ -13,6 +13,7 @@ $this->title = 'Bulk Reschedule';
         'model' => $model,
         'lastLessonDate' => $lastLessonDate,
         'teacherDetails' => $teacherDetails,
+        'durationMinutes' => $durationMinutes,
     ]) ?>
 
 </div>
