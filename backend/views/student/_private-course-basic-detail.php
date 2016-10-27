@@ -137,6 +137,8 @@ $to_time		 = (new \DateTime($location->to_time))->format('H:i:s');
 		$('#enrolment-form').on('beforeSubmit', function (e) {
             var courseDay = $('#course-day').val();
             if( ! courseDay) {
+            	$('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
+				 $(window).scrollTop(0);
 				return false;
             }
         });

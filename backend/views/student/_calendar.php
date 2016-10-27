@@ -4,7 +4,7 @@ use common\models\Location;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 ?>
-
+<div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="col-md-4">
 	<?php
 	// Dependent Dropdown
