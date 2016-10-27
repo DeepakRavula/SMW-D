@@ -304,10 +304,31 @@ class Lesson extends \yii\db\ActiveRecord
 					$lessonRescheduleModel->rescheduledLessonId = $this->id;
 					$lessonRescheduleModel->save();
 				}
-			}
-		} 
-            
-       return parent::afterSave($insert, $changedAttributes);
+                if(!empty($this->proFormaInvoice) || !empty($this->invoice)) {
+                    $subTotal                          = 0;
+                    $taxAmount                         = 0;
+                    $getDuration                       = \DateTime::createFromFormat('H:i', $this->duration);
+                    $hours                             = $getDuration->format('H');
+                    $minutes                           = $getDuration->format('i');
+                    $this->invoiceLineItem->unit       = (($hours * 60) + $minutes) / 60;
+                    $this->invoiceLineItem->amount     = $this->course->program->rate * $this->invoiceLineItem->unit;
+                    $this->invoiceLineItem->save();
+                    $subTotal                          += $this->invoiceLineItem->amount;
+                    $totalAmount                       = $subTotal + $taxAmount;
+                }
+                if (!empty($this->proFormaInvoice)) {
+                    $this->proFormaInvoice->subTotal = $subTotal;
+                    $this->proFormaInvoice->total    = $totalAmount;
+                    $this->proFormaInvoice->save();
+                }
+                if (!empty($this->invoice)) {
+                    $this->invoice->subTotal = $subTotal;
+                    $this->invoice->total    = $totalAmount;
+                    $this->invoice->save();
+                }
+            }
+        return parent::afterSave($insert, $changedAttributes);
+        }
 	}
 
 	public function notifyReschedule($user, $program, $fromDate, $toDate) {
