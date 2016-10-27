@@ -32,6 +32,7 @@ use common\models\TaxStatus;
 use common\models\PaymentMethod;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -369,8 +370,16 @@ class UserController extends Controller {
 
 			$availabilityModels = UserForm::createMultiple(TeacherAvailability::classname());
 			Model::loadMultiple($availabilityModels, Yii::$app->request->post());
-
-			$valid = $model->validate();
+            
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ArrayHelper::merge(
+                    ActiveForm::validateMultiple($addressModels),
+                    ActiveForm::validateMultiple($phoneNumberModels),
+                    ActiveForm::validateMultiple($availabilityModels)
+                );
+            }
+            $valid = $model->validate();
 			$valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels) || Model::validateMultiple($availabilityModels)) && $valid;
 
 			if ($valid) {
@@ -486,16 +495,19 @@ class UserController extends Controller {
 			$availabilityModels = UserForm::createMultiple(TeacherAvailability::classname(), $availabilityModels);
 			Model::loadMultiple($availabilityModels, Yii::$app->request->post());
 			$deletedAvailabilityIDs = array_diff($oldAvailabilityIDs, array_filter(ArrayHelper::map($availabilityModels, 'id', 'id')));
-//            print_r($model);die;
+            
+            if (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ArrayHelper::merge(
+                    ActiveForm::validateMultiple($addressModels),
+                    ActiveForm::validateMultiple($phoneNumberModels),
+                    ActiveForm::validateMultiple($availabilityModels)
+                );
+            }
 			$valid = $model->validate();
 			$valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels) && Model::validateMultiple($availabilityModels)) && $valid;
 
 			//print_r($availabilityModels[0]->getErrors());die;
-
-			if (Yii::$app->request->isAjax) {
-				Yii::$app->response->format = Response::FORMAT_JSON;
-				return \yii\widgets\ActiveForm::validateMultiple($availabilityModels);
-			}
 			if ($valid) {
 				$transaction = \Yii::$app->db->beginTransaction();
 				try {
@@ -550,9 +562,9 @@ class UserController extends Controller {
 					return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id,'#'=>$section]);
 					}
 				} catch (Exception $e) {
-					$transaction->rollBack();
-				}
-			}
+                    $transaction->rollBack();
+                }
+            }
 
 
 			

@@ -9,7 +9,6 @@ use common\models\PhoneNumber;
 use common\models\Program;
 use common\models\Qualification;
 use common\models\UserLocation;
-use common\models\Location;
 use common\models\TeacherAvailability;
 use yii\base\Exception;
 use yii\base\Model;
