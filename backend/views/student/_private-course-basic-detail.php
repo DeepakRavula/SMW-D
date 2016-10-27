@@ -17,7 +17,6 @@ $privatePrograms = ArrayHelper::map(Program::find()
 			->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
 			->all(), 'id', 'name')
 ?>
-<div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="enrolment-form form-well form-well-smw">
     <div class="row">
 		<div class="col-md-4">
@@ -138,8 +137,6 @@ $to_time		 = (new \DateTime($location->to_time))->format('H:i:s');
 		$('#enrolment-form').on('beforeSubmit', function (e) {
             var courseDay = $('#course-day').val();
             if( ! courseDay) {
-                alert('Please choose a day in the calendar');
-				e.preventDefault();
 				return false;
             }
         });
