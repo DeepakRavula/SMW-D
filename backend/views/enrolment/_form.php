@@ -82,6 +82,7 @@ $this->title = 'Bulk Reschedule';
 	</div>
 <div id="calendar" class="row">
     <?php echo $this->render('_calendar', [
+            'durationMinutes' => $durationMinutes,
             'teacherDetails' => $teacherDetails,
     ]) ?>
 </div>
@@ -123,7 +124,8 @@ $('#calendar').fullCalendar({
         $('#course-fromtime').val(moment(start).format('h:mm A'));
         $('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
         var endtime = start.clone();
-        moment(endtime.add(30, 'minutes'));
+        var durationMinutes = <?php echo $durationMinutes; ?>;
+        moment(endtime.add(durationMinutes, 'minutes'));
         $('#calendar').fullCalendar('renderEvent',
             {
                 id: 'newEnrolment',

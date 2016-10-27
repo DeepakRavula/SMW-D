@@ -62,7 +62,10 @@ $to_time	 = (new \DateTime($location->to_time))->format('H:i:s');
                 $('#course-fromtime').val(moment(start).format('h:mm A'));
                 $('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
                 var endtime = start.clone();
-                moment(endtime.add(30, 'minutes'));
+                var duration = $('#course-duration').val();
+                var fields = duration.split(/:/);
+                var durationMinutes = (fields[0] * 60) + fields[1];
+                moment(endtime.add(durationMinutes, 'minutes'));
                 $('#calendar').fullCalendar('renderEvent',
                     {
                         id: 'newEnrolment',
