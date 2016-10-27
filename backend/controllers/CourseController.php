@@ -69,7 +69,8 @@ class CourseController extends Controller
 				$enrolment->setAttributes([
 					'courseId'	 => $id,
 					'studentId' => $studentId,
-					'isDeleted' => 0,
+					'isDeleted' => false,
+					'isConfirmed' => false,
 					'paymentFrequency' => Enrolment::PAYMENT_FREQUENCY_FULL,
 				]);
 				$enrolment->save();
