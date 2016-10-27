@@ -62,8 +62,7 @@ $to_time	 = (new \DateTime($location->to_time))->format('H:i:s');
                 $('#course-fromtime').val(moment(start).format('h:mm A'));
                 $('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
                 var endtime = start.clone();
-                var duration = new moment($('#course-duration').val(), 'HH:mm');;
-                var durationMinutes = (duration.hour() * 60) + duration.minute();
+                var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
                 $('#calendar').fullCalendar('renderEvent',
                     {

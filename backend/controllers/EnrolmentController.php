@@ -103,9 +103,10 @@ class EnrolmentController extends Controller
             ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
             ->all();
         $lastLessonDate = new \DateTime(end($lessons)->date);
-        $getDuration = (new \DateTime($model->course->duration))->format('H:i');
-        $duration = explode(':', $getDuration);
-        $durationMinutes = ($duration[0] * 60) + $duration[1];
+        $getDuration = \DateTime::createFromFormat('H:i:s', $model->course->duration);
+        $hours = $getDuration->format('H');
+        $minutes = $getDuration->format('i');
+        $durationMinutes = ($hours * 60) + $minutes;
         if ($model->course->load(Yii::$app->request->post())) {
             $dayList               = TeacherAvailability::getWeekdaysList();
             (int) $model->course->day    = array_search($model->course->day,
