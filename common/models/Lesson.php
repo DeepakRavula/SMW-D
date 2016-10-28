@@ -33,7 +33,8 @@ class Lesson extends \yii\db\ActiveRecord
 	const STATUS_CANCELED = 4;
 
 	const SCENARIO_REVIEW = 'review';
-
+	const SCENARIO_RESCHEDULE_LESSON = 'reschedule-lesson';
+	
 	public $programId;
     public $time;
     public $hours;
@@ -58,14 +59,6 @@ class Lesson extends \yii\db\ActiveRecord
         ];
     }
 
-	public function scenarios()
-    {
-        $scenarios = parent::scenarios();
-        $scenarios[self::SCENARIO_REVIEW] = ['date'];
-        return $scenarios;
-    }
-	
-	
     /**
      * @inheritdoc
      */
@@ -76,7 +69,8 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'status'], 'integer'],
             [['date', 'programId', 'notes','teacherId'], 'safe'],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
-            [['date'], 'checkRescheduleLessonTime'],
+            ['date', 'checkConflict', 'on' => Lesson::SCENARIO_RESCHEDULE_LESSON],
+            ['date', 'checkRescheduleLessonTime', 'on' => Lesson::SCENARIO_RESCHEDULE_LESSON],
         ];
     }
 
