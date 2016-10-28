@@ -9,11 +9,10 @@ use common\models\User;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 $this->title = 'Locations';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-foreach ($roles as $name => $description) {
-	$role = $name;
-}
+$lastRole = end($roles);
+
 $addButton = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']);
-$this->params['action-button'] = $role === User::ROLE_ADMINISTRATOR ? $addButton : null;
+$this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
 <div class="grid-row-open p-10">
     <?php echo GridView::widget([

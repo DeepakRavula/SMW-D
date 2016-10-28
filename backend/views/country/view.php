@@ -12,13 +12,11 @@ $this->params['breadcrumbs'][] = ['label' => 'Countries', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-foreach ($roles as $name => $description) {
-	$role = $name;
-}
+$lastRole = end($roles);
 ?>
 <div class="country-view">
 
-	<?php if ($role === User::ROLE_ADMINISTRATOR): ?>
+	<?php if ($lastRole->name === User::ROLE_ADMINISTRATOR): ?>
     <p>
         <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
