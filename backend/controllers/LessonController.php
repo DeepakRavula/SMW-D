@@ -141,7 +141,7 @@ class LessonController extends Controller
 						if (!empty($lessonConflicts['lessonIds'])) {
 							$message = 'Reschedule time conflicts with another lesson';
 						} elseif($lessonConflicts['dates']){
-							$message = 'Reschedule Date conflict with holiday';
+							$message = 'Reschedule Date conflicts with holiday';
 						}
 					}else {
 						$message = $lessonConflicts;
