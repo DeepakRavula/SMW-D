@@ -43,7 +43,7 @@ use common\models\Lesson;
 				'options' => ['id' => 'course-duration'],
                 'pluginOptions' => [
 					'showMeridian' => false,
-					'defaultTime' => \DateTime::createFromFormat('H:i:s', $model->duration),
+					'defaultTime' => Yii::$app->formatter->asDateTime($model->duration),
 				]
 			]);
 			?>
