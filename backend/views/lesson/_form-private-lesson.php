@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
+use kartik\time\TimePicker;
 use common\models\Lesson;
 
 /* @var $this yii\web\View */
@@ -33,6 +34,18 @@ use common\models\Lesson;
                     'minuteStep' => 15
 				]
 			])->label('Reschedule Date');
+			?>
+        </div>
+        <div class="col-md-4">
+            <?php
+			echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+				[
+				'options' => ['id' => 'course-duration'],
+                'pluginOptions' => [
+					'showMeridian' => false,
+					'defaultTime' => Yii::$app->formatter->asDateTime($model->duration),
+				]
+			]);
 			?>
         </div>
 	   <div class="col-md-4">
