@@ -23,7 +23,6 @@ use yii\helpers\Url;
 	?>
 <?php endif;?>
 <?php $form = ActiveForm::begin([
-	'enableAjaxValidation' => true,
 ]); ?>
 <div class="row p-20">
 	<?php if($model->isNewRecord): ?>

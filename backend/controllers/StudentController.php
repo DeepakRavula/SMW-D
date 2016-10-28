@@ -110,10 +110,6 @@ class StudentController extends Controller
 		$request = Yii::$app->request;
 		$response = Yii::$app->response;
         if($lessonModel->load($request->post())) {
-			if($request->isAjax) {
-				$response->format = Response::FORMAT_JSON;
-				return ActiveForm::validate($lessonModel);
-			}
            $studentEnrolment = Enrolment::find()
 				   ->joinWith(['course' => function($query) use($lessonModel){
 					   $query->where(['course.programId' => $lessonModel->programId]);
