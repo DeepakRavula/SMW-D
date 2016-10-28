@@ -13,9 +13,8 @@ use common\models\User;
 
 $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 'Private Programs' : 'Group Programs'; 
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-foreach($roles as $name => $description){
-	$role = $name;
-}
+$lastRole = end($roles);
+
 ?>
 <style>
   .e1Div{
@@ -53,7 +52,7 @@ foreach($roles as $name => $description){
     	<?php echo $form->field($searchModel, 'type')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 	
-<?php if($role === User::ROLE_ADMINISTRATOR):?>
+<?php if($lastRole->name === User::ROLE_ADMINISTRATOR):?>
 <div class="col-md-5">
 <h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
 <a href="#" class="add-new-program pull-right text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add</a>
