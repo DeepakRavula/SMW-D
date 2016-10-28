@@ -51,8 +51,6 @@ class TeacherAvailability extends \yii\db\ActiveRecord
                 }
             ],
             [['from_time'], function ($attribute, $params) {
-                    $locationId = Yii::$app->session->get('location_id');
-                    $location = Location::findOne(['id' => $locationId]);
                     $fromTime = (new \DateTime($this->from_time))->format('H:i:s');
                     $toTime = (new \DateTime($this->to_time))->format('H:i:s');
                     if ($fromTime > $toTime) {
