@@ -11,9 +11,7 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-foreach ($roles as $name => $description) {
-	$role = $name;
-}
+$lastRole = end($roles);
 ?>
 <div class="location-view">
 <div class="user-details-wrapper">
@@ -47,7 +45,7 @@ foreach ($roles as $name => $description) {
 	<div class="clearfix"></div>
 
 	<!-- If admin show this -->
-	<?php if ($role === User::ROLE_ADMINISTRATOR): ?>
+	<?php if ($lastRole->name === User::ROLE_ADMINISTRATOR): ?>
 	<div class="student-view">
 		<div class="col-md-12 action-btns">
 			<?php echo Html::a('<i class="fa fa-pencil"></i>Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
