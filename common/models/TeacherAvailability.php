@@ -33,25 +33,33 @@ class TeacherAvailability extends \yii\db\ActiveRecord
             [['teacher_location_id','day', 'from_time', 'to_time'], 'required'],
             [['teacher_location_id','day'], 'integer'],
 			[['from_time'], function ($attribute, $params) {
-					$locationId	 = Yii::$app->session->get('location_id');
-					$location	 = Location::findOne(['id' => $locationId]);
+                    $locationId = Yii::$app->session->get('location_id');
+                    $location = Location::findOne(['id' => $locationId]);
+                    $fromTime = (new \DateTime($this->from_time))->format('H:i:s');
+                    if ($fromTime < $location->from_time) {
+                        return $this->addError($attribute, 'Operating hours Start Time ' . Yii::$app->formatter->asTime($location->from_time));
+                    }
+                }
+            ],
+            [['to_time'], function ($attribute, $params) {
+                    $locationId = Yii::$app->session->get('location_id');
+                    $location = Location::findOne(['id' => $locationId]);
+                    $toTime = (new \DateTime($this->to_time))->format('H:i:s');
+                    if ($toTime > $location->to_time) {
+                        return $this->addError($attribute, 'Operating hours To Time ' . Yii::$app->formatter->asTime($location->to_time));
+                    }
+                }
+            ],
+            [['from_time'], function ($attribute, $params) {
+                    $locationId = Yii::$app->session->get('location_id');
+                    $location = Location::findOne(['id' => $locationId]);
                     $fromTime = (new \DateTime($this->from_time))->format('H:i:s');
                     $toTime = (new \DateTime($this->to_time))->format('H:i:s');
-					if ($fromTime < $location->from_time) {
-						return $this->addError($attribute, 'Operating hours Start Time ' . $location->from_time);
-					}
                     if ($fromTime > $toTime) {
-						return $this->addError($attribute, 'Start Time should be smaller than To Time');
-					}
-			}],
-            [['to_time'], function ($attribute, $params) {
-					$locationId	 = Yii::$app->session->get('location_id');
-					$location	 = Location::findOne(['id' => $locationId]);
-                    $toTime = (new \DateTime($this->to_time))->format('H:i:s');
-					if ($toTime > $location->to_time) {
-						return $this->addError($attribute, 'Operating hours To Time ' . $location->to_time);
-					}
-			}],
+                        return $this->addError($attribute, 'From Time must be less than "To Time"');
+                    }
+                }
+            ],
         ];
     }
     /**

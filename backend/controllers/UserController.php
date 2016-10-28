@@ -364,7 +364,7 @@ class UserController extends Controller {
         
         $request = Yii::$app->request;
         $response = Yii::$app->response;
-		if ($model->load($request->post())) {
+        if ($model->load($request->post())) {
 			$addressModels = UserForm::createMultiple(Address::classname());
 			Model::loadMultiple($addressModels, $request->post());
 
@@ -377,9 +377,7 @@ class UserController extends Controller {
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
                 return ArrayHelper::merge(
-                    ActiveForm::validateMultiple($addressModels),
-                    ActiveForm::validateMultiple($phoneNumberModels),
-                    ActiveForm::validateMultiple($availabilityModels)
+                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($availabilityModels)
                 );
             }
             $valid = $model->validate();
@@ -485,7 +483,7 @@ class UserController extends Controller {
 		
         $request = Yii::$app->request;
         $response = Yii::$app->response;
-		if ($model->load($request->post())) {
+        if ($model->load($request->post())) {
 			$oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
 			$addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
 			Model::loadMultiple($addressModels, $request->post());
@@ -504,12 +502,10 @@ class UserController extends Controller {
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
                 return ArrayHelper::merge(
-                    ActiveForm::validateMultiple($addressModels),
-                    ActiveForm::validateMultiple($phoneNumberModels),
-                    ActiveForm::validateMultiple($availabilityModels)
+                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($availabilityModels)
                 );
             }
-			$valid = $model->validate();
+            $valid = $model->validate();
 			$valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels) && Model::validateMultiple($availabilityModels)) && $valid;
 
 			if ($valid) {
