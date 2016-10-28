@@ -89,23 +89,27 @@ class Lesson extends \yii\db\ActiveRecord
 				}])
 				->where(['teacher_availability_day.day' => $day])
 				->all();
-			$availableHours = [];
-			foreach ($teacherAvailabilities as $teacherAvailability) {
-				$start		 = new \DateTime($teacherAvailability->from_time);
-				$end		 = new \DateTime($teacherAvailability->to_time);
-				$interval	 = new \DateInterval('PT15M');
-				$hours		 = new \DatePeriod($start, $interval, $end);
-				foreach ($hours as $hour) {
-					$availableHours[] = Yii::$app->formatter->asTime($hour);
+			$availableHours	 = [];
+			if (empty($teacherAvailabilities)) {
+				$this->addError($attribute, 'Teacher is not available on '.(new \DateTime($this->date))->format('l'));
+			} else {
+				foreach ($teacherAvailabilities as $teacherAvailability) {
+					$start		 = new \DateTime($teacherAvailability->from_time);
+					$end		 = new \DateTime($teacherAvailability->to_time);
+					$interval	 = new \DateInterval('PT15M');
+					$hours		 = new \DatePeriod($start, $interval, $end);
+					foreach ($hours as $hour) {
+						$availableHours[] = Yii::$app->formatter->asTime($hour);
+					}
 				}
-			}
-			$lessonTime = (new \DateTime($this->date))->format('h:i A');
-			if (!in_array($lessonTime, $availableHours)) {
-				$this->addError($attribute, 'Please choose the lesson time within the teacher\'s availability hours');
+				$lessonTime = (new \DateTime($this->date))->format('h:i A');
+				if (!in_array($lessonTime, $availableHours)) {
+					$this->addError($attribute, 'Please choose the lesson time within the teacher\'s availability hours');
 			}
 		}
+	}
 
-	public function checkConflict($attribute, $params)
+		public function checkConflict($attribute, $params)
     {
 		$intervals = $this->dateIntervals();
 		$tree = new IntervalTree($intervals);
