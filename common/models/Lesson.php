@@ -76,8 +76,34 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'status'], 'integer'],
             [['date', 'programId', 'notes','teacherId'], 'safe'],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
+            [['date'], 'checkRescheduleLessonTime'],
         ];
     }
+
+	public function checkRescheduleLessonTime($attribute, $params)
+	{
+		$day					 = (new \DateTime($this->date))->format('N');
+		$teacherAvailabilities	 = TeacherAvailability::find()
+			->joinWith(['teacher' => function($query) {
+					$query->where(['user.id' => $this->teacherId]);
+				}])
+				->where(['teacher_availability_day.day' => $day])
+				->all();
+			$availableHours = [];
+			foreach ($teacherAvailabilities as $teacherAvailability) {
+				$start		 = new \DateTime($teacherAvailability->from_time);
+				$end		 = new \DateTime($teacherAvailability->to_time);
+				$interval	 = new \DateInterval('PT15M');
+				$hours		 = new \DatePeriod($start, $interval, $end);
+				foreach ($hours as $hour) {
+					$availableHours[] = Yii::$app->formatter->asTime($hour);
+				}
+			}
+			$lessonTime = (new \DateTime($this->date))->format('h:i A');
+			if (!in_array($lessonTime, $availableHours)) {
+				$this->addError($attribute, 'Please choose the lesson time within the teacher\'s availability hours');
+			}
+		}
 
 	public function checkConflict($attribute, $params)
     {

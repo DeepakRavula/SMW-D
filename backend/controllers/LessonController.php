@@ -135,11 +135,21 @@ class LessonController extends Controller
 				}
 				$lessonConflicts = [];
 				$lessonConflicts = $model->getErrors('date');
+				$lessonConflicts = current($lessonConflicts);
 				if (!empty($lessonConflicts)) {
+					if(isset($lessonConflicts['lessonIds']) || isset($lessonConflicts['dates'])){
+						if (!empty($lessonConflicts['lessonIds'])) {
+							$message = 'Reschedule time conflict with another lesson';
+						} elseif($lessonConflicts['dates']){
+							$message = 'Reschedule Date conflict with holiday';
+						}
+					}else {
+						$message = $lessonConflicts;
+					}
 					Yii::$app->session->setFlash('alert',
 						[
 						'options' => ['class' => 'alert-danger'],
-						'body' => 'Reschedule Date / time conflict with another lesson',
+						'body' => $message,
 					]);
 					$redirectionLink = $this->redirect(['update', 'id' => $model->id]);
 				} else {
