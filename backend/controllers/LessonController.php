@@ -130,7 +130,7 @@ class LessonController extends Controller
 			} else {
 				$oldDate = $model->getOldAttribute('date');
 				if (new \DateTime($oldDate) != new \DateTime($model->date)) {
-					$model->setScenario(Lesson::SCENARIO_RESCHEDULE_LESSON);
+					$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
 					$validate = $model->validate();
 				}
 				$lessonConflicts = [];

@@ -33,7 +33,7 @@ class Lesson extends \yii\db\ActiveRecord
 	const STATUS_CANCELED = 4;
 
 	const SCENARIO_REVIEW = 'review';
-	const SCENARIO_RESCHEDULE_LESSON = 'reschedule-lesson';
+	const SCENARIO_PRIVATE_LESSON = 'private-lesson';
 	
 	public $programId;
     public $time;
@@ -69,8 +69,8 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'status'], 'integer'],
             [['date', 'programId', 'notes','teacherId'], 'safe'],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
-            ['date', 'checkConflict', 'on' => Lesson::SCENARIO_RESCHEDULE_LESSON],
-            ['date', 'checkRescheduleLessonTime', 'on' => Lesson::SCENARIO_RESCHEDULE_LESSON],
+            ['date', 'checkConflict', 'on' => Lesson::SCENARIO_PRIVATE_LESSON],
+            ['date', 'checkRescheduleLessonTime', 'on' => Lesson::SCENARIO_PRIVATE_LESSON],
         ];
     }
 
