@@ -6,22 +6,20 @@ use common\models\Lesson;
 use common\models\Invoice;
 use yii\grid\GridView;
 ?>
-<div class="col-md-12">
+<div id="new-lesson" class="col-md-12">
 	<h4 class="pull-left m-r-20">Lessons</h4>
- <a href="#" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
- <div class="clearfix"></div>
- </div>
- <div class="dn lesson-create section-tab">
-     <?php echo $this->render('//lesson/_form', [
-         'model' => new Lesson(),
-         'studentModel' => $model,
-
-         ]) 
-             ?>
-
+	<a href="#" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
+	<div class="clearfix"></div>
 </div>
+<?php
+echo $this->render('_form-lesson', [
+	'model' => new Lesson(),
+	'studentModel' => $model,
+])
+?>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
+	'id' => 'student-lesson-listing',
 	'timeout' => 6000,
 ]) ?>
 <?php
@@ -89,3 +87,27 @@ echo GridView::widget([
 ?>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
+<script>
+$(document).ready(function() {
+	$('#new-lesson').click(function(){
+	$('#new-lesson-modal').modal('show');
+		return false;
+  });
+  });
+  $(document).on('beforeSubmit', '#lesson-form', function (e) {
+	$.ajax({
+		url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
+		type   : 'post',
+		dataType: "json",
+		data   : $('#lesson-form').serialize(),
+		success: function(response)
+		{
+		   if(response.status)
+		   {
+				$.pjax.reload({container : '#student-lesson-listing', timeout : 4000});
+			}
+		}
+		});
+		return false;
+});
+</script>

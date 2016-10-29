@@ -21,7 +21,7 @@ use yii\filters\VerbFilter;
 use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\CreditUsage;
-
+use yii\web\Response;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -75,13 +75,41 @@ class LessonController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($studentId)
     {
+		$response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+		$request = Yii::$app->request;
+        if ($model->load($request->post())) {
+			$studentEnrolment = Enrolment::find()
+			   ->joinWith(['course' => function($query) use($model){
+				   $query->where(['course.programId' => $model->programId]);
+			   }])
+				->where(['studentId' => $studentId])
+				->one();
+            $model->courseId = $studentEnrolment->courseId;
+            $model->status = Lesson::STATUS_SCHEDULED;
+		    $model->isDeleted = false;
+            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+            $model->date = $lessonDate->format('Y-m-d H:i:s');
+			$model->duration = $studentEnrolment->course->duration;
+			if ($invoiceLineItemModel->validate()) {
+	            $model->save();
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);
+				$response = [
+					'status' => false,
+					'errors' =>  $model->getErrors()
+				];
+			}
+			return $response;
+			}
+            //return $this->redirect(['view', 'id' => $model->course->enrolment->student->id]);
+        else {
             return $this->render('create', [
                 'model' => $model,
             ]);

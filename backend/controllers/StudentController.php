@@ -105,7 +105,7 @@ class StudentController extends Controller
         $unscheduledLessonDataProvider = new ActiveDataProvider([
             'query' => $unscheduledLessons,
         ]);    
-
+/*
 		$lessonModel = new Lesson();
 		$request = Yii::$app->request;
 		$response = Yii::$app->response;
@@ -128,14 +128,19 @@ class StudentController extends Controller
                 	'body' => 'Lesson has been created successfully'
             ]);
             	return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
-        } else {
+        }
+ * 
+ */
+
+		  //else {
+
 			return $this->render('view', [
 				'model' => $model,
 				'lessonDataProvider' => $lessonDataProvider,
 				'enrolmentDataProvider' => $enrolmentDataProvider,
 				'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
 			]);
-		}
+		//}
     }
 
 	

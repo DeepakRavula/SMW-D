@@ -13,7 +13,6 @@ use yii\helpers\Url;
 /* @var $model common\models\Lesson */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-
 <div class="lesson-form">
 <?php if(Yii::$app->controller->id === 'lesson'): ?>
 	<?=
@@ -23,6 +22,7 @@ use yii\helpers\Url;
 	?>
 <?php endif;?>
 <?php $form = ActiveForm::begin([
+	'id' => 'lesson-form',
 ]); ?>
 <div class="row p-20">
 	<?php if($model->isNewRecord): ?>
