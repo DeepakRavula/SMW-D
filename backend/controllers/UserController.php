@@ -272,7 +272,9 @@ class UserController extends Controller {
 			])->one();
 
 		$positiveOpeningBalanceModel = Invoice::find()
-				->joinWith('lineItems')
+				->joinWith(['lineItems' => function($query){
+                    $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+                }])
 				->joinWith('payment')
 				->where(['invoice.user_id' => $model->id, 'payment.id' => null])
 				->one();
