@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Lesson;
+use common\models\Enrolment;
+use common\models\Program;
 use common\models\Course;
 use common\models\Student;
 use common\models\Invoice;
@@ -138,8 +140,7 @@ class LessonController extends Controller
 		}
 	}
 
-	public function actionReview($studentId, $courseId){
-		$studentModel = Student::findOne(['id' => $studentId]);
+	public function actionReview($courseId){		
 		$courseModel = Course::findOne(['id' => $courseId]);
     	if (Yii::$app->request->post('hasEditable')) {
 			print_r($_POST);die;
@@ -162,17 +163,15 @@ class LessonController extends Controller
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]),
 		]);
 		
-		return $this->render('_review', [
-				'studentModel' => $studentModel,
+		return $this->render('_review', [				
 				'courseModel' => $courseModel,
 				'courseId' => $courseId,
                 'lessonDataProvider' => $lessonDataProvider,
             ]);	
 	}
 
-	public function actionConfirm($studentId, $courseId){
-		
-		$studentModel = Student::findOne(['id' => $studentId]);
+	public function actionConfirm($courseId){        
+        $courseModel = Course::findOne(['id' => $courseId]);
 		$lessons = Lesson::findAll(['courseId' => $courseId]);
 		foreach($lessons as $lesson){
 			$lesson->status = Lesson::STATUS_SCHEDULED;
@@ -183,7 +182,16 @@ class LessonController extends Controller
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Lessons have been created successfully'
 		]);
-        return $this->redirect(['student/view', 'id' => $studentModel->id,'#' => 'lesson']);
+        if((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) { 
+            $enrolmentModel = Enrolment::findOne(['courseId' => $courseId]);
+            $studentModel = Student::findOne(['id' => $enrolmentModel->studentId]);
+        
+            return $this->redirect(['student/view', 'id' => $studentModel->id, '#' => 'lesson']);
+        }
+        else {
+            return $this->redirect(['course/view', 'id' => $courseId]);   
+        }
+
 	}
 	
 	public function actionInvoice($id) {

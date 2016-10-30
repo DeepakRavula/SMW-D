@@ -247,7 +247,7 @@ $bundle = BackendAsset::register($this);
                         ],
 						[
                             'label'=>Yii::t('backend', 'Group Courses'), 
-							'url'=>['/course/index'], 
+							'url'=>['/course/index','CourseSearch[showAllCourses]' => false], 
 							'icon'=>'<i class="fa fa-book"></i>',
                             'visible'=>Yii::$app->user->can('staffmember'),
                             'active'=>(Yii::$app->controller->id=='group-course') ? true : false,
