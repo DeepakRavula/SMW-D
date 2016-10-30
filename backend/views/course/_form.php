@@ -12,7 +12,7 @@ use yii\helpers\ArrayHelper;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="group-course-form p-10">
+<div class="group-course-form">
 
     <?php $form = ActiveForm::begin(); ?>
 

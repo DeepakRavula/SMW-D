@@ -13,7 +13,6 @@ use common\models\Course;
 class CourseSearch extends Course
 {
 	public $query;
-	public $showAllCourses;
     /**
      * @inheritdoc
      */
@@ -21,8 +20,7 @@ class CourseSearch extends Course
     {
         return [
             [['id', 'programId', 'teacherId', 'locationId', 'day'], 'integer'],
-            [['fromTime', 'duration', 'startDate', 'endDate', 'query', 'showAllCourses'], 'safe'],
-            ['showAllCourses', 'boolean'],
+            [['fromTime', 'duration', 'startDate', 'endDate', 'query'], 'safe'],
         ];
     }
 
@@ -77,11 +75,6 @@ class CourseSearch extends Course
        $query->orFilterWhere(['like', 'up.firstname', $this->query]);
        $query->orFilterWhere(['like', 'up.lastname', $this->query]);
 
-		if (!$this->showAllCourses) {
-			$currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-			$query->andWhere(['>=', 'startDate', $currentDate]);
-		}
-		
-		return $dataProvider;
+        return $dataProvider;
     }
 }

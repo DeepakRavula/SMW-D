@@ -60,8 +60,8 @@ class StudentController extends Controller
 				->joinWith(['course' => function($query) use($locationId){
 					$query->where(['locationId' => $locationId]);	
 				}])
-				->notDeleted()
-				->andWhere(['studentId' => $model->id]);
+				->where(['studentId' => $model->id])
+				->notDeleted();
 
 		$enrolmentDataProvider = new ActiveDataProvider([
 			'query' => $enrolments,
@@ -182,7 +182,7 @@ class StudentController extends Controller
 				'options' => ['class' => 'alert-success'],
 				'body' => 'Student has been enrolled successfully'
             ]);
-        return $this->redirect(['lesson/review', 'courseId' => $courseModel->id]);
+            	return $this->redirect(['lesson/review', 'studentId' => $model->id, 'courseId' => $courseModel->id]);
         }
 		if (( ! empty($post['courseId'])) && is_array($post['courseId'])) {
 			$enrolmentModel = new Enrolment();
