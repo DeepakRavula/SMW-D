@@ -80,6 +80,7 @@ class LessonController extends Controller
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
         $model = new Lesson();
+		$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
 		$request = Yii::$app->request;
         if ($model->load($request->post())) {
 			$studentEnrolment = Enrolment::find()
@@ -94,13 +95,13 @@ class LessonController extends Controller
             $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
 			$model->duration = $studentEnrolment->course->duration;
-			if ($invoiceLineItemModel->validate()) {
+			if ($model->validate()) {
 	            $model->save();
 				$response = [
 					'status' => true,
 				];
 			} else {
-				$invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);
+				$model = ActiveForm::validate($model);
 				$response = [
 					'status' => false,
 					'errors' =>  $model->getErrors()
