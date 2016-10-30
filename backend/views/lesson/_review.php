@@ -64,12 +64,6 @@ $this->title = 'Review Lessons';
 			} 
 		],
 		[
-			'label' => 'Teacher Name',
-			'value' => function($data) {
-				return $data->course->teacher->publicIdentity;	
-			} 
-		],
-		[
 			'label' => 'Conflict',
 			'value' => function($data) {
 			} 
