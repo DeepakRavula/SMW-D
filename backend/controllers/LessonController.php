@@ -22,6 +22,7 @@ use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\CreditUsage;
 use yii\web\Response;
+use yii\widgets\ActiveForm;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
