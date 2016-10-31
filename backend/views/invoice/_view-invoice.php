@@ -2,9 +2,31 @@
 use yii\helpers\Html;
 use backend\models\search\InvoiceSearch;
 use yii\helpers\Url;
+use common\models\Invoice;
 use common\models\ItemType;
+use yii\widgets\ActiveForm;
+use kartik\switchinput\SwitchInput;
 ?>
 <div class="invoice-view p-50">
+	<div class="pull-right">
+		<?php if ((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE) : ?>
+			<?php $form			 = ActiveForm::begin([
+				'id' => 'mail-flag'
+			]); ?>
+			<?=
+			$form->field($model, 'isSent')->widget(SwitchInput::classname(),
+				[
+				'name' => 'isSent',
+				'pluginOptions' => [
+					'handleWidth' => 60,
+					'onText' => 'Sent',
+					'offText' => 'Not Sent'
+				]
+			])->label(false);
+			?>
+		<?php ActiveForm::end(); ?>
+	<?php endif; ?>
+	</div>
          <div class="row">
 		<div class="col-xs-12 p-0">
           <h2 class="m-0">
@@ -13,7 +35,7 @@ use common\models\ItemType;
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
 		<?= Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-right  m-l-20',]) ?>  
-          <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>  
+          <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target'=>'_blank',]) ?>
           <div class="pull-left invoice-address text-gray">
             <div class="row-fluid">
               <h2 class="m-0 text-inverse"><strong><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
@@ -187,5 +209,18 @@ $(document).ready(function() {
 	$('#invoice-line-item-modal').modal('show');
   		return false;
   });
+	$('input[name="Invoice[isSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+	$.ajax({
+            url    : '<?= Url::to(["invoice/update-mail-status", "id" => $model->id]) ?>',
+            type   : 'POST',
+            dataType: "json",
+			data   : $('#mail-flag').serialize(),
+			
+            success: function(response)
+            {
+            }
+        });
+        return false;
+	});
   });
 </script>

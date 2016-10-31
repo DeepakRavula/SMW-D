@@ -464,6 +464,13 @@ class InvoiceController extends Controller {
 		]);
 	}
 
+	public function actionUpdateMailStatus($id) {
+		$request = Yii::$app->request;
+		$model = $this->findModel($id);
+		$model->load($request->post());
+		$model->save();
+	}
+	
 	public function actionSendMail($id) {
 		$model = $this->findModel($id);
 		$invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
@@ -481,7 +488,8 @@ class InvoiceController extends Controller {
 				->setTo($model->user->email)
 				->setSubject($subject)
 				->send();
-
+			$model->isSent = true;
+			$model->save();
 			Yii::$app->session->setFlash('alert', [
 				'options' => ['class' => 'alert-success'],
 				'body' => ' Mail has been send successfully'

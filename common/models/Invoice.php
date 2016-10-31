@@ -32,7 +32,6 @@ class Invoice extends \yii\db\ActiveRecord
 	
 	public $customer_id;
 	public $credit;
-	
     /**
      * @inheritdoc
      */
@@ -49,6 +48,7 @@ class Invoice extends \yii\db\ActiveRecord
         return [
 			['user_id','required'],
             [['reminderNotes'], 'string'],
+			[['isSent'], 'boolean'],
 			[['type','notes','internal_notes', 'status'],'safe']
 		];
     }
