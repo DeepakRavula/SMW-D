@@ -13,9 +13,6 @@ use kartik\switchinput\SwitchInput;
 			<?php $form			 = ActiveForm::begin([
 				'id' => 'mail-flag'
 			]); ?>
-			<?php
-			$model->isSent	 = $model->isSent ? true : false;
-			?>
 			<?=
 			$form->field($model, 'isSent')->widget(SwitchInput::classname(),
 				[
