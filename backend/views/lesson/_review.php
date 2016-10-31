@@ -48,6 +48,9 @@ $this->title = 'Review Lessons';
                        'inputType'=>\kartik\editable\Editable::INPUT_WIDGET,
                        'widgetClass'=> '\yii\jui\DatePicker',
                        'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                       'pluginEvents' => [
+                           'editableSuccess' => "review.onEditableGridSuccess",
+                	   ],                   
                    ];
                }
            ],
@@ -80,6 +83,9 @@ $this->title = 'Review Lessons';
                            ]
                        ],
                        'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                       'pluginEvents' => [
+                           'editableSuccess' => "review.onEditableGridSuccess",
+                	   ],
                    ];
                }
            	],
@@ -111,7 +117,10 @@ $this->title = 'Review Lessons';
 						   ]
 					   ],
 					   'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
-				   ];
+                       'pluginEvents' => [
+                           'editableSuccess' => "review.onEditableGridSuccess",
+                	   ],
+                   ];
 			   }
 			],
 			[
@@ -163,6 +172,7 @@ $this->title = 'Review Lessons';
 		<?php if( ! (empty($lessonFromDate) && empty($lessonToDate))):?>
 		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[lessonFromDate]' => $lessonFromDate, 'Course[lessonToDate]' => $lessonToDate], [
 				'class' => 'btn btn-danger', 
+                'id' => 'confirm-button',
                 'disabled' => $hasConflict,
 				'data' => [
 					'method' => 'post',
@@ -171,6 +181,7 @@ $this->title = 'Review Lessons';
 		<?php else :?>
 		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId], [
 			'class' => 'btn btn-danger',
+            'id' => 'confirm-button',
             'disabled' => $hasConflict,
 			'data' => [
 				'method' => 'post',
@@ -187,3 +198,30 @@ $this->title = 'Review Lessons';
     </div>
 </div>
 	</div>
+<script>   
+var review = {
+	onEditableGridSuccess :function(event, val, form, data) {
+		$.ajax({
+		url    : "<?php echo Url::to(['lesson/fetch-conflict', 'courseId' => $courseId]);?>",
+		type   : "GET",
+        dataType: "json",
+		success: function(response)
+		{          
+            if(response.hasConflict){
+               $("#confirm-button").attr("disabled",true);
+               $('#confirm-button').bind('click',false);
+            } else {
+               $("#confirm-button").removeAttr('disabled');
+               $('#confirm-button').unbind('click',false); 
+            }
+		}
+		});
+		return true;     
+    }
+}
+$(document).ready(function(){   
+    if($('#confirm-button').attr('disabled')) {         
+        $('#confirm-button').bind('click',false);
+    }  
+});
+</script>
