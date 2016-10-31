@@ -21,6 +21,7 @@ class Enrolment extends \yii\db\ActiveRecord
 	
 	const PAYMENT_FREQUENCY_FULL = 1;
 	const PAYMENT_FREQUENCY_MONTHLY = 2;
+	const PAYMENT_FREQUENCY_QUARTERLY = 3;
     /**
      * @inheritdoc
      */
@@ -104,6 +105,7 @@ class Enrolment extends \yii\db\ActiveRecord
 		return [
             self::PAYMENT_FREQUENCY_FULL => Yii::t('common', 'Full'),
 			self::PAYMENT_FREQUENCY_MONTHLY => Yii::t('common', 'Monthly'),
+			self::PAYMENT_FREQUENCY_QUARTERLY => Yii::t('common', 'Quarterly'),
 		];
 	}
 	public function afterSave($insert, $changedAttributes)
