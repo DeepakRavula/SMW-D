@@ -66,7 +66,8 @@
     "kartik-v/yii2-datecontrol": "dev-master",
     "2amigos/yii2-date-time-picker-widget": "~1.0",
     "judev/php-intervaltree": "^2.0",
-    "drsdre/yii2-wizardwidget": "*"
+    "drsdre/yii2-wizardwidget": "*",
+    "kartik-v/yii2-widget-switchinput": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",
