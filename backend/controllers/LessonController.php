@@ -21,6 +21,7 @@ use yii\filters\VerbFilter;
 use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\CreditUsage;
+use yii\web\Response;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -286,6 +287,37 @@ class LessonController extends Controller
 			'lessonFromDate' => $lessonFromDate,
             'lessonToDate' => $lessonToDate,
         ]);	
+	}
+
+     public function actionFetchConflict($courseId)
+	{
+        $response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+		$courseModel = Course::findOne(['id' => $courseId]);
+		$draftLessons = Lesson::find()
+			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+			->all();
+		foreach($draftLessons as $draftLesson){
+			$draftLesson->setScenario('review');
+		}
+		Model::validateMultiple($draftLessons);
+		$conflicts = [];
+		foreach($draftLessons as $draftLesson){
+			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+		}
+        $hasConflict = false;
+        foreach ($conflicts as $conflictLessons) {
+            foreach ($conflictLessons as $conflictLesson) {
+                if((! empty($conflictLesson['lessonIds'])) || ( ! empty($conflictLesson['dates']))){
+				    $hasConflict = true;
+                    break;
+			    } 
+            }
+        }
+       
+		return [
+			'hasConflict' => $hasConflict,
+		];
 	}
 
 	public function actionConfirm($courseId){        
