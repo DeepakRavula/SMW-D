@@ -51,8 +51,8 @@ class Payment extends ActiveRecord
     {
         return [
             [['payment_method_id', 'amount'], 'required'],
-            [['user_id', 'payment_method_id'], 'integer'],
-            [['user_id', 'date', 'sourceType', 'sourceId', 'reference', 'credit'],
+            [['user_id', 'payment_method_id', 'reference'], 'integer'],
+            [['user_id', 'date', 'sourceType', 'sourceId', 'credit'],
                 'safe'],
             [['amount'], 'validateLessThanCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'validateCreditApplied', 'on' => self::SCENARIO_CREDIT_APPLIED],
