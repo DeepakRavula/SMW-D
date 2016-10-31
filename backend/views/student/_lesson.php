@@ -99,12 +99,18 @@ $(document).ready(function() {
 		url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
 		type   : 'post',
 		dataType: "json",
-		data   : $('#lesson-form').serialize(),
+		data   : $(this).serialize(),
 		success: function(response)
 		{
 		   if(response.status)
 		   {
 				$.pjax.reload({container : '#student-lesson-listing', timeout : 4000});
+				$('#new-lesson-modal').modal('hide');
+			}else
+			{
+			 $('#lesson-form').yiiActiveForm('updateMessages',
+				   response.errors
+				, true);
 			}
 		}
 		});

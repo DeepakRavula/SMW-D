@@ -102,10 +102,10 @@ class LessonController extends Controller
 					'status' => true,
 				];
 			} else {
-				$model = ActiveForm::validate($model);
+				$errors = ActiveForm::validate($model);
 				$response = [
 					'status' => false,
-					'errors' =>  $model->getErrors()
+					'errors' =>  $errors
 				];
 			}
 			return $response;
