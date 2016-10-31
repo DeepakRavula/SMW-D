@@ -10,18 +10,20 @@ use kartik\switchinput\SwitchInput;
 <div class="invoice-view p-50">
 	<div class="pull-right">
 		<?php if ((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE) : ?>
-			<?php $form			 = ActiveForm::begin(); ?>
+			<?php $form			 = ActiveForm::begin([
+				'id' => 'mail-flag'
+			]); ?>
 			<?php
-			$model->isSend	 = $model->isSend ? true : false;
+			$model->isSent	 = $model->isSent ? true : false;
 			?>
 			<?=
-			$form->field($model, 'isSend')->widget(SwitchInput::classname(),
+			$form->field($model, 'isSent')->widget(SwitchInput::classname(),
 				[
 				'name' => 'isSent',
 				'pluginOptions' => [
 					'handleWidth' => 60,
-					'onText' => 'Send',
-					'offText' => 'Not Send'
+					'onText' => 'Sent',
+					'offText' => 'Not Sent'
 				]
 			])->label(false);
 			?>
@@ -210,15 +212,13 @@ $(document).ready(function() {
 	$('#invoice-line-item-modal').modal('show');
   		return false;
   });
-	$('input[name="Invoice[isSend]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+	$('input[name="Invoice[isSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
 	$.ajax({
             url    : '<?= Url::to(["invoice/update-mail-status", "id" => $model->id]) ?>',
             type   : 'POST',
-            contentType: 'application/json',
             dataType: "json",
-			data: JSON.stringify({
-				"isSend": state,
-			}),
+			data   : $('#mail-flag').serialize(),
+			
             success: function(response)
             {
             }

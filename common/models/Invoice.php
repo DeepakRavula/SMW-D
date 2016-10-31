@@ -48,7 +48,8 @@ class Invoice extends \yii\db\ActiveRecord
         return [
 			['user_id','required'],
             [['reminderNotes'], 'string'],
-			[['type','notes','internal_notes', 'status','isSend'],'safe']
+			[['isSent'], 'boolean'],
+			[['type','notes','internal_notes', 'status'],'safe']
 		];
     }
 
