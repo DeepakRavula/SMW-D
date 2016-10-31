@@ -42,9 +42,6 @@ class UserForm extends Model
 	public $phoneNumbers;
 	public $addresses;
 	public $availabilities;
-	public $teacherAvailabilityDay;
-	public $fromTime;
-	public $toTime;
 	public $section;
 	
     /**
@@ -81,7 +78,6 @@ class UserForm extends Model
            	['locations','safe'],    
 			[['phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
             [['addresslabel', 'postalcode', 'province', 'city', 'country'],'safe'],
-			[['teacherAvailabilityDay','fromTime','toTime'],'safe']
         ];
     }
 
@@ -266,18 +262,6 @@ public static function createMultiple($modelClass, $multipleModels = [])
                 $userLocationModel->save();
 			}
 
-			$fromTime = new \DateTime($this->fromTime);
-			$toTime = new \DateTime($this->toTime);
-			if(! empty($userLocationModel)){
-				$teacherAvailabilityModel = TeacherAvailability::findOne(['teacher_location_id' => $userLocationModel->id]);
-				if(empty($teacherAvailabilityModel)){
-					$teacherAvailabilityModel = new TeacherAvailability;
-					$teacherAvailabilityModel->day = $this->teacherAvailabilityDay;
-					$teacherAvailabilityModel->from_time = $fromTime->format("H:i:s");
-					$teacherAvailabilityModel->to_time = $toTime->format("H:i:s");
-				}
-				$teacherAvailabilityModel->save();
-			}
             $userProfileModel = UserProfile::findOne(['user_id' => $model->getId()]);
 			if(empty($userProfileModel)) {
 				$userProfileModel = new UserProfile();

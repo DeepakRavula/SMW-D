@@ -31,6 +31,8 @@ use common\models\ItemType;
 use common\models\TaxStatus;
 use common\models\PaymentMethod;
 use yii\web\ForbiddenHttpException;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -359,17 +361,26 @@ class UserController extends Controller {
 				throw new ForbiddenHttpException;
 			}
 		}
-		if ($model->load(Yii::$app->request->post())) {
+        
+        $request = Yii::$app->request;
+        $response = Yii::$app->response;
+        if ($model->load($request->post())) {
 			$addressModels = UserForm::createMultiple(Address::classname());
-			Model::loadMultiple($addressModels, Yii::$app->request->post());
+			Model::loadMultiple($addressModels, $request->post());
 
 			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
-			Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
+			Model::loadMultiple($phoneNumberModels, $request->post());
 
 			$availabilityModels = UserForm::createMultiple(TeacherAvailability::classname());
-			Model::loadMultiple($availabilityModels, Yii::$app->request->post());
-
-			$valid = $model->validate();
+			Model::loadMultiple($availabilityModels, $request->post());
+            
+            if ($request->isAjax) {
+                $response->format = Response::FORMAT_JSON;
+                return ArrayHelper::merge(
+                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($availabilityModels)
+                );
+            }
+            $valid = $model->validate();
 			$valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels) || Model::validateMultiple($availabilityModels)) && $valid;
 
 			if ($valid) {
@@ -469,25 +480,40 @@ class UserController extends Controller {
 		$addressModels = $model->addresses;
 		$phoneNumberModels = $model->phoneNumbers;
 		$availabilityModels = $model->availabilities;
-		
-		if ($model->load(Yii::$app->request->post())) {
+        
+        $request = Yii::$app->request;
+        $response = Yii::$app->response;
+        if ($model->load($request->post())) {
 			$oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
 			$addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
-			Model::loadMultiple($addressModels, Yii::$app->request->post());
+			Model::loadMultiple($addressModels, $request->post());
 			$deletedAddressIDs = array_diff($oldAddressIDs, array_filter(ArrayHelper::map($addressModels, 'id', 'id')));
 
 			$oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
 			$phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
-			Model::loadMultiple($phoneNumberModels, Yii::$app->request->post());
+			Model::loadMultiple($phoneNumberModels, $request->post());
 			$deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
 			
 			$oldAvailabilityIDs = ArrayHelper::map($availabilityModels, 'id', 'id');
 			$availabilityModels = UserForm::createMultiple(TeacherAvailability::classname(), $availabilityModels);
-			Model::loadMultiple($availabilityModels, Yii::$app->request->post());
+            $userLocationModel = UserLocation::findOne([
+                    'user_id' => $id,
+                    'location_id' => $locationId,
+            ]);
+            foreach ($availabilityModels as $availabilityModel) {
+                $availabilityModel->teacher_location_id = $userLocationModel->id;
+            }
+            Model::loadMultiple($availabilityModels, $request->post());
 			$deletedAvailabilityIDs = array_diff($oldAvailabilityIDs, array_filter(ArrayHelper::map($availabilityModels, 'id', 'id')));
-
-			$valid = $model->validate();
-			$valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels) || Model::validateMultiple($availabilityModels)) && $valid;
+            
+            if ($request->isAjax) {
+                $response->format = Response::FORMAT_JSON;
+                return ArrayHelper::merge(
+                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($availabilityModels)
+                );
+            }
+            $valid = $model->validate();
+			$valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels) && Model::validateMultiple($availabilityModels)) && $valid;
 
 			if ($valid) {
 				$transaction = \Yii::$app->db->beginTransaction();
@@ -517,12 +543,7 @@ class UserController extends Controller {
 							TeacherAvailability::deleteAll(['id' => $deletedAvailabilityIDs]);
 						}
 
-						$userLocationModel = UserLocation::findOne([
-							'user_id' => $id,
-							'location_id' => $locationId,
-						]);
 						foreach ($availabilityModels as $availabilityModel) {
-							$availabilityModel->teacher_location_id = $userLocationModel->id;
 							$fromTime = \DateTime::createFromFormat('H:i A', $availabilityModel->from_time);
 							$toTime = \DateTime::createFromFormat('H:i A', $availabilityModel->to_time);
 							$availabilityModel->from_time = $fromTime->format('H:i:s');
@@ -543,9 +564,9 @@ class UserController extends Controller {
 					return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id,'#'=>$section]);
 					}
 				} catch (Exception $e) {
-					$transaction->rollBack();
-				}
-			}
+                    $transaction->rollBack();
+                }
+            }
 
 
 			
