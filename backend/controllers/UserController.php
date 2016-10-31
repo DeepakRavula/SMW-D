@@ -480,7 +480,7 @@ class UserController extends Controller {
 		$addressModels = $model->addresses;
 		$phoneNumberModels = $model->phoneNumbers;
 		$availabilityModels = $model->availabilities;
-		
+        
         $request = Yii::$app->request;
         $response = Yii::$app->response;
         if ($model->load($request->post())) {
@@ -496,7 +496,14 @@ class UserController extends Controller {
 			
 			$oldAvailabilityIDs = ArrayHelper::map($availabilityModels, 'id', 'id');
 			$availabilityModels = UserForm::createMultiple(TeacherAvailability::classname(), $availabilityModels);
-			Model::loadMultiple($availabilityModels, $request->post());
+            $userLocationModel = UserLocation::findOne([
+                    'user_id' => $id,
+                    'location_id' => $locationId,
+            ]);
+            foreach ($availabilityModels as $availabilityModel) {
+                $availabilityModel->teacher_location_id = $userLocationModel->id;
+            }
+            Model::loadMultiple($availabilityModels, $request->post());
 			$deletedAvailabilityIDs = array_diff($oldAvailabilityIDs, array_filter(ArrayHelper::map($availabilityModels, 'id', 'id')));
             
             if ($request->isAjax) {
@@ -536,12 +543,7 @@ class UserController extends Controller {
 							TeacherAvailability::deleteAll(['id' => $deletedAvailabilityIDs]);
 						}
 
-						$userLocationModel = UserLocation::findOne([
-							'user_id' => $id,
-							'location_id' => $locationId,
-						]);
 						foreach ($availabilityModels as $availabilityModel) {
-							$availabilityModel->teacher_location_id = $userLocationModel->id;
 							$fromTime = \DateTime::createFromFormat('H:i A', $availabilityModel->from_time);
 							$toTime = \DateTime::createFromFormat('H:i A', $availabilityModel->to_time);
 							$availabilityModel->from_time = $fromTime->format('H:i:s');
