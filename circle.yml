@@ -1,5 +1,6 @@
 dependencies:
-  override: echo "Skipping build. Moving to tests ..."
+  override:
+  	- echo "Skipping build. Moving to tests ..."
 
 test:
   override:
