@@ -34,7 +34,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['unit', 'amount', 'description'], 'required'],
+            [['unit', 'amount', 'description'], 'required', 'when' => function ($model, $attribute) {
+					return (int) $model->item_type_id === ItemType::TYPE_MISC;
+				}
+			],
             [['invoice_id', 'item_id'], 'integer'],
             [['amount'], 'number'],
 			[['isRoyalty', 'invoice_id', 'item_id','item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate'], 'safe'],
