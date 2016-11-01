@@ -1,10 +1,10 @@
 general:
-  branches:
-    ignore:
-      - master
+  override: echo "Skipping build. Moving to tests ..."
+
 test:
   override:
-    - echo "Skip tests"
+    - if [[ $CIRCLE_BRANCH != "master" ]] ; then echo "Skipping tests. Moving to deployment" ; fi
+
 deployment:
   staging:
     branch: master
