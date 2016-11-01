@@ -18,13 +18,14 @@ class InvoiceSearch extends Invoice
 	public $toDate = '31-12-2016';
     public $type;
     public $query;
+	public $notSent = true;
 	/**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['fromDate', 'toDate', 'type', 'query'], 'safe'],
+            [['fromDate', 'toDate', 'type', 'query', 'notSent'], 'safe'],
         ];
     }
 
@@ -73,7 +74,9 @@ class InvoiceSearch extends Invoice
 		$query->andWhere(['between','i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
         
         $query->andFilterWhere(['type' => $this->type]);
-        
+		if ($this->notSent) {
+			$query->andFilterWhere(['isSent' => false]);
+		}
         return $dataProvider;
     }
 

@@ -5,6 +5,8 @@ use yii\helpers\Url;
 use yii\grid\GridView;
 use common\models\Invoice;
 use backend\models\search\InvoiceSearch;
+use yii\widgets\ActiveForm;
+use kartik\switchinput\SwitchInput;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -20,6 +22,21 @@ $this->params['action-button'] = $actionButton;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-index p-10">
+	<?php if((int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE) : ?>
+	<div>
+	<?php $form			 = ActiveForm::begin(); ?>
+			<?=
+			$form->field($searchModel, 'notSent')->widget(SwitchInput::classname(),
+				[
+				'pluginOptions' => [
+					'onText'=>'Not Sent',
+			        'offText'=>'All',
+				]
+			])->label(false);
+			?>
+		<?php ActiveForm::end(); ?>
+	</div>
+	<?php endif; ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 	<?php $columns = [
 			[
@@ -98,7 +115,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 		
 		?>
-	<?php yii\widgets\Pjax::begin() ?>
+	<?php yii\widgets\Pjax::begin([
+		'id' => 'invoice-listing',
+	]) ?>
     <div class="grid-row-open">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
@@ -113,3 +132,11 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php \yii\widgets\Pjax::end(); ?>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+	$('input[name="InvoiceSearch[notSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		var url = "<?php echo Url::to(['invoice/index']);?>?InvoiceSearch[notSent]=" + (state | 0) + '&InvoiceSearch[type]=' + "<?php echo $searchModel->type;?>";
+      $.pjax.reload({url:url,container:"#invoice-listing",replace:false,  timeout: 4000});
+  });
+});
+</script>
