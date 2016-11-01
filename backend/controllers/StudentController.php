@@ -306,21 +306,18 @@ class StudentController extends Controller
      * @return Student the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-	protected function findModel($id) {
-		$session = Yii::$app->session;
-		$locationId = $session->get('location_id');
-		$model = Student::find()->joinWith(['customer' => function($query) use($locationId){
-				$query->joinWith(['location' => function($query) use($locationId) {
-						$query->where(['location_id' => $locationId]);
-					}]);
-				}])
-			->where(['student.id' => $id])->one();
-				if ($model !== null) {
-					return $model;
-				} else {
-					throw new NotFoundHttpException('The requested page does not exist.');
-				}
-			}
+	protected function findModel($id)
+	{
+		$session	 = Yii::$app->session;
+		$locationId	 = $session->get('location_id');
+		$model		 = Student::find()->location($locationId)
+				->where(['student.id' => $id])->one();
+		if ($model !== null) {
+			return $model;
+		} else {
+			throw new NotFoundHttpException('The requested page does not exist.');
+		}
+	}
 
 	public function actionFetchProgramRate($id) {
 		$response = Yii::$app->response;

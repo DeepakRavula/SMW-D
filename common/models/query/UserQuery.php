@@ -44,4 +44,10 @@ class UserQuery extends ActiveQuery
 			->andWhere(['ul.location_id' => $locationId ]);
 		return $this;
 	}
+
+	public function location($locationId) {
+		$this->joinWith('userLocation')
+			->where(['location_id' => $locationId]);
+		return $this;
+	}
 }
