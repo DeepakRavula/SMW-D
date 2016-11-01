@@ -17,7 +17,6 @@ use common\models\Lesson;
  */
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
-	const SCENARIO_ADD_MISC = 'add-misc';
 	private $isRoyaltyExempted;
 
 
@@ -40,12 +39,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             [['unit', 'amount'], 'number'],
 			[['isRoyalty', 'invoice_id', 'item_id','item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate'], 'safe'],
 			[['isRoyaltyExempted'], 'boolean'],
-			[['unit'], 'integer', 'when'=>function ($model, $attribute)
-            	{
-                    return ((int) $model->item_type_id === ItemType::TYPE_MISC);
-                }
-            ],
-        ];
+			[['unit'], 'integer', 'when' => function ($model, $attribute) {
+				return (int) $model->item_type_id === ItemType::TYPE_MISC;
+			}
+			],
+		];
     }
 
     public function getLesson()

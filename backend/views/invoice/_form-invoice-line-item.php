@@ -109,7 +109,7 @@ $(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
 				$('#invoice-line-item-modal').modal('hide');
 			}else
 			{
-			 $('#add-misc-item-form').yiiActiveForm('updateMessages',
+			 $(this).yiiActiveForm('updateMessages',
 				   response.errors
 				, true);
 			}
