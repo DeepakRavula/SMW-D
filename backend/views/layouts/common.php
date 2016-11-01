@@ -228,7 +228,7 @@ $bundle = BackendAsset::register($this);
                             'label'=>Yii::t('backend', 'Owners'),
                             'icon'=>'<i class="fa fa-user"></i>',
 							'url'=>['user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],    
-                            'visible'=>Yii::$app->user->can('administrator'),
+                            'visible'=>Yii::$app->user->can('owner'),
                             'active'=>(isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name']== User::ROLE_OWNER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name']== User::ROLE_OWNER)) ? true : false,
                         ],
 						[
