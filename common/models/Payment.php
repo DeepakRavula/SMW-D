@@ -50,16 +50,14 @@ class Payment extends ActiveRecord
     public function rules()
     {
         return [
-            [['payment_method_id', 'amount'], 'required'],
-            [['user_id', 'payment_method_id', 'reference'], 'integer'],
-            [['user_id', 'date', 'sourceType', 'sourceId', 'credit'],
-                'safe'],
+            [['amount'], 'required'],
             [['amount'], 'validateLessThanCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'validateCreditApplied', 'on' => self::SCENARIO_CREDIT_APPLIED],
             [['amount'], 'validateCreditUsed', 'on' => self::SCENARIO_CREDIT_USED],
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
                     self::SCENARIO_CREDIT_USED]],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
+           [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 'sourceId', 'credit'], 'safe'],
         ];
     }
 
