@@ -396,7 +396,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoiceLineItem->item_id    = $this->id;
         $lessonStartTime             = $actualLessonDate->format('H:i:s');
         $getDuration                 = \DateTime::createFromFormat('H:i:s',
-                $lessonStartTime);
+                $this->duration);
         $hours                       = $getDuration->format('H');
         $minutes                     = $getDuration->format('i');
         $invoiceLineItem->unit       = (($hours * 60) + $minutes) / 60;
