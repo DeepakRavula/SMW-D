@@ -1,3 +1,10 @@
+general:
+  branches:
+    ignore:
+      - master
+test:
+  override:
+    - echo "Skip tests"
 deployment:
   staging:
     branch: master
