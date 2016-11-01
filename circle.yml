@@ -1,4 +1,4 @@
-general:
+dependencies:
   override: echo "Skipping build. Moving to tests ..."
 
 test:
