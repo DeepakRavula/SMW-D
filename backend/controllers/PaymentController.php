@@ -113,9 +113,12 @@ class PaymentController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model   = $this->findModel($id);
+        $invoice = $model->invoice;
+        $model->invoicePayment->delete();
+        $model->delete();
+        $invoice->save();
+        return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);
     }
 
     /**
