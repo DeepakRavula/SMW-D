@@ -180,6 +180,7 @@ class InvoiceController extends Controller {
 		$response->format = Response::FORMAT_JSON;
 		$model = $this->findModel($id);
 		$invoiceLineItemModel = new InvoiceLineItem();
+		$invoiceLineItemModel->setScenario(InvoiceLineItem::SCENARIO_ADD_MISC);
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
 			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
 			$invoiceLineItemModel->invoice_id = $model->id; 
@@ -199,8 +200,8 @@ class InvoiceController extends Controller {
 			} else {
 				$invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);
 				$response = [
-					'status' => 'false',
-					'errors' => $invoiceLineItemModel->getErrors()
+					'status' => false,
+					'errors' => $invoiceLineItemModel
 				];
 			}
 			return $response;

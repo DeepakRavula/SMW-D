@@ -17,8 +17,10 @@ use common\models\Lesson;
  */
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
+	const SCENARIO_ADD_MISC = 'add-misc';
 	private $isRoyaltyExempted;
-	
+
+
     /**
      * @inheritdoc
      */
@@ -36,6 +38,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             [['unit', 'amount', 'description'], 'required'],
             [['invoice_id', 'item_id'], 'integer'],
             [['unit', 'amount'], 'number'],
+            [['unit'], 'integer', 'on' => self::SCENARIO_ADD_MISC],
 			[['isRoyalty', 'invoice_id', 'item_id','item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate'], 'safe'],
 			[['isRoyaltyExempted'], 'boolean'],
         ];
