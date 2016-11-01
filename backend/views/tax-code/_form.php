@@ -5,6 +5,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use common\models\TaxType;
 use common\models\Province;
+
 /* @var $this yii\web\View */
 /* @var $model common\models\TaxCode */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -18,16 +19,16 @@ use common\models\Province;
 	<div class="row">
         <div class="col-xs-4">
 		<?php
-			echo $form->field($model, 'tax_type_id')->dropDownList(ArrayHelper::map(
-							TaxType::find()->all(), 'id', 'name'
-			))
-			?>
+            echo $form->field($model, 'tax_type_id')->dropDownList(ArrayHelper::map(
+                            TaxType::find()->all(), 'id', 'name'
+            ))
+            ?>
         </div>
         <div class="col-xs-4">
              <?php echo $form->field($model, 'province_id')->dropDownList(ArrayHelper::map(
-							Province::find()->all(), 'id', 'name'
-			))
-			?> 
+                            Province::find()->all(), 'id', 'name'
+            ))
+            ?> 
         </div>
 		<div class="col-xs-4">
              <?php echo $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
@@ -38,12 +39,12 @@ use common\models\Province;
         </div>
         <div class="col-xs-4">
             <?php echo $form->field($model, 'start_date')->widget(\yii\jui\DatePicker::classname(), [
-                    'options' => ['class'=>'form-control'],
+                    'options' => ['class' => 'form-control'],
                     'clientOptions' => [
                         'changeMonth' => true,
                         'changeYear' => true,
-                        'yearRange' => '-70:today' 
-                    ]
+                        'yearRange' => '-70:today',
+                    ],
                 ]); ?>
         </div>
     </div>

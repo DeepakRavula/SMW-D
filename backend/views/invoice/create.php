@@ -8,16 +8,15 @@ use backend\models\search\InvoiceSearch;
 
 $this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Add Pro-forma Invoice' : 'Add Invoice';
 $this->params['breadcrumbs'][] = ['label' => (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice', 'url' => ['index', 'InvoiceSearch[type]' => $model->type]];
-;
 $this->params['breadcrumbs'][] = 'create';
 ?>
 <div class="invoice-create p-20">
 
     <?php echo $this->render('_form', [
         'model' => $model,
-		'dataProvider' => $dataProvider,
+        'dataProvider' => $dataProvider,
         'customer' => $customer,
-		'searchModel' => $searchModel,
+        'searchModel' => $searchModel,
     ]) ?>
 
 </div>

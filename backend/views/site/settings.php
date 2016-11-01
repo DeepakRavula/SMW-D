@@ -10,7 +10,7 @@ $this->title = Yii::t('backend', 'Application settings');
             'model' => $model,
             'formClass' => '\yii\bootstrap\ActiveForm',
             'submitText' => Yii::t('backend', 'Save'),
-            'submitOptions' => ['class' => 'btn btn-primary']
+            'submitOptions' => ['class' => 'btn btn-primary'],
         ]); ?>
     </div>
 </div>

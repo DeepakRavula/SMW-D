@@ -1,7 +1,8 @@
 <?php
 /**
  * @author Eugene Terentev <eugene@terentev.net>
- * @var $model common\models\TimelineEvent
+ *
+ * @var common\models\TimelineEvent
  */
 ?>
 <div class="timeline-item">
@@ -17,7 +18,7 @@
     <div class="timeline-body">
         <?php echo Yii::t('backend', 'New user ({identity}) was registered at {created_at}', [
             'identity' => $model->data['public_identity'],
-            'created_at' => Yii::$app->formatter->asDatetime($model->data['created_at'])
+            'created_at' => Yii::$app->formatter->asDatetime($model->data['created_at']),
         ]) ?>
     </div>
 

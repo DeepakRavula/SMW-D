@@ -1,4 +1,5 @@
 <?php
+
 namespace common\grid;
 
 use yii\grid\DataColumn;
@@ -10,8 +11,7 @@ use yii\helpers\ArrayHelper;
  *      'class' => 'common\grid\EnumColumn',
  *      'attribute' => 'role',
  *      'enum' => User::getRoles()
- * ]
- * @package common\components\grid
+ * ].
  */
 class EnumColumn extends DataColumn
 {
@@ -25,7 +25,7 @@ class EnumColumn extends DataColumn
     public $loadFilterDefaultValues = true;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -37,12 +37,14 @@ class EnumColumn extends DataColumn
     /**
      * @param mixed $model
      * @param mixed $key
-     * @param int $index
+     * @param int   $index
+     *
      * @return mixed
      */
     public function getDataCellValue($model, $key, $index)
     {
         $value = parent::getDataCellValue($model, $key, $index);
+
         return ArrayHelper::getValue($this->enum, $value, $value);
     }
 }

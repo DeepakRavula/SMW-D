@@ -32,82 +32,82 @@ use yii\bootstrap\Tabs;
 
 	<?php
     $form = ActiveForm::begin(['id' => 'dynamic-form',
-            'enableAjaxValidation' => true]);
+            'enableAjaxValidation' => true, ]);
 
     ?>
 	<?php
-	$profileContent = $this->render('_form-profile', [
-		'model' => $model,
-		'form' => $form,
-		'programs' => $programs,
-		'roles' => $roles,
-		'locations' => $locations
-	]);
+    $profileContent = $this->render('_form-profile', [
+        'model' => $model,
+        'form' => $form,
+        'programs' => $programs,
+        'roles' => $roles,
+        'locations' => $locations,
+    ]);
 
-	$addressContent = $this->render('_form-contact', [
-		'addressModels' => $addressModels,
-		'phoneNumberModels' => $phoneNumberModels,
-		'form' => $form,
-	]);
+    $addressContent = $this->render('_form-contact', [
+        'addressModels' => $addressModels,
+        'phoneNumberModels' => $phoneNumberModels,
+        'form' => $form,
+    ]);
 
-	$qualificationContent = $this->render('_form-qualification', [
-		'model' => $model,
-		'form' => $form,
-		'programs' => $programs,
-		'roles' => $roles,
-	]);
+    $qualificationContent = $this->render('_form-qualification', [
+        'model' => $model,
+        'form' => $form,
+        'programs' => $programs,
+        'roles' => $roles,
+    ]);
 
-	$teacherAvailabilityContent = $this->render('_form-teacher-availability', [
-		'model' => $model,
-		'form' => $form,
-		'availabilityModels' => $availabilityModels,
-	]);
-	?>
+    $teacherAvailabilityContent = $this->render('_form-teacher-availability', [
+        'model' => $model,
+        'form' => $form,
+        'availabilityModels' => $availabilityModels,
+    ]);
+    ?>
 	<?php
-	$items = [
-		[
-			'label' => 'Profile',
-			'content' => $profileContent,
-			'options' => [
+    $items = [
+        [
+            'label' => 'Profile',
+            'content' => $profileContent,
+            'options' => [
                     'id' => 'profile',
                 ],
-		],
-		[
-			'label' => 'Contact Information',
-			'content' => $addressContent,
-			'options' => [
+        ],
+        [
+            'label' => 'Contact Information',
+            'content' => $addressContent,
+            'options' => [
                     'id' => 'contact',
                 ],
-		],
-	];
-	if (in_array($model->roles, ['teacher'])) {
-		$items[] = [
-			'label' => 'Qualifications',
-			'content' => $qualificationContent,
-			'options' => [
+        ],
+    ];
+    if (in_array($model->roles, ['teacher'])) {
+        $items[] = [
+            'label' => 'Qualifications',
+            'content' => $qualificationContent,
+            'options' => [
                     'id' => 'qualification',
                 ],
-		];
-	}
-	if (in_array($model->roles, ['teacher'])) {
-		$items[] = [
-			'label' => 'Availability',
-			'content' => $teacherAvailabilityContent,
-			'options' => [
+        ];
+    }
+    if (in_array($model->roles, ['teacher'])) {
+        $items[] = [
+            'label' => 'Availability',
+            'content' => $teacherAvailabilityContent,
+            'options' => [
                     'id' => 'availability',
                 ],
-		];
-	}
-	?>
+        ];
+    }
+    ?>
 	<div class="tabbable-panel">
 		<div class="tabbable-line">
 			<?php
-			echo Tabs::widget([
-				'id' => 'user-update-tab',
-				'items' => $items,
+            echo Tabs::widget([
+                'id' => 'user-update-tab',
+                'items' => $items,
 
-			]);
-			?>
+            ]);
+            ?>
 		</div>
 	</div>
 
@@ -115,10 +115,10 @@ use yii\bootstrap\Tabs;
 		<?php echo $form->field($model, 'section')->hiddenInput()->label(false); ?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 			<?php
-			if(! $model->getModel()->getIsNewRecord()){
-				echo Html::a('Cancel', ['view','UserSearch[role_name]' => $model->roles,'id' => $model->getModel()->id], ['class'=>'btn']); 	
-			}
-		?>
+            if (!$model->getModel()->getIsNewRecord()) {
+                echo Html::a('Cancel', ['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id], ['class' => 'btn']);
+            }
+        ?>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div> <!-- user-form -->

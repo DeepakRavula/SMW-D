@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\Tabs;
 use common\models\Course;
 
@@ -14,7 +13,7 @@ $this->title = 'Student Enrolment';
 		<p class="users-name"><?php echo $model->fullName; ?> </p>
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Birth date">
-		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo ! empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?>
+		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?>
 	</div>
 	<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
 		<a href="/user/view?UserSearch%5Brole_name%5D=customer&id=<?php echo $model->customer->id ?>">
@@ -27,28 +26,28 @@ $this->title = 'Student Enrolment';
      <div class="tabbable-line">
 <?php 
 
-$privateCourseContent =  $this->render('_form-private-course', [
+$privateCourseContent = $this->render('_form-private-course', [
     'model' => new Course(),
 ]);
 
-$groupCourseContent =  $this->render('_form-group-course', [
-	'groupCourseDataProvider' => $groupCourseDataProvider,
+$groupCourseContent = $this->render('_form-group-course', [
+    'groupCourseDataProvider' => $groupCourseDataProvider,
 ]);
 
 ?>
 <?php echo Tabs::widget([
     'items' => [
-		[
+        [
             'label' => 'Private Course',
             'content' => $privateCourseContent,
-			'options' => [
+            'options' => [
                     'id' => 'private-course',
                 ],
         ],
-		[
+        [
             'label' => 'Group Course',
             'content' => $groupCourseContent,
-			'options' => [
+            'options' => [
                     'id' => 'group-course',
                 ],
         ],

@@ -11,20 +11,21 @@ use yii\helpers\Inflector;
 
 /**
  * @author Eugene Terentev <eugene@terentev.net>
- * @var array $keys Array of the keyStorage keys to be handled by this model ($key => $config)
- * Example:
- * [
- *   'keys' => [
- *       'frontend.maintenance' => [
- *           'label' => 'Maintenance mode',
- *           'type' => FormModel::TYPE_CHECKBOX,
- *           'rules' => [ ... validation rules ...]
- *           // 'items' => ['a' => 'b']  - For lists like TYPE_DROPBOX,
- *           // 'options' => [ ... ... ] - Options that will be passed to ActiveInput or widget
- *           // 'widget' => 'yii\jui\Datepicker' - Widget class name if TYPE_WIDGET
- *       ]
- *    ]
- * ]
+ *
+ * @var array Array of the keyStorage keys to be handled by this model ($key => $config)
+ *            Example:
+ *            [
+ *            'keys' => [
+ *            'frontend.maintenance' => [
+ *            'label' => 'Maintenance mode',
+ *            'type' => FormModel::TYPE_CHECKBOX,
+ *            'rules' => [ ... validation rules ...]
+ *            // 'items' => ['a' => 'b']  - For lists like TYPE_DROPBOX,
+ *            // 'options' => [ ... ... ] - Options that will be passed to ActiveInput or widget
+ *            // 'widget' => 'yii\jui\Datepicker' - Widget class name if TYPE_WIDGET
+ *            ]
+ *            ]
+ *            ]
  */
 class FormModel extends Model
 {
@@ -86,7 +87,8 @@ class FormModel extends Model
      * Returns the list of attribute names.
      * By default, this method returns all public non-static properties of the class.
      * You may override this method to change the default behavior.
-     * @return array list of attribute names.
+     *
+     * @return array list of attribute names
      */
     public function attributes()
     {
@@ -105,7 +107,7 @@ class FormModel extends Model
     {
         $rules = [];
         foreach ($this->keys as $attribute => $data) {
-            $attributeRules =  ArrayHelper::getValue($data, 'rules', []);
+            $attributeRules = ArrayHelper::getValue($data, 'rules', []);
             if (!empty($attributeRules)) {
                 foreach ($attributeRules as $rule) {
                     array_unshift($rule, $attribute);
@@ -114,8 +116,8 @@ class FormModel extends Model
             } else {
                 $rules[] = [$attribute, 'safe'];
             }
-
         }
+
         return $rules;
     }
 
@@ -129,12 +131,15 @@ class FormModel extends Model
             $label = is_array($data) ? ArrayHelper::getValue($data, 'label') : $data;
             $labels[$attribute] = $label;
         }
+
         return $labels;
     }
 
     /**
      * @param bool $runValidation
+     *
      * @return bool
+     *
      * @throws Exception
      */
     public function save($runValidation = true)
@@ -145,15 +150,17 @@ class FormModel extends Model
         foreach ($this->attributes as $variablizedKey => $value) {
             $originalKey = ArrayHelper::getValue($this->map, $variablizedKey);
             if (!$originalKey) {
-                throw new Exception;
+                throw new Exception();
             }
             $this->getKeyStorage()->set($originalKey, $value);
         }
+
         return true;
     }
 
     /**
      * @return null|object
+     *
      * @throws \yii\base\InvalidConfigException
      */
     protected function getKeyStorage()
@@ -166,8 +173,11 @@ class FormModel extends Model
      * This method is overridden so that attributes and related objects can be accessed like properties.
      *
      * @param string $name property name
+     *
      * @throws \yii\base\InvalidParamException if relation name is wrong
+     *
      * @return mixed property value
+     *
      * @see getAttribute()
      */
     public function __get($name)
@@ -178,6 +188,7 @@ class FormModel extends Model
             return null;
         } else {
             $value = parent::__get($name);
+
             return $value;
         }
     }
@@ -185,8 +196,9 @@ class FormModel extends Model
     /**
      * PHP setter magic method.
      * This method is overridden so that AR attributes can be accessed like properties.
-     * @param string $name property name
-     * @param mixed $value property value
+     *
+     * @param string $name  property name
+     * @param mixed  $value property value
      */
     public function __set($name, $value)
     {
@@ -200,8 +212,10 @@ class FormModel extends Model
     /**
      * Checks if a property value is null.
      * This method overrides the parent implementation by checking if the named attribute is null or not.
+     *
      * @param string $name the property name or the event name
-     * @return boolean whether the property value is null
+     *
+     * @return bool whether the property value is null
      */
     public function __isset($name)
     {
@@ -216,6 +230,7 @@ class FormModel extends Model
      * Sets a component property to be null.
      * This method overrides the parent implementation by clearing
      * the specified attribute value.
+     *
      * @param string $name the property name or the event name
      */
     public function __unset($name)
@@ -227,8 +242,10 @@ class FormModel extends Model
 
     /**
      * Returns a value indicating whether the model has an attribute with the specified name.
+     *
      * @param string $name the name of the attribute
-     * @return boolean whether the model has an attribute with the specified name.
+     *
+     * @return bool whether the model has an attribute with the specified name
      */
     public function hasAttribute($name)
     {
@@ -239,8 +256,11 @@ class FormModel extends Model
      * Returns the named attribute value.
      * If this record is the result of a query and the attribute is not loaded,
      * null will be returned.
+     *
      * @param string $name the attribute name
-     * @return mixed the attribute value. Null if the attribute is not set or does not exist.
+     *
+     * @return mixed the attribute value. Null if the attribute is not set or does not exist
+     *
      * @see hasAttribute()
      */
     public function getAttribute($name)
@@ -250,9 +270,12 @@ class FormModel extends Model
 
     /**
      * Sets the named attribute value.
-     * @param string $name the attribute name
-     * @param mixed $value the attribute value.
-     * @throws InvalidParamException if the named attribute does not exist.
+     *
+     * @param string $name  the attribute name
+     * @param mixed  $value the attribute value
+     *
+     * @throws InvalidParamException if the named attribute does not exist
+     *
      * @see hasAttribute()
      */
     public function setAttribute($name, $value)
@@ -260,7 +283,7 @@ class FormModel extends Model
         if ($this->hasAttribute($name)) {
             $this->attributes[$name] = $value;
         } else {
-            throw new InvalidParamException(get_class($this) . ' has no attribute named "' . $name . '".');
+            throw new InvalidParamException(get_class($this).' has no attribute named "'.$name.'".');
         }
     }
 }

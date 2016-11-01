@@ -24,8 +24,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="<?php echo Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-view">
 
     <p>
-        <?php echo "<?php echo " ?>Html::a(<?php echo $generator->generateString('Update') ?>, ['update', <?php echo $urlParams ?>], ['class' => 'btn btn-primary']) ?>
-        <?php echo "<?php echo " ?>Html::a(<?php echo $generator->generateString('Delete') ?>, ['delete', <?php echo $urlParams ?>], [
+        <?php echo '<?php echo ' ?>Html::a(<?php echo $generator->generateString('Update') ?>, ['update', <?php echo $urlParams ?>], ['class' => 'btn btn-primary']) ?>
+        <?php echo '<?php echo ' ?>Html::a(<?php echo $generator->generateString('Delete') ?>, ['delete', <?php echo $urlParams ?>], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => <?php echo $generator->generateString('Are you sure you want to delete this item?') ?>,
@@ -34,18 +34,18 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
-    <?php echo "<?php echo " ?>DetailView::widget([
+    <?php echo '<?php echo ' ?>DetailView::widget([
         'model' => $model,
         'attributes' => [
 <?php
 if (($tableSchema = $generator->getTableSchema()) === false) {
     foreach ($generator->getColumnNames() as $name) {
-        echo "            '" . $name . "',\n";
+        echo "            '".$name."',\n";
     }
 } else {
     foreach ($generator->getTableSchema()->columns as $column) {
         $format = $generator->generateColumnFormat($column);
-        echo "            '" . $column->name . ($format === 'text' ? "" : ":" . $format) . "',\n";
+        echo "            '".$column->name.($format === 'text' ? '' : ':'.$format)."',\n";
     }
 }
 ?>

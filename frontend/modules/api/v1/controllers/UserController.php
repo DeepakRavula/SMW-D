@@ -35,51 +35,55 @@ class UserController extends ActiveController
                     'class' => HttpBasicAuth::className(),
                     'auth' => function ($username, $password) {
                         $user = User::findByLogin($username);
+
                         return $user->validatePassword($password)
                             ? $user
                             : null;
-                    }
+                    },
                 ],
                 HttpBearerAuth::className(),
-                QueryParamAuth::className()
-            ]
+                QueryParamAuth::className(),
+            ],
         ];
 
         return $behaviors;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function actions()
     {
         return [
             'index' => [
                 'class' => 'yii\rest\IndexAction',
-                'modelClass' => $this->modelClass
+                'modelClass' => $this->modelClass,
             ],
             'view' => [
                 'class' => 'yii\rest\ViewAction',
                 'modelClass' => $this->modelClass,
-                'findModel' => [$this, 'findModel']
+                'findModel' => [$this, 'findModel'],
             ],
             'options' => [
-                'class' => 'yii\rest\OptionsAction'
-            ]
+                'class' => 'yii\rest\OptionsAction',
+            ],
         ];
     }
 
     /**
      * @param $id
+     *
      * @return null|static
+     *
      * @throws NotFoundHttpException
      */
     public function findModel($id)
     {
         $model = UserResource::findOne($id);
         if (!$model) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
+
         return $model;
     }
 }

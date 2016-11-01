@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "release_notes".
  *
@@ -15,7 +13,7 @@ use Yii;
 class ReleaseNotes extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -23,7 +21,7 @@ class ReleaseNotes extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -36,7 +34,7 @@ class ReleaseNotes extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -48,17 +46,18 @@ class ReleaseNotes extends \yii\db\ActiveRecord
         ];
     }
 
-	public function getUser()
+    public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
-    
+
     public function getReleaseNoteReads()
     {
         return $this->hasMany(ReleaseNotesRead::className(), ['release_note_id' => 'id']);
     }
-    
-    public static function latestNotes(){
-        return $query = ReleaseNotes::find()->orderBy(['id' => SORT_DESC])->one();
+
+    public static function latestNotes()
+    {
+        return $query = self::find()->orderBy(['id' => SORT_DESC])->one();
     }
 }

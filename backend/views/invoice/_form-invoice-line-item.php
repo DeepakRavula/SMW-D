@@ -14,9 +14,9 @@ use yii\helpers\Url;
 
 <div id="invoice-line-item-modal" class="invoice-line-item-form">
     <?php $form = ActiveForm::begin([
-		'id' => 'add-misc-item-form',
-		'action' => Url::to(['invoice/add-misc', 'id' => $invoiceModel->id]),
-	]); ?>
+        'id' => 'add-misc-item-form',
+        'action' => Url::to(['invoice/add-misc', 'id' => $invoiceModel->id]),
+    ]); ?>
  	<div class="row">
         <div class="col-xs-8">
     		<?php echo $form->field($model, 'description')->textInput()?>
@@ -46,10 +46,10 @@ use yii\helpers\Url;
  	<div class="row">
 		<div class="col-xs-4">
    			<?php
-			echo $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
-							TaxStatus::find()->all(), 'id', 'name'
-			), ['prompt' => 'Select'])
-			?>
+            echo $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
+                            TaxStatus::find()->all(), 'id', 'name'
+            ), ['prompt' => 'Select'])
+            ?>
         </div>
 	</div>
     <div class="form-group">
@@ -70,7 +70,7 @@ $(document).ready(function() {
 			var amount = $('#invoicelineitem-amount').val();
 			var taxStatusName = $(this).children("option").filter(":selected").text();
 			$.ajax({
-				url: "<?php echo Url::to(['invoice/compute-tax']);?>",
+				url: "<?php echo Url::to(['invoice/compute-tax']); ?>",
 				type: "POST",
 				contentType: 'application/json',
 				dataType: "json",

@@ -16,7 +16,7 @@ use common\models\Payment;
         <div class="col-md-3 p-0">
           <div class="small-box">
             <div class="inner">
-              <h3><?= ! empty($invoiceTotal) ? $invoiceTotal : 0 ?></h3>
+              <h3><?= !empty($invoiceTotal) ? $invoiceTotal : 0 ?></h3>
               <p>Invoice Total</p>
             </div>
           </div>
@@ -24,7 +24,7 @@ use common\models\Payment;
         <div class="col-md-3 p-0">
           <div class="small-box">
             <div class="inner">
-              <h3><?= ! empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h3>
+              <h3><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h3>
               <p>Invoice Tax Total</p>
             </div>
           </div>
@@ -60,16 +60,16 @@ use common\models\Payment;
    'options' => [
       'title' => ['text' => 'Monthly Revenue'],
       'xAxis' => [
-         'categories' => Dashboard::previousMonths()
+         'categories' => Dashboard::previousMonths(),
       ],
       'yAxis' => [
          'title' => ['text' => 'Income'],
       ],
       'series' => [
-         ['name' => 'Month', 'data' =>  Dashboard::income()]
-      ]
-   ]
-]);?>
+         ['name' => 'Month', 'data' => Dashboard::income()],
+      ],
+   ],
+]); ?>
 </div>
 <div class="col-md-5 m-t-20">
 <?=  Highcharts::widget([
@@ -82,7 +82,7 @@ use common\models\Payment;
                 'dataLabels' => [
                     'enabled' => true,
                     'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
-                ]
+                ],
             ],
         ],
         'series' => [
@@ -90,31 +90,31 @@ use common\models\Payment;
                 'type' => 'pie',
                 'name' => 'Hours',
                 'data' => $completedPrograms,
-            ] // new closing bracket
+            ], // new closing bracket
         ],
     ],
-]);?>
+]); ?>
 </div>
 </div>
 <div class="col-md-2 col-sm-4 p-r-0">
                   <div class="pad box-pane-right bg-green" style="min-height: 280px">
                     <div class="description-block margin-bottom">
-                      <h5 class="description-header"><?= ! empty($payments) ? $payments : 0 ?></h5>
+                      <h5 class="description-header"><?= !empty($payments) ? $payments : 0 ?></h5>
                       <span class="description-text">Payment Received</span>
                     </div>
                     <!-- /.description-block -->
                     <div class="description-block margin-bottom">
-                      <h5 class="description-header"><?= ! empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h5>
+                      <h5 class="description-header"><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h5>
                       <span class="description-text">Tax Collected</span>
                     </div>
                     <!-- /.description-block -->
                     <div class="description-block">
-                      <h5 class="description-header"><?= ! empty($royaltyPayment) ? $royaltyPayment: 0 ?></h5>
+                      <h5 class="description-header"><?= !empty($royaltyPayment) ? $royaltyPayment : 0 ?></h5>
                       <span class="description-text">Royalty Free Items</span>
                     </div>
                     <!-- /.description-block -->
                     <div class="description-block">
-                      <h5 class="description-header"><?php $total = $payments - ($invoiceTaxTotal + $royaltyPayment); ?>  <?= ! empty($total) ? $total : 0 ?></h5>
+                      <h5 class="description-header"><?php $total = $payments - ($invoiceTaxTotal + $royaltyPayment); ?>  <?= !empty($total) ? $total : 0 ?></h5>
                       <span class="description-text">Total</span>
                     </div>
                     <!-- /.description-block -->

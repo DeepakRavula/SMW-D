@@ -22,30 +22,36 @@ class ArticleController extends Controller
         $searchModel = new ArticleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->sort = [
-            'defaultOrder' => ['created_at' => SORT_DESC]
+            'defaultOrder' => ['created_at' => SORT_DESC],
         ];
-        return $this->render('index', ['dataProvider'=>$dataProvider]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     /**
      * @param $slug
+     *
      * @return string
+     *
      * @throws NotFoundHttpException
      */
     public function actionView($slug)
     {
-        $model = Article::find()->published()->andWhere(['slug'=>$slug])->one();
+        $model = Article::find()->published()->andWhere(['slug' => $slug])->one();
         if (!$model) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
 
         $viewFile = $model->view ?: 'view';
-        return $this->render($viewFile, ['model'=>$model]);
+
+        return $this->render($viewFile, ['model' => $model]);
     }
 
     /**
      * @param $id
+     *
      * @return $this
+     *
      * @throws NotFoundHttpException
      * @throws \yii\web\HttpException
      */
@@ -53,7 +59,7 @@ class ArticleController extends Controller
     {
         $model = ArticleAttachment::findOne($id);
         if (!$model) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
 
         return Yii::$app->response->sendStreamAsFile(

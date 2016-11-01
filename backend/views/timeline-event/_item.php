@@ -1,7 +1,8 @@
 <?php
 /**
  * @author Eugene Terentev <eugene@terentev.net>
- * @var $model common\models\TimelineEvent
+ *
+ * @var common\models\TimelineEvent
  */
 ?>
 <div class="timeline-item">

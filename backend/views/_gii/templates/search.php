@@ -2,9 +2,7 @@
 /**
  * This is the template for generating CRUD search class of the specified model.
  */
-
 use yii\helpers\StringHelper;
-
 
 /* @var $this yii\web\View */
 /* @var $generator yii\gii\generators\crud\Generator */
@@ -12,7 +10,7 @@ use yii\helpers\StringHelper;
 $modelClass = StringHelper::basename($generator->modelClass);
 $searchModelClass = StringHelper::basename($generator->searchModelClass);
 if ($modelClass === $searchModelClass) {
-    $modelAlias = $modelClass . 'Model';
+    $modelAlias = $modelClass.'Model';
 }
 $rules = $generator->generateSearchRules();
 $labels = $generator->generateSearchLabels();
@@ -27,7 +25,7 @@ namespace <?php echo StringHelper::dirname(ltrim($generator->searchModelClass, '
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use <?php echo ltrim($generator->modelClass, '\\') . (isset($modelAlias) ? " as $modelAlias" : "") ?>;
+use <?php echo ltrim($generator->modelClass, '\\').(isset($modelAlias) ? " as $modelAlias" : '') ?>;
 
 /**
  * <?php echo $searchModelClass ?> represents the model behind the search form about `<?php echo $generator->modelClass ?>`.

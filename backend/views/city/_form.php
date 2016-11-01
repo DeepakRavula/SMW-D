@@ -20,8 +20,8 @@ use common\models\Province;
 		</div>
 		<div class="col-md-4 ">
     <?php echo $form->field($model, 'province_id')->dropDownList(ArrayHelper::map(
-							Province::find()->all(), 'id', 'name'
-			)) ?>
+                            Province::find()->all(), 'id', 'name'
+            )) ?>
 		</div>
 </div>
 
@@ -29,10 +29,10 @@ use common\models\Province;
     <div class="form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php 
-			if(! $model->isNewRecord){
-				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn']); 	
-			}
-		?>
+            if (!$model->isNewRecord) {
+                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+            }
+        ?>
     </div>
 
     <?php ActiveForm::end(); ?>

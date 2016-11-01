@@ -28,6 +28,7 @@ class I18nSourceMessageController extends Controller
 
     /**
      * Lists all I18nSourceMessage models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -43,7 +44,9 @@ class I18nSourceMessageController extends Controller
 
     /**
      * Displays a single I18nSourceMessage model.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -56,6 +59,7 @@ class I18nSourceMessageController extends Controller
     /**
      * Creates a new I18nSourceMessage model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -74,7 +78,9 @@ class I18nSourceMessageController extends Controller
     /**
      * Updates an existing I18nSourceMessage model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -93,7 +99,9 @@ class I18nSourceMessageController extends Controller
     /**
      * Deletes an existing I18nSourceMessage model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -106,8 +114,11 @@ class I18nSourceMessageController extends Controller
     /**
      * Finds the I18nSourceMessage model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return I18nSourceMessage the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

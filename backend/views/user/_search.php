@@ -8,7 +8,7 @@ use yii\helpers\ArrayHelper;
 /* @var $model backend\models\search\UserSearch */
 /* @var $form yii\bootstrap\ActiveForm */
 $roles = ArrayHelper::getColumn(
-         	Yii::$app->authManager->getRoles(),'description'
+             Yii::$app->authManager->getRoles(), 'description'
         )
 ?>
 <div class="user-search m-t-10">

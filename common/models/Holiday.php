@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "holiday".
  *
@@ -13,7 +11,7 @@ use Yii;
 class Holiday extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -21,7 +19,7 @@ class Holiday extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -31,7 +29,7 @@ class Holiday extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -42,18 +40,20 @@ class Holiday extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
-     * @return \common\models\query\HolidayQuery the active query used by this AR class.
+     * {@inheritdoc}
+     *
+     * @return \common\models\query\HolidayQuery the active query used by this AR class
      */
     public static function find()
     {
         return new \common\models\query\HolidayQuery(get_called_class());
     }
 
-	public function beforeSave($insert) {
-	    $holidayDate = \DateTime::createFromFormat('d-m-Y', $this->date);
-    	$this->date = $holidayDate->format('Y-m-d');
-		
-		return parent::beforeSave($insert);
-	}
+    public function beforeSave($insert)
+    {
+        $holidayDate = \DateTime::createFromFormat('d-m-Y', $this->date);
+        $this->date = $holidayDate->format('Y-m-d');
+
+        return parent::beforeSave($insert);
+    }
 }

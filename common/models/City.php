@@ -2,19 +2,17 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "city".
  *
- * @property integer $id
+ * @property int $id
  * @property string $name
- * @property integer $province_id
+ * @property int $province_id
  */
 class City extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -22,7 +20,7 @@ class City extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -34,7 +32,7 @@ class City extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -45,7 +43,8 @@ class City extends \yii\db\ActiveRecord
         ];
     }
 
-	public function getProvince() {
-		return $this->hasOne(Province::className(), ['id' => 'province_id']);
-	}
+    public function getProvince()
+    {
+        return $this->hasOne(Province::className(), ['id' => 'province_id']);
+    }
 }

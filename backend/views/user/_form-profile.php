@@ -3,8 +3,8 @@
 use common\models\User;
 
 $Roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-foreach($Roles as $name => $description){
-	$role_name = $name;
+foreach ($Roles as $name => $description) {
+    $role_name = $name;
 }
 ?>
 
@@ -21,9 +21,9 @@ foreach($Roles as $name => $description){
 			<?php echo $form->field($model, 'email') ?>
 		</div>
 		<div class="row col-xs-6">
-            <?php if ( $role_name === User::ROLE_ADMINISTRATOR) : ?>
+            <?php if ($role_name === User::ROLE_ADMINISTRATOR) : ?>
                 <div class="col-xs-6">
-                    <?php if ( ! $model->getModel()->getIsNewRecord() ) : ?>
+                    <?php if (!$model->getModel()->getIsNewRecord()) : ?>
                         <?php echo $form->field($model, 'roles')->dropDownList($roles) ?>
                     <?php endif; ?>
                 </div>

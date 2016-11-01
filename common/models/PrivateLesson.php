@@ -2,20 +2,18 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "private_lesson".
  *
  * @property string $id
  * @property string $lessonId
  * @property string $expiryDate
- * @property integer $isElgible
+ * @property int $isElgible
  */
 class PrivateLesson extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -23,7 +21,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -35,7 +33,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -47,8 +45,9 @@ class PrivateLesson extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
-     * @return \common\models\query\PrivateLessonQuery the active query used by this AR class.
+     * {@inheritdoc}
+     *
+     * @return \common\models\query\PrivateLessonQuery the active query used by this AR class
      */
     public static function find()
     {

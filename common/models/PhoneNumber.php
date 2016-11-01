@@ -7,19 +7,19 @@ use Yii;
 /**
  * This is the model class for table "phone_number".
  *
- * @property integer $id
- * @property integer $user_id
- * @property integer $label_id
+ * @property int $id
+ * @property int $user_id
+ * @property int $label_id
  * @property string $number
- * @property integer $extension
+ * @property int $extension
  */
 class PhoneNumber extends \yii\db\ActiveRecord
 {
-	const LABEL_HOME = 1;
-	const LABEL_WORK = 2;
-	const LABEL_OTHER = 3;
+    const LABEL_HOME = 1;
+    const LABEL_WORK = 2;
+    const LABEL_OTHER = 3;
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -27,20 +27,20 @@ class PhoneNumber extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['label_id', 'number'], 'required'],
             [['label_id', 'extension'], 'integer'],
-            [['number'], 'string', 'max' => 16], 
+            [['number'], 'string', 'max' => 16],
             [['is_primary'], 'boolean'],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -50,25 +50,25 @@ class PhoneNumber extends \yii\db\ActiveRecord
             'label_id' => 'Label',
             'number' => 'Number',
             'extension' => 'Extension',
-            'is_primary' => 'Primary Phone Number'
+            'is_primary' => 'Primary Phone Number',
         ];
     }
-	
- 	public function getLabel()
+
+    public function getLabel()
     {
         return $this->hasOne(PhoneLabel::className(), ['id' => 'label_id']);
     }
-	
-	public function getUser()
+
+    public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
-	public static function phoneLabels()
+    public static function phoneLabels()
     {
         return [
             self::LABEL_HOME => Yii::t('common', 'Home'),
             self::LABEL_WORK => Yii::t('common', 'Work'),
-            self::LABEL_OTHER => Yii::t('common', 'Other')
+            self::LABEL_OTHER => Yii::t('common', 'Other'),
         ];
     }
 }

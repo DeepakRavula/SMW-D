@@ -12,24 +12,24 @@ use wbraganca\selectivity\SelectivityWidget;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 /* @var $form yii\bootstrap\ActiveForm */
-$customer_id = (empty($customer->id)) ? null : (string)$customer->id;
+$customer_id = (empty($customer->id)) ? null : (string) $customer->id;
 ?>
 
 <div class="invoice-form">
 
     <?php $form = ActiveForm::begin([
-		'method' => 'get',
+        'method' => 'get',
         'id' => 'customer-search-form',
-		'action' => Url::to('/invoice/create'),
-	]); ?>
+        'action' => Url::to('/invoice/create'),
+    ]); ?>
 
 <div class="row">
 <div class="col-md-4">
     <?php $customers = ArrayHelper::map(User::find()
-        ->join('INNER JOIN','user_location','user_location.user_id = user.id')
-        ->join('INNER JOIN','rbac_auth_assignment','rbac_auth_assignment.user_id = user.id')
-        ->where(['user_location.location_id' => Yii::$app->session->get('location_id'),'rbac_auth_assignment.item_name' => 'customer'])			
-        ->all(),'id','userProfile.fullName' );
+        ->join('INNER JOIN', 'user_location', 'user_location.user_id = user.id')
+        ->join('INNER JOIN', 'rbac_auth_assignment', 'rbac_auth_assignment.user_id = user.id')
+        ->where(['user_location.location_id' => Yii::$app->session->get('location_id'), 'rbac_auth_assignment.item_name' => 'customer'])
+        ->all(), 'id', 'userProfile.fullName');
     ?>
     <?=
         $form->field($model, 'customer_id')->widget(SelectivityWidget::classname(), [
@@ -37,48 +37,48 @@ $customer_id = (empty($customer->id)) ? null : (string)$customer->id;
                 'allowClear' => true,
                 'multiple' => false,
                 'items' => $customers,
-                'value' => (empty($customer->id)) ? null : (string)$customer->id,
+                'value' => (empty($customer->id)) ? null : (string) $customer->id,
                 'placeholder' => 'Select Customer',
-            ]
+            ],
         ]);
     ?>
 </div>
 </div>
 <div class="clearfix"></div>
 	 <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
-<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
+<?php if ((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
     <div class="col-md-3">        
         <?php echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(), [
-            'options'=>[
-                'class' => 'form-control'
-            ]   
+            'options' => [
+                'class' => 'form-control',
+            ],
         ]) ?>
     </div>
     <div class="col-md-3">
         <?php echo $form->field($searchModel, 'toDate')->widget(DatePicker::classname(), [
-            'options'=>[
-                'class' => 'form-control'
-            ]
+            'options' => [
+                'class' => 'form-control',
+            ],
         ]) ?>
     </div>
     <div class="col-md-3 form-group m-t-5">
         <br>
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>
-<?php endif;?>
+<?php endif; ?>
     <?php ActiveForm::end(); ?>
     <?php $form = ActiveForm::begin([
-		'method' => 'post',
+        'method' => 'post',
         'id' => 'customer-search-form',
-		'action' => Url::to(['/invoice/create','Invoice[customer_id]' => $customer_id, 'Invoice[type]' => $model->type]),
-	]); ?>
+        'action' => Url::to(['/invoice/create', 'Invoice[customer_id]' => $customer_id, 'Invoice[type]' => $model->type]),
+    ]); ?>
     <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
     <?php echo $this->render('_uninvoiced_lessons', [
-		'model'=>$model,
-		'form'=>$form,
-		'dataProvider' => $dataProvider,
-		'searchModel' => $searchModel,
-        'customer' => $customer
+        'model' => $model,
+        'form' => $form,
+        'dataProvider' => $dataProvider,
+        'searchModel' => $searchModel,
+        'customer' => $customer,
     ]) ?>
 
     <div class="form-group">

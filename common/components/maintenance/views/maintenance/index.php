@@ -1,7 +1,8 @@
 <?php
 /**
  * @author Eugene Terentev <eugene@terentev.net>
- * @var string $maintenanceText
+ *
+ * @var string
  * @var int|string $retryAfter
  */
 ?>
@@ -9,7 +10,7 @@
     <p class="well">
         <?php echo Yii::t('common', $maintenanceText, [
             'retryAfter' => $retryAfter,
-            'adminEmail' => Yii::$app->params['adminEmail']
+            'adminEmail' => Yii::$app->params['adminEmail'],
         ]) ?>
     </p>
 </div>

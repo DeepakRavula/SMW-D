@@ -11,7 +11,7 @@ use common\models\Course;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Group Courses';
-$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']); 
+$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <style>
@@ -56,61 +56,64 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php yii\widgets\Pjax::begin(['id' => 'group-courses']) ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
-        'rowOptions'   => function ($model, $key, $index, $grid) {
+        'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['course/view', 'id' => $model->id]);
-        return ['data-url' => $url];
-    	},
+
+            return ['data-url' => $url];
+        },
         'columns' => [
-			[
-				'attribute' => 'program_id',
-				'label' => 'Course Name',
-				'value' => function($data){
-					return ! empty($data->program->name) ? $data->program->name : null;
-				}
-			],
-			[
-				'attribute' => 'teacher_id',
-				'label' => 'Teacher Name',
-				'value' => function($data){
-					return ! empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
-				}
-			],
-			[
-				'label' => 'Day',
-				'value' => function($data) {
-					$dayList = Course::getWeekdaysList();
-					$day = $dayList[$data->day];	
-					return ! empty($day) ? $day : null;
-				},
-			],
-			[
-				'attribute' => 'rate',
-				'label' => 'Rate',
-				'value' => function($data){
-					return ! empty($data->program->rate) ? $data->program->rate : null;
-				}
-			],
-			[
-				'label' => 'Duration',
-				'value' => function($data){
-					$length = \DateTime::createFromFormat('H:i:s', $data->duration);
-					return ! empty($data->duration) ? $length->format('H:i') : null;
-				}
-			],
-			[
-				'label' => 'Start Date',
-				'value' => function($data) {
-					return ! empty($data->startDate) ? Yii::$app->formatter->asDate($data->startDate) : null;
-				},
-			],
-			[
-				'label' => 'End Date',
-				'value' => function($data) {
-					return ! empty($data->endDate) ? Yii::$app->formatter->asDate($data->endDate) : null;
-				},
-			],
+            [
+                'attribute' => 'program_id',
+                'label' => 'Course Name',
+                'value' => function ($data) {
+                    return !empty($data->program->name) ? $data->program->name : null;
+                },
+            ],
+            [
+                'attribute' => 'teacher_id',
+                'label' => 'Teacher Name',
+                'value' => function ($data) {
+                    return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
+                },
+            ],
+            [
+                'label' => 'Day',
+                'value' => function ($data) {
+                    $dayList = Course::getWeekdaysList();
+                    $day = $dayList[$data->day];
+
+                    return !empty($day) ? $day : null;
+                },
+            ],
+            [
+                'attribute' => 'rate',
+                'label' => 'Rate',
+                'value' => function ($data) {
+                    return !empty($data->program->rate) ? $data->program->rate : null;
+                },
+            ],
+            [
+                'label' => 'Duration',
+                'value' => function ($data) {
+                    $length = \DateTime::createFromFormat('H:i:s', $data->duration);
+
+                    return !empty($data->duration) ? $length->format('H:i') : null;
+                },
+            ],
+            [
+                'label' => 'Start Date',
+                'value' => function ($data) {
+                    return !empty($data->startDate) ? Yii::$app->formatter->asDate($data->startDate) : null;
+                },
+            ],
+            [
+                'label' => 'End Date',
+                'value' => function ($data) {
+                    return !empty($data->endDate) ? Yii::$app->formatter->asDate($data->endDate) : null;
+                },
+            ],
         ],
     ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
@@ -120,7 +123,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $(document).ready(function(){
  $("#coursesearch-showallcourses").on("change", function() {
      var showAllCourses = $(this).is(":checked");
-     var url = "<?php echo Url::to(['course/index']);?>?CourseSearch[query]=" + "<?php echo $searchModel->query;?>&CourseSearch[showAllCourses]=" + (showAllCourses | 0);
+     var url = "<?php echo Url::to(['course/index']); ?>?CourseSearch[query]=" + "<?php echo $searchModel->query; ?>&CourseSearch[showAllCourses]=" + (showAllCourses | 0);
      $.pjax.reload({url:url,container:"#group-courses",replace:false,  timeout: 4000});  //Reload GridView
  });
 });

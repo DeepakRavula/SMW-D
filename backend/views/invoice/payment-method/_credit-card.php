@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 
-
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -13,8 +12,8 @@ use yii\helpers\Url;
 
 <div class="payments-form p-l-20 form-well-smw form-well m-t-10 m-b-0">
     <?php $form = ActiveForm::begin([
-		'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id])
-	]); ?>
+        'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id]),
+    ]); ?>
  	<div class="row">
         <div class="col-xs-3">
    			<?php echo $form->field($model, 'amount')->textInput(['value' => $amount])->label('Amount Needed') ?>

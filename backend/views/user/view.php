@@ -9,25 +9,25 @@ use yii\helpers\Html;
 /* @var $model common\models\User */
 
 $roleNames = ArrayHelper::getColumn(
-				Yii::$app->authManager->getRoles(), 'description','name'
+                Yii::$app->authManager->getRoles(), 'description', 'name'
 );
 foreach ($roleNames as $name => $description) {
-	if ($name === $searchModel->role_name) {
-		$roleName = $description;
-	}
-} 
-$this->title = $model->publicIdentity . ' - ' . ucwords($searchModel->role_name);
-$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
+    if ($name === $searchModel->role_name) {
+        $roleName = $description;
+    }
+}
+$this->title = $model->publicIdentity.' - '.ucwords($searchModel->role_name);
+$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
-		<div class="row-fluid"><?php if(! empty($model->userProfile->notes)) :?>
+		<div class="row-fluid"><?php if (!empty($model->userProfile->notes)) :?>
 			<h5 class="m-0"><em><i class="fa fa-info-circle"></i> Notes:
-				<?php echo ! empty($model->userProfile->notes) ? $model->userProfile->notes : null; ?></em>
+				<?php echo !empty($model->userProfile->notes) ? $model->userProfile->notes : null; ?></em>
 			</h5>
-			<?php endif;?>
+			<?php endif; ?>
 		</div>	
         <div class="pull-left m-t-10">
-  			 <?php if($searchModel->role_name === 'staffmember'):?>
+  			 <?php if ($searchModel->role_name === 'staffmember'):?>
 			 <?php
             echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
                 'class' => 'abs-delete',
@@ -37,7 +37,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                 ],
             ])
             ?>
-			<?php endif;?>
+			<?php endif; ?>
             <div class="clearfix"></div>
         </div>    
     <div class="clearfix"></div>
@@ -46,106 +46,106 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	<div class="tabbable-line">
 
 		<?php $roles = Yii::$app->authManager->getRolesByUser($model->id);
-		$role = end($roles); ?>
+        $role = end($roles); ?>
 
 		<?php
-	
-		$studentContent = $this->render('_customer-student', [
-				'model' => $model,
-				'dataProvider' => $dataProvider,
-				'student' => $student,
-		]);
 
-		$addressContent = $this->render('_view-contact', [
-			'model' => $model,
-			'addressDataProvider' => $addressDataProvider,
-			'phoneDataProvider' => $phoneDataProvider,
-			'searchModel' => $searchModel
-		]);
+        $studentContent = $this->render('_customer-student', [
+                'model' => $model,
+                'dataProvider' => $dataProvider,
+                'student' => $student,
+        ]);
 
-		$lessonContent = $this->render('_lesson', [
-			'model' => $model,
-			'lessonDataProvider' => $lessonDataProvider,
-		]);
+        $addressContent = $this->render('_view-contact', [
+            'model' => $model,
+            'addressDataProvider' => $addressDataProvider,
+            'phoneDataProvider' => $phoneDataProvider,
+            'searchModel' => $searchModel,
+        ]);
 
-		$enrolmentContent = $this->render('_enrolment', [
-			'enrolmentDataProvider' => $enrolmentDataProvider,
-		]);
+        $lessonContent = $this->render('_lesson', [
+            'model' => $model,
+            'lessonDataProvider' => $lessonDataProvider,
+        ]);
 
-		$invoiceContent = $this->render('_invoice', [
-			'invoiceDataProvider' => $invoiceDataProvider,
-			'searchModel' => $searchModel,
-			'userModel' => $model,
-		]);
+        $enrolmentContent = $this->render('_enrolment', [
+            'enrolmentDataProvider' => $enrolmentDataProvider,
+        ]);
 
-		$proFormaInvoiceContent = $this->render('_pro-forma-invoice', [
-			'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
-			'userModel' => $model,
-		]);
-        
+        $invoiceContent = $this->render('_invoice', [
+            'invoiceDataProvider' => $invoiceDataProvider,
+            'searchModel' => $searchModel,
+            'userModel' => $model,
+        ]);
+
+        $proFormaInvoiceContent = $this->render('_pro-forma-invoice', [
+            'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
+            'userModel' => $model,
+        ]);
+
         $paymentContent = $this->render('_account', [
-			'paymentDataProvider' => $paymentDataProvider,
-			'model' => $model,
-		]);
+            'paymentDataProvider' => $paymentDataProvider,
+            'model' => $model,
+        ]);
 
-		$qualificationContent = $this->render('_view-qualification',[
-			'program' => $program,	
-			'model' => $model,
-			'searchModel' => $searchModel
-		]);
+        $qualificationContent = $this->render('_view-qualification', [
+            'program' => $program,
+            'model' => $model,
+            'searchModel' => $searchModel,
+        ]);
 
-		$teacherAvailabilityContent = $this->render('_view-teacher-availability',[
-			'teacherDataProvider' => $teacherDataProvider,
-			'model' => $model,
-			'searchModel' => $searchModel
-		]);
+        $teacherAvailabilityContent = $this->render('_view-teacher-availability', [
+            'teacherDataProvider' => $teacherDataProvider,
+            'model' => $model,
+            'searchModel' => $searchModel,
+        ]);
 
-		$teacherStudentContent = $this->render('_teacher-student',[
-			'studentDataProvider' => $studentDataProvider,
-		]);
+        $teacherStudentContent = $this->render('_teacher-student', [
+            'studentDataProvider' => $studentDataProvider,
+        ]);
 
-		$openingBalanceContent = $this->render('_opening-balance',[
-			'openingBalanceDataProvider' => $openingBalanceDataProvider,
-			'openingBalanceCredit' => $openingBalanceCredit,
-			'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
-			'model' => $model,
-		]);
-        
-        $unscheduledLessonContent = $this->render('_teacher-unscheduled-lesson',[
-			'dataProvider' => $unscheduledLessonDataProvider,
-		]);
+        $openingBalanceContent = $this->render('_opening-balance', [
+            'openingBalanceDataProvider' => $openingBalanceDataProvider,
+            'openingBalanceCredit' => $openingBalanceCredit,
+            'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
+            'model' => $model,
+        ]);
 
-		$teacherScheduleContent = $this->render('_calendar',[
-			'teacherId' => $model->id
-		]);
+        $unscheduledLessonContent = $this->render('_teacher-unscheduled-lesson', [
+            'dataProvider' => $unscheduledLessonDataProvider,
+        ]);
 
-		?>
+        $teacherScheduleContent = $this->render('_calendar', [
+            'teacherId' => $model->id,
+        ]);
+
+        ?>
 		<?php
-		$items = [
-			[
-				'label' => 'Contact Information',
-				'content' => $addressContent,
-				'options' => [
+        $items = [
+            [
+                'label' => 'Contact Information',
+                'content' => $addressContent,
+                'options' => [
                     'id' => 'contact',
                 ],
-			],
-		];
+            ],
+        ];
 
-		$teacherItems = [
-			[
-				'label' => 'Qualifications',
-				'content' => $qualificationContent,
-				'options' => [
+        $teacherItems = [
+            [
+                'label' => 'Qualifications',
+                'content' => $qualificationContent,
+                'options' => [
                     'id' => 'qualification',
                 ],
-			],
-			[
-				'label' => 'Availability',
-				'content' => $teacherAvailabilityContent,
-				'options' => [
+            ],
+            [
+                'label' => 'Availability',
+                'content' => $teacherAvailabilityContent,
+                'options' => [
                     'id' => 'availability',
                 ],
-			],
+            ],
             [
                 'label' => 'Students',
                 'content' => $teacherStudentContent,
@@ -153,87 +153,87 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                     'id' => 'student',
                 ],
             ],
-			[
-				'label' => 'Schedule',
-				'content' => $teacherScheduleContent,
-				'options' => [
+            [
+                'label' => 'Schedule',
+                'content' => $teacherScheduleContent,
+                'options' => [
                     'id' => 'calendar',
                 ],
-			],
+            ],
             [
-				'label' => 'Unscheduled Lesson',
-				'content' => $unscheduledLessonContent,
-				'options' => [
+                'label' => 'Unscheduled Lesson',
+                'content' => $unscheduledLessonContent,
+                'options' => [
                     'id' => 'unscheduled',
                 ],
-			],
+            ],
         ];
-		
-		$customerItems = [
-			[
-				'label' => 'Students',
-				'content' => $studentContent,
-				'options' => [
+
+        $customerItems = [
+            [
+                'label' => 'Students',
+                'content' => $studentContent,
+                'options' => [
                     'id' => 'student',
                 ],
-			],
-			[
-				'label' => 'Enrolments',
-				'content' => $enrolmentContent,
-				'options' => [
+            ],
+            [
+                'label' => 'Enrolments',
+                'content' => $enrolmentContent,
+                'options' => [
                     'id' => 'enrolment',
                 ],
-			],
-			[
-				'label' => 'Lessons',
-				'content' => $lessonContent,
-				'options' => [
+            ],
+            [
+                'label' => 'Lessons',
+                'content' => $lessonContent,
+                'options' => [
                     'id' => 'lesson',
                 ],
-			],
-			[
-				'label' => 'Invoices',
-				'content' => $invoiceContent,
-				'options' => [
+            ],
+            [
+                'label' => 'Invoices',
+                'content' => $invoiceContent,
+                'options' => [
                     'id' => 'invoice',
                 ],
-			],
-			[
-				'label' => 'Pro-forma Invoices',
-				'content' => $proFormaInvoiceContent,
-				'options' => [
+            ],
+            [
+                'label' => 'Pro-forma Invoices',
+                'content' => $proFormaInvoiceContent,
+                'options' => [
                     'id' => 'pro-forma-invoice',
                 ],
-			],
-			[
-				'label' => 'Accounts',
-				'content' => $paymentContent,
-				'options' => [
+            ],
+            [
+                'label' => 'Accounts',
+                'content' => $paymentContent,
+                'options' => [
                     'id' => 'account',
                 ],
-			],
-			[
-				'label' => 'Opening Balance',
-				'content' => $openingBalanceContent,
-				'options' => [
+            ],
+            [
+                'label' => 'Opening Balance',
+                'content' => $openingBalanceContent,
+                'options' => [
                     'id' => 'opening-balance',
                 ],
-			]
+            ],
 
-		];
-		if (in_array($role->name, ['teacher'])) {
-			$items = array_merge($items,$teacherItems);
-		}
-		
-		if (in_array($role->name, ['customer'])) {
-			$items = array_merge($items,$customerItems);
-		}
-		?>
+        ];
+        if (in_array($role->name, ['teacher'])) {
+            $items = array_merge($items, $teacherItems);
+        }
+
+        if (in_array($role->name, ['customer'])) {
+            $items = array_merge($items, $customerItems);
+        }
+        ?>
 		<?php
-		echo Tabs::widget([
-			'items' => $items,
-		]);
-		?>
+        echo Tabs::widget([
+            'items' => $items,
+        ]);
+        ?>
 		<div class="clearfix"></div>
 	</div>
 </div>

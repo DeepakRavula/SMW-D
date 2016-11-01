@@ -13,10 +13,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="system-log-index">
 
     <p>
-        <?php echo Html::a(Yii::t('backend', 'Clear'), false, ['class' => 'btn btn-danger', 'data-method'=>'delete']) ?>
+        <?php echo Html::a(Yii::t('backend', 'Clear'), false, ['class' => 'btn btn-danger', 'data-method' => 'delete']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]);?>
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
@@ -24,18 +24,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute'=>'level',
-                'value'=>function ($model) {
+                'attribute' => 'level',
+                'value' => function ($model) {
                     return \yii\log\Logger::getLevelName($model->level);
                 },
-                'filter'=>[
+                'filter' => [
                     \yii\log\Logger::LEVEL_ERROR => 'error',
                     \yii\log\Logger::LEVEL_WARNING => 'warning',
                     \yii\log\Logger::LEVEL_INFO => 'info',
                     \yii\log\Logger::LEVEL_TRACE => 'trace',
                     \yii\log\Logger::LEVEL_PROFILE_BEGIN => 'profile begin',
-                    \yii\log\Logger::LEVEL_PROFILE_END => 'profile end'
-                ]
+                    \yii\log\Logger::LEVEL_PROFILE_END => 'profile end',
+                ],
             ],
             'category',
             'prefix',
@@ -44,14 +44,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'datetime',
                 'value' => function ($model) {
                     return (int) $model->log_time;
-                }
+                },
             ],
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template'=>'{view}{delete}'
-            ]
-        ]
+                'template' => '{view}{delete}',
+            ],
+        ],
     ]); ?>
 
 </div>

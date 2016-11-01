@@ -19,7 +19,7 @@ use yii\bootstrap\ActiveForm;
 	
 	<?= $form->field($model, 'content')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'full'
+        'preset' => 'full',
     ]) ?>
 
     <div class="form-group">

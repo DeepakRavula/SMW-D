@@ -16,15 +16,15 @@ class DashboardController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        $searchModel = new DashboardSearch();        
+        $searchModel = new DashboardSearch();
         $currentDate = new \DateTime();
         $searchModel->fromDate = $currentDate->format('1-m-Y');
-		$searchModel->toDate = $currentDate->format('t-m-Y');
-        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
             $dashboardRequest = $request->get('DashboardSearch');
-            $searchModel->dateRange = $dashboardRequest['dateRange']; 
+            $searchModel->dateRange = $dashboardRequest['dateRange'];
         }
         $toDate = $searchModel->toDate;
         if ($toDate > $currentDate) {
@@ -37,65 +37,66 @@ class DashboardController extends \yii\web\Controller
                         ->sum('subTotal');
         $invoiceTaxTotal = Invoice::find()
                         ->where(['location_id' => $locationId])
-                        ->andWhere(['between','date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                        ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
                         ->sum('tax');
         $enrolments = Enrolment::find()
-					->notDeleted()
-					->program($locationId, $currentDate)
-					->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM])
+                    ->notDeleted()
+                    ->program($locationId, $currentDate)
+                    ->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM])
                     ->count('studentId');
-					
+
         $groupEnrolments = Enrolment::find()
-					->notDeleted()
-					->program($locationId, $currentDate)
-					->where(['program.type' => Program::TYPE_GROUP_PROGRAM])
+                    ->notDeleted()
+                    ->program($locationId, $currentDate)
+                    ->where(['program.type' => Program::TYPE_GROUP_PROGRAM])
                     ->count('studentId');
-		
+
         $payments = Payment::find()
-                    ->joinWith(['invoice i' => function($query) use($locationId) {                        
-                            $query->where(['i.location_id' => $locationId]);                        
+                    ->joinWith(['invoice i' => function ($query) use ($locationId) {
+                        $query->where(['i.location_id' => $locationId]);
                     }])
-                    ->andWhere(['between','payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
                     ->sum('payment.amount');
 
-		$royaltyPayment = InvoiceLineItem::find()
-					->joinWith(['invoice i' => function($query) use($locationId) {
-						  $query->where(['i.location_id' => $locationId, 'i.status' => Invoice::STATUS_PAID]);
-					}])
-                    ->andWhere(['between','i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-					->andWhere(['invoice_line_item.isRoyalty' => false])
-					->sum('invoice_line_item.amount');
+        $royaltyPayment = InvoiceLineItem::find()
+                    ->joinWith(['invoice i' => function ($query) use ($locationId) {
+                        $query->where(['i.location_id' => $locationId, 'i.status' => Invoice::STATUS_PAID]);
+                    }])
+                    ->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->andWhere(['invoice_line_item.isRoyalty' => false])
+                    ->sum('invoice_line_item.amount');
 
         $students = Student::find()
-			->joinWith(['enrolment' => function($query) use($locationId, $currentDate){
-                $query->joinWith(['course' => function($query) use($locationId, $currentDate){
-					$query->andWhere(['locationId' => $locationId])
+            ->joinWith(['enrolment' => function ($query) use ($locationId, $currentDate) {
+                $query->joinWith(['course' => function ($query) use ($locationId, $currentDate) {
+                    $query->andWhere(['locationId' => $locationId])
                         ->andWhere(['NOT', ['studentId' => null]])
-						->andWhere(['>=','endDate', $currentDate->format('Y-m-d')]);
+                        ->andWhere(['>=', 'endDate', $currentDate->format('Y-m-d')]);
                 }]);
-			}])
+            }])
             ->distinct(['enrolment.studentId'])
-			->count();
-       
-		$completedPrograms = [];            
+            ->count();
+
+        $completedPrograms = [];
         $programs = Lesson::find()
                     ->select(['sum(course.duration) as hours, program.name as program_name'])
-                    ->joinWith(['course' => function($query) use($locationId) {
-                        $query->where(['course.locationId' => $locationId]) ;
-                        $query->joinWith(['program' => function($query){
+                    ->joinWith(['course' => function ($query) use ($locationId) {
+                        $query->where(['course.locationId' => $locationId]);
+                        $query->joinWith(['program' => function ($query) {
                         }]);
                     }])
-                    ->andWhere(['between','lesson.date', $searchModel->fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
-                    ->andWhere(['not',['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+                    ->andWhere(['between', 'lesson.date', $searchModel->fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+                    ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
                     ->notDeleted()
                     ->groupBy(['course.programId'])
                     ->all();
-        foreach($programs as $program){
+        foreach ($programs as $program) {
             $completedProgram = [];
-            $completedProgram['name']  =  $program->program_name;
+            $completedProgram['name'] = $program->program_name;
             $completedProgram['y'] = $program->hours / 6000;
             array_push($completedPrograms, $completedProgram);
         }
+
         return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students, 'completedPrograms' => $completedPrograms, 'royaltyPayment' => $royaltyPayment]);
-	}
+    }
 }

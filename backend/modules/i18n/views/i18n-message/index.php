@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="i18n-message-index">
 
-    <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php //echo $this->render('_search', ['model' => $searchModel]);?>
 
     <p>
         <?php echo Html::a(Yii::t('backend', 'Create {modelClass}', [
@@ -27,16 +27,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             [
-                'attribute'=>'language',
-                'filter'=> $languages
+                'attribute' => 'language',
+                'filter' => $languages,
             ],
             [
-                'attribute'=>'category',
-                'filter'=> $categories
+                'attribute' => 'category',
+                'filter' => $categories,
             ],
             'sourceMessage',
             'translation:ntext',
-            ['class' => 'yii\grid\ActionColumn', 'template'=>'{update} {delete}'],
+            ['class' => 'yii\grid\ActionColumn', 'template' => '{update} {delete}'],
         ],
     ]); ?>
 

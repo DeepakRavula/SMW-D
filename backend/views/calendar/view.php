@@ -1,9 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\helpers\Json;
-use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 
@@ -13,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
 <div class="schedule-index">
 <div class="e1Div">
-    <?= Html::checkbox('active', false, ['label' => 'Show All Teachers', 'id' => 'active' ]); ?>
+    <?= Html::checkbox('active', false, ['label' => 'Show All Teachers', 'id' => 'active']); ?>
 </div>
 <div id='calendar' class="p-10"></div>
 </div>

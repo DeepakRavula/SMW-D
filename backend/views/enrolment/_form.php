@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use kartik\time\TimePicker;
 use kartik\date\DatePicker;
 use common\models\Course;
 use common\models\Location;
@@ -14,48 +13,48 @@ use yii\helpers\Json;
 
 $this->title = 'Bulk Reschedule';
 ?>
-<?= $this->render('_view-enrolment',[
-	    'model' => $model->enrolment,
-]);?>
+<?= $this->render('_view-enrolment', [
+        'model' => $model->enrolment,
+]); ?>
 <div class="enrolment-form form-well form-well-smw">
 	<?php $form = ActiveForm::begin(); ?>
     <div class="row">
 		<div class="col-md-4">
 			<?php echo $form->field($model, 'lessonFromDate')->widget(DatePicker::classname(), [
-               		'options' => [
+                       'options' => [
                     'value' => (new \DateTime())->format('d-m-Y'),
                ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy'
-                ]
-			  ]); ?>
+                    'format' => 'dd-mm-yyyy',
+                ],
+              ]); ?>
 		</div>
         <div class="col-md-4">
 			<?php echo $form->field($model, 'lessonToDate')->widget(DatePicker::classname(), [
-               		'options' => [
+                       'options' => [
                     'value' => Yii::$app->formatter->asDate($lastLessonDate),
                ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy'
-                ]
-			  ]); ?>
+                    'format' => 'dd-mm-yyyy',
+                ],
+              ]); ?>
 		</div>
         <div class="col-md-4">
 			<?php echo $form->field($model, 'goToDate')->widget(DatePicker::classname(), [
-               		'options' => [
+                       'options' => [
                         'id' => 'goToDate',
                         'value' => (new \DateTime())->format('d-m-Y'),
                ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy'
-                ]
-			  ]); ?>
+                    'format' => 'dd-mm-yyyy',
+                ],
+              ]); ?>
 		</div>
 		</div>
     
@@ -69,15 +68,15 @@ $this->title = 'Bulk Reschedule';
 		</div>
 		<div class="col-md-4">
 			<?php
-			echo $form->field($model, 'startDate')->widget(DatePicker::classname(), [
-				'type' => DatePicker::TYPE_COMPONENT_APPEND,
-       				'pluginOptions' => [
-					'format' => 'dd-mm-yyyy',
-					'todayHighlight' => true,
-					'autoclose' => true
-				]
-			])->hiddenInput()->label(false);
-			?>
+            echo $form->field($model, 'startDate')->widget(DatePicker::classname(), [
+                'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                       'pluginOptions' => [
+                    'format' => 'dd-mm-yyyy',
+                    'todayHighlight' => true,
+                    'autoclose' => true,
+                ],
+            ])->hiddenInput()->label(false);
+            ?>
 		</div>
 	</div>
 <div id="calendar" class="row">
@@ -91,10 +90,10 @@ $this->title = 'Bulk Reschedule';
 </div>
 <?php ActiveForm::end(); ?>
 <?php
-	$locationId			 = Yii::$app->session->get('location_id');
-	$location = Location::findOne(['id' => $locationId]);
-	$from_time = (new \DateTime($location->from_time))->format('H:i:s');
-	$to_time = (new \DateTime($location->to_time))->format('H:i:s');
+    $locationId = Yii::$app->session->get('location_id');
+    $location = Location::findOne(['id' => $locationId]);
+    $from_time = (new \DateTime($location->from_time))->format('H:i:s');
+    $to_time = (new \DateTime($location->to_time))->format('H:i:s');
 ?>
 
 <script type="text/javascript">

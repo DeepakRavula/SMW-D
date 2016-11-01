@@ -7,18 +7,18 @@ use tests\codeception\frontend\_pages\SignupPage;
 
 class SignupCest
 {
-
     /**
-     * This method is called before each cest class test method
+     * This method is called before each cest class test method.
+     *
      * @param \Codeception\Event\TestEvent $event
      */
     public function _before($event)
     {
-
     }
 
     /**
      * This method is called after each cest class test method, even if test failed.
+     *
      * @param \Codeception\Event\TestEvent $event
      */
     public function _after($event)
@@ -31,17 +31,16 @@ class SignupCest
 
     /**
      * This method is called when test fails.
+     *
      * @param \Codeception\Event\FailEvent $event
      */
     public function _fail($event)
     {
-
     }
 
     /**
-     *
      * @param \tests\codeception\frontend\FunctionalTester $I
-     * @param \Codeception\Scenario $scenario
+     * @param \Codeception\Scenario                        $scenario
      */
     public function testUserSignup($I, $scenario)
     {
@@ -70,7 +69,6 @@ class SignupCest
         $I->dontSee('Username cannot be blank.', '.help-block');
         $I->dontSee('Password cannot be blank.', '.help-block');
         $I->see('E-mail is not a valid email address.', '.help-block');
-
 
         $I->amGoingTo('submit signup form with correct email');
         $signupPage->submit([

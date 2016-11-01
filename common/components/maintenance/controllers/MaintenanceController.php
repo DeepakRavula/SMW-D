@@ -1,11 +1,13 @@
 <?php
+
 namespace common\components\maintenance\controllers;
 
 use Yii;
 use yii\web\Controller;
 
 /**
- * Class MaintenanceController
+ * Class MaintenanceController.
+ *
  * @author Eugene Terentev <eugene@terentev.net>
  */
 class MaintenanceController extends Controller
@@ -24,7 +26,7 @@ class MaintenanceController extends Controller
 
         return $this->render($this->maintenanceView, [
             'maintenanceText' => $this->maintenanceText,
-            'retryAfter' => $this->retryAfter
+            'retryAfter' => $this->retryAfter,
         ]);
     }
 }

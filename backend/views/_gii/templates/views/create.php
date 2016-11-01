@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="<?php echo Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-create">
 
-    <?php echo "<?php echo " ?>$this->render('_form', [
+    <?php echo '<?php echo ' ?>$this->render('_form', [
         'model' => $model,
     ]) ?>
 

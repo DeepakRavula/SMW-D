@@ -7,8 +7,7 @@ use Yii;
 use yii\web\Application;
 
 /**
- * Class LocaleBehavior
- * @package common\behaviors
+ * Class LocaleBehavior.
  */
 class LocaleBehavior extends Behavior
 {
@@ -27,19 +26,18 @@ class LocaleBehavior extends Behavior
     public function events()
     {
         return [
-            Application::EVENT_BEFORE_REQUEST => 'beforeRequest'
+            Application::EVENT_BEFORE_REQUEST => 'beforeRequest',
         ];
     }
 
     /**
-     * Resolve application language by checking user cookies, preferred language and profile settings
+     * Resolve application language by checking user cookies, preferred language and profile settings.
      */
     public function beforeRequest()
     {
         $hasCookie = Yii::$app->getRequest()->getCookies()->has($this->cookieName);
         $forceUpdate = Yii::$app->session->hasFlash('forceUpdateLocale');
-        if ($hasCookie && !$forceUpdate)
-        {
+        if ($hasCookie && !$forceUpdate) {
             $locale = Yii::$app->getRequest()->getCookies()->getValue($this->cookieName);
         } else {
             $locale = $this->resolveLocale();

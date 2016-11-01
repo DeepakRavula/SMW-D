@@ -1,6 +1,7 @@
 <?php
 
 namespace tests\codeception\common\unit;
+
 use Yii;
 
 /**
@@ -8,7 +9,6 @@ use Yii;
  */
 class KeyStorageTest extends TestCase
 {
-
     public function testKeyStorageSet()
     {
         Yii::$app->keyStorage->set('test.key', 'testValue');

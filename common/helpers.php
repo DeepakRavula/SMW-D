@@ -1,6 +1,7 @@
 <?php
 /**
- * Yii2 Shortcuts
+ * Yii2 Shortcuts.
+ *
  * @author Eugene Terentev <eugene@terentev.net>
  * -----
  * This file is just an example and a place where you can add your own shortcuts,
@@ -18,7 +19,8 @@ function getMyId()
 
 /**
  * @param string $view
- * @param array $params
+ * @param array  $params
+ *
  * @return string
  */
 function render($view, $params = [])
@@ -29,6 +31,7 @@ function render($view, $params = [])
 /**
  * @param $url
  * @param int $statusCode
+ *
  * @return \yii\web\Response
  */
 function redirect($url, $statusCode = 302)
@@ -42,6 +45,7 @@ function redirect($url, $statusCode = 302)
  * @param $attribute
  * @param array $inputOptions
  * @param array $fieldOptions
+ *
  * @return string
  */
 function activeTextinput($form, $model, $attribute, $inputOptions = [], $fieldOptions = [])
@@ -51,11 +55,12 @@ function activeTextinput($form, $model, $attribute, $inputOptions = [], $fieldOp
 
 /**
  * @param string $key
- * @param mixed $default
+ * @param mixed  $default
+ *
  * @return mixed
  */
-function env($key, $default = false) {
-
+function env($key, $default = false)
+{
     $value = getenv($key);
 
     if ($value === false) {

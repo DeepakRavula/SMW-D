@@ -1,6 +1,6 @@
 <?php
 /**
- * Eugine Terentev <eugine@terentev.net>
+ * Eugine Terentev <eugine@terentev.net>.
  */
 
 namespace common\behaviors;
@@ -32,8 +32,7 @@ use yii\db\ActiveRecord;
  *         ],
  *     ];
  * }
- * ```
- * @package common\behaviors
+ * ```.
  */
 class CacheInvalidateBehavior extends Behavior
 {
@@ -55,9 +54,9 @@ class CacheInvalidateBehavior extends Behavior
      */
     private $cache;
 
-
     /**
      * Get events list.
+     *
      * @return array
      */
     public function events()
@@ -71,6 +70,7 @@ class CacheInvalidateBehavior extends Behavior
 
     /**
      * Invalidate cache connected to model.
+     *
      * @return bool
      */
     public function invalidateCache()
@@ -81,11 +81,12 @@ class CacheInvalidateBehavior extends Behavior
         if (!empty($this->tags)) {
             $this->invalidateTags();
         }
+
         return true;
     }
 
     /**
-     * Invalidates
+     * Invalidates.
      */
     protected function invalidateKeys()
     {
@@ -97,9 +98,6 @@ class CacheInvalidateBehavior extends Behavior
         }
     }
 
-    /**
-     *
-     */
     protected function invalidateTags()
     {
         TagDependency::invalidate(
@@ -108,6 +106,7 @@ class CacheInvalidateBehavior extends Behavior
                 if (is_callable($tag)) {
                     $tag = call_user_func($tag, $this->owner);
                 }
+
                 return $tag;
             }, $this->tags)
         );

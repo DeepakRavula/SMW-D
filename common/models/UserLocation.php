@@ -2,19 +2,17 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "user_address".
  *
- * @property integer $id
- * @property integer $user_id
- * @property integer $address_id
+ * @property int $id
+ * @property int $user_id
+ * @property int $address_id
  */
 class UserLocation extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -22,7 +20,7 @@ class UserLocation extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -33,7 +31,7 @@ class UserLocation extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -44,26 +42,26 @@ class UserLocation extends \yii\db\ActiveRecord
         ];
     }
 
-	/**
-    * @return \yii\db\ActiveQuery
-    */
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getTeacherAvailability()
     {
         return $this->hasOne(TeacherAvailability::className(), ['teacher_location_id' => 'id'])
-			->andWhere(['not',['teacher_availability_day.id' => null]]);
+            ->andWhere(['not', ['teacher_availability_day.id' => null]]);
     }
 
-	public function getLocation()
+    public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'location_id']);
     }
 
-	public function getUserProfile()
+    public function getUserProfile()
     {
         return $this->hasOne(UserProfile::className(), ['user_id' => 'user_id']);
     }
 
-	public function getQualification()
+    public function getQualification()
     {
         return $this->hasOne(Qualification::className(), ['teacher_id' => 'user_id']);
     }

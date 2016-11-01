@@ -1,14 +1,15 @@
 <?php
+
 return [
-    'class'=>'yii\web\UrlManager',
-    'enablePrettyUrl'=>true,
-    'showScriptName'=>false,
-    'rules'=>[
+    'class' => 'yii\web\UrlManager',
+    'enablePrettyUrl' => true,
+    'showScriptName' => false,
+    'rules' => [
         // url rules
-		'calendar/<slug:[\w-]+>' => 'calendar/view',
+        'calendar/<slug:[\w-]+>' => 'calendar/view',
         'course/<groupCourseId:\d+>/student/<studentId:\d+>' => 'course/view-student',
         'student/<studentId:\d+>/enrolment/<enrolmentId:\d+>/program-type/<programType:\d+>/delete-preview' => 'student/delete-enrolment-preview',
         'course/<courseId:\d+>/lesson-review' => 'lesson/review',
         'student/<id:\d+>/enrolment' => 'student/enrolment',
-    ]
+    ],
 ];

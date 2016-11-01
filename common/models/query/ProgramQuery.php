@@ -6,8 +6,8 @@ use common\models\Program;
 use yii\db\ActiveQuery;
 
 /**
- * Class UserQuery
- * @package common\models\query
+ * Class UserQuery.
+ *
  * @author Eugene Terentev <eugene@terentev.net>
  */
 class ProgramQuery extends ActiveQuery
@@ -18,6 +18,7 @@ class ProgramQuery extends ActiveQuery
     public function active()
     {
         $this->andWhere(['status' => Program::STATUS_ACTIVE]);
+
         return $this;
     }
 }

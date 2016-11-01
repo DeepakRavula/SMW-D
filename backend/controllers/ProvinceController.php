@@ -28,6 +28,7 @@ class ProvinceController extends Controller
 
     /**
      * Lists all Province models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -43,7 +44,9 @@ class ProvinceController extends Controller
 
     /**
      * Displays a single Province model.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -56,6 +59,7 @@ class ProvinceController extends Controller
     /**
      * Creates a new Province model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -63,10 +67,11 @@ class ProvinceController extends Controller
         $model = new Province();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Province has been created successfully'
-        ]); 
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Province has been created successfully',
+        ]);
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -78,7 +83,9 @@ class ProvinceController extends Controller
     /**
      * Updates an existing Province model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -86,10 +93,11 @@ class ProvinceController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Province has been updated successfully'
-        ]); 
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Province has been updated successfully',
+        ]);
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -101,24 +109,30 @@ class ProvinceController extends Controller
     /**
      * Deletes an existing Province model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
         Yii::$app->session->setFlash('alert', [
-          	'options' => ['class' => 'alert-success'],
-           	'body' => 'Province has been deleted successfully'
-        ]); 
+              'options' => ['class' => 'alert-success'],
+               'body' => 'Province has been deleted successfully',
+        ]);
+
         return $this->redirect(['index']);
     }
 
     /**
      * Finds the Province model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return Province the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

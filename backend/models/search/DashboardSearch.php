@@ -2,9 +2,7 @@
 
 namespace backend\models\search;
 
-use Yii;
 use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use common\models\Invoice;
 
 /**
@@ -15,9 +13,9 @@ class DashboardSearch extends Invoice
     private $dateRange;
     public $fromDate;
     public $toDate;
-   
-	/**
-     * @inheritdoc
+
+    /**
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -27,7 +25,7 @@ class DashboardSearch extends Invoice
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -37,7 +35,7 @@ class DashboardSearch extends Invoice
 
     public function setDateRange($dateRange)
     {
-        list($fromDate, $toDate) = explode(" - ", $dateRange);
+        list($fromDate, $toDate) = explode(' - ', $dateRange);
         $this->fromDate = \DateTime::createFromFormat('d-m-Y', $fromDate);
         $this->toDate = \DateTime::createFromFormat('d-m-Y', $toDate);
     }
@@ -46,7 +44,8 @@ class DashboardSearch extends Invoice
     {
         $fromDate = $this->fromDate->format('d-m-Y');
         $toDate = $this->toDate->format('d-m-Y');
-        $this->dateRange = $fromDate . ' - ' . $toDate;
+        $this->dateRange = $fromDate.' - '.$toDate;
+
         return $this->dateRange;
     }
 }

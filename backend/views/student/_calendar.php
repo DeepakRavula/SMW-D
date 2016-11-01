@@ -3,21 +3,22 @@
 use common\models\Location;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
+
 ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="col-md-4">
 	<?php
-	// Dependent Dropdown
-	echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
-		[
-		'options' => ['id' => 'course-teacherid'],
-		'pluginOptions' => [
-			'depends' => ['course-programid'],
-			'placeholder' => 'Select...',
-			'url' => Url::to(['course/teachers']),
-		]
-	]);
-	?>
+    // Dependent Dropdown
+    echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
+        [
+        'options' => ['id' => 'course-teacherid'],
+        'pluginOptions' => [
+            'depends' => ['course-programid'],
+            'placeholder' => 'Select...',
+            'url' => Url::to(['course/teachers']),
+        ],
+    ]);
+    ?>
 </div>
 <div class="col-md-4">
 	<?= $form->field($model, 'day')->hiddenInput()->label(false) ?>
@@ -30,10 +31,10 @@ use yii\helpers\Url;
 	<div id="calendar" ></div>
 </div>
 <?php
-$locationId	 = Yii::$app->session->get('location_id');
-$location	 = Location::findOne(['id' => $locationId]);
-$from_time	 = (new \DateTime($location->from_time))->format('H:i:s');
-$to_time	 = (new \DateTime($location->to_time))->format('H:i:s');
+$locationId = Yii::$app->session->get('location_id');
+$location = Location::findOne(['id' => $locationId]);
+$from_time = (new \DateTime($location->from_time))->format('H:i:s');
+$to_time = (new \DateTime($location->to_time))->format('H:i:s');
 ?>
 <script type="text/javascript">
     function refreshCalendar(availableHours, events) {

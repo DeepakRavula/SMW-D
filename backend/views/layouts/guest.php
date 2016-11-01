@@ -1,12 +1,9 @@
 <?php
 
 /**
- * @var $this yii\web\View
+ * @var yii\web\View
  */
 use backend\assets\BackendAsset;
-use common\models\TimelineEvent;
-use yii\helpers\Html;
-use yii\helpers\Url;
 
 $bundle = BackendAsset::register($this);
 ?>

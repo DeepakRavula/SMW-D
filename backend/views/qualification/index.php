@@ -20,21 +20,21 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             [
-				'class' => 'yii\grid\SerialColumn',
-				'header' => 'Serial No.',
-			],
-			[
-				'label' => 'Teacher Name',
-				'value' => function($data) {
-					return ! empty($data->user->userProfile->fullName) ? $data->user->userProfile->fullName : null;
-                }, 	
-			],
-			[
-				'label' => 'Program Name',
-				'value' => function($data) {
-					return ! empty($data->program->name) ? $data->program->name : null;
-                }, 	
-			],
+                'class' => 'yii\grid\SerialColumn',
+                'header' => 'Serial No.',
+            ],
+            [
+                'label' => 'Teacher Name',
+                'value' => function ($data) {
+                    return !empty($data->user->userProfile->fullName) ? $data->user->userProfile->fullName : null;
+                },
+            ],
+            [
+                'label' => 'Program Name',
+                'value' => function ($data) {
+                    return !empty($data->program->name) ? $data->program->name : null;
+                },
+            ],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

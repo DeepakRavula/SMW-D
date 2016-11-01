@@ -33,11 +33,11 @@ $this->params['breadcrumbs'][] = $this->title;
 						<?php echo $form->field($model, 'reenterpassword')->passwordInput() ?>
 					<div class="form-group">
 						<?php
-						echo Html::submitButton('Save', [
-							'class' => 'btn btn-primary btn-flat btn-block',
-							'name' => 'login-button'
-						])
-						?>
+                        echo Html::submitButton('Save', [
+                            'class' => 'btn btn-primary btn-flat btn-block',
+                            'name' => 'login-button',
+                        ])
+                        ?>
 					</div>
 			<?php ActiveForm::end(); ?>
 		        </div>

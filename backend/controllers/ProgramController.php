@@ -31,22 +31,23 @@ class ProgramController extends Controller
 
     /**
      * Lists all Program models.
+     *
      * @return mixed
      */
     public function actionIndex()
-    {   
+    {
         $searchModel = new ProgramSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $model = new Program();
-		$model->type = $searchModel->type;
+        $model->type = $searchModel->type;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			Yii::$app->session->setFlash('alert', [
-        	    'options' => ['class' => 'alert-success'],
-            	'body' => 'Program has been created successfully'
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Program has been created successfully',
         ]);
-            return $this->redirect(['view', 'id' => $model->id]);
-        } 
 
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
 
         return $this->render('index', [
             'model' => $model,
@@ -57,57 +58,61 @@ class ProgramController extends Controller
 
     /**
      * Displays a single Program model.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionView($id)
     {
-		$locationId = Yii::$app->session->get('location_id');	
-		$query = Student::find()
-				->joinWith(['enrolment' => function($query) use($locationId, $id){
-					$query->location($locationId)
-						->where(['course.programId' => $id]);
-				}])
-				->active();
-		
-		$studentDataProvider = new ActiveDataProvider([
-			'query' => $query,
-		]);
+        $locationId = Yii::$app->session->get('location_id');
+        $query = Student::find()
+                ->joinWith(['enrolment' => function ($query) use ($locationId, $id) {
+                    $query->location($locationId)
+                        ->where(['course.programId' => $id]);
+                }])
+                ->active();
 
-		$query = User::find()
-				->joinWith(['userLocation ul' => function($query) use($locationId){
-					$query->where(['ul.location_id' => $locationId]);
-				}])
-				->joinWith('qualification')
-				->where(['program_id' => $id]);
-		$teacherDataProvider = new ActiveDataProvider([
-			'query' => $query,
-		]);
-		
+        $studentDataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $query = User::find()
+                ->joinWith(['userLocation ul' => function ($query) use ($locationId) {
+                    $query->where(['ul.location_id' => $locationId]);
+                }])
+                ->joinWith('qualification')
+                ->where(['program_id' => $id]);
+        $teacherDataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
         return $this->render('view', [
             'model' => $this->findModel($id),
-			'studentDataProvider' => $studentDataProvider, 
-			'teacherDataProvider' => $teacherDataProvider, 
+            'studentDataProvider' => $studentDataProvider,
+            'teacherDataProvider' => $teacherDataProvider,
         ]);
     }
 
     /**
      * Creates a new Program model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
     {
         $model = new Program();
-		$model->status = Program::STATUS_ACTIVE;
-		$request = Yii::$app->request;
-		$programRequest = $request->get('ProgramSearch');
-		$model->type = $programRequest['type'];
+        $model->status = Program::STATUS_ACTIVE;
+        $request = Yii::$app->request;
+        $programRequest = $request->get('ProgramSearch');
+        $model->type = $programRequest['type'];
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			Yii::$app->session->setFlash('alert', [
-        	    'options' => ['class' => 'alert-success'],
-            	'body' => 'Program has been created successfully'
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Program has been created successfully',
         ]);
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -119,28 +124,31 @@ class ProgramController extends Controller
     /**
      * Updates an existing Program model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-			
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			if($model->status == Program::STATUS_INACTIVE){
-				Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Program has been updated successfully'
-       		]);
-				return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
-			}
-			else{
-				Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Program has been updated successfully'
-        	]);
-				return $this->redirect(['view', 'id' => $model->id]);
-			}
+            if ($model->status == Program::STATUS_INACTIVE) {
+                Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Program has been updated successfully',
+               ]);
+
+                return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
+            } else {
+                Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Program has been updated successfully',
+            ]);
+
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -151,25 +159,31 @@ class ProgramController extends Controller
     /**
      * Deletes an existing Program model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
         $model->delete();
-		Yii::$app->session->setFlash('alert', [
-           	'options' => ['class' => 'alert-success'],
-           	'body' => 'Program has been deleted successfully'
+        Yii::$app->session->setFlash('alert', [
+               'options' => ['class' => 'alert-success'],
+               'body' => 'Program has been deleted successfully',
         ]);
+
         return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
     }
 
     /**
      * Finds the Program model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return Program the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

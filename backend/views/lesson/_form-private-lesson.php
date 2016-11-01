@@ -13,65 +13,65 @@ use common\models\Lesson;
 <div class="lesson-qualify p-10">
 
 	<?=
-		$this->render('view', [
-    		'model' => $model,
-    	]);
-	?>
+        $this->render('view', [
+            'model' => $model,
+        ]);
+    ?>
 
 <?php $form = ActiveForm::begin(); ?>
    <div class="row">
 	   <div class="col-md-4">
 			<?php
-			echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-				'options' => [
-					'value' => $model->status === Lesson::STATUS_CANCELED ? '' : Yii::$app->formatter->asDateTime($model->date),
-				],
-				'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'autoclose' => true,
-					'format' => 'dd-mm-yyyy HH:ii P',
+            echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
+                'options' => [
+                    'value' => $model->status === Lesson::STATUS_CANCELED ? '' : Yii::$app->formatter->asDateTime($model->date),
+                ],
+                'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd-mm-yyyy HH:ii P',
                     'showMeridian' => true,
-                    'minuteStep' => 15
-				]
-			])->label('Reschedule Date');
-			?>
+                    'minuteStep' => 15,
+                ],
+            ])->label('Reschedule Date');
+            ?>
         </div>
         <div class="col-md-4">
             <?php
-			echo $form->field($model, 'duration')->widget(TimePicker::classname(),
-				[
-				'options' => ['id' => 'course-duration'],
+            echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+                [
+                'options' => ['id' => 'course-duration'],
                 'pluginOptions' => [
-					'showMeridian' => false,
-					'defaultTime' => Yii::$app->formatter->asDateTime($model->duration),
-				]
-			]);
-			?>
+                    'showMeridian' => false,
+                    'defaultTime' => Yii::$app->formatter->asDateTime($model->duration),
+                ],
+            ]);
+            ?>
         </div>
 	   <div class="col-md-4">
 			<?php echo $form->field($model, 'status')->dropDownList(Lesson::lessonStatuses()) ?>
 		</div>
 		<div class="col-md-4">
 			<?php
-				if($privateLessonModel->isNewRecord){
-					$date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-					$date->modify('90 days');
-					$privateLessonModel->expiryDate = $date->format('d-m-Y H:i:s');
-				}
-			?>
+                if ($privateLessonModel->isNewRecord) {
+                    $date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+                    $date->modify('90 days');
+                    $privateLessonModel->expiryDate = $date->format('d-m-Y H:i:s');
+                }
+            ?>
 			<?= $form->field($privateLessonModel, 'expiryDate')->widget(DateTimePicker::classname(), [
-				'options' => [
-					'value' => Yii::$app->formatter->asDateTime($privateLessonModel->expiryDate),
-				],
-				'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'autoclose' => true,
-					'format' => 'dd-mm-yyyy HH:ii P',
+                'options' => [
+                    'value' => Yii::$app->formatter->asDateTime($privateLessonModel->expiryDate),
+                ],
+                'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd-mm-yyyy HH:ii P',
                     'showMeridian' => true,
-                    'minuteStep' => 15
-				]
-			]);
-			?>
+                    'minuteStep' => 15,
+                ],
+            ]);
+            ?>
 		</div>
 	   <div class="col-md-4">
             <?php echo $form->field($model, 'notes')->textarea() ?>

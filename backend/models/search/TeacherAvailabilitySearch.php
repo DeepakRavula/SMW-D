@@ -2,7 +2,6 @@
 
 namespace backend\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\TeacherAvailability;
@@ -13,7 +12,7 @@ use common\models\TeacherAvailability;
 class TeacherAvailabilitySearch extends TeacherAvailability
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -24,7 +23,7 @@ class TeacherAvailabilitySearch extends TeacherAvailability
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -33,7 +32,7 @@ class TeacherAvailabilitySearch extends TeacherAvailability
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *

@@ -1,13 +1,14 @@
 <?php
 
 use yii\helpers\Html;
+
 ?>
 <div class="user-details-wrapper">
 	<div class="col-md-12">
 		<p class="users-name"><?php echo $model->first_name; ?> <?php echo $model->last_name; ?></p>
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Birth date">
-		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo ! empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?>
+		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?>
 	</div>
 	<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
 		<a href="/user/view?UserSearch%5Brole_name%5D=customer&id=<?php echo $model->customer->id ?>">
@@ -15,11 +16,11 @@ use yii\helpers\Html;
 	</a>
 	</div>
 	<div class="clearfix"></div>
-		<div class="col-xs-12"><?php if(! empty($model->notes)) :?>
+		<div class="col-xs-12"><?php if (!empty($model->notes)) :?>
 			<h5><em><i class="fa fa-info-circle"></i> Notes:
-				<?php echo ! empty($model->notes) ? $model->notes : null; ?></em>
+				<?php echo !empty($model->notes) ? $model->notes : null; ?></em>
 			</h5>
-			<?php endif;?>
+			<?php endif; ?>
 		</div>
 	<div class="student-view">
 		<div class="col-md-12 action-btns">

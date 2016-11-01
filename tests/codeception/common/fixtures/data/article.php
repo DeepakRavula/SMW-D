@@ -14,7 +14,7 @@ return [
         'status' => 1,
         'published_at' => time() - 10,
         'created_at' => time() - 10,
-        'updated_at' => time() - 10
+        'updated_at' => time() - 10,
     ],
     [
         'id' => 2,
@@ -27,6 +27,6 @@ return [
         'status' => 1,
         'published_at' => time() + \cheatsheet\Time::SECONDS_IN_A_YEAR,
         'created_at' => time() + \cheatsheet\Time::SECONDS_IN_A_YEAR,
-        'updated_at' => time() + \cheatsheet\Time::SECONDS_IN_A_YEAR
-    ]
+        'updated_at' => time() + \cheatsheet\Time::SECONDS_IN_A_YEAR,
+    ],
 ];

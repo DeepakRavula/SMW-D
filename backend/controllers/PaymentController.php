@@ -35,22 +35,25 @@ class PaymentController extends Controller
 
     /**
      * Lists all Payments models.
+     *
      * @return mixed
      */
     public function actionIndex()
     {
         $searchModel = new PaymentSearch();
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-		return $this->render('index', [
-					'searchModel' => $searchModel,
-					'dataProvider' => $dataProvider,
-		]);
+        return $this->render('index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
      * Displays a single Payments model.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -63,6 +66,7 @@ class PaymentController extends Controller
     /**
      * Creates a new Payments model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -81,7 +85,9 @@ class PaymentController extends Controller
     /**
      * Updates an existing Payments model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -100,7 +106,9 @@ class PaymentController extends Controller
     /**
      * Deletes an existing Payments model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -113,8 +121,11 @@ class PaymentController extends Controller
     /**
      * Finds the Payments model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param string $id
+     *
      * @return Payments the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
@@ -126,89 +137,95 @@ class PaymentController extends Controller
         }
     }
 
-	public function actionPrint() {
-		$paymentDataProvider = new ActiveDataProvider([
-			'query' => Payment::find(),
-			'pagination' => false,
-		]);
-		$this->layout = "/print";
-		return $this->render('_print', [
-			'paymentDataProvider' => $paymentDataProvider
-		]);
-	}
-
-	public function actionInvoicePayment($id) {
-		$paymentModel = new Payment();
-		$db = \Yii::$app->db;
-		$transaction = $db->beginTransaction();
-		$request = Yii::$app->request;
-		if ($paymentModel->load($request->post())) {
-			$paymentModel->invoiceId = $id;
-			$paymentModel->save();
-			$transaction->commit();
-			Yii::$app->session->setFlash('alert',
-				[
-				'options' => ['class' => 'alert-success'],
-				'body' => 'Payment has been recorded successfully'
-			]);
-			return $this->redirect(['invoice/view', 'id' => $id, '#' => 'payment']);
-		}
-	}
-
-	public function actionCreditPayment($id) {
-		$model = Invoice::findOne(['id' => $id]);
-		$paymentModel = new Payment();
-		$paymentModel->setScenario('apply-credit');
-		$response = \Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
-		$request = Yii::$app->request;
-		if ($paymentModel->load($request->post())) {
-			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-			$paymentModel->reference		 = $paymentModel->sourceId;
-			$paymentModel->invoiceId = $model->id;
-			if ($paymentModel->validate()) {
-				$paymentModel->save();
-
-				$creditPaymentId = $paymentModel->id;
-				$paymentModel->id				 = null;
-				$paymentModel->isNewRecord		 = true;
-				$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-				$paymentModel->invoiceId		 = $paymentModel->sourceId;
-				$paymentModel->reference		 = $model->id;
-				$paymentModel->save();
-
-				$debitPaymentId						 = $paymentModel->id;
-				$creditUsageModel					 = new CreditUsage();
-				$creditUsageModel->credit_payment_id = $creditPaymentId;
-				$creditUsageModel->debit_payment_id	 = $debitPaymentId;
-				$creditUsageModel->save();
-
-				$invoiceModel			 = Invoice::findOne(['id' => $paymentModel->sourceId]);
-				$invoiceModel->balance	 = $invoiceModel->balance + abs($paymentModel->amount);
-				$invoiceModel->save();
-				$response = [
-					'status' => true,
-				];
-			} else {
-				$paymentModel = ActiveForm::validate($paymentModel);
-                $response = [
-					'status' => false,
-					'errors' => $paymentModel
-				];
-			}
-			return $response;
-		}
-	}
-
-	public function actionEdit($id)
+    public function actionPrint()
     {
-        $request          = Yii::$app->request;
-        $response         = \Yii::$app->response;
+        $paymentDataProvider = new ActiveDataProvider([
+            'query' => Payment::find(),
+            'pagination' => false,
+        ]);
+        $this->layout = '/print';
+
+        return $this->render('_print', [
+            'paymentDataProvider' => $paymentDataProvider,
+        ]);
+    }
+
+    public function actionInvoicePayment($id)
+    {
+        $paymentModel = new Payment();
+        $db = \Yii::$app->db;
+        $transaction = $db->beginTransaction();
+        $request = Yii::$app->request;
+        if ($paymentModel->load($request->post())) {
+            $paymentModel->invoiceId = $id;
+            $paymentModel->save();
+            $transaction->commit();
+            Yii::$app->session->setFlash('alert',
+                [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Payment has been recorded successfully',
+            ]);
+
+            return $this->redirect(['invoice/view', 'id' => $id, '#' => 'payment']);
+        }
+    }
+
+    public function actionCreditPayment($id)
+    {
+        $model = Invoice::findOne(['id' => $id]);
+        $paymentModel = new Payment();
+        $paymentModel->setScenario('apply-credit');
+        $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $post             = $request->post();
+        $request = Yii::$app->request;
+        if ($paymentModel->load($request->post())) {
+            $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+            $paymentModel->reference = $paymentModel->sourceId;
+            $paymentModel->invoiceId = $model->id;
+            if ($paymentModel->validate()) {
+                $paymentModel->save();
+
+                $creditPaymentId = $paymentModel->id;
+                $paymentModel->id = null;
+                $paymentModel->isNewRecord = true;
+                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+                $paymentModel->invoiceId = $paymentModel->sourceId;
+                $paymentModel->reference = $model->id;
+                $paymentModel->save();
+
+                $debitPaymentId = $paymentModel->id;
+                $creditUsageModel = new CreditUsage();
+                $creditUsageModel->credit_payment_id = $creditPaymentId;
+                $creditUsageModel->debit_payment_id = $debitPaymentId;
+                $creditUsageModel->save();
+
+                $invoiceModel = Invoice::findOne(['id' => $paymentModel->sourceId]);
+                $invoiceModel->balance = $invoiceModel->balance + abs($paymentModel->amount);
+                $invoiceModel->save();
+                $response = [
+                    'status' => true,
+                ];
+            } else {
+                $paymentModel = ActiveForm::validate($paymentModel);
+                $response = [
+                    'status' => false,
+                    'errors' => $paymentModel,
+                ];
+            }
+
+            return $response;
+        }
+    }
+
+    public function actionEdit($id)
+    {
+        $request = Yii::$app->request;
+        $response = \Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        $post = $request->post();
         if ($request->post('hasEditable')) {
             $paymentIndex = $request->post('editableIndex');
-            $model        = Payment::findOne(['id' => $id]);
+            $model = Payment::findOne(['id' => $id]);
             if (!empty($post['Payment'][$paymentIndex]['amount'])) {
                 $newAmount = $post['Payment'][$paymentIndex]['amount'];
                 if ($model->isOtherPayments()) {
@@ -241,7 +258,7 @@ class PaymentController extends Controller
 
         $result = [
             'output' => $newAmount,
-            'message' => ''
+            'message' => '',
         ];
 
         return $result;
@@ -249,17 +266,17 @@ class PaymentController extends Controller
 
     public function actionEditAccountEntry($model, $newAmount)
     {
-        $model->amount            = $newAmount;
+        $model->amount = $newAmount;
         $model->save();
-        $lineItem                 = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
-        $lineItem->amount         = $model->amount;
+        $lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
+        $lineItem->amount = $model->amount;
         $model->invoice->subTotal = $lineItem->amount;
-        $model->invoice->total    = $model->invoice->subTotal + $model->invoice->tax;
+        $model->invoice->total = $model->invoice->subTotal + $model->invoice->tax;
         $lineItem->save();
 
         $result = [
             'output' => $newAmount,
-            'message' => ''
+            'message' => '',
         ];
 
         return $result;
@@ -269,14 +286,14 @@ class PaymentController extends Controller
     {
         $model->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
         $model->lastAmount = $model->amount;
-        $model->amount     = $newAmount;
-        $model->differnce  = $model->amount - $model->lastAmount;
+        $model->amount = $newAmount;
+        $model->differnce = $model->amount - $model->lastAmount;
         if ($model->validate()) {
             $model->save();
 
             $result = [
                 'output' => $newAmount,
-                'message' => ''
+                'message' => '',
             ];
         } else {
             $errors = ActiveForm::validate($model);
@@ -294,14 +311,14 @@ class PaymentController extends Controller
     {
         $model->setScenario(Payment::SCENARIO_CREDIT_USED);
         $model->lastAmount = $model->amount;
-        $model->amount     = $newAmount;
-        $model->differnce  = $model->amount - $model->lastAmount;
+        $model->amount = $newAmount;
+        $model->differnce = $model->amount - $model->lastAmount;
         if ($model->validate()) {
             $model->save();
 
             $result = [
                 'output' => $newAmount,
-                'message' => ''
+                'message' => '',
             ];
         } else {
             $errors = ActiveForm::validate($model);

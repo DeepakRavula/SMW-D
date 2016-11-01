@@ -12,10 +12,10 @@ use common\models\Course;
  */
 class CourseSearch extends Course
 {
-	public $query;
-	public $showAllCourses;
+    public $query;
+    public $showAllCourses;
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -27,7 +27,7 @@ class CourseSearch extends Course
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -36,7 +36,7 @@ class CourseSearch extends Course
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *
@@ -44,9 +44,9 @@ class CourseSearch extends Course
      */
     public function search($params)
     {
-		$locationId = Yii::$app->session->get('location_id');
+        $locationId = Yii::$app->session->get('location_id');
         $query = Course::find()
-				->groupProgram($locationId);
+                ->groupProgram($locationId);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -56,10 +56,10 @@ class CourseSearch extends Course
             return $dataProvider;
         }
 
-        $query->joinWith(['teacher' => function($query) use($locationId){                
-           $query->joinWith('userProfile up');                     
+        $query->joinWith(['teacher' => function ($query) use ($locationId) {
+            $query->joinWith('userProfile up');
         }]);
-        $query->joinWith('program'); 
+        $query->joinWith('program');
 
         $query->andFilterWhere([
             'id' => $this->id,
@@ -71,17 +71,17 @@ class CourseSearch extends Course
             'duration' => $this->duration,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
-        ]);       
-        
-       $query->andFilterWhere(['like', 'program.name', $this->query]);        
-       $query->orFilterWhere(['like', 'up.firstname', $this->query]);
-       $query->orFilterWhere(['like', 'up.lastname', $this->query]);
+        ]);
 
-		if (!$this->showAllCourses) {
-			$currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-			$query->andWhere(['>=', 'startDate', $currentDate]);
-		}
-		
-		return $dataProvider;
+        $query->andFilterWhere(['like', 'program.name', $this->query]);
+        $query->orFilterWhere(['like', 'up.firstname', $this->query]);
+        $query->orFilterWhere(['like', 'up.lastname', $this->query]);
+
+        if (!$this->showAllCourses) {
+            $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+            $query->andWhere(['>=', 'startDate', $currentDate]);
+        }
+
+        return $dataProvider;
     }
 }

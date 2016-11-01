@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "blog".
  *
@@ -16,7 +14,7 @@ use Yii;
 class Blog extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -24,7 +22,7 @@ class Blog extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -37,7 +35,7 @@ class Blog extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -50,7 +48,7 @@ class Blog extends \yii\db\ActiveRecord
         ];
     }
 
-	public function getUser()
+    public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }

@@ -26,23 +26,23 @@ jQuery(".dynamicform_phone").on("afterDelete", function(e) {
 $this->registerJs($js);
 ?>
 <?php
-	DynamicFormWidget::begin([
-		'widgetContainer' => 'dynamicform_phone', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
-		'widgetBody' => '.phone-container-items', // required: css class selector
-		'widgetItem' => '.phone-item', // required: css class
-		'limit' => 10, // the maximum times, an element can be cloned (default 999)
-		'min' => 0, // 0 or 1 (default 1)
-		'insertButton' => '.phone-add-item', // css class
-		'deleteButton' => '.phone-remove-item', // css class
-		'model' => $phoneNumberModels[0],
-		'formId' => 'dynamic-form',
-		'formFields' => [
-			'phonenumber',
-			'phonelabel',
-			'phoneextension',
-		],
-	]);
-	?>
+    DynamicFormWidget::begin([
+        'widgetContainer' => 'dynamicform_phone', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
+        'widgetBody' => '.phone-container-items', // required: css class selector
+        'widgetItem' => '.phone-item', // required: css class
+        'limit' => 10, // the maximum times, an element can be cloned (default 999)
+        'min' => 0, // 0 or 1 (default 1)
+        'insertButton' => '.phone-add-item', // css class
+        'deleteButton' => '.phone-remove-item', // css class
+        'model' => $phoneNumberModels[0],
+        'formId' => 'dynamic-form',
+        'formFields' => [
+            'phonenumber',
+            'phonelabel',
+            'phoneextension',
+        ],
+    ]);
+    ?>
 	<div class="row-fluid">
 		<div class="col-md-12">
 			<h4 class="pull-left m-r-20">Phone Numbers</h4>
@@ -59,11 +59,11 @@ $this->registerJs($js);
 						<div class="clearfix"></div>
 					</h4>
 					<?php
-					// necessary for update action.
-					if (!$phoneNumberModel->isNewRecord) {
-						echo Html::activeHiddenInput($phoneNumberModel, "[{$index}]id");
-					}
-					?>
+                    // necessary for update action.
+                    if (!$phoneNumberModel->isNewRecord) {
+                        echo Html::activeHiddenInput($phoneNumberModel, "[{$index}]id");
+                    }
+                    ?>
 
 	                <div class="row">
                         <div class="clearfix"></div>

@@ -14,13 +14,13 @@ use common\models\Invoice;
  */
 class InvoiceSearch extends Invoice
 {
-	public $fromDate = '1-1-2016';
-	public $toDate = '31-12-2016';
+    public $fromDate = '1-1-2016';
+    public $toDate = '31-12-2016';
     public $type;
     public $query;
-	public $notSent = true;
-	/**
-     * @inheritdoc
+    public $notSent = true;
+    /**
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -30,7 +30,7 @@ class InvoiceSearch extends Invoice
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -39,62 +39,66 @@ class InvoiceSearch extends Invoice
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
+     *
      * @return ActiveDataProvider
      */
     public function search($params)
     {
-		$session = Yii::$app->session;
-		$locationId = $session->get('location_id');
+        $session = Yii::$app->session;
+        $locationId = $session->get('location_id');
         $query = Invoice::find()->alias('i')
-				->where([
-					'location_id' => $locationId,
-				]);
+                ->where([
+                    'location_id' => $locationId,
+                ]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        if ( !($this->load($params) && $this->validate())) {
+        if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
 
-        $query->joinWith(['user' => function($query) {				
+        $query->joinWith(['user' => function ($query) {
             $query->joinWith('userProfile up')
-                  ->joinWith('phoneNumber pn');                     
+                  ->joinWith('phoneNumber pn');
         }]);
         $query->groupBy('i.invoice_number');
-       
+
         $query->andFilterWhere(['like', 'up.firstname', $this->query])
               ->orFilterWhere(['like', 'up.lastname', $this->query])
               ->orFilterWhere(['like', 'pn.number', $this->query]);
-         
-		$this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);
-		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
-        
-		$query->andWhere(['between','i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
-        
+
+        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
+        $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
+
+        $query->andWhere(['between', 'i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+
         $query->andFilterWhere(['type' => $this->type]);
-		if ($this->notSent) {
-			$query->andFilterWhere(['isSent' => false]);
-		}
+        if ($this->notSent) {
+            $query->andFilterWhere(['isSent' => false]);
+        }
+
         return $dataProvider;
     }
 
-	public static function invoiceStatuses() {
-		return [
-			'' => 'All',
-			self::INVOICE_STATUS_UNINVOICED => 'Not Invoiced',	
-			Invoice::STATUS_PAID => 'Paid',
-			Invoice::STATUS_OWING => 'Owing',
+    public static function invoiceStatuses()
+    {
+        return [
+            '' => 'All',
+            self::INVOICE_STATUS_UNINVOICED => 'Not Invoiced',
+            Invoice::STATUS_PAID => 'Paid',
+            Invoice::STATUS_OWING => 'Owing',
 
-		];
-	}
+        ];
+    }
 
-	public static function lessonStatuses() {
-		return [
-			'' => 'All',
-			Lesson::STATUS_COMPLETED => 'Completed',
-			'scheduled' => 'Scheduled',
-		];
-	}
+    public static function lessonStatuses()
+    {
+        return [
+            '' => 'All',
+            Lesson::STATUS_COMPLETED => 'Completed',
+            'scheduled' => 'Scheduled',
+        ];
+    }
 }

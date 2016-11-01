@@ -28,6 +28,7 @@ class QualificationController extends Controller
 
     /**
      * Lists all Qualification models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -43,7 +44,9 @@ class QualificationController extends Controller
 
     /**
      * Displays a single Qualification model.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -56,6 +59,7 @@ class QualificationController extends Controller
     /**
      * Creates a new Qualification model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -74,7 +78,9 @@ class QualificationController extends Controller
     /**
      * Updates an existing Qualification model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -93,7 +99,9 @@ class QualificationController extends Controller
     /**
      * Deletes an existing Qualification model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -106,8 +114,11 @@ class QualificationController extends Controller
     /**
      * Finds the Qualification model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param string $id
+     *
      * @return Qualification the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

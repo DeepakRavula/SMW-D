@@ -1,7 +1,5 @@
 <?php
 
-use yii\helpers\Html;
-
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -11,7 +9,7 @@ use yii\helpers\Html;
 
     <?php echo $this->render('_form', [
         'model' => $model,
-		'customer' => $customer,
+        'customer' => $customer,
     ]) ?>
 
 </div>

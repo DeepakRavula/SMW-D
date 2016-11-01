@@ -15,7 +15,8 @@ class PrivateLessonQuery extends \yii\db\ActiveQuery
     }*/
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\PrivateLesson[]|array
      */
     public function all($db = null)
@@ -24,7 +25,8 @@ class PrivateLessonQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\PrivateLesson|array|null
      */
     public function one($db = null)

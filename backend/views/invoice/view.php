@@ -1,8 +1,6 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
-use yii\helpers\Url;
 use backend\models\search\InvoiceSearch;
 use yii\bootstrap\Tabs;
 use common\models\Invoice;
@@ -39,82 +37,82 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 </style>
 <?php 
 $lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->id]);
-if( ! empty($lineItem)){
-	$itemTypeId = $lineItem->item_type_id;
+if (!empty($lineItem)) {
+    $itemTypeId = $lineItem->item_type_id;
 } else {
-	$itemTypeId = null;
+    $itemTypeId = null;
 }
 
 ?>
-<?php if((int) $model->user_id === Invoice::USER_UNASSINGED || (int)$model->total === 0 || (int) $itemTypeId === ItemType::TYPE_MISC):?>
+<?php if ((int) $model->user_id === Invoice::USER_UNASSINGED || (int) $model->total === 0 || (int) $itemTypeId === ItemType::TYPE_MISC):?>
 <div class="tabbable-panel">
      <div class="tabbable-line">
 <?php 
 
 $customerContent = $this->render('_customer', [
-	'model' => $model,
-	'customer' => $customer,
+    'model' => $model,
+    'customer' => $customer,
 ]);
 $guestContent = $this->render('_guest', [
-	'model' => $model,
-	'userModel' => $userModel,
+    'model' => $model,
+    'userModel' => $userModel,
     'customer' => $customer,
 ]);
 ?>
 <?php echo Tabs::widget([
     'items' => [
-		[
+        [
             'label' => 'Customer',
             'content' => $customerContent,
-			'options' => [
+            'options' => [
                     'id' => 'customer-tab',
-            	],
+                ],
         ],
-		[
+        [
             'label' => 'Walk-in',
             'content' => $guestContent,
-			'options' => [
+            'options' => [
                     'id' => 'guest-tab',
-            	],
+                ],
         ],
     ],
-]);?>
+]); ?>
 </div>
 </div>
-<?php endif;?>
+<?php endif; ?>
 <div class="tabbable-panel">
      <div class="tabbable-line">
 <?php 
 
-$invoiceContent =  $this->render('_view-invoice', [
+$invoiceContent = $this->render('_view-invoice', [
     'model' => $model,
-	'customer' => $customer,
+    'customer' => $customer,
     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 ]);
-$paymentContent =  $this->render('_payment', [
+$paymentContent = $this->render('_payment', [
     'model' => $model,
     'invoicePayments' => $invoicePayments,
-	'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+    'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
 ]);
 
 ?>
 <?php echo Tabs::widget([
     'items' => [
-		[
+        [
             'label' => 'Invoice',
             'content' => $invoiceContent,
-			'options' => [
+            'options' => [
                     'id' => 'invoice',
-            	],
+                ],
         ],
-		[
+        [
             'label' => 'Payments',
             'content' => $paymentContent,
-			'options' => [
+            'options' => [
                     'id' => 'payment',
-            	],
+                ],
         ],
     ],
-]);?>
+]); ?>
 </div>
 </div>

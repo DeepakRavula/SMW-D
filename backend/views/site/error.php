@@ -19,7 +19,7 @@ $this->title = $name;
                         'backend',
                         'Error {code}',
                         [
-                            'code' => property_exists($exception, 'statusCode') ? $exception->statusCode : 500
+                            'code' => property_exists($exception, 'statusCode') ? $exception->statusCode : 500,
                         ])
                     ?>
                 </h3>

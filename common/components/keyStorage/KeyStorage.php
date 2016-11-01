@@ -1,4 +1,5 @@
 <?php
+
 namespace common\components\keyStorage;
 
 use yii\base\Component;
@@ -6,8 +7,7 @@ use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
- * Class KeyStorage
- * @package common\components\keyStorage
+ * Class KeyStorage.
  */
 class KeyStorage extends Component
 {
@@ -32,21 +32,24 @@ class KeyStorage extends Component
     /**
      * @param $key
      * @param $value
+     *
      * @return mixed
      */
     public function set($key, $value)
     {
         $model = $this->getModel($key);
         if (!$model) {
-            $model = new $this->modelClass;
+            $model = new $this->modelClass();
             $model->key = $key;
         }
         $model->value = $value;
         if ($model->save(false)) {
             $this->values[$key] = $value;
             Yii::$app->cache->set($this->getCacheKey($key), $value, $this->cachingDuration);
+
             return true;
-        };
+        }
+
         return false;
     }
 
@@ -62,9 +65,10 @@ class KeyStorage extends Component
 
     /**
      * @param $key
-     * @param null $default
-     * @param bool $cache
+     * @param null     $default
+     * @param bool     $cache
      * @param int|bool $cachingDuration
+     *
      * @return mixed|null
      */
     public function get($key, $default = null, $cache = true, $cachingDuration = false)
@@ -89,11 +93,13 @@ class KeyStorage extends Component
             $model = $this->getModel($key);
             $value = $model ? $model->value : $default;
         }
+
         return $value;
     }
 
     /**
      * @param array $keys
+     *
      * @return array
      */
     public function getAll(array $keys)
@@ -102,12 +108,14 @@ class KeyStorage extends Component
         foreach ($keys as $key) {
             $values[$key] = $this->get($key);
         }
+
         return $values;
     }
 
     /**
      * @param $key
      * @param bool $cache
+     *
      * @return bool
      */
     public function has($key, $cache = true)
@@ -117,6 +125,7 @@ class KeyStorage extends Component
 
     /**
      * @param array $keys
+     *
      * @return bool
      */
     public function hasAll(array $keys)
@@ -126,16 +135,19 @@ class KeyStorage extends Component
                 return false;
             }
         }
+
         return true;
     }
 
     /**
      * @param $key
+     *
      * @return bool
      */
     public function remove($key)
     {
         unset($this->values[$key]);
+
         return call_user_func($this->modelClass.'::deleteAll', ['key' => $key]);
     }
 
@@ -151,16 +163,19 @@ class KeyStorage extends Component
 
     /**
      * @param $key
+     *
      * @return mixed
      */
     protected function getModel($key)
     {
         $query = call_user_func($this->modelClass.'::find');
-        return $query->where(['key'=>$key])->select(['key', 'value'])->one();
+
+        return $query->where(['key' => $key])->select(['key', 'value'])->one();
     }
 
     /**
      * @param $key
+     *
      * @return array
      */
     protected function getCacheKey($key)
@@ -168,7 +183,7 @@ class KeyStorage extends Component
         return [
             __CLASS__,
             $this->cachePrefix,
-            $key
+            $key,
         ];
     }
 }

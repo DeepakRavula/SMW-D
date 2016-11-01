@@ -15,53 +15,53 @@ use yii\helpers\Url;
 ?>
 
 <div class="lesson-form">
-<?php if(Yii::$app->controller->id === 'lesson'): ?>
+<?php if (Yii::$app->controller->id === 'lesson'): ?>
 	<?=
-		$this->render('view', [
-    		'model' => $model,
-    	]);
-	?>
-<?php endif;?>
+        $this->render('view', [
+            'model' => $model,
+        ]);
+    ?>
+<?php endif; ?>
 <?php $form = ActiveForm::begin([
 ]); ?>
 <div class="row p-20">
-	<?php if($model->isNewRecord): ?>
+	<?php if ($model->isNewRecord): ?>
         <div class="col-md-4">
             <?php echo $form->field($model, 'programId')->dropDownList(
                     ArrayHelper::map(
                         Program::find()
-							->joinWith(['course' => function($query) use($studentModel){
-								$query->joinWith(['enrolment' => function($query) use($studentModel){
-									$query->where(['studentId' => $studentModel->id]);	
-								}]);
-							}])
+                            ->joinWith(['course' => function ($query) use ($studentModel) {
+                                $query->joinWith(['enrolment' => function ($query) use ($studentModel) {
+                                    $query->where(['studentId' => $studentModel->id]);
+                                }]);
+                            }])
                         ->all(),
-                     'id','name'),['prompt'=>'Select Program'] )->label() 
+                     'id', 'name'), ['prompt' => 'Select Program'])->label()
             ?>  
         </div>
     	<div class="col-md-4">
         <?php
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
-        	'options' => ['id' => 'lesson-teacherid'],
+            'options' => ['id' => 'lesson-teacherid'],
             'pluginOptions' => [
                 'depends' => ['lesson-programid'],
                 'placeholder' => 'Select...',
-                'url' => Url::to(['/course/teachers'])
-            ]
+                'url' => Url::to(['/course/teachers']),
+            ],
         ]);
         ?>
         </div>
-		<?php endif;?>
+		<?php endif; ?>
 		<div class="col-md-4">
             <?php 
-              if($model->isNewRecord){
+              if ($model->isNewRecord) {
                   $model->date = (new \DateTime())->format('d-m-Y g:i A');
               }
             ?>
             <?php
-            	echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-               		'options' => [
+                echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
+                       'options' => [
                     'value' => Yii::$app->formatter->asDateTime($model->date),
                ],
                 'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
@@ -69,9 +69,9 @@ use yii\helpers\Url;
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy HH:ii P',
                     'showMeridian' => true,
-                    'minuteStep' => 15
-                ]
-			  ]);
+                    'minuteStep' => 15,
+                ],
+              ]);
             ?>
         </div>
         <div class="col-md-4">			

@@ -2,29 +2,27 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "payment_methods".
  *
- * @property integer $id
+ * @property int $id
  * @property string $name
  */
 class PaymentMethod extends \yii\db\ActiveRecord
 {
-	const TYPE_ACCOUNT_ENTRY = 1;
-	const TYPE_CREDIT_USED = 2;
-	const TYPE_CREDIT_APPLIED = 3;
-	const TYPE_CASH = 4;
-	const TYPE_CHEQUE = 5;
-	const TYPE_CREDIT_CARD = 6;
-	const TYPE_APPLY_CREDIT = 7;
+    const TYPE_ACCOUNT_ENTRY = 1;
+    const TYPE_CREDIT_USED = 2;
+    const TYPE_CREDIT_APPLIED = 3;
+    const TYPE_CASH = 4;
+    const TYPE_CHEQUE = 5;
+    const TYPE_CREDIT_CARD = 6;
+    const TYPE_APPLY_CREDIT = 7;
 
-	const STATUS_ACTIVE = 1;
-	const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -32,7 +30,7 @@ class PaymentMethod extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -44,7 +42,7 @@ class PaymentMethod extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {

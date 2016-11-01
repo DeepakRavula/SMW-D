@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "tax_status".
  *
@@ -12,9 +10,8 @@ use Yii;
  */
 class TaxTypeTaxStatusAssoc extends \yii\db\ActiveRecord
 {
-	
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -22,7 +19,7 @@ class TaxTypeTaxStatusAssoc extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -32,7 +29,7 @@ class TaxTypeTaxStatusAssoc extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -42,8 +39,8 @@ class TaxTypeTaxStatusAssoc extends \yii\db\ActiveRecord
         ];
     }
 
-	public function getTaxType()
+    public function getTaxType()
     {
-       return $this->hasOne(TaxType::className(), ['id' => 'tax_type_id']);
+        return $this->hasOne(TaxType::className(), ['id' => 'tax_type_id']);
     }
 }

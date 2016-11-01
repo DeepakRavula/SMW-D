@@ -7,9 +7,10 @@ use yii\bootstrap\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
 /* @var $form yii\bootstrap\ActiveForm */
-if(! $model->isNewRecord){
-$title = (int)$model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Edit Private Progam' : 'Edit Group Progam';
-$this->title = $title;}
+if (!$model->isNewRecord) {
+    $title = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Edit Private Progam' : 'Edit Group Progam';
+    $this->title = $title;
+}
 ?>
 
 <div class="program-form">
@@ -21,7 +22,7 @@ $this->title = $title;}
 			<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 		</div>
 		<div class="col-md-4">
-			<?php $rateLabel = (int)$model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour($)' : 'Rate Per Course($)';?>
+			<?php $rateLabel = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour($)' : 'Rate Per Course($)'; ?>
 			<?php echo $form->field($model, 'rate')->textInput()->label($rateLabel); ?>
 		</div>
 		<div class="col-md-4">
@@ -34,10 +35,10 @@ $this->title = $title;}
 	<div class="row-fluid">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php 
-			if(! $model->isNewRecord){
-				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn']); 	
-			}
-		?>
+            if (!$model->isNewRecord) {
+                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+            }
+        ?>
     </div>
     <?php ActiveForm::end(); ?>
 
@@ -50,13 +51,13 @@ $this->title = $title;}
 		<p class="text-info">
 			<strong>What's that per month?</strong></p>
 	<div>
-			Four 30min Lessons @  $<span id="rate-30-min"><?= Yii::$app->formatter->asDecimal((($model->rate) / 2),2); ?></span> each = $<span id="rate-month-30-min"><?= Yii::$app->formatter->asDecimal(((($model->rate)/ 2) * 4),2); ?></span>/mn
+			Four 30min Lessons @  $<span id="rate-30-min"><?= Yii::$app->formatter->asDecimal((($model->rate) / 2), 2); ?></span> each = $<span id="rate-month-30-min"><?= Yii::$app->formatter->asDecimal(((($model->rate) / 2) * 4), 2); ?></span>/mn
 	</div>
 	<div>
-			Four 45min Lessons @  $<span id="rate-45-min"><?= Yii::$app->formatter->asDecimal((($model->rate) / (4 / 3)),2); ?></span> each = $<span id="rate-month-45-min"><?= Yii::$app->formatter->asDecimal(((($model->rate) / (4 / 3)) * 4),2); ?></span>/mn
+			Four 45min Lessons @  $<span id="rate-45-min"><?= Yii::$app->formatter->asDecimal((($model->rate) / (4 / 3)), 2); ?></span> each = $<span id="rate-month-45-min"><?= Yii::$app->formatter->asDecimal(((($model->rate) / (4 / 3)) * 4), 2); ?></span>/mn
 	</div>
 	<div>
-			Four 60min Lessons @  $<span id="rate-60-min"><?= Yii::$app->formatter->asDecimal(($model->rate),2); ?></span> each = $<span id="rate-month-60-min"><?= Yii::$app->formatter->asDecimal((($model->rate / 1) * 4),2); ?></span>/mn
+			Four 60min Lessons @  $<span id="rate-60-min"><?= Yii::$app->formatter->asDecimal(($model->rate), 2); ?></span> each = $<span id="rate-month-60-min"><?= Yii::$app->formatter->asDecimal((($model->rate / 1) * 4), 2); ?></span>/mn
 	</div>
 	</div>
 </div>

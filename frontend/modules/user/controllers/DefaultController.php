@@ -27,11 +27,11 @@ class DefaultController extends Controller
                     $file = $event->file;
                     $img = ImageManagerStatic::make($file->read())->fit(215, 215);
                     $file->put($img->encode());
-                }
+                },
             ],
             'avatar-delete' => [
-                'class' => DeleteAction::className()
-            ]
+                'class' => DeleteAction::className(),
+            ],
         ];
     }
 
@@ -46,10 +46,10 @@ class DefaultController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['@']
-                    ]
-                ]
-            ]
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -64,19 +64,21 @@ class DefaultController extends Controller
         $model = new MultiModel([
             'models' => [
                 'account' => $accountForm,
-                'profile' => Yii::$app->user->identity->userProfile
-            ]
+                'profile' => Yii::$app->user->identity->userProfile,
+            ],
         ]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $locale = $model->getModel('profile')->locale;
             Yii::$app->session->setFlash('forceUpdateLocale');
             Yii::$app->session->setFlash('alert', [
-                'options' => ['class'=>'alert-success'],
-                'body' => Yii::t('frontend', 'Your account has been successfully saved', [], $locale)
+                'options' => ['class' => 'alert-success'],
+                'body' => Yii::t('frontend', 'Your account has been successfully saved', [], $locale),
             ]);
+
             return $this->refresh();
         }
-        return $this->render('index', ['model'=>$model]);
+
+        return $this->render('index', ['model' => $model]);
     }
 }

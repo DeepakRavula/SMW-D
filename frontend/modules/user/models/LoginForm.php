@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\modules\user\models;
 
 use cheatsheet\Time;
@@ -7,7 +8,7 @@ use Yii;
 use yii\base\Model;
 
 /**
- * Login form
+ * Login form.
  */
 class LoginForm extends Model
 {
@@ -18,7 +19,7 @@ class LoginForm extends Model
     private $user = false;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -35,12 +36,11 @@ class LoginForm extends Model
     public function attributeLabels()
     {
         return [
-            'identity'=>Yii::t('frontend', 'Username or email'),
-            'password'=>Yii::t('frontend', 'Password'),
-            'rememberMe'=>Yii::t('frontend', 'Remember Me'),
+            'identity' => Yii::t('frontend', 'Username or email'),
+            'password' => Yii::t('frontend', 'Password'),
+            'rememberMe' => Yii::t('frontend', 'Remember Me'),
         ];
     }
-
 
     /**
      * Validates the password.
@@ -59,7 +59,7 @@ class LoginForm extends Model
     /**
      * Logs in a user using the provided username and password.
      *
-     * @return boolean whether the user is logged in successfully
+     * @return bool whether the user is logged in successfully
      */
     public function login()
     {
@@ -68,11 +68,12 @@ class LoginForm extends Model
                 return true;
             }
         }
+
         return false;
     }
 
     /**
-     * Finds user by [[username]]
+     * Finds user by [[username]].
      *
      * @return User|null
      */
@@ -81,7 +82,7 @@ class LoginForm extends Model
         if ($this->user === false) {
             $this->user = User::find()
                 ->active()
-                ->andWhere(['or', ['username'=>$this->identity], ['email'=>$this->identity]])
+                ->andWhere(['or', ['username' => $this->identity], ['email' => $this->identity]])
                 ->one();
         }
 

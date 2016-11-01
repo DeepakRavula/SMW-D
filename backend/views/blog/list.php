@@ -1,7 +1,5 @@
 <?php
 
-use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\widgets\ListView;
 
 /* @var $this yii\web\View */
@@ -13,8 +11,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="blog-index">
 	<div class="content">
 		<?php echo ListView::widget([
-		        'dataProvider' => $dataProvider,
-		        'itemView'=>'_view-blog', 
-		    ]); ?>
+                'dataProvider' => $dataProvider,
+                'itemView' => '_view-blog',
+            ]); ?>
 	</div>
 </div>

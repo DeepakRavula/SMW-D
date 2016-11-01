@@ -2,26 +2,21 @@
 
 namespace common\models;
 
-use Yii;
-use common\models\Invoice;
-use common\models\Lesson;
-
 /**
  * This is the model class for table "invoice_line_item".
  *
- * @property integer $id
- * @property integer $invoice_id
- * @property integer $item_id
- * @property double $unit
+ * @property int $id
+ * @property int $invoice_id
+ * @property int $item_id
+ * @property float $unit
  * @property string $amount
  */
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
-	private $isRoyaltyExempted;
-
+    private $isRoyaltyExempted;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -29,29 +24,29 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['unit', 'amount', 'description', 'tax_status'], 'required', 'when' => function ($model, $attribute) {
-					return (int) $model->item_type_id === ItemType::TYPE_MISC;
-				}
-			],
+                return (int) $model->item_type_id === ItemType::TYPE_MISC;
+            },
+            ],
             [['amount'], 'number', 'when' => function ($model, $attribute) {
-					return (int) $model->item_type_id === ItemType::TYPE_MISC;
-				}
-			],
-			[['isRoyaltyExempted'], 'boolean', 'when' => function ($model, $attribute) {
-					return (int) $model->item_type_id === ItemType::TYPE_MISC;
-				}
-			],
-			[['unit'], 'integer', 'when' => function ($model, $attribute) {
-					return (int) $model->item_type_id === ItemType::TYPE_MISC;
-				}
-			],
-			[['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate'], 'safe'],
-		];
+                return (int) $model->item_type_id === ItemType::TYPE_MISC;
+            },
+            ],
+            [['isRoyaltyExempted'], 'boolean', 'when' => function ($model, $attribute) {
+                return (int) $model->item_type_id === ItemType::TYPE_MISC;
+            },
+            ],
+            [['unit'], 'integer', 'when' => function ($model, $attribute) {
+                return (int) $model->item_type_id === ItemType::TYPE_MISC;
+            },
+            ],
+            [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate'], 'safe'],
+        ];
     }
 
     public function getLesson()
@@ -59,7 +54,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(Lesson::className(), ['id' => 'item_id']);
     }
 
-	public function getItemType()
+    public function getItemType()
     {
         return $this->hasOne(ItemType::className(), ['id' => 'item_type_id']);
     }
@@ -69,28 +64,28 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
     }
 
-	public function getOriginalInvoice()
+    public function getOriginalInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
-				->where(['invoice.type' => Invoice::TYPE_INVOICE]);
+                ->where(['invoice.type' => Invoice::TYPE_INVOICE]);
     }
 
-	public function getIsRoyaltyExempted() 
-	{
- 		return $this->isRoyaltyExempted;
-	}
+    public function getIsRoyaltyExempted()
+    {
+        return $this->isRoyaltyExempted;
+    }
 
-	public function setIsRoyaltyExempted($isRoyaltyExempted) 
-	{
-    	$this->isRoyalty = ! $isRoyaltyExempted;
-	}
+    public function setIsRoyaltyExempted($isRoyaltyExempted)
+    {
+        $this->isRoyalty = !$isRoyaltyExempted;
+    }
 
-	public function getIsRoyalty() 
-	{
-    	return $this->isRoyalty;
-	}
+    public function getIsRoyalty()
+    {
+        return $this->isRoyalty;
+    }
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -100,10 +95,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'lesson_id' => 'Lesson ID',
             'unit' => 'Quantity',
             'amount' => 'Total',
-			'description' => 'Description',
-			'tax_rate' => 'Tax',
-			'tax_status' => 'Tax Status',
-			'isRoyaltyExempted' => 'Exempt from Royalty'
+            'description' => 'Description',
+            'tax_rate' => 'Tax',
+            'tax_status' => 'Tax Status',
+            'isRoyaltyExempted' => 'Exempt from Royalty',
         ];
     }
 }

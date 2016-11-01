@@ -26,23 +26,23 @@ jQuery(".dynamicform_availability").on("afterDelete", function(e) {
 $this->registerJs($js);
 ?>
 <?php
-	DynamicFormWidget::begin([
-		'widgetContainer' => 'dynamicform_availability', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
-		'widgetBody' => '.availability-container-items', // required: css class selector
-		'widgetItem' => '.availability-item', // required: css class
-		'limit' => 10, // the maximum times, an element can be cloned (default 999)
-		'min' => 0, // 0 or 1 (default 1)
-		'insertButton' => '.availability-add-item', // css class
-		'deleteButton' => '.availability-remove-item', // css class
-		'model' => $availabilityModels[0],
-		'formId' => 'dynamic-form',
-		'formFields' => [
-			'day',
-			'fromTime',
-			'toTime',
-		],
-	]);
-	?>
+    DynamicFormWidget::begin([
+        'widgetContainer' => 'dynamicform_availability', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
+        'widgetBody' => '.availability-container-items', // required: css class selector
+        'widgetItem' => '.availability-item', // required: css class
+        'limit' => 10, // the maximum times, an element can be cloned (default 999)
+        'min' => 0, // 0 or 1 (default 1)
+        'insertButton' => '.availability-add-item', // css class
+        'deleteButton' => '.availability-remove-item', // css class
+        'model' => $availabilityModels[0],
+        'formId' => 'dynamic-form',
+        'formFields' => [
+            'day',
+            'fromTime',
+            'toTime',
+        ],
+    ]);
+    ?>
 	<div class="row-fluid">
 		<div class="col-md-12">
 			<h4 class="pull-left m-r-20">Teacher Availability</h4>
@@ -58,22 +58,22 @@ $this->registerJs($js);
 						<div class="clearfix"></div>
 					</h4>
 					<?php
-					// necessary for update action.
-					if (!$availabilityModel->isNewRecord) {
-						echo Html::activeHiddenInput($availabilityModel, "[{$index}]id");
-					}
-					?>
+                    // necessary for update action.
+                    if (!$availabilityModel->isNewRecord) {
+                        echo Html::activeHiddenInput($availabilityModel, "[{$index}]id");
+                    }
+                    ?>
 
 	                <div class="row">
 	                    <div class="col-sm-4">
-	<?= $form->field($availabilityModel, "[{$index}]day")->dropdownList(TeacherAvailability::getWeekdaysList(),['prompt' => 'select day']) ?>
+	<?= $form->field($availabilityModel, "[{$index}]day")->dropdownList(TeacherAvailability::getWeekdaysList(), ['prompt' => 'select day']) ?>
 	                    </div>
 	                    <div class="col-sm-4">
 <?php
-	$fromTime = Yii::$app->formatter->asTime($availabilityModel->from_time);
+    $fromTime = Yii::$app->formatter->asTime($availabilityModel->from_time);
     $toTime = Yii::$app->formatter->asTime($availabilityModel->to_time);
-	$availabilityModel->from_time = ! empty($availabilityModel->from_time) ? $fromTime : null;
-	$availabilityModel->to_time = ! empty($availabilityModel->to_time) ? $toTime : null;
+    $availabilityModel->from_time = !empty($availabilityModel->from_time) ? $fromTime : null;
+    $availabilityModel->to_time = !empty($availabilityModel->to_time) ? $toTime : null;
 ?>
 	<?= $form->field($availabilityModel, "[{$index}]from_time")->widget(TimePicker::classname(), []); ?>
 	                    </div>

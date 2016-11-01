@@ -2,18 +2,16 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "country".
  *
- * @property integer $id
+ * @property int $id
  * @property string $name
  */
 class Country extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -21,7 +19,7 @@ class Country extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -32,7 +30,7 @@ class Country extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {

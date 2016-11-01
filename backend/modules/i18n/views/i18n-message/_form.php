@@ -12,11 +12,11 @@ use yii\bootstrap\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?php echo $form->field($model, 'id')->textInput(['disabled'=>!$model->isNewRecord]) ?>
+    <?php echo $form->field($model, 'id')->textInput(['disabled' => !$model->isNewRecord]) ?>
 
     <?php if (!$model->isNewRecord): ?>
-        <?php echo $form->field($model, 'category')->textInput(['disabled'=>true]) ?>
-        <?php echo $form->field($model, 'sourceMessage')->textInput(['disabled'=>true]) ?>
+        <?php echo $form->field($model, 'category')->textInput(['disabled' => true]) ?>
+        <?php echo $form->field($model, 'sourceMessage')->textInput(['disabled' => true]) ?>
     <?php endif; ?>
 
     <?php echo $form->field($model, 'language')->textInput(['maxlength' => 16]) ?>

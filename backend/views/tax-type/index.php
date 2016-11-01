@@ -14,20 +14,22 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="tax-index">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-		'rowOptions' => function ($model, $key, $index, $grid) {
-            $u= \yii\helpers\StringHelper::basename(get_class($model));
-            $u= yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
-            return ['id' => $model['id'], 'style' => "cursor: pointer", 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $u = \yii\helpers\StringHelper::basename(get_class($model));
+            $u = yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);
+
+            return ['id' => $model['id'], 'style' => 'cursor: pointer', 'onclick' => 'location.href="'.$u.'?id="+(this.id);'];
         },
         'columns' => [
-         
-           	[
-				'label' => 'Province Name',
-				'value' => function($data) {
-					$provinceName = ! (empty($data->province->name)) ? $data->province->name : null;
-					return $provinceName;
-                } 
-			],
+
+               [
+                'label' => 'Province Name',
+                'value' => function ($data) {
+                    $provinceName = !(empty($data->province->name)) ? $data->province->name : null;
+
+                    return $provinceName;
+                },
+            ],
             'tax_rate',
             'since:date',
 

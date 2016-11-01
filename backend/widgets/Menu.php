@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\widgets;
 
 use yii\helpers\ArrayHelper;
@@ -6,8 +7,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 /**
- * Class Menu
- * @package backend\components\widget
+ * Class Menu.
  */
 class Menu extends \yii\widgets\Menu
 {
@@ -39,7 +39,7 @@ class Menu extends \yii\widgets\Menu
     public $parentRightIcon = '<i class="fa fa-angle-left pull-right"></i>';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function renderItem($item)
     {
@@ -58,11 +58,11 @@ class Menu extends \yii\widgets\Menu
             $template = ArrayHelper::getValue($item, 'template', $this->linkTemplate);
 
             return strtr($template, [
-                '{badge}'=> isset($item['badge'])
+                '{badge}' => isset($item['badge'])
                     ? Html::tag('small', $item['badge'], $item['badgeOptions'])
                     : '',
-                '{icon}'=>isset($item['icon']) ? $item['icon'] : '',
-                '{right-icon}'=>isset($item['right-icon']) ? $item['right-icon'] : '',
+                '{icon}' => isset($item['icon']) ? $item['icon'] : '',
+                '{right-icon}' => isset($item['right-icon']) ? $item['right-icon'] : '',
                 '{url}' => Url::to($item['url']),
                 '{label}' => $item['label'],
             ]);
@@ -70,11 +70,11 @@ class Menu extends \yii\widgets\Menu
             $template = ArrayHelper::getValue($item, 'template', $this->labelTemplate);
 
             return strtr($template, [
-                '{badge}'=> isset($item['badge'])
+                '{badge}' => isset($item['badge'])
                     ? Html::tag('small', $item['badge'], $item['badgeOptions'])
                     : '',
-                '{icon}'=>isset($item['icon']) ? $item['icon'] : '',
-                '{right-icon}'=>isset($item['right-icon']) ? $item['right-icon'] : '',
+                '{icon}' => isset($item['icon']) ? $item['icon'] : '',
+                '{right-icon}' => isset($item['right-icon']) ? $item['right-icon'] : '',
                 '{label}' => $item['label'],
             ]);
         }

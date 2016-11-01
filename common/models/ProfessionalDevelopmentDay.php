@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "professional_development_day".
  *
@@ -13,7 +11,7 @@ use Yii;
 class ProfessionalDevelopmentDay extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -21,17 +19,17 @@ class ProfessionalDevelopmentDay extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id','date'], 'safe'],
+            [['id', 'date'], 'safe'],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -42,18 +40,20 @@ class ProfessionalDevelopmentDay extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
-     * @return \common\models\query\ProfessionalDevelopmentDayQuery the active query used by this AR class.
+     * {@inheritdoc}
+     *
+     * @return \common\models\query\ProfessionalDevelopmentDayQuery the active query used by this AR class
      */
     public static function find()
     {
         return new \common\models\query\ProfessionalDevelopmentDayQuery(get_called_class());
     }
 
-	public function beforeSave($insert) {
-	    $professionalDevelopmentDate = \DateTime::createFromFormat('d-m-Y', $this->date);
-    	$this->date = $professionalDevelopmentDate->format('Y-m-d');
-		
-		return parent::beforeSave($insert);
-	}
+    public function beforeSave($insert)
+    {
+        $professionalDevelopmentDate = \DateTime::createFromFormat('d-m-Y', $this->date);
+        $this->date = $professionalDevelopmentDate->format('Y-m-d');
+
+        return parent::beforeSave($insert);
+    }
 }

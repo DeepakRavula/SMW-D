@@ -1,10 +1,10 @@
 <?php
 
-use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\Lesson;
 use common\models\Invoice;
 use yii\grid\GridView;
+
 ?>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Lessons</h4>
@@ -16,75 +16,78 @@ use yii\grid\GridView;
          'model' => new Lesson(),
          'studentModel' => $model,
 
-         ]) 
+         ])
              ?>
 
 </div>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
-	'timeout' => 6000,
+    'timeout' => 6000,
 ]) ?>
 <?php
 echo GridView::widget([
-	'dataProvider' => $lessonDataProvider,
-	'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['lesson/view', 'id' => $model->id]);
+    'dataProvider' => $lessonDataProvider,
+    'rowOptions' => function ($model, $key, $index, $grid) {
+        $url = Url::to(['lesson/view', 'id' => $model->id]);
+
         return ['data-url' => $url];
-	},
-	'options' => ['class' => 'col-md-12'],
-	'tableOptions' =>['class' => 'table table-bordered'],
-	'headerRowOptions' => ['class' => 'bg-light-gray' ],
-	'columns' => [
-		[
-			'label' => 'Program Name',
-			'value' => function($data) {
-				return !empty($data->course->program->name) ? $data->course->program->name : null;
-			},
-		],
-		[
-			'label' => 'Lesson Status',
-			'value' => function($data) {
-				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-				$currentDate = new \DateTime();
-
-				if ($lessonDate <= $currentDate) {
-					$status = 'Completed';
-				} else {
-					$status = 'Scheduled';
-				}
-
-				return $status;
-			},
-		],
-		[
-			'label' => 'Invoice Status',
-			'value' => function($data) {
-				$status = null;
-				if (!empty($data->invoice->status)) {
-					return $data->invoice->getStatus(); 
-				} else {
-					$status = 'Not Invoiced';
-				}
-				return $status;
-			},
-		],
-		[
-            'label' => 'Date',
-            'value' => function($data) {
-                return Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
-            }
+    },
+    'options' => ['class' => 'col-md-12'],
+    'tableOptions' => ['class' => 'table table-bordered'],
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'columns' => [
+        [
+            'label' => 'Program Name',
+            'value' => function ($data) {
+                return !empty($data->course->program->name) ? $data->course->program->name : null;
+            },
         ],
-		[
+        [
+            'label' => 'Lesson Status',
+            'value' => function ($data) {
+                $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+                $currentDate = new \DateTime();
+
+                if ($lessonDate <= $currentDate) {
+                    $status = 'Completed';
+                } else {
+                    $status = 'Scheduled';
+                }
+
+                return $status;
+            },
+        ],
+        [
+            'label' => 'Invoice Status',
+            'value' => function ($data) {
+                $status = null;
+                if (!empty($data->invoice->status)) {
+                    return $data->invoice->getStatus();
+                } else {
+                    $status = 'Not Invoiced';
+                }
+
+                return $status;
+            },
+        ],
+        [
+            'label' => 'Date',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDate($data->date).' @ '.Yii::$app->formatter->asTime($data->date);
+            },
+        ],
+        [
             'label' => 'Prepaid?',
-            'value' => function($data){
-                if( ! empty($data->proFormaInvoice->status) && ((int)$data->proFormaInvoice->status === (int) Invoice::STATUS_PAID || (int)$data->proFormaInvoice->status === (int) Invoice::STATUS_CREDIT)){
+            'value' => function ($data) {
+                if (!empty($data->proFormaInvoice->status) && ((int) $data->proFormaInvoice->status === (int) Invoice::STATUS_PAID || (int) $data->proFormaInvoice->status === (int) Invoice::STATUS_CREDIT)) {
                     return 'Yes';
                 }
+
                 return 'No';
-            }
+            },
         ],
 
-	],
+    ],
 ]);
 ?>
 </div>

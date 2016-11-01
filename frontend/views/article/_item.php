@@ -1,7 +1,7 @@
 <?php
 /**
- * @var $this yii\web\View
- * @var $model common\models\Article
+ * @var yii\web\View
+ * @var $model       common\models\Article
  */
 use yii\helpers\Html;
 
@@ -10,7 +10,7 @@ use yii\helpers\Html;
 <div class="article-item row">
     <div class="col-xs-12">
         <h2 class="article-title">
-            <?php echo Html::a($model->title, ['view', 'slug'=>$model->slug]) ?>
+            <?php echo Html::a($model->title, ['view', 'slug' => $model->slug]) ?>
         </h2>
         <div class="article-meta">
             <span class="article-date">
@@ -29,7 +29,7 @@ use yii\helpers\Html;
                     Yii::$app->glide->createSignedUrl([
                         'glide/index',
                         'path' => $model->thumbnail_path,
-                        'w' => 100
+                        'w' => 100,
                     ], true),
                     ['class' => 'article-thumb img-rounded pull-left']
                 ) ?>

@@ -1,4 +1,5 @@
 <?php
+
 use tests\codeception\frontend\_pages\LoginPage;
 use tests\codeception\frontend\FunctionalTester;
 

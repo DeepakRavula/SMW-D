@@ -20,27 +20,28 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
+        'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['city/view', 'id' => $model->id]);
-        return ['data-url' => $url];
+
+            return ['data-url' => $url];
         },
         'columns' => [
-			[
+            [
                 'attribute' => 'name',
-				'label' => 'Name',
-				'value' => function($data) {
-					return ! empty($data->name) ? $data->name : null;
-				}
-			],
-			[
+                'label' => 'Name',
+                'value' => function ($data) {
+                    return !empty($data->name) ? $data->name : null;
+                },
+            ],
+            [
                 'attribute' => 'province_id',
-				'label' => 'Province Name',
-				'value' => function($data) {
-					return ! empty($data->province->name) ? $data->province->name :null;
-				}
-			],
+                'label' => 'Province Name',
+                'value' => function ($data) {
+                    return !empty($data->province->name) ? $data->province->name : null;
+                },
+            ],
         ],
     ]); ?>
 

@@ -2,19 +2,17 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "user_address".
  *
- * @property integer $id
- * @property integer $user_id
- * @property integer $address_id
+ * @property int $id
+ * @property int $user_id
+ * @property int $address_id
  */
 class UserAddress extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -22,7 +20,7 @@ class UserAddress extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -33,7 +31,7 @@ class UserAddress extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {

@@ -5,7 +5,6 @@ namespace backend\controllers;
 use Yii;
 use backend\models\SystemLog;
 use backend\models\search\SystemLogSearch;
-use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -30,6 +29,7 @@ class LogController extends Controller
 
     /**
      * Lists all SystemLog models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -39,10 +39,11 @@ class LogController extends Controller
 
         if (strcasecmp(Yii::$app->request->method, 'delete') == 0) {
             SystemLog::deleteAll($dataProvider->query->where);
+
             return $this->refresh();
         }
         $dataProvider->sort = [
-            'defaultOrder'=>['log_time'=>SORT_DESC]
+            'defaultOrder' => ['log_time' => SORT_DESC],
         ];
 
         return $this->render('index', [
@@ -53,7 +54,9 @@ class LogController extends Controller
 
     /**
      * Displays a single SystemLog model.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -66,7 +69,9 @@ class LogController extends Controller
     /**
      * Deletes an existing SystemLog model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -79,8 +84,11 @@ class LogController extends Controller
     /**
      * Finds the SystemLog model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return SystemLog the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

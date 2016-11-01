@@ -1,6 +1,6 @@
 <?php
 /**
- * Author: Eugine Terentev <eugine@terentev.net>
+ * Author: Eugine Terentev <eugine@terentev.net>.
  */
 
 namespace common\actions;
@@ -11,28 +11,8 @@ use Yii;
 use yii\web\Cookie;
 
 /**
- * Class SetLocaleAction
- * @package common\actions
- *
- * Example:
- *
- *   public function actions()
- *   {
- *       return [
- *           'set-locale'=>[
- *               'class'=>'common\actions\SetLocaleAction',
- *               'locales'=>[
- *                   'en-US', 'ru-RU', 'ua-UA'
- *               ],
- *               'localeCookieName'=>'_locale',
- *               'callback'=>function($action){
- *                   return $this->controller->redirect(/.. some url ../)
- *               }
- *           ]
- *       ];
- *   }
-*/
-
+ * Class SetLocaleAction.
+ */
 class SetLocaleAction extends Action
 {
     /**
@@ -46,7 +26,7 @@ class SetLocaleAction extends Action
     public $localeCookieName = '_locale';
 
     /**
-     * @var integer
+     * @var int
      */
     public $cookieExpire;
 
@@ -60,9 +40,9 @@ class SetLocaleAction extends Action
      */
     public $callback;
 
-
     /**
      * @param $locale
+     *
      * @return mixed|static
      */
     public function run($locale)
@@ -80,9 +60,10 @@ class SetLocaleAction extends Action
         if ($this->callback && $this->callback instanceof \Closure) {
             return call_user_func_array($this->callback, [
                 $this,
-                $locale
+                $locale,
             ]);
         }
+
         return Yii::$app->response->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 }

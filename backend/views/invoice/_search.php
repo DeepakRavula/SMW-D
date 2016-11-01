@@ -2,8 +2,6 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use backend\models\search\LessonSearch;
-use yii\helpers\ArrayHelper;
 use yii\jui\DatePicker;
 
 /* @var $this yii\web\View */
@@ -20,18 +18,18 @@ use yii\jui\DatePicker;
     <div class="row">
     <div class="col-md-3">
         <?php echo $form->field($model, 'fromDate')->widget(DatePicker::classname(), [
-            'options'=>[
-                'class' => 'form-control'
-            ]
+            'options' => [
+                'class' => 'form-control',
+            ],
     //'language' => 'ru',
     //'dateFormat' => 'yyyy-MM-dd',
 ]) ?>
     </div>
     <div class="col-md-3">
         <?php echo $form->field($model, 'toDate')->widget(DatePicker::classname(), [
-            'options'=>[
-                'class' => 'form-control'
-            ]
+            'options' => [
+                'class' => 'form-control',
+            ],
     //'language' => 'ru',
     //'dateFormat' => 'yyyy-MM-dd',
 ]) ?>

@@ -25,13 +25,13 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'day') ?>
 
-    <?php // echo $form->field($model, 'fromTime') ?>
+    <?php // echo $form->field($model, 'fromTime')?>
 
-    <?php // echo $form->field($model, 'duration') ?>
+    <?php // echo $form->field($model, 'duration')?>
 
-    <?php // echo $form->field($model, 'startDate') ?>
+    <?php // echo $form->field($model, 'startDate')?>
 
-    <?php // echo $form->field($model, 'endDate') ?>
+    <?php // echo $form->field($model, 'endDate')?>
 
     <div class="form-group">
         <?php echo Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

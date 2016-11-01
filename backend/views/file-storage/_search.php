@@ -25,13 +25,13 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'type') ?>
 
-    <?php // echo $form->field($model, 'size') ?>
+    <?php // echo $form->field($model, 'size')?>
 
-    <?php // echo $form->field($model, 'name') ?>
+    <?php // echo $form->field($model, 'name')?>
 
-    <?php // echo $form->field($model, 'upload_ip') ?>
+    <?php // echo $form->field($model, 'upload_ip')?>
 
-    <?php // echo $form->field($model, 'created_at') ?>
+    <?php // echo $form->field($model, 'created_at')?>
 
     <div class="form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>

@@ -31,6 +31,7 @@ class I18nMessageController extends Controller
 
     /**
      * Lists all I18nMessage models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -54,13 +55,14 @@ class I18nMessageController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'languages' => $languages,
-            'categories' => $categories
+            'categories' => $categories,
         ]);
     }
 
     /**
      * Creates a new I18nMessage model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -79,8 +81,10 @@ class I18nMessageController extends Controller
     /**
      * Updates an existing I18nMessage model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     *
+     * @param int    $id
      * @param string $language
+     *
      * @return mixed
      */
     public function actionUpdate($id, $language)
@@ -99,8 +103,10 @@ class I18nMessageController extends Controller
     /**
      * Deletes an existing I18nMessage model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     *
+     * @param int    $id
      * @param string $language
+     *
      * @return mixed
      */
     public function actionDelete($id, $language)
@@ -113,9 +119,12 @@ class I18nMessageController extends Controller
     /**
      * Finds the I18nMessage model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     *
+     * @param int    $id
      * @param string $language
+     *
      * @return I18nMessage the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id, $language)

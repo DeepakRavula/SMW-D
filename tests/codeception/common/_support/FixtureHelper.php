@@ -18,8 +18,7 @@ use yii\test\FixtureTrait;
  */
 class FixtureHelper extends Module
 {
-
-    /**
+    /*
      * Redeclare visibility because codeception includes all public methods that not starts from "_"
      * and not excluded by module settings, in actor class.
      */
@@ -35,6 +34,7 @@ class FixtureHelper extends Module
     /**
      * Method called before any suite tests run. Loads User fixture login user
      * to use in acceptance and functional tests.
+     *
      * @param array $settings
      */
     public function _beforeSuite($settings = [])
@@ -43,7 +43,7 @@ class FixtureHelper extends Module
     }
 
     /**
-     * Method is called after all suite tests run
+     * Method is called after all suite tests run.
      */
     public function _afterSuite()
     {
@@ -51,7 +51,7 @@ class FixtureHelper extends Module
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function fixtures()
     {
@@ -79,7 +79,7 @@ class FixtureHelper extends Module
             'rbac_auth_assignment' => [
                 'class' => RbacAuthAssignmentFixture::className(),
                 'dataFile' => '@tests/codeception/common/fixtures/data/rbac_auth_assignment.php',
-            ]
+            ],
         ];
     }
 }

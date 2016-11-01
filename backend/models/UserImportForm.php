@@ -1,14 +1,14 @@
 <?php
+
 namespace backend\models;
 
 use common\models\User;
 use yii\base\Exception;
 use yii\base\Model;
 use Yii;
-use yii\helpers\ArrayHelper;
 
 /**
- * Create user form
+ * Create user form.
  */
 class UserImportForm extends Model
 {
@@ -17,7 +17,7 @@ class UserImportForm extends Model
     private $model;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -27,7 +27,7 @@ class UserImportForm extends Model
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -38,11 +38,13 @@ class UserImportForm extends Model
 
     /**
      * @param User $model
+     *
      * @return mixed
      */
     public function setModel($model)
     {
         $this->file = $model->file;
+
         return $this->model;
     }
 
@@ -54,11 +56,13 @@ class UserImportForm extends Model
         if (!$this->model) {
             $this->model = new User();
         }
+
         return $this->model;
     }
 
     /**
-     * Import users
+     * Import users.
+     *
      * @throws Exception
      */
     public function import()
@@ -68,6 +72,7 @@ class UserImportForm extends Model
 
             return !$model->hasErrors();
         }
+
         return null;
     }
 }
