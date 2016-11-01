@@ -693,26 +693,23 @@ class UserController extends Controller {
 	 * @return User the loaded model
 	 * @throws NotFoundHttpException if the model cannot be found
 	 */
-	protected function findModel($id) {
-		$session = Yii::$app->session;
-		$locationId = $session->get('location_id');
-		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-			foreach ($roles as $name => $description) {
-			$role = $name;
-		}
-		$adminModel = User::findOne(['id' => $id]); 
-		$model = User::find()->joinWith(['location' => function($query) use($locationId) {
-						$query->where(['location_id' => $locationId]);
-					}])->where(['user.id' => $id])->one();
-				if ($model !== null) {
-					return $model;
-				} 
-				elseif($role === User::ROLE_ADMINISTRATOR &&  $adminModel != null){
-					return $adminModel;
-				}
-				else {
-					throw new NotFoundHttpException('The requested page does not exist.');
-				}
+	protected function findModel($id)
+		{
+			$session	 = Yii::$app->session;
+			$locationId	 = $session->get('location_id');
+			$roles		 = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+			$lastRole	 = end($roles);
+			$adminModel	 = User::findOne(['id' => $id]);
+			$model		 = User::find()->location($locationId)
+				->where(['user.id' => $id])
+				->one();
+			if ($model !== null) {
+				return $model;
+			} elseif ($lastRole->name === User::ROLE_ADMINISTRATOR && $adminModel != null) {
+				return $adminModel;
+			} else {
+				throw new NotFoundHttpException('The requested page does not exist.');
 			}
-}
+		}
+	}
 		
