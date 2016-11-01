@@ -199,8 +199,8 @@ class InvoiceController extends Controller {
 			} else {
 				$invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);
 				$response = [
-					'status' => 'false',
-					'errors' => $invoiceLineItemModel->getErrors()
+					'status' => false,
+					'errors' => $invoiceLineItemModel
 				];
 			}
 			return $response;

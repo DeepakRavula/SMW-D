@@ -18,7 +18,8 @@ use common\models\Lesson;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
 	private $isRoyaltyExempted;
-	
+
+
     /**
      * @inheritdoc
      */
@@ -33,12 +34,24 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['unit', 'amount', 'description'], 'required'],
-            [['invoice_id', 'item_id'], 'integer'],
-            [['unit', 'amount'], 'number'],
-			[['isRoyalty', 'invoice_id', 'item_id','item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate'], 'safe'],
-			[['isRoyaltyExempted'], 'boolean'],
-        ];
+            [['unit', 'amount', 'description', 'tax_status'], 'required', 'when' => function ($model, $attribute) {
+					return (int) $model->item_type_id === ItemType::TYPE_MISC;
+				}
+			],
+            [['amount'], 'number', 'when' => function ($model, $attribute) {
+					return (int) $model->item_type_id === ItemType::TYPE_MISC;
+				}
+			],
+			[['isRoyaltyExempted'], 'boolean', 'when' => function ($model, $attribute) {
+					return (int) $model->item_type_id === ItemType::TYPE_MISC;
+				}
+			],
+			[['unit'], 'integer', 'when' => function ($model, $attribute) {
+					return (int) $model->item_type_id === ItemType::TYPE_MISC;
+				}
+			],
+			[['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate'], 'safe'],
+		];
     }
 
     public function getLesson()

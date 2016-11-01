@@ -96,10 +96,10 @@ $(document).ready(function() {
 <script>
 $(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
 	$.ajax({
-		url    : $('#add-misc-item-form').attr('action'),
+		url    : $(this).attr('action'),
 		type   : 'post',
 		dataType: "json",
-		data   : $('#add-misc-item-form').serialize(),
+		data   : $(this).serialize(),
 		success: function(response)
 		{
 		   if(response.status)
@@ -107,6 +107,11 @@ $(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
 				$.pjax.reload({container : '#line-item-listing', timeout : 4000});
                 invoice.updateSummarySectionAndStatus();
 				$('#invoice-line-item-modal').modal('hide');
+			}else
+			{
+			 $(this).yiiActiveForm('updateMessages',
+				   response.errors
+				, true);
 			}
 		}
 		});
