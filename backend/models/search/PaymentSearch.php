@@ -40,9 +40,11 @@ class PaymentSearch extends Payment
      */
     public function search($params)
     {
+		$locationId = Yii::$app->session->get('location_id');
         $this->fromDate = date('1-m-Y');
         $this->toDate = date('31-m-Y');
-        $query = Payment::find();
+        $query = Payment::find()
+			->location($locationId);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
