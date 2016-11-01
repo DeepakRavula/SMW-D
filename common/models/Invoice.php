@@ -283,7 +283,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $subTotal = InvoiceLineItem::find()
             ->where(['invoice_id' => $this->id])
-            ->sum('invoiceLineItem.amount');
+            ->sum('amount');
 
         return $subTotal;
     }

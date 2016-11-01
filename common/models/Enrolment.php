@@ -105,6 +105,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
     }
 
+    public function isMonthlyPaymentFrequency()
+    {
+        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_MONTHLY;
+    }
+
     public static function paymentFrequencies()
     {
         return [

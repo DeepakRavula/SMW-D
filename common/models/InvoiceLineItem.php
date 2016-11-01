@@ -106,7 +106,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        if (isPrivateLesson() || isGroupLesson()) {
+        if ($this->isPrivateLesson() || $this->isGroupLesson()) {
             $taxStatus        = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
             $this->tax_type   = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
             $this->tax_rate   = 0.0;

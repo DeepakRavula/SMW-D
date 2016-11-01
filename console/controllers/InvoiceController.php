@@ -27,56 +27,60 @@ class InvoiceController extends Controller
                 $priorDate->format('Y-m-1'));
         $monthLastDate         = \DateTime::createFromFormat('Y-m-d',
                 $priorDate->format('Y-m-t'));
-        $lessons               = Lesson::find()->where(['date' => $priorDate]);
+        $lessons               = Lesson::find()
+            ->scheduledBetween($priorDate, $priorDate)
+            ->all();
         $firstLessonsCourseIds = [];
-        foreach ($lessons as $lesson) {
-            if (!$lesson->isFirstLessonDate($priorDate) || !$lesson->$enrolment->isMonthlyPaymentFrequency()) {
-                continue;
+        if (!empty($lessons)) {
+            foreach ($lessons as $lesson) {
+                if (!$lesson->isFirstLessonDate($priorDate) || !$lesson->enrolment->isMonthlyPaymentFrequency()) {
+                    continue;
+                }
+                $firstLessonsCourseIds[] = $lesson->courseId;
             }
-            $firstLessonsCourseIds[] = $lesson->courseId;
-        }
-        if (!empty($firstLessonsCourseIds)) {
-            foreach ($firstLessonsCourseIds as $firstLessonsCourseId) {
-                $enrolment           = Enrolment::findOne(['courseId' => $firstLessonsCourseId]);
-                $lessons             = Lesson::find()
-                    ->where(['courseId' => $firstLessonsCourseId])
-                    ->scheduledBetween($monthFirstDate, $monthLastDate)
-                    ->all();
-                $invoice             = new Invoice();
-                $invoice->type       = Invoice::TYPE_PRO_FORMA_INVOICE;
-                $location_id         = $enrolment->course->locationId;
-                $lastProFormaInvoice = Invoice::lastProFormaInvoice($location_id);
-                if (empty($lastProFormaInvoice)) {
-                    $invoiceNumber = 1;
-                } else {
-                    $invoiceNumber = $lastProFormaInvoice->invoice_number + 1;
-                }
-                $invoice->user_id        = $enrolment->student->customer_id;
-                $invoice->invoice_number = $invoiceNumber;
-                $invoice->location_id    = $location_id;
-                $invoice->date           = (new \DateTime())->format('Y-m-d');
-                $invoice->status         = Invoice::STATUS_OWING;
-                $invoice->notes          = null;
-                $invoice->internal_notes = null;
-                $invoice->save();
-                $subTotal                = 0;
-                $taxAmount               = 0;
-                foreach ($lessons as $lesson) {
-                    $lesson->bulkLessonsInvoiceLineItem($invoice);
-                }
-                $invoice           = Invoice::findOne(['id' => $invoice->id]);
-                $subTotal          = $invoice->getSubTotal();
-                $invoice->subTotal = $subTotal;
-                $totalAmount       = $subTotal + $taxAmount;
-                $invoice->tax      = $taxAmount;
-                $invoice->total    = $totalAmount;
-                $invoice->save();
-                $notify = $invoice->sendEmail();
-                if($notify)
-                {
-                    echo 'Success';
-                } else{
-                    echo 'Failed';
+            if (!empty($firstLessonsCourseIds)) {
+                foreach ($firstLessonsCourseIds as $firstLessonsCourseId) {
+                    $enrolment           = Enrolment::findOne(['courseId' => $firstLessonsCourseId]);
+                    $lessons             = Lesson::find()
+                        ->where(['courseId' => $firstLessonsCourseId])
+                        ->scheduledBetween($monthFirstDate, $monthLastDate)
+                        ->all();
+                    $invoice             = new Invoice();
+                    $invoice->type       = Invoice::TYPE_PRO_FORMA_INVOICE;
+                    $location_id         = $enrolment->course->locationId;
+                    $lastProFormaInvoice = Invoice::lastProFormaInvoice($location_id);
+                    if (empty($lastProFormaInvoice)) {
+                        $invoiceNumber = 1;
+                    } else {
+                        $invoiceNumber = $lastProFormaInvoice->invoice_number + 1;
+                    }
+                    $invoice->user_id        = $enrolment->student->customer_id;
+                    $invoice->invoice_number = $invoiceNumber;
+                    $invoice->location_id    = $location_id;
+                    $invoice->date           = (new \DateTime())->format('Y-m-d');
+                    $invoice->status         = Invoice::STATUS_OWING;
+                    $invoice->notes          = null;
+                    $invoice->internal_notes = null;
+                    $invoice->save();
+                    $subTotal                = 0;
+                    $taxAmount               = 0;
+                    foreach ($lessons as $lesson) {
+                        $lesson->bulkLessonsInvoiceLineItem($invoice);
+                    }
+                    $invoice           = Invoice::findOne(['id' => $invoice->id]);
+                    $subTotal          = $invoice->getSubTotal();
+                    $invoice->subTotal = $subTotal;
+                    $totalAmount       = $subTotal + $taxAmount;
+                    $invoice->tax      = $taxAmount;
+                    $invoice->total    = $totalAmount;
+                    $invoice->save();
+                    $notify = $invoice->sendEmail();
+                    if($notify)
+                    {
+                        echo 'Success';
+                    } else{
+                        echo 'Failed';
+                    }
                 }
             }
         }
