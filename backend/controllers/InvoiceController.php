@@ -180,7 +180,6 @@ class InvoiceController extends Controller {
 		$response->format = Response::FORMAT_JSON;
 		$model = $this->findModel($id);
 		$invoiceLineItemModel = new InvoiceLineItem();
-		$invoiceLineItemModel->setScenario(InvoiceLineItem::SCENARIO_ADD_MISC);
 		if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
 			$invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC; 
 			$invoiceLineItemModel->invoice_id = $model->id; 
