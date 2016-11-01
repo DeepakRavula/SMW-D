@@ -337,43 +337,14 @@ class InvoiceController extends Controller
             $taxAmount = 0;
             foreach ($post['selection'] as $selection) {
                 $lesson = Lesson::findOne(['id' => $selection]);
-                $actualLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
-                $lessonDate = $actualLessonDate->format('Y-m-d');
-                $invoiceLineItem = new InvoiceLineItem();
-                $invoiceLineItem->invoice_id = $invoice->id;
-                $invoiceLineItem->item_id = $lesson->id;
-                $lessonStartTime = $actualLessonDate->format('H:i:s');
-                $lessonStartTime = new \DateTime($lessonStartTime);
-                $duration = explode(':', $lesson->duration);
-                $invoiceLineItem->unit = (($duration[0] * 60) + ($duration[1])) / 60;
-                if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                    $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-                    $courseFee = $lesson->course->program->rate;
-                    $courseCount = Lesson::find()
-                        ->where(['courseId' => $lesson->courseId])
-                        ->count('id');
-                    $lessonAmount = $lesson->course->program->rate / $courseCount;
-                    $invoiceLineItem->amount = $lessonAmount;
-                } else {
-                    $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-                    $invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
-                }
-                $taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-                $invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-                $invoiceLineItem->tax_rate = 0.0;
-                $invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-                $invoiceLineItem->tax_status = $taxStatus->name;
-                $description = $lesson->enrolment->program->name.' for '.$lesson->enrolment->student->fullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
-                $invoiceLineItem->description = $description;
-                $invoiceLineItem->isRoyalty = true;
-                $invoiceLineItem->save();
-                $subTotal += $invoiceLineItem->amount;
+                $lesson->bulkLessonsInvoiceLineItem($invoice);
             }
-            $invoice = Invoice::findOne(['id' => $invoice->id]);
+            $invoice           = Invoice::findOne(['id' => $invoice->id]);
+            $subTotal          = $invoice->getSubTotal();
             $invoice->subTotal = $subTotal;
-            $totalAmount = $subTotal + $taxAmount;
-            $invoice->tax = $taxAmount;
-            $invoice->total = $totalAmount;
+            $totalAmount       = $subTotal + $taxAmount;
+            $invoice->tax      = $taxAmount;
+            $invoice->total    = $totalAmount;
             $invoice->save();
 
             $invoiceType = (int) $invoice->type === Invoice::TYPE_INVOICE ? 'Invoice' : 'Pro-forma invoice';
@@ -500,24 +471,10 @@ class InvoiceController extends Controller
 
     public function actionSendMail($id)
     {
-        $model = $this->findModel($id);
-        $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoiceLineItems,
-        ]);
-        $subject = 'Invoice from '.Yii::$app->name;
-        if (!empty($model->user->email)) {
-            Yii::$app->mailer->compose('generateInvoice', [
-                'model' => $model,
-                'toName' => $model->user->publicIdentity,
-                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-            ])
-                ->setFrom(\Yii::$app->params['robotEmail'])
-                ->setTo($model->user->email)
-                ->setSubject($subject)
-                ->send();
-            $model->isSent = true;
-            $model->save();
+        $model      = $this->findModel($id);
+        $isMailSend = $model->sendEmail();
+        if($isMailSend)
+        {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => ' Mail has been send successfully',

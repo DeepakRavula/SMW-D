@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use Yii;
+use yii\data\ActiveDataProvider;
 use common\models\query\InvoiceQuery;
 
 /**
@@ -250,5 +252,39 @@ class Invoice extends \yii\db\ActiveRecord
         }
 
         return parent::beforeSave($insert);
+    }
+
+    public function sendEmail()
+    {
+        $invoiceLineItems             = InvoiceLineItem::find()->where(['invoice_id' => $this->id]);
+        $invoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $invoiceLineItems,
+        ]);
+        $subject                      = 'Invoice from '.Yii::$app->name;
+        if (!empty($this->user->email)) {
+            Yii::$app->mailer->compose('generateInvoice',
+                    [
+                    'model' => $this,
+                    'toName' => $this->user->publicIdentity,
+                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                ])
+                ->setFrom(\Yii::$app->params['robotEmail'])
+                ->setTo($this->user->email)
+                ->setSubject($subject)
+                ->send();
+            $this->isSent = true;
+            $this->save();
+            return true;
+        }
+        return false;
+    }
+
+    public function getSubTotal()
+    {
+        $subTotal = InvoiceLineItem::find()
+            ->where(['invoice_id' => $this->id])
+            ->sum('invoiceLineItem.amount');
+
+        return $subTotal;
     }
 }

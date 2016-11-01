@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use common\models\ItemType;
+use common\models\TaxStatus;
 /**
  * This is the model class for table "invoice_line_item".
  *
@@ -100,5 +102,27 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'tax_status' => 'Tax Status',
             'isRoyaltyExempted' => 'Exempt from Royalty',
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if (isPrivateLesson() || isGroupLesson()) {
+            $taxStatus        = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
+            $this->tax_type   = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
+            $this->tax_rate   = 0.0;
+            $this->tax_code   = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
+            $this->tax_status = $taxStatus->name;
+        }
+        return parent::beforeSave($insert);
+    }
+
+    public function isPrivateLesson()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON;
+    }
+
+    public function isGroupLesson()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_GROUP_LESSON;
     }
 }

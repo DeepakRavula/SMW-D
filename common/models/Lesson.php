@@ -366,4 +366,60 @@ class Lesson extends \yii\db\ActiveRecord
             ->setSubject($subject)
             ->send();
     }
-}
+
+    public function isFirstLessonDate($date)
+    {
+        $monthFirstDate  = \DateTime::createFromFormat('Y-m-d',
+                $date->format('Y-m-1'));
+        $monthLastDate   = \DateTime::createFromFormat('Y-m-d',
+                $date->format('Y-m-t'));
+        $lesson          = Lesson::find()
+            ->where(['courseId' => $this->courseId])
+            ->scheduledBetween($monthFirstDate, $monthLastDate)
+            ->orderBy(['lesson.date' => SORT_ASC])
+            ->one();
+        $courseStartDate = \DateTime::createFromFormat('Y-m-d H:i:s',
+                $lesson->date);
+        if ($courseStartDate->format('Y-m-d') === $date->format('Y-m-d')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function bulkLessonsInvoiceLineItem($invoice)
+    {
+        $actualLessonDate            = \DateTime::createFromFormat('Y-m-d H:i:s',
+                $this->date);
+        $invoiceLineItem             = new InvoiceLineItem();
+        $invoiceLineItem->invoice_id = $invoice->id;
+        $invoiceLineItem->item_id    = $this->id;
+        $lessonStartTime             = $actualLessonDate->format('H:i:s');
+        $getDuration                 = \DateTime::createFromFormat('H:i:s',
+                $lessonStartTime);
+        $hours                       = $getDuration->format('H');
+        $minutes                     = $getDuration->format('i');
+        $invoiceLineItem->unit       = (($hours * 60) + $minutes) / 60;
+        if ((int) $this->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+            $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
+            $courseCount                   = Lesson::find()
+                ->where(['courseId' => $this->courseId])
+                ->count('id');
+            $lessonAmount                  = $this->course->program->rate / $courseCount;
+            $invoiceLineItem->amount       = $lessonAmount;
+        } else {
+            $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+            $invoiceLineItem->amount       = $this->enrolment->program->rate
+                * $invoiceLineItem->unit;
+        }
+        $taxStatus                    = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
+        $invoiceLineItem->tax_type    = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
+        $invoiceLineItem->tax_rate    = 0.0;
+        $invoiceLineItem->tax_code    = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
+        $invoiceLineItem->tax_status  = $taxStatus->name;
+        $description                  = $this->enrolment->program->name.' for '.$this->enrolment->student->fullName.' with '.$this->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
+        $invoiceLineItem->description = $description;
+        $invoiceLineItem->isRoyalty   = true;
+        $invoiceLineItem->save();
+    }
+}    
