@@ -148,8 +148,8 @@ class Lesson extends \yii\db\ActiveRecord
 
         if ((int) $this->course->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
             $studentLessons = self::find()
-                    ->studentLessons($locationId, $this->course->enrolment->student)
-                    ->all();
+				->studentLessons($locationId, $this->course->enrolment->student)
+				->all();
 
             foreach ($studentLessons as $studentLesson) {
                 $otherLessons[] = [

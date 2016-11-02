@@ -63,9 +63,7 @@ class StudentController extends Controller
         $model = $this->findModel($id);
         $locationId = Yii::$app->session->get('location_id');
         $enrolments = Enrolment::find()
-                ->joinWith(['course' => function ($query) use ($locationId) {
-                    $query->where(['locationId' => $locationId]);
-                }])
+                ->location($locationId)
                 ->notDeleted()
                 ->isConfirmed()
                 ->andWhere(['studentId' => $model->id]);
@@ -76,12 +74,7 @@ class StudentController extends Controller
 
         $currentDate = new \DateTime();
         $lessons = Lesson::find()
-            ->joinWith(['course' => function ($query) use ($locationId, $model) {
-                $query->joinWith(['enrolment' => function ($query) use ($locationId, $model) {
-                    $query->where(['enrolment.studentId' => $model->id]);
-                }])
-            ->where(['course.locationId' => $locationId]);
-            }])
+			->studentEnrolment($locationId, $model->id)
             ->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
             ->orderBy(['lesson.date' => SORT_ASC])
             ->notDeleted();
@@ -91,12 +84,7 @@ class StudentController extends Controller
         ]);
 
         $unscheduledLessons = Lesson::find()
-            ->joinWith(['course' => function ($query) use ($locationId, $model) {
-                $query->joinWith(['enrolment' => function ($query) use ($locationId, $model) {
-                    $query->where(['enrolment.studentId' => $model->id]);
-                }])
-            ->where(['course.locationId' => $locationId]);
-            }])
+			->studentEnrolment($locationId, $model->id)
             ->joinWith(['lessonReschedule'])
             ->andWhere(['lesson_reschedule.lessonId' => null])
             ->joinWith(['privateLesson'])
@@ -153,9 +141,9 @@ class StudentController extends Controller
         $model = new Student();
         $request = Yii::$app->request;
         $user = $request->post('User');
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load($request->post())) {
+        	$model->status = Student::STATUS_ACTIVE;
             $model->customer_id = $user['id'];
-            $model->status = Student::STATUS_ACTIVE;
             $model->save();
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
