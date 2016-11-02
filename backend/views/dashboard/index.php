@@ -6,6 +6,7 @@ use common\models\Dashboard;
 use common\models\Invoice;
 use common\models\Payment;
 
+$this->title = 'Dashboard';
 ?>
 <div class="col-md-12">
     <h3 class="pull-left">Dashboard</h3>
