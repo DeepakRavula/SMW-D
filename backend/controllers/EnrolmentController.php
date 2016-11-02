@@ -127,7 +127,8 @@ class EnrolmentController extends Controller
             ]);
             $rescheduleLessons = Lesson::find()
                 ->where(['courseId' => $model->course->id])
-                ->scheduledBetween($lessonFromDate, $lessonToDate)
+                ->scheduled()
+                ->between($lessonFromDate, $lessonToDate)
                 ->all();
             //lesson start date
             $changedFromTime = (new \DateTime($model->course->fromTime))->format('H:i:s');

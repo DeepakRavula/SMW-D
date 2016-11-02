@@ -151,17 +151,14 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function scheduled()
     {
         $this->andFilterWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d')])
-             ->andFilterWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
+             ->andFilterWhere(['lesson.status' => Lesson::STATUS_SCHEDULED]);
 
         return $this;
     }
 
-    public function scheduledBetween($fromDate, $toDate)
+    public function between($fromDate, $toDate)
     {
-        $this->andFilterWhere(['between', 'lesson.date', $fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')])
-             ->andFilterWhere(['status' => Lesson::STATUS_SCHEDULED]);
-
-        return $this;
+        return $this->andFilterWhere(['between', 'lesson.date', $fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')]);
     }
 
     public function studentLessons($locationId, $studentId)

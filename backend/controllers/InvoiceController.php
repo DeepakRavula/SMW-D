@@ -82,18 +82,6 @@ class InvoiceController extends Controller
         }
         $location_id = Yii::$app->session->get('location_id');
         $invoice->location_id = $location_id;
-        $lastInvoice = Invoice::lastInvoice($location_id);
-        if (empty($lastInvoice)) {
-            $invoiceNumber = 1;
-        } else {
-            $invoiceNumber = $lastInvoice->invoice_number + 1;
-        }
-        $invoice->invoice_number = $invoiceNumber;
-		$invoice->isSent = false;
-        $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
-        $invoice->subTotal = 0.0;
-        $invoice->tax = 0.0;
-        $invoice->total = 0.0;
         $invoice->save();
 
         return $this->redirect(['view', 'id' => $invoice->id]);
@@ -200,9 +188,6 @@ class InvoiceController extends Controller
             $invoiceLineItemModel->tax_status = $taxStatus->name;
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
-                $model->subTotal += $invoiceLineItemModel->amount;
-                $model->tax += $invoiceLineItemModel->tax_rate;
-                $model->total = $model->subTotal + $model->tax;
                 $model->save();
                 $response = [
                     'invoiceStatus' => $model->getStatus(),
@@ -309,75 +294,15 @@ class InvoiceController extends Controller
         $post = $request->post();
         if ((!empty($post['selection'])) && is_array($post['selection']) && (!empty($customer->id))) {
             $invoice->type = $invoiceRequest['type'];
-            $lastInvoice = Invoice::lastInvoice($location_id);
-            $lastProFormaInvoice = Invoice::lastProFormaInvoice($location_id);
-            switch ($invoice->type) {
-                case Invoice::TYPE_PRO_FORMA_INVOICE:
-                    if (empty($lastProFormaInvoice)) {
-                        $invoiceNumber = 1;
-                    } else {
-                        $invoiceNumber = $lastProFormaInvoice->invoice_number + 1;
-                    }
-                    break;
-                case Invoice::TYPE_INVOICE:
-                    if (empty($lastInvoice)) {
-                        $invoiceNumber = 1;
-                    } else {
-                        $invoiceNumber = $lastInvoice->invoice_number + 1;
-                    }
-                    break;
-            }
-
             $invoice->user_id = $customer->id;
-            $invoice->invoice_number = $invoiceNumber;
             $invoice->location_id = $location_id;
-            $invoice->date = (new \DateTime())->format('Y-m-d');
-            $invoice->status = Invoice::STATUS_OWING;
             $invoice->notes = $post['Invoice']['notes'];
             $invoice->internal_notes = $post['Invoice']['internal_notes'];
             $invoice->save();
-
-            $subTotal = 0;
-            $taxAmount = 0;
             foreach ($post['selection'] as $selection) {
                 $lesson = Lesson::findOne(['id' => $selection]);
-                $actualLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
-                $lessonDate = $actualLessonDate->format('Y-m-d');
-                $invoiceLineItem = new InvoiceLineItem();
-                $invoiceLineItem->invoice_id = $invoice->id;
-                $invoiceLineItem->item_id = $lesson->id;
-                $lessonStartTime = $actualLessonDate->format('H:i:s');
-                $lessonStartTime = new \DateTime($lessonStartTime);
-                $duration = explode(':', $lesson->duration);
-                $invoiceLineItem->unit = (($duration[0] * 60) + ($duration[1])) / 60;
-                if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                    $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-                    $courseFee = $lesson->course->program->rate;
-                    $courseCount = Lesson::find()
-                        ->where(['courseId' => $lesson->courseId])
-                        ->count('id');
-                    $lessonAmount = $lesson->course->program->rate / $courseCount;
-                    $invoiceLineItem->amount = $lessonAmount;
-                } else {
-                    $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-                    $invoiceLineItem->amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
-                }
-                $taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-                $invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-                $invoiceLineItem->tax_rate = 0.0;
-                $invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-                $invoiceLineItem->tax_status = $taxStatus->name;
-                $description = $lesson->enrolment->program->name.' for '.$lesson->enrolment->student->fullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
-                $invoiceLineItem->description = $description;
-                $invoiceLineItem->isRoyalty = true;
-                $invoiceLineItem->save();
-                $subTotal += $invoiceLineItem->amount;
+                $invoice->addLineItem($lesson);
             }
-            $invoice = Invoice::findOne(['id' => $invoice->id]);
-            $invoice->subTotal = $subTotal;
-            $totalAmount = $subTotal + $taxAmount;
-            $invoice->tax = $taxAmount;
-            $invoice->total = $totalAmount;
             $invoice->save();
 
             $invoiceType = (int) $invoice->type === Invoice::TYPE_INVOICE ? 'Invoice' : 'Pro-forma invoice';
@@ -519,24 +444,10 @@ class InvoiceController extends Controller
 
     public function actionSendMail($id)
     {
-        $model = $this->findModel($id);
-        $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoiceLineItems,
-        ]);
-        $subject = 'Invoice from '.Yii::$app->name;
-        if (!empty($model->user->email)) {
-            Yii::$app->mailer->compose('generateInvoice', [
-                'model' => $model,
-                'toName' => $model->user->publicIdentity,
-                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-            ])
-                ->setFrom(\Yii::$app->params['robotEmail'])
-                ->setTo($model->user->email)
-                ->setSubject($subject)
-                ->send();
-            $model->isSent = true;
-            $model->save();
+        $model      = $this->findModel($id);
+        $isMailSend = $model->sendEmail();
+        if($isMailSend)
+        {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => ' Mail has been send successfully',

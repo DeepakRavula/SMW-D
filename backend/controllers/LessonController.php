@@ -11,7 +11,6 @@ use common\models\Course;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use common\models\ItemType;
-use common\models\TaxStatus;
 use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
@@ -356,7 +355,8 @@ class LessonController extends Controller
             $lessonToDate = \DateTime::createFromFormat('d-m-Y', $lessonToDate);
             $oldLessons = Lesson::find()
                 ->where(['courseId' => $courseModel->id])
-                ->scheduledBetween($lessonFromDate, $lessonToDate)
+                ->scheduled()
+                ->between($lessonFromDate, $lessonToDate)
                 ->all();
             $oldLessonIds = [];
             foreach ($oldLessons as $oldLesson) {
@@ -406,59 +406,14 @@ class LessonController extends Controller
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
         $currentDate = new \DateTime();
         $location_id = Yii::$app->session->get('location_id');
-        $lastInvoice = Invoice::lastInvoice($location_id);
-        if (empty($lastInvoice)) {
-            $invoiceNumber = 1;
-        } else {
-            $invoiceNumber = $lastInvoice->invoice_number + 1;
-        }
 
         if ($lessonDate <= $currentDate) {
             $invoice = new Invoice();
             $invoice->user_id = $model->enrolment->student->customer->id;
             $invoice->location_id = $location_id;
-            $invoice->invoice_number = $invoiceNumber;
-            $invoice->date = (new \DateTime())->format('Y-m-d');
-            $invoice->status = Invoice::STATUS_OWING;
-			$invoice->isSent = false;
             $invoice->type = INVOICE::TYPE_INVOICE;
             $invoice->save();
-            $subTotal = 0;
-            $taxAmount = 0;
-            $invoiceLineItem = new InvoiceLineItem();
-            $invoiceLineItem->invoice_id = $invoice->id;
-            $invoiceLineItem->item_id = $model->id;
-            $lessonStartTime = $lessonDate->format('H:i:s');
-            $lessonStartTime = new \DateTime($lessonStartTime);
-            $duration = explode(':', $model->duration);
-            $invoiceLineItem->unit = (($duration[0] * 60) + ($duration[1])) / 60;
-            if ((int) $model->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-                $courseFee = $model->course->program->rate;
-                $courseCount = Lesson::find()
-                    ->where(['courseId' => $model->courseId])
-                    ->count('id');
-                $lessonAmount = $model->course->program->rate / $courseCount;
-                $invoiceLineItem->amount = $lessonAmount;
-            } else {
-                $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-                $invoiceLineItem->amount = $model->course->program->rate * $invoiceLineItem->unit;
-            }
-            $taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-            $invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-            $invoiceLineItem->tax_rate = 0.0;
-            $invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-            $invoiceLineItem->tax_status = $taxStatus->name;
-            $description = $model->enrolment->program->name.' for '.$model->enrolment->student->fullName.' with '.$model->teacher->publicIdentity.' on '.$lessonDate->format('M. jS, Y');
-            $invoiceLineItem->description = $description;
-            $invoiceLineItem->isRoyalty = true;
-            $invoiceLineItem->save();
-            $subTotal += $invoiceLineItem->amount;
-            $invoice = Invoice::findOne(['id' => $invoice->id]);
-            $invoice->subTotal = $subTotal;
-            $totalAmount = $subTotal + $taxAmount;
-            $invoice->tax = $taxAmount;
-            $invoice->total = $totalAmount;
+            $invoice->addLineItem($model);
             $invoice->save();
             $proFormaInvoice = Invoice::find()
                 ->select(['invoice.id', 'SUM(payment.amount) as credit'])
