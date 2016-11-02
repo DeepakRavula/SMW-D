@@ -14,6 +14,9 @@ use common\models\Invoice;
  */
 class InvoiceSearch extends Invoice
 {
+	const STATUS_MAIL_SENT = 1;
+	const STATUS_MAIL_NOT_SENT = 2;
+	const STATUS_ALL = 3;
     public $fromDate = '1-1-2016';
     public $toDate = '31-12-2016';
     public $type;
@@ -26,7 +29,9 @@ class InvoiceSearch extends Invoice
     public function rules()
     {
         return [
-            [['fromDate', 'toDate', 'type', 'query', 'mailStatus', 'invoiceStatus'], 'safe'],
+            [['fromDate', 'toDate'], 'date', 'format' => 'php:d-m-Y'],
+			[['mailStatus', 'invoiceStatus'], 'integer'],
+            [['type', 'query'], 'safe'],
         ];
     }
 
@@ -76,24 +81,24 @@ class InvoiceSearch extends Invoice
         $query->andWhere(['between', 'i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 
         $query->andFilterWhere(['type' => $this->type]);
-		if ($this->mailStatus === 'sent') {
-            $query->mailSent();
-        } elseif ($this->mailStatus === 'notSent') {
-            $query->mailNotSent();
-        }
-		if ((int)$this->invoiceStatus === Invoice::STATUS_OWING) {
-            $query->unpaidProFromaInvoice();
-        } elseif ((int)$this->invoiceStatus === Invoice::STATUS_PAID) {
-            $query->paidProFromaInvoice();
-        }
+		if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
+			$query->mailSent();
+		} elseif ((int) $this->mailStatus === self::STATUS_MAIL_NOT_SENT) {
+			$query->mailNotSent();
+		}
+		if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
+			$query->unpaid()->proFromaInvoice();
+		} elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
+			$query->paid()->proFromaInvoice();
+		}
 
-        return $dataProvider;
+		return $dataProvider;
     }
 
 	public static function invoiceStatuses()
     {
         return [
-            'all' => 'All',
+            self::STATUS_ALL => 'All',
             Invoice::STATUS_OWING => 'Unpaid',
             Invoice::STATUS_PAID => 'Paid',
         ];
@@ -101,9 +106,9 @@ class InvoiceSearch extends Invoice
 	public static function mailStatuses()
     {
         return [
-            'all' => 'All',
-            'sent' => 'Sent',
-			'notSent' => 'Not Sent'
+            self::STATUS_ALL => 'All',
+            self::STATUS_MAIL_SENT => 'Sent',
+			self::STATUS_MAIL_NOT_SENT => 'Not Sent'
         ];
     }
 

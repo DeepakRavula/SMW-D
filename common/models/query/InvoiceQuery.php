@@ -102,25 +102,36 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-	public function unpaidProFromaInvoice(){
+	public function unpaid()
+	{
 		return $this->andFilterWhere([
 			'i.status' => Invoice::STATUS_OWING,
+		]);
+	}
+
+	public function proFromaInvoice()
+	{
+		return $this->andFilterWhere([
 			'type' => Invoice::TYPE_PRO_FORMA_INVOICE
 		]);
 	}
-	
-	public function paidProFromaInvoice(){
+
+	public function paid()
+	{
 		return $this->andFilterWhere([
 			'i.status' => Invoice::STATUS_PAID,
-			'type' => Invoice::TYPE_PRO_FORMA_INVOICE
 		]);
 	}
-	public function mailSent(){
+
+	public function mailSent()
+	{
 		return $this->andFilterWhere([
 			'isSent' => true
 		]);
 	}
-	public function mailNotSent(){
+
+	public function mailNotSent()
+	{
 		return $this->andFilterWhere([
 			'isSent' => false
 		]);
