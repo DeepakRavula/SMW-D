@@ -266,12 +266,12 @@ $bundle = BackendAsset::register($this);
                             'active' => (Yii::$app->controller->id === 'invoice') ? true : false,
 
                         ],
-                        [
-                            'label' => Yii::t('backend', 'Reports'),
-                            'icon' => '<i class="fa fa-line-chart""></i>',
-                            'url' => ['payment/index'],
-                            'visible' => Yii::$app->user->can('staffmember'),
-                            'active' => (Yii::$app->controller->id === 'payment') ? true : false,
+						[
+                            'label'=>Yii::t('backend', 'Reports'),
+                            'icon'=>'<i class="fa fa-line-chart""></i>',
+							'url'=>['payment/index'],    
+                            'visible'=>Yii::$app->user->can('owner'),
+                            'active'=>(Yii::$app->controller->id === 'payment')? true : false,
                         ],
                         [
                             'label' => Yii::t('backend', 'Release Notes'),
