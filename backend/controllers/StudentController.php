@@ -142,6 +142,7 @@ class StudentController extends Controller
         $request = Yii::$app->request;
         $user = $request->post('User');
         if ($model->load($request->post())) {
+        	$model->status = Student::STATUS_ACTIVE;
             $model->customer_id = $user['id'];
             $model->save();
             Yii::$app->session->setFlash('alert', [
