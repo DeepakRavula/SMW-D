@@ -116,14 +116,19 @@ class PaymentController extends Controller
         $model   = $this->findModel($id);
         $modelInvoice = $model->invoice;
         if($model->isCreditApplied()){
-            $model->creditUsage->debitUsagePayment->invoicePayment->delete();
-            $model->creditUsage->creditUsagePayment->invoice->save();
-            $model->creditUsage->debitUsagePayment->delete();
+            $creditUsedPaymentModel = $model->creditUsage->debitUsagePayment;
+            $creditUsedPaymentInvoiceModel = $model->creditUsage->debitUsagePayment->invoice;
+            $creditUsedPaymentModel->invoicePayment->delete();
+            $creditUsedPaymentModel->delete();
+            $creditUsedPaymentInvoiceModel->save();
             $model->creditUsage->delete();
         }elseif($model->isCreditUsed()){
-            $model->debitUsage->creditUsagePayment->invoicePayment->delete();
-            $model->debitUsage->debitUsagePayment->invoice->save();
+            $creditAppliedPaymentModel = $model->debitUsage->creditUsagePayment;
+            $creditAppliedPaymentInvoiceModel = $model->debitUsage->creditUsagePayment->invoice;
             $model->debitUsage->creditUsagePayment->delete();
+            $creditAppliedPaymentInvoiceModel->save();
+            $creditAppliedPaymentModel->invoicePayment->delete();
+            $model->debitUsage->delete();
         }
         $model->invoicePayment->delete();
         $model->delete();
