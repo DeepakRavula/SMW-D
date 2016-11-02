@@ -148,42 +148,6 @@ class TeacherAvailabilityController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    public function actionAvailableDays()
-    {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $session = Yii::$app->session;
-        $teacherId = $_POST['depdrop_parents'][0];
-        $location_id = $session->get('location_id');
-        $teacherLocation = UserLocation::findOne([
-            'user_id' => $teacherId,
-            'location_id' => $location_id,
-        ]);
-        if (!empty($teacherLocation)) {
-            $availabilities = TeacherAvailability::find()
-                ->where(['teacher_location_id' => $teacherLocation->id])
-                ->groupBy(['day'])
-                ->all();
-        }
-        $dayList = TeacherAvailability::getWeekdaysList();
-        $result = [];
-        $output = [];
-
-        if (!empty($availabilities)) {
-            foreach ($availabilities as $availability) {
-                $weekday = $dayList[$availability->day];
-                $output[] = [
-                    'id' => $availability->day,
-                    'name' => $weekday,
-                ];
-            }
-        }
-        $result = [
-            'output' => $output,
-            'selected' => '',
-        ];
-
-        return $result;
-    }
 
     public function actionAvailabilityWithEvents($id)
     {
