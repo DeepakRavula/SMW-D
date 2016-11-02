@@ -22,22 +22,8 @@ $this->params['action-button'] = $actionButton;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-index p-10">
-	<?php if ((int) $searchModel->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE) : ?>
-	<div>
-	<?php $form = ActiveForm::begin(); ?>
-			<?=
-            $form->field($searchModel, 'notSent')->widget(SwitchInput::classname(),
-                [
-                'pluginOptions' => [
-                    'onText' => 'Not Sent',
-                    'offText' => 'All',
-                ],
-            ])->label(false);
-            ?>
-		<?php ActiveForm::end(); ?>
-	</div>
-	<?php endif; ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+</div>
 	<?php $columns = [
             [
             'label' => 'Invoice Number',
@@ -68,14 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Status',
                 'value' => function ($data) {
-                    $status = null;
-                    if ((int) $data->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
-                        $status = 'None';
-                    } else {
-                        $status = $data->getStatus();
-                    }
-
-                    return $status;
+                    return $data->getStatus();
                 },
                 'contentOptions' => function ($data) {
                     $options = [];
@@ -136,11 +115,3 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php \yii\widgets\Pjax::end(); ?>
     </div>
 </div>
-<script>
-$(document).ready(function() {
-	$('input[name="InvoiceSearch[notSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
-		var url = "<?php echo Url::to(['invoice/index']); ?>?InvoiceSearch[notSent]=" + (state | 0) + '&InvoiceSearch[type]=' + "<?php echo $searchModel->type; ?>";
-      $.pjax.reload({url:url,container:"#invoice-listing",replace:false,  timeout: 4000});
-  });
-});
-</script>

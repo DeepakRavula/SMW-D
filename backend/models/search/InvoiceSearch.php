@@ -18,14 +18,15 @@ class InvoiceSearch extends Invoice
     public $toDate = '31-12-2016';
     public $type;
     public $query;
-    public $notSent = true;
+	public $mailStatus;
+	public $invoiceStatus;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['fromDate', 'toDate', 'type', 'query', 'notSent'], 'safe'],
+            [['fromDate', 'toDate', 'type', 'query', 'mailStatus', 'invoiceStatus'], 'safe'],
         ];
     }
 
@@ -75,30 +76,36 @@ class InvoiceSearch extends Invoice
         $query->andWhere(['between', 'i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 
         $query->andFilterWhere(['type' => $this->type]);
-        if ($this->notSent) {
-            $query->andFilterWhere(['isSent' => false]);
+		if ($this->mailStatus === 'sent') {
+            $query->mailSent();
+        } elseif ($this->mailStatus === 'notSent') {
+            $query->mailNotSent();
+        }
+		if ((int)$this->invoiceStatus === Invoice::STATUS_OWING) {
+            $query->unpaidProFromaInvoice();
+        } elseif ((int)$this->invoiceStatus === Invoice::STATUS_PAID) {
+            $query->paidProFromaInvoice();
         }
 
         return $dataProvider;
     }
 
-    public static function invoiceStatuses()
+	public static function invoiceStatuses()
     {
         return [
-            '' => 'All',
-            self::INVOICE_STATUS_UNINVOICED => 'Not Invoiced',
+            'all' => 'All',
+            Invoice::STATUS_OWING => 'Unpaid',
             Invoice::STATUS_PAID => 'Paid',
-            Invoice::STATUS_OWING => 'Owing',
-
         ];
     }
-
-    public static function lessonStatuses()
+	public static function mailStatuses()
     {
         return [
-            '' => 'All',
-            Lesson::STATUS_COMPLETED => 'Completed',
-            'scheduled' => 'Scheduled',
+            'all' => 'All',
+            'sent' => 'Sent',
+			'notSent' => 'Not Sent'
         ];
     }
+
+    
 }

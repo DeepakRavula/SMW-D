@@ -49,6 +49,8 @@ class InvoiceController extends Controller
     public function actionIndex()
     {
         $searchModel = new InvoiceSearch();
+        $searchModel->invoiceStatus = Invoice::STATUS_OWING;
+        $searchModel->mailStatus = 'sent';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -86,6 +88,7 @@ class InvoiceController extends Controller
             $invoiceNumber = $lastInvoice->invoice_number + 1;
         }
         $invoice->invoice_number = $invoiceNumber;
+		$invoice->isSent = false;
         $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
         $invoice->subTotal = 0.0;
         $invoice->tax = 0.0;

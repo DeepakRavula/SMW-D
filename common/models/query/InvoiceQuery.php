@@ -101,4 +101,28 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
+
+	public function unpaidProFromaInvoice(){
+		return $this->andFilterWhere([
+			'i.status' => Invoice::STATUS_OWING,
+			'type' => Invoice::TYPE_PRO_FORMA_INVOICE
+		]);
+	}
+	
+	public function paidProFromaInvoice(){
+		return $this->andFilterWhere([
+			'i.status' => Invoice::STATUS_PAID,
+			'type' => Invoice::TYPE_PRO_FORMA_INVOICE
+		]);
+	}
+	public function mailSent(){
+		return $this->andFilterWhere([
+			'isSent' => true
+		]);
+	}
+	public function mailNotSent(){
+		return $this->andFilterWhere([
+			'isSent' => false
+		]);
+	}
 }
