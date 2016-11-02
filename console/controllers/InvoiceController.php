@@ -53,5 +53,6 @@ class InvoiceController extends Controller
                 $invoice->on(Invoice::EVENT_GENERATE, $invoice->sendEmail());
             }
         }
+        return true;
     }
 }

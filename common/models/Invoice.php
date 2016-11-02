@@ -108,6 +108,13 @@ class Invoice extends \yii\db\ActiveRecord
                 ->sum('invoice_line_item.amount');
     }
 
+    public function getLineItemTax()
+    {
+        return $this->hasMany(InvoiceLineItem::className(),
+                    ['invoice_id' => 'id'])
+                ->sum('invoice_line_item.tax_rate');
+    }
+
     public function getCreditUsageTotal()
     {
         $creditUsageTotal = Payment::find()
@@ -121,25 +128,26 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-		if($this->lineItems) {
-			$existingSubtotal  = $this->subtotal;
-			if($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
-				$this->trigger(self::EVENT_GENERATE);
-			} else {
-				$this->trigger(self::EVENT_UPDATE);
-			}
-		}
-	}
+        if (!$insert) {
+            $existingSubtotal = $this->subTotal;
+            if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
+                $this->trigger(self::EVENT_GENERATE);
+            } else {
+                $this->trigger(self::EVENT_UPDATE);
+            }
+        }
+        return parent::afterSave($insert, $changedAttributes);
+    }
 
     public function updateInvoiceAttributes()
     {
-        $subTotal    = $this->getSubTotal();echo $subTotal;die;
-        $tax         = $this->getTax();
+        $subTotal    = $this->lineItemTotal;
+        $tax         = $this->lineItemTax;
         $totalAmount = $subTotal + $tax;
         return $this->updateAttributes([
-            'subTotal' => $subTotal,
-            'tax' => $tax,
-            'total' => $totalAmount,
+                'subTotal' => $subTotal,
+                'tax' => $tax,
+                'total' => $totalAmount,
         ]);
     }
 
@@ -249,19 +257,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-		$lastInvoice = $this->lastInvoice();
-		$invoiceNumber = 1;
-		if (!empty($lastInvoice)) {
-			$invoiceNumber = $lastInvoice->invoice_number + 1;
-		}
-		$this->invoice_number = $invoiceNumber;
-		$this->date           = (new \DateTime())->format('Y-m-d');
-		$this->status         = Invoice::STATUS_OWING;
-        $this->isSent         = false;
-        $this->subTotal       = 0.00;
-        $this->total          = 0.00;
-        $this->tax            = 0.00;
-        if ((float) $this->total === (float) $this->invoicePaymentTotal) {
+		if ((float) $this->total === (float) $this->invoicePaymentTotal) {
             if ((int) $this->type === (int) self::TYPE_INVOICE) {
                 $this->status = self::STATUS_PAID;
             } else {
@@ -276,6 +272,18 @@ class Invoice extends \yii\db\ActiveRecord
         }
         $this->balance = $this->invoiceBalance;
         if ($insert) {
+            $lastInvoice   = $this->lastInvoice();
+            $invoiceNumber = 1;
+            if (!empty($lastInvoice)) {
+                $invoiceNumber = $lastInvoice->invoice_number + 1;
+            }
+            $this->invoice_number = $invoiceNumber;
+            $this->date           = (new \DateTime())->format('Y-m-d');
+            $this->status         = Invoice::STATUS_OWING;
+            $this->isSent         = false;
+            $this->subTotal       = 0.00;
+            $this->total          = 0.00;
+            $this->tax            = 0.00;
             $reminderNotes = ReminderNote::find()->one();
             if (!empty($reminderNotes)) {
                 $this->reminderNotes = $reminderNotes->notes;
@@ -308,15 +316,6 @@ class Invoice extends \yii\db\ActiveRecord
             return true;
         }
         return false;
-    }
-
-    public function getSubTotal()
-    {
-        $subTotal = InvoiceLineItem::find()
-            ->where(['invoice_id' => $this->id])
-            ->sum('amount');
-
-        return $subTotal;
     }
 
     public function addLineItem($lesson)
