@@ -11,7 +11,6 @@ use common\models\Course;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use common\models\ItemType;
-use common\models\TaxStatus;
 use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
@@ -414,28 +413,8 @@ class LessonController extends Controller
             $invoice->location_id = $location_id;
             $invoice->type = INVOICE::TYPE_INVOICE;
             $invoice->save();
-            $invoiceLineItem = new InvoiceLineItem();
-            $invoiceLineItem->invoice_id = $invoice->id;
-            $invoiceLineItem->item_id = $model->id;
-            $lessonStartTime = $lessonDate->format('H:i:s');
-            $lessonStartTime = new \DateTime($lessonStartTime);
-            $duration = explode(':', $model->duration);
-            $invoiceLineItem->unit = (($duration[0] * 60) + ($duration[1])) / 60;
-            if ((int) $model->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-                $courseFee = $model->course->program->rate;
-                $courseCount = Lesson::find()
-                    ->where(['courseId' => $model->courseId])
-                    ->count('id');
-                $lessonAmount = $model->course->program->rate / $courseCount;
-                $invoiceLineItem->amount = $lessonAmount;
-            } else {
-                $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-                $invoiceLineItem->amount = $model->course->program->rate * $invoiceLineItem->unit;
-            }
-            $description = $model->enrolment->program->name.' for '.$model->enrolment->student->fullName.' with '.$model->teacher->publicIdentity.' on '.$lessonDate->format('M. jS, Y');
-            $invoiceLineItem->description = $description;
-            $invoiceLineItem->save();
+            $invoice->addLineItem($model);
+            $invoice->save();
             $proFormaInvoice = Invoice::find()
                 ->select(['invoice.id', 'SUM(payment.amount) as credit'])
                 ->proFormaCredit($model->id)

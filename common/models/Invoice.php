@@ -144,10 +144,16 @@ class Invoice extends \yii\db\ActiveRecord
         $subTotal    = $this->lineItemTotal;
         $tax         = $this->lineItemTax;
         $totalAmount = $subTotal + $tax;
-        return $this->updateAttributes([
+        $this->updateAttributes([
                 'subTotal' => $subTotal,
                 'tax' => $tax,
                 'total' => $totalAmount,
+        ]);
+        $status  = $this->getInvoiceStatus();
+        $balance = $this->invoiceBalance;
+        return $this->updateAttributes([
+                'status'    => $status,
+                'balance'   => $balance,
         ]);
     }
 
@@ -255,9 +261,9 @@ class Invoice extends \yii\db\ActiveRecord
                     ->one();
     }
 
-    public function beforeSave($insert)
+    public function getInvoiceStatus()
     {
-		if ((float) $this->total === (float) $this->invoicePaymentTotal) {
+       if ((float) $this->total === (float) $this->invoicePaymentTotal) {
             if ((int) $this->type === (int) self::TYPE_INVOICE) {
                 $this->status = self::STATUS_PAID;
             } else {
@@ -270,6 +276,12 @@ class Invoice extends \yii\db\ActiveRecord
                 $this->status = self::STATUS_CREDIT;
             }
         }
+        return $this->status;
+    }
+
+    public function beforeSave($insert)
+    {
+		$this->status  = $this->getInvoiceStatus();
         $this->balance = $this->invoiceBalance;
         if ($insert) {
             $lastInvoice   = $this->lastInvoice();
@@ -313,9 +325,8 @@ class Invoice extends \yii\db\ActiveRecord
                 ->send();
             $this->isSent = true;
             $this->save();
-            return true;
         }
-        return false;
+        return $this->isSent;
     }
 
     public function addLineItem($lesson)

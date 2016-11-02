@@ -301,12 +301,6 @@ class UserController extends Controller
             $invoiceLineItem->invoice_id = $invoice->id;
             $invoiceLineItem->item_id = Invoice::ITEM_TYPE_OPENING_BALANCE;
             $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
-            $invoiceLineItem->isRoyalty = false;
-            $taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-            $invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-            $invoiceLineItem->tax_rate = 0.00;
-            $invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-            $invoiceLineItem->tax_status = $taxStatus->name;
             $invoiceLineItem->description = 'Opening Balance';
             $invoiceLineItem->unit = 1;
             $invoiceLineItem->amount = $paymentModel->amount;
