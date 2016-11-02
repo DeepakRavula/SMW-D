@@ -420,6 +420,7 @@ class LessonController extends Controller
             $invoice->invoice_number = $invoiceNumber;
             $invoice->date = (new \DateTime())->format('Y-m-d');
             $invoice->status = Invoice::STATUS_OWING;
+			$invoice->isSent = false;
             $invoice->type = INVOICE::TYPE_INVOICE;
             $invoice->save();
             $subTotal = 0;

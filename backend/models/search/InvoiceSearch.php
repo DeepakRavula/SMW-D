@@ -14,18 +14,24 @@ use common\models\Invoice;
  */
 class InvoiceSearch extends Invoice
 {
+	const STATUS_MAIL_SENT = 1;
+	const STATUS_MAIL_NOT_SENT = 2;
+	const STATUS_ALL = 3;
     public $fromDate = '1-1-2016';
     public $toDate = '31-12-2016';
     public $type;
     public $query;
-    public $notSent = true;
+	public $mailStatus;
+	public $invoiceStatus;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['fromDate', 'toDate', 'type', 'query', 'notSent'], 'safe'],
+            [['fromDate', 'toDate'], 'date', 'format' => 'php:d-m-Y'],
+			[['mailStatus', 'invoiceStatus'], 'integer'],
+            [['type', 'query'], 'safe'],
         ];
     }
 
@@ -75,30 +81,36 @@ class InvoiceSearch extends Invoice
         $query->andWhere(['between', 'i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 
         $query->andFilterWhere(['type' => $this->type]);
-        if ($this->notSent) {
-            $query->andFilterWhere(['isSent' => false]);
-        }
+		if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
+			$query->mailSent();
+		} elseif ((int) $this->mailStatus === self::STATUS_MAIL_NOT_SENT) {
+			$query->mailNotSent();
+		}
+		if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
+			$query->unpaid()->proFromaInvoice();
+		} elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
+			$query->paid()->proFromaInvoice();
+		}
 
-        return $dataProvider;
+		return $dataProvider;
     }
 
-    public static function invoiceStatuses()
+	public static function invoiceStatuses()
     {
         return [
-            '' => 'All',
-            self::INVOICE_STATUS_UNINVOICED => 'Not Invoiced',
+            self::STATUS_ALL => 'All',
+            Invoice::STATUS_OWING => 'Unpaid',
             Invoice::STATUS_PAID => 'Paid',
-            Invoice::STATUS_OWING => 'Owing',
-
         ];
     }
-
-    public static function lessonStatuses()
+	public static function mailStatuses()
     {
         return [
-            '' => 'All',
-            Lesson::STATUS_COMPLETED => 'Completed',
-            'scheduled' => 'Scheduled',
+            self::STATUS_ALL => 'All',
+            self::STATUS_MAIL_SENT => 'Sent',
+			self::STATUS_MAIL_NOT_SENT => 'Not Sent'
         ];
     }
+
+    
 }

@@ -122,7 +122,7 @@ use kartik\switchinput\SwitchInput;
           </div>
           <div  class="row-fluid text-gray">
 				  <div id="invoice-status" class="col-md-4 pull-right text-right p-r-0">
-				  <?= (int) $model->type === InvoiceSearch::TYPE_INVOICE ? $model->getStatus() : 'None'; ?></div>
+				  <?= $model->getStatus(); ?></div>
 				  <div class="col-md-2 pull-right">Status:</div>
               <div class="clearfix"></div>
             </div>

@@ -106,12 +106,12 @@ class Invoice extends \yii\db\ActiveRecord
                 ->sum('invoice_line_item.amount');
     }
 
-    public function getCreditUsageTotal()
+    public function getCreditAppliedTotal()
     {
         $creditUsageTotal = Payment::find()
             ->joinWith('invoicePayment ip')
             ->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
-            ->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED])
+            ->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_APPLIED])
             ->sum('payment.amount');
 
         return $creditUsageTotal;
@@ -140,15 +140,16 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getInvoiceBalance()
     {
-        if ((int) $this->type === (int) self::TYPE_INVOICE) {
+        if ((int) $this->type === self::TYPE_INVOICE) {
             $balance = $this->total - $this->invoicePaymentTotal;
         } else {
             $balance = $this->total - $this->invoicePaymentTotal;
-            if (!empty($this->paymentTotal)) {
-                $balance = -abs($this->paymentTotal - abs($this->creditUsageTotal));
-            }
-        }
-
+			if ((float)$this->total === (float)$this->invoicePaymentTotal) {
+                $balance = -abs($this->total);
+        	}if ((float)$this->total < (float)$this->invoicePaymentTotal) {
+                $balance = -abs($this->invoicePaymentTotal);
+        	}
+		}
         return $balance;
     }
 
@@ -192,22 +193,19 @@ class Invoice extends \yii\db\ActiveRecord
         $status = null;
         switch ($this->status) {
             case self::STATUS_OWING:
-                $status = 'Owing';
+        		$status = (int) $this->type === self::TYPE_INVOICE ? 'Owing' : 'Unpaid';
             break;
             case self::STATUS_PAID:
-                    $status = 'Paid';
+        		$status = (int) $this->type === self::TYPE_INVOICE ? 'Paid' : 'Paid';
             break;
             case self::STATUS_CREDIT:
-                    $status = 'Credit';
+        		$status = (int) $this->type === self::TYPE_INVOICE ? 'Credit' : 'Paid';
             break;
             case self::STATUS_CANCEL:
                     $status = 'Cancel';
             break;
         }
-        if ((int) $this->type === self::TYPE_PRO_FORMA_INVOICE) {
-            $status = 'None';
-        }
-
+      
         return $status;
     }
 
@@ -240,17 +238,15 @@ class Invoice extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ((float) $this->total === (float) $this->invoicePaymentTotal) {
-            if ((int) $this->type === (int) self::TYPE_INVOICE) {
-                $this->status = self::STATUS_PAID;
-            } else {
-                $this->status = self::STATUS_CREDIT;
-            }
+            $this->status = self::STATUS_PAID;
         } elseif ($this->total > $this->invoicePaymentTotal) {
             $this->status = self::STATUS_OWING;
         } else {
             if ((int) $this->type === (int) self::TYPE_INVOICE) {
                 $this->status = self::STATUS_CREDIT;
-            }
+            }else{
+            	$this->status = self::STATUS_PAID;
+			}
         }
         $this->balance = $this->invoiceBalance;
         if ($insert) {
