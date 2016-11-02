@@ -27,7 +27,9 @@ class Invoice extends \yii\db\ActiveRecord
     const ITEM_TYPE_OPENING_BALANCE = 0;
     const USER_UNASSINGED = 0;
 
-    public $customer_id;
+	const SCENARIO_DELETE = 'delete';
+
+	public $customer_id;
     public $credit;
     /**
      * {@inheritdoc}
@@ -47,6 +49,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['reminderNotes'], 'string'],
             [['isSent'], 'boolean'],
             [['type', 'notes', 'internal_notes', 'status'], 'safe'],
+			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
         ];
     }
 
@@ -175,6 +178,14 @@ class Invoice extends \yii\db\ActiveRecord
 
         return $customerBalance;
     }
+
+	public function checkPaymentExists($attribute, $params)
+	{
+		if (! empty($this->invoicePayments)) {
+			$this->addError($attribute,
+				'Pro-forma invoice can\'t be deleted when there payments associated. Please delete the payments and try again');
+		}
+	}
 
     public function getStatus()
     {

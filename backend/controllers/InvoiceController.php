@@ -22,6 +22,7 @@ use common\models\TaxStatus;
 use common\models\Program;
 use yii\helpers\Json;
 use yii\web\Response;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /**
@@ -428,13 +429,28 @@ class InvoiceController extends Controller
      * @return mixed
      */
     public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
+	{
+		$model = $this->findModel($id);
+		$response = \Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+		$model->setScenario(Invoice::SCENARIO_DELETE);
+		if ($model->validate()) {
+			InvoiceLineItem::deleteAll(['invoice_id' => $model->id]);
+			$model->delete();
+			$response = [
+				'status' => true,
+				'url' => Url::to(['index', 'InvoiceSearch[type]' => $model->type]),
+			];
+		} else {
+			$model	 = ActiveForm::validate($model);
+			$response		 = [
+				'errors' => $model['invoice-id'],
+			];
+		}
+		return $response;
+	}
 
-        return $this->redirect(['index']);
-    }
-
-    /**
+	/**
      * Finds the Invoice model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
