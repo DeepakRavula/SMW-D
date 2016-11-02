@@ -7,6 +7,7 @@ use yii\widgets\ActiveForm;
 use kartik\switchinput\SwitchInput;
 
 ?>
+<div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="invoice-view p-50">
 	<div class="pull-right">
 		<?php if ((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE) : ?>
@@ -35,7 +36,19 @@ use kartik\switchinput\SwitchInput;
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
 		<?= Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-right  m-l-20']) ?>  
-          <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right', 'target' => '_blank']) ?>
+          <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right m-l-20', 'target' => '_blank']) ?>
+		
+		<?php $form = ActiveForm::begin();?>
+		<?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
+			<?=
+			Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id],
+				[
+				'class' => 'btn btn-default pull-right',
+				'id' => 'delete-button',
+			])
+			?>
+		<?php endif; ?>
+    <?php ActiveForm::end(); ?>
           <div class="pull-left invoice-address text-gray">
             <div class="row-fluid">
               <h2 class="m-0 text-inverse"><strong><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
@@ -226,4 +239,24 @@ $(document).ready(function() {
         return false;
 	});
   });
+</script>
+<script>
+$('#delete-button').click(function(){
+	$.ajax({
+		url    : '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
+		type   : 'post',
+		dataType: 'json',
+		success: function(response)
+		{
+		   if(response.status)
+		   {
+			   window.location.href = response.url;
+			}else
+			{
+				$('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+			}
+		}
+		});
+		return false;
+});
 </script>
