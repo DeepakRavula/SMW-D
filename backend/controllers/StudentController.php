@@ -223,11 +223,12 @@ class StudentController extends Controller
 
             return $this->redirect(['lesson/review', 'courseId' => $courseModel->id]);
         }
-        if ((!empty($post['courseId'])) && is_array($post['courseId'])) {
+        if (!empty($post['courseId'])) {
             $enrolmentModel = new Enrolment();
-            $enrolmentModel->courseId = $post['courseId'][0];
+            $enrolmentModel->courseId = current($post['courseId']);
             $enrolmentModel->studentId = $model->id;
-            $enrolmentModel->isDeleted = 0;
+            $enrolmentModel->isDeleted = false;
+            $enrolmentModel->isConfirmed = true;
             $enrolmentModel->paymentFrequency = Enrolment::PAYMENT_FREQUENCY_FULL;
             $enrolmentModel->save();
             $courseStartDate = new \DateTime($enrolmentModel->course->startDate);

@@ -69,7 +69,7 @@ class CourseController extends Controller
                     'courseId' => $id,
                     'studentId' => $studentId,
                     'isDeleted' => false,
-                    'isConfirmed' => false,
+                    'isConfirmed' => true,
                     'paymentFrequency' => Enrolment::PAYMENT_FREQUENCY_FULL,
                 ]);
                 $enrolment->save();
