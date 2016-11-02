@@ -1,4 +1,5 @@
 <?php
+use yii\helpers\Html;
 use common\models\Payment;
 use common\models\Invoice;
 use common\models\PaymentMethod;
@@ -45,6 +46,21 @@ $columns = [
                 ];
             },
         ],
+        [
+            'class' => kartik\grid\ActionColumn::className(),
+            'template' => '{delete}',
+            'buttons' => [
+                'delete' => function ($url, $model, $key) {
+                    return Html::a('<i class="fa fa-times" aria-hidden="true"></i>',
+                        ['payment/delete', 'id' => $model->id],
+                        ['data' => [
+                            'confirm' => 'Are you sure you want to delete this item?',
+                            'method' => 'post',
+                        ],
+                    ]);
+                },
+            ]
+        ]
 ]; ?>
 		<?=
         \kartik\grid\GridView::widget([

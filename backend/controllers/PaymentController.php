@@ -113,9 +113,27 @@ class PaymentController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model        = $this->findModel($id);
+        $modelInvoice = $model->invoice;
+        if ($model->isCreditApplied()) {
+            $creditUsedPaymentModel        = $model->creditUsage->debitUsagePayment;
+            $creditUsedPaymentInvoiceModel = $model->creditUsage->debitUsagePayment->invoice;
+            $creditUsedPaymentModel->invoicePayment->delete();
+            $creditUsedPaymentModel->delete();
+            $creditUsedPaymentInvoiceModel->save();
+            $model->creditUsage->delete();
+        } elseif ($model->isCreditUsed()) {
+            $creditAppliedPaymentModel        = $model->debitUsage->creditUsagePayment;
+            $creditAppliedPaymentInvoiceModel = $model->debitUsage->creditUsagePayment->invoice;
+            $model->debitUsage->creditUsagePayment->delete();
+            $creditAppliedPaymentInvoiceModel->save();
+            $creditAppliedPaymentModel->invoicePayment->delete();
+            $model->debitUsage->delete();
+        }
+        $model->invoicePayment->delete();
+        $model->delete();
+        $modelInvoice->save();
+        return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);
     }
 
     /**
