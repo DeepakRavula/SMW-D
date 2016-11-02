@@ -24,7 +24,8 @@ class InvoiceController extends Controller
          */
         $priorDate             = (new \DateTime())->modify('+15 day');
         $matchedLessons        = Lesson::find()
-            ->scheduledBetween($priorDate, $priorDate)
+            ->scheduled()
+            ->between($priorDate, $priorDate)
             ->all();
         $monthFirstDate        = \DateTime::createFromFormat('Y-m-d',
                 $priorDate->format('Y-m-1'));
@@ -37,18 +38,19 @@ class InvoiceController extends Controller
                 }
                 $lessons             = Lesson::find()
                         ->where(['courseId' => $matchedLesson->courseId])
-                        ->scheduledBetween($monthFirstDate, $monthLastDate)
+                        ->scheduled()
+                        ->between($monthFirstDate, $monthLastDate)
                         ->all();
-                $invoice            	= new Invoice();
-                $invoice->type       	= Invoice::TYPE_PRO_FORMA_INVOICE;
-                $invoice->location_id  	= $matchedLesson->enrolment->course->locationId;
-				$invoice->save();
+                $invoice              = new Invoice();
+                $invoice->type        = Invoice::TYPE_PRO_FORMA_INVOICE;
+                $invoice->location_id = $matchedLesson->enrolment->course->locationId;
+                $invoice->user_id     = $matchedLesson->enrolment->student->customer_id;
+                $invoice->save();
                 foreach ($lessons as $lesson) {
 					$invoice->addLineItem($lesson);
                 }
-				$invoice->on(Invoice::EVENT_GENERATE, $invoice->sendMail());
-
-                return $invoice->save();
+                $invoice->save();
+                $invoice->on(Invoice::EVENT_GENERATE, $invoice->sendEmail());
             }
         }
     }

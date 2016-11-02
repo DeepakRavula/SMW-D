@@ -375,12 +375,14 @@ class Lesson extends \yii\db\ActiveRecord
                 $date->format('Y-m-t'));
         $lesson          = Lesson::find()
             ->where(['courseId' => $this->courseId])
-            ->scheduledBetween($monthFirstDate, $monthLastDate)
+            ->scheduled()
+            ->between($monthFirstDate, $monthLastDate)
             ->orderBy(['lesson.date' => SORT_ASC])
             ->one();
         $courseStartDate = \DateTime::createFromFormat('Y-m-d H:i:s',
                 $lesson->date);
-
-        return $courseStartDate->format('Y-m-d') === $date->format('Y-m-d');
+        $courseStartDate = new \DateTime($courseStartDate->format('Y-m-d'));
+        $date = new \DateTime($date->format('Y-m-d'));
+        return $courseStartDate == $date;
     }
 }    

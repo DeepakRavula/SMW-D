@@ -291,19 +291,10 @@ class UserController extends Controller
         $locationId = Yii::$app->session->get('location_id');
         $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
         if ($paymentModel->load(Yii::$app->request->post())) {
-            $lastInvoice = Invoice::lastInvoice($locationId);
-
-            if (empty($lastInvoice)) {
-                $invoiceNumber = 1;
-            } else {
-                $invoiceNumber = $lastInvoice->invoice_number + 1;
-            }
             $invoice = new Invoice();
             $invoice->user_id = $model->id;
             $invoice->location_id = $locationId;
-            $invoice->invoice_number = $invoiceNumber;
             $invoice->type = Invoice::TYPE_INVOICE;
-            $invoice->date = (new \DateTime())->format('Y-m-d');
             $invoice->save();
 
             $invoiceLineItem = new InvoiceLineItem();
@@ -321,7 +312,6 @@ class UserController extends Controller
             $invoiceLineItem->amount = $paymentModel->amount;
             $invoiceLineItem->save();
 
-            $invoice = Invoice::findOne(['id' => $invoice->id]);
             if ($paymentModel->amount > 0) {
                 $invoice->subTotal = $invoiceLineItem->amount;
             } else {

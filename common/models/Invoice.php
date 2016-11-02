@@ -121,20 +121,27 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-		if($this->hasLineItems) {
-			$existingSubtotal = $this->subtotal;
-			$subTotal          = $this->getSubTotal();
-			$invoice->subTotal = $subTotal;
-			$totalAmount       = $subTotal + $taxAmount;
-			$invoice->tax      = $taxAmount;
-			$invoice->total    = $totalAmount;
-			if($this->updateAttributes() && (float) $existingSubtotal === 0.0) {
+		if($this->lineItems) {
+			$existingSubtotal  = $this->subtotal;
+			if($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
 				$this->trigger(self::EVENT_GENERATE);
 			} else {
 				$this->trigger(self::EVENT_UPDATE);
 			}
 		}
 	}
+
+    public function updateInvoiceAttributes()
+    {
+        $subTotal    = $this->getSubTotal();echo $subTotal;die;
+        $tax         = $this->getTax();
+        $totalAmount = $subTotal + $tax;
+        return $this->updateAttributes([
+            'subTotal' => $subTotal,
+            'tax' => $tax,
+            'total' => $totalAmount,
+        ]);
+    }
 
     public function getPaymentTotal()
     {
@@ -232,44 +239,28 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
-    public static function lastInvoice($location_id)
+    public function lastInvoice()
     {
-        return $query = self::find()->alias('i')
-                    ->where(['i.location_id' => $location_id, 'i.type' => self::TYPE_INVOICE])
-                    ->orderBy(['i.id' => SORT_DESC])
-                    ->one();
-    }
-
-    public function lastInvoice1()
-    {
-        return $query = self::find()->alias('i')
+        return $query = Invoice::find()->alias('i')
                     ->where(['i.location_id' => $this->location_id, 'i.type' => $this->type])
-                    ->orderBy(['i.id' => SORT_DESC])
-                    ->one();
-    }
-
-    public static function lastProFormaInvoice($location_id)
-    {
-        return $query = self::find()->alias('i')
-                    ->where(['i.location_id' => $location_id, 'i.type' => self::TYPE_PRO_FORMA_INVOICE])
                     ->orderBy(['i.id' => SORT_DESC])
                     ->one();
     }
 
     public function beforeSave($insert)
     {
-		$location_id         = $matchedLesson->enrolment->course->locationId;
-		$lastProFormaInvoice = $this->lastInvoice1();
+		$lastInvoice = $this->lastInvoice();
 		$invoiceNumber = 1;
-		if (!empty($lastProFormaInvoice)) {
-			$invoiceNumber = $lastProFormaInvoice->invoice_number + 1;
+		if (!empty($lastInvoice)) {
+			$invoiceNumber = $lastInvoice->invoice_number + 1;
 		}
-		$invoice->user_id        = $matchedLesson->enrolment->student->customer_id;
-		$invoice->invoice_number = $invoiceNumber;
-		$invoice->location_id    = $location_id;
-		$invoice->date           = (new \DateTime())->format('Y-m-d');
-		$invoice->status         = Invoice::STATUS_OWING;
-
+		$this->invoice_number = $invoiceNumber;
+		$this->date           = (new \DateTime())->format('Y-m-d');
+		$this->status         = Invoice::STATUS_OWING;
+        $this->isSent         = false;
+        $this->subTotal       = 0.00;
+        $this->total          = 0.00;
+        $this->tax            = 0.00;
         if ((float) $this->total === (float) $this->invoicePaymentTotal) {
             if ((int) $this->type === (int) self::TYPE_INVOICE) {
                 $this->status = self::STATUS_PAID;
@@ -331,36 +322,29 @@ class Invoice extends \yii\db\ActiveRecord
     public function addLineItem($lesson)
     {
         $actualLessonDate            = \DateTime::createFromFormat('Y-m-d H:i:s',
-                $this->date);
+                $lesson->date);
         $invoiceLineItem             = new InvoiceLineItem();
-        $invoiceLineItem->invoice_id = $invoice->id;
-        $invoiceLineItem->item_id    = $this->id;
-        $lessonStartTime             = $actualLessonDate->format('H:i:s');
+        $invoiceLineItem->invoice_id = $this->id;
+        $invoiceLineItem->item_id    = $lesson->id;
         $getDuration                 = \DateTime::createFromFormat('H:i:s',
-                $this->duration);
+                $lesson->duration);
         $hours                       = $getDuration->format('H');
         $minutes                     = $getDuration->format('i');
         $invoiceLineItem->unit       = (($hours * 60) + $minutes) / 60;
-        if ((int) $this->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+        if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
             $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
             $courseCount                   = Lesson::find()
-                ->where(['courseId' => $this->courseId])
+                ->where(['courseId' => $lesson->courseId])
                 ->count('id');
-            $lessonAmount                  = $this->course->program->rate / $courseCount;
+            $lessonAmount                  = $lesson->course->program->rate / $courseCount;
             $invoiceLineItem->amount       = $lessonAmount;
         } else {
             $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-            $invoiceLineItem->amount       = $this->enrolment->program->rate
+            $invoiceLineItem->amount       = $lesson->enrolment->program->rate
                 * $invoiceLineItem->unit;
         }
-        $taxStatus                    = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-        $invoiceLineItem->tax_type    = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-        $invoiceLineItem->tax_rate    = 0.0;
-        $invoiceLineItem->tax_code    = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-        $invoiceLineItem->tax_status  = $taxStatus->name;
-        $description                  = $this->enrolment->program->name.' for '.$this->enrolment->student->fullName.' with '.$this->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
+        $description                  = $lesson->enrolment->program->name.' for '.$lesson->enrolment->student->fullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
-        $invoiceLineItem->isRoyalty   = true;
         $invoiceLineItem->save();
     }
 }

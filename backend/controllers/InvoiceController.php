@@ -79,17 +79,6 @@ class InvoiceController extends Controller
         }
         $location_id = Yii::$app->session->get('location_id');
         $invoice->location_id = $location_id;
-        $lastInvoice = Invoice::lastInvoice($location_id);
-        if (empty($lastInvoice)) {
-            $invoiceNumber = 1;
-        } else {
-            $invoiceNumber = $lastInvoice->invoice_number + 1;
-        }
-        $invoice->invoice_number = $invoiceNumber;
-        $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
-        $invoice->subTotal = 0.0;
-        $invoice->tax = 0.0;
-        $invoice->total = 0.0;
         $invoice->save();
 
         return $this->redirect(['view', 'id' => $invoice->id]);
@@ -196,9 +185,6 @@ class InvoiceController extends Controller
             $invoiceLineItemModel->tax_status = $taxStatus->name;
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
-                $model->subTotal += $invoiceLineItemModel->amount;
-                $model->tax += $invoiceLineItemModel->tax_rate;
-                $model->total = $model->subTotal + $model->tax;
                 $model->save();
                 $response = [
                     'invoiceStatus' => $model->getStatus(),
@@ -305,46 +291,15 @@ class InvoiceController extends Controller
         $post = $request->post();
         if ((!empty($post['selection'])) && is_array($post['selection']) && (!empty($customer->id))) {
             $invoice->type = $invoiceRequest['type'];
-            $lastInvoice = Invoice::lastInvoice($location_id);
-            $lastProFormaInvoice = Invoice::lastProFormaInvoice($location_id);
-            switch ($invoice->type) {
-                case Invoice::TYPE_PRO_FORMA_INVOICE:
-                    if (empty($lastProFormaInvoice)) {
-                        $invoiceNumber = 1;
-                    } else {
-                        $invoiceNumber = $lastProFormaInvoice->invoice_number + 1;
-                    }
-                    break;
-                case Invoice::TYPE_INVOICE:
-                    if (empty($lastInvoice)) {
-                        $invoiceNumber = 1;
-                    } else {
-                        $invoiceNumber = $lastInvoice->invoice_number + 1;
-                    }
-                    break;
-            }
-
             $invoice->user_id = $customer->id;
-            $invoice->invoice_number = $invoiceNumber;
             $invoice->location_id = $location_id;
-            $invoice->date = (new \DateTime())->format('Y-m-d');
-            $invoice->status = Invoice::STATUS_OWING;
             $invoice->notes = $post['Invoice']['notes'];
             $invoice->internal_notes = $post['Invoice']['internal_notes'];
             $invoice->save();
-
-            $subTotal = 0;
-            $taxAmount = 0;
             foreach ($post['selection'] as $selection) {
                 $lesson = Lesson::findOne(['id' => $selection]);
-                $lesson->bulkLessonsInvoiceLineItem($invoice);
+                $invoice->addLineItem($lesson);
             }
-            $invoice           = Invoice::findOne(['id' => $invoice->id]);
-            $subTotal          = $invoice->getSubTotal();
-            $invoice->subTotal = $subTotal;
-            $totalAmount       = $subTotal + $taxAmount;
-            $invoice->tax      = $taxAmount;
-            $invoice->total    = $totalAmount;
             $invoice->save();
 
             $invoiceType = (int) $invoice->type === Invoice::TYPE_INVOICE ? 'Invoice' : 'Pro-forma invoice';
