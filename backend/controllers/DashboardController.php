@@ -42,13 +42,19 @@ class DashboardController extends \yii\web\Controller
         $enrolments = Enrolment::find()
                     ->notDeleted()
                     ->program($locationId, $currentDate)
-                    ->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM])
+                    ->where([
+						'program.type' => Program::TYPE_PRIVATE_PROGRAM,
+						'enrolment.isConfirmed' => true,
+					])
                     ->count('studentId');
 
         $groupEnrolments = Enrolment::find()
                     ->notDeleted()
                     ->program($locationId, $currentDate)
-                    ->where(['program.type' => Program::TYPE_GROUP_PROGRAM])
+                    ->where([
+						'program.type' => Program::TYPE_GROUP_PROGRAM,
+						'enrolment.isConfirmed' => true,
+					])
                     ->count('studentId');
 
         $payments = Payment::find()
@@ -72,7 +78,8 @@ class DashboardController extends \yii\web\Controller
                     $query->andWhere(['locationId' => $locationId])
                         ->andWhere(['NOT', ['studentId' => null]])
                         ->andWhere(['>=', 'endDate', $currentDate->format('Y-m-d')]);
-                }]);
+                }])
+				->where(['enrolment.isConfirmed' => true]);
             }])
             ->distinct(['enrolment.studentId'])
             ->count();
