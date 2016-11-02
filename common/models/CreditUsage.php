@@ -30,14 +30,12 @@ class CreditUsage extends \yii\db\ActiveRecord
 
     public function getDebitUsagePayment()
     {
-        return $this->hasOne(Payment::className(),
-                ['id' => 'debit_payment_id']);
+        return $this->hasOne(Payment::className(), ['id' => 'debit_payment_id']);
     }
 
     public function getCreditUsagePayment()
     {
-        return $this->hasOne(Payment::className(),
-                ['id' => 'credit_payment_id']);
+        return $this->hasOne(Payment::className(), ['id' => 'credit_payment_id']);
     }
 
     /**
