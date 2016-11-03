@@ -129,6 +129,8 @@ class LessonController extends Controller
             $data = ['model' => $model, 'privateLessonModel' => $privateLessonModel];
         }
         if ($model->load(Yii::$app->request->post())) {
+            $duration = \DateTime::createFromFormat('H:i', $model->duration);
+            $model->duration = $duration->format('H:i:s');
             if (empty($model->date)) {
                 $model->date = $model->getOldAttribute('date');
                 $model->status = Lesson::STATUS_CANCELED;
