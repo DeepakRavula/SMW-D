@@ -117,7 +117,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->isRoyalty  = false;
             }
         }
+        if(!$insert && $this->isMisc()) {
+            $this->tax_rate = $this->amount * $this->taxType->taxCode->rate / 100;
+        }
         return parent::beforeSave($insert);
+    }
+
+    public function getTaxType()
+    {
+        return $this->hasOne(TaxType::className(), ['name' => 'tax_type']);
     }
 
     public function isOpeningBalance()
