@@ -134,8 +134,6 @@ class Invoice extends \yii\db\ActiveRecord
             $existingSubtotal = $this->subTotal;
             if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
                 $this->trigger(self::EVENT_GENERATE);
-            } else {
-                $this->trigger(self::EVENT_UPDATE);
             }
         }
         return parent::afterSave($insert, $changedAttributes);
@@ -287,9 +285,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-		$this->status  = $this->getInvoiceStatus();
-        $this->balance = $this->invoiceBalance;
-        if ($insert) {
+		if ($insert) {
             $lastInvoice   = $this->lastInvoice();
             $invoiceNumber = 1;
             if (!empty($lastInvoice)) {
