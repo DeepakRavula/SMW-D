@@ -369,6 +369,6 @@ class Invoice extends \yii\db\ActiveRecord
         }
         $description                  = $lesson->enrolment->program->name.' for '.$lesson->enrolment->student->fullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
-        $invoiceLineItem->save();
+        return $invoiceLineItem->save();
     }
 }

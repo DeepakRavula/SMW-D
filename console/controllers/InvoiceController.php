@@ -24,23 +24,46 @@ class InvoiceController extends Controller
          */
         $priorDate             = (new \DateTime())->modify('+15 day');
         $matchedLessons        = Lesson::find()
-            ->unInvoiced()
+            ->unInvoicedProForma()
             ->scheduled()
             ->between($priorDate, $priorDate)
             ->all();
         $monthFirstDate        = \DateTime::createFromFormat('Y-m-d',
                 $priorDate->format('Y-m-1'));
-        $monthLastDate         = \DateTime::createFromFormat('Y-m-d',
-                $priorDate->format('Y-m-t'));
         if (!empty($matchedLessons)) {
             foreach ($matchedLessons as $matchedLesson) {
-                if (!$matchedLesson->isFirstLessonDate($priorDate) || !$matchedLesson->enrolment->isMonthlyPaymentFrequency()) {
-                    continue;
+                if ($matchedLesson->enrolment->isMonthlyPaymentFrequency()) {
+                    $monthLastDate         = \DateTime::createFromFormat('Y-m-d',
+                            $priorDate->format('Y-m-t'));
+                    if(!$matchedLesson->isFirstLessonDate($priorDate, $monthLastDate)) {
+                        continue;
+                    }
                 }
+                if ($matchedLesson->enrolment->isQuaterlyPaymentFrequency()) {
+                    $monthLastDate         = $monthFirstDate->modify('+3 month, -1 day');
+                    if(!$matchedLesson->isFirstLessonDate($priorDate, $monthLastDate)) {
+                        continue;
+                    }
+                }
+                if ($matchedLesson->enrolment->isHalfYearlyPaymentFrequency()) {
+                    $monthLastDate         = $monthFirstDate->modify('+6 month, -1 day');
+                    if(!$matchedLesson->isFirstLessonDate($priorDate, $monthLastDate)) {
+                        continue;
+                    }
+                }
+                if ($matchedLesson->enrolment->isAnnualPaymentFrequency()) {
+                    $monthLastDate         = $monthFirstDate->modify('+1 year, -1 day');
+                    if(!$matchedLesson->isFirstLessonDate($priorDate, $monthLastDate)) {
+                        continue;
+                    }
+                }
+                $monthStartDate        = \DateTime::createFromFormat('Y-m-d',
+                        $priorDate->format('Y-m-1'));
                 $lessons             = Lesson::find()
                         ->where(['courseId' => $matchedLesson->courseId])
+                        ->unInvoicedProForma()
                         ->scheduled()
-                        ->between($monthFirstDate, $monthLastDate)
+                        ->between($monthStartDate, $monthLastDate)
                         ->all();
                 $invoice              = new Invoice();
                 $invoice->type        = Invoice::TYPE_PRO_FORMA_INVOICE;

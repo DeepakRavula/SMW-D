@@ -20,6 +20,7 @@ class Enrolment extends \yii\db\ActiveRecord
     const PAYMENT_FREQUENCY_FULL = 1;
     const PAYMENT_FREQUENCY_MONTHLY = 2;
     const PAYMENT_FREQUENCY_QUARTERLY = 3;
+    const PAYMENT_FREQUENCY_HALFYEARLY = 4;
     /**
      * {@inheritdoc}
      */
@@ -108,6 +109,21 @@ class Enrolment extends \yii\db\ActiveRecord
     public function isMonthlyPaymentFrequency()
     {
         return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_MONTHLY;
+    }
+
+    public function isQuaterlyPaymentFrequency()
+    {
+        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_QUARTERLY;
+    }
+
+    public function isHalfYearlyPaymentFrequency()
+    {
+        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_HALFYEARLY;
+    }
+
+    public function isAnnualPaymentFrequency()
+    {
+        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_FULL;
     }
 
     public static function paymentFrequencies()

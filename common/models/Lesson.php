@@ -320,11 +320,7 @@ class Lesson extends \yii\db\ActiveRecord
                     $lessonRescheduleModel->rescheduledLessonId = $this->id;
                     $lessonRescheduleModel->save();
                 }
-                if(empty($changedAttributes['duration'])) {
-                    return parent::afterSave($insert, $changedAttributes);
-                }
-                $this->duration = \DateTime::createFromFormat('H:i', $this->duration);
-                if ($changedAttributes['duration'] !== $this->duration->format('H:i:s')) {
+                if (isset($changedAttributes['duration'])) {
                     if (!empty($this->proFormaInvoice) || !empty($this->invoice)) {
                         $subTotal = 0;
                         $taxAmount = 0;
@@ -370,14 +366,13 @@ class Lesson extends \yii\db\ActiveRecord
             ->send();
     }
 
-    public function isFirstLessonDate($date)
+    public function isFirstLessonDate($date, $monthLastDate)
     {
         $monthFirstDate  = \DateTime::createFromFormat('Y-m-d',
                 $date->format('Y-m-1'));
-        $monthLastDate   = \DateTime::createFromFormat('Y-m-d',
-                $date->format('Y-m-t'));
         $lesson          = Lesson::find()
             ->where(['courseId' => $this->courseId])
+            ->unInvoicedProForma()
             ->scheduled()
             ->between($monthFirstDate, $monthLastDate)
             ->orderBy(['lesson.date' => SORT_ASC])
