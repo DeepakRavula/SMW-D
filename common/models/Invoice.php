@@ -122,6 +122,11 @@ class Invoice extends \yii\db\ActiveRecord
                 ->sum('invoice_line_item.tax_rate');
     }
 
+    public function isOpeningBalance()
+    {
+        return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
+    }
+
     public function getCreditAppliedTotal()
     {
         $creditUsageTotal = Payment::find()
@@ -146,7 +151,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function updateInvoiceAttributes()
     {
-        if((int) $this->lineItem->item_type_id !== (int) ItemType::TYPE_OPENING_BALANCE) {
+        if(!$this->isOpeningBalance()) {
             $subTotal    = $this->lineItemTotal;
             $tax         = $this->lineItemTax;
             $totalAmount = $subTotal + $tax;
