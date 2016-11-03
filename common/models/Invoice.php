@@ -89,6 +89,11 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
 
+    public function getLineItem()
+    {
+        return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id']);
+    }
+
     public function getPayment()
     {
         return $this->hasMany(Payment::className(), ['user_id' => 'user_id']);
@@ -141,14 +146,16 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function updateInvoiceAttributes()
     {
-        $subTotal    = $this->lineItemTotal;
-        $tax         = $this->lineItemTax;
-        $totalAmount = $subTotal + $tax;
-        $this->updateAttributes([
-                'subTotal' => $subTotal,
-                'tax' => $tax,
-                'total' => $totalAmount,
-        ]);
+        if((int) $this->lineItem->item_type_id !== (int) ItemType::TYPE_OPENING_BALANCE) {
+            $subTotal    = $this->lineItemTotal;
+            $tax         = $this->lineItemTax;
+            $totalAmount = $subTotal + $tax;
+            $this->updateAttributes([
+                    'subTotal' => $subTotal,
+                    'tax' => $tax,
+                    'total' => $totalAmount,
+            ]);
+        }
         $status  = $this->getInvoiceStatus();
         $balance = $this->invoiceBalance;
         return $this->updateAttributes([
