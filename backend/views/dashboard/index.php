@@ -56,7 +56,7 @@ $this->title = 'Dashboard';
         </div>
     </div>
 
-<div class="col-md-5 m-t-20">
+<div>
 <?= Highcharts::widget([
    'options' => [
       'title' => ['text' => 'Monthly Revenue'],
@@ -72,7 +72,7 @@ $this->title = 'Dashboard';
    ],
 ]); ?>
 </div>
-<div class="col-md-5 m-t-20">
+<div>
 <?=  Highcharts::widget([
     'options' => [
         'title' => ['text' => 'Instruction Hours'],
