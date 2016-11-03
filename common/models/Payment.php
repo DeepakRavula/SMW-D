@@ -149,6 +149,12 @@ class Payment extends ActiveRecord
         return $this->hasOne(PaymentCheque::className(), ['payment_id' => 'id']);
     }
 
+    public function beforeDelete()
+    {
+        $this->invoicePayment->delete();
+        return parent::beforeDelete();
+    }
+
     public function beforeSave($insert)
     {
         if (!$insert) {

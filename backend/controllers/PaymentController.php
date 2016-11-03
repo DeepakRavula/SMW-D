@@ -118,19 +118,18 @@ class PaymentController extends Controller
         if ($model->isCreditApplied()) {
             $creditUsedPaymentModel        = $model->creditUsage->debitUsagePayment;
             $creditUsedPaymentInvoiceModel = $model->creditUsage->debitUsagePayment->invoice;
-            $creditUsedPaymentModel->invoicePayment->delete();
             $creditUsedPaymentModel->delete();
             $creditUsedPaymentInvoiceModel->save();
             $model->creditUsage->delete();
         } elseif ($model->isCreditUsed()) {
-            $creditAppliedPaymentModel        = $model->debitUsage->creditUsagePayment;
             $creditAppliedPaymentInvoiceModel = $model->debitUsage->creditUsagePayment->invoice;
-            $model->debitUsage->creditUsagePayment->delete();
+            $creditAppliedPaymentModel = $model->debitUsage->creditUsagePayment;
+            $creditAppliedPaymentModel->delete();
             $creditAppliedPaymentInvoiceModel->save();
-            $creditAppliedPaymentModel->invoicePayment->delete();
             $model->debitUsage->delete();
+        } elseif ($model->isAccountEntry()) {
+            $modelInvoice->lineItem->delete();
         }
-        $model->invoicePayment->delete();
         $model->delete();
         $modelInvoice->save();
         return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);
@@ -285,12 +284,19 @@ class PaymentController extends Controller
     public function actionEditAccountEntry($model, $newAmount)
     {
         $model->amount = $newAmount;
+        $invoiceModel          = $model->invoice;
+        $lineItemModel         = $model->invoice->lineItem;
+        $lineItemModel->amount = -($model->amount);
         $model->save();
-        $lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->invoice->id]);
-        $lineItem->amount = $model->amount;
-        $model->invoice->subTotal = $lineItem->amount;
-        $model->invoice->total = $model->invoice->subTotal + $model->invoice->tax;
-        $lineItem->save();
+        if ($newAmount < 0) {
+            $model->delete();
+            $lineItemModel->amount = abs($newAmount);
+            $invoiceModel->subTotal = $lineItemModel->amount;
+            $invoiceModel->total    = $invoiceModel->subTotal + $invoiceModel->tax;
+
+        }
+        $lineItemModel->save();
+        $invoiceModel->save();
 
         $result = [
             'output' => $newAmount,
