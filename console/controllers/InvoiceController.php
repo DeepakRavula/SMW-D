@@ -24,6 +24,7 @@ class InvoiceController extends Controller
          */
         $priorDate             = (new \DateTime())->modify('+15 day');
         $matchedLessons        = Lesson::find()
+            ->unInvoiced()
             ->scheduled()
             ->between($priorDate, $priorDate)
             ->all();
