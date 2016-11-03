@@ -184,8 +184,6 @@ class InvoiceController extends Controller
             $invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC;
             $invoiceLineItemModel->invoice_id = $model->id;
             $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
-            $taxStatus = TaxStatus::findOne(['id' => $invoiceLineItemModel->tax_status]);
-            $invoiceLineItemModel->tax_status = $taxStatus->name;
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
                 $model->save();
