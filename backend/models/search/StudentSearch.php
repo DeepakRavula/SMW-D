@@ -12,11 +12,11 @@ use common\models\Student;
  */
 class StudentSearch extends Student
 {
-	public $showAllStudents;
+    public $showAllStudents;
     public $query;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -26,7 +26,7 @@ class StudentSearch extends Student
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -35,36 +35,37 @@ class StudentSearch extends Student
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
+     *
      * @return ActiveDataProvider
      */
     public function search($params)
     {
         $locationId = Yii::$app->session->get('location_id');
-		$query = Student::find()
-				->location($locationId);				
-		
-		$dataProvider = new ActiveDataProvider([
-			'query' => $query,
-		]);
-        
+        $query = Student::find()
+                ->location($locationId);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
-        } 
-        
+        }
+
         $query->joinWith('customerProfile cp');
         $query->andFilterWhere(['like', 'first_name', $this->query])
                 ->orFilterWhere(['like', 'last_name', $this->query])
                 ->orFilterWhere(['like', 'cp.firstname', $this->query])
                 ->orFilterWhere(['like', 'cp.lastname', $this->query]);
         $query->groupBy('student.id');
-        
-       	if(! $this->showAllStudents) { 
+
+        if (!$this->showAllStudents) {
             $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-			$query->enrolled($currentDate)
-                              ->active();
-		} 
-        
+            $query->enrolled($currentDate)
+                ->active();
+        }
+
         return $dataProvider;
     }
 }

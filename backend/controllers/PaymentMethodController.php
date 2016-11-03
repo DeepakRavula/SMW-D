@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\PaymentMethod;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -28,6 +27,7 @@ class PaymentMethodController extends Controller
 
     /**
      * Lists all PaymentMethods models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -43,7 +43,9 @@ class PaymentMethodController extends Controller
 
     /**
      * Displays a single PaymentMethods model.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -56,6 +58,7 @@ class PaymentMethodController extends Controller
     /**
      * Creates a new PaymentMethods model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -74,7 +77,9 @@ class PaymentMethodController extends Controller
     /**
      * Updates an existing PaymentMethods model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -93,7 +98,9 @@ class PaymentMethodController extends Controller
     /**
      * Deletes an existing PaymentMethods model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -106,8 +113,11 @@ class PaymentMethodController extends Controller
     /**
      * Finds the PaymentMethods model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return PaymentMethods the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

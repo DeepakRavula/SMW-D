@@ -15,7 +15,8 @@ class PaymentChequeQuery extends \yii\db\ActiveQuery
     }*/
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\PaymentCheque[]|array
      */
     public function all($db = null)
@@ -24,7 +25,8 @@ class PaymentChequeQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\PaymentCheque|array|null
      */
     public function one($db = null)

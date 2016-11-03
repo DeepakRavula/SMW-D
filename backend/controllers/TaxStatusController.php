@@ -28,6 +28,7 @@ class TaxStatusController extends Controller
 
     /**
      * Lists all TaxStatus models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -43,7 +44,9 @@ class TaxStatusController extends Controller
 
     /**
      * Displays a single TaxStatus model.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -56,6 +59,7 @@ class TaxStatusController extends Controller
     /**
      * Creates a new TaxStatus model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -74,7 +78,9 @@ class TaxStatusController extends Controller
     /**
      * Updates an existing TaxStatus model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -93,7 +99,9 @@ class TaxStatusController extends Controller
     /**
      * Deletes an existing TaxStatus model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -106,8 +114,11 @@ class TaxStatusController extends Controller
     /**
      * Finds the TaxStatus model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param string $id
+     *
      * @return TaxStatus the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

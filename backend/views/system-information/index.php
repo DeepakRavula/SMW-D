@@ -1,16 +1,17 @@
 <?php
 /**
- * Author: Eugine Terentev <eugine@terentev.net>
- * @var $this \yii\web\View
- * @var $provider \probe\provider\ProviderInterface
+ * Author: Eugine Terentev <eugine@terentev.net>.
+ *
+ * @var \yii\web\View
+ * @var $provider     \probe\provider\ProviderInterface
  */
 use common\models\FileStorageItem;
 use common\models\User;
 
 $this->title = Yii::t('backend', 'System Information');
-$this->registerJs("window.paceOptions = { ajax: false }", \yii\web\View::POS_HEAD);
+$this->registerJs('window.paceOptions = { ajax: false }', \yii\web\View::POS_HEAD);
 $this->registerJsFile(
-    Yii::$app->request->baseUrl . 'js/system-information/index.js',
+    Yii::$app->request->baseUrl.'js/system-information/index.js',
     ['depends' => ['\yii\web\JqueryAsset', '\common\assets\Flot', '\yii\bootstrap\BootstrapPluginAsset']]
 ) ?>
 <div id="system-information-index">

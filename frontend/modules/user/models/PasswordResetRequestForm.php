@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\modules\user\models;
 
 use cheatsheet\Time;
@@ -9,7 +10,7 @@ use common\models\User;
 use yii\base\Model;
 
 /**
- * Password reset request form
+ * Password reset request form.
  */
 class PasswordResetRequestForm extends Model
 {
@@ -19,7 +20,7 @@ class PasswordResetRequestForm extends Model
     public $email;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -30,7 +31,7 @@ class PasswordResetRequestForm extends Model
             ['email', 'exist',
                 'targetClass' => '\common\models\User',
                 'filter' => ['status' => User::STATUS_ACTIVE],
-                'message' => 'There is no user with such email.'
+                'message' => 'There is no user with such email.',
             ],
         ];
     }
@@ -38,7 +39,7 @@ class PasswordResetRequestForm extends Model
     /**
      * Sends an email with a link, for resetting the password.
      *
-     * @return boolean whether the email was send
+     * @return bool whether the email was send
      */
     public function sendEmail()
     {
@@ -53,12 +54,12 @@ class PasswordResetRequestForm extends Model
             if ($user->save()) {
                 return Yii::$app->commandBus->handle(new SendEmailCommand([
                     'to' => $this->email,
-                    'subject' => Yii::t('frontend', 'Password reset for {name}', ['name'=>Yii::$app->name]),
+                    'subject' => Yii::t('frontend', 'Password reset for {name}', ['name' => Yii::$app->name]),
                     'view' => 'passwordResetToken',
                     'params' => [
                         'user' => $user,
-                        'token' => $token->token
-                    ]
+                        'token' => $token->token,
+                    ],
                 ]));
             }
         }
@@ -72,7 +73,7 @@ class PasswordResetRequestForm extends Model
     public function attributeLabels()
     {
         return [
-            'email'=>Yii::t('frontend', 'E-mail')
+            'email' => Yii::t('frontend', 'E-mail'),
         ];
     }
 }

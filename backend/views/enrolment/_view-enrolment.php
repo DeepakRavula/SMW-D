@@ -1,5 +1,6 @@
 <?php
 use common\models\Course;
+
 ?>
 <div class="group-course-view">
 	<div class="row-fluid user-details-wrapper">
@@ -14,19 +15,19 @@ use common\models\Course;
     </div>
 	<div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Duration">
     	<i class="fa fa-calendar"></i> <?php 
-		$length = \DateTime::createFromFormat('H:i:s', $model->course->duration);
-		echo $length->format('H:i'); ?>
+        $length = \DateTime::createFromFormat('H:i:s', $model->course->duration);
+        echo $length->format('H:i'); ?>
     </div>
 	<div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Day">
     	<i class="fa fa-calendar"></i> <?php
-		$dayList = Course::getWeekdaysList();
-		$day = $dayList[$model->course->day];
-		echo $day; ?>
+        $dayList = Course::getWeekdaysList();
+        $day = $dayList[$model->course->day];
+        echo $day; ?>
     </div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Time">
 		<i class="fa fa-clock-o"></i> <?php 
-		$fromTime = \DateTime::createFromFormat('H:i:s', $model->course->fromTime);
-		echo $fromTime->format('h:i A');?>	
+        $fromTime = \DateTime::createFromFormat('H:i:s', $model->course->fromTime);
+        echo $fromTime->format('h:i A'); ?>	
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Start Date">
 			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->startDate)?>	

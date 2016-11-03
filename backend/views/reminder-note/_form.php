@@ -17,7 +17,7 @@ use dosamigos\ckeditor\CKEditor;
 
     <?= $form->field($model, 'notes')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'full'
+        'preset' => 'full',
     ]) ?>
 
     <div class="form-group">

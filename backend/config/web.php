@@ -1,10 +1,10 @@
 <?php
 
 $config = [
-    'homeUrl'=>Yii::getAlias('@backendUrl'),
+    'homeUrl' => Yii::getAlias('@backendUrl'),
     'controllerNamespace' => 'backend\controllers',
-    'defaultRoute'=>'dashboard/index',
-    'controllerMap'=>[
+    'defaultRoute' => 'dashboard/index',
+    'controllerMap' => [
         'file-manager-elfinder' => [
             'class' => 'mihaildev\elfinder\Controller',
             'access' => ['manager'],
@@ -13,31 +13,31 @@ $config = [
                 [
                     'baseUrl' => '@storageUrl',
                     'basePath' => '@storage',
-                    'path'   => '/',
-                    'access' => ['read' => 'manager', 'write' => 'manager']
-                ]
-            ]
-        ]
+                    'path' => '/',
+                    'access' => ['read' => 'manager', 'write' => 'manager'],
+                ],
+            ],
+        ],
     ],
-    'components'=>[
+    'components' => [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
         'request' => [
-            'cookieValidationKey' => env('BACKEND_COOKIE_VALIDATION_KEY')
+            'cookieValidationKey' => env('BACKEND_COOKIE_VALIDATION_KEY'),
         ],
         'user' => [
-            'class'=>'yii\web\User',
+            'class' => 'yii\web\User',
             'identityClass' => 'common\models\User',
-            'loginUrl'=>['sign-in/login'],
+            'loginUrl' => ['sign-in/login'],
             'enableAutoLogin' => true,
-            'as afterLogin' => 'common\behaviors\LoginTimestampBehavior'
+            'as afterLogin' => 'common\behaviors\LoginTimestampBehavior',
         ],
     ],
-    'modules'=>[
+    'modules' => [
         'i18n' => [
             'class' => 'backend\modules\i18n\Module',
-            'defaultRoute'=>'i18n-message/index'
+            'defaultRoute' => 'i18n-message/index',
         ],
         'admin' => [
             'class' => 'mdm\admin\Module',
@@ -49,95 +49,95 @@ $config = [
                     'usernameField' => 'email',
                     'fullnameField' => 'publicIdentity',
                     ],
-                    'searchClass' => 'backend\models\search\UserSearch'
+                    'searchClass' => 'backend\models\search\UserSearch',
                 ],
         ],
-		'gridview' =>  [
-			'class' => '\kartik\grid\Module'
-		],
-		'datecontrol' =>  [
-        	'class' => '\kartik\datecontrol\Module'
-    	]
+        'gridview' => [
+            'class' => '\kartik\grid\Module',
+        ],
+        'datecontrol' => [
+            'class' => '\kartik\datecontrol\Module',
+        ],
     ],
-	'on beforeAction' => function ($event) {
-		$location_id = Yii::$app->session->get('location_id');
-		if(empty($location_id)) {
-			$roles = yii\helpers\ArrayHelper::getColumn(
-				Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
-				'name'
-			);
-			$role = end($roles);
-			if($role && $role !== common\models\User::ROLE_ADMINISTRATOR) {
-				$userLocation = common\models\UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-				Yii::$app->session->set('location_id', $userLocation->location_id);
-			} else {
-				Yii::$app->session->set('location_id', '1');
-			}
-		}
+    'on beforeAction' => function ($event) {
+        $location_id = Yii::$app->session->get('location_id');
+        if (empty($location_id)) {
+            $roles = yii\helpers\ArrayHelper::getColumn(
+                Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
+                'name'
+            );
+            $role = end($roles);
+            if ($role && $role !== common\models\User::ROLE_ADMINISTRATOR) {
+                $userLocation = common\models\UserLocation::findOne(['user_id' => Yii::$app->user->id]);
+                Yii::$app->session->set('location_id', $userLocation->location_id);
+            } else {
+                Yii::$app->session->set('location_id', '1');
+            }
+        }
         $unReadNotes = [];
         $latestNotes = common\models\ReleaseNotes::latestNotes();
-        if( ! empty($latestNotes)){
-            $unReadNotes = common\models\ReleaseNotesRead::findOne(['release_note_id'=>$latestNotes->id, 'user_id'=>Yii::$app->user->id]);
+        if (!empty($latestNotes)) {
+            $unReadNotes = common\models\ReleaseNotesRead::findOne(['release_note_id' => $latestNotes->id, 'user_id' => Yii::$app->user->id]);
         }
         Yii::$app->view->params['latestNotes'] = $latestNotes;
         Yii::$app->view->params['unReadNotes'] = $unReadNotes;
     },
-    'as globalAccess'=>[
-        'class'=>'\common\behaviors\GlobalAccessBehavior',
-        'rules'=>[
-			[
-                'controllers'=>['calendar'],
+    'as globalAccess' => [
+        'class' => '\common\behaviors\GlobalAccessBehavior',
+        'rules' => [
+            [
+                'controllers' => ['calendar'],
                 'allow' => true,
                 'roles' => ['?'],
-                'actions'=>['view']
+                'actions' => ['view'],
             ],
             [
-                'controllers'=>['sign-in'],
+                'controllers' => ['sign-in'],
                 'allow' => true,
                 'roles' => ['?'],
-                'actions'=>['login','request-password-reset','reset-password']
+                'actions' => ['login', 'request-password-reset', 'reset-password'],
             ],
             [
-                'controllers'=>['sign-in'],
+                'controllers' => ['sign-in'],
                 'allow' => true,
                 'roles' => ['@'],
-                'actions'=>['logout','profile','account']
+                'actions' => ['logout', 'profile', 'account'],
             ],
             [
-                'controllers'=>['site'],
+                'controllers' => ['site'],
                 'allow' => true,
                 'roles' => ['?', '@'],
-                'actions'=>['error']
+                'actions' => ['error'],
             ],
             [
-                'controllers'=>['debug/default'],
+                'controllers' => ['debug/default'],
                 'allow' => true,
                 'roles' => ['?'],
             ],
             [
-                'controllers'=>['user'],
+                'controllers' => ['user'],
                 'allow' => true,
                 'roles' => ['administrator', 'staffmember'],
             ],
-			[
-                'controllers'=>['schedule','student', 'release-notes', 'lesson', 'invoice','timeline-event','enrolment','teacher-availability','group-course','group-lesson','group-enrolment', 'payment', 'course', 'dashboard', 'log', 'invoice-line-item', 'holiday', 'professional-development-day', 'tax-code'],
+            [
+                'controllers' => ['schedule', 'student', 'release-notes', 'lesson', 'invoice', 'timeline-event', 'enrolment', 'teacher-availability', 'group-course', 'group-lesson', 'group-enrolment', 'payment', 'course', 'dashboard', 'log', 'invoice-line-item', 'holiday', 'professional-development-day', 'tax-code'],
                 'allow' => true,
                 'roles' => ['staffmember'],
             ],
             [
-                'controllers'=>['program', 'city', 'location','province','country'],
+                'controllers' => ['program', 'city', 'location', 'province', 'country'],
                 'allow' => true,
                 'roles' => ['staffmember'],
-                'actions'=>['index', 'view']
+                'actions' => ['index', 'view'],
             ],
-			[
-                'controllers'=>['blog'],
+            [
+                'controllers' => ['blog'],
                 'allow' => true,
                 'roles' => ['staffmember'],
-                'actions'=>['list']
+                'actions' => ['list'],
             ],
-			[
-                'controllers'=>['user'],
+            [
+                'controllers' => ['user'],
                 'allow' => false,
             ],
             [
@@ -145,27 +145,27 @@ $config = [
                 'roles' => ['administrator'],
             ],
             [
-                'controllers'=>['release-notes', 'reminder-note'],
+                'controllers' => ['release-notes', 'reminder-note'],
                 'allow' => true,
                 'roles' => ['administrator'],
-            ]
-        ]
-    ]
+            ],
+        ],
+    ],
 ];
 
 if (YII_ENV_DEV) {
     $config['modules']['gii'] = [
-        'class'=>'yii\gii\Module',
+        'class' => 'yii\gii\Module',
         'generators' => [
             'crud' => [
-                'class'=>'yii\gii\generators\crud\Generator',
-                'templates'=>[
-                    'yii2-starter-kit' => Yii::getAlias('@backend/views/_gii/templates')
+                'class' => 'yii\gii\generators\crud\Generator',
+                'templates' => [
+                    'yii2-starter-kit' => Yii::getAlias('@backend/views/_gii/templates'),
                 ],
                 'template' => 'yii2-starter-kit',
-                'messageCategory' => 'backend'
-            ]
-        ]
+                'messageCategory' => 'backend',
+            ],
+        ],
     ];
 }
 

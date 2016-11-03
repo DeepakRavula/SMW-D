@@ -1,12 +1,13 @@
 <?php
 
 /**
- * @var $this yii\web\View
+ * @var yii\web\View
  */
 use common\models\User;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\helpers\Url;
+
 ?>
 <?php $this->beginContent('@backend/views/layouts/common.php'); ?> 
 <div class="box">  
@@ -35,7 +36,7 @@ $(document).ready(function(){
     });
     $(".release-notes .close").click(function(){
         $.ajax({
-            url: "<?php echo Url::to(['release-notes/update-read-notes']);?>",
+            url: "<?php echo Url::to(['release-notes/update-read-notes']); ?>",
             type: "POST",
             contentType: 'application/json',
             dataType: "json",

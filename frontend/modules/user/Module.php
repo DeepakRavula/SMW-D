@@ -15,7 +15,7 @@ class Module extends \yii\base\Module
     public $shouldBeActivated = false;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init()
     {

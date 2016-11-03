@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = <?php echo $generator->generateString('Update')
 ?>
 <div class="<?php echo Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-update">
 
-    <?php echo "<?php echo " ?>$this->render('_form', [
+    <?php echo '<?php echo ' ?>$this->render('_form', [
         'model' => $model,
     ]) ?>
 

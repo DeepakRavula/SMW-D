@@ -1,7 +1,6 @@
 <?php
 
 namespace common\models\query;
-use common\models\InvoicePayment;
 
 class InvoicePaymentQuery extends \yii\db\ActiveQuery
 {
@@ -11,7 +10,8 @@ class InvoicePaymentQuery extends \yii\db\ActiveQuery
     }*/
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\Allocation[]|array
      */
     public function all($db = null)
@@ -20,16 +20,18 @@ class InvoicePaymentQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\Allocation|array|null
      */
     public function one($db = null)
     {
         return parent::one($db);
     }
-	public function paid() {
-		$this->joinWith('payment p');
-		
-		return $this;
-	}
+    public function paid()
+    {
+        $this->joinWith('payment p');
+
+        return $this;
+    }
 }

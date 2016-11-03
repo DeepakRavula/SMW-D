@@ -1,7 +1,5 @@
 <?php
 
-use yii\helpers\Html;
-
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Course */
@@ -14,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo $this->render('_form', [
         'model' => $model,
-		'teacher' => $teacher,
+        'teacher' => $teacher,
     ]) ?>
 
 </div>

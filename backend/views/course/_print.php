@@ -35,7 +35,7 @@ $this->title = $model->id;
                         <strong><?= 'Durartion: ' ?></strong>
                         <?php 
                             $length = \DateTime::createFromFormat('H:i:s', $model->duration);
-                            echo $length->format('H:i'); 
+                            echo $length->format('H:i');
                         ?>
                     </td>
                     <td><strong><?= 'Start Date: ' ?></strong> <?= Yii::$app->formatter->asDate($model->startDate); ?></td>
@@ -48,37 +48,39 @@ $this->title = $model->id;
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
-		'rowOptions' => function ($model, $key, $index, $grid) {
+        'rowOptions' => function ($model, $key, $index, $grid) {
             return ['data-id' => $model->id];
         },
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
+        'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
             [
-				'label' => 'Teacher Name',
-				'value' => function($data) {
-					return ! empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
+                'label' => 'Teacher Name',
+                'value' => function ($data) {
+                    return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
-			],
-			[
-				'label' => 'Date',
-				'value' => function($data) {
-					$date = Yii::$app->formatter->asDate($data->date); 
-					return ! empty($date) ? $date : null;
+            ],
+            [
+                'label' => 'Date',
+                'value' => function ($data) {
+                    $date = Yii::$app->formatter->asDate($data->date);
+
+                    return !empty($date) ? $date : null;
                 },
-			],
-			[
-				'label' => 'Status',
-				'value' => function($data) {
-					$status = null;
-					if (!empty($data->status)) {
-					return $data->getStatus();
-					}
-				return $status;
+            ],
+            [
+                'label' => 'Status',
+                'value' => function ($data) {
+                    $status = null;
+                    if (!empty($data->status)) {
+                        return $data->getStatus();
+                    }
+
+                    return $status;
                 },
-			],
+            ],
         ],
-	    ]); ?>
+        ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
     </div>
 </div>

@@ -19,7 +19,7 @@ return [
         'access_token' => 'JJcEWMSq4IFxhEMUpYoJXx5ZNDW33t4OFS5tXSlP',
         'created_at' => '1392559490',
         'updated_at' => '1392559490',
-        'email' => 'user@example.org'
+        'email' => 'user@example.org',
     ],
     [
         'id' => 3,
@@ -29,6 +29,6 @@ return [
         'access_token' => 'Q1M6dPrGpzBWOnGf2NbkEMLntSCDhchuVKDGOUWC',
         'created_at' => '1392559490',
         'updated_at' => '1392559490',
-        'email' => 'user@example.org'
+        'email' => 'user@example.org',
     ],
 ];

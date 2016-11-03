@@ -1,6 +1,5 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
 use wbraganca\dynamicform\DynamicFormWidget;
 use yii\helpers\Html;
 use common\models\Location;
@@ -40,26 +39,26 @@ $this->registerJs($js);
 	}
 </style>
 <?php
-	DynamicFormWidget::begin([
-		'widgetContainer' => 'dynamicform_address', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
-		'widgetBody' => '.address-container-items', // required: css class selector
-		'widgetItem' => '.address-item', // required: css class
-		'limit' => 10, // the maximum times, an element can be cloned (default 999)
-		'min' => 0, // 0 or 1 (default 1)
-		'insertButton' => '.address-add-item', // css class
-		'deleteButton' => '.address-remove-item', // css class
-		'model' => $addressModels[0],
-		'formId' => 'dynamic-form',
-		'formFields' => [
-			'addresslabel',
-			'address',
-			'city',
-			'country',
-			'province',
-			'postalcode',
-		],
-	]);
-	?>
+    DynamicFormWidget::begin([
+        'widgetContainer' => 'dynamicform_address', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
+        'widgetBody' => '.address-container-items', // required: css class selector
+        'widgetItem' => '.address-item', // required: css class
+        'limit' => 10, // the maximum times, an element can be cloned (default 999)
+        'min' => 0, // 0 or 1 (default 1)
+        'insertButton' => '.address-add-item', // css class
+        'deleteButton' => '.address-remove-item', // css class
+        'model' => $addressModels[0],
+        'formId' => 'dynamic-form',
+        'formFields' => [
+            'addresslabel',
+            'address',
+            'city',
+            'country',
+            'province',
+            'postalcode',
+        ],
+    ]);
+    ?>
     <div class="row-fluid">
 		<div class="col-md-12">
 			<h4 class="pull-left m-r-20">Addresses</h4>
@@ -76,11 +75,11 @@ $this->registerJs($js);
 						<div class="clearfix"></div>
 					</h4>
 					<?php
-					if (!$addressModel->isNewRecord) {
-						echo Html::activeHiddenInput($addressModel, "[{$index}]id");
-					}
-					$locationModel = Location::findOne(['id' => Yii::$app->session->get('location_id')]);
-					?>
+                    if (!$addressModel->isNewRecord) {
+                        echo Html::activeHiddenInput($addressModel, "[{$index}]id");
+                    }
+                    $locationModel = Location::findOne(['id' => Yii::$app->session->get('location_id')]);
+                    ?>
 
 					<div class="row">
 						<div class="col-sm-4">
@@ -91,33 +90,33 @@ $this->registerJs($js);
 						</div>
 						<div class="col-sm-4">
 							<?=
-							$form->field($addressModel, "[{$index}]city_id")->dropDownList(
-									ArrayHelper::map(City::find()->all(), 'id', 'name'), ['options' => [
-									$locationModel->city_id => ['selected' => true],
-								]
-							])
-							?>
+                            $form->field($addressModel, "[{$index}]city_id")->dropDownList(
+                                    ArrayHelper::map(City::find()->all(), 'id', 'name'), ['options' => [
+                                    $locationModel->city_id => ['selected' => true],
+                                ],
+                            ])
+                            ?>
 						</div>
 						<div class="clearfix"></div>
 					</div>
 					<div class="row">
 						<div class="col-sm-4">
 							<?=
-							$form->field($addressModel, "[{$index}]country_id")->dropDownList(
-									ArrayHelper::map(Country::find()->all(), 'id', 'name'), ['options' => [
-									$locationModel->country_id => ['selected' => true],
-								]
-							])
-							?>
+                            $form->field($addressModel, "[{$index}]country_id")->dropDownList(
+                                    ArrayHelper::map(Country::find()->all(), 'id', 'name'), ['options' => [
+                                    $locationModel->country_id => ['selected' => true],
+                                ],
+                            ])
+                            ?>
 						</div>
 						<div class="col-sm-4">
 							<?=
-							$form->field($addressModel, "[{$index}]province_id")->dropDownList(
-									ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['options' => [
-									$locationModel->province_id => ['selected' => true],
-								]
-							])
-							?>
+                            $form->field($addressModel, "[{$index}]province_id")->dropDownList(
+                                    ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['options' => [
+                                    $locationModel->province_id => ['selected' => true],
+                                ],
+                            ])
+                            ?>
 						</div>
 						<div class="col-sm-4">
 	<?= $form->field($addressModel, "[{$index}]postal_code")->textInput(['maxlength' => true]) ?>

@@ -3,27 +3,27 @@
 namespace common\models;
 
 use Yii;
-use \common\models\User;
+use common\models\User;
 
 /**
  * This is the model class for table "address".
  *
- * @property integer $id
+ * @property int $id
  * @property string $label
  * @property string $address
- * @property integer $city_id
- * @property integer $province_id
+ * @property int $city_id
+ * @property int $province_id
  * @property string $postal_code
- * @property integer $country_id
+ * @property int $country_id
  */
 class Address extends \yii\db\ActiveRecord
 {
-	const LABEL_HOME = 'Home';
+    const LABEL_HOME = 'Home';
     const LABEL_WORK = 'Work';
-	const LABEL_OTHER = 'Other';
-	const LABEL_BILLING = 'Billing';
-	/**
-     * @inheritdoc
+    const LABEL_OTHER = 'Other';
+    const LABEL_BILLING = 'Billing';
+    /**
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -31,7 +31,7 @@ class Address extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -46,7 +46,7 @@ class Address extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -65,41 +65,47 @@ class Address extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-	public function getUser() {
-		return $this->hasMany(User::className(), ['id' => 'user_id'])
-		  ->viaTable('user_address', ['address_id' => 'id']);
-	}
+    public function getUser()
+    {
+        return $this->hasMany(User::className(), ['id' => 'user_id'])
+          ->viaTable('user_address', ['address_id' => 'id']);
+    }
 
-	public function getUsers() {
-		return $this->hasOne(User::className(), ['id' => 'user_id'])
-		  ->viaTable('user_address', ['address_id' => 'id']);
-	}
-	
-	public function getCity() {
-		return $this->hasOne(City::className(), ['id' => 'city_id']);
-	}
-	
-	public function getProvince() {
-		return $this->hasOne(Province::className(), ['id' => 'province_id']);
-	}
-	
-	public function getCountry() {
-		return $this->hasOne(Country::className(), ['id' => 'country_id']);
-	}	
-	public static function findByUserId($user_id) {
-		return static::find()
-			->join('INNER JOIN','user_address','user_address.address_id = address.id')
-			->where(['user_address.user_id' => $user_id ])
-			->one();
-	}
+    public function getUsers()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id'])
+          ->viaTable('user_address', ['address_id' => 'id']);
+    }
 
-	public static function labels()
+    public function getCity()
+    {
+        return $this->hasOne(City::className(), ['id' => 'city_id']);
+    }
+
+    public function getProvince()
+    {
+        return $this->hasOne(Province::className(), ['id' => 'province_id']);
+    }
+
+    public function getCountry()
+    {
+        return $this->hasOne(Country::className(), ['id' => 'country_id']);
+    }
+    public static function findByUserId($user_id)
+    {
+        return static::find()
+            ->join('INNER JOIN', 'user_address', 'user_address.address_id = address.id')
+            ->where(['user_address.user_id' => $user_id])
+            ->one();
+    }
+
+    public static function labels()
     {
         return [
             self::LABEL_HOME => Yii::t('common', 'Home'),
             self::LABEL_WORK => Yii::t('common', 'Work'),
             self::LABEL_OTHER => Yii::t('common', 'Other'),
-            self::LABEL_BILLING => Yii::t('common', 'Billing')
+            self::LABEL_BILLING => Yii::t('common', 'Billing'),
         ];
     }
 }

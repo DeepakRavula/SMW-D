@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Student;
+
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -10,9 +11,9 @@ use common\models\Student;
 
 <div class="student-form form-well form-well-smw">
 	<?php
-	$session = Yii::$app->session;
-	$locationId = $session->get('location_id');
-	?>
+    $session = Yii::$app->session;
+    $locationId = $session->get('location_id');
+    ?>
     <?php $form = ActiveForm::begin($model->isNewRecord ? ['action' => '/student/create'] : null); ?>
 
     <div class="row">
@@ -23,11 +24,11 @@ use common\models\Student;
              <?php
             $customerName = $model->isNewRecord ? $customer->userProfile->lastname : null;
         ?>
-            <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true,'value' => $customerName]) ?>
+            <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
         </div>
         <div class="col-xs-4">
             <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname(), [
-                    'options' => ['class'=>'form-control'],                  
+                    'options' => ['class' => 'form-control'],
                 ]); ?>
         </div>
 			<div class="col-xs-4">
@@ -46,10 +47,10 @@ use common\models\Student;
     <div class="form-group">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php 
-			if(! $model->isNewRecord){
-				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn']); 	
-			}
-		?>
+            if (!$model->isNewRecord) {
+                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+            }
+        ?>
     </div>
     <div class="clearfix"></div>
     </div>

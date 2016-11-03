@@ -17,7 +17,7 @@ $this->params['body-class'] = 'login-page';
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-        <?php //echo Html::encode($this->title) ?>
+        <?php //echo Html::encode($this->title)?>
     </div><!-- /.login-logo -->
     <div class="header"></div>
     <div class="login-box-body">
@@ -25,18 +25,18 @@ $this->params['body-class'] = 'login-page';
         <div class="body">
             <?php echo $form->field($model, 'username') ?>
             <?php echo $form->field($model, 'password')->passwordInput() ?>
-            <?php echo $form->field($model, 'rememberMe')->checkbox(['class'=>'simple']) ?>
+            <?php echo $form->field($model, 'rememberMe')->checkbox(['class' => 'simple']) ?>
         </div>
         <div class="footer">
             <?php echo Html::submitButton(Yii::t('backend', 'Sign me in'), [
                 'class' => 'btn btn-primary btn-flat btn-block',
-                'name' => 'login-button'
+                'name' => 'login-button',
             ]) ?>
         </div>
 
         <div class="m-t-10 text-right">
             <?php echo Yii::t('frontend', '<a href="{link}">Forgot your password?</a>', [
-                'link'=>yii\helpers\Url::to(['sign-in/request-password-reset'])
+                'link' => yii\helpers\Url::to(['sign-in/request-password-reset']),
             ]) ?>
         </div>
         <?php ActiveForm::end(); ?>

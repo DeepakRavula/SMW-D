@@ -28,6 +28,7 @@ class BlogController extends Controller
 
     /**
      * Lists all Blog models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -41,8 +42,9 @@ class BlogController extends Controller
         ]);
     }
 
-	/**
+    /**
      * Lists all Blog models.
+     *
      * @return mixed
      */
     public function actionList()
@@ -57,7 +59,9 @@ class BlogController extends Controller
     }
     /**
      * Displays a single Blog model.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -70,6 +74,7 @@ class BlogController extends Controller
     /**
      * Creates a new Blog model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -77,10 +82,11 @@ class BlogController extends Controller
         $model = new Blog();
 
         if ($model->load(Yii::$app->request->post())) {
-			$model->user_id = Yii::$app->user->id;
-			$currentDate = new \DateTime();
-			$model->date = $currentDate->format('Y-m-d H:i:s');
-			$model->save();
+            $model->user_id = Yii::$app->user->id;
+            $currentDate = new \DateTime();
+            $model->date = $currentDate->format('Y-m-d H:i:s');
+            $model->save();
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -92,7 +98,9 @@ class BlogController extends Controller
     /**
      * Updates an existing Blog model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -111,7 +119,9 @@ class BlogController extends Controller
     /**
      * Deletes an existing Blog model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -124,8 +134,11 @@ class BlogController extends Controller
     /**
      * Finds the Blog model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param string $id
+     *
      * @return Blog the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

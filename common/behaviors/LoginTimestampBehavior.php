@@ -15,14 +15,13 @@ class LoginTimestampBehavior extends Behavior
      */
     public $attribute = 'logged_at';
 
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function events()
     {
         return [
-            User::EVENT_AFTER_LOGIN => 'afterLogin'
+            User::EVENT_AFTER_LOGIN => 'afterLogin',
         ];
     }
 

@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="grid-row-open">
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]);?>
 
 <?php yii\widgets\Pjax::begin(); ?>
     <?php echo GridView::widget([
@@ -22,18 +22,19 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['holiday/view', 'id' => $model->id]);
-        return ['data-url' => $url];
+
+            return ['data-url' => $url];
         },
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
+        'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
-			[
+            [
                 'attribute' => 'date',
-				'label' => 'Date',
-				'value' => function($data) {
-					return ! (empty($data->date)) ? Yii::$app->formatter->asDate($data->date) : null;
-                } 
-			],
+                'label' => 'Date',
+                'value' => function ($data) {
+                    return !(empty($data->date)) ? Yii::$app->formatter->asDate($data->date) : null;
+                },
+            ],
         ],
     ]); ?>
 

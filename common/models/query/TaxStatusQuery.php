@@ -15,7 +15,8 @@ class TaxStatusQuery extends \yii\db\ActiveQuery
     }*/
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\TaxStatus[]|array
      */
     public function all($db = null)
@@ -24,7 +25,8 @@ class TaxStatusQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\TaxStatus|array|null
      */
     public function one($db = null)

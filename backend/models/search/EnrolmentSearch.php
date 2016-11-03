@@ -2,7 +2,6 @@
 
 namespace backend\models\search;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Enrolment;
@@ -13,7 +12,7 @@ use common\models\Enrolment;
 class EnrolmentSearch extends Enrolment
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -23,7 +22,7 @@ class EnrolmentSearch extends Enrolment
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -32,7 +31,7 @@ class EnrolmentSearch extends Enrolment
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *

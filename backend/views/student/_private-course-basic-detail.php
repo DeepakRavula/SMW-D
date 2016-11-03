@@ -7,50 +7,51 @@ use kartik\time\TimePicker;
 use kartik\date\DatePicker;
 use common\models\Location;
 use yii\helpers\Url;
+
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <?php
 $privatePrograms = ArrayHelper::map(Program::find()
-			->active()
-			->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
-			->all(), 'id', 'name')
+            ->active()
+            ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
+            ->all(), 'id', 'name')
 ?>
 <div class="enrolment-form form-well form-well-smw">
     <div class="row">
 		<div class="col-md-4">
 			<?php
-			echo $form->field($model, 'startDate')->widget(DatePicker::classname(),
-				[
-				'type' => DatePicker::TYPE_COMPONENT_APPEND,
-				'options' => [
-					'value' => (new \DateTime())->format('d-m-Y'),
-				],
-				'pluginOptions' => [
-					'format' => 'dd-mm-yyyy',
-					'todayHighlight' => true,
-					'autoclose' => true
-				]
-			]);
-			?>
-			<?php
-			echo $form->field($model, 'duration')->widget(TimePicker::classname(),
-				[
-				'options' => ['id' => 'course-duration'],
+            echo $form->field($model, 'startDate')->widget(DatePicker::classname(),
+                [
+                'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'options' => [
+                    'value' => (new \DateTime())->format('d-m-Y'),
+                ],
                 'pluginOptions' => [
-					'showMeridian' => false,
-					'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
-				]
-			]);
-			?>
+                    'format' => 'dd-mm-yyyy',
+                    'todayHighlight' => true,
+                    'autoclose' => true,
+                ],
+            ]);
+            ?>
 			<?php
-			echo $form->field($model, 'programId')->dropDownList(
-				ArrayHelper::map(Program::find()
-						->active()
-						->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
-						->all(), 'id', 'name'), ['prompt' => 'Select..']);
-			?>
+            echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+                [
+                'options' => ['id' => 'course-duration'],
+                'pluginOptions' => [
+                    'showMeridian' => false,
+                    'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+                ],
+            ]);
+            ?>
+			<?php
+            echo $form->field($model, 'programId')->dropDownList(
+                ArrayHelper::map(Program::find()
+                        ->active()
+                        ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
+                        ->all(), 'id', 'name'), ['prompt' => 'Select..']);
+            ?>
 			
 <?= $form->field($model, 'paymentFrequency')->radioList(Enrolment::paymentFrequencies()) ?>
 	</div>
@@ -68,10 +69,10 @@ $privatePrograms = ArrayHelper::map(Program::find()
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <?php
-$locationId		 = Yii::$app->session->get('location_id');
-$location		 = Location::findOne(['id' => $locationId]);
-$from_time		 = (new \DateTime($location->from_time))->format('H:i:s');
-$to_time		 = (new \DateTime($location->to_time))->format('H:i:s');
+$locationId = Yii::$app->session->get('location_id');
+$location = Location::findOne(['id' => $locationId]);
+$from_time = (new \DateTime($location->from_time))->format('H:i:s');
+$to_time = (new \DateTime($location->to_time))->format('H:i:s');
 ?>
 <script>
 	function rateEstimation(duration, programRate) {
@@ -89,7 +90,7 @@ $to_time		 = (new \DateTime($location->to_time))->format('H:i:s');
 	}
 	function fetchProgram(duration, programId) {
 		$.ajax({
-			url: '<?= Url::to(["student/fetch-program-rate"]); ?>' + '?id=' + programId,
+			url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?id=' + programId,
 			type: 'get',
 			dataType: "json",
 			success: function (response)

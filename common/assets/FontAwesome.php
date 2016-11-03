@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: zein
  * Date: 7/3/14
- * Time: 3:24 PM
+ * Time: 3:24 PM.
  */
 
 namespace common\assets;
@@ -14,6 +14,6 @@ class FontAwesome extends AssetBundle
 {
     public $sourcePath = '@bower/font-awesome';
     public $css = [
-        'css/font-awesome.min.css'
+        'css/font-awesome.min.css',
     ];
 }

@@ -3,7 +3,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use common\models\Invoice;
-use yii\bootstrap\Tabs;
+
 ?>
 <style>
     hr{
@@ -22,43 +22,44 @@ use yii\bootstrap\Tabs;
 </div>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
-	'timeout' => 6000,
+    'timeout' => 6000,
 ]) ?>
 <?php echo GridView::widget([
     'dataProvider' => $proFormaInvoiceDataProvider,
     'options' => ['class' => 'col-md-12'],
-    'tableOptions' =>['class' => 'table table-bordered'],
-    'headerRowOptions' => ['class' => 'bg-light-gray' ],
+    'tableOptions' => ['class' => 'table table-bordered'],
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['invoice/view', 'id' => $model->id]);
-    return ['data-url' => $url];
+
+        return ['data-url' => $url];
     },
     'columns' => [
         [
             'label' => 'Student Name',
-            'value' => function($data) {
-                return ! empty($data->lineItems[0]->lesson->enrolment->student->fullName) ? $data->lineItems[0]->lesson->enrolment->student->fullName. ' (' .$data->lineItems[0]->lesson->enrolment->program->name. ')' : null;
+            'value' => function ($data) {
+                return !empty($data->lineItems[0]->lesson->enrolment->student->fullName) ? $data->lineItems[0]->lesson->enrolment->student->fullName.' ('.$data->lineItems[0]->lesson->enrolment->program->name.')' : null;
             },
         ],
         [
         'label' => 'Date',
-            'value' => function($data) {
-                return ! empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
-            }
+            'value' => function ($data) {
+                return !empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
+            },
         ],
         [
             'label' => 'Status',
-            'value' => function($data) {
-                return $data->getStatus(); 
+            'value' => function ($data) {
+                return $data->getStatus();
             },
         ],
-		[ 
-			'attribute' => 'total',
-			'label' => 'Total',
-			'headerOptions' => ['class' => 'text-right'],
-			'contentOptions' => ['class' => 'text-right'],
-			'enableSorting' => false,
-		],
+        [
+            'attribute' => 'total',
+            'label' => 'Total',
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
+            'enableSorting' => false,
+        ],
     ],
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>

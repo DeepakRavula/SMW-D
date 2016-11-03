@@ -2,7 +2,6 @@
 
 namespace backend\models\search;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\TaxCode;
@@ -13,7 +12,7 @@ use common\models\TaxCode;
 class TaxCodeSearch extends TaxCode
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -25,7 +24,7 @@ class TaxCodeSearch extends TaxCode
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -34,7 +33,7 @@ class TaxCodeSearch extends TaxCode
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *

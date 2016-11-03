@@ -1,9 +1,10 @@
-<?php 
+<?php
 
 namespace common\components\intervalTree;
 
 use DateTime;
 use DateInterval;
+
 /**
  * Date range which includes intersecting dates.
  */

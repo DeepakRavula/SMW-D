@@ -29,7 +29,7 @@ class Article extends \common\models\Article implements Linkable
     public function getLinks()
     {
         return [
-            Link::REL_SELF => Url::to(['article/view', 'id' => $this->id], true)
+            Link::REL_SELF => Url::to(['article/view', 'id' => $this->id], true),
         ];
     }
 }

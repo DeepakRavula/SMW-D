@@ -1,6 +1,7 @@
 <?php
+
 $config = [
-    'homeUrl'=>Yii::getAlias('@frontendUrl'),
+    'homeUrl' => Yii::getAlias('@frontendUrl'),
     'controllerNamespace' => 'frontend\controllers',
     'defaultRoute' => 'site/index',
     'bootstrap' => ['maintenance'],
@@ -12,9 +13,9 @@ $config = [
         'api' => [
             'class' => 'frontend\modules\api\Module',
             'modules' => [
-                'v1' => 'frontend\modules\api\v1\Module'
-            ]
-        ]
+                'v1' => 'frontend\modules\api\v1\Module',
+            ],
+        ],
     ],
     'components' => [
         'authClientCollection' => [
@@ -23,7 +24,7 @@ $config = [
                 'github' => [
                     'class' => 'yii\authclient\clients\GitHub',
                     'clientId' => env('GITHUB_CLIENT_ID'),
-                    'clientSecret' => env('GITHUB_CLIENT_SECRET')
+                    'clientSecret' => env('GITHUB_CLIENT_SECRET'),
                 ],
                 'facebook' => [
                     'class' => 'yii\authclient\clients\Facebook',
@@ -35,41 +36,41 @@ $config = [
                         'email',
                         'first_name',
                         'last_name',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error'
+            'errorAction' => 'site/error',
         ],
         'maintenance' => [
             'class' => 'common\components\maintenance\Maintenance',
             'enabled' => function ($app) {
                 return $app->keyStorage->get('frontend.maintenance') === 'enabled';
-            }
+            },
         ],
         'request' => [
-            'cookieValidationKey' => env('FRONTEND_COOKIE_VALIDATION_KEY')
+            'cookieValidationKey' => env('FRONTEND_COOKIE_VALIDATION_KEY'),
         ],
         'user' => [
-            'class'=>'yii\web\User',
+            'class' => 'yii\web\User',
             'identityClass' => 'common\models\User',
-            'loginUrl'=>['/user/sign-in/login'],
+            'loginUrl' => ['/user/sign-in/login'],
             'enableAutoLogin' => true,
-            'as afterLogin' => 'common\behaviors\LoginTimestampBehavior'
-        ]
-    ]
+            'as afterLogin' => 'common\behaviors\LoginTimestampBehavior',
+        ],
+    ],
 ];
 
 if (YII_ENV_DEV) {
     $config['modules']['gii'] = [
-        'class'=>'yii\gii\Module',
-        'generators'=>[
-            'crud'=>[
-                'class'=>'yii\gii\generators\crud\Generator',
-                'messageCategory'=>'frontend'
-            ]
-        ]
+        'class' => 'yii\gii\Module',
+        'generators' => [
+            'crud' => [
+                'class' => 'yii\gii\generators\crud\Generator',
+                'messageCategory' => 'frontend',
+            ],
+        ],
     ];
 }
 

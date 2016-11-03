@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+
 ?>
 <div class="row-fluid m-t-20">
 	<div class="col-md-2">
@@ -11,6 +12,6 @@ use yii\helpers\Html;
 	</div>
 	<div class="clearfix"></div>
 	<div class="col-md-12 m-t-20 m-b-20">
-		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit Qualification', ['update','UserSearch[role_name]' => $searchModel->role_name,'id' => $model->id,'#' => 'qualification'], ['class' => 'm-r-20']) ?>
+		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit Qualification', ['update', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'qualification'], ['class' => 'm-r-20']) ?>
 	</div>
 </div>

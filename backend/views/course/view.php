@@ -3,12 +3,13 @@
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
 use common\models\Enrolment;
+
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
 
 $this->title = 'Group Course Details';
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back text-add-new f-s-14 m-r-10 m-t-0']);
-$this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-left', 'target'=>'_blank']); 
+$this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-left', 'target' => '_blank']);
 
 ?>
 <div class="group-course-view">
@@ -24,13 +25,13 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['
     </div>
 	<div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Duration">
     	<i class="fa fa-calendar"></i> <?php 
-		$length = \DateTime::createFromFormat('H:i:s', $model->duration);
-		echo $length->format('H:i'); ?>
+        $length = \DateTime::createFromFormat('H:i:s', $model->duration);
+        echo $length->format('H:i'); ?>
     </div>
 	<div class="col-md-1 p-0 hand" data-toggle="tooltip" data-placement="bottom" title="Time">
 		<i class="fa fa-clock-o"></i> <?php 
-		$fromTime = \DateTime::createFromFormat('H:i:s', $model->fromTime);
-		echo $fromTime->format('h:i A');?>	
+        $fromTime = \DateTime::createFromFormat('H:i:s', $model->fromTime);
+        echo $fromTime->format('h:i A'); ?>	
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Start Date">
 			<i class="fa fa-calendar"></i> <?php echo Yii::$app->formatter->asDate($model->startDate)?>	
@@ -45,27 +46,27 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['
      <div class="tabbable-line">
 <?php 
 
-$enrolmentContent =  $this->render('_group-enrolment', [
-	'courseId' => $courseId,
-	'model' => new Enrolment(),
+$enrolmentContent = $this->render('_group-enrolment', [
+    'courseId' => $courseId,
+    'model' => new Enrolment(),
 ]);
 
-$studentContent =  $this->render('_student', [
-	'studentDataProvider' => $studentDataProvider,
+$studentContent = $this->render('_student', [
+    'studentDataProvider' => $studentDataProvider,
     'model' => $model,
 ]);
 
 ?>
 <?php echo Tabs::widget([
     'items' => [
-		[
+        [
             'label' => 'Enrolments',
             'content' => $enrolmentContent,
             'options' => [
                       'id' => 'enrolment',
             ],
         ],
-		[
+        [
             'label' => 'Students',
             'content' => $studentContent,
             'options' => [
@@ -73,7 +74,7 @@ $studentContent =  $this->render('_student', [
             ],
         ],
     ],
-]);?>
+]); ?>
 <div class="clearfix"></div>
      </div>
  </div>

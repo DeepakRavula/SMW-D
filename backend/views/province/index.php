@@ -21,18 +21,19 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['province/view', 'id' => $model->id]);
-        return ['data-url' => $url];
+
+            return ['data-url' => $url];
         },
         //'filterModel' => $searchModel,
         'columns' => [
             'name',
             'tax_rate',
-			[
-				'label' => 'Country Name',
-				'value' => function($data){
-					return ! empty($data->country->name) ? $data->country->name : null; 
-				}
-			],
+            [
+                'label' => 'Country Name',
+                'value' => function ($data) {
+                    return !empty($data->country->name) ? $data->country->name : null;
+                },
+            ],
         ],
     ]); ?>
 

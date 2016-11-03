@@ -11,9 +11,9 @@ use yii\helpers\Url;
 
 <div class="payments-form p-l-20 form-well-smw form-well m-t-10 m-b-0">
     <?php $form = ActiveForm::begin([
-		'id' => 'apply-credit-form',
-		'action' => Url::to(['payment/credit-payment', 'id' => $invoice->id])
-	]); ?>
+        'id' => 'apply-credit-form',
+        'action' => Url::to(['payment/credit-payment', 'id' => $invoice->id]),
+    ]); ?>
  	<div class="row">
         <div class="col-xs-3">
     		<?php echo $form->field($model, 'credit')->textInput()->label('Available Credit')?>
@@ -31,10 +31,10 @@ use yii\helpers\Url;
     <div class="form-group">
        <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
 			<?php 
-			if(! $model->isNewRecord){
-				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn']); 	
-			}
-		?>
+            if (!$model->isNewRecord) {
+                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+            }
+        ?>
     </div>
 
     <?php ActiveForm::end(); ?>

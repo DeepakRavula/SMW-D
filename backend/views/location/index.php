@@ -17,34 +17,35 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 <div class="grid-row-open p-10">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
-	'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['location/view', 'id' => $model->id]);
+        'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'rowOptions' => function ($model, $key, $index, $grid) {
+        $url = Url::to(['location/view', 'id' => $model->id]);
+
         return ['data-url' => $url];
-        },
+    },
         'columns' => [
             [
-	            'attribute'=>'name',
-				'label' => 'Name',
-        	    'format' => 'raw',
-            	'value'=>function ($data) {
-             	   return Html::a($data->name, ['location/view', 'id' => $data->id]);
-                	},
+                'attribute' => 'name',
+                'label' => 'Name',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return Html::a($data->name, ['location/view', 'id' => $data->id]);
+                },
             ],
             'address',
-			[
-				'label' => 'From Time',
-				'value' => function($data) {
-					return !empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
-				},
-			],
-			[
-				'label' => 'To Time',
-				'value' => function($data) {
-					return !empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
-				},
-			],
+            [
+                'label' => 'From Time',
+                'value' => function ($data) {
+                    return !empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
+                },
+            ],
+            [
+                'label' => 'To Time',
+                'value' => function ($data) {
+                    return !empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
+                },
+            ],
         ],
     ]); ?>
 

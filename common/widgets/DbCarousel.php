@@ -1,6 +1,6 @@
 <?php
 /**
- * Eugine Terentev <eugine@terentev.net>
+ * Eugine Terentev <eugine@terentev.net>.
  */
 
 namespace common\widgets;
@@ -13,8 +13,7 @@ use yii\bootstrap\Carousel;
 use yii\helpers\Html;
 
 /**
- * Class DbCarousel
- * @package common\widgets
+ * Class DbCarousel.
  */
 class DbCarousel extends Carousel
 {
@@ -37,11 +36,11 @@ class DbCarousel extends Carousel
     public function init()
     {
         if (!$this->key) {
-            throw new InvalidConfigException;
+            throw new InvalidConfigException();
         }
         $cacheKey = [
             WidgetCarousel::className(),
-            $this->key
+            $this->key,
         ];
         $items = Yii::$app->cache->get($cacheKey);
         if ($items === false) {
@@ -61,14 +60,14 @@ class DbCarousel extends Carousel
                 }
 
                 if ($item->url) {
-                    $items[$k]['content'] = Html::a($items[$k]['content'], $item->url, ['target'=>'_blank']);
+                    $items[$k]['content'] = Html::a($items[$k]['content'], $item->url, ['target' => '_blank']);
                 }
 
                 if ($item->caption) {
                     $items[$k]['caption'] = $item->caption;
                 }
             }
-            Yii::$app->cache->set($cacheKey, $items, 60*60*24*365);
+            Yii::$app->cache->set($cacheKey, $items, 60 * 60 * 24 * 365);
         }
         $this->items = $items;
         parent::init();
@@ -85,9 +84,10 @@ class DbCarousel extends Carousel
             $content = implode("\n", [
                 $this->renderIndicators(),
                 $this->renderItems(),
-                $this->renderControls()
+                $this->renderControls(),
             ]);
         }
+
         return Html::tag('div', $content, $this->options);
     }
 }

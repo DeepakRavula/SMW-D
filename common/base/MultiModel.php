@@ -8,16 +8,17 @@ use yii\helpers\ArrayHelper;
 
 /**
  * @author Eugene Terentev <eugene@terentev.net>
- * @var array $models
- * Example:
- * $model = new MultiModel([
- *      'models' => [
- *          'account' => $accountModel,
- *          'profile' => $profileModel
- *      ]
- * ])
- * $model->load($_POST);
- * $model->save();
+ *
+ * @var array
+ *            Example:
+ *            $model = new MultiModel([
+ *            'models' => [
+ *            'account' => $accountModel,
+ *            'profile' => $profileModel
+ *            ]
+ *            ])
+ *            $model->load($_POST);
+ *            $model->save();
  *
  * In view:
  * $form->field($model->getModel('account'), 'username')->textInput();
@@ -36,6 +37,7 @@ class MultiModel extends Model
     /**
      * @param $key
      * @param Model $model
+     *
      * @return Model
      */
     public function setModel($key, Model $model)
@@ -55,6 +57,7 @@ class MultiModel extends Model
 
     /**
      * @param $key
+     *
      * @return Model|null
      */
     public function getModel($key)
@@ -71,8 +74,9 @@ class MultiModel extends Model
     }
 
     /**
-     * @param array $data
+     * @param array  $data
      * @param string $formName
+     *
      * @return bool
      */
     public function load($data, $formName = '')
@@ -83,12 +87,14 @@ class MultiModel extends Model
                 return false;
             }
         }
+
         return true;
     }
 
     /**
      * @param null $attributeNames
      * @param bool $clearErrors
+     *
      * @return bool
      */
     public function validate($attributeNames = null, $clearErrors = true)
@@ -103,12 +109,15 @@ class MultiModel extends Model
             }
         }
         $this->trigger(Model::EVENT_AFTER_VALIDATE);
+
         return $success;
     }
 
     /**
      * @param bool $runValidation
+     *
      * @return bool
+     *
      * @throws \yii\db\Exception
      */
     public function save($runValidation = true)
@@ -122,10 +131,12 @@ class MultiModel extends Model
             $success = $model->save(false);
             if (!$success) {
                 $transaction->rollBack();
+
                 return false;
             }
         }
         $transaction->commit();
+
         return $success;
     }
 

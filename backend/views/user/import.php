@@ -1,6 +1,7 @@
 <?php
 
 use yii\web\JsExpression;
+
 /* @var $this yii\web\View */
 /* @var $model backend\models\UserForm */
 /* @var $roles yii\rbac\Role[] */
@@ -22,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
     'maxNumberOfFiles' => 3, // default 1,
     'acceptFileTypes' => new JsExpression('/(\.|\/)(csv|CSV)$/i'),
     'clientOptions' => ['done' => new JsExpression('UserImport.onDone')],
-]);?>
+]); ?>
 </div>
 <div id="import-log" class="p-t-10 pull-left">
 

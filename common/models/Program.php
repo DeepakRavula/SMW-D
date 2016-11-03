@@ -8,20 +8,20 @@ use common\models\query\ProgramQuery;
 /**
  * This is the model class for table "program".
  *
- * @property integer $id
+ * @property int $id
  * @property string $name
- * @property integer $rate
- * @property integer $status
+ * @property int $rate
+ * @property int $status
  */
 class Program extends \yii\db\ActiveRecord
 {
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
-   
-	const TYPE_PRIVATE_PROGRAM = 1;
-	const TYPE_GROUP_PROGRAM = 2;
+
+    const TYPE_PRIVATE_PROGRAM = 1;
+    const TYPE_GROUP_PROGRAM = 2;
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -37,21 +37,21 @@ class Program extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['name'], 'required'],
             [['status'], 'integer'],
-			[['rate'], 'number'],
+            [['rate'], 'number'],
             [['name'], 'string', 'max' => 255],
             [['type'], 'required'],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -60,36 +60,38 @@ class Program extends \yii\db\ActiveRecord
             'name' => 'Name',
             'rate' => 'Rate',
             'status' => 'Status',
-			'type' => 'Type',
+            'type' => 'Type',
         ];
     }
 
-    public function beforeSave($insert) {
-		if($this->isNewRecord) {
-			$this->status = self::STATUS_ACTIVE;
-		}
-        
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord) {
+            $this->status = self::STATUS_ACTIVE;
+        }
+
         return parent::beforeSave($insert);
     }
-    
+
     /**
-     * Returns program statuses list
+     * Returns program statuses list.
+     *
      * @return array|mixed
      */
     public static function statuses()
     {
         return [
             self::STATUS_INACTIVE => Yii::t('common', 'In Active'),
-            self::STATUS_ACTIVE => Yii::t('common', 'Active')
+            self::STATUS_ACTIVE => Yii::t('common', 'Active'),
         ];
     }
 
-	public function getQualification()
+    public function getQualification()
     {
         return $this->hasOne(Qualification::className(), ['program_id' => 'id']);
     }
 
-	public function getCourse()
+    public function getCourse()
     {
         return $this->hasMany(Course::className(), ['programId' => 'id']);
     }

@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "tax_code".
  *
@@ -16,7 +14,7 @@ use Yii;
 class TaxCode extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -24,7 +22,7 @@ class TaxCode extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -37,7 +35,7 @@ class TaxCode extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -51,27 +49,28 @@ class TaxCode extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
-     * @return \common\models\query\TaxCodeQuery the active query used by this AR class.
+     * {@inheritdoc}
+     *
+     * @return \common\models\query\TaxCodeQuery the active query used by this AR class
      */
     public static function find()
     {
         return new \common\models\query\TaxCodeQuery(get_called_class());
     }
 
-	public function getTaxType()
+    public function getTaxType()
     {
-       return $this->hasOne(TaxType::className(), ['id' => 'tax_type_id']);
+        return $this->hasOne(TaxType::className(), ['id' => 'tax_type_id']);
     }
 
-	public function getProvince()
+    public function getProvince()
     {
-       return $this->hasOne(Province::className(), ['id' => 'province_id']);
+        return $this->hasOne(Province::className(), ['id' => 'province_id']);
     }
 
-	public function getTaxStatus()
+    public function getTaxStatus()
     {
-       return $this->hasOne(TaxStatus::className(), ['id' => 'tax_status_id'])
-		->viaTable('tax_type_tax_status_assoc', ['tax_type_id' => 'tax_type_id']);
+        return $this->hasOne(TaxStatus::className(), ['id' => 'tax_status_id'])
+        ->viaTable('tax_type_tax_status_assoc', ['tax_type_id' => 'tax_type_id']);
     }
 }

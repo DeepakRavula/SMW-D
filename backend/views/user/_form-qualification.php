@@ -1,6 +1,7 @@
 <?php
 
 use wbraganca\selectivity\SelectivityWidget;
+
 ?>
 <div class="row-fluid">
 	<div class="col-md-12">
@@ -13,16 +14,16 @@ use wbraganca\selectivity\SelectivityWidget;
 		<div class="row">
 			<div class="col-md-12">
 				<?=
-				$form->field($model, 'qualifications')->widget(SelectivityWidget::classname(), [
-					'pluginOptions' => [
-						'allowClear' => true,
-						'multiple' => true,
-						'items' => $programs,
-						'value' => $model->qualifications,
-						'placeholder' => 'Select Qualification'
-					]
-				]);
-				?>
+                $form->field($model, 'qualifications')->widget(SelectivityWidget::classname(), [
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'multiple' => true,
+                        'items' => $programs,
+                        'value' => $model->qualifications,
+                        'placeholder' => 'Select Qualification',
+                    ],
+                ]);
+                ?>
 
 			</div>
 		</div>

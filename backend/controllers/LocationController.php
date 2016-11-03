@@ -28,6 +28,7 @@ class LocationController extends Controller
 
     /**
      * Lists all Location models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -43,7 +44,9 @@ class LocationController extends Controller
 
     /**
      * Displays a single Location model.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -56,6 +59,7 @@ class LocationController extends Controller
     /**
      * Creates a new Location model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -63,10 +67,11 @@ class LocationController extends Controller
         $model = new Location();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Location has been created successfully'
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Location has been created successfully',
         ]);
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -78,7 +83,9 @@ class LocationController extends Controller
     /**
      * Updates an existing Location model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -86,10 +93,11 @@ class LocationController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Location has been updated successfully'
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Location has been updated successfully',
         ]);
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -101,24 +109,30 @@ class LocationController extends Controller
     /**
      * Deletes an existing Location model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-		Yii::$app->session->setFlash('alert', [
-           	'options' => ['class' => 'alert-success'],
-           	'body' => 'Location has been deleted successfully'
+        Yii::$app->session->setFlash('alert', [
+               'options' => ['class' => 'alert-success'],
+               'body' => 'Location has been deleted successfully',
         ]);
+
         return $this->redirect(['index']);
     }
 
     /**
      * Finds the Location model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return Location the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
@@ -129,13 +143,12 @@ class LocationController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
-    public function actionChangeLocation() {
-        if (Yii::$app->request->isAjax) {
-            $location_id = Yii::$app->request->post("location_id");
-            Yii::$app->session->set("location_id" , $location_id);
-        }
 
-    }    
-    
+    public function actionChangeLocation()
+    {
+        if (Yii::$app->request->isAjax) {
+            $location_id = Yii::$app->request->post('location_id');
+            Yii::$app->session->set('location_id', $location_id);
+        }
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\grid\GridView;
+
 ?>
 <style>
 /* -------------------------------------
@@ -280,7 +281,7 @@ use yii\grid\GridView;
                     <tr>
                       <td>
                         <p>Dear <?php echo Html::encode($toName) ?>,</p>
-                        <p><?= 'Please find the lesson schedule for the program you enrolled on ' . Yii::$app->formatter->asDate($model->course->startDate) ?> </p>
+                        <p><?= 'Please find the lesson schedule for the program you enrolled on '.Yii::$app->formatter->asDate($model->course->startDate) ?> </p>
                         <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                           <tbody>
                             <tr>
@@ -303,7 +304,7 @@ use yii\grid\GridView;
                                                     <strong><?= 'Durartion: ' ?></strong>
                                                     <?php 
                                                         $length = \DateTime::createFromFormat('H:i:s', $model->course->duration);
-                                                        echo $length->format('H:i'); 
+                                                        echo $length->format('H:i');
                                                     ?>
                                                 </td>
                                                 <td><strong><?= 'Start Date: ' ?></strong> <?= Yii::$app->formatter->asDate($model->course->startDate); ?></td>
@@ -316,18 +317,19 @@ use yii\grid\GridView;
 
                                     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
                                         <?php echo GridView::widget([
-                                        'dataProvider' => $lessonDataProvider,      
-                                        'tableOptions' =>['class' => 'table table-bordered'],
-                                        'headerRowOptions' => ['class' => 'bg-light-gray' ],
+                                        'dataProvider' => $lessonDataProvider,
+                                        'tableOptions' => ['class' => 'table table-bordered'],
+                                        'headerRowOptions' => ['class' => 'bg-light-gray'],
                                         'summary' => '',
-                                        'columns' => [            
-                                            [               
-                                                'value' => function($data) {
-                                                    $lessonDate =  \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-                                                    $date = $lessonDate->format('l, F jS, Y @ g:i a');    
-                                                    return ! empty($date) ? $date : null;
+                                        'columns' => [
+                                            [
+                                                'value' => function ($data) {
+                                                    $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+                                                    $date = $lessonDate->format('l, F jS, Y @ g:i a');
+
+                                                    return !empty($date) ? $date : null;
                                                 },
-                                            ],          
+                                            ],
                                         ],
                                         ]); ?>
                                     <?php yii\widgets\Pjax::end(); ?>

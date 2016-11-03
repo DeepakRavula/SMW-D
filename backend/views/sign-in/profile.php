@@ -1,6 +1,5 @@
 <?php
 
-use common\models\UserProfile;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 

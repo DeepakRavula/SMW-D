@@ -1,12 +1,12 @@
 <?php
 
-use yii\helpers\Html; 
-use yii\bootstrap\ActiveForm; 
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
 use dosamigos\ckeditor\CKEditor;
 
-/* @var $this yii\web\View */ 
-/* @var $model common\models\ReleaseNotes */ 
-/* @var $form yii\bootstrap\ActiveForm */ 
+/* @var $this yii\web\View */
+/* @var $model common\models\ReleaseNotes */
+/* @var $form yii\bootstrap\ActiveForm */
 ?> 
 
 <div class="release-notes-form"> 
@@ -17,7 +17,7 @@ use dosamigos\ckeditor\CKEditor;
     
     <?= $form->field($model, 'notes')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'full'
+        'preset' => 'full',
     ]) ?>
 
     <div class="form-group"> 

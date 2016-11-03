@@ -9,20 +9,20 @@ use yii\db\ActiveRecord;
 /**
  * This is the model class for table "{{%file_storage_item}}".
  *
- * @property integer $id
+ * @property int $id
  * @property string $component
  * @property string $base_url
  * @property string $path
  * @property string $type
- * @property integer $size
+ * @property int $size
  * @property string $name
  * @property string $upload_ip
- * @property integer $created_at
+ * @property int $created_at
  */
 class FileStorageItem extends ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -34,13 +34,13 @@ class FileStorageItem extends ActiveRecord
         return [
             [
                 'class' => TimestampBehavior::className(),
-                'updatedAtAttribute' => false
-            ]
+                'updatedAtAttribute' => false,
+            ],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -50,12 +50,12 @@ class FileStorageItem extends ActiveRecord
             [['component', 'name', 'type'], 'string', 'max' => 255],
             [['path', 'base_url'], 'string', 'max' => 1024],
             [['type'], 'string', 'max' => 45],
-            [['upload_ip'], 'string', 'max' => 15]
+            [['upload_ip'], 'string', 'max' => 15],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -68,7 +68,7 @@ class FileStorageItem extends ActiveRecord
             'size' => Yii::t('common', 'Size'),
             'name' => Yii::t('common', 'Name'),
             'upload_ip' => Yii::t('common', 'Upload Ip'),
-            'created_at' => Yii::t('common', 'Created At')
+            'created_at' => Yii::t('common', 'Created At'),
         ];
     }
 }

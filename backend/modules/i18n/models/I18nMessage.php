@@ -7,12 +7,11 @@ use Yii;
 /**
  * This is the model class for table "{{%i18n_message}}".
  *
- * @property integer $id
+ * @property int $id
  * @property string $language
  * @property string $translation
  * @property string $sourceMessage
  * @property string $category
- *
  * @property I18nSourceMessage $sourceMessageModel
  */
 class I18nMessage extends \yii\db\ActiveRecord
@@ -21,7 +20,7 @@ class I18nMessage extends \yii\db\ActiveRecord
     public $sourceMessage;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -29,21 +28,21 @@ class I18nMessage extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['id', 'language'], 'required'],
-            [['id'], 'exist', 'targetClass'=>I18nSourceMessage::className(), 'targetAttribute'=>'id'],
+            [['id'], 'exist', 'targetClass' => I18nSourceMessage::className(), 'targetAttribute' => 'id'],
             [['translation'], 'string'],
             [['language'], 'string', 'max' => 16],
-            [['language'], 'unique', 'targetAttribute' => ['id', 'language']]
+            [['language'], 'unique', 'targetAttribute' => ['id', 'language']],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -60,9 +59,9 @@ class I18nMessage extends \yii\db\ActiveRecord
     {
         $this->sourceMessage = $this->sourceMessageModel ? $this->sourceMessageModel->message : null;
         $this->category = $this->sourceMessageModel ? $this->sourceMessageModel->category : null;
+
         return parent::afterFind();
     }
-
 
     /**
      * @return \yii\db\ActiveQuery

@@ -15,7 +15,8 @@ class ProfessionalDevelopmentDayQuery extends \yii\db\ActiveQuery
     }*/
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\ProfessionalDevelopmentDay[]|array
      */
     public function all($db = null)
@@ -24,7 +25,8 @@ class ProfessionalDevelopmentDayQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\ProfessionalDevelopmentDay|array|null
      */
     public function one($db = null)

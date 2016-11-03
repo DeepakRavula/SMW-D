@@ -1,15 +1,14 @@
 <?php
 
-use yii\db\Schema;
 use yii\db\Migration;
 
 class m161008_071619_master_data extends Migration
 {
     public function up()
     {
-		$sql = file_get_contents(dirname(__FILE__).'/' . get_class($this) . '_' . __FUNCTION__ . '.sql');
+        $sql = file_get_contents(dirname(__FILE__).'/'.get_class($this).'_'.__FUNCTION__.'.sql');
 
-		return $this->execute($sql);
+        return $this->execute($sql);
     }
 
     public function down()

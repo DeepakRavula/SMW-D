@@ -2,18 +2,16 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "payment_methods".
  *
- * @property integer $id
+ * @property int $id
  * @property string $name
  */
 class PaymentMethod extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -21,7 +19,7 @@ class PaymentMethod extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -33,7 +31,7 @@ class PaymentMethod extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {

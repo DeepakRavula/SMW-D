@@ -15,7 +15,8 @@ class TaxCodeQuery extends \yii\db\ActiveQuery
     }*/
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\TaxCode[]|array
      */
     public function all($db = null)
@@ -24,7 +25,8 @@ class TaxCodeQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\TaxCode|array|null
      */
     public function one($db = null)

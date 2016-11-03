@@ -15,7 +15,8 @@ class HolidayQuery extends \yii\db\ActiveQuery
     }*/
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\Holiday[]|array
      */
     public function all($db = null)
@@ -24,7 +25,8 @@ class HolidayQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @return \common\models\Holiday|array|null
      */
     public function one($db = null)

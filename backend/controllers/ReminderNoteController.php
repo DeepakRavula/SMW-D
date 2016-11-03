@@ -28,33 +28,34 @@ class ReminderNoteController extends Controller
 
     /**
      * Lists all ReminderNote models.
+     *
      * @return mixed
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => ReminderNote::find()
+            'query' => ReminderNote::find(),
         ]);
         $notes = ReminderNote::find()->one();
-        if ( ! empty($notes)) {
+        if (!empty($notes)) {
             return $this->render('index', [
                 'dataProvider' => $dataProvider,
             ]);
         } else {
             return $this->redirect(['create']);
         }
-        
     }
 
     /**
      * Creates a new ReminderNote model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
     {
         $model = new ReminderNote();
-        
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
         } else {
@@ -67,13 +68,15 @@ class ReminderNoteController extends Controller
     /**
      * Updates an existing ReminderNote model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
         } else {
@@ -86,7 +89,9 @@ class ReminderNoteController extends Controller
     /**
      * Deletes an existing ReminderNote model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -99,8 +104,11 @@ class ReminderNoteController extends Controller
     /**
      * Finds the ReminderNote model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param string $id
+     *
      * @return ReminderNote the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

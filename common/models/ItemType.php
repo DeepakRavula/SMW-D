@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "item_type".
  *
@@ -12,12 +10,12 @@ use Yii;
  */
 class ItemType extends \yii\db\ActiveRecord
 {
-	const TYPE_PRIVATE_LESSON = 1;
-	const TYPE_GROUP_LESSON = 2;
-	const TYPE_MISC = 3;
-	const TYPE_OPENING_BALANCE = 4;	
+    const TYPE_PRIVATE_LESSON = 1;
+    const TYPE_GROUP_LESSON = 2;
+    const TYPE_MISC = 3;
+    const TYPE_OPENING_BALANCE = 4;
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -25,7 +23,7 @@ class ItemType extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -36,7 +34,7 @@ class ItemType extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -46,22 +44,24 @@ class ItemType extends \yii\db\ActiveRecord
         ];
     }
 
-	public function getItemCode(){
-		$code = null;
-		switch($this->id){
-			case self::TYPE_PRIVATE_LESSON:
-				$code = 'PRIVATE LESSON';
-			break;
-			case self::TYPE_GROUP_LESSON:
-				$code = 'GROUP LESSON';
-			break;
-			case self::TYPE_MISC:
-				$code = 'MISC';
-			break;
-			case self::TYPE_OPENING_BALANCE:
-				$code = 'Opening Balance';
-			break;
-		}
-		return $code;
-	}
+    public function getItemCode()
+    {
+        $code = null;
+        switch ($this->id) {
+            case self::TYPE_PRIVATE_LESSON:
+                $code = 'PRIVATE LESSON';
+            break;
+            case self::TYPE_GROUP_LESSON:
+                $code = 'GROUP LESSON';
+            break;
+            case self::TYPE_MISC:
+                $code = 'MISC';
+            break;
+            case self::TYPE_OPENING_BALANCE:
+                $code = 'Opening Balance';
+            break;
+        }
+
+        return $code;
+    }
 }

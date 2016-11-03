@@ -23,10 +23,10 @@ use common\models\Country;
 		</div>
 		<div class="col-md-4 ">
 			<?php
-			echo $form->field($model, 'country_id')->dropDownList(ArrayHelper::map(
-							Country::find()->all(), 'id', 'name'
-			))
-			?>
+            echo $form->field($model, 'country_id')->dropDownList(ArrayHelper::map(
+                            Country::find()->all(), 'id', 'name'
+            ))
+            ?>
 		</div>
 	</div>
 
@@ -34,10 +34,10 @@ use common\models\Country;
     <div class="form-group">
 	<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php 
-			if(! $model->isNewRecord){
-				echo Html::a('Cancel', ['view','id' => $model->id], ['class'=>'btn']); 	
-			}
-		?>
+            if (!$model->isNewRecord) {
+                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+            }
+        ?>
     </div>
 
 <?php ActiveForm::end(); ?>

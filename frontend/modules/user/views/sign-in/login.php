@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php echo $form->field($model, 'rememberMe')->checkbox() ?>
                 <div style="color:#999;margin:1em 0">
                     <?php echo Yii::t('frontend', 'If you forgot your password you can reset it <a href="{link}">here</a>', [
-                        'link'=>yii\helpers\Url::to(['sign-in/request-password-reset'])
+                        'link' => yii\helpers\Url::to(['sign-in/request-password-reset']),
                     ]) ?>
                 </div>
                 <div class="form-group">
@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <h2><?php echo Yii::t('frontend', 'Log in with')  ?>:</h2>
                 <div class="form-group">
                     <?php echo yii\authclient\widgets\AuthChoice::widget([
-                        'baseAuthUrl' => ['/user/sign-in/oauth']
+                        'baseAuthUrl' => ['/user/sign-in/oauth'],
                     ]) ?>
                 </div>
             <?php ActiveForm::end(); ?>

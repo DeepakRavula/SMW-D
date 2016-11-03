@@ -9,7 +9,6 @@ class SignupCest
 {
     public function _before($event)
     {
-
     }
 
     public function _after($event)
@@ -22,12 +21,11 @@ class SignupCest
 
     public function _fail()
     {
-
     }
 
     /**
      * @param \tests\codeception\frontend\AcceptanceTester $I
-     * @param \Codeception\Scenario $scenario
+     * @param \Codeception\Scenario                        $scenario
      */
     public function testUserSignup($I, $scenario)
     {
@@ -68,7 +66,7 @@ class SignupCest
         }
 
         $I->expectTo('see that user logged in');
-        $I->click("tester","a");
-        $I->see("Logout","a");
+        $I->click('tester', 'a');
+        $I->see('Logout', 'a');
     }
 }

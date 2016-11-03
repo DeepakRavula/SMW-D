@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "tax_status".
  *
@@ -12,11 +10,11 @@ use Yii;
  */
 class TaxStatus extends \yii\db\ActiveRecord
 {
-	const STATUS_DEFAULT = 1;
-	const STATUS_NO_TAX = 2;
-	
+    const STATUS_DEFAULT = 1;
+    const STATUS_NO_TAX = 2;
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -24,7 +22,7 @@ class TaxStatus extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -35,7 +33,7 @@ class TaxStatus extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -46,15 +44,17 @@ class TaxStatus extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
-     * @return \common\models\query\TaxStatusQuery the active query used by this AR class.
+     * {@inheritdoc}
+     *
+     * @return \common\models\query\TaxStatusQuery the active query used by this AR class
      */
     public static function find()
     {
         return new \common\models\query\TaxStatusQuery(get_called_class());
     }
 
-	public function getTaxTypeTaxStatusAssoc(){
-		return $this->hasOne(TaxTypeTaxStatusAssoc::className(), ['tax_status_id' => 'id']);	
-	}
+    public function getTaxTypeTaxStatusAssoc()
+    {
+        return $this->hasOne(TaxTypeTaxStatusAssoc::className(), ['tax_status_id' => 'id']);
+    }
 }

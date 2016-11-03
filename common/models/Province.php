@@ -2,20 +2,18 @@
 
 namespace common\models;
 
-use Yii;
-
 /**
  * This is the model class for table "province".
  *
- * @property integer $id
+ * @property int $id
  * @property string $name
- * @property double $tax_rate
- * @property integer $country_id
+ * @property float $tax_rate
+ * @property int $country_id
  */
 class Province extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -23,7 +21,7 @@ class Province extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -36,7 +34,7 @@ class Province extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -54,5 +52,4 @@ class Province extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Country::className(), ['id' => 'country_id']);
     }
-	
 }

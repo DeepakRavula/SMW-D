@@ -1,15 +1,15 @@
 <?php
+
 namespace backend\models;
 
 use cheatsheet\Time;
 use common\models\User;
 use Yii;
-use yii\base\Exception;
 use yii\base\Model;
 use yii\web\ForbiddenHttpException;
 
 /**
- * Login form
+ * Login form.
  */
 class LoginForm extends Model
 {
@@ -20,7 +20,7 @@ class LoginForm extends Model
     private $user = false;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -35,14 +35,14 @@ class LoginForm extends Model
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
         return [
             'username' => Yii::t('backend', 'Username'),
             'password' => Yii::t('backend', 'Password'),
-            'rememberMe' => Yii::t('backend', 'Remember Me')
+            'rememberMe' => Yii::t('backend', 'Remember Me'),
         ];
     }
 
@@ -62,7 +62,9 @@ class LoginForm extends Model
 
     /**
      * Logs in a user using the provided username and password.
+     *
      * @return bool whether the user is logged in successfully
+     *
      * @throws ForbiddenHttpException
      */
     public function login()
@@ -74,8 +76,9 @@ class LoginForm extends Model
         if (Yii::$app->user->login($this->getUser(), $duration)) {
             if (!Yii::$app->user->can('loginToBackend')) {
                 Yii::$app->user->logout();
-                throw new ForbiddenHttpException;
+                throw new ForbiddenHttpException();
             }
+
             return true;
         }
 
@@ -83,7 +86,7 @@ class LoginForm extends Model
     }
 
     /**
-     * Finds user by [[username]]
+     * Finds user by [[username]].
      *
      * @return User|null
      */
@@ -91,7 +94,7 @@ class LoginForm extends Model
     {
         if ($this->user === false) {
             $this->user = User::find()
-                ->where(['email'=>$this->username])
+                ->where(['email' => $this->username])
                 ->one();
         }
 

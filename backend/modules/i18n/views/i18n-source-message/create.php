@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="i18n-source-message-create">
 
     <?php echo $this->render('_form', [
-        'model' => $model
+        'model' => $model,
     ]) ?>
 
 </div>

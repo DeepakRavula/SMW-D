@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\modules\user\models;
 
 use yii\base\Model;
@@ -6,7 +7,7 @@ use Yii;
 use yii\web\JsExpression;
 
 /**
- * Account form
+ * Account form.
  */
 class AccountForm extends Model
 {
@@ -25,7 +26,7 @@ class AccountForm extends Model
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -37,7 +38,7 @@ class AccountForm extends Model
                 'message' => Yii::t('frontend', 'This username has already been taken.'),
                 'filter' => function ($query) {
                     $query->andWhere(['not', ['id' => Yii::$app->user->getId()]]);
-                }
+                },
             ],
             ['username', 'string', 'min' => 1, 'max' => 255],
             ['email', 'filter', 'filter' => 'trim'],
@@ -48,18 +49,18 @@ class AccountForm extends Model
                 'message' => Yii::t('frontend', 'This email has already been taken.'),
                 'filter' => function ($query) {
                     $query->andWhere(['not', ['id' => Yii::$app->user->getId()]]);
-                }
+                },
             ],
             ['password', 'string'],
             [
                 'password_confirm',
                 'required',
-                'when' => function($model) {
+                'when' => function ($model) {
                     return !empty($model->password);
                 },
                 'whenClient' => new JsExpression("function (attribute, value) {
                     return $('#caccountform-password').val().length > 0;
-                }")
+                }"),
             ],
             ['password_confirm', 'compare', 'compareAttribute' => 'password', 'skipOnEmpty' => false],
 
@@ -72,7 +73,7 @@ class AccountForm extends Model
             'username' => Yii::t('frontend', 'Username'),
             'email' => Yii::t('frontend', 'Email'),
             'password' => Yii::t('frontend', 'Password'),
-            'password_confirm' => Yii::t('frontend', 'Confirm Password')
+            'password_confirm' => Yii::t('frontend', 'Confirm Password'),
         ];
     }
 
@@ -83,6 +84,7 @@ class AccountForm extends Model
         if ($this->password) {
             $this->user->setPassword($this->password);
         }
+
         return $this->user->save();
     }
 }

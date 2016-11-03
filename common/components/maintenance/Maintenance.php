@@ -1,4 +1,5 @@
 <?php
+
 namespace common\components\maintenance;
 
 use Yii;
@@ -6,24 +7,27 @@ use yii\base\Component;
 use yii\base\BootstrapInterface;
 
 /**
- * Class Maintenance
+ * Class Maintenance.
+ *
  * @author Eugene Terentev <eugene@terentev.net>
  */
 class Maintenance extends Component implements BootstrapInterface
 {
     /**
-     * @var boolean|\Closure boolean value or Closure that return
-     * boolean indicating if app in maintenance mode or not
+     * @var bool|\Closure boolean value or Closure that return
+     *                    boolean indicating if app in maintenance mode or not
      */
     public $enabled;
     /**
      * @var string
+     *
      * @see \yii\web\Application::catchAll
      */
     public $catchAllRoute;
 
     /**
      * @var mixed
+     *
      * @link http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.37
      */
     public $retryAfter = 300;
@@ -42,6 +46,7 @@ class Maintenance extends Component implements BootstrapInterface
 
     /**
      * Bootstrap method to be called during application bootstrap stage.
+     *
      * @param \yii\web\Application $app the application currently running
      */
     public function bootstrap($app)
@@ -59,7 +64,7 @@ class Maintenance extends Component implements BootstrapInterface
                     'retryAfter' => $this->retryAfter,
                     'maintenanceLayout' => $this->maintenanceLayout,
                     'maintenanceView' => $this->maintenanceView,
-                    'maintenanceText' => $this->maintenanceText
+                    'maintenanceText' => $this->maintenanceText,
                 ];
                 $app->catchAll = ['maintenance/index'];
                 Yii::$app->view->registerAssetBundle(MaintenanceAsset::className());
@@ -67,7 +72,7 @@ class Maintenance extends Component implements BootstrapInterface
                 $app->catchAll = [
                     $this->catchAllRoute,
                     'retryAfter' => $this->retryAfter,
-                    'maintenanceText' => $this->maintenanceText
+                    'maintenanceText' => $this->maintenanceText,
                 ];
             }
         }

@@ -14,26 +14,26 @@ use common\models\TeacherAvailability;
 <div class="teacher-availability-view">
 
     <?php 
-		$dayList = TeacherAvailability::getWeekdaysList();
+        $dayList = TeacherAvailability::getWeekdaysList();
         $day = $dayList[$model->day];
-	    $fromTime = Yii::$app->formatter->asTime($model->from_time);
-	    $toTime = Yii::$app->formatter->asTime($model->to_time);
-	?>
+        $fromTime = Yii::$app->formatter->asTime($model->from_time);
+        $toTime = Yii::$app->formatter->asTime($model->to_time);
+    ?>
     <?php echo DetailView::widget([
         'model' => $model,
         'attributes' => [
            [
                 'label' => 'Day',
-                'value' => ! empty($day) ? $day : null,
+                'value' => !empty($day) ? $day : null,
             ],
             [
-				'label' => 'From Time',
-				'value' =>  !empty($fromTime) ? $fromTime : null,
-			],
+                'label' => 'From Time',
+                'value' => !empty($fromTime) ? $fromTime : null,
+            ],
             [
-				'label' => 'To Time',
-				'value' =>  !empty($toTime) ? $toTime : null,
-			],
+                'label' => 'To Time',
+                'value' => !empty($toTime) ? $toTime : null,
+            ],
         ],
     ]) ?>
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Eugine Terentev <eugine@terentev.net>
+ * Eugine Terentev <eugine@terentev.net>.
  */
 
 namespace common\rbac\rule;
@@ -14,11 +14,12 @@ class UpdateOwnProfileRule extends Rule
     public $name = 'updateOwnProfileRule';
 
     /**
-     * @param int $user
-     * @param Item $item
+     * @param int   $user
+     * @param Item  $item
      * @param array $params
-     * - model: model to check owner
-     * - attribute: attribute that will be compared to user ID
+     *                      - model: model to check owner
+     *                      - attribute: attribute that will be compared to user ID
+     *
      * @return bool
      */
     public function execute($user, $item, $params)

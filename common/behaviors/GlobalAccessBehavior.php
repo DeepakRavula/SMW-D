@@ -7,14 +7,13 @@ use yii\base\Controller;
 use Yii;
 
 /**
- * Class GlobalAccessBehavior
- * @package common\behaviors
+ * Class GlobalAccessBehavior.
  */
 class GlobalAccessBehavior extends Behavior
 {
-
     /**
      * @var array
+     *
      * @see \yii\filters\AccessControl::rules
      */
     public $rules = [];
@@ -26,7 +25,7 @@ class GlobalAccessBehavior extends Behavior
 
     /**
      * @var callable a callback that will be called if the access should be denied
-     * to the current user. If not set, [[denyAccess()]] will be called.
+     *               to the current user. If not set, [[denyAccess()]] will be called.
      *
      * The signature of the callback should be as follows:
      *
@@ -35,7 +34,7 @@ class GlobalAccessBehavior extends Behavior
      * ~~~
      *
      * where `$rule` is the rule that denies the user, and `$action` is the current [[Action|action]] object.
-     * `$rule` can be `null` if access is denied because none of the rules matched.
+     * `$rule` can be `null` if access is denied because none of the rules matched
      */
     public $denyCallback;
 
@@ -45,7 +44,7 @@ class GlobalAccessBehavior extends Behavior
     public function events()
     {
         return [
-            Controller::EVENT_BEFORE_ACTION => 'beforeAction'
+            Controller::EVENT_BEFORE_ACTION => 'beforeAction',
         ];
     }
 
@@ -54,7 +53,7 @@ class GlobalAccessBehavior extends Behavior
         Yii::$app->controller->attachBehavior('access', [
             'class' => $this->accessControlFilter,
             'denyCallback' => $this->denyCallback,
-            'rules'=> $this->rules
+            'rules' => $this->rules,
         ]);
     }
 }

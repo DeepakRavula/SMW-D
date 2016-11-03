@@ -1,7 +1,5 @@
 <?php
 
-use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\bootstrap\Tabs;
 
 /* @var $this yii\web\View */
@@ -13,7 +11,7 @@ $this->title = 'Reports';
      <div class="tabbable-line">
 <?php 
 
-$paymentContent =  $this->render('_index-payment', [
+$paymentContent = $this->render('_index-payment', [
     'searchModel' => $searchModel,
     'dataProvider' => $dataProvider,
 ]);
@@ -22,9 +20,9 @@ $paymentContent =  $this->render('_index-payment', [
 
 <?php echo Tabs::widget([
     'items' => [
-		[
+        [
             'label' => 'Payments',
             'content' => $paymentContent,
         ],
     ],
-]);?>
+]); ?>

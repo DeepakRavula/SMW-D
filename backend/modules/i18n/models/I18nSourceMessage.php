@@ -7,16 +7,15 @@ use Yii;
 /**
  * This is the model class for table "{{%i18n_source_message}}".
  *
- * @property integer $id
+ * @property int $id
  * @property string $category
  * @property string $message
- *
  * @property I18nMessage[] $i18nMessages
  */
 class I18nSourceMessage extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -24,18 +23,18 @@ class I18nSourceMessage extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['message'], 'string'],
-            [['category'], 'string', 'max' => 32]
+            [['category'], 'string', 'max' => 32],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {

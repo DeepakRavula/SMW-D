@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="teacher-availability-index">
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]);?>
 
     <p>
         <?php echo Html::a('Create Teacher Availability', ['create'], ['class' => 'btn btn-success']) ?>
@@ -23,9 +23,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             [
-				'class' => 'yii\grid\SerialColumn',
-				'header' => 'Serial No.',
-			],
+                'class' => 'yii\grid\SerialColumn',
+                'header' => 'Serial No.',
+            ],
 
             'id',
             'teacher_id',

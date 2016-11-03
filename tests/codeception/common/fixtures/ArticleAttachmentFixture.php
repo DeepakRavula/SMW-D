@@ -1,4 +1,5 @@
 <?php
+
 namespace tests\codeception\common\fixtures;
 
 use yii\test\ActiveFixture;
@@ -10,6 +11,6 @@ class ArticleAttachmentFixture extends ActiveFixture
 {
     public $modelClass = 'common\models\ArticleAttachment';
     public $depends = [
-        'tests\codeception\common\fixtures\ArticleFixture'
+        'tests\codeception\common\fixtures\ArticleFixture',
     ];
 }

@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
 use common\models\User;
 
 /* @var $this yii\web\View */
@@ -12,8 +11,8 @@ $this->params['breadcrumbs'][] = ['label' => 'Holidays', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-foreach($roles as $name => $description){
-	$role = $name;
+foreach ($roles as $name => $description) {
+    $role = $name;
 }
 ?>
 <div class="holiday-view">
@@ -21,7 +20,7 @@ foreach($roles as $name => $description){
     <div class="col-xs-2">
         	<i class="fa fa-calendar"></i> <?php echo Yii::$app->formatter->asDate($model->date); ?>
     </div>
-        <?php if($role === User::ROLE_ADMINISTRATOR):?>
+        <?php if ($role === User::ROLE_ADMINISTRATOR):?>
             <div class="col-md-12 m-t-20">
                 <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
                 <?php
@@ -35,7 +34,7 @@ foreach($roles as $name => $description){
                 ?>
                 <div class="clearfix"></div>
             </div>
-        <?php endif;?> 
+        <?php endif; ?> 
     <div class="clearfix"></div>
 
 </div>

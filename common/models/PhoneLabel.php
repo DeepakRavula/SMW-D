@@ -2,19 +2,16 @@
 
 namespace common\models;
 
-use common\models\PhoneNumber;
-use Yii;
-
 /**
  * This is the model class for table "phone_label".
  *
- * @property integer $id
+ * @property int $id
  * @property string $name
  */
 class PhoneLabel extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -22,7 +19,7 @@ class PhoneLabel extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -33,7 +30,7 @@ class PhoneLabel extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -46,8 +43,8 @@ class PhoneLabel extends \yii\db\ActiveRecord
     public static function findByPhoneLabel($user_id)
     {
         return static::find()
-			->join('INNER JOIN','phone_number','phone_number.label_id = phone_label.id')
-			->where(['phone_number.user_id' => $user_id ])
-			->all();
+            ->join('INNER JOIN', 'phone_number', 'phone_number.label_id = phone_label.id')
+            ->where(['phone_number.user_id' => $user_id])
+            ->all();
     }
 }

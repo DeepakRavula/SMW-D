@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\modules\user\models;
 
 use cheatsheet\Time;
@@ -12,7 +13,7 @@ use Yii;
 use yii\helpers\Url;
 
 /**
- * Signup form
+ * Signup form.
  */
 class SignupForm extends Model
 {
@@ -30,7 +31,7 @@ class SignupForm extends Model
     public $password;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -38,8 +39,8 @@ class SignupForm extends Model
             ['username', 'filter', 'filter' => 'trim'],
             ['username', 'required'],
             ['username', 'unique',
-                'targetClass'=>'\common\models\User',
-                'message' => Yii::t('frontend', 'This username has already been taken.')
+                'targetClass' => '\common\models\User',
+                'message' => Yii::t('frontend', 'This username has already been taken.'),
             ],
             ['username', 'string', 'min' => 2, 'max' => 255],
 
@@ -47,8 +48,8 @@ class SignupForm extends Model
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'unique',
-                'targetClass'=> '\common\models\User',
-                'message' => Yii::t('frontend', 'This email address has already been taken.')
+                'targetClass' => '\common\models\User',
+                'message' => Yii::t('frontend', 'This email address has already been taken.'),
             ],
 
             ['password', 'required'],
@@ -62,9 +63,9 @@ class SignupForm extends Model
     public function attributeLabels()
     {
         return [
-            'username'=>Yii::t('frontend', 'Username'),
-            'email'=>Yii::t('frontend', 'E-mail'),
-            'password'=>Yii::t('frontend', 'Password'),
+            'username' => Yii::t('frontend', 'Username'),
+            'email' => Yii::t('frontend', 'E-mail'),
+            'password' => Yii::t('frontend', 'Password'),
         ];
     }
 
@@ -82,9 +83,9 @@ class SignupForm extends Model
             $user->email = $this->email;
             $user->status = $shouldBeActivated ? User::STATUS_NOT_ACTIVE : User::STATUS_ACTIVE;
             $user->setPassword($this->password);
-            if(!$user->save()) {
+            if (!$user->save()) {
                 throw new Exception("User couldn't be  saved");
-            };
+            }
             $user->afterSignup();
             if ($shouldBeActivated) {
                 $token = UserToken::create(
@@ -97,10 +98,11 @@ class SignupForm extends Model
                     'view' => 'activation',
                     'to' => $this->email,
                     'params' => [
-                        'url' => Url::to(['/user/sign-in/activation', 'token' => $token->token], true)
-                    ]
+                        'url' => Url::to(['/user/sign-in/activation', 'token' => $token->token], true),
+                    ],
                 ]));
             }
+
             return $user;
         }
 

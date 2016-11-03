@@ -25,7 +25,7 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'from_time') ?>
 
-    <?php // echo $form->field($model, 'to_time') ?>
+    <?php // echo $form->field($model, 'to_time')?>
 
     <div class="form-group">
         <?php echo Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

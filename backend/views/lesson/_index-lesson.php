@@ -16,62 +16,66 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php $columns = [
-			[
-				'label' => 'Student Name',
-				'value' => function($data) {
-					return ! empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
-					}
-			],
-			[
-				'label' => 'Program Name',
-				'value' => function($data) {
-					return ! empty($data->course->program->name) ? $data->course->program->name : null;
+            [
+                'label' => 'Student Name',
+                'value' => function ($data) {
+                    return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
                 },
-			],
-			[
-				'label' => 'Date',
-				'value' => function($data) {
-					$date = Yii::$app->formatter->asDate($data->date); 
-					$lessonTime = (new \DateTime($data->date))->format('H:i:s');
-					return ! empty($date) ? $date . ' @ ' . Yii::$app->formatter->asTime($lessonTime) : null;
+            ],
+            [
+                'label' => 'Program Name',
+                'value' => function ($data) {
+                    return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
-			],
-			[
-				'label' => 'Status',
-				'value' => function($data) {
-					$status = null;
-					if (!empty($data->status)) {
-					return $data->getStatus();
-					}
-				return $status;
+            ],
+            [
+                'label' => 'Date',
+                'value' => function ($data) {
+                    $date = Yii::$app->formatter->asDate($data->date);
+                    $lessonTime = (new \DateTime($data->date))->format('H:i:s');
+
+                    return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
                 },
-			],
-			[
-				'label' => 'Invoiced ?',
-				'value' => function($data) {
-					$status = null;
-				if (!empty($data->invoice->status)) {
-					$status = 'Yes'; 
-				} else {
-					$status = 'No';
-				}
-				return $status;
-			},
-			],
+            ],
+            [
+                'label' => 'Status',
+                'value' => function ($data) {
+                    $status = null;
+                    if (!empty($data->status)) {
+                        return $data->getStatus();
+                    }
+
+                    return $status;
+                },
+            ],
+            [
+                'label' => 'Invoiced ?',
+                'value' => function ($data) {
+                    $status = null;
+                    if (!empty($data->invoice->status)) {
+                        $status = 'Yes';
+                    } else {
+                        $status = 'No';
+                    }
+
+                    return $status;
+                },
+            ],
         ];
-            
-        if((int) $searchModel->type ===  Lesson::TYPE_GROUP_LESSON) {
-            array_shift($columns);            
+
+        if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
+            array_shift($columns);
         }
      ?>   
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-	'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['lesson/view', 'id' => $model->id]);
+    'rowOptions' => function ($model, $key, $index, $grid) {
+        $url = Url::to(['lesson/view', 'id' => $model->id]);
+
         return ['data-url' => $url];
-        },
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
+    },
+        'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>

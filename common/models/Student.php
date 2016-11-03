@@ -8,41 +8,40 @@ use common\models\query\StudentQuery;
 /**
  * This is the model class for table "student".
  *
- * @property integer $id
+ * @property int $id
  * @property string $first_name
  * @property string $last_name
  * @property string $birth_date
- * @property integer $customer_id
+ * @property int $customer_id
  */
 class Student extends \yii\db\ActiveRecord
 {
-	const STATUS_ACTIVE = 1;
-	const STATUS_INACTIVE = 2;
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 2;
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
-		return '{{%student}}';
+        return '{{%student}}';
     }
 
-	
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['first_name', 'last_name'], 'required'],
-            [['birth_date','notes'], 'safe'],
+            [['birth_date', 'notes'], 'safe'],
             [['customer_id', 'status'], 'integer'],
             [['first_name', 'last_name'], 'string', 'max' => 30],
-			[['birth_date'], 'date', 'format' => 'php:d-m-Y']
+            [['birth_date'], 'date', 'format' => 'php:d-m-Y'],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -56,68 +55,72 @@ class Student extends \yii\db\ActiveRecord
         ];
     }
 
-	/**
-     * @inheritdoc
-     * @return LessonQuery the active query used by this AR class.
+    /**
+     * {@inheritdoc}
+     *
+     * @return LessonQuery the active query used by this AR class
      */
     public static function find()
     {
         return new StudentQuery(get_called_class());
     }
 
-	public function getCustomer()
+    public function getCustomer()
     {
         return $this->hasOne(User::className(), ['id' => 'customer_id']);
     }
-    
+
     public function getCustomerProfile()
     {
         return $this->hasOne(UserProfile::className(), ['user_id' => 'customer_id']);
     }
-   
-	public function getEnrolment()
+
+    public function getEnrolment()
     {
         return $this->hasMany(Enrolment::className(), ['studentId' => 'id']);
     }
 
-	public function getCourse()
+    public function getCourse()
     {
         return $this->hasMany(Course::className(), ['id' => 'courseId'])
-			->viaTable('enrolment', ['studentId' => 'id']);
+            ->viaTable('enrolment', ['studentId' => 'id']);
     }
 
-	public function getLesson()
+    public function getLesson()
     {
-		return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
-			->viaTable('enrolment',['studentId' => 'id']);
-	}
+        return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
+            ->viaTable('enrolment', ['studentId' => 'id']);
+    }
 
-	public function getFullName()
+    public function getFullName()
     {
-		if ($this->first_name || $this->last_name) {
+        if ($this->first_name || $this->last_name) {
             return implode(' ', [$this->first_name, $this->last_name]);
         }
+
         return null;
     }
 
-	public function beforeSave($insert) {
-		if(! empty($this->birth_date)){
-	        $birthDate = \DateTime::createFromFormat('d-m-Y', $this->birth_date);
-    	    $this->birth_date = $birthDate->format('Y-m-d');
-		}
-		return parent::beforeSave($insert);
-	}
+    public function beforeSave($insert)
+    {
+        if (!empty($this->birth_date)) {
+            $birthDate = \DateTime::createFromFormat('d-m-Y', $this->birth_date);
+            $this->birth_date = $birthDate->format('Y-m-d');
+        }
 
-	public function getStudentIdentity()
-	{
-        if ( $this->getFullname()) {
+        return parent::beforeSave($insert);
+    }
+
+    public function getStudentIdentity()
+    {
+        if ($this->getFullname()) {
             return $this->getFullname();
         }
 
         return $this->getFullName();
     }
 
-	public static function statuses()
+    public static function statuses()
     {
         return [
             self::STATUS_ACTIVE => Yii::t('common', 'Active'),

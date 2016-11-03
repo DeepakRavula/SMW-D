@@ -17,7 +17,7 @@ class ContactForm extends Model
     public $verifyCode;
 
     /**
-     * @return array the validation rules.
+     * @return array the validation rules
      */
     public function rules()
     {
@@ -44,14 +44,16 @@ class ContactForm extends Model
             'email' => Yii::t('frontend', 'Email'),
             'subject' => Yii::t('frontend', 'Subject'),
             'body' => Yii::t('frontend', 'Body'),
-            'verifyCode' => Yii::t('frontend', 'Verification Code')
+            'verifyCode' => Yii::t('frontend', 'Verification Code'),
         ];
     }
 
     /**
      * Sends an email to the specified email address using the information collected by this model.
-     * @param  string  $email the target email address
-     * @return boolean whether the model passes validation
+     *
+     * @param string $email the target email address
+     *
+     * @return bool whether the model passes validation
      */
     public function contact($email)
     {

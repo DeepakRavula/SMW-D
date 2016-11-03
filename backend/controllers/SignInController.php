@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: zein
  * Date: 8/2/14
- * Time: 11:20 AM
+ * Time: 11:20 AM.
  */
 
 namespace backend\controllers;
@@ -17,13 +17,11 @@ use trntv\filekit\actions\DeleteAction;
 use trntv\filekit\actions\UploadAction;
 use Yii;
 use yii\filters\VerbFilter;
-use yii\imagine\Image;
 use yii\base\InvalidParamException;
 use yii\web\Controller;
 
 class SignInController extends Controller
 {
-
     public $defaultAction = 'login';
 
     public function behaviors()
@@ -32,9 +30,9 @@ class SignInController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post']
-                ]
-            ]
+                    'logout' => ['post'],
+                ],
+            ],
         ];
     }
 
@@ -49,14 +47,13 @@ class SignInController extends Controller
                     $file = $event->file;
                     $img = ImageManagerStatic::make($file->read())->fit(215, 215);
                     $file->put($img->encode());
-                }
+                },
             ],
             'avatar-delete' => [
-                'class' => DeleteAction::className()
-            ]
+                'class' => DeleteAction::className(),
+            ],
         ];
     }
-
 
     public function actionLogin()
     {
@@ -70,7 +67,7 @@ class SignInController extends Controller
             return $this->goBack();
         } else {
             return $this->render('login', [
-                'model' => $model
+                'model' => $model,
             ]);
         }
     }
@@ -78,6 +75,7 @@ class SignInController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
+
         return $this->goHome();
     }
 
@@ -90,12 +88,14 @@ class SignInController extends Controller
             $user->email = $model->email;
             $user->save();
             Yii::$app->session->setFlash('alert', [
-                'options'=>['class'=>'alert-success'],
-                'body'=>Yii::t('backend', 'Your profile has been successfully saved', [], $model->locale)
+                'options' => ['class' => 'alert-success'],
+                'body' => Yii::t('backend', 'Your profile has been successfully saved', [], $model->locale),
             ]);
+
             return $this->refresh();
         }
-        return $this->render('profile', ['model'=>$model]);
+
+        return $this->render('profile', ['model' => $model]);
     }
 
     public function actionAccount()
@@ -112,14 +112,16 @@ class SignInController extends Controller
             }
             $user->save();
             Yii::$app->session->setFlash('alert', [
-                'options'=>['class'=>'alert-success'],
-                'body'=>Yii::t('backend', 'Your account has been successfully saved')
+                'options' => ['class' => 'alert-success'],
+                'body' => Yii::t('backend', 'Your account has been successfully saved'),
             ]);
+
             return $this->refresh();
         }
-        return $this->render('account', ['model'=>$model]);
+
+        return $this->render('account', ['model' => $model]);
     }
-    
+
     /**
      * @return string|Response
      */
@@ -130,46 +132,48 @@ class SignInController extends Controller
         $isEmailSent = false;
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-            	$isEmailSent = true;
+                $isEmailSent = true;
             } else {
-               Yii::$app->session->setFlash('alert', [
-                    'body'=>Yii::t('backend', 'Sorry, we are unable to reset password for email provided.'),
-                    'options'=>['class'=>'alert-danger']
+                Yii::$app->session->setFlash('alert', [
+                    'body' => Yii::t('backend', 'Sorry, we are unable to reset password for email provided.'),
+                    'options' => ['class' => 'alert-danger'],
                 ]);
             }
         }
 
         return $this->render('requestPasswordResetToken', [
             'model' => $model,
-            'isEmailSent' => $isEmailSent
+            'isEmailSent' => $isEmailSent,
         ]);
     }
-    
+
     /**
      * @param $token
+     *
      * @return string|Response
+     *
      * @throws BadRequestHttpException
      */
     public function actionResetPassword($token)
     {
         $this->layout = 'base';
-		$tokenExpired = false;
-		$model = null;
+        $tokenExpired = false;
+        $model = null;
         try {
             $model = new ResetPasswordForm($token);
         } catch (InvalidParamException $e) {
- 			$tokenExpired = true; 
+            $tokenExpired = true;
         }
 
         $isResetPassword = false;
-        if ($model && $model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword())		  {
+        if ($model && $model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
             $isResetPassword = true;
         }
 
         return $this->render('resetPassword', [
             'model' => $model,
-			'isResetPassword' => $isResetPassword,
-			'tokenExpired' => $tokenExpired,
+            'isResetPassword' => $isResetPassword,
+            'tokenExpired' => $tokenExpired,
         ]);
     }
 }

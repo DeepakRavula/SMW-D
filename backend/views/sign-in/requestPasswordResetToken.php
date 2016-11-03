@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $model \frontend\modules\user\models\PasswordResetRequestForm */
 
-$this->title =  Yii::t('frontend', 'Request password reset');
+$this->title = Yii::t('frontend', 'Request password reset');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="login-box">
@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </a>
     </div><!-- /.login-logo -->
     <div class="header"></div>
-    <?php if( ! $isEmailSent):?>
+    <?php if (!$isEmailSent):?>
     <div class="site-request-password-reset login-box-body">
         <h4><?php echo Html::encode($this->title) ?></h4>
         <p>To reset your password, please enter an email associated with your account.</p>
@@ -28,12 +28,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="form-group">
                         <?php echo Html::submitButton('Send', [
                             'class' => 'btn btn-primary btn-flat btn-block',
-                            'name' => 'login-button'
+                            'name' => 'login-button',
                         ]) ?>
                     </div>
                     <div class="m-t-10 text-left">
                         <?php echo Yii::t('frontend', '<a href="{link}"><i class="fa fa-angle-left"></i> Back</a>', [
-                            'link'=>yii\helpers\Url::to(['/sign-in'])
+                            'link' => yii\helpers\Url::to(['/sign-in']),
                         ]) ?>
                     </div>
                 <?php ActiveForm::end(); ?>
@@ -44,5 +44,5 @@ $this->params['breadcrumbs'][] = $this->title;
         <p>A password reset link has been sent to your email.</p>
         <?php echo Html::a('Login', ['/sign-in/login'], ['class' => 'btn btn-primary btn-flat btn-block']) ?>
     </div>
-    <?php endif;?>
+    <?php endif; ?>
 </div>

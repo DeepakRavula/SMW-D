@@ -1,9 +1,8 @@
 <?php
 
 namespace backend\controllers;
-use common\models\Province;
+
 use Yii;
-use common\models\TaxType;
 use backend\models\search\TaxSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -28,6 +27,7 @@ class TaxTypeController extends Controller
 
     /**
      * Lists all Tax models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -43,11 +43,13 @@ class TaxTypeController extends Controller
 
     /**
      * Displays a single Tax model.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionView($id)
-    { 
+    {
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -56,16 +58,18 @@ class TaxTypeController extends Controller
     /**
      * Creates a new Tax model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
     {
         $model = new Tax();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) { 
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Tax has been created successfully'
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Tax has been created successfully',
         ]);
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -78,18 +82,21 @@ class TaxTypeController extends Controller
     /**
      * Updates an existing Tax model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) { 
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('alert', [
-            	'options' => ['class' => 'alert-success'],
-            	'body' => 'Tax has been updated successfully'
-        ]); 
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Tax has been updated successfully',
+        ]);
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -101,16 +108,18 @@ class TaxTypeController extends Controller
     /**
      * Deletes an existing Tax model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-        
+
         Yii::$app->session->setFlash('alert', [
-          	'options' => ['class' => 'alert-success'],
-           	'body' => 'Tax has been deleted successfully'
+              'options' => ['class' => 'alert-success'],
+               'body' => 'Tax has been deleted successfully',
         ]);
 
         return $this->redirect(['index']);
@@ -119,8 +128,11 @@ class TaxTypeController extends Controller
     /**
      * Finds the Tax model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param string $id
+     *
      * @return Tax the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

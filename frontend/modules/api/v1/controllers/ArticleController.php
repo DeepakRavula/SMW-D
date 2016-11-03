@@ -1,15 +1,16 @@
 <?php
+
 namespace frontend\modules\api\v1\controllers;
 
 use Yii;
 use frontend\modules\api\v1\resources\Article;
 use yii\data\ActiveDataProvider;
 use yii\rest\ActiveController;
-use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
 
 /**
- * Class ArticleController
+ * Class ArticleController.
+ *
  * @author Eugene Terentev <eugene@terentev.net>
  */
 class ArticleController extends ActiveController
@@ -23,11 +24,11 @@ class ArticleController extends ActiveController
      */
     public $serializer = [
         'class' => 'yii\rest\Serializer',
-        'collectionEnvelope' => 'items'
+        'collectionEnvelope' => 'items',
     ];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function actions()
     {
@@ -35,16 +36,16 @@ class ArticleController extends ActiveController
             'index' => [
                 'class' => 'yii\rest\IndexAction',
                 'modelClass' => $this->modelClass,
-                'prepareDataProvider' => [$this, 'prepareDataProvider']
+                'prepareDataProvider' => [$this, 'prepareDataProvider'],
             ],
             'view' => [
                 'class' => 'yii\rest\ViewAction',
                 'modelClass' => $this->modelClass,
-                'findModel' => [$this, 'findModel']
+                'findModel' => [$this, 'findModel'],
             ],
             'options' => [
-                'class' => 'yii\rest\OptionsAction'
-            ]
+                'class' => 'yii\rest\OptionsAction',
+            ],
         ];
     }
 
@@ -54,13 +55,15 @@ class ArticleController extends ActiveController
     public function prepareDataProvider()
     {
         return new ActiveDataProvider(array(
-            'query' => Article::find()->published()
+            'query' => Article::find()->published(),
         ));
     }
 
     /**
      * @param $id
+     *
      * @return array|null|\yii\db\ActiveRecord
+     *
      * @throws HttpException
      */
     public function findModel($id)
@@ -72,6 +75,7 @@ class ArticleController extends ActiveController
         if (!$model) {
             throw new HttpException(404);
         }
+
         return $model;
     }
 }

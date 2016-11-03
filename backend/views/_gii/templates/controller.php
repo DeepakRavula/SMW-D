@@ -2,10 +2,8 @@
 /**
  * This is the template for generating a CRUD controller class file.
  */
-
 use yii\db\ActiveRecordInterface;
 use yii\helpers\StringHelper;
-
 
 /* @var $this yii\web\View */
 /* @var $generator yii\gii\generators\crud\Generator */
@@ -14,7 +12,7 @@ $controllerClass = StringHelper::basename($generator->controllerClass);
 $modelClass = StringHelper::basename($generator->modelClass);
 $searchModelClass = StringHelper::basename($generator->searchModelClass);
 if ($modelClass === $searchModelClass) {
-    $searchModelAlias = $searchModelClass . 'Search';
+    $searchModelAlias = $searchModelClass.'Search';
 }
 
 /* @var $class ActiveRecordInterface */
@@ -32,7 +30,7 @@ namespace <?php echo StringHelper::dirname(ltrim($generator->controllerClass, '\
 use Yii;
 use <?php echo ltrim($generator->modelClass, '\\') ?>;
 <?php if (!empty($generator->searchModelClass)): ?>
-use <?php echo ltrim($generator->searchModelClass, '\\') . (isset($searchModelAlias) ? " as $searchModelAlias" : "") ?>;
+use <?php echo ltrim($generator->searchModelClass, '\\').(isset($searchModelAlias) ? " as $searchModelAlias" : '') ?>;
 <?php else: ?>
 use yii\data\ActiveDataProvider;
 <?php endif; ?>
@@ -43,7 +41,7 @@ use yii\filters\VerbFilter;
 /**
  * <?php echo $controllerClass ?> implements the CRUD actions for <?php echo $modelClass ?> model.
  */
-class <?php echo $controllerClass ?> extends <?php echo StringHelper::basename($generator->baseControllerClass) . "\n" ?>
+class <?php echo $controllerClass ?> extends <?php echo StringHelper::basename($generator->baseControllerClass)."\n" ?>
 {
     public function behaviors()
     {
@@ -84,7 +82,7 @@ class <?php echo $controllerClass ?> extends <?php echo StringHelper::basename($
 
     /**
      * Displays a single <?php echo $modelClass ?> model.
-     * <?php echo implode("\n     * ", $actionParamComments) . "\n" ?>
+     * <?php echo implode("\n     * ", $actionParamComments)."\n" ?>
      * @return mixed
      */
     public function actionView(<?php echo $actionParams ?>)
@@ -115,7 +113,7 @@ class <?php echo $controllerClass ?> extends <?php echo StringHelper::basename($
     /**
      * Updates an existing <?php echo $modelClass ?> model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * <?php echo implode("\n     * ", $actionParamComments) . "\n" ?>
+     * <?php echo implode("\n     * ", $actionParamComments)."\n" ?>
      * @return mixed
      */
     public function actionUpdate(<?php echo $actionParams ?>)
@@ -134,7 +132,7 @@ class <?php echo $controllerClass ?> extends <?php echo StringHelper::basename($
     /**
      * Deletes an existing <?php echo $modelClass ?> model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * <?php echo implode("\n     * ", $actionParamComments) . "\n" ?>
+     * <?php echo implode("\n     * ", $actionParamComments)."\n" ?>
      * @return mixed
      */
     public function actionDelete(<?php echo $actionParams ?>)
@@ -147,7 +145,7 @@ class <?php echo $controllerClass ?> extends <?php echo StringHelper::basename($
     /**
      * Finds the <?php echo $modelClass ?> model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * <?php echo implode("\n     * ", $actionParamComments) . "\n" ?>
+     * <?php echo implode("\n     * ", $actionParamComments)."\n" ?>
      * @return <?php echo                   $modelClass ?> the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -161,7 +159,7 @@ if (count($pks) === 1) {
     foreach ($pks as $pk) {
         $condition[] = "'$pk' => \$$pk";
     }
-    $condition = '[' . implode(', ', $condition) . ']';
+    $condition = '['.implode(', ', $condition).']';
 }
 ?>
         if (($model = <?php echo $modelClass ?>::findOne(<?php echo $condition ?>)) !== null) {

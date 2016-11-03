@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
+
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -14,33 +15,34 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'tableOptions' =>['class' => 'table table-bordered m-0'],
-            'headerRowOptions' => ['class' => 'bg-light-gray' ],
+        'tableOptions' => ['class' => 'table table-bordered m-0'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['blog/view', 'id' => $model->id]);
-        return ['data-url' => $url];
+
+            return ['data-url' => $url];
         },
         'columns' => [
-			[
-				'label' => 'User Name',
-				'value' => function($data){
-					return $data->user->publicIdentity;
-				}
-			],
-			[
-				'label' => 'Title',
-				'format' => 'raw',
-				'value' => function($data){
-					return substr($data->title,0,25) . ' ...';
-				}
-			],
-			[
-				'label' => 'Content',
-				'format' => 'raw',
-				'value' => function($data){
-					return substr($data->content,0,25) . ' ...';
-				}
-			],
+            [
+                'label' => 'User Name',
+                'value' => function ($data) {
+                    return $data->user->publicIdentity;
+                },
+            ],
+            [
+                'label' => 'Title',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return substr($data->title, 0, 25).' ...';
+                },
+            ],
+            [
+                'label' => 'Content',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return substr($data->content, 0, 25).' ...';
+                },
+            ],
             'date:date',
         ],
     ]); ?>

@@ -11,7 +11,7 @@ use common\models\User;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 'Private Programs' : 'Group Programs'; 
+$titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 'Private Programs' : 'Group Programs';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
@@ -52,13 +52,13 @@ $lastRole = end($roles);
     	<?php echo $form->field($searchModel, 'type')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 	
-<?php if($lastRole->name === User::ROLE_ADMINISTRATOR):?>
+<?php if ($lastRole->name === User::ROLE_ADMINISTRATOR):?>
 <div class="col-md-5">
 <h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
 <a href="#" class="add-new-program pull-right text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add</a>
 <div class="clearfix"></div>
 </div>
-<?php endif;?>
+<?php endif; ?>
 <div class="clearfix"></div>
 
 <div class="dn program-create section-tab form-well form-well-smw">
@@ -67,25 +67,26 @@ $lastRole = end($roles);
     ]) ?>
 </div>
     <div class="grid-row-open">
-	<?php $rateLabel = (int)$model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour' : 'Rate Per Course';?>
+	<?php $rateLabel = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour' : 'Rate Per Course'; ?>
 	<?php Pjax::begin(['id' => 'program-listing']) ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
-            'options' => ['class'=>'col-md-5'],
-            'tableOptions' =>['class' => 'table table-bordered'],
-            'headerRowOptions' => ['class' => 'bg-light-gray' ],
+            'options' => ['class' => 'col-md-5'],
+            'tableOptions' => ['class' => 'table table-bordered'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
             'rowOptions' => function ($model, $key, $index, $grid) {
-               $url = Url::to(['program/view', 'id' => $model->id]);
-            return ['data-url' => $url];
+                $url = Url::to(['program/view', 'id' => $model->id]);
+
+                return ['data-url' => $url];
             },
             'columns' => [
                 'name',
                 [
-				'label' => $rateLabel,
-				'value' => function($data) {
-					return ! empty($data->rate) ? Yii::$app->formatter->asCurrency($data->rate) : null;
+                'label' => $rateLabel,
+                'value' => function ($data) {
+                    return !empty($data->rate) ? Yii::$app->formatter->asCurrency($data->rate) : null;
                 },
-			],
+            ],
             ],
         ]); ?>
     <?php Pjax::end(); ?>
@@ -96,7 +97,7 @@ $lastRole = end($roles);
 $(document).ready(function(){
   $("#programsearch-showallprograms").on("change", function() {
       var showAllPrograms = $(this).is(":checked");
-      var url = "<?php echo Url::to(['program/index']);?>?ProgramSearch[query]=" + "<?= $searchModel->query;?>&ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + "<?php echo $searchModel->type;?>";
+      var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[query]=" + "<?= $searchModel->query; ?>&ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + "<?php echo $searchModel->type; ?>";
       $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
   });
 });

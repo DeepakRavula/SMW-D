@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\models;
 
 use common\models\User;
@@ -16,7 +17,7 @@ use Yii;
 use yii\helpers\ArrayHelper;
 
 /**
- * Create user form
+ * Create user form.
  */
 class UserForm extends Model
 {
@@ -24,31 +25,28 @@ class UserForm extends Model
     public $email;
     public $status;
     public $roles;
-	public $qualifications;
+    public $qualifications;
     public $lastname;
     public $firstname;
-	public $notes;
-	public $addresslabel;
-	public $city;
-	public $province;
-	public $postalcode;
-	public $country;
-	public $address;
-	public $phonenumber;
-	public $phonelabel;
-	public $phoneextension;
-	public $locations;
+    public $notes;
+    public $addresslabel;
+    public $city;
+    public $province;
+    public $postalcode;
+    public $country;
+    public $address;
+    public $phonenumber;
+    public $phonelabel;
+    public $phoneextension;
+    public $locations;
     private $model;
-	public $phoneNumbers;
-	public $addresses;
-	public $availabilities;
-	public $teacherAvailabilityDay;
-	public $fromTime;
-	public $toTime;
-	public $section;
-	
+    public $phoneNumbers;
+    public $addresses;
+    public $availabilities;
+    public $section;
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -56,37 +54,36 @@ class UserForm extends Model
             ['firstname', 'filter', 'filter' => 'trim'],
             ['firstname', 'required', 'on' => 'create'],
             ['firstname', 'string', 'min' => 2, 'max' => 255],
- 
+
             ['lastname', 'filter', 'filter' => 'trim'],
             ['lastname', 'required', 'on' => 'create'],
-            ['lastname', 'string', 'min' => 2, 'max' => 255],['email', 'filter', 'filter' => 'trim'],
-			
+            ['lastname', 'string', 'min' => 2, 'max' => 255], ['email', 'filter', 'filter' => 'trim'],
+
             ['email', 'safe'],
             ['email', 'email'],
-            ['email', 'unique', 'targetClass'=> User::className(), 'filter' => function ($query) {
+            ['email', 'unique', 'targetClass' => User::className(), 'filter' => function ($query) {
                 if (!$this->getModel()->isNewRecord) {
-                    $query->andWhere(['not', ['id'=>$this->getModel()->id]]);
+                    $query->andWhere(['not', ['id' => $this->getModel()->id]]);
                 }
             }],
 
             [['status'], 'integer'],
             [['qualifications'], 'each',
                 'rule' => ['in', 'range' => ArrayHelper::getColumn(
-					Program::find()->active()->all(),	
+                    Program::find()->active()->all(),
                     'id'
-                )]
+                )],
             ],
-            ['roles','required'],
-			['notes','safe'],
-           	['locations','safe'],    
-			[['phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
-            [['addresslabel', 'postalcode', 'province', 'city', 'country'],'safe'],
-			[['teacherAvailabilityDay','fromTime','toTime'],'safe']
+            ['roles', 'required'],
+            ['notes', 'safe'],
+               ['locations', 'safe'],
+            [['phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
+            [['addresslabel', 'postalcode', 'province', 'city', 'country'], 'safe'],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -107,12 +104,13 @@ class UserForm extends Model
             'province' => Yii::t('common', 'Province'),
             'city' => Yii::t('common', 'City'),
             'country' => Yii::t('common', 'Country'),
-			'teacherAvailabilityDay' => Yii::t('common','Day')
+            'teacherAvailabilityDay' => Yii::t('common', 'Day'),
         ];
     }
 
     /**
      * @param User $model
+     *
      * @return mixed
      */
     public function setModel($model)
@@ -125,55 +123,56 @@ class UserForm extends Model
             Yii::$app->authManager->getRolesByUser($model->getId()),
             'name'
         );
-		$this->roles = end($this->roles);
+        $this->roles = end($this->roles);
 
-		if(count($model->phoneNumbers) > 0) {
-			$this->phoneNumbers = $model->phoneNumbers;
-		} else {
-			$this->phoneNumbers = [new PhoneNumber];
-		}
+        if (count($model->phoneNumbers) > 0) {
+            $this->phoneNumbers = $model->phoneNumbers;
+        } else {
+            $this->phoneNumbers = [new PhoneNumber()];
+        }
 
-		if(count($model->addresses) > 0) {
-			$this->addresses = $model->addresses;
-		} else {
-			$this->addresses = [new Address];
-		}
-		
-		if(count($model->availabilities) > 0) {
-			$this->availabilities = $model->availabilities;
-		} else {
-			$this->availabilities = [new TeacherAvailability];
-		}
-		
-       	$userFirstName = UserProfile::findOne(['user_id' => $model->getId()]); 
-	  		if(! empty($userFirstName)){
-				$this->firstname = $userFirstName->firstname;
-			    $this->lastname = $userFirstName->lastname;
-				$this->notes = $userFirstName->notes;
-	   	}
-	   	
-		$phoneNumber = PhoneNumber::findOne(['user_id' => $model->getId()]); 
-	   		if(! empty($phoneNumber)){
-			   $this->phoneextension = $phoneNumber->extension;
-			   $this->phonenumber = $phoneNumber->number;
-               $this->phonelabel = $phoneNumber->label_id;
-	   	} 
-			
-		$address = Address::findByUserId($model->getId());
+        if (count($model->addresses) > 0) {
+            $this->addresses = $model->addresses;
+        } else {
+            $this->addresses = [new Address()];
+        }
 
-		if(! empty($address)){
-			$this->address = $address->address;
-			$this->addresslabel = $address->label;
-			$this->city = $address->city_id;
-			$this->country = $address->country_id;
-			$this->province = $address->province_id;
-			$this->postalcode = $address->postal_code;
-		}	
-		
-		$this->qualifications = ArrayHelper::getColumn(
-			Qualification::find()->where(['teacher_id'=>$model->getId()])->all(), 'program_id'
-		);
+        if (count($model->availabilities) > 0) {
+            $this->availabilities = $model->availabilities;
+        } else {
+            $this->availabilities = [new TeacherAvailability()];
+        }
+
+        $userFirstName = UserProfile::findOne(['user_id' => $model->getId()]);
+        if (!empty($userFirstName)) {
+            $this->firstname = $userFirstName->firstname;
+            $this->lastname = $userFirstName->lastname;
+            $this->notes = $userFirstName->notes;
+        }
+
+        $phoneNumber = PhoneNumber::findOne(['user_id' => $model->getId()]);
+        if (!empty($phoneNumber)) {
+            $this->phoneextension = $phoneNumber->extension;
+            $this->phonenumber = $phoneNumber->number;
+            $this->phonelabel = $phoneNumber->label_id;
+        }
+
+        $address = Address::findByUserId($model->getId());
+
+        if (!empty($address)) {
+            $this->address = $address->address;
+            $this->addresslabel = $address->label;
+            $this->city = $address->city_id;
+            $this->country = $address->country_id;
+            $this->province = $address->province_id;
+            $this->postalcode = $address->postal_code;
+        }
+
+        $this->qualifications = ArrayHelper::getColumn(
+            Qualification::find()->where(['teacher_id' => $model->getId()])->all(), 'program_id'
+        );
         $this->qualifications = array_map('strval', $this->qualifications);
+
         return $this->model;
     }
 
@@ -185,39 +184,41 @@ class UserForm extends Model
         if (!$this->model) {
             $this->model = new User();
         }
+
         return $this->model;
     }
 
+    public static function createMultiple($modelClass, $multipleModels = [])
+    {
+        $model = new $modelClass();
+        $formName = $model->formName();
+        $post = Yii::$app->request->post($formName);
+        $models = [];
 
-public static function createMultiple($modelClass, $multipleModels = [])
-{
-	$model = new $modelClass;
-	$formName = $model->formName();
-	$post = Yii::$app->request->post($formName);
-	$models = [];
+        if (!empty($multipleModels)) {
+            $keys = array_keys(ArrayHelper::map($multipleModels, 'id', 'id'));
+            $multipleModels = array_combine($keys, $multipleModels);
+        }
 
-	if (!empty($multipleModels)) {
-		$keys = array_keys(ArrayHelper::map($multipleModels, 'id', 'id'));
-		$multipleModels = array_combine($keys, $multipleModels);
-	}
+        if ($post && is_array($post)) {
+            foreach ($post as $i => $item) {
+                if (isset($item['id']) && !empty($item['id']) && isset($multipleModels[$item['id']])) {
+                    $models[] = $multipleModels[$item['id']];
+                } else {
+                    $models[] = new $modelClass();
+                }
+            }
+        }
+        unset($model, $formName, $post);
 
-	if ($post && is_array($post)) {
-		foreach ($post as $i => $item) {
-			if (isset($item['id']) && !empty($item['id']) && isset($multipleModels[$item['id']])) {
-				$models[] = $multipleModels[$item['id']];
-			} else {
-				$models[] = new $modelClass;
-			}
-		}
-	}
-	unset($model, $formName, $post);
-
-	return $models;
-}
+        return $models;
+    }
 
     /**
      * Signs user up.
+     *
      * @return User|null the saved model or null if saving fails
+     *
      * @throws Exception
      */
     public function save()
@@ -229,108 +230,97 @@ public static function createMultiple($modelClass, $multipleModels = [])
             $model->email = $this->email;
             if ($isNewRecord) {
                 $model->status = User::STATUS_ACTIVE;
-            } else {                
+            } else {
                 $model->status = $this->status;
             }
 
             $lastname = $this->lastname;
             $firstname = $this->firstname;
-			$phonenumber = $this->phonenumber;
-			$phonelabel = $this->phonelabel;
-			$phoneextension = $this->phoneextension;
-			$address = $this->address;
-			$addresslabel = $this->addresslabel;
-			$city = $this->city;
-			$country = $this->country;
-			$province = $this->province;
-			$postalcode = $this->postalcode;
+            $phonenumber = $this->phonenumber;
+            $phonelabel = $this->phonelabel;
+            $phoneextension = $this->phoneextension;
+            $address = $this->address;
+            $addresslabel = $this->addresslabel;
+            $city = $this->city;
+            $country = $this->country;
+            $province = $this->province;
+            $postalcode = $this->postalcode;
             if (!$model->save()) {
                 throw new Exception('Model not saved');
             }
             if ($isNewRecord) {
                 $model->afterSignup();
             }
-            
-            
+
             $auth = Yii::$app->authManager;
             $auth->revokeAll($model->getId());
 
-            if ($this->roles != null)
-            $auth->assign($auth->getRole($this->roles), $model->getId());
+            if ($this->roles != null) {
+                $auth->assign($auth->getRole($this->roles), $model->getId());
+            }
 
-            $userLocationModel = UserLocation::findOne(["user_id"=>$model->getId(), "location_id"=>Yii::$app->session->get('location_id')]);
-			if(empty($userLocationModel) && $this->roles !== User::ROLE_ADMINISTRATOR){
-				$userLocationModel = new UserLocation();
+            $userLocationModel = UserLocation::findOne(['user_id' => $model->getId(), 'location_id' => Yii::$app->session->get('location_id')]);
+            if (empty($userLocationModel) && $this->roles !== User::ROLE_ADMINISTRATOR) {
+                $userLocationModel = new UserLocation();
                 $userLocationModel->user_id = $model->getId();
                 $userLocationModel->location_id = Yii::$app->session->get('location_id');
                 $userLocationModel->save();
-			}
+            }
 
-			$fromTime = new \DateTime($this->fromTime);
-			$toTime = new \DateTime($this->toTime);
-			if(! empty($userLocationModel)){
-				$teacherAvailabilityModel = TeacherAvailability::findOne(['teacher_location_id' => $userLocationModel->id]);
-				if(empty($teacherAvailabilityModel)){
-					$teacherAvailabilityModel = new TeacherAvailability;
-					$teacherAvailabilityModel->day = $this->teacherAvailabilityDay;
-					$teacherAvailabilityModel->from_time = $fromTime->format("H:i:s");
-					$teacherAvailabilityModel->to_time = $toTime->format("H:i:s");
-				}
-				$teacherAvailabilityModel->save();
-			}
             $userProfileModel = UserProfile::findOne(['user_id' => $model->getId()]);
-			if(empty($userProfileModel)) {
-				$userProfileModel = new UserProfile();
-			}
-			$userProfileModel->lastname = $lastname;
+            if (empty($userProfileModel)) {
+                $userProfileModel = new UserProfile();
+            }
+            $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
-			$userProfileModel->notes = $this->notes;
+            $userProfileModel->notes = $this->notes;
             $userProfileModel->save();
-			
-			$phoneNumberModel = PhoneNumber::findOne(['user_id' => $model->getId()]);
-			if(empty($phoneNumberModel) || ($phoneNumberModel->label_id != $phonelabel)){
-				$phoneNumberModel = new PhoneNumber();
-				$phoneNumberModel->user_id = $model->getId();
-			}
+
+            $phoneNumberModel = PhoneNumber::findOne(['user_id' => $model->getId()]);
+            if (empty($phoneNumberModel) || ($phoneNumberModel->label_id != $phonelabel)) {
+                $phoneNumberModel = new PhoneNumber();
+                $phoneNumberModel->user_id = $model->getId();
+            }
             $phoneNumberModel->extension = $phoneextension;
             $phoneNumberModel->number = $phonenumber;
             $phoneNumberModel->label_id = $phonelabel;
             $phoneNumberModel->save();
 
-			$addressModel = Address::findByUserId($model->getId());
-				if(empty($addressModel)  || ($addressModel->label != $addresslabel)){
-					$addressModel = new Address();
-			}
-			$addressModel->city_id = $city;
-			$addressModel->address = $address;
-			$addressModel->label = $addresslabel;
-			$addressModel->postal_code = $postalcode;
-			$addressModel->country_id = $country;
-			$addressModel->province_id = $province;
+            $addressModel = Address::findByUserId($model->getId());
+            if (empty($addressModel) || ($addressModel->label != $addresslabel)) {
+                $addressModel = new Address();
+            }
+            $addressModel->city_id = $city;
+            $addressModel->address = $address;
+            $addressModel->label = $addresslabel;
+            $addressModel->postal_code = $postalcode;
+            $addressModel->country_id = $country;
+            $addressModel->province_id = $province;
             $addressModel->save();
 
-			$userAddressModel = UserAddress::findOne(['user_id' => $model->getId()]);
-				if(empty($userAddressModel)){
-					$userAddressModel = new UserAddress();
-			}
-			$userAddressModel->user_id = $model->id;
-			$userAddressModel->address_id = $addressModel->id;
-			$userAddressModel->save();
-			
-			if (current(Yii::$app->authManager->getRolesByUser($model->getId()))->name === User::ROLE_TEACHER) {
-				Qualification::deleteAll(['teacher_id' => $model->getId()]);
-				if ($this->qualifications && is_array($this->qualifications)) {
-					foreach ($this->qualifications as $qualification) {
-						$qualificationModel = new Qualification();
-						$qualificationModel->program_id = $qualification;
-						$qualificationModel->teacher_id = $model->getId();
-						$qualificationModel->save();
-					}
-				}
-					
-			}
+            $userAddressModel = UserAddress::findOne(['user_id' => $model->getId()]);
+            if (empty($userAddressModel)) {
+                $userAddressModel = new UserAddress();
+            }
+            $userAddressModel->user_id = $model->id;
+            $userAddressModel->address_id = $addressModel->id;
+            $userAddressModel->save();
+
+            if (current(Yii::$app->authManager->getRolesByUser($model->getId()))->name === User::ROLE_TEACHER) {
+                Qualification::deleteAll(['teacher_id' => $model->getId()]);
+                if ($this->qualifications && is_array($this->qualifications)) {
+                    foreach ($this->qualifications as $qualification) {
+                        $qualificationModel = new Qualification();
+                        $qualificationModel->program_id = $qualification;
+                        $qualificationModel->teacher_id = $model->getId();
+                        $qualificationModel->save();
+                    }
+                }
+            }
+
             return !$model->hasErrors();
         }
+
         return null;
     }
 }

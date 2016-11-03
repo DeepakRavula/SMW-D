@@ -1,6 +1,7 @@
 <?php
 /**
  * Configuration file for the "yii asset" console command.
+ *
  * @author Eugene Terentev <eugene@terentev.net>
  */
 
@@ -35,6 +36,6 @@ return [
     // Asset manager configuration:
     'assetManager' => [
         'basePath' => '@webroot/assets',
-        'baseUrl' => '@web/assets'
+        'baseUrl' => '@web/assets',
     ],
 ];

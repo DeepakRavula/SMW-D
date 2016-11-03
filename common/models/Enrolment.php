@@ -3,46 +3,45 @@
 namespace common\models;
 
 use Yii;
-use common\models\Holiday;
-use common\models\ProfessionalDevelopmentDay;
-use common\models\Lesson;
-use \yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
+
 /**
  * This is the model class for table "enrolment".
  *
  * @property string $id
  * @property string $courseId
  * @property string $studentId
- * @property integer $isDeleted
+ * @property int $isDeleted
  */
 class Enrolment extends \yii\db\ActiveRecord
 {
-	public $studentIds;
-	
-	const PAYMENT_FREQUENCY_FULL = 1;
-	const PAYMENT_FREQUENCY_MONTHLY = 2;
+    public $studentIds;
+
+    const PAYMENT_FREQUENCY_FULL = 1;
+    const PAYMENT_FREQUENCY_MONTHLY = 2;
+    const PAYMENT_FREQUENCY_QUARTERLY = 3;
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'enrolment';
     }
 
-	public function behaviors()
+    public function behaviors()
     {
         return [
             'softDeleteBehavior' => [
                 'class' => SoftDeleteBehavior::className(),
                 'softDeleteAttributeValues' => [
-                    'isDeleted' => true
+                    'isDeleted' => true,
                 ],
             ],
         ];
     }
-	
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -54,7 +53,7 @@ class Enrolment extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {
@@ -64,52 +63,60 @@ class Enrolment extends \yii\db\ActiveRecord
             'studentId' => 'Student Name',
             'studentIds' => 'Enrolled Student Name',
             'isDeleted' => 'Is Deleted',
-			'paymentFrequency' => 'Payment Frequency'
+            'paymentFrequency' => 'Payment Frequency',
         ];
     }
 
     /**
-     * @inheritdoc
-     * @return \common\models\query\EnrolmentQuery the active query used by this AR class.
+     * {@inheritdoc}
+     *
+     * @return \common\models\query\EnrolmentQuery the active query used by this AR class
      */
     public static function find()
     {
         return new \common\models\query\EnrolmentQuery(get_called_class());
     }
 
-	public function notDeleted() {
-		$this->where(['enrolment.isDeleted' => false]);
-		
-		return $this;
-	}
-    
-	public function getCourse() {
-		return $this->hasOne(Course::className(), ['id' => 'courseId']);
-	}
-
-	public function getStudent() {
-		return $this->hasOne(Student::className(), ['id' => 'studentId']);
-	}
-
-	public function getProgram() {
-		return $this->hasOne(Program::className(), ['id' => 'programId'])
-			->viaTable('course',['id' => 'courseId']);
-	}
-	
-	public function getLessons() {
-		return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
-	}
-
-	public static function paymentFrequencies(){
-		return [
-            self::PAYMENT_FREQUENCY_FULL => Yii::t('common', 'Full'),
-			self::PAYMENT_FREQUENCY_MONTHLY => Yii::t('common', 'Monthly'),
-		];
-	}
-	public function afterSave($insert, $changedAttributes)
+    public function notDeleted()
     {
-		$isGroupProgram = (int) $this->course->program->type === (int)Program::TYPE_GROUP_PROGRAM; 
-        if($isGroupProgram || (! empty($this->rescheduleBeginDate)) || (! $insert)) {
+        $this->where(['enrolment.isDeleted' => false]);
+
+        return $this;
+    }
+
+    public function getCourse()
+    {
+        return $this->hasOne(Course::className(), ['id' => 'courseId']);
+    }
+
+    public function getStudent()
+    {
+        return $this->hasOne(Student::className(), ['id' => 'studentId']);
+    }
+
+    public function getProgram()
+    {
+        return $this->hasOne(Program::className(), ['id' => 'programId'])
+            ->viaTable('course', ['id' => 'courseId']);
+    }
+
+    public function getLessons()
+    {
+        return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
+    }
+
+    public static function paymentFrequencies()
+    {
+        return [
+            self::PAYMENT_FREQUENCY_FULL => Yii::t('common', 'Full'),
+            self::PAYMENT_FREQUENCY_MONTHLY => Yii::t('common', 'Monthly'),
+            self::PAYMENT_FREQUENCY_QUARTERLY => Yii::t('common', 'Quarterly'),
+        ];
+    }
+    public function afterSave($insert, $changedAttributes)
+    {
+        $isGroupProgram = (int) $this->course->program->type === (int) Program::TYPE_GROUP_PROGRAM;
+        if ($isGroupProgram || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
             return true;
         }
         $interval = new \DateInterval('P1D');
@@ -119,17 +126,17 @@ class Enrolment extends \yii\db\ActiveRecord
         $end = new \DateTime($endDate);
         $period = new \DatePeriod($start, $interval, $end);
 
-        foreach($period as $day){
+        foreach ($period as $day) {
             if ((int) $day->format('N') === (int) $this->course->day) {
-				$professionalDevelopmentDay = clone $day;
+                $professionalDevelopmentDay = clone $day;
                 $professionalDevelopmentDay->modify('last day of previous month');
-                $professionalDevelopmentDay->modify('fifth ' . $day->format('l'));
-                if($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+                $professionalDevelopmentDay->modify('fifth '.$day->format('l'));
+                if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
                     continue;
-				}
+                }
                 $lesson = new Lesson();
                 $lesson->setAttributes([
-                    'courseId'	 => $this->course->id,
+                    'courseId' => $this->course->id,
                     'teacherId' => $this->course->teacherId,
                     'status' => Lesson::STATUS_DRAFTED,
                     'date' => $day->format('Y-m-d H:i:s'),
@@ -139,5 +146,5 @@ class Enrolment extends \yii\db\ActiveRecord
                 $lesson->save();
             }
         }
-	}
+    }
 }

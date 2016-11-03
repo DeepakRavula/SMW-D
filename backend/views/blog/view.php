@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
@@ -21,8 +20,8 @@ $this->params['breadcrumbs'][] = $this->title;
           <div class="box box-widget">
             <div class="box-header with-border">
               <div class="user-block">
-                <span class="username"><a href="#"><?= ! empty($model->title) ? $model->title : null ?></a></span>
-                <span class="description"><i class="fa fa-clock"></i> <?php  
+                <span class="username"><a href="#"><?= !empty($model->title) ? $model->title : null ?></a></span>
+                <span class="description"><i class="fa fa-clock"></i> <?php 
     $postDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
     echo $postDate->format('F j, Y'); ?></span>
               </div>
@@ -41,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <!-- /.box-header -->
             <div class="box-body p-10">
-              <?= ! empty($model->content) ? $model->content : null ?> 
+              <?= !empty($model->content) ? $model->content : null ?> 
               <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> Share</button>
               <span class="pull-right text-muted"><i class="fa fa-comment"></i> 2 comments</span>
             </div>

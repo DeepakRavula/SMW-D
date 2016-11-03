@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use common\models\Student;
+
 ?>
 
 <?php $form = ActiveForm::begin(); ?>
@@ -11,21 +12,21 @@ use common\models\Student;
 <div class="row p-10">
     <div class="col-xs-5">
 			<?php
-				$locationId = Yii::$app->session->get('location_id');
-			?>
+                $locationId = Yii::$app->session->get('location_id');
+            ?>
 			<?=
-			$form->field($model, 'studentId')->dropDownList(
-				ArrayHelper::map(
-					Student::find()
-					->active()
-					->unenrolled($courseId, $locationId)
-					->all(),
-				'id', function($model){
-					return $model->first_name . ' ' . $model->last_name;
-				}
-				),
-			['multiple' => 'multiple','size' => '14'])
-			?>
+            $form->field($model, 'studentId')->dropDownList(
+                ArrayHelper::map(
+                    Student::find()
+                    ->active()
+                    ->unenrolled($courseId, $locationId)
+                    ->all(),
+                'id', function ($model) {
+                    return $model->first_name.' '.$model->last_name;
+                }
+                ),
+            ['multiple' => 'multiple', 'size' => '14'])
+            ?>
     </div>
 
     <div class="col-xs-2">
@@ -39,17 +40,17 @@ use common\models\Student;
 
     <div class="col-xs-5">
 		<?=
-		$form->field($model, "studentIds")->dropDownList(
-			ArrayHelper::map(
-					Student::find()
-					->location($locationId)
-					->groupCourseEnrolled($courseId)
-					->active()
-					->all(),
-				'id', 'fullName'
-				),
-		['multiple' => 'multiple', 'id' => 'enrolment-studentid_to','size' => '14'])
-		?>
+        $form->field($model, 'studentIds')->dropDownList(
+            ArrayHelper::map(
+                    Student::find()
+                    ->location($locationId)
+                    ->groupCourseEnrolled($courseId)
+                    ->active()
+                    ->all(),
+                'id', 'fullName'
+                ),
+        ['multiple' => 'multiple', 'id' => 'enrolment-studentid_to', 'size' => '14'])
+        ?>
     </div>
     <div class="col-md-12 form-group">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>

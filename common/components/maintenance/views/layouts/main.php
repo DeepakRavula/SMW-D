@@ -1,8 +1,9 @@
 <?php
 /**
  * @author Eugene Terentev <eugene@terentev.net>
- * @var $this \yii\web\View
- * @var $content string
+ *
+ * @var \yii\web\View
+ * @var $content      string
  */
 use yii\helpers\Html;
 

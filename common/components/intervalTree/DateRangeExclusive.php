@@ -1,15 +1,16 @@
-<?php 
+<?php
 
 namespace common\components\intervalTree;
 
 use DateTime;
 use DateInterval;
+
 /**
  * Date range which excludes intersecting dates.
  */
-class DateRangeExclusive extends \IntervalTree\DateRangeExclusive 
+class DateRangeExclusive extends \IntervalTree\DateRangeExclusive
 {
-	public $id;
+    public $id;
     /**
      * @var \DateTime
      */
@@ -32,14 +33,14 @@ class DateRangeExclusive extends \IntervalTree\DateRangeExclusive
      */
     public function __construct(DateTime $start, DateTime $end = null, DateInterval $step = null, $id = null)
     {
-		$this->id = $id;
+        $this->id = $id;
         $this->start = clone $start;
         $this->end = clone $end;
         $this->step = $step ?: new DateInterval('P1D');
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return \DateTime
      */
@@ -49,7 +50,7 @@ class DateRangeExclusive extends \IntervalTree\DateRangeExclusive
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return \DateTime
      */
@@ -59,7 +60,7 @@ class DateRangeExclusive extends \IntervalTree\DateRangeExclusive
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return \Generator
      */

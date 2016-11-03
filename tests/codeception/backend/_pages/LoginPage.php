@@ -5,7 +5,7 @@ namespace tests\codeception\backend\_pages;
 use yii\codeception\BasePage;
 
 /**
- * Represents loging page
+ * Represents loging page.
  */
 class LoginPage extends BasePage
 {

@@ -17,41 +17,41 @@ echo $this->render('_profile', [
      <div class="tabbable-line">
 <?php 
 
-$enrolmentContent =  $this->render('_enrolment', [
+$enrolmentContent = $this->render('_enrolment', [
     'model' => $model,
-	'enrolmentDataProvider' => $enrolmentDataProvider,
+    'enrolmentDataProvider' => $enrolmentDataProvider,
 ]);
 
-$lessonContent =  $this->render('_lesson', [
-	'lessonDataProvider' => $lessonDataProvider,
+$lessonContent = $this->render('_lesson', [
+    'lessonDataProvider' => $lessonDataProvider,
     'model' => $model,
 ]);
 
-$unscheduledLessonContent =  $this->render('_unscheduledLesson', [
-	'dataProvider' => $unscheduledLessonDataProvider,
+$unscheduledLessonContent = $this->render('_unscheduledLesson', [
+    'dataProvider' => $unscheduledLessonDataProvider,
 ]);
 
 ?>
 <?php echo Tabs::widget([
     'items' => [
-		[
+        [
             'label' => 'Enrolments',
             'content' => $enrolmentContent,
-			'options' => [
+            'options' => [
                     'id' => 'enroment',
                 ],
         ],
-		[
+        [
             'label' => 'Lessons',
             'content' => $lessonContent,
-			'options' => [
+            'options' => [
                     'id' => 'lesson',
                 ],
         ],
         [
             'label' => 'Unscheduled Lessons',
             'content' => $unscheduledLessonContent,
-			'options' => [
+            'options' => [
                     'id' => 'unscheduledLesson',
                 ],
         ],

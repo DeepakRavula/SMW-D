@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 foreach ($roles as $name => $description) {
-	$role = $name;
+    $role = $name;
 }
 ?>
 <div class="tax-view">
@@ -34,9 +34,9 @@ foreach ($roles as $name => $description) {
     <?php echo DetailView::widget([
         'model' => $model,
         'attributes' => [
-                        	[
-				'label' => 'Province Name',
-				'value' =>  ! (empty($model->province->name)) ? $model->province->name : null,
+                            [
+                'label' => 'Province Name',
+                'value' => !(empty($model->province->name)) ? $model->province->name : null,
             ],
             'tax_rate',
             'since',

@@ -14,22 +14,29 @@ use common\models\Invoice;
  */
 class InvoiceSearch extends Invoice
 {
-	public $fromDate = '1-1-2016';
-	public $toDate = '31-12-2016';
+	const STATUS_MAIL_SENT = 1;
+	const STATUS_MAIL_NOT_SENT = 2;
+	const STATUS_ALL = 3;
+    public $fromDate = '1-1-2016';
+    public $toDate = '31-12-2016';
     public $type;
     public $query;
-	/**
-     * @inheritdoc
+	public $mailStatus;
+	public $invoiceStatus;
+    /**
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['fromDate', 'toDate', 'type', 'query'], 'safe'],
+            [['fromDate', 'toDate'], 'date', 'format' => 'php:d-m-Y'],
+			[['mailStatus', 'invoiceStatus'], 'integer'],
+            [['type', 'query'], 'safe'],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -38,60 +45,72 @@ class InvoiceSearch extends Invoice
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
+     *
      * @return ActiveDataProvider
      */
     public function search($params)
     {
-		$session = Yii::$app->session;
-		$locationId = $session->get('location_id');
+        $session = Yii::$app->session;
+        $locationId = $session->get('location_id');
         $query = Invoice::find()->alias('i')
-				->where([
-					'location_id' => $locationId,
-				]);
+                ->where([
+                    'location_id' => $locationId,
+                ]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        if ( !($this->load($params) && $this->validate())) {
+        if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
 
-        $query->joinWith(['user' => function($query) {				
+        $query->joinWith(['user' => function ($query) {
             $query->joinWith('userProfile up')
-                  ->joinWith('phoneNumber pn');                     
+                  ->joinWith('phoneNumber pn');
         }]);
         $query->groupBy('i.invoice_number');
-       
+
         $query->andFilterWhere(['like', 'up.firstname', $this->query])
               ->orFilterWhere(['like', 'up.lastname', $this->query])
               ->orFilterWhere(['like', 'pn.number', $this->query]);
-         
-		$this->fromDate =  \DateTime::createFromFormat('d-m-Y', $this->fromDate);
-		$this->toDate =  \DateTime::createFromFormat('d-m-Y', $this->toDate);
-        
-		$query->andWhere(['between','i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
-        
+
+        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
+        $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
+
+        $query->andWhere(['between', 'i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+
         $query->andFilterWhere(['type' => $this->type]);
-        
-        return $dataProvider;
+		if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
+			$query->mailSent();
+		} elseif ((int) $this->mailStatus === self::STATUS_MAIL_NOT_SENT) {
+			$query->mailNotSent();
+		}
+		if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
+			$query->unpaid()->proFromaInvoice();
+		} elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
+			$query->paid()->proFromaInvoice();
+		}
+
+		return $dataProvider;
     }
 
-	public static function invoiceStatuses() {
-		return [
-			'' => 'All',
-			self::INVOICE_STATUS_UNINVOICED => 'Not Invoiced',	
-			Invoice::STATUS_PAID => 'Paid',
-			Invoice::STATUS_OWING => 'Owing',
+	public static function invoiceStatuses()
+    {
+        return [
+            self::STATUS_ALL => 'All',
+            Invoice::STATUS_OWING => 'Unpaid',
+            Invoice::STATUS_PAID => 'Paid',
+        ];
+    }
+	public static function mailStatuses()
+    {
+        return [
+            self::STATUS_ALL => 'All',
+            self::STATUS_MAIL_SENT => 'Sent',
+			self::STATUS_MAIL_NOT_SENT => 'Not Sent'
+        ];
+    }
 
-		];
-	}
-
-	public static function lessonStatuses() {
-		return [
-			'' => 'All',
-			Lesson::STATUS_COMPLETED => 'Completed',
-			'scheduled' => 'Scheduled',
-		];
-	}
+    
 }

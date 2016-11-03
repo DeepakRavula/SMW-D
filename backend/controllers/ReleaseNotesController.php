@@ -30,6 +30,7 @@ class ReleaseNotesController extends Controller
 
     /**
      * Lists all ReleaseNotes models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -45,7 +46,9 @@ class ReleaseNotesController extends Controller
 
     /**
      * Displays a single ReleaseNotes model.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -58,13 +61,14 @@ class ReleaseNotesController extends Controller
     /**
      * Creates a new ReleaseNotes model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
     {
         $model = new ReleaseNotes();
         $currentDate = new \DateTime();
-        $model->date =  $currentDate->format('Y-m-d H:i:s');
+        $model->date = $currentDate->format('Y-m-d H:i:s');
         $model->user_id = Yii::$app->user->id;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -78,7 +82,9 @@ class ReleaseNotesController extends Controller
     /**
      * Updates an existing ReleaseNotes model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -97,7 +103,9 @@ class ReleaseNotesController extends Controller
     /**
      * Deletes an existing ReleaseNotes model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -110,8 +118,11 @@ class ReleaseNotesController extends Controller
     /**
      * Finds the ReleaseNotes model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param string $id
+     *
      * @return ReleaseNotes the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
@@ -122,14 +133,14 @@ class ReleaseNotesController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
-    public function actionUpdateReadNotes(){
+
+    public function actionUpdateReadNotes()
+    {
         $data = Yii::$app->request->rawBody;
-		$data = Json::decode($data, true);
+        $data = Json::decode($data, true);
         $model = new ReleaseNotesRead();
         $model->release_note_id = $data['id'];
         $model->user_id = Yii::$app->user->id;
         $model->save();
-        
     }
 }

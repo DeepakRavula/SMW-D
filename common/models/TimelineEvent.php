@@ -3,14 +3,13 @@
 namespace common\models;
 
 use common\models\query\TimelineEventQuery;
-use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "timeline_event".
  *
- * @property integer $id
+ * @property int $id
  * @property string $application
  * @property string $category
  * @property string $event
@@ -20,7 +19,7 @@ use yii\db\ActiveRecord;
 class TimelineEvent extends ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -36,8 +35,8 @@ class TimelineEvent extends ActiveRecord
             'timestamp' => [
                 'class' => TimestampBehavior::className(),
                 'createdAtAttribute' => 'created_at',
-                'updatedAtAttribute' => null
-            ]
+                'updatedAtAttribute' => null,
+            ],
         ];
     }
 
@@ -50,19 +49,19 @@ class TimelineEvent extends ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['application', 'category', 'event'], 'required'],
             [['data'], 'safe'],
-            [['application', 'category', 'event'], 'string', 'max' => 64]
+            [['application', 'category', 'event'], 'string', 'max' => 64],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function afterFind()
     {

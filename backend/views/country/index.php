@@ -21,7 +21,8 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['country/view', 'id' => $model->id]);
-        return ['data-url' => $url];
+
+            return ['data-url' => $url];
         },
         //'filterModel' => $searchModel,
         'columns' => [

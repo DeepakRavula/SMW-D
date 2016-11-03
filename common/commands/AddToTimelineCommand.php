@@ -27,6 +27,7 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
 
     /**
      * @param AddToTimelineCommand $command
+     *
      * @return bool
      */
     public function handle($command)
@@ -36,6 +37,7 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
         $model->category = $command->category;
         $model->event = $command->event;
         $model->data = json_encode($command->data, JSON_UNESCAPED_UNICODE);
+
         return $model->save(false);
     }
 }

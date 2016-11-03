@@ -28,6 +28,7 @@ class ProfessionalDevelopmentDayController extends Controller
 
     /**
      * Lists all ProfessionalDevelopmentDay models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -43,7 +44,9 @@ class ProfessionalDevelopmentDayController extends Controller
 
     /**
      * Displays a single ProfessionalDevelopmentDay model.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -56,6 +59,7 @@ class ProfessionalDevelopmentDayController extends Controller
     /**
      * Creates a new ProfessionalDevelopmentDay model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -74,7 +78,9 @@ class ProfessionalDevelopmentDayController extends Controller
     /**
      * Updates an existing ProfessionalDevelopmentDay model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -93,7 +99,9 @@ class ProfessionalDevelopmentDayController extends Controller
     /**
      * Deletes an existing ProfessionalDevelopmentDay model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param string $id
+     *
      * @return mixed
      */
     public function actionDelete($id)
@@ -106,8 +114,11 @@ class ProfessionalDevelopmentDayController extends Controller
     /**
      * Finds the ProfessionalDevelopmentDay model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param string $id
+     *
      * @return ProfessionalDevelopmentDay the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

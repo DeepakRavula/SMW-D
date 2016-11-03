@@ -2,7 +2,6 @@
 
 namespace backend\modules\i18n\models\search;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\modules\i18n\models\I18nSourceMessage;
@@ -13,7 +12,7 @@ use backend\modules\i18n\models\I18nSourceMessage;
 class I18nSourceMessageSearch extends I18nSourceMessage
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -24,7 +23,7 @@ class I18nSourceMessageSearch extends I18nSourceMessage
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -33,7 +32,7 @@ class I18nSourceMessageSearch extends I18nSourceMessage
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *

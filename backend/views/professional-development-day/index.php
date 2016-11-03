@@ -13,22 +13,22 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="professional-development-day-index">
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]);?>
    <?php yii\widgets\Pjax::begin(); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'tableOptions' =>['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray' ],
+        'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
-			[
+            [
                 'attribute' => 'date',
-				'label' => 'Date',
-				'value' => function($data) {
-					return ! (empty($data->date)) ? Yii::$app->formatter->asDate($data->date) : null;
-                } 
-			],
-			['class' => 'yii\grid\ActionColumn','template' => '{view}'],
+                'label' => 'Date',
+                'value' => function ($data) {
+                    return !(empty($data->date)) ? Yii::$app->formatter->asDate($data->date) : null;
+                },
+            ],
+            ['class' => 'yii\grid\ActionColumn', 'template' => '{view}'],
         ],
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>

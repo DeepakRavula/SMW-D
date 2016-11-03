@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\models;
 
 use common\models\User;
@@ -8,7 +9,7 @@ use yii\base\Model;
 use Yii;
 
 /**
- * Password reset form
+ * Password reset form.
  */
 class ResetPasswordForm extends Model
 {
@@ -26,8 +27,9 @@ class ResetPasswordForm extends Model
     /**
      * Creates a form model given a token.
      *
-     * @param  string                          $token
-     * @param  array                           $config name-value pairs that will be used to initialize the object properties
+     * @param string $token
+     * @param array  $config name-value pairs that will be used to initialize the object properties
+     *
      * @throws \yii\base\InvalidParamException if token is empty or not valid
      */
     public function __construct($token, $config = [])
@@ -35,7 +37,7 @@ class ResetPasswordForm extends Model
         if (empty($token) || !is_string($token)) {
             throw new InvalidParamException('Password reset token cannot be blank.');
         }
-        /** @var UserToken $tokenModel */
+        /* @var UserToken $tokenModel */
         $this->token = UserToken::find()
             ->notExpired()
             ->byType(UserToken::TYPE_PASSWORD_RESET)
@@ -49,29 +51,29 @@ class ResetPasswordForm extends Model
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
-			['reenterpassword', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match" ]
+            ['reenterpassword', 'compare', 'compareAttribute' => 'password', 'message' => "Passwords don't match"],
         ];
     }
 
     /**
      * Resets password.
      *
-     * @return boolean if password was reset.
+     * @return bool if password was reset
      */
     public function resetPassword()
     {
         $user = $this->token->user;
         $user->password = $this->password;
-        if($user->save()) {
+        if ($user->save()) {
             $this->token->delete();
-        };
+        }
 
         return true;
     }
@@ -82,8 +84,8 @@ class ResetPasswordForm extends Model
     public function attributeLabels()
     {
         return [
-            'password'=>Yii::t('backend', 'Password'),
-            'reenterpassword'=>Yii::t('backend', 'Confirm Password')
+            'password' => Yii::t('backend', 'Password'),
+            'reenterpassword' => Yii::t('backend', 'Confirm Password'),
         ];
     }
 }

@@ -34,10 +34,10 @@ $lastRole = end($roles);
         'attributes' => [
             'name',
             'tax_rate',
-			[
-				'label' => 'Country Name',
-				'value' => !empty($model->country->name) ? $model->country->name : null,
-			],
+            [
+                'label' => 'Country Name',
+                'value' => !empty($model->country->name) ? $model->country->name : null,
+            ],
         ],
     ]) ?>
 
