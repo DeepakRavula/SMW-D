@@ -94,6 +94,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
     }
 
+	public function getVacation()
+    {
+        return $this->hasOne(Vacation::className(), ['studentId' => 'studentId']);
+    }
+
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId'])

@@ -344,6 +344,10 @@ class LessonController extends Controller
         $courseModel = Course::findOne(['id' => $courseId]);
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
         $request = Yii::$app->request;
+        if (!empty($courseModel->enrolment->vacation)) {
+			$courseModel->enrolment->vacation->isConfirmed = true;
+			$courseModel->enrolment->vacation->save();
+		}
         if (!empty($courseModel->enrolment)) {
             $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
@@ -382,6 +386,10 @@ class LessonController extends Controller
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Lessons have been created successfully',
         ]);
+		if (! empty($courseModel->enrolment->vacation)) {
+            return $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
+
+		}
         if ((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
             $lessonDate = (new \DateTime($lessons[0]->date))->format('d-m-Y');
             $lessonStartDate = new \DateTime($lessons[0]->date);
@@ -396,7 +404,6 @@ class LessonController extends Controller
                 'LessonSearch[courseId]' => $courseModel->id,
             ]);
 
-            return $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'lesson']);
         } else {
             return $this->redirect(['course/view', 'id' => $courseId]);
         }
