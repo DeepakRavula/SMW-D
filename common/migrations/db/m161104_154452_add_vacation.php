@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m161104_152951_add_vacation extends Migration
+class m161104_154452_add_vacation extends Migration
 {
     public function up()
     {
@@ -13,7 +13,7 @@ class m161104_152951_add_vacation extends Migration
 
     public function down()
     {
-        echo "m161104_152951_add_vacation cannot be reverted.\n";
+        echo "m161104_154452_add_vacation cannot be reverted.\n";
 
         return false;
     }
