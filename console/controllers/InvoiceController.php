@@ -28,42 +28,21 @@ class InvoiceController extends Controller
             ->scheduled()
             ->between($priorDate, $priorDate)
             ->all();
-        $monthFirstDate        = \DateTime::createFromFormat('Y-m-d',
+        $paymentCycleStartDate        = \DateTime::createFromFormat('Y-m-d',
                 $priorDate->format('Y-m-1'));
         if (!empty($matchedLessons)) {
             foreach ($matchedLessons as $matchedLesson) {
-                if ($matchedLesson->enrolment->isMonthlyPaymentFrequency()) {
-                    $monthLastDate         = \DateTime::createFromFormat('Y-m-d',
-                            $priorDate->format('Y-m-t'));
-                    if(!$matchedLesson->isFirstLessonDate($priorDate, $monthLastDate)) {
-                        continue;
-                    }
+                $paymentCycleEndDate = $this->getLastDateOfPaymentCycle();
+                if(!$matchedLesson->isFirstLessonDate($paymentCycleStartDate, $paymentCycleEndDate)) {
+                    continue;
                 }
-                if ($matchedLesson->enrolment->isQuaterlyPaymentFrequency()) {
-                    $monthLastDate         = $monthFirstDate->modify('+3 month, -1 day');
-                    if(!$matchedLesson->isFirstLessonDate($priorDate, $monthLastDate)) {
-                        continue;
-                    }
-                }
-                if ($matchedLesson->enrolment->isHalfYearlyPaymentFrequency()) {
-                    $monthLastDate         = $monthFirstDate->modify('+6 month, -1 day');
-                    if(!$matchedLesson->isFirstLessonDate($priorDate, $monthLastDate)) {
-                        continue;
-                    }
-                }
-                if ($matchedLesson->enrolment->isAnnualPaymentFrequency()) {
-                    $monthLastDate         = $monthFirstDate->modify('+1 year, -1 day');
-                    if(!$matchedLesson->isFirstLessonDate($priorDate, $monthLastDate)) {
-                        continue;
-                    }
-                }
-                $monthStartDate        = \DateTime::createFromFormat('Y-m-d',
+                $paymentCycleStartDate        = \DateTime::createFromFormat('Y-m-d',
                         $priorDate->format('Y-m-1'));
                 $lessons             = Lesson::find()
                         ->where(['courseId' => $matchedLesson->courseId])
                         ->unInvoicedProForma()
                         ->scheduled()
-                        ->between($monthStartDate, $monthLastDate)
+                        ->between($paymentCycleStartDate, $paymentCycleEndDate)
                         ->all();
                 $invoice              = new Invoice();
                 $invoice->type        = Invoice::TYPE_PRO_FORMA_INVOICE;
@@ -78,5 +57,25 @@ class InvoiceController extends Controller
             }
         }
         return true;
+    }
+
+    public function getLastDateOfPaymentCycle()
+    {
+        switch ($matchedLesson->enrolment->paymentFrequency) {
+            case Enrolment::PAYMENT_FREQUENCY_FULL:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 year, -1 day');
+                break;
+            case Enrolment::PAYMENT_FREQUENCY_HALFYEARLY:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+6 month, -1 day');
+                break;
+            case Enrolment::PAYMENT_FREQUENCY_QUARTERLY:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+3 month, -1 day');
+                break;
+            case Enrolment::PAYMENT_FREQUENCY_MONTHLY:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 month, -1 day');
+                break;
+        }
+
+        return $paymentCycleEndDate;
     }
 }
