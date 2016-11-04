@@ -89,6 +89,11 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
 
+    public function getLineItem()
+    {
+        return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id']);
+    }
+
     public function getPayment()
     {
         return $this->hasMany(Payment::className(), ['user_id' => 'user_id']);
@@ -117,6 +122,11 @@ class Invoice extends \yii\db\ActiveRecord
                 ->sum('invoice_line_item.tax_rate');
     }
 
+    public function isOpeningBalance()
+    {
+        return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
+    }
+
     public function getCreditAppliedTotal()
     {
         $creditUsageTotal = Payment::find()
@@ -134,8 +144,6 @@ class Invoice extends \yii\db\ActiveRecord
             $existingSubtotal = $this->subTotal;
             if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
                 $this->trigger(self::EVENT_GENERATE);
-            } else {
-                $this->trigger(self::EVENT_UPDATE);
             }
         }
         return parent::afterSave($insert, $changedAttributes);
@@ -143,14 +151,16 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function updateInvoiceAttributes()
     {
-        $subTotal    = $this->lineItemTotal;
-        $tax         = $this->lineItemTax;
-        $totalAmount = $subTotal + $tax;
-        $this->updateAttributes([
-                'subTotal' => $subTotal,
-                'tax' => $tax,
-                'total' => $totalAmount,
-        ]);
+        if(!$this->isOpeningBalance()) {
+            $subTotal    = $this->lineItemTotal;
+            $tax         = $this->lineItemTax;
+            $totalAmount = $subTotal + $tax;
+            $this->updateAttributes([
+                    'subTotal' => $subTotal,
+                    'tax' => $tax,
+                    'total' => $totalAmount,
+            ]);
+        }
         $status  = $this->getInvoiceStatus();
         $balance = $this->invoiceBalance;
         return $this->updateAttributes([
@@ -287,9 +297,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-		$this->status  = $this->getInvoiceStatus();
-        $this->balance = $this->invoiceBalance;
-        if ($insert) {
+		if ($insert) {
             $lastInvoice   = $this->lastInvoice();
             $invoiceNumber = 1;
             if (!empty($lastInvoice)) {

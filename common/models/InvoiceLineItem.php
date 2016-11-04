@@ -106,7 +106,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        if (!$this->isMisc()) {
+        if ($insert && !$this->isMisc()) {
             $taxStatus        = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
             $this->tax_type   = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
             $this->tax_rate   = 0.0;
@@ -117,7 +117,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->isRoyalty  = false;
             }
         }
+        if(!$insert) {
+            $this->tax_rate = $this->amount * $this->taxType->taxCode->rate / 100;
+        }
         return parent::beforeSave($insert);
+    }
+
+    public function getTaxType()
+    {
+        return $this->hasOne(TaxType::className(), ['name' => 'tax_type']);
     }
 
     public function isOpeningBalance()

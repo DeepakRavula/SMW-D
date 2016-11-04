@@ -45,8 +45,6 @@ class InvoiceLineItemController extends Controller
                 $model->amount = $post['InvoiceLineItem'][$lineItemIndex]['amount'];
                 $output = $model->amount;
                 $model->save();
-                $model->invoice->subTotal = $model->invoice->lineItemTotal;
-                $model->invoice->total = $model->invoice->subTotal + $model->invoice->tax;
                 $model->invoice->save();
             }
             $result = [
@@ -61,11 +59,9 @@ class InvoiceLineItemController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $model->invoice->subTotal -= $model->amount;
-        $model->invoice->tax -= $model->tax_rate;
-        $model->invoice->total = $model->invoice->subTotal + $model->invoice->tax;
-        $model->invoice->save();
+        $invoiceModel = $model->invoice;
         $model->delete();
+        $invoiceModel->save();
         Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Line Item has been deleted successfully',
