@@ -47,7 +47,7 @@ if (!empty($dataProvider->getModels())) {
             [
                 'label' => 'Customer',
                 'value' => function ($data) {
-                    return $data->user->publicIdentity;
+                    return ! empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                 },
             ],
             [
