@@ -15,6 +15,7 @@ use Yii;
  */
 class Vacation extends \yii\db\ActiveRecord
 {
+	const EVENT_PUSH = 'event-push';
 	public $courseId;
     /**
      * @inheritdoc
@@ -73,6 +74,13 @@ class Vacation extends \yii\db\ActiveRecord
 		if (!$insert) {
 			return parent::afterSave($insert, $changedAttributes);
 		}
+	    $this->trigger(self::EVENT_PUSH);
+		
+		return parent::afterSave($insert, $changedAttributes);
+	}
+
+	public function pushLessons()
+	{
 		$lessons = Lesson::find()
 			->where(['courseId' => $this->courseId])
 			->andWhere(['>', 'date', $this->fromDate])
@@ -116,7 +124,5 @@ class Vacation extends \yii\db\ActiveRecord
 				$newLesson->save();
 			}
 		}
-
-		return parent::afterSave($insert, $changedAttributes);
 	}
 }

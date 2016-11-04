@@ -69,6 +69,8 @@ class VacationController extends Controller
 			$course = Course::findOne(['id' => $enrolmentModel->courseId]);
 			$model->courseId = $course->id;
 			$model->save();
+            $model->on(Vacation::EVENT_PUSH, $model->pushLessons());
+
             return $this->redirect(['lesson/review', 'courseId' => $model->courseId]);
         } else {
             return $this->render('create', [
