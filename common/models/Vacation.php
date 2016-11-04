@@ -1,7 +1,7 @@
 <?php
 
 namespace common\models;
-
+use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
@@ -69,44 +69,44 @@ class Vacation extends \yii\db\ActiveRecord
     }
 
 	public function afterSave($insert, $changedAttributes)
-    {
-		if(! $insert) {
-        	return parent::afterSave($insert, $changedAttributes);
+	{
+		if (!$insert) {
+			return parent::afterSave($insert, $changedAttributes);
 		}
-        $lessons = Lesson::find()
-		   ->where(['courseId' => $this->courseId])
-		   ->andWhere(['>', 'date', $this->fromDate])
-		   ->all();
-	    foreach($lessons as $lesson){
-		   $lesson->status = Lesson::STATUS_CANCELED;
-		   $lesson->save();
-	    }
-		$firstLesson = $lessons[0];
-		$lessonTime = (new \DateTime($firstLesson->date))->format('H:i:s');
-		$fromDate = new \DateTime($this->fromDate);
-		$toDate = new \DateTime($this->toDate);
-		$dayDifference = $fromDate->diff($toDate);
-		$count = $dayDifference->format('%a');
-		$lastLessonDate = new \DateTime(end($lessons)->date);
-		$startDate =  (new \DateTime($this->toDate))->format('d-m-Y');
-		$startDate =  (new \DateTime($startDate));
-		$duration = explode(':', $lessonTime);
-		$startDate->add(new \DateInterval('PT' . $duration[0] . 'H' . $duration[1] . 'M'));
-		$endDate =  $lastLessonDate->add(new \DateInterval('P' . $count . 'D'));
-		$interval = new \DateInterval('P1D');
-		$period = new \DatePeriod($startDate, $interval, $endDate);
-		$lessonDay = (new \DateTime($firstLesson->date))->format('N');
-		foreach($period as $day){
+		$lessons = Lesson::find()
+			->where(['courseId' => $this->courseId])
+			->andWhere(['>', 'date', $this->fromDate])
+			->all();
+		foreach ($lessons as $lesson) {
+			$lesson->status = Lesson::STATUS_CANCELED;
+			$lesson->save();
+		}
+		$firstLesson	 = ArrayHelper::getValue($lessons, 0);
+		$lessonTime		 = (new \DateTime($firstLesson->date))->format('H:i:s');
+		$fromDate		 = new \DateTime($this->fromDate);
+		$toDate			 = new \DateTime($this->toDate);
+		$dayDifference	 = $fromDate->diff($toDate);
+		$count			 = $dayDifference->format('%a');
+		$lastLessonDate	 = new \DateTime(end($lessons)->date);
+		$startDate		 = (new \DateTime($this->toDate))->format('d-m-Y');
+		$startDate		 = (new \DateTime($startDate));
+		$duration		 = explode(':', $lessonTime);
+		$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+		$endDate		 = $lastLessonDate->add(new \DateInterval('P'.$count.'D'));
+		$interval		 = new \DateInterval('P1D');
+		$period			 = new \DatePeriod($startDate, $interval, $endDate);
+		$lessonDay		 = (new \DateTime($firstLesson->date))->format('N');
+		foreach ($period as $day) {
 			$professionalDevelopmentDay = clone $day;
-                $professionalDevelopmentDay->modify('last day of previous month');
-                $professionalDevelopmentDay->modify('fifth '.$day->format('l'));
-                if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-                    continue;
-                }
+			$professionalDevelopmentDay->modify('last day of previous month');
+			$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
+			if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+				continue;
+			}
 			if ((int) $day->format('N') === (int) $lessonDay) {
 				$newLesson = new Lesson();
 				$newLesson->setAttributes([
-					'courseId'     => $firstLesson->courseId,
+					'courseId' => $firstLesson->courseId,
 					'teacherId' => $firstLesson->teacherId,
 					'status' => Lesson::STATUS_DRAFTED,
 					'date' => $day->format('Y-m-d H:i:s'),
@@ -117,6 +117,6 @@ class Vacation extends \yii\db\ActiveRecord
 			}
 		}
 
-        return parent::afterSave($insert, $changedAttributes);
-    }
+		return parent::afterSave($insert, $changedAttributes);
+	}
 }
