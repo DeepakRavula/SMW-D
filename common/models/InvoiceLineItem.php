@@ -132,10 +132,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function isOtherLineItems()
     {
-        $isOtherLineItems = (int) $this->item_type_id !== (int) ItemType::TYPE_OPENING_BALANCE && 
-            (int) $this->item_type_id !== (int) ItemType::TYPE_MISC && 
-            (int) $this->item_type_id !== (int) ItemType::TYPE_PRIVATE_LESSON && 
-            (int) $this->item_type_id !== (int) ItemType::TYPE_GROUP_LESSON;
+        $isOtherLineItems = (int) $this->item_type_id === (int) ItemType::TYPE_MISC ||
+            (int) $this->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON ||
+            (int) $this->item_type_id === (int) ItemType::TYPE_GROUP_LESSON;
         return $isOtherLineItems;
     }
 
