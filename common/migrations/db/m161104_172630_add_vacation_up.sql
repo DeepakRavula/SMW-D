@@ -13,7 +13,7 @@ CREATE TABLE `vacation` (
   `toDate` timestamp NOT NULL,
   `isConfirmed` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
