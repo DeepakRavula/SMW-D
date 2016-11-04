@@ -320,11 +320,7 @@ class Lesson extends \yii\db\ActiveRecord
                     $lessonRescheduleModel->rescheduledLessonId = $this->id;
                     $lessonRescheduleModel->save();
                 }
-                if(empty($changedAttributes['duration'])) {
-                    return parent::afterSave($insert, $changedAttributes);
-                }
-                $this->duration = \DateTime::createFromFormat('H:i', $this->duration);
-                if ($changedAttributes['duration'] !== $this->duration->format('H:i:s')) {
+                if (isset($changedAttributes['duration'])) {
                     if (!empty($this->proFormaInvoice) || !empty($this->invoice)) {
                         $subTotal = 0;
                         $taxAmount = 0;
