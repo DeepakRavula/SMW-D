@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use Yii;
+use yii\data\ActiveDataProvider;
 use common\models\query\InvoiceQuery;
 
 /**
@@ -27,9 +29,11 @@ class Invoice extends \yii\db\ActiveRecord
     const ITEM_TYPE_OPENING_BALANCE = 0;
     const USER_UNASSINGED = 0;
 
-	const SCENARIO_DELETE = 'delete';
+	const EVENT_GENERATE = 'event-generate';
+	const EVENT_UPDATE = 'event-update';
+    const SCENARIO_DELETE = 'delete';
 
-	public $customer_id;
+    public $customer_id;
     public $credit;
     /**
      * {@inheritdoc}
@@ -85,6 +89,11 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
 
+    public function getLineItem()
+    {
+        return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id']);
+    }
+
     public function getPayment()
     {
         return $this->hasMany(Payment::className(), ['user_id' => 'user_id']);
@@ -106,6 +115,18 @@ class Invoice extends \yii\db\ActiveRecord
                 ->sum('invoice_line_item.amount');
     }
 
+    public function getLineItemTax()
+    {
+        return $this->hasMany(InvoiceLineItem::className(),
+                    ['invoice_id' => 'id'])
+                ->sum('invoice_line_item.tax_rate');
+    }
+
+    public function isOpeningBalance()
+    {
+        return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
+    }
+
     public function getCreditAppliedTotal()
     {
         $creditUsageTotal = Payment::find()
@@ -115,6 +136,37 @@ class Invoice extends \yii\db\ActiveRecord
             ->sum('payment.amount');
 
         return $creditUsageTotal;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (!$insert) {
+            $existingSubtotal = $this->subTotal;
+            if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
+                $this->trigger(self::EVENT_GENERATE);
+            }
+        }
+        return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function updateInvoiceAttributes()
+    {
+        if(!$this->isOpeningBalance()) {
+            $subTotal    = $this->lineItemTotal;
+            $tax         = $this->lineItemTax;
+            $totalAmount = $subTotal + $tax;
+            $this->updateAttributes([
+                    'subTotal' => $subTotal,
+                    'tax' => $tax,
+                    'total' => $totalAmount,
+            ]);
+        }
+        $status  = $this->getInvoiceStatus();
+        $balance = $this->invoiceBalance;
+        return $this->updateAttributes([
+                'status'    => $status,
+                'balance'   => $balance,
+        ]);
     }
 
     public function getPaymentTotal()
@@ -219,25 +271,17 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
-    public static function lastInvoice($location_id)
+    public function lastInvoice()
     {
-        return $query = self::find()->alias('i')
-                    ->where(['i.location_id' => $location_id, 'i.type' => self::TYPE_INVOICE])
+        return $query = Invoice::find()->alias('i')
+                    ->where(['i.location_id' => $this->location_id, 'i.type' => $this->type])
                     ->orderBy(['i.id' => SORT_DESC])
                     ->one();
     }
 
-    public static function lastProFormaInvoice($location_id)
+    public function getInvoiceStatus()
     {
-        return $query = self::find()->alias('i')
-                    ->where(['i.location_id' => $location_id, 'i.type' => self::TYPE_PRO_FORMA_INVOICE])
-                    ->orderBy(['i.id' => SORT_DESC])
-                    ->one();
-    }
-
-    public function beforeSave($insert)
-    {
-        if ((float) $this->total === (float) $this->invoicePaymentTotal) {
+       if ((float) $this->total === (float) $this->invoicePaymentTotal) {
             $this->status = self::STATUS_PAID;
         } elseif ($this->total > $this->invoicePaymentTotal) {
             $this->status = self::STATUS_OWING;
@@ -248,8 +292,24 @@ class Invoice extends \yii\db\ActiveRecord
             	$this->status = self::STATUS_PAID;
 			}
         }
-        $this->balance = $this->invoiceBalance;
-        if ($insert) {
+        return $this->status;
+    }
+
+    public function beforeSave($insert)
+    {
+		if ($insert) {
+            $lastInvoice   = $this->lastInvoice();
+            $invoiceNumber = 1;
+            if (!empty($lastInvoice)) {
+                $invoiceNumber = $lastInvoice->invoice_number + 1;
+            }
+            $this->invoice_number = $invoiceNumber;
+            $this->date           = (new \DateTime())->format('Y-m-d');
+            $this->status         = Invoice::STATUS_OWING;
+            $this->isSent         = false;
+            $this->subTotal       = 0.00;
+            $this->total          = 0.00;
+            $this->tax            = 0.00;
             $reminderNotes = ReminderNote::find()->one();
             if (!empty($reminderNotes)) {
                 $this->reminderNotes = $reminderNotes->notes;
@@ -257,5 +317,58 @@ class Invoice extends \yii\db\ActiveRecord
         }
 
         return parent::beforeSave($insert);
+    }
+
+    public function sendEmail()
+    {
+        $invoiceLineItems             = InvoiceLineItem::find()->where(['invoice_id' => $this->id]);
+        $invoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $invoiceLineItems,
+        ]);
+        $subject                      = 'Invoice from '.Yii::$app->name;
+        if (!empty($this->user->email)) {
+            Yii::$app->mailer->compose('generateInvoice',
+                    [
+                    'model' => $this,
+                    'toName' => $this->user->publicIdentity,
+                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                ])
+                ->setFrom(\Yii::$app->params['robotEmail'])
+                ->setTo($this->user->email)
+                ->setSubject($subject)
+                ->send();
+            $this->isSent = true;
+            $this->save();
+        }
+        return $this->isSent;
+    }
+
+    public function addLineItem($lesson)
+    {
+        $actualLessonDate            = \DateTime::createFromFormat('Y-m-d H:i:s',
+                $lesson->date);
+        $invoiceLineItem             = new InvoiceLineItem();
+        $invoiceLineItem->invoice_id = $this->id;
+        $invoiceLineItem->item_id    = $lesson->id;
+        $getDuration                 = \DateTime::createFromFormat('H:i:s',
+                $lesson->duration);
+        $hours                       = $getDuration->format('H');
+        $minutes                     = $getDuration->format('i');
+        $invoiceLineItem->unit       = (($hours * 60) + $minutes) / 60;
+        if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+            $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
+            $courseCount                   = Lesson::find()
+                ->where(['courseId' => $lesson->courseId])
+                ->count('id');
+            $lessonAmount                  = $lesson->course->program->rate / $courseCount;
+            $invoiceLineItem->amount       = $lessonAmount;
+        } else {
+            $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+            $invoiceLineItem->amount       = $lesson->enrolment->program->rate
+                * $invoiceLineItem->unit;
+        }
+        $description                  = $lesson->enrolment->program->name.' for '.$lesson->enrolment->student->fullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
+        $invoiceLineItem->description = $description;
+        $invoiceLineItem->save();
     }
 }

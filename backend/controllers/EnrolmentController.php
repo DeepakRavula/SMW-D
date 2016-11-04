@@ -104,11 +104,12 @@ class EnrolmentController extends Controller
         $model = $this->findModel($id);
         $teacher = User::findOne(['id' => $model->course->teacherId]);
         $teacherDetails = $teacher->teacherAvailabilityWithLessons($model->course->teacherId);
-        $lessons = Lesson::find()
+        $lesson = Lesson::find()
             ->where(['courseId' => $model->course->id])
             ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
-            ->all();
-        $lastLessonDate = new \DateTime(end($lessons)->date);
+            ->orderBy(['date' => SORT_DESC])
+            ->one();
+        $lastLessonDate = new \DateTime($lesson->date);
         $getDuration = \DateTime::createFromFormat('H:i:s', $model->course->duration);
         $hours = $getDuration->format('H');
         $minutes = $getDuration->format('i');
@@ -127,7 +128,8 @@ class EnrolmentController extends Controller
             ]);
             $rescheduleLessons = Lesson::find()
                 ->where(['courseId' => $model->course->id])
-                ->scheduledBetween($lessonFromDate, $lessonToDate)
+                ->scheduled()
+                ->between($lessonFromDate, $lessonToDate)
                 ->all();
             //lesson start date
             $changedFromTime = (new \DateTime($model->course->fromTime))->format('H:i:s');

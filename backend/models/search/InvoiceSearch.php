@@ -81,17 +81,18 @@ class InvoiceSearch extends Invoice
         $query->andWhere(['between', 'i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 
         $query->andFilterWhere(['type' => $this->type]);
-		if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
-			$query->mailSent();
-		} elseif ((int) $this->mailStatus === self::STATUS_MAIL_NOT_SENT) {
-			$query->mailNotSent();
+		if ((int) $this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+			if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
+				$query->mailSent();
+			} elseif ((int) $this->mailStatus === self::STATUS_MAIL_NOT_SENT) {
+				$query->mailNotSent();
+			}
+			if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
+				$query->unpaid()->proFromaInvoice();
+			} elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
+				$query->paid()->proFromaInvoice();
+			}
 		}
-		if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
-			$query->unpaid()->proFromaInvoice();
-		} elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
-			$query->paid()->proFromaInvoice();
-		}
-
 		return $dataProvider;
     }
 

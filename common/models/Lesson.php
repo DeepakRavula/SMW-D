@@ -320,6 +320,9 @@ class Lesson extends \yii\db\ActiveRecord
                     $lessonRescheduleModel->rescheduledLessonId = $this->id;
                     $lessonRescheduleModel->save();
                 }
+                if(empty($changedAttributes['duration'])) {
+                    return parent::afterSave($insert, $changedAttributes);
+                }
                 $this->duration = \DateTime::createFromFormat('H:i', $this->duration);
                 if ($changedAttributes['duration'] !== $this->duration->format('H:i:s')) {
                     if (!empty($this->proFormaInvoice) || !empty($this->invoice)) {
@@ -366,4 +369,23 @@ class Lesson extends \yii\db\ActiveRecord
             ->setSubject($subject)
             ->send();
     }
-}
+
+    public function isFirstLessonDate($date)
+    {
+        $monthFirstDate  = \DateTime::createFromFormat('Y-m-d',
+                $date->format('Y-m-1'));
+        $monthLastDate   = \DateTime::createFromFormat('Y-m-d',
+                $date->format('Y-m-t'));
+        $lesson          = Lesson::find()
+            ->where(['courseId' => $this->courseId])
+            ->scheduled()
+            ->between($monthFirstDate, $monthLastDate)
+            ->orderBy(['lesson.date' => SORT_ASC])
+            ->one();
+        $courseStartDate = \DateTime::createFromFormat('Y-m-d H:i:s',
+                $lesson->date);
+        $courseStartDate = new \DateTime($courseStartDate->format('Y-m-d'));
+        $date = new \DateTime($date->format('Y-m-d'));
+        return $courseStartDate == $date;
+    }
+}    

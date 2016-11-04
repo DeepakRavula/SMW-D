@@ -291,37 +291,21 @@ class UserController extends Controller
         $locationId = Yii::$app->session->get('location_id');
         $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
         if ($paymentModel->load(Yii::$app->request->post())) {
-            $lastInvoice = Invoice::lastInvoice($locationId);
-
-            if (empty($lastInvoice)) {
-                $invoiceNumber = 1;
-            } else {
-                $invoiceNumber = $lastInvoice->invoice_number + 1;
-            }
             $invoice = new Invoice();
             $invoice->user_id = $model->id;
             $invoice->location_id = $locationId;
-            $invoice->invoice_number = $invoiceNumber;
             $invoice->type = Invoice::TYPE_INVOICE;
-            $invoice->date = (new \DateTime())->format('Y-m-d');
             $invoice->save();
 
             $invoiceLineItem = new InvoiceLineItem();
             $invoiceLineItem->invoice_id = $invoice->id;
             $invoiceLineItem->item_id = Invoice::ITEM_TYPE_OPENING_BALANCE;
             $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
-            $invoiceLineItem->isRoyalty = false;
-            $taxStatus = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-            $invoiceLineItem->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-            $invoiceLineItem->tax_rate = 0.00;
-            $invoiceLineItem->tax_code = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-            $invoiceLineItem->tax_status = $taxStatus->name;
             $invoiceLineItem->description = 'Opening Balance';
             $invoiceLineItem->unit = 1;
             $invoiceLineItem->amount = $paymentModel->amount;
             $invoiceLineItem->save();
 
-            $invoice = Invoice::findOne(['id' => $invoice->id]);
             if ($paymentModel->amount > 0) {
                 $invoice->subTotal = $invoiceLineItem->amount;
             } else {
