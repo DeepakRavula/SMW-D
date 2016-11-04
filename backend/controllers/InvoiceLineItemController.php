@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\Payment;
+use common\models\PaymentMethod;
 use common\models\InvoiceLineItem;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -42,18 +44,78 @@ class InvoiceLineItemController extends Controller
                 $model->save();
             }
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['amount'])) {
-                $model->amount = $post['InvoiceLineItem'][$lineItemIndex]['amount'];
-                $output = $model->amount;
-                $model->save();
-                $model->invoice->save();
+                $newAmount = $post['InvoiceLineItem'][$lineItemIndex]['amount'];
+                if ($model->isOpeningBalance()) {
+                    $result = Yii::$app->runAction('invoice-line-item/edit-opening-balance',
+                        ['model' => $model, 'newAmount' => $newAmount]);
+                }
+                if ($model->isOtherLineItems()) {
+                    $result = Yii::$app->runAction('invoice-line-item/edit-other-items',
+                        ['model' => $model, 'newAmount' => $newAmount]);
+                }
             }
-            $result = [
-                'output' => $output,
-                'message' => '',
-            ];
-
             return $result;
         }
+    }
+
+    public function actionEditOpeningBalance($model, $newAmount)
+    {
+        $model->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+        $model->amount = $newAmount;
+        $model->save();
+        $payments = $model->invoice->payment;
+        if($newAmount < 0) {
+            $model->invoice->subTotal = 0.00;
+            $model->invoice->total = $model->invoice->subTotal;
+            $model->invoice->save();
+            if(!empty($payments)) {
+                foreach ($payments as $payment){
+                    if($payment->isAccountEntry()) {
+                        $payment->amount = abs($newAmount);
+                        $payment->save();
+                        continue;
+                    }
+                }
+            }else {
+                $payment = new Payment();
+                $payment->amount = abs($newAmount);
+                $payment->invoiceId = $payments = $model->invoice->id;
+                $payment->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
+                $payment->reference = null;
+                $payment->save();
+            }
+        }elseif($newAmount > 0) {
+            $model->invoice->subTotal = $model->invoice->lineItemTotal;
+            $model->invoice->total = $model->invoice->subTotal;
+            $model->invoice->save();
+            if(!empty($payments)) {
+                foreach ($payments as $payment){
+                    if($payment->isAccountEntry()) {
+                        $payment->delete();
+                    }
+                }
+            }
+        }
+        
+        $result = [
+            'output' => $newAmount,
+            'message' => '',
+        ];
+
+        return $result;
+    }
+
+    public function actionEditOtherItems($model, $newAmount)
+    {
+        $model->amount = $newAmount;
+        $model->save();
+        $model->invoice->save();
+        $result = [
+            'output' => $newAmount,
+            'message' => '',
+        ];
+
+        return $result;
     }
 
     public function actionDelete($id)
