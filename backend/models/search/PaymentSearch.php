@@ -59,9 +59,7 @@ class PaymentSearch extends Payment
         $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
         $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
 
-        $query->andWhere(['between', 'date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
-
-        //$query->andFilterWhere(['type' => $this->type]);
+        $query->andWhere(['between', 'payment.date', $this->fromDate->format('Y-m-d 00:00:00'), $this->toDate->format('Y-m-d 23:59:59')]);
 
         return $dataProvider;
     }
