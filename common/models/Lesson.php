@@ -366,21 +366,20 @@ class Lesson extends \yii\db\ActiveRecord
             ->send();
     }
 
-    public function isFirstLessonDate($date, $monthLastDate)
+    public function isFirstLessonDate($paymentCycleStartDate, $paymentCycleEndDate)
     {
-        $monthFirstDate  = \DateTime::createFromFormat('Y-m-d',
-                $date->format('Y-m-1'));
+        $priorDate       = (new \DateTime())->modify('+15 day');
+        $priorDate       = new \DateTime($priorDate->format('Y-m-d'));
         $lesson          = Lesson::find()
             ->where(['courseId' => $this->courseId])
             ->unInvoicedProForma()
             ->scheduled()
-            ->between($monthFirstDate, $monthLastDate)
+            ->between($paymentCycleStartDate, $paymentCycleEndDate)
             ->orderBy(['lesson.date' => SORT_ASC])
             ->one();
-        $courseStartDate = \DateTime::createFromFormat('Y-m-d H:i:s',
-                $lesson->date);
-        $courseStartDate = new \DateTime($courseStartDate->format('Y-m-d'));
-        $date = new \DateTime($date->format('Y-m-d'));
-        return $courseStartDate == $date;
-    }
+        $lessonStartDate = \DateTime::createFromFormat('Y-m-d H:i:s',
+                    $lesson->date);
+        $lessonStartDate = new \DateTime($lessonStartDate->format('Y-m-d'));
+        return $lessonStartDate == $priorDate;
+        }
 }    

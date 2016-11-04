@@ -32,7 +32,7 @@ class InvoiceController extends Controller
                 $priorDate->format('Y-m-1'));
         if (!empty($matchedLessons)) {
             foreach ($matchedLessons as $matchedLesson) {
-                $paymentCycleEndDate = $this->getLastDateOfPaymentCycle();
+                $paymentCycleEndDate = $matchedLesson->enrolment->getLastDateOfPaymentCycle();
                 if(!$matchedLesson->isFirstLessonDate($paymentCycleStartDate, $paymentCycleEndDate)) {
                     continue;
                 }
@@ -57,25 +57,5 @@ class InvoiceController extends Controller
             }
         }
         return true;
-    }
-
-    public function getLastDateOfPaymentCycle()
-    {
-        switch ($matchedLesson->enrolment->paymentFrequency) {
-            case Enrolment::PAYMENT_FREQUENCY_FULL:
-                $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 year, -1 day');
-                break;
-            case Enrolment::PAYMENT_FREQUENCY_HALFYEARLY:
-                $paymentCycleEndDate = $paymentCycleStartDate->modify('+6 month, -1 day');
-                break;
-            case Enrolment::PAYMENT_FREQUENCY_QUARTERLY:
-                $paymentCycleEndDate = $paymentCycleStartDate->modify('+3 month, -1 day');
-                break;
-            case Enrolment::PAYMENT_FREQUENCY_MONTHLY:
-                $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 month, -1 day');
-                break;
-        }
-
-        return $paymentCycleEndDate;
     }
 }

@@ -168,4 +168,26 @@ class Enrolment extends \yii\db\ActiveRecord
             }
         }
     }
+
+    public function getLastDateOfPaymentCycle()
+    {
+        $priorDate             = (new \DateTime())->modify('+15 day');
+        $paymentCycleStartDate = \DateTime::createFromFormat('Y-m-d', $priorDate->format('Y-m-1'));
+        switch ($this->paymentFrequency) {
+            case self::PAYMENT_FREQUENCY_FULL:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 year, -1 day');
+                break;
+            case self::PAYMENT_FREQUENCY_HALFYEARLY:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+6 month, -1 day');
+                break;
+            case self::PAYMENT_FREQUENCY_QUARTERLY:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+3 month, -1 day');
+                break;
+            case self::PAYMENT_FREQUENCY_MONTHLY:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 month, -1 day');
+                break;
+        }
+
+        return $paymentCycleEndDate;
+    }
 }
