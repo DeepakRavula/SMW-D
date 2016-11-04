@@ -33,10 +33,10 @@ class Student extends \yii\db\ActiveRecord
     {
         return [
             [['first_name', 'last_name'], 'required'],
-            [['birth_date', 'notes'], 'safe'],
-            [['customer_id', 'status'], 'integer'],
-            [['first_name', 'last_name'], 'string', 'max' => 30],
+            [['first_name', 'last_name'], 'string', 'min' => 2, 'max' => 30],
+            [[ 'status'], 'integer'],
             [['birth_date'], 'date', 'format' => 'php:d-m-Y'],
+            [['customer_id','notes'], 'safe'],
         ];
     }
 
