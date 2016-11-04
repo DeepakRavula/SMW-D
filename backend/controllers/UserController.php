@@ -297,7 +297,7 @@ class UserController extends Controller
             $invoice->type = Invoice::TYPE_INVOICE;
             $invoice->save();
 
-            $invoiceLineItem = new InvoiceLineItem();
+            $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
             $invoiceLineItem->invoice_id = $invoice->id;
             $invoiceLineItem->item_id = Invoice::ITEM_TYPE_OPENING_BALANCE;
             $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
@@ -316,12 +316,9 @@ class UserController extends Controller
             $invoice->save();
 
             if ($paymentModel->amount < 0) {
-                $paymentModel->user_id = $model->id;
                 $paymentModel->invoiceId = $invoice->id;
                 $paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
                 $paymentModel->amount = abs($paymentModel->amount);
-                $date = \DateTime::createFromFormat('d-m-Y', $paymentModel->date);
-                $paymentModel->date = $date->format('Y-m-d H:i:s');
                 $paymentModel->save();
             }
             Yii::$app->session->setFlash('alert', [
