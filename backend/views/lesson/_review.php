@@ -170,7 +170,16 @@ $this->title = 'Review Lessons';
             }
         }
         ?>
-		<?php if (!(empty($lessonFromDate) && empty($lessonToDate))):?>
+		<?php if(! empty($vacationId)) :?>
+		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Student[vacationId]' => $vacationId], [
+            'class' => 'btn btn-danger',
+            'id' => 'confirm-button',
+            'disabled' => $hasConflict,
+            'data' => [
+                'method' => 'post',
+            ],
+        ]) ?>
+		<?php elseif (!(empty($lessonFromDate) && empty($lessonToDate))):?>
 		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[lessonFromDate]' => $lessonFromDate, 'Course[lessonToDate]' => $lessonToDate], [
                 'class' => 'btn btn-danger',
                 'id' => 'confirm-button',
@@ -179,6 +188,7 @@ $this->title = 'Review Lessons';
                     'method' => 'post',
                 ],
             ]) ?> 
+		
 		<?php else :?>
 		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId], [
             'class' => 'btn btn-danger',

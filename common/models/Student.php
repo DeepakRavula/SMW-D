@@ -16,8 +16,10 @@ use common\models\query\StudentQuery;
  */
 class Student extends \yii\db\ActiveRecord
 {
-    const STATUS_ACTIVE = 1;
+	const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
+
+	public $vacationId;
     /**
      * {@inheritdoc}
      */
