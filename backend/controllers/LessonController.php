@@ -21,6 +21,8 @@ use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\CreditUsage;
 use yii\web\Response;
+use common\models\Vacation;
+
 use yii\widgets\ActiveForm;
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -158,6 +160,8 @@ class LessonController extends Controller
             $data = ['model' => $model, 'privateLessonModel' => $privateLessonModel];
         }
         if ($model->load(Yii::$app->request->post())) {
+            $duration = \DateTime::createFromFormat('H:i', $model->duration);
+            $model->duration = $duration->format('H:i:s');
             if (empty($model->date)) {
                 $model->date = $model->getOldAttribute('date');
                 $model->status = Lesson::STATUS_CANCELED;
@@ -288,9 +292,11 @@ class LessonController extends Controller
     public function actionReview($courseId)
     {
         $request = Yii::$app->request;
+        $studentRequest = $request->get('Student');
         $courseRequest = $request->get('Course');
         $lessonFromDate = $courseRequest['lessonFromDate'];
         $lessonToDate = $courseRequest['lessonToDate'];
+        $vacationId = $studentRequest['vacationId'];
         $courseModel = Course::findOne(['id' => $courseId]);
         $draftLessons = Lesson::find()
             ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
@@ -332,6 +338,7 @@ class LessonController extends Controller
             'conflicts' => $conflicts,
             'lessonFromDate' => $lessonFromDate,
             'lessonToDate' => $lessonToDate,
+			'vacationId' => $vacationId
         ]);
     }
 
@@ -377,8 +384,15 @@ class LessonController extends Controller
             $enrolmentModel->save();
         }
         $courseRequest = $request->get('Course');
+        $studentRequest = $request->get('Student');
         $lessonFromDate = $courseRequest['lessonFromDate'];
         $lessonToDate = $courseRequest['lessonToDate'];
+        $vacationId = $studentRequest['vacationId'];
+		if(! empty($vacationId)) {
+			$vacation = Vacation::findOne(['id' => $vacationId]);
+			$vacation->isConfirmed = true;
+			$vacation->save();
+		}
         if (!(empty($lessonFromDate) && empty($lessonToDate))) {
             $lessonFromDate = \DateTime::createFromFormat('d-m-Y', $lessonFromDate);
             $lessonToDate = \DateTime::createFromFormat('d-m-Y', $lessonToDate);
@@ -397,7 +411,7 @@ class LessonController extends Controller
                 $lesson->status = Lesson::STATUS_SCHEDULED;
                 $lesson->save();
             }
-        } else {
+        }  else {
             foreach ($lessons as $lesson) {
                 $lesson->updateAttributes([
                     'status' => Lesson::STATUS_SCHEDULED,
@@ -409,6 +423,10 @@ class LessonController extends Controller
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Lessons have been created successfully',
         ]);
+		if (! empty($courseModel->enrolment->vacation)) {
+            return $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
+
+		}
         if ((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
             $lessonDate = (new \DateTime($lessons[0]->date))->format('d-m-Y');
             $lessonStartDate = new \DateTime($lessons[0]->date);
@@ -423,7 +441,6 @@ class LessonController extends Controller
                 'LessonSearch[courseId]' => $courseModel->id,
             ]);
 
-            return $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'lesson']);
         } else {
             return $this->redirect(['course/view', 'id' => $courseId]);
         }

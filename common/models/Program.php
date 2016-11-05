@@ -42,11 +42,11 @@ class Program extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
-            [['status'], 'integer'],
+            [['name', 'rate'], 'required'],
+            [['name'], 'string', 'min' => 3, 'max' => 255],
             [['rate'], 'number'],
-            [['name'], 'string', 'max' => 255],
-            [['type'], 'required'],
+            [['status'], 'integer'],
+            [['type'], 'safe'],
         ];
     }
 

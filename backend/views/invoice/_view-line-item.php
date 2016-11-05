@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\helpers\Url;
+use common\models\InvoiceLineItem;
 
 ?>
 <?php
@@ -39,6 +40,9 @@ $columns = [
         'contentOptions' => ['class' => 'text-center'],
         'enableSorting' => false,
         'editableOptions' => function ($model, $key, $index) {
+            if ($model->isOpeningBalance()) {
+                    $model->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+                }
             return [
                'header' => 'Price',
                'size' => 'md',

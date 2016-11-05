@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
+use common\models\Vacation;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -31,6 +32,11 @@ $unscheduledLessonContent = $this->render('_unscheduledLesson', [
     'dataProvider' => $unscheduledLessonDataProvider,
 ]);
 
+$vacationContent = $this->render('_vacation', [
+	'model' => new Vacation(),
+    'studentModel' => $model,
+]);
+
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -55,6 +61,13 @@ $unscheduledLessonContent = $this->render('_unscheduledLesson', [
                     'id' => 'unscheduledLesson',
                 ],
         ],
+		[
+            'label' => 'Vacations',
+            'content' => $vacationContent,
+            'options' => [
+                'id' => 'vacation',
+            ],
+        ],
     ],
 ]);
 ?>
@@ -65,6 +78,9 @@ $unscheduledLessonContent = $this->render('_unscheduledLesson', [
  $(document).ready(function() {
      $('.add-new-lesson').click(function(){
        $('.lesson-create').show();
+   });
+   $('.add-new-vacation').click(function(){
+       $('.vacation-create').show();
    });
  });
 </script>

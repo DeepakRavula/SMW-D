@@ -16,6 +16,7 @@ use common\models\TaxStatus;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
     private $isRoyaltyExempted;
+    const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
 
     /**
      * {@inheritdoc}
@@ -39,6 +40,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
             ],
+            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => self::SCENARIO_OPENING_BALANCE],
             [['isRoyaltyExempted'], 'boolean', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
@@ -126,6 +128,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getTaxType()
     {
         return $this->hasOne(TaxType::className(), ['name' => 'tax_type']);
+    }
+
+    public function isOtherLineItems()
+    {
+        $isOtherLineItems = (int) $this->item_type_id === (int) ItemType::TYPE_MISC ||
+            (int) $this->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON ||
+            (int) $this->item_type_id === (int) ItemType::TYPE_GROUP_LESSON;
+        return $isOtherLineItems;
     }
 
     public function isOpeningBalance()
