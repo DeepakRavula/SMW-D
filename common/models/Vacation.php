@@ -92,16 +92,17 @@ class Vacation extends \yii\db\ActiveRecord
 		$firstLesson = ArrayHelper::getValue($lessons, 0);
 		$lessonTime		 = (new \DateTime($firstLesson->date))->format('H:i:s');
 		$startDate		 = (new \DateTime($this->toDate))->format('d-m-Y');
-		$startDate		 = (new \DateTime($startDate));
+		$startDate		 = new \DateTime($startDate);
 		$duration		 = explode(':', $lessonTime);
-		$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 		$day = new \DateTime($firstLesson->date);
 		$startDate->modify('next '.$day->format('l'));
+		$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 		$professionalDevelopmentDay = clone $startDate;
 		$professionalDevelopmentDay->modify('last day of previous month');
 		$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
 		if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
 			$startDate->modify('next '.$day->format('l'));
+			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 		}
 		foreach($lessons as $lesson){
 			$newLesson = new Lesson();
@@ -116,11 +117,13 @@ class Vacation extends \yii\db\ActiveRecord
 			$newLesson->save();
 			$day = new \DateTime($lesson->date);
 			$startDate->modify('next '.$day->format('l'));
+			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 			$professionalDevelopmentDay = clone $startDate;
 			$professionalDevelopmentDay->modify('last day of previous month');
 			$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
 			if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
 				$startDate->modify('next '.$day->format('l'));
+				$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 			}
 		}
 	}
