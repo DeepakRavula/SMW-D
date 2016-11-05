@@ -85,10 +85,7 @@ class Vacation extends \yii\db\ActiveRecord
 			->where(['courseId' => $this->courseId])
 			->andWhere(['>', 'date', $this->fromDate])
 			->all();
-		foreach ($lessons as $lesson) {
-			$lesson->status = Lesson::STATUS_CANCELED;
-			$lesson->save();
-		}
+		
 		$firstLesson = ArrayHelper::getValue($lessons, 0);
 		$lessonTime		 = (new \DateTime($firstLesson->date))->format('H:i:s');
 		$startDate		 = (new \DateTime($this->toDate))->format('d-m-Y');
@@ -105,16 +102,19 @@ class Vacation extends \yii\db\ActiveRecord
 			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 		}
 		foreach($lessons as $lesson){
-			$newLesson = new Lesson();
-			$newLesson->setAttributes([
-				'courseId' => $lesson->courseId,
-				'teacherId' => $lesson->teacherId,
-				'status' => Lesson::STATUS_DRAFTED,
-				'date' => $startDate->format('Y-m-d H:i:s'),
-				'duration' => $lesson->duration,
-				'isDeleted' => false,
-			]);
-			$newLesson->save();
+			$originalLessonId = $lesson->id;
+			$lesson->status = Lesson::STATUS_CANCELED;
+			$lesson->save();
+			$lesson->id = null;
+			$lesson->isNewRecord = true;
+			$lesson->status = Lesson::STATUS_DRAFTED;
+			$lesson->date = $startDate->format('Y-m-d H:i:s');
+			$lesson->save();
+
+			$lessonRescheduleModel = new LessonReschedule();
+			$lessonRescheduleModel->lessonId = $originalLessonId;
+			$lessonRescheduleModel->rescheduledLessonId = $lesson->id;
+			$lessonRescheduleModel->save();
 			$day = new \DateTime($lesson->date);
 			$startDate->modify('next '.$day->format('l'));
 			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
