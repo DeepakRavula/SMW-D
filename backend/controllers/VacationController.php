@@ -71,7 +71,11 @@ class VacationController extends Controller
 			$model->save();
             $model->on(Vacation::EVENT_PUSH, $model->pushLessons());
 
-            return $this->redirect(['lesson/review', 'courseId' => $model->courseId]);
+            return $this->redirect([
+				'lesson/review',
+				'courseId' => $model->courseId,
+				'Student[vacationId]' => $model->id
+			]);
         } else {
             return $this->render('create', [
                 'model' => $model,

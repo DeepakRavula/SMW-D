@@ -21,6 +21,7 @@ use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\CreditUsage;
 use yii\web\Response;
+use common\models\Vacation;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -261,9 +262,11 @@ class LessonController extends Controller
     public function actionReview($courseId)
     {
         $request = Yii::$app->request;
+        $studentRequest = $request->get('Student');
         $courseRequest = $request->get('Course');
         $lessonFromDate = $courseRequest['lessonFromDate'];
         $lessonToDate = $courseRequest['lessonToDate'];
+        $vacationId = $studentRequest['vacationId'];
         $courseModel = Course::findOne(['id' => $courseId]);
         $draftLessons = Lesson::find()
             ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
@@ -305,6 +308,7 @@ class LessonController extends Controller
             'conflicts' => $conflicts,
             'lessonFromDate' => $lessonFromDate,
             'lessonToDate' => $lessonToDate,
+			'vacationId' => $vacationId
         ]);
     }
 
@@ -344,18 +348,21 @@ class LessonController extends Controller
         $courseModel = Course::findOne(['id' => $courseId]);
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
         $request = Yii::$app->request;
-        if (!empty($courseModel->enrolment->vacation)) {
-			$courseModel->enrolment->vacation->isConfirmed = true;
-			$courseModel->enrolment->vacation->save();
-		}
         if (!empty($courseModel->enrolment)) {
             $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
         }
         $courseRequest = $request->get('Course');
+        $studentRequest = $request->get('Student');
         $lessonFromDate = $courseRequest['lessonFromDate'];
         $lessonToDate = $courseRequest['lessonToDate'];
+        $vacationId = $studentRequest['vacationId'];
+		if(! empty($vacationId)) {
+			$vacation = Vacation::findOne(['id' => $vacationId]);
+			$vacation->isConfirmed = true;
+			$vacation->save();
+		}
         if (!(empty($lessonFromDate) && empty($lessonToDate))) {
             $lessonFromDate = \DateTime::createFromFormat('d-m-Y', $lessonFromDate);
             $lessonToDate = \DateTime::createFromFormat('d-m-Y', $lessonToDate);
@@ -374,7 +381,7 @@ class LessonController extends Controller
                 $lesson->status = Lesson::STATUS_SCHEDULED;
                 $lesson->save();
             }
-        } else {
+        }  else {
             foreach ($lessons as $lesson) {
                 $lesson->updateAttributes([
                     'status' => Lesson::STATUS_SCHEDULED,
