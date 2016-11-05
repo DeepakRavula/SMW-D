@@ -141,6 +141,9 @@ class Invoice extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
+			if(empty($this->lineItem)) {
+                return parent::afterSave($insert, $changedAttributes);
+            }
             $existingSubtotal = $this->subTotal;
             if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
                 $this->trigger(self::EVENT_GENERATE);
