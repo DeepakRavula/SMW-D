@@ -3,15 +3,21 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\HolidaySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Holidays';
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['create'], ['class' => 'btn btn-primary btn-sm']);
-$this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+$lastRole = end($roles);?>
+<?php if ($lastRole->name === User::ROLE_ADMINISTRATOR):?>
+<?php $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['create'], ['class' => 'btn btn-primary btn-sm']);?>
+<?php endif; ?>
+
 <div class="grid-row-open">
 
     <?php // echo $this->render('_search', ['model' => $searchModel]);?>
