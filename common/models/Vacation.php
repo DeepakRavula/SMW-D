@@ -89,39 +89,38 @@ class Vacation extends \yii\db\ActiveRecord
 			$lesson->status = Lesson::STATUS_CANCELED;
 			$lesson->save();
 		}
-		$firstLesson	 = ArrayHelper::getValue($lessons, 0);
+		$firstLesson = ArrayHelper::getValue($lessons, 0);
 		$lessonTime		 = (new \DateTime($firstLesson->date))->format('H:i:s');
-		$fromDate		 = new \DateTime($this->fromDate);
-		$toDate			 = new \DateTime($this->toDate);
-		$dayDifference	 = $fromDate->diff($toDate);
-		$count			 = $dayDifference->format('%a');
-		$lastLessonDate	 = new \DateTime(end($lessons)->date);
 		$startDate		 = (new \DateTime($this->toDate))->format('d-m-Y');
 		$startDate		 = (new \DateTime($startDate));
 		$duration		 = explode(':', $lessonTime);
 		$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
-		$endDate		 = $lastLessonDate->add(new \DateInterval('P'.$count.'D'));
-		$interval		 = new \DateInterval('P1D');
-		$period			 = new \DatePeriod($startDate, $interval, $endDate);
-		$lessonDay		 = (new \DateTime($firstLesson->date))->format('N');
-		foreach ($period as $day) {
-			$professionalDevelopmentDay = clone $day;
+		$day = new \DateTime($firstLesson->date);
+		$startDate->modify('next '.$day->format('l'));
+		$professionalDevelopmentDay = clone $startDate;
+		$professionalDevelopmentDay->modify('last day of previous month');
+		$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
+		if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+			$startDate->modify('next '.$day->format('l'));
+		}
+		foreach($lessons as $lesson){
+			$newLesson = new Lesson();
+			$newLesson->setAttributes([
+				'courseId' => $lesson->courseId,
+				'teacherId' => $lesson->teacherId,
+				'status' => Lesson::STATUS_DRAFTED,
+				'date' => $startDate->format('Y-m-d H:i:s'),
+				'duration' => $lesson->duration,
+				'isDeleted' => false,
+			]);
+			$newLesson->save();
+			$day = new \DateTime($lesson->date);
+			$startDate->modify('next '.$day->format('l'));
+			$professionalDevelopmentDay = clone $startDate;
 			$professionalDevelopmentDay->modify('last day of previous month');
 			$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
-			if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-				continue;
-			}
-			if ((int) $day->format('N') === (int) $lessonDay) {
-				$newLesson = new Lesson();
-				$newLesson->setAttributes([
-					'courseId' => $firstLesson->courseId,
-					'teacherId' => $firstLesson->teacherId,
-					'status' => Lesson::STATUS_DRAFTED,
-					'date' => $day->format('Y-m-d H:i:s'),
-					'duration' => $firstLesson->duration,
-					'isDeleted' => false,
-				]);
-				$newLesson->save();
+			if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+				$startDate->modify('next '.$day->format('l'));
 			}
 		}
 	}
