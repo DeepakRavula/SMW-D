@@ -51,7 +51,7 @@ class InvoiceController extends Controller
     {
         $searchModel = new InvoiceSearch();
         $searchModel->invoiceStatus = Invoice::STATUS_OWING;
-        $searchModel->mailStatus = InvoiceSearch::STATUS_MAIL_SENT;
+        $searchModel->mailStatus = InvoiceSearch::STATUS_MAIL_NOT_SENT;
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

@@ -78,10 +78,11 @@ class InvoiceSearch extends Invoice
         $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
         $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
 
-        $query->andWhere(['between', 'i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
-
-        $query->andFilterWhere(['type' => $this->type]);
 		if ((int) $this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+			$currentDate = new \DateTime();
+			$this->toDate = $currentDate;
+			$fromDate = clone $currentDate;
+			$this->fromDate =  $fromDate->modify('-90 days');
 			if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
 				$query->mailSent();
 			} elseif ((int) $this->mailStatus === self::STATUS_MAIL_NOT_SENT) {
@@ -93,6 +94,10 @@ class InvoiceSearch extends Invoice
 				$query->paid()->proFromaInvoice();
 			}
 		}
+        $query->andWhere(['between', 'i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+
+        $query->andFilterWhere(['type' => $this->type]);
+		
 		return $dataProvider;
     }
 
@@ -109,7 +114,7 @@ class InvoiceSearch extends Invoice
         return [
             self::STATUS_ALL => 'All',
             self::STATUS_MAIL_SENT => 'Sent',
-			self::STATUS_MAIL_NOT_SENT => 'Not Sent'
+			self::STATUS_MAIL_NOT_SENT => 'Unsent'
         ];
     }
 
