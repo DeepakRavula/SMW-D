@@ -79,10 +79,6 @@ class InvoiceSearch extends Invoice
         $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
 
 		if ((int) $this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
-			$currentDate = new \DateTime();
-			$this->toDate = $currentDate;
-			$fromDate = clone $currentDate;
-			$this->fromDate =  $fromDate->modify('-90 days');
 			if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
 				$query->mailSent();
 			} elseif ((int) $this->mailStatus === self::STATUS_MAIL_NOT_SENT) {
