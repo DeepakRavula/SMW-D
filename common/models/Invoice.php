@@ -141,7 +141,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
-			if(empty($this->lineItem)) {
+			if(empty($this->lineItems)) {
                 return parent::afterSave($insert, $changedAttributes);
             }
             $existingSubtotal = $this->subTotal;
