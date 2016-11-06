@@ -3,6 +3,7 @@
 use yii\data\ActiveDataProvider;
 use common\models\Vacation;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -58,7 +59,22 @@ echo GridView::widget([
 
             },
         ],
-    ],
+		[
+			'class' => 'yii\grid\ActionColumn',
+			'template' => '{delete}',
+			'buttons' => [
+				'delete' => function ($url, $model, $key) {
+					return Html::a('<i class="fa fa-times" aria-hidden="true"></i>',
+							['vacation/delete', 'id' => $model->id, 'studentId' => $model->student->id],
+							[
+							'data' => [
+								'method' => 'post',
+							],
+					]);
+				},
+				],
+			],
+		],
 ]);
 ?>
 <?php \yii\widgets\Pjax::end(); ?>

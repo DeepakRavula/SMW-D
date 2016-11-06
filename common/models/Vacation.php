@@ -16,6 +16,7 @@ use Yii;
 class Vacation extends \yii\db\ActiveRecord
 {
 	const EVENT_PUSH = 'event-push';
+	const EVENT_RESTORE = 'event-restore';
 	public $courseId;
     /**
      * @inheritdoc
@@ -89,6 +90,56 @@ class Vacation extends \yii\db\ActiveRecord
 		$firstLesson = ArrayHelper::getValue($lessons, 0);
 		$lessonTime		 = (new \DateTime($firstLesson->date))->format('H:i:s');
 		$startDate		 = (new \DateTime($this->toDate))->format('d-m-Y');
+		$startDate		 = new \DateTime($startDate);
+		$duration		 = explode(':', $lessonTime);
+		$day = new \DateTime($firstLesson->date);
+		$startDate->modify('next '.$day->format('l'));
+		$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+		$professionalDevelopmentDay = clone $startDate;
+		$professionalDevelopmentDay->modify('last day of previous month');
+		$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
+		if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+			$startDate->modify('next '.$day->format('l'));
+			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+		}
+		foreach($lessons as $lesson){
+			$originalLessonId = $lesson->id;
+			$lesson->status = Lesson::STATUS_CANCELED;
+			$lesson->save();
+			$lesson->id = null;
+			$lesson->isNewRecord = true;
+			$lesson->status = Lesson::STATUS_DRAFTED;
+			$lesson->date = $startDate->format('Y-m-d H:i:s');
+			$lesson->save();
+
+			$lessonRescheduleModel = new LessonReschedule();
+			$lessonRescheduleModel->lessonId = $originalLessonId;
+			$lessonRescheduleModel->rescheduledLessonId = $lesson->id;
+			$lessonRescheduleModel->save();
+			$day = new \DateTime($lesson->date);
+			$startDate->modify('next '.$day->format('l'));
+			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+			$professionalDevelopmentDay = clone $startDate;
+			$professionalDevelopmentDay->modify('last day of previous month');
+			$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
+			if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+				$startDate->modify('next '.$day->format('l'));
+				$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+			}
+		}
+	}
+
+	public function reStoreLessons($fromDate, $toDate, $course)
+	{
+		$lessons = Lesson::find()
+			->scheduled()
+			->where(['courseId' => $course->id])
+			->andWhere(['>', 'date', $toDate])
+			->all();
+
+		$firstLesson = ArrayHelper::getValue($lessons, 0);
+		$lessonTime		 = (new \DateTime($firstLesson->date))->format('H:i:s');
+		$startDate		 = (new \DateTime($fromDate))->format('d-m-Y');
 		$startDate		 = new \DateTime($startDate);
 		$duration		 = explode(':', $lessonTime);
 		$day = new \DateTime($firstLesson->date);
