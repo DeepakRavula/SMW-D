@@ -59,7 +59,6 @@ class UserForm extends Model
             ['lastname', 'required', 'on' => 'create'],
             ['lastname', 'string', 'min' => 2, 'max' => 255], ['email', 'filter', 'filter' => 'trim'],
 
-            ['email', 'safe'],
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => User::className(), 'filter' => function ($query) {
                 if (!$this->getModel()->isNewRecord) {
@@ -75,9 +74,7 @@ class UserForm extends Model
                 )],
             ],
             ['roles', 'required'],
-            ['notes', 'safe'],
-               ['locations', 'safe'],
-            [['phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
+            [['notes', 'locations', 'phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
             [['addresslabel', 'postalcode', 'province', 'city', 'country'], 'safe'],
         ];
     }
