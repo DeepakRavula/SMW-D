@@ -127,12 +127,14 @@ use kartik\switchinput\SwitchInput;
               <div class="clearfix"></div>
             </div>
           </div>
+	<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
 	<div id="add-misc-item" class="col-md-12">
     <div class="row m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>
 	<div class="clearfix"></div>
   </div>
 	</div>
+	<?php endif; ?>
 	<?php echo $this->render('_line-item', [
         'invoiceModel' => $model,
     ]) ?>

@@ -127,6 +127,10 @@ class Invoice extends \yii\db\ActiveRecord
         return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
     }
 
+	public function isInvoice()
+	{
+        return (int) $this->type === (int) Invoice::TYPE_INVOICE;
+	}
     public function getCreditAppliedTotal()
     {
         $creditUsageTotal = Payment::find()
