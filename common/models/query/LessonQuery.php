@@ -156,6 +156,13 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+ 	public function canceled()
+    {
+        $this->andFilterWhere(['lesson.status' => Lesson::STATUS_CANCELED]);
+
+        return $this;
+    }
+
     public function between($fromDate, $toDate)
     {
         return $this->andFilterWhere(['between', 'lesson.date', $fromDate->format('Y-m-d 00:00:00'), $toDate->format('Y-m-d 23:59:59')]);

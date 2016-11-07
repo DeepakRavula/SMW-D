@@ -9,7 +9,7 @@ use common\models\Enrolment;
 use common\models\Program;
 use common\models\Course;
 use common\models\Invoice;
-use common\models\InvoiceLineItem;
+use common\models\LessonReschedule;
 use common\models\ItemType;
 use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
@@ -262,11 +262,12 @@ class LessonController extends Controller
     public function actionReview($courseId)
     {
         $request = Yii::$app->request;
-        $studentRequest = $request->get('Student');
+        $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
         $lessonFromDate = $courseRequest['lessonFromDate'];
         $lessonToDate = $courseRequest['lessonToDate'];
-        $vacationId = $studentRequest['vacationId'];
+        $vacationId = $vacationRequest['id'];
+        $vacationType = $vacationRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
         $draftLessons = Lesson::find()
             ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
@@ -308,7 +309,8 @@ class LessonController extends Controller
             'conflicts' => $conflicts,
             'lessonFromDate' => $lessonFromDate,
             'lessonToDate' => $lessonToDate,
-			'vacationId' => $vacationId
+			'vacationId' => $vacationId,
+			'vacationType' => $vacationType,
         ]);
     }
 
@@ -354,14 +356,33 @@ class LessonController extends Controller
             $enrolmentModel->save();
         }
         $courseRequest = $request->get('Course');
-        $studentRequest = $request->get('Student');
+        $vacationRequest = $request->get('Vacation');
         $lessonFromDate = $courseRequest['lessonFromDate'];
         $lessonToDate = $courseRequest['lessonToDate'];
-        $vacationId = $studentRequest['vacationId'];
+        $vacationId = $vacationRequest['id'];
+        $vacationType = $vacationRequest['type'];
 		if(! empty($vacationId)) {
-			$vacation = Vacation::findOne(['id' => $vacationId]);
-			$vacation->isConfirmed = true;
-			$vacation->save();
+			if($vacationType === Vacation::TYPE_CREATE) {
+				$vacation = Vacation::findOne(['id' => $vacationId]);
+				$fromDate = (new \DateTime($vacation->fromDate))->format('Y-m-d');
+				$vacation->isConfirmed = true;
+				$vacation->save();
+				$oldLessons = Lesson::find()
+					->where(['courseId' => $courseId])
+					->andWhere(['>', 'lesson.date', $fromDate])
+					->canceled()
+					->all();
+				$oldLessonIds = [];
+				foreach ($oldLessons as $oldLesson) {
+					$oldLessonIds[] = $oldLesson->id;
+				}
+				foreach ($lessons as $i => $lesson) {
+					$lessonRescheduleModel = new LessonReschedule();
+					$lessonRescheduleModel->lessonId = $oldLessonIds[$i];
+					$lessonRescheduleModel->rescheduledLessonId = $lesson->id;
+					$lessonRescheduleModel->save();
+				}
+			}
 		}
         if (!(empty($lessonFromDate) && empty($lessonToDate))) {
             $lessonFromDate = \DateTime::createFromFormat('d-m-Y', $lessonFromDate);

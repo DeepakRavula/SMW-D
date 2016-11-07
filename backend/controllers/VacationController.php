@@ -74,7 +74,8 @@ class VacationController extends Controller
             return $this->redirect([
 				'lesson/review',
 				'courseId' => $model->courseId,
-				'Student[vacationId]' => $model->id
+				'Vacation[id]' => $model->id,
+				'Vacation[type]' => Vacation::TYPE_CREATE
 			]);
         } else {
             return $this->render('create', [

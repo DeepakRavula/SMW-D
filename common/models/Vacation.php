@@ -17,7 +17,10 @@ class Vacation extends \yii\db\ActiveRecord
 {
 	const EVENT_PUSH = 'event-push';
 	const EVENT_RESTORE = 'event-restore';
+	const TYPE_CREATE = 'create';
+	const TYPE_DELETE = 'delete';
 	public $courseId;
+	public $type;
     /**
      * @inheritdoc
      */
@@ -112,10 +115,6 @@ class Vacation extends \yii\db\ActiveRecord
 			$lesson->date = $startDate->format('Y-m-d H:i:s');
 			$lesson->save();
 
-			$lessonRescheduleModel = new LessonReschedule();
-			$lessonRescheduleModel->lessonId = $originalLessonId;
-			$lessonRescheduleModel->rescheduledLessonId = $lesson->id;
-			$lessonRescheduleModel->save();
 			$day = new \DateTime($lesson->date);
 			$startDate->modify('next '.$day->format('l'));
 			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
