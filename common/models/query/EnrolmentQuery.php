@@ -41,7 +41,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
 
     public function isConfirmed()
     {
-        return $this->where(['enrolment.isConfirmed' => true]);
+        return $this->andWhere(['enrolment.isConfirmed' => true]);
     }
 
     public function location($locationId)

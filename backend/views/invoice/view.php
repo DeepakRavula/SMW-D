@@ -44,7 +44,7 @@ if (!empty($lineItem)) {
 }
 
 ?>
-<?php if ((int) $model->user_id === Invoice::USER_UNASSINGED || (int) $model->total === 0 || (int) $itemTypeId === ItemType::TYPE_MISC):?>
+<?php if(empty($model->lineItem) || $model->lineItem->isMisc()) : ?>
 <div class="tabbable-panel">
      <div class="tabbable-line">
 <?php 
