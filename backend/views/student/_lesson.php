@@ -90,33 +90,3 @@ echo GridView::widget([
 ?>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
-<script>
-$(document).ready(function() {
-	$('#new-lesson').click(function(){
-	$('#new-lesson-modal').modal('show');
-		return false;
-  });
-  });
-  $(document).on('beforeSubmit', '#lesson-form', function (e) {
-	$.ajax({
-		url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
-		type   : 'post',
-		dataType: "json",
-		data   : $(this).serialize(),
-		success: function(response)
-		{
-		   if(response.status)
-		   {
-				$.pjax.reload({container : '#student-lesson-listing', timeout : 4000});
-				$('#new-lesson-modal').modal('hide');
-			}else
-			{
-			 $('#lesson-form').yiiActiveForm('updateMessages',
-				   response.errors
-				, true);
-			}
-		}
-		});
-		return false;
-});
-</script>

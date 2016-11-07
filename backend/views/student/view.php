@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
 use common\models\Vacation;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -76,13 +77,36 @@ $vacationContent = $this->render('_vacation', [
  </div>
 <script>
  $(document).ready(function() {
-     $('.add-new-lesson').click(function(){
-       $('.lesson-create').show();
-   });
    $('.add-new-vacation').click(function(){
        $('.vacation-create').show();
    });
+   $('#new-lesson').click(function(){
+	$('#new-lesson-modal').modal('show');
+		return false;
+  });
  });
+$(document).on('beforeSubmit', '#lesson-form', function (e) {
+	$.ajax({
+		url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
+		type   : 'post',
+		dataType: "json",
+		data   : $(this).serialize(),
+		success: function(response)
+		{
+		   if(response.status)
+		   {
+				$.pjax.reload({container : '#student-lesson-listing', timeout : 4000});
+				$('#new-lesson-modal').modal('hide');
+			}else
+			{
+			 $('#lesson-form').yiiActiveForm('updateMessages',
+				   response.errors
+				, true);
+			}
+		}
+		});
+		return false;
+});
 </script>
 
 

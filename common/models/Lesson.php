@@ -59,14 +59,44 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
+            [['date', 'courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId', 'notes', 'teacherId'], 'safe'],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
-            ['date', 'checkConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
+            ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
+            ['date', 'checkDateConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
         ];
     }
+
+    public function checkLessonConflict($attribute, $params)
+	{
+		$lessonIntervals = $this->lessonIntervals();
+        $tree = new IntervalTree($lessonIntervals);
+        $conflictedLessonIds = [];
+        $conflictedLessonsResults = $tree->search(new \DateTime($this->date));
+        foreach ($conflictedLessonsResults as $conflictedLessonsResult) {
+            $conflictedLessonIds[] = $conflictedLessonsResult->id;
+        }
+        if ((!empty($conflictedLessonIds))) {
+            $this->addError($attribute, 'Lesson date conflicts with another lesson');
+        }
+	}
+
+	public function checkDateConflict($attribute, $params)
+	{
+		$intervals = $this->dateIntervals();
+        $tree = new IntervalTree($intervals);
+        $conflictedDates = [];
+        $conflictedDatesResults = $tree->search(new \DateTime($this->date));
+        foreach ($conflictedDatesResults as $conflictedDatesResult) {
+            $startDate = $conflictedDatesResult->getStart();
+            $conflictedDates[] = $startDate->format('Y-m-d');
+        }
+        if (!empty($conflictedDates)) {
+            $this->addError($attribute, 'Lesson time conflicts with holiday');
+        }
+	}
 
     public function checkRescheduleLessonTime($attribute, $params)
     {

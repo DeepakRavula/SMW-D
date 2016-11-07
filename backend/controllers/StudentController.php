@@ -96,42 +96,13 @@ class StudentController extends Controller
         $unscheduledLessonDataProvider = new ActiveDataProvider([
             'query' => $unscheduledLessons,
         ]);    
-/*
-		$lessonModel = new Lesson();
-		$request = Yii::$app->request;
-		$response = Yii::$app->response;
-        if($lessonModel->load($request->post())) {
-           $studentEnrolment = Enrolment::find()
-				   ->joinWith(['course' => function($query) use($lessonModel){
-					   $query->where(['course.programId' => $lessonModel->programId]);
-				   }])
-			  		->where(['studentId' => $model->id])
-					->one();
-            $lessonModel->courseId = $studentEnrolment->courseId;
-            $lessonModel->status = Lesson::STATUS_SCHEDULED;
-            $lessonModel->isDeleted = false;
-            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $lessonModel->date);
-            $lessonModel->date = $lessonDate->format('Y-m-d H:i:s');
-            $lessonModel->duration = $studentEnrolment->course->duration;
-            $lessonModel->save();
-            Yii::$app->session->setFlash('alert', [
-                    'options' => ['class' => 'alert-success'],
-                    'body' => 'Lesson has been created successfully',
-            ]);
-            	return $this->redirect(['view', 'id' => $model->id,'#' => 'lesson']);
-        }
- * 
- */
 
-		  //else {
-
-			return $this->render('view', [
-				'model' => $model,
-				'lessonDataProvider' => $lessonDataProvider,
-				'enrolmentDataProvider' => $enrolmentDataProvider,
-				'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
-			]);
-		//}
+		return $this->render('view', [
+			'model' => $model,
+			'lessonDataProvider' => $lessonDataProvider,
+			'enrolmentDataProvider' => $enrolmentDataProvider,
+			'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
+		]);
     }
 
     /**
