@@ -74,7 +74,8 @@ class VacationController extends Controller
             return $this->redirect([
 				'lesson/review',
 				'courseId' => $model->courseId,
-				'Student[vacationId]' => $model->id
+				'Vacation[id]' => $model->id,
+				'Vacation[type]' => Vacation::TYPE_CREATE
 			]);
         } else {
             return $this->render('create', [
@@ -108,11 +109,21 @@ class VacationController extends Controller
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete($id, $studentId)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id);
+		$enrolment = $model->student->enrolment;
+		$enrolmentModel = current($enrolment);
+		$course = Course::findOne(['id' => $enrolmentModel->courseId]);
+	    $model->trigger(Vacation::EVENT_RESTORE);
+        $model->on(Vacation::EVENT_RESTORE, $model->restoreLessons($model->fromDate, $model->toDate, $course));
+		
+        return $this->redirect([
+			'lesson/review',
+			'courseId' => $course->id,
+			'Vacation[id]' => $model->id,
+			'Vacation[type]' => Vacation::TYPE_DELETE
+		]);
     }
 
     /**

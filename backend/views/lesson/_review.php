@@ -171,7 +171,7 @@ $this->title = 'Review Lessons';
         }
         ?>
 		<?php if(! empty($vacationId)) :?>
-		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Student[vacationId]' => $vacationId], [
+		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Vacation[id]' => $vacationId, 'Vacation[type]' => $vacationType], [
             'class' => 'btn btn-danger',
             'id' => 'confirm-button',
             'disabled' => $hasConflict,
