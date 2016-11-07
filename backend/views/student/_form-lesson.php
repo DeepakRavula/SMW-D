@@ -12,4 +12,3 @@ Modal::begin([
         'studentModel' => $studentModel,
 ]);
 Modal::end();
-?>
