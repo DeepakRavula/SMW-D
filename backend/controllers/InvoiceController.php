@@ -146,18 +146,18 @@ class InvoiceController extends Controller
 
         if ($request->isPost) {
             if (isset($_POST['customer-invoice'])) {
-                if ($model->load(Yii::$app->request->post())) {
+                if ($model->load($request->post())) {
                     $model->user_id = $customer->id;
                     $model->save();
                 }
             }
             if (isset($_POST['guest-invoice'])) {
-                if ($customer->load(Yii::$app->request->post())) {
+                if ($customer->load($request->post())) {
                     if ($customer->save()) {
                         $model->user_id = $customer->id;
                         $model->save();
 
-                        if ($userModel->load(Yii::$app->request->post())) {
+                        if ($userModel->load($request->post())) {
                             $userModel->user_id = $customer->id;
                             $userModel->save();
                             $auth = Yii::$app->authManager;
