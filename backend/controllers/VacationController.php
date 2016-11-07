@@ -121,7 +121,8 @@ class VacationController extends Controller
         return $this->redirect([
 			'lesson/review',
 			'courseId' => $course->id,
-			'Student[vacationId]' => $studentId
+			'Vacation[id]' => $model->id,
+			'Vacation[type]' => Vacation::TYPE_DELETE
 		]);
     }
 

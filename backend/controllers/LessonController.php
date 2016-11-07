@@ -362,26 +362,39 @@ class LessonController extends Controller
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
 		if(! empty($vacationId)) {
+			$vacation = Vacation::findOne(['id' => $vacationId]);
+			$fromDate = (new \DateTime($vacation->fromDate))->format('Y-m-d');
+			$toDate = (new \DateTime($vacation->toDate))->format('Y-m-d');
 			if($vacationType === Vacation::TYPE_CREATE) {
-				$vacation = Vacation::findOne(['id' => $vacationId]);
-				$fromDate = (new \DateTime($vacation->fromDate))->format('Y-m-d');
 				$vacation->isConfirmed = true;
 				$vacation->save();
 				$oldLessons = Lesson::find()
-					->where(['courseId' => $courseId])
-					->andWhere(['>', 'lesson.date', $fromDate])
-					->canceled()
-					->all();
+				->where(['courseId' => $courseId])
+				->andWhere(['>', 'lesson.date', $fromDate])
+				->canceled()
+				->all();
 				$oldLessonIds = [];
 				foreach ($oldLessons as $oldLesson) {
 					$oldLessonIds[] = $oldLesson->id;
 				}
-				foreach ($lessons as $i => $lesson) {
-					$lessonRescheduleModel = new LessonReschedule();
-					$lessonRescheduleModel->lessonId = $oldLessonIds[$i];
-					$lessonRescheduleModel->rescheduledLessonId = $lesson->id;
-					$lessonRescheduleModel->save();
+			} else {
+				$oldLessons = Lesson::find()
+				->where(['courseId' => $courseId])
+				->andWhere(['>', 'lesson.date', $toDate])
+				->canceled()
+				->all();
+				$oldLessonIds = [];
+				foreach ($oldLessons as $oldLesson) {
+					$oldLessonIds[] = $oldLesson->id;
 				}
+				$vacation->delete();
+			}
+			
+			foreach ($lessons as $i => $lesson) {
+				$lessonRescheduleModel = new LessonReschedule();
+				$lessonRescheduleModel->lessonId = $oldLessonIds[$i];
+				$lessonRescheduleModel->rescheduledLessonId = $lesson->id;
+				$lessonRescheduleModel->save();
 			}
 		}
         if (!(empty($lessonFromDate) && empty($lessonToDate))) {
@@ -414,7 +427,7 @@ class LessonController extends Controller
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Lessons have been created successfully',
         ]);
-		if (! empty($courseModel->enrolment->vacation)) {
+		if (! empty($courseModel->enrolment->vacation) || empty($courseModel->enrolment->vacation)) {
             return $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
 
 		}
