@@ -322,7 +322,7 @@ class Lesson extends \yii\db\ActiveRecord
         ];
     }
 
-    public function afterSave($insert, $changedAttributes)
+	public function afterSave($insert, $changedAttributes)
     {
         if ((int) $this->status !== (int) self::STATUS_DRAFTED) {
             if (!$insert) {

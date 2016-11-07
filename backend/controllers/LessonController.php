@@ -115,7 +115,6 @@ class LessonController extends Controller
 			}
 			return $response;
 			}
-            //return $this->redirect(['view', 'id' => $model->course->enrolment->student->id]);
         else {
             return $this->render('create', [
                 'model' => $model,
