@@ -13,7 +13,6 @@ use yii\helpers\Url;
 /* @var $model common\models\Lesson */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-
 <div class="lesson-form">
 <?php if (Yii::$app->controller->id === 'lesson'): ?>
 	<?=
@@ -23,10 +22,11 @@ use yii\helpers\Url;
     ?>
 <?php endif; ?>
 <?php $form = ActiveForm::begin([
+	'id' => 'lesson-form',
 ]); ?>
 <div class="row p-20">
 	<?php if ($model->isNewRecord): ?>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <?php echo $form->field($model, 'programId')->dropDownList(
                     ArrayHelper::map(
                         Program::find()
@@ -39,7 +39,7 @@ use yii\helpers\Url;
                      'id', 'name'), ['prompt' => 'Select Program'])->label()
             ?>  
         </div>
-    	<div class="col-md-4">
+    	<div class="col-md-6">
         <?php
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
@@ -53,7 +53,7 @@ use yii\helpers\Url;
         ?>
         </div>
 		<?php endif; ?>
-		<div class="col-md-4">
+		<div class="col-md-6">
             <?php 
               if ($model->isNewRecord) {
                   $model->date = (new \DateTime())->format('d-m-Y g:i A');
@@ -81,7 +81,6 @@ use yii\helpers\Url;
             <?php echo $form->field($model, 'notes')->textarea() ?>
         </div> 
         <div class="clearfix"></div>
-    </div>
     <div class="col-md-12 p-l-20 form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
         <?php
@@ -89,6 +88,7 @@ use yii\helpers\Url;
             echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
         }
         ?>
+    </div>
     </div>
 <?php ActiveForm::end(); ?>
 

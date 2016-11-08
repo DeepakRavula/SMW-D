@@ -6,23 +6,21 @@ use common\models\Invoice;
 use yii\grid\GridView;
 
 ?>
-<div class="col-md-12">
+<div id="new-lesson" class="col-md-12">
 	<h4 class="pull-left m-r-20">Lessons</h4>
- <a href="#" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
- <div class="clearfix"></div>
- </div>
- <div class="dn lesson-create section-tab">
-     <?php echo $this->render('//lesson/_form', [
-         'model' => new Lesson(),
-         'studentModel' => $model,
-
-         ])
-             ?>
-
+	<a href="#" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
+	<div class="clearfix"></div>
 </div>
+<?php
+echo $this->render('_form-lesson', [
+	'model' => new Lesson(),
+	'studentModel' => $model,
+])
+?>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
-    'timeout' => 6000,
+	'id' => 'student-lesson-listing',
+	'timeout' => 6000,
 ]) ?>
 <?php
 echo GridView::widget([

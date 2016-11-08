@@ -23,6 +23,7 @@ use common\models\CreditUsage;
 use yii\web\Response;
 use common\models\Vacation;
 
+use yii\widgets\ActiveForm;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -80,13 +81,41 @@ class LessonController extends Controller
      *
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($studentId)
     {
+		$response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+		$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
+		$request = Yii::$app->request;
+        if ($model->load($request->post())) {
+			$studentEnrolment = Enrolment::find()
+			   ->joinWith(['course' => function($query) use($model){
+				   $query->where(['course.programId' => $model->programId]);
+			   }])
+				->where(['studentId' => $studentId])
+				->one();
+            $model->courseId = $studentEnrolment->courseId;
+            $model->status = Lesson::STATUS_SCHEDULED;
+		    $model->isDeleted = false;
+            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+            $model->date = $lessonDate->format('Y-m-d H:i:s');
+			$model->duration = $studentEnrolment->course->duration;
+			if ($model->validate()) {
+	            $model->save();
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$errors = ActiveForm::validate($model);
+				$response = [
+					'status' => false,
+					'errors' =>  $errors
+				];
+			}
+			return $response;
+			}
+        else {
             return $this->render('create', [
                 'model' => $model,
             ]);
