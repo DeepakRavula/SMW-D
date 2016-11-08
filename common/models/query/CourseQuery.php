@@ -45,4 +45,8 @@ class CourseQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
+
+	public function location($locationId) {
+		return $this->andWhere(['locationId' => $locationId]);
+	}
 }

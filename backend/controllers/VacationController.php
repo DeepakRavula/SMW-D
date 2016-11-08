@@ -61,12 +61,15 @@ class VacationController extends Controller
     public function actionCreate($studentId)
     {
         $model = new Vacation();
-
+		$locationId = Yii::$app->session->get('location_id');
         if ($model->load(Yii::$app->request->post())) {
 			$model->studentId = $studentId;
 			$enrolment = $model->student->enrolment;
 			$enrolmentModel = current($enrolment);
-			$course = Course::findOne(['id' => $enrolmentModel->courseId]);
+			$course = Course::find()
+				->where(['id' => $enrolmentModel->courseId])
+				->location($locationId)
+				->one();
 			$model->courseId = $course->id;
 			$model->save();
             $model->on(Vacation::EVENT_PUSH, $model->pushLessons());
@@ -111,10 +114,14 @@ class VacationController extends Controller
      */
     public function actionDelete($id, $studentId)
     {
+		$locationId = Yii::$app->session->get('location_id');
         $model = $this->findModel($id);
 		$enrolment = $model->student->enrolment;
 		$enrolmentModel = current($enrolment);
-		$course = Course::findOne(['id' => $enrolmentModel->courseId]);
+		$course = Course::find()
+			->where(['id' => $enrolmentModel->courseId])
+			->location($locationId)
+			->one();
 	    $model->trigger(Vacation::EVENT_RESTORE);
         $model->on(Vacation::EVENT_RESTORE, $model->restoreLessons($model->fromDate, $model->toDate, $course));
 		
