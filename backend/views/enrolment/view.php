@@ -18,9 +18,6 @@ $this->title = $model->student->fullName.' - '.$model->course->program->name;
 	<?php if ((int) $model->course->program->type !== (int) Program::TYPE_GROUP_PROGRAM) : ?>
 		<?php $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Bulk Reschedule', ['update', 'id' => $model->id], ['class' => ' m-l-20 btn btn-sm btn-primary']) ?>
 	<?php endif; ?>
-	<?php if ((int) $model->lessons[0]->status === (int) Lesson::STATUS_DRAFTED) : ?>
-	<a href= '<?= Url::to(['course/'.$model->course->id.'/lesson-review'])?>' class=' m-l-20'><i class="fa fa-book"></i>Review Lessons</a>
-	<?php endif; ?>
     <div class="clearfix"></div>
     <h4><strong><?= 'Schedule of Lessons' ?> </strong></h4> 
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
