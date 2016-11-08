@@ -423,32 +423,30 @@ class LessonController extends Controller
             }
         }
 
-        Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Lessons have been created successfully',
-        ]);
-		if (! empty($courseModel->enrolment->vacation) || empty($courseModel->enrolment->vacation)) {
-            return $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
-
+		if ((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
+			$lessonDate		 = (new \DateTime($lessons[0]->date))->format('d-m-Y');
+			$lessonStartDate = new \DateTime($lessons[0]->date);
+			$lessonEndDate	 = $lessonStartDate->modify('+1 month');
+			$message		 = 'Lessons have been created successfully';
+			$link			 = $this->redirect([
+				'invoice/create',
+				'Invoice[customer_id]' => $courseModel->enrolment->student->customer->id,
+				'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
+				'LessonSearch[fromDate]' => $lessonDate,
+				'LessonSearch[toDate]' => $lessonEndDate->format('d-m-Y'),
+				'LessonSearch[courseId]' => $courseModel->id,
+			]);
+		} else {
+			$message = 'Course has been created successfully';
+			$link	 = $this->redirect(['course/view', 'id' => $courseId]);
 		}
-        if ((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
-            $lessonDate = (new \DateTime($lessons[0]->date))->format('d-m-Y');
-            $lessonStartDate = new \DateTime($lessons[0]->date);
-            $lessonEndDate = $lessonStartDate->modify('+1 month');
-
-            return $this->redirect([
-                'invoice/create',
-                'Invoice[customer_id]' => $courseModel->enrolment->student->customer->id,
-                'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
-                'LessonSearch[fromDate]' => $lessonDate,
-                'LessonSearch[toDate]' => $lessonEndDate->format('d-m-Y'),
-                'LessonSearch[courseId]' => $courseModel->id,
-            ]);
-
-        } else {
-            return $this->redirect(['course/view', 'id' => $courseId]);
-        }
-    }
+		Yii::$app->session->setFlash('alert',
+			[
+			'options' => ['class' => 'alert-success'],
+			'body' => $message,
+		]);
+		return $link;
+	}
 
     public function actionInvoice($id)
     {
