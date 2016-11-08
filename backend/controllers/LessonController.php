@@ -484,6 +484,15 @@ class LessonController extends Controller
         $currentDate = new \DateTime();
         $location_id = Yii::$app->session->get('location_id');
 
+        if($model->invoice) {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => 'Invoice has been generated already!.',
+            ]);
+
+            return $this->redirect(['lesson/view', 'id' => $id]);
+        }
+
         if ($lessonDate <= $currentDate) {
             $invoice = new Invoice();
             $invoice->user_id = $model->enrolment->student->customer->id;
