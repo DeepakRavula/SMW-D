@@ -128,11 +128,11 @@ class Vacation extends \yii\db\ActiveRecord
 		}
 	}
 
-	public function restoreLessons($fromDate, $toDate, $course)
+	public function restoreLessons($fromDate, $toDate, $courseId)
 	{
 		$lessons = Lesson::find()
 			->scheduled()
-			->where(['courseId' => $course->id])
+			->where(['courseId' => $courseId])
 			->andWhere(['>', 'date', $toDate])
 			->all();
 
