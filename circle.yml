@@ -11,4 +11,5 @@ deployment:
     branch: master
     commands:
       - ssh smwkristin@107.170.32.79 'cd /home/smwkristin/smw && git pull'
+      - ssh smwkristin@107.170.32.79 'cd /home/smwkristin/smw && composer install'
       - ssh smwkristin@107.170.32.79 'cd /home/smwkristin/smw && console/yii migrate/up --interactive=0'
