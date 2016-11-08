@@ -20,6 +20,7 @@ class Enrolment extends \yii\db\ActiveRecord
     const PAYMENT_FREQUENCY_FULL = 1;
     const PAYMENT_FREQUENCY_MONTHLY = 2;
     const PAYMENT_FREQUENCY_QUARTERLY = 3;
+    const PAYMENT_FREQUENCY_HALFYEARLY = 4;
     /**
      * {@inheritdoc}
      */
@@ -115,6 +116,21 @@ class Enrolment extends \yii\db\ActiveRecord
         return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_MONTHLY;
     }
 
+    public function isQuaterlyPaymentFrequency()
+    {
+        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_QUARTERLY;
+    }
+
+    public function isHalfYearlyPaymentFrequency()
+    {
+        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_HALFYEARLY;
+    }
+
+    public function isAnnualPaymentFrequency()
+    {
+        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_FULL;
+    }
+
     public static function paymentFrequencies()
     {
         return [
@@ -156,5 +172,27 @@ class Enrolment extends \yii\db\ActiveRecord
                 $lesson->save();
             }
         }
+    }
+
+    public function getLastDateOfPaymentCycle()
+    {
+        $priorDate             = (new \DateTime())->modify('+15 day');
+        $paymentCycleStartDate = \DateTime::createFromFormat('Y-m-d', $priorDate->format('Y-m-1'));
+        switch ($this->paymentFrequency) {
+            case self::PAYMENT_FREQUENCY_FULL:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 year, -1 day');
+                break;
+            case self::PAYMENT_FREQUENCY_HALFYEARLY:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+6 month, -1 day');
+                break;
+            case self::PAYMENT_FREQUENCY_QUARTERLY:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+3 month, -1 day');
+                break;
+            case self::PAYMENT_FREQUENCY_MONTHLY:
+                $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 month, -1 day');
+                break;
+        }
+
+        return $paymentCycleEndDate;
     }
 }

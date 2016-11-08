@@ -24,23 +24,25 @@ class InvoiceController extends Controller
          */
         $priorDate             = (new \DateTime())->modify('+15 day');
         $matchedLessons        = Lesson::find()
-            ->unInvoiced()
+            ->unInvoicedProForma()
             ->scheduled()
             ->between($priorDate, $priorDate)
             ->all();
-        $monthFirstDate        = \DateTime::createFromFormat('Y-m-d',
+        $paymentCycleStartDate        = \DateTime::createFromFormat('Y-m-d',
                 $priorDate->format('Y-m-1'));
-        $monthLastDate         = \DateTime::createFromFormat('Y-m-d',
-                $priorDate->format('Y-m-t'));
         if (!empty($matchedLessons)) {
             foreach ($matchedLessons as $matchedLesson) {
-                if (!$matchedLesson->isFirstLessonDate($priorDate) || !$matchedLesson->enrolment->isMonthlyPaymentFrequency()) {
+                $paymentCycleEndDate = $matchedLesson->enrolment->getLastDateOfPaymentCycle();
+                if(!$matchedLesson->isFirstLessonDate($paymentCycleStartDate, $paymentCycleEndDate)) {
                     continue;
                 }
+                $paymentCycleStartDate        = \DateTime::createFromFormat('Y-m-d',
+                        $priorDate->format('Y-m-1'));
                 $lessons             = Lesson::find()
                         ->where(['courseId' => $matchedLesson->courseId])
+                        ->unInvoicedProForma()
                         ->scheduled()
-                        ->between($monthFirstDate, $monthLastDate)
+                        ->between($paymentCycleStartDate, $paymentCycleEndDate)
                         ->all();
                 $invoice              = new Invoice();
                 $invoice->type        = Invoice::TYPE_PRO_FORMA_INVOICE;
