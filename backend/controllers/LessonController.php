@@ -135,7 +135,7 @@ class LessonController extends Controller
         $model = $this->findModel($id);
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
         $currentDate = new \DateTime();
-        if ($lessonDate > $currentDate) {
+        if ($lessonDate < $currentDate) {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
                 'body' => 'Completed lessons cannot be editable!.',
