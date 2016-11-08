@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Course;
+use common\models\Enrolment;
 /**
  * VacationController implements the CRUD actions for Vacation model.
  */
@@ -64,13 +65,14 @@ class VacationController extends Controller
 		$locationId = Yii::$app->session->get('location_id');
         if ($model->load(Yii::$app->request->post())) {
 			$model->studentId = $studentId;
-			$enrolment = $model->student->enrolment;
-			$enrolmentModel = current($enrolment);
-			$course = Course::find()
-				->where(['id' => $enrolmentModel->courseId])
+			$enrolment = Enrolment::find()
+				->notDeleted()
+				->isConfirmed()
 				->location($locationId)
+				->where(['studentId' => $model->studentId])
 				->one();
-			$model->courseId = $course->id;
+			
+			$model->courseId = $enrolment->courseId;
 			$model->save();
             $model->on(Vacation::EVENT_PUSH, $model->pushLessons());
 
@@ -116,18 +118,18 @@ class VacationController extends Controller
     {
 		$locationId = Yii::$app->session->get('location_id');
         $model = $this->findModel($id);
-		$enrolment = $model->student->enrolment;
-		$enrolmentModel = current($enrolment);
-		$course = Course::find()
-			->where(['id' => $enrolmentModel->courseId])
+		$enrolment = Enrolment::find()
+			->notDeleted()
+			->isConfirmed()
 			->location($locationId)
+			->where(['studentId' => $model->studentId])
 			->one();
 	    $model->trigger(Vacation::EVENT_RESTORE);
-        $model->on(Vacation::EVENT_RESTORE, $model->restoreLessons($model->fromDate, $model->toDate, $course));
+        $model->on(Vacation::EVENT_RESTORE, $model->restoreLessons($model->fromDate, $model->toDate, $enrolment->courseId));
 		
         return $this->redirect([
 			'lesson/review',
-			'courseId' => $course->id,
+			'courseId' => $enrolment->courseId,
 			'Vacation[id]' => $model->id,
 			'Vacation[type]' => Vacation::TYPE_DELETE
 		]);
