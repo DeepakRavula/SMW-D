@@ -48,7 +48,8 @@ class LessonQuery extends \yii\db\ActiveQuery
 	{
 		$this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {
 			$query->joinWith(['enrolment' => function ($query) use ($locationId, $studentId) {
-				$query->where(['enrolment.studentId' => $studentId]);
+				$query->where(['enrolment.studentId' => $studentId])
+					->isConfirmed();
 			}])
 		->where(['course.locationId' => $locationId]);
 		}]);
@@ -170,21 +171,20 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function studentLessons($locationId, $studentId)
     {
-        $this->notDeleted()
-            ->studentEnrolment($locationId, $studentId)
-            ->where(['lesson.status' => Lesson::STATUS_SCHEDULED]);
-
+        $this->studentEnrolment($locationId, $studentId)
+            ->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
+			->notDeleted();
         return $this;
     }
 
-    public function teacherLessons($teacherId)
+    public function teacherLessons($locationId, $teacherId)
     {
-        $this->notDeleted()
-            ->where([
+        $this->where([
                 'lesson.status' => Lesson::STATUS_SCHEDULED,
-                'teacherId' => $teacherId,
-            ]);
-
+                'lesson.teacherId' => $teacherId,
+            ])
+			->location($locationId)
+			->notDeleted();
         return $this;
     }
 }

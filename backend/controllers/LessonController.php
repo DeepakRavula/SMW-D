@@ -400,21 +400,23 @@ class LessonController extends Controller
 				$oldLessons = Lesson::find()
 				->where(['courseId' => $courseId])
 				->andWhere(['>', 'lesson.date', $fromDate])
-				->canceled()
 				->all();
 				$oldLessonIds = [];
 				foreach ($oldLessons as $oldLesson) {
 					$oldLessonIds[] = $oldLesson->id;
+					$oldLesson->status = Lesson::STATUS_CANCELED;
+					$oldLesson->save();
 				}
 			} else {
 				$oldLessons = Lesson::find()
 				->where(['courseId' => $courseId])
 				->andWhere(['>', 'lesson.date', $toDate])
-				->canceled()
 				->all();
 				$oldLessonIds = [];
 				foreach ($oldLessons as $oldLesson) {
 					$oldLessonIds[] = $oldLesson->id;
+					$oldLesson->status = Lesson::STATUS_CANCELED;
+					$oldLesson->save();
 				}
 				$vacation->delete();
 			}

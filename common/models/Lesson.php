@@ -178,10 +178,13 @@ class Lesson extends \yii\db\ActiveRecord
 
         if ((int) $this->course->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
             $studentLessons = self::find()
-				->studentLessons($locationId, $this->course->enrolment->student)
+				->studentLessons($locationId, $this->course->enrolment->student->id)
+				
 				->all();
-
             foreach ($studentLessons as $studentLesson) {
+				if($studentLesson->date === $this->date && (int)$studentLesson->status === Lesson::STATUS_SCHEDULED){
+					continue;
+				}
                 $otherLessons[] = [
                     'id' => $studentLesson->id,
                     'date' => $studentLesson->date,
@@ -190,9 +193,12 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         $teacherLessons = self::find()
-            ->teacherLessons($this->teacherId)
+            ->teacherLessons($locationId, $this->teacherId)
             ->all();
         foreach ($teacherLessons as $teacherLesson) {
+			if($teacherLesson->date === $this->date && (int)$teacherLesson->status === Lesson::STATUS_SCHEDULED){
+				continue;
+			}
             $otherLessons[] = [
                 'id' => $teacherLesson->id,
                 'date' => $teacherLesson->date,

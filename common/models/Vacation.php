@@ -86,7 +86,10 @@ class Vacation extends \yii\db\ActiveRecord
 	public function pushLessons()
 	{
 		$lessons = Lesson::find()
-			->where(['courseId' => $this->courseId])
+			->where([
+				'courseId' => $this->courseId,
+				'lesson.status' => Lesson::STATUS_SCHEDULED
+			])
 			->andWhere(['>', 'date', $this->fromDate])
 			->all();
 		
@@ -107,8 +110,6 @@ class Vacation extends \yii\db\ActiveRecord
 		}
 		foreach($lessons as $lesson){
 			$originalLessonId = $lesson->id;
-			$lesson->status = Lesson::STATUS_CANCELED;
-			$lesson->save();
 			$lesson->id = null;
 			$lesson->isNewRecord = true;
 			$lesson->status = Lesson::STATUS_DRAFTED;
@@ -131,8 +132,10 @@ class Vacation extends \yii\db\ActiveRecord
 	public function restoreLessons($fromDate, $toDate, $courseId)
 	{
 		$lessons = Lesson::find()
-			->scheduled()
-			->where(['courseId' => $courseId])
+			->where([
+				'courseId' => $courseId,
+				'lesson.status' => Lesson::STATUS_SCHEDULED
+			])
 			->andWhere(['>', 'date', $toDate])
 			->all();
 
@@ -153,8 +156,6 @@ class Vacation extends \yii\db\ActiveRecord
 		}
 		foreach($lessons as $lesson){
 			$originalLessonId = $lesson->id;
-			$lesson->status = Lesson::STATUS_CANCELED;
-			$lesson->save();
 			$lesson->id = null;
 			$lesson->isNewRecord = true;
 			$lesson->status = Lesson::STATUS_DRAFTED;
