@@ -453,8 +453,16 @@ class LessonController extends Controller
                 ]);
             }
         }
-
-		if ((int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
+		$isPrivateProgram = (int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM;
+		if ($isPrivateProgram && (!empty($vacationId))) {
+			if ($vacationType === Vacation::TYPE_CREATE) {
+				$message = 'Vacation has been created successfully';
+				$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
+			} else {
+				$message = 'Vacation has been deleted successfully';
+				$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
+			}
+		} elseif ($isPrivateProgram && empty($vacationId)) {
 			$lessonDate		 = (new \DateTime($lessons[0]->date))->format('d-m-Y');
 			$lessonStartDate = new \DateTime($lessons[0]->date);
 			$lessonEndDate	 = $lessonStartDate->modify('+1 month');
@@ -471,8 +479,7 @@ class LessonController extends Controller
 			$message = 'Course has been created successfully';
 			$link	 = $this->redirect(['course/view', 'id' => $courseId]);
 		}
-		Yii::$app->session->setFlash('alert',
-			[
+		Yii::$app->session->setFlash('alert', [
 			'options' => ['class' => 'alert-success'],
 			'body' => $message,
 		]);
