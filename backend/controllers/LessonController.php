@@ -454,27 +454,29 @@ class LessonController extends Controller
             }
         }
 		$isPrivateProgram = (int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM;
-		if ($isPrivateProgram && (!empty($vacationId))) {
-			if ($vacationType === Vacation::TYPE_CREATE) {
-				$message = 'Vacation has been created successfully';
-				$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
+		if ($isPrivateProgram) {
+			if (!empty($vacationId)) {
+				if ($vacationType === Vacation::TYPE_CREATE) {
+					$message = 'Vacation has been created successfully';
+					$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
+				} else {
+					$message = 'Vacation has been deleted successfully';
+					$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
+				}
 			} else {
-				$message = 'Vacation has been deleted successfully';
-				$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
+				$lessonDate		 = (new \DateTime($lessons[0]->date))->format('d-m-Y');
+				$lessonStartDate = new \DateTime($lessons[0]->date);
+				$lessonEndDate	 = $lessonStartDate->modify('+1 month');
+				$message		 = 'Lessons have been created successfully';
+				$link			 = $this->redirect([
+					'invoice/create',
+					'Invoice[customer_id]' => $courseModel->enrolment->student->customer->id,
+					'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
+					'LessonSearch[fromDate]' => $lessonDate,
+					'LessonSearch[toDate]' => $lessonEndDate->format('d-m-Y'),
+					'LessonSearch[courseId]' => $courseModel->id,
+				]);
 			}
-		} elseif ($isPrivateProgram && empty($vacationId)) {
-			$lessonDate		 = (new \DateTime($lessons[0]->date))->format('d-m-Y');
-			$lessonStartDate = new \DateTime($lessons[0]->date);
-			$lessonEndDate	 = $lessonStartDate->modify('+1 month');
-			$message		 = 'Lessons have been created successfully';
-			$link			 = $this->redirect([
-				'invoice/create',
-				'Invoice[customer_id]' => $courseModel->enrolment->student->customer->id,
-				'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
-				'LessonSearch[fromDate]' => $lessonDate,
-				'LessonSearch[toDate]' => $lessonEndDate->format('d-m-Y'),
-				'LessonSearch[courseId]' => $courseModel->id,
-			]);
 		} else {
 			$message = 'Course has been created successfully';
 			$link	 = $this->redirect(['course/view', 'id' => $courseId]);
