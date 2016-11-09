@@ -66,10 +66,10 @@ class VacationController extends Controller
         if ($model->load(Yii::$app->request->post())) {
 			$model->studentId = $studentId;
 			$enrolment = Enrolment::find()
-				->notDeleted()
-				->isConfirmed()
 				->location($locationId)
 				->where(['studentId' => $model->studentId])
+				->notDeleted()
+				->isConfirmed()
 				->one();
 			
 			$model->courseId = $enrolment->courseId;
@@ -119,10 +119,10 @@ class VacationController extends Controller
 		$locationId = Yii::$app->session->get('location_id');
         $model = $this->findModel($id);
 		$enrolment = Enrolment::find()
-			->notDeleted()
-			->isConfirmed()
 			->location($locationId)
 			->where(['studentId' => $model->studentId])
+			->notDeleted()
+			->isConfirmed()
 			->one();
 	    $model->trigger(Vacation::EVENT_RESTORE);
         $model->on(Vacation::EVENT_RESTORE, $model->restoreLessons($model->fromDate, $model->toDate, $enrolment->courseId));
