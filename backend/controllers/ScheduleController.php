@@ -96,6 +96,7 @@ class ScheduleController extends Controller
                 $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
             }])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+			->notDeleted()
             ->all();
         $events = [];
         foreach ($lessons as &$lesson) {

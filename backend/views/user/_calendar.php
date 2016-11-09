@@ -40,6 +40,7 @@ use common\models\Invoice;
         }])
         ->where(['lesson.teacherId' => $teacherId])
         ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+		->notDeleted()
         ->all();
    $events = [];
     foreach ($lessons as &$lesson) {
