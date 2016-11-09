@@ -33,6 +33,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $time;
     public $hours;
     public $program_name;
+	public $showAllReviewLessons = false;
     /**
      * {@inheritdoc}
      */
@@ -61,7 +62,7 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
-            [['date', 'programId', 'notes', 'teacherId'], 'safe'],
+            [['date', 'programId', 'notes', 'teacherId', 'showAllReviewLessons'], 'safe'],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],

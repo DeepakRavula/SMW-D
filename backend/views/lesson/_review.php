@@ -3,9 +3,17 @@ use yii\helpers\Html;
 use common\models\Program;
 use yii\helpers\Url;
 use kartik\grid\GridView;
+use yii\widgets\ActiveForm;
 
 $this->title = 'Review Lessons';
 ?>
+<div class="pull-right  m-r-20">
+		<div class="schedule-index">
+			<div class="e1Div">
+    			<?= Html::checkbox('showAllReviewLessons', false, ['label' => 'Show All', 'id' => 'review-lesson']); ?>
+			</div>
+		</div>
+    </div>
 <div class="user-details-wrapper">
 	<div class="row">
     <?php if ((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>  
@@ -153,6 +161,12 @@ $this->title = 'Review Lessons';
             }
         },
         'pjax' => true,
+			'pjaxSettings' => [
+        'neverTimeout' => true,
+        'options' => [
+            'id' => 'review-lesson-grid',
+        ],
+    ],
         'columns' => $columns,
         'showPageSummary' => true,
     ]); ?>
@@ -233,6 +247,11 @@ var review = {
 $(document).ready(function(){   
     if($('#confirm-button').attr('disabled')) {         
         $('#confirm-button').bind('click',false);
-    }  
+    }
+	$('#review-lesson').change(function() {
+        if( $(this).is(':checked') ){
+			$.pjax.reload({container : '#review-lesson-grid', timeout : 4000});
+        }
+	});
 });
 </script>

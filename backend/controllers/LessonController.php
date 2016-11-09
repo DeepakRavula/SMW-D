@@ -300,6 +300,7 @@ class LessonController extends Controller
 
     public function actionReview($courseId)
     {
+		$model = new Lesson();
         $request = Yii::$app->request;
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
@@ -316,15 +317,25 @@ class LessonController extends Controller
         }
         Model::validateMultiple($draftLessons);
         $conflicts = [];
+        $conflictedLessonIds = [];
         foreach ($draftLessons as $draftLesson) {
+			if(!empty($draftLesson->getErrors('date'))) {
+				$conflictedLessonIds[] = $draftLesson->id;
+			}
             $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
-        }
-        $lessonDataProvider = new ActiveDataProvider([
-            'query' => Lesson::find()->indexBy('id')
-                ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
-                ->orderBy(['lesson.date' => SORT_ASC]),
-        ]);
 
+        }
+		$query = Lesson::find()
+			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+            ->orderBy(['lesson.date' => SORT_ASC]);
+		if(! $model->showAllReviewLessons) {
+			if(! empty($conflictedLessonIds)){
+				 $query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
+			}
+		} 
+			$lessonDataProvider = new ActiveDataProvider([
+				'query' => $query,
+			]);
         return $this->render('_review', [
             'courseModel' => $courseModel,
             'courseId' => $courseId,
@@ -334,6 +345,7 @@ class LessonController extends Controller
             'lessonToDate' => $lessonToDate,
 			'vacationId' => $vacationId,
 			'vacationType' => $vacationType,
+			'model' => $model,
         ]);
     }
 
