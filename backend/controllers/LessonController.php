@@ -325,22 +325,6 @@ class LessonController extends Controller
                 ->orderBy(['lesson.date' => SORT_ASC]),
         ]);
 
-        $model = new Lesson();
-        $post = Yii::$app->request->post();
-        if ($model->load($post)) {
-            $model->courseId = $courseId;
-            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-            $model->date = $lessonDate->format('Y-m-d H:i:s');
-            $model->status = Lesson::STATUS_DRAFTED;
-            $model->isDeleted = false;
-            $model->duration = $model->course->duration;
-            $model->save();
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Lesson has been created successfully',
-            ]);
-        }
-
         return $this->render('_review', [
             'courseModel' => $courseModel,
             'courseId' => $courseId,
