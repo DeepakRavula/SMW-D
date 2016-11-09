@@ -133,6 +133,16 @@ class LessonController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+        $currentDate = new \DateTime();
+        if ($lessonDate < $currentDate) {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => 'Completed lessons cannot be editable!.',
+            ]);
+
+            return $this->redirect(['lesson/view', 'id' => $id]);
+        }
         $data = ['model' => $model];
         $view = '_form';
         if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM) {
@@ -418,7 +428,7 @@ class LessonController extends Controller
 				}
 				$vacation->delete();
 			}
-			
+
 			foreach ($lessons as $i => $lesson) {
 				$lessonRescheduleModel = new LessonReschedule();
 				$lessonRescheduleModel->lessonId = $oldLessonIds[$i];
@@ -483,6 +493,15 @@ class LessonController extends Controller
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
         $currentDate = new \DateTime();
         $location_id = Yii::$app->session->get('location_id');
+
+        if($model->invoice) {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => 'Invoice has been generated already!.',
+            ]);
+
+            return $this->redirect(['lesson/view', 'id' => $id]);
+        }
 
         if ($lessonDate <= $currentDate) {
             $invoice = new Invoice();
