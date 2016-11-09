@@ -103,7 +103,8 @@ class StudentQuery extends ActiveQuery
             }])
             ->joinWith(['course' => function ($query) use ($locationId) {
                 $query->where(['locationId' => $locationId]);
-            }]);
+            }])
+			->isConfirmed();
         }]);
 
         return $this;

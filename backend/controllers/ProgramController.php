@@ -69,7 +69,8 @@ class ProgramController extends Controller
         $query = Student::find()
                 ->joinWith(['enrolment' => function ($query) use ($locationId, $id) {
                     $query->location($locationId)
-                        ->where(['course.programId' => $id]);
+                        ->where(['course.programId' => $id])
+						->isConfirmed();
                 }])
                 ->active();
 
