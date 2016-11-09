@@ -67,11 +67,10 @@ class VacationController extends Controller
 			$model->studentId = $studentId;
 			$enrolment = Enrolment::find()
 				->location($locationId)
-				->where(['studentId' => $model->studentId])
 				->notDeleted()
+				->andWhere(['studentId' => $model->studentId])
 				->isConfirmed()
 				->one();
-			
 			$model->courseId = $enrolment->courseId;
 			$model->save();
             $model->on(Vacation::EVENT_PUSH, $model->pushLessons());
@@ -120,8 +119,8 @@ class VacationController extends Controller
         $model = $this->findModel($id);
 		$enrolment = Enrolment::find()
 			->location($locationId)
-			->where(['studentId' => $model->studentId])
 			->notDeleted()
+			->andWhere(['studentId' => $model->studentId])
 			->isConfirmed()
 			->one();
 	    $model->trigger(Vacation::EVENT_RESTORE);
