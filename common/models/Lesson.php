@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use IntervalTree\IntervalTree;
 use common\components\intervalTree\DateRangeInclusive;
@@ -394,5 +395,18 @@ class Lesson extends \yii\db\ActiveRecord
                     $lesson->date);
         $lessonStartDate = new \DateTime($lessonStartDate->format('Y-m-d'));
         return $lessonStartDate == $priorDate;
+    }
+
+	public function getRootLessonId($lessonId)
+    {
+        $parent = (new Query())->select(['lessonId'])
+            ->from('lesson_reschedule')
+            ->where(['rescheduledLessonId' => $lessonId])
+            ->scalar();
+
+        if (!empty($parent)) {
+            return $this->getRootLessonId($parent);
         }
+        return $lessonId;
+    }
 }    
