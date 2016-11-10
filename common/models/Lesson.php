@@ -397,26 +397,16 @@ class Lesson extends \yii\db\ActiveRecord
         return $lessonStartDate == $priorDate;
     }
 
-	public function getParent()
-	{
-		return $this->hasOne(self::className(), ['rescheduledLessonId' => 'lessonId'])
-			->from(['lesson_reschedule' => self::tableName()]);
-	}
-
-    public function getRoot()
+	public function getRootLessonId($lessonId)
     {
-		$parent = $this->getParent()->one();
-        
-        if(!empty($parent)) {
-			return $parent->getRoot();
-		}
+        $parent = (new Query())->select(['lessonId'])
+            ->from('lesson_reschedule')
+            ->where(['rescheduledLessonId' => $lessonId])
+            ->scalar();
 
-        return $this;
-	}
-
-
-	public function getInvoiceTotal($type)
-	{
-		return $this->hasMany(Invoice::className(), ['user_id' => 'id'])->sum('value');
-	}
+        if (!empty($parent)) {
+            return $this->getRootLessonId($parent);
+        }
+        return $lessonId;
+    }
 }    
