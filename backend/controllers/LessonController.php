@@ -521,11 +521,8 @@ class LessonController extends Controller
             $invoice->save();
             $invoice->addLineItem($model);
             $invoice->save();
-            $parentLessonId = $model->getParentLessonId($model->id);
-            $proFormaInvoice = Invoice::find()
-                ->select(['invoice.id', 'SUM(payment.amount) as credit'])
-                ->proFormaCredit($parentLessonId)
-                ->one();
+            $rootLesson = $model->getRoot();
+			$proFormaTotal = $rootLesson->invoice(Invoice::TYPE_PRO_FORMA_INVOICE)->sum();
 
             if (!empty($proFormaInvoice)) {
                 if ((float) $proFormaInvoice->credit > (float) $invoice->total) {
