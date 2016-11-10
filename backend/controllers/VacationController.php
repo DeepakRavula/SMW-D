@@ -8,7 +8,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use common\models\Course;
+use common\models\Lesson;
 use common\models\Enrolment;
 /**
  * VacationController implements the CRUD actions for Vacation model.
@@ -72,6 +72,14 @@ class VacationController extends Controller
 				->isConfirmed()
 				->one();
 			$model->courseId = $enrolment->courseId;
+			Vacation::deleteAll([
+				'studentId' => $studentId,
+				'isConfirmed' => false,
+			]);
+			Lesson::deleteAll([
+				'courseId' => $model->courseId,
+				'status' => Lesson::STATUS_DRAFTED
+			]);
 			$model->save();
             $model->on(Vacation::EVENT_PUSH, $model->pushLessons());
 
@@ -123,6 +131,11 @@ class VacationController extends Controller
 			->andWhere(['studentId' => $model->studentId])
 			->isConfirmed()
 			->one();
+		
+		Lesson::deleteAll([
+			'courseId' => $enrolment->courseId,
+			'status' => Lesson::STATUS_DRAFTED
+		]);
 	    $model->trigger(Vacation::EVENT_RESTORE);
         $model->on(Vacation::EVENT_RESTORE, $model->restoreLessons($model->fromDate, $model->toDate, $enrolment->courseId));
 		
