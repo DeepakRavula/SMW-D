@@ -10,7 +10,6 @@ use common\models\Program;
 use common\models\Course;
 use common\models\Invoice;
 use common\models\LessonReschedule;
-use common\models\ItemType;
 use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
@@ -522,9 +521,10 @@ class LessonController extends Controller
             $invoice->save();
             $invoice->addLineItem($model);
             $invoice->save();
+            $parentLessonId = $model->getParentLessonId($model->id);
             $proFormaInvoice = Invoice::find()
                 ->select(['invoice.id', 'SUM(payment.amount) as credit'])
-                ->proFormaCredit($model->id)
+                ->proFormaCredit($parentLessonId)
                 ->one();
 
             if (!empty($proFormaInvoice)) {
