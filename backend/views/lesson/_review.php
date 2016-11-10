@@ -99,9 +99,10 @@ $this->title = 'Review Lessons';
                        'size' => 'md',
                        'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
                        'widgetClass' => '\yii\jui\DatePicker',
-                       'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
-                           'editableSuccess' => 'review.onEditableGridSuccess',
+						   'editableError' => 'review.onEditableError',
+                           	'editableSuccess' => 'review.onEditableGridSuccess',
                        ],
                    ];
             },
@@ -135,7 +136,7 @@ $this->title = 'Review Lessons';
                                'minuteStep' => 15,
                            ],
                        ],
-                       'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
                            'editableSuccess' => 'review.onEditableGridSuccess',
                        ],
@@ -169,7 +170,7 @@ $this->title = 'Review Lessons';
                                'minuteStep' => 15,
                            ],
                        ],
-                       'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
                            'editableSuccess' => 'review.onEditableGridSuccess',
                        ],
@@ -263,6 +264,10 @@ $this->title = 'Review Lessons';
 	</div>
 <script>   
 var review = {
+	onEditableError: function(event, val, form, data) {
+		console.log(data.message);
+		log(message);
+	},
 	onEditableGridSuccess :function(event, val, form, data) {
 		$.ajax({
 		url    : "<?php echo Url::to(['lesson/fetch-conflict', 'courseId' => $courseId]); ?>",
