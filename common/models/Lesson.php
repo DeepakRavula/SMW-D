@@ -63,6 +63,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId', 'notes', 'teacherId'], 'safe'],
+            ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_REVIEW],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],

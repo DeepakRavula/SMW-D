@@ -252,47 +252,59 @@ class LessonController extends Controller
         }
     }
 
-    public function actionUpdateField($id)
+    public function actionUpdateField()
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        if (Yii::$app->request->post('hasEditable')) {
-            $lessonIndex = Yii::$app->request->post('editableIndex');
-            $model = Lesson::findOne(['id' => $id]);
+		$request = Yii::$app->request;
+		$response = Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        if ($request->post('hasEditable')) {
+			$lessonId = $request->post('editableKey');
+            $lessonIndex = $request->post('editableIndex');
+            $model = Lesson::findOne(['id' => $lessonId]);
+            $model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
+			$existingDate = $model->date;
             $result = [
                 'output' => '',
                 'message' => '',
             ];
-            $post = Yii::$app->request->post();
-            if (!empty($post['Lesson'][$lessonIndex]['date'])) {
-                $existingDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-                $lessonTime = $existingDate->format('H:i:s');
-                $timebits = explode(':', $lessonTime);
-                $changedDate = new \DateTime($post['Lesson'][$lessonIndex]['date']);
-                $changedDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-                $model->date = $changedDate->format('Y-m-d H:i:s');
-                $output = Yii::$app->formatter->asDate($model->date);
+			$posted = current($_POST['Lesson']);
+        	$post = ['Lesson' => $posted];
+            if ($model->load($post)) {
+				if (! empty($posted['date'])) {
+					$lessonTime = (new \DateTime($existingDate))->format('H:i:s');
+					$timebits = explode(':', $lessonTime);
+					$changedDate = new \DateTime($posted['date']);
+					$changedDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
+					$model->date = $changedDate->format('Y-m-d H:i:s');
+					$output = Yii::$app->formatter->asDate($model->date);
+            	}
+				if (!empty($posted['time'])) {
+					$existingDate = (new \DateTime($existingDate))->format('Y-m-d');
+					$existingDate = new \DateTime($existingDate);
+					$changedTime = new \DateTime($posted['time']);
+					$lessonTime = $changedTime->format('H:i:s');
+					$timebits = explode(':', $lessonTime);
+					$existingDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
+					$model->date = $existingDate->format('Y-m-d H:i:s');
+					$newTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+					$output = Yii::$app->formatter->asTime($newTime);
+				}
+				if (!empty($posted['duration'])) {
+					$model->duration = $posted['duration'];
+					$output = $model->duration;
+				}
+
+             $success = $model->save();
+			 $message = null;
+			if (!$success) {
+				$errors = ActiveForm::validate($model);
+				$message = current($errors['lesson-date']);
             }
-            if (!empty($post['Lesson'][$lessonIndex]['time'])) {
-                $existingDate = (new \DateTime($model->date))->format('Y-m-d');
-                $existingDate = new \DateTime($existingDate);
-                $changedTime = new \DateTime($post['Lesson'][$lessonIndex]['time']);
-                $lessonTime = $changedTime->format('H:i:s');
-                $timebits = explode(':', $lessonTime);
-                $existingDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-                $model->date = $existingDate->format('Y-m-d H:i:s');
-                $newTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-                $output = Yii::$app->formatter->asTime($newTime);
-            }
-            if (!empty($post['Lesson'][$lessonIndex]['duration'])) {
-                $model->duration = $post['Lesson'][$lessonIndex]['duration'];
-                $output = $model->duration;
-            }
-            $model->save();
             $result = [
                 'output' => $output,
-                'message' => '',
+                'message' => $message,
             ];
-
+		}
             return $result;
         }
     }

@@ -3,6 +3,8 @@ use yii\helpers\Html;
 use common\models\Program;
 use yii\helpers\Url;
 use kartik\grid\GridView;
+use common\models\TeacherAvailability;
+use yii\data\ActiveDataProvider;
 
 $this->title = 'Review Lessons';
 ?>
@@ -31,6 +33,56 @@ $this->title = 'Review Lessons';
         echo $fromTime->format('h:i A'); ?>	
 	</div>
 	</div>
+	<div class="clearfix"></div>
+	<div class="row teacher-availability">
+		<?php
+		$locationId = Yii::$app->session->get('location_id');
+		$query = TeacherAvailability::find()
+			->joinWith('userLocation')
+			->where(['user_id' => $courseModel->teacherId, 'location_id' => $locationId]);
+		$teacherAvailabilityDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+		?>
+		<?php yii\widgets\Pjax::begin() ?>
+		<h4>Availabilities </h4>
+		<?php
+		echo GridView::widget([
+			'dataProvider' => $teacherAvailabilityDataProvider,
+			'options' => ['class' => 'col-md-5'],
+			'tableOptions' => ['class' => 'table table-bordered'],
+			'headerRowOptions' => ['class' => 'bg-light-gray'],
+			'columns' => [
+				[
+					'label' => 'Day',
+					'value' => function ($data) {
+						if (!empty($data->day)) {
+							$dayList = TeacherAvailability::getWeekdaysList();
+							$day	 = $dayList[$data->day];
+
+							return !empty($day) ? $day : null;
+						}
+
+						return null;
+					},
+				],
+				[
+					'label' => 'From Time',
+					'value' => function ($data) {
+						return !empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
+					},
+				],
+				[
+					'label' => 'To Time',
+					'value' => function ($data) {
+						return !empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
+					},
+				],
+			],
+		]);
+		?>
+		<?php \yii\widgets\Pjax::end(); ?>
+	</div>
 	<div class="clearfix"></div>	
 	<?php
     $columns = [
@@ -47,9 +99,10 @@ $this->title = 'Review Lessons';
                        'size' => 'md',
                        'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
                        'widgetClass' => '\yii\jui\DatePicker',
-                       'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
-                           'editableSuccess' => 'review.onEditableGridSuccess',
+						   'editableError' => 'review.onEditableError',
+                           	'editableSuccess' => 'review.onEditableGridSuccess',
                        ],
                    ];
             },
@@ -83,8 +136,9 @@ $this->title = 'Review Lessons';
                                'minuteStep' => 15,
                            ],
                        ],
-                       'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
+						   'editableError' => 'review.onEditableError',
                            'editableSuccess' => 'review.onEditableGridSuccess',
                        ],
                    ];
@@ -117,7 +171,7 @@ $this->title = 'Review Lessons';
                                'minuteStep' => 15,
                            ],
                        ],
-                       'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
                            'editableSuccess' => 'review.onEditableGridSuccess',
                        ],
@@ -211,6 +265,10 @@ $this->title = 'Review Lessons';
 	</div>
 <script>   
 var review = {
+	onEditableError: function(event, val, form, data) {
+		$(form).find('.form-group').addClass('has-error');
+		$(form).find('.help-block').text(data.message);
+	},
 	onEditableGridSuccess :function(event, val, form, data) {
 		$.ajax({
 		url    : "<?php echo Url::to(['lesson/fetch-conflict', 'courseId' => $courseId]); ?>",
