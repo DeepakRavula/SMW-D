@@ -85,14 +85,14 @@ class Vacation extends \yii\db\ActiveRecord
 
 	public function pushLessons()
 	{
+		$fromDate = (new \DateTime($this->fromDate))->format('Y-m-d');
 		$lessons = Lesson::find()
 			->where([
 				'courseId' => $this->courseId,
 				'lesson.status' => Lesson::STATUS_SCHEDULED
 			])
-			->andWhere(['>', 'date', $this->fromDate])
+			->andWhere(['>=', 'date', $fromDate])
 			->all();
-		
 		$firstLesson = ArrayHelper::getValue($lessons, 0);
 		$lessonTime		 = (new \DateTime($firstLesson->date))->format('H:i:s');
 		$startDate		 = (new \DateTime($this->toDate))->format('d-m-Y');
@@ -131,12 +131,13 @@ class Vacation extends \yii\db\ActiveRecord
 
 	public function restoreLessons($fromDate, $toDate, $courseId)
 	{
+		$toDate = (new \DateTime($this->toDate))->format('Y-m-d');
 		$lessons = Lesson::find()
 			->where([
 				'courseId' => $courseId,
 				'lesson.status' => Lesson::STATUS_SCHEDULED
 			])
-			->andWhere(['>', 'date', $toDate])
+			->andWhere(['>=', 'date', $toDate])
 			->all();
 
 		$firstLesson = ArrayHelper::getValue($lessons, 0);
