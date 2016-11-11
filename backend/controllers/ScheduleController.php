@@ -72,7 +72,7 @@ class ScheduleController extends Controller
         }
 
         $allTeachers = TeacherAvailability::find()
-                ->select(['user_location.user_id as id', "CONCAT(user_profile.firstname, ' ', user_profile.lastname) as name"])
+                ->select(['user_location.user_id as id', "CONCAT(user_profile.firstname, ' ', user_profile.lastname) as name", 'teacher_availability_day.day as day'])
                 ->distinct()
                 ->joinWith(['userLocation' => function ($query) use ($locationId) {
                     $query->joinWith(['userProfile' => function ($query) {
@@ -87,6 +87,7 @@ class ScheduleController extends Controller
             $availableTeachers[] = [
                         'id' => $allTeacher->id,
                         'name' => $allTeacher->name,
+                        'day' => $allTeacher->day,
                     ];
         }
 
