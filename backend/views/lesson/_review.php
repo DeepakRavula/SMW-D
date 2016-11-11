@@ -34,7 +34,7 @@ $this->title = 'Review Lessons';
 	</div>
 	</div>
 	<div class="clearfix"></div>
-	<div class="row">
+	<div class="row teacher-availability">
 		<?php
 		$locationId = Yii::$app->session->get('location_id');
 		$query = TeacherAvailability::find()
@@ -138,6 +138,7 @@ $this->title = 'Review Lessons';
                        ],
                        'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
+						   'editableError' => 'review.onEditableError',
                            'editableSuccess' => 'review.onEditableGridSuccess',
                        ],
                    ];
@@ -265,8 +266,8 @@ $this->title = 'Review Lessons';
 <script>   
 var review = {
 	onEditableError: function(event, val, form, data) {
-		console.log(data.message);
-		log(message);
+		$(form).find('.form-group').addClass('has-error');
+		$(form).find('.help-block').text(data.message);
 	},
 	onEditableGridSuccess :function(event, val, form, data) {
 		$.ajax({

@@ -296,11 +296,10 @@ class LessonController extends Controller
 				}
 
              $success = $model->save();
-			 $errors = $model->errors;
+			 $message = null;
 			if (!$success) {
-                foreach ($errors as $error) {
-                    $message = $error[0];
-                }
+				$errors = ActiveForm::validate($model);
+				$message = current($errors['lesson-date']);
             }
             $result = [
                 'output' => $output,

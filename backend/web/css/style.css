@@ -914,3 +914,6 @@ input[type="search"]:-ms-input-placeholder {
 .invoice-credit {
     background-color:  #c0c0c0;   
 }
+.teacher-availability{
+	margin : 10px;
+}
