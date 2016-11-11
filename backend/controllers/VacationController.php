@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Lesson;
 use common\models\Enrolment;
+use common\models\Course;
 /**
  * VacationController implements the CRUD actions for Vacation model.
  */
@@ -61,9 +62,11 @@ class VacationController extends Controller
      */
     public function actionCreate($studentId)
     {
+		$session = Yii::$app->session;
+		$request = Yii::$app->request;
         $model = new Vacation();
-		$locationId = Yii::$app->session->get('location_id');
-        if ($model->load(Yii::$app->request->post())) {
+		$locationId = $session->get('location_id');
+        if ($model->load($request->post())) {
 			$model->studentId = $studentId;
 			$enrolment = Enrolment::find()
 				->location($locationId)
@@ -72,21 +75,20 @@ class VacationController extends Controller
 				->notDeleted()
 				->isConfirmed()
 				->one();
-			$model->courseId = $enrolment->courseId;
 			Vacation::deleteAll([
 				'studentId' => $studentId,
 				'isConfirmed' => false,
 			]);
 			Lesson::deleteAll([
-				'courseId' => $model->courseId,
+				'courseId' => $enrolment->course->id,
 				'status' => Lesson::STATUS_DRAFTED
 			]);
 			$model->save();
-            $model->on(Vacation::EVENT_PUSH, $model->pushLessons());
+            $model->on(Course::EVENT_VACATION_CREATE_PREVIEW, $enrolment->course->pushLessons($model->fromDate, $model->toDate));
 
             return $this->redirect([
 				'lesson/review',
-				'courseId' => $model->courseId,
+				'courseId' => $enrolment->course->id,
 				'Vacation[id]' => $model->id,
 				'Vacation[type]' => Vacation::TYPE_CREATE
 			]);
@@ -122,9 +124,10 @@ class VacationController extends Controller
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id, $studentId)
+    public function actionDelete($id)
     {
-		$locationId = Yii::$app->session->get('location_id');
+		$session = Yii::$app->session;
+		$locationId = $session->get('location_id');
         $model = $this->findModel($id);
 		$enrolment = Enrolment::find()
 			->location($locationId)
@@ -138,8 +141,8 @@ class VacationController extends Controller
 			'courseId' => $enrolment->courseId,
 			'status' => Lesson::STATUS_DRAFTED
 		]);
-	    $model->trigger(Vacation::EVENT_RESTORE);
-        $model->on(Vacation::EVENT_RESTORE, $model->restoreLessons($model->fromDate, $model->toDate, $enrolment->courseId));
+	    $model->trigger(Course::EVENT_VACATION_DELETE_PREVIEW);
+        $model->on(Course::EVENT_VACATION_DELETE_PREVIEW, $enrolment->course->restoreLessons($model->fromDate, $model->toDate));
 		
         return $this->redirect([
 			'lesson/review',

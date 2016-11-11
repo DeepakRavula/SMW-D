@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use yii\helpers\ArrayHelper;
 /**
  * This is the model class for table "course".
  *
@@ -17,6 +18,9 @@ namespace common\models;
  */
 class Course extends \yii\db\ActiveRecord
 {
+	const EVENT_VACATION_CREATE_PREVIEW = 'vacation-create-preview';
+	const EVENT_VACATION_DELETE_PREVIEW = 'vacation-delete-preview';
+
     public $studentId;
     public $paymentFrequency;
     public $goToDate;
@@ -188,4 +192,68 @@ class Course extends \yii\db\ActiveRecord
             }
         }
     }
+
+	public function generateLessons($lessonStartDate, $rescheduleLessonStartDate) {
+		$lessons = Lesson::find()
+			->where([
+				'courseId' => $this->id,
+				'lesson.status' => Lesson::STATUS_SCHEDULED
+			])
+			->andWhere(['>=', 'date', $lessonStartDate])
+			->all();
+		$firstLesson = ArrayHelper::getValue($lessons, 0);
+		$lessonTime		 = (new \DateTime($firstLesson->date))->format('H:i:s');
+		$startDate		 = new \DateTime($rescheduleLessonStartDate);
+		$duration		 = explode(':', $lessonTime);
+		$day = (new \DateTime($firstLesson->date))->format('l');
+		$startDay = (new \DateTime($rescheduleLessonStartDate))->format('l');
+		if($day !== $startDay){
+			$startDate->modify('next '.$day);
+			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+			$professionalDevelopmentDay = $this->checkProfessionalDevelopmentDay($startDate, $day, $duration);
+			if(! empty($professionalDevelopmentDay)) {
+				$startDate = $professionalDevelopmentDay;
+			}
+		}
+		foreach($lessons as $lesson){
+			$originalLessonId = $lesson->id;
+			$lesson->id = null;
+			$lesson->isNewRecord = true;
+			$lesson->status = Lesson::STATUS_DRAFTED;
+			$lesson->date = $startDate->format('Y-m-d H:i:s');
+			$lesson->save();
+
+			$day = (new \DateTime($lesson->date))->format('l');
+			$startDate->modify('next '.$day);
+			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+			$professionalDevelopmentDay = $this->checkProfessionalDevelopmentDay($startDate, $day, $duration);
+			if(! empty($professionalDevelopmentDay)) {
+				$startDate = $professionalDevelopmentDay;
+			}
+		}
+	}
+
+	public function checkProfessionalDevelopmentDay($startDate, $day, $duration){
+		$professionalDevelopmentDay = clone $startDate;
+		$professionalDevelopmentDay->modify('last day of previous month');
+		$professionalDevelopmentDay->modify('fifth '.$day);
+		if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+			$startDate->modify('next '.$day);
+			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+		}
+		return $startDate;
+	}
+	public function pushLessons($fromDate, $toDate)
+	{
+		$lessonStartDate = (new \DateTime($fromDate))->format('Y-m-d');
+		$rescheduleLessonStartDate		 = (new \DateTime($toDate))->format('d-m-Y');
+		$this->generateLessons($lessonStartDate, $rescheduleLessonStartDate);
+	}
+
+	public function restoreLessons($fromDate, $toDate)
+	{
+		$lessonStartDate = (new \DateTime($toDate))->format('Y-m-d');
+		$rescheduleLessonStartDate		 = (new \DateTime($fromDate))->format('d-m-Y');
+		$this->generateLessons($lessonStartDate, $rescheduleLessonStartDate);
+	}
 }
