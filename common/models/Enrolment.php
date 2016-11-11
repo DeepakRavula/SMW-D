@@ -143,8 +143,7 @@ class Enrolment extends \yii\db\ActiveRecord
 	
     public function afterSave($insert, $changedAttributes)
     {
-        $isGroupProgram = (int) $this->course->program->type === (int) Program::TYPE_GROUP_PROGRAM;
-        if ($isGroupProgram || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
+        if ($this->course->isGroupProgram() || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
             return true;
         }
         $interval = new \DateInterval('P1D');
@@ -198,8 +197,9 @@ class Enrolment extends \yii\db\ActiveRecord
         return $paymentCycleEndDate;
     }
 
-	public function getLastDateOfCourse($startDate)
+	public function getLastDateOfCourse()
     {
+		$startDate = new \DateTime($this->course->startDate);
         switch ($this->paymentFrequency) {
             case self::PAYMENT_FREQUENCY_FULL:
                 $endDate = $startDate->modify('+1 year');

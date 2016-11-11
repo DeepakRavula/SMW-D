@@ -446,8 +446,7 @@ class LessonController extends Controller
                 ]);
             }
         }
-		$isPrivateProgram = (int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM;
-		if ($isPrivateProgram) {
+		if ($courseModel->isPrivateProgram()) {
 			if (!empty($vacationId)) {
 				if ($vacationType === Vacation::TYPE_CREATE) {
 					$message = 'Vacation has been created successfully';
@@ -458,8 +457,7 @@ class LessonController extends Controller
 				}
 			} else {
             	$startDate = new \DateTime($courseModel->startDate);
-            	$courseStartDate = new \DateTime($courseModel->startDate);
-				$endDate = $courseModel->enrolment->getLastDateOfCourse($courseStartDate);
+				$endDate = $courseModel->enrolment->getLastDateOfCourse();
 				$message		 = 'Lessons have been created successfully';
 				$link			 = $this->redirect([
 					'invoice/create',

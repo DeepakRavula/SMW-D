@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use common\models\Program;
+
 /**
  * This is the model class for table "course".
  *
@@ -94,6 +96,16 @@ class Course extends \yii\db\ActiveRecord
             'Saturday',
         ];
     }
+
+	public function isPrivateProgram()
+	{
+		return (int) $this->program->type === Program::TYPE_PRIVATE_PROGRAM;
+	}
+
+	public function isGroupProgram()
+	{
+		return (int) $this->program->type === Program::TYPE_GROUP_PROGRAM;
+	}
 
     public function getTeacher()
     {
