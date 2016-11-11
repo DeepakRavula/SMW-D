@@ -134,11 +134,13 @@ class Enrolment extends \yii\db\ActiveRecord
     public static function paymentFrequencies()
     {
         return [
-            self::PAYMENT_FREQUENCY_FULL => Yii::t('common', 'Full'),
-            self::PAYMENT_FREQUENCY_MONTHLY => Yii::t('common', 'Monthly'),
+            self::PAYMENT_FREQUENCY_FULL => Yii::t('common', 'Annually'),
+            self::PAYMENT_FREQUENCY_HALFYEARLY => Yii::t('common', 'Semi-Annually'),
             self::PAYMENT_FREQUENCY_QUARTERLY => Yii::t('common', 'Quarterly'),
+            self::PAYMENT_FREQUENCY_MONTHLY => Yii::t('common', 'Monthly'),
         ];
     }
+	
     public function afterSave($insert, $changedAttributes)
     {
         $isGroupProgram = (int) $this->course->program->type === (int) Program::TYPE_GROUP_PROGRAM;
@@ -194,5 +196,25 @@ class Enrolment extends \yii\db\ActiveRecord
         }
 
         return $paymentCycleEndDate;
+    }
+
+	public function getLastDateOfCourse($startDate)
+    {
+        switch ($this->paymentFrequency) {
+            case self::PAYMENT_FREQUENCY_FULL:
+                $endDate = $startDate->modify('+1 year');
+                break;
+            case self::PAYMENT_FREQUENCY_HALFYEARLY:
+                $endDate = $startDate->modify('+6 month');
+                break;
+            case self::PAYMENT_FREQUENCY_QUARTERLY:
+                $endDate = $startDate->modify('+3 month');
+                break;
+            case self::PAYMENT_FREQUENCY_MONTHLY:
+                $endDate = $startDate->modify('+1 month');
+                break;
+        }
+		
+        return $endDate;
     }
 }
