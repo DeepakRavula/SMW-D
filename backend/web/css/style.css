@@ -708,7 +708,11 @@ input[type="search"]:-ms-input-placeholder {
     top: -45px;
     left: 185px;
 }
-
+.mail-flag{
+    position: absolute;
+    top: -48px;
+    left: 835px;
+}
 .abs-delete{
     position: absolute;
     right: 11px;

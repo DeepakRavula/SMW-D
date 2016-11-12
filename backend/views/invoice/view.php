@@ -3,9 +3,9 @@
 use yii\helpers\Html;
 use backend\models\search\InvoiceSearch;
 use yii\bootstrap\Tabs;
-use common\models\Invoice;
+use yii\widgets\ActiveForm;
 use common\models\InvoiceLineItem;
-use common\models\ItemType;
+use kartik\switchinput\SwitchInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -45,6 +45,36 @@ if (!empty($lineItem)) {
 }
 
 ?>
+<div class="invoice-index p-10">
+		<?= Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-right  m-l-20']) ?>
+        <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right m-l-20', 'target' => '_blank']) ?>
+<?php $form = ActiveForm::begin([
+                'id' => 'mail-flag',
+            ]);?>
+		<?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
+			<?=
+			Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id],
+				[
+				'class' => 'btn btn-default pull-right',
+				'id' => 'delete-button',
+			])
+			?>
+			<div class='mail-flag'>
+			<?=
+            $form->field($model, 'isSent')->widget(SwitchInput::classname(),
+                [
+                'name' => 'isSent',
+                'pluginOptions' => [
+                    'handleWidth' => 60,
+                    'onText' => 'Sent',
+                    'offText' => 'Not Sent',
+                ],
+            ])->label(false);
+            ?>
+			</div>
+		<?php endif; ?>
+    <?php ActiveForm::end(); ?>
+</div>
 <?php if(empty($model->lineItem) || $model->lineItem->isMisc()) : ?>
 <div class="tabbable-panel">
      <div class="tabbable-line">
