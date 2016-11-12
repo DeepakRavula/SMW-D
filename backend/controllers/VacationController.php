@@ -141,11 +141,13 @@ class VacationController extends Controller
 			->notDeleted()
 			->isConfirmed()
 			->one();
-		
+		$db = Yii::$app->db;
+        $transaction = $db->beginTransaction();
 		Lesson::deleteAll([
 			'courseId' => $enrolment->courseId,
 			'status' => Lesson::STATUS_DRAFTED
 		]);
+        $transaction->commit();
 	    $model->trigger(Course::EVENT_VACATION_DELETE_PREVIEW);
         $model->on(Course::EVENT_VACATION_DELETE_PREVIEW, $enrolment->course->restoreLessons($model->fromDate, $model->toDate));
 		
