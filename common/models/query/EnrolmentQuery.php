@@ -2,6 +2,8 @@
 
 namespace common\models\query;
 
+use common\models\Program;
+
 /**
  * This is the ActiveQuery class for [[\common\models\Enrolment]].
  *
@@ -36,7 +38,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
 
     public function notDeleted()
     {
-        return $this->where(['enrolment.isDeleted' => false]);
+        return $this->andWhere(['enrolment.isDeleted' => false]);
     }
 
     public function isConfirmed()
@@ -44,6 +46,22 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['enrolment.isConfirmed' => true]);
     }
 
+	public function programs()
+	{
+		$this->joinWith(['course' => function ($query){
+        	$query->joinWith(['program' => function ($query){
+			}]);
+		}]);
+
+		return $this;
+	}
+	
+	public function privateProgram() {
+		$this->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM]);
+		
+		return $this;
+	}
+	
     public function location($locationId)
     {
         $this->joinWith(['course' => function ($query) use ($locationId) {

@@ -65,7 +65,7 @@ echo GridView::widget([
 			'buttons' => [
 				'delete' => function ($url, $model, $key) {
 					return Html::a('<i class="fa fa-times" aria-hidden="true"></i>',
-							['vacation/delete', 'id' => $model->id, 'studentId' => $model->student->id],
+							['vacation/delete', 'id' => $model->id],
 							[
 							'data' => [
 								'method' => 'post',
