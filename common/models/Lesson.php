@@ -298,6 +298,16 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
+    public function isPaid()
+    {
+        return (int) $this->proFormaInvoice->status === (int) Invoice::STATUS_PAID;
+    }
+
+    public function hasCredit()
+    {
+        return (int) $this->proFormaInvoice->status === (int) Invoice::STATUS_CREDIT;
+    }
+
     public function getStatus()
     {
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
