@@ -40,7 +40,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			<i class="fa fa-music detail-icon"></i> <?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
 		</div>
         <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Duration">
-			<i class="fa fa-clock-o"></i> <?php echo !empty($model->duration) ? $model->duration : null ?>
+			<i class="fa fa-clock-o"></i> <?php echo !empty($model->duration) ? (new \DateTime($model->duration))->format('H:i') : null ?>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
 			<i class="fa fa-info-circle detail-icon"></i> <?php echo !empty($model->status) ? $model->getStatus() : null; ?>
