@@ -76,6 +76,8 @@ class VacationController extends Controller
 				->notDeleted()
 				->isConfirmed()
 				->one();
+			$db = Yii::$app->db;
+            $transaction = $db->beginTransaction();
 			Vacation::deleteAll([
 				'studentId' => $studentId,
 				'isConfirmed' => false,
@@ -84,6 +86,7 @@ class VacationController extends Controller
 				'courseId' => $enrolment->course->id,
 				'status' => Lesson::STATUS_DRAFTED
 			]);
+            $transaction->commit();
 			$model->save();
             $model->on(Course::EVENT_VACATION_CREATE_PREVIEW, $enrolment->course->pushLessons($model->fromDate, $model->toDate));
 

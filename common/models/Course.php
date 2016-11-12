@@ -202,40 +202,33 @@ class Course extends \yii\db\ActiveRecord
 		$lessonTime								 = (new \DateTime($firstLesson->date))->format('H:i:s');
 		$duration								 = explode(':', $lessonTime);
 		$day									 = (new \DateTime($firstLesson->date))->format('l');
-		$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
-		$nextWeekOfProfessionalDevelopmentDay	 = $this->checkProfessionalDevelopmentDay($startDate, $day, $duration);
-		if (!empty($nextWeekOfProfessionalDevelopmentDay)) {
-			$startDate = $nextWeekOfProfessionalDevelopmentDay;
-		}
-
 		foreach ($lessons as $lesson) {
+			if ($this->isProfessionalDevelopmentDay($startDate, $day)) {
+				$startDate = $startDate->modify('next '.$day);
+			}
 			$originalLessonId	 = $lesson->id;
 			$lesson->id			 = null;
 			$lesson->isNewRecord = true;
 			$lesson->status		 = Lesson::STATUS_DRAFTED;
+			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 			$lesson->date		 = $startDate->format('Y-m-d H:i:s');
 			$lesson->save();
 
 			$day									 = (new \DateTime($lesson->date))->format('l');
 			$startDate->modify('next '.$day);
-			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
-			$nextWeekOfProfessionalDevelopmentDay	 = $this->checkProfessionalDevelopmentDay($startDate, $day, $duration);
-			if (!empty($nextWeekOfProfessionalDevelopmentDay)) {
-				$startDate = $nextWeekOfProfessionalDevelopmentDay;
-			}
 		}
 	}
 
-	public function checkProfessionalDevelopmentDay($startDate, $day, $duration)
+	public function isProfessionalDevelopmentDay($startDate, $day)
 	{
+		$result = false;
 		$professionalDevelopmentDay = clone $startDate;
 		$professionalDevelopmentDay->modify('last day of previous month');
 		$professionalDevelopmentDay->modify('fifth '.$day);
 		if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-			$startDate->modify('next '.$day);
-			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+			$result = true;
 		}
-		return $startDate;
+		return $result;
 	}
 
 	public function pushLessons($fromDate, $toDate)
@@ -268,9 +261,12 @@ class Course extends \yii\db\ActiveRecord
 		$firstLesson = ArrayHelper::getValue($lessons, 0);
 		$day		 = (new \DateTime($firstLesson->date))->format('l');
 		$startDay	 = (new \DateTime($fromDate))->format('l');
-		$startDate	 = new \DateTime($fromDate);
 		if ($day !== $startDay) {
+			$startDate = new \DateTime($startDate);
 			$startDate->modify('next '.$day);
+		} else {
+			$startDate	 = (new \DateTime($fromDate))->format('Y-m-d');
+			$startDate = new \DateTime($startDate);
 		}
 		$this->generateLessons($lessons, $startDate);
 	}
