@@ -73,7 +73,7 @@ use kartik\switchinput\SwitchInput;
           <div class="row m-t-10">
             <div class="col-xs-8">
                 <h4 class="m-0 f-w-400">
-                    <a href="/user/view?UserSearch%5Brole_name%5D=customer&id=<?php echo $customer->id ?>#student">
+                    <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id, '#' => 'student']) ?>">
                         <strong><?= isset($customer->publicIdentity) ? $customer->publicIdentity : null?></strong>
                     </a>
                 </h4>
