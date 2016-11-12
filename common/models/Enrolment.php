@@ -143,7 +143,7 @@ class Enrolment extends \yii\db\ActiveRecord
 	
     public function afterSave($insert, $changedAttributes)
     {
-        if ($this->course->isGroupProgram() || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
+        if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
             return true;
         }
         $interval = new \DateInterval('P1D');
@@ -197,21 +197,22 @@ class Enrolment extends \yii\db\ActiveRecord
         return $paymentCycleEndDate;
     }
 
-	public function getLastDateOfCourse()
+	public function getLastLessonDateOfPaymentCycle()
     {
-		$startDate = new \DateTime($this->course->startDate);
+		$courseDate = new \DateTime($this->course->startDate);
+		$startDate = \DateTime::createFromFormat('Y-m-d', $courseDate->format('Y-m-1'));
         switch ($this->paymentFrequency) {
             case self::PAYMENT_FREQUENCY_FULL:
-                $endDate = $startDate->modify('+1 year');
+                $endDate = $startDate->modify('+1 year, -1 day');
                 break;
             case self::PAYMENT_FREQUENCY_HALFYEARLY:
-                $endDate = $startDate->modify('+6 month');
+                $endDate = $startDate->modify('+6 month, -1 day');
                 break;
             case self::PAYMENT_FREQUENCY_QUARTERLY:
-                $endDate = $startDate->modify('+3 month');
+                $endDate = $startDate->modify('+3 month, -1 day');
                 break;
             case self::PAYMENT_FREQUENCY_MONTHLY:
-                $endDate = $startDate->modify('+1 month');
+                $endDate = $startDate->modify('+1 month, -1 day');
                 break;
         }
 		
