@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use common\models\Program;
+
 /**
  * This is the model class for table "course".
  *
@@ -95,6 +97,7 @@ class Course extends \yii\db\ActiveRecord
         ];
     }
 
+	
     public function getTeacher()
     {
         return $this->hasOne(User::className(), ['id' => 'teacherId']);

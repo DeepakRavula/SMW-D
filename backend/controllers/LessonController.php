@@ -404,7 +404,7 @@ class LessonController extends Controller
 				$vacation->save();
 				$oldLessons = Lesson::find()
 				->where(['courseId' => $courseId])
-				->andWhere(['>', 'lesson.date', $fromDate])
+				->andWhere(['>=', 'lesson.date', $fromDate])
 				->all();
 				$oldLessonIds = [];
 				foreach ($oldLessons as $oldLesson) {
@@ -415,7 +415,7 @@ class LessonController extends Controller
 			} else {
 				$oldLessons = Lesson::find()
 				->where(['courseId' => $courseId])
-				->andWhere(['>', 'lesson.date', $toDate])
+				->andWhere(['>=', 'lesson.date', $toDate])
 				->all();
 				$oldLessonIds = [];
 				foreach ($oldLessons as $oldLesson) {
@@ -458,8 +458,7 @@ class LessonController extends Controller
                 ]);
             }
         }
-		$isPrivateProgram = (int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM;
-		if ($isPrivateProgram) {
+		if ($courseModel->program->isPrivate()) {
 			if (!empty($vacationId)) {
 				if ($vacationType === Vacation::TYPE_CREATE) {
 					$message = 'Vacation has been created successfully';
@@ -469,16 +468,15 @@ class LessonController extends Controller
 					$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
 				}
 			} else {
-				$lessonDate		 = (new \DateTime($lessons[0]->date))->format('d-m-Y');
-				$lessonStartDate = new \DateTime($lessons[0]->date);
-				$lessonEndDate	 = $lessonStartDate->modify('+1 month');
+            	$startDate = new \DateTime($courseModel->startDate);
+				$endDate = $courseModel->enrolment->getLastLessonDateOfPaymentCycle();
 				$message		 = 'Lessons have been created successfully';
 				$link			 = $this->redirect([
 					'invoice/create',
 					'Invoice[customer_id]' => $courseModel->enrolment->student->customer->id,
 					'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
-					'LessonSearch[fromDate]' => $lessonDate,
-					'LessonSearch[toDate]' => $lessonEndDate->format('d-m-Y'),
+					'LessonSearch[fromDate]' => $startDate->format('d-m-Y'),
+					'LessonSearch[toDate]' => $endDate->format('d-m-Y'),
 					'LessonSearch[courseId]' => $courseModel->id,
 				]);
 			}

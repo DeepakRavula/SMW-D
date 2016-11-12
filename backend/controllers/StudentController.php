@@ -194,10 +194,8 @@ class StudentController extends Controller
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->paymentFrequency = Enrolment::PAYMENT_FREQUENCY_FULL;
             $enrolmentModel->save();
-            $courseStartDate = new \DateTime($enrolmentModel->course->startDate);
-            $courseStartDate = $courseStartDate->format('d-m-Y');
-            $courseEndDate = new \DateTime($enrolmentModel->course->endDate);
-            $courseEndDate = $courseEndDate->format('d-m-Y');
+            $courseStartDate = (new \DateTime($enrolmentModel->course->startDate))->format('d-m-Y');
+            $courseEndDate = (new \DateTime($enrolmentModel->course->endDate))->format('d-m-Y');
 
             return $this->redirect([
                 '/invoice/create',

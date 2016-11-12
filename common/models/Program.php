@@ -95,4 +95,15 @@ class Program extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Course::className(), ['programId' => 'id']);
     }
+
+	public function isPrivate()
+	{
+		return (int) $this->type === self::TYPE_PRIVATE_PROGRAM;
+	}
+
+	public function isGroup()
+	{
+		return (int) $this->type === self::TYPE_GROUP_PROGRAM;
+	}
+
 }
