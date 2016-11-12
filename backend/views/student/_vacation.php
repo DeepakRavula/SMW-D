@@ -34,7 +34,7 @@ $vacationDataProvider = new ActiveDataProvider([
 	'query' => $vacations,
 ]);
 ?>
-<div class="grid-row-open">
+<div>
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
 ]) ?>
