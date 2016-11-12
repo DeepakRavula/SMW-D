@@ -46,15 +46,22 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['enrolment.isConfirmed' => true]);
     }
 
-	public function privateProgram() {
-        $this->joinWith(['course' => function ($query){
+	public function programs()
+	{
+		$this->joinWith(['course' => function ($query){
         	$query->joinWith(['program' => function ($query){
-				$query->where(['type' => Program::TYPE_PRIVATE_PROGRAM]);
 			}]);
 		}]);
+
+		return $this;
+	}
+	
+	public function privateProgram() {
+		$this->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM]);
 		
 		return $this;
 	}
+	
     public function location($locationId)
     {
         $this->joinWith(['course' => function ($query) use ($locationId) {

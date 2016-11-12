@@ -70,6 +70,7 @@ class VacationController extends Controller
 			$model->studentId = $studentId;
 			$enrolment = Enrolment::find()
 				->location($locationId)
+				->programs()
 				->privateProgram()
 				->andWhere(['studentId' => $model->studentId])
 				->notDeleted()
@@ -131,6 +132,7 @@ class VacationController extends Controller
         $model = $this->findModel($id);
 		$enrolment = Enrolment::find()
 			->location($locationId)
+			->programs()
 			->privateProgram()
 			->andWhere(['studentId' => $model->studentId])
 			->notDeleted()
