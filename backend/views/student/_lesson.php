@@ -59,9 +59,8 @@ echo GridView::widget([
             'label' => 'Invoice Status',
             'value' => function ($data) {
                 $status = null;
-                $rootLessonId = $data->getRootLessonId($data->id);
-                $rootLesson = Lesson::findOne(['id' => $rootLessonId]);
-                if (!empty($rootLesson->invoice->status)) {
+                $rootLesson = $data->getRootLesson();
+                if (!empty($rootLesson->invoice)) {
                     return $rootLesson->invoice->getStatus();
                 } else {
                     $status = 'Not Invoiced';
@@ -79,9 +78,8 @@ echo GridView::widget([
         [
             'label' => 'Prepaid?',
             'value' => function ($data) {
-                $rootLessonId = $data->getRootLessonId($data->id);
-                $rootLesson = Lesson::findOne(['id' => $rootLessonId]);
-                if (!empty($rootLesson->proFormaInvoice->status) && ($rootLesson->isPaid() || $rootLesson->hasCredit())) {
+                $rootLesson = $data->getRootLesson();
+                if (!empty($rootLesson->proFormaInvoice) && ($rootLesson->proFormaInvoice->isPaid() || $rootLesson->proFormaInvoice->hasCredit())) {
                     return 'Yes';
                 }
 

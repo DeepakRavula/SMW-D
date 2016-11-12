@@ -54,9 +54,8 @@ echo GridView::widget([
         [
             'label' => 'Invoice Status',
             'value' => function ($data) {
-                $rootLessonId = $data->getRootLessonId($data->id);
-                $rootLesson = Lesson::findOne(['id' => $rootLessonId]);
-                if (!empty($rootLesson->invoice->status)) {
+                $rootLesson = $data->getRootLesson();
+                if (!empty($rootLesson->invoice)) {
                     $status = $rootLesson->invoice->getStatus();
                 } else {
                     $status = 'Not Invoiced';
