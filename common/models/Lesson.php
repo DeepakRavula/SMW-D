@@ -410,4 +410,10 @@ class Lesson extends \yii\db\ActiveRecord
         }
         return $lessonId;
     }
+
+    public function getRootLesson()
+    {
+        $rootLessonId = $this->getRootLessonId($this->id);
+        return self::findOne(['id' => $rootLessonId]);
+    }
 }    

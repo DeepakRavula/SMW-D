@@ -131,6 +131,17 @@ class Invoice extends \yii\db\ActiveRecord
 	{
         return (int) $this->type === (int) Invoice::TYPE_INVOICE;
 	}
+
+    public function isPaid()
+    {
+        return (int) $this->status === (int) self::STATUS_PAID;
+    }
+
+    public function hasCredit()
+    {
+        return (int) $this->status === (int) self::STATUS_CREDIT;
+    }
+
     public function getCreditAppliedTotal()
     {
         $creditUsageTotal = Payment::find()
