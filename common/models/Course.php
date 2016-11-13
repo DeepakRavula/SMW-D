@@ -204,14 +204,14 @@ class Course extends \yii\db\ActiveRecord
 		$day									 = (new \DateTime($firstLesson->date))->format('l');
 		foreach ($lessons as $lesson) {
 			if ($this->isProfessionalDevelopmentDay($startDate, $day)) {
-				$startDate = $startDate->modify('next '.$day);
+				$nextWeekScheduledDate = $startDate->modify('next '.$day);
 			}
 			$originalLessonId	 = $lesson->id;
 			$lesson->id			 = null;
 			$lesson->isNewRecord = true;
 			$lesson->status		 = Lesson::STATUS_DRAFTED;
 			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
-			$lesson->date		 = $startDate->format('Y-m-d H:i:s');
+			$lesson->date		 = $nextWeekScheduledDate->format('Y-m-d H:i:s');
 			$lesson->save();
 
 			$day									 = (new \DateTime($lesson->date))->format('l');
@@ -221,14 +221,14 @@ class Course extends \yii\db\ActiveRecord
 
 	public function isProfessionalDevelopmentDay($startDate, $day)
 	{
-		$result = false;
+		$isProfessionalDevelopmentDay = false;
 		$professionalDevelopmentDay = clone $startDate;
 		$professionalDevelopmentDay->modify('last day of previous month');
 		$professionalDevelopmentDay->modify('fifth '.$day);
 		if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-			$result = true;
+			$isProfessionalDevelopmentDay = true;
 		}
-		return $result;
+		return $isProfessionalDevelopmentDay;
 	}
 
 	public function pushLessons($fromDate, $toDate)
