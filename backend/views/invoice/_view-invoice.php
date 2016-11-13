@@ -4,30 +4,10 @@ use backend\models\search\InvoiceSearch;
 use yii\helpers\Url;
 use common\models\Invoice;
 use yii\widgets\ActiveForm;
-use kartik\switchinput\SwitchInput;
 
 ?>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="invoice-view p-50">
-	<div class="pull-right">
-		<?php if ((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE) : ?>
-			<?php $form = ActiveForm::begin([
-                'id' => 'mail-flag',
-            ]); ?>
-			<?=
-            $form->field($model, 'isSent')->widget(SwitchInput::classname(),
-                [
-                'name' => 'isSent',
-                'pluginOptions' => [
-                    'handleWidth' => 60,
-                    'onText' => 'Sent',
-                    'offText' => 'Not Sent',
-                ],
-            ])->label(false);
-            ?>
-		<?php ActiveForm::end(); ?>
-	<?php endif; ?>
-	</div>
          <div class="row">
 		<div class="col-xs-12 p-0">
           <h2 class="m-0">
@@ -35,20 +15,6 @@ use kartik\switchinput\SwitchInput;
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-		<?= Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-right  m-l-20']) ?>  
-          <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right m-l-20', 'target' => '_blank']) ?>
-		
-		<?php $form = ActiveForm::begin();?>
-		<?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
-			<?=
-			Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id],
-				[
-				'class' => 'btn btn-default pull-right',
-				'id' => 'delete-button',
-			])
-			?>
-		<?php endif; ?>
-    <?php ActiveForm::end(); ?>
           <div class="pull-left invoice-address text-gray">
             <div class="row-fluid">
               <h2 class="m-0 text-inverse"><strong><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
