@@ -19,6 +19,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
 <div class="schedule-index">
+<div id="next-prev-week-button" class="week-button">
+<button id="previous-week" class="btn btn-default btn-sm">Previous Week</button>
+<button id="next-week" class="btn btn-default btn-sm">Next Week</button>
+</div>
 <div class="e1Div">
     <?= Html::checkbox('active', false, ['label' => 'Show All Teachers', 'id' => 'active']); ?>
 </div>
@@ -50,6 +54,59 @@ $(document).ready(function() {
     events: <?php echo Json::encode($events); ?>,
     eventClick: function(event) {
         $(location).attr('href', event.url);
+    },
+	viewRender: function( view, element ) {
+		if(view.name !== 'resourceDay') {
+			$('#next-prev-week-button').hide();
+		} else {
+			$('#next-prev-week-button').show();
+		}
+	},
+    // the 'ev' parameter is the mouse event rather than the resource 'event'
+    // the ev.data is the resource column clicked upon
+    selectable: true,
+    selectHelper: true,
+    select: function(start, end, ev) {
+      console.log(start);
+      console.log(end);
+      console.log(ev.data); // resources
+    },
+    eventDragStart: function(event, jsEvent, ui, view) {
+        oldEvent = event;
+        oldEventResource = event.resources;
+        console.log(oldEvent);
+	},
+    eventDrop: function(event, delta, revertFunc, jsEvent, ui, view) {
+        var newEventResource = event.resources;
+        if(Number(newEventResource) != Number(oldEventResource))
+        {
+            revertFunc();
+            /*$('#calendar').fullCalendar('removeEvents');
+            $('#calendar').fullCalendar('addEventSource', <?php echo Json::encode($events); ?>);         
+            $('#calendar').fullCalendar('rerenderEvents' );*/
+            
+           // $('#calendar').fullCalendar( 'removeEvents', event.id);
+            //$('#calendar').fullCalendar('addEventSource', oldEvent);  
+            //$('#calendar').fullCalendar( 'renderEvent', oldEvent , 'stick');
+            
+        } else {
+            $.ajax({
+                url: "<?php echo Url::to(['schedule/update-events']); ?>",
+                type: "POST",
+                contentType: 'application/json',
+                dataType: "json",
+                data: JSON.stringify({
+                    "id": event.id,
+                    "minutes": delta.asMinutes(),
+                }),
+                success: function(response) {
+                },
+                error: function() {
+                }
+            });
+            
+            $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
+        }
     },
     dayClick: function(date, allDay, jsEvent, view) {
         if (allDay) {
@@ -86,6 +143,22 @@ $(document).ready(function() {
 });
 
 $(document).ready(function () {
+$("#next-week").click(function() {
+    var resources = <?php echo Json::encode($teachersWithClass); ?>;
+	var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
+    calendarDate.setDate(calendarDate.getDate() + 7);
+	var nextWeek = calendarDate.getDate()+'-'+ (calendarDate.getMonth()+1) +'-'+calendarDate.getFullYear();
+	var date = moment(nextWeek,'D-M-YYYY', true).format();
+    refreshCalendar(resources, date);
+  });
+  $("#previous-week").click(function() {
+    var resources = <?php echo Json::encode($teachersWithClass); ?>;
+	var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
+    calendarDate.setDate(calendarDate.getDate() - 7);
+	var previousWeek = calendarDate.getDate()+'-'+ (calendarDate.getMonth()+1) +'-'+calendarDate.getFullYear();
+	var date = moment(previousWeek,'D-M-YYYY', true).format();
+    refreshCalendar(resources, date);
+  });
 $("#active").change(function() {
     var resources = <?php echo Json::encode($teachersWithClass); ?>;
     if( $(this).is(':checked') ){
