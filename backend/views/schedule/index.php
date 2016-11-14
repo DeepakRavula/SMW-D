@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
 <div class="schedule-index">
-<div>
+<div id="next-prev-week-button" class="week-button">
 <button id="previous-week" class="btn btn-default btn-sm">Previous Week</button>
 <button id="next-week" class="btn btn-default btn-sm">Next Week</button>
 </div>
@@ -55,6 +55,13 @@ $(document).ready(function() {
     eventClick: function(event) {
         $(location).attr('href', event.url);
     },
+	viewRender: function( view, element ) {
+		if(view.name !== 'resourceDay') {
+			$('#next-prev-week-button').hide();
+		} else {
+			$('#next-prev-week-button').show();
+		}
+	},
     // the 'ev' parameter is the mouse event rather than the resource 'event'
     // the ev.data is the resource column clicked upon
     selectable: true,

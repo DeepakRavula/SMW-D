@@ -656,6 +656,12 @@ Licensed under MIT
     top: -49px;
         line-height: 37px;
 }
+.week-button {
+	position: absolute;
+    right: 195px;
+    top: -39px;
+    line-height: 27px;
+}
 /*.schedule-index{
   position: relative;
 }*/
