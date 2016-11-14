@@ -140,20 +140,4 @@ class ScheduleController extends Controller
 
         return $this->render('index', ['teachersWithClass' => $activeTeachers, 'allTeachers' => $availableTeachers, 'events' => $events, 'from_time' => $from_time, 'to_time' => $to_time]);
     }
-
-    public function actionUpdateEvents()
-    {
-        $data = Yii::$app->request->rawBody;
-        $data = Json::decode($data, true);
-        $lesson = Lesson::findOne(['id' => $data['id']]);
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
-        $rescheduledLessonDate = clone $lessonDate;
-        if ((float) $data['minutes'] > 0) {
-            $rescheduledLessonDate->add(new \DateInterval('PT'.round($data['minutes']).'M'));
-        } else {
-            $rescheduledLessonDate->sub(new \DateInterval('PT'.round(abs($data['minutes'])).'M'));
-        }
-        $lesson->date = $rescheduledLessonDate->format('Y-m-d H:i:s');
-        $lesson->save();
-    }
 }
