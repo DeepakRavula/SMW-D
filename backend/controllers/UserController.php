@@ -430,7 +430,7 @@ class UserController extends Controller
         return $this->render('create', [
                     'model' => $model,
                     'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-                    'programs' => ArrayHelper::map(Program::find()->active()->privateProgram()->all(), 'id', 'name'),
+                    'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
                     'availabilityModels' => (empty($availabilityModels)) ? [new TeacherAvailability()] : $availabilityModels,
                     'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
                     'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
@@ -570,7 +570,7 @@ class UserController extends Controller
         return $this->render('update', [
                     'model' => $model,
                     'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-                    'programs' => ArrayHelper::map(Program::find()->active()->privateProgram()->all(), 'id', 'name'),
+                    'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
                     'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
                     'availabilityModels' => (empty($availabilityModels)) ? [new TeacherAvailability()] : $availabilityModels,
                     'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
