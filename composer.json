@@ -68,7 +68,8 @@
     "judev/php-intervaltree": "^2.0",
     "drsdre/yii2-wizardwidget": "*",
     "kartik-v/yii2-widget-switchinput": "*",
-    "janisto/yii2-timepicker": "*"
+    "janisto/yii2-timepicker": "*",
+    "moonlandsoft/bootui-datetimepicker": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",

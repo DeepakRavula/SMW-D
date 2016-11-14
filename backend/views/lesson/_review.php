@@ -113,7 +113,6 @@ $this->title = 'Review Lessons';
                'refreshGrid' => true,
                'value' => function ($model, $key, $index, $widget) {
                    $lessonTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date)->format('H:i:s');
-
                    return Yii::$app->formatter->asTime($lessonTime);
                },
                'headerOptions' => ['class' => 'kv-sticky-column'],
@@ -158,19 +157,10 @@ $this->title = 'Review Lessons';
                        'header' => 'Lesson Duration',
                        'size' => 'md',
                        'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-                       'widgetClass' => 'dosamigos\datetimepicker\DateTimePicker',
+                       'widgetClass' => 'bootui\datetimepicker\Timepicker',
                        'options' => [
-                           'clientOptions' => [
-                               'startView' => 1,
-                               'minView' => 0,
-                               'maxView' => 3,
-                               'pickDate' => false,
-                               'autoclose' => true,
-                               'format' => 'HH:ii',
-                               'showMeridian' => true,
-                               'minuteStep' => 15,
-                           ],
-                       ],
+							'format' => 'HH:mm',
+						],
                        'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
                            'editableSuccess' => 'review.onEditableGridSuccess',
