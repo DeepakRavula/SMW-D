@@ -19,6 +19,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
 <div class="schedule-index">
+<div>
+<button id="previous-week" class="btn btn-default btn-sm">Previous Week</button>
+<button id="next-week" class="btn btn-default btn-sm">Next Week</button>
+</div>
 <div class="e1Div">
     <?= Html::checkbox('active', false, ['label' => 'Show All Teachers', 'id' => 'active']); ?>
 </div>
@@ -133,6 +137,22 @@ $(document).ready(function() {
 });
 
 $(document).ready(function () {
+$("#next-week").click(function() {
+    var resources = <?php echo Json::encode($teachersWithClass); ?>;
+	var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
+    calendarDate.setDate(calendarDate.getDate() + 7);
+	var nextWeek = calendarDate.getDate()+'-'+ (calendarDate.getMonth()+1) +'-'+calendarDate.getFullYear();
+	var date = moment(nextWeek,'D-M-YYYY', true).format();
+    refreshCalendar(resources, date);
+  });
+  $("#previous-week").click(function() {
+    var resources = <?php echo Json::encode($teachersWithClass); ?>;
+	var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
+    calendarDate.setDate(calendarDate.getDate() - 7);
+	var previousWeek = calendarDate.getDate()+'-'+ (calendarDate.getMonth()+1) +'-'+calendarDate.getFullYear();
+	var date = moment(previousWeek,'D-M-YYYY', true).format();
+    refreshCalendar(resources, date);
+  });
 $("#active").change(function() {
     var resources = <?php echo Json::encode($teachersWithClass); ?>;
     if( $(this).is(':checked') ){
