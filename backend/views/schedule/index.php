@@ -62,52 +62,6 @@ $(document).ready(function() {
 			$('#next-prev-week-button').show();
 		}
 	},
-    // the 'ev' parameter is the mouse event rather than the resource 'event'
-    // the ev.data is the resource column clicked upon
-    selectable: true,
-    selectHelper: true,
-    select: function(start, end, ev) {
-      console.log(start);
-      console.log(end);
-      console.log(ev.data); // resources
-    },
-    eventDragStart: function(event, jsEvent, ui, view) {
-        oldEvent = event;
-        oldEventResource = event.resources;
-        console.log(oldEvent);
-	},
-    eventDrop: function(event, delta, revertFunc, jsEvent, ui, view) {
-        var newEventResource = event.resources;
-        if(Number(newEventResource) != Number(oldEventResource))
-        {
-            revertFunc();
-            /*$('#calendar').fullCalendar('removeEvents');
-            $('#calendar').fullCalendar('addEventSource', <?php echo Json::encode($events); ?>);         
-            $('#calendar').fullCalendar('rerenderEvents' );*/
-            
-           // $('#calendar').fullCalendar( 'removeEvents', event.id);
-            //$('#calendar').fullCalendar('addEventSource', oldEvent);  
-            //$('#calendar').fullCalendar( 'renderEvent', oldEvent , 'stick');
-            
-        } else {
-            $.ajax({
-                url: "<?php echo Url::to(['schedule/update-events']); ?>",
-                type: "POST",
-                contentType: 'application/json',
-                dataType: "json",
-                data: JSON.stringify({
-                    "id": event.id,
-                    "minutes": delta.asMinutes(),
-                }),
-                success: function(response) {
-                },
-                error: function() {
-                }
-            });
-            
-            $('#myflashwrapper').html("Re-scheduled successfully").fadeIn().delay(3000).fadeOut();
-        }
-    },
     dayClick: function(date, allDay, jsEvent, view) {
         if (allDay) {
             $('#calendar').fullCalendar('changeView', 'resourceDay');
