@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c44758e9afc219f2432fae0ff46d2367",
-    "content-hash": "68c20dfa921d5c5ef57946f07827da04",
+    "hash": "1d3582b4b0e8a2cefc734281088199d1",
+    "content-hash": "86d5f4b4e25cfd25ad2d7b58fb91b53a",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -2707,6 +2707,91 @@
                 "yii2"
             ],
             "time": "2016-08-07 15:32:52"
+        },
+        {
+            "name": "moonlandsoft/bootui-datetimepicker",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/moonlandsoft/bootui-datetimepicker.git",
+                "reference": "d67536e3269c00692a4e68c6856157226cf3519d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/moonlandsoft/bootui-datetimepicker/zipball/d67536e3269c00692a4e68c6856157226cf3519d",
+                "reference": "d67536e3269c00692a4e68c6856157226cf3519d",
+                "shasum": ""
+            },
+            "require": {
+                "moonlandsoft/helpers": "*",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "bootui\\datetimepicker\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Moh Khoirul Anam",
+                    "email": "moh.khoirul.anaam@gmail.com"
+                }
+            ],
+            "description": "Bootstrap Datepicker and Timepicker in one extentions",
+            "keywords": [
+                "DateTimePicker",
+                "bootstrap",
+                "datepicker",
+                "extension",
+                "timepicker",
+                "yii2"
+            ],
+            "time": "2015-01-23 22:43:56"
+        },
+        {
+            "name": "moonlandsoft/helpers",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/moonlandsoft/helpers.git",
+                "reference": "8a8c981b17112f04e1da0bd0de8d56adfb8e5adf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/moonlandsoft/helpers/zipball/8a8c981b17112f04e1da0bd0de8d56adfb8e5adf",
+                "reference": "8a8c981b17112f04e1da0bd0de8d56adfb8e5adf",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "moonland\\helpers\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Moh Khoirul Anam",
+                    "email": "moh.khoirul.anaam@gmail.com"
+                }
+            ],
+            "description": "Helper for all widgets",
+            "keywords": [
+                "extension",
+                "yii2"
+            ],
+            "time": "2015-01-23 14:45:15"
         },
         {
             "name": "psr/http-message",
