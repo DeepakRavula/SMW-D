@@ -198,12 +198,13 @@ class Course extends \yii\db\ActiveRecord
 
 	public function generateLessons($lessons, $startDate)
 	{
-		$firstLesson							 = ArrayHelper::getValue($lessons, 0);
-		$lessonTime								 = (new \DateTime($firstLesson->date))->format('H:i:s');
+		$lessonTime								 = (new \DateTime($this->startDate))->format('H:i:s');
 		$duration								 = explode(':', $lessonTime);
-		$day									 = (new \DateTime($firstLesson->date))->format('l');
+		$nextWeekScheduledDate = $startDate;
+		$dayList = self::getWeekdaysList();
+		$day = $dayList[$this->day];
 		foreach ($lessons as $lesson) {
-			if ($this->isProfessionalDevelopmentDay($startDate, $day)) {
+			if ($this->isProfessionalDevelopmentDay($startDate)) {
 				$nextWeekScheduledDate = $startDate->modify('next '.$day);
 			}
 			$originalLessonId	 = $lesson->id;
@@ -214,13 +215,14 @@ class Course extends \yii\db\ActiveRecord
 			$lesson->date		 = $nextWeekScheduledDate->format('Y-m-d H:i:s');
 			$lesson->save();
 
-			$day									 = (new \DateTime($lesson->date))->format('l');
 			$startDate->modify('next '.$day);
 		}
 	}
 
-	public function isProfessionalDevelopmentDay($startDate, $day)
+	public function isProfessionalDevelopmentDay($startDate)
 	{
+		$dayList = self::getWeekdaysList();
+		$day = $dayList[$this->day];
 		$isProfessionalDevelopmentDay = false;
 		$professionalDevelopmentDay = clone $startDate;
 		$professionalDevelopmentDay->modify('last day of previous month');
@@ -241,8 +243,8 @@ class Course extends \yii\db\ActiveRecord
 			])
 			->andWhere(['>=', 'date', $fromDate])
 			->all();
-		$firstLesson = ArrayHelper::getValue($lessons, 0);
-		$day		 = (new \DateTime($firstLesson->date))->format('l');
+		$dayList = self::getWeekdaysList();
+		$day = $dayList[$this->day];
 		$startDate	 = new \DateTime($toDate);
 		$startDate->modify('next '.$day);
 		$this->generateLessons($lessons, $startDate);
@@ -258,8 +260,8 @@ class Course extends \yii\db\ActiveRecord
 			])
 			->andWhere(['>=', 'date', $toDate])
 			->all();
-		$firstLesson = ArrayHelper::getValue($lessons, 0);
-		$day		 = (new \DateTime($firstLesson->date))->format('l');
+		$dayList = self::getWeekdaysList();
+		$day = $dayList[$this->day];
 		$startDay	 = (new \DateTime($fromDate))->format('l');
 		if ($day !== $startDay) {
 			$startDate = new \DateTime($startDate);
