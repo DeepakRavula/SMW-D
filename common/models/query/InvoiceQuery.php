@@ -38,11 +38,11 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 
     public function student($id)
     {
-        $this->joinWith(['lineItems li' => function ($query) use ($id) {
-            $query->joinWith(['lesson l' => function ($query) use ($id) {
-                $query->joinWith(['enrolment e' => function ($query) use ($id) {
-                    $query->joinWith('student s')
-                        ->where(['s.customer_id' => $id]);
+        $this->joinWith(['lineItems' => function ($query) use ($id) {
+            $query->joinWith(['lesson' => function ($query) use ($id) {
+                $query->joinWith(['enrolment' => function ($query) use ($id) {
+                    $query->joinWith('student')
+                        ->where(['student.customer_id' => $id]);
                 }]);
             }]);
         }]);

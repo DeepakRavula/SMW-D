@@ -71,8 +71,7 @@ class ProgramController extends Controller
                     $query->location($locationId)
                         ->where(['course.programId' => $id])
 						->isConfirmed();
-                }])
-                ->active();
+                }]);
 
         $studentDataProvider = new ActiveDataProvider([
             'query' => $query,

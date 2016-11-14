@@ -97,12 +97,8 @@ class StudentQuery extends ActiveQuery
     public function teacherStudents($locationId, $id)
     {
         $this->joinWith(['enrolment' => function ($query) use ($id, $locationId) {
-            $query->joinWith(['lessons' => function ($query) use ($id) {
-                $query->where(['lesson.teacherId' => $id])
-                    ->groupBy('lesson.teacherId');
-            }])
-            ->joinWith(['course' => function ($query) use ($locationId) {
-                $query->where(['locationId' => $locationId]);
+            $query->joinWith(['course' => function ($query) use ($locationId, $id) {
+                $query->andWhere(['locationId' => $locationId, 'teacherId' => $id]);
             }])
 			->isConfirmed();
         }]);
