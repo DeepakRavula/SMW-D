@@ -21,4 +21,11 @@ class ProgramQuery extends ActiveQuery
 
         return $this;
     }
+
+	public function privateProgram()
+    {
+        $this->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM]);
+
+        return $this;
+    }
 }
