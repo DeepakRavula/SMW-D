@@ -254,7 +254,12 @@ class Lesson extends \yii\db\ActiveRecord
         return new \common\models\query\LessonQuery(get_called_class());
     }
 
-    public function getEnrolment()
+	public function isUnscheduled()
+	{
+		return (int) $this->status === self::STATUS_UNSCHEDULED;
+	}
+
+	public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
     }

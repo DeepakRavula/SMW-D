@@ -144,7 +144,7 @@ class LessonController extends Controller
         }
         $data = ['model' => $model];
         $view = '_form';
-        if ((int) $model->course->program->isPrivate()) {
+        if ($model->course->program->isPrivate()) {
             $view = '_form-private-lesson';
             if (!empty($model->privateLesson->id)) {
                 $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
