@@ -426,4 +426,14 @@ class Lesson extends \yii\db\ActiveRecord
                 $this->date);
         return $rootLessonDate != $currentLessonDate;
     }
+
+    public function isEnrolmentFirstlesson()
+    {
+        $courseId             = $this->courseId;
+        $enrolmentFirstLesson = self::find()
+                ->where(['courseId' => $courseId])
+                ->orderBy(['id' => SORT_ASC])
+                ->one();
+        return $enrolmentFirstLesson->date === $this->date;
+    }
 }    

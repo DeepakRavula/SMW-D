@@ -86,6 +86,10 @@ a:hover, a:focus{
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
 }
+.enrolment-first-lesson, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .enrolment-first-lesson a{
+    border: 1px solid #FF00FF !important;
+    background-color: #FF00FF !important;
+}
 .proforma-paid, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .proforma-paid a{
     border: 1px solid  #378006 !important;
     background-color:  #378006 !important;
