@@ -30,6 +30,7 @@ class Lesson extends \yii\db\ActiveRecord
 	
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_PRIVATE_LESSON = 'private-lesson';
+    const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
 
     public $programId;
     public $time;
@@ -64,7 +65,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId', 'notes', 'teacherId'], 'safe'],
-            ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_REVIEW],
+            ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],

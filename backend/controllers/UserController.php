@@ -209,9 +209,10 @@ class UserController extends Controller
                 ]);
 
         $unscheduledLessons = Lesson::find()
+			->enrolment()
             ->andWhere([
 				'status' => Lesson::STATUS_UNSCHEDULED,
-				'teacherId' => $id,
+				'lesson.teacherId' => $id,
 			])
             ->joinWith(['privateLesson'])
             ->orderBy(['private_lesson.expiryDate' => SORT_DESC])

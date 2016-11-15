@@ -187,4 +187,13 @@ class LessonQuery extends \yii\db\ActiveQuery
 			->notDeleted();
         return $this;
     }
+
+	public function enrolment() {
+		$this->joinWith(['course' => function($query){
+			$query->joinWith(['enrolment' => function($query){
+				$query->isConfirmed();
+			}]);
+		}]);
+		return $this;
+	}
 }
