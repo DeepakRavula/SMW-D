@@ -16,8 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
     right: 0 !important;
   }
 </style>
-<div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
-<div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
 <div class="schedule-index">
 <div id="next-prev-week-button" class="week-button">
 <button id="previous-week" class="btn btn-default btn-sm">Previous Week</button>
@@ -72,22 +70,6 @@ $(document).ready(function() {
                     events: <?php echo Json::encode($events); ?>,
                 }
             );
-        }
-    },
-    eventAfterAllRender: function (view, element) {
-        var date = new Date($('#calendar').fullCalendar('getDate'));
-        var count = 0;
-        $('#calendar').fullCalendar('clientEvents', function(event) {
-            var startTime = new Date(event.start);
-            var eventDate = startTime.getDate() + "/" + startTime.getMonth() + "/" + startTime.getFullYear();
-            var currentDate = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
-            if(eventDate == currentDate) {
-               count++;
-            }
-        });
-
-        if(count==0){
-            $('#myflashinfo').html("No lessons scheduled for the day").fadeIn().delay(1000).fadeOut();
         }
     },
     });
@@ -157,22 +139,6 @@ function refreshCalendar(resources, date) {
                     resources:  <?php echo Json::encode($teachersWithClass); ?>,
                     events: <?php echo Json::encode($events); ?>,
                 });
-            }
-        },
-        eventAfterAllRender: function (view, element) {
-            var count = 0;
-            var date = new Date($('#calendar').fullCalendar('getDate'));
-            $('#calendar').fullCalendar('clientEvents', function(event) {
-                var startTime = new Date(event.start);
-                var eventDate = startTime.getDate() + "/" + startTime.getMonth() + "/" + startTime.getFullYear();
-                var currentDate = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
-                if(eventDate == currentDate) {
-                   count++;
-                }
-
-            });
-            if(count==0){
-                $('#myflashinfo').html("No lessons scheduled for the day").fadeIn().delay(3000).fadeOut();
             }
         },
     });
