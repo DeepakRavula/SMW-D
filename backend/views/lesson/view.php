@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use common\models\Program;
 use common\models\Lesson;
-use common\models\PrivateLesson;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -36,6 +35,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			<i class="fa fa-calendar"></i> <?php echo !empty(Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>
 			</div>
 		<?php endif; ?>
+        <?php if($model->isRescheduled()) : ?>
+        <?php $rootLesson = $model->getRootLesson(); ?>
+        <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Original Lesson Date">
+            <i class="fa fa-calendar-plus-o"></i> <?php echo Yii::$app->formatter->asDateTime($rootLesson->date); ?>
+        </div>
+        <?php endif; ?>
+        
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
 			<i class="fa fa-music detail-icon"></i> <?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
 		</div>
@@ -53,7 +59,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 				<i class="fa fa-calendar-plus-o"></i> <?php echo !empty(Yii::$app->formatter->asDateTime($model->privateLesson->expiryDate)) ? (Yii::$app->formatter->asDate($model->privateLesson->expiryDate)) : null; ?>
 		    <?php endif; ?>
 		</div>
-			
+        
 		<?php if (Yii::$app->controller->action->id === 'view'):?>
 	<div class="col-md-12 action-btns m-b-20">
 		<?php if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>
