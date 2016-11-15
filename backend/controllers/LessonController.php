@@ -144,7 +144,7 @@ class LessonController extends Controller
         }
         $data = ['model' => $model];
         $view = '_form';
-        if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM) {
+        if ((int) $model->course->program->isPrivate()) {
             $view = '_form-private-lesson';
             if (!empty($model->privateLesson->id)) {
                 $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
@@ -168,46 +168,33 @@ class LessonController extends Controller
             $data = ['model' => $model, 'privateLessonModel' => $privateLessonModel];
         }
         if ($model->load(Yii::$app->request->post())) {
-            $duration = \DateTime::createFromFormat('H:i', $model->duration);
-            $model->duration = $duration->format('H:i:s');
-            if (empty($model->date)) {
-                $model->date = $model->getOldAttribute('date');
-                $model->status = Lesson::STATUS_CANCELED;
-                $model->save();
-                $redirectionLink = $this->redirect(['view', 'id' => $model->id]);
-            } else {
-                $oldDate = $model->getOldAttribute('date');
-                if (new \DateTime($oldDate) != new \DateTime($model->date)) {
-                    $model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
-                    $validate = $model->validate();
-                }
-                $lessonConflicts = [];
-                $lessonConflicts = $model->getErrors('date');
-                $lessonConflicts = current($lessonConflicts);
-                if (!empty($lessonConflicts)) {
-                    if (isset($lessonConflicts['lessonIds']) || isset($lessonConflicts['dates'])) {
-                        if (!empty($lessonConflicts['lessonIds'])) {
-                            $message = 'Reschedule time conflicts with another lesson';
-                        } elseif ($lessonConflicts['dates']) {
-                            $message = 'Reschedule Date conflicts with holiday';
-                        }
-                    } else {
-                        $message = $lessonConflicts;
-                    }
-                    Yii::$app->session->setFlash('alert',
-                        [
-                        'options' => ['class' => 'alert-danger'],
-                        'body' => $message,
-                    ]);
-                    $redirectionLink = $this->redirect(['update', 'id' => $model->id]);
-                } else {
-                    $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+			$oldDate = $model->getOldAttribute('date');
+			if (new \DateTime($oldDate) != new \DateTime($model->date)) {
+				$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
+				$validate = $model->validate();
+			}
+			if (empty($model->date)) {
+				$model->setScenario(Lesson::SCENARIO_UNSCHEDULED_LESSON);
+			}
+			$lessonConflict = $model->getErrors('date');
+			$message = current($lessonConflict);
+			if(! empty($lessonConflict)){
+				Yii::$app->session->setFlash('alert',
+					[
+					'options' => ['class' => 'alert-danger'],
+					'body' => $message,
+				]);
+				$redirectionLink = $this->redirect(['update', 'id' => $model->id]);
+			} else {
+				$duration = \DateTime::createFromFormat('H:i', $model->duration);
+            	$model->duration = $duration->format('H:i:s');
+				if (! empty($model->date)) {
+					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
                     $model->date = $lessonDate->format('Y-m-d H:i:s');
-                    $model->save();
-                    $redirectionLink = $this->redirect(['view', 'id' => $model->id]);
-                }
-            }
-
+				}
+				$model->save();
+                $redirectionLink = $this->redirect(['view', 'id' => $model->id]);
+			}
             return $redirectionLink;
         }
 

@@ -31,9 +31,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			</h5>
 				<?php endif; ?>
 			</div>
-		<?php if ((int) $model->status !== Lesson::STATUS_CANCELED) : ?>
+			<?php if ((int) $model->status !== Lesson::STATUS_UNSCHEDULED) : ?>
 			<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
-			<i class="fa fa-calendar"></i> <?php echo !empty(Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>
+			<i class="fa fa-calendar"></i>
+				<?php echo !empty(Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>
 			</div>
 		<?php endif; ?>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
