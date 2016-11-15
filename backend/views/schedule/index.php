@@ -49,6 +49,10 @@ $this->params['breadcrumbs'][] = $this->title;
             ]);
             ?>
         </div>
+        <div id="next-prev-week-button" class="week-button">
+            <button id="previous-week" class="btn btn-default btn-sm">Previous Week</button>
+            <button id="next-week" class="btn btn-default btn-sm">Next Week</button>
+        </div>
     </div>
     <div id='calendar' class="p-10"></div>
 </div>
@@ -133,6 +137,22 @@ $(document).ready(function () {
         });
         refreshCalendar(resources, date);
 	}); }, 3000);
+    $("#next-week").click(function() {
+        var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
+        calendarDate.setDate(calendarDate.getDate() + 7);
+        var nextWeek = calendarDate.getDate()+'-'+ (calendarDate.getMonth()+1) +'-'+calendarDate.getFullYear();
+        var date = moment(nextWeek,'D-M-YYYY', true).format();
+        var resources = getResources(date);
+        refreshCalendar(resources, date);
+      });
+    $("#previous-week").click(function() {
+        var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
+        calendarDate.setDate(calendarDate.getDate() - 7);
+        var previousWeek = calendarDate.getDate()+'-'+ (calendarDate.getMonth()+1) +'-'+calendarDate.getFullYear();
+        var date = moment(previousWeek,'D-M-YYYY', true).format();
+        var resources = getResources(date);
+        refreshCalendar(resources, date);
+    });
 });
 function getResources(date) {
     var day = moment(date).day();
