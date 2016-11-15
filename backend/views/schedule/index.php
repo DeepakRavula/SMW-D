@@ -84,7 +84,7 @@ $(document).ready(function() {
     resources:  resources,
     events: events,
     viewRender: function( view, element ) {
-		if(view.name !== 'resourceDay') {
+		if(view.name != 'resourceDay') {
 			$('#next-prev-week-button').hide();
 		} else {
 			$('#next-prev-week-button').show();
@@ -117,28 +117,16 @@ $(document).ready(function() {
 
 $(document).ready(function () {
     setTimeout(function(){
-	$('#program-selector').on('selectivity-selected', function(e){
+	$('#program-selector').on('change', function(e){
         var date = $('#calendar').fullCalendar('getDate');
-		var day = moment(date).day();
-        var resources = [];
-        $.each( availableTeachersDetails, function( key, value ) {
-            if (value.day === day && $.inArray(e.id, value.programs) !== -1) {
-               resources.push(value);
-            }
-        });
+		var resources = getResources(date);
         refreshCalendar(resources, date);
 	}); }, 3000);
 
     setTimeout(function(){
-	$('#teacher-selector').on('selectivity-selected', function(e){
+	$('#teacher-selector').on('change', function(e){
         var date = $('#calendar').fullCalendar('getDate');
-		var day = moment(date).day();
-        var resources = [];
-        $.each( availableTeachersDetails, function( key, value ) {
-            if (value.day === day && e.id === value.id) {
-               resources.push(value);
-            }
-        });
+		var resources = getResources(date);
         refreshCalendar(resources, date);
 	}); }, 3000);
     $("#next-week").click(function() {
@@ -158,9 +146,9 @@ function getResources(date) {
     var day = moment(date).day();
     var resources = [];
     var selectedProgram = $('#program-selector').selectivity('value');
-    var programSelected = (selectedProgram !== 'undefined') && (selectedProgram !== null);
+    var programSelected = (selectedProgram != 'undefined') && (selectedProgram != null);
     var selectedTeacher = $('#teacher-selector').selectivity('value');
-    var teacherSelected = (selectedTeacher !== 'undefined') && (selectedTeacher !== null);
+    var teacherSelected = (selectedTeacher != 'undefined') && (selectedTeacher != null);
     if(!teacherSelected && !programSelected) {
         $.each( availableTeachersDetails, function( key, value ) {
             if (value.day == day) {
@@ -170,7 +158,7 @@ function getResources(date) {
     }
     if(!teacherSelected && programSelected){
         $.each( availableTeachersDetails, function( key, value ) {
-            if (value.day === day && $.inArray(selectedProgram, value.programs) !== -1) {
+            if (value.day == day && $.inArray(selectedProgram, value.programs) != -1) {
                resources.push(value);
             }
         });
@@ -178,7 +166,7 @@ function getResources(date) {
     if(teacherSelected){
         var resources = [];
         $.each( availableTeachersDetails, function( key, value ) {
-            if (value.day === day && selectedTeacher === value.id) {
+            if (value.day == day && selectedTeacher == value.id) {
                resources.push(value);
             }
         });
@@ -205,7 +193,7 @@ function refreshCalendar(resources, date) {
         resources:  resources,
         events: events,
         viewRender: function( view, element ) {
-            if(view.name !== 'resourceDay') {
+            if(view.name != 'resourceDay') {
                 $('#next-prev-week-button').hide();
             } else {
                 $('#next-prev-week-button').show();
