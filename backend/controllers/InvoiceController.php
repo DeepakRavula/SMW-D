@@ -313,12 +313,6 @@ class InvoiceController extends Controller
             }
             $invoice->save();
 
-            $invoiceType = (int) $invoice->type === Invoice::TYPE_INVOICE ? 'Invoice' : 'Pro-forma invoice';
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => $invoiceType.' '.'has been created successfully',
-            ]);
-
             return $this->redirect(['view', 'id' => $invoice->id]);
         } else {
             return $this->render('create', [

@@ -548,11 +548,7 @@ class LessonController extends Controller
                 $creditUsageModel->debit_payment_id = $debitPaymentId;
                 $creditUsageModel->save();
             }
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Invoice has been generated successfully',
-            ]);
-
+            
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {
             Yii::$app->session->setFlash('alert', [
