@@ -169,31 +169,33 @@ class LessonController extends Controller
         }
         if ($model->load(Yii::$app->request->post())) {
 			$oldDate = $model->getOldAttribute('date');
-			if (new \DateTime($oldDate) != new \DateTime($model->date)) {
-				$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
-				$validate = $model->validate();
-			}
-			if (empty($model->date)) {
-				$model->setScenario(Lesson::SCENARIO_UNSCHEDULED_LESSON);
-			}
-			$lessonConflict = $model->getErrors('date');
-			$message = current($lessonConflict);
-			if(! empty($lessonConflict)){
-				Yii::$app->session->setFlash('alert',
-					[
-					'options' => ['class' => 'alert-danger'],
-					'body' => $message,
-				]);
+			if(empty($model->date)) {
+				$model->date =  $model->getOldAttribute('date');
+				$model->status = Lesson::STATUS_UNSCHEDULED;
+				$model->save();
 				$redirectionLink = $this->redirect(['update', 'id' => $model->id]);
 			} else {
-				$duration = \DateTime::createFromFormat('H:i', $model->duration);
-            	$model->duration = $duration->format('H:i:s');
-				if (! empty($model->date)) {
-					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-                    $model->date = $lessonDate->format('Y-m-d H:i:s');
+				if (new \DateTime($oldDate) != new \DateTime($model->date)) {
+					$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
+					$validate = $model->validate();
 				}
-				$model->save();
-                $redirectionLink = $this->redirect(['view', 'id' => $model->id]);
+				$lessonConflict = $model->getErrors('date');
+				$message = current($lessonConflict);
+				if(! empty($lessonConflict)){
+					Yii::$app->session->setFlash('alert',
+						[
+						'options' => ['class' => 'alert-danger'],
+						'body' => $message,
+					]);
+					$redirectionLink = $this->redirect(['update', 'id' => $model->id]);
+				} else {
+					$duration = \DateTime::createFromFormat('H:i', $model->duration);
+					$model->duration = $duration->format('H:i:s');
+					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+					$model->date = $lessonDate->format('Y-m-d H:i:s');
+					$model->save();
+					$redirectionLink = $this->redirect(['view', 'id' => $model->id]);
+				}
 			}
             return $redirectionLink;
         }

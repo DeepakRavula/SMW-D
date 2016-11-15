@@ -30,7 +30,6 @@ class Lesson extends \yii\db\ActiveRecord
 	
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_PRIVATE_LESSON = 'private-lesson';
-	const SCENARIO_UNSCHEDULED_LESSON = 'unscheduled-lesson';
 
     public $programId;
     public $time;
@@ -70,7 +69,6 @@ class Lesson extends \yii\db\ActiveRecord
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkDateConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
-			['date', 'safe', 'on' => self::SCENARIO_UNSCHEDULED_LESSON]
         ];
     }
 
@@ -339,16 +337,14 @@ class Lesson extends \yii\db\ActiveRecord
     {
         if ((int) $this->status !== (int) self::STATUS_DRAFTED) {
             if (!$insert) {
-                if (isset($changedAttributes['date'])) {
+                if (isset($changedAttributes['date']) && !empty($this->date)) {
                     $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
                     $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-					if(!empty($this->date)){
-						if (!empty($this->teacher->email)) {
-							$this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
-						}
-						if (!empty($this->enrolment->student->customer->email)) {
-							$this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
-						}
+					if (!empty($this->teacher->email)) {
+						$this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
+					}
+					if (!empty($this->enrolment->student->customer->email)) {
+						$this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
 					}
                     $this->updateAttributes([
 						'date' => $fromDate->format('Y-m-d H:i:s'),
@@ -357,13 +353,8 @@ class Lesson extends \yii\db\ActiveRecord
                     $originalLessonId = $this->id;
                     $this->id = null;
                     $this->isNewRecord = true;
-					if(empty($toDate)){
-                    	$this->status = self::STATUS_UNSCHEDULED;
-						$this->date = '00-00-00 00:00:00';
-					} else {
-                    	$this->date = $toDate->format('Y-m-d H:i:s');
-                    	$this->status = self::STATUS_SCHEDULED;
-					}
+                    $this->date = $toDate->format('Y-m-d H:i:s');
+                    $this->status = self::STATUS_SCHEDULED;
                     $this->save();
                     $lessonRescheduleModel = new LessonReschedule();
                     $lessonRescheduleModel->lessonId = $originalLessonId;
