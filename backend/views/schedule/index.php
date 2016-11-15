@@ -83,6 +83,13 @@ $(document).ready(function() {
     droppable: true,
     resources:  resources,
     events: events,
+    viewRender: function( view, element ) {
+		if(view.name !== 'resourceDay') {
+			$('#next-prev-week-button').hide();
+		} else {
+			$('#next-prev-week-button').show();
+		}
+	},
     eventClick: function(event) {
         $(location).attr('href', event.url);
     },
@@ -91,9 +98,6 @@ $(document).ready(function() {
             var resources = getResources(date);
             refreshCalendar(resources, date);
         }
-    },
-    eventAfterAllRender: function (view, element) {
-        eventAfterAllRender();
     },
     });
     $(".fc-button-prev, .fc-button-next").click(function(){
@@ -139,17 +143,13 @@ $(document).ready(function () {
 	}); }, 3000);
     $("#next-week").click(function() {
         var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
-        calendarDate.setDate(calendarDate.getDate() + 7);
-        var nextWeek = calendarDate.getDate()+'-'+ (calendarDate.getMonth()+1) +'-'+calendarDate.getFullYear();
-        var date = moment(nextWeek,'D-M-YYYY', true).format();
+        var date = moment(calendarDate).add('d', 7);
         var resources = getResources(date);
         refreshCalendar(resources, date);
       });
     $("#previous-week").click(function() {
         var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
-        calendarDate.setDate(calendarDate.getDate() - 7);
-        var previousWeek = calendarDate.getDate()+'-'+ (calendarDate.getMonth()+1) +'-'+calendarDate.getFullYear();
-        var date = moment(previousWeek,'D-M-YYYY', true).format();
+        var date = moment(calendarDate).subtract('d', 7);
         var resources = getResources(date);
         refreshCalendar(resources, date);
     });
@@ -186,22 +186,6 @@ function getResources(date) {
     return resources;
 }
 
-function eventAfterAllRender () {
-    var count = 0;
-    var date = new Date($('#calendar').fullCalendar('getDate'));
-    $('#calendar').fullCalendar('clientEvents', function(event) {
-        var startTime = new Date(event.start);
-        var eventDate = startTime.getDate() + "/" + startTime.getMonth() + "/" + startTime.getFullYear();
-        var currentDate = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
-        if(eventDate == currentDate) {
-           count++;
-        }
-
-    });
-    if(count==0){
-        $('#myflashinfo').html("No lessons scheduled for the day").fadeIn().delay(3000).fadeOut();
-    }
-}
 function refreshCalendar(resources, date) {
     $('#calendar').html('');
     $('#calendar').unbind().removeData().fullCalendar({
@@ -220,14 +204,18 @@ function refreshCalendar(resources, date) {
         droppable: true,
         resources:  resources,
         events: events,
+        viewRender: function( view, element ) {
+            if(view.name !== 'resourceDay') {
+                $('#next-prev-week-button').hide();
+            } else {
+                $('#next-prev-week-button').show();
+            }
+        },
         dayClick: function(date, allDay, jsEvent, view) {
             if (allDay) {
                 var resources = getResources(date);
                 refreshCalendar(resources, date);
             }
-        },
-        eventAfterAllRender: function (view, element) {
-            eventAfterAllRender();
         },
     });
     $(".fc-button-prev, .fc-button-next").click(function(){
