@@ -35,12 +35,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			<i class="fa fa-calendar"></i> <?php echo !empty(Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>
 			</div>
 		<?php endif; ?>
+        <?php $rootLesson = $model->getRootLesson(); ?>
+        <?php if ($model->date !== $rootLesson->date) :?>
         <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Original Lesson Date">
-			<?php $rootLesson = $model->getRootLesson(); ?>
-            <?php if ($model->date !== $rootLesson->date) :?>
-                <i class="fa fa-calendar-plus-o"></i> <?php echo Yii::$app->formatter->asDateTime($rootLesson->date); ?>
-		    <?php endif; ?>
+            <i class="fa fa-calendar-plus-o"></i> <?php echo Yii::$app->formatter->asDateTime($rootLesson->date); ?>
         </div>
+        <?php endif; ?>
+        
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
 			<i class="fa fa-music detail-icon"></i> <?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
 		</div>
