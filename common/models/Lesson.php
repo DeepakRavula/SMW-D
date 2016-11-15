@@ -432,6 +432,7 @@ class Lesson extends \yii\db\ActiveRecord
         $courseId             = $this->courseId;
         $enrolmentFirstLesson = self::find()
                 ->where(['courseId' => $courseId])
+                ->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED]])
                 ->orderBy(['id' => SORT_ASC])
                 ->one();
         return $enrolmentFirstLesson->date === $this->date;
