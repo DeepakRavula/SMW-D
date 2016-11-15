@@ -158,7 +158,7 @@ function getResources(date) {
     }
     if(!teacherSelected && programSelected){
         $.each( availableTeachersDetails, function( key, value ) {
-            if (value.day == day && $.inArray(selectedProgram, value.programs) != -1) {
+            if (value.day == day && $.inArray(parseInt(selectedProgram), value.programs) != -1) {
                resources.push(value);
             }
         });
