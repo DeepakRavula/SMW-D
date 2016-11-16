@@ -26,9 +26,11 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_SCHEDULED = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
-
+	const STATUS_UNSCHEDULED = 5;
+	
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_PRIVATE_LESSON = 'private-lesson';
+    const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
 
     public $programId;
     public $time;
@@ -63,7 +65,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId', 'notes', 'teacherId'], 'safe'],
-            ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_REVIEW],
+            ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
@@ -181,7 +183,6 @@ class Lesson extends \yii\db\ActiveRecord
         if ((int) $this->course->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
             $studentLessons = self::find()
 				->studentLessons($locationId, $this->course->enrolment->student->id)
-				
 				->all();
             foreach ($studentLessons as $studentLesson) {
 				if($studentLesson->date === $this->date && (int)$studentLesson->status === Lesson::STATUS_SCHEDULED){
@@ -253,7 +254,12 @@ class Lesson extends \yii\db\ActiveRecord
         return new \common\models\query\LessonQuery(get_called_class());
     }
 
-    public function getEnrolment()
+	public function isUnscheduled()
+	{
+		return (int) $this->status === self::STATUS_UNSCHEDULED;
+	}
+
+	public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
     }
@@ -317,6 +323,9 @@ class Lesson extends \yii\db\ActiveRecord
             case self::STATUS_CANCELED:
                 $status = 'Canceled';
             break;
+			case self::STATUS_UNSCHEDULED:
+                $status = 'Unscheduled';
+            break;
         }
 
         return $status;
@@ -335,15 +344,16 @@ class Lesson extends \yii\db\ActiveRecord
         if ((int) $this->status !== (int) self::STATUS_DRAFTED) {
             if (!$insert) {
                 if (isset($changedAttributes['date']) && !empty($this->date)) {
-                    $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
                     $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
-                    if (!empty($this->teacher->email)) {
-                        $this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
-                    }
-                    if (!empty($this->enrolment->student->customer->email)) {
-                        $this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
-                    }
-                    $this->updateAttributes(['date' => $fromDate->format('Y-m-d H:i:s'),
+                    $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+					if (!empty($this->teacher->email)) {
+						$this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
+					}
+					if (!empty($this->enrolment->student->customer->email)) {
+						$this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
+					}
+                    $this->updateAttributes([
+						'date' => $fromDate->format('Y-m-d H:i:s'),
                         'status' => self::STATUS_CANCELED,
                     ]);
                     $originalLessonId = $this->id;
@@ -352,7 +362,6 @@ class Lesson extends \yii\db\ActiveRecord
                     $this->date = $toDate->format('Y-m-d H:i:s');
                     $this->status = self::STATUS_SCHEDULED;
                     $this->save();
-
                     $lessonRescheduleModel = new LessonReschedule();
                     $lessonRescheduleModel->lessonId = $originalLessonId;
                     $lessonRescheduleModel->rescheduledLessonId = $this->id;
