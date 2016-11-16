@@ -270,7 +270,6 @@ class LessonController extends Controller
 						$model->date = $changedDate->format('Y-m-d H:i:s');
 						$output = Yii::$app->formatter->asDate($model->date);
 					} else {
-
 						$model->date = $existingDate;
 						$model->status = Lesson::STATUS_UNSCHEDULED;
 						$privateLessonModel = new PrivateLesson();
@@ -279,7 +278,7 @@ class LessonController extends Controller
 						$expiryDate = $date->modify('90 days');
 						$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
 						$privateLessonModel->save();
-						$output = 0;
+						$output = '  ';
 					}
 				}
 				if (!empty($posted['time'])) {
