@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'id' => 'teacher-selector',
                 'pluginOptions' => [
                     'allowClear' => true,
-                    'items' => ArrayHelper::map($teachersAvailabilities, 'id', 'name'),
+                    'items' => ArrayHelper::map($availableTeachersDetails, 'id', 'name'),
                     'value' => null,
                     'placeholder' => 'Select Teacher',
                 ],
@@ -61,6 +61,7 @@ var date = new Date();
 var resources = [];
 var day = moment(date).day();
 var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
+var uniqueAvailableTeachersDetails = removeDuplicates(availableTeachersDetails, "id");
 var events = <?php echo Json::encode($events); ?>;
 $(document).ready(function() {
     $.each( availableTeachersDetails, function( key, value ) {
@@ -115,12 +116,56 @@ $(document).ready(function() {
 
 });
 
+function removeDuplicates(value, key) {
+    var unique = [];
+    var lookup  = {};
+
+    for (var i in value) {
+        lookup[value[i][key]] = value[i];
+    }
+
+    for (i in lookup) {
+        unique.push(lookup[i]);
+    }
+
+    return unique;
+}
+
+function loadTeachers(program) {
+    var teachers = [];
+    if((program == 'undefined') || (program == null)) {
+        $.each( uniqueAvailableTeachersDetails, function( key, value ) {
+            value.text = value.name;
+            teachers.push(value);
+        });
+    }else {
+        $.each( uniqueAvailableTeachersDetails, function( key, value ) {
+            if ($.inArray(program, value.programs) != -1) {
+                value.text= value.name;
+                teachers.push(value);
+            }
+        });
+    }
+    setTeachers(teachers);
+}
+
+function setTeachers(teachers){
+    $('#teacher-selector').selectivity('destroy');
+    $('#teacher-selector').selectivity({
+        allowClear: true,
+        items: teachers,
+        value: null,
+        placeholder: 'Select Teacher',
+    });
+ }
+
 $(document).ready(function () {
     setTimeout(function(){
 	$('#program-selector').on('change', function(e){
         var date = $('#calendar').fullCalendar('getDate');
 		var resources = getResources(date);
         refreshCalendar(resources, date);
+        loadTeachers(parseInt(e.value));
 	}); }, 3000);
 
     setTimeout(function(){
@@ -162,9 +207,8 @@ function getResources(date) {
                resources.push(value);
             }
         });
-    }
-    if(teacherSelected){
-        var resources = [];
+        loadTeachers(selectedProgram);
+    }else if(teacherSelected){
         $.each( availableTeachersDetails, function( key, value ) {
             if (value.day == day && selectedTeacher == value.id) {
                resources.push(value);
