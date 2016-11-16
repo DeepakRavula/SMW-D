@@ -210,13 +210,11 @@ class UserController extends Controller
 
         $unscheduledLessons = Lesson::find()
 			->enrolled()
-            ->andWhere([
-				'status' => Lesson::STATUS_UNSCHEDULED,
-				'lesson.teacherId' => $id,
-			])
             ->joinWith(['privateLesson'])
             ->orderBy(['private_lesson.expiryDate' => SORT_DESC])
-            ->notDeleted();
+			->andWhere(['lesson.teacherId' => $id])
+			->unscheduled()
+			->notDeleted();
 
         $unscheduledLessonDataProvider = new ActiveDataProvider([
             'query' => $unscheduledLessons,

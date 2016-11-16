@@ -67,7 +67,8 @@ class LessonQuery extends \yii\db\ActiveQuery
 
 	public function unscheduled()
 	{
-		$this->andFilterWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
+		$this->andWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
+		return $this;
 	}
 	
     public function student($id)

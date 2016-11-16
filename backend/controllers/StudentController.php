@@ -88,7 +88,7 @@ class StudentController extends Controller
             ->joinWith(['privateLesson'])
             ->andWhere(['NOT', ['private_lesson.lessonId' => null]])
             ->orderBy(['private_lesson.expiryDate' => SORT_DESC])
-            ->andWhere(['status' => Lesson::STATUS_UNSCHEDULED])
+			->unscheduled()
             ->notDeleted();
 
         $unscheduledLessonDataProvider = new ActiveDataProvider([
