@@ -4,15 +4,12 @@
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
 
-$this->title = 'Bulk Reschedule';
+$this->title = 'Enrolment Edit';
 ?>
 <div class="enrolment-update">
 
     <?php echo $this->render('_form', [
         'model' => $model,
-        'lastLessonDate' => $lastLessonDate,
-        'teacherDetails' => $teacherDetails,
-        'durationMinutes' => $durationMinutes,
     ]) ?>
 
 </div>
