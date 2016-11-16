@@ -193,7 +193,7 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-	public function enrolment() {
+	public function enrolled() {
 		$this->joinWith(['course' => function($query){
 			$query->joinWith(['enrolment' => function($query){
 				$query->isConfirmed();

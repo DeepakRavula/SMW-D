@@ -209,7 +209,7 @@ class UserController extends Controller
                 ]);
 
         $unscheduledLessons = Lesson::find()
-			->enrolment()
+			->enrolled()
             ->andWhere([
 				'status' => Lesson::STATUS_UNSCHEDULED,
 				'lesson.teacherId' => $id,
