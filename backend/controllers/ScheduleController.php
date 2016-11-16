@@ -109,13 +109,16 @@ class ScheduleController extends Controller
                 $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
             }
             $class = null;
-            if (!empty($lesson->proFormaInvoice)) {
+            if($lesson->isEnrolmentFirstlesson()) {
+                $class = 'enrolment-first-lesson';
+            } elseif (!empty($lesson->proFormaInvoice)) {
                 if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
                     $class = 'proforma-paid';
                 } else {
                     $class = 'proforma-unpaid';
                 }
             }
+            
             $events[] = [
                 'resources' => $lesson->teacherId,
                 'title' => $title,
