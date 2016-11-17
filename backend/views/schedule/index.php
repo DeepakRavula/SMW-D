@@ -60,6 +60,8 @@ $this->params['breadcrumbs'][] = $this->title;
 var date = new Date();
 var resources = [];
 var day = moment(date).day();
+var teachersAvailabilitiesAllDetails = <?php echo Json::encode($teachersAvailabilitiesAllDetails); ?>;
+var teachersAvailabilitiesDetails = <?php echo Json::encode($teachersAvailabilitiesDetails); ?>;
 var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
 var uniqueAvailableTeachersDetails = removeDuplicates(availableTeachersDetails, "id");
 var events = <?php echo Json::encode($events); ?>;
@@ -113,8 +115,33 @@ $(document).ready(function() {
     $(".fc-button-month, .fc-button-today").click(function(){
         $(".fc-view-month .fc-event").hide();
     });
-
+    addAvailabilityEvents();
 });
+
+function addAvailabilityEvents() {
+    $('#calendar').fullCalendar( 'addEventSource',
+    function(start, end, status, callback) {
+        var currentDay = moment(start).day();
+        var currentDate = moment(start).format('YYYY-MM-DD');
+
+        var events = [];
+        $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
+            if(value.day == currentDay) {
+                var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
+                var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
+                events.push({
+                    title: '',
+                    start: startTime,
+                    end: endTime,
+                    resources: value.id,
+                    allDay: false,
+                    className: 'teacher-availability'
+                })
+            }
+        });
+        callback( events );
+    });
+}
 
 function removeDuplicates(value, key) {
     var unique = [];
@@ -262,5 +289,6 @@ function refreshCalendar(resources, date) {
     $(".fc-button-month, .fc-button-today").click(function(){
         $(".fc-view-month .fc-event").hide();
     })
+    addAvailabilityEvents();
 }
 </script>

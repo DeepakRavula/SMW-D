@@ -56,8 +56,18 @@ class ScheduleController extends Controller
             }])
             ->orderBy(['teacher_availability_day.id' => SORT_DESC])
             ->all();
+        $teachersAvailabilitiesAllDetails = ArrayHelper::toArray($teachersAvailabilities, [
+            'common\models\TeacherAvailability' => [
+                'id' => function ($teachersAvailability) {
+                    return $teachersAvailability->userLocation->user_id;
+                },
+                'day',
+                'from_time',
+                'to_time',
+            ],
+        ]);
 
-        $availableTeachersDetails = ArrayHelper::toArray($teachersAvailabilities, [
+        $teachersAvailabilitiesDetails = ArrayHelper::toArray($teachersAvailabilities, [
             'common\models\TeacherAvailability' => [
                 'id' => function ($teachersAvailability) {
                     return $teachersAvailability->userLocation->user_id;
@@ -76,7 +86,7 @@ class ScheduleController extends Controller
                 },
             ],
         ]);
-        $availableTeachersDetails = array_unique($availableTeachersDetails, SORT_REGULAR);
+        $availableTeachersDetails = array_unique($teachersAvailabilitiesDetails, SORT_REGULAR);
         $availableTeachersDetails = array_values($availableTeachersDetails);
 
         $lessons = [];
@@ -107,7 +117,7 @@ class ScheduleController extends Controller
                     $class = 'proforma-unpaid';
                 }
             }
-            
+
             $events[] = [
                 'resources' => $lesson->teacherId,
                 'title' => $title,
@@ -129,6 +139,6 @@ class ScheduleController extends Controller
         $toTime = $location->to_time;
         $to_time = $toTime->format('H:i:s');
 
-        return $this->render('index', ['availableTeachersDetails' => $availableTeachersDetails, 'events' => $events, 'from_time' => $from_time, 'to_time' => $to_time]);
+        return $this->render('index', ['teachersAvailabilitiesAllDetails' => $teachersAvailabilitiesAllDetails, 'teachersAvailabilitiesDetails' => $teachersAvailabilitiesDetails, 'availableTeachersDetails' => $availableTeachersDetails, 'events' => $events, 'from_time' => $from_time, 'to_time' => $to_time]);
     }
 }
