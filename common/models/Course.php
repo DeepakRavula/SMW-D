@@ -262,7 +262,7 @@ class Course extends \yii\db\ActiveRecord
 		$day = $dayList[$this->day];
 		$startDay	 = (new \DateTime($fromDate))->format('l');
 		if ($day !== $startDay) {
-			$startDate = new \DateTime($startDate);
+			$startDate = new \DateTime($fromDate);
 			$startDate->modify('next '.$day);
 		} else {
 			$startDate	 = (new \DateTime($fromDate))->format('Y-m-d');

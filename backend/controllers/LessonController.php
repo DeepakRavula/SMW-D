@@ -429,7 +429,7 @@ class LessonController extends Controller
 		}
         if( ! empty($rescheduleBeginDate)) {
 			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);
-			$courseDate = $courseDate->format('Y-m-d H:i:s');
+			$courseDate = $courseDate->format('Y-m-d 00:00:00');
 			$oldLessons = Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
 				->andWhere(['>=', 'date', $courseDate])
@@ -464,6 +464,9 @@ class LessonController extends Controller
 					$message = 'Vacation has been deleted successfully';
 					$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
 				}
+			} elseif(! empty($rescheduleBeginDate)) {
+				$message = 'Future lessons have been changed successfully';
+				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
             	$startDate = new \DateTime($courseModel->startDate);
 				$endDate = $courseModel->enrolment->getLastLessonDateOfPaymentCycle();

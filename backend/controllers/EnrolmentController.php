@@ -60,6 +60,9 @@ class EnrolmentController extends Controller
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
                 ->where(['courseId' => $model->course->id])
+				->andWhere([
+					'status' => Lesson::STATUS_SCHEDULED
+				])
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
         ]);
@@ -101,24 +104,29 @@ class EnrolmentController extends Controller
     {
         $model = $this->findModel($id);
 		if ($model->course->load(Yii::$app->request->post())) {
-			$courseDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
-			$courseDate		 = $courseDate->format('Y-m-d H:i:s');
+			$rescheduleBeginDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
+			$rescheduleBeginDate = $rescheduleBeginDate->format('Y-m-d 00:00:00');
 			Lesson::deleteAll([
 				'courseId' => $model->course->id,
 				'status' => Lesson::STATUS_DRAFTED,
 			]);
 			$lessons		 = Lesson::find()
-				->where(['courseId' => $model->course->id])
-				->andWhere(['>=', 'date', $courseDate])
+				->where([
+					'courseId' => $model->course->id,
+					'status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED],
+				])
+				->andWhere(['>=', 'date', $rescheduleBeginDate])
 				->all();
 			//lesson start date
 			$changedFromTime = (new \DateTime($model->course->fromTime))->format('H:i:s');
 			$duration		 = explode(':', $changedFromTime);
 			$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
+			$dayList = Course::getWeekdaysList();
+			$courseDay = $dayList[$model->course->day];
 			$day = $startDate->format('l');
-			if ($day !== $model->course->day) {
+			if ($day !== $courseDay) {
 				$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
-				$startDate->modify('next '.$day);
+				$startDate->modify('next '.$courseDay);
 			}
 			foreach ($lessons as $lesson) {
 				$professionalDevelopmentDay = clone $startDate;
