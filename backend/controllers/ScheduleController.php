@@ -76,17 +76,6 @@ class ScheduleController extends Controller
                 },
             ],
         ]);
-        $teachersAvailabilities = TeacherAvailability::find()
-            ->select(['user_location.user_id as id', "CONCAT(user_profile.firstname, ' ', user_profile.lastname) as name"])
-            ->distinct()
-            ->joinWith(['userLocation' => function($query) use($locationId) {
-                $query->joinWith(['userProfile' => function($query) {
-                    }])
-                ->where(['user_location.location_id' => $locationId]);
-            }])
-            ->orderBy(['teacher_availability_day.id' => SORT_DESC])
-            ->all();
-
         $availableTeachersDetails = array_unique($availableTeachersDetails, SORT_REGULAR);
         $availableTeachersDetails = array_values($availableTeachersDetails);
 
@@ -140,6 +129,6 @@ class ScheduleController extends Controller
         $toTime = $location->to_time;
         $to_time = $toTime->format('H:i:s');
 
-        return $this->render('index', ['availableTeachersDetails' => $availableTeachersDetails, 'teachersAvailabilities' => $teachersAvailabilities, 'events' => $events, 'from_time' => $from_time, 'to_time' => $to_time]);
+        return $this->render('index', ['availableTeachersDetails' => $availableTeachersDetails, 'events' => $events, 'from_time' => $from_time, 'to_time' => $to_time]);
     }
 }
