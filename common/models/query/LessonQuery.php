@@ -44,6 +44,13 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+	public function notDraft()
+    {
+        $this->andWhere(['NOT', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
+
+        return $this;
+    }
+
 	public function studentEnrolment($locationId, $studentId)
 	{
 		$this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {

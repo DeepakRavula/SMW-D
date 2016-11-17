@@ -257,7 +257,15 @@ class UserController extends Controller
         $openingBalanceDataProvider = new ActiveDataProvider([
             'query' => $openingBalanceQuery,
         ]);
-
+		$teacherLessons = Lesson::find()
+			->location($locationId)
+			->where(['lesson.teacherId' => $model->id])
+			->notDraft()
+			->notDeleted();
+		$teacherLessonDataProvider = new ActiveDataProvider([
+            'query' => $teacherLessons,
+			'pagination' => false,
+        ]);
         return $this->render('view', [
             'student' => new Student(),
             'dataProvider' => $dataProvider,
@@ -278,6 +286,7 @@ class UserController extends Controller
             'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
             'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
+			'teacherLessonDataProvider' => $teacherLessonDataProvider
         ]);
     }
 
