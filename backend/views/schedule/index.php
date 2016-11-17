@@ -140,7 +140,7 @@ function loadTeachers(program) {
         });
     }else {
         $.each( uniqueAvailableTeachersDetails, function( key, value ) {
-            if ($.inArray(program, value.programs) != -1) {
+            if ($.inArray(parseInt(program), value.programs) != -1) {
                 value.text= value.name;
                 teachers.push(value);
             }
@@ -165,7 +165,7 @@ $(document).ready(function () {
         var date = $('#calendar').fullCalendar('getDate');
 		var resources = getResources(date);
         refreshCalendar(resources, date);
-        loadTeachers(parseInt(e.value));
+        loadTeachers(e.value);
 	}); }, 3000);
 
     setTimeout(function(){
