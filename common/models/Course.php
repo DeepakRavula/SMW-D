@@ -25,9 +25,7 @@ class Course extends \yii\db\ActiveRecord
 
     public $studentId;
     public $paymentFrequency;
-    public $goToDate;
-    public $lessonFromDate;
-    public $lessonToDate;
+	public $rescheduleBeginDate;
 
     /**
      * {@inheritdoc}
@@ -54,7 +52,7 @@ class Course extends \yii\db\ActiveRecord
                 return (int) $model->program->type === Program::TYPE_GROUP_PROGRAM;
             },
             ],
-			[['locationId', 'goToDate', 'lessonFromDate', 'lessonToDate'], 'safe']
+			[['locationId', 'rescheduleBeginDate'], 'safe']
         ];
     }
 
@@ -211,7 +209,7 @@ class Course extends \yii\db\ActiveRecord
 			$lesson->id			 = null;
 			$lesson->isNewRecord = true;
 			$lesson->status		 = Lesson::STATUS_DRAFTED;
-			$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+			$nextWeekScheduledDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 			$lesson->date		 = $nextWeekScheduledDate->format('Y-m-d H:i:s');
 			$lesson->save();
 
@@ -264,7 +262,7 @@ class Course extends \yii\db\ActiveRecord
 		$day = $dayList[$this->day];
 		$startDay	 = (new \DateTime($fromDate))->format('l');
 		if ($day !== $startDay) {
-			$startDate = new \DateTime($startDate);
+			$startDate = new \DateTime($fromDate);
 			$startDate->modify('next '.$day);
 		} else {
 			$startDate	 = (new \DateTime($fromDate))->format('Y-m-d');

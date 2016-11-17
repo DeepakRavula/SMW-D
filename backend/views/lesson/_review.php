@@ -223,8 +223,8 @@ $this->title = 'Review Lessons';
                 'method' => 'post',
             ],
         ]) ?>
-		<?php elseif (!(empty($lessonFromDate) && empty($lessonToDate))):?>
-		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[lessonFromDate]' => $lessonFromDate, 'Course[lessonToDate]' => $lessonToDate], [
+		<?php elseif( ! empty($rescheduleBeginDate)):?>
+		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[rescheduleBeginDate]' => $rescheduleBeginDate], [
                 'class' => 'btn btn-danger',
                 'id' => 'confirm-button',
                 'disabled' => $hasConflict,

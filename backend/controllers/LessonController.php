@@ -317,8 +317,7 @@ class LessonController extends Controller
         $request = Yii::$app->request;
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
-        $lessonFromDate = $courseRequest['lessonFromDate'];
-        $lessonToDate = $courseRequest['lessonToDate'];
+        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
@@ -344,8 +343,7 @@ class LessonController extends Controller
             'courseId' => $courseId,
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflicts,
-            'lessonFromDate' => $lessonFromDate,
-            'lessonToDate' => $lessonToDate,
+            'rescheduleBeginDate' => $rescheduleBeginDate,
 			'vacationId' => $vacationId,
 			'vacationType' => $vacationType,
         ]);
@@ -394,8 +392,8 @@ class LessonController extends Controller
         }
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');
-        $lessonFromDate = $courseRequest['lessonFromDate'];
-        $lessonToDate = $courseRequest['lessonToDate'];
+        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
+
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
 		if(! empty($vacationId)) {
@@ -428,7 +426,22 @@ class LessonController extends Controller
 				}
 				$vacation->delete();
 			}
-
+		}
+        if( ! empty($rescheduleBeginDate)) {
+			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);
+			$courseDate = $courseDate->format('Y-m-d 00:00:00');
+			$oldLessons = Lesson::find()
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
+				->andWhere(['>=', 'date', $courseDate])
+				->all();
+			$oldLessonIds = [];
+			foreach($oldLessons as $oldLesson){
+				$oldLessonIds[] = $oldLesson->id;
+				$oldLesson->status = Lesson::STATUS_CANCELED;
+				$oldLesson->save();
+			}
+		}
+		if(! empty($vacationId) || ! empty($rescheduleBeginDate)) {
 			foreach ($lessons as $i => $lesson) {
 				$lessonRescheduleModel = new LessonReschedule();
 				$lessonRescheduleModel->lessonId = $oldLessonIds[$i];
@@ -436,31 +449,12 @@ class LessonController extends Controller
 				$lessonRescheduleModel->save();
 			}
 		}
-        if (!(empty($lessonFromDate) && empty($lessonToDate))) {
-            $lessonFromDate = \DateTime::createFromFormat('d-m-Y', $lessonFromDate);
-            $lessonToDate = \DateTime::createFromFormat('d-m-Y', $lessonToDate);
-            $oldLessons = Lesson::find()
-                ->where(['courseId' => $courseModel->id])
-                ->scheduled()
-                ->between($lessonFromDate, $lessonToDate)
-                ->all();
-            $oldLessonIds = [];
-            foreach ($oldLessons as $oldLesson) {
-                $oldLessonIds[] = $oldLesson->id;
-                $oldLesson->delete();
-            }
-            foreach ($lessons as $i => $lesson) {
-                $lesson->id = $oldLessonIds[$i];
-                $lesson->status = Lesson::STATUS_SCHEDULED;
-                $lesson->save();
-            }
-        }  else {
-            foreach ($lessons as $lesson) {
-                $lesson->updateAttributes([
-                    'status' => Lesson::STATUS_SCHEDULED,
-                ]);
-            }
-        }
+		
+		foreach ($lessons as $lesson) {
+			$lesson->updateAttributes([
+				'status' => Lesson::STATUS_SCHEDULED,
+			]);
+		}
 		if ($courseModel->program->isPrivate()) {
 			if (!empty($vacationId)) {
 				if ($vacationType === Vacation::TYPE_CREATE) {
@@ -470,6 +464,9 @@ class LessonController extends Controller
 					$message = 'Vacation has been deleted successfully';
 					$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
 				}
+			} elseif(! empty($rescheduleBeginDate)) {
+				$message = 'Future lessons have been changed successfully';
+				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
             	$startDate = new \DateTime($courseModel->startDate);
 				$endDate = $courseModel->enrolment->getLastLessonDateOfPaymentCycle();

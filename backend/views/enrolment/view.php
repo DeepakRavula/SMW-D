@@ -16,7 +16,7 @@ $this->title = $model->student->fullName.' - '.$model->course->program->name;
     <?= Html::a('<i class="fa fa-print"></i> Print', ['course/print', 'id' => $model->course->id], ['class' => 'btn btn-default pull-left', 'target' => '_blank']) ?>  
     <?= Html::a('<i class="fa fa-envelope-o"></i> Email Lessons', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-left  m-l-20']) ?>
 	<?php if ((int) $model->course->program->type !== (int) Program::TYPE_GROUP_PROGRAM) : ?>
-		<?php $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Bulk Reschedule', ['update', 'id' => $model->id], ['class' => ' m-l-20 btn btn-sm btn-primary']) ?>
+		<?php $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => ' m-l-20 btn btn-sm btn-primary']) ?>
 	<?php endif; ?>
     <div class="clearfix"></div>
     <h4><strong><?= 'Schedule of Lessons' ?> </strong></h4> 
