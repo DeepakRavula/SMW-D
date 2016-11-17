@@ -725,4 +725,26 @@ class UserController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+	public function actionPrint($id)
+    {
+        $model = $this->findModel($id);
+        $session = Yii::$app->session;
+        $locationId = $session->get('location_id');
+        $teacherLessons = Lesson::find()
+			->location($locationId)
+			->where(['lesson.teacherId' => $model->id])
+			->notDraft()
+			->notDeleted();
+		$teacherLessonDataProvider = new ActiveDataProvider([
+            'query' => $teacherLessons,
+			'pagination' => false,
+        ]);
+        $this->layout = '/print';
+
+        return $this->render('_print', [
+			'model' => $model,
+			'teacherLessonDataProvider' => $teacherLessonDataProvider,
+        ]);
+    }
 }

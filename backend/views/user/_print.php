@@ -17,7 +17,7 @@ if (!empty($teacherLessonDataProvider->getModels())) {
 }
 ?>
 <div>
-  <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+    <h4><strong><?= $model->publicIdentity?> </strong></h4>
 	<?php
 	yii\widgets\Pjax::begin([
 		'timeout' => 6000,
@@ -71,3 +71,8 @@ if (!empty($teacherLessonDataProvider->getModels())) {
 	?>
 	<?php \yii\widgets\Pjax::end(); ?>
 </div>
+<script>
+	$(document).ready(function(){
+		window.print();
+	});
+</script>
