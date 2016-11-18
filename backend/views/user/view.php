@@ -125,6 +125,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         ]);
 		$teacherLessonContent = $this->render('_view-teacher-lesson', [
             'teacherLessonDataProvider' => $teacherLessonDataProvider,
+			'searchModel' => $lessonSearchModel,
 			'model' => $model,
         ]);
         ?>
@@ -280,9 +281,5 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     	$('#calendar').fullCalendar('render');
 	});
-   	var footer = $('#teacher-lesson table tfoot');
-	var summary = '<tr class="lesson-count"><td><?= $teacherLessonDataProvider->totalCount; ?> Lessons in Total</td> </tr>';
-	footer.append(summary);
-		 return false;
 });
 </script>

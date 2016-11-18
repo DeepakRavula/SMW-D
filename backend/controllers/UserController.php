@@ -13,7 +13,7 @@ use common\models\Qualification;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
-use common\models\LessonReschedule;
+use backend\models\search\LessonSearch;
 use common\models\PrivateLesson;
 use common\models\Location;
 use common\models\Invoice;
@@ -98,6 +98,32 @@ class UserController extends Controller
         ]);
     }
 
+	public function actionLessonSearch($id)
+	{
+		$model = $this->findModel($id);
+		$locationId = Yii::$app->session->get('location_id');
+		$request = Yii::$app->request;
+        $lessonSearch = $request->get('LessonSearch');
+		$fromDate = new \DateTime($lessonSearch['fromDate']);
+		$toDate = new \DateTime($lessonSearch['toDate']);
+		$teacherLessons = Lesson::find()
+		->location($locationId)
+		->where(['lesson.teacherId' => $model->id])
+		->notDraft()
+		->notDeleted()
+		->between($fromDate, $toDate);
+
+		$teacherLessonDataProvider = new ActiveDataProvider([
+            'query' => $teacherLessons,
+			'pagination' => false,
+        ]);
+		return $this->renderAjax('_view-teacher-lesson', [
+            'teacherLessonDataProvider' => $teacherLessonDataProvider,
+			'searchModel' => new LessonSearch(),
+			'model' => $model,
+        ]);
+	}
+	
     /**
      * Displays a single User model.
      *
@@ -257,21 +283,26 @@ class UserController extends Controller
         $openingBalanceDataProvider = new ActiveDataProvider([
             'query' => $openingBalanceQuery,
         ]);
+		$lessonSearchModel = new LessonSearch();
+		$lessonSearchModel->fromDate = new \DateTime();
+		$lessonSearchModel->toDate = new \DateTime();
 		$teacherLessons = Lesson::find()
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
-			->notDeleted();
+			->notDeleted()
+			->between($lessonSearchModel->fromDate, $lessonSearchModel->toDate);
 		$teacherLessonDataProvider = new ActiveDataProvider([
-            'query' => $teacherLessons,
+			'query' => $teacherLessons,
 			'pagination' => false,
-        ]);
+		]);
         return $this->render('view', [
             'student' => new Student(),
             'dataProvider' => $dataProvider,
             'teacherDataProvider' => $teacherDataProvider,
             'model' => $model,
             'searchModel' => $searchModel,
+			'lessonSearchModel' => $lessonSearchModel,
             'program' => $program,
             'addressDataProvider' => $addressDataProvider,
             'phoneDataProvider' => $phoneDataProvider,
