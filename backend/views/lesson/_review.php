@@ -20,7 +20,7 @@ $this->title = 'Review Lessons';
 <?php ActiveForm::end(); ?>
 <div class="user-details-wrapper">
 	<div class="row">
-    <?php if ((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>  
+    <?php if ((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>
 	<div class="col-md-12">
 		<p class="users-name"><?= $courseModel->enrolment->student->fullName; ?></p>
 	</div>
@@ -30,17 +30,17 @@ $this->title = 'Review Lessons';
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
 		<i class="fa fa-graduation-cap"></i> <?= $courseModel->teacher->publicIdentity; ?>
-	</div>	
+	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Commencement Date">
-			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($courseModel->startDate)?>	
+			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($courseModel->startDate)?>
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Renewal Date">
-			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($courseModel->endDate)?>	
+			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($courseModel->endDate)?>
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Time">
-		<i class="fa fa-clock-o"></i> <?php 
+		<i class="fa fa-clock-o"></i> <?php
         $fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->fromTime);
-        echo $fromTime->format('h:i A'); ?>	
+        echo $fromTime->format('h:i A'); ?>
 	</div>
 	</div>
 	<div class="clearfix"></div>
@@ -93,8 +93,24 @@ $this->title = 'Review Lessons';
 		?>
 		<?php \yii\widgets\Pjax::end(); ?>
 	</div>
-	<div class="clearfix"></div>	
-	<?php
+	<div class="clearfix"></div>
+    <?php
+    $hasConflict = false;
+    foreach ($conflicts as $conflictLessons) {
+        foreach ($conflictLessons as $conflictLesson) {
+            if ((!empty($conflictLesson['lessonIds'])) || (!empty($conflictLesson['dates']))) {
+                $hasConflict = true;
+                break;
+            }
+        }
+    }
+    ?>
+    <?php if(!$hasConflict) :?>
+    <div>
+        <?php echo 'No conflicts here! You are ready to confirm!'; ?>
+    </div>
+    <?php endif; ?>
+    <?php
     $columns = [
         [
             'class' => 'kartik\grid\EditableColumn',
@@ -207,7 +223,7 @@ $this->title = 'Review Lessons';
             }
         },
         'pjax' => true,
-			'pjaxSettings' => [
+            'pjaxSettings' => [
                 'neverTimeout' => true,
                 'options' => [
                     'id' => 'review-lesson-listing',
@@ -217,20 +233,9 @@ $this->title = 'Review Lessons';
         'showPageSummary' => true,
     ]); ?>
 
-	<div class="form-group">
+    <div class="form-group">
 	<div class="p-10 text-center">
-        <?php 
-        $hasConflict = false;
-        foreach ($conflicts as $conflictLessons) {
-            foreach ($conflictLessons as $conflictLesson) {
-                if ((!empty($conflictLesson['lessonIds'])) || (!empty($conflictLesson['dates']))) {
-                    $hasConflict = true;
-                    break;
-                }
-            }
-        }
-        ?>
-		<?php if(! empty($vacationId)) :?>
+        <?php if(! empty($vacationId)) :?>
 		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Vacation[id]' => $vacationId, 'Vacation[type]' => $vacationType], [
             'class' => 'btn btn-danger',
             'id' => 'confirm-button',
@@ -247,8 +252,8 @@ $this->title = 'Review Lessons';
                 'data' => [
                     'method' => 'post',
                 ],
-            ]) ?> 
-		
+            ]) ?>
+
 		<?php else :?>
 		<?= Html::a('Confirm', ['confirm', 'courseId' => $courseId], [
             'class' => 'btn btn-danger',
@@ -269,7 +274,7 @@ $this->title = 'Review Lessons';
     </div>
 </div>
 	</div>
-<script>   
+<script>
 var review = {
 	onEditableError: function(event, val, form, data) {
 		$(form).find('.form-group').addClass('has-error');
@@ -281,28 +286,27 @@ var review = {
 		type   : "GET",
         dataType: "json",
 		success: function(response)
-		{          
+		{
             if(response.hasConflict){
                $("#confirm-button").attr("disabled",true);
                $('#confirm-button').bind('click',false);
             } else {
                $("#confirm-button").removeAttr('disabled');
-               $('#confirm-button').unbind('click',false); 
+               $('#confirm-button').unbind('click',false);
             }
 		}
 		});
-		return true;     
+		return true;
     }
 }
-$(document).ready(function(){   
-    if($('#confirm-button').attr('disabled')) {         
+$(document).ready(function(){
+    if($('#confirm-button').attr('disabled')) {
         $('#confirm-button').bind('click',false);
     }
 	$("#lessonsearch-showallreviewlessons").on("change", function() {
         var showAllReviewLessons = $(this).is(":checked");
-        <?php $showAllReviewLessons = true;?>
-        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => $showAllReviewLessons]); ?>"
-		$.pjax.reload({url:url,container:"#review-lesson-listing",replace:false,  timeout: 4000});  //Reload GridView
+        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?LessonSearch[showAllReviewLessons]=" + (showAllReviewLessons | 0);
+        $.pjax.reload({url:url,container:"#review-lesson-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
 });
 </script>

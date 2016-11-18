@@ -6,7 +6,6 @@ use Yii;
 use common\models\Lesson;
 use common\models\PrivateLesson;
 use common\models\Enrolment;
-use common\models\Program;
 use common\models\Course;
 use common\models\Invoice;
 use common\models\LessonReschedule;
@@ -341,17 +340,16 @@ class LessonController extends Controller
             $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
 
         }
-		$query = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+        $query = Lesson::find()
             ->orderBy(['lesson.date' => SORT_ASC]);
-		if(! $showAllReviewLessons) {
-			if(! empty($conflictedLessonIds)){
-				 $query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
-			}
-		}
-			$lessonDataProvider = new ActiveDataProvider([
-				'query' => $query,
-			]);
+        if(! $showAllReviewLessons) {
+            $query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
+        }  else {
+            $query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+        }
+        $lessonDataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
         return $this->render('_review', [
             'courseModel' => $courseModel,
             'courseId' => $courseId,
@@ -465,7 +463,7 @@ class LessonController extends Controller
 				$lessonRescheduleModel->save();
 			}
 		}
-		
+
 		foreach ($lessons as $lesson) {
 			$lesson->updateAttributes([
 				'status' => Lesson::STATUS_SCHEDULED,
@@ -564,7 +562,7 @@ class LessonController extends Controller
                 $creditUsageModel->debit_payment_id = $debitPaymentId;
                 $creditUsageModel->save();
             }
-            
+
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {
             Yii::$app->session->setFlash('alert', [
