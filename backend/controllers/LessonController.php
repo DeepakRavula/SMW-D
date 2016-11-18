@@ -10,7 +10,6 @@ use common\models\Program;
 use common\models\Course;
 use common\models\Invoice;
 use common\models\LessonReschedule;
-use common\models\ItemType;
 use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
@@ -145,7 +144,7 @@ class LessonController extends Controller
         }
         $data = ['model' => $model];
         $view = '_form';
-        if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM) {
+        if ($model->course->program->isPrivate()) {
             $view = '_form-private-lesson';
             if (!empty($model->privateLesson->id)) {
                 $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
@@ -169,46 +168,35 @@ class LessonController extends Controller
             $data = ['model' => $model, 'privateLessonModel' => $privateLessonModel];
         }
         if ($model->load(Yii::$app->request->post())) {
-            $duration = \DateTime::createFromFormat('H:i', $model->duration);
-            $model->duration = $duration->format('H:i:s');
-            if (empty($model->date)) {
-                $model->date = $model->getOldAttribute('date');
-                $model->status = Lesson::STATUS_CANCELED;
-                $model->save();
-                $redirectionLink = $this->redirect(['view', 'id' => $model->id]);
-            } else {
-                $oldDate = $model->getOldAttribute('date');
-                if (new \DateTime($oldDate) != new \DateTime($model->date)) {
-                    $model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
-                    $validate = $model->validate();
-                }
-                $lessonConflicts = [];
-                $lessonConflicts = $model->getErrors('date');
-                $lessonConflicts = current($lessonConflicts);
-                if (!empty($lessonConflicts)) {
-                    if (isset($lessonConflicts['lessonIds']) || isset($lessonConflicts['dates'])) {
-                        if (!empty($lessonConflicts['lessonIds'])) {
-                            $message = 'Reschedule time conflicts with another lesson';
-                        } elseif ($lessonConflicts['dates']) {
-                            $message = 'Reschedule Date conflicts with holiday';
-                        }
-                    } else {
-                        $message = $lessonConflicts;
-                    }
-                    Yii::$app->session->setFlash('alert',
-                        [
-                        'options' => ['class' => 'alert-danger'],
-                        'body' => $message,
-                    ]);
-                    $redirectionLink = $this->redirect(['update', 'id' => $model->id]);
-                } else {
-                    $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-                    $model->date = $lessonDate->format('Y-m-d H:i:s');
-                    $model->save();
-                    $redirectionLink = $this->redirect(['view', 'id' => $model->id]);
-                }
-            }
-
+			$oldDate = $model->getOldAttribute('date');
+			if(empty($model->date)) {
+				$model->date =  $model->getOldAttribute('date');
+				$model->status = Lesson::STATUS_UNSCHEDULED;
+				$model->save();
+				$redirectionLink = $this->redirect(['view', 'id' => $model->id]);
+			} else {
+				if (new \DateTime($oldDate) != new \DateTime($model->date)) {
+					$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
+					$validate = $model->validate();
+				}
+				$lessonConflict = $model->getErrors('date');
+				$message = current($lessonConflict);
+				if(! empty($lessonConflict)){
+					Yii::$app->session->setFlash('alert',
+						[
+						'options' => ['class' => 'alert-danger'],
+						'body' => $message,
+					]);
+					$redirectionLink = $this->redirect(['update', 'id' => $model->id]);
+				} else {
+					$duration = \DateTime::createFromFormat('H:i', $model->duration);
+					$model->duration = $duration->format('H:i:s');
+					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+					$model->date = $lessonDate->format('Y-m-d H:i:s');
+					$model->save();
+					$redirectionLink = $this->redirect(['view', 'id' => $model->id]);
+				}
+			}
             return $redirectionLink;
         }
 
@@ -253,47 +241,73 @@ class LessonController extends Controller
         }
     }
 
-    public function actionUpdateField($id)
+    public function actionUpdateField()
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        if (Yii::$app->request->post('hasEditable')) {
-            $lessonIndex = Yii::$app->request->post('editableIndex');
-            $model = Lesson::findOne(['id' => $id]);
+		$request = Yii::$app->request;
+		$response = Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        if ($request->post('hasEditable')) {
+			$lessonId = $request->post('editableKey');
+            $lessonIndex = $request->post('editableIndex');
+            $model = Lesson::findOne(['id' => $lessonId]);
+			$existingDate = $model->date;
             $result = [
                 'output' => '',
                 'message' => '',
             ];
-            $post = Yii::$app->request->post();
-            if (!empty($post['Lesson'][$lessonIndex]['date'])) {
-                $existingDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-                $lessonTime = $existingDate->format('H:i:s');
-                $timebits = explode(':', $lessonTime);
-                $changedDate = new \DateTime($post['Lesson'][$lessonIndex]['date']);
-                $changedDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-                $model->date = $changedDate->format('Y-m-d H:i:s');
-                $output = Yii::$app->formatter->asDate($model->date);
+			$posted = current($_POST['Lesson']);
+        	$post = ['Lesson' => $posted];
+            if ($model->load($post)) {
+				if( ! empty($model->date)){
+            		$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
+				}
+				if (isset($posted['date'])) {
+					if(! empty($posted['date'])) {
+						$lessonTime = (new \DateTime($existingDate))->format('H:i:s');
+						$timebits = explode(':', $lessonTime);
+						$changedDate = new \DateTime($posted['date']);
+						$changedDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
+						$model->date = $changedDate->format('Y-m-d H:i:s');
+						$output = Yii::$app->formatter->asDate($model->date);
+					} else {
+						$model->date = $existingDate;
+						$model->status = Lesson::STATUS_UNSCHEDULED;
+						$privateLessonModel = new PrivateLesson();
+						$privateLessonModel->lessonId = $model->id;
+						$date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+						$expiryDate = $date->modify('90 days');
+						$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+						$privateLessonModel->save();
+						$output = '  ';
+					}
+				}
+				if (!empty($posted['time'])) {
+					$existingDate = (new \DateTime($existingDate))->format('Y-m-d');
+					$existingDate = new \DateTime($existingDate);
+					$changedTime = new \DateTime($posted['time']);
+					$lessonTime = $changedTime->format('H:i:s');
+					$timebits = explode(':', $lessonTime);
+					$existingDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
+					$model->date = $existingDate->format('Y-m-d H:i:s');
+					$newTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+					$output = Yii::$app->formatter->asTime($newTime);
+				}
+				if (!empty($posted['duration'])) {
+					$model->duration = $posted['duration'];
+					$output = $model->duration;
+				}
+
+             $success = $model->save();
+			 $message = null;
+			if (!$success) {
+				$errors = ActiveForm::validate($model);
+				$message = current($errors['lesson-date']);
             }
-            if (!empty($post['Lesson'][$lessonIndex]['time'])) {
-                $existingDate = (new \DateTime($model->date))->format('Y-m-d');
-                $existingDate = new \DateTime($existingDate);
-                $changedTime = new \DateTime($post['Lesson'][$lessonIndex]['time']);
-                $lessonTime = $changedTime->format('H:i:s');
-                $timebits = explode(':', $lessonTime);
-                $existingDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-                $model->date = $existingDate->format('Y-m-d H:i:s');
-                $newTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-                $output = Yii::$app->formatter->asTime($newTime);
-            }
-            if (!empty($post['Lesson'][$lessonIndex]['duration'])) {
-                $model->duration = $post['Lesson'][$lessonIndex]['duration'];
-                $output = $model->duration;
-            }
-            $model->save();
             $result = [
                 'output' => $output,
-                'message' => '',
+                'message' => $message,
             ];
-
+		}
             return $result;
         }
     }
@@ -304,8 +318,7 @@ class LessonController extends Controller
         $request = Yii::$app->request;
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
-        $lessonFromDate = $courseRequest['lessonFromDate'];
-        $lessonToDate = $courseRequest['lessonToDate'];
+        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
@@ -341,8 +354,7 @@ class LessonController extends Controller
             'courseId' => $courseId,
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflicts,
-            'lessonFromDate' => $lessonFromDate,
-            'lessonToDate' => $lessonToDate,
+            'rescheduleBeginDate' => $rescheduleBeginDate,
 			'vacationId' => $vacationId,
 			'vacationType' => $vacationType,
 			'model' => $model,
@@ -392,8 +404,8 @@ class LessonController extends Controller
         }
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');
-        $lessonFromDate = $courseRequest['lessonFromDate'];
-        $lessonToDate = $courseRequest['lessonToDate'];
+        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
+
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
 		if(! empty($vacationId)) {
@@ -405,7 +417,7 @@ class LessonController extends Controller
 				$vacation->save();
 				$oldLessons = Lesson::find()
 				->where(['courseId' => $courseId])
-				->andWhere(['>', 'lesson.date', $fromDate])
+				->andWhere(['>=', 'lesson.date', $fromDate])
 				->all();
 				$oldLessonIds = [];
 				foreach ($oldLessons as $oldLesson) {
@@ -416,7 +428,7 @@ class LessonController extends Controller
 			} else {
 				$oldLessons = Lesson::find()
 				->where(['courseId' => $courseId])
-				->andWhere(['>', 'lesson.date', $toDate])
+				->andWhere(['>=', 'lesson.date', $toDate])
 				->all();
 				$oldLessonIds = [];
 				foreach ($oldLessons as $oldLesson) {
@@ -426,7 +438,22 @@ class LessonController extends Controller
 				}
 				$vacation->delete();
 			}
-
+		}
+        if( ! empty($rescheduleBeginDate)) {
+			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);
+			$courseDate = $courseDate->format('Y-m-d 00:00:00');
+			$oldLessons = Lesson::find()
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
+				->andWhere(['>=', 'date', $courseDate])
+				->all();
+			$oldLessonIds = [];
+			foreach($oldLessons as $oldLesson){
+				$oldLessonIds[] = $oldLesson->id;
+				$oldLesson->status = Lesson::STATUS_CANCELED;
+				$oldLesson->save();
+			}
+		}
+		if(! empty($vacationId) || ! empty($rescheduleBeginDate)) {
 			foreach ($lessons as $i => $lesson) {
 				$lessonRescheduleModel = new LessonReschedule();
 				$lessonRescheduleModel->lessonId = $oldLessonIds[$i];
@@ -434,33 +461,13 @@ class LessonController extends Controller
 				$lessonRescheduleModel->save();
 			}
 		}
-        if (!(empty($lessonFromDate) && empty($lessonToDate))) {
-            $lessonFromDate = \DateTime::createFromFormat('d-m-Y', $lessonFromDate);
-            $lessonToDate = \DateTime::createFromFormat('d-m-Y', $lessonToDate);
-            $oldLessons = Lesson::find()
-                ->where(['courseId' => $courseModel->id])
-                ->scheduled()
-                ->between($lessonFromDate, $lessonToDate)
-                ->all();
-            $oldLessonIds = [];
-            foreach ($oldLessons as $oldLesson) {
-                $oldLessonIds[] = $oldLesson->id;
-                $oldLesson->delete();
-            }
-            foreach ($lessons as $i => $lesson) {
-                $lesson->id = $oldLessonIds[$i];
-                $lesson->status = Lesson::STATUS_SCHEDULED;
-                $lesson->save();
-            }
-        }  else {
-            foreach ($lessons as $lesson) {
-                $lesson->updateAttributes([
-                    'status' => Lesson::STATUS_SCHEDULED,
-                ]);
-            }
-        }
-		$isPrivateProgram = (int) $courseModel->program->type === (int) Program::TYPE_PRIVATE_PROGRAM;
-		if ($isPrivateProgram) {
+		
+		foreach ($lessons as $lesson) {
+			$lesson->updateAttributes([
+				'status' => Lesson::STATUS_SCHEDULED,
+			]);
+		}
+		if ($courseModel->program->isPrivate()) {
 			if (!empty($vacationId)) {
 				if ($vacationType === Vacation::TYPE_CREATE) {
 					$message = 'Vacation has been created successfully';
@@ -469,17 +476,19 @@ class LessonController extends Controller
 					$message = 'Vacation has been deleted successfully';
 					$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
 				}
+			} elseif(! empty($rescheduleBeginDate)) {
+				$message = 'Future lessons have been changed successfully';
+				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
-				$lessonDate		 = (new \DateTime($lessons[0]->date))->format('d-m-Y');
-				$lessonStartDate = new \DateTime($lessons[0]->date);
-				$lessonEndDate	 = $lessonStartDate->modify('+1 month');
+            	$startDate = new \DateTime($courseModel->startDate);
+				$endDate = $courseModel->enrolment->getLastLessonDateOfPaymentCycle();
 				$message		 = 'Lessons have been created successfully';
 				$link			 = $this->redirect([
 					'invoice/create',
 					'Invoice[customer_id]' => $courseModel->enrolment->student->customer->id,
 					'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
-					'LessonSearch[fromDate]' => $lessonDate,
-					'LessonSearch[toDate]' => $lessonEndDate->format('d-m-Y'),
+					'LessonSearch[fromDate]' => $startDate->format('d-m-Y'),
+					'LessonSearch[toDate]' => $endDate->format('d-m-Y'),
 					'LessonSearch[courseId]' => $courseModel->id,
 				]);
 			}
@@ -518,9 +527,10 @@ class LessonController extends Controller
             $invoice->save();
             $invoice->addLineItem($model);
             $invoice->save();
-            $proFormaInvoice = Invoice::find()
+            $rootLessonId         = $model->getRootLessonId($model->id);
+            $proFormaInvoice      = Invoice::find()
                 ->select(['invoice.id', 'SUM(payment.amount) as credit'])
-                ->proFormaCredit($model->id)
+                ->proFormaCredit($rootLessonId)
                 ->one();
 
             if (!empty($proFormaInvoice)) {
@@ -550,11 +560,7 @@ class LessonController extends Controller
                 $creditUsageModel->debit_payment_id = $debitPaymentId;
                 $creditUsageModel->save();
             }
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Invoice has been generated successfully',
-            ]);
-
+            
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {
             Yii::$app->session->setFlash('alert', [

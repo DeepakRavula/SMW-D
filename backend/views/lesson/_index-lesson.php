@@ -52,7 +52,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Invoiced ?',
                 'value' => function ($data) {
                     $status = null;
-                    if (!empty($data->invoice->status)) {
+                    $rootLesson = $data->getRootLesson();
+                    if (!empty($rootLesson->invoice)) {
                         $status = 'Yes';
                     } else {
                         $status = 'No';

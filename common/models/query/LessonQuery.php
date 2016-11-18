@@ -44,6 +44,13 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+	public function notDraft()
+    {
+        $this->andWhere(['NOT', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
+
+        return $this;
+    }
+
 	public function studentEnrolment($locationId, $studentId)
 	{
 		$this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {
@@ -65,6 +72,12 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+	public function unscheduled()
+	{
+		$this->andWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
+		return $this;
+	}
+	
     public function student($id)
     {
         $this->joinWith(['enrolment' => function ($query) use ($id) {
@@ -187,4 +200,13 @@ class LessonQuery extends \yii\db\ActiveQuery
 			->notDeleted();
         return $this;
     }
+
+	public function enrolled() {
+		$this->joinWith(['course' => function($query){
+			$query->joinWith(['enrolment' => function($query){
+				$query->isConfirmed();
+			}]);
+		}]);
+		return $this;
+	}
 }

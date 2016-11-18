@@ -3,6 +3,8 @@ use yii\helpers\Html;
 use common\models\Program;
 use yii\helpers\Url;
 use kartik\grid\GridView;
+use common\models\TeacherAvailability;
+use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 
 $this->title = 'Review Lessons';
@@ -39,6 +41,56 @@ $this->title = 'Review Lessons';
         echo $fromTime->format('h:i A'); ?>	
 	</div>
 	</div>
+	<div class="clearfix"></div>
+	<div class="row teacher-availability">
+		<?php
+		$locationId = Yii::$app->session->get('location_id');
+		$query = TeacherAvailability::find()
+			->joinWith('userLocation')
+			->where(['user_id' => $courseModel->teacherId, 'location_id' => $locationId]);
+		$teacherAvailabilityDataProvider = new ActiveDataProvider([
+			'query' => $query,
+		]);
+		?>
+		<?php yii\widgets\Pjax::begin() ?>
+		<h4>Availabilities </h4>
+		<?php
+		echo GridView::widget([
+			'dataProvider' => $teacherAvailabilityDataProvider,
+			'options' => ['class' => 'col-md-5'],
+			'tableOptions' => ['class' => 'table table-bordered'],
+			'headerRowOptions' => ['class' => 'bg-light-gray'],
+			'columns' => [
+				[
+					'label' => 'Day',
+					'value' => function ($data) {
+						if (!empty($data->day)) {
+							$dayList = TeacherAvailability::getWeekdaysList();
+							$day	 = $dayList[$data->day];
+
+							return !empty($day) ? $day : null;
+						}
+
+						return null;
+					},
+				],
+				[
+					'label' => 'From Time',
+					'value' => function ($data) {
+						return !empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
+					},
+				],
+				[
+					'label' => 'To Time',
+					'value' => function ($data) {
+						return !empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
+					},
+				],
+			],
+		]);
+		?>
+		<?php \yii\widgets\Pjax::end(); ?>
+	</div>
 	<div class="clearfix"></div>	
 	<?php
     $columns = [
@@ -55,9 +107,10 @@ $this->title = 'Review Lessons';
                        'size' => 'md',
                        'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
                        'widgetClass' => '\yii\jui\DatePicker',
-                       'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
-                           'editableSuccess' => 'review.onEditableGridSuccess',
+						   'editableError' => 'review.onEditableError',
+                           	'editableSuccess' => 'review.onEditableGridSuccess',
                        ],
                    ];
             },
@@ -68,7 +121,6 @@ $this->title = 'Review Lessons';
                'refreshGrid' => true,
                'value' => function ($model, $key, $index, $widget) {
                    $lessonTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date)->format('H:i:s');
-
                    return Yii::$app->formatter->asTime($lessonTime);
                },
                'headerOptions' => ['class' => 'kv-sticky-column'],
@@ -91,8 +143,9 @@ $this->title = 'Review Lessons';
                                'minuteStep' => 15,
                            ],
                        ],
-                       'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
+						   'editableError' => 'review.onEditableError',
                            'editableSuccess' => 'review.onEditableGridSuccess',
                        ],
                    ];
@@ -112,20 +165,11 @@ $this->title = 'Review Lessons';
                        'header' => 'Lesson Duration',
                        'size' => 'md',
                        'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-                       'widgetClass' => 'dosamigos\datetimepicker\DateTimePicker',
+                       'widgetClass' => 'bootui\datetimepicker\Timepicker',
                        'options' => [
-                           'clientOptions' => [
-                               'startView' => 1,
-                               'minView' => 0,
-                               'maxView' => 3,
-                               'pickDate' => false,
-                               'autoclose' => true,
-                               'format' => 'HH:ii',
-                               'showMeridian' => true,
-                               'minuteStep' => 15,
-                           ],
-                       ],
-                       'formOptions' => ['action' => Url::to(['lesson/update-field', 'id' => $model->id])],
+							'format' => 'HH:mm',
+						],
+                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
                            'editableSuccess' => 'review.onEditableGridSuccess',
                        ],
@@ -193,8 +237,8 @@ $this->title = 'Review Lessons';
                 'method' => 'post',
             ],
         ]) ?>
-		<?php elseif (!(empty($lessonFromDate) && empty($lessonToDate))):?>
-		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[lessonFromDate]' => $lessonFromDate, 'Course[lessonToDate]' => $lessonToDate], [
+		<?php elseif( ! empty($rescheduleBeginDate)):?>
+		    <?= Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[rescheduleBeginDate]' => $rescheduleBeginDate], [
                 'class' => 'btn btn-danger',
                 'id' => 'confirm-button',
                 'disabled' => $hasConflict,
@@ -225,6 +269,10 @@ $this->title = 'Review Lessons';
 	</div>
 <script>   
 var review = {
+	onEditableError: function(event, val, form, data) {
+		$(form).find('.form-group').addClass('has-error');
+		$(form).find('.help-block').text(data.message);
+	},
 	onEditableGridSuccess :function(event, val, form, data) {
 		$.ajax({
 		url    : "<?php echo Url::to(['lesson/fetch-conflict', 'courseId' => $courseId]); ?>",

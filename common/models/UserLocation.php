@@ -65,4 +65,9 @@ class UserLocation extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Qualification::className(), ['teacher_id' => 'user_id']);
     }
+
+    public function getQualifications()
+    {
+        return $this->hasMany(Qualification::className(), ['teacher_id' => 'user_id']);
+    }
 }

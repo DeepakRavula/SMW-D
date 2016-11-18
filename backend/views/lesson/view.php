@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use common\models\Program;
 use common\models\Lesson;
-use common\models\PrivateLesson;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -31,16 +30,24 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			</h5>
 				<?php endif; ?>
 			</div>
-		<?php if ((int) $model->status !== Lesson::STATUS_CANCELED) : ?>
+			<?php if (! $model->isUnscheduled()) : ?>
 			<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
-			<i class="fa fa-calendar"></i> <?php echo !empty(Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>
+			<i class="fa fa-calendar"></i>
+				<?php echo !empty(Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>
 			</div>
 		<?php endif; ?>
+        <?php if($model->isRescheduled()) : ?>
+        <?php $rootLesson = $model->getRootLesson(); ?>
+        <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Original Lesson Date">
+            <i class="fa fa-calendar-plus-o"></i> <?php echo Yii::$app->formatter->asDateTime($rootLesson->date); ?>
+        </div>
+        <?php endif; ?>
+        
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
 			<i class="fa fa-music detail-icon"></i> <?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
 		</div>
         <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Duration">
-			<i class="fa fa-clock-o"></i> <?php echo !empty($model->duration) ? $model->duration : null ?>
+			<i class="fa fa-clock-o"></i> <?php echo !empty($model->duration) ? (new \DateTime($model->duration))->format('H:i') : null ?>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
 			<i class="fa fa-info-circle detail-icon"></i> <?php echo !empty($model->status) ? $model->getStatus() : null; ?>
@@ -53,7 +60,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 				<i class="fa fa-calendar-plus-o"></i> <?php echo !empty(Yii::$app->formatter->asDateTime($model->privateLesson->expiryDate)) ? (Yii::$app->formatter->asDate($model->privateLesson->expiryDate)) : null; ?>
 		    <?php endif; ?>
 		</div>
-			
+        
 		<?php if (Yii::$app->controller->action->id === 'view'):?>
 	<div class="col-md-12 action-btns m-b-20">
 		<?php if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>

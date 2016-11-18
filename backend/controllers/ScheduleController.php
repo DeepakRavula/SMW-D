@@ -3,11 +3,11 @@
 namespace backend\controllers;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use common\models\Location;
 use common\models\Lesson;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use yii\helpers\Json;
 use yii\filters\AccessControl;
 use common\models\Program;
 use common\models\Invoice;
@@ -49,46 +49,45 @@ class ScheduleController extends Controller
     public function actionIndex()
     {
         $locationId = Yii::$app->session->get('location_id');
-        $teachersWithClass = TeacherAvailability::find()
-            ->select(['user_location.user_id as id', "CONCAT(user_profile.firstname, ' ', user_profile.lastname) as name"])
-            ->distinct()
+        $teachersAvailabilities = TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($locationId) {
-                $query->joinWith(['userProfile' => function ($query) {
-                    $query->joinWith(['lesson' => function ($query) {
-                        $query->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
-                    }]);
-                }])
+                $query->joinWith(['userProfile'])
                 ->where(['user_location.location_id' => $locationId]);
             }])
             ->orderBy(['teacher_availability_day.id' => SORT_DESC])
             ->all();
+        $teachersAvailabilitiesAllDetails = ArrayHelper::toArray($teachersAvailabilities, [
+            'common\models\TeacherAvailability' => [
+                'id' => function ($teachersAvailability) {
+                    return $teachersAvailability->userLocation->user_id;
+                },
+                'day',
+                'from_time',
+                'to_time',
+            ],
+        ]);
 
-        $activeTeachers = [];
-        foreach ($teachersWithClass as $teacherWithClass) {
-            $activeTeachers[] = [
-                    'id' => $teacherWithClass->id,
-                    'name' => $teacherWithClass->name,
-                ];
-        }
-
-        $allTeachers = TeacherAvailability::find()
-                ->select(['user_location.user_id as id', "CONCAT(user_profile.firstname, ' ', user_profile.lastname) as name"])
-                ->distinct()
-                ->joinWith(['userLocation' => function ($query) use ($locationId) {
-                    $query->joinWith(['userProfile' => function ($query) {
-                    }])
-                    ->where(['user_location.location_id' => $locationId]);
-                }])
-                ->orderBy(['teacher_availability_day.id' => SORT_DESC])
-                ->all();
-
-        $availableTeachers = [];
-        foreach ($allTeachers as $allTeacher) {
-            $availableTeachers[] = [
-                        'id' => $allTeacher->id,
-                        'name' => $allTeacher->name,
-                    ];
-        }
+        $teachersAvailabilitiesDetails = ArrayHelper::toArray($teachersAvailabilities, [
+            'common\models\TeacherAvailability' => [
+                'id' => function ($teachersAvailability) {
+                    return $teachersAvailability->userLocation->user_id;
+                },
+                'day',
+                'name' => function ($teachersAvailability) {
+                    return $teachersAvailability->teacher->getPublicIdentity();
+                },
+                'programs' => function ($teachersAvailability) {
+                    $qualifications = $teachersAvailability->userLocation->qualifications;
+                    $programs = [];
+                    foreach ($qualifications as $qualification) {
+                        $programs[] = $qualification->program_id;
+                    }
+                    return $programs;
+                },
+            ],
+        ]);
+        $availableTeachersDetails = array_unique($teachersAvailabilitiesDetails, SORT_REGULAR);
+        $availableTeachersDetails = array_values($availableTeachersDetails);
 
         $lessons = [];
         $lessons = Lesson::find()
@@ -109,13 +108,16 @@ class ScheduleController extends Controller
                 $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
             }
             $class = null;
-            if (!empty($lesson->proFormaInvoice)) {
+            if($lesson->isEnrolmentFirstlesson()) {
+                $class = 'enrolment-first-lesson';
+            } elseif (!empty($lesson->proFormaInvoice)) {
                 if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
                     $class = 'proforma-paid';
                 } else {
                     $class = 'proforma-unpaid';
                 }
             }
+
             $events[] = [
                 'resources' => $lesson->teacherId,
                 'title' => $title,
@@ -137,22 +139,6 @@ class ScheduleController extends Controller
         $toTime = $location->to_time;
         $to_time = $toTime->format('H:i:s');
 
-        return $this->render('index', ['teachersWithClass' => $activeTeachers, 'allTeachers' => $availableTeachers, 'events' => $events, 'from_time' => $from_time, 'to_time' => $to_time]);
-    }
-
-    public function actionUpdateEvents()
-    {
-        $data = Yii::$app->request->rawBody;
-        $data = Json::decode($data, true);
-        $lesson = Lesson::findOne(['id' => $data['id']]);
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
-        $rescheduledLessonDate = clone $lessonDate;
-        if ((float) $data['minutes'] > 0) {
-            $rescheduledLessonDate->add(new \DateInterval('PT'.round($data['minutes']).'M'));
-        } else {
-            $rescheduledLessonDate->sub(new \DateInterval('PT'.round(abs($data['minutes'])).'M'));
-        }
-        $lesson->date = $rescheduledLessonDate->format('Y-m-d H:i:s');
-        $lesson->save();
+        return $this->render('index', ['teachersAvailabilitiesAllDetails' => $teachersAvailabilitiesAllDetails, 'teachersAvailabilitiesDetails' => $teachersAvailabilitiesDetails, 'availableTeachersDetails' => $availableTeachersDetails, 'events' => $events, 'from_time' => $from_time, 'to_time' => $to_time]);
     }
 }

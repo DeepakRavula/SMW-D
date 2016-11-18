@@ -115,15 +115,13 @@ class UserController extends Controller
         $db = $searchModel->search(Yii::$app->request->queryParams);
 
         $query = Student::find()
-            ->where(['customer_id' => $id])
-            ->active();
+            ->andWhere(['customer_id' => $id]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         $query = Student::find()
-                ->teacherStudents($locationId, $model->id)
-                ->active();
+                ->teacherStudents($locationId, $model->id);
 
         $studentDataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -211,14 +209,12 @@ class UserController extends Controller
                 ]);
 
         $unscheduledLessons = Lesson::find()
-            ->joinWith(['lessonReschedule'])
-            ->andWhere(['status' => Lesson::STATUS_CANCELED])
-            ->andWhere(['teacherId' => $id])
-            ->andWhere(['lesson_reschedule.lessonId' => null])
+			->enrolled()
             ->joinWith(['privateLesson'])
-            ->andWhere(['NOT', ['private_lesson.lessonId' => null]])
             ->orderBy(['private_lesson.expiryDate' => SORT_DESC])
-            ->notDeleted();
+			->andWhere(['lesson.teacherId' => $id])
+			->unscheduled()
+			->notDeleted();
 
         $unscheduledLessonDataProvider = new ActiveDataProvider([
             'query' => $unscheduledLessons,
@@ -261,7 +257,15 @@ class UserController extends Controller
         $openingBalanceDataProvider = new ActiveDataProvider([
             'query' => $openingBalanceQuery,
         ]);
-
+		$teacherLessons = Lesson::find()
+			->location($locationId)
+			->where(['lesson.teacherId' => $model->id])
+			->notDraft()
+			->notDeleted();
+		$teacherLessonDataProvider = new ActiveDataProvider([
+            'query' => $teacherLessons,
+			'pagination' => false,
+        ]);
         return $this->render('view', [
             'student' => new Student(),
             'dataProvider' => $dataProvider,
@@ -282,6 +286,7 @@ class UserController extends Controller
             'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
             'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
+			'teacherLessonDataProvider' => $teacherLessonDataProvider
         ]);
     }
 
@@ -430,7 +435,7 @@ class UserController extends Controller
         return $this->render('create', [
                     'model' => $model,
                     'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-                    'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+                    'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
                     'availabilityModels' => (empty($availabilityModels)) ? [new TeacherAvailability()] : $availabilityModels,
                     'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
                     'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
@@ -570,7 +575,7 @@ class UserController extends Controller
         return $this->render('update', [
                     'model' => $model,
                     'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-                    'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+                    'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
                     'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
                     'availabilityModels' => (empty($availabilityModels)) ? [new TeacherAvailability()] : $availabilityModels,
                     'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
@@ -719,5 +724,27 @@ class UserController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+	public function actionPrint($id)
+    {
+        $model = $this->findModel($id);
+        $session = Yii::$app->session;
+        $locationId = $session->get('location_id');
+        $teacherLessons = Lesson::find()
+			->location($locationId)
+			->where(['lesson.teacherId' => $model->id])
+			->notDraft()
+			->notDeleted();
+		$teacherLessonDataProvider = new ActiveDataProvider([
+            'query' => $teacherLessons,
+			'pagination' => false,
+        ]);
+        $this->layout = '/print';
+
+        return $this->render('_print', [
+			'model' => $model,
+			'teacherLessonDataProvider' => $teacherLessonDataProvider,
+        ]);
     }
 }

@@ -134,15 +134,16 @@ class Enrolment extends \yii\db\ActiveRecord
     public static function paymentFrequencies()
     {
         return [
-            self::PAYMENT_FREQUENCY_FULL => Yii::t('common', 'Full'),
-            self::PAYMENT_FREQUENCY_MONTHLY => Yii::t('common', 'Monthly'),
+            self::PAYMENT_FREQUENCY_FULL => Yii::t('common', 'Annually'),
+            self::PAYMENT_FREQUENCY_HALFYEARLY => Yii::t('common', 'Semi-Annually'),
             self::PAYMENT_FREQUENCY_QUARTERLY => Yii::t('common', 'Quarterly'),
+            self::PAYMENT_FREQUENCY_MONTHLY => Yii::t('common', 'Monthly'),
         ];
     }
+	
     public function afterSave($insert, $changedAttributes)
     {
-        $isGroupProgram = (int) $this->course->program->type === (int) Program::TYPE_GROUP_PROGRAM;
-        if ($isGroupProgram || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
+        if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
             return true;
         }
         $interval = new \DateInterval('P1D');
@@ -194,5 +195,27 @@ class Enrolment extends \yii\db\ActiveRecord
         }
 
         return $paymentCycleEndDate;
+    }
+
+	public function getLastLessonDateOfPaymentCycle()
+    {
+		$courseDate = new \DateTime($this->course->startDate);
+		$startDate = \DateTime::createFromFormat('Y-m-d', $courseDate->format('Y-m-1'));
+        switch ($this->paymentFrequency) {
+            case self::PAYMENT_FREQUENCY_FULL:
+                $endDate = $startDate->modify('+1 year, -1 day');
+                break;
+            case self::PAYMENT_FREQUENCY_HALFYEARLY:
+                $endDate = $startDate->modify('+6 month, -1 day');
+                break;
+            case self::PAYMENT_FREQUENCY_QUARTERLY:
+                $endDate = $startDate->modify('+3 month, -1 day');
+                break;
+            case self::PAYMENT_FREQUENCY_MONTHLY:
+                $endDate = $startDate->modify('+1 month, -1 day');
+                break;
+        }
+		
+        return $endDate;
     }
 }

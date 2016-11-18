@@ -1,6 +1,6 @@
 <?php
 
-use common\models\Invoice;
+use common\models\Lesson;
 use yii\helpers\Url;
 use yii\grid\GridView;
 
@@ -54,8 +54,9 @@ echo GridView::widget([
         [
             'label' => 'Invoice Status',
             'value' => function ($data) {
-                if (!empty($data->invoice->status)) {
-                    $status = $data->invoice->getStatus();
+                $rootLesson = $data->getRootLesson();
+                if (!empty($rootLesson->invoice)) {
+                    $status = $rootLesson->invoice->getStatus();
                 } else {
                     $status = 'Not Invoiced';
                 }

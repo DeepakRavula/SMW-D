@@ -20,6 +20,11 @@ $this->title = $model->publicIdentity.' - '.ucwords($searchModel->role_name);
 $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
+<style>
+	.lesson-count {
+		font-weight: bold;
+	}
+</style>
 		<div class="row-fluid"><?php if (!empty($model->userProfile->notes)) :?>
 			<h5 class="m-0"><em><i class="fa fa-info-circle"></i> Notes:
 				<?php echo !empty($model->userProfile->notes) ? $model->userProfile->notes : null; ?></em>
@@ -118,7 +123,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         $teacherScheduleContent = $this->render('_calendar', [
             'teacherId' => $model->id,
         ]);
-
+		$teacherLessonContent = $this->render('_view-teacher-lesson', [
+            'teacherLessonDataProvider' => $teacherLessonDataProvider,
+			'model' => $model,
+        ]);
         ?>
 		<?php
         $items = [
@@ -158,6 +166,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                 'content' => $teacherScheduleContent,
                 'options' => [
                     'id' => 'calendar',
+                ],
+            ],
+			[
+                'label' => 'Lessons',
+                'content' => $teacherLessonContent,
+                'options' => [
+                    'id' => 'lesson',
                 ],
             ],
             [
@@ -265,5 +280,9 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     	$('#calendar').fullCalendar('render');
 	});
+   	var footer = $('#teacher-lesson table tfoot');
+	var summary = '<tr class="lesson-count"><td><?= $teacherLessonDataProvider->totalCount; ?> Lessons in Total</td> </tr>';
+	footer.append(summary);
+		 return false;
 });
 </script>

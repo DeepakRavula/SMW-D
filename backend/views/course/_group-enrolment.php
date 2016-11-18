@@ -18,7 +18,6 @@ use common\models\Student;
             $form->field($model, 'studentId')->dropDownList(
                 ArrayHelper::map(
                     Student::find()
-                    ->active()
                     ->unenrolled($courseId, $locationId)
                     ->all(),
                 'id', function ($model) {
@@ -45,7 +44,6 @@ use common\models\Student;
                     Student::find()
                     ->location($locationId)
                     ->groupCourseEnrolled($courseId)
-                    ->active()
                     ->all(),
                 'id', 'fullName'
                 ),

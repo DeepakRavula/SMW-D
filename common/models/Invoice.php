@@ -131,6 +131,17 @@ class Invoice extends \yii\db\ActiveRecord
 	{
         return (int) $this->type === (int) Invoice::TYPE_INVOICE;
 	}
+
+    public function isPaid()
+    {
+        return (int) $this->status === (int) self::STATUS_PAID;
+    }
+
+    public function hasCredit()
+    {
+        return (int) $this->status === (int) self::STATUS_CREDIT;
+    }
+
     public function getCreditAppliedTotal()
     {
         $creditUsageTotal = Payment::find()
@@ -356,7 +367,8 @@ class Invoice extends \yii\db\ActiveRecord
                 $lesson->date);
         $invoiceLineItem             = new InvoiceLineItem();
         $invoiceLineItem->invoice_id = $this->id;
-        $invoiceLineItem->item_id    = $lesson->id;
+        $rootLessonId                = $lesson->getRootLessonId($lesson->id);
+        $invoiceLineItem->item_id    = $rootLessonId;
         $getDuration                 = \DateTime::createFromFormat('H:i:s',
                 $lesson->duration);
         $hours                       = $getDuration->format('H');

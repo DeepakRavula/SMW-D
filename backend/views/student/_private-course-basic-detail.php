@@ -150,7 +150,9 @@ $to_time = (new \DateTime($location->to_time))->format('H:i:s');
         });
     });
     function loadCalendar() {
+		var date = $('#course-startdate').val();
         $('#calendar').fullCalendar({
+    		defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
             header: {
                 left: 'prev,next today',
                 center: 'title',

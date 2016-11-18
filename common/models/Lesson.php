@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use IntervalTree\IntervalTree;
 use common\components\intervalTree\DateRangeInclusive;
@@ -25,9 +26,11 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_SCHEDULED = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
-
+	const STATUS_UNSCHEDULED = 5;
+	
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_PRIVATE_LESSON = 'private-lesson';
+    const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
 
     public $programId;
     public $time;
@@ -62,7 +65,8 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
-            [['date', 'programId', 'notes', 'teacherId', 'showAllReviewLessons'], 'safe'],
+            [['date', 'programId', 'notes', 'teacherId'], 'safe'],
+            ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
@@ -180,7 +184,6 @@ class Lesson extends \yii\db\ActiveRecord
         if ((int) $this->course->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
             $studentLessons = self::find()
 				->studentLessons($locationId, $this->course->enrolment->student->id)
-				
 				->all();
             foreach ($studentLessons as $studentLesson) {
 				if($studentLesson->date === $this->date && (int)$studentLesson->status === Lesson::STATUS_SCHEDULED){
@@ -252,7 +255,12 @@ class Lesson extends \yii\db\ActiveRecord
         return new \common\models\query\LessonQuery(get_called_class());
     }
 
-    public function getEnrolment()
+	public function isUnscheduled()
+	{
+		return (int) $this->status === self::STATUS_UNSCHEDULED;
+	}
+
+	public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
     }
@@ -316,6 +324,9 @@ class Lesson extends \yii\db\ActiveRecord
             case self::STATUS_CANCELED:
                 $status = 'Canceled';
             break;
+			case self::STATUS_UNSCHEDULED:
+                $status = 'Unscheduled';
+            break;
         }
 
         return $status;
@@ -334,15 +345,16 @@ class Lesson extends \yii\db\ActiveRecord
         if ((int) $this->status !== (int) self::STATUS_DRAFTED) {
             if (!$insert) {
                 if (isset($changedAttributes['date']) && !empty($this->date)) {
-                    $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
                     $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
-                    if (!empty($this->teacher->email)) {
-                        $this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
-                    }
-                    if (!empty($this->enrolment->student->customer->email)) {
-                        $this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
-                    }
-                    $this->updateAttributes(['date' => $fromDate->format('Y-m-d H:i:s'),
+                    $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+					if (!empty($this->teacher->email)) {
+						$this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
+					}
+					if (!empty($this->enrolment->student->customer->email)) {
+						$this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
+					}
+                    $this->updateAttributes([
+						'date' => $fromDate->format('Y-m-d H:i:s'),
                         'status' => self::STATUS_CANCELED,
                     ]);
                     $originalLessonId = $this->id;
@@ -351,7 +363,6 @@ class Lesson extends \yii\db\ActiveRecord
                     $this->date = $toDate->format('Y-m-d H:i:s');
                     $this->status = self::STATUS_SCHEDULED;
                     $this->save();
-
                     $lessonRescheduleModel = new LessonReschedule();
                     $lessonRescheduleModel->lessonId = $originalLessonId;
                     $lessonRescheduleModel->rescheduledLessonId = $this->id;
@@ -395,5 +406,45 @@ class Lesson extends \yii\db\ActiveRecord
                     $lesson->date);
         $lessonStartDate = new \DateTime($lessonStartDate->format('Y-m-d'));
         return $lessonStartDate == $priorDate;
+    }
+
+	public function getRootLessonId($lessonId)
+    {
+        $parent = (new Query())->select(['lessonId'])
+            ->from('lesson_reschedule')
+            ->where(['rescheduledLessonId' => $lessonId])
+            ->scalar();
+
+        if (!empty($parent)) {
+            return $this->getRootLessonId($parent);
         }
+        return $lessonId;
+    }
+
+    public function getRootLesson()
+    {
+        $rootLessonId = $this->getRootLessonId($this->id);
+        return self::findOne(['id' => $rootLessonId]);
+    }
+
+    public function isRescheduled()
+    {
+        $rootLesson        = $this->getRootLesson();
+        $rootLessonDate    = \DateTime::createFromFormat('Y-m-d H:i:s',
+                $rootLesson->date);
+        $currentLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s',
+                $this->date);
+        return $rootLessonDate != $currentLessonDate;
+    }
+
+    public function isEnrolmentFirstlesson()
+    {
+        $courseId             = $this->courseId;
+        $enrolmentFirstLesson = self::find()
+                ->where(['courseId' => $courseId])
+                ->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED]])
+                ->orderBy(['id' => SORT_ASC])
+                ->one();
+        return $enrolmentFirstLesson->date === $this->date;
+    }
 }    

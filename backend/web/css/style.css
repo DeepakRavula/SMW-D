@@ -79,12 +79,23 @@ a:hover, a:focus{
 #calendar .fc-today {
     background: #FFF !important;
 }
+#calendar .fc-agenda-slots {
+    background: #C0C0C0 !important;
+}
 .fc-nonbusiness {
   background-color: #FFFF00 !important;
 }
 .proforma-unpaid, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .proforma-unpaid a{
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
+}
+.teacher-availability, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .teacher-availability a{
+    border: 1px solid #FFFFFF !important;
+    background-color: #FFFFFF !important;
+}
+.enrolment-first-lesson, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .enrolment-first-lesson a{
+    border: 1px solid #FF00FF !important;
+    background-color: #FF00FF !important;
 }
 .proforma-paid, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .proforma-paid a{
     border: 1px solid  #378006 !important;
@@ -656,6 +667,12 @@ Licensed under MIT
     top: -49px;
         line-height: 37px;
 }
+.week-button {
+	position: absolute;
+    right: 195px;
+    top: -39px;
+    line-height: 27px;
+}
 /*.schedule-index{
   position: relative;
 }*/
@@ -708,7 +725,11 @@ input[type="search"]:-ms-input-placeholder {
     top: -45px;
     left: 185px;
 }
-
+.mail-flag{
+    position: absolute;
+    top: -48px;
+    left: 835px;
+}
 .abs-delete{
     position: absolute;
     right: 11px;
@@ -913,4 +934,7 @@ input[type="search"]:-ms-input-placeholder {
 }
 .invoice-credit {
     background-color:  #c0c0c0;   
+}
+.teacher-availability{
+	margin : 10px;
 }

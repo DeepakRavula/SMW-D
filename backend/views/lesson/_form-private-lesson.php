@@ -24,7 +24,7 @@ use common\models\Lesson;
 			<?php
             echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
                 'options' => [
-                    'value' => $model->status === Lesson::STATUS_CANCELED ? '' : Yii::$app->formatter->asDateTime($model->date),
+                    'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
                 ],
                 'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [

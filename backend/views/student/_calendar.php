@@ -37,9 +37,10 @@ $from_time = (new \DateTime($location->from_time))->format('H:i:s');
 $to_time = (new \DateTime($location->to_time))->format('H:i:s');
 ?>
 <script type="text/javascript">
-    function refreshCalendar(availableHours, events) {
+    function refreshCalendar(availableHours, events, date) {
         $('#calendar').fullCalendar('destroy');
         $('#calendar').fullCalendar({
+    		defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
             header: {
                 left: 'prev,next today',
                 center: 'title',
@@ -87,6 +88,7 @@ $to_time = (new \DateTime($location->to_time))->format('H:i:s');
         $(document).on('change', '#course-teacherid', function () {
             var events, availableHours;
             var teacherId = $('#course-teacherid').val();
+			var date = $('#course-startdate').val();
             $.ajax({
                 url: '/teacher-availability/availability-with-events?id=' + teacherId,
                 type: 'get',
@@ -95,7 +97,7 @@ $to_time = (new \DateTime($location->to_time))->format('H:i:s');
                 {
                     events = response.events;
                     availableHours = response.availableHours;
-                    refreshCalendar(availableHours, events);
+                    refreshCalendar(availableHours, events, date);
                 }
             });
         });
