@@ -6,19 +6,6 @@ use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
 ?>
-<?php
-$totalDuration	 = 0;
-$count			 = $teacherLessonDataProvider->getCount();
-if (!empty($teacherLessonDataProvider->getModels())) {
-	foreach ($teacherLessonDataProvider->getModels() as $key => $val) {
-		$duration		 = \DateTime::createFromFormat('H:i:s', $val->duration);
-		$hours			 = $duration->format('H');
-		$minutes		 = $duration->format('i');
-		$lessonDuration	 = ($hours * 60) + $minutes;
-		$totalDuration += $lessonDuration;
-	}
-}
-?>
 <div>
   <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 	<?php $form = ActiveForm::begin([
@@ -66,37 +53,13 @@ if (!empty($teacherLessonDataProvider->getModels())) {
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'columns' => [
 			[
-				'label' => 'Time',
+				'label' => 'Day',
 				'value' => function ($data) {
-					return !empty($data->date) ? Yii::$app->formatter->asTime($data->date) : null;
-				},
-				'footer' => 'Total Hours of Instruction',
-			],
-			[
-				'label' => 'Program Name',
-				'value' => function ($data) {
-					return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
-				},
-			],
-			[
-				'label' => 'Student Name',
-				'value' => function ($data) {
-					return !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
-				},
-			],
-			[
-				'label' => 'Duration',
-				'value' => function ($data) {
-					$duration		 = \DateTime::createFromFormat('H:i:s', $data->duration);
-					$hours			 = $duration->format('H');
-					$minutes		 = $duration->format('i');
-					$lessonDuration	 = ($hours * 60) + $minutes;
+					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+					$date = $lessonDate->format('l, F jS, Y');
 
-					return $lessonDuration.'m';
+					return !empty($date) ? $date : null;
 				},
-				'headerOptions' => ['class' => 'text-right'],
-				'contentOptions' => ['class' => 'text-right'],
-				'footer' => $totalDuration.'m',
 			],
 		],
 	]);
