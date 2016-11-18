@@ -9,13 +9,15 @@ use yii\widgets\ActiveForm;
 
 $this->title = 'Review Lessons';
 ?>
+<?php $form = ActiveForm::begin();?>
 <div class="pull-right  m-r-20">
 		<div class="schedule-index">
 			<div class="e1Div">
-    			<?= Html::checkbox('showAllReviewLessons', false, ['label' => 'Show All', 'id' => 'review-lesson']); ?>
+    			<?= $form->field($searchModel, 'showAllReviewLessons')->checkbox(['data-pjax' => true]); ?>
 			</div>
 		</div>
     </div>
+<?php ActiveForm::end(); ?>
 <div class="user-details-wrapper">
 	<div class="row">
     <?php if ((int) $courseModel->program->type === Program::TYPE_PRIVATE_PROGRAM) :?>  
@@ -206,11 +208,11 @@ $this->title = 'Review Lessons';
         },
         'pjax' => true,
 			'pjaxSettings' => [
-        'neverTimeout' => true,
-        'options' => [
-            'id' => 'review-lesson-grid',
-        ],
-    ],
+                'neverTimeout' => true,
+                'options' => [
+                    'id' => 'review-lesson-listing',
+                ],
+            ],
         'columns' => $columns,
         'showPageSummary' => true,
     ]); ?>
@@ -296,10 +298,11 @@ $(document).ready(function(){
     if($('#confirm-button').attr('disabled')) {         
         $('#confirm-button').bind('click',false);
     }
-	$('#review-lesson').change(function() {
-        if( $(this).is(':checked') ){
-			$.pjax.reload({container : '#review-lesson-grid', timeout : 4000});
-        }
-	});
+	$("#lessonsearch-showallreviewlessons").on("change", function() {
+        var showAllReviewLessons = $(this).is(":checked");
+        <?php $showAllReviewLessons = true;?>
+        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => $showAllReviewLessons]); ?>"
+		$.pjax.reload({url:url,container:"#review-lesson-listing",replace:false,  timeout: 4000});  //Reload GridView
+    });
 });
 </script>

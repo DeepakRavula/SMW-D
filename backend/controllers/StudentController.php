@@ -182,7 +182,7 @@ class StudentController extends Controller
             $courseModel->day = array_search($courseModel->day, $dayList);
             $courseModel->save();
 
-            return $this->redirect(['lesson/review', 'courseId' => $courseModel->id]);
+            return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
         }
         if (!empty($post['courseId'])) {
             $enrolmentModel = new Enrolment();

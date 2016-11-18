@@ -315,7 +315,10 @@ class LessonController extends Controller
     public function actionReview($courseId)
     {
 		$model = new Lesson();
+        $searchModel = new LessonSearch();
         $request = Yii::$app->request;
+        $lessonSearchRequest = $request->get('LessonSearch');
+        $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
         $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
@@ -341,11 +344,11 @@ class LessonController extends Controller
 		$query = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
             ->orderBy(['lesson.date' => SORT_ASC]);
-		if(! $model->showAllReviewLessons) {
+		if(! $showAllReviewLessons) {
 			if(! empty($conflictedLessonIds)){
 				 $query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
 			}
-		} 
+		}
 			$lessonDataProvider = new ActiveDataProvider([
 				'query' => $query,
 			]);
@@ -355,6 +358,7 @@ class LessonController extends Controller
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflicts,
             'rescheduleBeginDate' => $rescheduleBeginDate,
+            'searchModel' => $searchModel,
 			'vacationId' => $vacationId,
 			'vacationType' => $vacationType,
 			'model' => $model,
