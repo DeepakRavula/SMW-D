@@ -36,6 +36,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $time;
     public $hours;
     public $program_name;
+	public $showAllReviewLessons = false;
     /**
      * {@inheritdoc}
      */

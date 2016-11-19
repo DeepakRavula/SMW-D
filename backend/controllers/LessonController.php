@@ -6,7 +6,6 @@ use Yii;
 use common\models\Lesson;
 use common\models\PrivateLesson;
 use common\models\Enrolment;
-use common\models\Program;
 use common\models\Course;
 use common\models\Invoice;
 use common\models\LessonReschedule;
@@ -314,7 +313,11 @@ class LessonController extends Controller
 
     public function actionReview($courseId)
     {
+		$model = new Lesson();
+        $searchModel = new LessonSearch();
         $request = Yii::$app->request;
+        $lessonSearchRequest = $request->get('LessonSearch');
+        $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
         $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
@@ -329,23 +332,34 @@ class LessonController extends Controller
         }
         Model::validateMultiple($draftLessons);
         $conflicts = [];
+        $conflictedLessonIds = [];
         foreach ($draftLessons as $draftLesson) {
+			if(!empty($draftLesson->getErrors('date'))) {
+				$conflictedLessonIds[] = $draftLesson->id;
+			}
             $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+
+        }
+        $query = Lesson::find()
+            ->orderBy(['lesson.date' => SORT_ASC]);
+        if(! $showAllReviewLessons) {
+            $query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
+        }  else {
+            $query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
         }
         $lessonDataProvider = new ActiveDataProvider([
-            'query' => Lesson::find()->indexBy('id')
-                ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
-                ->orderBy(['lesson.date' => SORT_ASC]),
+            'query' => $query,
         ]);
-
         return $this->render('_review', [
             'courseModel' => $courseModel,
             'courseId' => $courseId,
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflicts,
             'rescheduleBeginDate' => $rescheduleBeginDate,
+            'searchModel' => $searchModel,
 			'vacationId' => $vacationId,
 			'vacationType' => $vacationType,
+			'model' => $model,
         ]);
     }
 
@@ -449,7 +463,7 @@ class LessonController extends Controller
 				$lessonRescheduleModel->save();
 			}
 		}
-		
+
 		foreach ($lessons as $lesson) {
 			$lesson->updateAttributes([
 				'status' => Lesson::STATUS_SCHEDULED,
@@ -548,7 +562,7 @@ class LessonController extends Controller
                 $creditUsageModel->debit_payment_id = $debitPaymentId;
                 $creditUsageModel->save();
             }
-            
+
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {
             Yii::$app->session->setFlash('alert', [

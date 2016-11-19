@@ -21,6 +21,7 @@ class LessonSearch extends Lesson
     public $type;
     public $customerId;
     public $invoiceType;
+    public $showAllReviewLessons = false;
 
     /**
      * {@inheritdoc}
@@ -29,11 +30,11 @@ class LessonSearch extends Lesson
     {
         return [
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
-            [['date'], 'safe'],
+            [['date', 'showAllReviewLessons'], 'safe'],
             [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 'invoiceType'], 'safe'],
         ];
     }
-
+    
     /**
      * {@inheritdoc}
      */
