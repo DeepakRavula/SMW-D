@@ -107,12 +107,14 @@ class UserController extends Controller
 		$fromDate = new \DateTime($lessonSearch['fromDate']);
 		$toDate = new \DateTime($lessonSearch['toDate']);
 		$teacherLessons = Lesson::find()
-		->location($locationId)
-		->where(['lesson.teacherId' => $model->id])
-		->notDraft()
-		->notDeleted()
-		->between($fromDate, $toDate);
-
+			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, date, lesson.teacherId"])
+			->location($locationId)
+			->where(['lesson.teacherId' => $model->id])
+			->notDraft()
+			->notDeleted()
+			->between($fromDate, $toDate)
+			->groupBy(['lessonDate']);
+	
 		$teacherLessonDataProvider = new ActiveDataProvider([
             'query' => $teacherLessons,
 			'pagination' => false,
@@ -287,62 +289,18 @@ class UserController extends Controller
 		$lessonSearchModel->fromDate = new \DateTime();
 		$lessonSearchModel->toDate = new \DateTime();
 		$teacherLessons = Lesson::find()
+			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, date, lesson.teacherId"])
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
 			->notDeleted()
-			->between($lessonSearchModel->fromDate, $lessonSearchModel->toDate);
+			->between($lessonSearchModel->fromDate, $lessonSearchModel->toDate)
+			->groupBy(['lessonDate']);
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,
 			'pagination' => false,
 		]);
-		/*$request = Yii::$app->request;
-		if($request->isPjax){
-		$lessonSearch = $request->get('LessonSearch');
-	$fromDate = new \DateTime($lessonSearch['fromDate']);
-		$toDate = new \DateTime($lessonSearch['toDate']);
-		$teacherLessons = Lesson::find()
-		->location($locationId)
-		->where(['lesson.teacherId' => $model->id])
-		->notDraft()
-		->notDeleted()
-		->between($fromDate, $toDate);
-
-		$teacherLessonDataProvider = new ActiveDataProvider([
-            'query' => $teacherLessons,
-			'pagination' => false,
-        ]);
-		return $this->renderAjax('_view-teacher-lesson', [
-            'teacherLessonDataProvider' => $teacherLessonDataProvider,
-			'searchModel' => new LessonSearch(),
-			'model' => $model,
-        ]);
-		}
-		/*
-		$lessonSearch = $request->get('LessonSearch');
-		if(! empty($lessonSearch)) {
-			die('11jfhk');
-		$fromDate = new \DateTime($lessonSearch['fromDate']);
-		$toDate = new \DateTime($lessonSearch['toDate']);
-		$teacherLessons = Lesson::find()
-		->location($locationId)
-		->where(['lesson.teacherId' => $model->id])
-		->notDraft()
-		->notDeleted()
-		->between($fromDate, $toDate);
-
-		$teacherLessonDataProvider = new ActiveDataProvider([
-            'query' => $teacherLessons,
-			'pagination' => false,
-        ]);
-		return $this->renderAjax('_view-teacher-lesson', [
-            'teacherLessonDataProvider' => $teacherLessonDataProvider,
-			'searchModel' => new LessonSearch(),
-			'model' => $model,
-        ]);
-		}
-		 * 
-		 */
+		
         return $this->render('view', [
             'student' => new Student(),
             'dataProvider' => $dataProvider,

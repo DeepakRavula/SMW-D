@@ -1,10 +1,10 @@
 <?php
 
-use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
+use kartik\grid\GridView;
 ?>
 <div>
   <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
@@ -51,17 +51,18 @@ use yii\helpers\Url;
 			[
                 'class' => 'kartik\grid\ExpandRowColumn',
                 'width' => '50px',
+				'enableRowClick' => true,
                 'value' => function ($model, $key, $index, $column) {
                     return GridView::ROW_COLLAPSED;
                 },
                 'detail' => function ($model, $key, $index, $column) {
-              //      return Yii::$app->controller->renderPartial('_conflict-lesson', ['model' => $model, 'conflicts' => $conflicts[$model->id]]);
+                    return Yii::$app->controller->renderPartial('_teacher-lesson', ['model' => $model]);
                 },
                 'headerOptions' => ['class' => 'kartik-sheet-style'],
             ]
 		];
 	?>
-	<?= \kartik\grid\GridView::widget([
+	<?= GridView::widget([
 		'dataProvider' => $teacherLessonDataProvider,
 		'options' => ['class' => 'col-md-12'],
 		'footerRowOptions' => ['style' => 'font-weight:bold;text-align: left;'],
@@ -82,8 +83,8 @@ use yii\helpers\Url;
 <script>
 $(document).ready(function(){
 	$('#teacher-lesson-search-form').submit(function(){
-		//var url = "<?= Url::to(['user/lesson-search', 'id' => $model->id]); ?>";
-		$.pjax.reload({container:"#teacher-lesson-grid", replace: false, timeout : 6000, data : $(this).serialize()});  //Reload GridView
+		var url = "<?= Url::to(['user/lesson-search', 'id' => $model->id]); ?>";
+		$.pjax.reload({url: url, container:"#teacher-lesson-grid", replace: false, timeout : 6000, data : $(this).serialize()});  //Reload GridView
 		 return false;
 	});
 });
