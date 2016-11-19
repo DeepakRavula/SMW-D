@@ -38,20 +38,7 @@ use yii\helpers\Url;
     </div>
 	<?php ActiveForm::end(); ?>
 	<?php
-	yii\widgets\Pjax::begin([
-		'id' => 'teacher-lesson-grid',
-	])
-	?>
-	<?php
-	echo GridView::widget([
-		'id' => 'teacher-lesson',
-		'dataProvider' => $teacherLessonDataProvider,
-		'options' => ['class' => 'col-md-12'],
-		'footerRowOptions' => ['style' => 'font-weight:bold;text-align: left;'],
-		'showFooter' => true,
-		'tableOptions' => ['class' => 'table table-bordered'],
-		'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'columns' => [
+		$columns = [
 			[
 				'label' => 'Day',
 				'value' => function ($data) {
@@ -61,16 +48,42 @@ use yii\helpers\Url;
 					return !empty($date) ? $date : null;
 				},
 			],
-		],
-	]);
+			[
+                'class' => 'kartik\grid\ExpandRowColumn',
+                'width' => '50px',
+                'value' => function ($model, $key, $index, $column) {
+                    return GridView::ROW_COLLAPSED;
+                },
+                'detail' => function ($model, $key, $index, $column) {
+              //      return Yii::$app->controller->renderPartial('_conflict-lesson', ['model' => $model, 'conflicts' => $conflicts[$model->id]]);
+                },
+                'headerOptions' => ['class' => 'kartik-sheet-style'],
+            ]
+		];
 	?>
-	<?php \yii\widgets\Pjax::end(); ?>
+	<?= \kartik\grid\GridView::widget([
+		'dataProvider' => $teacherLessonDataProvider,
+		'options' => ['class' => 'col-md-12'],
+		'footerRowOptions' => ['style' => 'font-weight:bold;text-align: left;'],
+		'showFooter' => true,
+		'tableOptions' => ['class' => 'table table-bordered'],
+		'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'pjax' => true,
+		'pjaxSettings' => [
+			'neverTimeout' => true,
+			'options' => [
+				'id' => 'teacher-lesson-grid',
+			],
+		],
+        'columns' => $columns,
+        'showPageSummary' => true,
+    ]); ?>
 </div>
 <script>
 $(document).ready(function(){
 	$('#teacher-lesson-search-form').submit(function(){
-		var url = "<?= Url::to(['user/lesson-search', 'id' => $model->id]); ?>";
-		$.pjax.reload({url:url, container:"#teacher-lesson-grid", replace: false, timeout : 6000, data : $(this).serialize()});  //Reload GridView
+		//var url = "<?= Url::to(['user/lesson-search', 'id' => $model->id]); ?>";
+		$.pjax.reload({container:"#teacher-lesson-grid", replace: false, timeout : 6000, data : $(this).serialize()});  //Reload GridView
 		 return false;
 	});
 });
