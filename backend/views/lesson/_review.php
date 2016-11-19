@@ -105,11 +105,6 @@ $this->title = 'Review Lessons';
         }
     }
     ?>
-    <?php if(!$hasConflict) :?>
-    <div>
-        <?php echo 'No conflicts here! You are ready to confirm!'; ?>
-    </div>
-    <?php endif; ?>
     <?php
     $columns = [
         [
@@ -230,6 +225,7 @@ $this->title = 'Review Lessons';
                 ],
             ],
         'columns' => $columns,
+		'emptyText' => 'No conflicts here! You are ready to confirm!',
         'showPageSummary' => true,
     ]); ?>
 
