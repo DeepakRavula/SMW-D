@@ -6,19 +6,6 @@ use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
 ?>
-<?php
-$totalDuration	 = 0;
-$count			 = $teacherLessonDataProvider->getCount();
-if (!empty($teacherLessonDataProvider->getModels())) {
-	foreach ($teacherLessonDataProvider->getModels() as $key => $val) {
-		$duration		 = \DateTime::createFromFormat('H:i:s', $val->duration);
-		$hours			 = $duration->format('H');
-		$minutes		 = $duration->format('i');
-		$lessonDuration	 = ($hours * 60) + $minutes;
-		$totalDuration += $lessonDuration;
-	}
-}
-?>
 <div>
   <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 	<?php $form = ActiveForm::begin([
@@ -51,63 +38,52 @@ if (!empty($teacherLessonDataProvider->getModels())) {
     </div>
 	<?php ActiveForm::end(); ?>
 	<?php
-	yii\widgets\Pjax::begin([
-		'id' => 'teacher-lesson-grid',
-	])
+		$columns = [
+			[
+				'label' => 'Day',
+				'value' => function ($data) {
+					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+					$date = $lessonDate->format('l, F jS, Y');
+
+					return !empty($date) ? $date : null;
+				},
+			],
+			[
+                'class' => 'kartik\grid\ExpandRowColumn',
+                'width' => '50px',
+                'value' => function ($model, $key, $index, $column) {
+                    return GridView::ROW_COLLAPSED;
+                },
+                'detail' => function ($model, $key, $index, $column) {
+              //      return Yii::$app->controller->renderPartial('_conflict-lesson', ['model' => $model, 'conflicts' => $conflicts[$model->id]]);
+                },
+                'headerOptions' => ['class' => 'kartik-sheet-style'],
+            ]
+		];
 	?>
-	<?php
-	echo GridView::widget([
-		'id' => 'teacher-lesson',
+	<?= \kartik\grid\GridView::widget([
 		'dataProvider' => $teacherLessonDataProvider,
 		'options' => ['class' => 'col-md-12'],
 		'footerRowOptions' => ['style' => 'font-weight:bold;text-align: left;'],
 		'showFooter' => true,
 		'tableOptions' => ['class' => 'table table-bordered'],
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'columns' => [
-			[
-				'label' => 'Time',
-				'value' => function ($data) {
-					return !empty($data->date) ? Yii::$app->formatter->asTime($data->date) : null;
-				},
-				'footer' => 'Total Hours of Instruction',
-			],
-			[
-				'label' => 'Program Name',
-				'value' => function ($data) {
-					return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
-				},
-			],
-			[
-				'label' => 'Student Name',
-				'value' => function ($data) {
-					return !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
-				},
-			],
-			[
-				'label' => 'Duration',
-				'value' => function ($data) {
-					$duration		 = \DateTime::createFromFormat('H:i:s', $data->duration);
-					$hours			 = $duration->format('H');
-					$minutes		 = $duration->format('i');
-					$lessonDuration	 = ($hours * 60) + $minutes;
-
-					return $lessonDuration.'m';
-				},
-				'headerOptions' => ['class' => 'text-right'],
-				'contentOptions' => ['class' => 'text-right'],
-				'footer' => $totalDuration.'m',
+        'pjax' => true,
+		'pjaxSettings' => [
+			'neverTimeout' => true,
+			'options' => [
+				'id' => 'teacher-lesson-grid',
 			],
 		],
-	]);
-	?>
-	<?php \yii\widgets\Pjax::end(); ?>
+        'columns' => $columns,
+        'showPageSummary' => true,
+    ]); ?>
 </div>
 <script>
 $(document).ready(function(){
 	$('#teacher-lesson-search-form').submit(function(){
-		var url = "<?= Url::to(['user/lesson-search', 'id' => $model->id]); ?>";
-		$.pjax.reload({url:url, container:"#teacher-lesson-grid", replace: false, timeout : 6000, data : $(this).serialize()});  //Reload GridView
+		//var url = "<?= Url::to(['user/lesson-search', 'id' => $model->id]); ?>";
+		$.pjax.reload({container:"#teacher-lesson-grid", replace: false, timeout : 6000, data : $(this).serialize()});  //Reload GridView
 		 return false;
 	});
 });
