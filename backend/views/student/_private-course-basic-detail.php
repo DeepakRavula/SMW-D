@@ -48,8 +48,8 @@ $privatePrograms = ArrayHelper::map(Program::find()
 			<?php
             echo $form->field($model, 'programId')->dropDownList(
                 ArrayHelper::map(Program::find()
-                        ->active()
                         ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
+                        ->active()
                         ->all(), 'id', 'name'), ['prompt' => 'Select..']);
             ?>
 			
