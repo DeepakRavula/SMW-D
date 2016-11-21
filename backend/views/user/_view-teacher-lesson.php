@@ -8,8 +8,11 @@ use kartik\grid\GridView;
 ?>
 <div>
   <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+
+<?php yii\widgets\Pjax::begin(['id' => 'search-form']) ?>
 	<?php $form = ActiveForm::begin([
 	'id' => 'teacher-lesson-search-form',
+	'options' => ['data-pjax' => true]
 ]);
 ?>
 	<div class="col-md-3">
@@ -37,6 +40,7 @@ use kartik\grid\GridView;
 	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
     </div>
 	<?php ActiveForm::end(); ?>
+	<?php yii\widgets\Pjax::end(); ?>
 	<?php
 		$columns = [
 			[
@@ -53,7 +57,7 @@ use kartik\grid\GridView;
                 'width' => '50px',
 				'enableRowClick' => true,
                 'value' => function ($model, $key, $index, $column) {
-                    return GridView::ROW_COLLAPSED;
+                    return GridView::ROW_EXPANDED;
                 },
                 'detail' => function ($model, $key, $index, $column) {
                     return Yii::$app->controller->renderPartial('_teacher-lesson', ['model' => $model]);
@@ -82,10 +86,8 @@ use kartik\grid\GridView;
 </div>
 <script>
 $(document).ready(function(){
-	$('#teacher-lesson-search-form').submit(function(){
-		var url = "<?= Url::to(['user/lesson-search', 'id' => $model->id]); ?>";
-		$.pjax.reload({url: url, container:"#teacher-lesson-grid", replace: false, timeout : 6000, data : $(this).serialize()});  //Reload GridView
-		 return false;
-	});
+$("#search-form").on("pjax:end", function() {
+           $.pjax.reload({container:"#teacher-lesson-grid"});  //Reload GridView
+       });
 });
 </script>

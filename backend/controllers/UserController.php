@@ -287,6 +287,7 @@ class UserController extends Controller
         ]);
 		$lessonSearchModel = new LessonSearch();
 		$lessonSearchModel->fromDate = new \DateTime();
+		$lessonSearchModel->fromDate->modify('-3 months');
 		$lessonSearchModel->toDate = new \DateTime();
 		$teacherLessons = Lesson::find()
 			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, date, lesson.teacherId"])
