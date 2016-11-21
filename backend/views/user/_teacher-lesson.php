@@ -5,9 +5,23 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
+use common\models\Lesson;
+use yii\data\ActiveDataProvider;
 ?>
 <?php
-die('sdfjdh');
+$locationId = Yii::$app->session->get('location_id');
+$lessonDate = new \DateTime($model->date);
+$teacherLessons = Lesson::find()
+		->location($locationId)
+		->where(['lesson.teacherId' => $model->teacherId])
+		->notDraft()
+		->notDeleted()
+		->between($lessonDate, $lessonDate);
+
+	$teacherLessonDataProvider = new ActiveDataProvider([
+        'query' => $teacherLessons,
+		'pagination' => false,
+    ]);
 $totalDuration	 = 0;
 $count			 = $teacherLessonDataProvider->getCount();
 if (!empty($teacherLessonDataProvider->getModels())) {
