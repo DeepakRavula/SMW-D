@@ -285,17 +285,24 @@ class UserController extends Controller
         $openingBalanceDataProvider = new ActiveDataProvider([
             'query' => $openingBalanceQuery,
         ]);
-		$lessonSearchModel = new LessonSearch();
-		$lessonSearchModel->fromDate = new \DateTime();
-		$lessonSearchModel->fromDate->modify('-3 months');
-		$lessonSearchModel->toDate = new \DateTime();
+		$request = Yii::$app->request;
+		$lessonSearch = new LessonSearch();
+		$lessonSearch->fromDate = new \DateTime();
+		$lessonSearch->toDate = new \DateTime();
+		$lessonSearchModel = $request->post('LessonSearch');
+		
+		if(!empty($lessonSearchModel)) {
+			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
+			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
+		}
+	
 		$teacherLessons = Lesson::find()
 			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, date, lesson.teacherId"])
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
 			->notDeleted()
-			->between($lessonSearchModel->fromDate, $lessonSearchModel->toDate)
+			->between($lessonSearch->fromDate, $lessonSearch->toDate)
 			->groupBy(['lessonDate']);
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,
@@ -308,7 +315,7 @@ class UserController extends Controller
             'teacherDataProvider' => $teacherDataProvider,
             'model' => $model,
             'searchModel' => $searchModel,
-			'lessonSearchModel' => $lessonSearchModel,
+			'lessonSearchModel' => $lessonSearch,
             'program' => $program,
             'addressDataProvider' => $addressDataProvider,
             'phoneDataProvider' => $phoneDataProvider,
