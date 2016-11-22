@@ -786,7 +786,7 @@ class UserController extends Controller
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
 		}
         $teacherLessons = Lesson::find()
-			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, lesson.date, lesson.teacherId"])
+			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, lesson.date, lesson.teacherId, lesson.duration"])
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
