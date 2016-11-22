@@ -71,9 +71,7 @@ use common\models\Invoice;
     unset($lesson);
 
 ?>
-<div class="calendar">
 <div id="calendar" class="p-10"></div>
-</div>
 <script type="text/javascript">
   $('#calendar').fullCalendar({
     header: {

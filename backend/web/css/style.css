@@ -748,11 +748,6 @@ input[type="search"]:-ms-input-placeholder {
   margin-left: 0;
 }
 
-/*.calendar {
-	width: 43px;
-  	height: 26px;
-  	margin: 6px 10px 0 0;
-}*/
 .schedule-index input[type="checkbox"]{
   -webkit-appearance: none;
   -moz-appearance: none;
