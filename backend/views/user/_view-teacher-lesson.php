@@ -7,7 +7,7 @@ use yii\helpers\Url;
 use kartik\grid\GridView;
 ?>
 <div>
-  <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+  <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 
 	<?php $form = ActiveForm::begin([
 	'id' => 'teacher-lesson-search-form',
@@ -85,7 +85,11 @@ use kartik\grid\GridView;
 <script>
 $(document).ready(function(){
 	$("#teacher-lesson-search-form").on("submit", function() {
-		$.pjax.reload({container:"#teacher-lesson-grid", replace:false, timeout:6000, data:$(this).serialize()});  //Reload GridView
+		var fromDate = $('#lessonsearch-fromdate').val();
+		var toDate = $('#lessonsearch-todate').val();
+		$.pjax.reload({container:"#teacher-lesson-grid", replace:false, timeout:6000, data:$(this).serialize()});
+		var url = "<?= Url::to(['user/print', 'id' => $model->id]); ?>&LessonSearch[fromDate]=" + fromDate + "&LessonSearch[toDate]=" + toDate;
+		$('#print-btn').attr('href', url);
 		return false;
     });
 });
