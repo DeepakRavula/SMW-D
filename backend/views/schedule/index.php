@@ -20,8 +20,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
 <div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
 <div class="schedule-index">
-    <div class="row">
-        <div class="col-md-4">
+    <div class="row schedule-filter">
+        <div class="col-md-1 m-t-10 text-right"><p>Filter by</p></div>
+        <div class="col-md-3 p-0">
             <?=
             SelectivityWidget::widget([
                 'name' => 'Program',
@@ -30,12 +31,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'allowClear' => true,
                     'items' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
                     'value' => null,
-                    'placeholder' => 'Select Program',
+                    'placeholder' => 'Program',
                 ],
             ]);
             ?>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <?=
             SelectivityWidget::widget([
                 'name' => 'Teacher',
@@ -44,12 +45,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'allowClear' => true,
                     'items' => ArrayHelper::map($availableTeachersDetails, 'id', 'name'),
                     'value' => null,
-                    'placeholder' => 'Select Teacher',
+                    'placeholder' => 'Teacher',
                 ],
             ]);
             ?>
         </div>
-        <div id="next-prev-week-button" class="week-button">
+        <div id="next-prev-week-button" class="col-md-3 week-button m-t-10 m-l-10">
             <button id="previous-week" class="btn btn-default btn-sm">Previous Week</button>
             <button id="next-week" class="btn btn-default btn-sm">Next Week</button>
         </div>
