@@ -76,12 +76,9 @@ a:hover, a:focus{
 .fc{
   background: #fff;
 }
-#calendar .fc-today {
+/*#calendar .fc-today {
     background: #FFF !important;
-}
-#calendar .fc-agenda-slots {
-    background: #C0C0C0 !important;
-}
+}*/
 .fc-nonbusiness {
   background-color: #FFFF00 !important;
 }
@@ -90,8 +87,12 @@ a:hover, a:focus{
     background-color: #da0f0f !important;
 }
 .teacher-availability, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .teacher-availability a{
-    border: 1px solid #FFFFFF !important;
-    background-color: #FFFFFF !important;
+    border: 1px solid #5ead1c !important;
+    border-left: 5px solid #5EAD1C !important;
+    background-color: #fff !important;
+}
+.fc-event-vert .fc-event-time{
+  background: #5EAD1C;
 }
 .enrolment-first-lesson, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .enrolment-first-lesson a{
     border: 1px solid #FF00FF !important;
@@ -108,17 +109,25 @@ a:hover, a:focus{
 }
 .fc-state-default{
   border-color: rgba(51, 51, 51, 0.1) rgba(72, 72, 72, 0.1) rgba(130, 130, 130, 0.25) !important;
-  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f9f9f9+0,f9f9f9+100 */
-  background: #f9f9f9 !important; /* Old browsers */ /* FF3.6-15 */
-  background: -webkit-linear-gradient(top,  #f9f9f9 0%,#f9f9f9 100%) !important; /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom,  #f9f9f9 0%,#f9f9f9 100%) !important; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  background: #f9f9f9 !important; 
+  background: -webkit-linear-gradient(top,  #f9f9f9 0%,#f9f9f9 100%) !important; 
+  background: linear-gradient(to bottom,  #f9f9f9 0%,#f9f9f9 100%) !important; 
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#f9f9f9',GradientType=0 ) !important; /* IE6-9 */
+}
+.fc-event:hover{
+  color: #fff;
 }
 .fc-state-active{
   border: 1px solid #f7aeae !important;
 }
 .fc-cell-overlay{
   background: #f5b8b1 !important;
+}
+.fc-agenda-days tbody tr td{
+  background: #f1f1f1;
+}
+.fc-agenda-days tbody tr td.fc-today{
+  background: #fcf8e3;
 }
 .selectivity-multiple-selected-item, .selectivity-load-more.highlight, .selectivity-result-item.highlight,
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
@@ -739,11 +748,11 @@ input[type="search"]:-ms-input-placeholder {
   margin-left: 0;
 }
 
-.calendar {
+/*.calendar {
 	width: 43px;
   	height: 26px;
   	margin: 6px 10px 0 0;
-}
+}*/
 .schedule-index input[type="checkbox"]{
   -webkit-appearance: none;
   -moz-appearance: none;
