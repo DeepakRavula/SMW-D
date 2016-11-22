@@ -9,11 +9,8 @@ use kartik\grid\GridView;
 <div>
   <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 
-<?php yii\widgets\Pjax::begin(['id' => 'search-form']) ?>
-
 	<?php $form = ActiveForm::begin([
 	'id' => 'teacher-lesson-search-form',
-	'options' => ['data-pjax' => true]
 ]);
 ?>
 	<div class="col-md-3">
@@ -41,7 +38,6 @@ use kartik\grid\GridView;
 	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
     </div>
 	<?php ActiveForm::end(); ?>
-	    <?php yii\widgets\Pjax::end(); ?>
 
 	<?php
 		$columns = [
@@ -88,8 +84,9 @@ use kartik\grid\GridView;
 </div>
 <script>
 $(document).ready(function(){
-	$("#search-form").on("pjax:end", function() {
-		$.pjax.reload({container:"#teacher-lesson-grid", replace:false, timeout:6000});  //Reload GridView
+	$("#teacher-lesson-search-form").on("submit", function() {
+		$.pjax.reload({container:"#teacher-lesson-grid", replace:false, timeout:6000, data:$(this).serialize()});  //Reload GridView
+		return false;
     });
 });
 </script>

@@ -289,13 +289,12 @@ class UserController extends Controller
 		$lessonSearch = new LessonSearch();
 		$lessonSearch->fromDate = new \DateTime();
 		$lessonSearch->toDate = new \DateTime();
-		$lessonSearchModel = $request->post('LessonSearch');
+		$lessonSearchModel = $request->get('LessonSearch');
 		
 		if(!empty($lessonSearchModel)) {
 			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
 		}
-	
 		$teacherLessons = Lesson::find()
 			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, date, lesson.teacherId"])
 			->location($locationId)
@@ -304,6 +303,7 @@ class UserController extends Controller
 			->notDeleted()
 			->between($lessonSearch->fromDate, $lessonSearch->toDate)
 			->groupBy(['lessonDate']);
+			
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,
 			'pagination' => false,
