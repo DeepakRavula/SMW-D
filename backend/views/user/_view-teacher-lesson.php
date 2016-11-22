@@ -85,7 +85,9 @@ use kartik\grid\GridView;
 <script>
 $(document).ready(function(){
 	$("#teacher-lesson-search-form").on("submit", function() {
-		$.pjax.reload({container:"#teacher-lesson-grid", replace:false, timeout:6000, data:$(this).serialize()});  //Reload GridView
+		$.pjax.reload({container:"#teacher-lesson-grid", replace:false, timeout:6000, data:$(this).serialize()});
+		//var url = "<?= Url::to(['user/print', 'id' => $model->id]); ?>";
+		//$.pjax.reload({container:"#teacher-lesson-print-grid", replace:false, timeout:6000, data:$(this).serialize()});		//Reload GridView
 		return false;
     });
 });

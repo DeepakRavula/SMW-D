@@ -775,15 +775,29 @@ class UserController extends Controller
         $model = $this->findModel($id);
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
+		$request = Yii::$app->request;
+		$lessonSearch = new LessonSearch();
+		$lessonSearch->fromDate = new \DateTime();
+		$lessonSearch->toDate = new \DateTime();
+		$lessonSearchModel = $request->get('LessonSearch');
+		
+		if(!empty($lessonSearchModel)) {
+			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
+			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
+		}
         $teacherLessons = Lesson::find()
+			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, lesson.date, lesson.teacherId"])
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
-			->notDeleted();
+			->notDeleted()
+			->between($lessonSearch->fromDate, $lessonSearch->toDate)
+			->groupBy(['lessonDate']);
+			
 		$teacherLessonDataProvider = new ActiveDataProvider([
-            'query' => $teacherLessons,
+			'query' => $teacherLessons,
 			'pagination' => false,
-        ]);
+		]);
         $this->layout = '/print';
 
         return $this->render('_print', [
