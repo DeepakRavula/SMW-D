@@ -143,19 +143,12 @@ $this->title = 'Review Lessons';
                        'header' => 'Lesson From Time',
                        'size' => 'md',
                        'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-                       'widgetClass' => 'dosamigos\datetimepicker\DateTimePicker',
+                       'widgetClass' => 'bootui\datetimepicker\Timepicker',
                        'options' => [
-                           'clientOptions' => [
-                               'startView' => 1,
-                               'minView' => 0,
-                               'maxView' => 1,
-                               'pickDate' => false,
-                               'autoclose' => true,
-                               'format' => 'HH:ii P',
-                               'showMeridian' => true,
-                               'minuteStep' => 15,
-                           ],
-                       ],
+							'format' => 'hh:mm A',
+							'stepping' => 15,
+							
+						],
                        'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
 						   'editableError' => 'review.onEditableError',
@@ -181,6 +174,7 @@ $this->title = 'Review Lessons';
                        'widgetClass' => 'bootui\datetimepicker\Timepicker',
                        'options' => [
 							'format' => 'HH:mm',
+							'stepping' => 15,
 						],
                        'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
