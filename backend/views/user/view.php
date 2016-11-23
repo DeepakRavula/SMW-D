@@ -125,6 +125,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         ]);
 		$teacherLessonContent = $this->render('_view-teacher-lesson', [
             'teacherLessonDataProvider' => $teacherLessonDataProvider,
+			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
 			'searchModel' => $lessonSearchModel,
 			'model' => $model,
         ]);

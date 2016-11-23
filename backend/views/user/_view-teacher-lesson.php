@@ -40,6 +40,17 @@ use kartik\grid\GridView;
 	<?php ActiveForm::end(); ?>
 
 	<?php
+		$lessonCount = $teacherAllLessonDataProvider->totalCount;
+		$totalDuration	 = 0;
+		if (!empty($teacherAllLessonDataProvider->getModels())) {
+			foreach ($teacherAllLessonDataProvider->getModels() as $key => $val) {
+				$duration		 = \DateTime::createFromFormat('H:i:s', $val->duration);
+				$hours			 = $duration->format('H');
+				$minutes		 = $duration->format('i');
+				$lessonDuration	 = ($hours * 60) + $minutes;
+				$totalDuration += $lessonDuration;
+			}
+		}
 		$columns = [
 			[
 				'label' => 'Day',
@@ -49,6 +60,11 @@ use kartik\grid\GridView;
 
 					return !empty($date) ? $date : null;
 				},
+				'pageSummary' => $lessonCount . ' Lessons in total',
+
+			],
+			[
+				'pageSummary' => $totalDuration . 'm',
 			],
 			[
                 'class' => 'kartik\grid\ExpandRowColumn',
@@ -72,6 +88,7 @@ use kartik\grid\GridView;
 		'tableOptions' => ['class' => 'table table-bordered'],
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
         'pjax' => true,
+		'showPageSummary'=>true,
 		'pjaxSettings' => [
 			'neverTimeout' => true,
 			'options' => [
@@ -79,7 +96,6 @@ use kartik\grid\GridView;
 			],
 		],
         'columns' => $columns,
-        'showPageSummary' => true,
     ]); ?>
 </div>
 <script>
