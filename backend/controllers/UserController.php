@@ -811,11 +811,23 @@ class UserController extends Controller
 			'query' => $teacherLessons,
 			'pagination' => false,
 		]);
+		$teacherAllLessons = Lesson::find()
+			->location($locationId)
+			->where(['lesson.teacherId' => $model->id])
+			->notDraft()
+			->notDeleted()
+			->between($lessonSearch->fromDate, $lessonSearch->toDate);
+
+		$teacherAllLessonDataProvider = new ActiveDataProvider([
+			'query' => $teacherAllLessons,
+			'pagination' => false,
+		]);
         $this->layout = '/print';
 
         return $this->render('_print', [
 			'model' => $model,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
+			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
         ]);
     }
 }
