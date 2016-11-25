@@ -962,3 +962,21 @@ input[type="search"]:-ms-input-placeholder {
 .teacher-availability{
 	margin : 10px;
 }
+.wizard {
+    margin: 0px auto;
+}
+.wizard .nav-tabs {
+    margin: 0px auto;
+}
+.connecting-line {
+    background: transparent;
+}
+.wizard .tab-pane{
+  padding-top: 0px;
+}
+.wizard li.active:after{
+  left: 48%;
+}
+#stepwizard_step1_next{
+
+}
