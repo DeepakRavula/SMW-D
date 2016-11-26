@@ -11,7 +11,7 @@ use yii\helpers\Html;
 
 ?>
 
-<div class="group-course-index"> 
+<div class="group-course-index col-md-12"> 
     
    <?php $form = ActiveForm::begin([
         'method' => 'post',
@@ -81,7 +81,7 @@ use yii\helpers\Html;
     ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 	<div class="form-group">
-		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'm-l-10 btn btn-primary group-course-save', 'name' => 'signup-button']) ?>
+		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary group-course-save', 'name' => 'signup-button']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

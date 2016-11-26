@@ -86,10 +86,13 @@ a:hover, a:focus{
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
 }
-.teacher-availability, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .teacher-availability a{
-    border: 1px solid #5ead1c !important;
+.fc-event .fc-event-vert .fc-event-start .fc-event-end,
+.fc-event-container .teacher-availability, 
+.fc-event-container .teacher-availability a{
+    border: 0 !important;
     border-left: 5px solid #5EAD1C !important;
     background-color: #fff !important;
+    box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.08);
 }
 /*.fc-event-vert .fc-event-time{
   color: #5EAD1C;
@@ -102,7 +105,12 @@ a:hover, a:focus{
     border: 1px solid #FF00FF !important;
     background-color: #FF00FF !important;
 }
-.proforma-paid, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .proforma-paid a{
+.proforma-paid, 
+.fc-event,
+.fc-event .fc-event-vert .fc-event-start .fc-event-end, 
+.fc-event .fc-event-vert .fc-event-start .fc-event-end:focus,
+.proforma-paid a
+{
     border: 1px solid  #378006 !important;
     background-color:  #378006 !important;
 }
@@ -118,7 +126,7 @@ a:hover, a:focus{
   background: linear-gradient(to bottom,  #f9f9f9 0%,#f9f9f9 100%) !important; 
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#f9f9f9',GradientType=0 ) !important; /* IE6-9 */
 }
-.fc-event:hover{
+.fc-event:hover, .fc-event:focus{
   color: #fff;
 }
 .fc-state-active{
@@ -368,16 +376,17 @@ table tr{
 }
 
 .btn-outline-info {
-    color: #5bc0de;
+    color: #E12E2B;
     background-image: none;
     background-color: transparent;
-    border-color: #5bc0de;
+    border-color: #E12E2B;
+    outline: 0 none;
 }
 
 .btn-outline-info:hover, .btn-outline-info.active {
     color: #fff;
-    background-color: #5bc0de;
-    border-color: #5bc0de;
+    background-color: #E12E2B;
+    border-color: #E12E2B;
     text-decoration: none;
 }
 
@@ -951,13 +960,15 @@ input[type="search"]:-ms-input-placeholder {
 	margin: 10px;
 }
 .invoice-paid {
-    background-color:  #8cf64f;   
+    background-color: #00b506;
+    color: #fff; 
 }
 .invoice-owing {
-    background-color:  #c0c0c0;   
+    background-color: #4083ff;
+    color: #fff;   
 }
 .invoice-credit {
-    background-color:  #c0c0c0;   
+    background-color:  #ffd475;   
 }
 .teacher-availability{
 	margin : 10px;

@@ -10,7 +10,7 @@ use yii\bootstrap\ActiveForm;
 $this->title = Yii::t('backend', 'Edit Profile')
 ?>
 
-<div class="user-profile-form p-t-10">
+<div class="user-profile-form p-t-10 p-b-20">
 
     <?php $form = ActiveForm::begin(); ?>
     <div class="row-fluid">
