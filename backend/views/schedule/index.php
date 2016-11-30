@@ -17,8 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
     right: 0 !important;
   }
 </style>
-<div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
-<div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
 <div class="schedule-index">
     <div class="row schedule-filter">
         <div class="col-md-1 m-t-10 text-right"><p>Filter by</p></div>
