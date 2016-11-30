@@ -91,7 +91,7 @@ a:hover, a:focus{
 .fc-event-container .teacher-availability a{
     border: 0 !important;
     border-left: 5px solid #5EAD1C !important;
-    background-color: #fff !important;
+    background-color: #fff4bf !important;
     box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.08);
 }
 /*.fc-event-vert .fc-event-time{
@@ -136,10 +136,10 @@ a:hover, a:focus{
   background: #f5b8b1 !important;
 }
 .fc-agenda-days tbody tr td{
-  background: #f1f1f1;
+  background: #ffffff;
 }
 .fc-agenda-days tbody tr td.fc-today{
-  background: #fcf8e3;
+  background: #ffffff;
 }
 .selectivity-multiple-selected-item, .selectivity-load-more.highlight, .selectivity-result-item.highlight,
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
