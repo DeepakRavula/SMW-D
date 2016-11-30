@@ -84,7 +84,7 @@ $(document).ready(function() {
     maxTime: "<?php echo $to_time; ?>",
     slotDuration: "00:15:01",
     editable: false,
-    droppable: true,
+    droppable: false,
     resources:  resources,
     events: events,
     viewRender: function( view, element ) {
@@ -260,8 +260,8 @@ function refreshCalendar(resources, date) {
         minTime: "<?php echo $from_time; ?>",
         maxTime: "<?php echo $to_time; ?>",
         slotDuration: "00:15:01",
-        editable: true,
-        droppable: true,
+        editable: false,
+        droppable: false,
         resources:  resources,
         events: events,
         viewRender: function( view, element ) {
