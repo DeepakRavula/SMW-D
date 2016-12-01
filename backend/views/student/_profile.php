@@ -10,6 +10,15 @@ use yii\helpers\Html;
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Birth date">
 		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?>
 	</div>
+	<?php if (! empty($model->birth_date)) : ?>
+	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Age">
+		<i class="fa fa-birthday-cake detail-icon"></i> <?php
+		$birthDate = new DateTime($model->birth_date);
+		$currentDate   = new DateTime('today');
+		echo $birthDate->diff($currentDate)->y;
+		?>
+	</div>
+	<?php endif;?>
 	<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
 		<a href="/user/view?UserSearch%5Brole_name%5D=customer&id=<?php echo $model->customer->id ?>">
 		<i class="fa fa-user detail-icon"></i> <?php echo !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null ?>
