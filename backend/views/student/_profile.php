@@ -15,7 +15,7 @@ use yii\helpers\Html;
 		<i class="fa fa-birthday-cake detail-icon"></i> <?php
 		$birthDate = new DateTime($model->birth_date);
 		$currentDate   = new DateTime('today');
-		echo $birthDate->diff($currentDate)->y;
+		echo $birthDate->diff($currentDate)->y .'yrs old';
 		?>
 	</div>
 	<?php endif;?>
