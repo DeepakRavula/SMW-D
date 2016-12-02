@@ -114,6 +114,14 @@ $(document).ready(function() {
     $(".fc-button-month, .fc-button-today").click(function(){
         $(".fc-view-month .fc-event").hide();
     });
+    $(".fc-button-resourceDay, .fc-button-today").click(function(){
+        var date = $('#calendar').fullCalendar('getDate');
+        if ($(this).className === 'fc-button-today') {
+            var date = moment(new Date());
+        }
+        var resources = getResources(date);
+        refreshCalendar(resources, date);
+    })
     addAvailabilityEvents();
 });
 
@@ -287,6 +295,14 @@ function refreshCalendar(resources, date) {
     })
     $(".fc-button-month, .fc-button-today").click(function(){
         $(".fc-view-month .fc-event").hide();
+    })
+    $(".fc-button-resourceDay, .fc-button-today").click(function(){
+        var date = $('#calendar').fullCalendar('getDate');
+        if ($(this).className === 'fc-button-today') {
+            var date = moment(new Date());
+        }
+        var resources = getResources(date);
+        refreshCalendar(resources, date);
     })
     addAvailabilityEvents();
 }
