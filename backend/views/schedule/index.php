@@ -62,6 +62,12 @@ var day = moment(date).day();
 var teachersAvailabilitiesAllDetails = <?php echo Json::encode($teachersAvailabilitiesAllDetails); ?>;
 var teachersAvailabilitiesDetails = <?php echo Json::encode($teachersAvailabilitiesDetails); ?>;
 var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
+availableTeachersDetails.push({
+    id: 0,
+    day: 0,
+    name: 'Holiday',
+    programs: '',
+})
 var uniqueAvailableTeachersDetails = removeDuplicates(availableTeachersDetails, "id");
 var events = <?php echo Json::encode($events); ?>;
 $(document).ready(function() {
@@ -122,7 +128,7 @@ $(document).ready(function() {
         var resources = getResources(date);
         refreshCalendar(resources, date);
     })
-    addAvailabilityEvents();
+        addAvailabilityEvents();
 });
 
 function addAvailabilityEvents() {
@@ -132,20 +138,31 @@ function addAvailabilityEvents() {
         var currentDate = moment(start).format('YYYY-MM-DD');
 
         var events = [];
-        $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
-            if(value.day == currentDay) {
-                var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
-                var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
-                events.push({
-                    title: '',
-                    start: startTime,
-                    end: endTime,
-                    resources: value.id,
-                    allDay: false,
-                    className: 'teacher-availability'
-                })
-            }
-        });
+        if(currentDay === 0) {
+            events.push({
+                title: '',
+                start: moment(start).format('YYYY-MM-DD 00:00:00'),
+                end: moment(start).format('YYYY-MM-DD 23:59:59'),
+                resources: '0',
+                allDay: false,
+                className: 'school-unavailability'
+            })
+        } else {
+            $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
+                if(value.day == currentDay) {
+                    var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
+                    var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
+                    events.push({
+                        title: '',
+                        start: startTime,
+                        end: endTime,
+                        resources: value.id,
+                        allDay: false,
+                        className: 'teacher-availability'
+                    })
+                }
+            });
+        }
         callback( events );
     });
 }
@@ -304,6 +321,6 @@ function refreshCalendar(resources, date) {
         var resources = getResources(date);
         refreshCalendar(resources, date);
     })
-    addAvailabilityEvents();
+        addAvailabilityEvents();
 }
 </script>
