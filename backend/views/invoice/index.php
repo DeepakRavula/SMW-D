@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
     </div>
 	<?php if((int) $searchModel->type === Invoice::TYPE_INVOICE) : ?>
-	<div class="mail-flag">
+	<div class="bulk-invoice">
 		<?= Html::a('<i class="fa fa-dollar"></i> Invoice All Completed Lessons', ['all-completed-lessons'], ['class' => 'btn btn-default  m-l-20']) ?>
     </div>
 <?php endif; ?>
