@@ -58,4 +58,58 @@ class InvoiceController extends Controller
         }
         return true;
     }
+	
+	public function actionAllCompletedLessons()
+	{
+		$locationId = Yii::$app->session->get('location_id');
+		$lessons = Lesson::find()
+			->location($locationId)
+			->completed()
+			->all();
+		foreach($lessons as $lesson) {
+			$invoice = new Invoice();
+			$invoice->type = Invoice::TYPE_INVOICE;
+			$invoice->user_id = $lesson->course->enrolment->student->customer_id;
+			$invoice->location_id = $locationId;
+			$invoice->save();
+			$invoice->addLineItem($lesson);
+			$invoice->save();
+
+			$rootLessonId         = $lesson->getRootLessonId($lesson->id);
+            $proFormaInvoice      = Invoice::find()
+                ->select(['invoice.id', 'SUM(payment.amount) as credit'])
+                ->proFormaCredit($rootLessonId)
+                ->one();
+
+            if (!empty($proFormaInvoice)) {
+                if ((float) $proFormaInvoice->credit > (float) $invoice->total) {
+                    $paymentAmount = $invoice->total;
+                } else {
+                    $paymentAmount = $proFormaInvoice->credit;
+                }
+                $paymentModel = new Payment();
+                $paymentModel->amount = $paymentAmount;
+                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+                $paymentModel->reference = $proFormaInvoice->id;
+                $paymentModel->invoiceId = $invoice->id;
+                $paymentModel->save();
+
+                $creditPaymentId = $paymentModel->id;
+                $paymentModel->id = null;
+                $paymentModel->isNewRecord = true;
+                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+                $paymentModel->invoiceId = $proFormaInvoice->id;
+                $paymentModel->reference = $invoice->id;
+                $paymentModel->save();
+
+                $debitPaymentId = $paymentModel->id;
+                $creditUsageModel = new CreditUsage();
+                $creditUsageModel->credit_payment_id = $creditPaymentId;
+                $creditUsageModel->debit_payment_id = $debitPaymentId;
+                $creditUsageModel->save();
+            }
+		}
+		
+        return true;
+	}
 }
