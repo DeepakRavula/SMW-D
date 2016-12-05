@@ -8,6 +8,9 @@ use yii\helpers\Console;
 use common\models\Invoice;
 use common\models\Enrolment;
 use common\models\Lesson;
+use common\models\Payment;
+use common\models\CreditUsage;
+use common\models\PaymentMethod;
 
 class InvoiceController extends Controller
 {
