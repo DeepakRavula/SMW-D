@@ -64,16 +64,14 @@ class InvoiceController extends Controller
 	
 	public function actionAllCompletedLessons()
 	{
-		$locationId = Yii::$app->session->get('location_id');
 		$lessons = Lesson::find()
-			->location($locationId)
 			->completed()
 			->all();
 		foreach($lessons as $lesson) {
 			$invoice = new Invoice();
 			$invoice->type = Invoice::TYPE_INVOICE;
 			$invoice->user_id = $lesson->course->enrolment->student->customer_id;
-			$invoice->location_id = $locationId;
+			$invoice->location_id = $lesson->enrolment->course->locationId;
 			$invoice->save();
 			$invoice->addLineItem($lesson);
 			$invoice->save();
