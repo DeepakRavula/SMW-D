@@ -155,7 +155,7 @@ function addAvailabilityEvents() {
                 end: end,
                 resourceId: 0,
                 allDay: false,
-                backgroundColor: '#aaaaa7',
+                className: 'holiday',
                 rendering: 'background'
             })
         } else {
@@ -169,7 +169,7 @@ function addAvailabilityEvents() {
                         end: endTime,
                         resourceId: value.id,
                         allDay: false,
-                        rendering: 'inverse-background'
+                        rendering: 'background'
                     })
                 }
             });

@@ -97,13 +97,16 @@ a:hover, a:focus{
 /*.fc-event-vert .fc-event-time{
   color: #5EAD1C;
 }*/
-.teacher-availability .fc-event-inner .fc-event-time{
-  color: #5EAD1C;
-  font-weight: bold;
+.fc-bgevent {
+    background-color: yellow !important;
 }
 .enrolment-first-lesson, .fc-event .enrolment-first-lesson .fc-event-time, .enrolment-first-lesson a{
     border: 1px solid #FF00FF !important;
     background-color: #FF00FF !important;
+}
+.holiday, .fc-event .holiday .fc-event-time, .holiday a{
+    border: 1px solid grey !important;
+    background-color: grey !important;
 }
 .proforma-paid, .fc-agenda .proforma-paid .fc-event-time, .proforma-paid a{
     border: 1px solid  #378006 !important;

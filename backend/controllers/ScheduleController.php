@@ -99,7 +99,7 @@ class ScheduleController extends Controller
                 'title' => '',
                 'start' => $holiday->date,
                 'end' => $date->format('Y-m-d 23:59:59'),
-                'backgroundColor' => '#aaaaa7',
+                'className' => 'holiday',
                 'rendering' => 'background'
             ];
         }
