@@ -82,7 +82,7 @@ a:hover, a:focus{
 .fc-nonbusiness {
   background-color: #FFFF00 !important;
 }
-.proforma-unpaid, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .proforma-unpaid a{
+.proforma-unpaid, .fc-agenda .proforma-unpaid .fc-event-time, .proforma-unpaid a{
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
 }
@@ -101,16 +101,11 @@ a:hover, a:focus{
   color: #5EAD1C;
   font-weight: bold;
 }
-.enrolment-first-lesson, .fc-event .fc-event-vert .fc-event-start .fc-event-end, .enrolment-first-lesson a{
+.enrolment-first-lesson, .fc-event .enrolment-first-lesson .fc-event-time, .enrolment-first-lesson a{
     border: 1px solid #FF00FF !important;
     background-color: #FF00FF !important;
 }
-.proforma-paid, 
-.fc-event,
-.fc-event .fc-event-vert .fc-event-start .fc-event-end, 
-.fc-event .fc-event-vert .fc-event-start .fc-event-end:focus,
-.proforma-paid a
-{
+.proforma-paid, .fc-agenda .proforma-paid .fc-event-time, .proforma-paid a{
     border: 1px solid  #378006 !important;
     background-color:  #378006 !important;
 }

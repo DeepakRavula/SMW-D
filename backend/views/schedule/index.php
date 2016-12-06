@@ -72,7 +72,7 @@ $(document).ready(function() {
     if(day == 0 ) {
         resources.push({
             id: '0',
-            title: 'Holiday'
+            title: 'Sunday-Holiday'
         })
     } else {
         $.each( availableTeachersDetails, function( key, value ) {
@@ -155,6 +155,7 @@ function addAvailabilityEvents() {
                 end: end,
                 resourceId: 0,
                 allDay: false,
+                backgroundColor: '#aaaaa7',
                 rendering: 'background'
             })
         } else {
@@ -267,7 +268,7 @@ function getResources(date) {
     if(day == 0 && $.isEmptyObject(resources)) {
         resources.push({
             id: '0',
-            title: 'Holiday'
+            title: 'Sunday-Holiday'
         })
     } else if($.isEmptyObject(resources)) {
         if(!teacherSelected && !programSelected) {
