@@ -60,6 +60,8 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <script type="text/javascript">
 var date = new Date();
+var currentDate = moment(date).format('YYYY-MM-DD 00:00:00');
+var isHoliday = false;
 var resources = [];
 var day = moment(date).day();
 var teachersAvailabilitiesAllDetails = <?php echo Json::encode($teachersAvailabilitiesAllDetails); ?>;
@@ -69,12 +71,21 @@ var uniqueAvailableTeachersDetails = removeDuplicates(availableTeachersDetails, 
 var events = <?php echo Json::encode($events); ?>;
 var holidays = <?php echo Json::encode($holidays); ?>;
 $(document).ready(function() {
-    if(day == 0 ) {
+    $.each( holidays, function( key, value ) {
+        if (value.date == currentDate) {
+            isHoliday = true;
+            resources.push({
+                id: '0',
+                title: 'Holiday'
+            })
+        }
+    });
+    if(day == 0 && !isHoliday) {
         resources.push({
             id: '0',
             title: 'Sunday-Holiday'
         })
-    } else {
+    } else if(!isHoliday) {
         $.each( availableTeachersDetails, function( key, value ) {
             if (value.day == day) {
                 resources.push({
@@ -124,7 +135,7 @@ $(document).ready(function() {
             var resources = getResources(date);
             refreshCalendar(resources, date);
         }
-});
+    });
     $(".fc-month-button, .fc-today-button").click(function(){
         $(".fc-view-month .fc-event").hide();
     });
@@ -135,11 +146,11 @@ $(document).ready(function() {
         }
         var resources = getResources(date);
         refreshCalendar(resources, date);
-    })
-        addAvailabilityEvents();
+    });
+        addAllAvailabilityEvents();
 });
 
-function addAvailabilityEvents() {
+function addAllAvailabilityEvents() {
     $('#calendar').fullCalendar( 'addEventSource',
     function(start, end, status, callback) {
         var currentDay = moment(start).day();
@@ -178,6 +189,88 @@ function addAvailabilityEvents() {
     });
 }
 
+function addAvailabilityEvents() {
+    var holidays = <?php echo Json::encode($holidays); ?>;
+    $('#calendar').fullCalendar( 'addEventSource',
+    function(start, end, status, callback) {
+        var selectedProgram = $('#program-selector').selectivity('value');
+        var programSelected = (selectedProgram != 'undefined') && (selectedProgram != null);
+        var selectedTeacher = $('#teacher-selector').selectivity('value');
+        var teacherSelected = (selectedTeacher != 'undefined') && (selectedTeacher != null);
+        var day = moment(start).day();
+        var currentDate = moment(start).format('YYYY-MM-DD');
+        var start = moment(start).format('YYYY-MM-DD 00:00:00');
+        var end = moment(start).format('YYYY-MM-DD 23:59:59');
+        var events = [];
+        var isHoliday = false;
+        $.each( holidays, function( key, value ) {
+            if (value.date == start) {
+                isHoliday = true;
+            }
+        });debugger;
+        if(day === 0 && !isHoliday) {
+            events.push({
+                title: '',
+                start: start,
+                end: end,
+                resourceId: 0,
+                allDay: false,
+                className: 'holiday',
+                rendering: 'background'
+            })
+        } else if(!isHoliday) {
+            if(!teacherSelected && !programSelected) {
+                $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
+                    if (value.day == day) {
+                        var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
+                        var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
+                        events.push({
+                            title: '',
+                            start: startTime,
+                            end: endTime,
+                            resourceId: value.id,
+                            allDay: false,
+                            rendering: 'background'
+                        })
+                    }
+                });
+            }
+            if(!teacherSelected && programSelected){
+                $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
+                    if (value.day == day && $.inArray((selectedProgram), value.programs) != -1) {
+                        var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
+                        var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
+                        events.push({
+                            title: '',
+                            start: startTime,
+                            end: endTime,
+                            resourceId: value.id,
+                            allDay: false,
+                            rendering: 'background'
+                        })
+                    }
+                });
+            }else if(teacherSelected){
+                $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
+                    if (value.day == day && selectedTeacher == value.id) {
+                        var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
+                        var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
+                        events.push({
+                            title: '',
+                            start: startTime,
+                            end: endTime,
+                            resourceId: value.id,
+                            allDay: false,
+                            rendering: 'background'
+                        })
+                    }
+                });
+            }
+        }
+        callback( events );
+    });
+}
+
 function removeDuplicates(value, key) {
     var unique = [];
     var lookup  = {};
@@ -202,7 +295,7 @@ function loadTeachers(program) {
         });
     }else {
         $.each( uniqueAvailableTeachersDetails, function( key, value ) {
-            if ($.inArray(parseInt(program), value.programs) != -1) {
+            if ($.inArray((program), value.programs) != -1) {
                 value.text= value.name;
                 teachers.push(value);
             }
@@ -283,7 +376,7 @@ function getResources(date) {
         }
         if(!teacherSelected && programSelected){
             $.each( availableTeachersDetails, function( key, value ) {
-                if (value.day == day && $.inArray(parseInt(selectedProgram), value.programs) != -1) {
+                if (value.day == day && $.inArray((selectedProgram), value.programs) != -1) {
                     resources.push({
                         id: value.id,
                         title: value.name

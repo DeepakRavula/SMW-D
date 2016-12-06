@@ -65,6 +65,14 @@ class ScheduleController extends Controller
                 'day',
                 'from_time',
                 'to_time',
+                'programs' => function ($teachersAvailability) {
+                    $qualifications = $teachersAvailability->userLocation->qualifications;
+                    $programs = [];
+                    foreach ($qualifications as $qualification) {
+                        $programs[] = $qualification->program_id;
+                    }
+                    return $programs;
+                },
             ],
         ]);
 
