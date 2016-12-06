@@ -295,7 +295,7 @@ function loadTeachers(program) {
         });
     }else {
         $.each( uniqueAvailableTeachersDetails, function( key, value ) {
-            if ($.inArray((program), value.programs) != -1) {
+            if ($.inArray(parseInt(program), value.programs) != -1) {
                 value.text= value.name;
                 teachers.push(value);
             }
@@ -376,7 +376,7 @@ function getResources(date) {
         }
         if(!teacherSelected && programSelected){
             $.each( availableTeachersDetails, function( key, value ) {
-                if (value.day == day && $.inArray((selectedProgram), value.programs) != -1) {
+                if (value.day == day && $.inArray(parseInt(selectedProgram), value.programs) != -1) {
                     resources.push({
                         id: value.id,
                         title: value.name
