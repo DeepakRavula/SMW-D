@@ -768,6 +768,11 @@ input[type="search"]:-ms-input-placeholder {
     top: -48px;
     left: 835px;
 }
+.bulk-invoice{
+    position: absolute;
+    top: -48px;
+    left: 775px;
+}
 .abs-delete{
     position: absolute;
     right: 11px;
