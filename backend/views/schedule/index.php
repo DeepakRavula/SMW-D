@@ -10,8 +10,11 @@ use common\models\Program;
 $this->title = 'Schedule';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<link type="text/css" href="/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
-<script type="text/javascript" src="/plugins/fullcalendar/fullcalendar.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <style>
   .e1Div{
     right: 0 !important;
@@ -62,37 +65,42 @@ var day = moment(date).day();
 var teachersAvailabilitiesAllDetails = <?php echo Json::encode($teachersAvailabilitiesAllDetails); ?>;
 var teachersAvailabilitiesDetails = <?php echo Json::encode($teachersAvailabilitiesDetails); ?>;
 var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
-availableTeachersDetails.push({
-    id: 0,
-    day: 0,
-    name: 'Holiday',
-    programs: '',
-})
 var uniqueAvailableTeachersDetails = removeDuplicates(availableTeachersDetails, "id");
 var events = <?php echo Json::encode($events); ?>;
+var holidays = <?php echo Json::encode($holidays); ?>;
 $(document).ready(function() {
-    $.each( availableTeachersDetails, function( key, value ) {
-        if (value.day == day) {
-           resources.push(value);
-        }
-    });
+    if(day == 0 ) {
+        resources.push({
+            id: '0',
+            title: 'Holiday'
+        })
+    } else {
+        $.each( availableTeachersDetails, function( key, value ) {
+            if (value.day == day) {
+                resources.push({
+                    id: value.id,
+                    title: value.name
+                })
+            }
+        });
+    }
     $('#calendar').fullCalendar({
     header: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'month,agendaWeek,resourceDay'
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay'
     },
 	titleFormat: 'DD-MMM-YYYY, dddd',
-    defaultView: 'resourceDay',
+    defaultView: 'agendaDay',
     minTime: "<?php echo $from_time; ?>",
     maxTime: "<?php echo $to_time; ?>",
-    slotDuration: "00:15:01",
+    slotDuration: "00:15:00",
     editable: false,
     droppable: false,
-    resources:  resources,
+    resources: resources,
     events: events,
     viewRender: function( view, element ) {
-		if(view.name != 'resourceDay') {
+		if(view.name != 'agendaDay') {
 			$('#next-prev-week-button').hide();
 		} else {
 			$('#next-prev-week-button').show();
@@ -108,21 +116,21 @@ $(document).ready(function() {
         }
     },
     });
-    $(".fc-button-prev, .fc-button-next").click(function(){
+    $(".fc-prev-button, .fc-next-button").click(function(){ 
         $(".fc-view-month .fc-event").hide();
         var date = $('#calendar').fullCalendar('getDate');
         var view = $('#calendar').fullCalendar('getView');
-        if(view.name == 'resourceDay'){
+        if(view.name == 'agendaDay'){
             var resources = getResources(date);
             refreshCalendar(resources, date);
         }
-    });
-    $(".fc-button-month, .fc-button-today").click(function(){
+});
+    $(".fc-month-button, .fc-today-button").click(function(){
         $(".fc-view-month .fc-event").hide();
     });
-    $(".fc-button-resourceDay, .fc-button-today").click(function(){
+    $(".fc-agendaDay-button, .fc-today-button").click(function(){
         var date = $('#calendar').fullCalendar('getDate');
-        if ($(this).className === 'fc-button-today') {
+        if ($(this).className === 'fc-today-button') {
             var date = moment(new Date());
         }
         var resources = getResources(date);
@@ -136,16 +144,18 @@ function addAvailabilityEvents() {
     function(start, end, status, callback) {
         var currentDay = moment(start).day();
         var currentDate = moment(start).format('YYYY-MM-DD');
+        var start = moment(start).format('YYYY-MM-DD 00:00:00');
+        var end = moment(start).format('YYYY-MM-DD 23:59:59');
 
         var events = [];
         if(currentDay === 0) {
             events.push({
                 title: '',
-                start: moment(start).format('YYYY-MM-DD 00:00:00'),
-                end: moment(start).format('YYYY-MM-DD 23:59:59'),
-                resources: '0',
+                start: start,
+                end: end,
+                resourceId: 0,
                 allDay: false,
-                className: 'school-unavailability'
+                rendering: 'background'
             })
         } else {
             $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
@@ -156,9 +166,9 @@ function addAvailabilityEvents() {
                         title: '',
                         start: startTime,
                         end: endTime,
-                        resources: value.id,
+                        resourceId: value.id,
                         allDay: false,
-                        className: 'teacher-availability'
+                        rendering: 'inverse-background'
                     })
                 }
             });
@@ -240,31 +250,56 @@ $(document).ready(function () {
 });
 function getResources(date) {
     var day = moment(date).day();
+    var currentDate = moment(date).format('YYYY-MM-DD 00:00:00');
     var resources = [];
     var selectedProgram = $('#program-selector').selectivity('value');
     var programSelected = (selectedProgram != 'undefined') && (selectedProgram != null);
     var selectedTeacher = $('#teacher-selector').selectivity('value');
     var teacherSelected = (selectedTeacher != 'undefined') && (selectedTeacher != null);
-    if(!teacherSelected && !programSelected) {
-        $.each( availableTeachersDetails, function( key, value ) {
-            if (value.day == day) {
-               resources.push(value);
-            }
-        });
-    }
-    if(!teacherSelected && programSelected){
-        $.each( availableTeachersDetails, function( key, value ) {
-            if (value.day == day && $.inArray(parseInt(selectedProgram), value.programs) != -1) {
-               resources.push(value);
-            }
-        });
-        loadTeachers(selectedProgram);
-    }else if(teacherSelected){
-        $.each( availableTeachersDetails, function( key, value ) {
-            if (value.day == day && selectedTeacher == value.id) {
-               resources.push(value);
-            }
-        });
+    $.each( holidays, function( key, value ) {
+        if (value.date == currentDate) {
+            resources.push({
+                id: '0',
+                title: 'Holiday'
+            })
+        }
+    });
+    if(day == 0 && $.isEmptyObject(resources)) {
+        resources.push({
+            id: '0',
+            title: 'Holiday'
+        })
+    } else if($.isEmptyObject(resources)) {
+        if(!teacherSelected && !programSelected) {
+            $.each( availableTeachersDetails, function( key, value ) {
+                if (value.day == day) {
+                    resources.push({
+                        id: value.id,
+                        title: value.name
+                    })
+                }
+            });
+        }
+        if(!teacherSelected && programSelected){
+            $.each( availableTeachersDetails, function( key, value ) {
+                if (value.day == day && $.inArray(parseInt(selectedProgram), value.programs) != -1) {
+                    resources.push({
+                        id: value.id,
+                        title: value.name
+                    })
+                }
+            });
+            loadTeachers(selectedProgram);
+        }else if(teacherSelected){
+            $.each( availableTeachersDetails, function( key, value ) {
+                if (value.day == day && selectedTeacher == value.id) {
+                    resources.push({
+                        id: value.id,
+                        title: value.name
+                    })
+                }
+            });
+        }
     }
     return resources;
 }
@@ -276,19 +311,19 @@ function refreshCalendar(resources, date) {
         header: {
           left: 'prev,next today',
           center: 'title',
-          right: 'month,agendaWeek,resourceDay'
+          right: 'month,agendaWeek,agendaDay'
         },
         titleFormat: 'DD-MMM-YYYY, dddd',
-        defaultView: 'resourceDay',
+        defaultView: 'agendaDay',
         minTime: "<?php echo $from_time; ?>",
         maxTime: "<?php echo $to_time; ?>",
-        slotDuration: "00:15:01",
+        slotDuration: "00:15:00",
         editable: false,
         droppable: false,
         resources:  resources,
         events: events,
         viewRender: function( view, element ) {
-            if(view.name != 'resourceDay') {
+            if(view.name != 'agendaDay') {
                 $('#next-prev-week-button').hide();
             } else {
                 $('#next-prev-week-button').show();
@@ -301,21 +336,21 @@ function refreshCalendar(resources, date) {
             }
         },
     });
-    $(".fc-button-prev, .fc-button-next").click(function(){
+    $(".fc-prev-button, .fc-next-button").click(function(){
         $(".fc-view-month .fc-event").hide();
         var date = $('#calendar').fullCalendar('getDate');
         var view = $('#calendar').fullCalendar('getView');
-        if(view.name == 'resourceDay'){
+        if(view.name == 'agendaDay'){
             var resources = getResources(date);
             refreshCalendar(resources, date);
         }
     })
-    $(".fc-button-month, .fc-button-today").click(function(){
+    $(".fc-month-button, .fc-today-button").click(function(){
         $(".fc-view-month .fc-event").hide();
     })
-    $(".fc-button-resourceDay, .fc-button-today").click(function(){
+    $(".fc-agendaDay-button, .fc-today-button").click(function(){
         var date = $('#calendar').fullCalendar('getDate');
-        if ($(this).className === 'fc-button-today') {
+        if ($(this).className === 'fc-today-button') {
             var date = moment(new Date());
         }
         var resources = getResources(date);

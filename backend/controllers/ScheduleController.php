@@ -12,6 +12,7 @@ use yii\filters\AccessControl;
 use common\models\Program;
 use common\models\Invoice;
 use yii\helpers\Url;
+use common\models\Holiday;
 use common\models\TeacherAvailability;
 
 /**
@@ -89,6 +90,18 @@ class ScheduleController extends Controller
         $availableTeachersDetails = array_unique($teachersAvailabilitiesDetails, SORT_REGULAR);
         $availableTeachersDetails = array_values($availableTeachersDetails);
 
+        $events = [];
+        $holidays = Holiday::find()->all();
+        foreach ($holidays as $holiday) {
+            $date = new \DateTime($holiday->date);
+            $events[] = [
+                'resourceId' => '0',
+                'title' => '',
+                'start' => $holiday->date,
+                'end' => $date->format('Y-m-d 23:59:59'),
+                'rendering' => 'background'
+            ];
+        }
         $lessons = [];
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
@@ -97,7 +110,7 @@ class ScheduleController extends Controller
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
 			->notDeleted()
             ->all();
-        $events = [];
+        
         foreach ($lessons as &$lesson) {
             $toTime = new \DateTime($lesson->date);
             $length = explode(':', $lesson->duration);
@@ -119,7 +132,7 @@ class ScheduleController extends Controller
             }
 
             $events[] = [
-                'resources' => $lesson->teacherId,
+                'resourceId' => $lesson->teacherId,
                 'title' => $title,
                 'start' => $lesson->date,
                 'end' => $toTime->format('Y-m-d H:i:s'),
@@ -139,6 +152,6 @@ class ScheduleController extends Controller
         $toTime = $location->to_time;
         $to_time = $toTime->format('H:i:s');
 
-        return $this->render('index', ['teachersAvailabilitiesAllDetails' => $teachersAvailabilitiesAllDetails, 'teachersAvailabilitiesDetails' => $teachersAvailabilitiesDetails, 'availableTeachersDetails' => $availableTeachersDetails, 'events' => $events, 'from_time' => $from_time, 'to_time' => $to_time]);
+        return $this->render('index', ['holidays' => $holidays, 'teachersAvailabilitiesAllDetails' => $teachersAvailabilitiesAllDetails, 'teachersAvailabilitiesDetails' => $teachersAvailabilitiesDetails, 'availableTeachersDetails' => $availableTeachersDetails, 'events' => $events, 'from_time' => $from_time, 'to_time' => $to_time]);
     }
 }
