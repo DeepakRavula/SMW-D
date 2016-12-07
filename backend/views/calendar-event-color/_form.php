@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use kartik\color\ColorInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\CalendarEventColor */
@@ -9,21 +10,30 @@ use yii\bootstrap\ActiveForm;
 ?>
 
 <div class="calendar-event-color-form">
-
+	<div class="p-10">
     <?php $form = ActiveForm::begin(); ?>
-
-    <?php echo $form->errorSummary($model); ?>
-
-    <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'cssClass')->textInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+	<?php foreach ($eventModels as $index => $eventModel): ?>
+	<?php
+		// necessary for update action.
+		if (!$eventModel->isNewRecord) {
+			echo Html::activeHiddenInput($eventModel, "[{$index}]id");
+		}
+	?>
+	<div class="form-group col-lg-6">
+	<?php echo $form->field($eventModel, "[{$index}]name")->textInput(['readonly' => true])->label(false); ?>
+	</div>
+	<div class="form-group col-lg-6">
+    <?php echo $form->field($eventModel, "[{$index}]code")->widget(ColorInput::classname(), [
+		'options' => ['placeholder' => 'Select color ...'],
+	])->label(false);
+	?>
+	</div>
+	<?php endforeach; ?>
+	<div class="form-group col-md-12 p-l-20">
+       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
+    </div>
 
 </div>

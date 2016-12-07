@@ -69,7 +69,8 @@
     "drsdre/yii2-wizardwidget": "*",
     "kartik-v/yii2-widget-switchinput": "*",
     "janisto/yii2-timepicker": "*",
-    "moonlandsoft/bootui-datetimepicker": "*"
+    "moonlandsoft/bootui-datetimepicker": "*",
+    "kartik-v/yii2-widget-colorinput": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",
