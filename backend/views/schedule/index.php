@@ -207,7 +207,7 @@ function addAvailabilityEvents() {
             if (value.date == start) {
                 isHoliday = true;
             }
-        });debugger;
+        });
         if(day === 0 && !isHoliday) {
             events.push({
                 title: '',
@@ -383,6 +383,12 @@ function getResources(date) {
                     })
                 }
             });
+            if($.isEmptyObject(resources)) {
+                resources.push({
+                    id: '',
+                    title: 'No Teacher Available for the selected Program'
+                })
+            }
             loadTeachers(selectedProgram);
         }else if(teacherSelected){
             $.each( availableTeachersDetails, function( key, value ) {
@@ -393,6 +399,12 @@ function getResources(date) {
                     })
                 }
             });
+            if($.isEmptyObject(resources)) {
+                resources.push({
+                    id: '',
+                    title: 'Selected Teacher Not Available'
+                })
+            }
         }
     }
     return resources;
