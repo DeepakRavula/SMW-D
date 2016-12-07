@@ -314,7 +314,7 @@ $bundle = BackendAsset::register($this);
 								[
                                     'label' => Yii::t('backend', 'Color Code'),
                                     'icon' => '<i class="fa fa-newspaper-o"></i>',
-                                    'url' => ['calendar-event-color/create'],
+                                    'url' => ['calendar-event-color/edit'],
                                     'visible' => Yii::$app->user->can('administrator'),
                                 ],
                                 [
