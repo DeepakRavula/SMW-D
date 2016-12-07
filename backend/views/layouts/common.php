@@ -311,6 +311,12 @@ $bundle = BackendAsset::register($this);
                             'icon' => '<i class="fa fa-cogs"></i>',
                             'options' => ['class' => 'treeview'],
                             'items' => [
+								[
+                                    'label' => Yii::t('backend', 'Color Code'),
+                                    'icon' => '<i class="fa fa-newspaper-o"></i>',
+                                    'url' => ['calendar-event-color/edit'],
+                                    'visible' => Yii::$app->user->can('administrator'),
+                                ],
                                 [
                                     'label' => Yii::t('backend', 'Reminder Notes'),
                                     'icon' => '<i class="fa  fa-bell"></i>',
