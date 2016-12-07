@@ -237,7 +237,7 @@ function addAvailabilityEvents() {
             }
             if(!teacherSelected && programSelected){
                 $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
-                    if (value.day == day && $.inArray((selectedProgram), value.programs) != -1) {
+                    if (value.day == day && $.inArray(parseInt(selectedProgram), value.programs) != -1) {
                         var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
                         var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
                         events.push({
