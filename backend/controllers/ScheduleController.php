@@ -140,13 +140,6 @@ class ScheduleController extends Controller
                     $class = 'lesson-assigned-teacher';
                 }
             }
-            /*elseif (!empty($lesson->proFormaInvoice)) {
-                if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
-                    $class = 'proforma-paid';
-                } else {
-                    $class = 'proforma-unpaid';
-                }
-            }*/
 
             $events[] = [
                 'resourceId' => $lesson->teacherId,
