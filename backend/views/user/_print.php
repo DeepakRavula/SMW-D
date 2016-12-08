@@ -24,12 +24,14 @@ use yii\widgets\ListView;
         }
     }
     ?>
-    <div class="col-md-2 p-0">
+	<div class="col-md-10">
+    <strong><?= 'Total Hours of Instruction' . ' : ' . $totalDuration . 'm'; ?></strong>
+    </div>
+	<div class="clearfix"></div>
+    <div class="col-md-10">
     	<strong><?= $lessonCount . ' Lessons in total'; ?></strong>
 	</div>
-	<div class="col-md-10">
-    <strong><?= $totalDuration . 'm'; ?></strong>
-    </div>
+	
 </div>
 <script>
 	$(document).ready(function(){
