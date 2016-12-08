@@ -40,7 +40,7 @@ if (!empty($teacherLessonDataProvider->getModels())) {
 		'id' => 'teacher-lesson',
 		'dataProvider' => $teacherLessonDataProvider,
 		'options' => ['class' => 'col-md-12'],
-		'footerRowOptions' => ['style' => 'font-weight:bold;text-align: left;'],
+		'footerRowOptions' => ['style' => 'font-weight:bold;text-align: right;'],
 		'showFooter' => true,
 		'tableOptions' => ['class' => 'table table-bordered'],
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
