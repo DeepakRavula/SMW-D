@@ -86,28 +86,9 @@ a:hover, a:focus{
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
 }
-.fc-event .fc-event-vert .fc-event-start .fc-event-end,
-.fc-event-container .teacher-availability, 
-.fc-event-container .teacher-availability a{
-    border: 0 !important;
-    border-left: 5px solid #5EAD1C !important;
-    background-color: #fff4bf !important;
-    box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.08);
-}
 /*.fc-event-vert .fc-event-time{
   color: #5EAD1C;
 }*/
-.fc-bgevent {
-    background-color: yellow !important;
-}
-.enrolment-first-lesson, .fc-event .enrolment-first-lesson .fc-event-time, .enrolment-first-lesson a{
-    border: 1px solid #FF00FF !important;
-    background-color: #FF00FF !important;
-}
-.holiday, .fc-event .holiday .fc-event-time, .holiday a{
-    border: 1px solid grey !important;
-    background-color: grey !important;
-}
 .proforma-paid, .fc-agenda .proforma-paid .fc-event-time, .proforma-paid a{
     border: 1px solid  #378006 !important;
     background-color:  #378006 !important;

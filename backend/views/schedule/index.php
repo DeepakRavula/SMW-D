@@ -4,6 +4,7 @@ use yii\helpers\Json;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
+use common\models\CalendarEventColor;
 
 /* @var $this yii\web\View */
 
@@ -20,6 +21,38 @@ $this->params['breadcrumbs'][] = $this->title;
     right: 0 !important;
   }
 </style>
+<?php
+    $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
+    $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
+    $teacherUnavailability = CalendarEventColor::findOne(['cssClass' => 'teacher-unavailability']);
+    $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
+    $groupLesson = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
+    $firstLesson = CalendarEventColor::findOne(['cssClass' => 'first-lesson']);
+    $lessonAssignedTeacher = CalendarEventColor::findOne(['cssClass' => 'lesson-assigned-teacher']);
+    $lessonRescheduledDate = CalendarEventColor::findOne(['cssClass' => 'lesson-reschedule-date']);
+    $this->registerCss(
+        ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
+        .holiday, .fc-event .holiday .fc-event-time, .holiday a { background-color: " . $storeClosed->code . " !important;
+            border: 1px solid " . $storeClosed->code . " !important; }
+        .fc-bg { background-color: " . $teacherUnavailability->code . " !important; }
+        .fc-today { background-color: " . $teacherUnavailability->code . " !important; }
+        .private-lesson, .fc-event .private-lesson .fc-event-time, .private-lesson a {
+            border: 1px solid " . $privateLesson->code . " !important;
+            background-color: " . $privateLesson->code . " !important; }
+        .first-lesson, .fc-event .first-lesson .fc-event-time, .first-lesson a {
+            border: 1px solid " . $firstLesson->code . " !important;
+            background-color: " . $firstLesson->code . " !important; }
+        .group-lesson, .fc-event .group-lesson .fc-event-time, .group-lesson a {
+            border: 1px solid " . $groupLesson->code . " !important;
+            background-color: " . $groupLesson->code . " !important; }
+        .lesson-assigned-teacher, .fc-event .lesson-assigned-teacher .fc-event-time, .lesson-assigned-teacher a {
+            border: 1px solid " . $lessonAssignedTeacher->code . " !important;
+            background-color: " . $lessonAssignedTeacher->code . " !important; }
+        .lesson-reschedule-date, .fc-event .lesson-reschedule-date .fc-event-time, .lesson-reschedule-date a {
+            border: 1px solid " . $lessonRescheduledDate->code . " !important;
+            background-color: " . $lessonRescheduledDate->code . " !important; }"
+    );
+?>
 <div class="schedule-index">
     <div class="row schedule-filter">
         <div class="col-md-1 m-t-10 text-right"><p>Filter by</p></div>
@@ -96,6 +129,7 @@ $(document).ready(function() {
         });
     }
     $('#calendar').fullCalendar({
+    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
     header: {
         left: 'prev,next today',
         center: 'title',
@@ -413,6 +447,7 @@ function getResources(date) {
 function refreshCalendar(resources, date) {
     $('#calendar').html('');
     $('#calendar').unbind().removeData().fullCalendar({
+        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         defaultDate: date,
         header: {
           left: 'prev,next today',

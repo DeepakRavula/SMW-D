@@ -126,19 +126,27 @@ class ScheduleController extends Controller
             $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
             if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
                 $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
+                $class = 'group-lesson';
             } else {
                 $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
+                $class = 'private-lesson';
             }
-            $class = null;
             if($lesson->isEnrolmentFirstlesson()) {
-                $class = 'enrolment-first-lesson';
-            } elseif (!empty($lesson->proFormaInvoice)) {
+                $class = 'first-lesson';
+            } else if ($lesson->getRootLesson()) {
+                $class = 'lesson-reschedule-date';
+                $rootLesson = $lesson->getRootLesson();
+                if ($rootLesson->teacherId !== $lesson->teacherId) {
+                    $class = 'lesson-assigned-teacher';
+                }
+            }
+            /*elseif (!empty($lesson->proFormaInvoice)) {
                 if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
                     $class = 'proforma-paid';
                 } else {
                     $class = 'proforma-unpaid';
                 }
-            }
+            }*/
 
             $events[] = [
                 'resourceId' => $lesson->teacherId,
