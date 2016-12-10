@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\ClassRoom */
 
-$this->title = 'Add Class Room';
+$this->title = 'Add Classroom';
 ?>
 <div class="class-room-create">
 

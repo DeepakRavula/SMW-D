@@ -3,14 +3,14 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\ClassRoom;
+use common\models\Classroom;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ClassRoomController implements the CRUD actions for ClassRoom model.
+ * ClassRoomController implements the CRUD actions for Classroom model.
  */
 class ClassroomController extends Controller
 {
@@ -27,7 +27,7 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Lists all ClassRoom models.
+     * Lists all Classroom models.
      * @return mixed
      */
     public function actionIndex()
@@ -42,7 +42,7 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Displays a single ClassRoom model.
+     * Displays a single Classroom model.
      * @param string $id
      * @return mixed
      */
@@ -54,7 +54,7 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Creates a new ClassRoom model.
+     * Creates a new Classroom model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
@@ -72,7 +72,7 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Updates an existing ClassRoom model.
+     * Updates an existing Classroom model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -91,7 +91,7 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Deletes an existing ClassRoom model.
+     * Deletes an existing Classroom model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -104,10 +104,10 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Finds the ClassRoom model based on its primary key value.
+     * Finds the Classroom model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return ClassRoom the loaded model
+     * @return Classroom the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
