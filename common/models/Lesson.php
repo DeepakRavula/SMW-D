@@ -362,12 +362,24 @@ class Lesson extends \yii\db\ActiveRecord
         return $colorCode;
     }
 
+    public function isPrivate()
+    {
+        return ((int) $this->course->program->type === (int) Program::TYPE_PRIVATE_PROGRAM);
+    }
+
     public function beforeSave($insert)
     {
 		if (isset($this->colorCode)) {
-            $defaultRescheduledLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
-            if ( $this->colorCode == $defaultRescheduledLessonEventColor->code) {
-                $this->colorCode = null;
+            if ($this->isRescheduled()) {
+                $defaultRescheduledLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
+                if ($this->colorCode === $defaultRescheduledLessonEventColor->code) {
+                    $this->colorCode = null;
+                }
+            } else if ($this->isPrivate()) {
+                $defaultPrivateLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
+                if ($this->colorCode === $defaultPrivateLessonEventColor->code) {
+                    $this->colorCode = null;
+                }
             }
         }
 
