@@ -57,8 +57,11 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Expiry Date">
 			<?php if (!empty($model->privateLesson->expiryDate)) :?>
-				<i class="fa fa-calendar-plus-o"></i> <?php echo !empty(Yii::$app->formatter->asDateTime($model->privateLesson->expiryDate)) ? (Yii::$app->formatter->asDate($model->privateLesson->expiryDate)) : null; ?>
+				<i class="fa fa-calendar-plus-o"></i> <?php echo !empty($model->privateLesson->expiryDate) ? (Yii::$app->formatter->asDate($model->privateLesson->expiryDate)) : null; ?>
 		    <?php endif; ?>
+		</div>
+		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Classroom">
+			<i class="fa fa-home"></i> <?php echo !empty($model->classroomId) ? $model->classroom->name : null; ?>
 		</div>
         
 		<?php if (Yii::$app->controller->action->id === 'view'):?>

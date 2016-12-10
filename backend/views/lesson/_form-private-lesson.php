@@ -5,6 +5,9 @@ use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
 use common\models\Lesson;
+use wbraganca\selectivity\SelectivityWidget;
+use yii\helpers\ArrayHelper;
+use common\models\Classroom;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -76,6 +79,17 @@ use common\models\Lesson;
 	   <div class="col-md-4">
             <?php echo $form->field($model, 'notes')->textarea() ?>
         </div>
+	   <div class="col-md-4">
+		   <?=
+                $form->field($model, 'classroomId')->widget(SelectivityWidget::classname(), [
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'items' => ArrayHelper::map(Classroom::find()->all(), 'id', 'name'),
+                        'placeholder' => 'Select Classroom',
+                    ],
+                ]);
+                ?>
+		</div>
     <div class="col-md-12 p-l-20 form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
 		<?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
