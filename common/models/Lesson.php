@@ -275,6 +275,11 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PrivateLesson::className(), ['lessonId' => 'id']);
     }
+	
+	public function getClassroom()
+    {
+        return $this->hasOne(Classroom::className(), ['id' => 'classroomId']);
+    }
 
     public function getInvoice()
     {

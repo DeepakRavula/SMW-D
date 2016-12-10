@@ -126,18 +126,26 @@ class ScheduleController extends Controller
             $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
             if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
                 $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
+				if(! empty($lesson->classroomId)) {
+					$classroom = $lesson->classroom->name;
+					$title = $title . '[ ' . $classroom . ' ]';
+				}
                 $class = 'group-lesson';
             } else {
                 $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
+				if(! empty($lesson->classroomId)) {
+					$classroom = $lesson->classroom->name;
+					$title = $title . '[ ' . $classroom . ' ]';
+				}
                 $class = 'private-lesson';
             }
             if($lesson->isEnrolmentFirstlesson()) {
                 $class = 'first-lesson';
             } else if ($lesson->getRootLesson()) {
-                $class = 'lesson-reschedule-date';
+                $class = 'lesson-rescheduled';
                 $rootLesson = $lesson->getRootLesson();
                 if ($rootLesson->teacherId !== $lesson->teacherId) {
-                    $class = 'lesson-assigned-teacher';
+                    $class = 'teacher-substituted';
                 }
             }
 
