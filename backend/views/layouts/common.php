@@ -312,6 +312,12 @@ $bundle = BackendAsset::register($this);
                             'options' => ['class' => 'treeview'],
                             'items' => [
 								[
+                                    'label' => Yii::t('backend', 'Class Rooms'),
+                                    'icon' => '<i class="fa fa-home"></i>',
+                                    'url' => ['classroom/index'],
+                                    'visible' => Yii::$app->user->can('administrator'),
+                                ],
+								[
                                     'label' => Yii::t('backend', 'Color Code'),
                                     'icon' => '<i class="fa fa-newspaper-o"></i>',
                                     'url' => ['calendar-event-color/edit'],

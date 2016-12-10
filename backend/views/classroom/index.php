@@ -1,0 +1,30 @@
+<?php
+
+use yii\helpers\Html;
+use yii\grid\GridView;
+use common\models\User;
+use yii\helpers\Url;
+
+/* @var $this yii\web\View */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = 'Classrooms';
+$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+$lastRole = end($roles);
+
+$addButton = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']);
+$this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
+?>
+
+<div class="class-room-index">
+    <?php echo GridView::widget([
+        'dataProvider' => $dataProvider,
+		'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'columns' => [
+            'name',
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+
+</div>
