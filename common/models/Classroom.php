@@ -10,14 +10,14 @@ use Yii;
  * @property string $id
  * @property string $name
  */
-class ClassRoom extends \yii\db\ActiveRecord
+class Classroom extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'class_room';
+        return 'classroom';
     }
 
     /**
