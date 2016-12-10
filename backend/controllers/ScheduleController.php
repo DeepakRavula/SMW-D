@@ -157,7 +157,7 @@ class ScheduleController extends Controller
                     $backgroundColor = $lesson->colorCode;
                 }
             } else if ($lesson->getRootLesson()) {
-                $class = 'lesson-rescheduld';
+                $class = 'lesson-rescheduled';
                 $backgroundColor = null;
                 if (!empty($lesson->colorCode)) {
                     $class = null;
