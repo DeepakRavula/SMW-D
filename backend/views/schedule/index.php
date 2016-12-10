@@ -29,8 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
     $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
     $groupLesson = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
     $firstLesson = CalendarEventColor::findOne(['cssClass' => 'first-lesson']);
-    $lessonAssignedTeacher = CalendarEventColor::findOne(['cssClass' => 'teacher-substituted']);
-    $lessonRescheduledDate = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
+    $teacherSubstitutedLesson = CalendarEventColor::findOne(['cssClass' => 'teacher-substituted']);
+    $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
     $this->registerCss(
         ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
         .holiday, .fc-event .holiday .fc-event-time, .holiday a { background-color: " . $storeClosed->code . " !important;
@@ -46,12 +46,12 @@ $this->params['breadcrumbs'][] = $this->title;
         .group-lesson, .fc-event .group-lesson .fc-event-time, .group-lesson a {
             border: 1px solid " . $groupLesson->code . " !important;
             background-color: " . $groupLesson->code . " !important; }
-        .teacher-substituted, .fc-event .teacher-substituted .fc-event-time, .teacher-substituted a {
-            border: 1px solid " . $lessonAssignedTeacher->code . " !important;
-            background-color: " . $lessonAssignedTeacher->code . " !important; }
-        .lesson-rescheduled, .fc-event .lesson-rescheduled .fc-event-time, .lesson-rescheduled a {
-            border: 1px solid " . $lessonRescheduledDate->code . " !important;
-            background-color: " . $lessonRescheduledDate->code . " !important; }"
+        .teacher-substituted, .fc-event .lesson-assigned-teacher .fc-event-time, .lesson-assigned-teacher a {
+            border: 1px solid " . $teacherSubstitutedLesson->code . " !important;
+            background-color: " . $teacherSubstitutedLesson->code . " !important; }
+        .lesson-rescheduled, .fc-event .lesson-reschedule-date .fc-event-time, .lesson-reschedule-date a {
+            border: 1px solid " . $rescheduledLesson->code . " !important;
+            background-color: " . $rescheduledLesson->code . " !important; }"
     );
 ?>
 <div class="schedule-index">

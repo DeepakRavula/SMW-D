@@ -131,6 +131,11 @@ class ScheduleController extends Controller
 					$title = $title . '[ ' . $classroom . ' ]';
 				}
                 $class = 'group-lesson';
+                $backgroundColor = null;
+                if (!empty($lesson->colorCode)) {
+                    $class = null;
+                    $backgroundColor = $lesson->colorCode;
+                }
             } else {
                 $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
 				if(! empty($lesson->classroomId)) {
@@ -138,14 +143,34 @@ class ScheduleController extends Controller
 					$title = $title . '[ ' . $classroom . ' ]';
 				}
                 $class = 'private-lesson';
+                $backgroundColor = null;
+                if (!empty($lesson->colorCode)) {
+                    $class = null;
+                    $backgroundColor = $lesson->colorCode;
+                }
             }
             if($lesson->isEnrolmentFirstlesson()) {
                 $class = 'first-lesson';
+                $backgroundColor = null;
+                if (!empty($lesson->colorCode)) {
+                    $class = null;
+                    $backgroundColor = $lesson->colorCode;
+                }
             } else if ($lesson->getRootLesson()) {
-                $class = 'lesson-rescheduled';
+                $class = 'lesson-rescheduld';
+                $backgroundColor = null;
+                if (!empty($lesson->colorCode)) {
+                    $class = null;
+                    $backgroundColor = $lesson->colorCode;
+                }
                 $rootLesson = $lesson->getRootLesson();
                 if ($rootLesson->teacherId !== $lesson->teacherId) {
                     $class = 'teacher-substituted';
+                    $backgroundColor = null;
+                    if (!empty($lesson->colorCode)) {
+                        $class = null;
+                        $backgroundColor = $lesson->colorCode;
+                    }
                 }
             }
 
@@ -156,6 +181,7 @@ class ScheduleController extends Controller
                 'end' => $toTime->format('Y-m-d H:i:s'),
                 'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
                 'className' => $class,
+                'backgroundColor' => $backgroundColor,
             ];
         }
         unset($lesson);
