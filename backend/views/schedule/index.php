@@ -5,6 +5,7 @@ use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\CalendarEventColor;
+use kartik\switchinput\SwitchInput;
 
 /* @var $this yii\web\View */
 
@@ -28,8 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
     $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
     $groupLesson = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
     $firstLesson = CalendarEventColor::findOne(['cssClass' => 'first-lesson']);
-    $lessonAssignedTeacher = CalendarEventColor::findOne(['cssClass' => 'lesson-assigned-teacher']);
-    $lessonRescheduledDate = CalendarEventColor::findOne(['cssClass' => 'lesson-reschedule-date']);
+    $lessonAssignedTeacher = CalendarEventColor::findOne(['cssClass' => 'teacher-substituted']);
+    $lessonRescheduledDate = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
     $this->registerCss(
         ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
         .holiday, .fc-event .holiday .fc-event-time, .holiday a { background-color: " . $storeClosed->code . " !important;
@@ -45,10 +46,10 @@ $this->params['breadcrumbs'][] = $this->title;
         .group-lesson, .fc-event .group-lesson .fc-event-time, .group-lesson a {
             border: 1px solid " . $groupLesson->code . " !important;
             background-color: " . $groupLesson->code . " !important; }
-        .lesson-assigned-teacher, .fc-event .lesson-assigned-teacher .fc-event-time, .lesson-assigned-teacher a {
+        .teacher-substituted, .fc-event .teacher-substituted .fc-event-time, .teacher-substituted a {
             border: 1px solid " . $lessonAssignedTeacher->code . " !important;
             background-color: " . $lessonAssignedTeacher->code . " !important; }
-        .lesson-reschedule-date, .fc-event .lesson-reschedule-date .fc-event-time, .lesson-reschedule-date a {
+        .lesson-rescheduled, .fc-event .lesson-rescheduled .fc-event-time, .lesson-rescheduled a {
             border: 1px solid " . $lessonRescheduledDate->code . " !important;
             background-color: " . $lessonRescheduledDate->code . " !important; }"
     );
@@ -84,11 +85,12 @@ $this->params['breadcrumbs'][] = $this->title;
             ]);
             ?>
         </div>
+   
         <div id="next-prev-week-button" class="col-md-3 week-button m-t-10 m-l-10">
             <button id="previous-week" class="btn btn-default btn-sm">Previous Week</button>
             <button id="next-week" class="btn btn-default btn-sm">Next Week</button>
-        </div>
-    </div>
+    	</div>
+		 </div>
     <div id='calendar' class="p-10"></div>
 </div>
 <script type="text/javascript">
