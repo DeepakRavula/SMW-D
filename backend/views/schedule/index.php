@@ -6,6 +6,7 @@ use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\CalendarEventColor;
 use kartik\switchinput\SwitchInput;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 
@@ -91,6 +92,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <button id="next-week" class="btn btn-default btn-sm">Next Week</button>
     	</div>
 		 </div>
+		 <div class="e1Div">
+    <?= Html::checkbox('active', false, ['label' => 'Show classroom', 'id' => 'active' ]); ?>
+</div>
     <div id='calendar' class="p-10"></div>
 </div>
 <script type="text/javascript">
@@ -377,6 +381,34 @@ $(document).ready(function () {
         var resources = getResources(date);
         refreshCalendar(resources, date);
     });
+	 $("#active").change(function() {
+        if( $(this).is(':checked') ){
+            
+			var date = new Date();
+		$('#calendar').html('');
+    $('#calendar').unbind().removeData().fullCalendar({
+        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        titleFormat: 'DD-MMM-YYYY, dddd',
+        defaultView: 'agendaDay',
+        minTime: "<?php echo $from_time; ?>",
+        maxTime: "<?php echo $to_time; ?>",
+        slotDuration: "00:15:00",
+        editable: false,
+        droppable: false,
+        resources: <?php echo Json::encode($classroomResource); ?>,
+        events: <?php echo Json::encode($classroomEvents); ?>,
+        viewRender: function( view, element ) {
+            $('.schedule-filter').hide();
+        },
+        
+    });
+		}
+  });
 });
 function getResources(date) {
     var day = moment(date).day();
@@ -501,4 +533,6 @@ function refreshCalendar(resources, date) {
     })
         addAvailabilityEvents();
 }
+
+ 
 </script>

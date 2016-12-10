@@ -14,6 +14,7 @@ use common\models\Invoice;
 use yii\helpers\Url;
 use common\models\Holiday;
 use common\models\TeacherAvailability;
+use common\models\Classroom;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -186,6 +187,84 @@ class ScheduleController extends Controller
         }
         unset($lesson);
 
+		$classrooms = Classroom::find()->all();
+		$classroomResource = [];
+			foreach ($classrooms as $classroom) {
+				$classroomResource[] = [
+					'id' => $classroom->id,
+					'name' => $classroom->name,
+				];
+			}
+			
+		$classroomEvents = [];
+		foreach ($lessons as &$lesson) {
+            $toTime = new \DateTime($lesson->date);
+            $length = explode(':', $lesson->duration);
+            $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+            if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+                $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
+				if(! empty($lesson->classroomId)) {
+					$classroom = $lesson->classroom->name;
+					$classroomId = $lesson->classroomId;
+					$title = $title . '[ ' . $lesson->teacher->publicIdentity . ' ]';
+				}
+                $class = 'group-lesson';
+                $backgroundColor = null;
+                if (!empty($lesson->colorCode)) {
+                    $class = null;
+                    $backgroundColor = $lesson->colorCode;
+                }
+            } else {
+                $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
+				if(! empty($lesson->classroomId)) {
+					$classroom = $lesson->classroom->name;
+					$classroomId = $lesson->classroomId;
+					$title = $title . '[ ' . $lesson->teacher->publicIdentity . ' ]';
+				}
+                $class = 'private-lesson';
+                $backgroundColor = null;
+                if (!empty($lesson->colorCode)) {
+                    $class = null;
+                    $backgroundColor = $lesson->colorCode;
+                }
+            }
+            if($lesson->isEnrolmentFirstlesson()) {
+                $class = 'first-lesson';
+                $backgroundColor = null;
+                if (!empty($lesson->colorCode)) {
+                    $class = null;
+                    $backgroundColor = $lesson->colorCode;
+                }
+            } else if ($lesson->getRootLesson()) {
+                $class = 'lesson-rescheduld';
+                $backgroundColor = null;
+                if (!empty($lesson->colorCode)) {
+                    $class = null;
+                    $backgroundColor = $lesson->colorCode;
+                }
+                $rootLesson = $lesson->getRootLesson();
+                if ($rootLesson->teacherId !== $lesson->teacherId) {
+                    $class = 'teacher-substituted';
+                    $backgroundColor = null;
+                    if (!empty($lesson->colorCode)) {
+                        $class = null;
+                        $backgroundColor = $lesson->colorCode;
+                    }
+                }
+            }
+
+            $classroomEvents[] = [
+                'resourceId' => $classroomId,
+                'title' => $title,
+                'start' => $lesson->date,
+                'end' => $toTime->format('Y-m-d H:i:s'),
+                'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
+                'className' => $class,
+                'backgroundColor' => $backgroundColor,
+            ];
+        }
+        unset($lesson);
+
         $location = Location::findOne($id = Yii::$app->session->get('location_id'));
 
         $location->from_time = new \DateTime($location->from_time);
@@ -196,6 +275,16 @@ class ScheduleController extends Controller
         $toTime = $location->to_time;
         $to_time = $toTime->format('H:i:s');
 
-        return $this->render('index', ['holidays' => $holidays, 'teachersAvailabilitiesAllDetails' => $teachersAvailabilitiesAllDetails, 'teachersAvailabilitiesDetails' => $teachersAvailabilitiesDetails, 'availableTeachersDetails' => $availableTeachersDetails, 'events' => $events, 'from_time' => $from_time, 'to_time' => $to_time]);
+        return $this->render('index', [
+			'holidays' => $holidays,
+			'teachersAvailabilitiesAllDetails' => $teachersAvailabilitiesAllDetails,
+			'teachersAvailabilitiesDetails' => $teachersAvailabilitiesDetails,
+			'availableTeachersDetails' => $availableTeachersDetails,
+			'events' => $events,
+			'from_time' => $from_time,
+			'to_time' => $to_time,
+			'classroomResource' => $classroomResource,
+			'classroomEvents' => $classroomEvents
+		]);
     }
 }
