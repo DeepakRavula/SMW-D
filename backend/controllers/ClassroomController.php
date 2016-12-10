@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * ClassRoomController implements the CRUD actions for ClassRoom model.
  */
-class ClassRoomController extends Controller
+class ClassroomController extends Controller
 {
     public function behaviors()
     {
@@ -33,7 +33,7 @@ class ClassRoomController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => ClassRoom::find(),
+            'query' => Classroom::find(),
         ]);
 
         return $this->render('index', [
@@ -60,7 +60,7 @@ class ClassRoomController extends Controller
      */
     public function actionCreate()
     {
-        $model = new ClassRoom();
+        $model = new Classroom();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -112,7 +112,7 @@ class ClassRoomController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = ClassRoom::findOne($id)) !== null) {
+        if (($model = Classroom::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
