@@ -343,17 +343,14 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getColorCode()
     {
-        $defaultRescheduledLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
-        $defaultLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
-        if ($this->isRescheduled()) {
-            $colorCode = $defaultRescheduledLessonEventColor->code;
-            if (!empty($this->colorCode)) {
-                $colorCode = $this->colorCode;
-            }
-        }
-        $colorCode = $defaultLessonEventColor->code;
         if (!empty($this->colorCode)) {
             $colorCode = $this->colorCode;
+        } else if ($this->isRescheduled()) {
+            $defaultRescheduledLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
+            $colorCode = $defaultRescheduledLessonEventColor->code;
+        } else {
+            $defaultLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
+            $colorCode = $defaultLessonEventColor->code;
         }
 
         return $colorCode;
