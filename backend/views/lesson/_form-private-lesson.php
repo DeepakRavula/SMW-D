@@ -80,7 +80,7 @@ use common\models\Classroom;
         <div class="col-md-4">
             <?php echo $form->field($model, 'notes')->textarea() ?>
         </div>
-	   <div class="col-md-4">
+	   <div class=" col-md-4">
 		   <?=
                 $form->field($model, 'classroomId')->widget(SelectivityWidget::classname(), [
                     'pluginOptions' => [
