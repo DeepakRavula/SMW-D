@@ -65,7 +65,7 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
-            [['date', 'programId', 'notes', 'teacherId'], 'safe'],
+            [['date', 'programId', 'notes', 'teacherId', 'colorCode'], 'safe'],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
@@ -242,6 +242,7 @@ class Lesson extends \yii\db\ActiveRecord
             'isDeleted' => 'Is Deleted',
             'time' => 'From Time',
             'toTime' => 'To time',
+            'colorCode' => 'Color Code',
         ];
     }
 
@@ -338,6 +339,33 @@ class Lesson extends \yii\db\ActiveRecord
             self::STATUS_COMPLETED => Yii::t('common', 'Completed'),
             self::STATUS_SCHEDULED => Yii::t('common', 'Scheduled'),
         ];
+    }
+
+    public function getColorCode()
+    {
+        if (!empty($this->colorCode)) {
+            $colorCode = $this->colorCode;
+        } else if ($this->isRescheduled()) {
+            $defaultRescheduledLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
+            $colorCode = $defaultRescheduledLessonEventColor->code;
+        } else {
+            $defaultLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
+            $colorCode = $defaultLessonEventColor->code;
+        }
+
+        return $colorCode;
+    }
+
+    public function beforeSave($insert)
+    {
+		if (isset($this->colorCode)) {
+            $defaultRescheduledLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
+            if ( $this->colorCode == $defaultRescheduledLessonEventColor->code) {
+                $this->colorCode = null;
+            }
+        }
+
+        return parent::beforeSave($insert);
     }
 
 	public function afterSave($insert, $changedAttributes)
@@ -443,8 +471,8 @@ class Lesson extends \yii\db\ActiveRecord
         $enrolmentFirstLesson = self::find()
                 ->where(['courseId' => $courseId])
                 ->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED]])
-                ->orderBy(['id' => SORT_ASC])
+                ->orderBy(['date' => SORT_ASC])
                 ->one();
         return $enrolmentFirstLesson->date === $this->date;
     }
-}    
+}

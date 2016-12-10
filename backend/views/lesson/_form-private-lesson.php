@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
+use kartik\color\ColorInput;
 use common\models\Lesson;
 
 /* @var $this yii\web\View */
@@ -73,8 +74,17 @@ use common\models\Lesson;
             ]);
             ?>
 		</div>
-	   <div class="col-md-4">
+        <div class="col-md-4">
             <?php echo $form->field($model, 'notes')->textarea() ?>
+        </div>
+        <div class="form-group col-lg-6">
+        <?php echo $form->field($model, 'colorCode')->widget(ColorInput::classname(), [
+                'options' => [
+                    'placeholder' => 'Select color ...',
+                    'value' => $model->getColorCode(),
+                ],
+        ]);
+        ?>
         </div>
     <div class="col-md-12 p-l-20 form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
