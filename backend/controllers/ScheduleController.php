@@ -192,7 +192,7 @@ class ScheduleController extends Controller
 			foreach ($classrooms as $classroom) {
 				$classroomResource[] = [
 					'id' => $classroom->id,
-					'name' => $classroom->name,
+					'title' => $classroom->name,
 				];
 			}
 			
