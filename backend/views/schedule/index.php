@@ -6,6 +6,8 @@ use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\CalendarEventColor;
 use kartik\switchinput\SwitchInput;
+use yii\helpers\Html;
+
 
 /* @var $this yii\web\View */
 
@@ -91,6 +93,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <button id="next-week" class="btn btn-default btn-sm">Next Week</button>
     	</div>
 		 </div>
+		 <div class="btn-group" role="group" aria-label="...">
+			<button type="button"  id="teacher" class="btn btn-default">Teacher-view</button>
+			<button type="button" id="classroom" class="btn btn-default">Classroom-view</button>
+		</div>
     <div id='calendar' class="p-10"></div>
 </div>
 <script type="text/javascript">
@@ -184,6 +190,106 @@ $(document).ready(function() {
         refreshCalendar(resources, date);
     });
         addAllAvailabilityEvents();
+	$("#teacher").click(function() {
+	   $.each( holidays, function( key, value ) {
+			if (value.date == currentDate) {
+				isHoliday = true;
+				resources.push({
+					id: '0',
+					title: 'Holiday'
+				})
+			}
+		});
+		if(day == 0 && !isHoliday) {
+			resources.push({
+				id: '0',
+				title: 'Sunday-Holiday'
+			})
+		} else if(!isHoliday) {
+			$.each( availableTeachersDetails, function( key, value ) {
+				if (value.day == day) {
+					resources.push({
+						id: value.id,
+						title: value.name
+					})
+				}
+			});
+		}
+		$('#calendar').html('');
+		$('#calendar').unbind().removeData().fullCalendar({
+			schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+			titleFormat: 'DD-MMM-YYYY, dddd',
+			defaultView: 'agendaDay',
+			minTime: "<?php echo $from_time; ?>",
+			maxTime: "<?php echo $to_time; ?>",
+			slotDuration: "00:15:00",
+			editable: false,
+			droppable: false,
+			resources: resources,
+			events: events,
+			viewRender: function( view, element ) {
+				$('.schedule-filter').show();
+			},
+			eventClick: function(event) {
+				$(location).attr('href', event.url);
+			},
+			dayClick: function(date, allDay, jsEvent, view) {
+				if (allDay) {
+					var resources = getResources(date);
+					refreshCalendar(resources, date);
+				}
+			}
+    	});
+	    $(".fc-prev-button, .fc-next-button").click(function(){ 
+        $(".fc-view-month .fc-event").hide();
+        var date = $('#calendar').fullCalendar('getDate');
+        var view = $('#calendar').fullCalendar('getView');
+        if(view.name == 'agendaDay'){
+            var resources = getResources(date);
+            refreshCalendar(resources, date);
+        }
+    });
+    $(".fc-month-button, .fc-today-button").click(function(){
+        $(".fc-view-month .fc-event").hide();
+    });
+    $(".fc-agendaDay-button, .fc-today-button").click(function(){
+        var date = $('#calendar').fullCalendar('getDate');
+        if ($(this).className === 'fc-today-button') {
+            var date = moment(new Date());
+        }
+        var resources = getResources(date);
+        refreshCalendar(resources, date);
+    });
+        addAllAvailabilityEvents();
+	});
+	$('#classroom').click(function(){
+		$('#calendar').html('');
+		$('#calendar').unbind().removeData().fullCalendar({
+			schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+			header: {
+			  left: 'prev,next today',
+			  center: 'title',
+			  right: 'month,agendaWeek,agendaDay'
+			},
+			titleFormat: 'DD-MMM-YYYY, dddd',
+			defaultView: 'agendaDay',
+			minTime: "<?php echo $from_time; ?>",
+			maxTime: "<?php echo $to_time; ?>",
+			slotDuration: "00:15:00",
+			editable: false,
+			droppable: false,
+			resources: <?php echo Json::encode($classroomResource); ?>,
+			events: <?php echo Json::encode($classroomEvents); ?>,
+			viewRender: function( view, element ) {
+				$('.schedule-filter').hide();
+			}
+		});
+  	});
 });
 
 function addAllAvailabilityEvents() {
@@ -377,6 +483,7 @@ $(document).ready(function () {
         var resources = getResources(date);
         refreshCalendar(resources, date);
     });
+
 });
 function getResources(date) {
     var day = moment(date).day();
@@ -501,4 +608,6 @@ function refreshCalendar(resources, date) {
     })
         addAvailabilityEvents();
 }
+
+ 
 </script>
