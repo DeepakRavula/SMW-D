@@ -91,6 +91,7 @@ use kartik\grid\GridView;
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
         'pjax' => true,
 		'showPageSummary'=>true,
+		'pageSummaryRowOptions' => ['class' => 'pull-right'],
 		'pjaxSettings' => [
 			'neverTimeout' => true,
 			'options' => [
