@@ -252,7 +252,7 @@ class ScheduleController extends Controller
                     }
                 }
             }
-
+		if(! empty($lesson->classroomId)) {
             $classroomEvents[] = [
                 'resourceId' => $classroomId,
                 'title' => $title,
@@ -262,6 +262,7 @@ class ScheduleController extends Controller
                 'className' => $class,
                 'backgroundColor' => $backgroundColor,
             ];
+		}
         }
         unset($lesson);
 
