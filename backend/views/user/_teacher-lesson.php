@@ -50,7 +50,6 @@ if (!empty($teacherLessonDataProvider->getModels())) {
 				'value' => function ($data) {
 					return !empty($data->date) ? Yii::$app->formatter->asTime($data->date) : null;
 				},
-				'footer' => 'Total Hours of Instruction',
 			],
 			[
 				'label' => 'Program Name',

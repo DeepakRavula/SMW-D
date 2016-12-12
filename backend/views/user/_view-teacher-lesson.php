@@ -60,7 +60,8 @@ use kartik\grid\GridView;
 
 					return !empty($date) ? $date : null;
 				},
-				'pageSummary' => $lessonCount . ' Lessons in total',
+				'pageSummary' => 'Total Hours of Instruction',
+				'footer' => $lessonCount . ' Lessons in total',
 
 			],
 			[
@@ -83,12 +84,13 @@ use kartik\grid\GridView;
 	<?= GridView::widget([
 		'dataProvider' => $teacherLessonDataProvider,
 		'options' => ['class' => 'col-md-12'],
-		'footerRowOptions' => ['style' => 'font-weight:bold;text-align: left;'],
+		'footerRowOptions' => ['style' => 'font-weight:bold;text-align:left;'],
 		'showFooter' => true,
 		'tableOptions' => ['class' => 'table table-bordered'],
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
         'pjax' => true,
 		'showPageSummary'=>true,
+		'pageSummaryRowOptions' => ['class' => 'total-hours-of-instruction'],
 		'pjaxSettings' => [
 			'neverTimeout' => true,
 			'options' => [
