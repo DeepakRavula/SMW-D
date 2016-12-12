@@ -60,7 +60,6 @@ use kartik\grid\GridView;
 
 					return !empty($date) ? $date : null;
 				},
-				'contentOptions' => ['class' => 'text-left'],
 				'pageSummary' => 'Total Hours of Instruction',
 				'footer' => $lessonCount . ' Lessons in total',
 
@@ -91,7 +90,7 @@ use kartik\grid\GridView;
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
         'pjax' => true,
 		'showPageSummary'=>true,
-		'pageSummaryRowOptions' => ['class' => 'pull-right'],
+		'pageSummaryRowOptions' => ['class' => 'total-hours-of-instruction'],
 		'pjaxSettings' => [
 			'neverTimeout' => true,
 			'options' => [
