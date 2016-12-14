@@ -27,6 +27,7 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
 	const STATUS_UNSCHEDULED = 5;
+	const STATUS_MISSED = 6;
 	
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_PRIVATE_LESSON = 'private-lesson';
