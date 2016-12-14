@@ -51,6 +51,11 @@ class BlogController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Blog::find(),
+			'sort' => [
+				'defaultOrder' => [
+					'id' => SORT_DESC,
+				],
+			]
         ]);
 
         return $this->render('list', [
