@@ -268,6 +268,16 @@ class Lesson extends \yii\db\ActiveRecord
 		return (int) $this->status === self::STATUS_COMPLETED;
 	}
 
+	public function isMissed()
+	{
+		return (int) $this->status === self::STATUS_MISSED;
+	}
+
+	public function isCanceled()
+	{
+		return (int) $this->status === self::STATUS_CANCELED;
+	}
+
 	public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
