@@ -184,12 +184,7 @@ class ScheduleController extends Controller
             $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
             if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
                 $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
-				if(! empty($lesson->classroomId)) {
-					$classroom = $lesson->classroom->name;
-					$classroomId = $lesson->classroomId;
-					$title = $title . '[ ' . $lesson->teacher->publicIdentity . ' ]';
-				}
-                $class = 'group-lesson';
+				$class = 'group-lesson';
                 $backgroundColor = null;
                 if (!empty($lesson->colorCode)) {
                     $class = null;
@@ -197,53 +192,38 @@ class ScheduleController extends Controller
                 }
             } else {
                 $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
-				if(! empty($lesson->classroomId)) {
-					$classroom = $lesson->classroom->name;
-					$classroomId = $lesson->classroomId;
-					$title = $title . '[ ' . $lesson->teacher->publicIdentity . ' ]';
-				}
-                $class = 'private-lesson';
+				$class = 'private-lesson';
                 $backgroundColor = null;
                 if (!empty($lesson->colorCode)) {
                     $class = null;
                     $backgroundColor = $lesson->colorCode;
-                }
-            }
-            if($lesson->isEnrolmentFirstlesson()) {
-                $class = 'first-lesson';
-                $backgroundColor = null;
-                if (!empty($lesson->colorCode)) {
-                    $class = null;
-                    $backgroundColor = $lesson->colorCode;
-                }
-            } else if ($lesson->getRootLesson()) {
-                $class = 'lesson-rescheduld';
-                $backgroundColor = null;
-                if (!empty($lesson->colorCode)) {
-                    $class = null;
-                    $backgroundColor = $lesson->colorCode;
-                }
-                $rootLesson = $lesson->getRootLesson();
-                if ($rootLesson->teacherId !== $lesson->teacherId) {
-                    $class = 'teacher-substituted';
-                    $backgroundColor = null;
-                    if (!empty($lesson->colorCode)) {
-                        $class = null;
-                        $backgroundColor = $lesson->colorCode;
+                } else if ($lesson->status === Lesson::STATUS_MISSED) {
+                    $class = 'lesson-missed';
+                } else if($lesson->isEnrolmentFirstlesson()) {
+                    $class = 'first-lesson';
+                } else if ($lesson->getRootLesson()) {
+                    $class = 'lesson-rescheduld';
+                    $rootLesson = $lesson->getRootLesson();
+                    if ($rootLesson->teacherId !== $lesson->teacherId) {
+                        $class = 'teacher-substituted';
                     }
                 }
             }
-		if(! empty($lesson->classroomId)) {
-            $classroomEvents[] = [
-                'resourceId' => $classroomId,
-                'title' => $title,
-                'start' => $lesson->date,
-                'end' => $toTime->format('Y-m-d H:i:s'),
-                'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
-                'className' => $class,
-                'backgroundColor' => $backgroundColor,
-            ];
-		}
+            
+            if(! empty($lesson->classroomId)) {
+                $classroom = $lesson->classroom->name;
+                $classroomId = $lesson->classroomId;
+                $title = $title . '[ ' . $lesson->teacher->publicIdentity . ' ]';
+                $classroomEvents[] = [
+                    'resourceId' => $classroomId,
+                    'title' => $title,
+                    'start' => $lesson->date,
+                    'end' => $toTime->format('Y-m-d H:i:s'),
+                    'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
+                    'className' => $class,
+                    'backgroundColor' => $backgroundColor,
+                ];
+            }
         }
         unset($lesson);
 
