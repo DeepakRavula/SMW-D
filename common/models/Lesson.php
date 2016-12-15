@@ -27,6 +27,7 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
 	const STATUS_UNSCHEDULED = 5;
+	const STATUS_MISSED = 6;
 	
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_PRIVATE_LESSON = 'private-lesson';
@@ -262,6 +263,21 @@ class Lesson extends \yii\db\ActiveRecord
 		return (int) $this->status === self::STATUS_UNSCHEDULED;
 	}
 
+	public function isCompleted()
+	{
+		return (int) $this->status === self::STATUS_COMPLETED;
+	}
+
+	public function isMissed()
+	{
+		return (int) $this->status === self::STATUS_MISSED;
+	}
+
+	public function isCanceled()
+	{
+		return (int) $this->status === self::STATUS_CANCELED;
+	}
+
 	public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
@@ -320,19 +336,29 @@ class Lesson extends \yii\db\ActiveRecord
         switch ($this->status) {
             case self::STATUS_SCHEDULED:
                 if ($lessonDate >= $currentDate) {
-                    $status = 'Scheduled';
+                $status = 'Scheduled';
                 } else {
                     $status = 'Completed';
                 }
             break;
             case self::STATUS_COMPLETED:
                 $status = 'Completed';
+				if ($lessonDate <= $currentDate) {
+                	$status = 'Completed';
+				}
             break;
             case self::STATUS_CANCELED:
                 $status = 'Canceled';
             break;
 			case self::STATUS_UNSCHEDULED:
                 $status = 'Unscheduled';
+            break;
+			case self::STATUS_MISSED:
+				if ($lessonDate >= $currentDate) {
+					$status = 'Scheduled';
+				} else {
+					$status = 'Completed';
+				}
             break;
         }
 

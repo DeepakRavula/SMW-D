@@ -156,7 +156,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         $this->joinWith('invoice')
             ->where(['invoice.id' => null])
-            ->andFilterWhere(['<=', 'lesson.date', (new \DateTime())->format('Y-m-d')])
+            ->andFilterWhere(['<=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
              ->andFilterWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
 
         return $this;

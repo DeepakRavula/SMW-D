@@ -173,7 +173,21 @@ class InvoiceController extends Controller
                 }
             }
         }
-
+		$post = Yii::$app->request->post();
+		if (isset($post['hasEditable'])) {
+			$response = Yii::$app->response;
+			$response->format = Response::FORMAT_JSON;
+			if(! empty($post['notes'])) {
+				$model->notes = $post['notes'];
+				$model->save();
+				return ['output' => $model->notes, 'message' => ''];
+			}
+			if(!empty($post['internalNotes'])) {
+				$model->internal_notes = $post['internalNotes'];
+				$model->save();
+				return ['output' => $model->internal_notes, 'message' => ''];
+			}
+		}
         return $this->render('view', [
                     'model' => $model,
                     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,

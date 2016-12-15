@@ -573,4 +573,63 @@ class LessonController extends Controller
             return $this->redirect(['lesson/view', 'id' => $id]);
         }
     }
+
+	public function actionMissed($id)
+	{
+		$session = Yii::$app->session;
+        $location_id = $session->get('location_id');
+		$model = Lesson::findOne(['id' => $id]);
+		$model->status = Lesson::STATUS_MISSED;
+		$model->save();
+		$lesson = Lesson::find()
+			->innerJoinWith('invoice')
+			->where(['lesson.id' => $id])
+			->one();
+		if(empty($lesson)) {
+		  	$invoice = new Invoice();
+            $invoice->user_id = $model->enrolment->student->customer->id;
+            $invoice->location_id = $location_id;
+            $invoice->type = INVOICE::TYPE_INVOICE;
+            $invoice->save();
+            $invoice->addLineItem($model);
+            $invoice->save();
+            $rootLessonId         = $model->getRootLessonId($model->id);
+            $proFormaInvoice      = Invoice::find()
+                ->select(['invoice.id', 'SUM(payment.amount) as credit'])
+                ->proFormaCredit($rootLessonId)
+                ->one();
+
+            if (!empty($proFormaInvoice)) {
+                if ((float) $proFormaInvoice->credit > (float) $invoice->total) {
+                    $paymentAmount = $invoice->total;
+                } else {
+                    $paymentAmount = $proFormaInvoice->credit;
+                }
+                $paymentModel = new Payment();
+                $paymentModel->amount = $paymentAmount;
+                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+                $paymentModel->reference = $proFormaInvoice->id;
+                $paymentModel->invoiceId = $invoice->id;
+                $paymentModel->save();
+
+                $creditPaymentId = $paymentModel->id;
+                $paymentModel->id = null;
+                $paymentModel->isNewRecord = true;
+                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+                $paymentModel->invoiceId = $proFormaInvoice->id;
+                $paymentModel->reference = $invoice->id;
+                $paymentModel->save();
+
+                $debitPaymentId = $paymentModel->id;
+                $creditUsageModel = new CreditUsage();
+                $creditUsageModel->credit_payment_id = $creditPaymentId;
+                $creditUsageModel->debit_payment_id = $debitPaymentId;
+                $creditUsageModel->save();
+            }
+
+            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
+		} else {
+            return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
+		}
+	}
 }

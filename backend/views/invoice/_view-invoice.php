@@ -4,6 +4,7 @@ use backend\models\search\InvoiceSearch;
 use yii\helpers\Url;
 use common\models\Invoice;
 use yii\widgets\ActiveForm;
+use kartik\editable\Editable;
 
 ?>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
@@ -119,20 +120,39 @@ use yii\widgets\ActiveForm;
               <tbody>
                 <tr>
                   <td colspan="4">
-                    <?php if (!empty($model->notes)):?>
+                    
                     <div class="row-fluid m-t-20">
-                      <em><strong>Printed Notes: </strong><Br>
-                        <?= $model->notes; ?></em>
-                      </div>
-                      <?php endif; ?>
-                      <?php if (!empty($model->notes) && !empty($model->internal_notes)):?>
-                      <hr class="right-side-faded">
-                      <?php endif; ?>
-                      <?php if (!empty($model->internal_notes)):?>
-                      <div class="row-fluid">
-                      <em><strong>Internal notes:</strong><Br> <?= $model->internal_notes; ?></em>
+					<em><strong>Printed notes:</strong></em><Br>
+					<?=
+					 Editable::widget([
+						'name'=>'notes', 
+						'asPopover' => true,
+						'inputType' => Editable::INPUT_TEXTAREA,
+						'value' => $model->notes,
+						'header' => 'Printed Notes',
+						'submitOnEnter' => false,
+						'size'=>'lg',
+						'options' => ['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Enter Printed notes...'],
+					])
+					?>  
                     </div>
-                    <?php endif; ?>
+                      <hr class="right-side-faded">
+                      <div class="row-fluid">
+                      <em><strong>Internal notes:</strong><Br></em>
+					  <?=
+					 Editable::widget([
+						'name'=>'internalNotes', 
+						'asPopover' => true,
+						'inputType' => Editable::INPUT_TEXTAREA,
+						'value' => $model->internal_notes,
+						'header' => 'Internal Notes',
+						'submitOnEnter' => false,
+						'size'=>'lg',
+						'options' => ['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Enter Internal notes...']
+					])
+					?>  
+                    </div>
+                    
                   </td>
                   <td colspan="2">
                     <table id="invoice-summary-section" class="table-invoice-childtable">
