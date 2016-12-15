@@ -627,9 +627,9 @@ class LessonController extends Controller
                 $creditUsageModel->save();
             }
 
-            return $this->redirect(['invoice/update', 'id' => $invoice->id]);
+            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
 		} else {
-            return $this->redirect(['invoice/update', 'id' => $model->invoice->id]);
+            return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
 		}
 	}
 }

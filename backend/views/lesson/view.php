@@ -76,7 +76,14 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
 		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
 		<?php if (($lessonDate <= $currentDate && !$model->isMissed() && !$model->isCanceled() && !$model->isUnscheduled()) || $model->isCompleted()) : ?>
-		<?php echo Html::a('<span class="label label-primary">Missed Lesson</span>', ['missed', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+		<?php echo Html::a('<span class="label label-primary">Missed Lesson</span>', ['missed', 'id' => $model->id], [
+			'class' => 'm-r-20',
+			'data' => [
+                    'confirm' => 'Are you sure you want to mark this lesson as missed?',
+                    'method' => 'post',
+                ],
+			]) ?>
+	    </div>
 		</div>
 		<?php endif; ?>
 		<?php endif; ?>
