@@ -39,10 +39,9 @@ if (!empty($teacherLessonDataProvider->getModels())) {
 	echo GridView::widget([
 		'id' => 'teacher-lesson',
 		'dataProvider' => $teacherLessonDataProvider,
-		'options' => ['class' => 'col-md-12'],
 		'footerRowOptions' => ['style' => 'font-weight:bold;text-align: right;'],
 		'showFooter' => true,
-		'tableOptions' => ['class' => 'table table-bordered'],
+		'tableOptions' => ['class' => 'table table-bordered m-b-0 table-condensed'],
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'columns' => [
 			[

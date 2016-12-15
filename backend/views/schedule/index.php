@@ -93,11 +93,11 @@ $this->params['breadcrumbs'][] = $this->title;
             <button id="next-week" class="btn btn-default btn-sm">Next Week</button>
     	</div>
 		 </div>
-		 <div class="btn-group" role="group" aria-label="...">
-			<button type="button"  id="teacher" class="btn btn-default">Teacher-view</button>
-			<button type="button" id="classroom" class="btn btn-default">Classroom-view</button>
+		 <div class="t-c-v">
+			<button type="button"  id="teacher" class="btn btn-primary btn-sm"><i class="fa fa-graduation-cap"></i> Teacher view</button>
+			<button type="button" id="classroom" class="btn btn-primary btn-sm"><i class="fa fa-sitemap"></i> Classroom view</button>
 		</div>
-    <div id='calendar' class="p-10"></div>
+    <div id='calendar'></div>
 </div>
 <script type="text/javascript">
 var date = new Date();

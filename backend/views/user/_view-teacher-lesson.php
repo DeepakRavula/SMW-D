@@ -57,15 +57,14 @@ use kartik\grid\GridView;
 				'value' => function ($data) {
 					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
 					$date = $lessonDate->format('l, F jS, Y');
-
 					return !empty($date) ? $date : null;
 				},
-				'pageSummary' => 'Total Hours of Instruction',
+				'pageSummary' => '<div class="text-right">Total Hours of Instruction</div>',
 				'footer' => $lessonCount . ' Lessons in total',
 
 			],
 			[
-				'pageSummary' => $totalDuration . 'm',
+				'pageSummary' => '<div class="text-right">' . $totalDuration . 'm</div>',
 			],
 			[
                 'class' => 'kartik\grid\ExpandRowColumn',

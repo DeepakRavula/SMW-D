@@ -100,16 +100,30 @@ a:hover, a:focus{
 }
 .fc-state-default{
   border-color: rgba(51, 51, 51, 0.1) rgba(72, 72, 72, 0.1) rgba(130, 130, 130, 0.25) !important;
-  background: #f9f9f9 !important; 
-  background: -webkit-linear-gradient(top,  #f9f9f9 0%,#f9f9f9 100%) !important; 
-  background: linear-gradient(to bottom,  #f9f9f9 0%,#f9f9f9 100%) !important; 
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#f9f9f9',GradientType=0 ) !important; /* IE6-9 */
+  background: #9b9b8f !important;
+  color: #fff !important;
+  text-shadow: 0px 0px 0px !important;
+}
+.fc-state-default:hover{
+  background: #83837a !important;
+}
+.fc-state-default.fc-corner-left{
+      border-top-left-radius: 20px !important;
+    border-bottom-left-radius: 20px !important;
+}
+.fc-state-default.fc-corner-right {
+    border-top-right-radius: 20px !important;
+    border-bottom-right-radius: 20px !important;
 }
 .fc-event:hover, .fc-event:focus{
   color: #fff;
 }
-.fc-state-active{
-  border: 1px solid #f7aeae !important;
+.fc-state-active, .fc-state-active:hover{
+    background: #EB232F !important;
+    color: #fff !important;
+    text-shadow: 0px 0px 0px !important;
+    box-shadow: 0px 0px 0px !important;
+    outline: 0 none !important;
 }
 .fc-cell-overlay{
   background: #f5b8b1 !important;
@@ -684,15 +698,8 @@ Licensed under MIT
     position: relative;
     box-sizing: content-box;
 }
-#teacher {
-	position: absolute;
-    top: -55px;
-    left: 875px;
-}
-#classroom {
-	position: absolute;
-    top: -55px;
-    left: 980px;
+#teacher{
+  margin-left: 10px;
 }
 
 .search-field{
@@ -974,6 +981,215 @@ input[type="search"]:-ms-input-placeholder {
 .wizard li.active:after{
   left: 48%;
 }
-#stepwizard_step1_next{
+.t-c-v{
+    position: absolute !important;
+    right: 0px !important;
+    top: -40px !important;
+    /* float: right !important; */
+    /* display: block; */
+}
+.field-lesson-classroomid label{
+      display: block;
+    margin: 0;
+}
+.fc-bgevent{
+  border: 1px solid #ddd;
+  border-left: 0;
+  border-right: 0;
+  opacity: 1 !important;
+}
+.fc-toolbar h2{
+  font-size: 18px;
+}
 
+.fc-unthemed .fc-divider,.fc-unthemed .fc-popover,.fc-unthemed .fc-row,.fc-unthemed tbody,.fc-unthemed td,.fc-unthemed th,.fc-unthemed thead {
+    border-color: #ececec #eae8e8 #E8E8E8!important;
+}
+
+.fc-unthemed td:first-child {
+    border-left: 0 none!important;
+    border-bottom: 0 none!important;
+}
+
+.fc-unthemed .fc-slats tr td:first-child {
+    border-style: solid!important;
+}
+
+.fc-unthemed .fc-minor td:first-child {
+    border-top: 0 none!important;
+}
+
+.fc-unthemed .fc-minor td {
+    border-top-color: #F5F5F5!important;
+}
+
+.fc-unthemed td:last-child {
+    border-right: 0 none!important;
+}
+
+/*.fc-nonbusiness {
+    background: #F1F1F1!important;
+}*/
+
+hr.fc-divider {
+    padding: 0 0 1px!important;
+}
+
+.fc-unthemed .fc-today {
+    background: #FDFCF1!important;
+}
+
+.fc-event-container .fc-event {
+    font-size: 12px;
+    line-height: 14px;
+    border-radius: 4px!important;
+    border: 1px solid rgba(255,255,255,.9);
+    background-color: #9B9B8F;
+    font-family: robotoregular,sans-serif;
+    font-weight: 400;
+    margin-right: -2px;
+    margin-top: 2px;
+    min-height: 13px;
+}
+
+.combo_list ul,.fc-view-container .fc-body .fc-day-grid .fc-row {
+    min-height: 30px;
+}
+
+.fc-event .fc-content {
+    padding: 5px;
+    display: block;
+    white-space: normal!important;
+}
+
+.fc-event .fc-content .fc-time {
+    font-size: 12px!important;
+    font-family: robotobold,sans-serif;
+    line-height: 14px;
+    width: 100%!important;
+}
+
+.fc-event .fc-content .fc-title {
+    font-size: 12px!important;
+    line-height: 14px;
+    width: 95%!important;
+    margin-bottom: 2px;
+    opacity: 1;
+    padding: 0 5% 0 0!important;
+    display: block;
+}
+
+.fc-event .fc-content .fc-description,.fc-event .fc-content .fc-notes {
+    font-size: 12px!important;
+    line-height: 14px;
+    width: 95%!important;
+    padding: 0!important;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.fc-event .fc-content .fc-notes {
+    font-style: italic;
+    margin-top: 8px;
+}
+
+.fc-event .fc-bg {
+    display: none;
+}
+
+.fc-event .fc-resizer {
+    padding: 0;
+    height: 12px!important;
+    line-height: 12px!important;
+    border-top: 1px solid rgba(255,255,255,.05);
+}
+
+.fc-event .fc-resizer:after {
+    font-size: 20px;
+    color: #fff;
+}
+
+.fc-event.red {
+    background-color: #eea09a!important;
+}
+
+.fc-event.red .fc-resizer {
+    background-color: rgba(238,159,153,.9)!important;
+}
+
+.fc-event.blue {
+    background-color: #83c9eb!important;
+}
+
+.fc-event.blue .fc-resizer {
+    background-color: rgba(130,201,235,.9)!important;
+}
+
+.fc-event.green {
+    background-color: #93d8cf!important;
+}
+
+.fc-event.green .fc-resizer {
+    background-color: rgba(147,215,207,.9)!important;
+}
+
+.fc-event.violet {
+    background-color: #d1a7e5!important;
+}
+
+.fc-event.violet .fc-resizer {
+    background-color: rgba(209,167,228,.9)!important;
+}
+
+.fc-event.brown {
+    background-color: #b57570!important;
+}
+
+.fc-event.brown .fc-resizer {
+    background-color: rgba(180,117,112,.9)!important;
+}
+
+.fc-view-container .fc-body,.fc-view-container .fc-body .fc-day-grid,.fc-view-container .fc-head {
+    background-color: #fff;
+}
+
+.fc-view-container .fc-head td,.fc-view-container .fc-head th {
+    border-bottom: 1px solid #f44336!important;
+    border-left: 0 none!important;
+    border-top: 0 none!important;
+    border-right: 0 none!important;
+}
+
+.fc-view-container .fc-head td th {
+    text-align: center;
+    line-height: 35px;
+    color: #2d3135;
+    font-size: 10px;
+    font-family: robotobold,sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.fc-view-container .fc-body .fc-day-grid .fc-axis {
+    font-size: 12px;
+    color: #626256;
+    font-family: robotoregular,sans-serif;
+    font-weight: 400;
+}
+
+.fc-view-container .fc-body .fc-time-grid .fc-axis {
+    text-align: center;
+}
+
+.fc-view-container .fc-body .fc-time-grid .fc-axis.fc-time span {
+    font-size: 10px;
+    color: #332323;
+    font-family: robotoregular,sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.fc-view-container .fc-body .fc-time-grid .fc-slats td {
+/* height:50px; */
+    border-bottom: 0;
 }

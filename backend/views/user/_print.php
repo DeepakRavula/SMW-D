@@ -3,7 +3,7 @@
 use yii\widgets\ListView;
 ?>
 <div>
-<h3> <?= $model->publicIdentity; ?> </h3>
+<h3 class="m-0"> <?= $model->publicIdentity; ?> </h3>
 <?php echo ListView::widget([
 		'dataProvider' => $teacherLessonDataProvider,
 		'itemView' => '_print-content',
@@ -24,14 +24,15 @@ use yii\widgets\ListView;
         }
     }
     ?>
-	<div class="col-md-10">
-    <strong><?= 'Total Hours of Instruction' . ' : ' . $totalDuration . 'm'; ?></strong>
-    </div>
-	<div class="clearfix"></div>
-    <div class="col-md-10">
-    	<strong><?= $lessonCount . ' Lessons in total'; ?></strong>
+    <div class="row">
+    	<div class="col-md-10">
+            <strong><?= 'Total Hours of Instruction' . ' : ' . $totalDuration . 'm'; ?></strong>
+        </div>
+    	<div class="clearfix"></div>
+        <div class="col-md-10">
+        	<strong><?= $lessonCount . ' Lessons in total'; ?></strong>
+    	</div>
 	</div>
-	
 </div>
 <script>
 	$(document).ready(function(){

@@ -14,7 +14,7 @@ use common\models\Classroom;
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<div class="lesson-qualify p-10">
+<div class="lesson-qualify">
 
 	<?=
         $this->render('view', [
@@ -22,7 +22,12 @@ use common\models\Classroom;
         ]);
     ?>
 
-<?php $form = ActiveForm::begin(); ?>
+<?php $form = ActiveForm::begin([
+            'action' => '/login',
+            'options' => [
+                'class' => 'p-10'
+             ]
+        ]); ?>
    <div class="row">
 	   <div class="col-md-4">
 			<?php
@@ -77,9 +82,6 @@ use common\models\Classroom;
             ]);
             ?>
 		</div>
-        <div class="col-md-4">
-            <?php echo $form->field($model, 'notes')->textarea() ?>
-        </div>
 	   <div class=" col-md-4">
 		   <?=
                 $form->field($model, 'classroomId')->widget(SelectivityWidget::classname(), [
@@ -91,7 +93,7 @@ use common\models\Classroom;
                 ]);
                 ?>
 		</div>
-        <div class="form-group col-lg-6">
+        <div class="form-group col-md-3">
         <?php echo $form->field($model, 'colorCode')->widget(ColorInput::classname(), [
                 'options' => [
                     'placeholder' => 'Select color ...',
@@ -99,6 +101,9 @@ use common\models\Classroom;
                 ],
         ]);
         ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo $form->field($model, 'notes')->textarea() ?>
         </div>
     <div class="col-md-12 p-l-20 form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
