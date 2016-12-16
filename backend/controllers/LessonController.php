@@ -529,10 +529,9 @@ class LessonController extends Controller
             $invoice->save();
             $invoice->addLineItem($model);
             $invoice->save();
-            $rootLessonId         = $model->getRootLessonId($model->id);
             $proFormaInvoice      = Invoice::find()
                 ->select(['invoice.id', 'SUM(payment.amount) as credit'])
-                ->proFormaCredit($rootLessonId)
+                ->proFormaCredit($model->id)
                 ->one();
 
             if (!empty($proFormaInvoice)) {
@@ -593,10 +592,9 @@ class LessonController extends Controller
             $invoice->save();
             $invoice->addLineItem($model);
             $invoice->save();
-            $rootLessonId         = $model->getRootLessonId($model->id);
             $proFormaInvoice      = Invoice::find()
                 ->select(['invoice.id', 'SUM(payment.amount) as credit'])
-                ->proFormaCredit($rootLessonId)
+                ->proFormaCredit($model->id)
                 ->one();
 
             if (!empty($proFormaInvoice)) {

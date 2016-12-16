@@ -55,8 +55,7 @@ use common\models\PrivateLesson;
                 'label' => 'Invoiced ?',
                 'value' => function ($data) {
                     $status = null;
-                    $rootLesson = $data->getRootLesson();
-                    if (!empty($rootLesson->invoice)) {
+                    if (!empty($data->invoice)) {
                         $status = 'Yes';
                     } else {
                         $status = 'No';

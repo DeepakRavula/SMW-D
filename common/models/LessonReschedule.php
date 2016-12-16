@@ -41,4 +41,20 @@ class LessonReschedule extends \yii\db\ActiveRecord
             'rescheduledLessonId' => 'Rescheduled Lesson ID',
         ];
     }
+
+    public function afterSave($insert)
+    {
+        if ($insert) {
+            $oldLesson = Lesson::findOne($this->lessonId);
+            if (!empty($oldLesson->invoiceLineItems)) {
+                $invoiceLineItems = $oldLesson->invoiceLineItems;
+                foreach ($invoiceLineItems as $invoiceLineItem) {
+                    $invoiceLineItem->item_id = $this->rescheduledLessonId;
+                    $invoiceLineItem->save();
+                }
+            }
+        }
+
+        return parent::afterSave($insert);
+    }
 }

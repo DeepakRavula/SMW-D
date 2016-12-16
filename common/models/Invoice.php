@@ -367,7 +367,7 @@ class Invoice extends \yii\db\ActiveRecord
                 $lesson->date);
         $invoiceLineItem             = new InvoiceLineItem();
         $invoiceLineItem->invoice_id = $this->id;
-        $rootLessonId                = $lesson->getRootLessonId($lesson->id);
+        $rootLessonId                = $lesson->id;
         $invoiceLineItem->item_id    = $rootLessonId;
         $getDuration                 = \DateTime::createFromFormat('H:i:s',
                 $lesson->duration);

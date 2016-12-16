@@ -494,10 +494,9 @@ class InvoiceController extends Controller
 			$invoice->addLineItem($lesson);
 			$invoice->save();
 
-			$rootLessonId         = $lesson->getRootLessonId($lesson->id);
-            $proFormaInvoice      = Invoice::find()
+			$proFormaInvoice      = Invoice::find()
                 ->select(['invoice.id', 'SUM(payment.amount) as credit'])
-                ->proFormaCredit($rootLessonId)
+                ->proFormaCredit($lesson->id)
                 ->one();
 
             if (!empty($proFormaInvoice)) {

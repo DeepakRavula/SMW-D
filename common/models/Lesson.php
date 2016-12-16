@@ -323,6 +323,12 @@ class Lesson extends \yii\db\ActiveRecord
                 ->where(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
     }
 
+    public function getInvoiceLineItems()
+    {
+        return $this->hasMany(InvoiceLineItem::className(), ['item_id' => 'id'])
+                ->where(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+    }
+
     public function getTeacher()
     {
         return $this->hasOne(User::className(), ['id' => 'teacherId']);

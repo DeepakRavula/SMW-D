@@ -59,9 +59,8 @@ echo GridView::widget([
             'label' => 'Invoice Status',
             'value' => function ($data) {
                 $status = null;
-                $rootLesson = $data->getRootLesson();
-                if (!empty($rootLesson->invoice)) {
-                    return $rootLesson->invoice->getStatus();
+                if (!empty($data->invoice)) {
+                    return $data->invoice->getStatus();
                 } else {
                     $status = 'Not Invoiced';
                 }
@@ -78,8 +77,7 @@ echo GridView::widget([
         [
             'label' => 'Prepaid?',
             'value' => function ($data) {
-                $rootLesson = $data->getRootLesson();
-                if (!empty($rootLesson->proFormaInvoice) && ($rootLesson->proFormaInvoice->isPaid() || $rootLesson->proFormaInvoice->hasCredit())) {
+                if (!empty($data->proFormaInvoice) && ($data->proFormaInvoice->isPaid() || $data->proFormaInvoice->hasCredit())) {
                     return 'Yes';
                 }
 
