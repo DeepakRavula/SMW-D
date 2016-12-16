@@ -23,7 +23,7 @@ use common\models\Classroom;
     ?>
 
 <?php $form = ActiveForm::begin([
-            'action' => '/login',
+            
             'options' => [
                 'class' => 'p-10'
              ]
