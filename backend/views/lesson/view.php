@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use common\models\Program;
 use common\models\Lesson;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -66,12 +67,19 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
        <?php if($model->isMissed()) : ?>
 		<div class="missed-lesson"></div>
 		<?php endif; ?>
+		
 		<?php if (Yii::$app->controller->action->id === 'view'):?>
 	<div class="col-md-12 action-btns m-b-20">
 		<?php if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>
 		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 		<?php endif; ?>
+		<?php if($model->invoice) : ?>
+		<a href= "<?= Url::to(['invoice/view', 'id' => $model->invoice->id]) ?>">
+		<i class=" m-r-10 detail-icon"></i> <?= 'View Invoice'?>
+		</a>
+		<?php else : ?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
+		<?php endif; ?>
 		<?php
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
 		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
