@@ -71,21 +71,19 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		<?php if (Yii::$app->controller->action->id === 'view'):?>
 	<div class="col-md-12 action-btns m-b-20">
 		<?php if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>
-		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-pencil"></i> Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 		<?php endif; ?>
 		<?php if($model->invoice) : ?>
-		<a href= "<?= Url::to(['invoice/view', 'id' => $model->invoice->id]) ?>">
-		<i class=" m-r-10 detail-icon"></i> <?= 'View Invoice'?>
-		</a>
+		<?= Html::a('<span class="label label-primary">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-20 del-ce'])?>
 		<?php else : ?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
-		<?php endif; ?>
+        <?php endif; ?>
 		<?php
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
 		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
 		<?php if (($lessonDate <= $currentDate && !$model->isMissed() && !$model->isCanceled() && !$model->isUnscheduled()) || $model->isCompleted()) : ?>
 		<?php echo Html::a('<span class="label label-primary">Missed Lesson</span>', ['missed', 'id' => $model->id], [
-			'class' => 'm-r-20',
+			'class' => 'm-r-20 del-ce',
 			'data' => [
                     'confirm' => 'Are you sure you want to mark this lesson as missed?',
                     'method' => 'post',
