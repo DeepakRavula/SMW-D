@@ -571,11 +571,7 @@ class LessonController extends Controller
 		$model = Lesson::findOne(['id' => $id]);
 		$model->status = Lesson::STATUS_MISSED;
 		$model->save();
-		$lesson = Lesson::find()
-			->innerJoinWith('invoice')
-			->where(['lesson.id' => $id])
-			->one();
-		if(empty($lesson)) {
+		if(empty($model->invoice)) {
 		  	$invoice = new Invoice();
             $invoice->user_id = $model->enrolment->student->customer->id;
             $invoice->location_id = $location_id;

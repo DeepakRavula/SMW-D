@@ -101,7 +101,8 @@ class LessonSearch extends Lesson
             $query->andFilterWhere(['lesson.courseId' => $this->courseId]);
         }
         if ($this->lessonStatus == Lesson::STATUS_COMPLETED) {
-            $query->completed();
+            $query->unInvoiced()
+                ->completed();
         } elseif ($this->lessonStatus === 'scheduled') {
             $query->scheduled();
         } elseif ($this->lessonStatus === self::STATUS_INVOICED) {
