@@ -22,6 +22,7 @@ class Course extends \yii\db\ActiveRecord
 {
 	const EVENT_VACATION_CREATE_PREVIEW = 'vacation-create-preview';
 	const EVENT_VACATION_DELETE_PREVIEW = 'vacation-delete-preview';
+	const SCENARIO_GROUP_COURSE = 'group-course';
 
     public $studentId;
     public $paymentFrequency;
@@ -52,8 +53,25 @@ class Course extends \yii\db\ActiveRecord
                 return (int) $model->program->type === Program::TYPE_GROUP_PROGRAM;
             },
             ],
-			[['locationId', 'rescheduleBeginDate'], 'safe']
+			[['locationId', 'rescheduleBeginDate'], 'safe'],
+            ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
         ];
+    }
+
+
+	public function checkTeacherAvailableDay($attribute, $params)
+    {
+        $teacherAvailabilities = TeacherAvailability::find()
+            ->joinWith(['teacher' => function ($query) {
+                $query->where(['user.id' => $this->teacherId]);
+            }])
+                ->where(['teacher_availability_day.day' => $this->day])
+                ->all();
+        if (empty($teacherAvailabilities)) {
+			$dayList = self::getWeekdaysList();
+			$day = $dayList[$this->day];
+            $this->addError($attribute, 'Teacher is not available on '. $day);
+        }
     }
 
     /**
