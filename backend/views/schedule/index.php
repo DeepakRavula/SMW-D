@@ -138,159 +138,41 @@ $(document).ready(function() {
         });
     }
     $('#calendar').fullCalendar({
-    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-    header: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'month,agendaWeek,agendaDay'
-    },
-	titleFormat: 'DD-MMM-YYYY, dddd',
-    defaultView: 'agendaDay',
-    minTime: "<?php echo $from_time; ?>",
-    maxTime: "<?php echo $to_time; ?>",
-    slotDuration: "00:15:00",
-    editable: false,
-    droppable: false,
-    resources: resources,
-    events: events,
-    viewRender: function( view, element ) {
-		if(view.name != 'agendaDay') {
-			$('#next-prev-week-button').hide();
-		} else {
-			$('#next-prev-week-button').show();
-		}
-	},
-    eventClick: function(event) {
-        $(location).attr('href', event.url);
-    },
-    dayClick: function(date, allDay, jsEvent, view) {
-        if (allDay) {
-            var resources = getResources(date);
-            refreshCalendar(resources, date);
-        }
-    },
+        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: null
+        },
+        titleFormat: 'DD-MMM-YYYY, dddd',
+        defaultView: 'agendaDay',
+        minTime: "<?php echo $from_time; ?>",
+        maxTime: "<?php echo $to_time; ?>",
+        slotDuration: "00:15:00",
+        editable: false,
+        droppable: false,
+        resources: resources,
+        events: events,
+        eventClick: function(event) {
+            $(location).attr('href', event.url);
+        },
     });
+
     $(".fc-prev-button, .fc-next-button").click(function(){ 
-        $(".fc-view-month .fc-event").hide();
         var date = $('#calendar').fullCalendar('getDate');
-        var view = $('#calendar').fullCalendar('getView');
-        if(view.name == 'agendaDay'){
-            var resources = getResources(date);
-            refreshCalendar(resources, date);
-        }
-    });
-    $(".fc-month-button, .fc-today-button").click(function(){
-        $(".fc-view-month .fc-event").hide();
-    });
-    $(".fc-agendaDay-button, .fc-today-button").click(function(){
-        var date = $('#calendar').fullCalendar('getDate');
-        if ($(this).className === 'fc-today-button') {
-            var date = moment(new Date());
-        }
         var resources = getResources(date);
         refreshCalendar(resources, date);
     });
-        addAllAvailabilityEvents();
-	$("#teacher").click(function() {
-	   $.each( holidays, function( key, value ) {
-			if (value.date == currentDate) {
-				isHoliday = true;
-				resources.push({
-					id: '0',
-					title: 'Holiday'
-				})
-			}
-		});
-		if(day == 0 && !isHoliday) {
-			resources.push({
-				id: '0',
-				title: 'Sunday-Holiday'
-			})
-		} else if(!isHoliday) {
-			$.each( availableTeachersDetails, function( key, value ) {
-				if (value.day == day) {
-					resources.push({
-						id: value.id,
-						title: value.name
-					})
-				}
-			});
-		}
-		$('#calendar').html('');
-		$('#calendar').unbind().removeData().fullCalendar({
-			schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
-			},
-			titleFormat: 'DD-MMM-YYYY, dddd',
-			defaultView: 'agendaDay',
-			minTime: "<?php echo $from_time; ?>",
-			maxTime: "<?php echo $to_time; ?>",
-			slotDuration: "00:15:00",
-			editable: false,
-			droppable: false,
-			resources: resources,
-			events: events,
-			viewRender: function( view, element ) {
-				$('.schedule-filter').show();
-			},
-			eventClick: function(event) {
-				$(location).attr('href', event.url);
-			},
-			dayClick: function(date, allDay, jsEvent, view) {
-				if (allDay) {
-					var resources = getResources(date);
-					refreshCalendar(resources, date);
-				}
-			}
-    	});
-	    $(".fc-prev-button, .fc-next-button").click(function(){ 
-        $(".fc-view-month .fc-event").hide();
-        var date = $('#calendar').fullCalendar('getDate');
-        var view = $('#calendar').fullCalendar('getView');
-        if(view.name == 'agendaDay'){
-            var resources = getResources(date);
-            refreshCalendar(resources, date);
-        }
-    });
-    $(".fc-month-button, .fc-today-button").click(function(){
-        $(".fc-view-month .fc-event").hide();
-    });
-    $(".fc-agendaDay-button, .fc-today-button").click(function(){
-        var date = $('#calendar').fullCalendar('getDate');
-        if ($(this).className === 'fc-today-button') {
-            var date = moment(new Date());
-        }
+
+    $(".fc-today-button").click(function(){
+        var date = moment(new Date());
         var resources = getResources(date);
         refreshCalendar(resources, date);
     });
+
+    if (!isHoliday) {
         addAllAvailabilityEvents();
-	});
-	$('#classroom').click(function(){
-		$('#calendar').html('');
-		$('#calendar').unbind().removeData().fullCalendar({
-			schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-			header: {
-			  left: 'prev,next today',
-			  center: 'title',
-			  right: 'month,agendaWeek,agendaDay'
-			},
-			titleFormat: 'DD-MMM-YYYY, dddd',
-			defaultView: 'agendaDay',
-			minTime: "<?php echo $from_time; ?>",
-			maxTime: "<?php echo $to_time; ?>",
-			slotDuration: "00:15:00",
-			editable: false,
-			droppable: false,
-			resources: <?php echo Json::encode($classroomResource); ?>,
-			events: <?php echo Json::encode($classroomEvents); ?>,
-			viewRender: function( view, element ) {
-				$('.schedule-filter').hide();
-			}
-		});
-  	});
+    }
 });
 
 function addAllAvailabilityEvents() {
@@ -458,6 +340,38 @@ function setTeachers(teachers){
  }
 
 $(document).ready(function () {
+    $("#teacher").click(function() {
+        var date = $('#calendar').fullCalendar('getDate');
+		var resources = getResources(date);
+        refreshCalendar(resources, date);
+    });
+    
+	$('#classroom').click(function(){
+        var date = $('#calendar').fullCalendar('getDate');
+		$('#calendar').html('');
+		$('#calendar').unbind().removeData().fullCalendar({
+			schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            defaultDate: date,
+			header: {
+			  left: 'prev,next today',
+			  center: 'title',
+			  right: null
+			},
+			titleFormat: 'DD-MMM-YYYY, dddd',
+			defaultView: 'agendaDay',
+			minTime: "<?php echo $from_time; ?>",
+			maxTime: "<?php echo $to_time; ?>",
+			slotDuration: "00:15:00",
+			editable: false,
+			droppable: false,
+			resources: <?php echo Json::encode($classroomResource); ?>,
+			events: <?php echo Json::encode($classroomEvents); ?>,
+			viewRender: function() {
+				$('.schedule-filter').hide();
+			}
+		});
+  	});
+
     setTimeout(function(){
 	$('#program-selector').on('change', function(e){
         var date = $('#calendar').fullCalendar('getDate');
@@ -472,12 +386,14 @@ $(document).ready(function () {
 		var resources = getResources(date);
         refreshCalendar(resources, date);
 	}); }, 3000);
+
     $("#next-week").click(function() {
         var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
         var date = moment(calendarDate).add('d', 7);
         var resources = getResources(date);
         refreshCalendar(resources, date);
       });
+
     $("#previous-week").click(function() {
         var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
         var date = moment(calendarDate).subtract('d', 7);
@@ -562,7 +478,7 @@ function refreshCalendar(resources, date) {
         header: {
           left: 'prev,next today',
           center: 'title',
-          right: 'month,agendaWeek,agendaDay'
+          right: null
         },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -573,41 +489,25 @@ function refreshCalendar(resources, date) {
         droppable: false,
         resources:  resources,
         events: events,
-        viewRender: function( view, element ) {
-            if(view.name != 'agendaDay') {
-                $('#next-prev-week-button').hide();
-            } else {
-                $('#next-prev-week-button').show();
-            }
-        },
-        dayClick: function(date, allDay, jsEvent, view) {
-            if (allDay) {
-                var resources = getResources(date);
-                refreshCalendar(resources, date);
-            }
+        viewRender: function() {
+            $('.schedule-filter').show();
         },
     });
+
     $(".fc-prev-button, .fc-next-button").click(function(){
-        $(".fc-view-month .fc-event").hide();
+        $(".fc-event").hide();
         var date = $('#calendar').fullCalendar('getDate');
-        var view = $('#calendar').fullCalendar('getView');
-        if(view.name == 'agendaDay'){
-            var resources = getResources(date);
-            refreshCalendar(resources, date);
-        }
-    })
-    $(".fc-month-button, .fc-today-button").click(function(){
-        $(".fc-view-month .fc-event").hide();
-    })
-    $(".fc-agendaDay-button, .fc-today-button").click(function(){
-        var date = $('#calendar').fullCalendar('getDate');
-        if ($(this).className === 'fc-today-button') {
-            var date = moment(new Date());
-        }
         var resources = getResources(date);
         refreshCalendar(resources, date);
     })
-        addAvailabilityEvents();
+
+    $(".fc-today-button").click(function(){
+        var date = moment(new Date());
+        var resources = getResources(date);
+        refreshCalendar(resources, date);
+    })
+
+    addAvailabilityEvents();
 }
 
  
