@@ -14,7 +14,9 @@ use yii\helpers\ArrayHelper;
 
 <div class="group-course-form p-10">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+		'enableAjaxValidation' => true,
+	]); ?>
 
 <div class="row">
 	<div class="col-md-4">

@@ -15,6 +15,8 @@ use common\models\User;
 use common\models\Student;
 use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
+use yii\widgets\ActiveForm;
+use yii\web\Response;
 
 /**
  * CourseController implements the CRUD actions for Course model.
@@ -108,6 +110,7 @@ class CourseController extends Controller
     public function actionCreate()
     {
         $model = new Course();
+		$model->setScenario(Course::SCENARIO_GROUP_COURSE);
         $teacherModel = ArrayHelper::map(User::find()
                     ->joinWith(['userLocation ul' => function ($query) {
                         $query->joinWith('teacherAvailability');
@@ -119,8 +122,15 @@ class CourseController extends Controller
                 'id', 'userProfile.fullName'
             );
         $model->locationId = Yii::$app->session->get('location_id');
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['lesson/review', 'courseId' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+			if(Yii::$app->request->isAjax) {
+				$response = Yii::$app->response;
+		        $response->format = Response::FORMAT_JSON;
+				return ActiveForm::validate($model);
+			} else {
+				$model->save();
+            	return $this->redirect(['lesson/review', 'courseId' => $model->id]);
+			}
         } else {
             return $this->render('create', [
                 'model' => $model,
