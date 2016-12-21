@@ -184,6 +184,9 @@ $(document).ready(function() {
         eventClick: function(event) {
             $(location).attr('href', event.url);
         },
+        viewRender: function() {
+            $('.fc-teacherView-button').addClass('fc-state-active');
+        }
     });
 
     $(".fc-prev-button, .fc-next-button").click(function(){
@@ -445,6 +448,7 @@ function showClassRoomCalendar(date) {
         resources: <?php echo Json::encode($classroomResource); ?>,
         events: <?php echo Json::encode($classroomEvents); ?>,
         viewRender: function() {
+            $('.fc-classRoomView-button').addClass('fc-state-active');
             $('.filter').hide();
         }
     });
@@ -568,6 +572,7 @@ function refreshCalendar(resources, date) {
         resources:  resources,
         events: events,
         viewRender: function() {
+            $('.fc-teacherView-button').addClass('fc-state-active');
             $('.filter').show();
         }
     });
