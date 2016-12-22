@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\Json;
-use kartik\date\DatePicker;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
@@ -12,6 +11,8 @@ use common\models\CalendarEventColor;
 $this->title = 'Schedule';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
@@ -62,18 +63,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row schedule-filter">
         <div class="col-md-2 m-t-10 text-center"><p>Go to Date</p></div>
         <div class="col-md-2 p-0">
-            <?=
-                DatePicker::widget([
-                    'name' => 'date',
-                    'id' => 'datePicker-date',
-                    'value' => (new \DateTime())->format('d-m-Y'),
-                    'type' => DatePicker::TYPE_BUTTON,
-                    'pluginOptions' => [
-                        'autoclose' => true,
-                        'format' => 'dd-mm-yyyy',
-                    ]
-                ]);
-            ?>
+            <div class="input-group date">
+                <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                </div>
+            </div>
         </div>
         <div class="filter">
             <div class="col-md-1 m-t-10 text-right"><p>Filter by</p></div>
