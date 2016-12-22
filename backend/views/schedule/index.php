@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="input-group date">
                 <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
                 <div class="input-group-addon">
-                    <span class="glyphicon glyphicon-th"></span>
+                    <span class="glyphicon glyphicon-calendar"></span>
                 </div>
             </div>
         </div>
@@ -118,6 +118,11 @@ var events = <?php echo Json::encode($events); ?>;
 var holidays = <?php echo Json::encode($holidays); ?>;
 isclassroom = false;
 $(document).ready(function() {
+	$('.input-group.date').datepicker ({
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+        todayHighlight: true
+    });
     $.each( holidays, function( key, value ) {
         if (value.date == currentDate) {
             isHoliday = true;
