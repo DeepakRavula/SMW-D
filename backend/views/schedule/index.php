@@ -121,7 +121,7 @@ var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails
 var uniqueAvailableTeachersDetails = removeDuplicates(availableTeachersDetails, "id");
 var events = <?php echo Json::encode($events); ?>;
 var holidays = <?php echo Json::encode($holidays); ?>;
-isClassRoom = false;
+isclassroom = false;
 $(document).ready(function() {
     $.each( holidays, function( key, value ) {
         if (value.date == currentDate) {
@@ -154,23 +154,21 @@ $(document).ready(function() {
             teacherView: {
                 text: 'Teacher View',
                 click: function() {
-                    var date = $('#calendar').fullCalendar('getDate');
                     var resources = getResources(date);
                     refreshCalendar(resources, date);
                 }
             },
-            classRoomView: {
-                text: 'Class Room View',
+            classroomView: {
+                text: 'Classroom View',
                 click: function() {
-                    var date = $('#calendar').fullCalendar('getDate');
-                    showClassRoomCalendar(date);
+                    showclassroomCalendar(date);
                 }
             }
         },
         header: {
-            left: 'teacherView today',
+            left: 'today',
             center: 'prevYear prev title next nextYear',
-            right: 'classRoomView'
+            right: 'teacherView classroomView'
         },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -402,17 +400,17 @@ $(document).ready(function () {
 
     $('#datePicker-date').on('change', function(){
         var date = moment($(this).val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
-		if (!isClassRoom) {
+		if (!isclassroom) {
             var resources = getResources(date);
             refreshCalendar(resources, date);
         } else {
-            showClassRoomCalendar(date);
+            showclassroomCalendar(date);
         }
 	});
 });
 
-function showClassRoomCalendar(date) {
-    isClassRoom = true;
+function showclassroomCalendar(date) {
+    isclassroom = true;
     $('#calendar').html('');
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -426,17 +424,17 @@ function showClassRoomCalendar(date) {
                     refreshCalendar(resources, date);
                 }
             },
-            classRoomView: {
-                text: 'Class Room View',
+            classroomView: {
+                text: 'Classroom View',
                 click: function() {
-                    showClassRoomCalendar(date);
+                    showclassroomCalendar(date);
                 }
             }
         },
         header: {
-            left: 'teacherView today',
+            left: 'today',
             center: 'prevYear prev title next nextYear',
-            right: 'classRoomView'
+            right: 'teacherView classroomView'
         },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -448,7 +446,7 @@ function showClassRoomCalendar(date) {
         resources: <?php echo Json::encode($classroomResource); ?>,
         events: <?php echo Json::encode($classroomEvents); ?>,
         viewRender: function() {
-            $('.fc-classRoomView-button').addClass('fc-state-active');
+            $('.fc-classroomView-button').addClass('fc-state-active');
             $('.filter').hide();
         }
     });
@@ -456,13 +454,13 @@ function showClassRoomCalendar(date) {
     $(".fc-nextYear-button").click(function(e) {
         var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
         var date = moment(calendarDate).subtract(1, 'year').add(1, 'weeks');
-        showClassRoomCalendar(date);
+        showclassroomCalendar(date);
     });
 
     $(".fc-prevYear-button").click(function(e) {
         var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
         var date = moment(calendarDate).add(1, 'year').subtract(1, 'weeks');
-        showClassRoomCalendar(date);
+        showclassroomCalendar(date);
     });
 }
 
@@ -535,7 +533,7 @@ function getResources(date) {
 }
 
 function refreshCalendar(resources, date) {
-    isClassRoom = false;
+    isclassroom = false;
     $('#calendar').html('');
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -549,18 +547,18 @@ function refreshCalendar(resources, date) {
                     refreshCalendar(resources, date);
                 }
             },
-            classRoomView: {
-                text: 'Class Room View',
+            classroomView: {
+                text: 'Classroom View',
                 click: function() {
                     var date = $('#calendar').fullCalendar('getDate');
-                    showClassRoomCalendar(date);
+                    showclassroomCalendar(date);
                 }
             }
         },
         header: {
-            left: 'teacherView today',
+            left: 'today',
             center: 'prevYear prev title next nextYear',
-            right: 'classRoomView'
+            right: 'teacherView classroomView'
         },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
