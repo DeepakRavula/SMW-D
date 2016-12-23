@@ -1,15 +1,12 @@
 <?php
 
 use yii\helpers\Json;
-use wbraganca\selectivity\SelectivityWidget;
-use yii\helpers\ArrayHelper;
-use common\models\Program;
+use yii\bootstrap\Tabs;
 use common\models\CalendarEventColor;
 
 /* @var $this yii\web\View */
 
 $this->title = 'Schedule';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -18,11 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<style>
-  .e1Div{
-    right: 0 !important;
-  }
-</style>
 <?php
     $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
     $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
@@ -59,50 +51,51 @@ $this->params['breadcrumbs'][] = $this->title;
             background-color: " . $missedLesson->code . " !important; }"
     );
 ?>
+
+<div class="tabbable-panel">
+    <div class="tabbable-line">
+        <?php
+
+        $teacher = $this->render('_teacher-view',[
+            'availableTeachersDetails' => $availableTeachersDetails
+        ]);
+
+        $classroom = $this->render('_classroom-view');
+
+        ?>
+
+        <?php echo Tabs::widget([
+            'items' => [
+                [
+                    'label' => 'Teacher View',
+                    'content' => $teacher,
+                    'options' => [
+                            'id' => 'teacher-view',
+                        ],
+                ],
+                [
+                    'label' => 'Classroom View',
+                    'content' => $classroom,
+                    'options' => [
+                            'id' => 'classroom-view',
+                        ],
+                ],
+            ],
+        ]);?>
+    </div>
+</div>
+
 <div class="schedule-index">
     <div class="row schedule-filter">
         <div class="col-md-2 m-t-10 text-center"><p>Go to Date</p></div>
-        <div class="col-md-2 p-0">
+        <div class="col-md-2">
             <div id="datepicker" class="input-group date">
                 <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
                 <div class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
-                </div>
-            </div>
-        </div>
-        <div class="filter">
-            <div class="col-md-1 m-t-10 text-right"><p>Filter by</p></div>
-            <div class="col-md-3 p-0">
-                <?=
-                SelectivityWidget::widget([
-                    'name' => 'Program',
-                    'id' => 'program-selector',
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                        'items' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-                        'value' => null,
-                        'placeholder' => 'Program',
-                    ],
-                ]);
-                ?>
-            </div>
-            <div class="col-md-3">
-                <?=
-                SelectivityWidget::widget([
-                    'name' => 'Teacher',
-                    'id' => 'teacher-selector',
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                        'items' => ArrayHelper::map($availableTeachersDetails, 'id', 'name'),
-                        'value' => null,
-                        'placeholder' => 'Teacher',
-                    ],
-                ]);
-                ?>
             </div>
         </div>
     </div>
-    <div id='calendar'></div>
 </div>
 <script type="text/javascript">
 var date = new Date();
@@ -118,12 +111,7 @@ var events = <?php echo Json::encode($events); ?>;
 var holidays = <?php echo Json::encode($holidays); ?>;
 isclassroom = false;
 $(document).ready(function() {
-	$('#datepicker').datepicker ({
-        format: 'dd-mm-yyyy',
-        autoclose: true,
-        todayHighlight: true
-    });
-    $.each( holidays, function( key, value ) {
+	$.each( holidays, function( key, value ) {
         if (value.date == currentDate) {
             isHoliday = true;
             resources.push({
@@ -151,24 +139,17 @@ $(document).ready(function() {
     $('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         customButtons: {
-            teacherView: {
-                text: 'Teacher View',
+            filter: {
+                icon: 'fa-filter',
                 click: function() {
-                    var resources = getResources(date);
-                    refreshCalendar(resources, date);
-                }
-            },
-            classroomView: {
-                text: 'Classroom View',
-                click: function() {
-                    showclassroomCalendar(date);
+                    $('.filter').toggle();
                 }
             }
         },
         header: {
             left: 'today',
             center: 'prevYear prev title next nextYear',
-            right: 'teacherView classroomView'
+            right: 'filter'
         },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -183,7 +164,8 @@ $(document).ready(function() {
             $(location).attr('href', event.url);
         },
         viewRender: function() {
-            $('.fc-teacherView-button').addClass('fc-state-active');
+            $(".fc-filter-button span").remove();
+            $(".fc-filter-button").prepend("<i class='fa fa-filter'></i>");
         }
     });
 
@@ -220,6 +202,19 @@ $(document).ready(function() {
     if (!isHoliday) {
         addAllAvailabilityEvents();
     }
+});
+
+$(document).ready(function () {
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var tab = e.target.text;
+        var date = $('#datepicker').datepicker("getDate");
+        if (tab === "Classroom View") {
+            showclassroomCalendar(date);
+        } else {
+            var resources = getResources(date);
+            refreshCalendar(resources, date);
+        }
+    });
 });
 
 function addAllAvailabilityEvents() {
@@ -387,6 +382,14 @@ function setTeachers(teachers){
  }
 
 $(document).ready(function () {
+    $('#datepicker').datepicker ({
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+        todayHighlight: true
+    });
+    
+    $('.filter').hide();
+
     setTimeout(function(){
 	$('#program-selector').on('change', function(e){
         var date = $('#calendar').fullCalendar('getDate');
@@ -415,30 +418,14 @@ $(document).ready(function () {
 
 function showclassroomCalendar(date) {
     isclassroom = true;
-    $('#calendar').html('');
-    $('#calendar').unbind().removeData().fullCalendar({
+    $('#classroom-calendar').html('');
+    $('#classroom-calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         defaultDate: date,
-        customButtons: {
-            teacherView: {
-                text: 'Teacher View',
-                click: function() {
-                    var date = $('#calendar').fullCalendar('getDate');
-                    var resources = getResources(date);
-                    refreshCalendar(resources, date);
-                }
-            },
-            classroomView: {
-                text: 'Classroom View',
-                click: function() {
-                    showclassroomCalendar(date);
-                }
-            }
-        },
         header: {
             left: 'today',
             center: 'prevYear prev title next nextYear',
-            right: 'teacherView classroomView'
+            right: null,
         },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -449,27 +436,23 @@ function showclassroomCalendar(date) {
         droppable: false,
         resources: <?php echo Json::encode($classroomResource); ?>,
         events: <?php echo Json::encode($classroomEvents); ?>,
-        viewRender: function() {
-            $('.fc-classroomView-button').addClass('fc-state-active');
-            $('.filter').hide();
-        }
     });
 
     $(".fc-prev-button, .fc-next-button, .fc-today-button").click(function(){
         $(".fc-event").hide();
-        var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
+        var calendarDate = new Date($('#classroom-calendar').fullCalendar('getDate'));
         $('#datepicker').datepicker('update', moment(calendarDate).format('DD-MM-YYYY'));
     });
 
     $(".fc-nextYear-button").click(function(e) {
-        var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
+        var calendarDate = new Date($('#classroom-calendar').fullCalendar('getDate'));
         var date = moment(calendarDate).subtract(1, 'year').add(1, 'weeks');
         showclassroomCalendar(date);
         $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
     });
 
     $(".fc-prevYear-button").click(function(e) {
-        var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
+        var calendarDate = new Date($('#classroom-calendar').fullCalendar('getDate'));
         var date = moment(calendarDate).add(1, 'year').subtract(1, 'weeks');
         showclassroomCalendar(date);
         $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
@@ -551,26 +534,17 @@ function refreshCalendar(resources, date) {
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         defaultDate: date,
         customButtons: {
-            teacherView: {
-                text: 'Teacher View',
+            filter: {
+                icon: 'fa-filter',
                 click: function() {
-                    var date = $('#calendar').fullCalendar('getDate');
-                    var resources = getResources(date);
-                    refreshCalendar(resources, date);
-                }
-            },
-            classroomView: {
-                text: 'Classroom View',
-                click: function() {
-                    var date = $('#calendar').fullCalendar('getDate');
-                    showclassroomCalendar(date);
+                    $('.filter').toggle();
                 }
             }
         },
         header: {
             left: 'today',
             center: 'prevYear prev title next nextYear',
-            right: 'teacherView classroomView'
+            right: 'filter'
         },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -582,8 +556,8 @@ function refreshCalendar(resources, date) {
         resources:  resources,
         events: events,
         viewRender: function() {
-            $('.fc-teacherView-button').addClass('fc-state-active');
-            $('.filter').show();
+            $(".fc-filter-button span").remove();
+            $(".fc-filter-button").prepend("<i class='fa fa-filter'></i>");
         }
     });
 
