@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Json;
+use yii\helpers\Html;
 use yii\bootstrap\Tabs;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
@@ -94,8 +95,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="schedule-index">
     <div class="row schedule-filter">
-        <div class="col-md-2 m-t-10 text-center"><p>Go to Date</p></div>
-        <div class="col-md-2 p-0">
+        <div class="col-md-1 m-t-10 text-center"><p>Go to Date</p></div>
+        <div class="col-md-2">
             <div id="datepicker" class="input-group date">
                 <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
                 <div class="input-group-addon">
@@ -134,6 +135,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 ?>
             </div>
         </div>
+    </div>
+    <div class="e1Div">
+        <?= Html::checkbox('active', false, ['label' => 'Show Filters', 'id' => 'active']); ?>
     </div>
 </div>
 <script type="text/javascript">
@@ -414,6 +418,11 @@ $(document).ready(function () {
         autoclose: true,
         todayHighlight: true
     });
+
+    $('.filter').hide();
+    $('#active').on('change', function(){
+        $('.filter').toggle();
+    });
     
     setTimeout(function(){
 	$('#program-selector').on('change', function(e){
@@ -463,6 +472,7 @@ function showclassroomCalendar(date) {
         events: <?php echo Json::encode($classroomEvents); ?>,
         viewRender: function() {
             $('.filter').hide();
+            $('.e1Div').hide();
         }
     });
 
@@ -577,6 +587,7 @@ function refreshCalendar(resources, date) {
         events: events,
         viewRender: function() {
             $('.filter').show();
+            $('.e1Div').show();
         }
     });
 
