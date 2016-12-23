@@ -1,17 +1,12 @@
 <?php
 
 use yii\helpers\Json;
-use yii\helpers\Html;
 use yii\bootstrap\Tabs;
-use wbraganca\selectivity\SelectivityWidget;
-use yii\helpers\ArrayHelper;
-use common\models\Program;
 use common\models\CalendarEventColor;
 
 /* @var $this yii\web\View */
 
 $this->title = 'Schedule';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -20,11 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<style>
-  .e1Div{
-    right: 0 !important;
-  }
-</style>
 <?php
     $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
     $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
@@ -66,7 +56,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="tabbable-line">
         <?php
 
-        $teacher = $this->render('_teacher-view');
+        $teacher = $this->render('_teacher-view',[
+            'availableTeachersDetails' => $availableTeachersDetails
+        ]);
 
         $classroom = $this->render('_classroom-view');
 
@@ -95,49 +87,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="schedule-index">
     <div class="row schedule-filter">
-        <div class="col-md-1 m-t-10 text-center"><p>Go to Date</p></div>
+        <div class="col-md-2 m-t-10 text-center"><p>Go to Date</p></div>
         <div class="col-md-2">
             <div id="datepicker" class="input-group date">
                 <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
                 <div class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
-                </div>
             </div>
         </div>
-        <div class="filter">
-            <div class="col-md-1 m-t-10 text-right"><p>Filter by</p></div>
-            <div class="col-md-3 p-0">
-                <?=
-                SelectivityWidget::widget([
-                    'name' => 'Program',
-                    'id' => 'program-selector',
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                        'items' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-                        'value' => null,
-                        'placeholder' => 'Program',
-                    ],
-                ]);
-                ?>
-            </div>
-            <div class="col-md-3">
-                <?=
-                SelectivityWidget::widget([
-                    'name' => 'Teacher',
-                    'id' => 'teacher-selector',
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                        'items' => ArrayHelper::map($availableTeachersDetails, 'id', 'name'),
-                        'value' => null,
-                        'placeholder' => 'Teacher',
-                    ],
-                ]);
-                ?>
-            </div>
-        </div>
-    </div>
-    <div class="e1Div">
-        <?= Html::checkbox('active', false, ['label' => 'Show Filters', 'id' => 'active']); ?>
     </div>
 </div>
 <script type="text/javascript">
@@ -181,10 +138,18 @@ $(document).ready(function() {
 
     $('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+        customButtons: {
+            filter: {
+                icon: 'fa-filter',
+                click: function() {
+                    $('.filter').toggle();
+                }
+            }
+        },
         header: {
             left: 'today',
             center: 'prevYear prev title next nextYear',
-            right: null
+            right: 'filter'
         },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -198,6 +163,10 @@ $(document).ready(function() {
         eventClick: function(event) {
             $(location).attr('href', event.url);
         },
+        viewRender: function() {
+            $(".fc-filter-button span").remove();
+            $(".fc-filter-button").prepend("<i class='fa fa-filter'></i>");
+        }
     });
 
     $(".fc-prev-button, .fc-next-button").click(function(){
@@ -418,12 +387,9 @@ $(document).ready(function () {
         autoclose: true,
         todayHighlight: true
     });
-
-    $('.filter').hide();
-    $('#active').on('change', function(){
-        $('.filter').toggle();
-    });
     
+    $('.filter').hide();
+
     setTimeout(function(){
 	$('#program-selector').on('change', function(e){
         var date = $('#calendar').fullCalendar('getDate');
@@ -470,10 +436,6 @@ function showclassroomCalendar(date) {
         droppable: false,
         resources: <?php echo Json::encode($classroomResource); ?>,
         events: <?php echo Json::encode($classroomEvents); ?>,
-        viewRender: function() {
-            $('.filter').hide();
-            $('.e1Div').hide();
-        }
     });
 
     $(".fc-prev-button, .fc-next-button, .fc-today-button").click(function(){
@@ -571,10 +533,18 @@ function refreshCalendar(resources, date) {
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         defaultDate: date,
+        customButtons: {
+            filter: {
+                icon: 'fa-filter',
+                click: function() {
+                    $('.filter').toggle();
+                }
+            }
+        },
         header: {
             left: 'today',
             center: 'prevYear prev title next nextYear',
-            right: null
+            right: 'filter'
         },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -586,8 +556,8 @@ function refreshCalendar(resources, date) {
         resources:  resources,
         events: events,
         viewRender: function() {
-            $('.filter').show();
-            $('.e1Div').show();
+            $(".fc-filter-button span").remove();
+            $(".fc-filter-button").prepend("<i class='fa fa-filter'></i>");
         }
     });
 
