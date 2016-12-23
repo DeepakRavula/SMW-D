@@ -16,6 +16,7 @@ use yii\helpers\ArrayHelper;
 
     <?php $form = ActiveForm::begin([
 		'enableAjaxValidation' => true,
+		'enableClientValidation' => false
 	]); ?>
 
 <div class="row">
