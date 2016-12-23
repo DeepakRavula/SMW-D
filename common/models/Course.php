@@ -55,9 +55,28 @@ class Course extends \yii\db\ActiveRecord
             ],
 			[['locationId', 'rescheduleBeginDate'], 'safe'],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
+			[['startDate'], 'checkStartDate', 'on' => self::SCENARIO_GROUP_COURSE],
+			[['endDate'], 'checkEndDate', 'on' => self::SCENARIO_GROUP_COURSE],
         ];
     }
 
+	public function checkStartDate($attribute, $params)
+	{
+		$startDate = (new \DateTime($this->startDate))->format('d-m-Y');
+		$endDate = (new \DateTime($this->endDate))->format('d-m-Y');
+		if ($startDate > $endDate) {
+			return $this->addError($attribute, 'Start date must be less than "End date"');
+		}
+	}
+
+	public function checkEndDate($attribute, $params)
+	{
+		$startDate = (new \DateTime($this->startDate))->format('d-m-Y');
+		$endDate = (new \DateTime($this->endDate))->format('d-m-Y');
+		if ($endDate < $startDate) {
+			return $this->addError($attribute, 'End date must be greater than "Start date"');
+		}
+	}
 
 	public function checkTeacherAvailableDay($attribute, $params)
     {
