@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m161224_071218_add_exam_result extends Migration
+class m161224_110404_add_exam_result extends Migration
 {
     public function up()
     {
@@ -13,7 +13,7 @@ class m161224_071218_add_exam_result extends Migration
 
     public function down()
     {
-        echo "m161224_071218_add_exam_result cannot be reverted.\n";
+        echo "m161224_110404_add_exam_result cannot be reverted.\n";
 
         return false;
     }

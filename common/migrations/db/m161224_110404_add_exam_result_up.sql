@@ -5,7 +5,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 --  Table structure for `exam_result`
 -- ----------------------------
 BEGIN;
-DROP TABLE IF EXISTS `vacation`;
+DROP TABLE IF EXISTS `exam_result`;
 CREATE TABLE `exam_result` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `studentId` int(10) unsigned NOT NULL,
@@ -20,5 +20,4 @@ CREATE TABLE `exam_result` (
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
-
 
