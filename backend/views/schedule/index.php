@@ -87,12 +87,12 @@ $this->title = 'Schedule';
 
 <div class="schedule-index">
     <div class="row schedule-filter">
-        <div class="col-md-2 m-t-10 text-center"><p>Go to Date</p></div>
-        <div class="col-md-2">
+        <div class="col-md-2 pull-right">
             <div id="datepicker" class="input-group date">
                 <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
                 <div class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -100,6 +100,7 @@ $this->title = 'Schedule';
 <script type="text/javascript">
 var date = new Date();
 var currentDate = moment(date).format('YYYY-MM-DD 00:00:00');
+var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
 var isHoliday = false;
 var resources = [];
 var day = moment(date).day();
@@ -111,6 +112,9 @@ var events = <?php echo Json::encode($events); ?>;
 var holidays = <?php echo Json::encode($holidays); ?>;
 isclassroom = false;
 $(document).ready(function() {
+    $(".content-header h1").remove();
+    $(".content-header").prepend("<h1>Schedule for " + formattedDate + "</h1>");
+
 	$.each( holidays, function( key, value ) {
         if (value.date == currentDate) {
             isHoliday = true;
@@ -138,19 +142,6 @@ $(document).ready(function() {
 
     $('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        customButtons: {
-            filter: {
-                icon: 'fa-filter',
-                click: function() {
-                    $('.filter').toggle();
-                }
-            }
-        },
-        header: {
-            left: 'today',
-            center: 'prevYear prev title next nextYear',
-            right: 'filter'
-        },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
         minTime: "<?php echo $from_time; ?>",
@@ -164,39 +155,8 @@ $(document).ready(function() {
             $(location).attr('href', event.url);
         },
         viewRender: function() {
-            $(".fc-filter-button span").remove();
-            $(".fc-filter-button").prepend("<i class='fa fa-filter'></i>");
+            $(".fc-header-toolbar").remove();
         }
-    });
-
-    $(".fc-prev-button, .fc-next-button").click(function(){
-        var date = $('#calendar').fullCalendar('getDate');
-        var resources = getResources(date);
-        refreshCalendar(resources, date);
-        $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
-    });
-
-    $(".fc-today-button").click(function(){
-        var date = moment(new Date());
-        var resources = getResources(date);
-        refreshCalendar(resources, date);
-        $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
-    });
-
-    $(".fc-prevYear-button").click(function() {
-        var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
-        var date = moment(calendarDate).add(1, 'year').subtract(1, 'weeks');
-        var resources = getResources(date);
-        refreshCalendar(resources, date);
-        $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
-    });
-
-    $(".fc-nextYear-button").click(function() {
-        var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
-        var date = moment(calendarDate).subtract(1, 'year').add(1, 'weeks');
-        var resources = getResources(date);
-        refreshCalendar(resources, date);
-        $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
     });
 
     if (!isHoliday) {
@@ -388,8 +348,6 @@ $(document).ready(function () {
         todayHighlight: true
     });
     
-    $('.filter').hide();
-
     setTimeout(function(){
 	$('#program-selector').on('change', function(e){
         var date = $('#calendar').fullCalendar('getDate');
@@ -407,6 +365,9 @@ $(document).ready(function () {
 
     $('#datepicker').on('change', function(){
         var date = $('#datepicker').datepicker("getDate");
+        var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
+        $(".content-header h1").remove();
+        $(".content-header").prepend("<h1>Schedule for " + formattedDate + "</h1>");
 		if (!isclassroom) {
             var resources = getResources(date);
             refreshCalendar(resources, date);
@@ -422,11 +383,6 @@ function showclassroomCalendar(date) {
     $('#classroom-calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         defaultDate: date,
-        header: {
-            left: 'today',
-            center: 'prevYear prev title next nextYear',
-            right: null,
-        },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
         minTime: "<?php echo $from_time; ?>",
@@ -436,26 +392,9 @@ function showclassroomCalendar(date) {
         droppable: false,
         resources: <?php echo Json::encode($classroomResource); ?>,
         events: <?php echo Json::encode($classroomEvents); ?>,
-    });
-
-    $(".fc-prev-button, .fc-next-button, .fc-today-button").click(function(){
-        $(".fc-event").hide();
-        var calendarDate = new Date($('#classroom-calendar').fullCalendar('getDate'));
-        $('#datepicker').datepicker('update', moment(calendarDate).format('DD-MM-YYYY'));
-    });
-
-    $(".fc-nextYear-button").click(function(e) {
-        var calendarDate = new Date($('#classroom-calendar').fullCalendar('getDate'));
-        var date = moment(calendarDate).subtract(1, 'year').add(1, 'weeks');
-        showclassroomCalendar(date);
-        $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
-    });
-
-    $(".fc-prevYear-button").click(function(e) {
-        var calendarDate = new Date($('#classroom-calendar').fullCalendar('getDate'));
-        var date = moment(calendarDate).add(1, 'year').subtract(1, 'weeks');
-        showclassroomCalendar(date);
-        $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
+        viewRender: function() {
+            $(".fc-header-toolbar").remove();
+        }
     });
 }
 
@@ -533,19 +472,6 @@ function refreshCalendar(resources, date) {
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         defaultDate: date,
-        customButtons: {
-            filter: {
-                icon: 'fa-filter',
-                click: function() {
-                    $('.filter').toggle();
-                }
-            }
-        },
-        header: {
-            left: 'today',
-            center: 'prevYear prev title next nextYear',
-            right: 'filter'
-        },
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
         minTime: "<?php echo $from_time; ?>",
@@ -556,40 +482,8 @@ function refreshCalendar(resources, date) {
         resources:  resources,
         events: events,
         viewRender: function() {
-            $(".fc-filter-button span").remove();
-            $(".fc-filter-button").prepend("<i class='fa fa-filter'></i>");
+            $(".fc-header-toolbar").remove();
         }
-    });
-
-    $(".fc-prev-button, .fc-next-button").click(function(){
-        $(".fc-event").hide();
-        var date = $('#calendar').fullCalendar('getDate');
-        var resources = getResources(date);
-        refreshCalendar(resources, date);
-        $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
-    });
-
-    $(".fc-today-button").click(function(){
-        var date = moment(new Date());
-        var resources = getResources(date);
-        refreshCalendar(resources, date);
-        $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
-    });
-
-    $(".fc-prevYear-button").click(function() {
-        var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
-        var date = moment(calendarDate).add(1, 'year').subtract(1, 'weeks');
-        var resources = getResources(date);
-        refreshCalendar(resources, date);
-        $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
-    });
-
-    $(".fc-nextYear-button").click(function() {
-        var calendarDate = new Date($('#calendar').fullCalendar('getDate'));
-        var date = moment(calendarDate).subtract(1, 'year').add(1, 'weeks');
-        var resources = getResources(date);
-        refreshCalendar(resources, date);
-        $('#datepicker').datepicker('update', moment(date).format('DD-MM-YYYY'));
     });
 
     addAvailabilityEvents();
