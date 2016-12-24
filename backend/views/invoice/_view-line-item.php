@@ -26,6 +26,7 @@ $columns = [
             return [
                'header' => 'Description',
                'size' => 'md',
+			   'placement' => 'top',
                'inputType' => \kartik\editable\Editable::INPUT_TEXT,
                'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
            ];
@@ -46,6 +47,7 @@ $columns = [
             return [
                'header' => 'Price',
                'size' => 'md',
+			   'placement' => 'top',
                'inputType' => \kartik\editable\Editable::INPUT_TEXT,
                'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
                'pluginEvents' => [
