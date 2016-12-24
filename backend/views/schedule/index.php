@@ -6,7 +6,7 @@ use common\models\CalendarEventColor;
 
 /* @var $this yii\web\View */
 
-$this->title = 'Schedule';
+$this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -112,10 +112,7 @@ var events = <?php echo Json::encode($events); ?>;
 var holidays = <?php echo Json::encode($holidays); ?>;
 isclassroom = false;
 $(document).ready(function() {
-    $(".content-header h1").remove();
-    $(".content-header").prepend("<h1>Schedule for " + formattedDate + "</h1>");
-
-	$.each( holidays, function( key, value ) {
+    $.each( holidays, function( key, value ) {
         if (value.date == currentDate) {
             isHoliday = true;
             resources.push({
@@ -142,6 +139,7 @@ $(document).ready(function() {
 
     $('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+        header: false,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
         minTime: "<?php echo $from_time; ?>",
@@ -154,9 +152,6 @@ $(document).ready(function() {
         eventClick: function(event) {
             $(location).attr('href', event.url);
         },
-        viewRender: function() {
-            $(".fc-header-toolbar").remove();
-        }
     });
 
     if (!isHoliday) {
@@ -366,8 +361,7 @@ $(document).ready(function () {
     $('#datepicker').on('change', function(){
         var date = $('#datepicker').datepicker("getDate");
         var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-        $(".content-header h1").remove();
-        $(".content-header").prepend("<h1>Schedule for " + formattedDate + "</h1>");
+        $(".content-header h1").text("Schedule for " + formattedDate);
 		if (!isclassroom) {
             var resources = getResources(date);
             refreshCalendar(resources, date);
@@ -382,6 +376,7 @@ function showclassroomCalendar(date) {
     $('#classroom-calendar').html('');
     $('#classroom-calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+        header: false,
         defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -392,9 +387,6 @@ function showclassroomCalendar(date) {
         droppable: false,
         resources: <?php echo Json::encode($classroomResource); ?>,
         events: <?php echo Json::encode($classroomEvents); ?>,
-        viewRender: function() {
-            $(".fc-header-toolbar").remove();
-        }
     });
 }
 
@@ -471,6 +463,7 @@ function refreshCalendar(resources, date) {
     $('#calendar').html('');
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+        header: false,
         defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -481,9 +474,6 @@ function refreshCalendar(resources, date) {
         droppable: false,
         resources:  resources,
         events: events,
-        viewRender: function() {
-            $(".fc-header-toolbar").remove();
-        }
     });
 
     addAvailabilityEvents();
