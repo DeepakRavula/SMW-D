@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
 use common\models\Invoice;
 use yii\web\Response;
 use common\models\TeacherAvailability;
+use common\models\ExamResult;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -95,11 +96,19 @@ class StudentController extends Controller
             'query' => $unscheduledLessons,
         ]);    
 
+		$examResults = ExamResult::find()
+			->where(['studentId' => $model->id]);
+		
+        $examResultDataProvider = new ActiveDataProvider([
+            'query' => $examResults,
+        ]);
+
 		return $this->render('view', [
 			'model' => $model,
 			'lessonDataProvider' => $lessonDataProvider,
 			'enrolmentDataProvider' => $enrolmentDataProvider,
 			'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
+			'examResultDataProvider' => $examResultDataProvider
 		]);
     }
 

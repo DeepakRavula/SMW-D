@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
 use common\models\Vacation;
+use common\models\ExamResult;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -38,6 +39,12 @@ $vacationContent = $this->render('_vacation', [
     'studentModel' => $model,
 ]);
 
+$examResultContent = $this->render('_exam-result', [
+	'model' => new ExamResult(),
+    'studentModel' => $model,
+	'examResultDataProvider' => $examResultDataProvider
+]);
+
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -63,10 +70,17 @@ $vacationContent = $this->render('_vacation', [
                 ],
         ],
 		[
-            'label' => 'Vacations',
+            'label' => 'Exam Result',
             'content' => $vacationContent,
             'options' => [
                 'id' => 'vacation',
+            ],
+        ],
+		[
+            'label' => 'Vacations',
+            'content' => $examResultContent,
+            'options' => [
+                'id' => 'exam-result',
             ],
         ],
     ],
@@ -82,6 +96,10 @@ $vacationContent = $this->render('_vacation', [
    });
    $('#new-lesson').click(function(){
 	$('#new-lesson-modal').modal('show');
+		return false;
+  });
+  $('#new-exam-result').click(function(){
+	$('#new-exam-result-modal').modal('show');
 		return false;
   });
  });
