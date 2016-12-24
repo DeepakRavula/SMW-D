@@ -70,17 +70,17 @@ $examResultContent = $this->render('_exam-result', [
                 ],
         ],
 		[
-            'label' => 'Exam Result',
-            'content' => $vacationContent,
+            'label' => 'Evaluations',
+            'content' => $examResultContent,
             'options' => [
-                'id' => 'vacation',
+                'id' => 'exam-result',
             ],
         ],
 		[
             'label' => 'Vacations',
-            'content' => $examResultContent,
+            'content' => $vacationContent,
             'options' => [
-                'id' => 'exam-result',
+                'id' => 'vacation',
             ],
         ],
     ],
@@ -118,6 +118,28 @@ $(document).on('beforeSubmit', '#lesson-form', function (e) {
 			}else
 			{
 			 $('#lesson-form').yiiActiveForm('updateMessages',
+				   response.errors
+				, true);
+			}
+		}
+		});
+		return false;
+});
+$(document).on('beforeSubmit', '#exam-result-form', function (e) {
+	$.ajax({
+		url    : '<?= Url::to(['exam-result/create', 'studentId' => $model->id]); ?>',
+		type   : 'post',
+		dataType: "json",
+		data   : $(this).serialize(),
+		success: function(response)
+		{
+		   if(response.status)
+		   {
+				$.pjax.reload({container : '#student-exam-result-listing', timeout : 4000});
+				$('#new-exam-result-modal').modal('hide');
+			}else
+			{
+			 $('#exam-result-form').yiiActiveForm('updateMessages',
 				   response.errors
 				, true);
 			}

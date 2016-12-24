@@ -11,13 +11,13 @@ use yii\bootstrap\Modal;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <div id="new-exam-result" class="col-md-12">
-	<h4 class="pull-left m-r-20">Exam Results</h4>
+	<h4 class="pull-left m-r-20">Exam History</h4>
 	<a href="#" class="add-new-exam-result text-add-new"><i class="fa fa-plus"></i></a>
 	<div class="clearfix"></div>
 </div>
 <?php
 Modal::begin([
-    'header' => '<h4 class="m-0">Add Exam Result</h4>',
+    'header' => '<h4 class="m-0">Evaluations</h4>',
     'id'=>'new-exam-result-modal',
 ]);
  echo $this->render('_form-exam-result', [
@@ -26,7 +26,7 @@ Modal::begin([
 ]);
 Modal::end();
 ?>
-<div class="grid-row-open">
+<div>
 <?php yii\widgets\Pjax::begin([
 	'id' => 'student-exam-result-listing',
 	'timeout' => 6000,
@@ -38,17 +38,26 @@ echo GridView::widget([
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => [
-        'date:date',
+        [
+			'label' => 'Exam Date',
+			'value' => function($data) {
+				return !empty($data->date) ? (new \DateTime($data->date))->format('M. d, Y') : null;
+			}
+		],
 		'mark',
 		'level',
 		'program',
 		[
 			'label' => 'Type',
-			'value' => !empty($data->type) ? $data->type : 'None'
+			'value' => function($data) {
+				return !empty($data->type) ? $data->type : 'None';
+			}
 		],
 		[
 			'label' => 'Teacher',
-			'value' => !empty($data->teacherId) ? $data->teacher->publicIdentity : null
+			'value' => function($data) {
+				return !empty($data->teacherId) ? $data->teacher->publicIdentity : null;
+			}
 		]
     ],
 ]);

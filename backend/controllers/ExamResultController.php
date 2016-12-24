@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * ExamResultController implements the CRUD actions for ExamResult model.
@@ -58,17 +59,32 @@ class ExamResultController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($studentId)
     {
+		$response = Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
         $model = new ExamResult();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        if ($model->load(Yii::$app->request->post())) {
+			$model->studentId = $studentId;
+			if ($model->validate()) {
+	            $model->save();
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$errors = ActiveForm::validate($model);
+				$response = [
+					'status' => false,
+					'errors' =>  $errors
+				];
+			}
+			return $response;
+        } /*else {
             return $this->render('create', [
                 'model' => $model,
             ]);
-        }
+        }*/
     }
 
     /**

@@ -8,6 +8,8 @@ use kartik\depdrop\DepDrop;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use yii\helpers\Url;
+use common\models\User;
+use wbraganca\selectivity\SelectivityWidget;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
