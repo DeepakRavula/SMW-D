@@ -4,6 +4,10 @@ use yii\helpers\Json;
 use yii\bootstrap\Tabs;
 use common\models\CalendarEventColor;
 
+use wbraganca\selectivity\SelectivityWidget;
+use yii\helpers\ArrayHelper;
+use common\models\Program;
+
 /* @var $this yii\web\View */
 
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
@@ -51,7 +55,38 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
             background-color: " . $missedLesson->code . " !important; }"
     );
 ?>
-
+<div class="p-10 calendar-filter">
+        <div class="pull-right m-1-20">
+		Filter by
+            <?=
+            SelectivityWidget::widget([
+                'name' => 'Program',
+                'id' => 'program-selector',
+                'pluginOptions' => [
+                    'allowClear' => true,
+                    'items' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+                    'value' => null,
+                    'placeholder' => 'Program',
+                ],
+            ]);
+            ?>
+       
+        
+            <?=
+            SelectivityWidget::widget([
+                'name' => 'Teacher',
+                'id' => 'teacher-selector',
+                'pluginOptions' => [
+                    'allowClear' => true,
+                    'items' => ArrayHelper::map($availableTeachersDetails, 'id', 'name'),
+                    'value' => null,
+                    'placeholder' => 'Teacher',
+                ],
+            ]);
+            ?>
+       </div>
+   
+</div>
 <div class="tabbable-panel">
     <div class="tabbable-line">
         <?php
@@ -165,9 +200,11 @@ $(document).ready(function () {
         var date = $('#datepicker').datepicker("getDate");
         if (tab === "Classroom View") {
             showclassroomCalendar(date);
+			$('.calendar-filter').hide();
         } else {
             var resources = getResources(date);
             refreshCalendar(resources, date);
+			$('.calendar-filter').show();
         }
     });
 });
