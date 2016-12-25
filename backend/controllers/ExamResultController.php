@@ -80,11 +80,7 @@ class ExamResultController extends Controller
 				];
 			}
 			return $response;
-        } /*else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }*/
+        }
     }
 
     /**
@@ -114,9 +110,10 @@ class ExamResultController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+		$model = $this->findModel($id);
+        $model->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['student/view', 'id' => $model->studentId, '#' => 'exam-result']);
     }
 
     /**
