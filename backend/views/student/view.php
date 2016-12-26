@@ -102,6 +102,10 @@ $examResultContent = $this->render('exam-result/view', [
 	$('#new-exam-result-modal').modal('show');
 		return false;
   });
+  $('#edit-button').click(function(){
+	$('#new-exam-result-modal').modal('show');
+		return false;
+  });
   });
 $(document).on('beforeSubmit', '#lesson-form', function (e) {
 	$.ajax({
@@ -135,7 +139,7 @@ $(document).on('beforeSubmit', '#exam-result-form', function (e) {
 		{
 		   if(response.status)
 		   {
-				$.pjax.reload({container : '#student-exam-result-listing', timeout : 4000});
+				$.pjax.reload({container : '#student-exam-result-listing', timeout : 6000});
 				$('#new-exam-result-modal').modal('hide');
 			}else
 			{
@@ -156,7 +160,7 @@ $(document).on('click', '#button' ,function() {
 		{
 			if(response) {
 				var url = response.url;
-				$.pjax.reload({url:url, container : '#student-exam-result-listing', timeout : 4000});
+				$.pjax.reload({url:url, container : '#student-exam-result-listing', timeout : 6000});
 			}
 		}
 	});
