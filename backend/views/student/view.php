@@ -147,6 +147,21 @@ $(document).on('beforeSubmit', '#exam-result-form', function (e) {
 		});
 		return false;
 });
+$(document).on('click', '#button' ,function() {
+	$.ajax({
+		url : $(this).attr('href'),
+		type : 'POST',
+		dataType : 'json',
+		success: function(response)
+		{
+			if(response) {
+				var url = response.url;
+				$.pjax.reload({url:url, container : '#student-exam-result-listing', timeout : 4000});
+			}
+		}
+	});
+	return false;
+});
 </script>
 
 

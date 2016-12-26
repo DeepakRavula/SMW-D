@@ -65,12 +65,7 @@ echo GridView::widget([
 			'template' => '{delete}',
 			'buttons' => [
 				'delete' => function  ($url, $model) {
-					return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['exam-result/delete', 'id' => $model->id],[
-			'data' => [
-                    'confirm' => 'Are you sure you want to delete this exam history?',
-                    'method' => 'post',
-                ],
-		]);
+                    return  Html::a('<i class="fa fa-times" aria-hidden="true"></i>',['exam-result/delete', 'id' => $model->id], ['id' => 'button']);
 				},
 			],
 		],
