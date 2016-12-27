@@ -62,8 +62,14 @@ echo GridView::widget([
 		],
 		[
 			'class' => 'yii\grid\ActionColumn',
-			'template' => '{delete}',
+			'template' => '{edit}{delete}',
 			'buttons' => [
+				'edit' => function  ($url, $model) {
+                    return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
+						'id' => 'edit-button-' . $model->id,
+						'class' => 'edit-button'
+					]);
+				},
 				'delete' => function  ($url, $model) {
                     return  Html::a('<i class="fa fa-times" aria-hidden="true"></i>',['exam-result/delete', 'id' => $model->id], ['id' => 'button']);
 				},

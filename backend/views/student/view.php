@@ -91,43 +91,70 @@ $examResultContent = $this->render('exam-result/view', [
  </div>
 <script>
  $(document).ready(function() {
-   $('.add-new-vacation').click(function(){
+	$(document).on('click', '.add-new-vacation', function (e) {
        $('.vacation-create').show();
-   });
-   $('#new-lesson').click(function(){
-	$('#new-lesson-modal').modal('show');
 		return false;
-  });
-  $('#new-exam-result').click(function(){
-	$('#new-exam-result-modal').modal('show');
+   	});
+	$(document).on('click', '#new-lesson', function (e) {
+		$('#new-lesson-modal').modal('show');
 		return false;
-  });
-  });
-$(document).on('beforeSubmit', '#lesson-form', function (e) {
-	$.ajax({
-		url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
-		type   : 'post',
-		dataType: "json",
-		data   : $(this).serialize(),
-		success: function(response)
-		{
-		   if(response.status)
-		   {
-				$.pjax.reload({container : '#student-lesson-listing', timeout : 4000});
-				$('#new-lesson-modal').modal('hide');
-			}else
+  	});
+	$(document).on('click', '#new-exam-result', function (e) {
+		$('#new-exam-result-modal').modal('show');
+		return false;
+  	});
+  	$(document).on('click', '.edit-button' ,function() {
+		$.ajax({
+			url    : '<?= Url::to(['exam-result/update']); ?>?id=' + $(this).parent().parent().data('key'),
+			type   : 'get',
+			dataType: "json",
+			success: function(response)
 			{
-			 $('#lesson-form').yiiActiveForm('updateMessages',
-				   response.errors
-				, true);
+			   if(response.status)
+			   {
+				   $('#new-exam-result-modal .modal-body').html(response.data);
+					$('#new-exam-result-modal').modal('show');
+				} else {
+				 $('#lesson-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
+				}
 			}
-		}
+		});
+	});
+	$(document).on('beforeSubmit', '#lesson-form', function (e) {
+		$.ajax({
+			url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#student-lesson-listing', timeout : 4000});
+					$('#new-lesson-modal').modal('hide');
+				}else
+				{
+				 $('#lesson-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
+				}
+			}
 		});
 		return false;
-});
+	});
 $(document).on('beforeSubmit', '#exam-result-form', function (e) {
+	var studentId = <?= $model->id;?>;
+	var examResultId = $('#examresult-id').val();
+
+	if(examResultId) {
+		var url = '/exam-result/update?id=' + examResultId;
+	} else {
+		var url = '/exam-result/create?studentId=' + studentId;
+	}
 	$.ajax({
-		url    : '<?= Url::to(['exam-result/create', 'studentId' => $model->id]); ?>',
+		url    : url,
 		type   : 'post',
 		dataType: "json",
 		data   : $(this).serialize(),
@@ -135,7 +162,7 @@ $(document).on('beforeSubmit', '#exam-result-form', function (e) {
 		{
 		   if(response.status)
 		   {
-				$.pjax.reload({container : '#student-exam-result-listing', timeout : 4000});
+				$.pjax.reload({container : '#student-exam-result-listing', timeout : 6000});
 				$('#new-exam-result-modal').modal('hide');
 			}else
 			{
@@ -156,11 +183,12 @@ $(document).on('click', '#button' ,function() {
 		{
 			if(response) {
 				var url = response.url;
-				$.pjax.reload({url:url, container : '#student-exam-result-listing', timeout : 4000});
+				$.pjax.reload({url:url, container : '#student-exam-result-listing', timeout : 6000});
 			}
 		}
 	});
 	return false;
+});
 });
 </script>
 
