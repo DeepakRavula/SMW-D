@@ -5,6 +5,7 @@ use yii\bootstrap\Tabs;
 use common\models\Vacation;
 use common\models\ExamResult;
 use yii\helpers\Url;
+use common\models\Note;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -45,6 +46,12 @@ $examResultContent = $this->render('exam-result/view', [
 	'examResultDataProvider' => $examResultDataProvider
 ]);
 
+$noteContent = $this->render('note/view', [
+	'model' => new Note(),
+    'studentModel' => $model,
+	'noteDataProvider' => $noteDataProvider
+]);
+
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -68,6 +75,13 @@ $examResultContent = $this->render('exam-result/view', [
             'options' => [
                     'id' => 'unscheduledLesson',
                 ],
+        ],
+		[
+            'label' => 'Notes',
+            'content' => $noteContent,
+            'options' => [
+                'id' => 'note',
+            ],
         ],
 		[
             'label' => 'Evaluations',
@@ -100,6 +114,10 @@ $examResultContent = $this->render('exam-result/view', [
   });
   $('#new-exam-result').click(function(){
 	$('#new-exam-result-modal').modal('show');
+		return false;
+  });
+  $('#student-note').click(function(){
+	$('#student-note-modal').modal('show');
 		return false;
   });
   });
@@ -161,6 +179,28 @@ $(document).on('click', '#button' ,function() {
 		}
 	});
 	return false;
+});
+$(document).on('beforeSubmit', '#student-note-form', function (e) {
+	$.ajax({
+		url    : '<?= Url::to(['student/add-note', 'id' => $model->id]); ?>',
+		type   : 'post',
+		dataType: "json",
+		data   : $(this).serialize(),
+		success: function(response)
+		{
+		   if(response.status)
+		   {
+				$.pjax.reload({container : '#student-note-listing', timeout : 12000});
+				$('#student-note-modal').modal('hide');
+			}else
+			{
+			 $('#student-note-form').yiiActiveForm('updateMessages',
+				   response.errors
+				, true);
+			}
+		}
+		});
+		return false;
 });
 </script>
 
