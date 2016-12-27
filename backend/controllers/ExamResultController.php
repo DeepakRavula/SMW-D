@@ -92,15 +92,18 @@ class ExamResultController extends Controller
      */
     public function actionUpdate($id)
     {
+		$response = Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
+		$data =  $this->renderPartial('//student/exam-result/_form', [
+				'model' => $model
+		]);
+
+		 return [
+			'status' => true,
+			'data' => $data
+		];
     }
 
     /**

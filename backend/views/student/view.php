@@ -102,7 +102,33 @@ $examResultContent = $this->render('exam-result/view', [
 	$('#new-exam-result-modal').modal('show');
 		return false;
   });
-  $('#edit-button').click(function(){
+  $('.edit-button').click(function(){
+	 /**
+	  * 1. Get the chosen row Id (examResultId)
+	  * 2. Load _form with examResult model data using Ajax
+	  * 3. Then, $('#new-exam-result-modal body').html(_form data)
+	  * 4. Show the dialog
+	  */
+
+	$.ajax({
+		url    : '<?= Url::to(['exam-result/update']); ?>?id=' + $(this).parent().parent().data('key'),
+		type   : 'get',
+		dataType: "json",
+		success: function(response)
+		{
+		   if(response.status)
+		   {
+
+			   $('#new-exam-result-modal .modal-body').html(response.data);
+				$('#new-exam-result-modal').modal('show');
+			}else
+			{
+			 $('#lesson-form').yiiActiveForm('updateMessages',
+				   response.errors
+				, true);
+			}
+		}
+		});
 	$('#new-exam-result-modal').modal('show');
 		return false;
   });
