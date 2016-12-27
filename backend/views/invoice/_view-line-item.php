@@ -34,6 +34,30 @@ $columns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'discount',
+        'refreshGrid' => true,
+        'headerOptions' => ['class' => 'kv-sticky-column'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+        'editableOptions' => function ($model, $key, $index) {
+            return [
+                'header' => 'Discount',
+                'size' => 'md',
+                'placement' => 'left',
+                'afterInput' => function ($form, $widget) use ($model, $index) {
+                    echo $form->field($model, "[{$index}]discountType")->dropDownList([1 => '$', 2 => '%']);
+                },
+                'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+            ];
+        },
+    ],
+    [
+        'label' => 'Type',
+        'value' => function ($data) {
+            return $data->getDiscountType();
+        },
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'amount',
         'label' => 'Price',
         'refreshGrid' => true,
@@ -55,6 +79,12 @@ $columns = [
                 ],
 
            ];
+        },
+    ],
+    [
+        'label' => 'Final Price',
+        'value' => function ($data) {
+            return $data->getFinalPrice();
         },
     ],
     [

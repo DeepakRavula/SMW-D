@@ -11,12 +11,16 @@ use common\models\TaxStatus;
  * @property int $invoice_id
  * @property int $item_id
  * @property float $unit
+ * @property float $discount
+ * @property float $discountType
  * @property string $amount
  */
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
     private $isRoyaltyExempted;
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
+    const DISCOUNT_FLAT            = 1;
+    const DISCOUNT_PERCENTAGE      = 2;
 
     /**
      * {@inheritdoc}
@@ -24,6 +28,27 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'invoice_line_item';
+    }
+
+    public function getDiscountType() {
+        switch ($this->discountType) {
+            case self::DISCOUNT_FLAT:
+        		$discountType = '$';
+            break;
+            case self::DISCOUNT_PERCENTAGE:
+        		$discountType = '%';
+            break;
+        }
+        return $discountType;
+    }
+
+    public function getFinalPrice()
+    {
+        $finalPrice = $this->amount - $this->discount;
+        if ((int) $this->discountType === (int) self::DISCOUNT_PERCENTAGE) {
+            $finalPrice = $this->amount - ($this->amount * ($this->discount / 100));
+        }
+        return $finalPrice;
     }
 
     /**
@@ -99,6 +124,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'lesson_id' => 'Lesson ID',
             'unit' => 'Quantity',
             'amount' => 'Total',
+            'discount' => 'Discount',
+            'discountType' => 'Discount Type',
             'description' => 'Description',
             'tax_rate' => 'Tax',
             'tax_status' => 'Tax Status',
@@ -109,12 +136,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($insert && !$this->isMisc()) {
-            $taxStatus        = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-            $this->tax_type   = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-            $this->tax_rate   = 0.0;
-            $this->tax_code   = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-            $this->tax_status = $taxStatus->name;
-            $this->isRoyalty  = true;
+            $taxStatus          = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
+            $this->tax_type     = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
+            $this->tax_rate     = 0.0;
+            $this->tax_code     = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
+            $this->tax_status   = $taxStatus->name;
+            $this->isRoyalty    = true;
+            $this->discount     = 0.00;
+            $this->discountType = self::DISCOUNT_FLAT;
             if($this->isOpeningBalance()) {
                 $this->isRoyalty  = false;
             }
