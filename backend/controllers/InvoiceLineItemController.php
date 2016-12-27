@@ -43,6 +43,12 @@ class InvoiceLineItemController extends Controller
                 $output = $model->description;
                 $model->save();
             }
+            if ($post['InvoiceLineItem'][$lineItemIndex]['discount']) {
+                $model->discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
+                $model->discountType = $post['InvoiceLineItem'][$lineItemIndex]['discountType'];
+                $output = $model->discount;
+                $model->save();
+            }
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['amount'])) {
                 $newAmount = $post['InvoiceLineItem'][$lineItemIndex]['amount'];
                 if ($model->isOpeningBalance()) {
