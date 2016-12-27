@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use yii\helpers\Url;
 
 /**
  * ExamResultController implements the CRUD actions for ExamResult model.
@@ -80,11 +81,7 @@ class ExamResultController extends Controller
 				];
 			}
 			return $response;
-        } /*else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }*/
+        }
     }
 
     /**
@@ -114,9 +111,17 @@ class ExamResultController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+		$response = Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+		
+		$model = $this->findModel($id);
+        if($model->delete()) {
+			$url = Url::to(['student/view', 'id' => $model->studentId, '#' => 'exam-result']);
+        	return [
+				'status' => true,
+				'url' => $url,
+			];
+		}
     }
 
     /**

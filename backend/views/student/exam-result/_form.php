@@ -1,13 +1,9 @@
 <?php
 
-use common\models\Lesson;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
-use kartik\depdrop\DepDrop;
 use yii\helpers\ArrayHelper;
-use common\models\Program;
-use yii\helpers\Url;
 use common\models\User;
 use wbraganca\selectivity\SelectivityWidget;
 

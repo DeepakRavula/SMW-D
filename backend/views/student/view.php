@@ -39,7 +39,7 @@ $vacationContent = $this->render('_vacation', [
     'studentModel' => $model,
 ]);
 
-$examResultContent = $this->render('_exam-result', [
+$examResultContent = $this->render('exam-result/view', [
 	'model' => new ExamResult(),
     'studentModel' => $model,
 	'examResultDataProvider' => $examResultDataProvider
@@ -102,7 +102,7 @@ $examResultContent = $this->render('_exam-result', [
 	$('#new-exam-result-modal').modal('show');
 		return false;
   });
- });
+  });
 $(document).on('beforeSubmit', '#lesson-form', function (e) {
 	$.ajax({
 		url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
@@ -146,6 +146,21 @@ $(document).on('beforeSubmit', '#exam-result-form', function (e) {
 		}
 		});
 		return false;
+});
+$(document).on('click', '#button' ,function() {
+	$.ajax({
+		url : $(this).attr('href'),
+		type : 'POST',
+		dataType : 'json',
+		success: function(response)
+		{
+			if(response) {
+				var url = response.url;
+				$.pjax.reload({url:url, container : '#student-exam-result-listing', timeout : 4000});
+			}
+		}
+	});
+	return false;
 });
 </script>
 

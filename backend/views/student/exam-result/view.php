@@ -5,6 +5,7 @@ use common\models\ExamResult;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -20,7 +21,7 @@ Modal::begin([
     'header' => '<h4 class="m-0">Evaluations</h4>',
     'id'=>'new-exam-result-modal',
 ]);
- echo $this->render('_form-exam-result', [
+ echo $this->render('_form', [
 		'model' => new ExamResult(),
         'studentModel' => $studentModel,
 ]);
@@ -58,7 +59,16 @@ echo GridView::widget([
 			'value' => function($data) {
 				return !empty($data->teacherId) ? $data->teacher->publicIdentity : null;
 			}
-		]
+		],
+		[
+			'class' => 'yii\grid\ActionColumn',
+			'template' => '{delete}',
+			'buttons' => [
+				'delete' => function  ($url, $model) {
+                    return  Html::a('<i class="fa fa-times" aria-hidden="true"></i>',['exam-result/delete', 'id' => $model->id], ['id' => 'button']);
+				},
+			],
+		],
     ],
 ]);
 ?>
