@@ -68,6 +68,7 @@ use wbraganca\selectivity\SelectivityWidget;
         </div>
         <div class="clearfix"></div>
     <div class="col-md-12 p-l-20 form-group">
+		<?=  $form->field($model, 'id')->hiddenInput();?>
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php if(! $model->isNewRecord) : ?>
             <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']); ?>

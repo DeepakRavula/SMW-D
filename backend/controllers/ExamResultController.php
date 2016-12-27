@@ -96,7 +96,7 @@ class ExamResultController extends Controller
 		$response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
 
-		$data =  $this->renderPartial('//student/exam-result/_form', [
+		$data =  $this->renderAjax('//student/exam-result/_form', [
 				'model' => $model
 		]);
 

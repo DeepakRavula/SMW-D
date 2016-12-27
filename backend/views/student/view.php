@@ -102,7 +102,7 @@ $examResultContent = $this->render('exam-result/view', [
 	$('#new-exam-result-modal').modal('show');
 		return false;
   });
-  $('.edit-button').click(function(){
+  $(document).on('click', '.edit-button' ,function() {
 	 /**
 	  * 1. Get the chosen row Id (examResultId)
 	  * 2. Load _form with examResult model data using Ajax
@@ -156,8 +156,16 @@ $(document).on('beforeSubmit', '#lesson-form', function (e) {
 		return false;
 });
 $(document).on('beforeSubmit', '#exam-result-form', function (e) {
+	var studentId = <?= $model->id;?>;
+	var examResultId = $('#examresult-id').val();
+
+	if(examResultId) {
+		var url = '/exam-result/update?id=' + examResultId;
+	} else {
+		var url = '/exam-result/create?studentId=' + studentId;
+	}
 	$.ajax({
-		url    : '<?= Url::to(['exam-result/create', 'studentId' => $model->id]); ?>',
+		url    : url,
 		type   : 'post',
 		dataType: "json",
 		data   : $(this).serialize(),
