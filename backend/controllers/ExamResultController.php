@@ -97,13 +97,19 @@ class ExamResultController extends Controller
         $model = $this->findModel($id);
 
 		$data =  $this->renderAjax('//student/exam-result/_form', [
-				'model' => $model
+			'model' => $model,
 		]);
-
-		 return [
+		if ($model->load(Yii::$app->request->post())) {
+	       	$model->save();
+			return  [
+				'status' => true,
+			];
+        }
+		return [
 			'status' => true,
 			'data' => $data
 		];
+
     }
 
     /**
