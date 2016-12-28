@@ -106,7 +106,7 @@ use kartik\editable\Editable;
     </div>
 	</div>
     <?php endif; ?>
-    <?php if($model->isProFormaInvoice()) :?>
+    <?php if(!empty($model->lineItem)) :?>
     <div id="apply-discount" class="col-md-12">
     <div class="row m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Apply Discount</a>
