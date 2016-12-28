@@ -50,14 +50,14 @@ use yii\bootstrap\Tabs;
         'form' => $form,
     ]);
 
-    $qualificationContent = $this->render('_form-qualification', [
+    $qualificationContent = $this->render('teacher/_form-qualification', [
         'model' => $model,
         'form' => $form,
         'programs' => $programs,
         'roles' => $roles,
     ]);
 
-    $teacherAvailabilityContent = $this->render('_form-teacher-availability', [
+    $teacherAvailabilityContent = $this->render('teacher/_form-availability', [
         'model' => $model,
         'form' => $form,
         'availabilityModels' => $availabilityModels,
