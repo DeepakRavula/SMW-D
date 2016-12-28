@@ -55,7 +55,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 
 		<?php
 
-        $studentContent = $this->render('_customer-student', [
+        $studentContent = $this->render('customer/_student', [
                 'model' => $model,
                 'dataProvider' => $dataProvider,
                 'student' => $student,
@@ -68,27 +68,27 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             'searchModel' => $searchModel,
         ]);
 
-        $lessonContent = $this->render('_lesson', [
+        $lessonContent = $this->render('customer/_lesson', [
             'model' => $model,
             'lessonDataProvider' => $lessonDataProvider,
         ]);
 
-        $enrolmentContent = $this->render('_enrolment', [
+        $enrolmentContent = $this->render('customer/_enrolment', [
             'enrolmentDataProvider' => $enrolmentDataProvider,
         ]);
 
-        $invoiceContent = $this->render('_invoice', [
+        $invoiceContent = $this->render('customer/_invoice', [
             'invoiceDataProvider' => $invoiceDataProvider,
             'searchModel' => $searchModel,
             'userModel' => $model,
         ]);
 
-        $proFormaInvoiceContent = $this->render('_pro-forma-invoice', [
+        $proFormaInvoiceContent = $this->render('customer/_pro-forma-invoice', [
             'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
             'userModel' => $model,
         ]);
 
-        $paymentContent = $this->render('_account', [
+        $paymentContent = $this->render('customer/_account', [
             'paymentDataProvider' => $paymentDataProvider,
             'model' => $model,
         ]);
@@ -109,7 +109,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             'studentDataProvider' => $studentDataProvider,
         ]);
 
-        $openingBalanceContent = $this->render('_opening-balance', [
+        $openingBalanceContent = $this->render('customer/_opening-balance', [
             'openingBalanceDataProvider' => $openingBalanceDataProvider,
             'openingBalanceCredit' => $openingBalanceCredit,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
