@@ -14,8 +14,7 @@ use common\models\PaymentMethod;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
 use common\models\CreditUsage;
-use common\models\InvoiceLineItem;
-
+use yii\filters\ContentNegotiator;
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
@@ -28,6 +27,14 @@ class PaymentController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['edit', 'credit-payment'],
+                'formatParam' => '_format',
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -192,8 +199,6 @@ class PaymentController extends Controller
         $model = Invoice::findOne(['id' => $id]);
         $paymentModel = new Payment();
         $paymentModel->setScenario('apply-credit');
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $request = Yii::$app->request;
         if ($paymentModel->load($request->post())) {
             $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
@@ -237,8 +242,6 @@ class PaymentController extends Controller
     public function actionEdit($id)
     {
         $request = Yii::$app->request;
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $post = $request->post();
         if ($request->post('hasEditable')) {
             $paymentIndex = $request->post('editableIndex');

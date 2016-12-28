@@ -6,6 +6,10 @@ use Yii;
 use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\InvoiceLineItem;
+use yii\web\Response;
+use yii\filters\ContentNegotiator;
+use yii\bootstrap\ActiveForm;
+use common\models\Invoice;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -24,12 +28,19 @@ class InvoiceLineItemController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['edit', 'apply-discount'],
+                'formatParam' => '_format',
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
     public function actionEdit($id)
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if (Yii::$app->request->post('hasEditable')) {
             $lineItemIndex = Yii::$app->request->post('editableIndex');
             $model = InvoiceLineItem::findOne(['id' => $id]);
@@ -40,13 +51,11 @@ class InvoiceLineItemController extends Controller
             $post = Yii::$app->request->post();
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['description'])) {
                 $model->description = $post['InvoiceLineItem'][$lineItemIndex]['description'];
-                $output = $model->description;
                 $model->save();
             }
-            if ($post['InvoiceLineItem'][$lineItemIndex]['discount']) {
+            if (isset($post['InvoiceLineItem'][$lineItemIndex]['discount'])) {
                 $model->discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
                 $model->discountType = $post['InvoiceLineItem'][$lineItemIndex]['discountType'];
-                $output = $model->discount;
                 $model->save();
             }
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['amount'])) {
@@ -60,6 +69,7 @@ class InvoiceLineItemController extends Controller
                         ['model' => $model, 'newAmount' => $newAmount]);
                 }
             }
+            $model->invoice->save();
             return $result;
         }
     }
@@ -122,6 +132,36 @@ class InvoiceLineItemController extends Controller
         ];
 
         return $result;
+    }
+
+    public function actionApplyDiscount($id)
+    {
+        $invoiceModel = Invoice::findOne($id);
+        $invoiceModel->setScenario(Invoice::SCENARIO_DISCOUNT);
+        if ($invoiceModel->load(Yii::$app->request->post())) {
+            if ($invoiceModel->validate()) {
+                $invoiceLineItems = $invoiceModel->lineItems;
+                foreach ($invoiceLineItems as $invoiceLineItem) {
+                    $invoiceLineItem->discount = $invoiceModel->discount;
+                    $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
+                    $invoiceLineItem->save();
+                }
+                $invoiceModel->save();
+                $response = [
+                    'status' => true,
+                    'invoiceStatus' => $invoiceModel->getStatus(),
+                ];
+            } else {
+                $errors = ActiveForm::validate($invoiceModel);
+                $response = [
+                    'status' => false,
+                    'errors' => $errors,
+                ];
+            }
+
+            return $response;
+        }
+
     }
 
     public function actionDelete($id)

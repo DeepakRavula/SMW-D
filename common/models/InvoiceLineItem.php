@@ -42,13 +42,19 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $discountType;
     }
 
-    public function getFinalPrice()
+    public function getNetPrice()
     {
-        $finalPrice = $this->amount - $this->discount;
+        return $this->amount - $this->getDiscount();
+    }
+
+    public function getDiscount()
+    {
         if ((int) $this->discountType === (int) self::DISCOUNT_PERCENTAGE) {
-            $finalPrice = $this->amount - ($this->amount * ($this->discount / 100));
+            $discount = $this->amount * ($this->discount / 100);
+        } else {
+            $discount = $this->discount;
         }
-        return $finalPrice;
+        return $discount;
     }
 
     /**

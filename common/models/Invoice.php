@@ -32,9 +32,11 @@ class Invoice extends \yii\db\ActiveRecord
 	const EVENT_GENERATE = 'event-generate';
 	const EVENT_UPDATE = 'event-update';
     const SCENARIO_DELETE = 'delete';
+    const SCENARIO_DISCOUNT = 'discount';
 
     public $customer_id;
     public $credit;
+    public $discount;
     /**
      * {@inheritdoc}
      */
@@ -54,6 +56,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['isSent'], 'boolean'],
             [['type', 'notes', 'internal_notes', 'status'], 'safe'],
 			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
+            [['discount'], 'required', 'on' => self::SCENARIO_DISCOUNT],
         ];
     }
 
@@ -132,6 +135,11 @@ class Invoice extends \yii\db\ActiveRecord
         return (int) $this->type === (int) Invoice::TYPE_INVOICE;
 	}
 
+    public function isProFormaInvoice()
+	{
+        return (int) $this->type === (int) Invoice::TYPE_PRO_FORMA_INVOICE;
+	}
+
     public function isPaid()
     {
         return (int) $this->status === (int) self::STATUS_PAID;
@@ -172,7 +180,8 @@ class Invoice extends \yii\db\ActiveRecord
         if(!$this->isOpeningBalance()) {
             $subTotal    = $this->lineItemTotal;
             $tax         = $this->lineItemTax;
-            $totalAmount = $subTotal + $tax;
+            $discount    = $this->getDiscount();
+            $totalAmount = ($subTotal + $tax) - $discount;
             $this->updateAttributes([
                     'subTotal' => $subTotal,
                     'tax' => $tax,
@@ -221,6 +230,18 @@ class Invoice extends \yii\db\ActiveRecord
         	}
 		}
         return $balance;
+    }
+
+    public function getDiscount()
+    {
+        $discount = 0.0;
+        if (!empty($this->lineItems)) {
+            foreach ($this->lineItems as $lineItem) {
+                $discount += $lineItem->getDiscount();
+            }
+        }
+
+        return $discount;
     }
 
     public function getSumOfPayment($customerId)

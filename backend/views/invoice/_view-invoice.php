@@ -103,9 +103,17 @@ use kartik\editable\Editable;
     <div class="row m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>
 	<div class="clearfix"></div>
-  </div>
+    </div>
 	</div>
-	<?php endif; ?>
+    <?php endif; ?>
+    <?php if(!empty($model->lineItem)) :?>
+    <div id="apply-discount" class="col-md-12">
+    <div class="row m-b-20">
+	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Apply Discount</a>
+	<div class="clearfix"></div>
+    </div>
+	</div>
+    <?php endif; ?>
 	<?php echo $this->render('_line-item', [
         'invoiceModel' => $model,
     ]) ?>
@@ -216,7 +224,13 @@ $(document).ready(function() {
     $('#invoicelineitem-tax_status').val('');
 	$('#invoice-line-item-modal').modal('show');
   		return false;
-  });
+    });
+
+    $('#apply-discount').click(function(){
+        $('#apply-discount-modal').modal('show');
+  		return false;
+    });
+    
 	$('input[name="Invoice[isSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
 	$.ajax({
             url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>',
@@ -233,6 +247,9 @@ $(document).ready(function() {
   });
 </script>
 <script>
+$(document).ajaxSuccess(function() {
+  invoice.updateSummarySectionAndStatus();
+});
 $('#delete-button').click(function(){
 	$.ajax({
 		url    : '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
