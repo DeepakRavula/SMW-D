@@ -236,8 +236,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $discount = 0.0;
         if (!empty($this->lineItems)) {
-            $lineItems = $this->lineItems;
-            foreach ($lineItems as $lineItem) {
+            foreach ($this->lineItems as $lineItem) {
                 $discount += $lineItem->getDiscount();
             }
         }

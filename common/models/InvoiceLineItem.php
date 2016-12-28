@@ -44,12 +44,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        if ((int) $this->discountType === (int) self::DISCOUNT_PERCENTAGE) {
-            $netPrice = $this->amount - ($this->amount * ($this->discount / 100));
-        } else {
-            $netPrice = $this->amount - $this->discount;
-        }
-        return $netPrice;
+        return $this->amount - $this->getDiscount();
     }
 
     public function getDiscount()

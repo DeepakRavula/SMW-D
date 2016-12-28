@@ -30,6 +30,15 @@ class PaymentController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'contentNegotiator' => [
+                'class' => \yii\filters\ContentNegotiator::className(),
+                'only' => ['edit', 'credit-payment'],
+                'formatParam' => '_format',
+                'formats' => [
+                    'application/json' => \yii\web\Response::FORMAT_JSON,
+                    'application/xml' => \yii\web\Response::FORMAT_XML,
+                ],
+            ],
         ];
     }
 
@@ -192,8 +201,6 @@ class PaymentController extends Controller
         $model = Invoice::findOne(['id' => $id]);
         $paymentModel = new Payment();
         $paymentModel->setScenario('apply-credit');
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $request = Yii::$app->request;
         if ($paymentModel->load($request->post())) {
             $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
@@ -237,8 +244,6 @@ class PaymentController extends Controller
     public function actionEdit($id)
     {
         $request = Yii::$app->request;
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $post = $request->post();
         if ($request->post('hasEditable')) {
             $paymentIndex = $request->post('editableIndex');

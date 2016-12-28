@@ -27,12 +27,20 @@ class InvoiceLineItemController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'contentNegotiator' => [
+                'class' => \yii\filters\ContentNegotiator::className(),
+                'only' => ['edit', 'apply-discount'],
+                'formatParam' => '_format',
+                'formats' => [
+                    'application/json' => \yii\web\Response::FORMAT_JSON,
+                    'application/xml' => \yii\web\Response::FORMAT_XML,
+                ],
+            ],
         ];
     }
 
     public function actionEdit($id)
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if (Yii::$app->request->post('hasEditable')) {
             $lineItemIndex = Yii::$app->request->post('editableIndex');
             $model = InvoiceLineItem::findOne(['id' => $id]);
@@ -46,7 +54,13 @@ class InvoiceLineItemController extends Controller
                 $output = $model->description;
                 $model->save();
             }
-            if ($post['InvoiceLineItem'][$lineItemIndex]['discount']) {
+            if (empty($post['InvoiceLineItem'][$lineItemIndex]['discount'])) {
+                $model->discount = 0;
+                $model->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+                $output = $model->discount;
+                $model->save();
+            }
+            if (!empty($post['InvoiceLineItem'][$lineItemIndex]['discount'])) {
                 $model->discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
                 $model->discountType = $post['InvoiceLineItem'][$lineItemIndex]['discountType'];
                 $output = $model->discount;
@@ -130,8 +144,6 @@ class InvoiceLineItemController extends Controller
 
     public function actionApplyDiscount($id)
     {
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $invoiceModel = Invoice::findOne($id);
         $invoiceModel->setScenario(Invoice::SCENARIO_DISCOUNT);
         if ($invoiceModel->load(Yii::$app->request->post())) {

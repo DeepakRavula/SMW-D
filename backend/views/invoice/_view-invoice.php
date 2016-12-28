@@ -247,6 +247,9 @@ $(document).ready(function() {
   });
 </script>
 <script>
+$(document).ajaxSuccess(function() {
+  invoice.updateSummarySectionAndStatus();
+});
 $('#delete-button').click(function(){
 	$.ajax({
 		url    : '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
