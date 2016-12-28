@@ -16,6 +16,8 @@ use yii\helpers\Url;
 	<a href="#" class="add-new-exam-result text-add-new"><i class="fa fa-plus"></i></a>
 	<div class="clearfix"></div>
 </div>
+<?= Html::a('<i class="fa fa-print"></i> Print', ['exam-result/print', 'studentId' => $studentModel->id], ['class' => 'btn btn-default pull-right m-l-20', 'target' => '_blank']) ?>
+	<div class="clearfix"></div>
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Evaluations</h4>',
@@ -67,11 +69,11 @@ echo GridView::widget([
 				'edit' => function  ($url, $model) {
                     return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
 						'id' => 'edit-button-' . $model->id,
-						'class' => 'edit-button'
+						'class' => 'edit-button m-l-20'
 					]);
 				},
 				'delete' => function  ($url, $model) {
-                    return  Html::a('<i class="fa fa-times" aria-hidden="true"></i>',['exam-result/delete', 'id' => $model->id], ['id' => 'button']);
+                    return  Html::a('<i class="fa fa-times" aria-hidden="true"></i>',['exam-result/delete', 'id' => $model->id], ['id' => 'button', 'class' => 'm-l-20']);
 				},
 			],
 		],

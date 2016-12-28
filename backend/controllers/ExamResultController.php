@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\Student;
 use common\models\ExamResult;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -148,4 +149,20 @@ class ExamResultController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+	public function actionPrint($studentId)
+    {
+		$studentModel = Student::findOne(['id' => $studentId]);
+        $examResults = ExamResult::find()->where(['studentId' => $studentId]);
+        $examResultDataProvider = new ActiveDataProvider([
+            'query' => $examResults,
+        ]);
+
+        $this->layout = '/print';
+
+        return $this->render('/student/exam-result/_print', [
+			'studentModel' => $studentModel,
+			'examResultDataProvider' => $examResultDataProvider,
+        ]);
+	}
 }
