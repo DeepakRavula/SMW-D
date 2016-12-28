@@ -14,8 +14,7 @@ use common\models\PaymentMethod;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
 use common\models\CreditUsage;
-use common\models\InvoiceLineItem;
-
+use yii\filters\ContentNegotiator;
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
@@ -31,12 +30,11 @@ class PaymentController extends Controller
                 ],
             ],
             'contentNegotiator' => [
-                'class' => \yii\filters\ContentNegotiator::className(),
+                'class' => ContentNegotiator::className(),
                 'only' => ['edit', 'credit-payment'],
                 'formatParam' => '_format',
                 'formats' => [
-                    'application/json' => \yii\web\Response::FORMAT_JSON,
-                    'application/xml' => \yii\web\Response::FORMAT_XML,
+                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];

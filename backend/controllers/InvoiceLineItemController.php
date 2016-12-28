@@ -7,6 +7,7 @@ use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\InvoiceLineItem;
 use yii\web\Response;
+use yii\filters\ContentNegotiator;
 use yii\bootstrap\ActiveForm;
 use common\models\Invoice;
 use yii\web\Controller;
@@ -28,12 +29,11 @@ class InvoiceLineItemController extends Controller
                 ],
             ],
             'contentNegotiator' => [
-                'class' => \yii\filters\ContentNegotiator::className(),
+                'class' => ContentNegotiator::className(),
                 'only' => ['edit', 'apply-discount'],
                 'formatParam' => '_format',
                 'formats' => [
-                    'application/json' => \yii\web\Response::FORMAT_JSON,
-                    'application/xml' => \yii\web\Response::FORMAT_XML,
+                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -51,19 +51,11 @@ class InvoiceLineItemController extends Controller
             $post = Yii::$app->request->post();
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['description'])) {
                 $model->description = $post['InvoiceLineItem'][$lineItemIndex]['description'];
-                $output = $model->description;
                 $model->save();
             }
-            if (empty($post['InvoiceLineItem'][$lineItemIndex]['discount'])) {
-                $model->discount = 0;
-                $model->discountType = InvoiceLineItem::DISCOUNT_FLAT;
-                $output = $model->discount;
-                $model->save();
-            }
-            if (!empty($post['InvoiceLineItem'][$lineItemIndex]['discount'])) {
+            if (isset($post['InvoiceLineItem'][$lineItemIndex]['discount'])) {
                 $model->discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
                 $model->discountType = $post['InvoiceLineItem'][$lineItemIndex]['discountType'];
-                $output = $model->discount;
                 $model->save();
             }
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['amount'])) {
