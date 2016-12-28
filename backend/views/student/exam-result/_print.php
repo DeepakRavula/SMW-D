@@ -4,6 +4,9 @@ use yii\grid\GridView;
 ?>
 <div>
 	<h3 class="m-0"> <?= $studentModel->fullName; ?> </h3>
+</div>
+<div class="clearfix"></div>
+<div>
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $examResultDataProvider,
@@ -32,7 +35,7 @@ use yii\grid\GridView;
 			[
 				'label' => 'Program',
 				'value' => function($data) {
-					return !empty($data->date) ? (new \DateTime($data->date))->format('M. d, Y') : null;
+					return !empty($data->program) ? $data->program : null;
 				}
 			],
 			[
@@ -50,6 +53,7 @@ use yii\grid\GridView;
 		],
 	]);
 	?>
+</div>
 	<script>
         $(document).ready(function () {
             window.print();
