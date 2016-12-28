@@ -526,7 +526,7 @@ class LessonController extends Controller
                 ->one();
 
             if (!empty($proFormaInvoice)) {
-				$model->invoice->addPayment($proFormaInvoice);
+				$invoice->addPayment($proFormaInvoice);
             }
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
@@ -561,7 +561,7 @@ class LessonController extends Controller
                 ->one();
 
             if (!empty($proFormaInvoice)) {
-				$model->invoice->addPayment($proFormaInvoice);
+				$invoice->addPayment($proFormaInvoice);
             }
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
