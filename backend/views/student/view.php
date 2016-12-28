@@ -113,6 +113,10 @@ $noteContent = $this->render('note/view', [
 		$('#new-lesson-modal').modal('show');
 		return false;
   	});
+	$(document).on('click', '#student-note', function (e) {
+		$('#student-note-modal').modal('show');
+		return false;
+  	});
 	$(document).on('click', '#new-exam-result', function (e) {
 		$('#new-exam-result-modal').modal('show');
 		return false;
@@ -158,72 +162,73 @@ $noteContent = $this->render('note/view', [
 		});
 		return false;
 	});
-$(document).on('beforeSubmit', '#exam-result-form', function (e) {
-	var studentId = <?= $model->id;?>;
-	var examResultId = $('#examresult-id').val();
+	$(document).on('beforeSubmit', '#exam-result-form', function (e) {
+		var studentId = <?= $model->id;?>;
+		var examResultId = $('#examresult-id').val();
 
-	if(examResultId) {
-		var url = '/exam-result/update?id=' + examResultId;
-	} else {
-		var url = '/exam-result/create?studentId=' + studentId;
-	}
-	$.ajax({
-		url    : url,
-		type   : 'post',
-		dataType: "json",
-		data   : $(this).serialize(),
-		success: function(response)
-		{
-		   if(response.status)
-		   {
-				$.pjax.reload({container : '#student-exam-result-listing', timeout : 6000});
-				$('#new-exam-result-modal').modal('hide');
-			}else
+		if(examResultId) {
+			var url = '/exam-result/update?id=' + examResultId;
+		} else {
+			var url = '/exam-result/create?studentId=' + studentId;
+		}
+		$.ajax({
+			url    : url,
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
 			{
-			 $('#exam-result-form').yiiActiveForm('updateMessages',
-				   response.errors
-				, true);
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#student-exam-result-listing', timeout : 6000});
+					$('#new-exam-result-modal').modal('hide');
+				}else
+				{
+				 $('#exam-result-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
+				}
 			}
-		}
-		});
-		return false;
-});
-$(document).on('click', '#button' ,function() {
-	$.ajax({
-		url : $(this).attr('href'),
-		type : 'POST',
-		dataType : 'json',
-		success: function(response)
-		{
-			if(response) {
-				var url = response.url;
-				$.pjax.reload({url:url, container : '#student-exam-result-listing', timeout : 6000});
-			}
-		}
+			});
+			return false;
 	});
-	return false;
-});
-$(document).on('beforeSubmit', '#student-note-form', function (e) {
-	$.ajax({
-		url    : '<?= Url::to(['student/add-note', 'id' => $model->id]); ?>',
-		type   : 'post',
-		dataType: "json",
-		data   : $(this).serialize(),
-		success: function(response)
-		{
-		   if(response.status)
-		   {
-				$.pjax.reload({container : '#student-note-listing', timeout : 12000});
-				$('#student-note-modal').modal('hide');
-			}else
+	$(document).on('click', '#button' ,function() {
+		$.ajax({
+			url : $(this).attr('href'),
+			type : 'POST',
+			dataType : 'json',
+			success: function(response)
 			{
-			 $('#student-note-form').yiiActiveForm('updateMessages',
-				   response.errors
-				, true);
+				if(response) {
+					var url = response.url;
+					$.pjax.reload({url:url, container : '#student-exam-result-listing', timeout : 6000});
+				}
 			}
-		}
 		});
 		return false;
+	});
+	$(document).on('beforeSubmit', '#student-note-form', function (e) {
+		$.ajax({
+			url    : '<?= Url::to(['student/add-note', 'id' => $model->id]); ?>',
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#student-note-listing', timeout : 12000});
+					$('#student-note-modal').modal('hide');
+				}else
+				{
+				 $('#student-note-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
+				}
+			}
+		});
+		return false;
+	});
 });
 </script>
 

@@ -167,7 +167,6 @@ class StudentController extends Controller
 			$model->instanceId = $id;
 			$model->instanceType = Note::INSTANCE_TYPE_STUDENT;
             $model->createdUserId = $userId;
-			$model->updatedUserId = $userId;
 			if ($model->validate()) {
 	            $model->save();
 				$response = [

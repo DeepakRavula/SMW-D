@@ -12,7 +12,6 @@ use Yii;
  * @property integer $instanceType
  * @property string $content
  * @property string $createdUserId
- * @property string $updatedUserId
  * @property string $createdOn
  * @property string $updatedOn
  */
@@ -35,7 +34,7 @@ class Note extends \yii\db\ActiveRecord
     {
         return [
             [['content'], 'required'],
-            [['instanceId', 'instanceType', 'createdUserId', 'updatedUserId'], 'integer'],
+            [['instanceId', 'instanceType', 'createdUserId'], 'integer'],
             [['content'], 'string'],
             [['createdOn', 'updatedOn'], 'safe'],
         ];
@@ -52,7 +51,6 @@ class Note extends \yii\db\ActiveRecord
             'instanceType' => 'Instance Type',
             'content' => 'Content',
             'createdUserId' => 'Created User ID',
-            'updatedUserId' => 'Updated User ID',
             'createdOn' => 'Created On',
             'updatedOn' => 'Updated On',
         ];
@@ -61,11 +59,6 @@ class Note extends \yii\db\ActiveRecord
 	public function getCreatedUser()
     {
         return $this->hasOne(User::className(), ['id' => 'createdUserId']);
-    }
-
-	public function getUpdatedUser()
-    {
-        return $this->hasOne(User::className(), ['id' => 'updatedUserId']);
     }
 
 	public function beforeSave($insert)
