@@ -82,9 +82,9 @@ $columns = [
         },
     ],
     [
-        'label' => 'Final Price',
+        'label' => 'Net Price',
         'value' => function ($data) {
-            return $data->getFinalPrice();
+            return $data->getNetPrice();
         },
     ],
     [

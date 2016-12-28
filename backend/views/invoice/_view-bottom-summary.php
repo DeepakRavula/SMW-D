@@ -7,6 +7,10 @@
 	<td><?= $model->tax; ?></td>
 </tr>
 <tr>
+	<td>Discount</td>
+	<td><?= $model->getDiscount(); ?></td>
+</tr>
+<tr>
 	<td>Paid</td>
 	<td><?= $model->paymentTotal; ?></td>
 </tr>
