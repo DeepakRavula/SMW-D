@@ -18,6 +18,8 @@ use common\models\Invoice;
 use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\ExamResult;
+use common\models\Note;
+use yii\widgets\ActiveForm;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -103,12 +105,21 @@ class StudentController extends Controller
             'query' => $examResults,
         ]);
 
+		$notes = Note::find()
+			->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_STUDENT])
+			->orderBy(['createdOn' => SORT_DESC]);
+
+        $noteDataProvider = new ActiveDataProvider([
+            'query' => $notes,
+        ]);
+
 		return $this->render('view', [
 			'model' => $model,
 			'lessonDataProvider' => $lessonDataProvider,
 			'enrolmentDataProvider' => $enrolmentDataProvider,
 			'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
-			'examResultDataProvider' => $examResultDataProvider
+			'examResultDataProvider' => $examResultDataProvider,
+			'noteDataProvider' => $noteDataProvider
 		]);
     }
 
@@ -143,6 +154,34 @@ class StudentController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+	public function actionAddNote($id)
+    {
+		$userId = Yii::$app->user->id;
+		$response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+        $model = new Note();
+		$request = Yii::$app->request;
+        if ($model->load($request->post())) {
+			$model->instanceId = $id;
+			$model->instanceType = Note::INSTANCE_TYPE_STUDENT;
+            $model->createdUserId = $userId;
+			$model->updatedUserId = $userId;
+			if ($model->validate()) {
+	            $model->save();
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$errors = ActiveForm::validate($model);
+				$response = [
+					'status' => false,
+					'errors' =>  $errors
+				];
+			}
+			return $response;
+		}
     }
 
     /**
