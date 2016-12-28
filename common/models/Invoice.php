@@ -388,8 +388,14 @@ class Invoice extends \yii\db\ActiveRecord
                 $lesson->date);
         $invoiceLineItem             = new InvoiceLineItem();
         $invoiceLineItem->invoice_id = $this->id;
-        $rootLessonId                = $lesson->id;
-        $invoiceLineItem->item_id    = $rootLessonId;
+        $invoiceLineItem->item_id    = $lesson->id;
+        if (!empty($lesson->invoiceLineItem)) {
+            $invoiceLineItem->discount     = $lesson->invoiceLineItem->discount;
+            $invoiceLineItem->discountType = $lesson->invoiceLineItem->discountType;
+        } else {
+            $invoiceLineItem->discount     = 0.00;
+            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+        }
         $getDuration                 = \DateTime::createFromFormat('H:i:s',
                 $lesson->duration);
         $hours                       = $getDuration->format('H');
