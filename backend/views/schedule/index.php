@@ -186,7 +186,7 @@ $(document).ready(function() {
         events: events,
         eventClick: function(event) {
             $(location).attr('href', event.url);
-        },
+        }
     });
 
     if (!isHoliday) {
@@ -194,17 +194,42 @@ $(document).ready(function() {
     }
 });
 
+function getEvents(resources, action, date) {
+    var isClassroom = false;
+    if (action === 'classroom-event') {
+        isClassroom = true;
+    }
+    $.ajax({
+        url    : '' + action + '?date=' + date + '',
+        type   : 'GET',
+        dataType: "json",
+        success: function(response)
+        {
+            if (isClassroom) {
+                showclassroomCalendar(response, moment(date));
+            } else {
+                refreshCalendar(resources, response, moment(date));
+            }
+        }
+    });
+    return false;
+}
+
 $(document).ready(function () {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         var tab = e.target.text;
         var date = $('#datepicker').datepicker("getDate");
+        var formattedDate = moment($('#datepicker').datepicker("getDate")).format('YYYY-MM-DD');
         if (tab === "Classroom View") {
-            showclassroomCalendar(date);
-			$('.calendar-filter').hide();
+            var action = 'classroom-event';
+            var resources = [];
+            getEvents(resources, action, formattedDate);
+            $('.calendar-filter').hide();
         } else {
             var resources = getResources(date);
-            refreshCalendar(resources, date);
-			$('.calendar-filter').show();
+            var action = 'day-event';
+            getEvents(resources, action, formattedDate);
+            $('.calendar-filter').show();
         }
     });
 });
@@ -383,32 +408,40 @@ $(document).ready(function () {
     setTimeout(function(){
 	$('#program-selector').on('change', function(e){
         var date = $('#calendar').fullCalendar('getDate');
+        var formattedDate = moment(date).format('YYYY-MM-DD');
 		var resources = getResources(date);
-        refreshCalendar(resources, date);
+        var action = 'day-event';
+        getEvents(resources, action, formattedDate);
         loadTeachers(e.value);
 	}); }, 3000);
 
     setTimeout(function(){
 	$('#teacher-selector').on('change', function(){
         var date = $('#calendar').fullCalendar('getDate');
+        var formattedDate = moment(date).format('YYYY-MM-DD');
 		var resources = getResources(date);
-        refreshCalendar(resources, date);
+        var action = 'day-event';
+        getEvents(resources, action, formattedDate);
 	}); }, 3000);
 
     $('#datepicker').on('change', function(){
         var date = $('#datepicker').datepicker("getDate");
         var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
+        var dateOnly = moment(date).format('YYYY-MM-DD');
         $(".content-header h1").text("Schedule for " + formattedDate);
 		if (!isclassroom) {
             var resources = getResources(date);
-            refreshCalendar(resources, date);
+            var action = 'day-event';
+            getEvents(resources, action, dateOnly);
         } else {
-            showclassroomCalendar(date);
+            var action = 'classroom-event';
+            var resources = [];
+            getEvents(resources, action, dateOnly);
         }
 	});
 });
 
-function showclassroomCalendar(date) {
+function showclassroomCalendar(events, date) {
     isclassroom = true;
     $('#classroom-calendar').html('');
     $('#classroom-calendar').unbind().removeData().fullCalendar({
@@ -423,7 +456,7 @@ function showclassroomCalendar(date) {
         editable: false,
         droppable: false,
         resources: <?php echo Json::encode($classroomResource); ?>,
-        events: <?php echo Json::encode($classroomEvents); ?>,
+        events: events
     });
 }
 
@@ -495,7 +528,7 @@ function getResources(date) {
     return resources;
 }
 
-function refreshCalendar(resources, date) {
+function refreshCalendar(resources, events, date) {
     isclassroom = false;
     $('#calendar').html('');
     $('#calendar').unbind().removeData().fullCalendar({
@@ -510,7 +543,7 @@ function refreshCalendar(resources, date) {
         editable: false,
         droppable: false,
         resources:  resources,
-        events: events,
+        events: events
     });
 
     addAvailabilityEvents();
