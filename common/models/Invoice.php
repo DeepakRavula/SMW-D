@@ -390,8 +390,8 @@ class Invoice extends \yii\db\ActiveRecord
         $invoiceLineItem->invoice_id = $this->id;
         $invoiceLineItem->item_id    = $lesson->id;
         if (!empty($lesson->proFormaInvoiceLineItem)) {
-            $invoiceLineItem->discount     = $lesson->invoiceLineItem->discount;
-            $invoiceLineItem->discountType = $lesson->invoiceLineItem->discountType;
+            $invoiceLineItem->discount     = $lesson->proFormaInvoiceLineItem->discount;
+            $invoiceLineItem->discountType = $lesson->proFormaInvoiceLineItem->discountType;
         } else {
             $invoiceLineItem->discount     = 0.00;
             $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
