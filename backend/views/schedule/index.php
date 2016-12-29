@@ -184,6 +184,7 @@ $(document).ready(function() {
         droppable: false,
         resources: resources,
         events: events,
+		allDaySlot:false,
         eventClick: function(event) {
             $(location).attr('href', event.url);
         },
@@ -420,6 +421,7 @@ function showclassroomCalendar(date) {
         minTime: "<?php echo $from_time; ?>",
         maxTime: "<?php echo $to_time; ?>",
         slotDuration: "00:15:00",
+		allDaySlot:false,
         editable: false,
         droppable: false,
         resources: <?php echo Json::encode($classroomResource); ?>,
@@ -507,6 +509,7 @@ function refreshCalendar(resources, date) {
         minTime: "<?php echo $from_time; ?>",
         maxTime: "<?php echo $to_time; ?>",
         slotDuration: "00:15:00",
+		allDaySlot:false,
         editable: false,
         droppable: false,
         resources:  resources,
