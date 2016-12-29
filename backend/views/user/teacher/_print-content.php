@@ -11,7 +11,7 @@ use yii\helpers\Html;
     <div class="clearfix"></div>
 	<div class="">
 	<?=
-	$this->render('_teacher-lesson', [
+	$this->render('teacher/_lesson', [
 		'model' => $model,
     ]);
 	?>

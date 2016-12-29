@@ -74,7 +74,7 @@ use kartik\grid\GridView;
                     return GridView::ROW_EXPANDED;
                 },
                 'detail' => function ($model, $key, $index, $column) {
-                    return Yii::$app->controller->renderPartial('_teacher-lesson', ['model' => $model]);
+                    return Yii::$app->controller->renderPartial('teacher/_lesson', ['model' => $model]);
                 },
                 'headerOptions' => ['class' => 'kartik-sheet-style'],
             ]

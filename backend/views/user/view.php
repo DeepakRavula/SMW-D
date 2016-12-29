@@ -93,19 +93,19 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             'model' => $model,
         ]);
 
-        $qualificationContent = $this->render('_view-qualification', [
+        $qualificationContent = $this->render('teacher/_view-qualification', [
             'program' => $program,
             'model' => $model,
             'searchModel' => $searchModel,
         ]);
 
-        $teacherAvailabilityContent = $this->render('_view-teacher-availability', [
+        $teacherAvailabilityContent = $this->render('teacher/_view-availability', [
             'teacherDataProvider' => $teacherDataProvider,
             'model' => $model,
             'searchModel' => $searchModel,
         ]);
 
-        $teacherStudentContent = $this->render('_teacher-student', [
+        $teacherStudentContent = $this->render('teacher/_student', [
             'studentDataProvider' => $studentDataProvider,
         ]);
 
@@ -116,14 +116,14 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             'model' => $model,
         ]);
 
-        $unscheduledLessonContent = $this->render('_teacher-unscheduled-lesson', [
+        $unscheduledLessonContent = $this->render('teacher/_unscheduled-lesson', [
             'dataProvider' => $unscheduledLessonDataProvider,
         ]);
 
-        $teacherScheduleContent = $this->render('_calendar', [
+        $teacherScheduleContent = $this->render('teacher/_calendar', [
             'teacherId' => $model->id,
         ]);
-		$teacherLessonContent = $this->render('_view-teacher-lesson', [
+		$teacherLessonContent = $this->render('teacher/_view-lesson', [
             'teacherLessonDataProvider' => $teacherLessonDataProvider,
 			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
 			'searchModel' => $lessonSearchModel,
