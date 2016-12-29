@@ -148,8 +148,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $this->tax_code     = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
             $this->tax_status   = $taxStatus->name;
             $this->isRoyalty    = true;
-            $this->discount     = 0.00;
-            $this->discountType = self::DISCOUNT_FLAT;
             if($this->isOpeningBalance()) {
                 $this->isRoyalty  = false;
             }
