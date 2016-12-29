@@ -14,7 +14,11 @@ $bundle = BackendAsset::register($this);
 		</h1>
 	</section>
 	<!-- Main content -->
+	<div class="box">
+    <div class="box-body">
 	<section class="content">
 		<?php echo $content ?>
 	</section><!-- /.content -->
+	  </div>
+</div>
 <?php $this->endContent(); ?>
