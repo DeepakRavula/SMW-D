@@ -4,6 +4,8 @@
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\Tabs;
 use yii\helpers\Html;
+use common\models\Note;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -129,6 +131,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'searchModel' => $lessonSearchModel,
 			'model' => $model,
         ]);
+		$noteContent = $this->render('note/view', [
+			'model' => new Note(),
+			'noteDataProvider' => $noteDataProvider
+		]);
         ?>
 		<?php
         $items = [
@@ -184,6 +190,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                     'id' => 'unscheduled',
                 ],
             ],
+			[
+        	    'label' => 'Notes',
+    	        'content' => $noteContent,
+	            'options' => [
+                	'id' => 'note',
+            	],
+        	],
         ];
 
         $customerItems = [
@@ -236,7 +249,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                     'id' => 'opening-balance',
                 ],
             ],
-
+			[
+				'label' => 'Notes',
+				'content' => $noteContent,
+				'options' => [
+					'id' => 'note',
+				],
+       		],
         ];
         if (in_array($role->name, ['teacher'])) {
             $items = array_merge($items, $teacherItems);
@@ -281,6 +300,32 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	$(document).ready(function(){
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     	$('#calendar').fullCalendar('render');
+	});
+	$(document).on('click', '#user-note', function (e) {
+		$('#user-note-modal').modal('show');
+		return false;
+  	});
+	$(document).on('beforeSubmit', '#user-note-form', function (e) {
+		$.ajax({
+			url    : '<?= Url::to(['user/add-note', 'id' => $model->id]); ?>',
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#user-note-listing', timeout : 12000});
+					$('#user-note-modal').modal('hide');
+				}else
+				{
+				 $('#user-note-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
+				}
+			}
+		});
+		return false;
 	});
 });
 </script>
