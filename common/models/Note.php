@@ -18,6 +18,7 @@ use Yii;
 class Note extends \yii\db\ActiveRecord
 {
 	const INSTANCE_TYPE_STUDENT = 1;
+	const INSTANCE_TYPE_USER = 2;
 	
     /**
      * @inheritdoc

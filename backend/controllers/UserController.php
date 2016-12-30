@@ -14,7 +14,7 @@ use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
 use backend\models\search\LessonSearch;
-use common\models\PrivateLesson;
+use common\models\Note;
 use common\models\Location;
 use common\models\Invoice;
 use backend\models\UserImportForm;
@@ -321,6 +321,13 @@ class UserController extends Controller
 			'pagination' => false,
 		]);
 		
+		$notes = Note::find()
+			->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_USER])
+			->orderBy(['createdOn' => SORT_DESC]);
+
+        $noteDataProvider = new ActiveDataProvider([
+            'query' => $notes,
+        ]);
         return $this->render('view', [
             'student' => new Student(),
             'dataProvider' => $dataProvider,
@@ -343,10 +350,38 @@ class UserController extends Controller
             'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
-			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider
+			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
+			'noteDataProvider' => $noteDataProvider
         ]);
     }
 
+	public function actionAddNote($id)
+    {
+		$userId = Yii::$app->user->id;
+		$response = Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+        $model = new Note();
+		$request = Yii::$app->request;
+        if ($model->load($request->post())) {
+			$model->instanceId = $id;
+			$model->instanceType = Note::INSTANCE_TYPE_USER;
+            $model->createdUserId = $userId;
+			if ($model->validate()) {
+	            $model->save();
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$errors = ActiveForm::validate($model);
+				$response = [
+					'status' => false,
+					'errors' =>  $errors
+				];
+			}
+			return $response;
+		}
+    }
+	
     public function actionAddOpeningBalance($id)
     {
         $model = $this->findModel($id);
