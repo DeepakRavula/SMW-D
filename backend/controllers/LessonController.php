@@ -15,7 +15,7 @@ use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use common\models\Payment;
+use common\models\Note;
 use common\models\PaymentMethod;
 use common\models\CreditUsage;
 use yii\web\Response;
@@ -68,8 +68,18 @@ class LessonController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+		$notes = Note::find()
+			->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
+			->orderBy(['createdOn' => SORT_DESC]);
+
+        $noteDataProvider = new ActiveDataProvider([
+            'query' => $notes,
+        ]);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+			'noteDataProvider' => $noteDataProvider
         ]);
     }
 
@@ -120,6 +130,32 @@ class LessonController extends Controller
         }
     }
 
+	public function actionAddNote($id)
+    {
+		$userId = Yii::$app->user->id;
+		$response = Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+        $model = new Note();
+		$request = Yii::$app->request;
+        if ($model->load($request->post())) {
+			$model->instanceId = $id;
+			$model->instanceType = Note::INSTANCE_TYPE_LESSON;
+            $model->createdUserId = $userId;
+			if ($model->validate()) {
+	            $model->save();
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$errors = ActiveForm::validate($model);
+				$response = [
+					'status' => false,
+					'errors' =>  $errors
+				];
+			}
+			return $response;
+		}
+    }
     /**
      * Updates an existing Lesson model.
      * If update is successful, the browser will be redirected to the 'view' page.
