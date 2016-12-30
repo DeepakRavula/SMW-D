@@ -445,6 +445,35 @@ $(document).ready(function () {
 
 function showclassroomCalendar(events, date) {
     isclassroom = true;
+    var day = moment(date).day();
+    var resources = [];
+    var currentDate = moment(date).format('YYYY-MM-DD 00:00:00');
+    var currentDateEnd = moment(date).format('YYYY-MM-DD 23:59:59');
+    $.each( holidays, function( key, value ) {
+        if (value.date == currentDate) {
+            resources.push({
+                id: '0',
+                title: 'Holiday'
+            });
+        }
+    });
+    if(day == 0 && $.isEmptyObject(resources)) {
+        resources.push({
+            id: '0',
+            title: 'Sunday-Holiday'
+        });
+        events.push({
+                title: '',
+                start: currentDate,
+                end: currentDateEnd,
+                resourceId: 0,
+                allDay: false,
+                className: 'holiday',
+                rendering: 'background'
+            });
+    } else if($.isEmptyObject(resources)) {
+        var resources = <?php echo Json::encode($classroomResource); ?> ;
+    }
     $('#classroom-calendar').html('');
     $('#classroom-calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -458,7 +487,7 @@ function showclassroomCalendar(events, date) {
 		allDaySlot:false,
         editable: false,
         droppable: false,
-        resources: <?php echo Json::encode($classroomResource); ?>,
+        resources: resources,
         events: events
     });
 }
