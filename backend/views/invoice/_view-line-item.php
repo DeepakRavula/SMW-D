@@ -2,6 +2,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\InvoiceLineItem;
+use kartik\switchinput\SwitchInput;
 
 ?>
 <?php
@@ -44,16 +45,18 @@ $columns = [
                 'size' => 'md',
                 'placement' => 'left',
                 'afterInput' => function ($form, $widget) use ($model, $index) {
-                    echo $form->field($model, "[{$index}]discountType")->dropDownList([1 => '$', 2 => '%']);
+                    echo $form->field($model, "[{$index}]discountType")->widget(SwitchInput::classname(),
+                        [
+                        'name' => 'discountType',
+                        'pluginOptions' => [
+                            'handleWidth' => 60,
+                            'onText' => '$',
+                            'offText' => '%',
+                        ],
+                    ])->label(false);
                 },
                 'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
             ];
-        },
-    ],
-    [
-        'label' => 'Type',
-        'value' => function ($data) {
-            return $data->getDiscountType();
         },
     ],
     [
@@ -84,7 +87,7 @@ $columns = [
     [
         'label' => 'Net Price',
         'value' => function ($data) {
-            return $data->getNetPrice();
+            return $data->amount - $data->discount;
         },
     ],
     [

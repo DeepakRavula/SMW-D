@@ -54,8 +54,13 @@ class InvoiceLineItemController extends Controller
                 $model->save();
             }
             if (isset($post['InvoiceLineItem'][$lineItemIndex]['discount'])) {
-                $model->discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
-                $model->discountType = $post['InvoiceLineItem'][$lineItemIndex]['discountType'];
+                $discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
+                $discountType = $post['InvoiceLineItem'][$lineItemIndex]['discountType'];
+                if ((int) $discountType === InvoiceLineItem::DISCOUNT_FLAT) {
+                    $model->discount = $discount;
+                } else {
+                    $model->discount = $model->amount * ($discount / 100);
+                }
                 $model->save();
             }
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['amount'])) {
@@ -142,8 +147,7 @@ class InvoiceLineItemController extends Controller
             if ($invoiceModel->validate()) {
                 $invoiceLineItems = $invoiceModel->lineItems;
                 foreach ($invoiceLineItems as $invoiceLineItem) {
-                    $invoiceLineItem->discount = $invoiceModel->discount;
-                    $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
+                    $invoiceLineItem->discount = $invoiceLineItem->amount * ($invoiceModel->discount / 100);
                     $invoiceLineItem->save();
                 }
                 $invoiceModel->save();

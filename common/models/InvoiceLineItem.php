@@ -18,9 +18,10 @@ use common\models\TaxStatus;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
     private $isRoyaltyExempted;
+    public $discountType;
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
     const DISCOUNT_FLAT            = 1;
-    const DISCOUNT_PERCENTAGE      = 2;
+    const DISCOUNT_PERCENTAGE      = 0;
 
     /**
      * {@inheritdoc}
@@ -28,33 +29,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'invoice_line_item';
-    }
-
-    public function getDiscountType() {
-        switch ($this->discountType) {
-            case self::DISCOUNT_FLAT:
-        		$discountType = '$';
-            break;
-            case self::DISCOUNT_PERCENTAGE:
-        		$discountType = '%';
-            break;
-        }
-        return $discountType;
-    }
-
-    public function getNetPrice()
-    {
-        return $this->amount - $this->getDiscount();
-    }
-
-    public function getDiscount()
-    {
-        if ((int) $this->discountType === (int) self::DISCOUNT_PERCENTAGE) {
-            $discount = $this->amount * ($this->discount / 100);
-        } else {
-            $discount = $this->discount;
-        }
-        return $discount;
     }
 
     /**
