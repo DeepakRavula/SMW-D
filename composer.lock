@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "20876918ae77ada13ad168200b8a3d38",
-    "content-hash": "7b71d29b1cf158d37754c10551d98371",
+    "hash": "dd18f6f0e194bde2e1f7f0f53599727e",
+    "content-hash": "b960f62fd435ec861ac25528c97bbc6a",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -127,6 +127,50 @@
                 "yii2"
             ],
             "time": "2015-04-02 10:59:30"
+        },
+        {
+            "name": "2amigos/yii2-editable-widget",
+            "version": "0.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/2amigos/yii2-editable-widget.git",
+                "reference": "4ef78e7bfd575dc39e43e85ef23196382cb72783"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/2amigos/yii2-editable-widget/zipball/4ef78e7bfd575dc39e43e85ef23196382cb72783",
+                "reference": "4ef78e7bfd575dc39e43e85ef23196382cb72783",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/select2": "3.5.2",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "dosamigos\\editable\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Antonio Ramirez",
+                    "email": "ramirez.cobos@gmail.com",
+                    "homepage": "http://2amigos.us"
+                }
+            ],
+            "description": "X-Editable widget for Yii2.",
+            "keywords": [
+                "extension",
+                "widget",
+                "x-editable",
+                "yii"
+            ],
+            "time": "2015-02-20 15:13:36"
         },
         {
             "name": "asofter/yii2-imperavi-redactor",
@@ -883,6 +927,34 @@
                     "Gruntfile.js",
                     "node_modules",
                     "package.json"
+                ]
+            }
+        },
+        {
+            "name": "bower-asset/select2",
+            "version": "3.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/select2/select2.git",
+                "reference": "6633cda9061d9fc65075dd140c63f9a6adbcbd72"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/select2/select2/zipball/6633cda9061d9fc65075dd140c63f9a6adbcbd72",
+                "reference": "6633cda9061d9fc65075dd140c63f9a6adbcbd72",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/jquery": ">=1.7.1"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "select2.js",
+                    "select2.css",
+                    "select2.png",
+                    "select2x2.png",
+                    "select2-spinner.gif"
                 ]
             }
         },
