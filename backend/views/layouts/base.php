@@ -7,6 +7,8 @@ use yii\helpers\ArrayHelper;
 /* @var $content string */
 
 $bundle = BackendAsset::register($this);
+$bundle = \common\assets\RequireJS::register($this);
+
 
 $this->params['body-class'] = array_key_exists('body-class', $this->params) ?
     $this->params['body-class']

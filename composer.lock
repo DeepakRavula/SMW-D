@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "dd18f6f0e194bde2e1f7f0f53599727e",
-    "content-hash": "b960f62fd435ec861ac25528c97bbc6a",
+    "hash": "332dab1cc74834476db95018bf57971f",
+    "content-hash": "21129d0cf532370f03da3b332b1c94dc",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -283,6 +283,82 @@
                 "responsive",
                 "template",
                 "theme"
+            ]
+        },
+        {
+            "name": "bower-asset/backbone",
+            "version": "1.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jashkenas/backbone.git",
+                "reference": "8ec88604732944f197b352a6be22c8216ea9d3a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jashkenas/backbone/zipball/8ec88604732944f197b352a6be22c8216ea9d3a1",
+                "reference": "8ec88604732944f197b352a6be22c8216ea9d3a1",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/underscore": ">=1.8.3"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "backbone.js",
+                "bower-asset-ignore": [
+                    "docs",
+                    "examples",
+                    "test",
+                    "*.yml",
+                    "*.html",
+                    "*.ico",
+                    "*.md",
+                    "CNAME",
+                    ".*",
+                    "karma.*",
+                    "package.json"
+                ]
+            }
+        },
+        {
+            "name": "bower-asset/backbone.radio",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marionettejs/backbone.radio.git",
+                "reference": "8d3c7deec61205daddbd49ce86dbac27afb1aaad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/marionettejs/backbone.radio/zipball/8d3c7deec61205daddbd49ce86dbac27afb1aaad",
+                "reference": "8d3c7deec61205daddbd49ce86dbac27afb1aaad",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "build/backbone.radio.js",
+                "bower-asset-ignore": [
+                    "**/.*",
+                    "node_modules",
+                    "bower_components",
+                    "test",
+                    "tests"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Messaging patterns for Backbone applications.",
+            "keywords": [
+                "architecture",
+                "backbone",
+                "decoupled",
+                "marionette",
+                "messaging",
+                "publish",
+                "pubsub",
+                "spa",
+                "subscribe"
             ]
         },
         {
@@ -804,6 +880,56 @@
             }
         },
         {
+            "name": "bower-asset/marionette",
+            "version": "v3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marionettejs/backbone.marionette.git",
+                "reference": "c1d41d73c60ad117b285fd7495b4c1801ca1873d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/marionettejs/backbone.marionette/zipball/c1d41d73c60ad117b285fd7495b4c1801ca1873d",
+                "reference": "c1d41d73c60ad117b285fd7495b4c1801ca1873d",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/backbone.radio": ">=2.0.0,<3.0.0"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "./lib/backbone.marionette.js",
+                "bower-asset-ignore": [
+                    "api",
+                    "docs",
+                    "gulp",
+                    "jsdoc",
+                    "src",
+                    "tasks",
+                    "test",
+                    ".babelrc",
+                    ".editorconfig",
+                    ".eslintrc",
+                    ".gitignore",
+                    ".jscsrc",
+                    ".npmignore",
+                    ".travis.yml",
+                    "CONTRIBUTING.md",
+                    "gulpfile.babel.js",
+                    "SpecRunner.html",
+                    "upgradeGuide.md"
+                ]
+            },
+            "description": "The Backbone Framework",
+            "keywords": [
+                "backbone",
+                "browser",
+                "client",
+                "composite",
+                "framework"
+            ]
+        },
+        {
             "name": "bower-asset/moment",
             "version": "2.13.0",
             "source": {
@@ -931,6 +1057,33 @@
             }
         },
         {
+            "name": "bower-asset/requirejs",
+            "version": "2.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/requirejs/requirejs-bower.git",
+                "reference": "ccebb20d187a88aef04c643b2d61325e469902a8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/requirejs/requirejs-bower/zipball/ccebb20d187a88aef04c643b2d61325e469902a8",
+                "reference": "ccebb20d187a88aef04c643b2d61325e469902a8",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "require.js",
+                "bower-asset-ignore": []
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A file and module loader for JavaScript",
+            "keywords": [
+                "AMD"
+            ]
+        },
+        {
             "name": "bower-asset/select2",
             "version": "3.5.2",
             "source": {
@@ -1033,6 +1186,45 @@
                     "minify.sh"
                 ]
             }
+        },
+        {
+            "name": "bower-asset/underscore",
+            "version": "1.8.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jashkenas/underscore.git",
+                "reference": "e4743ab712b8ab42ad4ccb48b155034d02394e4d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jashkenas/underscore/zipball/e4743ab712b8ab42ad4ccb48b155034d02394e4d",
+                "reference": "e4743ab712b8ab42ad4ccb48b155034d02394e4d",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "underscore.js",
+                "bower-asset-ignore": [
+                    "docs",
+                    "test",
+                    "*.yml",
+                    "CNAME",
+                    "index.html",
+                    "favicon.ico",
+                    "CONTRIBUTING.md",
+                    ".*",
+                    "component.json",
+                    "package.json",
+                    "karma.*"
+                ]
+            },
+            "keywords": [
+                "browser",
+                "client",
+                "functional",
+                "server",
+                "util"
+            ]
         },
         {
             "name": "bower-asset/yii2-pjax",

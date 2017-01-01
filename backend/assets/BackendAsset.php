@@ -22,7 +22,6 @@ class BackendAsset extends AssetBundle
         'plugins/jquery-multiselect/style.css',
     ];
     public $js = [
-        'js/app.js',
         'plugins/momentjs/moment-with-locales.js',
         'plugins/jquery-timepicker/jquery.timepicker.js',
         'plugins/jquery-multiselect/multiselect.js',
@@ -33,6 +32,7 @@ class BackendAsset extends AssetBundle
         'yii\web\YiiAsset',
         'common\assets\AdminLte',
         'common\assets\Html5shiv',
+        'common\assets\MarionetteJS',
     ];
 
     public function init()
