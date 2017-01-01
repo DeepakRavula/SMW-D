@@ -40,6 +40,7 @@ $config = [
             'timeline-event/*',
             'debug/*',
             'schedule/*',
+            'schedule2/*',
             'enrolment/*',
             'teacher-availability/*',
             'cron/*',

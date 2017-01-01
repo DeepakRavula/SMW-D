@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "332dab1cc74834476db95018bf57971f",
-    "content-hash": "21129d0cf532370f03da3b332b1c94dc",
+    "hash": "931e3514d5cdb645c4948d9e05b8c81e",
+    "content-hash": "aeec0a65a6eb4cc14cf88779fc916565",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -673,6 +673,91 @@
                 "CC-BY-3.0"
             ],
             "description": "Font Awesome"
+        },
+        {
+            "name": "bower-asset/fullcalendar",
+            "version": "v3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fullcalendar/fullcalendar.git",
+                "reference": "c9e90782f61b7a6ebd47a6314be1648749a7a7d6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fullcalendar/fullcalendar/zipball/c9e90782f61b7a6ebd47a6314be1648749a7a7d6",
+                "reference": "c9e90782f61b7a6ebd47a6314be1648749a7a7d6",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/jquery": ">=2.0.0",
+                "bower-asset/moment": ">=2.9.0"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "dist/fullcalendar.js",
+                    "dist/fullcalendar.css"
+                ],
+                "bower-asset-ignore": [
+                    "*",
+                    "**/.*",
+                    "!/dist/**",
+                    "!/README.*",
+                    "!/LICENSE.*",
+                    "!/CHANGELOG.*",
+                    "!/CONTRIBUTING.*"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Full-sized drag & drop event calendar",
+            "keywords": [
+                "calendar",
+                "event",
+                "full-sized",
+                "jquery-plugin"
+            ]
+        },
+        {
+            "name": "bower-asset/fullcalendar-scheduler",
+            "version": "v1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fullcalendar/fullcalendar-scheduler.git",
+                "reference": "22465b924ab9532270839e1f33812f11c28e21b5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fullcalendar/fullcalendar-scheduler/zipball/22465b924ab9532270839e1f33812f11c28e21b5",
+                "reference": "22465b924ab9532270839e1f33812f11c28e21b5",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/fullcalendar": ">=3.0.1",
+                "bower-asset/jquery": ">=2.0.0",
+                "bower-asset/moment": ">=2.9.0"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "dist/scheduler.js",
+                    "dist/scheduler.css"
+                ],
+                "bower-asset-ignore": [
+                    "*",
+                    "**/.*",
+                    "!/dist/**",
+                    "!/README.*",
+                    "!/LICENSE.*",
+                    "!/CHANGELOG.*",
+                    "!/CONTRIBUTING.*"
+                ]
+            },
+            "license": [
+                "SEE LICENSE IN LICENSE.md"
+            ],
+            "description": "A premium add-on to FullCalendar for displaying events and resources"
         },
         {
             "name": "bower-asset/html5shiv",
