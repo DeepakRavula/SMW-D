@@ -307,7 +307,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
   	});
 	$(document).on('beforeSubmit', '#user-note-form', function (e) {
 		$.ajax({
-			url    : '<?= Url::to(['user/add-note', 'id' => $model->id]); ?>',
+			url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_USER]); ?>',
 			type   : 'post',
 			dataType: "json",
 			data   : $(this).serialize(),

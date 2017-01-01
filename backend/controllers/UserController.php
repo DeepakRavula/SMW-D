@@ -355,33 +355,6 @@ class UserController extends Controller
         ]);
     }
 
-	public function actionAddNote($id)
-    {
-		$userId = Yii::$app->user->id;
-		$response = Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
-        $model = new Note();
-		$request = Yii::$app->request;
-        if ($model->load($request->post())) {
-			$model->instanceId = $id;
-			$model->instanceType = Note::INSTANCE_TYPE_USER;
-            $model->createdUserId = $userId;
-			if ($model->validate()) {
-	            $model->save();
-				$response = [
-					'status' => true,
-				];
-			} else {
-				$errors = ActiveForm::validate($model);
-				$response = [
-					'status' => false,
-					'errors' =>  $errors
-				];
-			}
-			return $response;
-		}
-    }
-	
     public function actionAddOpeningBalance($id)
     {
         $model = $this->findModel($id);

@@ -120,7 +120,7 @@ $config = [
                 'roles' => ['administrator', 'staffmember'],
             ],
             [
-                'controllers' => ['schedule', 'student', 'exam-result',
+                'controllers' => ['schedule', 'student', 'exam-result','note',
 					'release-notes', 'lesson', 'invoice', 'timeline-event', 'enrolment', 
 					'teacher-availability', 'group-course', 'group-lesson', 'group-enrolment', 
 					'payment', 'course', 'dashboard', 'log', 'invoice-line-item', 'holiday', 
