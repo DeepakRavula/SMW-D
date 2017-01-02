@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\Location;
+use common\models\TaxCode;
 use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\InvoiceLineItem;
@@ -53,9 +55,36 @@ class InvoiceLineItemController extends Controller
                 $model->description = $post['InvoiceLineItem'][$lineItemIndex]['description'];
                 $model->save();
             }
+            if (isset($post['InvoiceLineItem'][$lineItemIndex]['isRoyalty'])) {
+                $model->isRoyalty = $post['InvoiceLineItem'][$lineItemIndex]['isRoyalty'];
+                $model->save();
+            }
+            if (!empty($post['InvoiceLineItem'][$lineItemIndex]['tax_status'])) {
+                $ax_status     = $post['InvoiceLineItem'][$lineItemIndex]['tax_status'];
+                $today         = (new \DateTime())->format('Y-m-d H:i:s');
+                $locationId    = Yii::$app->session->get('location_id');
+                $locationModel = Location::findOne(['id' => $locationId]);
+                $taxCode = TaxCode::find()
+                    ->joinWith(['taxStatus' => function ($query) use ($ax_status) {
+                        $query->where(['tax_status.id' => $ax_status]);
+                    }])
+                    ->where(['<=', 'start_date', $today])
+                    ->andWhere(['province_id' => $locationModel->province_id])
+                    ->orderBy('start_date DESC')
+                    ->one();
+                $model->tax_status = $taxCode->taxStatus->name;
+                $model->tax_type   = $taxCode->taxType->name;
+                $model->save();
+                $model->invoice->save();
+            }
             if (isset($post['InvoiceLineItem'][$lineItemIndex]['discount'])) {
-                $model->discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
-                $model->discountType = $post['InvoiceLineItem'][$lineItemIndex]['discountType'];
+                $discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
+                $discountType = $post['InvoiceLineItem'][$lineItemIndex]['discountType'];
+                if ((int) $discountType === InvoiceLineItem::DISCOUNT_FLAT) {
+                    $model->discount = $discount;
+                } else {
+                    $model->discount = $model->amount * ($discount / 100);
+                }
                 $model->save();
             }
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['amount'])) {
@@ -142,8 +171,7 @@ class InvoiceLineItemController extends Controller
             if ($invoiceModel->validate()) {
                 $invoiceLineItems = $invoiceModel->lineItems;
                 foreach ($invoiceLineItems as $invoiceLineItem) {
-                    $invoiceLineItem->discount = $invoiceModel->discount;
-                    $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
+                    $invoiceLineItem->discount = $invoiceLineItem->amount * ($invoiceModel->discount / 100);
                     $invoiceLineItem->save();
                 }
                 $invoiceModel->save();
