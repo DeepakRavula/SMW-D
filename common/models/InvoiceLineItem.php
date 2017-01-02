@@ -20,8 +20,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     private $isRoyaltyExempted;
     public $discountType;
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
-    const DISCOUNT_FLAT            = 1;
-    const DISCOUNT_PERCENTAGE      = 0;
+    const DISCOUNT_FLAT            = 0;
+    const DISCOUNT_PERCENTAGE      = 1;
 
     /**
      * {@inheritdoc}
@@ -110,6 +110,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'tax_rate' => 'Tax',
             'tax_status' => 'Tax Status',
             'isRoyaltyExempted' => 'Exempt from Royalty',
+            'isRoyalty' => 'Royalty',
         ];
     }
 

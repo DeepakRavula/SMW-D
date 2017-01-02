@@ -1,6 +1,8 @@
 <?php
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
+use common\models\TaxStatus;
 use common\models\InvoiceLineItem;
 use kartik\switchinput\SwitchInput;
 
@@ -14,9 +16,27 @@ $columns = [
         },
     ],
     [
-        'label' => 'R',
-        'value' => function ($data) {
-            return $data->isRoyalty ? 'Yes' : 'No';
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'isRoyalty',
+        'value' => function ($model) {
+            return $model->isRoyalty ? 'Yes' : 'No';
+        },
+        'refreshGrid' => true,
+        'editableOptions' => function ($model, $key, $index) {
+            return [
+                'header' => 'Royalty',
+                'size' => 'md',
+                'placement' => 'top',
+                'inputType' => \kartik\editable\Editable::INPUT_SWITCH,
+                'options' => [
+                    'pluginOptions' => [
+                        'handleWidth' => 60,
+                        'onText' => 'Yes',
+                        'offText' => 'No',
+                    ],
+                ],
+                'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+            ];
         },
     ],
     [
@@ -50,11 +70,32 @@ $columns = [
                         'name' => 'discountType',
                         'pluginOptions' => [
                             'handleWidth' => 60,
-                            'onText' => '$',
-                            'offText' => '%',
+                            'onText' => '%',
+                            'offText' => '$',
                         ],
                     ])->label(false);
                 },
+                'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+                'pluginEvents' => [
+                    'editableSuccess' => 'invoice.onEditableGridSuccess',
+                ],
+            ];
+        },
+    ],
+            [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'tax_status',
+        'refreshGrid' => true,
+        'editableOptions' => function ($model, $key, $index) {
+            return [
+                'header' => 'Tax Status',
+                'size' => 'md',
+                'placement' => 'top',
+                'inputType' => \kartik\editable\Editable::INPUT_DROPDOWN_LIST,
+                'data' => ArrayHelper::map(TaxStatus::find()->all(), 'id', 'name'),
+                'options' => [
+                    'prompt' => 'Select Tax'
+                ],
                 'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
             ];
         },
@@ -69,25 +110,24 @@ $columns = [
         'enableSorting' => false,
         'editableOptions' => function ($model, $key, $index) {
             if ($model->isOpeningBalance()) {
-                    $model->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
-                }
+                $model->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+            }
             return [
-               'header' => 'Price',
-               'size' => 'md',
-			   'placement' => 'left',
-               'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-               'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
-               'pluginEvents' => [
+                'header' => 'Price',
+                'size' => 'md',
+                'placement' => 'left',
+                'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+                'pluginEvents' => [
                     'editableSuccess' => 'invoice.onEditableGridSuccess',
                 ],
-
-           ];
+            ];
         },
     ],
     [
         'label' => 'Net Price',
         'value' => function ($data) {
-            return $data->amount - $data->discount;
+            return ($data->amount - $data->discount) + $data->tax_rate;
         },
     ],
     [

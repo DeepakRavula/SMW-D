@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\Location;
+use common\models\TaxCode;
 use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\InvoiceLineItem;
@@ -52,6 +54,28 @@ class InvoiceLineItemController extends Controller
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['description'])) {
                 $model->description = $post['InvoiceLineItem'][$lineItemIndex]['description'];
                 $model->save();
+            }
+            if (isset($post['InvoiceLineItem'][$lineItemIndex]['isRoyalty'])) {
+                $model->isRoyalty = $post['InvoiceLineItem'][$lineItemIndex]['isRoyalty'];
+                $model->save();
+            }
+            if (!empty($post['InvoiceLineItem'][$lineItemIndex]['tax_status'])) {
+                $ax_status     = $post['InvoiceLineItem'][$lineItemIndex]['tax_status'];
+                $today         = (new \DateTime())->format('Y-m-d H:i:s');
+                $locationId    = Yii::$app->session->get('location_id');
+                $locationModel = Location::findOne(['id' => $locationId]);
+                $taxCode = TaxCode::find()
+                    ->joinWith(['taxStatus' => function ($query) use ($ax_status) {
+                        $query->where(['tax_status.id' => $ax_status]);
+                    }])
+                    ->where(['<=', 'start_date', $today])
+                    ->andWhere(['province_id' => $locationModel->province_id])
+                    ->orderBy('start_date DESC')
+                    ->one();
+                $model->tax_status = $taxCode->taxStatus->name;
+                $model->tax_type   = $taxCode->taxType->name;
+                $model->save();
+                $model->invoice->save();
             }
             if (isset($post['InvoiceLineItem'][$lineItemIndex]['discount'])) {
                 $discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
