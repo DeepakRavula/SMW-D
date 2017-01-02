@@ -1,22 +1,11 @@
-require(function(jq){
-	$(function() {
-		"use strict";
 
-		//Make the dashboard widgets sortable Using jquery UI
-		$(".connectedSortable").sortable({
-			placeholder: "sort-highlight",
-			connectWith: ".connectedSortable",
-			handle: ".box-header, .nav-tabs",
-			forcePlaceholderSize: true,
-			zIndex: 999999
-		}).disableSelection();
-		$(".connectedSortable .box-header, .connectedSortable .nav-tabs-custom").css("cursor", "move");
-	});
-
+<? $bundle = \common\assets\fullcalendar\FullCalendar::register($this);?>
+<div id="calendar"></div>
+<script>
 $(function() {
     data = [{
-        "start": "2015-06-20 15:00:00",
-        "end": "2015-06-20 16:00:00",
+        "start": "2017-01-01 15:00:00",
+        "end": "2017-01-01 16:00:00",
         "title": "Java"
     }, {
         "start": "2015-06-20 15:00:00",
@@ -63,4 +52,4 @@ $(function() {
         collection: myCollection
     }).render();
 });
-});
+</script>
