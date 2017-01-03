@@ -24,6 +24,17 @@ class NoteController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			[
+				'class' => 'yii\filters\ContentNegotiator',
+				'only' => ['create'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,
+				],
+				'languages' => [
+					'en',
+					'de',
+				],
+        	],
         ];
     }
 
@@ -62,8 +73,6 @@ class NoteController extends Controller
 	public function actionCreate($instanceId, $instanceType)
     {
 		$userId = Yii::$app->user->id;
-		$response = Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
         $model = new Note();
 		$request = Yii::$app->request;
         if ($model->load($request->post())) {
@@ -85,21 +94,7 @@ class NoteController extends Controller
 			return $response;
 		}
     }
-    /*public function actionCreate()
-    {
-        $model = new Note();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
-    }
-	 * 
-	 */
-
+    
     /**
      * Updates an existing Note model.
      * If update is successful, the browser will be redirected to the 'view' page.
