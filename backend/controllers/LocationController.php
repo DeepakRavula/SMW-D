@@ -3,6 +3,9 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\LocationAvailability;
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
 use common\models\Location;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -23,6 +26,14 @@ class LocationController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'contentNegotiator' => [
+               'class' => ContentNegotiator::className(),
+               'only' => ['edit-availability'],
+               'formatParam' => '_format',
+               'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
+               ],
+           ],
         ];
     }
 
@@ -90,7 +101,20 @@ class LocationController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model  = $this->findModel($id);
+        $currentDate = (new \DateTime())->format('Y-m-d');
+        $events = [];
+        foreach ($model->locationAvailabilities as $availability) {
+            $startDate = $currentDate . ' ' . $availability->fromTime;
+            $endDate = $currentDate . ' ' . $availability->toTime;
+            $start = \DateTime::createFromFormat('Y-m-d H:i:s', $startDate);
+            $end = \DateTime::createFromFormat('Y-m-d H:i:s', $endDate);
+            $events[] = [
+                'resourceId' => $availability->day,
+                'start' => $start->format('Y-m-d H:i:s'),
+                'end' => $end->format('Y-m-d H:i:s'),
+            ];
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('alert', [
@@ -102,8 +126,23 @@ class LocationController extends Controller
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'events' => $events,
             ]);
         }
+    }
+
+    public function actionEditAvailability($id, $resourceId, $startTime, $endTime)
+    {
+        $availabilityModel = LocationAvailability::find()
+            ->where(['locationId' => $id, 'day' => $resourceId])
+            ->one();
+        $availabilityModel->fromTime = $startTime;
+        $availabilityModel->toTime = $endTime;
+        $availabilityModel->save();
+        $response = [
+            'status' => true,
+        ];
+        return $response;
     }
 
     /**
