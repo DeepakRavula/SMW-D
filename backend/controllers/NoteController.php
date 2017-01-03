@@ -30,10 +30,6 @@ class NoteController extends Controller
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
-				'languages' => [
-					'en',
-					'de',
-				],
         	],
         ];
     }
