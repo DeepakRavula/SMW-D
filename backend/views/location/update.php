@@ -66,8 +66,9 @@ $this->params['breadcrumbs'][] = 'Edit';
         selectable: true,
         draggable: false,
         droppable: false,
-        resources: [{'id':'0','title':'Sunday'},{'id':'1', 'title':'Monday'}, {'id':'2','title':'Tuesday'},
-            {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'}, {'id':'6','title':'Saturday'}],
+        resources: [{'id':'1', 'title':'Monday'}, {'id':'2','title':'Tuesday'},
+            {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'}, 
+            {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
         events: {
             url: '<?= Url::to(['location/render-events', 'id' => $model->id]) ?>',
             type: 'POST',

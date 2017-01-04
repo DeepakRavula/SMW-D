@@ -116,10 +116,10 @@ class Location extends \yii\db\ActiveRecord
             $model->locationId = $this->id;
             $model->fromTime   = LocationAvailability::DEFAULT_FROM_TIME;
             $model->toTime     = LocationAvailability::DEFAULT_TO_TIME;
-            for ( $day = 0; $day < 7; $day ++ ) {
-                $model->id = null;
+            for ( $day = 1; $day < 8; $day ++ ) {
+                $model->id          = null;
                 $model->isNewRecord = true;
-                $model->day        = $day;
+                $model->day         = $day;
                 $model->save();
             }
         }
