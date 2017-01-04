@@ -122,16 +122,17 @@ $(document).ready(function() {
         events: <?php echo Json::encode($events); ?>,
         eventResize: function(event) {
             var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
-            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');debugger;
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
             $.ajax({
-                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&resourceId=' + event.resourceId + '&startTime=' + startTime + '&endTime=' + endTime,
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
                 type   : 'POST',
                 dataType: 'json',
                 success: function(response)
                 {
                     if(response.status)
                     {
-                        $('#myflashwrapper').html("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                        $('#myflashwrapper').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
                     }
                 }
             });
@@ -140,15 +141,16 @@ $(document).ready(function() {
         eventDrop: function(event) {
             var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
             $.ajax({
-                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&resourceId=' + event.resourceId + '&startTime=' + startTime + '&endTime=' + endTime,
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
                 type   : 'POST',
                 dataType: 'json',
                 success: function(response)
                 {
                     if(response.status)
                     {
-                        $('#myflashwrapper').html("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                        $('#myflashwrapper').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
                     }
                 }
             });

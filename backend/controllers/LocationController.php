@@ -102,20 +102,22 @@ class LocationController extends Controller
     public function actionUpdate($id)
     {
         $model  = $this->findModel($id);
-        $currentDate = (new \DateTime())->format('Y-m-d');
+        $currentDate = new \DateTime((new \DateTime())->format('Y-m-d'));
         $events = [];
         foreach ($model->locationAvailabilities as $availability) {
-            $startDate = $currentDate . ' ' . $availability->fromTime;
-            $endDate = $currentDate . ' ' . $availability->toTime;
-            $start = \DateTime::createFromFormat('Y-m-d H:i:s', $startDate);
-            $end = \DateTime::createFromFormat('Y-m-d H:i:s', $endDate);
+            $startTime = new \DateTime($availability->fromTime);
+            $endTime   = new \DateTime($availability->toTime);
+            $start     = $currentDate->setTime($startTime->format('H'),
+                $startTime->format('i'), $startTime->format('s'));
+            $end       = $currentDate->setTime($endTime->format('H'),
+                $endTime->format('i'), $endTime->format('s'));
             $events[] = [
                 'resourceId' => $availability->day,
                 'start' => $start->format('Y-m-d H:i:s'),
                 'end' => $end->format('Y-m-d H:i:s'),
             ];
         }
-
+        //print_r($events);die;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
