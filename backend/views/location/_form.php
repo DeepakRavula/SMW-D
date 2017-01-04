@@ -122,7 +122,7 @@ $(document).ready(function() {
         events: <?php echo Json::encode($events); ?>,
         eventResize: function(event) {
             var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
-            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');debugger;
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
             var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
             $.ajax({
                 url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
