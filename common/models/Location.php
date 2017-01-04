@@ -88,6 +88,11 @@ class Location extends \yii\db\ActiveRecord
         return $this->hasOne(Province::className(), ['id' => 'province_id']);
     }
 
+    public function getLocationAvailabilities()
+    {
+        return $this->hasMany(LocationAvailability::className(), ['locationId' => 'id']);
+    }
+
     public function getUserLocations()
     {
         return $this->hasMany(UserLocation::className(), ['location_id' => 'id']);
