@@ -112,12 +112,14 @@ class Location extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if ($insert) {
-            for ( $day = 0; $day > 7; $day ++ ) {
-                $model = new LocationAvailability();
-                $model->locationId = $this->id;
+            $model = new LocationAvailability();
+            $model->locationId = $this->id;
+            $model->fromTime   = LocationAvailability::DEFAULT_FROM_TIME;
+            $model->toTime     = LocationAvailability::DEFAULT_TO_TIME;
+            for ( $day = 0; $day < 7; $day ++ ) {
+                $model->id = null;
+                $model->isNewRecord = true;
                 $model->day        = $day;
-                $model->fromTime   = LocationAvailability::DEFAULT_FROM_TIME;
-                $model->toTime     = LocationAvailability::DEFAULT_TO_TIME;
                 $model->save();
             }
         }
