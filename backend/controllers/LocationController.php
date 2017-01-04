@@ -28,7 +28,8 @@ class LocationController extends Controller
             ],
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
-               'only' => ['edit-availability', 'add-availability', 'render-events', 'check-availability'],
+               'only' => ['edit-availability', 'add-availability', 'render-events', 'check-availability',
+                   'delete-availability'],
                'formatParam' => '_format',
                'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -126,6 +127,15 @@ class LocationController extends Controller
         $availabilityModel->toTime = $endTime;
         $availabilityModel->save();
         
+        return true;
+    }
+
+    public function actionDeleteAvailability($id, $resourceId)
+    {
+        $availabilityModel = LocationAvailability::find()
+            ->where(['locationId' => $id, 'day' => $resourceId])
+            ->one();
+        $availabilityModel->delete();
         return true;
     }
 
