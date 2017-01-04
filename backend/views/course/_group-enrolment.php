@@ -44,6 +44,7 @@ use common\models\Student;
                     Student::find()
                     ->location($locationId)
                     ->groupCourseEnrolled($courseId)
+					->active()
                     ->all(),
                 'id', 'fullName'
                 ),

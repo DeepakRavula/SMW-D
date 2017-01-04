@@ -81,6 +81,7 @@ class DashboardController extends \yii\web\Controller
                 }])
 				->where(['enrolment.isConfirmed' => true]);
             }])
+			->active()
             ->distinct(['enrolment.studentId'])
             ->count();
 

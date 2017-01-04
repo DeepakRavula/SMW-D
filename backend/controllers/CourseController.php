@@ -80,7 +80,8 @@ class CourseController extends Controller
 
         $studentDataProvider = new ActiveDataProvider([
             'query' => Student::find()
-                ->groupCourseEnrolled($id),
+                ->groupCourseEnrolled($id)
+				->active(),
         ]);
 
         return $this->render('view', [

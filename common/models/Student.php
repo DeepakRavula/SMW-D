@@ -64,8 +64,7 @@ class Student extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        $query = new StudentQuery(get_called_class());
-		return $query->active();
+        return new StudentQuery(get_called_class());
     }
 
     public function getCustomer()
