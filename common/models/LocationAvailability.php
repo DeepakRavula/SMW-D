@@ -15,6 +15,9 @@ use Yii;
  */
 class LocationAvailability extends \yii\db\ActiveRecord
 {
+    const DEFAULT_FROM_TIME = '09:00:00';
+    const DEFAULT_TO_TIME   = '17:00:00';
+
     /**
      * @inheritdoc
      */

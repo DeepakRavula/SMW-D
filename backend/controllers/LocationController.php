@@ -125,9 +125,8 @@ class LocationController extends Controller
         $availabilityModel->fromTime = $startTime;
         $availabilityModel->toTime = $endTime;
         $availabilityModel->save();
-        $response = true;
         
-        return $response;
+        return true;
     }
 
     public function actionAddAvailability($id, $resourceId, $startTime, $endTime)
@@ -138,9 +137,8 @@ class LocationController extends Controller
         $model->fromTime = $startTime;
         $model->toTime = $endTime;
         $model->save();
-        $response = true;
-        
-        return $response;
+
+        return true;
     }
 
     public function actionRenderEvents($id)

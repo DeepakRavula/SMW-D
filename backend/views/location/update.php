@@ -11,9 +11,8 @@ $this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Edit';
 ?>
 
-<div id="myflashwrapper" style="display: none;" class="alert-success alert fade in"></div>
-<div id="myflashinfo" style="display: none;" class="alert-info alert fade in"></div>
-
+<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
+<div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="tabbable-panel">
     <div class="tabbable-line">
         <?php
@@ -86,7 +85,7 @@ $this->params['breadcrumbs'][] = 'Edit';
                 dataType: 'json',
                 success: function()
                 {
-                    $('#myflashwrapper').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                    $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
                 }
             });
 
@@ -101,7 +100,7 @@ $this->params['breadcrumbs'][] = 'Edit';
                 dataType: 'json',
                 success: function()
                 {
-                    $('#myflashwrapper').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                    $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
                 }
             });
         },
@@ -124,13 +123,12 @@ $this->params['breadcrumbs'][] = 'Edit';
                             dataType: 'json',
                             success: function()
                             {
-                                $('#myflashwrapper').text("New Availability added Successfully!").fadeIn().delay(3000).fadeOut();
+                                $('#flash-success').text("New Availability added Successfully!").fadeIn().delay(3000).fadeOut();
                                 $("#calendar").fullCalendar("refetchEvents");
-
                             }
                         });
                     } else {
-                        $('#myflashinfo').text("You are not allowed to set more than one availability for a day!").fadeIn().delay(3000).fadeOut();
+                        $('#flash-danger').text("You are not allowed to set more than one availability for a day!").fadeIn().delay(3000).fadeOut();
                     }
                 }
             });
