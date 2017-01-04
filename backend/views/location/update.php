@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = 'Edit';
         <?php echo Tabs::widget([
             'items' => [
                 [
-                    'label' => 'Loaction',
+                    'label' => 'Location',
                     'content' => $locationDetails,
                     'options' => [
                             'id' => 'location',
