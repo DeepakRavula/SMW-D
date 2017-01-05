@@ -76,6 +76,24 @@ $this->params['breadcrumbs'][] = 'Edit';
                 alert('there was an error while fetching events!');
             }
         },
+        eventRender: function(event, element) {
+            element.find("div.fc-content").prepend("<i  class='fa fa-trash pull-right text-danger'></i>");
+        },
+        eventClick: function(event) {
+            var params = $.param({ resourceId: event.resourceId });
+            $(".fa-trash").click(function() {
+                $.ajax({
+                    url    : '<?= Url::to(['location/delete-availability', 'id' => $model->id]) ?>&' + params,
+                    type   : 'POST',
+                    dataType: 'json',
+                    success: function()
+                    {
+                        $('#flash-success').text("Availability Successfully deleted!").fadeIn().delay(3000).fadeOut();
+                        $("#calendar").fullCalendar("refetchEvents");
+                    }
+                });
+            });
+        },
         eventResize: function(event) {
             var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
@@ -89,7 +107,6 @@ $this->params['breadcrumbs'][] = 'Edit';
                     $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
                 }
             });
-
         },
         eventDrop: function(event) {
             var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
