@@ -44,7 +44,7 @@ class Location extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'from_time', 'to_time'], 'required'],
+            [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code'], 'required'],
             [['slug'], 'safe'],
             [['city_id', 'province_id', 'country_id'], 'integer'],
             [['name'], 'string', 'max' => 32],
@@ -67,8 +67,6 @@ class Location extends \yii\db\ActiveRecord
             'province_id' => 'Province',
             'postal_code' => 'Postal Code',
             'country_id' => 'Country',
-            'from_time' => 'From Time',
-            'to_time' => 'To Time',
             'slug' => 'Slug',
         ];
     }
@@ -88,6 +86,11 @@ class Location extends \yii\db\ActiveRecord
         return $this->hasOne(Province::className(), ['id' => 'province_id']);
     }
 
+    public function getLocationAvailabilities()
+    {
+        return $this->hasMany(LocationAvailability::className(), ['locationId' => 'id']);
+    }
+
     public function getUserLocations()
     {
         return $this->hasMany(UserLocation::className(), ['location_id' => 'id']);
@@ -100,14 +103,26 @@ class Location extends \yii\db\ActiveRecord
     {
         if (parent::beforeSave($insert)) {
             $this->country_id = 1;
-            $fromTime = \DateTime::createFromFormat('g:i a', $this->from_time);
-            $this->from_time = $fromTime->format('H:i');
-            $toTime = \DateTime::createFromFormat('g:i a', $this->to_time);
-            $this->to_time = $toTime->format('H:i');
-
             return true;
         } else {
             return false;
         }
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+            $model = new LocationAvailability();
+            $model->locationId = $this->id;
+            $model->fromTime   = LocationAvailability::DEFAULT_FROM_TIME;
+            $model->toTime     = LocationAvailability::DEFAULT_TO_TIME;
+            for ( $day = 1; $day < 8; $day ++ ) {
+                $model->id          = null;
+                $model->isNewRecord = true;
+                $model->day         = $day;
+                $model->save();
+            }
+        }
+        return parent::afterSave($insert, $changedAttributes);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use yii\bootstrap\Tabs;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
@@ -8,10 +10,134 @@ $this->title = 'Edit Location';
 $this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Edit';
 ?>
-<div class="location-update p-10">
 
-    <?php echo $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
+<div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
+<div class="tabbable-panel">
+    <div class="tabbable-line">
+        <?php
 
+        $locationDetails = $this->render('_form',[
+            'model' => $model,
+        ]);
+
+        $availabilityDetails = $this->render('_availability-details',[
+            'model' => $model,
+        ]);
+
+        ?>
+
+        <?php echo Tabs::widget([
+            'items' => [
+                [
+                    'label' => 'Location',
+                    'content' => $locationDetails,
+                    'options' => [
+                            'id' => 'location',
+                        ],
+                ],
+                [
+                    'label' => 'Availability',
+                    'content' => $availabilityDetails,
+                    'options' => [
+                            'id' => 'availability',
+                        ],
+                ],
+            ],
+        ]);?>
+    </div>
 </div>
+
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+
+<script type="text/javascript">
+    $('#calendar').fullCalendar({
+        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+        header: false,
+        defaultView: 'agendaDay',
+        minTime: "00:00:00",
+        maxTime: "23:59:59",
+        slotDuration: "00:15:00",
+        editable: true,
+        selectable: true,
+        draggable: false,
+        droppable: false,
+        resources: [{'id':'1', 'title':'Monday'}, {'id':'2','title':'Tuesday'},
+            {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'}, 
+            {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
+        events: {
+            url: '<?= Url::to(['location/render-events', 'id' => $model->id]) ?>',
+            type: 'POST',
+            error: function() {
+                alert('there was an error while fetching events!');
+            }
+        },
+        eventResize: function(event) {
+            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
+            $.ajax({
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                type   : 'POST',
+                dataType: 'json',
+                success: function()
+                {
+                    $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                }
+            });
+
+        },
+        eventDrop: function(event) {
+            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
+            $.ajax({
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                type   : 'POST',
+                dataType: 'json',
+                success: function()
+                {
+                    $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                }
+            });
+        },
+        select: function( start, end, jsEvent, view, resourceObj ) {
+            var endTime = moment(end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: resourceObj.id, startTime: startTime, endTime: endTime });
+            var availabilityCheckParams = $.param({ resourceId: resourceObj.id});
+            $.ajax({
+                url    : '<?= Url::to(['location/check-availability', 'id' => $model->id]) ?>&' + availabilityCheckParams,
+                type   : 'POST',
+                dataType: 'json',
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $.ajax({
+                            url    : '<?= Url::to(['location/add-availability', 'id' => $model->id]) ?>&' + params,
+                            type   : 'POST',
+                            dataType: 'json',
+                            success: function()
+                            {
+                                $('#flash-success').text("New Availability added Successfully!").fadeIn().delay(3000).fadeOut();
+                                $("#calendar").fullCalendar("refetchEvents");
+                            }
+                        });
+                    } else {
+                        $('#flash-danger').text("You are not allowed to set more than one availability for a day!").fadeIn().delay(3000).fadeOut();
+                    }
+                }
+            });
+        }
+    });
+$(document).ready(function () {
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        $('#calendar').fullCalendar('render');
+    });
+});
+</script>
