@@ -159,19 +159,35 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $code;
                     },
                 ],
+			    [
+        			'label' => 'Royalty',
+					'value' => function ($model) {
+						return $model->isRoyalty ? 'Yes' : 'No';
+					},
+       
+				],
                 [
                     'label' => 'Description',
                     'value' => function ($data) {
                         return $data->description;
                     },
                 ],
-                [
-                    'attribute' => 'unit',
-                       'label' => 'Quantity',
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center'],
-                    'enableSorting' => false,
-                ],
+				[
+					'label' => 'Discount',
+					'value' => function ($data) {
+                        return $data->discount;
+                    },
+					'headerOptions' => ['class' => 'kv-sticky-column'],
+					'contentOptions' => ['class' => 'kv-sticky-column'],
+				],
+				[
+					'label' => 'Tax Status',
+					'value' => function ($data) {
+                        return $data->tax_status;
+                    },
+					'headerOptions' => ['class' => 'kv-sticky-column'],
+					'contentOptions' => ['class' => 'kv-sticky-column'],
+				],
                 [
                     'label' => 'Price',
                     'headerOptions' => ['class' => 'text-center'],
@@ -184,11 +200,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     },
                 ],
-                [
-                    'attribute' => 'amount',
-                    'label' => 'Total',
-                    'enableSorting' => false,
-                ],
+				[
+					'label' => 'Net Price',
+					'value' => function ($data) {
+						return ($data->amount - $data->discount) + $data->tax_rate;
+					},
+				],
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
@@ -214,29 +231,28 @@ $this->params['breadcrumbs'][] = $this->title;
                     <table class="table-invoice-childtable">
                      <tr>
                       <td>SubTotal</td>
-                      <td><?php echo $model->subTotal; ?></td>
+                      <td><?= $model->subTotal; ?></td>
                     </tr> 
                      <tr>
                       <td>Tax</td>
-                      <td><?php echo $model->tax; ?></td>
+                      <td><?= $model->tax; ?></td>
                     </tr>
-                     <?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
+					<tr>
+						<td>Discount</td>
+						<td><?= $model->getDiscount(); ?></td>
+					</tr>
 					<tr>
                       <td>Paid</td>
-                      <td><?= $model->invoicePaymentTotal; ?></td> 
+                     <td><?= $model->paymentTotal; ?></td>
                     </tr>
-				<?php endif; ?>
-                     <tr>
-                      <tr>
+                    <tr>
                       <td><strong>Total</strong></td>
-                      <td><strong><?php echo $model->total; ?></strong></td> 
+                      <td><strong><?= $model->total; ?></strong></td>
                     </tr>
-                     <?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
-                    </tr>
+                    <tr>
                       <td class="p-t-20">Balance</td>
-                      <td class="p-t-20"><?= $model->invoiceBalance; ?></td> 
+                      <td class="p-t-20"><?= $model->invoiceBalance; ?></td>
                     </tr>
-				<?php endif; ?>
                     </table>
                   </td>
                 </tr>
