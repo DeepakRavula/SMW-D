@@ -28,7 +28,7 @@ $noteContent = $this->render('note/view', [
 <?php echo Tabs::widget([
     'items' => [
         [
-            'label' => 'Lesson',
+            'label' => 'Details',
             'content' => $lessonContent,
             'options' => [
                     'id' => 'lesson',
