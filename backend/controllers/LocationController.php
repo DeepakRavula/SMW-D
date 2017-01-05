@@ -125,9 +125,7 @@ class LocationController extends Controller
             ->one();
         $availabilityModel->fromTime = $startTime;
         $availabilityModel->toTime = $endTime;
-        $availabilityModel->save();
-        
-        return true;
+        return $availabilityModel->save();
     }
 
     public function actionDeleteAvailability($id, $resourceId)
@@ -135,8 +133,7 @@ class LocationController extends Controller
         $availabilityModel = LocationAvailability::find()
             ->where(['locationId' => $id, 'day' => $resourceId])
             ->one();
-        $availabilityModel->delete();
-        return true;
+        return $availabilityModel->delete();
     }
 
     public function actionAddAvailability($id, $resourceId, $startTime, $endTime)
@@ -146,9 +143,7 @@ class LocationController extends Controller
         $model->day = $resourceId;
         $model->fromTime = $startTime;
         $model->toTime = $endTime;
-        $model->save();
-
-        return true;
+        return $model->save();
     }
 
     public function actionRenderEvents($id)
