@@ -96,9 +96,10 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
 
-    public function getPayment()
+    public function getPayments()
     {
-        return $this->hasMany(Payment::className(), ['user_id' => 'user_id']);
+        return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
+                        ->via('invoicePayments');
     }
 
     public function getInvoicePayments()
@@ -122,6 +123,14 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasMany(InvoiceLineItem::className(),
                     ['invoice_id' => 'id'])
                 ->sum('invoice_line_item.tax_rate');
+    }
+
+    public function getInvoicePaymentMethodTotal($paymentMethodId)
+    {
+        return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
+                        ->via('invoicePayments')
+                        ->andWhere(['payment.payment_method_id' => $paymentMethodId])
+                        ->sum('payment.amount');
     }
 
     public function isOpeningBalance()

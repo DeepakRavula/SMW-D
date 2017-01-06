@@ -18,8 +18,6 @@ use yii\filters\VerbFilter;
 use common\models\ItemType;
 use common\models\TaxCode;
 use common\models\Location;
-use common\models\CreditUsage;
-use common\models\PaymentMethod;
 use yii\helpers\Json;
 use yii\web\Response;
 use yii\helpers\Url;
@@ -444,15 +442,23 @@ class InvoiceController extends Controller
     {
         $model = $this->findModel($id);
         $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
+        $payments = Payment::find()
+            ->joinWith(['invoicePayments' => function ($query) use ($id) {
+                $query->where(['invoice_id' => $id]);
+            }])
+            ->groupBy('payment.payment_method_id');
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
         ]);
-
+        $paymentsDataProvider = new ActiveDataProvider([
+            'query' => $payments,
+        ]);
         $this->layout = '/print';
 
         return $this->render('_print', [
                     'model' => $model,
                     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                    'paymentsDataProvider' => $paymentsDataProvider,
         ]);
     }
 

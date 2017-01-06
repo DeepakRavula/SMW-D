@@ -41,7 +41,7 @@ class PaymentSearch extends Payment
     public function search($params)
     {
 		$locationId = Yii::$app->session->get('location_id');
-        $this->searchDate = date('d-m-Y');
+        $this->searchDate = new \DateTime();
         $query = Payment::find()
 			->location($locationId)
             ->groupBy('payment.payment_method_id');
@@ -51,6 +51,7 @@ class PaymentSearch extends Payment
         ]);
 
         if (!($this->load($params) && $this->validate())) {
+            $query->andWhere(['between', 'payment.date', $this->searchDate->format('Y-m-d 00:00:00'), $this->searchDate->format('Y-m-d 23:59:59')]);
             return $dataProvider;
         }
 

@@ -14,10 +14,12 @@ $columns = [
         'value' => function ($data) {
             return $data->itemType->itemCode;
         },
+        'contentOptions' => ['style' => 'width:120px;'],
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'isRoyalty',
+        'label' => 'R',
         'value' => function ($model) {
             return $model->isRoyalty ? 'Yes' : 'No';
         },
@@ -38,6 +40,7 @@ $columns = [
                 'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
             ];
         },
+        'contentOptions' => ['style' => 'width:50px;'],
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
@@ -58,7 +61,7 @@ $columns = [
         'attribute' => 'discount',
         'refreshGrid' => true,
         'headerOptions' => ['class' => 'kv-sticky-column'],
-        'contentOptions' => ['class' => 'kv-sticky-column'],
+        'contentOptions' => ['class' => 'kv-sticky-column', 'style' => 'width:80px;'],
         'editableOptions' => function ($model, $key, $index) {
             return [
                 'header' => 'Discount',
@@ -86,6 +89,7 @@ $columns = [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'tax_status',
         'refreshGrid' => true,
+        'contentOptions' => ['style' => 'width:85px;'],
         'editableOptions' => function ($model, $key, $index) {
             return [
                 'header' => 'Tax Status',
@@ -106,7 +110,7 @@ $columns = [
         'label' => 'Price',
         'refreshGrid' => true,
         'headerOptions' => ['class' => 'text-center'],
-        'contentOptions' => ['class' => 'text-center'],
+        'contentOptions' => ['class' => 'text-center', 'style' => 'width:60px;'],
         'enableSorting' => false,
         'editableOptions' => function ($model, $key, $index) {
             if ($model->isOpeningBalance()) {
@@ -129,6 +133,8 @@ $columns = [
         'value' => function ($data) {
             return ($data->amount - $data->discount) + $data->tax_rate;
         },
+        'contentOptions' => ['style' => 'width:48px;'],
+        'format' => ['decimal', 2],
     ],
     [
         'class' => kartik\grid\ActionColumn::className(),

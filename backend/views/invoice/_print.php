@@ -158,6 +158,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         return $code;
                     },
+                    'contentOptions' => ['style' => 'width:140px;'],
                 ],
                 [
                     'label' => 'Description',
@@ -166,17 +167,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
 				[
-					'label' => 'Discount',
-					'value' => function ($data) {
-                        return $data->discount;
-                    },
-					'headerOptions' => ['class' => 'kv-sticky-column'],
-					'contentOptions' => ['class' => 'kv-sticky-column'],
-				],
-                [
-                    'label' => 'Price',
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center'],
+                    'label' => 'Sell',
+                    'contentOptions' => ['style' => 'width:60px;'],
                     'value' => function ($data) {
                         if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
                             return $data->lesson->enrolment->program->rate;
@@ -185,11 +177,20 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     },
                 ],
+                [
+					'label' => 'Qty',
+					'value' => function ($data) {
+                        return $data->unit;
+                    },
+					'contentOptions' => ['style' => 'width:50px;'],
+				],
 				[
 					'label' => 'Net Price',
-					'value' => function ($data) {
+                    'value' => function ($data) {
 						return ($data->amount - $data->discount) + $data->tax_rate;
 					},
+                    'contentOptions' => ['style' => 'width:50px;'],
+                    'format' => ['decimal', 2],
 				],
             ],
         ]); ?>
@@ -209,6 +210,36 @@ $this->params['breadcrumbs'][] = $this->title;
                       </div>
                       <?php endif; ?>
                   </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        <?php yii\widgets\Pjax::begin(['id' => 'payment-index']); ?>
+        <?php echo GridView::widget([
+            'dataProvider' => $paymentsDataProvider,
+            'tableOptions' => ['class' => 'table table-bordered m-0'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
+            'columns' => [
+                [
+                    'label' => 'Payment Method',
+                    'value' => function ($data) {
+                        return $data->paymentMethod->name;
+                    },
+                ],
+                [
+					'label' => 'Amount',
+					'value' => function ($data) {
+						return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
+					},
+                    'contentOptions' => ['style' => 'width:80px;'],
+				],
+            ],
+        ]); ?>
+    <?php yii\widgets\Pjax::end(); ?>
+        <div class="table-responsive pull-right">
+            <table class="table table-invoice-total">
+              <tbody>
+                <tr>
                   <td colspan="2">
                     <table class="table-invoice-childtable">
                      <tr>

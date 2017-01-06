@@ -7,12 +7,26 @@ use common\models\Invoice;
 use yii\db\ActiveQuery;
 
 /**
- * Class UserQuery.
+ * Class PaymentQuery.
  *
  * @author Eugene Terentev <eugene@terentev.net>
  */
 class PaymentQuery extends ActiveQuery
 {
+    public function all($db = null)
+    {
+        return parent::all($db);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return Payment|array|null
+     */
+    public function one($db = null)
+    {
+        return parent::one($db);
+    }
     /**
      * @return $this
      */
