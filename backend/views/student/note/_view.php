@@ -23,7 +23,8 @@ use yii\helpers\Url;
     'mode' => 'pop',
     'clientOptions' => [
         'placement' => 'right',
-    ]
+		'showbuttons' => 'bottom',
+    ],
 ]);?>
 </div><!-- /panel-body -->
 </div><!-- /panel panel-default -->
