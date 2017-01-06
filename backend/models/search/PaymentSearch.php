@@ -12,9 +12,7 @@ use Yii;
  */
 class PaymentSearch extends Payment
 {
-    public $fromDate;
-    public $toDate;
-    public $status;
+    public $searchDate;
     public $query;
     /**
      * {@inheritdoc}
@@ -22,7 +20,7 @@ class PaymentSearch extends Payment
     public function rules()
     {
         return [
-            [['fromDate', 'toDate', 'status', 'query'], 'safe'],
+            [['searchDate', 'query'], 'safe'],
         ];
     }
 
@@ -43,10 +41,10 @@ class PaymentSearch extends Payment
     public function search($params)
     {
 		$locationId = Yii::$app->session->get('location_id');
-        $this->fromDate = date('1-m-Y');
-        $this->toDate = date('31-m-Y');
+        $this->searchDate = date('d-m-Y');
         $query = Payment::find()
-			->location($locationId);
+			->location($locationId)
+            ->groupBy('payment.payment_method_id');
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
@@ -56,10 +54,9 @@ class PaymentSearch extends Payment
             return $dataProvider;
         }
 
-        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
-        $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
+        $this->searchDate = \DateTime::createFromFormat('d-m-Y', $this->searchDate);
 
-        $query->andWhere(['between', 'payment.date', $this->fromDate->format('Y-m-d 00:00:00'), $this->toDate->format('Y-m-d 23:59:59')]);
+        $query->andWhere(['between', 'payment.date', $this->searchDate->format('Y-m-d 00:00:00'), $this->searchDate->format('Y-m-d 23:59:59')]);
 
         return $dataProvider;
     }

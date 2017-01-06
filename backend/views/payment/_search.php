@@ -17,27 +17,15 @@ use yii\jui\DatePicker;
     ]); ?>
     <div class="row">
     <div class="col-md-3">
-        <?php echo $form->field($model, 'fromDate')->widget(DatePicker::classname(), [
+        <?php echo $form->field($model, 'searchDate')->widget(DatePicker::classname(), [
             'options' => [
                 'class' => 'form-control',
             ],
-    //'language' => 'ru',
-    //'dateFormat' => 'yyyy-MM-dd',
-]) ?>
+        ]) ?>
     </div>
-    <div class="col-md-3">
-        <?php echo $form->field($model, 'toDate')->widget(DatePicker::classname(), [
-            'options' => [
-                'class' => 'form-control',
-            ],
-    //'language' => 'ru',
-    //'dateFormat' => 'yyyy-MM-dd',
-]) ?>
-    </div>
-    
+
     <div class="col-md-3 form-group m-t-20">
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
         <div class="clearfix"></div>
     </div>
     </div>

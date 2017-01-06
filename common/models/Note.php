@@ -20,6 +20,7 @@ class Note extends \yii\db\ActiveRecord
 	const INSTANCE_TYPE_STUDENT = 1;
 	const INSTANCE_TYPE_USER = 2;
 	const INSTANCE_TYPE_LESSON = 3;
+	const INSTANCE_TYPE_INVOICE = 4;
 	
     /**
      * @inheritdoc

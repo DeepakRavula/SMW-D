@@ -6,6 +6,8 @@ use yii\bootstrap\Tabs;
 use yii\widgets\ActiveForm;
 use common\models\InvoiceLineItem;
 use kartik\switchinput\SwitchInput;
+use common\models\Note;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -124,16 +126,26 @@ $paymentContent = $this->render('_payment', [
     'invoicePayments' => $invoicePayments,
     'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
 ]);
-
+$noteContent = $this->render('note/view', [
+	'model' => new Note(),
+	'noteDataProvider' => $noteDataProvider
+]);
 ?>
 <?php echo Tabs::widget([
     'items' => [
         [
-            'label' => 'Invoice',
+            'label' => 'Details',
             'content' => $invoiceContent,
             'options' => [
                     'id' => 'invoice',
                 ],
+        ],
+		[
+            'label' => 'Notes',
+            'content' => $noteContent,
+            'options' => [
+                'id' => 'note',
+            ],
         ],
         [
             'label' => 'Payments',
@@ -146,3 +158,33 @@ $paymentContent = $this->render('_payment', [
 ]); ?>
 </div>
 </div>
+<script>
+ $(document).ready(function() {
+	 $(document).on('click', '#invoice-note', function (e) {
+		$('#invoice-note-modal').modal('show');
+		return false;
+  	});
+	$(document).on('beforeSubmit', '#invoice-note-form', function (e) {
+		$.ajax({
+			url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE]); ?>',
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#invoice-note-listing', timeout : 12000});
+					$('#invoice-note-modal').modal('hide');
+				}else
+				{
+				 $('#invoice-note-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
+				}
+			}
+		});
+		return false;
+	});
+	});
+</script>

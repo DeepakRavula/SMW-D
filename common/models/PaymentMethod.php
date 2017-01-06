@@ -51,4 +51,12 @@ class PaymentMethod extends \yii\db\ActiveRecord
             'name' => 'Name',
         ];
     }
+
+    public function getPaymentMethodTotal($date)
+    {
+        return $this->hasMany(Payment::className(), ['payment_method_id' => 'id'])
+                ->andWhere(['between', 'payment.date', $date->format('Y-m-d 00:00:00'),
+                    $date->format('Y-m-d 23:59:59')])
+                ->sum('payment.amount');
+    }
 }

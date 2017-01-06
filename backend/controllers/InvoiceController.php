@@ -24,6 +24,7 @@ use yii\helpers\Json;
 use yii\web\Response;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use common\models\Note;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -182,19 +183,24 @@ class InvoiceController extends Controller
 				$model->save();
 				return ['output' => $model->notes, 'message' => ''];
 			}
-			if(!empty($post['internalNotes'])) {
-				$model->internal_notes = $post['internalNotes'];
-				$model->save();
-				return ['output' => $model->internal_notes, 'message' => ''];
-			}
 		}
+
+		$notes = Note::find()
+			->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE])
+			->orderBy(['createdOn' => SORT_DESC]);
+
+        $noteDataProvider = new ActiveDataProvider([
+            'query' => $notes,
+        ]);
+
         return $this->render('view', [
-                    'model' => $model,
-                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                    'invoicePayments' => $customerInvoicePaymentsDataProvider,
-                    'customer' => empty($customer) ? new User() : $customer,
-                    'userModel' => $userModel,
-                    'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+			'model' => $model,
+			'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+			'invoicePayments' => $customerInvoicePaymentsDataProvider,
+			'customer' => empty($customer) ? new User() : $customer,
+			'userModel' => $userModel,
+			'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+			'noteDataProvider' => $noteDataProvider
         ]);
     }
 

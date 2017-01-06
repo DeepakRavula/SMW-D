@@ -144,22 +144,6 @@ use kartik\editable\Editable;
 					])
 					?>  
                     </div>
-                      <hr class="right-side-faded">
-                      <div class="row-fluid">
-                      <em><strong>Internal notes:</strong><Br></em>
-					  <?=
-					 Editable::widget([
-						'name'=>'internalNotes', 
-						'asPopover' => true,
-						'inputType' => Editable::INPUT_TEXTAREA,
-						'value' => $model->internal_notes,
-						'header' => 'Internal Notes',
-						'submitOnEnter' => false,
-						'size'=>'lg',
-						'options' => ['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Enter Internal notes...']
-					])
-					?>  
-                    </div>
                     
                   </td>
                   <td colspan="2">

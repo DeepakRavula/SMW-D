@@ -2,9 +2,6 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use common\models\PaymentMethod;
-use common\models\InvoicePayment;
-use common\models\Invoice;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -12,7 +9,8 @@ use common\models\Invoice;
 $total = 0;
 if (!empty($dataProvider->getModels())) {
     foreach ($dataProvider->getModels() as $key => $val) {
-        $total += $val->amount;
+        $date = new \DateTime($val->date);
+        $total += $val->paymentMethod->getPaymentMethodTotal($date);
     }
 }
 ?>
@@ -27,49 +25,17 @@ if (!empty($dataProvider->getModels())) {
             'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
             [
-                'label' => 'ID',
-                'value' => function ($data) {
-                    return $data->invoicePayment->invoice->getInvoiceNumber();
-                },
-            ],
-            [
-                'label' => 'Date',
-                'value' => function ($data) {
-                    return Yii::$app->formatter->asDate($data->date);
-                },
-            ],
-            [
                 'label' => 'Payment Method',
                 'value' => function ($data) {
                     return $data->paymentMethod->name;
                 },
             ],
             [
-                'label' => 'Customer',
-                'value' => function ($data) {
-                    return ! empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
-                },
-            ],
-            [
-                'label' => 'Reference Number',
-                'value' => function ($data) {
-                    if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
-                        $invoiceNumber = str_pad($data->reference, 5, 0, STR_PAD_LEFT);
-                        $invoicePayment = InvoicePayment::findOne(['payment_id' => $data->id]);
-                        if ((int) $invoicePayment->invoice->type === Invoice::TYPE_INVOICE) {
-                            return 'I - '.$invoiceNumber;
-                        } else {
-                            return 'P - '.$invoiceNumber;
-                        }
-                    } else {
-                        return $data->reference;
-                    }
-                },
-            ],
-            [
                 'label' => 'Amount',
+                'attribute' => 'amount',
                 'value' => function ($data) {
-                    return $data->amount;
+                    $date = new \DateTime($data->date);
+                    return $data->paymentMethod->getPaymentMethodTotal($date);
                 },
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
