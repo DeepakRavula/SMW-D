@@ -85,10 +85,9 @@ use yii\helpers\Url;
                     'method' => 'post',
                 ],
 			]) ?>
+		<?php endif; ?>
 	    </div>
+		<?php endif; ?>
 		</div>
-		<?php endif; ?>
-		<?php endif; ?>
-
 <div class="clearfix"></div>
 </div>
