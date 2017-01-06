@@ -90,7 +90,8 @@
     "trntv/yii2-debug-xhprof": "dev-master@dev"
   },
   "config": {
-    "process-timeout": 1800
+    "process-timeout": 1800,
+    "discard-changes": true
   },
   "extra": {
     "asset-installer-paths": {
