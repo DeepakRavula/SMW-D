@@ -326,7 +326,6 @@ class InvoiceController extends Controller
             $invoice->user_id = $customer->id;
             $invoice->location_id = $location_id;
             $invoice->notes = $post['Invoice']['notes'];
-            $invoice->internal_notes = $post['Invoice']['internal_notes'];
             $invoice->save();
             foreach ($post['selection'] as $selection) {
                 $lesson = Lesson::findOne(['id' => $selection]);

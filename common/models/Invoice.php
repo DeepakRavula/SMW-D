@@ -54,7 +54,7 @@ class Invoice extends \yii\db\ActiveRecord
             ['user_id', 'required'],
             [['reminderNotes'], 'string'],
             [['isSent'], 'boolean'],
-            [['type', 'notes', 'internal_notes', 'status'], 'safe'],
+            [['type', 'notes','status'], 'safe'],
 			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discount'], 'required', 'on' => self::SCENARIO_DISCOUNT],
         ];
@@ -70,7 +70,6 @@ class Invoice extends \yii\db\ActiveRecord
             'invoice_number' => 'Invoice Number',
             'date' => 'Date',
             'notes' => 'Printed Notes',
-            'internal_notes' => 'Internal Notes',
             'type' => 'Type',
             'reminderNotes' => 'Reminder Notes',
             'customer_id' => 'Customer Name',

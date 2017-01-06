@@ -208,9 +208,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php echo $model->notes; ?></em>
                       </div>
                       <?php endif; ?>
-                      <?php if (!empty($model->notes) && !empty($model->internal_notes)):?>
-                      <hr class="right-side-faded">
-                      <?php endif; ?>
                   </td>
                   <td colspan="2">
                     <table class="table-invoice-childtable">

@@ -16,9 +16,6 @@ use yii\bootstrap\ActiveForm;
 	<div class="col-md-4">
 		<?php echo $form->field($model, 'notes')->textarea() ?>
 	</div>
-	<div class="col-md-4">
-		<?php echo $form->field($model, 'internal_notes')->textarea() ?>
-	</div>
     <div class="clearfix"></div>
     </div>
     <div class="form-group">
