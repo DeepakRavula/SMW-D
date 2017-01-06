@@ -75,7 +75,8 @@
     "bower-asset/requirejs": "^2.3",
     "bower-asset/marionette": "^3.1",
     "bower-asset/backbone": "^1.3",
-    "bower-asset/fullcalendar-scheduler": "^1.5"
+    "bower-asset/fullcalendar-scheduler": "^1.5",
+    "yii2tech/ar-softdelete": "^1.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",

@@ -1,0 +1,31 @@
+[03-Oct-2016 04:39:39 America/Chicago] PHP Warning:  require(/home/smwkristin/smw/backend/web/../../vendor/autoload.php): failed to open stream: No such file or directory in /home/smwkristin/smw/backend/web/index.php on line 7
+[03-Oct-2016 04:39:39 America/Chicago] PHP Fatal error:  require(): Failed opening required '/home/smwkristin/smw/backend/web/../../vendor/autoload.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/smwkristin/smw/backend/web/index.php on line 7
+[06-Oct-2016 03:54:06 US/Eastern] PHP Fatal error:  Undefined class constant 'ROYALTY_PAYMENT' in /home/smwkristin/smw/backend/controllers/LessonController.php on line 386
+[12-Oct-2016 02:29:36 US/Eastern] PHP Fatal error:  Call to a member function format() on boolean in /home/smwkristin/smw/backend/views/invoice/payment-method/_apply-credit.php on line 32
+[12-Oct-2016 02:29:53 US/Eastern] PHP Fatal error:  Call to a member function format() on boolean in /home/smwkristin/smw/backend/views/user/_account.php on line 21
+[12-Oct-2016 02:30:09 US/Eastern] PHP Fatal error:  Call to a member function format() on boolean in /home/smwkristin/smw/backend/views/user/_account.php on line 21
+[12-Oct-2016 02:31:59 US/Eastern] PHP Fatal error:  Call to a member function format() on boolean in /home/smwkristin/smw/backend/views/user/_account.php on line 21
+[12-Oct-2016 02:32:31 US/Eastern] PHP Fatal error:  Call to a member function format() on boolean in /home/smwkristin/smw/backend/views/user/_account.php on line 21
+[12-Oct-2016 02:33:09 US/Eastern] PHP Fatal error:  Call to a member function format() on boolean in /home/smwkristin/smw/backend/views/user/_account.php on line 21
+[17-Oct-2016 23:20:18 US/Eastern] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 53523265 bytes) in /home/smwkristin/smw/vendor/yiisoft/yii2-debug/LogTarget.php on line 57
+[17-Oct-2016 23:22:39 US/Eastern] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 53277728 bytes) in /home/smwkristin/smw/vendor/yiisoft/yii2-debug/LogTarget.php on line 57
+[17-Oct-2016 23:30:25 US/Eastern] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 53348396 bytes) in /home/smwkristin/smw/vendor/yiisoft/yii2-debug/LogTarget.php on line 57
+[24-Oct-2016 09:43:34 US/Eastern] PHP Fatal error:  Class 'drsdre\wizardwidget\WizardWidget' not found in /home/smwkristin/smw/backend/views/student/_form-private-course.php on line 55
+[24-Oct-2016 13:06:58 US/Eastern] PHP Fatal error:  Call to a member function get() on null in /home/smwkristin/smw/backend/controllers/TeacherAvailabilityController.php on line 177
+[24-Oct-2016 13:07:36 US/Eastern] PHP Fatal error:  Call to a member function get() on null in /home/smwkristin/smw/backend/controllers/TeacherAvailabilityController.php on line 177
+[27-Oct-2016 06:24:26 US/Eastern] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 56411521 bytes) in /home/smwkristin/smw/vendor/yiisoft/yii2-debug/LogTarget.php on line 57
+[27-Oct-2016 06:59:55 US/Eastern] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 56722433 bytes) in /home/smwkristin/smw/vendor/yiisoft/yii2-debug/LogTarget.php on line 57
+[31-Oct-2016 10:43:42 US/Eastern] PHP Fatal error:  Class 'kartik\switchinput\SwitchInput' not found in /home/smwkristin/smw/backend/views/invoice/_view-invoice.php on line 17
+[02-Nov-2016 06:09:42 US/Eastern] PHP Fatal error:  Class 'backend\models\search\Yii' not found in /home/smwkristin/smw/backend/models/search/PaymentSearch.php on line 44
+[02-Nov-2016 06:10:01 US/Eastern] PHP Fatal error:  Class 'backend\models\search\Yii' not found in /home/smwkristin/smw/backend/models/search/PaymentSearch.php on line 44
+[02-Nov-2016 16:46:16 US/Eastern] PHP Fatal error:  Call to a member function format() on boolean in /home/smwkristin/smw/common/models/Lesson.php on line 324
+[07-Nov-2016 12:55:36 US/Eastern] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 46247590 bytes) in /home/smwkristin/smw/vendor/yiisoft/yii2-debug/LogTarget.php on line 57
+[10-Nov-2016 10:08:16 US/Eastern] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 37822049 bytes) in /home/smwkristin/smw/vendor/yiisoft/yii2-debug/LogTarget.php on line 57
+[10-Nov-2016 10:11:49 US/Eastern] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 72 bytes) in /home/smwkristin/smw/vendor/yiisoft/yii2-debug/LogTarget.php on line 116
+[10-Nov-2016 11:16:02 US/Eastern] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 72 bytes) in /home/smwkristin/smw/vendor/yiisoft/yii2-debug/LogTarget.php on line 116
+[24-Dec-2016 02:30:28 US/Eastern] PHP Fatal error:  Class 'yii2tech\ar\softdelete\SoftDeleteBehavior' not found in /home/smwkristin/smw/common/models/Lesson.php on line 53
+[30-Dec-2016 23:26:27 America/Chicago] PHP Warning:  require(/home/smwkristin/smw/vendor/composer/../league/uri/src/functions_include.php): failed to open stream: No such file or directory in /home/smwkristin/smw/vendor/composer/autoload_real.php on line 66
+[30-Dec-2016 23:26:27 America/Chicago] PHP Fatal error:  require(): Failed opening required '/home/smwkristin/smw/vendor/composer/../league/uri/src/functions_include.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/smwkristin/smw/vendor/composer/autoload_real.php on line 66
+[06-Jan-2017 01:46:05 US/Eastern] PHP Fatal error:  Class 'yii2tech\ar\softdelete\SoftDeleteBehavior' not found in /home/smwkristin/smw/common/models/Enrolment.php on line 36
+[06-Jan-2017 01:46:38 US/Eastern] PHP Fatal error:  Class 'yii2tech\ar\softdelete\SoftDeleteBehavior' not found in /home/smwkristin/smw/common/models/Lesson.php on line 53
+[06-Jan-2017 01:46:38 US/Eastern] PHP Fatal error:  Class 'yii2tech\ar\softdelete\SoftDeleteBehavior' not found in /home/smwkristin/smw/common/models/Enrolment.php on line 36
