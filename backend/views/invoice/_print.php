@@ -159,13 +159,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $code;
                     },
                 ],
-			    [
-        			'label' => 'Royalty',
-					'value' => function ($model) {
-						return $model->isRoyalty ? 'Yes' : 'No';
-					},
-       
-				],
                 [
                     'label' => 'Description',
                     'value' => function ($data) {
@@ -176,14 +169,6 @@ $this->params['breadcrumbs'][] = $this->title;
 					'label' => 'Discount',
 					'value' => function ($data) {
                         return $data->discount;
-                    },
-					'headerOptions' => ['class' => 'kv-sticky-column'],
-					'contentOptions' => ['class' => 'kv-sticky-column'],
-				],
-				[
-					'label' => 'Tax Status',
-					'value' => function ($data) {
-                        return $data->tax_status;
                     },
 					'headerOptions' => ['class' => 'kv-sticky-column'],
 					'contentOptions' => ['class' => 'kv-sticky-column'],
