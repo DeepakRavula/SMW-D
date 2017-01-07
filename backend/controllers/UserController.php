@@ -834,7 +834,7 @@ class UserController extends Controller
 		]);
         $this->layout = '/print';
 
-        return $this->render('teacher/_print', [
+        return $this->render('_print', [
 			'model' => $model,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
 			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
