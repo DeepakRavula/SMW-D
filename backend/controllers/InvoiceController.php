@@ -483,6 +483,7 @@ class InvoiceController extends Controller
 		$locationId = Yii::$app->session->get('location_id');
 		$lessons = Lesson::find()
 			->location($locationId)
+            ->unInvoiced()
 			->completed()
 			->all();
 		foreach($lessons as $lesson) {

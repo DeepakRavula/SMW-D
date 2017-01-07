@@ -154,10 +154,13 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function completed()
     {
-        $this->joinWith('invoice')
-            ->where(['invoice.id' => null])
-            ->andFilterWhere(['<=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
-             ->andFilterWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]]);
+        $this->andFilterWhere(['OR',
+                [
+                    'AND',
+                    ['lesson.status' => Lesson::STATUS_SCHEDULED],
+                    ['<=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]
+                ],
+                ['lesson.status' => Lesson::STATUS_COMPLETED]]);
 
         return $this;
     }

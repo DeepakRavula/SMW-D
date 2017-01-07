@@ -65,6 +65,7 @@ class InvoiceController extends Controller
 	public function actionAllCompletedLessons()
 	{
 		$lessons = Lesson::find()
+            ->unInvoiced()
 			->completed()
 			->all();
 		foreach($lessons as $lesson) {
