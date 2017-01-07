@@ -108,7 +108,7 @@ class InvoiceLineItemController extends Controller
         $model->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
         $model->amount = $newAmount;
         $model->save();
-        $payments = $model->invoice->payment;
+        $payments = $model->invoice->payments;
         if($newAmount < 0) {
             $model->invoice->subTotal = 0.00;
             $model->invoice->total = $model->invoice->subTotal;

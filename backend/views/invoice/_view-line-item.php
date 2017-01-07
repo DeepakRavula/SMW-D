@@ -10,6 +10,8 @@ use kartik\switchinput\SwitchInput;
 <?php
 $columns = [
     [
+        'headerOptions' => ['class' => 'text-center'],
+        'contentOptions' => ['class' => 'text-center', 'style' => 'width:120px;'],
         'label' => 'Code',
         'value' => function ($data) {
             return $data->itemType->itemCode;
@@ -17,7 +19,10 @@ $columns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
+        'headerOptions' => ['class' => 'text-center'],
+        'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px;'],
         'attribute' => 'isRoyalty',
+        'label' => 'R',
         'value' => function ($model) {
             return $model->isRoyalty ? 'Yes' : 'No';
         },
@@ -41,6 +46,7 @@ $columns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
+        'headerOptions' => ['class' => 'text-center'],
         'attribute' => 'description',
         'refreshGrid' => true,
         'editableOptions' => function ($model, $key, $index) {
@@ -55,10 +61,11 @@ $columns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
+        'headerOptions' => ['class' => 'text-center'],
+        'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
+        'format' => ['decimal', 2],
         'attribute' => 'discount',
         'refreshGrid' => true,
-        'headerOptions' => ['class' => 'kv-sticky-column'],
-        'contentOptions' => ['class' => 'kv-sticky-column'],
         'editableOptions' => function ($model, $key, $index) {
             return [
                 'header' => 'Discount',
@@ -82,10 +89,12 @@ $columns = [
             ];
         },
     ],
-            [
+    [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'tax_status',
         'refreshGrid' => true,
+        'headerOptions' => ['class' => 'text-center'],
+        'contentOptions' => ['class' => 'text-center', 'style' => 'width:85px;'],
         'editableOptions' => function ($model, $key, $index) {
             return [
                 'header' => 'Tax Status',
@@ -106,7 +115,7 @@ $columns = [
         'label' => 'Price',
         'refreshGrid' => true,
         'headerOptions' => ['class' => 'text-center'],
-        'contentOptions' => ['class' => 'text-center'],
+        'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
         'enableSorting' => false,
         'editableOptions' => function ($model, $key, $index) {
             if ($model->isOpeningBalance()) {
@@ -125,6 +134,9 @@ $columns = [
         },
     ],
     [
+        'headerOptions' => ['class' => 'text-center'],
+        'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
+        'format' => ['decimal', 2],
         'label' => 'Net Price',
         'value' => function ($data) {
             return ($data->amount - $data->discount) + $data->tax_rate;
@@ -133,6 +145,7 @@ $columns = [
     [
         'class' => kartik\grid\ActionColumn::className(),
         'template' => '{delete}',
+        'headerOptions' => ['class' => 'text-center'],
         'buttons' => [
             'delete' => function ($url, $model, $key) {
                 return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['invoice-line-item/delete', 'id' => $model->id], [

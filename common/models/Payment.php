@@ -144,6 +144,11 @@ class Payment extends ActiveRecord
         return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id']);
     }
 
+    public function getInvoicePayments()
+    {
+        return $this->hasMany(InvoicePayment::className(), ['payment_id' => 'id']);
+    }
+
     public function getPaymentCheque()
     {
         return $this->hasOne(PaymentCheque::className(), ['payment_id' => 'id']);
