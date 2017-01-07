@@ -390,4 +390,33 @@ class Invoice extends \yii\db\ActiveRecord
         $invoiceLineItem->description = $description;
         return $invoiceLineItem->save();
     }
+
+	public function addPayment($proFormaInvoice)
+	{
+		if ((float) $proFormaInvoice->credit > (float) $this->total) {
+			$paymentAmount = $this->total;
+		} else {
+			$paymentAmount = $proFormaInvoice->credit;
+		}
+		$paymentModel = new Payment();
+		$paymentModel->amount = $paymentAmount;
+		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+		$paymentModel->reference = $proFormaInvoice->id;
+		$paymentModel->invoiceId = $this->id;
+		$paymentModel->save();
+
+		$creditPaymentId = $paymentModel->id;
+		$paymentModel->id = null;
+		$paymentModel->isNewRecord = true;
+		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+		$paymentModel->invoiceId = $proFormaInvoice->id;
+		$paymentModel->reference = $this->id;
+		$paymentModel->save();
+
+		$debitPaymentId = $paymentModel->id;
+		$creditUsageModel = new CreditUsage();
+		$creditUsageModel->credit_payment_id = $creditPaymentId;
+		$creditUsageModel->debit_payment_id = $debitPaymentId;
+		$creditUsageModel->save();
+	}
 }
