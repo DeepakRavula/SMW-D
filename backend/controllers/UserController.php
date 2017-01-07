@@ -98,34 +98,6 @@ class UserController extends Controller
         ]);
     }
 
-	public function actionLessonSearch($id)
-	{
-		$model = $this->findModel($id);
-		$locationId = Yii::$app->session->get('location_id');
-		$request = Yii::$app->request;
-        $lessonSearch = $request->get('LessonSearch');
-		$fromDate = new \DateTime($lessonSearch['fromDate']);
-		$toDate = new \DateTime($lessonSearch['toDate']);
-		$teacherLessons = Lesson::find()
-			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, date, lesson.teacherId"])
-			->location($locationId)
-			->where(['lesson.teacherId' => $model->id])
-			->notDraft()
-			->notDeleted()
-			->between($fromDate, $toDate)
-			->groupBy(['lessonDate']);
-	
-		$teacherLessonDataProvider = new ActiveDataProvider([
-            'query' => $teacherLessons,
-			'pagination' => false,
-        ]);
-		return $this->renderAjax('_view-teacher-lesson', [
-            'teacherLessonDataProvider' => $teacherLessonDataProvider,
-			'searchModel' => new LessonSearch(),
-			'model' => $model,
-        ]);
-	}
-	
     /**
      * Displays a single User model.
      *
