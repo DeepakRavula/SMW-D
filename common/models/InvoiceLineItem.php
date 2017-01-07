@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\models\ItemType;
 use common\models\TaxStatus;
+use common\models\query\InvoiceLineItemQuery;
 /**
  * This is the model class for table "invoice_line_item".
  *
@@ -56,6 +57,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             ],
             [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate'], 'safe'],
         ];
+    }
+
+    public static function find()
+    {
+        return new InvoiceLineItemQuery(get_called_class());
     }
 
     public function getLesson()

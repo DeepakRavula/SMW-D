@@ -15,7 +15,7 @@ if (!empty($dataProvider->getModels())) {
 }
 ?>
 <div class="payments-index p-10">
-	<?= Html::a('<i class="fa fa-print"></i> Print', ['print'], ['class' => 'btn btn-default pull-right', 'target' => '_blank']) ?> 
+	<?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'date' => $searchModel->searchDate->format('Y-m-d')], ['class' => 'btn btn-default pull-right', 'target' => '_blank']) ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
