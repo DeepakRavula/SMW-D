@@ -158,17 +158,20 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         return $code;
                     },
-                    'contentOptions' => ['style' => 'width:140px;'],
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:120px;'],
                 ],
                 [
                     'label' => 'Description',
                     'value' => function ($data) {
                         return $data->description;
                     },
+                    'headerOptions' => ['class' => 'text-center'],
                 ],
 				[
                     'label' => 'Sell',
-                    'contentOptions' => ['style' => 'width:60px;'],
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:60px;'],
                     'value' => function ($data) {
                         if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
                             return $data->lesson->enrolment->program->rate;
@@ -182,14 +185,16 @@ $this->params['breadcrumbs'][] = $this->title;
 					'value' => function ($data) {
                         return $data->unit;
                     },
-					'contentOptions' => ['style' => 'width:50px;'],
+                    'headerOptions' => ['class' => 'text-center'],
+					'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px;'],
 				],
 				[
 					'label' => 'Net Price',
                     'value' => function ($data) {
 						return ($data->amount - $data->discount) + $data->tax_rate;
 					},
-                    'contentOptions' => ['style' => 'width:50px;'],
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
                     'format' => ['decimal', 2],
 				],
             ],
@@ -225,13 +230,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($data) {
                         return $data->paymentMethod->name;
                     },
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center'],
                 ],
                 [
 					'label' => 'Amount',
 					'value' => function ($data) {
 						return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
 					},
-                    'contentOptions' => ['style' => 'width:80px;'],
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
 				],
             ],
         ]); ?>
