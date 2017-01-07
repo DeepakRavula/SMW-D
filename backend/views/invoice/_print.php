@@ -219,6 +219,12 @@ $this->params['breadcrumbs'][] = $this->title;
               </tbody>
             </table>
           </div>
+        <div class="table-responsive">
+            <table class="table table-invoice-total">
+              <tbody>
+                <tr>
+                    <td colspan="4">
+        <?php if (!empty($model->payments)) : ?>
         <?php yii\widgets\Pjax::begin(['id' => 'payment-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $paymentsDataProvider,
@@ -243,11 +249,8 @@ $this->params['breadcrumbs'][] = $this->title;
 				],
             ],
         ]); ?>
-    <?php yii\widgets\Pjax::end(); ?>
-        <div class="table-responsive pull-right">
-            <table class="table table-invoice-total">
-              <tbody>
-                <tr>
+        <?php yii\widgets\Pjax::end(); ?>
+        <?php endif; ?>
                   <td colspan="2">
                     <table class="table-invoice-childtable">
                      <tr>
