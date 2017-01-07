@@ -270,7 +270,7 @@ class UserController extends Controller
                 ->joinWith(['lineItems' => function ($query) {
                     $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
                 }])
-                ->joinWith('payment')
+                ->joinWith('payments')
                 ->where(['invoice.user_id' => $model->id, 'payment.id' => null])
                 ->one();
 
