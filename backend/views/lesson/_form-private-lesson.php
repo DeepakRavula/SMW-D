@@ -17,7 +17,7 @@ use common\models\Classroom;
 <div class="lesson-qualify">
 
 	<?=
-        $this->render('view', [
+        $this->render('_view', [
             'model' => $model,
         ]);
     ?>

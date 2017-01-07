@@ -149,7 +149,7 @@ class LessonController extends Controller
                 'body' => 'Completed lessons cannot be editable!.',
             ]);
 
-            return $this->redirect(['lesson/view', 'id' => $id]);
+            return $this->redirect(['lesson/view', 'id' => $id, '#' => 'details']);
         }
         $data = ['model' => $model];
         $view = '_form';
@@ -170,7 +170,7 @@ class LessonController extends Controller
                     $privateLessonModel->expiryDate = $model->date;
                     $privateLessonModel->save();
 
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
                 }
                 $privateLessonModel->save();
             }
@@ -182,7 +182,7 @@ class LessonController extends Controller
 				$model->date =  $model->getOldAttribute('date');
 				$model->status = Lesson::STATUS_UNSCHEDULED;
 				$model->save();
-				$redirectionLink = $this->redirect(['view', 'id' => $model->id]);
+				$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 			} else {
 				if (new \DateTime($oldDate) != new \DateTime($model->date)) {
 					$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
@@ -196,19 +196,18 @@ class LessonController extends Controller
 						'options' => ['class' => 'alert-danger'],
 						'body' => $message,
 					]);
-					$redirectionLink = $this->redirect(['update', 'id' => $model->id]);
+					$redirectionLink = $this->redirect(['update', 'id' => $model->id, '#' => 'details']);
 				} else {
 					$duration = \DateTime::createFromFormat('H:i', $model->duration);
 					$model->duration = $duration->format('H:i:s');
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
 					$model->save();
-					$redirectionLink = $this->redirect(['view', 'id' => $model->id]);
+					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 				}
 			}
             return $redirectionLink;
         }
-
         return $this->render($view, $data);
     }
     /**

@@ -31,7 +31,7 @@ $noteContent = $this->render('note/view', [
             'label' => 'Details',
             'content' => $lessonContent,
             'options' => [
-                    'id' => 'lesson',
+                    'id' => 'details',
                 ],
         ],
 		[
