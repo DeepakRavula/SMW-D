@@ -25,12 +25,6 @@ use yii\helpers\Html;
 	</a>
 	</div>
 	<div class="clearfix"></div>
-		<div class="col-xs-12"><?php if (!empty($model->notes)) :?>
-			<h5><em><i class="fa fa-info-circle"></i> Notes:
-				<?php echo !empty($model->notes) ? $model->notes : null; ?></em>
-			</h5>
-			<?php endif; ?>
-		</div>
 	<div class="student-view">
 		<div class="col-md-12 action-btns">
 			<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
