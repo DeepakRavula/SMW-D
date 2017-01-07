@@ -67,9 +67,12 @@ class Note extends \yii\db\ActiveRecord
 	public function beforeSave($insert)
 	{
 		$currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-		$this->createdOn = $currentDate;
-		$this->updatedOn = $currentDate;
-
+		if(! $insert) {
+			$this->updatedOn = $currentDate;
+		} else {
+            $this->createdOn = $currentDate;
+			$this->updatedOn = $currentDate;
+        }
 		return parent::beforeSave($insert);
 	}
 }
