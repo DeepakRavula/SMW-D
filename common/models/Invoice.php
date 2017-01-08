@@ -36,7 +36,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public $customer_id;
     public $credit;
-    public $discount;
+    public $discountApplied;
     /**
      * {@inheritdoc}
      */
@@ -56,7 +56,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['isSent'], 'boolean'],
             [['type', 'notes','status'], 'safe'],
 			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
-            [['discount'], 'required', 'on' => self::SCENARIO_DISCOUNT],
+            [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
         ];
     }
 
@@ -188,7 +188,7 @@ class Invoice extends \yii\db\ActiveRecord
         if(!$this->isOpeningBalance()) {
             $subTotal    = $this->lineItemTotal;
             $tax         = $this->lineItemTax;
-            $discount    = $this->getDiscount();
+            $discount    = $this->discount;
             $totalAmount = ($subTotal + $tax) - $discount;
             $this->updateAttributes([
                     'subTotal' => $subTotal,
@@ -245,7 +245,7 @@ class Invoice extends \yii\db\ActiveRecord
         $discount = 0.0;
         if (!empty($this->lineItems)) {
             foreach ($this->lineItems as $lineItem) {
-                $discount += $lineItem->discount;
+                $discount += $lineItem->discountValue;
             }
         }
 

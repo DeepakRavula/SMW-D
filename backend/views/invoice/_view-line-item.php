@@ -63,14 +63,24 @@ $columns = [
         'class' => 'kartik\grid\EditableColumn',
         'headerOptions' => ['class' => 'text-center'],
         'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
-        'format' => ['decimal', 2],
         'attribute' => 'discount',
+        'value' => function ($model) {
+            if ((int) $model->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
+                return Yii::$app->formatter->format($model->discount, ['currency']);
+            } else {
+                return Yii::$app->formatter->format($model->discount, ['percent']);
+            }
+        },
         'refreshGrid' => true,
         'editableOptions' => function ($model, $key, $index) {
             return [
                 'header' => 'Discount',
                 'size' => 'md',
                 'placement' => 'left',
+                'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                'options' => [
+                    'value' => $model->discount,
+                ],
                 'afterInput' => function ($form, $widget) use ($model, $index) {
                     echo $form->field($model, "[{$index}]discountType")->widget(SwitchInput::classname(),
                         [
@@ -106,16 +116,28 @@ $columns = [
                     'prompt' => 'Select Tax'
                 ],
                 'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+                'pluginEvents' => [
+                    'editableSuccess' => 'invoice.onEditableGridSuccess',
+                ],
             ];
         },
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
+        'format' => 'raw',
         'attribute' => 'amount',
         'label' => 'Price',
+        'value' => function ($model) {
+            if (!empty($model->discount)) {
+                return "<strike>" . Yii::$app->formatter->format($model->amount, ['currency']) . "</strike> - " .
+                    Yii::$app->formatter->format($model->netPrice, ['currency']);
+            } else {
+                return Yii::$app->formatter->format($model->amount, ['currency']);
+            }
+        },
         'refreshGrid' => true,
         'headerOptions' => ['class' => 'text-center'],
-        'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
+        'contentOptions' => ['class' => 'text-center', 'style' => 'width:160px;'],
         'enableSorting' => false,
         'editableOptions' => function ($model, $key, $index) {
             if ($model->isOpeningBalance()) {
@@ -131,15 +153,6 @@ $columns = [
                     'editableSuccess' => 'invoice.onEditableGridSuccess',
                 ],
             ];
-        },
-    ],
-    [
-        'headerOptions' => ['class' => 'text-center'],
-        'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
-        'format' => ['decimal', 2],
-        'label' => 'Net Price',
-        'value' => function ($data) {
-            return ($data->amount - $data->discount) + $data->tax_rate;
         },
     ],
     [

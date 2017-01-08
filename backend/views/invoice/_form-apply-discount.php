@@ -18,7 +18,7 @@ use common\models\Invoice;
  	<div class="row">
         <div class="col-xs-3">
     		<?php $invoiceModel->setScenario(Invoice::SCENARIO_DISCOUNT);
-            echo $form->field($invoiceModel, 'discount')->textInput()->hint('%') ?>
+            echo $form->field($invoiceModel, 'discountApplied')->textInput()->hint('%') ?>
         </div>
     </div>
 
