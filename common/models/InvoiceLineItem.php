@@ -191,7 +191,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ((int) $this->discountType === (int) self::DISCOUNT_FLAT) {
             return $this->discount;
         } else {
-            return (($this->discount / 100) * $this->amount) ;
+            return ($this->discount / 100) * $this->amount;
         }
     }
 

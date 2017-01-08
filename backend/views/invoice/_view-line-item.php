@@ -66,9 +66,9 @@ $columns = [
         'attribute' => 'discount',
         'value' => function ($model) {
             if ((int) $model->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
-                return '$ ' . Yii::$app->formatter->format($model->discount, ['decimal', 2]);
+                return Yii::$app->formatter->format($model->discount, ['currency']);
             } else {
-                return Yii::$app->formatter->format($model->discount, ['decimal', 2]) . ' %';
+                return Yii::$app->formatter->format($model->discount, ['percent']);
             }
         },
         'refreshGrid' => true,
@@ -79,7 +79,7 @@ $columns = [
                 'placement' => 'left',
                 'inputType' => \kartik\editable\Editable::INPUT_TEXT,
                 'options' => [
-                    'value' => Yii::$app->formatter->format($model->discount, ['decimal', 2])
+                    'value' => $model->discount,
                 ],
                 'afterInput' => function ($form, $widget) use ($model, $index) {
                     echo $form->field($model, "[{$index}]discountType")->widget(SwitchInput::classname(),
@@ -129,10 +129,10 @@ $columns = [
         'label' => 'Price',
         'value' => function ($model) {
             if (!empty($model->discount)) {
-                return "$ <strike>" . $model->amount . "</strike> - $ " .
-                    Yii::$app->formatter->format($model->netPrice, ['decimal', 2]);
+                return "<strike>" . Yii::$app->formatter->format($model->amount, ['currency']) . "</strike> - " .
+                    Yii::$app->formatter->format($model->netPrice, ['currency']);
             } else {
-                return $model->amount;
+                return Yii::$app->formatter->format($model->amount, ['currency']);
             }
         },
         'refreshGrid' => true,
@@ -155,15 +155,6 @@ $columns = [
             ];
         },
     ],
-    /*[
-        'headerOptions' => ['class' => 'text-center'],
-        'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
-        'format' => ['decimal', 2],
-        'label' => 'Net Price',
-        'value' => function ($data) {
-            return $data->netPrice;
-        },
-    ],*/
     [
         'class' => kartik\grid\ActionColumn::className(),
         'template' => '{delete}',
