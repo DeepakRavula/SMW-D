@@ -1,6 +1,7 @@
 <?php
 
 use yii\grid\GridView;
+use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use common\models\ItemType;
 
@@ -163,20 +164,37 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'label' => 'Description',
+                    'format' => 'raw',
                     'value' => function ($data) {
-                        return $data->description;
+                        if (!empty($data->discount)) {
+                            if ((int) $data->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
+                                $discount = Yii::$app->formatter->format($data->discount, ['decimal', 2]);
+                                $discountDiscription = '(Discount - $' . $discount . ')' ;
+                                $discription = $data->description . "<br><center>" .
+                                    $discountDiscription . "</center>";
+                            } else {
+                                $discount = Yii::$app->formatter->format($data->discount, ['decimal', 2]);
+                                $discountDiscription = '(Discount - ' . $discount . '%)' ;
+                                $discription = $data->description . "<br><center>" .
+                                    $discountDiscription . "</center>";
+                            }
+                        } else {
+                            $discription = $data->description;
+                        }
+                        return $discription;
                     },
                     'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center'],
                 ],
 				[
                     'label' => 'Sell',
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center', 'style' => 'width:60px;'],
                     'value' => function ($data) {
-                        if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
-                            return $data->lesson->enrolment->program->rate;
+                        if ((int) $data->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON) {
+                            return '$ ' . $data->lesson->enrolment->program->rate;
                         } else {
-                            return $data->amount;
+                            return '$ ' . $data->amount;
                         }
                     },
                 ],
@@ -189,14 +207,19 @@ $this->params['breadcrumbs'][] = $this->title;
 					'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px;'],
 				],
 				[
+                    'format' => 'raw',
 					'label' => 'Net Price',
                     'value' => function ($data) {
-						return ($data->amount - $data->discount) + $data->tax_rate;
+                        if (!empty($data->discount)) {
+                            return '<strike>$ ' . $data->amount . '</strike><br> $ ' .
+                                Yii::$app->formatter->format($data->netPrice, ['decimal', 2]);
+                        } else {
+                           return '$ ' . $data->amount;
+                        }
 					},
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
-                    'format' => ['decimal', 2],
-				],
+                ],
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
@@ -263,7 +286,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </tr>
 					<tr>
 						<td>Discount</td>
-						<td><?= $model->getDiscount(); ?></td>
+						<td><?= Yii::$app->formatter->format($model->discount, ['decimal', 2]); ?></td>
 					</tr>
 					<tr>
                       <td>Paid</td>

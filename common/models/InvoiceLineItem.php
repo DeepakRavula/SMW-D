@@ -19,7 +19,7 @@ use common\models\query\InvoiceLineItemQuery;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
     private $isRoyaltyExempted;
-    public $discountType;
+
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
     const DISCOUNT_FLAT            = 0;
     const DISCOUNT_PERCENTAGE      = 1;
@@ -146,6 +146,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
+    public function afterSave($insert, $changedAttributes)
+    {
+        $this->invoice->save();
+        
+        return parent::afterSave($insert, $changedAttributes);
+    }
+
     public function getTaxType()
     {
         return $this->hasOne(TaxType::className(), ['name' => 'tax_type']);
@@ -177,5 +184,19 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function isGroupLesson()
     {
         return (int) $this->item_type_id === (int) ItemType::TYPE_GROUP_LESSON;
+    }
+
+    public function getDiscountValue()
+    {
+        if ((int) $this->discountType === (int) self::DISCOUNT_FLAT) {
+            return $this->discount;
+        } else {
+            return (($this->discount / 100) * $this->amount) ;
+        }
+    }
+
+    public function getNetPrice()
+    {
+        return ($this->amount - $this->discountValue) + $this->tax_rate;
     }
 }

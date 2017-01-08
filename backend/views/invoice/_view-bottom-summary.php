@@ -8,7 +8,7 @@
 </tr>
 <tr>
 	<td>Discount</td>
-	<td><?= $model->getDiscount(); ?></td>
+	<td><?= Yii::$app->formatter->format($model->discount, ['decimal', 2]); ?></td>
 </tr>
 <tr>
 	<td>Paid</td>

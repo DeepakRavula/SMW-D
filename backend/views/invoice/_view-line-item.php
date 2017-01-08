@@ -63,14 +63,24 @@ $columns = [
         'class' => 'kartik\grid\EditableColumn',
         'headerOptions' => ['class' => 'text-center'],
         'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
-        'format' => ['decimal', 2],
         'attribute' => 'discount',
+        'value' => function ($model) {
+            if ((int) $model->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
+                return '$ ' . Yii::$app->formatter->format($model->discount, ['decimal', 2]);
+            } else {
+                return Yii::$app->formatter->format($model->discount, ['decimal', 2]) . ' %';
+            }
+        },
         'refreshGrid' => true,
         'editableOptions' => function ($model, $key, $index) {
             return [
                 'header' => 'Discount',
                 'size' => 'md',
                 'placement' => 'left',
+                'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                'options' => [
+                    'value' => Yii::$app->formatter->format($model->discount, ['decimal', 2])
+                ],
                 'afterInput' => function ($form, $widget) use ($model, $index) {
                     echo $form->field($model, "[{$index}]discountType")->widget(SwitchInput::classname(),
                         [
@@ -106,16 +116,28 @@ $columns = [
                     'prompt' => 'Select Tax'
                 ],
                 'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
+                'pluginEvents' => [
+                    'editableSuccess' => 'invoice.onEditableGridSuccess',
+                ],
             ];
         },
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
+        'format' => 'raw',
         'attribute' => 'amount',
         'label' => 'Price',
+        'value' => function ($model) {
+            if (!empty($model->discount)) {
+                return "$ <strike>" . $model->amount . "</strike> - $ " .
+                    Yii::$app->formatter->format($model->netPrice, ['decimal', 2]);
+            } else {
+                return $model->amount;
+            }
+        },
         'refreshGrid' => true,
         'headerOptions' => ['class' => 'text-center'],
-        'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
+        'contentOptions' => ['class' => 'text-center', 'style' => 'width:160px;'],
         'enableSorting' => false,
         'editableOptions' => function ($model, $key, $index) {
             if ($model->isOpeningBalance()) {
@@ -133,15 +155,15 @@ $columns = [
             ];
         },
     ],
-    [
+    /*[
         'headerOptions' => ['class' => 'text-center'],
         'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
         'format' => ['decimal', 2],
         'label' => 'Net Price',
         'value' => function ($data) {
-            return ($data->amount - $data->discount) + $data->tax_rate;
+            return $data->netPrice;
         },
-    ],
+    ],*/
     [
         'class' => kartik\grid\ActionColumn::className(),
         'template' => '{delete}',
