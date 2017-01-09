@@ -36,8 +36,5 @@ foreach ($Roles as $name => $description) {
 			<div class="clearfix"></div>
 		</div>
 	</div>
-	<div class="col-xs-8">
-		<?php echo $form->field($model, 'notes')->textarea() ?>
-	</div>
 	<div class="clearfix"></div>
 </div>

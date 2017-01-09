@@ -38,7 +38,7 @@ class Student extends \yii\db\ActiveRecord
             [['first_name', 'last_name'], 'string', 'min' => 2, 'max' => 30],
             [[ 'status'], 'integer'],
             [['birth_date'], 'date', 'format' => 'php:d-m-Y'],
-            [['customer_id','notes'], 'safe'],
+            [['customer_id'], 'safe'],
         ];
     }
 
@@ -53,7 +53,6 @@ class Student extends \yii\db\ActiveRecord
             'last_name' => 'Last Name',
             'birth_date' => 'Birth Date',
             'customer_id' => 'Customer Name',
-            'notes' => 'Notes',
         ];
     }
 
