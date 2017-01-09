@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use yii\filters\ContentNegotiator;
 use common\models\Payment;
 use Yii;
 use common\models\User;
@@ -27,6 +28,7 @@ use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
 use common\models\Program;
+use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
 use common\models\ItemType;
 use common\models\TaxStatus;
@@ -49,6 +51,15 @@ class UserController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'contentNegotiator' => [
+               'class' => ContentNegotiator::className(),
+               'only' => ['edit-teacher-availability', 'add-teacher-availability', 'teacher-availability-events',
+                   'delete-availability'],
+               'formatParam' => '_format',
+               'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
+               ],
+           ],
         ];
     }
 
@@ -59,7 +70,7 @@ class UserController extends Controller
                 'class' => 'common\actions\UserImportUploadAction',
                 'multiple' => false,
                 'disableCsrf' => true,
-                'responseFormat' => \yii\web\Response::FORMAT_JSON,
+                'responseFormat' => Response::FORMAT_JSON,
                 'responsePathParam' => 'path',
                 'responseBaseUrlParam' => 'base_url',
                 'responseUrlParam' => 'url',
@@ -811,5 +822,63 @@ class UserController extends Controller
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
 			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
         ]);
+    }
+
+    public function actionTeacherAvailabilityEvents($id)
+    {
+        $session    = Yii::$app->session;
+        $locationId = $session->get('location_id');
+        $location   = Location::findOne($locationId);
+        $events     = [];
+        foreach ($location->locationAvailabilities as $availability) {
+            $startTime = new \DateTime($availability->fromTime);
+            $endTime   = new \DateTime($availability->toTime);
+            $events[]  = [
+                'resourceId' => $availability->day,
+                'start'      => $startTime->format('Y-m-d H:i:s'),
+                'end'        => $endTime->format('Y-m-d H:i:s'),
+                'rendering'  => 'background'
+            ];
+        }
+        $teacherAvailabilities = TeacherAvailability::find()
+                ->joinWith('userLocation')
+                ->where(['user_id' => $id])
+                ->all();
+        foreach ($teacherAvailabilities as $teacherAvailability) {
+            $startTime = new \DateTime($teacherAvailability->from_time);
+            $endTime   = new \DateTime($teacherAvailability->to_time);
+            $events[]  = [
+                'id'         => $teacherAvailability->id,
+                'resourceId' => $teacherAvailability->day,
+                'start'      => $startTime->format('Y-m-d H:i:s'),
+                'end'        => $endTime->format('Y-m-d H:i:s'),
+            ];
+        }
+        return $events;
+    }
+
+    public function actionEditTeacherAvailability($id, $startTime, $endTime)
+    {
+        $availabilityModel            = TeacherAvailability::findOne($id);
+        $availabilityModel->from_time = $startTime;
+        $availabilityModel->to_time   = $endTime;
+        return $availabilityModel->save();
+    }
+
+    public function actionDeleteTeacherAvailability($id)
+    {
+        $availabilityModel = TeacherAvailability::findOne($id);
+        return $availabilityModel->delete();
+    }
+
+    public function actionAddTeacherAvailability($id, $resourceId, $startTime, $endTime)
+    {
+        $teacher                    = $this->findModel($id);
+        $model                      = new TeacherAvailability();
+        $model->teacher_location_id = $teacher->userLocation->id;
+        $model->day                 = $resourceId;
+        $model->from_time           = $startTime;
+        $model->to_time             = $endTime;
+        return $model->save();
     }
 }

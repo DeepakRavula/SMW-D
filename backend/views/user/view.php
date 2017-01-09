@@ -95,10 +95,8 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             'searchModel' => $searchModel,
         ]);
 
-        $teacherAvailabilityContent = $this->render('teacher/_view-availability', [
-            'teacherDataProvider' => $teacherDataProvider,
+        $teacherAvailabilityContent = $this->render('teacher/_availability-calendar', [
             'model' => $model,
-            'searchModel' => $searchModel,
         ]);
 
         $teacherStudentContent = $this->render('teacher/_student', [
@@ -292,8 +290,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$('#invoice-line-item-modal').modal('show');
   	});
 	$(document).ready(function(){
-	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-    	$('#calendar').fullCalendar('render');
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function (event) {
+        if(event.currentTarget.text === 'Availability') {
+            $('#availability-calendar').fullCalendar('render');
+        }
+        if (event.currentTarget.text === 'Schedule') {
+            $('#calendar').fullCalendar('render');
+        }
 	});
 	$(document).on('click', '#user-note', function (e) {
 		$('#user-note-modal').modal('show');
