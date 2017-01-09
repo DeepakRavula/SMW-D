@@ -173,7 +173,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 $discription = $data->description . "<br><center>" .
                                     $discountDiscription . "</center>";
                             } else {
-                                $discount = Yii::$app->formatter->format($data->discount, ['percent']);
+                                $discount = Yii::$app->formatter->format($data->discount / 100, ['percent']);
                                 $discountDiscription = '(Discount - ' . $discount . ')' ;
                                 $discription = $data->description . "<br><center>" .
                                     $discountDiscription . "</center>";
