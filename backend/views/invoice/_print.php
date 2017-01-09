@@ -1,6 +1,7 @@
 <?php
 
 use yii\grid\GridView;
+use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use common\models\ItemType;
 
@@ -163,17 +164,35 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'label' => 'Description',
+                    'format' => 'raw',
                     'value' => function ($data) {
-                        return $data->description;
+                        if (!empty($data->discount)) {
+                            if ((int) $data->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
+                                $discount = Yii::$app->formatter->format($data->discount, ['currency']);
+                                $discountDiscription = '(Discount - ' . $discount . ')' ;
+                                $discription = $data->description . "<br><center>" .
+                                    $discountDiscription . "</center>";
+                            } else {
+                                $discount = Yii::$app->formatter->format($data->discount, ['percent']);
+                                $discountDiscription = '(Discount - ' . $discount . ')' ;
+                                $discription = $data->description . "<br><center>" .
+                                    $discountDiscription . "</center>";
+                            }
+                        } else {
+                            $discription = $data->description;
+                        }
+                        return $discription;
                     },
                     'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center'],
                 ],
 				[
+                    'format' => 'currency',
                     'label' => 'Sell',
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center', 'style' => 'width:60px;'],
                     'value' => function ($data) {
-                        if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
+                        if ((int) $data->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON) {
                             return $data->lesson->enrolment->program->rate;
                         } else {
                             return $data->amount;
@@ -189,14 +208,19 @@ $this->params['breadcrumbs'][] = $this->title;
 					'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px;'],
 				],
 				[
+                    'format' => 'raw',
 					'label' => 'Net Price',
                     'value' => function ($data) {
-						return ($data->amount - $data->discount) + $data->tax_rate;
+                        if (!empty($data->discount)) {
+                            return '<strike>' . Yii::$app->formatter->format($data->amount, ['currency']) . '</strike><br>' .
+                                Yii::$app->formatter->format($data->netPrice, ['currency']);
+                        } else {
+                           return Yii::$app->formatter->format($data->amount, ['currency']);
+                        }
 					},
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
-                    'format' => ['decimal', 2],
-				],
+                ],
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
@@ -240,6 +264,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['class' => 'text-center'],
                 ],
                 [
+                    'format' => 'currency',
 					'label' => 'Amount',
 					'value' => function ($data) {
 						return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
@@ -255,27 +280,27 @@ $this->params['breadcrumbs'][] = $this->title;
                     <table class="table-invoice-childtable">
                      <tr>
                       <td>SubTotal</td>
-                      <td><?= $model->subTotal; ?></td>
+                      <td><?= Yii::$app->formatter->format($model->subTotal, ['currency']); ?></td>
                     </tr> 
                      <tr>
                       <td>Tax</td>
-                      <td><?= $model->tax; ?></td>
+                      <td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
                     </tr>
 					<tr>
 						<td>Discount</td>
-						<td><?= $model->getDiscount(); ?></td>
+						<td><?= Yii::$app->formatter->format($model->discount, ['currency']); ?></td>
 					</tr>
 					<tr>
                       <td>Paid</td>
-                     <td><?= $model->paymentTotal; ?></td>
+                     <td><?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?></td>
                     </tr>
                     <tr>
                       <td><strong>Total</strong></td>
-                      <td><strong><?= $model->total; ?></strong></td>
+                      <td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
                     </tr>
                     <tr>
                       <td class="p-t-20">Balance</td>
-                      <td class="p-t-20"><?= $model->invoiceBalance; ?></td>
+                      <td class="p-t-20"><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></td>
                     </tr>
                     </table>
                   </td>
