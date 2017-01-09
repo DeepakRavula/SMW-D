@@ -19,14 +19,6 @@ use yii\helpers\Url;
         </p>
         <div class="clearfix"></div>
     </div>
-    <div class="col-md-12">
-				<?php if (!empty($model->notes)) :?>
-				<h5 class="m-t-20"><em><i class="fa fa-info-circle"></i> Notes:
-				<?php echo !empty($model->notes) ? $model->notes : null; ?>
-				</em>
-			</h5>
-				<?php endif; ?>
-			</div>
 			<?php if (! $model->isUnscheduled()) : ?>
 			<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
 			<i class="fa fa-calendar"></i>

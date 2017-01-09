@@ -37,10 +37,6 @@ use common\models\Student;
 				<?php endif; ?>
 			</div>
             <div class="clearfix"></div>
-        <div class="col-md-4">
-              <?php echo $form->field($model, 'notes')->textarea()?>
-        </div>
-
         </div>
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
     <div class="row-fluid">

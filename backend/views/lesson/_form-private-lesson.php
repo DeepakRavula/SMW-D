@@ -102,9 +102,6 @@ use common\models\Classroom;
         ]);
         ?>
         </div>
-        <div class="col-md-4">
-            <?php echo $form->field($model, 'notes')->textarea() ?>
-        </div>
     <div class="col-md-12 p-l-20 form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
 		<?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);

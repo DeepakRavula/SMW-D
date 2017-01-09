@@ -77,9 +77,6 @@ use yii\helpers\Url;
         <div class="col-md-4">			
 			<?php echo $form->field($model, 'status')->dropDownList(Lesson::lessonStatuses()) ?>
 		</div>
-        <div class="col-md-4">
-            <?php echo $form->field($model, 'notes')->textarea() ?>
-        </div>
         <div class="clearfix"></div>
     <div class="col-md-12 p-l-20 form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
