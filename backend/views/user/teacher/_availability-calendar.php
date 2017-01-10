@@ -64,7 +64,7 @@ use yii\helpers\Url;
             var endTime = moment(event.end).format('HH:mm:ss');
             var startTime = moment(event.start).format('HH:mm:ss');
             var id = $.param({ id: event.id });
-            var params = $.param({ startTime: startTime, endTime: endTime });
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
             $.ajax({
                 url    : '<?= Url::to(['user/edit-teacher-availability']) ?>?' + id + '&' + params,
                 type   : 'POST',
