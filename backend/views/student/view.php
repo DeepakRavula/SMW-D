@@ -114,6 +114,7 @@ $noteContent = $this->render('note/view', [
 		return false;
   	});
 	$(document).on('click', '#student-note', function (e) {
+		$('#note-content').val('');
 		$('#student-note-modal').modal('show');
 		return false;
   	});
@@ -217,7 +218,7 @@ $noteContent = $this->render('note/view', [
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#student-note-listing', timeout : 12000});
+					$('.student-note-content').html(response.data);
 					$('#student-note-modal').modal('hide');
 				}else
 				{

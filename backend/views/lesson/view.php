@@ -44,12 +44,12 @@ $noteContent = $this->render('note/view', [
     ],
 ]);
 ?>
-<div class="clearfix"></div>
      </div>
  </div>
 <script>
  $(document).ready(function() {
 	$(document).on('click', '#lesson-note', function (e) {
+		$('#note-content').val('');
 		$('#lesson-note-modal').modal('show');
 		return false;
   	});
@@ -63,7 +63,7 @@ $noteContent = $this->render('note/view', [
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#lesson-note-listing', timeout : 12000});
+					$('.lesson-note-content').html(response.data);
 					$('#lesson-note-modal').modal('hide');
 				}else
 				{

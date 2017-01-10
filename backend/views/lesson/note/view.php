@@ -23,14 +23,11 @@ Modal::begin([
 ]);
 Modal::end();
 ?>
-<div>
-<?php yii\widgets\Pjax::begin([
-	'id' => 'lesson-note-listing',
-	'timeout' => 6000,
-]) ?>
-<?php echo ListView::widget([
-	'dataProvider' =>  $noteDataProvider,
-	'itemView' => '_view',
-]); ?>
+<div class="lesson-note-content">
+<?=
+	$this->render('_view', [
+		'noteDataProvider' =>  $noteDataProvider,
+		'itemView' => '_list',
+]);
+?>
 </div>
-<?php \yii\widgets\Pjax::end(); ?>

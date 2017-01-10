@@ -23,11 +23,11 @@ Modal::begin([
 ]);
 Modal::end();
 ?>
-<div>
+<div class="invoice-note-content">
 <?=
-	$this->render('note/_view', [
-	'dataProvider' =>  $noteDataProvider,
-	'itemView' => '_view',
+	$this->render('_view', [
+		'noteDataProvider' =>  $noteDataProvider,
+		'itemView' => '_list',
 ]);
 ?>
 </div>

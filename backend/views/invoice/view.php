@@ -161,6 +161,7 @@ $noteContent = $this->render('note/view', [
 <script>
  $(document).ready(function() {
 	 $(document).on('click', '#invoice-note', function (e) {
+		$('#note-content').val('');
 		$('#invoice-note-modal').modal('show');
 		return false;
   	});
@@ -174,7 +175,7 @@ $noteContent = $this->render('note/view', [
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#invoice-note-listing', timeout : 12000});
+					$('.invoice-note-content').html(response.data);
 					$('#invoice-note-modal').modal('hide');
 				}else
 				{

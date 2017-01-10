@@ -123,8 +123,8 @@ $holidays = Holiday::find()
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,
     ]); ?>
-    </div>
 	<?php yii\widgets\Pjax::end(); ?>
+    </div>
 <?php elseif (!empty($results)):?>
 	<?php
         foreach ($results as $result) {

@@ -64,6 +64,25 @@ class Note extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'createdUserId']);
     }
 
+	public function getInstanceTypeName()
+	{
+		$name = null;
+		switch($this->instanceType) {
+			case self::INSTANCE_TYPE_STUDENT :
+				$name = 'student';
+			break;
+			case self::INSTANCE_TYPE_USER :
+				$name = 'user';
+			break;
+			case self::INSTANCE_TYPE_LESSON :
+				$name = 'lesson';
+			break;
+			case self::INSTANCE_TYPE_INVOICE :
+				$name = 'invoice';
+			break;
+		}
+		return $name;
+	}
 	public function beforeSave($insert)
 	{
 		$currentDate = (new \DateTime())->format('Y-m-d H:i:s');

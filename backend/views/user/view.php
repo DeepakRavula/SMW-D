@@ -296,6 +296,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
     	$('#calendar').fullCalendar('render');
 	});
 	$(document).on('click', '#user-note', function (e) {
+		$('#note-content').val('');
 		$('#user-note-modal').modal('show');
 		return false;
   	});
@@ -309,7 +310,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#user-note-listing', timeout : 12000});
+					$('.user-note-content').html(response.data);
 					$('#user-note-modal').modal('hide');
 				}else
 				{
