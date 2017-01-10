@@ -42,7 +42,7 @@ class LessonReschedule extends \yii\db\ActiveRecord
         ];
     }
 
-    public function afterSave($insert)
+    public function afterSave($insert,$changedAttributes)
     {
         if ($insert) {
             $oldLesson = Lesson::findOne($this->lessonId);
@@ -55,6 +55,6 @@ class LessonReschedule extends \yii\db\ActiveRecord
             }
         }
 
-        return parent::afterSave($insert);
+        return parent::afterSave($insert, $changedAttributes);
     }
 }
