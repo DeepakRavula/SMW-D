@@ -55,7 +55,7 @@ use yii\helpers\Url;
                     success: function()
                     {
                         $('#flash-success').text("Availability Successfully deleted!").fadeIn().delay(3000).fadeOut();
-                        $("#calendar").fullCalendar("refetchEvents");
+                        $("#availability-calendar").fullCalendar("refetchEvents");
                     }
                 });
             });
@@ -69,9 +69,15 @@ use yii\helpers\Url;
                 url    : '<?= Url::to(['user/edit-teacher-availability']) ?>?' + id + '&' + params,
                 type   : 'POST',
                 dataType: 'json',
-                success: function()
+                success: function(response)
                 {
-                    $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                    if (response) {
+                        $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                        $("#availability-calendar").fullCalendar("refetchEvents");
+                    } else {
+                        $('#flash-danger').text("Plz choose between location availability!").fadeIn().delay(3000).fadeOut();
+                        $("#availability-calendar").fullCalendar("refetchEvents");
+                    }
                 }
             });
         },
@@ -79,14 +85,20 @@ use yii\helpers\Url;
             var endTime = moment(event.end).format('HH:mm:ss');
             var startTime = moment(event.start).format('HH:mm:ss');
             var id = $.param({ id: event.id });
-            var params = $.param({ startTime: startTime, endTime: endTime });
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
             $.ajax({
                 url    : '<?= Url::to(['user/edit-teacher-availability']) ?>?' + id + '&' + params,
                 type   : 'POST',
                 dataType: 'json',
-                success: function()
+                success: function(response)
                 {
-                    $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                    if (response) {
+                        $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                        $("#availability-calendar").fullCalendar("refetchEvents");
+                    } else {
+                        $('#flash-danger').text("Plz choose between location availability!").fadeIn().delay(3000).fadeOut();
+                        $("#availability-calendar").fullCalendar("refetchEvents");
+                    }
                 }
             });
         },
@@ -98,10 +110,14 @@ use yii\helpers\Url;
                 url    : '<?= Url::to(['user/add-teacher-availability', 'id' => $model->id]) ?>&' + params,
                 type   : 'POST',
                 dataType: 'json',
-                success: function()
+                success: function(response)
                 {
-                    $('#flash-success').text("New Availability added Successfully!").fadeIn().delay(3000).fadeOut();
-                    $("#calendar").fullCalendar("refetchEvents");
+                    if (response) {
+                        $('#flash-success').text("New Availability added Successfully!").fadeIn().delay(3000).fadeOut();
+                        $("#availability-calendar").fullCalendar("refetchEvents");
+                    } else {
+                        $('#flash-danger').text("Plz choose between location availability!").fadeIn().delay(3000).fadeOut();
+                    }
                 }
             });
         }

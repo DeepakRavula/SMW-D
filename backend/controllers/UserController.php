@@ -857,9 +857,10 @@ class UserController extends Controller
         return $events;
     }
 
-    public function actionEditTeacherAvailability($id, $startTime, $endTime)
+    public function actionEditTeacherAvailability($id, $resourceId, $startTime, $endTime)
     {
         $availabilityModel            = TeacherAvailability::findOne($id);
+        $availabilityModel->day       = $resourceId;
         $availabilityModel->from_time = $startTime;
         $availabilityModel->to_time   = $endTime;
         return $availabilityModel->save();
