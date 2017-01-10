@@ -68,7 +68,7 @@ $columns = [
             if ((int) $model->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
                 return Yii::$app->formatter->format($model->discount, ['currency']);
             } else {
-                return Yii::$app->formatter->format($model->discount, ['percent']);
+                return $model->discount . '%';
             }
         },
         'refreshGrid' => true,

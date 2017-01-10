@@ -173,7 +173,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 $discription = $data->description . "<br><center>" .
                                     $discountDiscription . "</center>";
                             } else {
-                                $discount = Yii::$app->formatter->format($data->discount, ['percent']);
+                                $discount = $data->discount . '%';
                                 $discountDiscription = '(Discount - ' . $discount . ')' ;
                                 $discription = $data->description . "<br><center>" .
                                     $discountDiscription . "</center>";
@@ -190,7 +190,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'currency',
                     'label' => 'Sell',
                     'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:60px;'],
+                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
                     'value' => function ($data) {
                         if ((int) $data->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON) {
                             return $data->lesson->enrolment->program->rate;
