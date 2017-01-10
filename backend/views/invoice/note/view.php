@@ -24,13 +24,10 @@ Modal::begin([
 Modal::end();
 ?>
 <div>
-<?php yii\widgets\Pjax::begin([
-	'id' => 'invoice-note-listing',
-	'timeout' => 6000,
-]) ?>
-<?php echo ListView::widget([
+<?=
+	$this->render('note/_view', [
 	'dataProvider' =>  $noteDataProvider,
 	'itemView' => '_view',
-]); ?>
+]);
+?>
 </div>
-<?php \yii\widgets\Pjax::end(); ?>
