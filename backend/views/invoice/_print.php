@@ -166,7 +166,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'currency',
                     'label' => 'Sell',
                     'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
+                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
                     'value' => function ($data) {
                         if ((int) $data->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON) {
                             return $data->lesson->enrolment->program->rate;
@@ -181,7 +181,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $data->unit;
                     },
                     'headerOptions' => ['class' => 'text-center'],
-					'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px;'],
+					'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
 				],
 				[
                     'format' => 'currency',
@@ -190,7 +190,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $data->netPrice;
                     },
                     'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
+                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
                 ],
             ],
         ]); ?>
