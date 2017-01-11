@@ -124,20 +124,12 @@ $columns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'format' => 'raw',
+        'format' => 'currency',
         'attribute' => 'amount',
         'label' => 'Price',
-        'value' => function ($model) {
-            if (!empty($model->discount)) {
-                return "<strike>" . Yii::$app->formatter->format($model->amount, ['currency']) . "</strike> - " .
-                    Yii::$app->formatter->format($model->netPrice, ['currency']);
-            } else {
-                return Yii::$app->formatter->format($model->amount, ['currency']);
-            }
-        },
         'refreshGrid' => true,
-        'headerOptions' => ['class' => 'text-center'],
-        'contentOptions' => ['class' => 'text-center', 'style' => 'width:160px;'],
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
         'enableSorting' => false,
         'editableOptions' => function ($model, $key, $index) {
             if ($model->isOpeningBalance()) {

@@ -517,12 +517,9 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isRescheduled()
     {
-        $rootLesson        = $this->getRootLesson();
-        $rootLessonDate    = \DateTime::createFromFormat('Y-m-d H:i:s',
-                $rootLesson->date);
-        $currentLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s',
-                $this->date);
-        return $rootLessonDate != $currentLessonDate;
+        $rootLessonId = $this->getRootLessonId($this->id);
+
+        return $rootLessonId !== $this->id;
     }
 
     public function isEnrolmentFirstlesson()
