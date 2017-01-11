@@ -454,4 +454,16 @@ class Invoice extends \yii\db\ActiveRecord
 		$creditUsageModel->debit_payment_id = $debitPaymentId;
 		$creditUsageModel->save();
 	}
+
+    public function getNetSubtotal()
+    {
+        $netSubtotal = 0.0;
+        if (!empty($this->lineItems)) {
+            foreach ($this->lineItems as $lineItem) {
+                $netSubtotal += $lineItem->netPrice;
+            }
+        }
+
+        return $netSubtotal;
+    }
 }

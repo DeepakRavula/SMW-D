@@ -120,7 +120,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
           <div class="row-fluid text-gray">
               <div class="col-md-4 pull-right text-right p-r-0"><?= Yii::$app->formatter->asDate($model->date); ?></div>
-              <div class="invoice-labels col-md-4 pull-left">Date:</div>
+              <div class="col-md-4 pull-left">Date:</div>
               <div class="clearfix"></div>
           </div>
           <div class="row-fluid text-gray">
@@ -138,30 +138,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'tableOptions' => ['class' => 'table table-bordered m-0'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'columns' => [
-                [
-                    'label' => 'Code',
-                    'value' => function ($data) {
-                        $code = null;
-                        switch ($data->item_type_id) {
-                            case ItemType::TYPE_PRIVATE_LESSON:
-                                $code = 'PRIVATE LESSON';
-                            break;
-                            case ItemType::TYPE_GROUP_LESSON:
-                                $code = 'GROUP LESSON';
-                            break;
-                            case ItemType::TYPE_MISC:
-                                $code = 'MISC';
-                            break;
-                            case ItemType::TYPE_OPENING_BALANCE:
-                                $code = 'Opening Balance';
-                            break;
-                        }
-
-                        return $code;
-                    },
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:120px;'],
-                ],
                 [
                     'label' => 'Description',
                     'format' => 'raw',
@@ -208,16 +184,11 @@ $this->params['breadcrumbs'][] = $this->title;
 					'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px;'],
 				],
 				[
-                    'format' => 'raw',
+                    'format' => 'currency',
 					'label' => 'Net Price',
                     'value' => function ($data) {
-                        if (!empty($data->discount)) {
-                            return '<strike>' . Yii::$app->formatter->format($data->amount, ['currency']) . '</strike><br>' .
-                                Yii::$app->formatter->format($data->netPrice, ['currency']);
-                        } else {
-                           return Yii::$app->formatter->format($data->amount, ['currency']);
-                        }
-					},
+                        return $data->netPrice;
+                    },
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
                 ],
@@ -280,27 +251,23 @@ $this->params['breadcrumbs'][] = $this->title;
                     <table class="table-invoice-childtable">
                      <tr>
                       <td>SubTotal</td>
-                      <td><?= Yii::$app->formatter->format($model->subTotal, ['currency']); ?></td>
+                      <td><?= Yii::$app->formatter->format($model->netSubtotal, ['currency']); ?></td>
                     </tr> 
                      <tr>
                       <td>Tax</td>
                       <td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
                     </tr>
 					<tr>
-						<td>Discount</td>
-						<td><?= Yii::$app->formatter->format($model->discount, ['currency']); ?></td>
-					</tr>
-					<tr>
-                      <td>Paid</td>
-                     <td><?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?></td>
-                    </tr>
-                    <tr>
                       <td><strong>Total</strong></td>
                       <td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
                     </tr>
                     <tr>
-                      <td class="p-t-20">Balance</td>
-                      <td class="p-t-20"><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></td>
+                      <td>Paid</td>
+                     <td><?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?></td>
+                    </tr>
+                    <tr>
+                      <td class="p-t-20"><strong>Balance</strong></td>
+                      <td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
                     </tr>
                     </table>
                   </td>

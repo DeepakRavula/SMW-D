@@ -197,6 +197,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return ($this->amount - $this->discountValue) + $this->tax_rate;
+        return $this->amount - $this->discountValue;
     }
 }
