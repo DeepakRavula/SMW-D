@@ -15,6 +15,6 @@
 	<td><?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?></td>
 </tr>
 
-<td class="p-t-20">Balance</td>
-<td class="p-t-20"><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></td>
+<td class="p-t-20"><strong>Balance</strong></td>
+<td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
 </tr>

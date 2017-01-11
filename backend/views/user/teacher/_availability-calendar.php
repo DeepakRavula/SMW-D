@@ -75,7 +75,7 @@ use yii\helpers\Url;
                         $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
                         $("#availability-calendar").fullCalendar("refetchEvents");
                     } else {
-                        $('#flash-danger').text("Plz choose between location availability!").fadeIn().delay(3000).fadeOut();
+                        $('#flash-danger').text("Please choose availability within the location hours").fadeIn().delay(3000).fadeOut();
                         $("#availability-calendar").fullCalendar("refetchEvents");
                     }
                 }
@@ -96,7 +96,7 @@ use yii\helpers\Url;
                         $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
                         $("#availability-calendar").fullCalendar("refetchEvents");
                     } else {
-                        $('#flash-danger').text("Plz choose between location availability!").fadeIn().delay(3000).fadeOut();
+                        $('#flash-danger').text("Please choose availability within the location hours").fadeIn().delay(3000).fadeOut();
                         $("#availability-calendar").fullCalendar("refetchEvents");
                     }
                 }

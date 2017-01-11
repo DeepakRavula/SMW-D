@@ -130,7 +130,7 @@ use kartik\editable\Editable;
                   <td colspan="4">
                     
                     <div class="row-fluid m-t-20">
-					<em><strong>Printed notes:</strong></em><Br>
+					<em><strong>Notes:</strong></em><Br>
 					<?=
 					 Editable::widget([
 						'name'=>'notes', 
