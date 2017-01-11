@@ -28,7 +28,6 @@ class UserForm extends Model
     public $qualifications;
     public $lastname;
     public $firstname;
-    public $notes;
     public $addresslabel;
     public $city;
     public $province;
@@ -74,7 +73,7 @@ class UserForm extends Model
                 )],
             ],
             ['roles', 'required'],
-            [['notes', 'locations', 'phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
+            [['locations', 'phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
             [['addresslabel', 'postalcode', 'province', 'city', 'country'], 'safe'],
         ];
     }
@@ -144,7 +143,6 @@ class UserForm extends Model
         if (!empty($userFirstName)) {
             $this->firstname = $userFirstName->firstname;
             $this->lastname = $userFirstName->lastname;
-            $this->notes = $userFirstName->notes;
         }
 
         $phoneNumber = PhoneNumber::findOne(['user_id' => $model->getId()]);
@@ -270,7 +268,6 @@ class UserForm extends Model
             }
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
-            $userProfileModel->notes = $this->notes;
             $userProfileModel->save();
 
             $phoneNumberModel = PhoneNumber::findOne(['user_id' => $model->getId()]);
