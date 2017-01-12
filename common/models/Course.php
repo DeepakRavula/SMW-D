@@ -4,7 +4,10 @@ namespace common\models;
 
 use yii\helpers\ArrayHelper;
 use common\models\Program;
-
+use common\models\Lesson;
+use IntervalTree\IntervalTree;
+use common\components\intervalTree\DateRangeInclusive;
+use Yii;
 /**
  * This is the model class for table "course".
  *
@@ -57,6 +60,7 @@ class Course extends \yii\db\ActiveRecord
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['startDate'], 'checkStartDate', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['endDate'], 'checkEndDate', 'on' => self::SCENARIO_GROUP_COURSE],
+            ['fromTime', 'checkTime', 'on' => self::SCENARIO_GROUP_COURSE],
         ];
     }
 
@@ -93,6 +97,33 @@ class Course extends \yii\db\ActiveRecord
         }
     }
 
+	public function checkTime($attribute, $params)
+    {
+        $teacherAvailabilities = TeacherAvailability::find()
+            ->joinWith(['teacher' => function ($query) {
+                $query->where(['user.id' => $this->teacherId]);
+            }])
+                ->where(['teacher_availability_day.day' => $this->day])
+                ->all();
+        $availableHours = [];
+        if (! empty($teacherAvailabilities)) {
+            foreach ($teacherAvailabilities as $teacherAvailability) {
+                $start = new \DateTime($teacherAvailability->from_time);
+                $end = new \DateTime($teacherAvailability->to_time);
+                $interval = new \DateInterval('PT15M');
+                $hours = new \DatePeriod($start, $interval, $end);
+                foreach ($hours as $hour) {
+                    $availableHours[] = Yii::$app->formatter->asTime($hour);
+                }
+            }
+            $fromTime = (new \DateTime($this->fromTime))->format('h:i A');
+            if (!in_array($fromTime, $availableHours)) {
+                $this->addError($attribute, 'Please choose the lesson time within the teacher\'s availability hours');
+            }
+        }
+    }
+
+	
     /**
      * {@inheritdoc}
      */
