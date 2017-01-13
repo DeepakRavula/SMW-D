@@ -5,7 +5,6 @@ use yii\helpers\Url;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use common\models\Holiday;
-use common\models\ProfessionalDevelopmentDay;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -27,8 +26,6 @@ $conflictedDates = [];
     }
 $holidays = Holiday::find()
         ->all();
-    $professionalDevelopmentDays = ProfessionalDevelopmentDay::find()
-        ->all();
 
     $results = [];
     foreach ($holidays as $holiday) {
@@ -43,19 +40,7 @@ $holidays = Holiday::find()
             }
         }
     }
-    foreach ($professionalDevelopmentDays as $professionalDevelopmentDay) {
-        foreach ($conflictedDates as $conflictedDate) {
-            $professionalDevelopmentDayDate = \DateTime::createFromFormat('Y-m-d H:i:s', $professionalDevelopmentDay->date);
-            $professionalDevelopmentDayDate = $professionalDevelopmentDayDate->format('Y-m-d');
-            $lessonDate = new \DateTime($conflictedDate);
-            if (new \DateTime($professionalDevelopmentDayDate) == new \DateTime($conflictedDate)) {
-                $results[] = [
-                    'date' => $professionalDevelopmentDay->date,
-                    'type' => 'Professional Development Day',
-                ];
-            }
-        }
-    }
+    
     $conflictedLessonDataProvider = new ActiveDataProvider([
         'query' => Lesson::find()
             ->where(['IN', 'id', $conflictedLessonIds])
