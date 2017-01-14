@@ -62,7 +62,7 @@ $columns = [
     [
         'class' => 'kartik\grid\EditableColumn',
         'headerOptions' => ['class' => 'text-center'],
-        'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
         'attribute' => 'discount',
         'value' => function ($model) {
             if ((int) $model->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
