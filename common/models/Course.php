@@ -61,6 +61,7 @@ class Course extends \yii\db\ActiveRecord
 			[['startDate'], 'checkStartDate', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['endDate'], 'checkEndDate', 'on' => self::SCENARIO_GROUP_COURSE],
             ['fromTime', 'checkTime', 'on' => self::SCENARIO_GROUP_COURSE],
+            ['fromTime', 'checkConflict', 'on' => self::SCENARIO_GROUP_COURSE],
         ];
     }
 
@@ -123,7 +124,37 @@ class Course extends \yii\db\ActiveRecord
         }
     }
 
-	
+	public function checkConflict($attribute, $params)
+    {
+		$locationId = Yii::$app->session->get('location_id');
+		$otherLessons = [];
+        $intervals = [];
+
+		$teacherLessons = Lesson::find()
+            ->teacherLessons($locationId, $this->teacherId)
+            ->all();
+        foreach ($teacherLessons as $teacherLesson) {
+            $otherLessons[] = [
+                'id' => $teacherLesson->id,
+                'date' => $teacherLesson->date,
+                'duration' => $teacherLesson->course->duration,
+            ];
+        }
+		foreach ($otherLessons as $otherLesson) {
+            $timebits = explode(':', $otherLesson['duration']);
+            $intervals[] = new DateRangeInclusive(new \DateTime($otherLesson['date']), new \DateTime($otherLesson['date']), new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'), $otherLesson['id']);
+        }
+        $tree = new IntervalTree($intervals);
+        $conflictedLessonIds = [];
+		$lessonDate = $this->startDate . ' ' . $this->fromTime;
+        $conflictedLessonsResults = $tree->search(new \DateTime($lessonDate));
+        foreach ($conflictedLessonsResults as $conflictedLessonsResult) {
+            $conflictedLessonIds[] = $conflictedLessonsResult->id;
+        }
+        if (!empty($conflictedLessonIds)) {
+            $this->addError($attribute, "Course time conflicts with teacher's other lesson");
+        }
+    }
     /**
      * {@inheritdoc}
      */
