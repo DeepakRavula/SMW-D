@@ -162,8 +162,6 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $holidays = Holiday::find()
             ->all();
-        $professionalDevelopmentDays = ProfessionalDevelopmentDay::find()
-            ->all();
 
         $intervals = [];
         foreach ($holidays as $holiday) {
