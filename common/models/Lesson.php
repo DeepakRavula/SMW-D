@@ -167,10 +167,7 @@ class Lesson extends \yii\db\ActiveRecord
         foreach ($holidays as $holiday) {
             $intervals[] = new DateRangeInclusive(new \DateTime($holiday->date), new \DateTime($holiday->date));
         }
-        foreach ($professionalDevelopmentDays as $professionalDevelopmentDay) {
-            $intervals[] = new DateRangeInclusive(new \DateTime($professionalDevelopmentDay->date), new \DateTime($professionalDevelopmentDay->date), null, $this->id);
-        }
-
+        
         return $intervals;
     }
 
