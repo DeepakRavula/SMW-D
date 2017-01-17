@@ -121,6 +121,16 @@ class UserController extends Controller
         $model = $this->findModel($id);
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
+        $locationAvailabilityMinTime = LocationAvailability::find()
+            ->where(['locationId' => $locationId])
+            ->orderBy(['fromTime' => SORT_DESC])
+            ->one();
+        $locationAvailabilityMaxTime = LocationAvailability::find()
+            ->where(['locationId' => $locationId])
+            ->orderBy(['toTime' => SORT_DESC])
+            ->one();
+        $minTime                     = $locationAvailabilityMinTime->fromTime;
+        $maxTime                     = $locationAvailabilityMaxTime->toTime;
 
         $searchModel = new UserSearch();
         $db = $searchModel->search(Yii::$app->request->queryParams);
@@ -314,6 +324,8 @@ class UserController extends Controller
             'query' => $notes,
         ]);
         return $this->render('view', [
+            'minTime' => $minTime,
+            'maxTime' => $maxTime,
             'student' => new Student(),
             'dataProvider' => $dataProvider,
             'teacherDataProvider' => $teacherDataProvider,
@@ -837,7 +849,8 @@ class UserController extends Controller
                 'resourceId' => $availability->day,
                 'start'      => $startTime->format('Y-m-d H:i:s'),
                 'end'        => $endTime->format('Y-m-d H:i:s'),
-                'rendering'  => 'background'
+                'rendering'  => 'inverse-background',
+                'backgroundColor' => '#e1e2e0',
             ];
         }
         $teacherAvailabilities = TeacherAvailability::find()
@@ -852,6 +865,7 @@ class UserController extends Controller
                 'resourceId' => $teacherAvailability->day,
                 'start'      => $startTime->format('Y-m-d H:i:s'),
                 'end'        => $endTime->format('Y-m-d H:i:s'),
+                'backgroundColor' => '#97ef83',
             ];
         }
         return $events;
