@@ -42,6 +42,9 @@ $this->params['breadcrumbs'][] = $this->title;
       .invoice-labels{
         width: 82px;
       }
+      .text-left{
+        text-align: left !important;
+      }
     }
 </style>
 <div class="invoice-view p-10">
@@ -69,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <!-- /.col -->
       </div>
-    <div class="row invoice-info m-t-20">
+    <div class="row invoice-info m-t-15">
         <!-- /.col -->
         <div class="col-sm-9 invoice-col m-b-20 pull-left p-0">
           <div class="row m-t-10">
@@ -114,18 +117,18 @@ $this->params['breadcrumbs'][] = $this->title;
         <!-- /.col -->
         <div class="col-sm-3 invoice-col m-t-10 text-right p-0">
             <div class="row-fluid  text-gray">
-              <div class="col-md-4 pull-right text-right p-r-0"><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#'.$model->invoice_number?></div>
-              <div class="col-md-4 pull-left"><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Number:'?> </div> 
+              <div class="col-md-4 pull-right text-left width-80 p-r-0 "><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#'.$model->invoice_number?></div>
+              <div class="col-md-4 pull-left" ><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Number:'?> </div> 
               <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">
-              <div class="col-md-4 pull-right text-right p-r-0"><?= Yii::$app->formatter->asDate($model->date); ?></div>
+              <div class="col-md-4 pull-right text-left width-80 p-r-0" ><?= Yii::$app->formatter->asDate($model->date); ?></div>
               <div class="col-md-4 pull-left">Date:</div>
               <div class="clearfix"></div>
           </div>
           <div class="row-fluid text-gray">
 			  <?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
-				  <div class="col-md-4 pull-right text-right p-r-0"><?= $model->getStatus(); ?></div>
+				  <div class="col-md-4 pull-right text-left p-r-0 width-80"><?= $model->getStatus(); ?></div>
 				  <div class="col-md-4 pull-left">Status:</div>
 			<?php endif; ?>
               <div class="clearfix"></div>
@@ -135,7 +138,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
-            'tableOptions' => ['class' => 'table table-bordered m-0'],
+            'tableOptions' => ['class' => 'table table-bordered m-0 table-more-condensed'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'columns' => [
                 [
@@ -198,7 +201,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="row">
         <!-- /.col -->
-          <div class="table-responsive">
+<!--           <div class="table-responsive">
             <table class="table table-invoice-total">
               <tbody>
                 <tr>
@@ -214,67 +217,144 @@ $this->params['breadcrumbs'][] = $this->title;
               </tbody>
             </table>
           </div>
-        <div class="table-responsive">
+
+
+          <div class="table-responsive">
             <table class="table table-invoice-total">
               <tbody>
                 <tr>
                     <td colspan="4">
-        <?php if (!empty($model->payments)) : ?>
-        <?php yii\widgets\Pjax::begin(['id' => 'payment-index']); ?>
-        <?php echo GridView::widget([
-            'dataProvider' => $paymentsDataProvider,
-            'tableOptions' => ['class' => 'table table-bordered m-0'],
-            'headerRowOptions' => ['class' => 'bg-light-gray'],
-            'columns' => [
-                [
-                    'label' => 'Payment Method',
-                    'value' => function ($data) {
-                        return $data->paymentMethod->name;
-                    },
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center'],
-                ],
-                [
-                    'format' => 'currency',
-					'label' => 'Amount',
-					'value' => function ($data) {
-						return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
-					},
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
-				],
-            ],
-        ]); ?>
-        <?php yii\widgets\Pjax::end(); ?>
-        <?php endif; ?>
+                      <?php if (!empty($model->payments)) : ?>
+                      <?php yii\widgets\Pjax::begin(['id' => 'payment-index']); ?>
+                      <?php echo GridView::widget([
+                          'dataProvider' => $paymentsDataProvider,
+                          'tableOptions' => ['class' => 'table table-bordered m-0'],
+                          'headerRowOptions' => ['class' => 'bg-light-gray'],
+                          'columns' => [
+                              [
+                                  'label' => 'Payment Method',
+                                  'value' => function ($data) {
+                                      return $data->paymentMethod->name;
+                                  },
+                                  'headerOptions' => ['class' => 'text-center'],
+                                  'contentOptions' => ['class' => 'text-center'],
+                              ],
+                              [
+                                  'format' => 'currency',
+              					'label' => 'Amount',
+              					'value' => function ($data) {
+              						return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
+              					},
+                                  'headerOptions' => ['class' => 'text-center'],
+                                  'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
+              				],
+                          ],
+                      ]); ?>
+                      <?php yii\widgets\Pjax::end(); ?>
+                    <?php endif; ?>
                   <td colspan="2">
                     <table class="table-invoice-childtable">
-                     <tr>
-                      <td>SubTotal</td>
-                      <td><?= Yii::$app->formatter->format($model->netSubtotal, ['currency']); ?></td>
-                    </tr> 
-                     <tr>
-                      <td>Tax</td>
-                      <td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
-                    </tr>
-					<tr>
-                      <td><strong>Total</strong></td>
-                      <td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
-                    </tr>
-                    <tr>
-                      <td>Paid</td>
-                     <td><?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?></td>
-                    </tr>
-                    <tr>
-                      <td class="p-t-20"><strong>Balance</strong></td>
-                      <td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
-                    </tr>
+                      <tr>
+                        <td>SubTotal</td>
+                        <td><?= Yii::$app->formatter->format($model->netSubtotal, ['currency']); ?></td>
+                      </tr> 
+                      <tr>
+                        <td>Tax</td>
+                        <td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
+                      </tr>
+  					          <tr>
+                        <td><strong>Total</strong></td>
+                        <td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
+                      </tr>
+                      <tr>
+                        <td>Paid</td>
+                       <td><?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?></td>
+                      </tr>
+                      <tr>
+                        <td class="p-t-20"><strong>Balance</strong></td>
+                        <td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
+                      </tr>
                     </table>
                   </td>
                 </tr>
               </tbody>
             </table>
-          </div>
+          </div> -->
+
+    <table class="table-responsive below-description ">
+        <tr>
+            <td class="notes-table">
+                <?php if (!empty($model->notes)):?>
+                <div class="row-fluid m-t-15 m-b-15">
+                    <em><strong> Notes: </strong><Br>
+                    <?php echo $model->notes; ?></em>
+                </div>
+                <?php endif; ?>
+            </td>
+            <td rowspan="2" class="subtotal-table p-t-20">
+                <table class="table-invoice-childtable table-more-condensed">
+                    <tr>
+                        <td>SubTotal</td>
+                        <td>
+                            <?= Yii::$app->formatter->format($model->netSubtotal, ['currency']); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tax</td>
+                        <td>
+                            <?= Yii::$app->formatter->format($model->tax, ['currency']); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
+                    </tr>
+                    <tr>
+                        <td>Paid</td>
+                        <td>
+                            <?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-t-20"><strong>Balance</strong></td>
+                        <td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="payment-method-table">
+              <?php if (!empty($model->payments)) : ?>
+                    <?php yii\widgets\Pjax::begin(['id' => 'payment-index']); ?>
+                    <?php echo GridView::widget([
+                          'dataProvider' => $paymentsDataProvider,
+                          'tableOptions' => ['class' => 'table  m-0 table-more-condensed inner-payment-table'],
+                          'headerRowOptions' => ['class' => 'bg-light-gray'],
+                          'columns' => [
+                              [
+                                  'label' => 'Payment',
+                                  'value' => function ($data) {
+                                      return $data->paymentMethod->name;
+                                  },
+                                  'headerOptions' => ['class' => 'text-center'],
+                                  'contentOptions' => ['class' => 'text-center'],
+                              ],
+                              [
+                                  'format' => 'currency',
+                                  // 'label' => 'Amount',
+                                  'value' => function ($data) {
+                                    return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
+                                  },
+                                  'headerOptions' => ['class' => 'text-center'],
+                                  'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
+                              ],
+                          ],
+                    ]); ?>
+                    <?php yii\widgets\Pjax::end(); ?>
+                <?php endif; ?>
+            </td>
+        </tr>
+    </table>
         <!-- /.col -->
         </div>
     <div>

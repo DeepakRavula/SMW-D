@@ -183,6 +183,12 @@ Resets
 .m-t-10, .empty{
   margin-top: 10px !important;
 }
+.m-t-15{
+  margin-top:15px !important;
+}
+.m-b-15{
+  margin-bottom:15px !important;
+}
 .m-t-20{
   margin-top: 20px !important;
 }
@@ -932,11 +938,30 @@ input[type="search"]:-ms-input-placeholder {
     table>tbody>tr>td:last-child{
     text-align: right;
     }
+
     .table-invoice-childtable>tbody>tr>td:first-of-type{
     width: 230px;
     }
     .invoice-view .logo>img{
     width:135px;
+    }
+    .table-more-condensed>tbody>tr>td, .table-more-condensed>tbody>tr>th, .table-more-condensed>tfoot>tr>td, .table-more-condensed>tfoot>tr>th, .table-more-condensed>thead>tr>td, .table-more-condensed>thead>tr>th{
+      padding:3px;
+    }
+    .payment-method-table{
+      border:none;
+    }
+    .payment-method-table thead tr th{
+      /*background:red !important;*/
+    }
+    .payment-method-table .inner-payment-table thead tr th{
+      border:none;
+    }
+    .inner-payment-table>tbody>tr>td{
+      border:none !important;
+    }
+    .inner-payment-table > tbody *{
+      border:none !important;
     }
     .badge{
     border-radius: 50px;
@@ -948,6 +973,9 @@ input[type="search"]:-ms-input-placeholder {
     .text-right{
     text-align: right;
     }
+    .text-left{
+      text-align: left;
+    }
     .p-r-0{
     padding-right: 0;
     }
@@ -957,6 +985,13 @@ input[type="search"]:-ms-input-placeholder {
     .invoice-labels{
     width: 100px;
     }
+    .width-80{
+      width:80px;
+    }
+    .notes-table{
+      width: 68vw;
+    }
+
 }
 
 .monthly-estimate {
