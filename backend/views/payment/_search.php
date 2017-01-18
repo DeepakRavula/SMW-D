@@ -41,6 +41,7 @@ use yii\jui\DatePicker;
     </div>
     <div class="col-md-3 form-group m-t-20">
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
+        <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
         <div class="clearfix"></div>
     </div>
     </div>
