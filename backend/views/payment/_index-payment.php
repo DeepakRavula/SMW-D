@@ -1,7 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -9,20 +10,32 @@ use yii\grid\GridView;
 $total = 0;
 if (!empty($dataProvider->getModels())) {
     foreach ($dataProvider->getModels() as $key => $val) {
-        $date = new \DateTime($val->date);
-        $total += $val->paymentMethod->getPaymentMethodTotal($date);
+        if ($searchModel->groupByMethod) {
+            $total    += $val->paymentMethod->getPaymentMethodTotal($searchModel->fromDate, $searchModel->toDate);
+        } else {
+            $total += $val->amount;
+        }
     }
 }
 ?>
 <div class="payments-index p-10">
-	<?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'date' => $searchModel->searchDate->format('Y-m-d')], ['class' => 'btn btn-default pull-right', 'target' => '_blank']) ?>
+    <div id="print" class="btn btn-default pull-right">
+        <?= Html::a('<i class="fa fa-print"></i> Print') ?>
+    </div>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'payment-listing',
+            ],
+        ],
         'showFooter' => true,
         'footerRowOptions' => ['style' => 'font-weight:bold;text-align: right;'],
         'tableOptions' => ['class' => 'table table-bordered m-0'],
-            'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
             [
                 'label' => 'Payment Method',
@@ -33,16 +46,41 @@ if (!empty($dataProvider->getModels())) {
             [
                 'label' => 'Amount',
                 'attribute' => 'amount',
-                'value' => function ($data) {
-                    $date = new \DateTime($data->date);
-                    return $data->paymentMethod->getPaymentMethodTotal($date);
+                'value' => function ($data) use ($searchModel) {
+                    if (! $searchModel->groupByMethod) {
+                        return $data->amount;
+                    } else {
+                        return $data->paymentMethod->getPaymentMethodTotal($searchModel->fromDate, $searchModel->toDate);
+                    }
                 },
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'enableSorting' => false,
                 'footer' => Yii::$app->formatter->asCurrency($total),
+                ],
             ],
-        ],
     ]); ?>
-
 </div>
+
+<script>
+$(document).ready(function(){
+    $("#group-by-method").on("change", function() {
+        var groupByMethod = $(this).is(":checked");
+        var fromDate = $('#from-date').val();
+        var toDate = $('#to-date').val();
+        var params = $.param({ 'PaymentSearch[fromDate]': fromDate,
+            'PaymentSearch[toDate]': toDate, 'PaymentSearch[groupByMethod]': (groupByMethod | 0) });
+        var url = '<?php echo Url::to(['payment/index']); ?>?' + params;
+        $.pjax.reload({url:url,container:"#payment-listing",replace:false,  timeout: 4000});  //Reload GridView
+    });
+    $("#print").on("click", function() {
+        var groupByMethod = $(this).is(":checked");
+        var fromDate = $('#from-date').val();
+        var toDate = $('#to-date').val();
+        var params = $.param({ fromDate: fromDate,
+            toDate: toDate, groupByMethod: (groupByMethod | 0) });
+        var url = '<?php echo Url::to(['payment/print']); ?>?' + params;
+        window.open(url,'_blank');
+    });
+});
+</script>

@@ -12,7 +12,9 @@ use Yii;
  */
 class PaymentSearch extends Payment
 {
-    public $searchDate;
+    public $fromDate;
+    public $toDate;
+    public $groupByMethod;
     public $query;
     /**
      * {@inheritdoc}
@@ -20,7 +22,7 @@ class PaymentSearch extends Payment
     public function rules()
     {
         return [
-            [['searchDate', 'query'], 'safe'],
+            [['fromDate', 'toDate', 'groupByMethod', 'query'], 'safe'],
         ];
     }
 
@@ -40,24 +42,27 @@ class PaymentSearch extends Payment
      */
     public function search($params)
     {
-		$locationId = Yii::$app->session->get('location_id');
-        $this->searchDate = new \DateTime();
-        $query = Payment::find()
-			->location($locationId)
-            ->groupBy('payment.payment_method_id');
-        $dataProvider = new ActiveDataProvider([
+        $locationId          = Yii::$app->session->get('location_id');
+        $query               = Payment::find()
+            ->location($locationId);
+        $dataProvider        = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
         ]);
 
         if (!($this->load($params) && $this->validate())) {
-            $query->andWhere(['between', 'payment.date', $this->searchDate->format('Y-m-d 00:00:00'), $this->searchDate->format('Y-m-d 23:59:59')]);
+            $this->fromDate      = new \DateTime();
+            $this->toDate        = new \DateTime();
+            $query->andWhere(['between', 'payment.date', $this->fromDate->format('Y-m-d 00:00:00'), $this->toDate->format('Y-m-d 23:59:59')]);
             return $dataProvider;
         }
+        if ($this->groupByMethod) {
+            $query->groupBy('payment.payment_method_id');
+        }
+        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
+        $this->toDate   = \DateTime::createFromFormat('d-m-Y', $this->toDate);
 
-        $this->searchDate = \DateTime::createFromFormat('d-m-Y', $this->searchDate);
-
-        $query->andWhere(['between', 'payment.date', $this->searchDate->format('Y-m-d 00:00:00'), $this->searchDate->format('Y-m-d 23:59:59')]);
+        $query->andWhere(['between', 'payment.date', $this->fromDate->format('Y-m-d 00:00:00'), $this->toDate->format('Y-m-d 23:59:59')]);
 
         return $dataProvider;
     }

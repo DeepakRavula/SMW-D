@@ -123,7 +123,7 @@ class UserController extends Controller
         $locationId = $session->get('location_id');
         $locationAvailabilityMinTime = LocationAvailability::find()
             ->where(['locationId' => $locationId])
-            ->orderBy(['fromTime' => SORT_DESC])
+            ->orderBy(['fromTime' => SORT_ASC])
             ->one();
         $locationAvailabilityMaxTime = LocationAvailability::find()
             ->where(['locationId' => $locationId])
