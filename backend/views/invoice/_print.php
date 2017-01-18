@@ -357,7 +357,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </table>
         <!-- /.col -->
         </div>
-    <div>
+    <div class="reminder_notes">
         <?php echo $model->reminderNotes; ?>
     </div>
 </div>

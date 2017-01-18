@@ -8,7 +8,7 @@ use yii\grid\GridView;
 $this->title = 'Reminder Notes';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="reminder-notes-index">
+<div class="reminder-notes-index p-10">
 
 
     <?php echo GridView::widget([

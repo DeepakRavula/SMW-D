@@ -82,17 +82,17 @@ use kartik\editable\Editable;
         <!-- /.col -->
         <div class="col-sm-4 invoice-col m-t-10 text-right p-0">
             <div class="row-fluid  text-gray">
-              <div class="col-md-4 pull-right text-right p-r-0"><?= '#'.$model->getInvoiceNumber()?></div>
+              <div class="col-md-4 pull-right text-left p-r-0 p-l-30"><?= '#'.$model->getInvoiceNumber()?></div>
               <div class="col-md-2 pull-right"><?= 'Number:'?> </div> 
               <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">
-              <div class="col-md-4 pull-right text-right p-r-0"><?= Yii::$app->formatter->asDate($model->date); ?></div>
+              <div class="col-md-4 pull-right text-left p-r-0 p-l-30"><?= Yii::$app->formatter->asDate($model->date); ?></div>
               <div class="col-md-2 pull-right">Date:</div>
               <div class="clearfix"></div>
           </div>
           <div  class="row-fluid text-gray">
-				  <div id="invoice-status" class="col-md-4 pull-right text-right p-r-0">
+				  <div id="invoice-status" class="col-md-4 pull-right text-left p-r-0 p-l-30">
 				  <?= $model->getStatus(); ?></div>
 				  <div class="col-md-2 pull-right">Status:</div>
               <div class="clearfix"></div>
@@ -164,10 +164,11 @@ use kartik\editable\Editable;
 <div class="clearfix"></div>
 <div class="row no-print">
   <div class="col-xs-12">
+  <!-- <hr class="default-hr">   -->
   </div>
 </div>
 </div>
-<div>
+<div class="reminder_notes">
     <?php echo $model->reminderNotes; ?>
 </div>
 </div>

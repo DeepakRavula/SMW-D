@@ -57,7 +57,7 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 ?>
 <div class="p-10 calendar-filter">
         <div class="pull-right m-1-20">
-		Filter by
+		<span class="filter_by_calendar">Filter by</span>
             <?=
             SelectivityWidget::widget([
                 'name' => 'Program',
@@ -118,20 +118,20 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
             ],
         ]);?>
     </div>
-</div>
-
-<div class="schedule-index">
-    <div class="row schedule-filter">
-        <div class="col-md-2 pull-right">
-            <div id="datepicker" class="input-group date">
-                <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
-                <div class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
+    <div class="schedule-index">
+        <div class="row schedule-filter">
+            <div class="col-md-2 pull-right">
+                <div id="datepicker" class="input-group date">
+                    <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script type="text/javascript">
 var date = new Date();
 var currentDate = moment(date).format('YYYY-MM-DD 00:00:00');

@@ -57,7 +57,7 @@ $this->title = 'Calendar for ' .(new \DateTime())->format('l, F jS, Y');
 ?>
 <div class="p-10 calendar-filter">
         <div class="pull-right m-1-20">
-		Filter by
+		<span class="filter_by_calendar">Filter by</span>
             <?=
             SelectivityWidget::widget([
                 'name' => 'Program',
