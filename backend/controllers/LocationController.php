@@ -63,7 +63,7 @@ class LocationController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+        return $this->render('_view', [
             'model' => $this->findModel($id),
         ]);
     }
@@ -112,7 +112,7 @@ class LocationController extends Controller
 
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('update', [
+            return $this->render('_form', [
                 'model' => $model,
             ]);
         }

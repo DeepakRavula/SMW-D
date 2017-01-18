@@ -8,7 +8,6 @@ use yii\helpers\Url;
  * and open the template in the editor.
  */
 ?>
-<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 
 <div id="availability-calendar"></div>

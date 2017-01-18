@@ -5,19 +5,14 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
-
-$this->title = 'Edit Location';
-$this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
-$this->params['breadcrumbs'][] = 'Edit';
 ?>
 
-<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="tabbable-panel">
     <div class="tabbable-line">
         <?php
 
-        $locationDetails = $this->render('_form',[
+        $locationDetails = $this->render('view',[
             'model' => $model,
         ]);
 
@@ -30,7 +25,7 @@ $this->params['breadcrumbs'][] = 'Edit';
         <?php echo Tabs::widget([
             'items' => [
                 [
-                    'label' => 'Location',
+                    'label' => 'Details',
                     'content' => $locationDetails,
                     'options' => [
                             'id' => 'location',

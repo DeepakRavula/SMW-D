@@ -10,6 +10,9 @@ use yii\helpers\ArrayHelper;
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
 /* @var $form yii\bootstrap\ActiveForm */
+$this->title = 'Edit Location';
+$this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
+$this->params['breadcrumbs'][] = 'Edit';
 ?>
 
 <div class="location-form">
