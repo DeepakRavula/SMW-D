@@ -47,15 +47,18 @@ use yii\helpers\Url;
         eventClick: function(event) {
             var params = $.param({ id: event.id });
             $(".fa-close").click(function() {
-                $.ajax({
-                    url    : '<?= Url::to(['user/delete-teacher-availability']) ?>?' + params,
-                    type   : 'POST',
-                    dataType: 'json',
-                    success: function()
-                    {
-                        $("#availability-calendar").fullCalendar("refetchEvents");
-                    }
-                });
+                var status = confirm("Are you sure to delete availability?");
+                if (status) {
+                    $.ajax({
+                        url    : '<?= Url::to(['user/delete-teacher-availability']) ?>?' + params,
+                        type   : 'POST',
+                        dataType: 'json',
+                        success: function()
+                        {
+                            $("#availability-calendar").fullCalendar("refetchEvents");
+                        }
+                    });
+                }
             });
         },
         eventResize: function(event) {
