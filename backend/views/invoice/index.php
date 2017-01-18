@@ -3,6 +3,7 @@
 use common\models\Invoice;
 use backend\models\search\InvoiceSearch;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
 use yii\bootstrap\Tabs;
 
 $this->title = 'Invoices';
@@ -38,8 +39,12 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ])->input('search')->label(false);
     ?>
-    </div>        
-
+    </div>
+	<?php if((int) $searchModel->type === Invoice::TYPE_INVOICE) : ?>
+	<div class="mail-flag">
+		<?= Html::a('<i class="fa fa-dollar"></i> Invoice All Completed Lessons', ['all-completed-lessons'], ['class' => 'btn btn-default  m-l-20']) ?>
+    </div>
+<?php endif; ?>
    <?php 
     $indexInvoice = $this->render('_index-invoice', [
         'searchModel' => $searchModel,
