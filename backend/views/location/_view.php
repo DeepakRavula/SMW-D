@@ -5,19 +5,14 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
-
-$this->title = 'Edit Location';
-$this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
-$this->params['breadcrumbs'][] = 'Edit';
 ?>
 
-<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="tabbable-panel">
     <div class="tabbable-line">
         <?php
 
-        $locationDetails = $this->render('_form',[
+        $locationDetails = $this->render('view',[
             'model' => $model,
         ]);
 
@@ -30,7 +25,7 @@ $this->params['breadcrumbs'][] = 'Edit';
         <?php echo Tabs::widget([
             'items' => [
                 [
-                    'label' => 'Location',
+                    'label' => 'Details',
                     'content' => $locationDetails,
                     'options' => [
                             'id' => 'location',
@@ -61,7 +56,7 @@ $this->params['breadcrumbs'][] = 'Edit';
         defaultView: 'agendaDay',
         minTime: "00:00:00",
         maxTime: "23:59:59",
-        slotDuration: "00:15:00",
+        slotDuration: "00:30:00",
         editable: true,
         selectable: true,
         draggable: false,
@@ -77,21 +72,23 @@ $this->params['breadcrumbs'][] = 'Edit';
             }
         },
         eventRender: function(event, element) {
-            element.find("div.fc-content").prepend("<i  class='fa fa-trash pull-right text-danger'></i>");
+            element.find("div.fc-content").prepend("<i  class='fa fa-close pull-right text-danger'></i>");
         },
         eventClick: function(event) {
             var params = $.param({ resourceId: event.resourceId });
-            $(".fa-trash").click(function() {
-                $.ajax({
-                    url    : '<?= Url::to(['location/delete-availability', 'id' => $model->id]) ?>&' + params,
-                    type   : 'POST',
-                    dataType: 'json',
-                    success: function()
-                    {
-                        $('#flash-success').text("Availability Successfully deleted!").fadeIn().delay(3000).fadeOut();
-                        $("#calendar").fullCalendar("refetchEvents");
-                    }
-                });
+            $(".fa-close").click(function() {
+                var status = confirm("Are you sure to delete availability?");
+                if (status) {
+                    $.ajax({
+                        url    : '<?= Url::to(['location/delete-availability', 'id' => $model->id]) ?>&' + params,
+                        type   : 'POST',
+                        dataType: 'json',
+                        success: function()
+                        {
+                            $("#calendar").fullCalendar("refetchEvents");
+                        }
+                    });
+                }
             });
         },
         eventResize: function(event) {
@@ -104,7 +101,7 @@ $this->params['breadcrumbs'][] = 'Edit';
                 dataType: 'json',
                 success: function()
                 {
-                    $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                    $("#calendar").fullCalendar("refetchEvents");
                 }
             });
         },
@@ -118,7 +115,7 @@ $this->params['breadcrumbs'][] = 'Edit';
                 dataType: 'json',
                 success: function()
                 {
-                    $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
+                    $("#calendar").fullCalendar("refetchEvents");
                 }
             });
         },
@@ -141,7 +138,6 @@ $this->params['breadcrumbs'][] = 'Edit';
                             dataType: 'json',
                             success: function()
                             {
-                                $('#flash-success').text("New Availability added Successfully!").fadeIn().delay(3000).fadeOut();
                                 $("#calendar").fullCalendar("refetchEvents");
                             }
                         });

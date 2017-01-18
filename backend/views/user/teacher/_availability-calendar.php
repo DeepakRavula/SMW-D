@@ -8,7 +8,6 @@ use yii\helpers\Url;
  * and open the template in the editor.
  */
 ?>
-<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 
 <div id="availability-calendar"></div>
@@ -25,8 +24,8 @@ use yii\helpers\Url;
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
         defaultView: 'agendaDay',
-        minTime: "00:00:00",
-        maxTime: "23:59:59",
+        minTime: "<?php echo $minTime; ?>",
+        maxTime: "<?php echo $maxTime; ?>",
         slotDuration: "00:15:00",
         editable: true,
         selectable: true,
@@ -43,21 +42,23 @@ use yii\helpers\Url;
             }
         },
         eventRender: function(event, element) {
-            element.find("div.fc-content").prepend("<i  class='fa fa-trash pull-right text-danger'></i>");
+            element.find("div.fc-content").prepend("<i class='fa fa-close pull-right text-danger'></i>");
         },
         eventClick: function(event) {
             var params = $.param({ id: event.id });
-            $(".fa-trash").click(function() {
-                $.ajax({
-                    url    : '<?= Url::to(['user/delete-teacher-availability']) ?>?' + params,
-                    type   : 'POST',
-                    dataType: 'json',
-                    success: function()
-                    {
-                        $('#flash-success').text("Availability Successfully deleted!").fadeIn().delay(3000).fadeOut();
-                        $("#availability-calendar").fullCalendar("refetchEvents");
-                    }
-                });
+            $(".fa-close").click(function() {
+                var status = confirm("Are you sure to delete availability?");
+                if (status) {
+                    $.ajax({
+                        url    : '<?= Url::to(['user/delete-teacher-availability']) ?>?' + params,
+                        type   : 'POST',
+                        dataType: 'json',
+                        success: function()
+                        {
+                            $("#availability-calendar").fullCalendar("refetchEvents");
+                        }
+                    });
+                }
             });
         },
         eventResize: function(event) {
@@ -72,7 +73,6 @@ use yii\helpers\Url;
                 success: function(response)
                 {
                     if (response) {
-                        $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
                         $("#availability-calendar").fullCalendar("refetchEvents");
                     } else {
                         $('#flash-danger').text("Please choose availability within the location hours").fadeIn().delay(3000).fadeOut();
@@ -93,7 +93,6 @@ use yii\helpers\Url;
                 success: function(response)
                 {
                     if (response) {
-                        $('#flash-success').text("Availability Successfully modified").fadeIn().delay(3000).fadeOut();
                         $("#availability-calendar").fullCalendar("refetchEvents");
                     } else {
                         $('#flash-danger').text("Please choose availability within the location hours").fadeIn().delay(3000).fadeOut();
@@ -113,7 +112,6 @@ use yii\helpers\Url;
                 success: function(response)
                 {
                     if (response) {
-                        $('#flash-success').text("New Availability added Successfully!").fadeIn().delay(3000).fadeOut();
                         $("#availability-calendar").fullCalendar("refetchEvents");
                     } else {
                         $('#flash-danger').text("Please choose availability within the location hours").fadeIn().delay(3000).fadeOut();

@@ -34,18 +34,6 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
                 },
             ],
             'address',
-            [
-                'label' => 'From Time',
-                'value' => function ($data) {
-                    return !empty($data->from_time) ? Yii::$app->formatter->asTime($data->from_time) : null;
-                },
-            ],
-            [
-                'label' => 'To Time',
-                'value' => function ($data) {
-                    return !empty($data->to_time) ? Yii::$app->formatter->asTime($data->to_time) : null;
-                },
-            ],
         ],
     ]); ?>
 

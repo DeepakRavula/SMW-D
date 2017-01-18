@@ -1,6 +1,7 @@
 <?php
 
 use yii\grid\GridView;
+use common\models\PaymentMethod;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -8,18 +9,72 @@ use yii\grid\GridView;
 $total = 0;
 if (!empty($paymentDataProvider->getModels())) {
     foreach ($paymentDataProvider->getModels() as $key => $val) {
-        $date = new \DateTime($val->date);
-        $total += $val->paymentMethod->getPaymentMethodTotal($date);
+        if ($groupByMethod) {
+            $total    += $val->paymentMethod->getPaymentMethodTotal($fromDate, $toDate);
+        } else {
+            $total += $val->amount;
+        }
     }
 }
 ?>
 <h3>Payments</h3>
 
-<?php echo GridView::widget([
-        'dataProvider' => $paymentDataProvider,
-        'showFooter' => true,
-        'footerRowOptions' => ['style' => 'font-weight:bold;text-align: right;'],
-        'columns' => [
+<?php
+    if (! $groupByMethod) {
+        $columns = [
+            [
+                'label' => 'ID',
+                'value' => function ($data) {
+                    return $data->invoicePayment->invoice->getInvoiceNumber();
+                },
+            ],
+            [
+                'label' => 'Date',
+                'value' => function ($data) {
+                    return Yii::$app->formatter->asDate($data->date);
+                },
+            ],
+            [
+                'label' => 'Payment Method',
+                'value' => function ($data) {
+                    return $data->paymentMethod->name;
+                },
+            ],
+            [
+                'label' => 'Customer',
+                'value' => function ($data) {
+                    return $data->user->publicIdentity;
+                },
+            ],
+            [
+                'label' => 'Reference Number',
+                'value' => function ($data) {
+                    if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
+                        $invoiceNumber = str_pad($data->reference, 5, 0, STR_PAD_LEFT);
+                        $invoicePayment = InvoicePayment::findOne(['payment_id' => $data->id]);
+                        if ((int) $invoicePayment->invoice->type === Invoice::TYPE_INVOICE) {
+                            return 'I - '.$invoiceNumber;
+                        } else {
+                            return 'P - '.$invoiceNumber;
+                        }
+                    } else {
+                        return $data->reference;
+                    }
+                },
+            ],
+            [
+                'label' => 'Amount',
+                'value' => function ($data) {
+                    return $data->amount;
+                },
+                'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right'],
+                'enableSorting' => false,
+                'footer' => Yii::$app->formatter->asCurrency($total),
+            ],
+        ];
+    } else {
+        $columns = [
             [
                 'label' => 'Payment Method',
                 'value' => function ($data) {
@@ -28,19 +83,25 @@ if (!empty($paymentDataProvider->getModels())) {
             ],
             [
                 'label' => 'Amount',
-                'value' => function ($data) {
-                    $date = new \DateTime($data->date);
-                    return $data->paymentMethod->getPaymentMethodTotal($date);
+                'value' => function ($data) use ($fromDate, $toDate) {
+                    return $data->paymentMethod->getPaymentMethodTotal($fromDate, $toDate);
                 },
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'enableSorting' => false,
                 'footer' => Yii::$app->formatter->asCurrency($total),
             ],
-        ],
+        ];
+    }
+?>
+
+    <?php echo GridView::widget([
+        'dataProvider' => $paymentDataProvider,
+        'showFooter' => true,
+        'footerRowOptions' => ['style' => 'font-weight:bold;text-align: right;'],
+        'columns' => $columns,
     ]); ?>
 
-</div>
 
 <script>
 	$(document).ready(function(){

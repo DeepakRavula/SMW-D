@@ -4,7 +4,10 @@ namespace common\models;
 
 use yii\helpers\ArrayHelper;
 use common\models\Program;
-
+use common\models\Lesson;
+use IntervalTree\IntervalTree;
+use common\components\intervalTree\DateRangeInclusive;
+use Yii;
 /**
  * This is the model class for table "course".
  *
@@ -57,6 +60,8 @@ class Course extends \yii\db\ActiveRecord
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['startDate'], 'checkStartDate', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['endDate'], 'checkEndDate', 'on' => self::SCENARIO_GROUP_COURSE],
+            ['fromTime', 'checkTime', 'on' => self::SCENARIO_GROUP_COURSE],
+            ['fromTime', 'checkConflict', 'on' => self::SCENARIO_GROUP_COURSE],
         ];
     }
 
@@ -93,6 +98,63 @@ class Course extends \yii\db\ActiveRecord
         }
     }
 
+	public function checkTime($attribute, $params)
+    {
+        $teacherAvailabilities = TeacherAvailability::find()
+            ->joinWith(['teacher' => function ($query) {
+                $query->where(['user.id' => $this->teacherId]);
+            }])
+                ->where(['teacher_availability_day.day' => $this->day])
+                ->all();
+        $availableHours = [];
+        if (! empty($teacherAvailabilities)) {
+            foreach ($teacherAvailabilities as $teacherAvailability) {
+                $start = new \DateTime($teacherAvailability->from_time);
+                $end = new \DateTime($teacherAvailability->to_time);
+                $interval = new \DateInterval('PT15M');
+                $hours = new \DatePeriod($start, $interval, $end);
+                foreach ($hours as $hour) {
+                    $availableHours[] = Yii::$app->formatter->asTime($hour);
+                }
+            }
+            $fromTime = (new \DateTime($this->fromTime))->format('h:i A');
+            if (!in_array($fromTime, $availableHours)) {
+                $this->addError($attribute, 'Please choose the lesson time within the teacher\'s availability hours');
+            }
+        }
+    }
+
+	public function checkConflict($attribute, $params)
+    {
+		$locationId = Yii::$app->session->get('location_id');
+		$otherLessons = [];
+        $intervals = [];
+
+		$teacherLessons = Lesson::find()
+            ->teacherLessons($locationId, $this->teacherId)
+            ->all();
+        foreach ($teacherLessons as $teacherLesson) {
+            $otherLessons[] = [
+                'id' => $teacherLesson->id,
+                'date' => $teacherLesson->date,
+                'duration' => $teacherLesson->course->duration,
+            ];
+        }
+		foreach ($otherLessons as $otherLesson) {
+            $timebits = explode(':', $otherLesson['duration']);
+            $intervals[] = new DateRangeInclusive(new \DateTime($otherLesson['date']), new \DateTime($otherLesson['date']), new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'), $otherLesson['id']);
+        }
+        $tree = new IntervalTree($intervals);
+        $conflictedLessonIds = [];
+		$lessonDate = $this->startDate . ' ' . $this->fromTime;
+        $conflictedLessonsResults = $tree->search(new \DateTime($lessonDate));
+        foreach ($conflictedLessonsResults as $conflictedLessonsResult) {
+            $conflictedLessonIds[] = $conflictedLessonsResult->id;
+        }
+        if (!empty($conflictedLessonIds)) {
+            $this->addError($attribute, "Course time conflicts with teacher's other lesson");
+        }
+    }
     /**
      * {@inheritdoc}
      */

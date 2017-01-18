@@ -97,6 +97,8 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 
         $teacherAvailabilityContent = $this->render('teacher/_availability-calendar', [
             'model' => $model,
+            'minTime' => $minTime,
+            'maxTime' => $maxTime,
         ]);
 
         $teacherStudentContent = $this->render('teacher/_student', [

@@ -94,6 +94,7 @@ class Payment extends ActiveRecord
             'user_id' => 'User ID',
             'payment_method_id' => 'Payment Method',
             'amount' => 'Amount',
+            'groupByMethod' => 'Summaries Only',
         ];
     }
 
