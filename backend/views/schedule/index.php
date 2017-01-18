@@ -55,6 +55,12 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
             background-color: " . $missedLesson->code . " !important; }"
     );
 ?>
+<style>
+    .schedule-index {
+    position: absolute;
+    top: -45px;
+}
+</style>
 <div class="p-10 calendar-filter">
         <div class="pull-right m-1-20">
 		<span class="filter_by_calendar">Filter by</span>

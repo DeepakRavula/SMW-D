@@ -857,7 +857,9 @@ Licensed under MIT
     line-height: 23px;
     font-size: 24px;
 }
-
+.invoice-view ul {
+        padding: 0; 
+    }
 .smw-box {
     background: #f5f5f5;
     border: 1px solid #ddd;
@@ -902,7 +904,7 @@ Licensed under MIT
 .e1Div {
     position: absolute;
     right: 175px;
-    top: -27px !important;
+    top: -27px;
     line-height: 37px;
 }
 
@@ -916,11 +918,6 @@ Licensed under MIT
 
 .schedule_tabbable {
     position: relative;
-}
-
-.schedule-index {
-    position: absolute;
-    top: -45px;
 }
 
 .selectivity-single-select {
@@ -1209,6 +1206,9 @@ input[type="search"]:-ms-input-placeholder {
     .invoice-view .logo>img {
         width: 135px;
     }
+    .invoice-view > ul {
+        padding: 0; 
+    }
     .table-more-condensed>tbody>tr>td,
     .table-more-condensed>tbody>tr>th,
     .table-more-condensed>tfoot>tr>td,
@@ -1228,7 +1228,7 @@ input[type="search"]:-ms-input-placeholder {
         width: 200px;
     }
     .inner-payment-table {
-        width: 30vw;
+        width: 35vw;
     }
     .inner-payment-table>tbody>tr>td {
         border: none !important;
@@ -1577,9 +1577,9 @@ hr.fc-divider {
 
 /******Invoice Notes********/
 
-#lesson-index {
+/*#lesson-index {
     padding: 10px;
-}
+}*/
 
 .user-search button[type="submit"],
 .user-search button[type="reset"] {
