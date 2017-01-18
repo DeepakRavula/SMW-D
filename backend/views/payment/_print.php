@@ -8,8 +8,11 @@ use yii\grid\GridView;
 $total = 0;
 if (!empty($paymentDataProvider->getModels())) {
     foreach ($paymentDataProvider->getModels() as $key => $val) {
-        $date = new \DateTime($val->date);
-        $total += $val->paymentMethod->getPaymentMethodTotal($date);
+        if ($groupByMethod) {
+            $total    += $val->paymentMethod->getPaymentMethodTotal($fromDate, $toDate);
+        } else {
+            $total += $val->amount;
+        }
     }
 }
 ?>
@@ -28,9 +31,12 @@ if (!empty($paymentDataProvider->getModels())) {
             ],
             [
                 'label' => 'Amount',
-                'value' => function ($data) {
-                    $date = new \DateTime($data->date);
-                    return $data->paymentMethod->getPaymentMethodTotal($date);
+                'value' => function ($data) use ($groupByMethod, $fromDate, $toDate) {
+                    if (! $groupByMethod) {
+                        return $data->amount;
+                    } else {
+                        return $data->paymentMethod->getPaymentMethodTotal($fromDate, $toDate);
+                    }
                 },
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],

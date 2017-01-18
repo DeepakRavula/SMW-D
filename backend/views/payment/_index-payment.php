@@ -74,7 +74,7 @@ $(document).ready(function(){
         $.pjax.reload({url:url,container:"#payment-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
     $("#print").on("click", function() {
-        var groupByMethod = $(this).is(":checked");
+        var groupByMethod = $("#group-by-method").is(":checked");
         var fromDate = $('#from-date').val();
         var toDate = $('#to-date').val();
         var params = $.param({ fromDate: fromDate,
