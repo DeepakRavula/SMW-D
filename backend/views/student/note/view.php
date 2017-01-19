@@ -8,6 +8,7 @@ use yii\bootstrap\Modal;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<div class="row p-10">
 <div id="student-note" class="col-md-12">
 	<h4 class="pull-left m-r-20">Notes</h4>
 	<a href="#" class="text-add-new"><i class="fa fa-plus"></i></a>
@@ -31,4 +32,7 @@ Modal::end();
 		'itemView' => '_list',
 ]);
 ?>
+</div>
+	
+	
 </div>

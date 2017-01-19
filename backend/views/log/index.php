@@ -10,7 +10,7 @@ use yii\grid\GridView;
 $this->title = Yii::t('backend', 'System Logs');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="system-log-index">
+<div class="system-log-index p-10">
 
     <p>
         <?php echo Html::a(Yii::t('backend', 'Clear'), false, ['class' => 'btn btn-danger', 'data-method' => 'delete']) ?>

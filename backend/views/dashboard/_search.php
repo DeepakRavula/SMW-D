@@ -16,7 +16,7 @@ use kartik\daterange\DateRangePicker;
         'method' => 'get',
     ]); ?>
     <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-7">
    <?php 
    echo '<label>Date Range</label>';
    echo DateRangePicker::widget([
@@ -41,7 +41,7 @@ use kartik\daterange\DateRangePicker;
     ]);
    ?>
    </div>    
-    <div class="col-md-4 form-group m-t-20">
+    <div class="col-md-5 form-group m-t-25">
         <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
         <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
         <div class="clearfix"></div>

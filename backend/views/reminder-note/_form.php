@@ -9,7 +9,7 @@ use dosamigos\ckeditor\CKEditor;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="reminder-notes-form">
+<div class="reminder-notes-form p-10">
 
     <?php $form = ActiveForm::begin(); ?>
 

@@ -10,11 +10,11 @@ $this->title = 'Dashboard';
 ?>
 <div class="col-md-12">
     <h3 class="pull-left">Dashboard</h3>
-    <div class="pull-right col-xs-5 p-10"><?php echo $this->render('_search', ['model' => $searchModel]); ?></div>
+    <div class="pull-right col-xs-12 col-md-6 p-10 p-r-0"><?php echo $this->render('_search', ['model' => $searchModel]); ?></div>
     <div class="clearfix"></div>
     <div class="col-md-10 p-0">
     <div class="row text-center bg-gray disabled color-palette">
-        <div class="col-md-3 p-0">
+        <div class="col-md-3 p-0 ">
           <div class="small-box">
             <div class="inner">
               <h3><?= !empty($invoiceTotal) ? $invoiceTotal : 0 ?></h3>
@@ -72,7 +72,7 @@ $this->title = 'Dashboard';
    ],
 ]); ?>
 </div>
-<div>
+<div class="m-t-20     instruction_hours_piechart">
 <?=  Highcharts::widget([
     'options' => [
         'title' => ['text' => 'Instruction Hours'],

@@ -10,7 +10,7 @@ use yii\grid\GridView;
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $examResultDataProvider,
-		'options' => ['class' => 'col-md-12'],
+		'options' => ['class' => 'col-md-12 p-0'],
 		'tableOptions' => ['class' => 'table table-bordered'],
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'columns' => [
