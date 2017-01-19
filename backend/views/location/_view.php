@@ -25,7 +25,7 @@ use yii\helpers\Url;
         <?php echo Tabs::widget([
             'items' => [
                 [
-                    'label' => 'Details',
+                    'label' => 'Address',
                     'content' => $locationDetails,
                     'options' => [
                             'id' => 'location',
