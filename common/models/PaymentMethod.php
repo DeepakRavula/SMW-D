@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use Yii;
+
 /**
  * This is the model class for table "payment_methods".
  *
@@ -54,7 +56,9 @@ class PaymentMethod extends \yii\db\ActiveRecord
 
     public function getPaymentMethodTotal($fromDate, $toDate)
     {
+        $locationId          = Yii::$app->session->get('location_id');
         return $this->hasMany(Payment::className(), ['payment_method_id' => 'id'])
+                ->location($locationId)
                 ->andWhere(['between', 'payment.date', $fromDate->format('Y-m-d 00:00:00'),
                     $toDate->format('Y-m-d 23:59:59')])
                 ->sum('payment.amount');

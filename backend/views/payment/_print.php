@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 use common\models\PaymentMethod;
+use common\models\InvoicePayment;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
