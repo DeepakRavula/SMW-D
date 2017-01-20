@@ -33,7 +33,12 @@ use yii\helpers\Url;
         <?php endif; ?>
         
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
-			<i class="fa fa-music detail-icon"></i> <?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
+			<?php if ((int) $model->course->program->type === Program::TYPE_GROUP_PROGRAM):?>
+                <a href= "<?= Url::to(['course/view', 'id' => $model->courseId]) ?>">
+			<?php endif; ?>
+			<i class="fa fa-music detail-icon"></i>
+				<?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
+				</a>
 		</div>
         <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Duration">
 			<i class="fa fa-clock-o"></i> <?php echo !empty($model->duration) ? (new \DateTime($model->duration))->format('H:i') : null ?>
