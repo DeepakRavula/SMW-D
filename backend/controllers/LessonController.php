@@ -17,7 +17,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
 use common\models\PaymentMethod;
-use common\models\CreditUsage;
+use common\models\Student;
 use yii\web\Response;
 use common\models\Vacation;
 
@@ -68,6 +68,7 @@ class LessonController extends Controller
      */
     public function actionView($id)
     {
+		$locationId = Yii::$app->session->get('location_id');
         $model = $this->findModel($id);
 		$notes = Note::find()
 			->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
@@ -77,9 +78,29 @@ class LessonController extends Controller
             'query' => $notes,
         ]);
 
+		$groupLessonStudents = Student::find()
+			->joinWith(['enrolment' => function($query) use($id) {
+				$query->joinWith(['course' => function($query) use($id) {
+					$query->joinWith(['program' => function($query) use($id) {
+						$query->group();
+					}]);
+					$query->joinWith(['lessons' => function($query) use($id) {
+						$query->andWhere(['lesson.id' => $id]);
+					}]);
+				}])
+				->notDeleted()
+		        ->isConfirmed();
+			}])
+			->location($locationId);
+
+        $studentDataProvider = new ActiveDataProvider([
+            'query' => $groupLessonStudents,
+        ]);
+
         return $this->render('view', [
             'model' => $model,
-			'noteDataProvider' => $noteDataProvider
+			'noteDataProvider' => $noteDataProvider,
+			'studentDataProvider' => $studentDataProvider
         ]);
     }
 
