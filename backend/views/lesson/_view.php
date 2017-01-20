@@ -10,15 +10,19 @@ use yii\helpers\Url;
 ?>
 <div class="lesson-view">
 	<div class="row-fluid ">
-    <div class="col-md-12 p-t-10">
         <p class="users-name pull-left">
-        	<?php 
-            if ($model->course->program->isPrivate()):?>
-			<?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null ?>
+        	<?php if ($model->course->program->isPrivate()):?>
+        	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Student">
+                <a href= "<?= Url::to(['student/view', 'id' => $model->enrolment->student->id]) ?>">
+				<i class="fa fa-lg fa-fw fa-child"></i><strong><?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null ?></strong></a>
+        	</div>
+        	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
+                <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $model->enrolment->student->customer->id]) ?>">
+			<i class="fa fa-lg fa-fw fa-male"></i><strong><?= !empty($model->enrolment->student->customer->userProfile->fullName) ? $model->enrolment->student->customer->userProfile->fullName : null ?></strong></a>
+        	</div>
 		<?php endif; ?>
         </p>
         <div class="clearfix"></div>
-    </div>
 			<?php if (! $model->isUnscheduled()) : ?>
 			<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
 			<i class="fa fa-calendar"></i>
