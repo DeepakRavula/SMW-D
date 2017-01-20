@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	}
 </style>
 
-<div class="group-course-index p-10"> 
+<div class="group-course-index "> 
     <div class="smw-search">
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
     <?php

@@ -8,7 +8,14 @@ use yii\jui\DatePicker;
 /* @var $model backend\models\search\UserSearch */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-
+<style>
+    .e1Div{
+            position: absolute;
+    right: 155px;
+    top: 17px;
+    line-height: 37px;
+    }
+</style>
 <div class="user-search">
 
     <?php $form = ActiveForm::begin([

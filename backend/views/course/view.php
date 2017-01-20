@@ -14,30 +14,30 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['
 ?>
 <div class="group-course-view">
 	<div class="row-fluid user-details-wrapper">
-    <div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Program Name">
-        	<i class="fa fa-music"></i> <?php echo $model->program->name; ?>
+    <div class="col-md-3 text-center" data-toggle="tooltip" data-placement="bottom" title="Program Name">
+        	<i class="fa fa-music"></i><br><?php echo $model->program->name; ?>
     </div>
-	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Teacher Name">
-        	<i class="fa fa-graduation-cap"></i> <?php echo $model->teacher->publicIdentity; ?>
+	<div class="col-md-2 text-center" data-toggle="tooltip" data-placement="bottom" title="Teacher Name">
+        	<i class="fa fa-graduation-cap"></i><br> <?php echo $model->teacher->publicIdentity; ?>
     </div>
-    <div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Rate">
-    	<i class="fa fa-money"></i> <?php echo $model->program->rate; ?>
+    <div class="col-md-1 text-center" data-toggle="tooltip" data-placement="bottom" title="Rate">
+    	<i class="fa fa-money"></i> <br><?php echo $model->program->rate; ?>
     </div>
-	<div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Duration">
-    	<i class="fa fa-calendar"></i> <?php 
+	<div class="col-md-1 text-center" data-toggle="tooltip" data-placement="bottom" title="Duration">
+    	<i class="fa fa-calendar"></i> <br><?php 
         $length = \DateTime::createFromFormat('H:i:s', $model->duration);
         echo $length->format('H:i'); ?>
     </div>
-	<div class="col-md-1 p-0 hand" data-toggle="tooltip" data-placement="bottom" title="Time">
-		<i class="fa fa-clock-o"></i> <?php 
+	<div class="col-md-1 p-0 hand text-center" data-toggle="tooltip" data-placement="bottom" title="Time">
+		<i class="fa fa-clock-o"></i> <br><?php 
         $fromTime = \DateTime::createFromFormat('H:i:s', $model->fromTime);
         echo $fromTime->format('h:i A'); ?>	
 	</div>
-	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Start Date">
-			<i class="fa fa-calendar"></i> <?php echo Yii::$app->formatter->asDate($model->startDate)?>	
+	<div class="col-md-2 hand text-center" data-toggle="tooltip" data-placement="bottom" title="Start Date">
+			<i class="fa fa-calendar"></i> <br><?php echo Yii::$app->formatter->asDate($model->startDate)?>	
 	</div>
-	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="End Date">
-			<i class="fa fa-calendar"></i> <?php echo Yii::$app->formatter->asDate($model->endDate)?>	
+	<div class="col-md-2 hand text-center" data-toggle="tooltip" data-placement="bottom" title="End Date">
+			<i class="fa fa-calendar"></i> <br><?php echo Yii::$app->formatter->asDate($model->endDate)?>	
 	</div>
     <div class="clearfix"></div>
 </div>
