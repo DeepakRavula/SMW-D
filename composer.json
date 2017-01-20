@@ -53,7 +53,7 @@
     "kartik-v/yii2-widget-timepicker": "*",
     "kartik-v/yii2-widget-depdrop": "@dev",
     "kartik-v/yii2-widget-datepicker": "@dev",
-    "kartik-v/yii2-date-range": "*",
+    "kartik-v/yii2-date-range": "1.6.6",
     "kartik-v/yii2-mpdf": "*",
     "shershennm/yii2-sendgrid": "*",
     "wbraganca/yii2-selectivity": "^1.0",
