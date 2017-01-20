@@ -13,7 +13,7 @@ use yii\helpers\Url;
     <div class="col-md-12 p-t-10">
         <p class="users-name pull-left">
         	<?php 
-            if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>
+            if ($model->course->program->isPrivate()):?>
 			<?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null ?>
 		<?php endif; ?>
         </p>
@@ -33,7 +33,12 @@ use yii\helpers\Url;
         <?php endif; ?>
         
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
-			<i class="fa fa-music detail-icon"></i> <?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
+			<?php if ($model->course->program->isGroup()):?>
+                <a href= "<?= Url::to(['course/view', 'id' => $model->courseId]) ?>">
+			<?php endif; ?>
+			<i class="fa fa-music detail-icon"></i>
+				<?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
+				</a>
 		</div>
         <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Duration">
 			<i class="fa fa-clock-o"></i> <?php echo !empty($model->duration) ? (new \DateTime($model->duration))->format('H:i') : null ?>
@@ -58,7 +63,7 @@ use yii\helpers\Url;
 		
 		<?php if (Yii::$app->controller->action->id === 'view'):?>
 	<div class="col-md-12 action-btns m-b-20">
-		<?php if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>
+		<?php if ($model->course->program->isPrivate()):?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-pencil"></i> Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 		<?php endif; ?>
 		<?php if($model->invoice) : ?>
