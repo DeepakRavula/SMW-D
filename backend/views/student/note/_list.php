@@ -8,9 +8,9 @@ use yii\helpers\Url;
 <div class="panel-heading">
 <strong><?= $model->createdUser->publicIdentity; ?></strong> <span class="text-muted">
 <?php if($model->createdOn !== $model->updatedOn): ?>
-<?= 'updated on ' . (new \DateTime($model->updatedOn))->format('M. d, Y'); ?>
+<?= 'updated on ' . (new \DateTime($model->updatedOn))->format('M. d, Y @ g:i A'); ?>
 <?php else : ?>
-<?= 'created on ' . (new \DateTime($model->createdOn))->format('M. d, Y'); ?>
+<?= 'created on ' . (new \DateTime($model->createdOn))->format('M. d, Y @ g:i A'); ?>
 <?php endif; ?></span>
 </div>
 <div class="panel-body">
