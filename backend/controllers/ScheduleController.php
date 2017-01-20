@@ -256,7 +256,7 @@ class ScheduleController extends Controller
                     $length = explode(':', $lesson->duration);
                     $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
                     if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                        $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
+                        $title = $lesson->teacher->publicIdentity . ' [' . $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ' . ']';
                         $class = 'group-lesson';
                         $backgroundColor = null;
                         if (!empty($lesson->colorCode)) {
@@ -264,7 +264,7 @@ class ScheduleController extends Controller
                             $backgroundColor = $lesson->colorCode;
                         }
                     } else {
-                        $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
+                        $title = $lesson->teacher->publicIdentity . ' [' . $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ' . ']';
                         $class = 'private-lesson';
                         $backgroundColor = null;
                         if (!empty($lesson->colorCode)) {
@@ -284,7 +284,6 @@ class ScheduleController extends Controller
                     }
                     $classroom = $lesson->classroom->name;
                     $classroomId = $lesson->classroomId;
-                    $title = $title . '[ ' . $lesson->teacher->publicIdentity . ' ]';
                     $events[] = [
                         'resourceId' => $classroomId,
                         'title' => $title,
