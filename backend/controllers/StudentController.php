@@ -212,17 +212,21 @@ class StudentController extends Controller
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->paymentFrequency = Enrolment::PAYMENT_FREQUENCY_FULL;
             $enrolmentModel->save();
-            $courseStartDate = (new \DateTime($enrolmentModel->course->startDate))->format('d-m-Y');
-            $courseEndDate = (new \DateTime($enrolmentModel->course->endDate))->format('d-m-Y');
 
-            return $this->redirect([
-                '/invoice/create',
-                'Invoice[customer_id]' => $model->customer->id,
-                'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
-                'LessonSearch[fromDate]' => $courseStartDate,
-                'LessonSearch[toDate]' => $courseEndDate,
-                'LessonSearch[courseId]' => $enrolmentModel->courseId,
-            ]);
+			$lessons = Lesson::find()
+				->andWhere(['courseId' => $enrolmentModel->courseId])
+				->all();
+        	$invoice = new Invoice();
+			$invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
+            $invoice->user_id = $enrolmentModel->student->customer->id;
+            $invoice->location_id = $locationId;
+            $invoice->save();
+			foreach ($lessons as $lesson) {
+                $invoice->addLineItem($lesson);
+            }
+            $invoice->save();
+
+            return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
         }
 
         $groupEnrolments = Enrolment::find()
