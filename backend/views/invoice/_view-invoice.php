@@ -40,7 +40,7 @@ use kartik\editable\Editable;
           <div class="row m-t-10">
             <div class="col-xs-8">
                 <h4 class="m-0 f-w-400">
-                    <a href= "<?= Url::to(['user/view', 'id' => $customer->id, '#' => 'student']) ?>">
+                    <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id, '#' => 'student']) ?>">
                         <strong><?= isset($customer->publicIdentity) ? $customer->publicIdentity : null?></strong>
                     </a>
                 </h4>
