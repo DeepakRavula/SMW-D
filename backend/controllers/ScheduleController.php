@@ -233,6 +233,7 @@ class ScheduleController extends Controller
             } else if (!empty($programId) && $programId != 'undefined') {
                 $teachersAvailabilities = TeacherAvailability::find()
                         ->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
+                            $query->where(['user_location.location_id' => $locationId]);
                             $query->joinWith(['qualifications'  => function ($query) use ($programId) {
                                 $query->andWhere(['qualification.program_id' => $programId]);
                             }]);
@@ -308,6 +309,7 @@ class ScheduleController extends Controller
             } else if (!empty($programId) && $programId != 'undefined') {
                 $teachersAvailabilities = TeacherAvailability::find()
                     ->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
+                        $query->where(['user_location.location_id' => $locationId]);
                         $query->joinWith(['qualifications'  => function ($query) use ($programId) {
                             $query->andWhere(['qualification.program_id' => $programId]);
                         }]);
