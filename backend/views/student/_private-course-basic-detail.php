@@ -5,7 +5,7 @@ use common\models\Enrolment;
 use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
 use kartik\date\DatePicker;
-use common\models\Location;
+use common\models\LocationAvailability;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -70,9 +70,16 @@ $privatePrograms = ArrayHelper::map(Program::find()
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <?php
 $locationId = Yii::$app->session->get('location_id');
-$location = Location::findOne(['id' => $locationId]);
-$from_time = (new \DateTime($location->from_time))->format('H:i:s');
-$to_time = (new \DateTime($location->to_time))->format('H:i:s');
+$minLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['fromTime' => SORT_ASC])
+    ->one();
+$maxLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['toTime' => SORT_DESC])
+    ->one();
+$from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+$to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <script>
 	function rateEstimation(duration, programRate) {

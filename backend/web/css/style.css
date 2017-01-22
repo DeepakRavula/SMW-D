@@ -1233,15 +1233,7 @@ input[type="search"]:-ms-input-placeholder {
     .inner-payment-table>tbody>tr>td {
         border: none !important;
     }
-    .inner-payment-table thead tr th,
-    .inner-payment-table tbody tr td,
-    {
-        /*width: 350px;*/
-    }
-    /*    td:first-child { width: width of first column; }
-td:last-child {width: width of last column; }
-td { width: width of the other columns; }
-table { table-layout: fixed; }*/
+	
     .inner-payment-table > tbody * {
         border: none !important;
     }
@@ -1611,8 +1603,3 @@ hr.fc-divider {
     position: absolute;
     right:25px;
 }
-
-
-    .delete_staff_all_button{
-        padding-left:8px;
-    }

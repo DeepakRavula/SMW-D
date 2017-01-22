@@ -28,4 +28,11 @@ class ProgramQuery extends ActiveQuery
 
         return $this;
     }
+
+	public function group()
+    {
+        $this->andWhere(['type' => Program::TYPE_GROUP_PROGRAM]);
+
+        return $this;
+    }
 }
