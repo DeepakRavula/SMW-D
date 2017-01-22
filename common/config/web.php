@@ -48,7 +48,7 @@ $config = [
             'group-lesson/*',
             'group-enrolment/*',
             'holiday/*',
-            'professional-development-day/*',
+            'customer-discount/*',
             'calendar/*',
             'blog/*',
             'payment/*',
