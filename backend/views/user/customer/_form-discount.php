@@ -10,7 +10,7 @@ use common\models\CustomerDiscount;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <div class="p-10">
-	<h4><strong>Add Discount ($)</strong></h4>
+	<h4><strong>Set Discount ($)</strong></h4>
 	<?php $form = ActiveForm::begin([
         'action' => Url::to(['customer-discount/create', 'id' => $userModel->id]),
     ]); ?>
