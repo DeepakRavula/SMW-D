@@ -21,7 +21,7 @@ if (!empty($dataProvider->getModels())) {
 }
 ?>
 <div class="payments-index p-10">
-    <div id="print" class="btn btn-default pull-right">
+    <div id="print" class="btn btn-default pull-right m-t-20">
         <?= Html::a('<i class="fa fa-print"></i> Print') ?>
     </div>
     <?php if (! $searchModel->groupByMethod) {

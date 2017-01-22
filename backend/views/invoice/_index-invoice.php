@@ -100,7 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php yii\widgets\Pjax::begin([
         'id' => 'invoice-listing',
     ]) ?>
-    <div class="grid-row-open">
+    <div class="grid-row-open p-10">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],

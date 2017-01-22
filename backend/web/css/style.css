@@ -993,9 +993,9 @@ input[type="search"]:-ms-input-placeholder {
 }
 
 .mail-flag {
-    position: absolute;
-    top: -48px;
-    left: 835px;
+        position: absolute;
+    top: -45px;
+    right: 0;
 }
 
 .bulk-invoice {
@@ -1071,7 +1071,7 @@ input[type="search"]:-ms-input-placeholder {
 }
 
 #apply-credit-btn {
-    margin-left: 100px;
+    margin-left: 50px;
 }
 
 .schedule-index input[type="checkbox"].green:checked {
@@ -1271,7 +1271,7 @@ table { table-layout: fixed; }*/
         width: 80px;
     }
     .notes-table {
-        width: 68vw;
+        width: 80vw;
     }
 }
 
@@ -1553,19 +1553,19 @@ hr.fc-divider {
 /******Reminder Notes********/
 
 .reminder_notes ul {
-    margin-left: -32px;
+    /*margin-left: -32px;*/
 }
 
 @media print {
     .reminder_notes ul {
-        margin-left: -32px;
+        /*margin-left: -32px;*/
     }
 }
 
 
 /******Invoice Notes********/
 
-.invoice-note-content .empty {
+.invoice-note-content .empty, .user-note-content .empty, .lesson-note-content .empty {
     padding-left: 15px;
 }
 
@@ -1611,3 +1611,8 @@ hr.fc-divider {
     position: absolute;
     right:25px;
 }
+
+
+    .delete_staff_all_button{
+        padding-left:8px;
+    }

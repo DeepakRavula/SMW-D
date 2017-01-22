@@ -7,6 +7,19 @@ use yii\bootstrap\ButtonGroup;
 use yii\helpers\Url;
 
 ?>
+<style>
+    #apply-credit-btn{
+        border-bottom-left-radius: 3px;
+        border-top-left-radius: 3px;
+    }
+    #cheque-btn{
+        border-left:0px;
+    }
+    #amex-btn{
+        border-bottom-right-radius:3px;
+        border-top-right-radius:3px;
+    }
+</style>
 <?php
 $columns = [
     'date:date',
