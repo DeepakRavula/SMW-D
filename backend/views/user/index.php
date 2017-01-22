@@ -43,6 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	.smw-search{
 		left: 138px;
 	}
+
 </style>
 <?php 
 }
@@ -122,7 +123,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 <?php yii\widgets\Pjax::end(); ?>
 </div>
-<div class="p-l-20 m-b-20">
+<div class=" m-b-20">
 <?php if ($searchModel->role_name === User::ROLE_CUSTOMER && YII_ENV !== 'prod'):?>
 	<?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
         'modelClass' => 'User',
@@ -136,7 +137,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'modelClass' => 'User',
         ]),
         ['delete-all-staff-members'],
-        ['class' => 'btn pull-left'])
+        ['class' => 'btn pull-left delete_staff_all_button'])
     ?>
 <?php endif; ?>    
 <div class="clearfix"></div>

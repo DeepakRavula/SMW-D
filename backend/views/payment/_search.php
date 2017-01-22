@@ -9,10 +9,16 @@ use yii\jui\DatePicker;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <style>
-  .e1Div{
+/*  .e1Div{
     right: 0 !important;
     top: -59px;
-  }
+  }*/
+    .e1Div{
+    position: absolute;
+    right: 155px;
+    top: 17px;
+    line-height: 37px;
+    }
 </style>
 <div class="user-search">
 

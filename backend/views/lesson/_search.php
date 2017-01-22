@@ -35,7 +35,7 @@ use yii\jui\DatePicker;
             ],
         ]) ?>
     </div>
-    <div class="col-md-3 form-group m-t-5">
+    <div class="col-md-3 form-group m-t-10">
         <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>

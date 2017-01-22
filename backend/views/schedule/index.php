@@ -58,11 +58,16 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 ?>
 <style>
     .schedule-index {
-    position: absolute;
-    top: -45px;
+        position: absolute;
+        top: -45px;
+    }
+.selectivity-single-select{
+    margin-right: 10px;
+    padding-bottom:2px;
 }
+
 </style>
-<div class="p-10 calendar-filter">
+<div class=" calendar-filter">
         <div class="pull-right m-1-20">
 		<span class="filter_by_calendar">Filter by</span>
             <?=
