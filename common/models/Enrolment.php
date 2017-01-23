@@ -95,6 +95,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
     }
 
+	public function getPaymentFrequencyDiscount()
+    {
+        return $this->hasOne(PaymentFrequencyDiscount::className(), ['paymentFrequencyId' => 'paymentFrequency']);
+    }
+
 	public function getVacation()
     {
         return $this->hasOne(Vacation::className(), ['studentId' => 'studentId']);

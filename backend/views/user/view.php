@@ -139,6 +139,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'model' => new Note(),
 			'noteDataProvider' => $noteDataProvider
 		]);
+		
+		$discountContent = $this->render('customer/_discount', [
+			'model' => $model,
+		]);
         ?>
 		<?php
         $items = [
@@ -258,6 +262,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 				'content' => $noteContent,
 				'options' => [
 					'id' => 'note',
+				],
+       		],
+			[
+				'label' => 'Discount',
+				'content' => $discountContent,
+				'options' => [
+					'id' => 'discount',
 				],
        		],
         ];

@@ -54,7 +54,7 @@ class Invoice extends \yii\db\ActiveRecord
             ['user_id', 'required'],
             [['reminderNotes'], 'string'],
             [['isSent'], 'boolean'],
-            [['type', 'notes','status'], 'safe'],
+            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount'], 'safe'],
 			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
         ];
@@ -182,7 +182,7 @@ class Invoice extends \yii\db\ActiveRecord
         }
         return parent::afterSave($insert, $changedAttributes);
     }
-
+	
     public function updateInvoiceAttributes()
     {
         if(!$this->isOpeningBalance()) {
@@ -401,8 +401,15 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->discount     = $lesson->proFormaInvoiceLineItem->discount;
             $invoiceLineItem->discountType = $lesson->proFormaInvoiceLineItem->discountType;
         } else {
-            $invoiceLineItem->discount     = 0.00;
-            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+			if($lesson->course->program->isPrivate()) {
+				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : null;
+				$paymentFrequencyDiscount = $lesson->course->enrolment->paymentFrequencyDiscount->value;
+				$invoiceLineItem->discount     = $customerDiscount + $paymentFrequencyDiscount;
+				$invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
+			} else {
+				$invoiceLineItem->discount     = 0;
+	            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+			}
         }
         $getDuration                 = \DateTime::createFromFormat('H:i:s',
                 $lesson->duration);

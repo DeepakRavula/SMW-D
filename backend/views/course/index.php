@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'rate',
-                'label' => 'Rate',
+                'label' => 'Rate($)',
                 'value' => function ($data) {
                     return !empty($data->program->rate) ? $data->program->rate : null;
                 },
