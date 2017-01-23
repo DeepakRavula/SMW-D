@@ -54,7 +54,7 @@ class Invoice extends \yii\db\ActiveRecord
             ['user_id', 'required'],
             [['reminderNotes'], 'string'],
             [['isSent'], 'boolean'],
-            [['type', 'notes','status'], 'safe'],
+            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount'], 'safe'],
 			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
         ];
@@ -94,6 +94,12 @@ class Invoice extends \yii\db\ActiveRecord
     public function getLineItem()
     {
         return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id']);
+    }
+
+	public function getLineItemCount()
+    {
+        return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id'])
+			->count();
     }
 
     public function getPayments()
@@ -175,6 +181,9 @@ class Invoice extends \yii\db\ActiveRecord
 			if(empty($this->lineItems)) {
                 return parent::afterSave($insert, $changedAttributes);
             }
+			$this->customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
+			echo $this->lineItemCount;die;
+			$this->paymentFrequencyDiscount = 0;
             $existingSubtotal = $this->subTotal;
             if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
                 $this->trigger(self::EVENT_GENERATE);
@@ -183,6 +192,13 @@ class Invoice extends \yii\db\ActiveRecord
         return parent::afterSave($insert, $changedAttributes);
     }
 
+	public function getPaymentFrequencyDiscount()
+	{
+		$lineItemCount = $this->lineItemCount;
+		foreach($this->lineItems as $lineItem) {
+
+		}
+	}
     public function updateInvoiceAttributes()
     {
         if(!$this->isOpeningBalance()) {

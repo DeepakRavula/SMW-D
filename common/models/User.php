@@ -184,6 +184,10 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(PhoneNumber::className(), ['user_id' => 'id']);
     }
 
+	public function getCustomerDiscount()
+    {
+        return $this->hasOne(CustomerDiscount::className(), ['customerId' => 'id']);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
