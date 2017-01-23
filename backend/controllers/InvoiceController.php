@@ -307,6 +307,7 @@ class InvoiceController extends Controller
         $location_id = Yii::$app->session->get('location_id');
         if (isset($invoiceRequest['customer_id'])) {
             $customer = User::findOne(['id' => $invoiceRequest['customer_id']]);
+
             $dataProvider = $searchModel->search($params);
 
             if (empty($customer)) {
