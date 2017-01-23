@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\PaymentFrequency;
+use common\models\PaymentFrequencyDiscount;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\base\Model;
 /**
- * PaymentFrequencyController implements the CRUD actions for PaymentFrequency model.
+ * PaymentFrequencyDiscountController implements the CRUD actions for PaymentFrequencyDiscount model.
  */
-class PaymentFrequencyController extends Controller
+class PaymentFrequencyDiscountController extends Controller
 {
     public function behaviors()
     {
@@ -23,24 +23,17 @@ class PaymentFrequencyController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['update'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
         ];
     }
 
     /**
-     * Lists all PaymentFrequency models.
+     * Lists all PaymentFrequencyDiscount models.
      * @return mixed
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => PaymentFrequency::find(),
+            'query' => PaymentFrequencyDiscount::find(),
         ]);
 
         return $this->render('index', [
@@ -49,7 +42,7 @@ class PaymentFrequencyController extends Controller
     }
 
     /**
-     * Displays a single PaymentFrequency model.
+     * Displays a single PaymentFrequencyDiscount model.
      * @param string $id
      * @return mixed
      */
@@ -61,13 +54,13 @@ class PaymentFrequencyController extends Controller
     }
 
     /**
-     * Creates a new PaymentFrequency model.
+     * Creates a new PaymentFrequencyDiscount model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new PaymentFrequency();
+        $model = new PaymentFrequencyDiscount();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -79,40 +72,26 @@ class PaymentFrequencyController extends Controller
     }
 
     /**
-     * Updates an existing PaymentFrequency model.
+     * Updates an existing PaymentFrequencyDiscount model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionEdit()
     {
-		$model = $this->findModel($id);
-		$data =  $this->renderAjax('payment-frequency/_form', [
-			'model' => $model->paymentFrequencyDiscount,
+		$paymentFrequencies = PaymentFrequencyDiscount::find()->all();
+		$request = Yii::$app->request;
+        Model::loadMultiple($paymentFrequencies, $request->post());
+		foreach ($paymentFrequencies as $paymentFrequency) {
+			$paymentFrequency->save();
+		}
+		return $this->render('update', [
+			'paymentFrequencies' => $paymentFrequencies,
 		]);
-		if ($model->load(Yii::$app->request->post())) {
-	       	$model->save();
-			return  [
-				'status' => true,
-			];
-        }
-		return [
-			'status' => true,
-			'data' => $data
-		];
-
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
     }
 
     /**
-     * Deletes an existing PaymentFrequency model.
+     * Deletes an existing PaymentFrequencyDiscount model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -125,15 +104,15 @@ class PaymentFrequencyController extends Controller
     }
 
     /**
-     * Finds the PaymentFrequency model based on its primary key value.
+     * Finds the PaymentFrequencyDiscount model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return PaymentFrequency the loaded model
+     * @return PaymentFrequencyDiscount the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = PaymentFrequency::findOne($id)) !== null) {
+        if (($model = PaymentFrequencyDiscount::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

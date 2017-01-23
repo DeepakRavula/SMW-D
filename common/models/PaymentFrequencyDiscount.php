@@ -27,8 +27,7 @@ class PaymentFrequencyDiscount extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['paymentFrequencyId', 'value'], 'required'],
-            [['paymentFrequencyId'], 'integer'],
+            [['value'], 'required'],
             [['value'], 'number'],
         ];
     }
@@ -43,5 +42,10 @@ class PaymentFrequencyDiscount extends \yii\db\ActiveRecord
             'paymentFrequencyId' => 'Payment Frequency ID',
             'value' => 'Value',
         ];
+    }
+
+	public function getPaymentFrequency()
+    {
+        return $this->hasOne(PaymentFrequency::className(), ['id' => 'paymentFrequencyId']);
     }
 }

@@ -4,13 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\PaymentFrequency */
+/* @var $model common\models\PaymentFrequencyDiscount */
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Payment Frequencies', 'url' => ['index']];
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Payment Frequency Discounts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="payment-frequency-view">
+<div class="payment-frequency-discount-view">
 
     <p>
         <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
@@ -27,7 +27,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'name',
+            'paymentFrequencyId',
+            'value',
         ],
     ]) ?>
 
