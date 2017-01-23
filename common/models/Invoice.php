@@ -181,9 +181,6 @@ class Invoice extends \yii\db\ActiveRecord
 			if(empty($this->lineItems)) {
                 return parent::afterSave($insert, $changedAttributes);
             }
-			$this->customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
-			echo $this->lineItemCount;die;
-			$this->paymentFrequencyDiscount = 0;
             $existingSubtotal = $this->subTotal;
             if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
                 $this->trigger(self::EVENT_GENERATE);
@@ -194,19 +191,25 @@ class Invoice extends \yii\db\ActiveRecord
 
 	public function getPaymentFrequencyDiscount()
 	{
-		$lineItemCount = $this->lineItemCount;
-		foreach($this->lineItems as $lineItem) {
-
+		$paymentFrequencyDiscount = 0;
+		if($this->lineItem->lesson->course->program->isPrivate()) {
+			$paymentFrequencyDiscount = $this->lineItemCount * $this->lineItem->lesson->course->enrolment->paymentFrequencyDiscount->value;
 		}
+		return $paymentFrequencyDiscount;
 	}
+	
     public function updateInvoiceAttributes()
     {
         if(!$this->isOpeningBalance()) {
             $subTotal    = $this->lineItemTotal;
             $tax         = $this->lineItemTax;
             $discount    = $this->discount;
-            $totalAmount = ($subTotal + $tax) - $discount;
+			$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
+			$paymentFrequencyDiscount = $this->getPaymentFrequencyDiscount();
+            $totalAmount = ($subTotal + $tax) - ($discount + $customerDiscount + $paymentFrequencyDiscount);
             $this->updateAttributes([
+					'customerDiscount' => $customerDiscount,
+					'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
                     'subTotal' => $subTotal,
                     'tax' => $tax,
                     'total' => $totalAmount,
