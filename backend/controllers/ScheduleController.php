@@ -6,7 +6,6 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
-use common\models\Location;
 use common\models\Lesson;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -423,7 +422,6 @@ class ScheduleController extends Controller
                             }
                         }
                     }
-                    $classroom = $lesson->classroom->name;
                     $classroomId = $lesson->classroomId;
                     $events[] = [
                         'resourceId' => $classroomId,
