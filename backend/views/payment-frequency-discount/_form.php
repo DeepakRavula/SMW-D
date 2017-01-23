@@ -14,7 +14,7 @@ use yii\bootstrap\ActiveForm;
 		<strong>Payment Frequency</strong>
 	</div>
 	<div class="form-group col-lg-6">
-		<strong>Set Discount ($)</strong>
+		<strong>Set Discount (%)</strong>
 	</div>
 	<?php foreach ($paymentFrequencies as $index => $paymentFrequency): ?>
 	<?php

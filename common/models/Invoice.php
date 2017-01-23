@@ -188,15 +188,6 @@ class Invoice extends \yii\db\ActiveRecord
         }
         return parent::afterSave($insert, $changedAttributes);
     }
-
-	public function getPaymentFrequencyDiscount()
-	{
-		$paymentFrequencyDiscount = 0;
-		if($this->lineItem->lesson->course->program->isPrivate()) {
-			$paymentFrequencyDiscount = $this->lineItemCount * $this->lineItem->lesson->course->enrolment->paymentFrequencyDiscount->value;
-		}
-		return $paymentFrequencyDiscount;
-	}
 	
     public function updateInvoiceAttributes()
     {
@@ -204,12 +195,8 @@ class Invoice extends \yii\db\ActiveRecord
             $subTotal    = $this->lineItemTotal;
             $tax         = $this->lineItemTax;
             $discount    = $this->discount;
-			$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
-			$paymentFrequencyDiscount = $this->getPaymentFrequencyDiscount();
-            $totalAmount = ($subTotal + $tax) - ($discount + $customerDiscount + $paymentFrequencyDiscount);
+            $totalAmount = ($subTotal + $tax) - $discount;
             $this->updateAttributes([
-					'customerDiscount' => $customerDiscount,
-					'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
                     'subTotal' => $subTotal,
                     'tax' => $tax,
                     'total' => $totalAmount,
@@ -420,8 +407,15 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->discount     = $lesson->proFormaInvoiceLineItem->discount;
             $invoiceLineItem->discountType = $lesson->proFormaInvoiceLineItem->discountType;
         } else {
-            $invoiceLineItem->discount     = 0.00;
-            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+			if($lesson->course->program->isPrivate()) {
+				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : null;
+				$paymentFrequencyDiscount = $lesson->course->enrolment->paymentFrequencyDiscount->value;
+				$invoiceLineItem->discount     = $customerDiscount + $paymentFrequencyDiscount;
+				$invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
+			} else {
+				$invoiceLineItem->discount     = 0;
+	            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+			}
         }
         $getDuration                 = \DateTime::createFromFormat('H:i:s',
                 $lesson->duration);
