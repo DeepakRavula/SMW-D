@@ -3,6 +3,8 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use common\models\Invoice;
+use yii\widgets\ActiveForm;
+use kartik\date\DatePicker;
 
 ?>
 <style>
@@ -20,12 +22,34 @@ use common\models\Invoice;
             'class' => 'add-new-invoice text-add-new',
             ]);
     ?>
+	<?php $form = ActiveForm::begin([
+		'id' => 'customer-invoice-search-form'
+    ]); ?>
+	<div class="col-md-3">
+ <?php
+		echo $form->field($userModel, 'fromDate')->widget(DatePicker::classname(), [
+		'type' => DatePicker::TYPE_COMPONENT_APPEND,
+		'pluginOptions' => [
+			'startView' => 3,
+			'minViewMode' => 2,
+			'autoclose' => true,
+			'format' => 'yyyy',
+		],
+	  ])->label('Date');
+	?>
+    </div>
+    <div class="col-md-3 form-group m-t-5">
+        <br>
+	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
+    </div>
+	<?php ActiveForm::end(); ?>
 </div>
 <div class="clearfix"></div>
 <hr class="hr-ad right-side-faded">
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
+	'id' => 'customer-invoice-grid'
 ]) ?>
 <?php echo  GridView::widget([
     'dataProvider' => $invoiceDataProvider,
@@ -73,3 +97,13 @@ use common\models\Invoice;
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
 </div>
+<script>
+$(document).ready(function(){
+	$("#customer-invoice-search-form").on("submit", function() {
+		var fromDate = $('#user-fromdate').val();
+		$.pjax.reload({container:"#customer-invoice-grid", replace:false, timeout:6000, data:$(this).serialize()});
+		
+		return false;
+    });
+});
+</script>

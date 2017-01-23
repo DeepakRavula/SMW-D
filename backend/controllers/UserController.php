@@ -14,6 +14,7 @@ use common\models\Qualification;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
+use backend\models\search\InvoiceSearch;
 use backend\models\search\LessonSearch;
 use common\models\Note;
 use common\models\Location;
@@ -213,12 +214,23 @@ class UserController extends Controller
             'query' => $enrolmentQuery,
         ]);
 
+		$request = Yii::$app->request;
+		$model->fromDate = (new \DateTime())->format('Y');
+        $userRequest = $request->get('User');
+		if(!empty($userRequest)) {
+            $model->fromDate = $userRequest['fromDate'];
+		} 
+		$fromDate =  (new \DateTime($model->fromDate))->format('Y-01-01');
+        $toDate = (new \DateTime($model->fromDate))->format('Y-12-31');
+		//print_r($fromDate);
+		//print_r($toDate);die;
         $invoiceQuery = Invoice::find()
                 ->student($id)
                 ->where([
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
-                ]);
+                ])
+				->between($fromDate,$toDate);
 
         $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoiceQuery,
