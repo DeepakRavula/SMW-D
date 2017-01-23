@@ -26,8 +26,18 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	.lesson-count {
 		font-weight: bold;
 	}
+    #user-note{
+        padding-left:10px;
+    }
+    .user-note-content .empty{
+        padding-left:10px;
+    }
+    .pagination{
+        padding-left:0;
+        margin-left:0;
+    }
 </style>
-        <div class="pull-left m-t-10">
+        <div class="pull-left m-T-10">
   			 <?php if ($searchModel->role_name === 'staffmember'):?>
 			 <?php
             echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [

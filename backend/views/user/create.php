@@ -19,7 +19,7 @@ $this->title = Yii::t('backend', 'Add new {modelClass}', [
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', $role.'s'), 'url' => ['index', 'UserSearch[role_name]' => $name]];
 $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Create')];
 ?>
-<div class="user-create m-t-10">
+<div class="user-create mt10">
 
     <?php echo $this->render('_form', [
         'model' => $model,

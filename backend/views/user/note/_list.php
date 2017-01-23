@@ -3,7 +3,7 @@ use yii\helpers\Html;
 use dosamigos\editable\Editable;
 use yii\helpers\Url;
 ?>
-<div class="col-sm-10">
+<div class="col-sm-10 p-10">
 <div class="panel panel-default">
 <div class="panel-heading">
 <strong><?= $model->createdUser->publicIdentity; ?></strong> <span class="text-muted">

@@ -9,7 +9,7 @@ foreach ($Roles as $name => $description) {
 ?>
 
 <div class="row-fluid section-tab">
-	<div class="col-xs-8">
+	<div class="col-xs-8 p-l-10">
 		<div class="col-xs-6 p-l-0">
 			<?php echo $form->field($model, 'firstname') ?>
 		</div>

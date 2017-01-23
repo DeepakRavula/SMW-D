@@ -8,7 +8,7 @@ use yii\bootstrap\Modal;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<div id="lesson-note" class="col-md-12">
+<div id="lesson-note" class="col-md-12 p-l-10">
 	<h4 class="pull-left m-r-20">Notes</h4>
 	<a href="#" class="text-add-new"><i class="fa fa-plus"></i></a>
 	<div class="clearfix"></div>
@@ -23,7 +23,7 @@ Modal::begin([
 ]);
 Modal::end();
 ?>
-<div class="lesson-note-content">
+<div class="lesson-note-content p-10">
 <?=
 	$this->render('_view', [
 		'noteDataProvider' =>  $noteDataProvider,
