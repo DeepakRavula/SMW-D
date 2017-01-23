@@ -96,12 +96,6 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
 
-	public function getLineItemCount()
-    {
-        return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id'])
-			->count();
-    }
-
     public function getPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
