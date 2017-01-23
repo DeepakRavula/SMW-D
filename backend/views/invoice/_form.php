@@ -15,14 +15,6 @@ use wbraganca\selectivity\SelectivityWidget;
 $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
 ?>
 
-<style>
-    #customer-search-form:nth-child(2){
-            position: absolute;
-    bottom: 0;
-    left: 740px;
-    }
-</style>
-
 <div class="invoice-form">
 
     <?php $form = ActiveForm::begin([
