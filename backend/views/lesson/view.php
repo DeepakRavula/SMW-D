@@ -24,27 +24,45 @@ $noteContent = $this->render('note/view', [
 	'noteDataProvider' => $noteDataProvider
 ]);
 
-?>
-<?php echo Tabs::widget([
-    'items' => [
-        [
-            'label' => 'Details',
-            'content' => $lessonContent,
-            'options' => [
-                    'id' => 'details',
-                ],
-        ],
-		[
-            'label' => 'Notes',
-            'content' => $noteContent,
-            'options' => [
-                'id' => 'note',
-            ],
-        ],
-    ],
+$studentContent = $this->render('student/view', [
+	'studentDataProvider' => $studentDataProvider
 ]);
+
+$items = [
+	[
+		'label' => 'Details',
+		'content' => $lessonContent,
+		'options' => [
+				'id' => 'details',
+			],
+	],
+	[
+		'label' => 'Notes',
+		'content' => $noteContent,
+		'options' => [
+			'id' => 'note',
+		],
+	],
+];
+$groupLesson = [
+	[
+		'label' => 'Students',
+		'content' => $studentContent,
+		'options' => [
+			'id' => 'student',
+		],
+	],
+];
+if ($model->course->program->isGroup()) {
+	$items = array_merge($items, $groupLesson);
+}
 ?>
-     </div>
+<?php
+	echo Tabs::widget([
+		'items' => $items,
+	]);
+?>
+    </div>
  </div>
 <script>
  $(document).ready(function() {

@@ -77,8 +77,7 @@ class LessonSearch extends Lesson
 
         if (!empty($this->type)) {
             if ((int) $this->type === Lesson::TYPE_PRIVATE_LESSON) {
-                $query->activePrivateLessons()
-                    ;
+                $query->activePrivateLessons();
             } else {
                 $query->groupLessons();
             }
@@ -115,7 +114,7 @@ class LessonSearch extends Lesson
         $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
 
         if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
-            $query->andWhere(['between', 'lesson.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+            $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
         }
 
         return $dataProvider;

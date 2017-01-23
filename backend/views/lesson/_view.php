@@ -10,15 +10,19 @@ use yii\helpers\Url;
 ?>
 <div class="lesson-view">
 	<div class="row-fluid ">
-    <div class="col-md-12 p-t-10">
         <p class="users-name pull-left">
-        	<?php 
-            if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>
-			<?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null ?>
+        	<?php if ($model->course->program->isPrivate()):?>
+        	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Student">
+                <a href= "<?= Url::to(['student/view', 'id' => $model->enrolment->student->id]) ?>">
+				<i class="fa fa-lg fa-fw fa-child"></i><strong><?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null ?></strong></a>
+        	</div>
+        	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
+                <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $model->enrolment->student->customer->id]) ?>">
+			<i class="fa fa-lg fa-fw fa-male"></i><strong><?= !empty($model->enrolment->student->customer->userProfile->fullName) ? $model->enrolment->student->customer->userProfile->fullName : null ?></strong></a>
+        	</div>
 		<?php endif; ?>
         </p>
         <div class="clearfix"></div>
-    </div>
 			<?php if (! $model->isUnscheduled()) : ?>
 			<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
 			<i class="fa fa-calendar"></i>
@@ -33,7 +37,12 @@ use yii\helpers\Url;
         <?php endif; ?>
         
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program name">
-			<i class="fa fa-music detail-icon"></i> <?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
+			<?php if ($model->course->program->isGroup()):?>
+                <a href= "<?= Url::to(['course/view', 'id' => $model->courseId]) ?>">
+			<?php endif; ?>
+			<i class="fa fa-music detail-icon"></i>
+				<?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
+				</a>
 		</div>
         <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Duration">
 			<i class="fa fa-clock-o"></i> <?php echo !empty($model->duration) ? (new \DateTime($model->duration))->format('H:i') : null ?>
@@ -58,7 +67,7 @@ use yii\helpers\Url;
 		
 		<?php if (Yii::$app->controller->action->id === 'view'):?>
 	<div class="col-md-12 action-btns m-b-20">
-		<?php if ((int) $model->course->program->type === Program::TYPE_PRIVATE_PROGRAM):?>
+		<?php if ($model->course->program->isPrivate()):?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-pencil"></i> Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 		<?php endif; ?>
 		<?php if($model->invoice) : ?>
@@ -78,6 +87,13 @@ use yii\helpers\Url;
                 ],
 			]) ?>
 		<?php endif; ?>
+		<?php if(!empty($model->proFormaInvoice)) : ?>
+		<?php if($model->proFormaInvoice->isPaid()) : ?>
+		<?= Html::a('<span class="label label-primary">View Payment</span>', ['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment'], ['class' => 'm-r-20 del-ce'])?>
+		<?php else : ?>
+		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Take Payment</span>', ['invoice/view', 'id' => $model->proFormaInvoice->id], ['class' => 'm-r-20 del-ce']) ?>
+        <?php endif; ?>
+		 <?php endif; ?>
 	    </div>
 		<?php endif; ?>
 		</div>

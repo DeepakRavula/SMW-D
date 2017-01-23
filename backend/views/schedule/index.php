@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Json;
+use yii\helpers\Url;
 use yii\bootstrap\Tabs;
 use common\models\CalendarEventColor;
 
@@ -144,45 +145,12 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 </div>
 
 <script type="text/javascript">
-var date = new Date();
-var currentDate = moment(date).format('YYYY-MM-DD 00:00:00');
-var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-var isHoliday = false;
-var resources = [];
-var day = moment(date).day();
-var teachersAvailabilitiesAllDetails = <?php echo Json::encode($teachersAvailabilitiesAllDetails); ?>;
-var teachersAvailabilitiesDetails = <?php echo Json::encode($teachersAvailabilitiesDetails); ?>;
 var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
-var uniqueAvailableTeachersDetails = removeDuplicates(availableTeachersDetails, "id");
-var events = <?php echo Json::encode($events); ?>;
-var holidays = <?php echo Json::encode($holidays); ?>;
-isclassroom = false;
+var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
 $(document).ready(function() {
-    $.each( holidays, function( key, value ) {
-        if (value.date == currentDate) {
-            isHoliday = true;
-            resources.push({
-                id: '0',
-                title: 'Holiday'
-            });
-        }
-    });
-    if(day == 0 && !isHoliday) {
-        resources.push({
-            id: '0',
-            title: 'Sunday-Holiday'
-        });
-    } else if(!isHoliday) {
-        $.each( availableTeachersDetails, function( key, value ) {
-            if (value.day == day) {
-                resources.push({
-                    id: value.id,
-                    title: value.name
-                });
-            }
-        });
-    }
-
+    var params = $.param({ date: moment(new Date()).format('YYYY-MM-DD'),
+        programId: '',
+        teacherId: '' });
     $('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
@@ -193,204 +161,50 @@ $(document).ready(function() {
         slotDuration: "00:15:00",
         editable: false,
         droppable: false,
-        resources: resources,
-        events: events,
+        resources: {
+            url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
+            type: 'POST',
+            error: function() {
+                alert('There was an error while fetching resources, Please re-select!');
+            }
+        },
+        events: {
+            url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
+            type: 'POST',
+            error: function() {
+                alert('There was an error while fetching events, Please re-select!');
+            }
+        },
 		allDaySlot:false,
         eventClick: function(event) {
             $(location).attr('href', event.url);
         }
     });
-
-    if (!isHoliday) {
-        addAllAvailabilityEvents();
-    }
 });
-
-function getEvents(resources, action, date) {
-    var isClassroom = false;
-    if (action === 'classroom-event') {
-        isClassroom = true;
-    }
-    $.ajax({
-        url    : '' + action + '?date=' + date + '',
-        type   : 'GET',
-        dataType: "json",
-        success: function(response)
-        {
-            if (isClassroom) {
-                showclassroomCalendar(response, moment(date));
-            } else {
-                refreshCalendar(resources, response, moment(date));
-            }
-        }
-    });
-    return false;
-}
 
 $(document).ready(function () {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        var tab = e.target.text;
+        var tab  = e.target.text;
         var date = $('#datepicker').datepicker("getDate");
-        var formattedDate = moment($('#datepicker').datepicker("getDate")).format('YYYY-MM-DD');
         if (tab === "Classroom View") {
-            var action = 'classroom-event';
-            var resources = [];
-            getEvents(resources, action, formattedDate);
+            showclassroomCalendar(moment(date));
             $('.calendar-filter').hide();
         } else {
-            var resources = getResources(date);
-            var action = 'day-event';
-            getEvents(resources, action, formattedDate);
+            refreshCalendar(moment(date));
             $('.calendar-filter').show();
         }
     });
 });
 
-function addAllAvailabilityEvents() {
-    $('#calendar').fullCalendar( 'addEventSource',
-    function(start, end, status, callback) {
-        var currentDay = moment(start).day();
-        var currentDate = moment(start).format('YYYY-MM-DD');
-        var start = moment(start).format('YYYY-MM-DD 00:00:00');
-        var end = moment(start).format('YYYY-MM-DD 23:59:59');
-
-        var events = [];
-        if(currentDay === 0) {
-            events.push({
-                title: '',
-                start: start,
-                end: end,
-                resourceId: 0,
-                allDay: false,
-                className: 'holiday',
-                rendering: 'background'
-            });
-        } else {
-            $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
-                if(value.day == currentDay) {
-                    var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
-                    var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
-                    events.push({
-                        title: '',
-                        start: startTime,
-                        end: endTime,
-                        resourceId: value.id,
-                        allDay: false,
-                        rendering: 'background'
-                    });
-                }
-            });
-        }
-        callback( events );
-    });
-}
-
-function addAvailabilityEvents() {
-    var holidays = <?php echo Json::encode($holidays); ?>;
-    $('#calendar').fullCalendar( 'addEventSource',
-    function(start, end, status, callback) {
-        var selectedProgram = $('#program-selector').selectivity('value');
-        var programSelected = (selectedProgram != 'undefined') && (selectedProgram != null);
-        var selectedTeacher = $('#teacher-selector').selectivity('value');
-        var teacherSelected = (selectedTeacher != 'undefined') && (selectedTeacher != null);
-        var day = moment(start).day();
-        var currentDate = moment(start).format('YYYY-MM-DD');
-        var start = moment(start).format('YYYY-MM-DD 00:00:00');
-        var end = moment(start).format('YYYY-MM-DD 23:59:59');
-        var events = [];
-        var isHoliday = false;
-        $.each( holidays, function( key, value ) {
-            if (value.date == start) {
-                isHoliday = true;
-            }
-        });
-        if(day === 0 && !isHoliday) {
-            events.push({
-                title: '',
-                start: start,
-                end: end,
-                resourceId: 0,
-                allDay: false,
-                className: 'holiday',
-                rendering: 'background'
-            });
-        } else if(!isHoliday) {
-            if(!teacherSelected && !programSelected) {
-                $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
-                    if (value.day == day) {
-                        var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
-                        var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
-                        events.push({
-                            title: '',
-                            start: startTime,
-                            end: endTime,
-                            resourceId: value.id,
-                            allDay: false,
-                            rendering: 'background'
-                        });
-                    }
-                });
-            }
-            if(!teacherSelected && programSelected){
-                $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
-                    if (value.day == day && $.inArray(parseInt(selectedProgram), value.programs) != -1) {
-                        var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
-                        var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
-                        events.push({
-                            title: '',
-                            start: startTime,
-                            end: endTime,
-                            resourceId: value.id,
-                            allDay: false,
-                            rendering: 'background'
-                        });
-                    }
-                });
-            }else if(teacherSelected){
-                $.each( teachersAvailabilitiesAllDetails, function( key, value ) {
-                    if (value.day == day && selectedTeacher == value.id) {
-                        var startTime = moment(currentDate+' '+value.from_time).format('YYYY-MM-DD HH:mm:ss');
-                        var endTime = moment(currentDate+' '+value.to_time).format('YYYY-MM-DD HH:mm:ss');
-                        events.push({
-                            title: '',
-                            start: startTime,
-                            end: endTime,
-                            resourceId: value.id,
-                            allDay: false,
-                            rendering: 'background'
-                        });
-                    }
-                });
-            }
-        }
-        callback( events );
-    });
-}
-
-function removeDuplicates(value, key) {
-    var unique = [];
-    var lookup  = {};
-
-    for (var i in value) {
-        lookup[value[i][key]] = value[i];
-    }
-
-    for (i in lookup) {
-        unique.push(lookup[i]);
-    }
-
-    return unique;
-}
-
 function loadTeachers(program) {
     var teachers = [];
     if((program == 'undefined') || (program == null)) {
-        $.each( uniqueAvailableTeachersDetails, function( key, value ) {
+        $.each( availableTeachersDetails, function( key, value ) {
             value.text = value.name;
             teachers.push(value);
         });
     }else {
-        $.each( uniqueAvailableTeachersDetails, function( key, value ) {
+        $.each( availableTeachersDetails, function( key, value ) {
             if ($.inArray(parseInt(program), value.programs) != -1) {
                 value.text= value.name;
                 teachers.push(value);
@@ -420,70 +234,42 @@ $(document).ready(function () {
     setTimeout(function(){
 	$('#program-selector').on('change', function(e){
         var date = $('#calendar').fullCalendar('getDate');
-        var formattedDate = moment(date).format('YYYY-MM-DD');
-		var resources = getResources(date);
-        var action = 'day-event';
-        getEvents(resources, action, formattedDate);
+        refreshCalendar(moment(date));
         loadTeachers(e.value);
 	}); }, 3000);
 
     setTimeout(function(){
 	$('#teacher-selector').on('change', function(){
         var date = $('#calendar').fullCalendar('getDate');
-        var formattedDate = moment(date).format('YYYY-MM-DD');
-		var resources = getResources(date);
-        var action = 'day-event';
-        getEvents(resources, action, formattedDate);
+        refreshCalendar(moment(date));
 	}); }, 3000);
 
     $('#datepicker').on('change', function(){
         var date = $('#datepicker').datepicker("getDate");
         var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-        var dateOnly = moment(date).format('YYYY-MM-DD');
         $(".content-header h1").text("Schedule for " + formattedDate);
-		if (!isclassroom) {
-            var resources = getResources(date);
-            var action = 'day-event';
-            getEvents(resources, action, dateOnly);
+		if ($('.nav-tabs .active').text() === 'Classroom View') {
+            showclassroomCalendar(moment(date));
         } else {
-            var action = 'classroom-event';
-            var resources = [];
-            getEvents(resources, action, dateOnly);
+            refreshCalendar(moment(date));
         }
 	});
 });
 
-function showclassroomCalendar(events, date) {
-    isclassroom = true;
-    var day = moment(date).day();
-    var resources = [];
-    var currentDate = moment(date).format('YYYY-MM-DD 00:00:00');
-    var currentDateEnd = moment(date).format('YYYY-MM-DD 23:59:59');
-    $.each( holidays, function( key, value ) {
-        if (value.date == currentDate) {
-            resources.push({
-                id: '0',
-                title: 'Holiday'
-            });
+function showclassroomCalendar(date) {
+    var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
+    var fromTime = "09:00:00";
+    var toTime   = "17:00:00";
+    var day      = moment(date).day();
+    $.each( locationAvailabilities, function( key, value ) {
+        if (day === 0) {
+            day = 7;
+        }
+        if (day === value.day) {
+            fromTime = value.fromTime;
+            toTime   = value.toTime;
         }
     });
-    if(day == 0 && $.isEmptyObject(resources)) {
-        resources.push({
-            id: '0',
-            title: 'Sunday-Holiday'
-        });
-        events.push({
-                title: '',
-                start: currentDate,
-                end: currentDateEnd,
-                resourceId: 0,
-                allDay: false,
-                className: 'holiday',
-                rendering: 'background'
-            });
-    } else if($.isEmptyObject(resources)) {
-        var resources = <?php echo Json::encode($classroomResource); ?> ;
-    }
     $('#classroom-calendar').html('');
     $('#classroom-calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -491,87 +277,45 @@ function showclassroomCalendar(events, date) {
         defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
-        minTime: "<?php echo $from_time; ?>",
-        maxTime: "<?php echo $to_time; ?>",
+        minTime: fromTime,
+        maxTime: toTime,
         slotDuration: "00:15:00",
 		allDaySlot:false,
         editable: false,
         droppable: false,
-        resources: resources,
-        events: events
+        resources: {
+            url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + params,
+            type: 'POST',
+            error: function() {
+                alert('There was an error while fetching resources, Please re-select!');
+            }
+        },
+        events: {
+            url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + params,
+            type: 'POST',
+            error: function() {
+                alert('there was an error while fetching events, Please re-select!');
+            }
+        }
     });
 }
 
-function getResources(date) {
-    var day = moment(date).day();
-    var currentDate = moment(date).format('YYYY-MM-DD 00:00:00');
-    var resources = [];
-    var selectedProgram = $('#program-selector').selectivity('value');
-    var programSelected = (selectedProgram != 'undefined') && (selectedProgram != null);
-    var selectedTeacher = $('#teacher-selector').selectivity('value');
-    var teacherSelected = (selectedTeacher != 'undefined') && (selectedTeacher != null);
-    $.each( holidays, function( key, value ) {
-        if (value.date == currentDate) {
-            resources.push({
-                id: '0',
-                title: 'Holiday'
-            });
+function refreshCalendar(date) {
+    var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
+        programId: $('#program-selector').selectivity('value'),
+        teacherId: $('#teacher-selector').selectivity('value') });
+    var minTime = "09:00:00";
+    var maxTime = "17:00:00";
+    var day     = moment(date).day();
+    $.each( locationAvailabilities, function( key, value ) {
+        if (day === 0) {
+            day = 7;
+        }
+        if (day === value.day) {
+            minTime = value.fromTime;
+            maxTime = value.toTime;
         }
     });
-    if(day == 0 && $.isEmptyObject(resources)) {
-        resources.push({
-            id: '0',
-            title: 'Sunday-Holiday'
-        });
-    } else if($.isEmptyObject(resources)) {
-        if(!teacherSelected && !programSelected) {
-            $.each( availableTeachersDetails, function( key, value ) {
-                if (value.day == day) {
-                    resources.push({
-                        id: value.id,
-                        title: value.name
-                    });
-                }
-            });
-        }
-        if(!teacherSelected && programSelected){
-            $.each( availableTeachersDetails, function( key, value ) {
-                if (value.day == day && $.inArray(parseInt(selectedProgram), value.programs) != -1) {
-                    resources.push({
-                        id: value.id,
-                        title: value.name
-                    });
-                }
-            });
-            if($.isEmptyObject(resources)) {
-                resources.push({
-                    id: '',
-                    title: 'No Teacher Available for the selected Program'
-                });
-            }
-            loadTeachers(selectedProgram);
-        }else if(teacherSelected){
-            $.each( availableTeachersDetails, function( key, value ) {
-                if (value.day == day && selectedTeacher == value.id) {
-                    resources.push({
-                        id: value.id,
-                        title: value.name
-                    });
-                }
-            });
-            if($.isEmptyObject(resources)) {
-                resources.push({
-                    id: '',
-                    title: 'Selected Teacher Not Available'
-                });
-            }
-        }
-    }
-    return resources;
-}
-
-function refreshCalendar(resources, events, date) {
-    isclassroom = false;
     $('#calendar').html('');
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -579,16 +323,26 @@ function refreshCalendar(resources, events, date) {
         defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
-        minTime: "<?php echo $from_time; ?>",
-        maxTime: "<?php echo $to_time; ?>",
+        minTime: minTime,
+        maxTime: maxTime,
         slotDuration: "00:15:00",
 		allDaySlot:false,
         editable: false,
         droppable: false,
-        resources:  resources,
-        events: events
+        resources: {
+            url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
+            type: 'POST',
+            error: function() {
+                alert('There was an error while fetching resources, Please re-select!');
+            }
+        },
+        events: {
+            url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
+            type: 'POST',
+            error: function() {
+                alert('There was an error while fetching events, Please re-select!');
+            }
+        }
     });
-
-    addAvailabilityEvents();
 }
 </script>
