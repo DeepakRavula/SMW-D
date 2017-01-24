@@ -162,11 +162,18 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                     'id' => 'qualification',
                 ],
             ],
-            [
+			[
                 'label' => 'Availability',
                 'content' => $teacherAvailabilityContent,
                 'options' => [
                     'id' => 'availability',
+                ],
+            ],
+			[
+                'label' => 'Classroom',
+                'content' => '',
+                'options' => [
+                    'id' => 'classroom',
                 ],
             ],
             [
