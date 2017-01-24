@@ -10,7 +10,7 @@ $this->title = 'Release Notes';
 $this->params['action-button'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i> Create', ['create'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
 ?> 
-<div class="release-notes-index p-10"> 
+<div class="release-notes-index "> 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered m-0'],

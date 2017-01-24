@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Edit')];
     	display: none !important;
     }
 </style>
-<div class="user-update p-t-10">
+<div class="user-update p-T-10">
 
     <?php echo $this->render('_form', [
         'model' => $model,
