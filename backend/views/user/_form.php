@@ -57,13 +57,6 @@ use yii\bootstrap\Tabs;
         'roles' => $roles,
     ]);
 
-    $teacherAvailabilityContent = $this->render('teacher/_form-availability', [
-        'model' => $model,
-        'form' => $form,
-        'availabilityModels' => $availabilityModels,
-    ]);
-    ?>
-	<?php
     $items = [
         [
             'label' => 'Profile',
@@ -89,15 +82,6 @@ use yii\bootstrap\Tabs;
                 ],
         ];
     }
-    if (in_array($model->roles, ['teacher'])) {
-        $items[] = [
-            'label' => 'Availability',
-            'content' => $teacherAvailabilityContent,
-            'options' => [
-                    'id' => 'availability',
-                ],
-        ];
-    }
     ?>
 	<div class="tabbable-panel">
 		<div class="tabbable-line">
@@ -111,7 +95,7 @@ use yii\bootstrap\Tabs;
 		</div>
 	</div>
 
-	<div class="col-md-12 m-b-10 p-l-10">
+	<div class="col-md-12 m-b-10">
 		<?php echo $form->field($model, 'section')->hiddenInput()->label(false); ?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 			<?php
@@ -155,5 +139,5 @@ use yii\bootstrap\Tabs;
 	$('.nav-tabs a').on('shown.bs.tab', function (e) {
 		$('input[name="UserForm[section]"]').val(e.target.hash);
     });
-    
+
 </script>
