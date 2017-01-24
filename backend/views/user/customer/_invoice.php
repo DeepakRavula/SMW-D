@@ -43,6 +43,7 @@ use kartik\date\DatePicker;
 	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
     </div>
 	<?php ActiveForm::end(); ?>
+	<?= Html::a('<i class="fa fa-print"></i> Print', ['invoice-print', 'id' => $userModel->id], ['id' => 'invoice-print', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 </div>
 <div class="clearfix"></div>
 <hr class="hr-ad right-side-faded">
@@ -102,7 +103,8 @@ $(document).ready(function(){
 	$("#customer-invoice-search-form").on("submit", function() {
 		var fromDate = $('#user-fromdate').val();
 		$.pjax.reload({container:"#customer-invoice-grid", replace:false, timeout:6000, data:$(this).serialize()});
-		
+		var url = "<?= Url::to(['user/invoice-print', 'id' => $userModel->id]); ?>&User[fromDate]=" + fromDate;
+		$('#invoice-print').attr('href', url);
 		return false;
     });
 });
