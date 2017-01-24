@@ -17,7 +17,10 @@ use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
-
+use common\models\TeacherAvailability;
+use common\models\LocationAvailability;
+use yii\filters\ContentNegotiator;
+use common\models\Holiday;
 /**
  * CourseController implements the CRUD actions for Course model.
  */
@@ -30,6 +33,15 @@ class CourseController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+			'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['render-day-events', 
+                   'render-resources',],
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -90,7 +102,25 @@ class CourseController extends Controller
             'studentDataProvider' => $studentDataProvider,
         ]);
     }
-
+public function getHolidayEvent($date)
+    {
+        $locationId = Yii::$app->session->get('location_id');
+        $events     = [];
+        $holiday    = Holiday::find()
+            ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
+            ->one();
+        if (!empty($holiday)) {
+            $events[] = [
+                'resourceId' => '0',
+                'title'      => '',
+                'start'      => $holiday->date,
+                'end'        => $date->format('Y-m-d 23:59:59'),
+                'className'  => 'holiday',
+                'rendering'  => 'background'
+            ];
+        }
+        return $events;
+    }
     public function actionViewStudent($groupCourseId, $studentId)
     {
         $model = $this->findModel($groupCourseId);
@@ -110,8 +140,6 @@ class CourseController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Course();
-		$model->setScenario(Course::SCENARIO_GROUP_COURSE);
         $teacherModel = ArrayHelper::map(User::find()
                     ->joinWith(['userLocation ul' => function ($query) {
                         $query->joinWith('teacherAvailability');
@@ -122,23 +150,49 @@ class CourseController extends Controller
                     ->all(),
                 'id', 'userProfile.fullName'
             );
-        $model->locationId = Yii::$app->session->get('location_id');
-        if ($model->load(Yii::$app->request->post())) {
-			if(Yii::$app->request->isAjax) {
-				$response = Yii::$app->response;
-		        $response->format = Response::FORMAT_JSON;
-				return ActiveForm::validate($model);
-			} else {
-				$model->save();
-            	return $this->redirect(['lesson/review', 'courseId' => $model->id]);
-			}
-        } else {
+		$locationId             = Yii::$app->session->get('location_id');
+        $teachersAvailabilities = TeacherAvailability::find()
+            ->joinWith(['userLocation' => function ($query) use ($locationId) {
+                $query->joinWith(['userProfile'])
+                ->where(['user_location.location_id' => $locationId]);
+            }])
+            ->orderBy(['teacher_availability_day.id' => SORT_DESC])
+            ->groupBy('teacher_location_id')
+            ->all();
+        $availableTeachersDetails = ArrayHelper::toArray($teachersAvailabilities, [
+            'common\models\TeacherAvailability' => [
+                'id' => function ($teachersAvailability) {
+                    return $teachersAvailability->userLocation->user_id;
+                },
+                'name' => function ($teachersAvailability) {
+                    return $teachersAvailability->teacher->getPublicIdentity();
+                },
+            ],
+        ]);
+
+        $date = new \DateTime();
+        $locationAvailabilities = LocationAvailability::find()
+            ->where(['locationId' => $locationId])
+            ->all();
+        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
+            'day' => $date->format('N')]);
+        if (empty($locationAvailability)) {
+            $from_time = LocationAvailability::DEFAULT_FROM_TIME;
+            $to_time   = LocationAvailability::DEFAULT_TO_TIME;
+        }
+        $from_time = $locationAvailability->fromTime;
+        $to_time   = $locationAvailability->toTime;
+
+        
             return $this->render('create', [
-                'model' => $model,
+                'model' => new Course(),
                 'teacher' => $teacherModel,
+				'availableTeachersDetails' => $availableTeachersDetails,
+            'locationAvailabilities'   => $locationAvailabilities,
+			'from_time'                => $from_time,
+			'to_time'                  => $to_time,
             ]);
         }
-    }
 
     /**
      * Updates an existing Course model.
@@ -168,7 +222,138 @@ class CourseController extends Controller
             ]);
         }
     }
+public function getHolidayResources($date)
+    {
+        $locationId = Yii::$app->session->get('location_id');
+        $resources  = [];
+        $holiday    = Holiday::find()
+            ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
+            ->one();
+        if (!empty($holiday)) {
+            $resources[] = [
+                'id'    => '0',
+                'title' => 'Holiday',
+            ];
+        }
+        return $resources;
+    }
 
+	    public function actionRenderResources($date)
+    {
+        $locationId = Yii::$app->session->get('location_id');
+        $date       = \DateTime::createFromFormat('Y-m-d', $date);
+        $resources  = $this->getHolidayResources($date);
+        if (empty($resources)) {
+			$teachersAvailabilities = TeacherAvailability::find()
+						->joinWith(['userLocation' => function ($query) use ($locationId) {
+							$query->where(['user_location.location_id' => $locationId]);
+						}])
+						->andWhere(['day' => $date->format('N')])
+						->all();
+			if (!empty($teachersAvailabilities)) {
+				foreach ($teachersAvailabilities as $teachersAvailability) {
+					$resources[] = [
+						'id'    => $teachersAvailability->teacher->id,
+						'title' => $teachersAvailability->teacher->getPublicIdentity(),
+					];
+				}
+			} else {
+				$resources[] = [
+					'id'    => '0',
+					'title' => 'No Teacher Available Today'
+				];
+			}
+		}
+        return $resources;
+    }
+public function getLessons($date)
+    {
+        $lessons = Lesson::find()
+                ->joinWith(['course' => function ($query) {
+                    $query->andWhere(['course.locationId' => Yii::$app->session->get('location_id')]);
+                }])
+                ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+                ->between($date, $date)
+                ->notDeleted()
+                ->all();
+        return $lessons;
+    }
+
+	public function actionRenderDayEvents($date)
+    {
+        $locationId = Yii::$app->session->get('location_id');
+        $date       = \DateTime::createFromFormat('Y-m-d', $date);
+        $events     = $this->getHolidayEvent($date);
+        if (empty($events)) {
+			$teachersAvailabilities = TeacherAvailability::find()
+				->where(['day' => $date->format('N')])
+				->all();
+
+			foreach ($teachersAvailabilities as $teachersAvailability) {
+				$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
+					' ' . $teachersAvailability->from_time);
+				$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
+					' ' . $teachersAvailability->to_time);
+				$events[] = [
+					'resourceId' => $teachersAvailability->teacher->id,
+					'title'      => '',
+					'start'      => $start->format('Y-m-d H:i:s'),
+					'end'        => $end->format('Y-m-d H:i:s'),
+					'rendering'  => 'background',
+				];
+			}
+            }
+            $lessons = $this->getLessons($date);
+            foreach ($lessons as &$lesson) {
+                $toTime = new \DateTime($lesson->date);
+                $length = explode(':', $lesson->duration);
+                $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+                if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+                    $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
+                    $class = 'group-lesson';
+                    $backgroundColor = null;
+                    if (!empty($lesson->colorCode)) {
+                        $class = null;
+                        $backgroundColor = $lesson->colorCode;
+                    }
+                } else {
+                    $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
+                    $class = 'private-lesson';
+                    $backgroundColor = null;
+                    if (!empty($lesson->colorCode)) {
+                        $class = null;
+                        $backgroundColor = $lesson->colorCode;
+                    } else if ($lesson->status === Lesson::STATUS_MISSED) {
+                        $class = 'lesson-missed';
+                    } else if($lesson->isEnrolmentFirstlesson()) {
+                        $class = 'first-lesson';
+                    } else if ($lesson->getRootLesson()) {
+                        $class = 'lesson-rescheduled';
+                        $rootLesson = $lesson->getRootLesson();
+                        if ($rootLesson->teacherId !== $lesson->teacherId) {
+                            $class = 'teacher-substituted';
+                        }
+                    }
+                }
+                if(! empty($lesson->classroomId)) {
+                    $classroom = $lesson->classroom->name;
+                    $title = $title . '[ ' . $classroom . ' ]';
+                }
+
+                $events[] = [
+                    'resourceId' => $lesson->teacherId,
+                    'title' => $title,
+                    'start' => $lesson->date,
+                    'end' => $toTime->format('Y-m-d H:i:s'),
+                    'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
+                    'className' => $class,
+                    'backgroundColor' => $backgroundColor,
+                ];
+            }
+            unset($lesson);
+			
+        return $events;
+    }
     /**
      * Deletes an existing Course model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

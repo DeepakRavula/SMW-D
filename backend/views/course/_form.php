@@ -27,30 +27,6 @@ use yii\helpers\ArrayHelper;
                     ->all(), 'id', 'name')) ?>
 	</div>
 	<div class="col-md-4">
-            <?php echo $form->field($model, 'teacherId')->dropDownList($teacher) ?>
-	</div>
-	<div class="col-md-4">
-    <?php echo $form->field($model, 'duration')->widget(TimePicker::classname(), [
-                'pluginOptions' => [
-                    'showMeridian' => false,
-                    'defaultTime' => date('H:i', strtotime('00:30')),
-                ],
-            ]); ?>
-
-	</div>	
-	</div>
-	<div class="row">
-		<div class="col-md-4">
-            <?php echo $form->field($model, 'day')->dropdownList(Course::getWeekdaysList(), ['prompt' => 'select day']) ?>
-		</div>
-	<?php
-        $fromTime = \DateTime::createFromFormat('H:i:s', $model->fromTime);
-        $model->fromTime = !empty($model->fromTime) ? $fromTime->format('g:i A') : null;
-    ?>
-		<div class="col-md-4">
-		<?= $form->field($model, 'fromTime')->widget(TimePicker::classname(), []); ?>
-		</div>
-		<div class="col-md-4">
             <?php echo $form->field($model, 'startDate')->widget(\yii\jui\DatePicker::classname(), [
                     'options' => ['class' => 'form-control'],
                     'clientOptions' => [
@@ -60,8 +36,7 @@ use yii\helpers\ArrayHelper;
                     ],
                 ]); ?>
 		</div>
-		</div>
-		<div class="row">
+
 		<div class="col-md-4">
             <?php echo $form->field($model, 'endDate')->widget(\yii\jui\DatePicker::classname(), [
                     'options' => ['class' => 'form-control'],
@@ -72,6 +47,29 @@ use yii\helpers\ArrayHelper;
                     ],
                 ]); ?>
 		</div>
+	</div>
+	<div class="col-md-4">
+		<?php echo $form->field($model, 'teacherId')->hiddenInput()->label(false); ?>
+	</div>
+	<div class="col-md-4">
+		<?php echo $form->field($model, 'duration')->hiddenInput()->label(false); ?>
+	</div>
+		<div class="col-md-4">
+		<?php echo $form->field($model, 'day')->hiddenInput()->label(false); ?>
+		</div>
+		<div class="col-md-4">
+		<?php echo $form->field($model, 'fromTime')->hiddenInput()->label(false); ?>
+		</div>
+		
+	<div class="clearfix"></div>
+	<div>
+	<?php echo $this->render('_calendar', [
+		'model' => $model,
+				'availableTeachersDetails' => $availableTeachersDetails,
+            'locationAvailabilities'   => $locationAvailabilities,
+			'from_time'                => $from_time,
+			'to_time'                  => $to_time,
+	]); ?>
 	</div>
 	</div>
 </div>
