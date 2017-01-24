@@ -45,6 +45,10 @@ class User extends ActiveRecord implements IdentityInterface
 
     const EVENT_AFTER_SIGNUP = 'afterSignup';
     const EVENT_AFTER_LOGIN = 'afterLogin';
+
+	public $fromDate;
+	public $toDate;
+	
     /**
      * {@inheritdoc}
      */

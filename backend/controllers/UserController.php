@@ -14,6 +14,7 @@ use common\models\Qualification;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
+use backend\models\search\InvoiceSearch;
 use backend\models\search\LessonSearch;
 use common\models\Note;
 use common\models\Location;
@@ -213,12 +214,21 @@ class UserController extends Controller
             'query' => $enrolmentQuery,
         ]);
 
+		$request = Yii::$app->request;
+		$model->fromDate = (new \DateTime())->format('Y');
+        $userRequest = $request->get('User');
+		if(!empty($userRequest)) {
+            $model->fromDate = $userRequest['fromDate'];
+		} 
+		$fromDate =  $model->fromDate . '-01-01';
+        $toDate = $model->fromDate . '-12-31';
         $invoiceQuery = Invoice::find()
                 ->student($id)
                 ->where([
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
-                ]);
+                ])
+				->between($fromDate,$toDate);
 
         $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoiceQuery,
@@ -833,6 +843,38 @@ class UserController extends Controller
 			'model' => $model,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
 			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
+        ]);
+    }
+
+	public function actionInvoicePrint($id)
+    {
+        $model = $this->findModel($id);
+        $session = Yii::$app->session;
+        $locationId = $session->get('location_id');
+		$request = Yii::$app->request;
+		$model->fromDate = (new \DateTime())->format('Y');
+        $userRequest = $request->get('User');
+		if(!empty($userRequest)) {
+            $model->fromDate = $userRequest['fromDate'];
+		}
+		$fromDate =  $model->fromDate . '-01-01';
+        $toDate = $model->fromDate . '-12-31';
+        $invoiceQuery = Invoice::find()
+                ->student($id)
+                ->where([
+                    'invoice.type' => Invoice::TYPE_INVOICE,
+                    'invoice.location_id' => $locationId,
+                ])
+				->between($fromDate,$toDate);
+
+        $invoiceDataProvider = new ActiveDataProvider([
+            'query' => $invoiceQuery,
+        ]);
+        $this->layout = '/print';
+
+        return $this->render('customer/_print', [
+			'model' => $model,
+			'invoiceDataProvider' => $invoiceDataProvider,
         ]);
     }
 
