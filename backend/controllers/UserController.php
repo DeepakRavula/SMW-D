@@ -220,10 +220,8 @@ class UserController extends Controller
 		if(!empty($userRequest)) {
             $model->fromDate = $userRequest['fromDate'];
 		} 
-		$fromDate =  (new \DateTime($model->fromDate))->format('Y-01-01');
-        $toDate = (new \DateTime($model->fromDate))->format('Y-12-31');
-		//print_r($fromDate);
-		//print_r($toDate);die;
+		$fromDate =  $model->fromDate . '-01-01';
+        $toDate = $model->fromDate . '-12-31';
         $invoiceQuery = Invoice::find()
                 ->student($id)
                 ->where([
