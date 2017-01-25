@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => (int) $model->type === InvoiceSearc
 $this->params['breadcrumbs'][] = 'create';
 ?>
 
-<div class="invoice-create p-20">
+<div class="invoice-create p-10">
 
     <?php echo $this->render('_form', [
         'model' => $model,

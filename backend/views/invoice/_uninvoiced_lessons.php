@@ -9,7 +9,7 @@ use yii\helpers\Html;
 ?>
 <div class="lesson-index">
 <div class="row-fluid">
-    <div class="col-md-12 p-t-10">
+    <div class="col-md-12 p-t-10 p-l-0">
         <p class="users-name pull-left"><?php echo!empty($customer->userProfile->firstname) ? $customer->userProfile->firstname : null ?>
             <?php echo!empty($customer->userProfile->lastname) ? $customer->userProfile->lastname : null ?> 
              <em>

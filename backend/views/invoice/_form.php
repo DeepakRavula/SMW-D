@@ -15,6 +15,21 @@ use wbraganca\selectivity\SelectivityWidget;
 $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
 ?>
 
+<style> 
+.selectivity-input{
+    width: 100%;
+}
+.field-invoice-customer_id label{
+    display: block;
+}
+.field-invoice-type{
+    display: none;
+}
+.selectivity-single-select{
+    padding:2px 0;
+}
+</style>
+
 <div class="invoice-form">
 
     <?php $form = ActiveForm::begin([
@@ -24,7 +39,7 @@ $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
     ]); ?>
 
 <div class="row">
-<div class="col-md-4">
+<div class="col-md-3">
     <?php $customers = ArrayHelper::map(User::find()
         ->join('INNER JOIN', 'user_location', 'user_location.user_id = user.id')
         ->join('INNER JOIN', 'rbac_auth_assignment', 'rbac_auth_assignment.user_id = user.id')
@@ -43,8 +58,8 @@ $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
         ]);
     ?>
 </div>
-</div>
-<div class="clearfix"></div>
+
+<!-- <div class="clearfix"></div> -->
 	 <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
 <?php if ((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
     <div class="col-md-3">        
@@ -61,11 +76,12 @@ $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
             ],
         ]) ?>
     </div>
-    <div class="col-md-3 form-group m-t-5">
+    <div class="col-md-1 form-group m-t-5">
         <br>
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>
 <?php endif; ?>
+</div>
     <?php ActiveForm::end(); ?>
     <?php $form = ActiveForm::begin([
         'method' => 'post',

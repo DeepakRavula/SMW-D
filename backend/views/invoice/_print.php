@@ -45,6 +45,31 @@ $this->params['breadcrumbs'][] = $this->title;
       .text-left{
         text-align: left !important;
       }
+      .reminder_notes{
+        position: fixed;
+        bottom:0;
+      }
+      .notes-table{
+        width:90vw;
+      }
+      .subtotal-table{
+        float-right;
+      }
+      .below-description{
+        width:100%;
+      }
+      .table-invoice-childtable{
+        width: 10vw;
+        float:right !important;
+
+      }
+      .table-invoice-childtable>tbody>tr>td:first-of-type{
+        width: 7vw;
+      }
+      .last-balance{
+        border-top:1px solid #eaeaea;
+      }
+
     }
 </style>
 <div class="invoice-view p-10">
@@ -72,10 +97,10 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <!-- /.col -->
       </div>
-    <div class="row invoice-info m-t-15">
+    <div class="row invoice-info m-t-10">
         <!-- /.col -->
-        <div class="col-sm-9 invoice-col m-b-20 pull-left p-0">
-          <div class="row m-t-10">
+        <div class="col-sm-9 invoice-col m-b-10 pull-left p-0">
+          <div class="row m-T-10">
             <div class="col-xs-12">
                 <h4 class="m-0 f-w-400"><strong><?php echo isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?></strong></h4>
             <div class="text-gray">
@@ -98,7 +123,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     echo $billingAddress->province->name.'<br>'.$billingAddress->country->name.' ';
                     echo $billingAddress->postal_code;
                 } ?>
-                <div class="row-fluid m-t-20">
+                <div class="row-fluid m-t-5">
                   <?php if (!empty($model->user->email)): ?>
                   <?php echo 'E: '; ?><?php echo $model->user->email?>
                   <?php endif; ?>
@@ -115,15 +140,15 @@ $this->params['breadcrumbs'][] = $this->title;
           </div>
         </div>
         <!-- /.col -->
-        <div class="col-sm-3 invoice-col m-t-10 text-right p-0">
+        <div class="col-sm-3 invoice-col m-t-0 text-right p-0">
             <div class="row-fluid  text-gray">
               <div class="col-md-4 pull-right text-left width-80 p-r-0 "><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#'.$model->invoice_number?></div>
               <div class="col-md-4 pull-left" ><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Number:'?> </div> 
               <div class="clearfix"></div>
             </div>
           <div class="row-fluid text-gray">
-              <div class="col-md-4 pull-right text-left width-80 p-r-0" ><?= Yii::$app->formatter->asDate($model->date); ?></div>
-              <div class="col-md-4 pull-left">Date:</div>
+              <div class="col-md-3 pull-right text-left width-80 p-r-0" ><?= Yii::$app->formatter->asDate($model->date); ?></div>
+              <div class="col-md-3 pull-right">Date:</div>
               <div class="clearfix"></div>
           </div>
           <div class="row-fluid text-gray">
@@ -168,7 +193,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				[
                     'format' => 'currency',
                     'label' => 'Sell',
-                    'headerOptions' => ['class' => 'text-center'],
+                    'headerOptions' => ['class' => 'text-right'],
                     'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
                     'value' => function ($data) {
                         if ((int) $data->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON) {
@@ -183,7 +208,7 @@ $this->params['breadcrumbs'][] = $this->title;
 					'value' => function ($data) {
                         return $data->unit;
                     },
-                    'headerOptions' => ['class' => 'text-center'],
+                    'headerOptions' => ['class' => 'text-right'],
 					'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
 				],
 				[
@@ -201,7 +226,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="row">
         <!-- /.col -->
-<!--           <div class="table-responsive">
+          <!--<div class="table-responsive">
             <table class="table table-invoice-total">
               <tbody>
                 <tr>
@@ -291,7 +316,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
                 <?php endif; ?>
             </td>
-            <td rowspan="2" class="subtotal-table p-t-20">
+            <td rowspan="2" class="subtotal-table p-t-10">
                 <table class="table-invoice-childtable table-more-condensed">
                     <tr>
                         <td>SubTotal</td>
@@ -315,9 +340,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="p-t-20"><strong>Balance</strong></td>
-                        <td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
+                    <tr class="last-balance">
+                        <td class="p-t-0"><strong>Balance</strong></td>
+                        <td class="p-t-0"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
                     </tr>
                 </table>
             </td>
