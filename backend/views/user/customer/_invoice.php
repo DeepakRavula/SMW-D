@@ -11,6 +11,13 @@ use kartik\date\DatePicker;
     hr{
         margin: 10px 0;
     }
+    .field-user-fromdate label{
+        display: none;
+
+    }
+    #user-fromdate-kvdate{
+        left:20px;
+    }
 </style>
 <div class="col-md-12">
     <h4 class="pull-left m-r-20">Invoices</h4>
@@ -38,8 +45,7 @@ use kartik\date\DatePicker;
 	  ])->label('Date');
 	?>
     </div>
-    <div class="col-md-3 form-group m-t-5">
-        <br>
+    <div class="col-md-3 form-group M-t-5">
 	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
     </div>
 	<?php ActiveForm::end(); ?>
