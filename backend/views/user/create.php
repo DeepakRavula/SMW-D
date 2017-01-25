@@ -27,7 +27,6 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Create')];
         'locations' => $locations,
         'programs' => $programs,
         'phoneNumberModels' => $phoneNumberModels,
-        'availabilityModels' => $availabilityModels,
         'addressModels' => $addressModels,
     ]) ?>
 

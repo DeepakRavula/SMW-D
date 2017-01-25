@@ -52,6 +52,9 @@ $this->params['breadcrumbs'][] = $this->title;
       .notes-table{
         width:90vw;
       }
+      .notes-table, .payment-method-table{
+        vertical-align: top;
+      }
       .subtotal-table{
         float-right;
       }

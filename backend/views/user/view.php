@@ -85,7 +85,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 
         $invoiceContent = $this->render('customer/_invoice', [
             'invoiceDataProvider' => $invoiceDataProvider,
-            'searchModel' => $searchModel,
             'userModel' => $model,
         ]);
 

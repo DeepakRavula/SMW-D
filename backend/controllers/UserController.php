@@ -14,6 +14,7 @@ use common\models\Qualification;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
+use backend\models\search\InvoiceSearch;
 use backend\models\search\LessonSearch;
 use common\models\Note;
 use common\models\Location;
@@ -213,12 +214,21 @@ class UserController extends Controller
             'query' => $enrolmentQuery,
         ]);
 
+		$request = Yii::$app->request;
+		$model->fromDate = (new \DateTime())->format('Y');
+        $userRequest = $request->get('User');
+		if(!empty($userRequest)) {
+            $model->fromDate = $userRequest['fromDate'];
+		} 
+		$fromDate =  $model->fromDate . '-01-01';
+        $toDate = $model->fromDate . '-12-31';
         $invoiceQuery = Invoice::find()
                 ->student($id)
                 ->where([
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
-                ]);
+                ])
+				->between($fromDate,$toDate);
 
         $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoiceQuery,
@@ -410,7 +420,6 @@ class UserController extends Controller
         $model = new UserForm();
         $addressModels = [new Address()];
         $phoneNumberModels = [new PhoneNumber()];
-        $availabilityModels = [new TeacherAvailability()];
 
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
@@ -429,18 +438,15 @@ class UserController extends Controller
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
             Model::loadMultiple($phoneNumberModels, $request->post());
 
-            $availabilityModels = UserForm::createMultiple(TeacherAvailability::classname());
-            Model::loadMultiple($availabilityModels, $request->post());
-
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
 
                 return ArrayHelper::merge(
-                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($availabilityModels)
+                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels)
                 );
             }
             $valid = $model->validate();
-            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels) || Model::validateMultiple($availabilityModels)) && $valid;
+            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels)) && $valid;
 
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
@@ -462,21 +468,7 @@ class UserController extends Controller
                                 break;
                             }
                         }
-                        $userLocationModel = UserLocation::findOne([
-                            'user_id' => $model->getModel()->id,
-                            'location_id' => $locationId,
-                        ]);
-                        foreach ($availabilityModels as $availabilityModel) {
-                            $availabilityModel->teacher_location_id = $userLocationModel->id;
-                            $fromTime = \DateTime::createFromFormat('H:i A', $availabilityModel->from_time);
-                            $toTime = \DateTime::createFromFormat('H:i A', $availabilityModel->to_time);
-                            $availabilityModel->from_time = $fromTime->format('H:i:s');
-                            $availabilityModel->to_time = $toTime->format('H:i:s');
-                            if (!($flag = $availabilityModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
+                     
                     }
 
                     if ($flag) {
@@ -498,7 +490,6 @@ class UserController extends Controller
                     'model' => $model,
                     'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
                     'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
-                    'availabilityModels' => (empty($availabilityModels)) ? [new TeacherAvailability()] : $availabilityModels,
                     'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
                     'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
                     'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
@@ -542,7 +533,6 @@ class UserController extends Controller
 
         $addressModels = $model->addresses;
         $phoneNumberModels = $model->phoneNumbers;
-        $availabilityModels = $model->availabilities;
 
         $request = Yii::$app->request;
         $response = Yii::$app->response;
@@ -557,27 +547,16 @@ class UserController extends Controller
             Model::loadMultiple($phoneNumberModels, $request->post());
             $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
 
-            $oldAvailabilityIDs = ArrayHelper::map($availabilityModels, 'id', 'id');
-            $availabilityModels = UserForm::createMultiple(TeacherAvailability::classname(), $availabilityModels);
-            $userLocationModel = UserLocation::findOne([
-                    'user_id' => $id,
-                    'location_id' => $locationId,
-            ]);
-            foreach ($availabilityModels as $availabilityModel) {
-                $availabilityModel->teacher_location_id = $userLocationModel->id;
-            }
-            Model::loadMultiple($availabilityModels, $request->post());
-            $deletedAvailabilityIDs = array_diff($oldAvailabilityIDs, array_filter(ArrayHelper::map($availabilityModels, 'id', 'id')));
 
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
 
                 return ArrayHelper::merge(
-                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($availabilityModels)
+                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels)
                 );
             }
             $valid = $model->validate();
-            $valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels) && Model::validateMultiple($availabilityModels)) && $valid;
+            $valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels)) && $valid;
 
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
@@ -599,20 +578,6 @@ class UserController extends Controller
                         foreach ($phoneNumberModels as $phoneNumberModel) {
                             $phoneNumberModel->user_id = $id;
                             if (!($flag = $phoneNumberModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-                        if (!empty($deletedAvailabilityIDs)) {
-                            TeacherAvailability::deleteAll(['id' => $deletedAvailabilityIDs]);
-                        }
-
-                        foreach ($availabilityModels as $availabilityModel) {
-                            $fromTime = \DateTime::createFromFormat('H:i A', $availabilityModel->from_time);
-                            $toTime = \DateTime::createFromFormat('H:i A', $availabilityModel->to_time);
-                            $availabilityModel->from_time = $fromTime->format('H:i:s');
-                            $availabilityModel->to_time = $toTime->format('H:i:s');
-                            if (!($flag = $availabilityModel->save(false))) {
                                 $transaction->rollBack();
                                 break;
                             }
@@ -639,7 +604,6 @@ class UserController extends Controller
                     'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
                     'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
                     'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
-                    'availabilityModels' => (empty($availabilityModels)) ? [new TeacherAvailability()] : $availabilityModels,
                     'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
                     'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
         ]);
@@ -833,6 +797,38 @@ class UserController extends Controller
 			'model' => $model,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
 			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
+        ]);
+    }
+
+	public function actionInvoicePrint($id)
+    {
+        $model = $this->findModel($id);
+        $session = Yii::$app->session;
+        $locationId = $session->get('location_id');
+		$request = Yii::$app->request;
+		$model->fromDate = (new \DateTime())->format('Y');
+        $userRequest = $request->get('User');
+		if(!empty($userRequest)) {
+            $model->fromDate = $userRequest['fromDate'];
+		}
+		$fromDate =  $model->fromDate . '-01-01';
+        $toDate = $model->fromDate . '-12-31';
+        $invoiceQuery = Invoice::find()
+                ->student($id)
+                ->where([
+                    'invoice.type' => Invoice::TYPE_INVOICE,
+                    'invoice.location_id' => $locationId,
+                ])
+				->between($fromDate,$toDate);
+
+        $invoiceDataProvider = new ActiveDataProvider([
+            'query' => $invoiceQuery,
+        ]);
+        $this->layout = '/print';
+
+        return $this->render('customer/_print', [
+			'model' => $model,
+			'invoiceDataProvider' => $invoiceDataProvider,
         ]);
     }
 

@@ -1557,7 +1557,7 @@ hr.fc-divider {
 
 /******Invoice Notes********/
 
-.invoice-note-content .empty, .user-note-content .empty, .lesson-note-content .empty {
+.invoice-note-content .empty, .user-note-content .empty, .lesson-note-content .empty, .student-note-content .empty {
     padding-left: 15px;
 }
 

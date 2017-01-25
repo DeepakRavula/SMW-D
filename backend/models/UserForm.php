@@ -41,7 +41,6 @@ class UserForm extends Model
     private $model;
     public $phoneNumbers;
     public $addresses;
-    public $availabilities;
     public $section;
 
     /**
@@ -131,12 +130,6 @@ class UserForm extends Model
             $this->addresses = $model->addresses;
         } else {
             $this->addresses = [new Address()];
-        }
-
-        if (count($model->availabilities) > 0) {
-            $this->availabilities = $model->availabilities;
-        } else {
-            $this->availabilities = [new TeacherAvailability()];
         }
 
         $userFirstName = UserProfile::findOne(['user_id' => $model->getId()]);

@@ -136,4 +136,9 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 			'isSent' => false
 		]);
 	}
+
+	public function between($fromDate, $toDate)
+    {
+        return $this->andFilterWhere(['between', 'invoice.date', $fromDate, $toDate]);
+    }
 }
