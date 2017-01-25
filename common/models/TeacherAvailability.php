@@ -113,4 +113,9 @@ class TeacherAvailability extends \yii\db\ActiveRecord
     {
         return $this->hasOne(UserLocation::className(), ['id' => 'teacher_location_id']);
     }
+
+	public function getTeacherRoom()
+    {
+        return $this->hasOne(TeacherRoom::className(), ['teacherAvailabilityId' => 'id']);
+    }
 }

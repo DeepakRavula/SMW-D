@@ -14,7 +14,8 @@ use yii\helpers\Url;
 ?>
 <div class="calendar-event-color-form">
 	<div class="p-10">
-    <?php $form = ActiveForm::begin([
+    <?php
+		$form = ActiveForm::begin([
 		'action' => Url::to(['teacher-room/create', 'id' => $userModel->id])
 	]); ?>
 	<div class="form-group col-lg-6">
@@ -27,11 +28,15 @@ use yii\helpers\Url;
 	<?php
 		$dayList = TeacherAvailability::getWeekdaysList();
 		$day = $dayList[$teachersAvailability->day];
+		if(!empty($teachersAvailability->teacherRoom)) {
+			$classroom = $teachersAvailability->teacherRoom->classroomId;
+		}
 		// necessary for update action.
 		if (!$model->isNewRecord) {
 			echo Html::activeHiddenInput($model, "[{$index}]id");
 		}
 	?>
+	<?php echo $form->field($model, "[{$index}]teacherAvailabilityId")->hiddenInput(['value' => $teachersAvailability->id])->label(false); ?>
 	<div class="form-group col-lg-6">
 	<?php echo $form->field($model, "[{$index}]day")->textInput(['readonly' => true, 'value' => $day])->label(false); ?>
 	</div>
@@ -42,7 +47,7 @@ use yii\helpers\Url;
                         'allowClear' => true,
                         'multiple' => false,
                         'items' => ArrayHelper::map(Classroom::find()->all(), 'id', 'name'),
-                        'value' => (string) $model->classroomId,
+                        'value' => !empty($classroom) ? (string) $classroom : null,
                         'placeholder' => 'Select Classroom',
                     ],
                 ])->label(false);

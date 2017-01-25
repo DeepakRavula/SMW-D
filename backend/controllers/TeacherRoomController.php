@@ -10,6 +10,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use backend\models\UserForm;
 use yii\base\Model;
+use common\models\TeacherAvailability;
+
 /**
  * TeacherRoomController implements the CRUD actions for TeacherRoom model.
  */
@@ -61,11 +63,23 @@ class TeacherRoomController extends Controller
      */
     public function actionCreate($id)
     {
+		$availableRooms = TeacherRoom::find()
+			->joinWith(['teacherAvailability' => function($query) use($id) {
+				$query->joinWith(['userLocation' => function($query) use($id) {
+					$query->andWhere(['user_id' => $id]);
+				}]);
+			}])
+			->all();
+		if(!empty($availableRooms)) {
+			foreach($availableRooms as $availableRoom) {
+				$availableRoom->delete();
+			}
+		}
 		$request = Yii::$app->request;
 		$models = UserForm::createMultiple(TeacherRoom::classname());
         Model::loadMultiple($models, $request->post());
  		foreach ($models as $model) {
-			$dayList = \common\models\TeacherAvailability::getWeekdaysList();
+			$dayList = TeacherAvailability::getWeekdaysList();
 			$day = array_search($model->day, $dayList);
 			$model->day = $day;
 			$model->save();
