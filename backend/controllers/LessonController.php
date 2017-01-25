@@ -16,7 +16,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
-use common\models\PaymentMethod;
+use common\models\TeacherRoom;
 use common\models\Student;
 use yii\web\Response;
 use common\models\Vacation;
@@ -130,8 +130,10 @@ class LessonController extends Controller
             $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
 			$model->duration = $studentEnrolment->course->duration;
-			if ($model->validate()) {
-	            $model->save();
+			$day = (new \DateTime($model->date))->format('N');
+			$classroom = TeacherRoom::findOne(['teacherId' => $model->teacherId, 'day' => $day]);
+			$model->classroomId = !empty($classroom) ? $classroom->classroomId : null;
+			if ($model->save()) {
 				$response = [
 					'status' => true,
 				];

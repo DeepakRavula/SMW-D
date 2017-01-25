@@ -36,7 +36,7 @@ use yii\helpers\Url;
 			echo Html::activeHiddenInput($model, "[{$index}]id");
 		}
 	?>
-	<?php echo $form->field($model, "[{$index}]teacherAvailabilityId")->hiddenInput(['value' => $teachersAvailability->id])->label(false); ?>
+	<?php echo $form->field($model, "[{$index}]teacherId")->hiddenInput(['value' => $teachersAvailability->teacher->id])->label(false); ?>
 	<div class="form-group col-lg-6">
 	<?php echo $form->field($model, "[{$index}]day")->textInput(['readonly' => true, 'value' => $day])->label(false); ?>
 	</div>

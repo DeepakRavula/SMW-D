@@ -27,7 +27,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['classroomId', 'teacherAvailabilityId'], 'integer'],
+            [['classroomId', 'teacherId'], 'integer'],
 			[['day'], 'safe']
         ];
     }
@@ -51,6 +51,6 @@ class TeacherRoom extends \yii\db\ActiveRecord
 
 	public function getTeacherAvailability()
     {
-        return $this->hasOne(TeacherAvailability::className(), ['id' => 'teacherAvailabilityId']);
+        return $this->hasOne(TeacherAvailability::className(), ['day' => 'day']);
     }
 }
