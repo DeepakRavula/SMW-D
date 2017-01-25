@@ -137,6 +137,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->isRoyalty    = true;
 				}
             if ($this->isOpeningBalance()) {
+				$this->discount     = 0.0;
+                $this->discountType = 0;
                 $this->isRoyalty  = false;
             }
         }
