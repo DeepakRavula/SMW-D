@@ -126,10 +126,7 @@ use yii\bootstrap\Tabs;
 		$('.quali-fields').show();
 		$('.hr-qu').hide();
 	});
-	$('.add-availability').bind('click', function () {
-	$('.availability-fields').show();
-	$('.hr-qu').hide();
-	});
+	
 	$('#user-update-tab a').click(function (e) {
 		$('.section-tab').css('display', 'block');
 		//$('#contact-section').css('display','block');
