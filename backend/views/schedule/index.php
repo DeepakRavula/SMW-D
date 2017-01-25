@@ -65,6 +65,12 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
     margin-right: 10px;
     padding-bottom:2px;
 }
+.tab-content{
+    padding:0 !important;
+}
+.box-body .fc{
+    margin:0 !important;
+}
 
 </style>
 <div class=" calendar-filter">
