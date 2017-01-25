@@ -27,7 +27,7 @@ use wbraganca\selectivity\SelectivityWidget;
 <?php $form = ActiveForm::begin([
 	'id' => 'exam-result-form',
 ]); ?>
-<div class="row p-20">
+<div class="row">
 	<div class="col-md-6">
 		<?=  $form->field($model, 'date')->widget(DatePicker::classname(), [
 				'options' => [

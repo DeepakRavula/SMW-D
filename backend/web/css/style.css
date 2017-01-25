@@ -1000,8 +1000,8 @@ input[type="search"]:-ms-input-placeholder {
 
 .bulk-invoice {
     position: absolute;
-    top: -48px;
-    left: 775px;
+    top: -50px;
+    right: 64px;
 }
 
 .abs-delete {

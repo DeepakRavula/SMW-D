@@ -6,37 +6,43 @@ use yii\jui\DatePicker;
 use yii\helpers\Url;
 use kartik\grid\GridView;
 ?>
-<div>
-  <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
-
-	<?php $form = ActiveForm::begin([
+<div class="col-md-12">
+<?php $form = ActiveForm::begin([
 	'id' => 'teacher-lesson-search-form',
 ]);
 ?>
-	<div class="col-md-3">
-		<?php
-		echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(),
-			[
-			'options' => [
-				'class' => 'form-control',
-			],
-		])
-		?>
-    </div>
-    <div class="col-md-3">
-		<?php
-		echo $form->field($searchModel, 'toDate')->widget(DatePicker::classname(),
-			[
-			'options' => [
-				'class' => 'form-control',
-			],
-		])
-		?>
-    </div>
-    <div class="col-md-3 form-group m-t-5">
-        <br>
-	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
-    </div>
+	<div class="row">
+		<div class="col-md-2">
+			<?php
+			echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(),
+				[
+				'options' => [
+					'class' => 'form-control',
+				],
+			])
+			?>
+	    </div>
+	    <div class="col-md-2">
+			<?php
+			echo $form->field($searchModel, 'toDate')->widget(DatePicker::classname(),
+				[
+				'options' => [
+					'class' => 'form-control',
+				],
+			])
+			?>
+	    </div>
+	    <div class="col-md-2 form-group m-t-5">
+	    	<Br>
+		<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
+	    </div>
+	    <div class="col-md-6 p-t-20">
+	    	<?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+
+	    </div>
+	    <div class="clearfix"></div>
+	</div>
+</div>
 	<?php ActiveForm::end(); ?>
 
 	<?php

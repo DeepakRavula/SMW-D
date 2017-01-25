@@ -15,7 +15,7 @@ echo GridView::widget([
     return ['data-url' => $url];
 },
 'options' => ['class' => 'col-md-12'],
-'tableOptions' => ['class' => 'table table-bordered'],
+'tableOptions' => ['class' => 'table table-bordered m-t-15'],
 'headerRowOptions' => ['class' => 'bg-light-gray'],
 'columns' => [
     [

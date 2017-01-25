@@ -24,7 +24,7 @@ use yii\helpers\Url;
 <?php $form = ActiveForm::begin([
 	'id' => 'lesson-form',
 ]); ?>
-<div class="row p-20">
+<div class="row">
 	<?php if ($model->isNewRecord): ?>
         <div class="col-md-6">
             <?php echo $form->field($model, 'programId')->dropDownList(

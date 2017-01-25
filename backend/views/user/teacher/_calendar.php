@@ -78,6 +78,15 @@ use common\models\Invoice;
     unset($lesson);
 
 ?>
+<style>
+    .tab-content{
+    padding:0 !important;
+}
+.box-body .fc{
+    margin:0 !important;
+}
+
+</style>
 <div id="calendar" class="p-10"></div>
 <script type="text/javascript">
   $('#calendar').fullCalendar({

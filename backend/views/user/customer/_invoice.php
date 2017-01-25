@@ -52,7 +52,6 @@ use kartik\date\DatePicker;
 	<?= Html::a('<i class="fa fa-print"></i> Print', ['invoice-print', 'id' => $userModel->id], ['id' => 'invoice-print', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 </div>
 <div class="clearfix"></div>
-<hr class="hr-ad right-side-faded">
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
