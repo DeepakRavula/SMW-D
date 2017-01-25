@@ -63,11 +63,18 @@ $this->params['breadcrumbs'][] = $this->title;
         float:right !important;
 
       }
+      .table-invoice-childtable>thead>tr>th:last-child, 
+      .table-invoice-childtable>tbody>tr>td:last-child{
+        white-space: nowrap;
+      }
       .table-invoice-childtable>tbody>tr>td:first-of-type{
         width: 7vw;
       }
       .last-balance{
         border-top:1px solid #eaeaea;
+      }
+      .border-bottom-gray{
+        border-bottom:1px solid #efefef;
       }
 
     }
@@ -75,14 +82,14 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="invoice-view p-10">
     <div class="row">
         <div class="col-xs-12 p-0">
-          <h2 class="m-0">
+          <h2 class="m-0 border-bottom-gray">
             <a class="logo pull-left">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
           <div class="pull-left invoice-address  text-gray">
             <div class="row-fluid">
-              <h2 class="m-0 text-inverse"><strong><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
+              <h2 class="m-0 text-inverse "><strong><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
           </div>
           <small><?php if (!empty($model->user->userLocation->location->address)): ?>
                 <?php echo $model->user->userLocation->location->address?>
@@ -148,7 +155,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
           <div class="row-fluid text-gray">
               <div class="col-md-3 pull-right text-left width-80 p-r-0" ><?= Yii::$app->formatter->asDate($model->date); ?></div>
-              <div class="col-md-3 pull-right">Date:</div>
+              <div class="col-md-3 pull-left">Date:</div>
               <div class="clearfix"></div>
           </div>
           <div class="row-fluid text-gray">
