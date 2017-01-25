@@ -42,10 +42,19 @@ hr.default-hr {
     border: 0;
     border-top: 1px solid #eee;
 }
+
+hr.default-hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 0;
+    border-top: 1px solid #eee;
+}
 .content-header{
   padding:15px 5px 0 15px;
 }
-
+.red-text{
+    color:#ea212d
+}
 /*****************************
 Skin-black // Theme Modification
 ******************************/
@@ -293,7 +302,9 @@ Resets
 .m-b-0 {
     margin-bottom: 0px !important;
 }
-
+.m-l-0{
+    margin-left:0px !important;
+}
 .m-l-10 {
     margin-left: 10px !important;
 }
@@ -861,9 +872,11 @@ Licensed under MIT
         padding: 0; 
     }
 .smw-box {
-    background: #f5f5f5;
-    border: 1px solid #ddd;
+            background: #F44336;
+    border: 1px solid #F44336;
     padding: 20px;
+    color: white;
+    border-radius: 50px;
 }
 
 

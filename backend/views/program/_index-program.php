@@ -22,7 +22,11 @@ $lastRole = end($roles);
         right: 0;
   }
 </style>
-
+<style>
+    #w3 .tab-content{
+        padding: 0;
+    }
+</style>
 <div class="program-index">
 <div class="smw-search">
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
