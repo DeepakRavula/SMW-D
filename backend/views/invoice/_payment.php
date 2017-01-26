@@ -129,7 +129,7 @@ $columns = [
         'buttons' => $buttons,
         'options' => [
             'id' => 'payment-method-btn-section',
-            'class' => 'btn-group-horizontal p-l-10',
+            'class' => 'btn-group-horizontal p-l-10 m-t-20 m-b-20',
         ],
     ]); ?>
 
