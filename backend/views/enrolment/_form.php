@@ -5,6 +5,7 @@ use yii\bootstrap\ActiveForm;
 use kartik\time\TimePicker;
 use kartik\date\DatePicker;
 use common\models\Course;
+use common\models\Enrolment;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
@@ -21,6 +22,7 @@ $this->render('_view-enrolment', [
 		<?php
 		$fromTime		 = Yii::$app->formatter->asTime($model->fromTime);
 		$model->fromTime = !empty($model->fromTime) ? $fromTime : null;
+		$model->paymentFrequency = $model->enrolment->paymentFrequency;
 		?>
         <div class="col-md-4">
 <?php echo $form->field($model, 'day')->dropdownList(Course::getWeekdaysList(), ['prompt' => 'select day']) ?>
@@ -43,8 +45,11 @@ $this->render('_view-enrolment', [
 			]);
 			?>
 		</div>
+	<div class="col-md-4">
+	<?= $form->field($model, 'paymentFrequency')->radioList(Enrolment::paymentFrequencies()) ?>
 	</div>
-    <div class="form-group">
+	</div>
+    <div class="form-group col-md-4">
 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
 	['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>

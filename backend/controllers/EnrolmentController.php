@@ -104,6 +104,9 @@ class EnrolmentController extends Controller
     {
         $model = $this->findModel($id);
 		if ($model->course->load(Yii::$app->request->post())) {
+			$model->paymentFrequency = $model->course->paymentFrequency;
+			$model->save();
+
 			$rescheduleBeginDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
 			$rescheduleBeginDate = $rescheduleBeginDate->format('Y-m-d 00:00:00');
 			Lesson::deleteAll([
