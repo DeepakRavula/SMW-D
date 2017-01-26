@@ -949,6 +949,9 @@ Licensed under MIT
 #teacher {
     margin-left: 10px;
 }
+.program-view #teacher{
+    margin-left: 0;
+}
 
 .search-field {
     background: transparent;

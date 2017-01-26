@@ -57,7 +57,7 @@ $lastRole = end($roles);
     <?php ActiveForm::end(); ?>
 	
 <?php if ($lastRole->name === User::ROLE_ADMINISTRATOR):?>
-<div class="col-md-5">
+<div class="col-md-8">
 <h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
 <a href="#" class="add-new-program pull-right text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add</a>
 <div class="clearfix"></div>
@@ -65,7 +65,7 @@ $lastRole = end($roles);
 <?php endif; ?>
 <div class="clearfix"></div>
 
-<div class="dn program-create section-tab form-well form-well-smw">
+<div class="dn program-create section-tab form-well form-well-smw p-15">
     <?php echo $this->render('_form', [
         'model' => $model,
     ]) ?>
@@ -75,7 +75,7 @@ $lastRole = end($roles);
 	<?php Pjax::begin(['id' => 'program-listing']) ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
-            'options' => ['class' => 'col-md-5'],
+            'options' => ['class' => 'col-md-8'],
             'tableOptions' => ['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'rowOptions' => function ($model, $key, $index, $grid) {
