@@ -51,7 +51,7 @@ use common\models\TeacherRoom;
                         'allowClear' => true,
                         'multiple' => false,
                         'items' => ArrayHelper::map(Classroom::find()->andWhere(['NOT IN', 'id', $classroomIds])->all(), 'id', 'name'),
-                        'value' => (string) $allocatedRoom->classroomId,
+                        'value' => !empty($allocatedRoom) ? (string) $allocatedRoom->classroomId : null,
                         'placeholder' => 'Select Classroom',
                     ],
                 ])->label(false);
