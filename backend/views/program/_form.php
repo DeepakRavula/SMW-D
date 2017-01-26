@@ -12,7 +12,11 @@ if (!$model->isNewRecord) {
     $this->title = $title;
 }
 ?>
-
+<style>
+	#w3 .tab-content{
+		padding: 0;
+	}
+</style>
 <div class="program-form">
 
     <?php $form = ActiveForm::begin(); ?>

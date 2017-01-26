@@ -8,9 +8,21 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
 ?>
+<style>
+	.student_customer{
+		margin-left:-5px;
+	}
+	.hand i{
+		padding-right:5px;
+		color:#bc3c3c;
+	}
+	.hand{
+		text-transform: capitalize;
+	}
+</style>
 <div class="lesson-view">
-	<div class="row-fluid ">
-        <p class="users-name pull-left">
+	<div class="row student_customer">
+        <p class="col-md-12 users-name pull-left">
         	<?php if ($model->course->program->isPrivate()):?>
         	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Student">
                 <a href= "<?= Url::to(['student/view', 'id' => $model->enrolment->student->id]) ?>">
@@ -22,7 +34,13 @@ use yii\helpers\Url;
         	</div>
 		<?php endif; ?>
         </p>
-        <div class="clearfix"></div>
+    </div>
+    <div class="row-fluid">
+    	<div class="col-md-12">
+        	<hr class="default-hr">    		
+    	</div>
+    </div>
+    <div class="row-fluid">
 			<?php if (! $model->isUnscheduled()) : ?>
 			<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
 			<i class="fa fa-calendar"></i>
@@ -66,6 +84,13 @@ use yii\helpers\Url;
 		<?php endif; ?>
 		
 		<?php if (Yii::$app->controller->action->id === 'view'):?>
+	</div>
+	<div class="row-fluid">
+    	<div class="col-md-12">
+        	<hr class="default-hr">    		
+    	</div>
+    </div>
+	<div class="row-fluid">
 	<div class="col-md-12 action-btns m-b-20">
 		<?php if ($model->course->program->isPrivate()):?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-pencil"></i> Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>

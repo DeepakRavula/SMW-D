@@ -37,6 +37,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         padding-left:0;
         margin-left:0;
     }
+
 </style>
         <div class="pull-left m-T-10">
   			 <?php if ($searchModel->role_name === 'staffmember'):?>

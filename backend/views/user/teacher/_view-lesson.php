@@ -11,6 +11,15 @@ use kartik\grid\GridView;
 	'id' => 'teacher-lesson-search-form',
 ]);
 ?>
+<style>
+#w20-container table > tbody > tr.info > td{
+	padding:8px;
+	background:#fff;
+}
+.bg-light-gray-1{
+	background: #f5ecec;
+}
+</style>
 	<div class="row">
 		<div class="col-md-2">
 			<?php
@@ -32,11 +41,11 @@ use kartik\grid\GridView;
 			])
 			?>
 	    </div>
-	    <div class="col-md-2 form-group m-t-5">
+	    <div class="col-md-2 form-group p-t-5">
 	    	<Br>
 		<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
 	    </div>
-	    <div class="col-md-6 p-t-20">
+	    <div class="col-md-6 m-t-25">
 	    	<?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 
 	    </div>
@@ -91,8 +100,8 @@ use kartik\grid\GridView;
 		'options' => ['class' => 'col-md-12'],
 		'footerRowOptions' => ['style' => 'font-weight:bold;text-align:left;'],
 		'showFooter' => true,
-		'tableOptions' => ['class' => 'table table-bordered'],
-		'headerRowOptions' => ['class' => 'bg-light-gray'],
+		'tableOptions' => ['class' => 'table table-bordered table-responsive'],
+		'headerRowOptions' => ['class' => 'bg-light-gray-1'],
         'pjax' => true,
 		'showPageSummary'=>true,
 		'pageSummaryRowOptions' => ['class' => 'total-hours-of-instruction'],

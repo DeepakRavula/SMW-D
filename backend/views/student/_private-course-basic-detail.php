@@ -12,13 +12,33 @@ use yii\helpers\Url;
 /* @var $model common\models\Enrolment */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<style>
+    #course-paymentfrequency .radio{
+        display: inline;
+        padding-right: 45px;
+    }
+    #stepwizard_step1_next{
+        margin-right:15px;
+    }  
+    .field-course-teacherid{
+        margin-top:15px;
+        margin-left: -5px;
+    }
+    #stepwizard_step2_prev{
+        margin-top:15px;
+    }
+    #stepwizard_step2_save{
+        margin-right: 15px;
+        margin-top:15px;
+    }
+</style>
 <?php
 $privatePrograms = ArrayHelper::map(Program::find()
             ->active()
             ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
             ->all(), 'id', 'name')
 ?>
-<div class="enrolment-form form-well form-well-smw">
+<div class="enrolment-form form-well form-well-smw ">
     <div class="row">
 		<div class="col-md-4">
 			<?php
@@ -35,6 +55,8 @@ $privatePrograms = ArrayHelper::map(Program::find()
                 ],
             ]);
             ?>
+        </div>
+        <div class="col-md-4">
 			<?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
                 [
@@ -45,6 +67,8 @@ $privatePrograms = ArrayHelper::map(Program::find()
                 ],
             ]);
             ?>
+        </div>
+        <div class="col-md-4">
 			<?php
             echo $form->field($model, 'programId')->dropDownList(
                 ArrayHelper::map(Program::find()
@@ -52,13 +76,17 @@ $privatePrograms = ArrayHelper::map(Program::find()
                         ->active()
                         ->all(), 'id', 'name'), ['prompt' => 'Select..']);
             ?>
-			
-<?= $form->field($model, 'paymentFrequency')->radioList(Enrolment::paymentFrequencies()) ?>
-	</div>
-		<div id="course-rate-estimation" class="col-md-4">
-			<p class="text-info">
+        </div>
+        <div class="clear-fix"></div>
+        <div class="col-md-12">
+            <?= $form->field($model, 'paymentFrequency')->radioList(Enrolment::paymentFrequencies()) ?>
+	    </div>
+        <div id="course-rate-estimation" class="col-md-12">
+        <hr class="default-hr">
+			<p class="text-info text-center">
 			<strong>What's that per month?</strong></p>
-			<div class="smw-box col-md-12 m-l-20 m-b-30 course-monthly-estimate">
+            <div class="col-md-4"></div>
+			<div class="smw-box col-md-offset-4 col-md-4 m-l-0 m-b-30 course-monthly-estimate text-center">
 				<div>
 			Four <span id="duration"></span>min Lessons @ $<span id="rate-30-min"></span> each = $<span id="rate-month-30-min"></span>/mn
 				</div>

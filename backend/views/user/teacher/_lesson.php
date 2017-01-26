@@ -8,6 +8,21 @@ use yii\helpers\Url;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 ?>
+<style>	
+.diff_color{
+		background: #e12e2b !important;
+    color: white;
+}
+    #unscheduled .grid-row-open{
+        padding:15px !important;
+    }
+    #user-note{
+    	padding:15px;
+    }
+.user-note-content .empty{
+	padding:1px;
+}
+</style>
 <?php
 $locationId = Yii::$app->session->get('location_id');
 $lessonDate = new \DateTime($model->date);
@@ -41,8 +56,8 @@ if (!empty($teacherLessonDataProvider->getModels())) {
 		'dataProvider' => $teacherLessonDataProvider,
 		'footerRowOptions' => ['style' => 'font-weight:bold;text-align: right;'],
 		'showFooter' => true,
-		'tableOptions' => ['class' => 'table table-bordered m-b-0 table-condensed'],
-		'headerRowOptions' => ['class' => 'bg-light-gray'],
+		'tableOptions' => ['class' => 'table table-bordered		 m-b-0 table-condensed'],
+		'headerRowOptions' => ['class' => 'bg-light-gray diff_color'],
 		'columns' => [
 			[
 				'label' => 'Time',

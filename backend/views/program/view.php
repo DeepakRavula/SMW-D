@@ -16,6 +16,11 @@ foreach ($roles as $name => $description) {
     $role = $name;
 }
 ?>
+<style>
+    #w3 .tab-content{
+        padding: 0;
+    }
+</style>
 <div class="program-view">
 	<div class="row-fluid user-details-wrapper">
     <div class="col-xs-2">
