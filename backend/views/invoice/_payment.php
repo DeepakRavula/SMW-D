@@ -19,7 +19,11 @@ use yii\helpers\Url;
         border-bottom-right-radius:3px;
         border-top-right-radius:3px;
     }
+    .kv-table-wrap{
+        margin-bottom:0;
+    }
 </style>
+
 <?php
 $columns = [
     'date:date',
@@ -74,95 +78,100 @@ $columns = [
                 },
             ]
         ]
-]; ?>
-		<?=
-        \kartik\grid\GridView::widget([
-            'dataProvider' => $invoicePaymentsDataProvider,
-            'pjax' => true,
-            'pjaxSettings' => [
-                'neverTimeout' => true,
-                'options' => [
-                    'id' => 'invoice-payment-listing',
-                ],
+    ]; ?>
+	<?=
+    \kartik\grid\GridView::widget([
+        'dataProvider' => $invoicePaymentsDataProvider,
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'invoice-payment-listing',
             ],
-            'columns' => $columns,
-            'responsive' => false,
-        ]);
-        ?>
+        ],
+        'columns' => $columns,
+        'responsive' => false,
+    ]);
+    ?>
+<div class="col-md-9 m-t-10">  
+    <?php $buttons = [];
+    ?>
+    <?php foreach (PaymentMethod::find()
+        ->where([
+                'active' => PaymentMethod::STATUS_ACTIVE,
+                'displayed' => 1,
+            ])
+        ->orderBy(['sortOrder' => SORT_ASC])->all() as $method):?>
+        <?php if ((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
+            <?php if ($method->name === 'Apply Credit'):?>
+                <?php continue; ?>
+            <?php endif; ?>
+        <?php endif; ?>
+        <?php 
+        $paymentType = $method->name;
+        if (in_array($method->id, [8, 9, 10, 11])) {
+            $paymentType = 'Credit Card';
+        }?>
+        <?php $paymentType = str_replace(' ', '-', trim(strtolower($paymentType))); ?>
+        <?php $buttons[] = [
+                'label' => $method->name,
+                'options' => [
+                    'class' => 'btn btn-outline-info',
+                    'id' => str_replace(' ', '-', trim(strtolower($method->name))).'-btn',
+                    'data-payment-type' => $paymentType,
+                    'data-payment-type-id' => $method->id,
+                ],
+        ]; ?>
+    <?php endforeach; ?>
+
+    <?php // a button group with items configuration
+    echo ButtonGroup::widget([
+        'buttons' => $buttons,
+        'options' => [
+            'id' => 'payment-method-btn-section',
+            'class' => 'btn-group-horizontal p-l-10',
+        ],
+    ]); ?>
+
+    <?php
+        $amount = 0.0;
+        if ($model->total > $model->invoicePaymentTotal) {
+            $amount = $model->invoiceBalance;
+        }
+    ?>
+
+    <?php foreach (PaymentMethod::findAll([
+                'active' => PaymentMethod::STATUS_ACTIVE,
+                'displayed' => 1,
+                'id' => [4, 5, 6, 7],
+        ]) as $method):?>
+        <div id="<?= str_replace(' ', '-', trim(strtolower($method->name))).'-section'; ?>" class="payment-method-section" style="display: none;">
+            <?php echo $this->render('payment-method/_'.str_replace(' ', '-', trim(strtolower($method->name))), [
+                    'model' => new Payment(),
+                    'invoice' => $model,
+                    'amount' => $amount,
+            ]); ?>  
+        </div>
+    <?php endforeach; ?>
+
+        <div id="credit-card-section" class="payment-method-section" style="display: none;">
+            <?php echo $this->render('payment-method/_credit-card', [
+                    'model' => new Payment(),
+                    'invoice' => $model,
+                    'amount' => $amount,
+            ]); ?>  
+        </div>
+</div>
+
 <?php if ((int) $model->type === Invoice::TYPE_INVOICE):?>
-<div id="invoice-payment-detail" class="smw-box col-md-3 m-l-10 m-b-20">
+
+<div id="invoice-payment-detail" class="pull-right col-md-3  m-b-20">
 <?php echo $this->render('_invoice-summary', [
         'model' => $model,
     ]) ?>
 </div>
 <div class="clearfix"></div>
 <?php endif; ?>
-<?php $buttons = [];
-?>
-<?php foreach (PaymentMethod::find()
-    ->where([
-            'active' => PaymentMethod::STATUS_ACTIVE,
-            'displayed' => 1,
-        ])
-    ->orderBy(['sortOrder' => SORT_ASC])->all() as $method):?>
-	<?php if ((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
-		<?php if ($method->name === 'Apply Credit'):?>
-			<?php continue; ?>
-		<?php endif; ?>
-	<?php endif; ?>
-	<?php 
-    $paymentType = $method->name;
-    if (in_array($method->id, [8, 9, 10, 11])) {
-        $paymentType = 'Credit Card';
-    }?>
-	<?php $paymentType = str_replace(' ', '-', trim(strtolower($paymentType))); ?>
-	<?php $buttons[] = [
-            'label' => $method->name,
-            'options' => [
-                'class' => 'btn btn-outline-info',
-                'id' => str_replace(' ', '-', trim(strtolower($method->name))).'-btn',
-                'data-payment-type' => $paymentType,
-                'data-payment-type-id' => $method->id,
-            ],
-    ]; ?>
-<?php endforeach; ?>
-
-<?php // a button group with items configuration
-echo ButtonGroup::widget([
-    'buttons' => $buttons,
-    'options' => [
-        'id' => 'payment-method-btn-section',
-        'class' => 'btn-group-horizontal p-l-10',
-    ],
-]); ?>
-
-<?php
-    $amount = 0.0;
-    if ($model->total > $model->invoicePaymentTotal) {
-        $amount = $model->invoiceBalance;
-    }
-?>
-<?php foreach (PaymentMethod::findAll([
-            'active' => PaymentMethod::STATUS_ACTIVE,
-            'displayed' => 1,
-            'id' => [4, 5, 6, 7],
-        ]) as $method):?>
-	<div id="<?= str_replace(' ', '-', trim(strtolower($method->name))).'-section'; ?>" class="payment-method-section" style="display: none;">
-		<?php echo $this->render('payment-method/_'.str_replace(' ', '-', trim(strtolower($method->name))), [
-                'model' => new Payment(),
-                'invoice' => $model,
-                'amount' => $amount,
-        ]); ?>	
-	</div>
-	<?php endforeach; ?>
-
-	<div id="credit-card-section" class="payment-method-section" style="display: none;">
-		<?php echo $this->render('payment-method/_credit-card', [
-                'model' => new Payment(),
-                'invoice' => $model,
-                'amount' => $amount,
-        ]); ?>	
-	</div>
 
 <script type="text/javascript">
 $(document).ready(function(){

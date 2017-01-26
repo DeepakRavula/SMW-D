@@ -874,10 +874,10 @@ Licensed under MIT
         padding: 0; 
     }
 .smw-box {
-            background: #F44336;
-    border: 1px solid #F44336;
+            background: #f5ecec;
+    border: 1px solid #f5ecec;
     padding: 20px;
-    color: white;
+    color: #ea212d;
     border-radius: 50px;
 }
 

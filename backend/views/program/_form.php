@@ -17,11 +17,12 @@ if (!$model->isNewRecord) {
 		padding: 0;
 	}
 	.smw-box {
-    background: #F44336;
-    border: 1px solid #F44336;
+    background: #f5ecec;
+    border: 1px solid #f5ecec;
     padding: 10px;
     color: white;
     border-radius: 5px;
+    color:#333;
 }
 .monthly-estimate {
 	margin-top:20px;
