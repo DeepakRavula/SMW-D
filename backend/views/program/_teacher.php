@@ -8,6 +8,7 @@ use yii\helpers\Url;
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
 ]) ?>
+
 <?php
 echo GridView::widget([
 'dataProvider' => $teacherDataProvider,
