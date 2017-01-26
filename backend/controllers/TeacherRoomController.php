@@ -63,18 +63,7 @@ class TeacherRoomController extends Controller
      */
     public function actionCreate($id)
     {
-		$availableRooms = TeacherRoom::find()
-			->joinWith(['teacherAvailability' => function($query) use($id) {
-				$query->joinWith(['userLocation' => function($query) use($id) {
-					$query->andWhere(['user_id' => $id]);
-				}]);
-			}])
-			->all();
-		if(!empty($availableRooms)) {
-			foreach($availableRooms as $availableRoom) {
-				$availableRoom->delete();
-			}
-		}
+		TeacherRoom::deleteAll(['teacherId' => $id]);
 		$request = Yii::$app->request;
 		$models = UserForm::createMultiple(TeacherRoom::classname());
         Model::loadMultiple($models, $request->post());

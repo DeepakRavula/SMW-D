@@ -7,6 +7,7 @@ use wbraganca\selectivity\SelectivityWidget;
 use common\models\Classroom;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use common\models\TeacherRoom;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\PaymentFrequencyDiscount */
@@ -28,9 +29,12 @@ use yii\helpers\Url;
 	<?php
 		$dayList = TeacherAvailability::getWeekdaysList();
 		$day = $dayList[$teachersAvailability->day];
-		if(!empty($teachersAvailability->teacherRoom)) {
-			$classroom = $teachersAvailability->teacherRoom->classroomId;
-		}
+		$classrooms = TeacherRoom::find()
+			->andWhere(['day' => $teachersAvailability->day])
+			->all();
+		$classroomIds = ArrayHelper::getColumn($classrooms, 'classroomId');
+
+		$allocatedRoom = TeacherRoom::findOne(['teacherId' => $userModel->id, 'day' => $teachersAvailability->day]);
 		// necessary for update action.
 		if (!$model->isNewRecord) {
 			echo Html::activeHiddenInput($model, "[{$index}]id");
@@ -46,8 +50,8 @@ use yii\helpers\Url;
                     'pluginOptions' => [
                         'allowClear' => true,
                         'multiple' => false,
-                        'items' => ArrayHelper::map(Classroom::find()->all(), 'id', 'name'),
-                        'value' => !empty($classroom) ? (string) $classroom : null,
+                        'items' => ArrayHelper::map(Classroom::find()->andWhere(['NOT IN', 'id', $classroomIds])->all(), 'id', 'name'),
+                        'value' => (string) $allocatedRoom->classroomId,
                         'placeholder' => 'Select Classroom',
                     ],
                 ])->label(false);
