@@ -269,6 +269,7 @@ class Course extends \yii\db\ActiveRecord
             $start = new \DateTime($startDate);
             $end = new \DateTime($endDate);
             $period = new \DatePeriod($start, $interval, $end);
+			$classroom = TeacherRoom::findOne(['teacherId' => $this->teacherId, 'day' => $this->day]);
 
             foreach ($period as $day) {
                 $professionalDevelopmentDay = clone $day;
@@ -285,7 +286,8 @@ class Course extends \yii\db\ActiveRecord
                         'status' => Lesson::STATUS_DRAFTED,
                         'date' => $day->format('Y-m-d H:i:s'),
                         'duration' => $this->duration,
-                        'isDeleted' => 0,
+                        'isDeleted' => false,
+						'classroomId' => !empty($classroom) ? $classroom->classroomId : null,
                     ]);
                     $lesson->save();
                 }

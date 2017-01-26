@@ -6,6 +6,7 @@ use yii\bootstrap\Tabs;
 use yii\helpers\Html;
 use common\models\Note;
 use yii\helpers\Url;
+use common\models\TeacherRoom;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -142,6 +143,12 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$discountContent = $this->render('customer/_discount', [
 			'model' => $model,
 		]);
+
+		$classroomContent = $this->render('teacher/_form-classroom', [
+			'teachersAvailabilities' => $teachersAvailabilities,
+			'model' => new TeacherRoom(),
+			'userModel' => $model
+		]);
         ?>
 		<?php
         $items = [
@@ -162,11 +169,18 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                     'id' => 'qualification',
                 ],
             ],
-            [
+			[
                 'label' => 'Availability',
                 'content' => $teacherAvailabilityContent,
                 'options' => [
                     'id' => 'availability',
+                ],
+            ],
+			[
+                'label' => 'Classroom',
+                'content' => $classroomContent,
+                'options' => [
+                    'id' => 'classroom',
                 ],
             ],
             [

@@ -60,6 +60,7 @@ $config = [
 			'classroom/*',
 			'exam-result/*',
 			'note/*',
+			'teacher-room/*',
 			'payment-frequency-discount/*'
 
             // The actions listed here will be allowed to everyone including guests.

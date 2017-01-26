@@ -333,6 +333,12 @@ class UserController extends Controller
         $noteDataProvider = new ActiveDataProvider([
             'query' => $notes,
         ]);
+		$teachersAvailabilities = TeacherAvailability::find()
+            ->joinWith(['userLocation' => function ($query) use ($locationId, $model) {
+                $query->andWhere(['user_location.location_id' => $locationId, 'user_id' => $model->id]);
+            }])
+            ->groupBy('day')
+            ->all();
         return $this->render('view', [
             'minTime' => $minTime,
             'maxTime' => $maxTime,
@@ -358,7 +364,8 @@ class UserController extends Controller
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
 			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
-			'noteDataProvider' => $noteDataProvider
+			'noteDataProvider' => $noteDataProvider,
+			'teachersAvailabilities' => $teachersAvailabilities
         ]);
     }
 
