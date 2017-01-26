@@ -258,6 +258,14 @@ $bundle = BackendAsset::register($this);
                             'visible' => Yii::$app->user->can('staffmember'),
                             'active' => (Yii::$app->controller->id === 'lesson') ? true : false,
                         ],
+						[
+                            'label' => Yii::t('backend', 'Proforma Invoices'),
+                            'icon' => '<i class="fa  fa-dollar"></i>',
+                            'url' => ['invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_PRO_FORMA_INVOICE],
+                            'visible' => Yii::$app->user->can('staffmember'),
+                            'active' => (Yii::$app->controller->id === 'invoice') ? true : false,
+
+                        ],
                         [
                             'label' => Yii::t('backend', 'Invoices'),
                             'icon' => '<i class="fa  fa-dollar"></i>',

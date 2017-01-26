@@ -20,8 +20,6 @@ $this->params['breadcrumbs'][] = $this->title;
  }
  ?>
 
-<div class="tabbable-panel">
-     <div class="tabbable-line">
             <div class="search-<?= $invoiceTypeClassName; ?>">
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
     <?php
@@ -46,30 +44,10 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 <?php endif; ?>
    <?php 
-    $indexInvoice = $this->render('_index-invoice', [
+    echo $this->render('_index-invoice', [
         'searchModel' => $searchModel,
         'dataProvider' => $dataProvider,
     ]);
     ?> 
-    
-<?php echo Tabs::widget([
-    'items' => [
-        [
-            'label' => 'Invoices',
-            'content' => (int) $searchModel->type === Invoice::TYPE_INVOICE ? $indexInvoice : null,
-            'url' => ['/invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE],
-            'active' => (int) $searchModel->type === Invoice::TYPE_INVOICE,
-        ],
-        [
-            'label' => 'Pro-forma Invoices',
-            'content' => (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ? $indexInvoice : null,
-            'url' => ['/invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_PRO_FORMA_INVOICE],
-            'active' => (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE,
-        ],
-    ],
-]); ?>
-         
 <?php ActiveForm::end(); ?>   
 <div class="clearfix"></div>
-</div>
-</div>
