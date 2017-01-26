@@ -104,7 +104,6 @@ use kartik\grid\GridView;
 		],
         'columns' => $columns,
     ]); ?>
-</div>
 <script>
 $(document).ready(function(){
 	$("#teacher-lesson-search-form").on("submit", function() {
