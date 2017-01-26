@@ -189,7 +189,7 @@ a:focus {
 }
 
 .fc-agenda-days tbody tr td.fc-today {
-    background: #ffffff;
+    background: #e1e2e0;
 }
 
 .selectivity-multiple-selected-item,
@@ -595,6 +595,10 @@ table tr {
 
 .location-view>.user-details-wrapper {
     background: transparent;
+}
+
+.location-availability .fc-time span {
+    color: #000000;
 }
 
 .text-add-new {
@@ -1378,7 +1382,7 @@ hr.fc-divider {
 }
 
 .fc-unthemed .fc-today {
-    background: #FDFCF1!important;
+    background: #e1e2e0!important;
 }
 
 .fc-event-container .fc-event {

@@ -97,9 +97,10 @@ class ScheduleController extends Controller
         if (empty($locationAvailability)) {
             $from_time = LocationAvailability::DEFAULT_FROM_TIME;
             $to_time   = LocationAvailability::DEFAULT_TO_TIME;
+        } else {
+            $from_time = $locationAvailability->fromTime;
+            $to_time   = $locationAvailability->toTime;
         }
-        $from_time = $locationAvailability->fromTime;
-        $to_time   = $locationAvailability->toTime;
 
         return $this->render('index', [
 			'availableTeachersDetails' => $availableTeachersDetails,
@@ -113,18 +114,31 @@ class ScheduleController extends Controller
     {
         $locationId = Yii::$app->session->get('location_id');
         $events     = [];
-        $holiday    = Holiday::find()
-            ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
-            ->one();
-        if (!empty($holiday)) {
+        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
+            'day' => $date->format('N')]);
+        if (empty($locationAvailability)) {
             $events[] = [
                 'resourceId' => '0',
                 'title'      => '',
-                'start'      => $holiday->date,
+                'start'      => $date->format('Y-m-d 00:00:00'),
                 'end'        => $date->format('Y-m-d 23:59:59'),
                 'className'  => 'holiday',
                 'rendering'  => 'background'
             ];
+        } else {
+            $holiday    = Holiday::find()
+                ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
+                ->one();
+            if (!empty($holiday)) {
+                $events[] = [
+                    'resourceId' => '0',
+                    'title'      => '',
+                    'start'      => $holiday->date,
+                    'end'        => $date->format('Y-m-d 23:59:59'),
+                    'className'  => 'holiday',
+                    'rendering'  => 'background'
+                ];
+            }
         }
         return $events;
     }
@@ -132,15 +146,24 @@ class ScheduleController extends Controller
     public function getHolidayResources($date)
     {
         $locationId = Yii::$app->session->get('location_id');
+        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
+            'day' => $date->format('N')]);
         $resources  = [];
-        $holiday    = Holiday::find()
-            ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
-            ->one();
-        if (!empty($holiday)) {
+        if (empty($locationAvailability)) {
             $resources[] = [
                 'id'    => '0',
                 'title' => 'Holiday',
             ];
+        } else {
+            $holiday    = Holiday::find()
+                ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
+                ->one();
+            if (!empty($holiday)) {
+                $resources[] = [
+                    'id'    => '0',
+                    'title' => 'Holiday',
+                ];
+            }
         }
         return $resources;
     }

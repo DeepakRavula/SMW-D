@@ -100,9 +100,10 @@ class CalendarController extends Controller
             if (empty($locationAvailability)) {
                 $from_time = LocationAvailability::DEFAULT_FROM_TIME;
                 $to_time   = LocationAvailability::DEFAULT_TO_TIME;
+            } else {
+                $from_time = $locationAvailability->fromTime;
+                $to_time   = $locationAvailability->toTime;
             }
-            $from_time = $locationAvailability->fromTime;
-            $to_time   = $locationAvailability->toTime;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
@@ -114,36 +115,58 @@ class CalendarController extends Controller
 		]);
     }
 
-    public function getHolidayEvent($date)
+    public function getHolidayEvent($date, $locationId)
     {
         $events     = [];
-        $holiday    = Holiday::find()
-            ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
-            ->one();
-        if (!empty($holiday)) {
+        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
+            'day' => $date->format('N')]);
+        if (empty($locationAvailability)) {
             $events[] = [
                 'resourceId' => '0',
                 'title'      => '',
-                'start'      => $holiday->date,
+                'start'      => $date->format('Y-m-d 00:00:00'),
                 'end'        => $date->format('Y-m-d 23:59:59'),
                 'className'  => 'holiday',
                 'rendering'  => 'background'
             ];
+        } else {
+            $holiday    = Holiday::find()
+                ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
+                ->one();
+            if (!empty($holiday)) {
+                $events[] = [
+                    'resourceId' => '0',
+                    'title'      => '',
+                    'start'      => $holiday->date,
+                    'end'        => $date->format('Y-m-d 23:59:59'),
+                    'className'  => 'holiday',
+                    'rendering'  => 'background'
+                ];
+            }
         }
         return $events;
     }
 
-    public function getHolidayResources($date)
+    public function getHolidayResources($date, $locationId)
     {
+        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
+            'day' => $date->format('N')]);
         $resources  = [];
-        $holiday    = Holiday::find()
-            ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
-            ->one();
-        if (!empty($holiday)) {
+        if (empty($locationAvailability)) {
             $resources[] = [
                 'id'    => '0',
                 'title' => 'Holiday',
             ];
+        } else {
+            $holiday    = Holiday::find()
+                ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
+                ->one();
+            if (!empty($holiday)) {
+                $resources[] = [
+                    'id'    => '0',
+                    'title' => 'Holiday',
+                ];
+            }
         }
         return $resources;
     }
@@ -167,10 +190,10 @@ class CalendarController extends Controller
         return $lessons;
     }
 
-    public function actionRenderClassroomResources($date)
+    public function actionRenderClassroomResources($date, $locationId)
     {
         $date      = \DateTime::createFromFormat('Y-m-d', $date);
-        $resources = $this->getHolidayResources($date);
+        $resources = $this->getHolidayResources($date, $locationId);
         if (empty($resources)) {
             $classrooms = Classroom::find()->all();
             foreach ($classrooms as $classroom) {
@@ -186,7 +209,7 @@ class CalendarController extends Controller
     public function actionRenderResources($date, $programId, $teacherId, $locationId)
     {
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
-        $resources  = $this->getHolidayResources($date);
+        $resources  = $this->getHolidayResources($date, $locationId);
         if (empty($resources)) {
             if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
                 && ($programId == 'undefined')) {
@@ -263,7 +286,7 @@ class CalendarController extends Controller
     public function actionRenderDayEvents($date, $programId, $teacherId, $locationId)
     {
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
-        $events     = $this->getHolidayEvent($date);
+        $events     = $this->getHolidayEvent($date, $locationId);
         if (empty($events)) {
             if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
                 && ($programId == 'undefined')) {
@@ -386,7 +409,7 @@ class CalendarController extends Controller
     public function actionRenderClassroomEvents($date, $locationId)
     {
         $date = \DateTime::createFromFormat('Y-m-d', $date);
-        $events = $this->getHolidayEvent($date);
+        $events = $this->getHolidayEvent($date, $locationId);
         if (empty($events)) {
             $programId = null;
             $teacherId = null;

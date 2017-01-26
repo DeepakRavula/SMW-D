@@ -157,7 +157,8 @@ class LocationController extends Controller
                 'resourceId' => $availability->day,
                 'start' => $startTime->format('Y-m-d H:i:s'),
                 'end' => $endTime->format('Y-m-d H:i:s'),
-                'backgroundColor' => '#97ef83',
+                'backgroundColor' => '#ffffff',
+                'className' => 'location-availability',
             ];
         }
 

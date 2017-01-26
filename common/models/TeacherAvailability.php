@@ -37,7 +37,9 @@ class TeacherAvailability extends \yii\db\ActiveRecord
                 $locationId = Yii::$app->session->get('location_id');
                 $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId, 'day' => $this->day]);
                 $fromTime = (new \DateTime($this->from_time))->format('H:i:s');
-                if ($fromTime < $locationAvailability->fromTime || $locationAvailability->toTime < $fromTime) {
+                if(empty($locationAvailability)) {
+                    return $this->addError($attribute, 'Please choose from time within the operating hours ');
+                }else if ($fromTime < $locationAvailability->fromTime || $locationAvailability->toTime < $fromTime) {
                     return $this->addError($attribute, 'Please choose from time within the operating hours ' . Yii::$app->formatter->asTime($locationAvailability->fromTime) . ' to ' . Yii::$app->formatter->asTime($locationAvailability->toTime));
                 }
             },
@@ -46,7 +48,9 @@ class TeacherAvailability extends \yii\db\ActiveRecord
                 $locationId = Yii::$app->session->get('location_id');
                 $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId, 'day' => $this->day]);
                 $toTime = (new \DateTime($this->to_time))->format('H:i:s');
-                if ($toTime > $locationAvailability->toTime || $toTime < $locationAvailability->fromTime) {
+                if(empty($locationAvailability)) {
+                    return $this->addError($attribute, 'Please choose from time within the operating hours ');
+                }else if ($toTime > $locationAvailability->toTime || $toTime < $locationAvailability->fromTime) {
                     return $this->addError($attribute, 'Please choose from time within the operating hours ' . Yii::$app->formatter->asTime($locationAvailability->fromTime) . ' to ' . Yii::$app->formatter->asTime($locationAvailability->toTime));
                 }
             },
