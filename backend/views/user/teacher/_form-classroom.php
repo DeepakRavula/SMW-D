@@ -31,6 +31,7 @@ use common\models\TeacherRoom;
 		$day = $dayList[$teachersAvailability->day];
 		$classrooms = TeacherRoom::find()
 			->andWhere(['day' => $teachersAvailability->day])
+			->andWhere(['NOT IN', 'teacherId', $userModel->id])
 			->all();
 		$classroomIds = ArrayHelper::getColumn($classrooms, 'classroomId');
 
@@ -51,7 +52,7 @@ use common\models\TeacherRoom;
                         'allowClear' => true,
                         'multiple' => false,
                         'items' => ArrayHelper::map(Classroom::find()->andWhere(['NOT IN', 'id', $classroomIds])->all(), 'id', 'name'),
-                        'value' => !empty($allocatedRoom) ? (string) $allocatedRoom->classroomId : null,
+                        'value' => !empty($allocatedRoom->classroomId) ? (string) $allocatedRoom->classroomId : null,
                         'placeholder' => 'Select Classroom',
                     ],
                 ])->label(false);
