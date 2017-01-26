@@ -23,17 +23,20 @@ foreach ($roles as $name => $description) {
 </style>
 <div class="program-view">
 	<div class="row-fluid user-details-wrapper">
-    <div class="col-xs-2">
+    <div class="col-xs-2 p-l-0">
         	<i class="fa fa-music"></i> <?php echo $model->name; ?>
     </div>
 	<?php $rate = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour($)' : 'Rate Per Course($)'; ?>
-	<div class="col-xs-2" data-toggle="tooltip" data-placement="bottom" title= "<?= $rate; ?>" >
+	<div class="col-xs-2 p-l-0" data-toggle="tooltip" data-placement="bottom" title= "<?= $rate; ?>" >
 		<i class="fa fa-money"></i> <?php echo $model->rate; ?>
 	</div>
-        <?php if ($role === User::ROLE_ADMINISTRATOR):?>
-            <div class="col-md-12 m-t-20">
-                <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
-                <?php
+    <div class="clearfix"></div>
+    <?php if ($role === User::ROLE_ADMINISTRATOR):?>
+        <div class="col-xs-2 m-t-15 p-l-0">
+            <?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+        </div>
+        <div class="col-xs-2 m-t-15 p-l-0">
+            <?php
                 echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
                     'class' => '',
                     'data' => [
@@ -42,11 +45,10 @@ foreach ($roles as $name => $description) {
                     ],
                 ])
                 ?>
-                <div class="clearfix"></div>
-            </div>
+            <div class="clearfix"></div>
+        </div>
         <?php endif; ?> 
     <div class="clearfix"></div>
-
 </div>
 <div class="tabbable-panel">
 	<div class="tabbable-line">

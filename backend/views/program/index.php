@@ -7,6 +7,11 @@ use yii\bootstrap\Tabs;
 $this->title = 'Programs';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<style>
+    .tabbable-line > .tab-content{
+        padding-top:0;
+    }
+</style>
 
 <div class="tabbable-panel">
      <div class="tabbable-line">
