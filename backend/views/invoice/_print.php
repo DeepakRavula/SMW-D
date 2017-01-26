@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
         vertical-align: top;
       }
       .subtotal-table{
-        float-right;
+        float:right;
       }
       .below-description{
         width:100%;
