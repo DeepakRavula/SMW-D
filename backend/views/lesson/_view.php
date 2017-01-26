@@ -22,18 +22,20 @@ use yii\helpers\Url;
 </style>
 <div class="lesson-view">
 	<div class="row student_customer">
-        <p class="col-md-12 users-name pull-left">
         	<?php if ($model->course->program->isPrivate()):?>
         	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Student">
+        		<p class="m-b-0">Student</p>
                 <a href= "<?= Url::to(['student/view', 'id' => $model->enrolment->student->id]) ?>">
-				<i class="fa fa-lg fa-fw fa-child"></i><strong><?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null ?></strong></a>
+					<strong><?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null ?></strong>
+				</a>
         	</div>
         	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
+        		<p class="m-b-0">Customer</p>
                 <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $model->enrolment->student->customer->id]) ?>">
-			<i class="fa fa-lg fa-fw fa-male"></i><strong><?= !empty($model->enrolment->student->customer->userProfile->fullName) ? $model->enrolment->student->customer->userProfile->fullName : null ?></strong></a>
+				<strong><?= !empty($model->enrolment->student->customer->userProfile->fullName) ? $model->enrolment->student->customer->userProfile->fullName : null ?></strong></a>
         	</div>
+        	<div class="clearfix"></div>
 		<?php endif; ?>
-        </p>
     </div>
     <div class="row-fluid">
     	<div class="col-md-12">

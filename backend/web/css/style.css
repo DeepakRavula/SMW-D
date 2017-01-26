@@ -37,17 +37,9 @@ hr.right-side-faded {
 }
 
 hr.default-hr {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border: 0;
-    border-top: 1px solid #eee;
-}
-
-hr.default-hr {
     margin-top: 10px;
     margin-bottom: 10px;
     border: 0;
-    border-top: 1px solid #eee;
 }
 .content-header{
   padding:15px 5px 0 15px;
