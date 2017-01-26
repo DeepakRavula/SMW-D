@@ -270,7 +270,9 @@ Resets
     margin-top: 0px !important;
 }
 
-.m-t-10,
+.m-t-25{
+    margin-top:25px !important;
+}
 .empty {
     margin-top: 10px !important;
 }
