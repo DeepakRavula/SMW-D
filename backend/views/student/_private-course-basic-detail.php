@@ -18,7 +18,7 @@ use yii\helpers\Url;
         padding-right: 45px;
     }
     #stepwizard_step1_next{
-        margin-right:15px;
+        /*margin-right:15px;*/
     }  
     .field-course-teacherid{
         margin-top:15px;
@@ -31,6 +31,13 @@ use yii\helpers\Url;
         margin-right: 15px;
         margin-top:15px;
     }
+#stepwizard .tab-content .tab-pane ul.list-inline{
+        float: none !important;
+}
+#stepwizard .tab-content .tab-pane ul.list-inline{
+        width: 100%;
+        text-align: center;
+}
 </style>
 <?php
 $privatePrograms = ArrayHelper::map(Program::find()
@@ -40,7 +47,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 ?>
 <div class="enrolment-form form-well form-well-smw ">
     <div class="row">
-		<div class="col-md-4">
+		<div class="col-md-4 asd">
 			<?php
             echo $form->field($model, 'startDate')->widget(DatePicker::classname(),
                 [

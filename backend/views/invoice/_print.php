@@ -36,6 +36,9 @@ $this->params['breadcrumbs'][] = $this->title;
       background: #ea212c;
     }
     @media print{
+      .invoice-info{
+        margin-top: 5px;
+      }
       .text-gray{
         color: gray !important;
       }
