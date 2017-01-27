@@ -830,6 +830,7 @@ class UserController extends Controller
 
         $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoiceQuery,
+			'pagination' => false,
         ]);
         $this->layout = '/print';
 
