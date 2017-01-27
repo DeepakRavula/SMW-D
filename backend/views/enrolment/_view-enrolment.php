@@ -1,6 +1,7 @@
 <?php
 use common\models\Course;
-
+use kartik\editable\Editable;
+use common\models\Enrolment;
 ?>
 <div class="group-course-view">
 	<div class="row-fluid user-details-wrapper">
@@ -36,6 +37,23 @@ use common\models\Course;
 	<div class="col-md-1 p-0 hand" data-toggle="tooltip" data-placement="bottom" title="End Date">
 			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->endDate)?>	
 	</div>
+    <div class="clearfix"></div>
+	<?php if($model->course->program->isPrivate()) : ?>
+	<div class="col-md-1 p-0 hand" data-toggle="tooltip" data-placement="bottom" title="Payment Frequency">
+		<?=
+		 Editable::widget([
+			'name'=>'paymentFrequency',
+			'asPopover' => true,
+			'inputType' => Editable::INPUT_DROPDOWN_LIST,
+			'value' => $model->getPaymentFrequency(),
+			'header' => 'Payment Frequency',
+			'submitOnEnter' => false,
+			'size'=>'md',
+			'data' => Enrolment::paymentFrequencies()
+		])
+		?> 
+	</div>
+	<?php endif; ?>
     <div class="clearfix"></div>
 </div>
 </div>

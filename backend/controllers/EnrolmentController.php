@@ -13,6 +13,7 @@ use backend\models\search\EnrolmentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -66,7 +67,17 @@ class EnrolmentController extends Controller
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
         ]);
-
+		
+		$post = Yii::$app->request->post();
+		if (isset($post['hasEditable'])) {
+			$response = Yii::$app->response;
+			$response->format = Response::FORMAT_JSON;
+			if(! empty($post['paymentFrequency'])) {
+				$model->paymentFrequency = $post['paymentFrequency'];
+				$model->save();
+				return ['output' => $model->getPaymentFrequency(), 'message' => ''];
+			}
+		}
         return $this->render('view', [
                 'model' => $model,
                 'lessonDataProvider' => $lessonDataProvider,
@@ -103,9 +114,17 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+		$post = Yii::$app->request->post();
+		if (isset($post['hasEditable'])) {
+			$response = Yii::$app->response;
+			$response->format = Response::FORMAT_JSON;
+			if(! empty($post['paymentFrequency'])) {
+				$model->paymentFrequency = $post['paymentFrequency'];
+				$model->save();
+				return ['output' => $model->getPaymentFrequency(), 'message' => ''];
+			}
+		}
 		if ($model->course->load(Yii::$app->request->post())) {
-			$model->paymentFrequency = $model->course->paymentFrequency;
-			$model->save();
 
 			$rescheduleBeginDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
 			$rescheduleBeginDate = $rescheduleBeginDate->format('Y-m-d 00:00:00');

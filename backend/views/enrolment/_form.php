@@ -45,9 +45,6 @@ $this->render('_view-enrolment', [
 			]);
 			?>
 		</div>
-	<div class="col-md-4">
-	<?= $form->field($model, 'paymentFrequency')->radioList(Enrolment::paymentFrequencies()) ?>
-	</div>
 	</div>
     <div class="form-group col-md-4">
 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),

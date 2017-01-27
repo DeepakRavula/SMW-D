@@ -224,4 +224,24 @@ class Enrolment extends \yii\db\ActiveRecord
 		
         return $endDate;
     }
+
+	public function getPaymentFrequency()
+	{
+		$paymentFrequency = null;
+		switch($this->paymentFrequency) {
+			case self::PAYMENT_FREQUENCY_FULL :
+				$paymentFrequency = 'Annually';
+			break;
+			case self::PAYMENT_FREQUENCY_HALFYEARLY :
+				$paymentFrequency = 'Semi-Annually';
+			break;
+			case self::PAYMENT_FREQUENCY_QUARTERLY :
+				$paymentFrequency = 'Quarterly';
+			break;
+			case self::PAYMENT_FREQUENCY_MONTHLY :
+				$paymentFrequency = 'Monthly';
+			break;
+		}
+		return $paymentFrequency;
+	}
 }
