@@ -17,8 +17,8 @@ class InvoiceSearch extends Invoice
 	const STATUS_MAIL_SENT = 1;
 	const STATUS_MAIL_NOT_SENT = 2;
 	const STATUS_ALL = 3;
-    public $fromDate = '1-1-2016';
-    public $toDate = '31-12-2016';
+    public $fromDate;
+    public $toDate;
     public $type;
     public $query;
 	public $mailStatus;

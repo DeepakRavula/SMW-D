@@ -59,6 +59,9 @@ class InvoiceController extends Controller
 			$searchModel->fromDate = $fromDate->format('d-m-Y');
 			$searchModel->invoiceStatus	 = Invoice::STATUS_OWING;
 			$searchModel->mailStatus	 = InvoiceSearch::STATUS_MAIL_NOT_SENT;
+		} else {
+			$searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
+			$searchModel->toDate = (new \DateTime('last day of this month'))->format('d-m-Y');
 		}
 
 		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
