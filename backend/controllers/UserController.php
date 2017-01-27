@@ -852,8 +852,8 @@ class UserController extends Controller
                 'resourceId' => $availability->day,
                 'start'      => $startTime->format('Y-m-d H:i:s'),
                 'end'        => $endTime->format('Y-m-d H:i:s'),
-                'rendering'  => 'inverse-background',
-                'backgroundColor' => '#e1e2e0',
+                'rendering'  => 'background',
+                'backgroundColor' => '#ffffff',
             ];
         }
         $teacherAvailabilities = TeacherAvailability::find()
