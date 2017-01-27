@@ -53,4 +53,15 @@ class TeacherRoom extends \yii\db\ActiveRecord
     {
         return $this->hasOne(TeacherAvailability::className(), ['day' => 'day']);
     }
+
+	public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'teacherId']);
+    }
+
+	public function getUserLocation()
+    {
+        return $this->hasOne(UserLocation::className(), ['user_id' => 'id'])
+			->via('user');
+    }
 }

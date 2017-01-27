@@ -30,6 +30,9 @@ use common\models\TeacherRoom;
 		$dayList = TeacherAvailability::getWeekdaysList();
 		$day = $dayList[$teachersAvailability->day];
 		$classrooms = TeacherRoom::find()
+			->joinWith(['userLocation' => function($query) {
+				$query->andWhere(['location_id' => Yii::$app->session->get('location_id')]);
+			}])
 			->andWhere(['day' => $teachersAvailability->day])
 			->andWhere(['NOT IN', 'teacherId', $userModel->id])
 			->all();
