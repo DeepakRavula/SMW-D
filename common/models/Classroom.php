@@ -27,6 +27,7 @@ class Classroom extends \yii\db\ActiveRecord
     {
         return [
             [['name'], 'required'],
+			[['locationId'], 'integer'],
             [['name'], 'string', 'max' => 30],
         ];
     }

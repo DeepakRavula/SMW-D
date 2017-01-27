@@ -323,7 +323,7 @@ $bundle = BackendAsset::register($this);
                                     'label' => Yii::t('backend', 'Class Rooms'),
                                     'icon' => '<i class="fa fa-home"></i>',
                                     'url' => ['classroom/index'],
-                                    'visible' => Yii::$app->user->can('administrator'),
+                                    'visible' => Yii::$app->user->can('staffmember'),
                                 ],
 								[
                                     'label' => Yii::t('backend', 'Color Code'),

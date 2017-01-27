@@ -62,7 +62,9 @@ class ClassroomController extends Controller
     {
         $model = new Classroom();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+			$model->locationId = Yii::$app->session->get('location_id');
+			$model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [

@@ -27,12 +27,11 @@ use common\models\TeacherRoom;
 	</div>
 	<?php foreach ($teachersAvailabilities as $index => $teachersAvailability): ?>
 	<?php
+	$locationId = Yii::$app->session->get('location_id');
 		$dayList = TeacherAvailability::getWeekdaysList();
 		$day = $dayList[$teachersAvailability->day];
 		$classrooms = TeacherRoom::find()
-			->joinWith(['userLocation' => function($query) {
-				$query->andWhere(['location_id' => Yii::$app->session->get('location_id')]);
-			}])
+			
 			->andWhere(['day' => $teachersAvailability->day])
 			->andWhere(['NOT IN', 'teacherId', $userModel->id])
 			->all();
@@ -54,7 +53,9 @@ use common\models\TeacherRoom;
                     'pluginOptions' => [
                         'allowClear' => true,
                         'multiple' => false,
-                        'items' => ArrayHelper::map(Classroom::find()->andWhere(['NOT IN', 'id', $classroomIds])->all(), 'id', 'name'),
+                        'items' => ArrayHelper::map(Classroom::find()
+							->andWhere(['locationId' => $locationId])
+							->andWhere(['NOT IN', 'id', $classroomIds])->all(), 'id', 'name'),
                         'value' => !empty($allocatedRoom->classroomId) ? (string) $allocatedRoom->classroomId : null,
                         'placeholder' => 'Select Classroom',
                     ],
