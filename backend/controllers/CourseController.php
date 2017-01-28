@@ -32,6 +32,13 @@ class CourseController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			[
+				'class' => 'yii\filters\ContentNegotiator',
+				'only' => ['fetch-teacher-availability'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,
+				],
+        	],
         ];
     }
 
@@ -104,8 +111,6 @@ class CourseController extends Controller
 
 	public function actionFetchTeacherAvailability($teacherId)
     {
-        $response = Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
 		$query = TeacherAvailability::find()
                 ->joinWith('userLocation')
                 ->where(['user_id' => $teacherId]);
