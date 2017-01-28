@@ -17,7 +17,7 @@ use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
-
+use common\models\TeacherAvailability;
 /**
  * CourseController implements the CRUD actions for Course model.
  */
@@ -32,6 +32,13 @@ class CourseController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			[
+				'class' => 'yii\filters\ContentNegotiator',
+				'only' => ['fetch-teacher-availability'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,
+				],
+        	],
         ];
     }
 
@@ -102,6 +109,20 @@ class CourseController extends Controller
         ]);
     }
 
+	public function actionFetchTeacherAvailability($teacherId)
+    {
+		$query = TeacherAvailability::find()
+                ->joinWith('userLocation')
+                ->where(['user_id' => $teacherId]);
+        $teacherDataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+		$data = $this->renderAjax('_teacher-availability', [
+        	'teacherDataProvider' => $teacherDataProvider,
+    	]);
+
+        return $data;
+    }
     /**
      * Creates a new Course model.
      * If creation is successful, the browser will be redirected to the 'view' page.
