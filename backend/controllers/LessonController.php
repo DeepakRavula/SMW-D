@@ -363,14 +363,14 @@ class LessonController extends Controller
 		$conflictedLessonIds = [];
 		if(!empty($enrolmentEditType) && $enrolmentEditType === Enrolment::EDIT_LEAVE) {
 			$lessons = Lesson::find()
-				->where(['courseId' => $courseModel->id])
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
 				->andWhere(['>=', 'date', (new \DateTime($endDate))->format('Y-m-d')])
 				->all();
 			foreach ($lessons as $lesson) {
 				$conflicts[$lesson->id] = [];
 			}
 			$query = Lesson::find()
-				->where(['courseId' => $courseModel->id])
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
 				->andWhere(['>=', 'date', (new \DateTime($endDate))->format('Y-m-d')]);
 		} else {
 			$draftLessons = Lesson::find()
@@ -522,7 +522,7 @@ class LessonController extends Controller
 		}
 		if(!empty($enrolmentEditType) && $enrolmentEditType === Enrolment::EDIT_LEAVE) {
 			$lessons = Lesson::find()
-				->where(['courseId' => $courseModel->id])
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
 				->andWhere(['>=', 'date', (new \DateTime($endDate))->format('Y-m-d')])
 				->all();
 			foreach ($lessons as $lesson) {
