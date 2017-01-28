@@ -362,9 +362,16 @@ class LessonController extends Controller
 		$conflicts = [];
 		$conflictedLessonIds = [];
 		if(!empty($enrolmentEditType) && $enrolmentEditType === Enrolment::EDIT_LEAVE) {
+			$lessons = Lesson::find()
+				->where(['courseId' => $courseModel->id])
+				->andWhere(['>=', 'date', (new \DateTime($endDate))->format('Y-m-d')])
+				->all();
+			foreach ($lessons as $lesson) {
+				$conflicts[$lesson->id] = [];
+			}
 			$query = Lesson::find()
 				->where(['courseId' => $courseModel->id])
-				->andWhere(['>=', 'date', $endDate]);
+				->andWhere(['>=', 'date', (new \DateTime($endDate))->format('Y-m-d')]);
 		} else {
 			$draftLessons = Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
@@ -391,7 +398,6 @@ class LessonController extends Controller
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-		print_r($conflicts);die;
         return $this->render('_review', [
             'courseModel' => $courseModel,
             'courseId' => $courseId,
@@ -514,10 +520,22 @@ class LessonController extends Controller
 				'endDate' => (new \DateTime($endDate))->format('Y-m-d H:i:s'),
 			]);
 		}
-		foreach ($lessons as $lesson) {
-			$lesson->updateAttributes([
-				'status' => Lesson::STATUS_SCHEDULED,
-			]);
+		if(!empty($enrolmentEditType) && $enrolmentEditType === Enrolment::EDIT_LEAVE) {
+			$lessons = Lesson::find()
+				->where(['courseId' => $courseModel->id])
+				->andWhere(['>=', 'date', (new \DateTime($endDate))->format('Y-m-d')])
+				->all();
+			foreach ($lessons as $lesson) {
+				$lesson->updateAttributes([
+					'isDeleted' => true,
+				]);
+			}
+		} else {
+			foreach ($lessons as $lesson) {
+				$lesson->updateAttributes([
+					'status' => Lesson::STATUS_SCHEDULED,
+				]);
+			}
 		}
 		if ($courseModel->program->isPrivate()) {
 			if (!empty($vacationId)) {
@@ -532,7 +550,7 @@ class LessonController extends Controller
 				$message = 'Future lessons have been changed successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} elseif(! empty($endDate)) {
-				$message = 'Your enrolment has been renewed successfully';
+				$message = 'Your enrolment has been updated successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
             	$startDate = new \DateTime($courseModel->startDate);

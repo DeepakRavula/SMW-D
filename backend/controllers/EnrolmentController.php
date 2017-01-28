@@ -60,10 +60,11 @@ class EnrolmentController extends Controller
         $model = $this->findModel($id);
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->where(['courseId' => $model->course->id])
 				->andWhere([
+					'courseId' => $model->course->id,
 					'status' => Lesson::STATUS_SCHEDULED
 				])
+				->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
         ]);
