@@ -14,7 +14,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-
+use common\models\TeacherRoom;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -124,8 +124,44 @@ class EnrolmentController extends Controller
 				return ['output' => $model->getPaymentFrequency(), 'message' => ''];
 			}
 		}
+        $timebits = explode(':', $model->course->fromTime);
+		$courseEndDate = (new \DateTime($model->course->endDate))->format('Y-m-d');
+		$courseEndDate = new \DateTime($courseEndDate);
+        $courseEndDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
 		if ($model->course->load(Yii::$app->request->post())) {
+			$existingEndDate = (new \DateTime($model->course->getOldAttribute('endDate')))->format('d-m-Y');
+			$endDate = new \DateTime($model->course->endDate);
+			if(new \DateTime($existingEndDate) != $endDate) {
+				if(new \DateTime($existingEndDate) < $endDate) {
+					$interval = new \DateInterval('P1D');
+					$period = new \DatePeriod($courseEndDate, $interval, $endDate);
+					$classroom = TeacherRoom::findOne(['teacherId' => $model->course->teacherId, 'day' => $model->course->day]);
 
+					foreach ($period as $day) {
+						$professionalDevelopmentDay = clone $day;
+						$professionalDevelopmentDay->modify('last day of previous month');
+						$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
+						if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+							continue;
+						}
+						if ((int) $day->format('N') === (int) $model->course->day) {
+							$lesson = new Lesson();
+							$lesson->setAttributes([
+								'courseId' => $model->course->id,
+								'teacherId' => $model->course->teacherId,
+								'status' => Lesson::STATUS_DRAFTED,
+								'date' => $day->format('Y-m-d H:i:s'),
+								'duration' => $model->course->duration,
+								'isDeleted' => false,
+								'classroomId' => !empty($classroom) ? $classroom->classroomId : null,
+							]);
+							$lesson->save();
+						}
+					}
+					return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Enrolment[endDate]' => $model->course->endDate]);
+				} else {
+				}
+			}
 			$rescheduleBeginDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
 			$rescheduleBeginDate = $rescheduleBeginDate->format('Y-m-d 00:00:00');
 			Lesson::deleteAll([

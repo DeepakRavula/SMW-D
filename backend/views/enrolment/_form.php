@@ -45,6 +45,21 @@ $this->render('_view-enrolment', [
 			]);
 			?>
 		</div>
+		<div class="col-md-4">
+			<?php
+			echo $form->field($model, 'endDate')->widget(DatePicker::classname(),
+				[
+				'options' => [
+					'value' => (new \DateTime($model->endDate))->format('d-m-Y'),
+				],
+				'type' => DatePicker::TYPE_COMPONENT_APPEND,
+				'pluginOptions' => [
+					'autoclose' => true,
+					'format' => 'dd-mm-yyyy'
+				]
+			]);
+			?>
+		</div>
 	</div>
     <div class="form-group col-md-4">
 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),

@@ -16,6 +16,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class Enrolment extends \yii\db\ActiveRecord
 {
     public $studentIds;
+	public $endDate;
 
     const PAYMENT_FREQUENCY_FULL = 1;
     const PAYMENT_FREQUENCY_MONTHLY = 2;

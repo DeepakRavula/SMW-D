@@ -230,6 +230,9 @@ class Course extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
+		if(!$insert) {
+        	return parent::beforeSave($insert);
+		}
         $fromTime = \DateTime::createFromFormat('h:i A', $this->fromTime);
         $this->fromTime = $fromTime->format('H:i:s');
         $timebits = explode(':', $this->fromTime);
@@ -253,6 +256,9 @@ class Course extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
+		if(!$insert) {
+        	return parent::afterSave($insert, $changedAttributes);
+		}
         if ((int) $this->program->type === Program::TYPE_PRIVATE_PROGRAM) {
             $enrolmentModel = new Enrolment();
             $enrolmentModel->courseId = $this->id;
@@ -293,6 +299,7 @@ class Course extends \yii\db\ActiveRecord
                 }
             }
         }
+        	return parent::afterSave($insert, $changedAttributes);
     }
 
 	public function generateLessons($lessons, $startDate)

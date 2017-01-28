@@ -352,6 +352,8 @@ class LessonController extends Controller
         $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
+        $enrolmentRequest = $request->get('Enrolment');
+        $endDate = $enrolmentRequest['endDate'];
         $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
@@ -391,6 +393,7 @@ class LessonController extends Controller
             'searchModel' => $searchModel,
 			'vacationId' => $vacationId,
 			'vacationType' => $vacationType,
+			'endDate' => $endDate,
 			'model' => $model,
         ]);
     }
@@ -438,8 +441,9 @@ class LessonController extends Controller
         }
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');
+        $enrolmentRequest = $request->get('Enrolment');
         $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
-
+		$endDate = $enrolmentRequest['endDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
 		if(! empty($vacationId)) {
@@ -495,7 +499,11 @@ class LessonController extends Controller
 				$lessonRescheduleModel->save();
 			}
 		}
-
+		if(! empty($endDate)) {
+			$courseModel->updateAttributes([
+				'endDate' => (new \DateTime($endDate))->format('Y-m-d H:i:s'),
+			]);
+		}
 		foreach ($lessons as $lesson) {
 			$lesson->updateAttributes([
 				'status' => Lesson::STATUS_SCHEDULED,
@@ -512,6 +520,9 @@ class LessonController extends Controller
 				}
 			} elseif(! empty($rescheduleBeginDate)) {
 				$message = 'Future lessons have been changed successfully';
+				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
+			} elseif(! empty($endDate)) {
+				$message = 'Your enrolment has been renewed successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
             	$startDate = new \DateTime($courseModel->startDate);
