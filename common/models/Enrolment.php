@@ -22,6 +22,10 @@ class Enrolment extends \yii\db\ActiveRecord
     const PAYMENT_FREQUENCY_MONTHLY = 2;
     const PAYMENT_FREQUENCY_QUARTERLY = 3;
     const PAYMENT_FREQUENCY_HALFYEARLY = 4;
+
+	const EDIT_RENEWAL = 'renewal';
+	const EDIT_LEAVE = 'leave';
+	
     /**
      * {@inheritdoc}
      */

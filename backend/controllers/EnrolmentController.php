@@ -158,8 +158,9 @@ class EnrolmentController extends Controller
 							$lesson->save();
 						}
 					}
-					return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Enrolment[endDate]' => $model->course->endDate]);
+					return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Enrolment[endDate]' => $model->course->endDate, 'Enrolment[type]' => Enrolment::EDIT_RENEWAL]);
 				} else {
+					return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Enrolment[endDate]' => $model->course->endDate, 'Enrolment[type]' => Enrolment::EDIT_LEAVE]);
 				}
 			}
 			$rescheduleBeginDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);

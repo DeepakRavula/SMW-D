@@ -354,36 +354,44 @@ class LessonController extends Controller
         $courseRequest = $request->get('Course');
         $enrolmentRequest = $request->get('Enrolment');
         $endDate = $enrolmentRequest['endDate'];
+        $enrolmentEditType = $enrolmentRequest['type'];
         $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
-        $draftLessons = Lesson::find()
-            ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
-            ->all();
-        foreach ($draftLessons as $draftLesson) {
-            $draftLesson->setScenario('review');
-        }
-        Model::validateMultiple($draftLessons);
-        $conflicts = [];
-        $conflictedLessonIds = [];
-        foreach ($draftLessons as $draftLesson) {
-			if(!empty($draftLesson->getErrors('date'))) {
-				$conflictedLessonIds[] = $draftLesson->id;
+		$conflicts = [];
+		$conflictedLessonIds = [];
+		if(!empty($enrolmentEditType) && $enrolmentEditType === Enrolment::EDIT_LEAVE) {
+			$query = Lesson::find()
+				->where(['courseId' => $courseModel->id])
+				->andWhere(['>=', 'date', $endDate]);
+		} else {
+			$draftLessons = Lesson::find()
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+				->all();
+			foreach ($draftLessons as $draftLesson) {
+				$draftLesson->setScenario('review');
 			}
-            $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+			Model::validateMultiple($draftLessons);
+			foreach ($draftLessons as $draftLesson) {
+				if(!empty($draftLesson->getErrors('date'))) {
+					$conflictedLessonIds[] = $draftLesson->id;
+				}
+				$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
 
-        }
-        $query = Lesson::find()
-            ->orderBy(['lesson.date' => SORT_ASC]);
-        if(! $showAllReviewLessons) {
-            $query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
-        }  else {
-            $query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
-        }
+			}
+			$query = Lesson::find()
+				->orderBy(['lesson.date' => SORT_ASC]);
+			if(! $showAllReviewLessons) {
+				$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
+			}  else {
+				$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+			}
+		}
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+		print_r($conflicts);die;
         return $this->render('_review', [
             'courseModel' => $courseModel,
             'courseId' => $courseId,
@@ -395,6 +403,7 @@ class LessonController extends Controller
 			'vacationType' => $vacationType,
 			'endDate' => $endDate,
 			'model' => $model,
+			'enrolmentEditType' => $enrolmentEditType
         ]);
     }
 
@@ -444,6 +453,7 @@ class LessonController extends Controller
         $enrolmentRequest = $request->get('Enrolment');
         $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
 		$endDate = $enrolmentRequest['endDate'];
+        $enrolmentEditType = $enrolmentRequest['type'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
 		if(! empty($vacationId)) {
