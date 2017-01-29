@@ -33,6 +33,9 @@ use kartik\editable\Editable;
         </div>
         <!-- /.col -->
       </div>
+      <div class="row"> 
+        <hr class="default-hr">  
+      </div>
     <div class="row invoice-info m-t-20">
         <!-- /.col -->
 		<?php if (!empty($customer)):?>

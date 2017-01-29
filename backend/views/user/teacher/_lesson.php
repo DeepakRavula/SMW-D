@@ -10,8 +10,8 @@ use yii\data\ActiveDataProvider;
 ?>
 <style>	
 .diff_color{
-		background: #e12e2b !important;
-    color: white;
+		background: #f9f9f9 !important;
+    color: #333;
 }
     #unscheduled .grid-row-open{
         padding:15px !important;
@@ -20,7 +20,7 @@ use yii\data\ActiveDataProvider;
     	padding:15px;
     }
 .user-note-content .empty{
-	padding:1px;
+	padding:15px;
 }
 </style>
 <?php
