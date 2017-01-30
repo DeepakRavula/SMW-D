@@ -38,7 +38,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
     }
     .invoice-index{
         padding-top:5px;
-        padding-right:10px;
+        padding-right:15px;
         position: relative;
     }
 </style>

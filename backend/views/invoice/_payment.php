@@ -22,6 +22,13 @@ use yii\helpers\Url;
     .kv-table-wrap{
         margin-bottom:0;
     }
+    #payment-method-btn-section{
+        margin-top:     10px;
+    }
+    #invoice-payment-listing{
+        padding-left:15px;
+        padding-right: 15px;
+    }
 </style>
 
 <?php
