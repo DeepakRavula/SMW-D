@@ -363,15 +363,17 @@ class LessonController extends Controller
 		$conflictedLessonIds = [];
 		if(!empty($enrolmentEditType) && $enrolmentEditType === Enrolment::EDIT_LEAVE) {
 			$lessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
-				->andWhere(['>=', 'date', (new \DateTime($endDate))->format('Y-m-d')])
+				->where(['courseId' => $courseModel->id, 'lesson.status' => Lesson::STATUS_SCHEDULED])
+				->andWhere(['>=', 'lesson.date', (new \DateTime($endDate))->format('Y-m-d')])
+				->unInvoicedProForma()
 				->all();
 			foreach ($lessons as $lesson) {
 				$conflicts[$lesson->id] = [];
 			}
 			$query = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
-				->andWhere(['>=', 'date', (new \DateTime($endDate))->format('Y-m-d')]);
+				->where(['courseId' => $courseModel->id, 'lesson.status' => Lesson::STATUS_SCHEDULED])
+				->andWhere(['>=', 'lesson.date', (new \DateTime($endDate))->format('Y-m-d')])
+				->unInvoicedProForma();
 		} else {
 			$draftLessons = Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
@@ -522,8 +524,9 @@ class LessonController extends Controller
 		}
 		if(!empty($enrolmentEditType) && $enrolmentEditType === Enrolment::EDIT_LEAVE) {
 			$lessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
-				->andWhere(['>=', 'date', (new \DateTime($endDate))->format('Y-m-d')])
+				->where(['courseId' => $courseModel->id, 'lesson.status' => Lesson::STATUS_SCHEDULED])
+				->andWhere(['>=', 'lesson.date', (new \DateTime($endDate))->format('Y-m-d')])
+				->unInvoicedProForma()
 				->all();
 			foreach ($lessons as $lesson) {
 				$lesson->updateAttributes([
