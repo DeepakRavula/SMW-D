@@ -36,6 +36,9 @@ $this->params['breadcrumbs'][] = $this->title;
       background: #ea212c;
     }
     @media print{
+      .invoice-info{
+        margin-top: 5px;
+      }
       .text-gray{
         color: gray !important;
       }
@@ -45,12 +48,25 @@ $this->params['breadcrumbs'][] = $this->title;
       .text-left{
         text-align: left !important;
       }
+      
+      .table-invoice-childtable{
+        width: 10vw;
+        float:right !important;
+
+      }
+      .table-invoice-childtable>thead>tr>th:last-child, 
+      .table-invoice-childtable>tbody>tr>td:last-child{
+        white-space: nowrap;
+      }
+      .table-invoice-childtable>tbody>tr>td:first-of-type{
+        width: 7vw;
+      }
     }
 </style>
 <div class="invoice-view p-10">
     <div class="row">
         <div class="col-xs-12 p-0">
-          <h2 class="m-0">
+          <h2 class="m-0 border-bottom-gray">
             <a class="logo pull-left">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
@@ -72,10 +88,10 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <!-- /.col -->
       </div>
-    <div class="row invoice-info m-t-15">
+    <div class="row invoice-info m-t-10">
         <!-- /.col -->
-        <div class="col-sm-9 invoice-col m-b-20 pull-left p-0">
-          <div class="row m-t-10">
+        <div class="col-sm-9 invoice-col m-b-10 pull-left p-0">
+          <div class="row m-T-10">
             <div class="col-xs-12">
                 <h4 class="m-0 f-w-400"><strong><?php echo isset($model->publicIdentity) ? $model->publicIdentity : null?></strong></h4>
             <div class="text-gray">
@@ -98,11 +114,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     echo $billingAddress->province->name.'<br>'.$billingAddress->country->name.' ';
                     echo $billingAddress->postal_code;
                 } ?>
-                <div class="row-fluid m-t-20">
+                <div class="row-fluid m-t-5">
                   <?php if (!empty($model->email)): ?>
                   <?php echo 'E: '; ?><?php echo $model->email?>
                   <?php endif; ?>
                 </div>
+              </div>
               </div>
             <!-- Phone number -->
             <div class="row-fluid text-gray">
