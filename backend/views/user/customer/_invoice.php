@@ -6,6 +6,7 @@ use common\models\Invoice;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
+use backend\models\search\UserSearch;
 
 ?>
 <style>
@@ -57,6 +58,9 @@ use kartik\daterange\DateRangePicker;
 
     ]);
    ?>
+    </div>
+	<div class="col-md-3">
+        <?php echo $form->field($userModel, 'invoiceStatus')->dropDownList(UserSearch::invoiceStatuses())->label('Invoice Status')->label(false); ?>
     </div>
     <div class="col-md-3 form-group M-t-5">
 	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
@@ -120,8 +124,9 @@ use kartik\daterange\DateRangePicker;
 $(document).ready(function(){
 	$("#customer-invoice-search-form").on("submit", function() {
 		var dateRange = $('#user-daterange').val();
+		var invoiceStatus = $('#user-invoicestatus').val();
 		$.pjax.reload({container:"#customer-invoice-grid", replace:false, timeout:6000, data:$(this).serialize()});
-		var url = "<?= Url::to(['user/invoice-print', 'id' => $userModel->id]); ?>&User[dateRange]=" + dateRange;
+		var url = "<?= Url::to(['user/invoice-print', 'id' => $userModel->id]); ?>&User[dateRange]=" + dateRange +"&User[invoiceStatus]=" + invoiceStatus;
 		$('#invoice-print').attr('href', url);
 		return false;
     });

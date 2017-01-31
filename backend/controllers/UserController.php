@@ -222,6 +222,7 @@ class UserController extends Controller
         $userRequest = $request->get('User');
 		if(!empty($userRequest)) {
 			list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
+			$invoiceStatus = $userRequest['invoiceStatus'];
 		} 
 		$fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
         $toDate =(new \DateTime($model->toDate))->format('Y-m-d');
@@ -232,6 +233,9 @@ class UserController extends Controller
                     'invoice.location_id' => $locationId,
                 ])
 				->between($fromDate,$toDate);
+		if(!empty($invoiceStatus) && (int)$invoiceStatus !== UserSearch::STATUS_ALL) {
+			$invoiceQuery->andWhere(['invoice.status' => $invoiceStatus]);
+		}
 
         $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoiceQuery,
@@ -823,6 +827,7 @@ class UserController extends Controller
         $userRequest = $request->get('User');
 		if(!empty($userRequest)) {
 			list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
+			$invoiceStatus = $userRequest['invoiceStatus'];
 		} 
 		$fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
         $toDate =(new \DateTime($model->toDate))->format('Y-m-d');
@@ -833,7 +838,9 @@ class UserController extends Controller
                     'invoice.location_id' => $locationId,
                 ])
 				->between($fromDate,$toDate);
-
+		if(!empty($invoiceStatus) && (int)$invoiceStatus !== UserSearch::STATUS_ALL) {
+			$invoiceQuery->andWhere(['invoice.status' => $invoiceStatus]);
+		}
         $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoiceQuery,
 			'pagination' => false,

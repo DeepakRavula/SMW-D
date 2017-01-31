@@ -72,6 +72,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
           <div class="pull-left invoice-address  text-gray">
+	      <div class="row-fluid">
+              <h4 class="m-0 text-inverse"><strong>STATEMENT</strong></h4>
+          </div>
           <small><?php
 		  $locationId = Yii::$app->session->get('location_id');
 		  $location = Location::findOne(['id' => $locationId]);
