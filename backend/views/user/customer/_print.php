@@ -133,6 +133,13 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             </div>
           </div>
+		 <div class="col-sm-4 invoice-col m-t-10 text-right p-0">
+          <div class="row-fluid text-gray">
+              <div class="col-md-4 pull-right text-left p-r-0 p-l-30"><?= $dateRange; ?></div>
+              <div class="col-md-2 pull-right">Date:</div>
+              <div class="clearfix"></div>
+          </div>
+          </div> 
         </div>
         <!-- /.col -->
      

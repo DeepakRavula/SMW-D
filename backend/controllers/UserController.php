@@ -826,6 +826,7 @@ class UserController extends Controller
         $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
         $userRequest = $request->get('User');
 		if(!empty($userRequest)) {
+			$model->dateRange = $userRequest['dateRange']; 
 			list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
 			$invoiceStatus = $userRequest['invoiceStatus'];
 		} 
@@ -850,6 +851,7 @@ class UserController extends Controller
         return $this->render('customer/_print', [
 			'model' => $model,
 			'invoiceDataProvider' => $invoiceDataProvider,
+			'dateRange' => $model->dateRange,
         ]);
     }
 
