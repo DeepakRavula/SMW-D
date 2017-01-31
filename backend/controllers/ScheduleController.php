@@ -192,7 +192,9 @@ class ScheduleController extends Controller
         $date      = \DateTime::createFromFormat('Y-m-d', $date);
         $resources = $this->getHolidayResources($date);
         if (empty($resources)) {
-            $classrooms = Classroom::find()->all();
+            $classrooms = Classroom::find()
+				->andWhere(['locationId' => Yii::$app->session->get('location_id')])
+				->all();
             foreach ($classrooms as $classroom) {
                 $resources[] = [
                     'id'    => $classroom->id,
