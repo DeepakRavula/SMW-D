@@ -72,6 +72,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
           <div class="pull-left invoice-address  text-gray">
+	      <div class="row-fluid">
+              <h4 class="m-0 text-inverse"><strong>STATEMENT</strong></h4>
+          </div>
           <small><?php
 		  $locationId = Yii::$app->session->get('location_id');
 		  $location = Location::findOne(['id' => $locationId]);
@@ -130,6 +133,13 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             </div>
           </div>
+		 <div class="col-sm-4 invoice-col m-t-10 text-right p-0">
+          <div class="row-fluid text-gray">
+              <div class="col-md-4 pull-right text-left p-r-0 p-l-30"><?= $dateRange; ?></div>
+              <div class="col-md-2 pull-right">Date:</div>
+              <div class="clearfix"></div>
+          </div>
+          </div> 
         </div>
         <!-- /.col -->
      

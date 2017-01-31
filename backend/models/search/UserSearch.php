@@ -6,12 +6,14 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\User;
-
+use common\models\Invoice;
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
  */
 class UserSearch extends User
 {
+	const STATUS_ALL = 3;
+    
     public $role_name;
     public $lastname;
     public $firstname;
@@ -96,5 +98,14 @@ class UserSearch extends User
         $query->active();
 
         return $dataProvider;
+    }
+
+    public static function invoiceStatuses()
+    {
+        return [
+            self::STATUS_ALL => 'All',
+            Invoice::STATUS_OWING => 'Owing',
+            Invoice::STATUS_PAID => 'Paid',
+        ];
     }
 }

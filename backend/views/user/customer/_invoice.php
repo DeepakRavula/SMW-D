@@ -5,6 +5,8 @@ use yii\grid\GridView;
 use common\models\Invoice;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
+use kartik\daterange\DateRangePicker;
+use backend\models\search\UserSearch;
 
 ?>
 <style>
@@ -33,17 +35,32 @@ use kartik\date\DatePicker;
 		'id' => 'customer-invoice-search-form'
     ]); ?>
 	<div class="col-md-3">
- <?php
-		echo $form->field($userModel, 'fromDate')->widget(DatePicker::classname(), [
-		'type' => DatePicker::TYPE_COMPONENT_APPEND,
-		'pluginOptions' => [
-			'startView' => 3,
-			'minViewMode' => 2,
-			'autoclose' => true,
-			'format' => 'yyyy',
-		],
-	  ])->label('Date');
-	?>
+    <?php 
+   echo DateRangePicker::widget([
+    'model' => $userModel,
+    'attribute' => 'dateRange',
+    'convertFormat' => true,
+    'initRangeExpr' => true,
+    'pluginOptions' => [
+        'autoApply' => true,
+        'ranges' => [
+            Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
+            Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
+	    	Yii::t('kvdrp', 'This Year') => ["moment().startOf('year')", "moment().endOf('year')"],
+            Yii::t('kvdrp', 'Last Year') => ["moment().subtract(1, 'year').startOf('year')", "moment().subtract(1, 'year').endOf('year')"],
+        ],
+			
+        'locale' => [
+            'format' => 'd-m-Y',
+        ],
+        'opens' => 'right',
+        ],
+
+    ]);
+   ?>
+    </div>
+	<div class="col-md-3">
+        <?php echo $form->field($userModel, 'invoiceStatus')->dropDownList(UserSearch::invoiceStatuses())->label('Invoice Status')->label(false); ?>
     </div>
     <div class="col-md-3 form-group M-t-5">
 	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
@@ -106,9 +123,10 @@ use kartik\date\DatePicker;
 <script>
 $(document).ready(function(){
 	$("#customer-invoice-search-form").on("submit", function() {
-		var fromDate = $('#user-fromdate').val();
+		var dateRange = $('#user-daterange').val();
+		var invoiceStatus = $('#user-invoicestatus').val();
 		$.pjax.reload({container:"#customer-invoice-grid", replace:false, timeout:6000, data:$(this).serialize()});
-		var url = "<?= Url::to(['user/invoice-print', 'id' => $userModel->id]); ?>&User[fromDate]=" + fromDate;
+		var url = "<?= Url::to(['user/invoice-print', 'id' => $userModel->id]); ?>&User[dateRange]=" + dateRange +"&User[invoiceStatus]=" + invoiceStatus;
 		$('#invoice-print').attr('href', url);
 		return false;
     });

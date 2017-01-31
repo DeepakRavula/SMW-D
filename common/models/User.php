@@ -48,7 +48,8 @@ class User extends ActiveRecord implements IdentityInterface
 
 	public $fromDate;
 	public $toDate;
-	
+	public $dateRange;	
+	public $invoiceStatus;
     /**
      * {@inheritdoc}
      */
