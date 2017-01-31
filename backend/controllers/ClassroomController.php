@@ -32,8 +32,10 @@ class ClassroomController extends Controller
      */
     public function actionIndex()
     {
+		$locationId = Yii::$app->session->get('location_id');
         $dataProvider = new ActiveDataProvider([
-            'query' => Classroom::find(),
+            'query' => Classroom::find()
+				->andWhere(['locationId' => $locationId]),
         ]);
 
         return $this->render('index', [
