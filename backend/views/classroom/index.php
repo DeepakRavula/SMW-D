@@ -9,11 +9,9 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Classrooms';
-$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-$lastRole = end($roles);
 
 $addButton = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']);
-$this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
+$this->params['action-button'] = $addButton;
 ?>
 
 <div class="class-room-index">
