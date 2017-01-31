@@ -215,13 +215,16 @@ class UserController extends Controller
         ]);
 
 		$request = Yii::$app->request;
-		$model->fromDate = (new \DateTime())->format('Y');
+        $currentDate = new \DateTime();
+        $model->fromDate = $currentDate->format('1-m-Y');
+        $model->toDate = $currentDate->format('t-m-Y');
+        $model->dateRange = $model->fromDate.' - '.$model->toDate;
         $userRequest = $request->get('User');
 		if(!empty($userRequest)) {
-            $model->fromDate = $userRequest['fromDate'];
+			list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
 		} 
-		$fromDate =  $model->fromDate . '-01-01';
-        $toDate = $model->fromDate . '-12-31';
+		$fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
+        $toDate =(new \DateTime($model->toDate))->format('Y-m-d');
         $invoiceQuery = Invoice::find()
                 ->student($id)
                 ->where([
@@ -813,13 +816,16 @@ class UserController extends Controller
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
 		$request = Yii::$app->request;
-		$model->fromDate = (new \DateTime())->format('Y');
+        $currentDate = new \DateTime();
+        $model->fromDate = $currentDate->format('1-m-Y');
+        $model->toDate = $currentDate->format('t-m-Y');
+        $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
         $userRequest = $request->get('User');
 		if(!empty($userRequest)) {
-            $model->fromDate = $userRequest['fromDate'];
-		}
-		$fromDate =  $model->fromDate . '-01-01';
-        $toDate = $model->fromDate . '-12-31';
+			list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
+		} 
+		$fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
+        $toDate =(new \DateTime($model->toDate))->format('Y-m-d');
         $invoiceQuery = Invoice::find()
                 ->student($id)
                 ->where([
