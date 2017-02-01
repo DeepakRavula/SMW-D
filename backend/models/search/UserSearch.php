@@ -19,6 +19,7 @@ class UserSearch extends User
     public $firstname;
     public $query;
     public $showAllCustomers;
+	public $showAllTeachers;
     /**
      * {@inheritdoc}
      */
@@ -26,7 +27,7 @@ class UserSearch extends User
     {
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname', 'lastname', 'query', 'showAllCustomers'], 'safe'],
+            [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname', 'lastname', 'query', 'showAllCustomers', 'showAllTeachers'], 'safe'],
         ];
     }
 
@@ -90,7 +91,14 @@ class UserSearch extends User
                 $query->joinWith(['student' => function ($query) use ($currentDate) {
                     $query->enrolled($currentDate);
                 }]);
-                $query->andFilterWhere(['like', 'ul.location_id', $locationId]);
+            }
+            $query->groupBy('user.id');
+        }
+		 if ($this->role_name === USER::ROLE_TEACHER) {
+            if (!$this->showAllTeachers) {
+                $query->joinWith(['userLocation' => function ($query) {
+                    $query->joinWith('teacherAvailability');
+                }]);
             }
             $query->groupBy('user.id');
         }

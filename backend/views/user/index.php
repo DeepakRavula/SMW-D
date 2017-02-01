@@ -84,10 +84,18 @@ $this->params['breadcrumbs'][] = $this->title;
 		</div>
     </div>
     <?php endif; ?>
-        
+    <?php if ($searchModel->role_name === User::ROLE_TEACHER):?>
+	<div class="pull-right  m-r-20">
+		<div class="schedule-index">
+			<div class="e1Div">
+				<?= $form->field($searchModel, 'showAllTeachers')->checkbox(['data-pjax' => true])->label('Show All'); ?>
+			</div>
+		</div>
+    </div>
+    <?php endif; ?> 
     <?php ActiveForm::end(); ?>
 <div class="grid-row-open">
-    <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+    <?php yii\widgets\Pjax::begin(['id' => 'user-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
             'rowOptions' => function ($model, $key, $index, $grid) use ($roleName, $originalInvoice) {
@@ -148,7 +156,12 @@ $(document).ready(function(){
   $("#usersearch-showallcustomers").on("change", function() {
       var showAllCustomers = $(this).is(":checked");
       var url = "<?php echo Url::to(['user/index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER]); ?>&UserSearch[query]=" + "<?php echo $searchModel->query; ?>&UserSearch[showAllCustomers]=" + (showAllCustomers | 0);
-      $.pjax.reload({url:url,container:"#lesson-index",replace:false,  timeout: 4000});  //Reload GridView
+      $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 4000});  //Reload GridView
+    });
+	 $("#usersearch-showallteachers").on("change", function() {
+      var showAllTeachers = $(this).is(":checked");
+      var url = "<?php echo Url::to(['user/index', 'UserSearch[role_name]' => User::ROLE_TEACHER]); ?>&UserSearch[query]=" + "<?php echo $searchModel->query; ?>&UserSearch[showAllTeachers]=" + (showAllTeachers | 0);
+      $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 4000});  //Reload GridView
     });
 });
 </script>
