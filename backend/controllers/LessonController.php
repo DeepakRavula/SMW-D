@@ -175,7 +175,7 @@ class LessonController extends Controller
             return $this->redirect(['lesson/view', 'id' => $id, '#' => 'details']);
         }
         $data = ['model' => $model];
-        $view = '_form';
+        $view = '_form-group-lesson';
         if ($model->course->program->isPrivate()) {
             $view = '_form-private-lesson';
             if (!empty($model->privateLesson->id)) {
