@@ -221,8 +221,10 @@ class LessonController extends Controller
 					]);
 					$redirectionLink = $this->redirect(['update', 'id' => $model->id, '#' => 'details']);
 				} else {
-					$duration = \DateTime::createFromFormat('H:i', $model->duration);
-					$model->duration = $duration->format('H:i:s');
+					if($model->course->program->isPrivate()) {
+						$duration = \DateTime::createFromFormat('H:i', $model->duration);
+						$model->duration = $duration->format('H:i:s');
+					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
 					$model->save();

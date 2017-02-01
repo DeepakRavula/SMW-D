@@ -430,10 +430,10 @@ class Lesson extends \yii\db\ActiveRecord
                 if (isset($changedAttributes['date']) && !empty($this->date)) {
                     $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
                     $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-					if (!empty($this->teacher->email)) {
+					if (!empty($this->teacher->email) && $this->course->program->isPrivate()) {
 						$this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
 					}
-					if (!empty($this->enrolment->student->customer->email)) {
+					if (!empty($this->enrolment->student->customer->email) && $this->course->program->isPrivate()) {
 						$this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
 					}
                     $this->updateAttributes([

@@ -8,6 +8,9 @@ use kartik\depdrop\DepDrop;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use yii\helpers\Url;
+use wbraganca\selectivity\SelectivityWidget;
+use common\models\Classroom;
+use kartik\color\ColorInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -28,9 +31,9 @@ use yii\helpers\Url;
 	<div class="col-md-4">
 		<?php
 			echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-				   'options' => [
-				'value' => Yii::$app->formatter->asDateTime($model->date),
-		   ],
+				  'options' => [
+                    'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
+                ],
 			'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
 			'pluginOptions' => [
 				'autoclose' => true,
@@ -41,6 +44,27 @@ use yii\helpers\Url;
 		  ]);
 		?>
 	</div>
+	<div class=" col-md-4">
+		   <?php $locationId = Yii::$app->session->get('location_id'); ?>
+		   <?=
+                $form->field($model, 'classroomId')->widget(SelectivityWidget::classname(), [
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'items' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
+                        'placeholder' => 'Select Classroom',
+                    ],
+                ]);
+                ?>
+		</div>
+        <div class="form-group col-md-3">
+        <?php echo $form->field($model, 'colorCode')->widget(ColorInput::classname(), [
+                'options' => [
+                    'placeholder' => 'Select color ...',
+                    'value' => $model->getColorCode(),
+                ],
+        ]);
+        ?>
+        </div>
         <div class="clearfix"></div>
     <div class="col-md-12 p-l-20 form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
