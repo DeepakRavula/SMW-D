@@ -94,9 +94,7 @@ use yii\helpers\Url;
     </div>
 	<div class="row-fluid">
 	<div class="col-md-12 action-btns m-b-20">
-		<?php if ($model->course->program->isPrivate()):?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-pencil"></i> Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
-		<?php endif; ?>
 		<?php if($model->invoice) : ?>
 		<?= Html::a('<span class="label label-primary">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-20 del-ce'])?>
 		<?php else : ?>
