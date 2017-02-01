@@ -27,6 +27,7 @@ class Course extends \yii\db\ActiveRecord
 	const EVENT_VACATION_DELETE_PREVIEW = 'vacation-delete-preview';
 	const SCENARIO_GROUP_COURSE = 'group-course';
 
+	public $lessonStatus;
     public $studentId;
     public $paymentFrequency;
 	public $rescheduleBeginDate;
@@ -228,6 +229,13 @@ class Course extends \yii\db\ActiveRecord
         return $this->getEnrolments()->count();
     }
 
+	public static function lessonStatuses()
+    {
+        return [
+            'all' => 'All',
+            Lesson::STATUS_UNSCHEDULED => 'Unscheduled',
+        ];
+    }
     public function beforeSave($insert)
     {
 		if(!$insert) {
