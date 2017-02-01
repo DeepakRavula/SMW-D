@@ -57,9 +57,6 @@ use common\models\Classroom;
             ]);
             ?>
         </div>
-	   <div class="col-md-4">
-			<?php echo $form->field($model, 'status')->dropDownList(Lesson::lessonStatuses()) ?>
-		</div>
 		<div class="col-md-4">
 			<?php
                 if ($privateLessonModel->isNewRecord) {
