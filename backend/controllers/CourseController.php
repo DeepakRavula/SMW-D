@@ -91,10 +91,20 @@ class CourseController extends Controller
 				->active(),
         ]);
 
+		$lessonDataProvider = new ActiveDataProvider([
+            'query' => Lesson::find()
+				->andWhere([
+					'courseId' => $id,
+					'status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]
+				])
+				->notDeleted(),
+        ]);
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'courseId' => $id,
             'studentDataProvider' => $studentDataProvider,
+            'lessonDataProvider' => $lessonDataProvider,
         ]);
     }
 

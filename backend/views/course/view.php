@@ -55,6 +55,10 @@ $studentContent = $this->render('_student', [
     'studentDataProvider' => $studentDataProvider,
     'model' => $model,
 ]);
+$lessonContent = $this->render('_lesson', [
+    'lessonDataProvider' => $lessonDataProvider,
+    'model' => $model,
+]);
 
 ?>
 <?php echo Tabs::widget([
@@ -71,6 +75,13 @@ $studentContent = $this->render('_student', [
             'content' => $studentContent,
             'options' => [
                       'id' => 'student',
+            ],
+        ],
+		[
+            'label' => 'Lessons',
+            'content' => $lessonContent,
+            'options' => [
+                'id' => 'lesson',
             ],
         ],
     ],
