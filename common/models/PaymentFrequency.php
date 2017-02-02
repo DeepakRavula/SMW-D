@@ -12,6 +12,9 @@ use Yii;
  */
 class PaymentFrequency extends \yii\db\ActiveRecord
 {
+	public $individualDiscountValue;
+	public $familyDiscountValue;
+	
     /**
      * @inheritdoc
      */
@@ -28,6 +31,7 @@ class PaymentFrequency extends \yii\db\ActiveRecord
         return [
             [['name'], 'required'],
             [['name'], 'string', 'max' => 20],
+			[['individualDiscountValue', 'familyDiscountValue'], 'number']
         ];
     }
 
@@ -40,5 +44,15 @@ class PaymentFrequency extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
         ];
+    }
+
+	public function getPaymentFrequencyDiscount()
+    {
+        return $this->hasOne(PaymentFrequencyDiscount::className(), ['paymentFrequencyId' => 'id']);
+    }
+
+	public function getFamilyDiscount()
+    {
+        return $this->hasOne(FamilyDiscount::className(), ['paymentFrequencyId' => 'id']);
     }
 }

@@ -350,9 +350,9 @@ $bundle = BackendAsset::register($this);
                                     'visible' => Yii::$app->user->can('staffmember'),
                                 ],
 								[
-                                    'label' => Yii::t('backend', 'Payment Frequency Discount'),
+                                    'label' => Yii::t('backend', 'Discount'),
                                     'icon' => '<i class="fa fa-dollar"></i>',
-                                    'url' => ['payment-frequency-discount/edit'],
+                                    'url' => ['discount/edit'],
                                     'visible' => Yii::$app->user->can('administrator'),
                                 ],
                                 [
