@@ -2,6 +2,8 @@
 use common\models\Course;
 use kartik\editable\Editable;
 use common\models\Enrolment;
+use common\models\PaymentFrequency;
+use yii\helpers\ArrayHelper;
 ?>
 <div class="group-course-view">
 	<div class="row-fluid user-details-wrapper">
@@ -42,14 +44,14 @@ use common\models\Enrolment;
 	<div class="col-md-1 p-0 hand" data-toggle="tooltip" data-placement="bottom" title="Payment Frequency">
 		<?=
 		 Editable::widget([
-			'name'=>'paymentFrequency',
+			'name'=>'paymentFrequencyId',
 			'asPopover' => true,
 			'inputType' => Editable::INPUT_DROPDOWN_LIST,
 			'value' => $model->getPaymentFrequency(),
 			'header' => 'Payment Frequency',
 			'submitOnEnter' => false,
 			'size'=>'md',
-			'data' => Enrolment::paymentFrequencies()
+			'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')
 		])
 		?> 
 	</div>

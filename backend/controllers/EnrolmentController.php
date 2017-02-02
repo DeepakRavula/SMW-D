@@ -73,8 +73,8 @@ class EnrolmentController extends Controller
 		if (isset($post['hasEditable'])) {
 			$response = Yii::$app->response;
 			$response->format = Response::FORMAT_JSON;
-			if(! empty($post['paymentFrequency'])) {
-				$model->paymentFrequency = $post['paymentFrequency'];
+			if(! empty($post['paymentFrequencyId'])) {
+				$model->paymentFrequencyId = $post['paymentFrequencyId'];
 				$model->save();
 				return ['output' => $model->getPaymentFrequency(), 'message' => ''];
 			}
@@ -119,8 +119,8 @@ class EnrolmentController extends Controller
 		if (isset($post['hasEditable'])) {
 			$response = Yii::$app->response;
 			$response->format = Response::FORMAT_JSON;
-			if(! empty($post['paymentFrequency'])) {
-				$model->paymentFrequency = $post['paymentFrequency'];
+			if(! empty($post['paymentFrequencyId'])) {
+				$model->paymentFrequencyId = $post['paymentFrequencyId'];
 				$model->save();
 				return ['output' => $model->getPaymentFrequency(), 'message' => ''];
 			}

@@ -2,7 +2,8 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
-use common\models\Invoice;
+use common\models\Course;
+use yii\bootstrap\ActiveForm;
 use common\models\Lesson;
 
 /* @var $this yii\web\View */
@@ -12,43 +13,42 @@ $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="grid-row-open p-10">
-<?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
-    <?php $columns = [
-		[
-			'label' => 'Date',
-			'value' => function ($data) {
-				$date = Yii::$app->formatter->asDate($data->date);
-				$lessonTime = (new \DateTime($data->date))->format('H:i:s');
+<div class="user-search">
 
-				return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
-			},
-		],
-		[
-			'label' => 'Status',
-			'value' => function ($data) {
-				$status = null;
-				if (!empty($data->status)) {
-					return $data->getStatus();
-				}
-
-				return $status;
-			},
-		],
-	];
-     ?>   
-    <?php echo GridView::widget([
-        'dataProvider' => $lessonDataProvider,
-   		'rowOptions' => function ($model, $key, $index, $grid) {
-        $url = Url::to(['lesson/view', 'id' => $model->id]);
-
-        return ['data-url' => $url];
-    },
-        'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'columns' => $columns,
-    ]); ?>
-	<?php yii\widgets\Pjax::end(); ?>
+    <?php $form = ActiveForm::begin(); ?>
+    <div class="col-md-12">
+        <div class="e1Div schedule-index">
+        <?= $form->field($model, 'lessonStatus')->checkbox(['data-pjax' => true])->label('Show All'); ?>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+    <?php ActiveForm::end(); ?>
 
 </div>
-
+<div class="group-course-lessons">
+	<?= $this->render('_lesson-list', [
+    	'lessonDataProvider' => $lessonDataProvider,
+    	'model' => $model,
+	]);?>
+</div>
+<script>
+ $(document).ready(function() {
+	$(document).on('change', '#course-lessonstatus', function (e) {
+      var lessonStatus = $(this).is(":checked");
+	  console.log(lessonStatus);
+		$.ajax({
+			url    : '<?= Url::to(['course/fetch-lessons', 'id' => $model->id]);?>&lessonStatus=' + (lessonStatus | 0),
+			type   : 'get',
+			dataType: "json",
+			success: function(response)
+			{
+			   if(response)
+			   {
+					$('.group-course-lessons').html(response);
+				}
+			}
+		});
+		return false;
+	});
+});
+</script>

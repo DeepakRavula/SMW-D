@@ -1,7 +1,7 @@
 <?php
 
 use common\models\Program;
-use common\models\Enrolment;
+use common\models\PaymentFrequency;
 use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
 use kartik\date\DatePicker;
@@ -86,7 +86,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
         </div>
         <div class="clear-fix"></div>
         <div class="col-md-12">
-            <?= $form->field($model, 'paymentFrequency')->radioList(Enrolment::paymentFrequencies()) ?>
+            <?= $form->field($model, 'paymentFrequency')->radioList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')) ?>
 	    </div>
         <div id="course-rate-estimation" class="col-md-12">
         <hr class="default-hr">

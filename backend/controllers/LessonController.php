@@ -558,17 +558,24 @@ class LessonController extends Controller
 				$message = 'Your enrolment has been updated successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
+				$locationId = Yii::$app->session->get('location_id');
             	$startDate = new \DateTime($courseModel->startDate);
 				$endDate = $courseModel->enrolment->getLastLessonDateOfPaymentCycle();
-				$message		 = 'Lessons have been created successfully';
-				$link			 = $this->redirect([
-					'invoice/create',
-					'Invoice[customer_id]' => $courseModel->enrolment->student->customer->id,
-					'Invoice[type]' => Invoice::TYPE_PRO_FORMA_INVOICE,
-					'LessonSearch[fromDate]' => $startDate->format('d-m-Y'),
-					'LessonSearch[toDate]' => $endDate->format('d-m-Y'),
-					'LessonSearch[courseId]' => $courseModel->id,
-				]);
+				$lessons = Lesson::find()
+				->andWhere(['courseId' => $courseModel->id])
+				->between($startDate, $endDate)
+				->all();
+				$invoice = new Invoice();
+				$invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
+				$invoice->user_id = $courseModel->enrolment->student->customer->id;
+				$invoice->location_id = $locationId;
+				$invoice->save();
+				foreach ($lessons as $lesson) {
+					$invoice->addLineItem($lesson);
+				}
+				$invoice->save();
+
+				return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
 			}
 		} else {
 			$message = 'Course has been created successfully';

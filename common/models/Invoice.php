@@ -403,8 +403,12 @@ class Invoice extends \yii\db\ActiveRecord
         } else {
 			if($lesson->course->program->isPrivate()) {
 				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : null;
-				$paymentFrequencyDiscount = $lesson->course->enrolment->paymentFrequencyDiscount->value;
-				$invoiceLineItem->discount     = $customerDiscount + $paymentFrequencyDiscount;
+				if($this->user->getNumberOfStudents() > 1) {
+					$discount = $this->user->familyDiscount($lesson->course->enrolment->paymentFrequencyId);	
+				} else {
+					$discount = $this->user->prePaymentDiscount($lesson->course->enrolment->paymentFrequencyId);	
+				}
+				$invoiceLineItem->discount     = $customerDiscount + $discount;
 				$invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
 			} else {
 				$invoiceLineItem->discount     = 0;
