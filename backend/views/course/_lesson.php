@@ -17,8 +17,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php $form = ActiveForm::begin(); ?>
     <div class="col-md-12">
-        <?= $form->field($model, 'lessonStatus')->radioList(Course::lessonStatuses())->label(false) ?>
+        <div class="e1Div schedule-index">
+        <?= $form->field($model, 'lessonStatus')->checkbox(['data-pjax' => true])->label('Show All'); ?>
+		</div>
 	</div>
+	<div class="clearfix"></div>
     <?php ActiveForm::end(); ?>
 
 </div>
@@ -31,12 +34,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <script>
  $(document).ready(function() {
 	$(document).on('change', '#course-lessonstatus', function (e) {
-		var lessonStatus = $("input[type='radio'][name='Course[lessonStatus]']:checked").val();
+      var lessonStatus = $(this).is(":checked");
+	  console.log(lessonStatus);
 		$.ajax({
-			url    : '<?= Url::to(['course/fetch-lessons', 'id' => $model->id]);?>&lessonStatus=' + lessonStatus,
+			url    : '<?= Url::to(['course/fetch-lessons', 'id' => $model->id]);?>&lessonStatus=' + (lessonStatus | 0),
 			type   : 'get',
 			dataType: "json",
-			data   : $(this).serialize(),
 			success: function(response)
 			{
 			   if(response)

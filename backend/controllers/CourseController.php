@@ -95,7 +95,7 @@ class CourseController extends Controller
             'query' => Lesson::find()
 				->andWhere([
 					'courseId' => $id,
-					'status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]
+					'status' => Lesson::STATUS_UNSCHEDULED,
 				])
 				->notDeleted(),
         ]);
@@ -113,10 +113,10 @@ class CourseController extends Controller
 		$query = Lesson::find()
 			->andWhere(['courseId' => $id])
 			->notDeleted();
-		if((int)$lessonStatus === Lesson::STATUS_UNSCHEDULED) {
-			$query->andWhere(['status' => Lesson::STATUS_UNSCHEDULED]);
+		if($lessonStatus) { 
+			$query->andWhere(['status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_UNSCHEDULED]]);
 		} else {
-			$query->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]]);
+			$query->andWhere(['status' => [Lesson::STATUS_UNSCHEDULED]]);
 		}
 		$lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
