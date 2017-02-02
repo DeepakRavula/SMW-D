@@ -35,7 +35,7 @@ class CourseController extends Controller
             ],
 			[
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['fetch-teacher-availability'],
+				'only' => ['fetch-teacher-availability', 'fetch-lessons'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -96,7 +96,7 @@ class CourseController extends Controller
             'query' => Lesson::find()
 				->andWhere([
 					'courseId' => $id,
-					'status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]
+					'status' => Lesson::STATUS_UNSCHEDULED,
 				])
 				->notDeleted(),
         ]);
@@ -109,6 +109,24 @@ class CourseController extends Controller
         ]);
     }
 
+	public function actionFetchLessons($id, $lessonStatus)
+	{
+		$query = Lesson::find()
+			->andWhere(['courseId' => $id])
+			->notDeleted();
+		if($lessonStatus) { 
+			$query->andWhere(['status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_UNSCHEDULED]]);
+		} else {
+			$query->andWhere(['status' => [Lesson::STATUS_UNSCHEDULED]]);
+		}
+		$lessonDataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+		return $this->renderAjax('_lesson-list', [
+			'lessonDataProvider' => $lessonDataProvider,
+			'model' => $this->findModel($id),
+		]);	
+	}
     public function actionViewStudent($groupCourseId, $studentId)
     {
         $model = $this->findModel($groupCourseId);
