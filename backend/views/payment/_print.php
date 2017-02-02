@@ -18,7 +18,7 @@ if (!empty($paymentDataProvider->getModels())) {
     }
 }
 ?>
-<h3>Payments</h3>
+<h3>Payments<center>Date : <?= $fromDate->format('d-m-Y') . ' to ' . $toDate->format('d-m-Y');?></center></h3>  
 
 <?php
     if (! $groupByMethod) {
