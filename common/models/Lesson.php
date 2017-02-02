@@ -72,6 +72,7 @@ class Lesson extends \yii\db\ActiveRecord
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkDateConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
+            ['teacherId', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
         ];
     }
 

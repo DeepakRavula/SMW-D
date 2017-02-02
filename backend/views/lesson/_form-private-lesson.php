@@ -9,6 +9,7 @@ use common\models\Lesson;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -44,6 +45,25 @@ use common\models\Classroom;
                 ],
             ])->label('Reschedule Date');
             ?>
+        </div>
+	   <div class="col-md-4">
+        <?php
+        // Dependent Dropdown
+        echo $form->field($model, 'teacherId')->dropDownList(
+            ArrayHelper::map(User::find()
+				->joinWith(['userLocation ul' => function ($query) {
+					$query->joinWith('teacherAvailability');
+				}])
+				->joinWith(['qualification' => function($query) use($model){
+					$query->andWhere(['program_id' => $model->course->program->id]);
+				}])
+				->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+				->where(['raa.item_name' => 'teacher'])
+				->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+				->all(),
+			'id', 'userProfile.fullName'
+		))->label();
+            ?>  
         </div>
         <div class="col-md-4">
             <?php
