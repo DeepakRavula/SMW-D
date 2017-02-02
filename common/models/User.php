@@ -464,7 +464,8 @@ class User extends ActiveRecord implements IdentityInterface
 	{
 		$count = self::find()
 			->joinWith(['student' => function($query){
-				$query->andWhere(['customer_id' => $this->id])
+				$query->innerJoinWith('enrolment')
+					->andWhere(['customer_id' => $this->id])
 					->active();
 			}])
 			->count();

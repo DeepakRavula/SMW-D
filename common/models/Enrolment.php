@@ -18,11 +18,6 @@ class Enrolment extends \yii\db\ActiveRecord
     public $studentIds;
 	public $endDate;
 
-    const PAYMENT_FREQUENCY_FULL = 1;
-    const PAYMENT_FREQUENCY_MONTHLY = 2;
-    const PAYMENT_FREQUENCY_QUARTERLY = 3;
-    const PAYMENT_FREQUENCY_HALFYEARLY = 4;
-
 	const EDIT_RENEWAL = 'renewal';
 	const EDIT_LEAVE = 'leave';
 	
@@ -54,7 +49,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
-            [['paymentFrequency', 'isDeleted', 'isConfirmed'], 'safe'],
+            [['paymentFrequencyId', 'isDeleted', 'isConfirmed'], 'safe'],
         ];
     }
 
@@ -69,7 +64,7 @@ class Enrolment extends \yii\db\ActiveRecord
             'studentId' => 'Student Name',
             'studentIds' => 'Enrolled Student Name',
             'isDeleted' => 'Is Deleted',
-            'paymentFrequency' => 'Payment Frequency',
+            'paymentFrequencyId' => 'Payment Frequency',
         ];
     }
 
@@ -141,16 +136,6 @@ class Enrolment extends \yii\db\ActiveRecord
         return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_FULL;
     }
 
-    public static function paymentFrequencies()
-    {
-        return [
-            self::PAYMENT_FREQUENCY_FULL => Yii::t('common', 'Annually'),
-            self::PAYMENT_FREQUENCY_HALFYEARLY => Yii::t('common', 'Semi-Annually'),
-            self::PAYMENT_FREQUENCY_QUARTERLY => Yii::t('common', 'Quarterly'),
-            self::PAYMENT_FREQUENCY_MONTHLY => Yii::t('common', 'Monthly'),
-        ];
-    }
-	
     public function afterSave($insert, $changedAttributes)
     {
         if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
@@ -190,17 +175,17 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $priorDate             = (new \DateTime())->modify('+15 day');
         $paymentCycleStartDate = \DateTime::createFromFormat('Y-m-d', $priorDate->format('Y-m-1'));
-        switch ($this->paymentFrequency) {
-            case self::PAYMENT_FREQUENCY_FULL:
+        switch ($this->paymentFrequencyId) {
+            case PaymentFrequency::PAYMENT_FREQUENCY_FULL:
                 $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 year, -1 day');
                 break;
-            case self::PAYMENT_FREQUENCY_HALFYEARLY:
+            case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY:
                 $paymentCycleEndDate = $paymentCycleStartDate->modify('+6 month, -1 day');
                 break;
-            case self::PAYMENT_FREQUENCY_QUARTERLY:
+            case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY:
                 $paymentCycleEndDate = $paymentCycleStartDate->modify('+3 month, -1 day');
                 break;
-            case self::PAYMENT_FREQUENCY_MONTHLY:
+            case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY:
                 $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 month, -1 day');
                 break;
         }
@@ -212,17 +197,17 @@ class Enrolment extends \yii\db\ActiveRecord
     {
 		$courseDate = new \DateTime($this->course->startDate);
 		$startDate = \DateTime::createFromFormat('Y-m-d', $courseDate->format('Y-m-1'));
-        switch ($this->paymentFrequency) {
-            case self::PAYMENT_FREQUENCY_FULL:
+        switch ($this->paymentFrequencyId) {
+            case PaymentFrequency::PAYMENT_FREQUENCY_FULL:
                 $endDate = $startDate->modify('+1 year, -1 day');
                 break;
-            case self::PAYMENT_FREQUENCY_HALFYEARLY:
+            case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY:
                 $endDate = $startDate->modify('+6 month, -1 day');
                 break;
-            case self::PAYMENT_FREQUENCY_QUARTERLY:
+            case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY:
                 $endDate = $startDate->modify('+3 month, -1 day');
                 break;
-            case self::PAYMENT_FREQUENCY_MONTHLY:
+            case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY:
                 $endDate = $startDate->modify('+1 month, -1 day');
                 break;
         }
@@ -233,17 +218,17 @@ class Enrolment extends \yii\db\ActiveRecord
 	public function getPaymentFrequency()
 	{
 		$paymentFrequency = null;
-		switch($this->paymentFrequency) {
-			case self::PAYMENT_FREQUENCY_FULL :
+		switch($this->paymentFrequencyId) {
+			case PaymentFrequency::PAYMENT_FREQUENCY_FULL :
 				$paymentFrequency = 'Annually';
 			break;
-			case self::PAYMENT_FREQUENCY_HALFYEARLY :
+			case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY :
 				$paymentFrequency = 'Semi-Annually';
 			break;
-			case self::PAYMENT_FREQUENCY_QUARTERLY :
+			case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY :
 				$paymentFrequency = 'Quarterly';
 			break;
-			case self::PAYMENT_FREQUENCY_MONTHLY :
+			case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY :
 				$paymentFrequency = 'Monthly';
 			break;
 		}

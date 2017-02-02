@@ -265,7 +265,7 @@ class Course extends \yii\db\ActiveRecord
             $enrolmentModel->studentId = $this->studentId;
             $enrolmentModel->isDeleted = 0;
             $enrolmentModel->isConfirmed = false;
-            $enrolmentModel->paymentFrequency = $this->paymentFrequency;
+            $enrolmentModel->paymentFrequencyId = $this->paymentFrequency;
             $enrolmentModel->save();
         }
         if ((int) $this->program->type === Program::TYPE_GROUP_PROGRAM) {

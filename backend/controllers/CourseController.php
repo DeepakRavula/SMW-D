@@ -18,6 +18,7 @@ use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
 use common\models\TeacherAvailability;
+use common\models\PaymentFrequency;
 /**
  * CourseController implements the CRUD actions for Course model.
  */
@@ -79,7 +80,7 @@ class CourseController extends Controller
                     'studentId' => $studentId,
                     'isDeleted' => false,
                     'isConfirmed' => true,
-                    'paymentFrequency' => Enrolment::PAYMENT_FREQUENCY_FULL,
+                    'paymentFrequencyId' => PaymentFrequency::PAYMENT_FREQUENCY_FULL,
                 ]);
                 $enrolment->save();
             }

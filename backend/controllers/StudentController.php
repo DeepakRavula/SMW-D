@@ -20,6 +20,7 @@ use common\models\TeacherAvailability;
 use common\models\ExamResult;
 use common\models\Note;
 use yii\widgets\ActiveForm;
+use common\models\PaymentFrequency;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -210,7 +211,7 @@ class StudentController extends Controller
             $enrolmentModel->studentId = $model->id;
             $enrolmentModel->isDeleted = false;
             $enrolmentModel->isConfirmed = true;
-            $enrolmentModel->paymentFrequency = Enrolment::PAYMENT_FREQUENCY_FULL;
+            $enrolmentModel->paymentFrequencyId = PaymentFrequency::PAYMENT_FREQUENCY_FULL;
             $enrolmentModel->save();
 
 			$lessons = Lesson::find()
