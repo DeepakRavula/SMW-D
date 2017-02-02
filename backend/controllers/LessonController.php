@@ -201,13 +201,14 @@ class LessonController extends Controller
         }
         if ($model->load(Yii::$app->request->post())) {
 			$oldDate = $model->getOldAttribute('date');
+			$teacherId = $model->getOldAttribute('teacherId');
 			if(empty($model->date)) {
 				$model->date =  $model->getOldAttribute('date');
 				$model->status = Lesson::STATUS_UNSCHEDULED;
 				$model->save();
 				$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 			} else {
-				if (new \DateTime($oldDate) != new \DateTime($model->date)) {
+				if (new \DateTime($oldDate) != new \DateTime($model->date) || $teacherId != $model->teacherId) {
 					$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
 					$validate = $model->validate();
 				}
