@@ -179,8 +179,8 @@ class TeacherAvailabilityController extends Controller
                 $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
             }])
             ->where(['lesson.teacherId' => $id])
+        	->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
 			->notDeleted()
-            ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
             ->all();
         $events = [];
         foreach ($lessons as &$lesson) {
