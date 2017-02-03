@@ -73,7 +73,6 @@ class Lesson extends \yii\db\ActiveRecord
             ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkDateConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['teacherId', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
-//            ['teacherId', 'checkTeacherLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
         ];
     }
 
@@ -86,8 +85,14 @@ class Lesson extends \yii\db\ActiveRecord
         foreach ($conflictedLessonsResults as $conflictedLessonsResult) {
             $conflictedLessonIds[] = $conflictedLessonsResult->id;
         }
+		$oldDate = $this->getOldAttribute('date');
+		$oldTeacherId = $this->getOldAttribute('teacherId'); 
         if ((!empty($conflictedLessonIds))) {
-            $this->addError($attribute, 'Lesson date conflicts with another lesson');
+			if(new \DateTime($oldDate) != new \DateTime($this->date)) {
+            	$this->addError($attribute, 'Lesson date conflicts with another lesson');
+			} else {
+            	$this->addError($attribute, 'Teacher occupied with another lesson');
+			}
         }
 	}
 
@@ -108,6 +113,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function checkRescheduleLessonTime($attribute, $params)
     {
+		$oldDate = $this->getOldAttribute('date');
+		$oldTeacherId = $this->getOldAttribute('teacherId'); 
         $day = (new \DateTime($this->date))->format('N');
         $teacherAvailabilities = TeacherAvailability::find()
             ->joinWith(['teacher' => function ($query) {
@@ -130,7 +137,11 @@ class Lesson extends \yii\db\ActiveRecord
             }
             $lessonTime = (new \DateTime($this->date))->format('h:i A');
             if (!in_array($lessonTime, $availableHours)) {
-                $this->addError($attribute, 'Please choose the lesson time within the teacher\'s availability hours');
+				if(new \DateTime($oldDate) != new \DateTime($this->date)) {
+                	$this->addError($attribute, 'Please choose the lesson time within the teacher\'s availability hours');
+				} else {
+            		$this->addError($attribute, 'Teacher is not available at ' . Yii::$app->formatter->asTime($this->date));
+				}
             }
         }
     }
