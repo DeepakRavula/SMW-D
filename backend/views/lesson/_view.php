@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use common\models\Program;
 use common\models\Lesson;
 use yii\helpers\Url;
+use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -81,10 +82,7 @@ use yii\helpers\Url;
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Classroom">
 			<i class="fa fa-home"></i> <?php echo !empty($model->classroomId) ? $model->classroom->name : null; ?>
 		</div>
-       <?php if($model->isMissed()) : ?>
-		<div class="missed-lesson"></div>
-		<?php endif; ?>
-		
+      
 		<?php if (Yii::$app->controller->action->id === 'view'):?>
 	</div>
 	<div class="row-fluid">
@@ -103,14 +101,11 @@ use yii\helpers\Url;
 		<?php
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
 		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
-		<?php if (($lessonDate <= $currentDate && !$model->isMissed() && !$model->isCanceled() && !$model->isUnscheduled()) || $model->isCompleted()) : ?>
-		<?php echo Html::a('<span class="label label-primary">Missed Lesson</span>', ['missed', 'id' => $model->id], [
-			'class' => 'm-r-20 del-ce',
-			'data' => [
-                    'confirm' => 'Are you sure you want to mark this lesson as missed?',
-                    'method' => 'post',
-                ],
-			]) ?>
+		<?php if (($lessonDate <= $currentDate && !$model->isCanceled() && !$model->isUnscheduled()) || $model->isCompleted()) : ?>
+		  <?php	$form = ActiveForm::begin();?>
+		<?php $model->present = $model->isMissed() ? false : true; ?> 
+			<?= $form->field($model, 'present')->checkbox(); ?>
+		<?php ActiveForm::end(); ?>
 		<?php endif; ?>
 		<?php if(!empty($model->proFormaInvoice)) : ?>
 		<?php if($model->proFormaInvoice->isPaid()) : ?>
@@ -124,3 +119,19 @@ use yii\helpers\Url;
 		</div>
 <div class="clearfix"></div>
 </div>
+<script>
+ $(document).ready(function() {
+	$(document).on('change', '#lesson-present', function (e) {
+		$.ajax({
+			url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]);?>',
+			type   : 'post',
+			dataType: "json",
+			success: function(response)
+			{
+			  
+			}
+		});
+		return false;
+	});
+});
+</script>

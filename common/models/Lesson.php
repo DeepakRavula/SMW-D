@@ -38,6 +38,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $hours;
     public $program_name;
 	public $showAllReviewLessons = false;
+	public $present;
     /**
      * {@inheritdoc}
      */
@@ -253,6 +254,11 @@ class Lesson extends \yii\db\ActiveRecord
         return new \common\models\query\LessonQuery(get_called_class());
     }
 
+	public function isScheduled()
+	{
+		return (int) $this->status === self::STATUS_SCHEDULED;
+	}
+	
 	public function isUnscheduled()
 	{
 		return (int) $this->status === self::STATUS_UNSCHEDULED;
