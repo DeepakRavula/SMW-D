@@ -279,6 +279,7 @@ $bundle = BackendAsset::register($this);
                             'url' => '#',
                             'icon' => '<i class="fa fa-line-chart"></i>',
                             'options' => ['class' => 'treeview'],
+                            'visible' => Yii::$app->user->can('staffmember'),
                             'items' => [
 								[
 									'label'=>Yii::t('backend', 'Payments'),
