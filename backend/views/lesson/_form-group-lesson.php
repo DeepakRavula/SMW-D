@@ -1,12 +1,10 @@
 <?php
 
-use common\models\Lesson;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
-use kartik\depdrop\DepDrop;
 use yii\helpers\ArrayHelper;
-use common\models\Program;
+use common\models\User;
 use yii\helpers\Url;
 use wbraganca\selectivity\SelectivityWidget;
 use common\models\Classroom;
@@ -44,6 +42,22 @@ use kartik\color\ColorInput;
 		  ]);
 		?>
 	</div>
+	 <div class="col-md-4">
+        <?php
+        // Dependent Dropdown
+        echo $form->field($model, 'teacherId')->dropDownList(
+            ArrayHelper::map(User::find()
+				->joinWith(['userLocation ul' => function ($query) {
+					$query->joinWith('teacherAvailability');
+				}])
+				->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+				->where(['raa.item_name' => 'teacher'])
+				->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+				->all(),
+			'id', 'userProfile.fullName'
+		))->label();
+            ?>  
+        </div>
 	<div class=" col-md-4">
 		   <?php $locationId = Yii::$app->session->get('location_id'); ?>
 		   <?=
