@@ -195,8 +195,9 @@ class Lesson extends \yii\db\ActiveRecord
             $studentLessons = self::find()
 				->studentLessons($locationId, $this->course->enrolment->student->id)
 				->all();
+			
             foreach ($studentLessons as $studentLesson) {
-				if($studentLesson->date === $this->date && (int)$studentLesson->status === Lesson::STATUS_SCHEDULED){
+				if(new \DateTime($studentLesson->date) == new \DateTime($this->date) && (int)$studentLesson->status === Lesson::STATUS_SCHEDULED){
 					continue;
 				}
                 $otherLessons[] = [
@@ -210,7 +211,7 @@ class Lesson extends \yii\db\ActiveRecord
             ->teacherLessons($locationId, $this->teacherId)
             ->all();
         foreach ($teacherLessons as $teacherLesson) {
-			if($teacherLesson->date === $this->date && (int)$teacherLesson->status === Lesson::STATUS_SCHEDULED){
+			if(new \DateTime($teacherLesson->date) == new \DateTime($this->date) && (int)$teacherLesson->status === Lesson::STATUS_SCHEDULED){
 				continue;
 			}
             $otherLessons[] = [
@@ -446,23 +447,33 @@ class Lesson extends \yii\db\ActiveRecord
     {
         if ((int) $this->status !== (int) self::STATUS_DRAFTED) {
             if (!$insert) {
-                if (isset($changedAttributes['date']) && !empty($this->date)) {
-                    $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
-                    $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-					if (!empty($this->teacher->email) && $this->course->program->isPrivate()) {
-						$this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
+                if ((isset($changedAttributes['date']) && !empty($this->date)) || isset($changedAttributes['teacherId'])) {                
+					if(isset($changedAttributes['date']) && !empty($this->date)) {
+						$fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
+	                    $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+						if (!empty($this->teacher->email) && $this->course->program->isPrivate()) {
+							$this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
+						}
+						if (!empty($this->enrolment->student->customer->email) && $this->course->program->isPrivate()) {
+							$this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
+						}
+						$this->updateAttributes([
+							'date' => $fromDate->format('Y-m-d H:i:s'),
+							'status' => self::STATUS_CANCELED,
+                    	]);
+					} else {
+						$this->updateAttributes([
+							'status' => self::STATUS_CANCELED,
+							'teacherId' => $this->getOldAttribute('teacherId')
+                    	]);	
 					}
-					if (!empty($this->enrolment->student->customer->email) && $this->course->program->isPrivate()) {
-						$this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
-					}
-                    $this->updateAttributes([
-						'date' => $fromDate->format('Y-m-d H:i:s'),
-                        'status' => self::STATUS_CANCELED,
-                    ]);
+                    
                     $originalLessonId = $this->id;
                     $this->id = null;
                     $this->isNewRecord = true;
-                    $this->date = $toDate->format('Y-m-d H:i:s');
+					if(isset($changedAttributes['date']) && !empty($this->date)) {
+                    	$this->date = $toDate->format('Y-m-d H:i:s');
+					}
                     $this->status = self::STATUS_SCHEDULED;
                     $this->save();
                     $lessonRescheduleModel = new LessonReschedule();
