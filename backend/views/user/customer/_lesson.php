@@ -69,6 +69,20 @@ echo GridView::widget([
                 return !empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
             },
         ],
+		[
+			'label' => 'Present?',
+			'value' => function ($data) {
+				$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+				$currentDate = new \DateTime();
+				$result = 'Yes';
+				if($data->isScheduled() || $lessonDate > $currentDate) {
+					$result = '-';
+				} else if($data->isMissed()) {
+					$result = 'No';
+				}
+				return $result;
+			},
+		],
     ],
 ]);
 ?>
