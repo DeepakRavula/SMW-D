@@ -387,7 +387,7 @@ class InvoiceController extends Controller
         $response->format = Response::FORMAT_JSON;
 		$model->setScenario(Invoice::SCENARIO_DELETE);
 		if ($model->validate()) {
-			$model->isDeleted = true;
+			$model->delete();
 			$model->save();
 			$response = [
 				'status' => true,

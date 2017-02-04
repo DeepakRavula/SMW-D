@@ -660,8 +660,7 @@ class LessonController extends Controller
 		} else {
 			$model->status = Lesson::STATUS_COMPLETED;
 			$model->save();
-			$model->invoice->isDeleted = true;
-			$model->invoice->save();
+			$model->invoice->delete();
 		}
 		
 	}
