@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\data\ActiveDataProvider;
 use common\models\query\InvoiceQuery;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "invoice".
@@ -45,6 +46,19 @@ class Invoice extends \yii\db\ActiveRecord
         return 'invoice';
     }
 
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+				'replaceRegularDelete' => true
+            ],
+        ];
+    }
+	
     /**
      * {@inheritdoc}
      */
@@ -54,7 +68,7 @@ class Invoice extends \yii\db\ActiveRecord
             ['user_id', 'required'],
             [['reminderNotes'], 'string'],
             [['isSent'], 'boolean'],
-            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount'], 'safe'],
+            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted'], 'safe'],
 			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
         ];
@@ -361,6 +375,7 @@ class Invoice extends \yii\db\ActiveRecord
             if (!empty($reminderNotes)) {
                 $this->reminderNotes = $reminderNotes->notes;
             }
+			$this->isDeleted = false;
         }
 
         return parent::beforeSave($insert);

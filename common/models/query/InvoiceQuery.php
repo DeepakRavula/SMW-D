@@ -36,6 +36,13 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return parent::one($db);
     }
 
+	public function notDeleted()
+    {
+        $this->andWhere(['invoice.isDeleted' => false]);
+
+        return $this;
+    }
+	
     public function student($id)
     {
         $this->joinWith(['lineItems' => function ($query) use ($id) {
@@ -105,7 +112,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 	public function unpaid()
 	{
 		return $this->andFilterWhere([
-			'i.status' => Invoice::STATUS_OWING,
+			'invoice.status' => Invoice::STATUS_OWING,
 		]);
 	}
 
@@ -119,7 +126,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 	public function paid()
 	{
 		return $this->andFilterWhere([
-			'i.status' => Invoice::STATUS_PAID,
+			'invoice.status' => Invoice::STATUS_PAID,
 		]);
 	}
 
