@@ -232,6 +232,7 @@ class UserController extends Controller
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
                 ])
+				->notDeleted()
 				->between($fromDate,$toDate);
 		if(!empty($invoiceStatus) && (int)$invoiceStatus !== UserSearch::STATUS_ALL) {
 			$invoiceQuery->andWhere(['invoice.status' => $invoiceStatus]);
@@ -246,7 +247,8 @@ class UserController extends Controller
                 ->where([
                     'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
                     'invoice.location_id' => $locationId,
-                ]);
+                ])
+				->notDeleted();
 
         $unscheduledLessons = Lesson::find()
 			->enrolled()
@@ -275,6 +277,7 @@ class UserController extends Controller
                 }])
                 ->where(['invoice.user_id' => $model->id])
                 ->andWhere(['<', 'invoice.balance', 0])
+				->notDeleted()
                 ->one();
         $positiveOpeningBalanceModel = Invoice::find()
                 ->joinWith(['lineItems' => function ($query) {
@@ -282,6 +285,7 @@ class UserController extends Controller
                 }])
                 ->joinWith('payments')
                 ->where(['invoice.user_id' => $model->id, 'payment.id' => null])
+				->notDeleted()
                 ->one();
 
         $openingBalanceQuery = Payment::find()
@@ -838,6 +842,7 @@ class UserController extends Controller
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
                 ])
+				->notDeleted()
 				->between($fromDate,$toDate);
 		if(!empty($invoiceStatus) && (int)$invoiceStatus !== UserSearch::STATUS_ALL) {
 			$invoiceQuery->andWhere(['invoice.status' => $invoiceStatus]);

@@ -607,6 +607,7 @@ class LessonController extends Controller
             $proFormaInvoice      = Invoice::find()
                 ->select(['invoice.id', 'SUM(payment.amount) as credit'])
                 ->proFormaCredit($model->id)
+				->notDeleted()
                 ->one();
 
             if (!empty($proFormaInvoice)) {
@@ -631,32 +632,37 @@ class LessonController extends Controller
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
 		$lessonRequest = $request->post('Lesson');
-		if($lessonRequest['present']) {
+		if(!$lessonRequest['present']) {
 			$model->status = Lesson::STATUS_MISSED;
+			$model->save();
+			if(empty($model->invoice)) {
+				$invoice = new Invoice();
+				$invoice->user_id = $model->enrolment->student->customer->id;
+				$invoice->location_id = $location_id;
+				$invoice->type = INVOICE::TYPE_INVOICE;
+				$invoice->save();
+				$invoice->addLineItem($model);
+				$invoice->save();
+				$proFormaInvoice      = Invoice::find()
+					->select(['invoice.id', 'SUM(payment.amount) as credit'])
+					->proFormaCredit($model->id)
+					->notDeleted()
+					->one();
+
+				if (!empty($proFormaInvoice)) {
+					$invoice->addPayment($proFormaInvoice);
+				}
+
+				return $this->redirect(['invoice/view', 'id' => $invoice->id]);
+			} else {
+        	   return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
+			}
 		} else {
 			$model->status = Lesson::STATUS_COMPLETED;
+			$model->save();
+			$model->invoice->isDeleted = true;
+			$model->invoice->save();
 		}
-		$model->save();
-		if(empty($model->invoice)) {
-		  	$invoice = new Invoice();
-            $invoice->user_id = $model->enrolment->student->customer->id;
-            $invoice->location_id = $location_id;
-            $invoice->type = INVOICE::TYPE_INVOICE;
-            $invoice->save();
-            $invoice->addLineItem($model);
-            $invoice->save();
-            $proFormaInvoice      = Invoice::find()
-                ->select(['invoice.id', 'SUM(payment.amount) as credit'])
-                ->proFormaCredit($model->id)
-                ->one();
-
-            if (!empty($proFormaInvoice)) {
-				$invoice->addPayment($proFormaInvoice);
-            }
-
-            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-		} else {
-            return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
-		}
+		
 	}
 }

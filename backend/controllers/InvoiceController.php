@@ -514,6 +514,7 @@ class InvoiceController extends Controller
 			$proFormaInvoice      = Invoice::find()
                 ->select(['invoice.id', 'SUM(payment.amount) as credit'])
                 ->proFormaCredit($lesson->id)
+				->notDeleted()
                 ->one();
 
             if (!empty($proFormaInvoice)) {

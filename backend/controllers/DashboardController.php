@@ -34,10 +34,12 @@ class DashboardController extends \yii\web\Controller
         $invoiceTotal = Invoice::find()
                         ->where(['location_id' => $locationId])
                         ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+						->notDeleted()
                         ->sum('subTotal');
         $invoiceTaxTotal = Invoice::find()
                         ->where(['location_id' => $locationId])
                         ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+						->notDeleted()
                         ->sum('tax');
         $enrolments = Enrolment::find()
                     ->notDeleted()

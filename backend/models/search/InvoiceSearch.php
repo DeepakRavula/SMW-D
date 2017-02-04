@@ -53,10 +53,11 @@ class InvoiceSearch extends Invoice
     {
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
-        $query = Invoice::find()->alias('i')
+        $query = Invoice::find()
                 ->where([
                     'location_id' => $locationId,
-                ]);
+                ])
+				->notDeleted();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -69,7 +70,7 @@ class InvoiceSearch extends Invoice
             $query->joinWith('userProfile up')
                   ->joinWith('phoneNumber pn');
         }]);
-        $query->groupBy('i.invoice_number');
+        $query->groupBy('invoice.invoice_number');
 
         $query->andFilterWhere(['like', 'up.firstname', $this->query])
               ->orFilterWhere(['like', 'up.lastname', $this->query])
@@ -90,7 +91,7 @@ class InvoiceSearch extends Invoice
 				$query->paid()->proFromaInvoice();
 			}
 		}
-        $query->andWhere(['between', 'i.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+        $query->andWhere(['between', 'invoice.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 
         $query->andFilterWhere(['type' => $this->type]);
 		
