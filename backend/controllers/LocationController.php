@@ -77,8 +77,8 @@ class LocationController extends Controller
     public function actionCreate()
     {
         $model = new Location();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+			$model->save();
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Location has been created successfully',
@@ -103,8 +103,15 @@ class LocationController extends Controller
     public function actionUpdate($id)
     {
         $model  = $this->findModel($id);
+		$model->royaltyValue = $model->royalty->value;
+		$model->advertisementValue = $model->advertisement->value;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+			$model->royalty->value = $model->royaltyValue;
+			$model->advertisement->value = $model->advertisementValue;	
+			$model->save();
+			$model->royalty->save();
+			$model->advertisement->save();
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Location has been updated successfully',

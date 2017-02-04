@@ -3,7 +3,7 @@
 namespace common\models;
 
 use yii\behaviors\SluggableBehavior;
-
+use common\models\LocationDebt;
 /**
  * This is the model class for table "location".
  *
@@ -19,6 +19,9 @@ use yii\behaviors\SluggableBehavior;
  */
 class Location extends \yii\db\ActiveRecord
 {
+	public $royaltyValue;
+	public $advertisementValue;
+	
     /**
       * {@inheritdoc}
       */
@@ -46,6 +49,7 @@ class Location extends \yii\db\ActiveRecord
         return [
             [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code'], 'required'],
             [['slug'], 'safe'],
+			[['royaltyValue', 'advertisementValue'], 'number'],
             [['city_id', 'province_id', 'country_id'], 'integer'],
             [['name'], 'string', 'max' => 32],
             [['address'], 'string', 'max' => 64],
@@ -68,6 +72,8 @@ class Location extends \yii\db\ActiveRecord
             'postal_code' => 'Postal Code',
             'country_id' => 'Country',
             'slug' => 'Slug',
+			'royaltyValue' => 'Royalty (%)',
+			'advertisementValue' => 'Advertisement (%)',
         ];
     }
 
@@ -84,6 +90,18 @@ class Location extends \yii\db\ActiveRecord
     public function getProvince()
     {
         return $this->hasOne(Province::className(), ['id' => 'province_id']);
+    }
+
+	public function getRoyalty()
+    {
+        return $this->hasOne(LocationDebt::className(), ['locationId' => 'id'])
+			->onCondition(['location_debt.type' => LocationDebt::TYPE_ROYALTY]);
+    }
+
+	public function getAdvertisement()
+    {
+        return $this->hasOne(LocationDebt::className(), ['locationId' => 'id'])
+			->onCondition(['location_debt.type' => LocationDebt::TYPE_ADVERTISEMENT]);
     }
 
     public function getLocationAvailabilities()
@@ -122,6 +140,17 @@ class Location extends \yii\db\ActiveRecord
                 $model->day         = $day;
                 $model->save();
             }
+			$locationDebt = new LocationDebt();
+			$locationDebt->locationId = $this->id;
+			$locationDebt->type = LocationDebt::TYPE_ROYALTY;
+			$locationDebt->value = $this->royaltyValue;
+			$locationDebt->save();
+			
+			$locationDebt->id = null;
+			$locationDebt->isNewRecord = true;
+			$locationDebt->type = LocationDebt::TYPE_ADVERTISEMENT;
+			$locationDebt->value = $this->advertisementValue;
+			$locationDebt->save();
         }
         return parent::afterSave($insert, $changedAttributes);
     }

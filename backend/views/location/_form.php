@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = 'Edit';
 <div class="location-form">
 
 	<?php $form = ActiveForm::begin(); ?>
-		<div class="row">
+		<div class="row p-10">
 		<div class="col-md-4">
 			<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 		</div>
@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = 'Edit';
 		</div>
 		<div class="clearfix"></div>
 	</div>
-	<div class="row">
+	<div class="row p-10">
 		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'city_id')->dropDownList(ArrayHelper::map(
@@ -54,9 +54,15 @@ $this->params['breadcrumbs'][] = 'Edit';
 		</div>
 	</div>
 	<div class="clearfix"></div>
-	<div class="row">
+	<div class="row p-10">
 		<div class="col-md-4">
 			<?php echo $form->field($model, 'postal_code')->textInput(['maxlength' => true]) ?>
+		</div>
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'royaltyValue')->textInput() ?>
+		</div>
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'advertisementValue')->textInput() ?>
 		</div>
 	</div>
 	<div class="clearfix"></div>
