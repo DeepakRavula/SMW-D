@@ -5,6 +5,7 @@ use common\models\Program;
 use common\models\Lesson;
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
+use kartik\switchinput\SwitchInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -98,22 +99,35 @@ use yii\bootstrap\ActiveForm;
 		<?php else : ?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
         <?php endif; ?>
-		<?php
-		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
-		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
-		<?php if (($lessonDate <= $currentDate && !$model->isCanceled() && !$model->isUnscheduled()) || $model->isCompleted()) : ?>
-		  <?php	$form = ActiveForm::begin();?>
-		<?php $model->present = $model->isMissed() ? false : true; ?> 
-			<?= $form->field($model, 'present')->checkbox(); ?>
-		<?php ActiveForm::end(); ?>
-		<?php endif; ?>
-		<?php if(!empty($model->proFormaInvoice)) : ?>
+			<?php if(!empty($model->proFormaInvoice)) : ?>
 		<?php if($model->proFormaInvoice->isPaid()) : ?>
 		<?= Html::a('<span class="label label-primary">View Payment</span>', ['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment'], ['class' => 'm-r-20 del-ce'])?>
 		<?php else : ?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Take Payment</span>', ['invoice/view', 'id' => $model->proFormaInvoice->id], ['class' => 'm-r-20 del-ce']) ?>
         <?php endif; ?>
 		 <?php endif; ?>
+		<?php
+		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
+		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
+		<?php if (($lessonDate <= $currentDate && !$model->isCanceled() && !$model->isUnscheduled()) || $model->isCompleted()) : ?>
+		  <?php	$form = ActiveForm::begin(['id' => 'lesson-present-form']);?>
+		<?php $model->present = $model->isMissed() ? false : true; ?> 
+		<div class="m-r-10 del-ce">
+			<?=
+            $form->field($model, 'present')->widget(SwitchInput::classname(),
+                [
+                'name' => 'present',
+                'pluginOptions' => [
+                    'handleWidth' => 60,
+                    'onText' => 'Present',
+                    'offText' => 'Absent',
+                ],
+            ])->label(false);
+            ?>
+			</div>
+		<?php ActiveForm::end(); ?>
+		<?php endif; ?>
+	
 	    </div>
 		<?php endif; ?>
 		</div>
@@ -121,17 +135,17 @@ use yii\bootstrap\ActiveForm;
 </div>
 <script>
  $(document).ready(function() {
-	$(document).on('change', '#lesson-present', function (e) {
-		$.ajax({
-			url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]);?>',
-			type   : 'post',
-			dataType: "json",
-			success: function(response)
-			{
-			  
-			}
-		});
-		return false;
+	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+	$.ajax({
+            url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
+            type   : 'POST',
+            dataType: "json",
+			data   : $('#lesson-present-form').serialize(),
+            success: function(response)
+            {
+            }
+        });
+        return false;
 	});
 });
 </script>

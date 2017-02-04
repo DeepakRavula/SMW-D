@@ -628,8 +628,14 @@ class LessonController extends Controller
 	{
 		$session = Yii::$app->session;
         $location_id = $session->get('location_id');
-		$model = Lesson::findOne(['id' => $id]);
-		$model->status = Lesson::STATUS_MISSED;
+		$request = Yii::$app->request;
+        $model = $this->findModel($id);
+		$lessonRequest = $request->post('Lesson');
+		if($lessonRequest['present']) {
+			$model->status = Lesson::STATUS_MISSED;
+		} else {
+			$model->status = Lesson::STATUS_COMPLETED;
+		}
 		$model->save();
 		if(empty($model->invoice)) {
 		  	$invoice = new Invoice();
