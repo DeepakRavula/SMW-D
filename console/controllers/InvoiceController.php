@@ -30,6 +30,7 @@ class InvoiceController extends Controller
             ->unInvoicedProForma()
             ->scheduled()
             ->between($priorDate, $priorDate)
+			->notDeleted()
             ->all();
         $paymentCycleStartDate        = \DateTime::createFromFormat('Y-m-d',
                 $priorDate->format('Y-m-1'));
@@ -46,6 +47,7 @@ class InvoiceController extends Controller
                         ->unInvoicedProForma()
                         ->scheduled()
                         ->between($paymentCycleStartDate, $paymentCycleEndDate)
+						->notDeleted()
                         ->all();
                 $invoice              = new Invoice();
                 $invoice->type        = Invoice::TYPE_PRO_FORMA_INVOICE;
@@ -67,6 +69,7 @@ class InvoiceController extends Controller
 		$lessons = Lesson::find()
             ->unInvoiced()
 			->completed()
+			->notDeleted()
 			->all();
 		foreach($lessons as $lesson) {
 			$invoice = new Invoice();
