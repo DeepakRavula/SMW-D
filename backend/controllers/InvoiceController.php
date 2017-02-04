@@ -387,8 +387,8 @@ class InvoiceController extends Controller
         $response->format = Response::FORMAT_JSON;
 		$model->setScenario(Invoice::SCENARIO_DELETE);
 		if ($model->validate()) {
-			InvoiceLineItem::deleteAll(['invoice_id' => $model->id]);
-			$model->delete();
+			$model->isDeleted = true;
+			$model->save();
 			$response = [
 				'status' => true,
 				'url' => Url::to(['index', 'InvoiceSearch[type]' => $model->type]),
