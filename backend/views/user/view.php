@@ -110,6 +110,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             'model' => $model,
             'minTime' => $minTime,
             'maxTime' => $maxTime,
+			'roomModel' => new TeacherRoom(),
         ]);
 
         $teacherStudentContent = $this->render('teacher/_student', [
