@@ -324,7 +324,7 @@ class UserController extends Controller
 			'query' => $teacherLessons,
 			'pagination' => false,
 		]);
-		
+
 		$teacherAllLessons = Lesson::find()
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
