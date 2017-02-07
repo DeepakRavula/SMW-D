@@ -4,6 +4,7 @@ use yii\helpers\Url;
 use common\models\Lesson;
 use common\models\Invoice;
 use yii\grid\GridView;
+use yii\bootstrap\Modal;
 
 ?>
 <div class="">
@@ -12,12 +13,17 @@ use yii\grid\GridView;
     	<a href="#" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
     	<div class="clearfix"></div>
     </div>
-    <?php
-    echo $this->render('_form-lesson', [
-    	'model' => new Lesson(),
-    	'studentModel' => $model,
-    ])
-    ?>
+	<?php
+	Modal::begin([
+		'header' => '<h4 class="m-0">Add Lesson</h4>',
+		'id'=>'new-lesson-modal',
+	]);
+	 echo $this->render('_form-lesson', [
+			'model' => new Lesson(),
+			'studentModel' => $model,
+	]);
+	Modal::end();
+	?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin([
     	'id' => 'student-lesson-listing',

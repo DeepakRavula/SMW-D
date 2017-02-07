@@ -162,7 +162,7 @@ $noteContent = $this->render('note/view', [
 			}
 		});
 		return false;
-	});
+	});	
 	$(document).on('beforeSubmit', '#exam-result-form', function (e) {
 		var studentId = <?= $model->id;?>;
 		var examResultId = $('#examresult-id').val();

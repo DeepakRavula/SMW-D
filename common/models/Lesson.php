@@ -32,6 +32,7 @@ class Lesson extends \yii\db\ActiveRecord
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_PRIVATE_LESSON = 'private-lesson';
     const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
+    const SCENARIO_LESSON_CREATE = 'lesson-create';
 
     public $programId;
     public $time;
@@ -65,7 +66,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
+            [['courseId', 'teacherId', 'status', 'isDeleted', 'duration', 'date'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
@@ -74,6 +75,9 @@ class Lesson extends \yii\db\ActiveRecord
             ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['date', 'checkDateConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['teacherId', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
+			['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_LESSON_CREATE],
+            ['date', 'checkLessonConflict', 'on' => self::SCENARIO_LESSON_CREATE],
+            ['date', 'checkDateConflict', 'on' => self::SCENARIO_LESSON_CREATE],
         ];
     }
 
