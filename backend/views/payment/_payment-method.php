@@ -1,6 +1,6 @@
 <?php
 
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
@@ -40,71 +40,65 @@ $dataProvider = new ActiveDataProvider([
 $total = 0;
 if (!empty($dataProvider->getModels())) {
     foreach ($dataProvider->getModels() as $key => $val) {
-        $total    += $val->paymentMethod->getPaymentMethodTotal(
-            $date, $date);
+        $total    += $val->paymentMethod->getPaymentMethodTotal($date, $date);
     }
 }
 ?>
 <div>
 	<?php
-	echo GridView::widget([
-		'id' => 'payment-method-listing',
-		'dataProvider' => $dataProvider,
-		'showFooter' => true,
-		'tableOptions' => ['class' => 'table table-bordered		 m-b-0 table-condensed'],
-		'headerRowOptions' => ['class' => 'bg-light-gray diff_color'],
-		'columns' => [
+    if ($searchModel->groupByMethod) {
+	$columns = [
             [
-                'label' => 'ID',
-                'value' => function ($data) {
-                    return $data->invoicePayment->invoice->getInvoiceNumber();
-                },
-            ],
-            [
-                'label' => 'Date',
-                'value' => function ($data) {
-                    return Yii::$app->formatter->asDate($data->date);
-                },
-            ],
-            [
-                'label' => 'Payment Method',
+                'header' => false,
                 'value' => function ($data) {
                     return $data->paymentMethod->name;
-                },
+                }
             ],
             [
-                'label' => 'Customer',
-                'value' => function ($data) {
-                    return ! empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
-                },
-            ],
-            [
-                'label' => 'Reference Number',
-                'value' => function ($data) {
-                    if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
-                        $invoiceNumber = str_pad($data->reference, 5, 0, STR_PAD_LEFT);
-                        $invoicePayment = InvoicePayment::findOne(['payment_id' => $data->id]);
-                        if ((int) $invoicePayment->invoice->type === Invoice::TYPE_INVOICE) {
-                            return 'I - '.$invoiceNumber;
-                        } else {
-                            return 'P - '.$invoiceNumber;
-                        }
-                    } else {
-                        return $data->reference;
-                    }
-                },
-            ],
-            [
-                'label' => 'Amount',
+                'header' => false,
                 'value' => function ($data) {
                     return $data->amount;
                 },
-                'headerOptions' => ['class' => 'text-right'],
+                'header' => false,
                 'contentOptions' => ['class' => 'text-right'],
                 'enableSorting' => false,
-                'footer' => Yii::$app->formatter->asCurrency($total),
             ],
-        ]
-	]);
+        ];
+    } else {
+        $columns = [
+            [
+                'header' => false,
+                'value' => function ($data) {
+                    return $data->paymentMethod->name;
+                }
+            ],
+            [
+                'class' => 'kartik\grid\ExpandRowColumn',
+                'width' => '50px',
+				'enableRowClick' => true,
+                'value' => function ($model, $key, $index, $column) {
+                    return GridView::ROW_EXPANDED;
+                },
+                'detail' => function ($model, $key, $index, $column) use ($searchModel) {
+                    return Yii::$app->controller->renderPartial('_payment-method-detail', ['model' => $model, 'searchModel' => $searchModel]);
+                },
+                'headerOptions' => ['class' => 'kartik-sheet-style'],
+            ]
+		];
+    }
 	?>
+    <?= GridView::widget([
+		'dataProvider' => $dataProvider,
+		'options' => ['class' => 'col-md-12'],
+		'tableOptions' => ['class' => 'table table-bordered table-responsive'],
+		'headerRowOptions' => ['class' => 'bg-light-gray-1'],
+        'pjax' => true,
+		'pjaxSettings' => [
+			'neverTimeout' => true,
+			'options' => [
+				'id' => 'payment-method-listing',
+			],
+		],
+        'columns' => $columns,
+    ]); ?>
 </div>

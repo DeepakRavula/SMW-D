@@ -3,21 +3,19 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
-use common\models\PaymentMethod;
-use common\models\InvoicePayment;
-use common\models\Invoice;
+use common\models\Payment;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+$locationId          = Yii::$app->session->get('location_id');
 $total = 0;
-if (!empty($dataProvider->getModels())) {
-    foreach ($dataProvider->getModels() as $key => $val) {
-        if ($searchModel->groupByMethod) {
-            $total    += $val->paymentMethod->getPaymentMethodTotal($searchModel->fromDate, $searchModel->toDate);
-        } else {
-            $total += $val->amount;
-        }
-    }
+$payments = Payment::find()
+    ->location($locationId)
+    ->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d 00:00:00'),
+        $searchModel->toDate->format('Y-m-d 23:59:59')])
+    ->all();
+foreach ($payments as $payment) {
+    $total += $payment->amount;
 }
 ?>
 <div class="payments-index p-10">
@@ -32,16 +30,16 @@ if (!empty($dataProvider->getModels())) {
                 },
                 'footer' => Yii::$app->formatter->asCurrency($total),
 
-			],
-			[
+            ],
+           [
                 'class' => 'kartik\grid\ExpandRowColumn',
                 'width' => '50px',
 				'enableRowClick' => true,
                 'value' => function ($model, $key, $index, $column) {
                     return GridView::ROW_EXPANDED;
                 },
-                'detail' => function ($model, $key, $index, $column) {
-                    return Yii::$app->controller->renderPartial('_payment-method', ['model' => $model]);
+                'detail' => function ($model, $key, $index, $column) use ($searchModel) {
+                    return Yii::$app->controller->renderPartial('_payment-method', ['model' => $model, 'searchModel' => $searchModel]);
                 },
                 'headerOptions' => ['class' => 'kartik-sheet-style'],
             ]
@@ -56,8 +54,6 @@ if (!empty($dataProvider->getModels())) {
 		'tableOptions' => ['class' => 'table table-bordered table-responsive'],
 		'headerRowOptions' => ['class' => 'bg-light-gray-1'],
         'pjax' => true,
-		'showPageSummary'=>true,
-		'pageSummaryRowOptions' => ['class' => 'total-hours-of-instruction'],
 		'pjaxSettings' => [
 			'neverTimeout' => true,
 			'options' => [
