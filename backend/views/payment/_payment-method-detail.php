@@ -3,8 +3,8 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\jui\DatePicker;
-use yii\helpers\Url;
+use common\models\Invoice;
+use common\models\InvoicePayment;
 use common\models\Payment;
 use common\models\PaymentMethod;
 use yii\data\ActiveDataProvider;

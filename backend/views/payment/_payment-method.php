@@ -59,7 +59,7 @@ if (!empty($dataProvider->getModels())) {
                 'value' => function ($data) {
                     return $data->amount;
                 },
-                'header' => false,
+                'footer' => Yii::$app->formatter->asCurrency($total),
                 'contentOptions' => ['class' => 'text-right'],
                 'enableSorting' => false,
             ],
@@ -90,6 +90,8 @@ if (!empty($dataProvider->getModels())) {
     <?= GridView::widget([
 		'dataProvider' => $dataProvider,
 		'options' => ['class' => 'col-md-12'],
+        'footerRowOptions' => ['style' => 'font-weight:bold;text-align:right;'],
+        'showFooter' => true,
 		'tableOptions' => ['class' => 'table table-bordered table-responsive'],
 		'headerRowOptions' => ['class' => 'bg-light-gray-1'],
         'pjax' => true,
