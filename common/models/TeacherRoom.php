@@ -28,7 +28,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
     {
         return [
             [['classroomId', 'teacherAvailabilityId'], 'integer'],
-			[['teacherAvailabilityId'], function ($attribute, $params) {
+			[['classroomId'], function ($attribute, $params) {
                 $teacherAvailability = TeacherAvailability::findOne($this->teacherAvailabilityId);
                 $teacherRooms = TeacherRoom::findAll(['classroomId' => $this->classroomId]);
                 foreach ($teacherRooms as $teacherRoom) {

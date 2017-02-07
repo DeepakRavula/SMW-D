@@ -16,10 +16,12 @@ use common\models\Classroom;
 
 <div id="availability-calendar"></div>
 <div id="dialog" style="display:none">
-<?php $form = ActiveForm::begin(); ?>
-		   <?php $locationId = Yii::$app->session->get('location_id'); ?>
-		   <?=
-                $form->field($roomModel, 'classroomId')->widget(SelectivityWidget::classname(), [
+<?php $form = ActiveForm::begin(['id' => 'classroom-assign-form']); ?>
+            <?php $locationId = Yii::$app->session->get('location_id'); ?>
+            <?= $form->field($roomModel, 'teacherAvailabilityId')->hiddenInput(['id' => 'teacher-availability-id'])
+                ->label(false);
+            ?>
+            <?= $form->field($roomModel, 'classroomId')->widget(SelectivityWidget::classname(), [
                     'pluginOptions' => [
                         'allowClear' => true,
                         'items' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
@@ -72,6 +74,7 @@ use common\models\Classroom;
 				width: 350, height: 500
     		});
 			$('#dialog').dialog('open');
+            $('#teacher-availability-id').val(event.id);
             $(".fa-close").click(function() {
                 var status = confirm("Are you sure to delete availability?");
                 if (status) {
@@ -146,6 +149,26 @@ use common\models\Classroom;
             });
         }
     });
+
+    $(document).on('beforeSubmit', '#classroom-assign-form', function (event) {
+        $.ajax({
+			url    : '<?= Url::to(['user/assign-classroom']); ?>',
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+                {
+					$('#dialog').dialog('close');
+				} else
+				{
+                    $('#flash-danger').text(response.errors.classroomId).fadeIn().delay(3000).fadeOut();
+				}
+			}
+		});
+		return false;
+	});
 
 </script>
 

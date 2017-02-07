@@ -6,7 +6,7 @@ use yii\filters\ContentNegotiator;
 use common\models\Payment;
 use Yii;
 use common\models\User;
-use common\models\UserLocation;
+use common\models\TeacherRoom;
 use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
@@ -55,7 +55,7 @@ class UserController extends Controller
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
                'only' => ['edit-teacher-availability', 'add-teacher-availability', 'teacher-availability-events',
-                   'delete-availability'],
+                   'delete-availability', 'assign-classroom'],
                'formatParam' => '_format',
                'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -919,5 +919,35 @@ class UserController extends Controller
         $model->from_time           = $startTime;
         $model->to_time             = $endTime;
         return $model->save();
+    }
+
+    public function actionAssignClassroom()
+    {
+        $teacherRoom = new TeacherRoom();
+        $post = Yii::$app->request->post('TeacherRoom');
+        if (isset($post['teacherAvailabilityId']) && isset($post['classroomId'])) {
+            $teacherRoom->teacherAvailabilityId = $post['teacherAvailabilityId'];
+            $teacherRoom->classroomId = $post['classroomId'];
+            if ($teacherRoom->validate()) {
+                $teacherRoom->save();
+                $response =[
+                    'status' => true,
+                    'errors' => ''
+                ];
+            } else {
+                $response =[
+                    'status' => false,
+                    'errors' => $teacherRoom->getErrors()
+                ];
+            }
+        } else {
+            $response =[
+                    'status' => false,
+                    'errors' => [
+                        'classroomId' => 'Classroom Cannot be blank'
+                    ]
+                ];
+        }
+        return $response;
     }
 }
