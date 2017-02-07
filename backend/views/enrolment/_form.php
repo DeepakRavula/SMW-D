@@ -14,8 +14,7 @@ use yii\data\ActiveDataProvider;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <style>
-
-	.smw-box {
+.smw-box {
     background: #f5ecec;
     border: 1px solid #f5ecec;
     padding: 10px;
@@ -43,8 +42,8 @@ $this->render('_view-enrolment', [
             'query' => $query,
         ]); ?>
 	<?= $this->render('_teacher-availability', [
-    'teacherDataProvider' => $teacherDataProvider,
-]); ?>
+    	'teacherDataProvider' => $teacherDataProvider,
+	]); ?>
 	</div>
 	</div>
 <div class="enrolment-form form-well form-well-smw">

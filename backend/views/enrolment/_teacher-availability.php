@@ -6,6 +6,7 @@ use yii\helpers\Html;
 
 ?>
 <?php yii\widgets\Pjax::begin() ?>
+<h4>Teacher's availability</h4>
 <?php
 
 echo GridView::widget([
