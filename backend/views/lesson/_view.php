@@ -99,11 +99,11 @@ use kartik\switchinput\SwitchInput;
 		<?php else : ?>
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
         <?php endif; ?>
-			<?php if(!empty($model->proFormaInvoice)) : ?>
-		<?php if($model->proFormaInvoice->isPaid()) : ?>
+			<?php if($model->isScheduled()) : ?>
+		<?php if(!empty($model->proFormaInvoice->id) && $model->proFormaInvoice->isPaid()) : ?>
 		<?= Html::a('<span class="label label-primary">View Payment</span>', ['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment'], ['class' => 'm-r-20 del-ce'])?>
 		<?php else : ?>
-		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Take Payment</span>', ['invoice/view', 'id' => $model->proFormaInvoice->id], ['class' => 'm-r-20 del-ce']) ?>
+		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Take Payment</span>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
         <?php endif; ?>
 		 <?php endif; ?>
 		<?php
