@@ -3,115 +3,63 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
-use common\models\PaymentMethod;
-use common\models\InvoicePayment;
-use common\models\Invoice;
+use common\models\Payment;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+$locationId          = Yii::$app->session->get('location_id');
 $total = 0;
-if (!empty($dataProvider->getModels())) {
-    foreach ($dataProvider->getModels() as $key => $val) {
-        if ($searchModel->groupByMethod) {
-            $total    += $val->paymentMethod->getPaymentMethodTotal($searchModel->fromDate, $searchModel->toDate);
-        } else {
-            $total += $val->amount;
-        }
-    }
+$payments = Payment::find()
+    ->location($locationId)
+    ->andWhere(['between', 'DATE(payment.date)', $searchModel->fromDate->format('Y-m-d'),
+        $searchModel->toDate->format('Y-m-d')])
+    ->all();
+foreach ($payments as $payment) {
+    $total += $payment->amount;
 }
 ?>
 <div class="payments-index p-10">
     <div id="print" class="btn btn-default pull-right m-t-20">
         <?= Html::a('<i class="fa fa-print"></i> Print') ?>
     </div>
-    <?php if (! $searchModel->groupByMethod) {
-        $columns = [
+    <?php $columns = [
             [
-                'label' => 'ID',
-                'value' => function ($data) {
-                    return $data->invoicePayment->invoice->getInvoiceNumber();
-                },
-            ],
-            [
-                'label' => 'Date',
+                'label' => 'Payment Method',
                 'value' => function ($data) {
                     return Yii::$app->formatter->asDate($data->date);
                 },
-            ],
-            [
-                'label' => 'Payment Method',
-                'value' => function ($data) {
-                    return $data->paymentMethod->name;
-                },
-            ],
-            [
-                'label' => 'Customer',
-                'value' => function ($data) {
-                    return ! empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
-                },
-            ],
-            [
-                'label' => 'Reference Number',
-                'value' => function ($data) {
-                    if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
-                        $invoiceNumber = str_pad($data->reference, 5, 0, STR_PAD_LEFT);
-                        $invoicePayment = InvoicePayment::findOne(['payment_id' => $data->id]);
-                        if ((int) $invoicePayment->invoice->type === Invoice::TYPE_INVOICE) {
-                            return 'I - '.$invoiceNumber;
-                        } else {
-                            return 'P - '.$invoiceNumber;
-                        }
-                    } else {
-                        return $data->reference;
-                    }
-                },
-            ],
-            [
-                'label' => 'Amount',
-                'value' => function ($data) {
-                    return $data->amount;
-                },
-                'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right'],
-                'enableSorting' => false,
                 'footer' => Yii::$app->formatter->asCurrency($total),
+
             ],
-        ];
-    } else {
-        $columns = [
-            [
-                'label' => 'Payment Method',
-                'value' => function ($data) {
-                    return $data->paymentMethod->name;
+           [
+                'class' => 'kartik\grid\ExpandRowColumn',
+                'width' => '50px',
+				'enableRowClick' => true,
+                'value' => function ($model, $key, $index, $column) {
+                    return GridView::ROW_EXPANDED;
                 },
-            ],
-            [
-                'label' => 'Amount',
-                'attribute' => 'amount',
-                'value' => function ($data) use ($searchModel) {
-                    return $data->paymentMethod->getPaymentMethodTotal($searchModel->fromDate, $searchModel->toDate);
+                'detail' => function ($model, $key, $index, $column) use ($searchModel) {
+                    return Yii::$app->controller->renderPartial('_payment-method', ['model' => $model, 'searchModel' => $searchModel]);
                 },
-                'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right'],
-                'enableSorting' => false,
-                'footer' => Yii::$app->formatter->asCurrency($total),
+                'headerOptions' => ['class' => 'kartik-sheet-style'],
             ]
-        ];
-    } ?>
+		];
+    ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-    <?php echo GridView::widget([
-        'dataProvider' => $dataProvider,
+	<?= GridView::widget([
+		'dataProvider' => $dataProvider,
+		'options' => ['class' => 'col-md-12'],
+		'footerRowOptions' => ['style' => 'font-weight:bold;text-align:right;'],
+		'showFooter' => true,
+		'tableOptions' => ['class' => 'table table-bordered table-responsive'],
+		'headerRowOptions' => ['class' => 'bg-light-gray-1'],
         'pjax' => true,
-        'pjaxSettings' => [
-            'neverTimeout' => true,
-            'options' => [
-                'id' => 'payment-listing',
-            ],
-        ],
-        'showFooter' => true,
-        'footerRowOptions' => ['style' => 'font-weight:bold;text-align: right;'],
-        'tableOptions' => ['class' => 'table table-bordered m-0'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
+		'pjaxSettings' => [
+			'neverTimeout' => true,
+			'options' => [
+				'id' => 'payment-listing',
+			],
+		],
         'columns' => $columns,
     ]); ?>
 </div>
