@@ -3,17 +3,17 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Classroom;
+use common\models\ClassroomUnavailability;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use common\models\ClassroomUnavailability;
+use yii\web\Response;
 
 /**
- * ClassRoomController implements the CRUD actions for Classroom model.
+ * ClassroomUnavailabilityController implements the CRUD actions for ClassroomUnavailability model.
  */
-class ClassroomController extends Controller
+class ClassroomUnavailabilityController extends Controller
 {
     public function behaviors()
     {
@@ -24,19 +24,24 @@ class ClassroomController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			[
+				'class' => 'yii\filters\ContentNegotiator',
+				'only' => ['create'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,
+				],
+        	],
         ];
     }
 
     /**
-     * Lists all Classroom models.
+     * Lists all ClassroomUnavailability models.
      * @return mixed
      */
     public function actionIndex()
     {
-		$locationId = Yii::$app->session->get('location_id');
         $dataProvider = new ActiveDataProvider([
-            'query' => Classroom::find()
-				->andWhere(['locationId' => $locationId]),
+            'query' => ClassroomUnavailability::find(),
         ]);
 
         return $this->render('index', [
@@ -45,48 +50,45 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Displays a single Classroom model.
+     * Displays a single ClassroomUnavailability model.
      * @param string $id
      * @return mixed
      */
     public function actionView($id)
     {
-		$unavailabilities = ClassroomUnavailability::find()
-			->andWhere(['classroomId' => $id])
-			->orderBy(['id' => SORT_DESC]);
-
-		$unavailabilityDataProvider = new ActiveDataProvider([
-			'query' => $unavailabilities, 
-		]);
-		
         return $this->render('view', [
             'model' => $this->findModel($id),
-			'unavailabilityDataProvider' => $unavailabilityDataProvider
         ]);
     }
 
     /**
-     * Creates a new Classroom model.
+     * Creates a new ClassroomUnavailability model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($classroomId)
     {
-        $model = new Classroom();
+        $model = new ClassroomUnavailability();
 
         if ($model->load(Yii::$app->request->post())) {
-			$model->locationId = Yii::$app->session->get('location_id');
-			$model->save();
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+			$model->classroomId = $classroomId;
+			if ($model->save()) {
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$errors = ActiveForm::validate($model);
+				$response = [
+					'status' => false,
+					'errors' =>  $errors
+				];
+			}
+			return $response;
+        } 
     }
 
     /**
-     * Updates an existing Classroom model.
+     * Updates an existing ClassroomUnavailability model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -105,7 +107,7 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Deletes an existing Classroom model.
+     * Deletes an existing ClassroomUnavailability model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -118,15 +120,15 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Finds the Classroom model based on its primary key value.
+     * Finds the ClassroomUnavailability model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return Classroom the loaded model
+     * @return ClassroomUnavailability the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Classroom::findOne($id)) !== null) {
+        if (($model = ClassroomUnavailability::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
