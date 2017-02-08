@@ -161,30 +161,16 @@ class PaymentController extends Controller
         }
     }
 
-    public function actionPrint($fromDate, $toDate, $groupByMethod)
+    public function actionPrint()
     {
-        $locationId = Yii::$app->session->get('location_id');
-        $fromDate   = new \DateTime($fromDate);
-        $toDate     = new \DateTime($toDate);
-        $query      = Payment::find()
-                        ->location($locationId)
-                        ->andWhere(['between', 'payment.date', $fromDate->format('Y-m-d 00:00:00'),
-                            $toDate->format('Y-m-d 23:59:59')]);
-        if ($groupByMethod) {
-            $query->groupBy('payment.payment_method_id');
-        }
-        $paymentDataProvider = new ActiveDataProvider([
-            'query'      => $query,
-            'pagination' => false,
-        ]);
+        $searchModel = new PaymentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         
         $this->layout = '/print';
 
         return $this->render('_print', [
-            'paymentDataProvider' => $paymentDataProvider,
-            'fromDate' => $fromDate,
-            'toDate' => $toDate,
-            'groupByMethod' => $groupByMethod,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
