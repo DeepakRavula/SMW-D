@@ -30,35 +30,23 @@ class TeacherRoom extends \yii\db\ActiveRecord
             [['classroomId', 'teacherAvailabilityId'], 'integer'],
 			[['classroomId'], function ($attribute, $params) {
                 $teacherAvailability = TeacherAvailability::findOne($this->teacherAvailabilityId);
-                $teacherRooms = TeacherRoom::findAll(['classroomId' => $this->classroomId]);
+                $teacherRooms        = TeacherRoom::findAll(['classroomId' => $this->classroomId]);
                 foreach ($teacherRooms as $teacherRoom) {
-                    $availableHours = [];
                     if ($teacherRoom->teacherAvailability->day === $teacherAvailability->day) {
-                        $start = new \DateTime($teacherAvailability->from_time);
-                        $end = new \DateTime($teacherAvailability->to_time);
-                        $interval = new \DateInterval('PT15M');
-                        $hours = new \DatePeriod($start, $interval, $end);
-                        foreach ($hours as $hour) {
-                            $availableHours[] = Yii::$app->formatter->asTime($hour);
-                        }
                         $fromTime = (new \DateTime($teacherRoom->teacherAvailability->from_time))->format('h:i A');
-                        $toTime = (new \DateTime($teacherRoom->teacherAvailability->to_time))->format('h:i A');
-                        if (in_array($fromTime, $availableHours) || in_array($toTime, $availableHours)) {
-                            return $this->addError($attribute, 'Classroom Already Choosen!');
-                        }
-                        $availableHours = [];
-                        $start = new \DateTime($teacherRoom->teacherAvailability->from_time);
-                        $end = new \DateTime($teacherRoom->teacherAvailability->to_time);
+                        $toTime   = (new \DateTime($teacherRoom->teacherAvailability->to_time))->format('h:i A');
+                        $start    = new \DateTime($teacherAvailability->from_time);
+                        $end      = new \DateTime($teacherAvailability->to_time);
                         $interval = new \DateInterval('PT15M');
-                        $hours = new \DatePeriod($start, $interval, $end);
-                        foreach ($hours as $hour) {
-                            $availableHours[] = Yii::$app->formatter->asTime($hour);
-                        }
+                        $hours    = new \DatePeriod($start, $interval, $end);
+                        $this->checkClassroomAvailability($hours, $fromTime, $toTime);
+                        
                         $fromTime = (new \DateTime($teacherAvailability->from_time))->format('h:i A');
-                        $toTime = (new \DateTime($teacherAvailability->to_time))->format('h:i A');
-                        if (in_array($fromTime, $availableHours) || in_array($toTime, $availableHours)) {
-                            return $this->addError($attribute, 'Classroom Already Choosen!');
-                        }
+                        $toTime   = (new \DateTime($teacherAvailability->to_time))->format('h:i A');
+                        $start    = new \DateTime($teacherRoom->teacherAvailability->from_time);
+                        $end      = new \DateTime($teacherRoom->teacherAvailability->to_time);
+                        $hours    = new \DatePeriod($start, $interval, $end);
+                        $this->checkClassroomAvailability($hours, $fromTime, $toTime);
                     }
                 }
             },
@@ -97,5 +85,17 @@ class TeacherRoom extends \yii\db\ActiveRecord
     {
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id'])
 			->via('user');
+    }
+
+    public function checkClassroomAvailability($hours, $fromTime, $toTime)
+    {
+        $availableHours = [];
+        foreach ($hours as $hour) {
+            $availableHours[] = Yii::$app->formatter->asTime($hour);
+        }
+        
+        if (in_array($fromTime, $availableHours) || in_array($toTime, $availableHours)) {
+            return $this->addError('Classroom Already Choosen!');
+        }
     }
 }

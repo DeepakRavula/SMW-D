@@ -71,7 +71,7 @@ use common\models\Classroom;
             var params = $.param({ id: event.id });
 			$("#dialog").dialog({
        			 autoOpen: false,
-				width: 350, height: 500
+				width: 550, height: 400
     		});
 			$('#dialog').dialog('open');
             $('#teacher-availability-id').val(event.id);
