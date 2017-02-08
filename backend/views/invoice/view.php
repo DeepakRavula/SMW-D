@@ -8,6 +8,7 @@ use common\models\InvoiceLineItem;
 use kartik\switchinput\SwitchInput;
 use common\models\Note;
 use yii\helpers\Url;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -51,8 +52,20 @@ if (!empty($lineItem)) {
 }
 
 ?>
+<?php
+Modal::begin([
+    'header' => '<h4 class="m-0">Email Preview</h4>',
+    'id'=>'invoice-mail-modal',
+]);
+ echo $this->render('mail/preview', [
+		'model' => $model,
+]);
+Modal::end();
+?>
 <div class="invoice-index p0">
-		<?= Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', ['send-mail', 'id' => $model->id], ['class' => 'btn btn-default pull-right  m-l-10']) ?>
+		<?= Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', '#', [
+			'id' => 'invoice-mail-button',
+			'class' => 'btn btn-default pull-right  m-l-10']) ?>
         <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right m-l-10', 'target' => '_blank']) ?>
 <?php $form = ActiveForm::begin([
                 'id' => 'mail-flag',
@@ -168,6 +181,10 @@ $noteContent = $this->render('note/view', [
 	 $(document).on('click', '#invoice-note', function (e) {
 		$('#note-content').val('');
 		$('#invoice-note-modal').modal('show');
+		return false;
+  	});
+	$(document).on('click', '#invoice-mail-button', function (e) {
+		$('#invoice-mail-modal').modal('show');
 		return false;
   	});
 	$(document).on('beforeSubmit', '#invoice-note-form', function (e) {
