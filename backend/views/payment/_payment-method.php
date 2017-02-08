@@ -30,8 +30,8 @@ $date       = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
 $query = Payment::find()
     ->location($locationId)
     ->groupBy('payment.payment_method_id')
-    ->andWhere(['between', 'payment.date', $date->format('Y-m-d 00:00:00'),
-        $date->format('Y-m-d 23:59:59')]);
+    ->andWhere(['between', 'DATE(payment.date)', $date->format('Y-m-d'),
+        $date->format('Y-m-d')]);
 $dataProvider = new ActiveDataProvider([
     'query' => $query,
     'pagination' => false,
@@ -56,8 +56,8 @@ if (!empty($dataProvider->getModels())) {
             ],
             [
                 'header' => false,
-                'value' => function ($data) {
-                    return $data->amount;
+                'value' => function ($data) use ($date) {
+                    return $data->paymentMethod->getPaymentMethodTotal($date, $date);
                 },
                 'footer' => Yii::$app->formatter->asCurrency($total),
                 'contentOptions' => ['class' => 'text-right'],

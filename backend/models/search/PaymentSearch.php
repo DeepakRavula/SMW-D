@@ -44,7 +44,7 @@ class PaymentSearch extends Payment
     {
         $locationId          = Yii::$app->session->get('location_id');
         $query               = Payment::find()
-            ->select(["DATE_FORMAT(payment.date, '%Y-%m-%d') as paymentDate, payment.date"])
+            ->select(["DATE(payment.date) as paymentDate, payment.date"])
             ->location($locationId);
         $dataProvider        = new ActiveDataProvider([
             'query' => $query,
@@ -55,14 +55,14 @@ class PaymentSearch extends Payment
         if (!($this->load($params) && $this->validate())) {
             $this->fromDate      = new \DateTime();
             $this->toDate        = new \DateTime();
-            $query->andWhere(['between', 'payment.date', $this->fromDate->format('Y-m-d 00:00:00'),
-                $this->toDate->format('Y-m-d 23:59:59')]);
+            $query->andWhere(['between', 'DATE(payment.date)', $this->fromDate->format('Y-m-d'),
+                $this->toDate->format('Y-m-d')]);
             return $dataProvider;
         }
         $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
         $this->toDate   = \DateTime::createFromFormat('d-m-Y', $this->toDate);
-        $query->andWhere(['between', 'payment.date', $this->fromDate->format('Y-m-d 00:00:00'),
-            $this->toDate->format('Y-m-d 23:59:59')]);
+        $query->andWhere(['between', 'DATE(payment.date)', $this->fromDate->format('Y-m-d'),
+            $this->toDate->format('Y-m-d')]);
 
         return $dataProvider;
     }

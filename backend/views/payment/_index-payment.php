@@ -11,8 +11,8 @@ $locationId          = Yii::$app->session->get('location_id');
 $total = 0;
 $payments = Payment::find()
     ->location($locationId)
-    ->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d 00:00:00'),
-        $searchModel->toDate->format('Y-m-d 23:59:59')])
+    ->andWhere(['between', 'DATE(payment.date)', $searchModel->fromDate->format('Y-m-d'),
+        $searchModel->toDate->format('Y-m-d')])
     ->all();
 foreach ($payments as $payment) {
     $total += $payment->amount;
