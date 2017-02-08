@@ -17,12 +17,8 @@ Dear <?php echo Html::encode($toName) ?>,<br>
                 [
                     'label' => 'Code',
                     'value' => function ($data) {
-                        if ((int) $data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
-                            return 'LESSON';
-                        } else {
-                            return 'MISC';
-                        }
-                    },
+			            return $data->itemType->itemCode;
+        			},
                 ],
                 [
                     'label' => 'Description',
@@ -32,7 +28,7 @@ Dear <?php echo Html::encode($toName) ?>,<br>
                 ],
                 [
                     'attribute' => 'unit',
-                       'label' => 'Quantity',
+                    'label' => 'Quantity',
                     'headerOptions' => ['class' => 'text-center'],
                     'contentOptions' => ['class' => 'text-center'],
                     'enableSorting' => false,
@@ -75,24 +71,24 @@ Dear <?php echo Html::encode($toName) ?>,<br>
                     <table class="table-invoice-childtable">
                      <tr>
                       <td>SubTotal</td>
-                      <td><?php echo $model->subTotal; ?></td>
+						<td><?= Yii::$app->formatter->format($model->netSubtotal, ['currency']); ?></td>
                     </tr> 
                      <tr>
                       <td>Tax</td>
-                      <td><?php echo $model->tax; ?></td>
+						<td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
                     </tr>
                      <tr>
                       <td>Paid</td>
-                      <td><?php echo '0.00'; ?></td> 
+						<td><?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?></td>
                     </tr>
                      <tr>
                       <tr>
                       <td><strong>Total</strong></td>
-                      <td><strong><?php echo $model->total; ?></strong></td> 
+						<td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
                     </tr>
                       <tr>
                       <td class="p-t-20">Balance</td>
-                      <td class="p-t-20"><?php echo $model->total; ?></td> 
+						<td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
                     </tr>
                     </table>
                   </td>
