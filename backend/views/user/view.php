@@ -110,6 +110,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             'model' => $model,
             'minTime' => $minTime,
             'maxTime' => $maxTime,
+			'roomModel' => new TeacherRoom(),
         ]);
 
         $teacherStudentContent = $this->render('teacher/_student', [
@@ -145,11 +146,11 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'model' => $model,
 		]);
 
-		$classroomContent = $this->render('teacher/_form-classroom', [
+		/*$classroomContent = $this->render('teacher/_form-classroom', [
 			'teachersAvailabilities' => $teachersAvailabilities,
 			'model' => new TeacherRoom(),
 			'userModel' => $model
-		]);
+		]);*/
         ?>
 		<?php
         $items = [
@@ -177,13 +178,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                     'id' => 'availability',
                 ],
             ],
-			[
+			/*[
                 'label' => 'Classroom',
                 'content' => $classroomContent,
                 'options' => [
                     'id' => 'classroom',
                 ],
-            ],
+            ],*/
             [
                 'label' => 'Students',
                 'content' => $teacherStudentContent,

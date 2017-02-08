@@ -1,7 +1,11 @@
 <?php
 
 use yii\helpers\Url;
-
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use wbraganca\selectivity\SelectivityWidget;
+use yii\helpers\ArrayHelper;
+use common\models\Classroom;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,7 +15,26 @@ use yii\helpers\Url;
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 
 <div id="availability-calendar"></div>
-
+<div id="dialog" style="display:none">
+<?php $form = ActiveForm::begin(['id' => 'classroom-assign-form']); ?>
+            <?php $locationId = Yii::$app->session->get('location_id'); ?>
+            <?= $form->field($roomModel, 'teacherAvailabilityId')->hiddenInput(['id' => 'teacher-availability-id'])
+                ->label(false);
+            ?>
+            <?= $form->field($roomModel, 'classroomId')->widget(SelectivityWidget::classname(), [
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'items' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
+                        'placeholder' => 'Select Classroom',
+                    ],
+                ]);
+                ?>
+	  <div class="col-md-12 p-l-20 form-group">
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
+		<div class="clearfix"></div>
+	</div>
+	<?php ActiveForm::end(); ?>
+</div>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
@@ -46,6 +69,12 @@ use yii\helpers\Url;
         },
         eventClick: function(event) {
             var params = $.param({ id: event.id });
+			$("#dialog").dialog({
+       			 autoOpen: false,
+				width: 550, height: 400
+    		});
+			$('#dialog').dialog('open');
+            $('#teacher-availability-id').val(event.id);
             $(".fa-close").click(function() {
                 var status = confirm("Are you sure to delete availability?");
                 if (status) {
@@ -120,6 +149,26 @@ use yii\helpers\Url;
             });
         }
     });
+
+    $(document).on('beforeSubmit', '#classroom-assign-form', function (event) {
+        $.ajax({
+			url    : '<?= Url::to(['user/assign-classroom']); ?>',
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+                {
+					$('#dialog').dialog('close');
+				} else
+				{
+                    $('#flash-danger').text(response.errors.classroomId).fadeIn().delay(3000).fadeOut();
+				}
+			}
+		});
+		return false;
+	});
 
 </script>
 
