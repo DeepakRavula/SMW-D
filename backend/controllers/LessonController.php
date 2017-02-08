@@ -664,4 +664,33 @@ class LessonController extends Controller
 		}
 		
 	}
+	
+	 public function actionTakePayment($id)
+    {
+        $model = Lesson::findOne(['id' => $id]);
+        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+        $currentDate = new \DateTime();
+        $location_id = Yii::$app->session->get('location_id');
+		if(empty($model->proFormaInvoice)) {
+			$invoice = new Invoice();
+			$invoice->user_id = $model->enrolment->student->customer->id;
+			$invoice->location_id = $location_id;
+			$invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
+			$invoice->save();
+			$invoice->addLineItem($model);
+			$invoice->save();
+			$proFormaInvoice      = Invoice::find()
+				->select(['invoice.id', 'SUM(payment.amount) as credit'])
+				->proFormaCredit($model->id)
+				->notDeleted()
+				->one();
+
+			if (!empty($proFormaInvoice)) {
+				$invoice->addPayment($proFormaInvoice);
+			}
+			return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
+		}
+
+		return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
+    }
 }
