@@ -11,6 +11,7 @@ $this->title = $model->student->fullName.' - '.$model->course->program->name;
 <?= $this->render('_view-enrolment', [
     'model' => $model,
 ]); ?>
+
 <div class="row-fluid p-10">
     
     <?= Html::a('<i class="fa fa-print"></i> Print', ['course/print', 'id' => $model->course->id], ['class' => 'btn btn-default pull-left', 'target' => '_blank']) ?>  
