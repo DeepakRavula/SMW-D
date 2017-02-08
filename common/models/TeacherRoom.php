@@ -29,34 +29,8 @@ class TeacherRoom extends \yii\db\ActiveRecord
     {
         return [
             [['classroomId', 'teacherAvailabilityId'], 'integer'],
-			[['classroomId'], function ($attribute, $params) {
-                $locationId = Yii::$app->session->get('location_id');
-                $teacherAvailability = TeacherAvailability::findOne($this->teacherAvailabilityId);
-                $teacherRooms        = TeacherRoom::find()
-                    ->location($locationId)
-                    ->day($teacherAvailability->day)
-                    ->where(['classroomId' => $this->classroomId])
-                    ->all();
-                foreach ($teacherRooms as $teacherRoom) {
-                    if ($teacherRoom->teacherAvailability->day === $teacherAvailability->day) {
-                        $fromTime = (new \DateTime($teacherRoom->teacherAvailability->from_time))->format('h:i A');
-                        $toTime   = (new \DateTime($teacherRoom->teacherAvailability->to_time))->format('h:i A');
-                        $start    = new \DateTime($teacherAvailability->from_time);
-                        $end      = new \DateTime($teacherAvailability->to_time);
-                        $interval = new \DateInterval('PT15M');
-                        $hours    = new \DatePeriod($start, $interval, $end);
-                        $this->checkClassroomAvailability($hours, $fromTime, $toTime, $attribute);
-                        
-                        $fromTime = (new \DateTime($teacherAvailability->from_time))->format('h:i A');
-                        $toTime   = (new \DateTime($teacherAvailability->to_time))->format('h:i A');
-                        $start    = new \DateTime($teacherRoom->teacherAvailability->from_time);
-                        $end      = new \DateTime($teacherRoom->teacherAvailability->to_time);
-                        $hours    = new \DatePeriod($start, $interval, $end);
-                        $this->checkClassroomAvailability($hours, $fromTime, $toTime, $attribute);
-                    }
-                }
-            },
-            ],
+            [['classroomId'], 'required'],
+			[['classroomId'], 'validateClassroomAvailability'],
         ];
     }
 
@@ -72,9 +46,42 @@ class TeacherRoom extends \yii\db\ActiveRecord
         ];
     }
 
+    public function validateClassroomAvailability($attribute)
+    {
+        $locationId = Yii::$app->session->get('location_id');
+        $teacherAvailability = TeacherAvailability::findOne($this->teacherAvailabilityId);
+        $teacherRooms        = TeacherRoom::find()
+            ->location($locationId)
+            ->day($teacherAvailability->day)
+            ->where(['classroomId' => $this->classroomId])
+            ->all();
+        foreach ($teacherRooms as $teacherRoom) {
+            $fromTime = (new \DateTime($teacherRoom->teacherAvailability->from_time))->format('h:i A');
+            $toTime   = (new \DateTime($teacherRoom->teacherAvailability->to_time))->format('h:i A');
+            $start    = new \DateTime($teacherAvailability->from_time);
+            $end      = new \DateTime($teacherAvailability->to_time);
+            $interval = new \DateInterval('PT15M');
+            $hours    = new \DatePeriod($start, $interval, $end);
+            $this->checkClassroomAvailability($hours, $fromTime, $toTime, $attribute);
+
+            $fromTime = (new \DateTime($teacherAvailability->from_time))->format('h:i A');
+            $toTime   = (new \DateTime($teacherAvailability->to_time))->format('h:i A');
+            $start    = new \DateTime($teacherRoom->teacherAvailability->from_time);
+            $end      = new \DateTime($teacherRoom->teacherAvailability->to_time);
+            $hours    = new \DatePeriod($start, $interval, $end);
+            $this->checkClassroomAvailability($hours, $fromTime, $toTime, $attribute);
+        }
+    }
+
     public static function find()
     {
         return new TeacherRoomQuery(get_called_class());
+    }
+
+    public function beforeSave($insert)
+    {
+        self::deleteAll(['teacherAvailabilityId' => $this->teacherAvailabilityId]);
+		return parent::beforeSave($insert);
     }
 
 	public function getClassroom()

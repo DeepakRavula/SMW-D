@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use wbraganca\selectivity\SelectivityWidget;
+use kartik\select2\Select2;
 use common\models\Classroom;
 use yii\helpers\ArrayHelper;
 
@@ -14,19 +14,18 @@ use yii\helpers\ArrayHelper;
     <div class="row p-20">
         <?php $form       = ActiveForm::begin(['id' => 'classroom-assign-form']); ?>
         <?php $locationId = Yii::$app->session->get('location_id'); ?>
-        <div class="col-md-12 form-group">
+        <div class="col-md-6 form-group">
             <?=
             $form->field($roomModel, 'teacherAvailabilityId')->hiddenInput([
                 'id' => 'teacher-availability-id'])->label(false);
             ?>
             <?=
-            $form->field($roomModel, 'classroomId')->widget(SelectivityWidget::classname(),
-                [
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'items' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->all(),
+            $form->field($roomModel, 'classroomId')->widget(Select2::classname(), [
+                'data' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->all(),
                         'id', 'name'),
-                    'placeholder' => 'Select Classroom',
+                'options' => ['placeholder' => 'Select Classroom'],
+                'pluginOptions' => [
+                    'allowClear' => true
                 ],
             ]);
             ?>

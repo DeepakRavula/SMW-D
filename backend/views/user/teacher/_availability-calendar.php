@@ -145,7 +145,9 @@ use common\models\TeacherRoom;
                     $('#flash-success').text('Classroom Successfully assigned for the selected availability').fadeIn().delay(3000).fadeOut();
 				} else
 				{
-                    $('#flash-danger').text($.unique(response.errors.classroomId)).fadeIn().delay(3000).fadeOut();
+                    $('#classroom-assign-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
 				}
 			}
 		});

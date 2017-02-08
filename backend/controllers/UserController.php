@@ -924,30 +924,21 @@ class UserController extends Controller
     public function actionAssignClassroom()
     {
         $teacherRoom = new TeacherRoom();
-        $post = Yii::$app->request->post('TeacherRoom');
-        if (isset($post['teacherAvailabilityId']) && isset($post['classroomId'])) {
-            $teacherRoom->teacherAvailabilityId = $post['teacherAvailabilityId'];
-            $teacherRoom->classroomId = $post['classroomId'];
-            if ($teacherRoom->validate()) {
+        $post = Yii::$app->request->post();
+        $teacherRoom->load($post);
+        if ($teacherRoom->validate()) {
                 $teacherRoom->save();
                 $response =[
                     'status' => true,
-                    'errors' => ''
                 ];
-            } else {
-                $response =[
-                    'status' => false,
-                    'errors' => $teacherRoom->getErrors()
-                ];
-            }
         } else {
-            $response =[
-                    'status' => false,
-                    'errors' => [
-                        'classroomId' => 'Classroom Cannot be blank'
-                    ]
-                ];
+            $errors = ActiveForm::validate($teacherRoom);
+            $response = [
+                'status' => false,
+                'errors' => $errors,
+            ];
         }
+    
         return $response;
     }
 }
