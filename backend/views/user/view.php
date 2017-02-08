@@ -39,6 +39,8 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
     }
 
 </style>
+<div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
+<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
         <div class="pull-left m-T-10">
   			 <?php if ($searchModel->role_name === 'staffmember'):?>
 			 <?php
@@ -341,7 +343,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$('#user-note-modal').modal('show');
 		return false;
   	});
-	$(document).on('beforeSubmit', '#user-note-form', function (e) {
+    $(document).on('beforeSubmit', '#user-note-form', function (e) {
 		$.ajax({
 			url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_USER]); ?>',
 			type   : 'post',

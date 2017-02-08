@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+use common\models\query\TeacherRoomQuery;
 
 use Yii;
 
@@ -29,8 +30,13 @@ class TeacherRoom extends \yii\db\ActiveRecord
         return [
             [['classroomId', 'teacherAvailabilityId'], 'integer'],
 			[['classroomId'], function ($attribute, $params) {
+                $locationId = Yii::$app->session->get('location_id');
                 $teacherAvailability = TeacherAvailability::findOne($this->teacherAvailabilityId);
-                $teacherRooms        = TeacherRoom::findAll(['classroomId' => $this->classroomId]);
+                $teacherRooms        = TeacherRoom::find()
+                    ->location($locationId)
+                    ->day($teacherAvailability->day)
+                    ->where(['classroomId' => $this->classroomId])
+                    ->all();
                 foreach ($teacherRooms as $teacherRoom) {
                     if ($teacherRoom->teacherAvailability->day === $teacherAvailability->day) {
                         $fromTime = (new \DateTime($teacherRoom->teacherAvailability->from_time))->format('h:i A');
@@ -39,14 +45,14 @@ class TeacherRoom extends \yii\db\ActiveRecord
                         $end      = new \DateTime($teacherAvailability->to_time);
                         $interval = new \DateInterval('PT15M');
                         $hours    = new \DatePeriod($start, $interval, $end);
-                        $this->checkClassroomAvailability($hours, $fromTime, $toTime);
+                        $this->checkClassroomAvailability($hours, $fromTime, $toTime, $attribute);
                         
                         $fromTime = (new \DateTime($teacherAvailability->from_time))->format('h:i A');
                         $toTime   = (new \DateTime($teacherAvailability->to_time))->format('h:i A');
                         $start    = new \DateTime($teacherRoom->teacherAvailability->from_time);
                         $end      = new \DateTime($teacherRoom->teacherAvailability->to_time);
                         $hours    = new \DatePeriod($start, $interval, $end);
-                        $this->checkClassroomAvailability($hours, $fromTime, $toTime);
+                        $this->checkClassroomAvailability($hours, $fromTime, $toTime, $attribute);
                     }
                 }
             },
@@ -62,8 +68,13 @@ class TeacherRoom extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'day' => 'Day',
-            'classroomId' => 'Classroom ID',
+            'classroomId' => 'Classroom',
         ];
+    }
+
+    public static function find()
+    {
+        return new TeacherRoomQuery(get_called_class());
     }
 
 	public function getClassroom()
@@ -87,7 +98,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
 			->via('user');
     }
 
-    public function checkClassroomAvailability($hours, $fromTime, $toTime)
+    public function checkClassroomAvailability($hours, $fromTime, $toTime, $attribute)
     {
         $availableHours = [];
         foreach ($hours as $hour) {
@@ -95,7 +106,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
         }
         
         if (in_array($fromTime, $availableHours) || in_array($toTime, $availableHours)) {
-            return $this->addError('Classroom Already Choosen!');
+            return $this->addError($attribute,'Classroom Already Choosen!');
         }
     }
 }
