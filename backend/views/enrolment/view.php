@@ -7,6 +7,7 @@ use common\models\Lesson;
 use yii\helpers\Url;
 
 $this->title = $model->student->fullName.' - '.$model->course->program->name;
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['student/view', 'id' => $model->student->id], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
 <?= $this->render('_view-enrolment', [
     'model' => $model,
