@@ -1,0 +1,106 @@
+<?php
+use yii\helpers\Html;
+use yii\grid\GridView;
+use common\models\Invoice;
+use common\models\ItemType;
+
+?>
+
+Dear <?php echo Html::encode($toName) ?>,<br>
+        <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+        <?php echo GridView::widget([
+            'dataProvider' => $invoiceLineItemsDataProvider,
+            'tableOptions' => ['class' => 'table table-bordered m-0'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
+            'summary' => '',
+            'columns' => [
+                [
+                    'label' => 'Code',
+                    'value' => function ($data) {
+			            return $data->itemType->itemCode;
+        			},
+                ],
+                [
+                    'label' => 'Description',
+                    'value' => function ($data) {
+                        return $data->description;
+                    },
+                ],
+                [
+                    'attribute' => 'unit',
+                    'label' => 'Quantity',
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center'],
+                    'enableSorting' => false,
+                ],
+                [
+                    'label' => 'Price',
+                    'headerOptions' => ['class' => 'text-center'],
+                    'contentOptions' => ['class' => 'text-center'],
+                    'value' => function ($data) {
+                        if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
+                            return $data->lesson->enrolment->program->rate;
+                        } else {
+                            return $data->amount;
+                        }
+                    },
+                ],
+                [
+                    'attribute' => 'amount',
+                    'label' => 'Total',
+                    'enableSorting' => false,
+                ],
+            ],
+        ]); ?>
+    <?php yii\widgets\Pjax::end(); ?>
+    <div class="row">
+        <!-- /.col -->
+          <div class="table-responsive">
+            <table class="table table-invoice-total">
+              <tbody>
+                <tr>
+                  <td colspan="4">
+                    <?php if (!empty($model->notes)):?>
+                    <div class="row-fluid m-t-20">
+                      <em><strong> Printed Notes: </strong><Br>
+                        <?php echo $model->notes; ?></em>
+                      </div>
+                      <?php endif; ?>
+                  </td>
+                  <td colspan="2">
+                    <table class="table-invoice-childtable">
+                     <tr>
+                      <td>SubTotal</td>
+						<td><?= Yii::$app->formatter->format($model->netSubtotal, ['currency']); ?></td>
+                    </tr> 
+                     <tr>
+                      <td>Tax</td>
+						<td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
+                    </tr>
+                     <tr>
+                      <td>Paid</td>
+						<td><?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?></td>
+                    </tr>
+                     <tr>
+                      <tr>
+                      <td><strong>Total</strong></td>
+						<td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
+                    </tr>
+                      <tr>
+                      <td class="p-t-20">Balance</td>
+						<td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
+                    </tr>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        <!-- /.col -->
+        </div>
+<div>
+    <?php echo $model->reminderNotes; ?>
+</div>
+<br>
+Thank you<br>
+Arcadia Music Academy Team.<br>

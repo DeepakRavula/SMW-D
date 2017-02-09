@@ -115,6 +115,7 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+		
 		$post = Yii::$app->request->post();
 		if (isset($post['hasEditable'])) {
 			$response = Yii::$app->response;
@@ -130,6 +131,17 @@ class EnrolmentController extends Controller
 		$courseEndDate = new \DateTime($courseEndDate);
         $courseEndDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
 		if ($model->course->load(Yii::$app->request->post())) {
+			$model->course->setScenario(Course::SCENARIO_EDIT_ENROLMENT);
+			$validate = $model->course->validate();
+			$errors = $model->course->getErrors();
+			if(!empty($errors)) {
+				Yii::$app->session->setFlash('alert',
+					[
+					'options' => ['class' => 'alert-danger'],
+					'body' => current(reset($errors)),
+				]);
+				return $this->redirect(['update', 'id' => $model->id]);
+			}
 			$existingEndDate = (new \DateTime($model->course->getOldAttribute('endDate')))->format('d-m-Y');
 			$endDate = new \DateTime($model->course->endDate);
 			if(new \DateTime($existingEndDate) != $endDate) {

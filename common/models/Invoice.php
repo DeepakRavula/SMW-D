@@ -38,6 +38,9 @@ class Invoice extends \yii\db\ActiveRecord
     public $customer_id;
     public $credit;
     public $discountApplied;
+	public $toEmailAddress;
+	public $subject;
+	public $content;
     /**
      * {@inheritdoc}
      */
@@ -87,6 +90,7 @@ class Invoice extends \yii\db\ActiveRecord
             'type' => 'Type',
             'reminderNotes' => 'Reminder Notes',
             'customer_id' => 'Customer Name',
+			'toEmailAddress' => 'To'
         ];
     }
 
@@ -383,25 +387,20 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function sendEmail()
     {
-        $invoiceLineItems             = InvoiceLineItem::find()->where(['invoice_id' => $this->id]);
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoiceLineItems,
-        ]);
-        $subject                      = 'Invoice from '.Yii::$app->name;
-        if (!empty($this->user->email)) {
-            Yii::$app->mailer->compose('generateInvoice',
-                    [
-                    'model' => $this,
-                    'toName' => $this->user->publicIdentity,
-                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                ])
-                ->setFrom(\Yii::$app->params['robotEmail'])
-                ->setTo($this->user->email)
-                ->setSubject($subject)
-                ->send();
-            $this->isSent = true;
-            $this->save();
-        }
+        $subject                      = $this->subject;
+		Yii::$app->mailer->compose('generateInvoice',
+				[
+				'model' => $this,
+				'toName' => $this->user->publicIdentity,
+				'content' => $this->content,
+			])
+			->setFrom(\Yii::$app->params['robotEmail'])
+			->setTo($this->toEmailAddress)
+			->setSubject($subject)
+			->send();
+		$this->isSent = true;
+		$this->save();
+			
         return $this->isSent;
     }
 

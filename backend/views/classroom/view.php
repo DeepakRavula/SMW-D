@@ -3,35 +3,66 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use common\models\User;
+use yii\bootstrap\Tabs;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\ClassRoom */
 
-$this->title = $model->name;
-$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-$lastRole = end($roles);
 ?>
-<div class="class-room-view">
+ <div class="tabbable-panel">
+     <div class="tabbable-line">
+<?php 
 
-	<?php if ($lastRole->name === User::ROLE_ADMINISTRATOR): ?>
-    <p>
-        <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-	<?php endif; ?>
-
-    <?php echo DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'name',
-        ],
-    ]) ?>
-
-</div>
+$unavailabilityContent = $this->render('unavailability/view', [
+    'model' => $model,
+	'unavailabilityDataProvider' => $unavailabilityDataProvider
+]);
+?>
+<?php
+	echo Tabs::widget([
+		'items' => [
+			[
+				'label' => 'Unavailabilities',
+				'content' => $unavailabilityContent,
+				'options' => [
+						'id' => 'unavailability',
+					],
+			],
+		]
+	]);
+?>
+    </div>
+ </div>
+<script>
+$(document).ready(function() {
+	$(document).on('click', '#classroom-unavailability', function (e) {
+    	$('input[type="text"]').val(moment(new Date()).format('DD-MM-Y'));
+		$('#classroomunavailability-reason').val('');	
+		$('#classroom-unavailability-modal').modal('show');
+		return false;
+  	});
+	$(document).on('beforeSubmit', '#classroom-unavailability-form', function (e) {
+		$.ajax({
+			url    : '<?= Url::to(['classroom-unavailability/create', 'classroomId' => $model->id]); ?>',
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#classroom-unavailability-grid', timeout : 4000});
+					$('#classroom-unavailability-modal').modal('hide');
+				}else
+				{
+				 $('#classroom-unavailability-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
+				}
+			}
+		});
+		return false;
+	});
+});
+</script>

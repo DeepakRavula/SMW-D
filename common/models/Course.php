@@ -26,6 +26,7 @@ class Course extends \yii\db\ActiveRecord
 	const EVENT_VACATION_CREATE_PREVIEW = 'vacation-create-preview';
 	const EVENT_VACATION_DELETE_PREVIEW = 'vacation-delete-preview';
 	const SCENARIO_GROUP_COURSE = 'group-course';
+	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
 
 	public $lessonStatus;
     public $studentId;
@@ -47,17 +48,19 @@ class Course extends \yii\db\ActiveRecord
     {
         return [
             [['programId', 'teacherId', 'day', 'fromTime', 'duration', 'startDate'], 'required'],
-            [['startDate', 'endDate'], 'date', 'format' => 'php:d-m-Y'],
+            [['startDate', 'endDate'], 'date', 'format' => 'php:d-m-Y', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'paymentFrequency'], 'integer'],
             [['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
-            },
+            },'except' => self::SCENARIO_EDIT_ENROLMENT 
             ],
 			[['endDate'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->program->type === Program::TYPE_GROUP_PROGRAM;
             },
             ],
 			[['locationId', 'rescheduleBeginDate'], 'safe'],
+            ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
+            ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['startDate'], 'checkStartDate', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['endDate'], 'checkEndDate', 'on' => self::SCENARIO_GROUP_COURSE],
