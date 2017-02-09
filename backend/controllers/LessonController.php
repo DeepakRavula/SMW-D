@@ -131,8 +131,6 @@ class LessonController extends Controller
             $model->date = $lessonDate->format('Y-m-d H:i:s');
 			$model->duration = $studentEnrolment->course->duration;
 			$day = (new \DateTime($model->date))->format('N');
-			$classroom = TeacherRoom::findOne(['teacherId' => $model->teacherId, 'day' => $day]);
-			$model->classroomId = !empty($classroom) ? $classroom->classroomId : null;
 			if ($model->save()) {
 				$response = [
 					'status' => true,

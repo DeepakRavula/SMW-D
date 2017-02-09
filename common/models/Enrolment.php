@@ -147,7 +147,6 @@ class Enrolment extends \yii\db\ActiveRecord
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
         $period = new \DatePeriod($start, $interval, $end);
-		$classroom = TeacherRoom::findOne(['teacherId' => $this->course->teacherId, 'day' => $this->course->day]);
         foreach ($period as $day) {
             if ((int) $day->format('N') === (int) $this->course->day) {
                 $professionalDevelopmentDay = clone $day;
@@ -164,7 +163,6 @@ class Enrolment extends \yii\db\ActiveRecord
                     'date' => $day->format('Y-m-d H:i:s'),
                     'duration' => $this->course->duration,
                     'isDeleted' => false,
-					'classroomId' => !empty($classroom) ? $classroom->classroomId : null,
                 ]);
                 $lesson->save();
             }
