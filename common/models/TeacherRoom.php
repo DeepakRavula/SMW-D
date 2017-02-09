@@ -63,13 +63,6 @@ class TeacherRoom extends \yii\db\ActiveRecord
             $interval = new \DateInterval('PT15M');
             $hours    = new \DatePeriod($start, $interval, $end);
             $this->checkClassroomAvailability($hours, $fromTime, $toTime, $attribute);
-
-            $fromTime = (new \DateTime($teacherAvailability->from_time))->format('h:i A');
-            $toTime   = (new \DateTime($teacherAvailability->to_time))->format('h:i A');
-            $start    = new \DateTime($teacherRoom->teacherAvailability->from_time);
-            $end      = new \DateTime($teacherRoom->teacherAvailability->to_time);
-            $hours    = new \DatePeriod($start, $interval, $end);
-            $this->checkClassroomAvailability($hours, $fromTime, $toTime, $attribute);
         }
     }
 
