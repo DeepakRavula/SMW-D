@@ -20,7 +20,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
 	const EDIT_RENEWAL = 'renewal';
 	const EDIT_LEAVE = 'leave';
-	
+
     /**
      * {@inheritdoc}
      */
@@ -147,7 +147,7 @@ class Enrolment extends \yii\db\ActiveRecord
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
         $period = new \DatePeriod($start, $interval, $end);
-		$classroom = TeacherRoom::findOne(['teacherId' => $this->course->teacherId, 'day' => $this->course->day]);
+		$classroom = $this->getTeacherClassroom($this->course->userLocation->id, $this->course->day, $start, $end);
         foreach ($period as $day) {
             if ((int) $day->format('N') === (int) $this->course->day) {
                 $professionalDevelopmentDay = clone $day;
@@ -211,7 +211,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 $endDate = $startDate->modify('+1 month, -1 day');
                 break;
         }
-		
+
         return $endDate;
     }
 

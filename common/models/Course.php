@@ -229,6 +229,11 @@ class Course extends \yii\db\ActiveRecord
         return $this->getEnrolments()->count();
     }
 
+    public function getUserLocation()
+    {
+        return $this->hasOne(UserLocation::className(), ['user_id' => 'teacherId']);
+    }
+
 	public static function lessonStatuses()
     {
         return [
@@ -282,8 +287,10 @@ class Course extends \yii\db\ActiveRecord
             $endDate = $this->endDate;
             $start = new \DateTime($startDate);
             $end = new \DateTime($endDate);
+            $duration = new \DateTime($this->duration);
+            $toTime->add(new \DateInterval('PT'.$duration->format('H').'H'.$duration->format('i').'M'));
             $period = new \DatePeriod($start, $interval, $end);
-			$classroom = TeacherRoom::findOne(['teacherId' => $this->teacherId, 'day' => $this->day]);
+			$classroom = $this->getTeacherClassroom($this->userLocation->id, $this->day, $start, $toTime);
 
             foreach ($period as $day) {
                 $professionalDevelopmentDay = clone $day;
@@ -386,4 +393,18 @@ class Course extends \yii\db\ActiveRecord
 		}
 		$this->generateLessons($lessons, $startDate);
 	}
+
+    public function getTeacherClassroom($teacherLocationId, $day, $start, $end)
+    {
+        $classroom = null;
+        $teacherAvailability = TeacherRoom::find()->where([
+                    'day' => $day, 'teacher_location_id' => $teacherLocationId])
+                    ->between($start, $end)
+                    ->one();
+                                print_r($teacherAvailability);die;
+        if (!empty($classroom)) {
+            $classroom = $teacherAvailability->teacherRoom;
+        }
+        return $classroom;
+    }
 }

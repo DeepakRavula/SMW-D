@@ -131,7 +131,10 @@ class LessonController extends Controller
             $model->date = $lessonDate->format('Y-m-d H:i:s');
 			$model->duration = $studentEnrolment->course->duration;
 			$day = (new \DateTime($model->date))->format('N');
-			$classroom = TeacherRoom::findOne(['teacherId' => $model->teacherId, 'day' => $day]);
+            $start = new \DateTime($model->date);
+            $duration = new \DateTime($model->duration);
+            $toTime = $start->add(new \DateInterval('PT'.$duration->format('H').'H'.$duration->format('i').'M'));
+            $classroom = $studentEnrolment->course->getTeacherClassroom($studentEnrolment->course->userLocation->id, $day, $start, $toTime);
 			$model->classroomId = !empty($classroom) ? $classroom->classroomId : null;
 			if ($model->save()) {
 				$response = [
