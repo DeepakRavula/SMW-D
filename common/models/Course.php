@@ -232,12 +232,7 @@ class Course extends \yii\db\ActiveRecord
         return $this->getEnrolments()->count();
     }
 
-    public function getUserLocation()
-    {
-        return $this->hasOne(UserLocation::className(), ['user_id' => 'teacherId']);
-    }
-
-	public static function lessonStatuses()
+    public static function lessonStatuses()
     {
         return [
             'all' => 'All',
