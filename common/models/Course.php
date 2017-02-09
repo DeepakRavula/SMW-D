@@ -285,6 +285,7 @@ class Course extends \yii\db\ActiveRecord
             $endDate = $this->endDate;
             $start = new \DateTime($startDate);
             $end = new \DateTime($endDate);
+			$end->modify('+1 day');
             $period = new \DatePeriod($start, $interval, $end);
 
             foreach ($period as $day) {
