@@ -1,11 +1,12 @@
 <?php
 use yii\grid\GridView;
 use common\models\Course;
-
+use yii\helpers\Url;
 ?>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Enrolments</h4>
 </div>
+    <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
 ]) ?>
@@ -15,6 +16,11 @@ use common\models\Course;
         'options' => ['class' => 'col-md-12'],
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
+		'rowOptions' => function ($model, $key, $index, $grid) {
+			$url = Url::to(['enrolment/update', 'id' => $model->id]);
+
+			return ['data-url' => $url];
+		},
         'columns' => [
             [
                 'label' => 'Student Name',
@@ -79,3 +85,4 @@ use common\models\Course;
     ]);
     ?>
 <?php \yii\widgets\Pjax::end(); ?>
+</div>

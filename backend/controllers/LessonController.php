@@ -130,6 +130,10 @@ class LessonController extends Controller
             $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
 			$model->duration = $studentEnrolment->course->duration;
+<<<<<<< HEAD
+=======
+			$day = (new \DateTime($model->date))->format('N');
+>>>>>>> origin
 			if ($model->save()) {
 				$response = [
 					'status' => true,

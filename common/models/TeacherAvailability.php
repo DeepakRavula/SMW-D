@@ -100,11 +100,6 @@ class TeacherAvailability extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function find()
-    {
-        return new \common\models\query\TeacherAvailabilityQuery(get_called_class());
-    }
-
     public function IsAvailableAtLocation($teacher_location_id)
     {
         return $this->find()

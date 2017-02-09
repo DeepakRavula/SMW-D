@@ -237,87 +237,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
     </div>
-    <div class="row">
-        <!-- /.col -->
-          <!--<div class="table-responsive">
-            <table class="table table-invoice-total">
-              <tbody>
-                <tr>
-                  <td colspan="4">
-                    <?php if (!empty($model->notes)):?>
-                    <div class="row-fluid m-t-20">
-                      <em><strong> Notes: </strong><Br>
-                        <?php echo $model->notes; ?></em>
-                      </div>
-                      <?php endif; ?>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-
-          <div class="table-responsive">
-            <table class="table table-invoice-total">
-              <tbody>
-                <tr>
-                    <td colspan="4">
-                      <?php if (!empty($model->payments)) : ?>
-                      <?php yii\widgets\Pjax::begin(['id' => 'payment-index']); ?>
-                      <?php echo GridView::widget([
-                          'dataProvider' => $paymentsDataProvider,
-                          'tableOptions' => ['class' => 'table table-bordered m-0'],
-                          'headerRowOptions' => ['class' => 'bg-light-gray'],
-                          'columns' => [
-                              [
-                                  'label' => 'Payment Method',
-                                  'value' => function ($data) {
-                                      return $data->paymentMethod->name;
-                                  },
-                                  'headerOptions' => ['class' => 'text-center'],
-                                  'contentOptions' => ['class' => 'text-center'],
-                              ],
-                              [
-                                  'format' => 'currency',
-              					'label' => 'Amount',
-              					'value' => function ($data) {
-              						return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
-              					},
-                                  'headerOptions' => ['class' => 'text-center'],
-                                  'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
-              				],
-                          ],
-                      ]); ?>
-                      <?php yii\widgets\Pjax::end(); ?>
-                    <?php endif; ?>
-                  <td colspan="2">
-                    <table class="table-invoice-childtable">
-                      <tr>
-                        <td>SubTotal</td>
-                        <td><?= Yii::$app->formatter->format($model->netSubtotal, ['currency']); ?></td>
-                      </tr> 
-                      <tr>
-                        <td>Tax</td>
-                        <td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
-                      </tr>
-  					          <tr>
-                        <td><strong>Total</strong></td>
-                        <td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
-                      </tr>
-                      <tr>
-                        <td>Paid</td>
-                       <td><?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?></td>
-                      </tr>
-                      <tr>
-                        <td class="p-t-20"><strong>Balance</strong></td>
-                        <td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div> -->
+   
 
     <table class="table-responsive below-description ">
         <tr>
@@ -377,9 +297,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                   'headerOptions' => ['class' => 'text-center'],
                                   'contentOptions' => ['class' => 'text-center'],
                               ],
+							[
+                                  'value' => function ($data) {
+                                      return !empty($data->reference) ? $data->reference : null;
+                                  },
+                              ],
                               [
                                   'format' => 'currency',
-                                  // 'label' => 'Amount',
                                   'value' => function ($data) {
                                     return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
                                   },
