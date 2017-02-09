@@ -290,10 +290,7 @@ class Course extends \yii\db\ActiveRecord
             $endDate = $this->endDate;
             $start = new \DateTime($startDate);
             $end = new \DateTime($endDate);
-            $duration = new \DateTime($this->duration);
-            $toTime->add(new \DateInterval('PT'.$duration->format('H').'H'.$duration->format('i').'M'));
             $period = new \DatePeriod($start, $interval, $end);
-			$classroom = $this->getTeacherClassroom($this->userLocation->id, $this->day, $start, $toTime);
 
             foreach ($period as $day) {
                 $professionalDevelopmentDay = clone $day;
@@ -311,8 +308,7 @@ class Course extends \yii\db\ActiveRecord
                         'date' => $day->format('Y-m-d H:i:s'),
                         'duration' => $this->duration,
                         'isDeleted' => false,
-						'classroomId' => !empty($classroom) ? $classroom->classroomId : null,
-                    ]);
+					]);
                     $lesson->save();
                 }
             }
@@ -396,18 +392,4 @@ class Course extends \yii\db\ActiveRecord
 		}
 		$this->generateLessons($lessons, $startDate);
 	}
-
-    public function getTeacherClassroom($teacherLocationId, $day, $start, $end)
-    {
-        $classroom = null;
-        $teacherAvailability = TeacherRoom::find()->where([
-                    'day' => $day, 'teacher_location_id' => $teacherLocationId])
-                    ->between($start, $end)
-                    ->one();
-                                print_r($teacherAvailability);die;
-        if (!empty($classroom)) {
-            $classroom = $teacherAvailability->teacherRoom;
-        }
-        return $classroom;
-    }
 }
