@@ -882,9 +882,14 @@ class UserController extends Controller
                 ->where(['user_id' => $id])
                 ->all();
         foreach ($teacherAvailabilities as $teacherAvailability) {
+            $title = null;
+            if (!empty($teacherAvailability->teacherRoom->classroom->name)) {
+                $title = $teacherAvailability->teacherRoom->classroom->name;
+            }
             $startTime = new \DateTime($teacherAvailability->from_time);
             $endTime   = new \DateTime($teacherAvailability->to_time);
             $events[]  = [
+                'title'      => $title,
                 'id'         => $teacherAvailability->id,
                 'resourceId' => $teacherAvailability->day,
                 'start'      => $startTime->format('Y-m-d H:i:s'),
