@@ -583,7 +583,16 @@ class Lesson extends \yii\db\ActiveRecord
 
         if (!empty($teacherAvailability->teacherRoom)) {
             $classroomId = $teacherAvailability->teacherRoom->classroomId;
-            
+            $unavailability = ClassroomUnavailability::find()
+                    ->andWhere(['classroomId' => $classroomId])
+                    ->andWhere(['AND',
+                        ['<=', 'DATE(fromDate)', $start->format('Y-m-d')],
+                        ['>=', 'DATE(toDate)', $start->format('Y-m-d')]
+                    ])
+                    ->one();
+            if (!empty($unavailability)) {
+                $classroomId = null;
+            }
         }
         return $classroomId;
     }
