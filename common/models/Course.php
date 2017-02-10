@@ -232,7 +232,7 @@ class Course extends \yii\db\ActiveRecord
         return $this->getEnrolments()->count();
     }
 
-	public static function lessonStatuses()
+    public static function lessonStatuses()
     {
         return [
             'all' => 'All',

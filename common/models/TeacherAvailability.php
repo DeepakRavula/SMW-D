@@ -120,6 +120,6 @@ class TeacherAvailability extends \yii\db\ActiveRecord
 
 	public function getTeacherRoom()
     {
-        return $this->hasOne(TeacherRoom::className(), ['day' => 'day']);
+        return $this->hasOne(TeacherRoom::className(), ['teacherAvailabilityId' => 'id']);
     }
 }

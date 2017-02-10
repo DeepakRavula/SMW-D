@@ -20,7 +20,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
 	const EDIT_RENEWAL = 'renewal';
 	const EDIT_LEAVE = 'leave';
-	
+
     /**
      * {@inheritdoc}
      */
@@ -209,7 +209,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 $endDate = $startDate->modify('+1 month, -1 day');
                 break;
         }
-		
+
         return $endDate;
     }
 

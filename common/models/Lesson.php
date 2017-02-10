@@ -443,6 +443,9 @@ class Lesson extends \yii\db\ActiveRecord
                 }
             }
         }
+        if ($insert) {
+            $this->classroomId = $this->getTeacherClassroomId();
+        }
 
         return parent::beforeSave($insert);
     }
@@ -560,5 +563,28 @@ class Lesson extends \yii\db\ActiveRecord
                 ->orderBy(['date' => SORT_ASC])
                 ->one();
         return $enrolmentFirstLesson->date === $this->date;
+    }
+
+    public function getTeacherClassroomId()
+    {
+        $classroomId         = null;
+        $teacherLocationId   = $this->teacher->userLocation->id;
+        $day                 = (new \DateTime($this->date))->format('N');
+        $start               = new \DateTime($this->date);
+        $duration            = new \DateTime($this->duration);
+        $end                 = $start->add(new \DateInterval('PT'.$duration->format('H').'H'.$duration->format('i').'M'));
+        $teacherAvailability = TeacherAvailability::find()
+            ->andWhere(['day' => $day, 'teacher_location_id' => $teacherLocationId])
+            ->andWhere(['AND',
+                ['<=', 'from_time', $start->format('H:i:s')],
+                ['>=', 'to_time', $end->format('H:i:s')]
+            ])
+            ->one();
+
+        if (!empty($teacherAvailability->teacherRoom)) {
+            $classroomId = $teacherAvailability->teacherRoom->classroomId;
+            
+        }
+        return $classroomId;
     }
 }
