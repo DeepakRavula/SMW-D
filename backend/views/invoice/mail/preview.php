@@ -19,7 +19,7 @@ use yii\helpers\Url;
             'query' => $invoiceLineItems,
         ]);	
 	$content = $this->render('content', [
-		'toName' => $model->user->publicIdentity,
+		'toName' => !empty($model->user->publicIdentity) ? $model->user->publicIdentity : null,
 		'model' => $model,
 		'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 	]);?>
@@ -43,7 +43,7 @@ use yii\helpers\Url;
         		'options' => [
 					'value' => $content,
 					'rows' => 6],
-        		'preset' => 'full',
+        		'preset' => 'basic',
     		]) ?>
         </div>
         </div>
