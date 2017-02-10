@@ -96,11 +96,12 @@ use yii\bootstrap\Modal;
                 'value' => function ($data) {
 					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
 					$currentDate = new \DateTime();
-					$result = 'Yes';
-					if($data->isScheduled() || $lessonDate > $currentDate) {
+					if($lessonDate > $currentDate) {
 						$result = '-';
 					} else if($data->isMissed()) {
 						$result = 'No';
+					} else if($lessonDate < $currentDate) {
+						$result = 'Yes';
 					}
                     return $result;
                 },
