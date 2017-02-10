@@ -143,6 +143,7 @@ use common\models\TeacherRoom;
                 {
 					$('#classroom-modal').modal('hide');
                     $('#flash-success').text("Classroom assigned to the selected teacher's availability successfully.").fadeIn().delay(3000).fadeOut();
+                    $("#availability-calendar").fullCalendar("refetchEvents");
 				} else
 				{
                     $('#classroom-assign-form').yiiActiveForm('updateMessages',
