@@ -46,7 +46,7 @@ use common\models\TeacherRoom;
             url: '<?= Url::to(['user/teacher-availability-events', 'id' => $model->id]) ?>',
             type: 'POST',
             error: function() {
-                alert('there was an error while fetching events!');
+                $("#availability-calendar").fullCalendar("refetchEvents");
             }
         },
         eventRender: function(event, element) {

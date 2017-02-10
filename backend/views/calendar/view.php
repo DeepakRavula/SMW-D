@@ -161,14 +161,14 @@ $(document).ready(function() {
             url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
             type: 'POST',
             error: function() {
-                alert('There was an error while fetching resources, Please re-select!');
+                $("#calendar").fullCalendar("refetchResources");
             }
         },
         events: {
             url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
             type: 'POST',
             error: function() {
-                alert('There was an error while fetching events, Please re-select!');
+                $("#calendar").fullCalendar("refetchEvents");
             }
         },
 		allDaySlot:false,
@@ -285,14 +285,14 @@ function showclassroomCalendar(date) {
             url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + resourceParams,
             type: 'POST',
             error: function() {
-                alert('There was an error while fetching resources, Please re-select!');
+                $("#classroom-calendar").fullCalendar("refetchResources");
             }
         },
         events: {
             url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + eventParms,
             type: 'POST',
             error: function() {
-                alert('there was an error while fetching events, Please re-select!');
+                $("#classroom-calendar").fullCalendar("refetchEvents");
             }
         }
     });
@@ -332,14 +332,14 @@ function refreshCalendar(date) {
             url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
             type: 'POST',
             error: function() {
-                alert('There was an error while fetching resources, Please re-select!');
+                $("#calendar").fullCalendar("refetchResources");
             }
         },
         events: {
             url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
             type: 'POST',
             error: function() {
-                alert('There was an error while fetching events, Please re-select!');
+                $("#calendar").fullCalendar("refetchEvents");
             }
         }
     });

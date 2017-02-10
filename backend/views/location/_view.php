@@ -68,7 +68,7 @@ use yii\helpers\Url;
             url: '<?= Url::to(['location/render-events', 'id' => $model->id]) ?>',
             type: 'POST',
             error: function() {
-                alert('there was an error while fetching events!');
+                $("#calendar").fullCalendar("refetchEvents");
             }
         },
         eventRender: function(event, element) {
