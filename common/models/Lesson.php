@@ -215,8 +215,12 @@ class Lesson extends \yii\db\ActiveRecord
             ->teacherLessons($locationId, $this->teacherId)
             ->all();
         foreach ($teacherLessons as $teacherLesson) {
-			if(new \DateTime($teacherLesson->date) == new \DateTime($this->date) && (int)$teacherLesson->status === Lesson::STATUS_SCHEDULED){
-				continue;
+			$oldDate = $this->getOldAttribute('date');
+			$oldTeacherId = $this->getOldAttribute('teacherId'); 
+			if((int)$oldTeacherId == $this->teacherId && $oldDate == new \DateTime($this->date)) {
+				if(new \DateTime($teacherLesson->date) == new \DateTime($this->date) && (int)$teacherLesson->status === Lesson::STATUS_SCHEDULED){
+					continue;
+				}
 			}
             $otherLessons[] = [
                 'id' => $teacherLesson->id,
