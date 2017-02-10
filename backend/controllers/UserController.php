@@ -883,7 +883,7 @@ class UserController extends Controller
                 ->all();
         foreach ($teacherAvailabilities as $teacherAvailability) {
             $title = null;
-            if (!empty($teacherAvailability->teacherRoom)) {
+            if (!empty($teacherAvailability->teacherRoom->classroom->name)) {
                 $title = $teacherAvailability->teacherRoom->classroom->name;
             }
             $startTime = new \DateTime($teacherAvailability->from_time);
