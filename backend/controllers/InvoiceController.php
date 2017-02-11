@@ -105,6 +105,7 @@ class InvoiceController extends Controller
         $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
+			'pagination' => false,
         ]);
 
         $request = Yii::$app->request;
@@ -453,6 +454,7 @@ class InvoiceController extends Controller
             ->groupBy('payment.payment_method_id');
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
+			'pagination' => false,
         ]);
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
