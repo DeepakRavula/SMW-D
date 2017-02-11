@@ -462,12 +462,7 @@ class Lesson extends \yii\db\ActiveRecord
 					if(isset($changedAttributes['date']) && !empty($this->date)) {
 						$fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
 	                    $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-						if (!empty($this->teacher->email) && $this->course->program->isPrivate()) {
-							$this->notifyReschedule($this->teacher, $this->enrolment->course->program, $fromDate, $toDate);
-						}
-						if (!empty($this->enrolment->student->customer->email) && $this->course->program->isPrivate()) {
-							$this->notifyReschedule($this->enrolment->student->customer, $this->enrolment->program, $fromDate, $toDate);
-						}
+						
 						$this->updateAttributes([
 							'date' => $fromDate->format('Y-m-d H:i:s'),
 							'status' => self::STATUS_CANCELED,
@@ -496,23 +491,6 @@ class Lesson extends \yii\db\ActiveRecord
 
             return parent::afterSave($insert, $changedAttributes);
         }
-    }
-
-    public function notifyReschedule($user, $program, $fromDate, $toDate)
-    {
-        $subject = Yii::$app->name.' - '.$program->name
-                .' lesson rescheduled from '.$fromDate->format('d-m-Y h:i a').' to '.$toDate->format('d-m-Y h:i a');
-
-        Yii::$app->mailer->compose('lesson-reschedule', [
-            'program' => $program->name,
-            'toName' => $user->userProfile->firstname,
-            'fromDate' => $fromDate->format('d-m-Y h:i a'),
-            'toDate' => $toDate->format('d-m-Y h:i a'),
-            ])
-            ->setFrom(\Yii::$app->params['robotEmail'])
-            ->setTo($user->email)
-            ->setSubject($subject)
-            ->send();
     }
 
     public function isFirstLessonDate($paymentCycleStartDate, $paymentCycleEndDate)
