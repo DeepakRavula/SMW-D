@@ -1431,6 +1431,20 @@ hr.fc-divider {
     display: block;
     white-space: normal!important;
 }
+.fc-event .fc-content .fa-close{
+    margin-left: .3em;
+    background: #ff1414;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom-left-radius: 18%;
+    position: relative;
+    top: -5px;
+    right: -5px;
+    color: #fff;
+}
 
 .fc-event .fc-content .fc-time {
     font-size: 10px!important;
