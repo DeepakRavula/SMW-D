@@ -863,7 +863,7 @@ Licensed under MIT
 }
 
 .table-invoice-childtable {
-    width: 310px;
+    width: 255px;
     line-height: 24px;
 }
 
@@ -877,10 +877,12 @@ Licensed under MIT
     padding: 0px 30px 10px;
     margin-left: 30px;
     line-height: 23px;
-    font-size: 24px;
+    font-size: 22px;
 }
 .invoice-view ul {
         padding: 0; 
+        margin: 0;
+        list-style: none;
     }
 .smw-box {
             background: #f5ecec;
@@ -1234,7 +1236,9 @@ input[type="search"]:-ms-input-placeholder {
         width: 135px;
     }
     .invoice-view > ul {
-        padding: 0; 
+        padding: 0;
+        margin: 0;
+        list-style: none;
     }
     .table-more-condensed>tbody>tr>td,
     .table-more-condensed>tbody>tr>th,
@@ -1581,12 +1585,18 @@ hr.fc-divider {
     /* height:50px; */
     border-bottom: 0;
 }
-
+.kv-editable-value {
+    margin-right: 5px;
+    text-align: left;
+}
 
 /******Reminder Notes********/
 
 .reminder_notes ul {
     /*margin-left: -32px;*/
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
 @media print {

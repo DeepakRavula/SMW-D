@@ -17,10 +17,13 @@ $this->params['breadcrumbs'][] = $this->title;
     table>tbody>tr>td:first-child{
         text-align: left !important;
     }
-    table>thead>tr>th:last-child,
+    .table-invoice-childtable>tbody>tr>td:last-of-type {
+        text-align: right;
+    }
+    /*table>thead>tr>th:last-child,
     table>tbody>tr>td:last-child{
       text-align: right;
-    }
+    }*/
     .table-invoice-childtable>tbody>tr>td:first-of-type{
       width: 230px;
     }
@@ -86,38 +89,32 @@ $this->params['breadcrumbs'][] = $this->title;
     }
 </style>
 <div class="invoice-view p-10">
-    <div class="row">
-        <div class="col-xs-12 p-0">
-          <h2 class="m-0 border-bottom-gray">
-            <a class="logo pull-left">
-                <!-- Add the class icon to your logo image or logo icon to add the margining -->                
+<div class="row">
+            <a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo invoice-col col-sm-2">              
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-          <div class="pull-left invoice-address  text-gray">
-            <div class="row-fluid">
-              <h2 class="m-0 text-inverse "><strong><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
-          </div>
-          <small><?php if (!empty($model->user->userLocation->location->address)): ?>
-                <?php echo $model->user->userLocation->location->address?>
-      <?php endif; ?>
-      <?php if (!empty($model->user->userLocation->location->phone_number)): ?><br>
-            <?php echo $model->user->userLocation->location->phone_number?>
-      <?php endif; ?> 
-      </small> 
-      </div>
-      <div class="clearfix"></div>
-          </h2>
-        </div>
-        <!-- /.col -->
-      </div>
-    <div class="row invoice-info m-t-10">
-        <!-- /.col -->
-        <div class="col-sm-9 invoice-col m-b-10 pull-left p-0">
-          <div class="row m-T-10">
-            <div class="col-xs-12">
-                <h4 class="m-0 f-w-400"><strong><?php echo isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?></strong></h4>
-            <div class="text-gray">
-            <?php
+          <div class="col-sm-3 invoice-col text-gray" style="font-size:18px;">
+              <div class="row-fluid">
+                <h2 class="m-0 text-inverse"><strong>
+                  <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong>
+                </h2>
+              </div>
+              <small>
+                <?php if (!empty($model->user->userLocation->location->address)): ?>
+                  <?= $model->user->userLocation->location->address?><br>
+                <?php endif; ?>
+                <?php if (!empty($model->user->userLocation->location->phone_number)): ?>
+                  <?= $model->user->userLocation->location->phone_number?>
+                <?php endif; ?> 
+              </small> 
+            </div>
+            <div class="col-sm-4 invoice-col">
+              To<br>
+              <strong>
+               <?php echo isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?>
+               </strong>
+              <address>
+                <?php
                 $addresses = $model->user->addresses;
                 foreach ($addresses as $address) {
                     if ($address->label === 'Billing') {
@@ -141,7 +138,6 @@ $this->params['breadcrumbs'][] = $this->title;
                   <?php echo 'E: '; ?><?php echo $model->user->email?>
                   <?php endif; ?>
                 </div>
-              </div>
             <!-- Phone number -->
             <div class="row-fluid text-gray">
               <?php if (!empty($phoneNumber)) {
@@ -149,30 +145,16 @@ $this->params['breadcrumbs'][] = $this->title;
               <?php echo $phoneNumber->number;
                 } ?>
             </div>
+              </address>
             </div>
-          </div>
-        </div>
-        <!-- /.col -->
-        <div class="col-sm-3 invoice-col m-t-0 text-right p-0">
-            <div class="row-fluid  text-gray">
-              <div class="col-md-4 pull-right text-left width-80 p-r-0 "><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#'.$model->invoice_number?></div>
-              <div class="col-md-4 pull-left" ><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Number:'?> </div> 
-              <div class="clearfix"></div>
+            <div class="col-sm-2 invoice-col">
+              <b><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Invoice No.:'?></b> <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#'.$model->invoice_number?><br>
+              <b>Date:</b> <?= Yii::$app->formatter->asDate($model->date); ?><br>
+              <b>Status:</b> <?= $model->getStatus(); ?>
             </div>
-          <div class="row-fluid text-gray">
-              <div class="col-md-3 pull-right text-left width-80 p-r-0" ><?= Yii::$app->formatter->asDate($model->date); ?></div>
-              <div class="col-md-3 pull-left">Date:</div>
-              <div class="clearfix"></div>
-          </div>
-          <div class="row-fluid text-gray">
-			  <?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE):?>
-				  <div class="col-md-4 pull-right text-left p-r-0 width-80"><?= $model->getStatus(); ?></div>
-				  <div class="col-md-4 pull-left">Status:</div>
-			<?php endif; ?>
-              <div class="clearfix"></div>
-            </div>
-          </div>
           <div class="clearfix"></div>
+        </div>
+    <div class="row invoice-info m-t-10">
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
@@ -186,28 +168,28 @@ $this->params['breadcrumbs'][] = $this->title;
                         if (!empty($data->discount)) {
                             if ((int) $data->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
                                 $discount = Yii::$app->formatter->format($data->discount, ['currency']);
-                                $discountDiscription = '(Discount - ' . $discount . ')' ;
-                                $discription = $data->description . "<br><center>" .
-                                    $discountDiscription . "</center>";
+                                $discountDiscription = ' (Discount - ' . $discount . ')' ;
+                                $discription = $data->description . "<i>" .
+                                    $discountDiscription . "</i>";
                             } else {
                                 $discount = $data->discount . '%';
-                                $discountDiscription = '(Discount - ' . $discount . ')' ;
-                                $discription = $data->description . "<br><center>" .
-                                    $discountDiscription . "</center>";
+                                $discountDiscription = ' (Discount - ' . $discount . ')' ;
+                                $discription = $data->description . "<i>" .
+                                    $discountDiscription . "</i>";
                             }
                         } else {
                             $discription = $data->description;
                         }
                         return $discription;
                     },
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center'],
+                    'headerOptions' => ['class' => 'text-left'],
+                    'contentOptions' => ['class' => 'text-left'],
                 ],
 				[
                     'format' => 'currency',
                     'label' => 'Sell',
-                    'headerOptions' => ['class' => 'text-right'],
-                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
+                    'headerOptions' => ['class' => 'text-left'],
+                    'contentOptions' => ['class' => 'text-left', 'style' => 'width:80px;'],
                     'value' => function ($data) {
                         if ((int) $data->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON) {
                             return $data->lesson->enrolment->program->rate;
@@ -221,8 +203,8 @@ $this->params['breadcrumbs'][] = $this->title;
 					'value' => function ($data) {
                         return $data->unit;
                     },
-                    'headerOptions' => ['class' => 'text-right'],
-					'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+                    'headerOptions' => ['class' => 'text-left'],
+					'contentOptions' => ['class' => 'text-left', 'style' => 'width:50px;'],
 				],
 				[
                     'format' => 'currency',
@@ -230,8 +212,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($data) {
                         return $data->netPrice;
                     },
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
+                    'headerOptions' => ['class' => 'text-left'],
+                    'contentOptions' => ['class' => 'text-left', 'style' => 'width:80px;'],
                 ],
             ],
         ]); ?>
@@ -294,8 +276,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                   'value' => function ($data) {
                                       return $data->paymentMethod->name;
                                   },
-                                  'headerOptions' => ['class' => 'text-center'],
-                                  'contentOptions' => ['class' => 'text-center'],
+                                  'headerOptions' => ['class' => 'text-left'],
+                                  'contentOptions' => ['class' => 'text-left'],
                               ],
 							[
                                   'value' => function ($data) {
@@ -307,8 +289,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                   'value' => function ($data) {
                                     return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
                                   },
-                                  'headerOptions' => ['class' => 'text-center'],
-                                  'contentOptions' => ['class' => 'text-center', 'style' => 'width:80px;'],
+                                  'headerOptions' => ['class' => 'text-left'],
+                                  'contentOptions' => ['class' => 'text-left', 'style' => 'width:80px;'],
                               ],
                           ],
                     ]); ?>
@@ -319,7 +301,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </table>
         <!-- /.col -->
         </div>
-    <div class="reminder_notes">
+    <div class="reminder_notes text-muted well well-sm no-shadow">
         <?php echo $model->reminderNotes; ?>
     </div>
 </div>

@@ -7,111 +7,94 @@ use yii\widgets\ActiveForm;
 use kartik\editable\Editable;
 
 ?>
+<style>
+.table-invoice-childtable>tbody>tr>td:last-of-type {
+    text-align: right;
+}
+</style>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
-<div class="invoice-view p-50">
-         <div class="row">
-		<div class="col-xs-12 p-0">
-          <h2 class="m-0">
-            <a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo pull-left">
-                <!-- Add the class icon to your logo image or logo icon to add the margining -->                
+<div class="invoice-view p-10">
+		    <div class="row">
+            <a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo invoice-col col-sm-2">              
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-          <div class="pull-left invoice-address text-gray">
-            <div class="row-fluid">
-              <h2 class="m-0 text-inverse"><strong><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong></h2>
-          </div>
-          <small><?php if (!empty($model->user->userLocation->location->address)): ?>
-                <?= $model->user->userLocation->location->address?>
-			<?php endif; ?>
-			<?php if (!empty($model->user->userLocation->location->phone_number)): ?><br>
-            <?= $model->user->userLocation->location->phone_number?>
-			<?php endif; ?> 
-      </small> 
-      </div>
-      <div class="clearfix"></div>
-          </h2>
-        </div>
-        <!-- /.col -->
-      </div>
-      <div class="row"> 
-        <hr class="default-hr">  
-      </div>
-    <div class="row invoice-info m-t-20">
-        <!-- /.col -->
-		<?php if (!empty($customer)):?>
-        <div class="col-sm-8 invoice-col m-b-20 p-0">
-          <div class="row m-t-10">
-            <div class="col-xs-8">
-                <h4 class="m-0 f-w-400">
-                    <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id, '#' => 'student']) ?>">
-                        <strong><?= isset($customer->publicIdentity) ? $customer->publicIdentity : null?></strong>
-                    </a>
-                </h4>
-              <div class="text-gray">
-	   		<?php
-                $addresses = $customer->addresses;
-                foreach ($addresses as $address) {
-                    if ($address->label === 'Billing') {
-                        $billingAddress = $address;
-                        break;
-                    }
-                }
-                $phoneNumber = $customer->phoneNumber;
-            ?>
-            <!-- Billing address -->
-            <?php if (!empty($billingAddress)) {
-                ?>
-              <?php 
+          <div class="col-sm-3 invoice-address invoice-col text-gray">
+              <div class="row-fluid">
+                <h2 class="m-0 text-inverse"><strong>
+                  <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong>
+                </h2>
+              </div>
+              <small>
+                <?php if (!empty($model->user->userLocation->location->address)): ?>
+                  <?= $model->user->userLocation->location->address?><br>
+          			<?php endif; ?>
+          			<?php if (!empty($model->user->userLocation->location->phone_number)): ?>
+                  <?= $model->user->userLocation->location->phone_number?>
+          			<?php endif; ?> 
+              </small> 
+            </div>
+            <?php if (!empty($customer)):?>
+            <div class="col-sm-4 invoice-col">
+              To
+              <address>
+                <strong>
+                  <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id, '#' => 'student']) ?>">
+                        <?= isset($customer->publicIdentity) ? $customer->publicIdentity : null?>
+                  </a></strong>
+                  <br>
+                  <?php
+                      $addresses = $customer->addresses;
+                      foreach ($addresses as $address) {
+                          if ($address->label === 'Billing') {
+                              $billingAddress = $address;
+                              break;
+                          }
+                      }
+                      $phoneNumber = $customer->phoneNumber;
+                  ?>
+                <!-- Billing address -->
+                <?php if (!empty($billingAddress)) {
                     echo $billingAddress->address.'<br> '.$billingAddress->city->name.', ';
-                echo $billingAddress->province->name.'<br>'.$billingAddress->country->name.' ';
-                echo $billingAddress->postal_code;
-            } ?>
-            <div class="row-fluid m-t-20">
+                    echo $billingAddress->province->name.'<br>'.$billingAddress->country->name.' ';
+                    echo $billingAddress->postal_code;
+                } ?>
+            
                <?php if (!empty($customer->email)): ?>
-               <?= 'E: '; ?><?= $customer->email?>
+               <?= 'E: '; ?><?= $customer->email?><br>
                <?php endif; ?>
-            </div>
+            
             <!-- Phone number -->
-            <div class="row-fluid">
-              <?php if (!empty($phoneNumber)) {
-                ?><?= 'P: '; ?>
-              <?= $phoneNumber->number;
-            } ?>
+            
+              <?php if (!empty($phoneNumber)) { ?>
+                <div class="row-fluid"><?= 'P: '; ?><?= $phoneNumber->number; } ?>
+                </div>
+              <?php endif; ?>
+              </address>
             </div>
-            </div></div>
-          </div>
+            <div class="col-sm-2 invoice-col">
+              <b>Invoice <?= '#'.$model->getInvoiceNumber()?></b><br>
+              <b>Date:</b> <?= Yii::$app->formatter->asDate($model->date); ?><br>
+              <b>Status:</b> <?= $model->getStatus(); ?>
+            </div>
+          <div class="clearfix"></div>
         </div>
-		<?php endif; ?>
         <!-- /.col -->
-        <div class="col-sm-4 invoice-col m-t-10 text-right p-0">
-            <div class="row-fluid  text-gray">
-              <div class="col-md-4 pull-right text-left p-r-0 p-l-30"><?= '#'.$model->getInvoiceNumber()?></div>
-              <div class="col-md-2 pull-right"><?= 'Number:'?> </div> 
-              <div class="clearfix"></div>
-            </div>
-          <div class="row-fluid text-gray">
-              <div class="col-md-4 pull-right text-left p-r-0 p-l-30"><?= Yii::$app->formatter->asDate($model->date); ?></div>
-              <div class="col-md-2 pull-right">Date:</div>
-              <div class="clearfix"></div>
-          </div>
-          <div  class="row-fluid text-gray">
-				  <div id="invoice-status" class="col-md-4 pull-right text-left p-r-0 p-l-30">
-				  <?= $model->getStatus(); ?></div>
-				  <div class="col-md-2 pull-right">Status:</div>
-              <div class="clearfix"></div>
-            </div>
-          </div>
+    <div class="invoice-info m-t-20">
+        <!-- /.col -->
+
+
+		
 	<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
-	<div id="add-misc-item" class="col-md-12">
-    <div class="row m-b-20">
+	<div id="add-misc-item" class="col-sm-1">
+    <div class="m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>
 	<div class="clearfix"></div>
     </div>
 	</div>
     <?php endif; ?>
     <?php if(!empty($model->lineItem) && (!$model->lineItem->isOpeningBalance())) :?>
-    <div id="apply-discount" class="col-md-12">
-    <div class="row m-b-20">
+    <div id="apply-discount" class="col-sm-2">
+    <div class="m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Apply Discount</a>
 	<div class="clearfix"></div>
     </div>
@@ -165,13 +148,13 @@ use kartik\editable\Editable;
         <!-- /.col -->
         </div>
 <div class="clearfix"></div>
-<div class="row no-print">
+<div class="no-print">
   <div class="col-xs-12">
   <!-- <hr class="default-hr">   -->
   </div>
 </div>
 </div>
-<div class="reminder_notes">
+<div class="reminder_notes text-muted well well-sm no-shadow">
     <?php echo $model->reminderNotes; ?>
 </div>
 </div>
