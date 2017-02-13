@@ -49,7 +49,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
             $query->joinWith(['lesson' => function ($query) use ($id) {
                 $query->joinWith(['enrolment' => function ($query) use ($id) {
                     $query->joinWith('student')
-                        ->where(['student.customer_id' => $id]);
+						->andWhere(['student.id' => $id]);
                 }]);
             }]);
         }]);

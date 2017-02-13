@@ -50,6 +50,7 @@ class User extends ActiveRecord implements IdentityInterface
 	public $toDate;
 	public $dateRange;	
 	public $invoiceStatus;
+	public $studentId;
     /**
      * {@inheritdoc}
      */

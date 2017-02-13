@@ -223,12 +223,13 @@ class UserController extends Controller
 		if(!empty($userRequest)) {
 			list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
 			$invoiceStatus = $userRequest['invoiceStatus'];
+			$studentId = $userRequest['studentId'];
 		} 
 		$fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
         $toDate =(new \DateTime($model->toDate))->format('Y-m-d');
         $invoiceQuery = Invoice::find()
-                ->student($id)
-                ->where([
+                ->andWhere([
+					'invoice.user_id' => $model->id,
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
                 ])
@@ -237,14 +238,17 @@ class UserController extends Controller
 		if(!empty($invoiceStatus) && (int)$invoiceStatus !== UserSearch::STATUS_ALL) {
 			$invoiceQuery->andWhere(['invoice.status' => $invoiceStatus]);
 		}
+		if(!empty($studentId)) {
+			$invoiceQuery->student($studentId);
+		}
 
         $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoiceQuery,
         ]);
 
         $proFormaInvoiceQuery = Invoice::find()
-                ->student($id)
                 ->where([
+					'invoice.user_id' => $model->id,
                     'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
                     'invoice.location_id' => $locationId,
                 ])
@@ -833,12 +837,13 @@ class UserController extends Controller
 			$model->dateRange = $userRequest['dateRange']; 
 			list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
 			$invoiceStatus = $userRequest['invoiceStatus'];
+			$studentId = $userRequest['studentId'];
 		} 
 		$fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
         $toDate =(new \DateTime($model->toDate))->format('Y-m-d');
         $invoiceQuery = Invoice::find()
-                ->student($id)
                 ->where([
+					'invoice.user_id' => $model->id,
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
                 ])
@@ -846,6 +851,9 @@ class UserController extends Controller
 				->between($fromDate,$toDate);
 		if(!empty($invoiceStatus) && (int)$invoiceStatus !== UserSearch::STATUS_ALL) {
 			$invoiceQuery->andWhere(['invoice.status' => $invoiceStatus]);
+		}
+		if(!empty($studentId)) {
+			$invoiceQuery->student($studentId);
 		}
         $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoiceQuery,
