@@ -7,7 +7,8 @@ use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use backend\models\search\UserSearch;
-
+use yii\helpers\ArrayHelper;
+use common\models\Student;
 ?>
 <style>
     hr{
@@ -34,7 +35,7 @@ use backend\models\search\UserSearch;
 	<?php $form = ActiveForm::begin([
 		'id' => 'customer-invoice-search-form'
     ]); ?>
-	<div class="col-md-3">
+	<div class="col-xs-3">
     <?php 
    echo DateRangePicker::widget([
     'model' => $userModel,
@@ -59,10 +60,21 @@ use backend\models\search\UserSearch;
     ]);
    ?>
     </div>
-	<div class="col-md-3">
+	<div class="col-xs-2">
         <?php echo $form->field($userModel, 'invoiceStatus')->dropDownList(UserSearch::invoiceStatuses())->label('Invoice Status')->label(false); ?>
     </div>
-    <div class="col-md-3 form-group M-t-5">
+	<div class="col-xs-3">
+		<?php
+		$locationId = Yii::$app->session->get('location_id');
+		$students = ArrayHelper::map(Student::find()
+			->joinWith(['customer' => function($query) use($userModel) {
+				$query->andWhere(['user.id' => $userModel->id]);
+			}])
+			->location($locationId)
+			->all(), 'id', 'fullName'); ?>
+        <?php echo $form->field($userModel, 'studentId')->dropDownList($students, ['prompt' => 'Select Student'])->label(false); ?>
+    </div>
+    <div class="col-md-2 form-group M-t-5">
 	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
     </div>
 	<?php ActiveForm::end(); ?>
@@ -125,8 +137,12 @@ $(document).ready(function(){
 	$("#customer-invoice-search-form").on("submit", function() {
 		var dateRange = $('#user-daterange').val();
 		var invoiceStatus = $('#user-invoicestatus').val();
+    	//$("#user-studentid").on("change", function() {
+			var studentId = $("#user-studentid").val();	
+		//});
 		$.pjax.reload({container:"#customer-invoice-grid", replace:false, timeout:6000, data:$(this).serialize()});
-		var url = "<?= Url::to(['user/invoice-print', 'id' => $userModel->id]); ?>&User[dateRange]=" + dateRange +"&User[invoiceStatus]=" + invoiceStatus;
+		var params = $.param({ 'User[dateRange]': dateRange, 'User[invoiceStatus]': invoiceStatus, 'User[studentId]': studentId });
+		var url = '<?= Url::to(['user/invoice-print', 'id' => $userModel->id]); ?>&' + params;
 		$('#invoice-print').attr('href', url);
 		return false;
     });
