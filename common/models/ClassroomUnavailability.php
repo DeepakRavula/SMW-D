@@ -31,9 +31,26 @@ class ClassroomUnavailability extends \yii\db\ActiveRecord
         return [
             [['classroomId'], 'required'],
             [['classroomId'], 'integer'],
-            [['fromDate', 'toDate'], 'safe'],
+            [['fromDate', 'toDate'], 'required'],
             [['reason'], 'string'],
+            [['fromDate', 'toDate'], 'checkLessonClassroom'],
         ];
+    }
+
+	public function checkLessonClassroom($attribute, $params)
+    {
+		$locationId = Yii::$app->session->get('location_id');
+		$fromDate = (new \DateTime($this->fromDate))->format('Y-m-d');
+		$toDate = (new \DateTime($this->toDate))->format('Y-m-d');
+		$lessons = Lesson::find()
+			->location($locationId)
+            ->andWhere(['classroomId' => $this->classroomId])
+			->andWhere(['BETWEEN','DATE(date)', $fromDate, $toDate])
+			->all();
+		if(!empty($lessons)) {	
+       		$this->addError($attribute, $this->classroom->name . ' already booked for lesson schedule on ' . Yii::$app->formatter->asDate($lessons[0]->date));
+		}
+		
     }
 
     /**
@@ -50,6 +67,11 @@ class ClassroomUnavailability extends \yii\db\ActiveRecord
         ];
     }
 
+	public function getClassroom()
+    {
+        return $this->hasOne(Classroom::className(), ['id' => 'classroomId']);
+    }
+	
 	public function beforeSave($insert) {
 		$this->fromDate = (new \DateTime($this->fromDate))->format('Y-m-d H:i:s');
 		$this->toDate = (new \DateTime($this->toDate))->format('Y-m-d H:i:s');
