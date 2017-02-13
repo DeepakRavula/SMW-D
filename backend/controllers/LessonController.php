@@ -691,4 +691,29 @@ class LessonController extends Controller
 
 		return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
     }
+
+	public function actionSendMail($id)
+    {
+        $model      = $this->findModel($id);
+		$lessonRequest = Yii::$app->request->post('Lesson');
+		if($lessonRequest) {
+			$model->toEmailAddress = $lessonRequest['toEmailAddress'];
+			$model->subject = $lessonRequest['subject'];
+			$model->content = $lessonRequest['content'];
+			$isMailSend = $model->sendEmail();
+			if($isMailSend)
+			{
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-success'],
+					'body' => ' Mail has been send successfully',
+				]);
+			} else {
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-danger'],
+					'body' => 'The customer doesn\'t have email id',
+				]);
+			}
+			return $this->redirect(['view', 'id' => $model->id]);
+		}
+    }
 }

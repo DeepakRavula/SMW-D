@@ -6,6 +6,7 @@ use common\models\Lesson;
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 use kartik\switchinput\SwitchInput;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -20,6 +21,9 @@ use kartik\switchinput\SwitchInput;
 	}
 	.hand{
 		text-transform: capitalize;
+	}
+	.lesson-mail {
+		margin-top: 40px;
 	}
 </style>
 <div class="lesson-view">
@@ -127,14 +131,30 @@ use kartik\switchinput\SwitchInput;
 			</div>
 		<?php ActiveForm::end(); ?>
 		<?php endif; ?>
-	
+		<?php echo Html::a('<i class="fa fa-mail"></i> Email', '#' , [
+			'id' => 'lesson-mail-button',
+			'class' => 'btn btn-default btn-sm m-l-20 pull-left lesson-mail']) ?>	
 	    </div>
 		<?php endif; ?>
 		</div>
 <div class="clearfix"></div>
 </div>
+<?php
+Modal::begin([
+    'header' => '<h4 class="m-0">Email Preview</h4>',
+    'id'=>'lesson-mail-modal',
+]);
+ echo $this->render('mail/preview', [
+		'model' => $model,
+]);
+Modal::end();
+?>
 <script>
  $(document).ready(function() {
+	 $(document).on('click', '#lesson-mail-button', function (e) {
+		$('#lesson-mail-modal').modal('show');
+		return false;
+  	});
 	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
 	$.ajax({
             url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',

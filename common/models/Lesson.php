@@ -40,6 +40,9 @@ class Lesson extends \yii\db\ActiveRecord
     public $program_name;
 	public $showAllReviewLessons = false;
 	public $present;
+	public $toEmailAddress;
+	public $subject;
+	public $content;
     /**
      * {@inheritdoc}
      */
@@ -578,4 +581,19 @@ class Lesson extends \yii\db\ActiveRecord
         }
         return $classroomId;
     }
+
+	public function sendEmail()
+    {
+        $subject                      = $this->subject;
+		Yii::$app->mailer->compose('lesson-reschedule',
+			[
+				'content' => $this->content,
+			])
+			->setFrom(\Yii::$app->params['robotEmail'])
+			->setTo($this->toEmailAddress)
+			->setSubject($subject)
+			->send();
+			
+        return true;
+	}
 }
