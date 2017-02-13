@@ -48,7 +48,7 @@ class ClassroomUnavailability extends \yii\db\ActiveRecord
 			->andWhere(['BETWEEN','DATE(date)', $fromDate, $toDate])
 			->all();
 		if(!empty($lessons)) {	
-       		$this->addError($attribute, $this->classroom->name . ' already booked for lesson schedule on ' . Yii::$app->formatter->asDate($lessons[0]->date));
+       		$this->addError($attribute, $this->classroom->name . ' is already booked for lesson scheduled on ' . Yii::$app->formatter->asDate($lessons[0]->date));
 		}
 		
     }
