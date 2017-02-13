@@ -243,17 +243,26 @@ class Invoice extends \yii\db\ActiveRecord
         return $invoicePaymentTotal;
     }
 
+	public function getProFormaPaymentTotal()
+    {
+        $invoicePaymentTotal = Payment::find()
+            ->joinWith('invoicePayment ip')
+            ->andWhere([
+				'ip.invoice_id' => $this->id,
+				'payment.user_id' => $this->user_id,
+			])
+			->andWhere(['NOT IN', 'payment.payment_method_id', [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]])
+            ->sum('payment.amount');
+
+        return $invoicePaymentTotal;
+    }
+	
     public function getInvoiceBalance()
     {
         if ((int) $this->type === self::TYPE_INVOICE) {
             $balance = $this->total - $this->invoicePaymentTotal;
         } else {
-            $balance = $this->total - $this->invoicePaymentTotal;
-			if ((float)$this->total === (float)$this->invoicePaymentTotal) {
-                $balance = -abs($this->total);
-        	}if ((float)$this->total < (float)$this->invoicePaymentTotal) {
-                $balance = -abs($this->invoicePaymentTotal);
-        	}
+            $balance = $this->total - $this->proFormaPaymentTotal;
 		}
         return $balance;
     }
