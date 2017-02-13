@@ -65,12 +65,13 @@ use kartik\editable\Editable;
             
             <!-- Phone number -->
             
-              <?php if (!empty($phoneNumber)) { ?>
-                <div class="row-fluid"><?= 'P: '; ?><?= $phoneNumber->number; } ?>
+              <?php if (!empty($phoneNumber)) : ?>
+                <div class="row-fluid"><?= 'P: '; ?><?= $phoneNumber->number; ?>
                 </div>
               <?php endif; ?>
               </address>
             </div>
+             <?php endif; ?>
             <div class="col-sm-2 invoice-col">
               <b>Invoice <?= '#'.$model->getInvoiceNumber()?></b><br>
               <b>Date:</b> <?= Yii::$app->formatter->asDate($model->date); ?><br>

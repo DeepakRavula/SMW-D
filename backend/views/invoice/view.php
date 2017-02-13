@@ -20,14 +20,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
   .invoice-view .logo>img{
     width: 216px;
   }
-/*    table>thead>tr>th:first-child,
-    table>tbody>tr>td:first-child{
-        text-align: left !important;
-    }
-    table>thead>tr>th:last-child,
-    table>tbody>tr>td:last-child{
-      text-align: right;
-    }*/
     .badge{
       border-radius: 50px;
       font-size: 18px;
