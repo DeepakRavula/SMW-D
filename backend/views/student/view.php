@@ -153,11 +153,6 @@ $noteContent = $this->render('note/view', [
 			   {
 					$.pjax.reload({container : '#student-lesson-listing', timeout : 4000});
 					$('#new-lesson-modal').modal('hide');
-				}else
-				{
-				 $('#lesson-form').yiiActiveForm('updateMessages',
-					   response.errors
-					, true);
 				}
 			}
 		});

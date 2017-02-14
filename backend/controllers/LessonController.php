@@ -135,18 +135,12 @@ class LessonController extends Controller
 				$response = [
 					'status' => true,
 				];
-			} else {
-				$errors = ActiveForm::validate($model);
-				$response = [
-					'status' => false,
-					'errors' =>  $errors
-				];
 			}
 			return $response;
-			}
+		}
     }
 
-	 public function actionValidate()
+	 public function actionValidate($studentId)
     {
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
@@ -154,6 +148,13 @@ class LessonController extends Controller
 		$model->setScenario(Lesson::SCENARIO_LESSON_CREATE);
 		$request = Yii::$app->request;
         if ($model->load($request->post())) {
+			$studentEnrolment = Enrolment::find()
+			   ->joinWith(['course' => function($query) use($model){
+				   $query->where(['course.programId' => $model->programId]);
+			   }])
+				->where(['studentId' => $studentId])
+				->one();
+            $model->courseId = $studentEnrolment->courseId;
 			$errors =  ActiveForm::validate($model);
 			if(!empty($errors)) {
 				return $errors;
