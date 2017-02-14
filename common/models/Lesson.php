@@ -59,6 +59,7 @@ class Lesson extends \yii\db\ActiveRecord
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
+				'replaceRegularDelete' => true
             ],
         ];
     }
@@ -371,6 +372,13 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
+	public function getProFormaLineItem()
+    {
+        return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])
+			->joinWith('invoice')
+            ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE, 'invoice.isDeleted' => false]);
+    }
+	
     public function getStatus()
     {
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);

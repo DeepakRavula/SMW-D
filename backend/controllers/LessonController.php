@@ -16,10 +16,12 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
-use common\models\TeacherRoom;
+use common\models\PaymentMethod;
 use common\models\Student;
 use yii\web\Response;
 use common\models\Vacation;
+use common\models\ItemType;
+use common\models\Payment;
 
 use yii\widgets\ActiveForm;
 /**
@@ -253,9 +255,43 @@ class LessonController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $model->delete();
+        $locationId = Yii::$app->session->get('location_id');
+		if($model->course->program->isPrivate()) {
+			$type = Lesson::TYPE_PRIVATE_LESSON;
+		} else {
+			$type = Lesson::TYPE_GROUP_LESSON;
+		}
+		if(!empty($model->proFormaInvoice->id) && $model->proFormaInvoice->isPaid()){
+			$invoice = new Invoice();
+            $invoice->user_id = $model->proFormaInvoice->user_id;
+            $invoice->location_id = $locationId;
+            $invoice->type = Invoice::TYPE_INVOICE;
+            $invoice->save();	
 
-        return $this->redirect(['review', 'courseId' => $model->courseId]);
+			$invoiceLineItem = $model->proFormaLineItem;
+			$invoiceLineItem->id = null;
+			$invoiceLineItem->isNewRecord = true;
+			$invoiceLineItem->invoice_id = $invoice->id;
+            $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
+            $invoiceLineItem->description = 'Lesson Credit';
+            $invoiceLineItem->save();
+			
+			$invoice->tax = $invoiceLineItem->tax_rate;
+            $invoice->total = $invoice->subTotal + $invoice->tax;
+            $invoice->save();
+			
+			$paymentModel = new Payment();
+			$paymentModel->invoiceId = $invoice->id;
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
+			$paymentModel->amount = $invoice->total;
+			if($paymentModel->save()) {
+	    	  	$model->delete();
+			}
+		} else {
+	        $model->delete();
+		}
+
+        return $this->redirect(['index', 'LessonSearch[type]' => $type]);
     }
 
     /**
@@ -654,7 +690,6 @@ class LessonController extends Controller
 					->proFormaCredit($model->id)
 					->notDeleted()
 					->one();
-
 				if (!empty($proFormaInvoice)) {
 					$invoice->addPayment($proFormaInvoice);
 				}

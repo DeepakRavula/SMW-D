@@ -22,7 +22,10 @@ if (!empty($invoiceCredits)) {
         if ((int) $lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE) {
             $source = 'Opening Balance';
             $type = 'account_entry';
-        } else {
+        } else if((int) $invoiceCredit->isLessonCredit()) {
+			$source = 'Lesson Credit';
+            $type = 'invoice';	
+		}else {
             $source = 'Invoice';
             $type = 'invoice';
         }
