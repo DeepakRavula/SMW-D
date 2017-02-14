@@ -700,8 +700,7 @@ class LessonController extends Controller
 			$model->toEmailAddress = $lessonRequest['toEmailAddress'];
 			$model->subject = $lessonRequest['subject'];
 			$model->content = $lessonRequest['content'];
-			$isMailSend = $model->sendEmail();
-			if($isMailSend)
+			if($model->sendEmail())
 			{
 				Yii::$app->session->setFlash('alert', [
 					'options' => ['class' => 'alert-success'],

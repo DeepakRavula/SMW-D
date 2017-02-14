@@ -585,7 +585,7 @@ class Lesson extends \yii\db\ActiveRecord
 	public function sendEmail()
     {
         $subject                      = $this->subject;
-		Yii::$app->mailer->compose('lesson-reschedule',
+		return Yii::$app->mailer->compose('lesson-reschedule',
 			[
 				'content' => $this->content,
 			])
@@ -593,7 +593,5 @@ class Lesson extends \yii\db\ActiveRecord
 			->setTo($this->toEmailAddress)
 			->setSubject($subject)
 			->send();
-			
-        return true;
 	}
 }
