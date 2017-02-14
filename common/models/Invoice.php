@@ -462,13 +462,17 @@ class Invoice extends \yii\db\ActiveRecord
 
 	public function addPayment($proFormaInvoice)
 	{
-		if ((float) $proFormaInvoice->credit > (float) $this->total) {
-			$paymentAmount = $this->total;
-		} else {
-			$paymentAmount = $proFormaInvoice->credit;
-		}
+		$invoice = self::find()
+			->joinWith('lineItem')
+			->andWhere([
+				'invoice_line_item.item_id' => $this->lineItem->item_id,
+				'invoice.type' => self::TYPE_PRO_FORMA_INVOICE
+				])
+			->one();
+		$lessonPrePaymentAmount = $invoice->lineItem->amount;
+		
 		$paymentModel = new Payment();
-		$paymentModel->amount = $paymentAmount;
+		$paymentModel->amount = $lessonPrePaymentAmount;
 		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
 		$paymentModel->reference = $proFormaInvoice->id;
 		$paymentModel->invoiceId = $this->id;
