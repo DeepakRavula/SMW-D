@@ -155,10 +155,7 @@ class LessonController extends Controller
 				->where(['studentId' => $studentId])
 				->one();
             $model->courseId = $studentEnrolment->courseId;
-			$errors =  ActiveForm::validate($model);
-			if(!empty($errors)) {
-				return $errors;
-			}
+			return  ActiveForm::validate($model);
 		}
     }
 
