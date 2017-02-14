@@ -144,11 +144,21 @@ class LessonController extends Controller
 			}
 			return $response;
 			}
-        else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+    }
+
+	 public function actionValidate()
+    {
+		$response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
+        $model = new Lesson();
+		$model->setScenario(Lesson::SCENARIO_LESSON_CREATE);
+		$request = Yii::$app->request;
+        if ($model->load($request->post())) {
+			$errors =  ActiveForm::validate($model);
+			if(!empty($errors)) {
+				return $errors;
+			}
+		}
     }
 
     /**

@@ -16,6 +16,10 @@ use yii\helpers\Url;
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
 	'id' => 'lesson-form',
+	'enableClientValidation' => false,
+	'enableAjaxValidation' => true,
+	'validationUrl' => Url::to(['lesson/validate']), 
+	'action' => Url::to(['lesson/create', 'studentId' => $studentModel->id]),
 ]); ?>
 <div class="row">
         <div class="col-md-6">

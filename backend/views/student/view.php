@@ -143,7 +143,7 @@ $noteContent = $this->render('note/view', [
 	});
 	$(document).on('beforeSubmit', '#lesson-form', function (e) {
 		$.ajax({
-			url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
+			url    : $(this).attr('action'),
 			type   : 'post',
 			dataType: "json",
 			data   : $(this).serialize(),
