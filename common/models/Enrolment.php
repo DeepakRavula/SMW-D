@@ -191,10 +191,10 @@ class Enrolment extends \yii\db\ActiveRecord
         return $paymentCycleEndDate;
     }
 
-	public function getLastLessonDateOfPaymentCycle()
+	public function getLastLessonDateOfPaymentCycle($startDate)
     {
-		$courseDate = new \DateTime($this->course->startDate);
-		$startDate = \DateTime::createFromFormat('Y-m-d', $courseDate->format('Y-m-1'));
+//		$courseDate = new \DateTime($this->course->startDate);
+		$startDate = \DateTime::createFromFormat('Y-m-d', $startDate->format('Y-m-1'));
         switch ($this->paymentFrequencyId) {
             case PaymentFrequency::PAYMENT_FREQUENCY_FULL:
                 $endDate = $startDate->modify('+1 year, -1 day');
