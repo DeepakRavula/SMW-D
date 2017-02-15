@@ -316,13 +316,12 @@ class UserController extends Controller
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
 		}
 		$teacherLessons = Lesson::find()
-			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, date, lesson.teacherId"])
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
 			->notDeleted()
 			->between($lessonSearch->fromDate, $lessonSearch->toDate)
-			->groupBy(['lessonDate']);
+			->groupBy(['DATE(date)']);
 			
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,

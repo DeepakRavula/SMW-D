@@ -5,6 +5,8 @@ use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
 use kartik\grid\GridView;
+use yii\helpers\ArrayHelper;
+use common\models\Lesson;
 ?>
 <div class="col-md-12">
 <?php $form = ActiveForm::begin([
@@ -76,51 +78,63 @@ use kartik\grid\GridView;
 		}
 		$columns = [
 			[
-				'label' => 'Day',
-				'value' => function ($data) {
-					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-					$date = $lessonDate->format('l, F jS, Y');
-					return !empty($date) ? $date : null;
+				'label' => 'Time',
+				'width'=>'250px',
+            	'value' => function ($data) {
+					return !empty($data->date) ? Yii::$app->formatter->asTime($data->date) : null;
 				},
-				'pageSummary' => '<div class="text-right">Total Hours of Instruction</div>',
-				'footer' => $lessonCount . ' Lessons in total',
-
+				 'group'=>true,  // enable grouping,
+            'groupedRow'=>true,                    // move grouped column to a single grouped row
+            'groupOddCssClass'=>'kv-grouped-row',  // configure odd group cell css class
+            'groupEvenCssClass'=>'kv-grouped-row',
 			],
 			[
-				'pageSummary' => '<div class="text-right">' . $totalDuration . '</div>',
-				'contentOptions' => ['style' => 'width:50px;'],
+				'label' => 'Program',
+				'width'=>'250px',
+				'value' => function ($data) {
+					return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
+				},
+			'group'=>true,  // enable grouping
+            'subGroupOf'=>1
 			],
 			[
-				'pageSummary' => '<div class="text-right">Total Cost</div>',
-				'contentOptions' => ['style' => 'width:100px;'],
+				'label' => 'Student',
+				'value' => function ($data) {
+					return !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
+				},
 			],
 			[
-				'pageSummary' => '<div class="text-right">$' . $totalCost . '</div>',
+				'label' => 'Duration(hrs)',
+				'value' => function ($data) {
+					return $data->getDuration();
+				},
 			],
 			[
-                'class' => 'kartik\grid\ExpandRowColumn',
-                'width' => '50px',
-				'enableRowClick' => true,
-                'value' => function ($model, $key, $index, $column) {
-                    return GridView::ROW_EXPANDED;
-                },
-                'detail' => function ($model, $key, $index, $column) {
-                    return Yii::$app->controller->renderPartial('teacher/_lesson', ['model' => $model]);
-                },
-                'headerOptions' => ['class' => 'kartik-sheet-style'],
-            ]
+				'label' => 'Rate',
+				'value' => function ($data) {
+					return $data->course->program->rate;	
+				},
+			],
+			[
+				'label' => 'Cost',
+				'value' => function ($data) {
+					if($data->course->program->isPrivate()) {
+						$cost = $data->getDuration() * $data->course->program->rate;	
+					} else {
+						$cost = $data->course->program->rate / $data->getGroupLessonCount();
+					}
+					return $cost;
+				},
+			],
 		];
 	?>
 	<?= GridView::widget([
 		'dataProvider' => $teacherLessonDataProvider,
 		'options' => ['class' => 'col-md-12'],
-		'footerRowOptions' => ['style' => 'font-weight:bold;text-align:left;'],
-		'showFooter' => true,
 		'tableOptions' => ['class' => 'table table-bordered table-responsive'],
 		'headerRowOptions' => ['class' => 'bg-light-gray-1'],
         'pjax' => true,
 		'showPageSummary'=>true,
-		'pageSummaryRowOptions' => ['class' => 'total-hours-of-instruction'],
 		'pjaxSettings' => [
 			'neverTimeout' => true,
 			'options' => [
