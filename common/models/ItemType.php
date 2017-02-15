@@ -14,6 +14,7 @@ class ItemType extends \yii\db\ActiveRecord
     const TYPE_GROUP_LESSON = 2;
     const TYPE_MISC = 3;
     const TYPE_OPENING_BALANCE = 4;
+    const TYPE_LESSON_CREDIT = 5;
     /**
      * {@inheritdoc}
      */
@@ -59,6 +60,9 @@ class ItemType extends \yii\db\ActiveRecord
             break;
             case self::TYPE_OPENING_BALANCE:
                 $code = 'Opening Balance';
+            break;
+			case self::TYPE_LESSON_CREDIT:
+                $code = 'Lesson Credit';
             break;
         }
 

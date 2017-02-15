@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 use kartik\switchinput\SwitchInput;
 use yii\bootstrap\Modal;
+use common\models\Invoice;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -21,9 +22,6 @@ use yii\bootstrap\Modal;
 	}
 	.hand{
 		text-transform: capitalize;
-	}
-	.lesson-mail {
-		margin-top: 40px;
 	}
 </style>
 <div class="lesson-view">
@@ -110,13 +108,30 @@ use yii\bootstrap\Modal;
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Take Payment</span>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
         <?php endif; ?>
 		 <?php endif; ?>
+		<?php echo Html::a('<i class="fa fa-mail"></i> Email', '#' , [
+			'id' => 'lesson-mail-button',
+			'class' => 'btn btn-default btn-sm m-r-20 del-ce']) ?>	
+		<?php $message = 'Are you sure you want to delete this lesson?'; ?> 
+		<?php if(!empty($model->proFormaInvoice->id) && $model->proFormaInvoice->isPaid()) : ?>
+		<?php
+		$lessonPrePaymentAmount = $model->invoiceLineItem->amount;
+		$message = 'The lesson is already prepaid. $' . $lessonPrePaymentAmount . ' is automatically credited to ' . $model->proFormaInvoice->user->publicIdentity . ' account. Are you sure you want to delete this lesson?'; 
+		?>
+		<?php endif; ?>
+		<?php echo Html::a('<i class="fa fa-trash"></i> Delete', ['delete', 'id' => $model->id], [
+			'class' => 'btn btn-primary m-r-20 del-ce',
+			'data' => [
+            	'confirm' => $message,
+            	'method' => 'post',
+        	],
+			]) ?>
 		<?php
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
 		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
 		<?php if (($lessonDate <= $currentDate && !$model->isCanceled() && !$model->isUnscheduled()) || $model->isCompleted()) : ?>
 		  <?php	$form = ActiveForm::begin(['id' => 'lesson-present-form']);?>
 		<?php $model->present = $model->isMissed() ? false : true; ?> 
-		<div class="m-r-10 del-ce">
+		<div class="m-r-20 del-ce">
 			<?=
             $form->field($model, 'present')->widget(SwitchInput::classname(),
                 [
@@ -131,9 +146,7 @@ use yii\bootstrap\Modal;
 			</div>
 		<?php ActiveForm::end(); ?>
 		<?php endif; ?>
-		<?php echo Html::a('<i class="fa fa-mail"></i> Email', '#' , [
-			'id' => 'lesson-mail-button',
-			'class' => 'btn btn-default btn-sm m-l-20 pull-left lesson-mail']) ?>	
+		
 	    </div>
 		<?php endif; ?>
 		</div>

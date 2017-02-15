@@ -151,6 +151,11 @@ class Invoice extends \yii\db\ActiveRecord
                         ->sum('payment.amount');
     }
 
+	public function isLessonCredit()
+    {
+        return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
+    }
+	
     public function isOpeningBalance()
     {
         return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
@@ -215,7 +220,11 @@ class Invoice extends \yii\db\ActiveRecord
             ]);
         }
         $status  = $this->getInvoiceStatus();
-        $balance = $this->invoiceBalance;
+		if($this->isLessonCredit()) {
+			$balance = -abs($this->total);
+		} else {
+	        $balance = $this->invoiceBalance;
+		}
         return $this->updateAttributes([
                 'status'    => $status,
                 'balance'   => $balance,
@@ -390,8 +399,8 @@ class Invoice extends \yii\db\ActiveRecord
             }
 			$this->isDeleted = false;
         }
-
-        return parent::beforeSave($insert);
+		
+     	return parent::beforeSave($insert);
     }
 
     public function sendEmail()

@@ -141,6 +141,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->discountType = 0;
                 $this->isRoyalty  = false;
             }
+			if($this->isLessonCredit()) {
+        		return parent::beforeSave($insert);
+			}
         }
         
         if (!$insert) {
@@ -167,6 +170,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             (int) $this->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON ||
             (int) $this->item_type_id === (int) ItemType::TYPE_GROUP_LESSON;
         return $isOtherLineItems;
+    }
+	
+	public function isLessonCredit()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
     }
 
     public function isOpeningBalance()
