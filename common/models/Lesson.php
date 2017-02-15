@@ -548,6 +548,25 @@ class Lesson extends \yii\db\ActiveRecord
         return $rootLessonId !== $this->id;
     }
 
+	public function getDuration()
+    {
+        $duration		 = \DateTime::createFromFormat('H:i:s', $this->duration);
+		$hours			 = $duration->format('H');
+		$minutes		 = $duration->format('i');
+		$lessonDuration	 = $hours + ($minutes / 60);
+		
+		return $lessonDuration;
+    }
+
+	public function getGroupLessonCount()
+    {
+        $courseCount  = Lesson::find()
+			->andWhere(['courseId' => $this->courseId])
+			->count('id');
+		
+		return $courseCount;
+    }
+
     public function isEnrolmentFirstlesson()
     {
         $courseId             = $this->courseId;

@@ -819,6 +819,8 @@ class UserController extends Controller
 			'model' => $model,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
 			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
+			'fromDate' => $lessonSearch->fromDate,
+			'toDate' => $lessonSearch->toDate
         ]);
     }
 

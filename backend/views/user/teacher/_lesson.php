@@ -38,14 +38,22 @@ $teacherLessons = Lesson::find()
 		'pagination' => false,
     ]);
 $totalDuration	 = 0;
+$lessonTotal = 0;
+$totalCost = 0;
 $count			 = $teacherLessonDataProvider->getCount();
 if (!empty($teacherLessonDataProvider->getModels())) {
 	foreach ($teacherLessonDataProvider->getModels() as $key => $val) {
 		$duration		 = \DateTime::createFromFormat('H:i:s', $val->duration);
 		$hours			 = $duration->format('H');
 		$minutes		 = $duration->format('i');
-		$lessonDuration	 = ($hours * 60) + $minutes;
+		$lessonDuration	 = $hours + ($minutes / 60);
 		$totalDuration += $lessonDuration;
+		if($val->course->program->isPrivate()) {
+			$lessonTotal = $lessonDuration * $val->course->program->rate; 
+		} else {
+			$lessonTotal  = $val->course->program->rate / $val->getGroupLessonCount();
+		}
+		$totalCost += $lessonTotal;
 	}
 }
 ?>
@@ -78,18 +86,35 @@ if (!empty($teacherLessonDataProvider->getModels())) {
 				},
 			],
 			[
-				'label' => 'Duration',
+				'label' => 'Duration (hrs)',
 				'value' => function ($data) {
-					$duration		 = \DateTime::createFromFormat('H:i:s', $data->duration);
-					$hours			 = $duration->format('H');
-					$minutes		 = $duration->format('i');
-					$lessonDuration	 = ($hours * 60) + $minutes;
-
-					return $lessonDuration.'m';
+					return $data->getDuration();
 				},
 				'headerOptions' => ['class' => 'text-right'],
 				'contentOptions' => ['class' => 'text-right'],
-				'footer' => $totalDuration.'m',
+				'footer' => $totalDuration,
+			],
+			[
+				'label' => 'Rate',
+				'value' => function ($data) {
+					return $data->course->program->rate;	
+				},
+				'headerOptions' => ['class' => 'text-right'],
+				'contentOptions' => ['class' => 'text-right'],
+			],
+			[
+				'label' => 'Cost',
+				'value' => function ($data) {
+					if($data->course->program->isPrivate()) {
+						$cost = $data->getDuration() * $data->course->program->rate;	
+					} else {
+						$cost = $data->course->program->rate / $data->getGroupLessonCount();
+					}
+					return $cost;
+				},
+				'headerOptions' => ['class' => 'text-right'],
+				'contentOptions' => ['class' => 'text-right'],
+				'footer' => $totalCost,
 			],
 		],
 	]);

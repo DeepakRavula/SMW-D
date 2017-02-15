@@ -57,13 +57,21 @@ use kartik\grid\GridView;
 	<?php
 		$lessonCount = $teacherAllLessonDataProvider->totalCount;
 		$totalDuration	 = 0;
+		$lessonTotal = 0;
+		$totalCost = 0;
 		if (!empty($teacherAllLessonDataProvider->getModels())) {
 			foreach ($teacherAllLessonDataProvider->getModels() as $key => $val) {
 				$duration		 = \DateTime::createFromFormat('H:i:s', $val->duration);
 				$hours			 = $duration->format('H');
 				$minutes		 = $duration->format('i');
-				$lessonDuration	 = ($hours * 60) + $minutes;
+				$lessonDuration	 = $hours + ($minutes / 60);
 				$totalDuration += $lessonDuration;
+				if($val->course->program->isPrivate()) {
+					$lessonTotal = $lessonDuration * $val->course->program->rate; 
+				} else {
+            		$lessonTotal  = $val->course->program->rate / $val->getGroupLessonCount();
+				}
+				$totalCost += $lessonTotal;
 			}
 		}
 		$columns = [
@@ -79,7 +87,15 @@ use kartik\grid\GridView;
 
 			],
 			[
-				'pageSummary' => '<div class="text-right">' . $totalDuration . 'm</div>',
+				'pageSummary' => '<div class="text-right">' . $totalDuration . '</div>',
+				'contentOptions' => ['style' => 'width:50px;'],
+			],
+			[
+				'pageSummary' => '<div class="text-right">Total Cost</div>',
+				'contentOptions' => ['style' => 'width:100px;'],
+			],
+			[
+				'pageSummary' => '<div class="text-right">$' . $totalCost . '</div>',
 			],
 			[
                 'class' => 'kartik\grid\ExpandRowColumn',
