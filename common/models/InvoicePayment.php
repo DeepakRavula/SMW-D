@@ -57,4 +57,19 @@ class InvoicePayment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
     }
+
+	public function afterSave($insert, $changedAttributes) {
+		if($this->invoice->isProFormaInvoice()) {
+			foreach($this->invoice->lineItems as $lineItem) {
+				if(new \DateTime($lineItem->lesson->date) > new \DateTime($this->payment->date)) {
+					continue;
+				}
+				if(new \DateTime($lineItem->lesson->date) <= new \DateTime($this->payment->date) && !empty($lineItem->lesson->invoice) && !$lineItem->lesson->invoice->isPaid()) {
+					$this->invoice->credit = $this->payment->amount; 
+					$lineItem->lesson->invoice->addPayment($this->invoice);
+				}
+			}
+		}
+		return parent::afterSave($insert, $changedAttributes);
+	}
 }
