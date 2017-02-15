@@ -19,14 +19,14 @@ use yii\widgets\ListView;
             $duration         = \DateTime::createFromFormat('H:i:s', $val->duration);
             $hours             = $duration->format('H');
             $minutes         = $duration->format('i');
-            $lessonDuration     = ($hours * 60) + $minutes;
+			$lessonDuration	 = $hours + ($minutes / 60);
             $totalDuration += $lessonDuration;
         }
     }
     ?>
     <div class="row">
     	<div class="col-md-10">
-            <strong><?= 'Total Hours of Instruction' . ' : ' . $totalDuration . 'm'; ?></strong>
+            <strong><?= 'Total Hours of Instruction' . ' : ' . $totalDuration . 'hrs'; ?></strong>
         </div>
     	<div class="clearfix"></div>
         <div class="col-md-10">

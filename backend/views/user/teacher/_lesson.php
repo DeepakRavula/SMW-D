@@ -44,7 +44,7 @@ if (!empty($teacherLessonDataProvider->getModels())) {
 		$duration		 = \DateTime::createFromFormat('H:i:s', $val->duration);
 		$hours			 = $duration->format('H');
 		$minutes		 = $duration->format('i');
-		$lessonDuration	 = ($hours * 60) + $minutes;
+		$lessonDuration	 = $hours + ($minutes / 60);
 		$totalDuration += $lessonDuration;
 	}
 }
@@ -83,13 +83,13 @@ if (!empty($teacherLessonDataProvider->getModels())) {
 					$duration		 = \DateTime::createFromFormat('H:i:s', $data->duration);
 					$hours			 = $duration->format('H');
 					$minutes		 = $duration->format('i');
-					$lessonDuration	 = ($hours * 60) + $minutes;
+					$lessonDuration	 = $hours + ($minutes / 60);
 
-					return $lessonDuration.'m';
+					return $lessonDuration.'hrs';
 				},
 				'headerOptions' => ['class' => 'text-right'],
 				'contentOptions' => ['class' => 'text-right'],
-				'footer' => $totalDuration.'m',
+				'footer' => $totalDuration.'hrs',
 			],
 		],
 	]);

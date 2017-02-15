@@ -62,7 +62,7 @@ use kartik\grid\GridView;
 				$duration		 = \DateTime::createFromFormat('H:i:s', $val->duration);
 				$hours			 = $duration->format('H');
 				$minutes		 = $duration->format('i');
-				$lessonDuration	 = ($hours * 60) + $minutes;
+				$lessonDuration	 = $hours + ($minutes / 60);
 				$totalDuration += $lessonDuration;
 			}
 		}
@@ -79,7 +79,7 @@ use kartik\grid\GridView;
 
 			],
 			[
-				'pageSummary' => '<div class="text-right">' . $totalDuration . 'm</div>',
+				'pageSummary' => '<div class="text-right">' . $totalDuration . 'hrs</div>',
 			],
 			[
                 'class' => 'kartik\grid\ExpandRowColumn',
