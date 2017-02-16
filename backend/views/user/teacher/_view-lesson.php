@@ -5,139 +5,169 @@ use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
 use kartik\grid\GridView;
+use yii\helpers\ArrayHelper;
+use common\models\Lesson;
 ?>
 <div class="col-md-12">
-<?php $form = ActiveForm::begin([
-	'id' => 'teacher-lesson-search-form',
-]);
-?>
-<style>
-#w20-container table > tbody > tr.info > td{
-	padding:8px;
-	background:#fff;
-}
-.bg-light-gray-1{
-	background: #f5ecec;
-}
-</style>
+	<?php
+	$form = ActiveForm::begin([
+			'id' => 'teacher-lesson-search-form',
+	]);
+	?>
+	<style>
+		#w20-container table > tbody > tr.info > td{
+			padding:8px;
+			background:#fff;
+		}
+		.bg-light-gray-1{
+			background: #f5ecec;
+		}
+	</style>
 	<div class="row">
 		<div class="col-md-2">
 			<?php
-			echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(),
-				[
+			echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(), [
 				'options' => [
 					'class' => 'form-control',
 				],
 			])
 			?>
-	    </div>
-	    <div class="col-md-2">
+		</div>
+		<div class="col-md-2">
 			<?php
-			echo $form->field($searchModel, 'toDate')->widget(DatePicker::classname(),
-				[
+			echo $form->field($searchModel, 'toDate')->widget(DatePicker::classname(), [
 				'options' => [
 					'class' => 'form-control',
 				],
 			])
 			?>
-	    </div>
-	    <div class="col-md-2 form-group p-t-5">
-	    	<Br>
-		<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
-	    </div>
-	    <div class="col-md-6 m-t-25">
-	    	<?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+		</div>
+		<div class="col-md-2 form-group p-t-5">
+			<Br>
+			<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
+		</div>
+		<div class="col-md-6 m-t-25">
+			<?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 
-	    </div>
-	    <div class="clearfix"></div>
+		</div>
+		<div class="clearfix"></div>
 	</div>
 </div>
-	<?php ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
 
-	<?php
-		$lessonCount = $teacherAllLessonDataProvider->totalCount;
-		$totalDuration	 = 0;
-		$lessonTotal = 0;
-		$totalCost = 0;
-		if (!empty($teacherAllLessonDataProvider->getModels())) {
-			foreach ($teacherAllLessonDataProvider->getModels() as $key => $val) {
-				$duration		 = \DateTime::createFromFormat('H:i:s', $val->duration);
-				$hours			 = $duration->format('H');
-				$minutes		 = $duration->format('i');
-				$lessonDuration	 = $hours + ($minutes / 60);
-				$totalDuration += $lessonDuration;
-				if($val->course->program->isPrivate()) {
-					$lessonTotal = $lessonDuration * $val->course->program->rate; 
-				} else {
-            		$lessonTotal  = $val->course->program->rate / $val->getGroupLessonCount();
-				}
-				$totalCost += $lessonTotal;
+<?php
+$columns = [
+		[
+		'value' => function ($data) {
+			if( ! empty($data->date)) {
+    			$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+			    return $lessonDate->format('l, F jS, Y');
 			}
-		}
-		$columns = [
-			[
-				'label' => 'Day',
-				'value' => function ($data) {
-					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-					$date = $lessonDate->format('l, F jS, Y');
-					return !empty($date) ? $date : null;
-				},
-				'pageSummary' => '<div class="text-right">Total Hours of Instruction</div>',
-				'footer' => $lessonCount . ' Lessons in total',
 
-			],
-			[
-				'pageSummary' => '<div class="text-right">' . $totalDuration . '</div>',
-				'contentOptions' => ['style' => 'width:50px;'],
-			],
-			[
-				'pageSummary' => '<div class="text-right">Total Cost</div>',
-				'contentOptions' => ['style' => 'width:100px;'],
-			],
-			[
-				'pageSummary' => '<div class="text-right">$' . $totalCost . '</div>',
-			],
-			[
-                'class' => 'kartik\grid\ExpandRowColumn',
-                'width' => '50px',
-				'enableRowClick' => true,
-                'value' => function ($model, $key, $index, $column) {
-                    return GridView::ROW_EXPANDED;
-                },
-                'detail' => function ($model, $key, $index, $column) {
-                    return Yii::$app->controller->renderPartial('teacher/_lesson', ['model' => $model]);
-                },
-                'headerOptions' => ['class' => 'kartik-sheet-style'],
-            ]
-		];
-	?>
-	<?= GridView::widget([
-		'dataProvider' => $teacherLessonDataProvider,
-		'options' => ['class' => 'col-md-12'],
-		'footerRowOptions' => ['style' => 'font-weight:bold;text-align:left;'],
-		'showFooter' => true,
-		'tableOptions' => ['class' => 'table table-bordered table-responsive'],
-		'headerRowOptions' => ['class' => 'bg-light-gray-1'],
-        'pjax' => true,
-		'showPageSummary'=>true,
-		'pageSummaryRowOptions' => ['class' => 'total-hours-of-instruction'],
-		'pjaxSettings' => [
-			'neverTimeout' => true,
-			'options' => [
-				'id' => 'teacher-lesson-grid',
-			],
+			return null;
+		},
+		'group' => true,
+		'groupedRow' => true,
+		'groupFooter' => function ($model, $key, $index, $widget) {
+			return [
+				'mergeColumns' => [[1, 3]],
+				'content' => [
+					4 => GridView::F_SUM,
+					6 => GridView::F_SUM,
+				],
+				'contentFormats' => [
+					4 => ['format' => 'number', 'decimals' => 2],
+					6 => ['format' => 'number', 'decimals' => 2],
+				],
+				'contentOptions' => [
+					4 => ['style' => 'text-align:right'],
+					6 => ['style' => 'text-align:right'],
+				],
+			'options'=>['style'=>'font-weight:bold;']
+			];
+		}
+	],
+		[
+		'label' => 'Time',
+		'width' => '250px',
+		'value' => function ($data) {
+			return !empty($data->date) ? Yii::$app->formatter->asTime($data->date) : null;
+		},
+	],
+		[
+		'label' => 'Program',
+		'width' => '250px',
+		'value' => function ($data) {
+			return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
+		},
+	],
+		[
+		'label' => 'Student',
+		'value' => function ($data) {
+			return !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
+		},
+	],
+		[
+		'label' => 'Duration(hrs)',
+		'value' => function ($data) {
+			return $data->getDuration();
+		},
+		'contentOptions' => ['class' => 'text-right'],
+			'hAlign'=>'right',
+			'pageSummary'=>true,
+            'pageSummaryFunc'=>GridView::F_SUM
+	],
+		[
+		'label' => 'Rate',
+		'value' => function ($data) {
+			return $data->course->program->rate;
+		},
+			'hAlign'=>'right',
+		'contentOptions' => ['class' => 'text-right'],
+	],
+		[
+		'label' => 'Cost',
+		'value' => function ($data) {
+			if ($data->course->program->isPrivate()) {
+				$cost = $data->getDuration() * $data->course->program->rate;
+			} else {
+				$cost = $data->course->program->rate / $data->getGroupLessonCount();
+			}
+			return $cost;
+		},
+		'contentOptions' => ['class' => 'text-right'],
+			'hAlign'=>'right',
+			'pageSummary'=>true,
+            'pageSummaryFunc'=>GridView::F_SUM
+	],
+];
+?>
+<?=
+GridView::widget([
+	'dataProvider' => $teacherLessonDataProvider,
+	'options' => ['class' => 'col-md-12'],
+	'tableOptions' => ['class' => 'table table-responsive'],
+	'headerRowOptions' => ['class' => 'bg-light-gray-1'],
+	'pjax' => true,
+	'showPageSummary' => true,
+	'pjaxSettings' => [
+		'neverTimeout' => true,
+		'options' => [
+			'id' => 'teacher-lesson-grid',
 		],
-        'columns' => $columns,
-    ]); ?>
+	],
+	'columns' => $columns,
+]);
+?>
 <script>
-$(document).ready(function(){
-	$("#teacher-lesson-search-form").on("submit", function() {
-		var fromDate = $('#lessonsearch-fromdate').val();
-		var toDate = $('#lessonsearch-todate').val();
-		$.pjax.reload({container:"#teacher-lesson-grid", replace:false, timeout:6000, data:$(this).serialize()});
-		var url = "<?= Url::to(['user/print', 'id' => $model->id]); ?>&LessonSearch[fromDate]=" + fromDate + "&LessonSearch[toDate]=" + toDate;
-		$('#print-btn').attr('href', url);
-		return false;
+    $(document).ready(function () {
+        $("#teacher-lesson-search-form").on("submit", function () {
+            var fromDate = $('#lessonsearch-fromdate').val();
+            var toDate = $('#lessonsearch-todate').val();
+            $.pjax.reload({container: "#teacher-lesson-grid", replace: false, timeout: 6000, data: $(this).serialize()});
+            var url = "<?= Url::to(['user/print', 'id' => $model->id]); ?>&LessonSearch[fromDate]=" + fromDate + "&LessonSearch[toDate]=" + toDate;
+            $('#print-btn').attr('href', url);
+            return false;
+        });
     });
-});
 </script>
