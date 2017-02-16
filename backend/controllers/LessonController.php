@@ -646,14 +646,11 @@ class LessonController extends Controller
             $invoice->save();
             $invoice->addLineItem($model);
             $invoice->save();
-            $proFormaInvoice      = Invoice::find()
-                ->select(['invoice.id', 'SUM(payment.amount) as credit'])
-                ->proFormaCredit($model->id)
-				->notDeleted()
-                ->one();
 
-            if (!empty($proFormaInvoice)) {
-				$invoice->addPayment($proFormaInvoice);
+            if (!empty($model->proFormaInvoice)) {
+                if ($model->proFormaInvoice->proformaCredit >= $model->proFormaInvoiceLineItem->amount) {
+                    $invoice->addPayment($model->proFormaInvoice);
+                }
             }
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);

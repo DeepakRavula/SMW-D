@@ -244,6 +244,9 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getInvoicePaymentTotal()
     {
+        if ($this->isProFormaInvoice()) {
+            return $this->paymentTotal;
+        }
         $invoicePaymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
             ->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
@@ -265,13 +268,23 @@ class Invoice extends \yii\db\ActiveRecord
 
         return $invoicePaymentTotal;
     }
+
+    public function getProFormacredit()
+    {
+        $creditTotal = Payment::find()
+            ->joinWith('invoicePayment ip')
+            ->andWhere([ 'ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+			->sum('payment.amount');
+
+        return $creditTotal;
+    }
 	
     public function getInvoiceBalance()
     {
         if ((int) $this->type === self::TYPE_INVOICE) {
             $balance = $this->total - $this->invoicePaymentTotal;
         } else {
-            $balance = $this->total - $this->proFormaPaymentTotal;
+            $balance = $this->total - $this->paymentTotal;
 		}
         return $balance;
     }
@@ -471,14 +484,8 @@ class Invoice extends \yii\db\ActiveRecord
 
 	public function addPayment($proFormaInvoice)
 	{
-		if ((float) $proFormaInvoice->credit > (float) $this->total) {
-			$paymentAmount = $this->total;
-		} else {
-			$paymentAmount = $proFormaInvoice->credit;
-		}
-		
-		$paymentModel = new Payment();
-		$paymentModel->amount = $paymentAmount;
+        $paymentModel = new Payment();
+		$paymentModel->amount = $this->total;
 		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
 		$paymentModel->reference = $proFormaInvoice->id;
 		$paymentModel->invoiceId = $this->id;
