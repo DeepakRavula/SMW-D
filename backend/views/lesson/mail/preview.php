@@ -18,19 +18,37 @@ use yii\helpers\Url;
 	]); ?>
 		<div class="row">
         <div class="col-lg-12">
-			<?php $email = !empty($model->enrolment->student->customer->email) ? $model->enrolment->student->customer->email : null; ?>
+			<?php 
+			$email = !empty($model->enrolment->student->customer->email) ? $model->enrolment->student->customer->email : null;
+			$subject = $model->course->program->name . ' lesson reschedule';
+			$body = null;
+			?>
+			<?php if($model->isRescheduled()) : ?>
+        	<?php $rootLesson = $model->getRootLesson(); 
+				if($rootLesson->date != $model->date) {
+					$body = $model->course->program->name . ' lesson rescheduled from ' . (new \DateTime($rootLesson->date))->format('d-m-Y h:i a') . ' to ' . (new \DateTime($model->date))->format('d-m-Y h:i a'); 
+				} else {
+					$body = $model->course->program->name . ' lesson rescheduled from ' . $rootLesson->teacher->publicIdentity . ' to ' . $model->teacher->publicIdentity; 	
+				}
+			?>
+			<?php endif; ?>
+			<?php $content = $this->render('content', [
+				'toName' => !empty($model->enrolment->student->customer->publicIdentity) ? $model->enrolment->student->customer->publicIdentity : null,
+				'content' => $body,
+			]); ?>
             <?php echo $form->field($model, 'toEmailAddress')->textInput(['value' => $email, 'readonly' => true]) ?>
         </div>
         </div>
 		<div class="row">
         <div class="col-lg-12">
-            <?php echo $form->field($model, 'subject')->textInput() ?>
+            <?php echo $form->field($model, 'subject')->textInput(['value' => $subject]) ?>
         </div>
         </div>
 		<div class="row">
         <div class="col-lg-12">
             <?php echo $form->field($model, 'content')->widget(CKEditor::className(), [
         		'options' => [
+					'value' => $content,
 					'rows' => 6],
         		'preset' => 'basic',
     		]) ?>

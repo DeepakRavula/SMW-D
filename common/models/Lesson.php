@@ -471,6 +471,7 @@ class Lesson extends \yii\db\ActiveRecord
         if ((int) $this->status !== (int) self::STATUS_DRAFTED) {
             if (!$insert) {
                 if ((isset($changedAttributes['date']) && !empty($this->date)) || isset($changedAttributes['teacherId'])) {                
+					$teacherId = $this->teacherId;
 					if(isset($changedAttributes['date']) && !empty($this->date)) {
 						$fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
 	                    $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
@@ -482,15 +483,17 @@ class Lesson extends \yii\db\ActiveRecord
 					} else {
 						$this->updateAttributes([
 							'status' => self::STATUS_CANCELED,
-							'teacherId' => $this->getOldAttribute('teacherId')
+							'teacherId' => $changedAttributes['teacherId']
                     	]);	
 					}
-                    
                     $originalLessonId = $this->id;
                     $this->id = null;
                     $this->isNewRecord = true;
 					if(isset($changedAttributes['date']) && !empty($this->date)) {
                     	$this->date = $toDate->format('Y-m-d H:i:s');
+					}
+					if(isset($changedAttributes['teacherId'])) {
+                    	$this->teacherId = $teacherId;
 					}
                     $this->status = self::STATUS_SCHEDULED;
                     $this->save();
@@ -615,6 +618,7 @@ class Lesson extends \yii\db\ActiveRecord
         $subject                      = $this->subject;
 		return Yii::$app->mailer->compose('lesson-reschedule',
 			[
+				'toName' => $this->enrolment->student->customer->publicIdentity,
 				'content' => $this->content,
 			])
 			->setFrom(\Yii::$app->params['robotEmail'])
