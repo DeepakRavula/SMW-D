@@ -626,4 +626,23 @@ class Lesson extends \yii\db\ActiveRecord
 			->setSubject($subject)
 			->send();
 	}
+
+    public function createRealInvoice()
+    {
+        $location_id = Yii::$app->session->get('location_id');
+        $invoice = new Invoice();
+        $invoice->user_id = $this->enrolment->student->customer->id;
+        $invoice->location_id = $location_id;
+        $invoice->type = INVOICE::TYPE_INVOICE;
+        $invoice->save();
+        $invoice->addLineItem($this);
+        $invoice->save();
+        if (!empty($this->proFormaInvoice)) {
+            if ($this->proFormaInvoice->proformaCredit >= $this->proFormaInvoiceLineItem->amount) {
+                $invoice->addPayment($this->proFormaInvoice);
+            }
+        }
+
+        return $invoice;
+    }
 }

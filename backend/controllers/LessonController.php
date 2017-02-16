@@ -636,22 +636,9 @@ class LessonController extends Controller
         $model = Lesson::findOne(['id' => $id]);
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
         $currentDate = new \DateTime();
-        $location_id = Yii::$app->session->get('location_id');
 
         if ($lessonDate <= $currentDate) {
-            $invoice = new Invoice();
-            $invoice->user_id = $model->enrolment->student->customer->id;
-            $invoice->location_id = $location_id;
-            $invoice->type = INVOICE::TYPE_INVOICE;
-            $invoice->save();
-            $invoice->addLineItem($model);
-            $invoice->save();
-
-            if (!empty($model->proFormaInvoice)) {
-                if ($model->proFormaInvoice->proformaCredit >= $model->proFormaInvoiceLineItem->amount) {
-                    $invoice->addPayment($model->proFormaInvoice);
-                }
-            }
+            $invoice = $model->createInvoice();
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {

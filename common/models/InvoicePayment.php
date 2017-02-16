@@ -61,13 +61,19 @@ class InvoicePayment extends \yii\db\ActiveRecord
 	public function afterSave($insert, $changedAttributes) {
 		if($this->invoice->isProFormaInvoice()) {
 			foreach($this->invoice->lineItems as $lineItem) {
-				if(new \DateTime($lineItem->lesson->date) > new \DateTime($this->payment->date)) {
-					continue;
-				}
-				if(new \DateTime($lineItem->lesson->date) <= new \DateTime($this->payment->date) && !empty($lineItem->lesson->invoice) && !$lineItem->lesson->invoice->isPaid()) {
-					$this->invoice->credit = $this->payment->amount; 
-					$lineItem->lesson->invoice->addPayment($this->invoice);
-				}
+                $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lineItem->lesson->date);
+                $currentDate = new \DateTime();
+				if($lessonDate <= $currentDate) {
+					if (empty($lineItem->lesson->invoice)) {
+                        $invoice = $lineItem->lesson->createRealInvoice();
+                    } else if (!$lineItem->lesson->invoice->isPaid()) {
+                        if (!empty($lineItem->lesson->proFormaInvoice)) {
+                            if ($lineItem->lesson->proFormaInvoice->proformaCredit >= $lineItem->lesson->proFormaInvoiceLineItem->amount) {
+                                $lineItem->lesson->invoice->addPayment($lineItem->lesson->proFormaInvoice);
+                            }
+                        }
+                    }
+                }
 			}
 		}
 		return parent::afterSave($insert, $changedAttributes);
