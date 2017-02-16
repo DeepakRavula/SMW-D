@@ -328,18 +328,6 @@ class UserController extends Controller
 			'pagination' => false,
 		]);
 
-		$teacherAllLessons = Lesson::find()
-			->location($locationId)
-			->where(['lesson.teacherId' => $model->id])
-			->notDraft()
-			->notDeleted()
-			->between($lessonSearch->fromDate, $lessonSearch->toDate);
-			
-		$teacherAllLessonDataProvider = new ActiveDataProvider([
-			'query' => $teacherAllLessons,
-			'pagination' => false,
-		]);
-		
 		$notes = Note::find()
 			->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_USER])
 			->orderBy(['createdOn' => SORT_DESC]);
@@ -377,7 +365,6 @@ class UserController extends Controller
             'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
-			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
 			'noteDataProvider' => $noteDataProvider,
 			'teachersAvailabilities' => $teachersAvailabilities
         ]);
@@ -789,35 +776,23 @@ class UserController extends Controller
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
 		}
         $teacherLessons = Lesson::find()
-			->select(["DATE_FORMAT(lesson.date, '%Y-%m-%d') as lessonDate, lesson.date, lesson.teacherId, lesson.duration"])
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
 			->notDeleted()
 			->between($lessonSearch->fromDate, $lessonSearch->toDate)
-			->groupBy(['lessonDate']);
+			->groupBy(['DATE(date)']);
 			
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,
 			'pagination' => false,
 		]);
-		$teacherAllLessons = Lesson::find()
-			->location($locationId)
-			->where(['lesson.teacherId' => $model->id])
-			->notDraft()
-			->notDeleted()
-			->between($lessonSearch->fromDate, $lessonSearch->toDate);
-
-		$teacherAllLessonDataProvider = new ActiveDataProvider([
-			'query' => $teacherAllLessons,
-			'pagination' => false,
-		]);
+		
         $this->layout = '/print';
 
         return $this->render('teacher/_print', [
 			'model' => $model,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
-			'teacherAllLessonDataProvider' => $teacherAllLessonDataProvider,
 			'fromDate' => $lessonSearch->fromDate,
 			'toDate' => $lessonSearch->toDate
         ]);

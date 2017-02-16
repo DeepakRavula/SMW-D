@@ -1,51 +1,110 @@
 <?php
 
-use yii\widgets\ListView;
+use kartik\grid\GridView;
 ?>
-<div>
-<h3 class="m-0"> <?= $model->publicIdentity; ?> </h3>
-<h4> <?= $fromDate->format('M jS, Y') . ' to ' . $toDate->format('M jS, Y'); ?> </h4>
-<?php echo ListView::widget([
-		'dataProvider' => $teacherLessonDataProvider,
-		'itemView' => '_print-content',
-	]); ?>
-	
-</div>
-<div>
+<h3><?= $model->publicIdentity; ?></h3>
+<h4><?= $fromDate->format('l, jS Y') . ' to ' . $toDate->format('l, jS Y'); ?></h4>
 <?php
-    $lessonCount = $teacherAllLessonDataProvider->totalCount;
-    $totalDuration     = 0;
-	$lessonTotal = 0;
-	$totalCost = 0;
-    if (!empty($teacherAllLessonDataProvider->getModels())) {
-        foreach ($teacherAllLessonDataProvider->getModels() as $key => $val) {
-            $duration         = \DateTime::createFromFormat('H:i:s', $val->duration);
-            $hours             = $duration->format('H');
-            $minutes         = $duration->format('i');
-			$lessonDuration	 = $hours + ($minutes / 60);
-            $totalDuration += $lessonDuration;
-			if($val->course->program->isPrivate()) {
-				$lessonTotal = $lessonDuration * $val->course->program->rate; 
+$columns = [
+		[
+		'value' => function ($data) {
+			$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+			$date = $lessonDate->format('l, F jS, Y');
+			return !empty($date) ? $date : null;
+		},
+		'group' => true,
+		'groupedRow' => true,
+		'groupFooter' => function ($model, $key, $index, $widget) {
+			return [
+				'mergeColumns' => [[1, 3]],
+				'content' => [
+					4 => GridView::F_SUM,
+					6 => GridView::F_SUM,
+				],
+				'contentFormats' => [
+					4 => ['format' => 'number', 'decimals' => 2],
+					6 => ['format' => 'number', 'decimals' => 2],
+				],
+				'contentOptions' => [
+					4 => ['style' => 'text-align:right'],
+					6 => ['style' => 'text-align:right'],
+				],
+			'options'=>['style'=>'font-weight:bold;']
+			];
+		}
+	],
+		[
+		'label' => 'Time',
+		'width' => '250px',
+		'value' => function ($data) {
+			return !empty($data->date) ? Yii::$app->formatter->asTime($data->date) : null;
+		},
+	],
+		[
+		'label' => 'Program',
+		'width' => '250px',
+		'value' => function ($data) {
+			return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
+		},
+	],
+		[
+		'label' => 'Student',
+		'value' => function ($data) {
+			return !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
+		},
+	],
+		[
+		'label' => 'Duration(hrs)',
+		'value' => function ($data) {
+			return $data->getDuration();
+		},
+		'contentOptions' => ['class' => 'text-right'],
+			'hAlign'=>'right',
+			'pageSummary'=>true,
+            'pageSummaryFunc'=>GridView::F_SUM
+	],
+		[
+		'label' => 'Rate',
+		'value' => function ($data) {
+			return $data->course->program->rate;
+		},
+			'hAlign'=>'right',
+		'contentOptions' => ['class' => 'text-right'],
+	],
+		[
+		'label' => 'Cost',
+		'value' => function ($data) {
+			if ($data->course->program->isPrivate()) {
+				$cost = $data->getDuration() * $data->course->program->rate;
 			} else {
-				$lessonTotal  = $val->course->program->rate / $val->getGroupLessonCount();
+				$cost = $data->course->program->rate / $data->getGroupLessonCount();
 			}
-			$totalCost += $lessonTotal;
-        }
-    }
-    ?>
-    <div class="row">
-    	<div class="col-md-10">
-            <strong><?= 'Total Hours of Instruction' . ' : ' . $totalDuration . 'hrs'; ?></strong>
-        </div>
-		<div class="col-md-10">
-            <strong><?= 'Total Cost' . ' : $' . $totalCost; ?></strong>
-        </div>
-    	<div class="clearfix"></div>
-        <div class="col-md-10">
-        	<strong><?= $lessonCount . ' Lessons in total'; ?></strong>
-    	</div>
-	</div>
-</div>
+			return $cost;
+		},
+		'contentOptions' => ['class' => 'text-right'],
+			'hAlign'=>'right',
+			'pageSummary'=>true,
+            'pageSummaryFunc'=>GridView::F_SUM
+	],
+];
+?>
+<?=
+GridView::widget([
+	'dataProvider' => $teacherLessonDataProvider,
+	'options' => ['class' => 'col-md-12'],
+	'tableOptions' => ['class' => 'table table-responsive'],
+	'headerRowOptions' => ['class' => 'bg-light-gray-1'],
+	'pjax' => true,
+	'showPageSummary' => true,
+	'pjaxSettings' => [
+		'neverTimeout' => true,
+		'options' => [
+			'id' => 'teacher-lesson-grid',
+		],
+	],
+	'columns' => $columns,
+]);
+?>
 <script>
 	$(document).ready(function(){
 		window.print();
