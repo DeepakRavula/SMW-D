@@ -59,9 +59,12 @@ use common\models\Lesson;
 $columns = [
 		[
 		'value' => function ($data) {
-			$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-			$date = $lessonDate->format('l, F jS, Y');
-			return !empty($date) ? $date : null;
+			if( ! empty($data->date)) {
+    			$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+			    return $lessonDate->format('l, F jS, Y');
+			}
+
+			return null;
 		},
 		'group' => true,
 		'groupedRow' => true,
