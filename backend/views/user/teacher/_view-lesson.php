@@ -122,11 +122,12 @@ $columns = [
 		'value' => function ($data) {
 			return $data->course->program->rate;
 		},
-			'hAlign'=>'right',
+		'hAlign'=>'right',
 		'contentOptions' => ['class' => 'text-right'],
 	],
 		[
 		'label' => 'Cost',
+		'format'=>['decimal',2],
 		'value' => function ($data) {
 			if ($data->course->program->isPrivate()) {
 				$cost = $data->getDuration() * $data->course->program->rate;

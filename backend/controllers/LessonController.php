@@ -22,7 +22,7 @@ use yii\web\Response;
 use common\models\Vacation;
 use common\models\ItemType;
 use common\models\Payment;
-
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -136,6 +136,7 @@ class LessonController extends Controller
             if ($model->save()) {
 				$response = [
 					'status' => true,
+					'url' => Url::to(['lesson/view', 'id' => $model->id])
 				];
 			}
 			return $response;

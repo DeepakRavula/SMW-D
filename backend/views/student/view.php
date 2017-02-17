@@ -151,8 +151,8 @@ $noteContent = $this->render('note/view', [
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#student-lesson-listing', timeout : 4000});
 					$('#new-lesson-modal').modal('hide');
+					window.location.href = response.url;
 				}
 			}
 		});
