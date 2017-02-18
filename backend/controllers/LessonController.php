@@ -694,6 +694,7 @@ class LessonController extends Controller
 	 public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);
+        $locationId = Yii::$app->session->get('location_id');
         if(!$model->hasProFormaInvoice()) {
             $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
             if ($lessonDate->format('Y-m-d') === $lessonDate->format('Y-m-t')) {
@@ -703,7 +704,8 @@ class LessonController extends Controller
             }
             $paymentCycleLesson = Lesson::find()
                 ->notDeleted()
-                ->andWhere(['OR', ['status' => Lesson::STATUS_COMPLETED], ['status' => Lesson::STATUS_SCHEDULED]])
+                ->location($locationId)
+                ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
                 ->andWhere(['between', 'DATE(date)', $lessonDate->format('Y-m-1'), $lessonDate->format('Y-m-t')])
                 ->orderBy(['date' => $order])
                 ->one();
@@ -713,8 +715,8 @@ class LessonController extends Controller
             } else {
                 $startDate = $model->enrolment->getCurrentPaymentCycleStartDate();
                 $endDate = $model->course->enrolment->getLastLessonDateOfPaymentCycle($startDate);
-                $locationId = Yii::$app->session->get('location_id');
                 $lessons = Lesson::find()
+                    ->location($locationId)
                     ->andWhere(['courseId' => $model->courseId])
                     ->between($startDate, $endDate)
                     ->all();

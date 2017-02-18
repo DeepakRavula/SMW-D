@@ -204,7 +204,7 @@ class Enrolment extends \yii\db\ActiveRecord
             $enrolmentFirstLesson = Lesson::find()
                 ->notDeleted()
                 ->andWhere(['courseId' => $this->courseId])
-                ->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]])
+                ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
                 ->orderBy(['date' => SORT_ASC])
                 ->one();
             $startDate = (new \DateTime($enrolmentFirstLesson->date))->modify('first day of this month');
