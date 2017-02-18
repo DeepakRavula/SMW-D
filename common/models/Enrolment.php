@@ -255,4 +255,41 @@ class Enrolment extends \yii\db\ActiveRecord
 		}
 		return $paymentFrequency;
 	}
+
+    public function setPaymentCycle()
+    {
+        $enrolmentStartDate      = \DateTime::createFromFormat('Y-m-d H:i:s', $this->course->startDate);
+        $endDate                 = $enrolmentStartDate->modify('first day of previous month');
+        $enrolmentLesson         = $this->lessons;
+        $enrolmentLastLesson     = end($enrolmentLesson);
+        $enrolmentLastLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $enrolmentLastLesson->date);
+        
+        for ($i = 0; $i < (12 / $this->paymentFrequencyId) + 1; $i++) {
+            $paymentCycleStartDate = $endDate->modify('First day of next month');
+            switch ($this->paymentFrequencyId) {
+                case PaymentFrequency::PAYMENT_FREQUENCY_FULL:
+                    $endDate = $paymentCycleStartDate->modify('+1 year, -1 day');
+                    break;
+                case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY:
+                    $endDate = $paymentCycleStartDate->modify('+6 month, -1 day');
+                    break;
+                case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY:
+                    $endDate = $paymentCycleStartDate->modify('+3 month, -1 day');
+                    break;
+                case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY:
+                    $endDate = $paymentCycleStartDate->modify('+1 month, -1 day');
+                    break;
+            }
+            
+            if ($enrolmentLastLessonDate->format('Y-m-d') > $endDate->format('Y-m-1 ')) {
+                $paymentCycle              = new PaymentCycle();
+                $paymentCycle->enrolmentId = $this->id;
+                $paymentCycle->startDate   = $endDate->format('Y-m-1');
+                $paymentCycle->endDate     = $endDate->format('Y-m-d');
+                $currentDate               = new \DateTime();
+                $paymentCycle->validFrom   = $currentDate->format('Y-m-d');
+                $paymentCycle->save();
+            }
+        }
+    }
 }

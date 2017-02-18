@@ -326,6 +326,17 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(Classroom::className(), ['id' => 'classroomId']);
     }
 
+    public function getPaymentCycle()
+    {
+        return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
+                    ->viaTable('payment_cycle_lesson', ['lessonId' => 'id']);
+    }
+
+    public function getPaymentCycleLesson()
+    {
+        return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id']);
+    }
+
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])

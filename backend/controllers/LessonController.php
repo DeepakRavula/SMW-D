@@ -586,6 +586,13 @@ class LessonController extends Controller
 				]);
 			}
 		}
+        if (!empty($courseModel->enrolment) && empty($courseRequest) &&
+            empty($vacationRequest) && empty($enrolmentRequest)) {
+            $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
+            $enrolmentModel->isConfirmed = true;
+            $enrolmentModel->save();
+            $enrolmentModel->setPaymentCycle();
+        }
 		if ($courseModel->program->isPrivate()) {
 			if (!empty($vacationId)) {
 				if ($vacationType === Vacation::TYPE_CREATE) {
@@ -606,9 +613,9 @@ class LessonController extends Controller
             	$startDate = new \DateTime($courseModel->startDate);
 				$endDate = $courseModel->enrolment->getLastLessonDateOfPaymentCycle($startDate);
 				$lessons = Lesson::find()
-				->andWhere(['courseId' => $courseModel->id])
-				->between($startDate, $endDate)
-				->all();
+                    ->andWhere(['courseId' => $courseModel->id])
+                    ->between($startDate, $endDate)
+                    ->all();
 				$invoice = new Invoice();
 				$invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
 				$invoice->user_id = $courseModel->enrolment->student->customer->id;
@@ -695,50 +702,29 @@ class LessonController extends Controller
     {
         $model = Lesson::findOne(['id' => $id]);
         $locationId = Yii::$app->session->get('location_id');
-        if(!$model->hasProFormaInvoice()) {
-            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-            if ($lessonDate->format('Y-m-d') === $lessonDate->format('Y-m-t')) {
-                $order = SORT_ASC;
-            } else {
-                $order = SORT_DESC;
-            }
-            $paymentCycleLesson = Lesson::find()
-                ->notDeleted()
+        if(!$model->paymentCycle->hasProFormaInvoice()) {
+            $startDate = \DateTime::createFromFormat('Y-m-d', $model->paymentCycle->startDate);
+            $endDate   = \DateTime::createFromFormat('Y-m-d', $model->paymentCycle->endDate);
+            $lessons = Lesson::find()
                 ->location($locationId)
-                ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
-                ->andWhere(['between', 'DATE(date)', $lessonDate->format('Y-m-1'), $lessonDate->format('Y-m-t')])
-                ->orderBy(['date' => $order])
-                ->one();
-            if ($paymentCycleLesson->hasProFormaInvoice()) {
-                $paymentCycleLesson->proFormaInvoice->addLineItem($model);
-                $paymentCycleLesson->proFormaInvoice->save();
-            } else {
-                $startDate = $model->enrolment->getCurrentPaymentCycleStartDate();
-                $endDate = $model->course->enrolment->getLastLessonDateOfPaymentCycle($startDate);
-                $lessons = Lesson::find()
-                    ->location($locationId)
-                    ->andWhere(['courseId' => $model->courseId])
-                    ->between($startDate, $endDate)
-                    ->all();
-                $invoice = new Invoice();
-                $invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
-                $invoice->user_id = $model->enrolment->student->customer->id;
-                $invoice->location_id = $locationId;
-                $invoice->save();
-                foreach ($lessons as $lesson) {
-                    $invoice->addLineItem($lesson);
-                }
-                $invoice->save();
-
-                return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
+                ->andWhere(['courseId' => $model->courseId])
+                ->between($startDate, $endDate)
+                ->all();
+            $invoice = new Invoice();
+            $invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
+            $invoice->user_id = $model->enrolment->student->customer->id;
+            $invoice->location_id = $locationId;
+            $invoice->save();
+            foreach ($lessons as $lesson) {
+                $invoice->addLineItem($lesson);
             }
-            return $this->redirect(['invoice/view', 'id' => $paymentCycleLesson->proFormaInvoice->id, '#' => 'payment']);
-		} else {
-            $model->proFormaInvoice->makeInvoicePayment();
+            $invoice->save();
+
+            return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
+        } else {
+            $model->paymentCycle->proFormaInvoice->makeInvoicePayment();
             return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
         }
-        
-        return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
     }
 
 	public function actionSendMail($id)
