@@ -39,6 +39,9 @@ $lastRole = end($roles);
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Phone number">
 			<i class="fa fa-phone detail-icon"></i> <?php echo $model->phone_number; ?>
 		</div>
+                <div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Email">
+			<i class="fa fa-envelope detail-icon"></i> <?php echo $model->email; ?>
+		</div>
 	</div>
 	
 	<div class="clearfix"></div>
