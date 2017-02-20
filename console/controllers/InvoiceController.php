@@ -34,7 +34,7 @@ class InvoiceController extends Controller
             ->all();
         if (!empty($matchedLessons)) {
             foreach ($matchedLessons as $matchedLesson) {
-                $invoice = $matchedLesson->createProFormaInvoice();
+                $invoice = $matchedLesson->paymentCycle->createProFormaInvoice();
                 $invoice->on(Invoice::EVENT_GENERATE, $invoice->sendEmail());
             }
         }

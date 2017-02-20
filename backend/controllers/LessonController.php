@@ -609,7 +609,7 @@ class LessonController extends Controller
 				$message = 'Your enrolment has been updated successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
-				$invoice = $courseModel->firstLesson->createProFormaInvoice();
+				$invoice = $courseModel->enrolment->firstPaymentCycle->createProFormaInvoice();
 
 				return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
 			}
@@ -672,7 +672,7 @@ class LessonController extends Controller
         $model = Lesson::findOne(['id' => $id]);
         if(!$model->hasProFormaInvoice()) {
             if (!$model->paymentCycle->hasProFormaInvoice()) {
-                $invoice = $model->paymentCycle->lesson->createProFormaInvoice();
+                $invoice = $model->paymentCycle->createProFormaInvoice();
 
                 return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
             } else {

@@ -214,7 +214,7 @@ class StudentController extends Controller
             $enrolmentModel->paymentFrequencyId = PaymentFrequency::PAYMENT_FREQUENCY_FULL;
             $enrolmentModel->save();
 
-			$invoice = $enrolmentModel->firstLesson->createProFormaInvoice();
+			$invoice = $enrolmentModel->firstPaymentCycle->createProFormaInvoice();
 
             return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
         }

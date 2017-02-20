@@ -643,30 +643,6 @@ class Lesson extends \yii\db\ActiveRecord
         return $invoice;
     }
 
-    public function createProFormaInvoice()
-    {
-        $locationId = Yii::$app->session->get('location_id');
-        $invoice = new Invoice();
-        $invoice->user_id = $this->enrolment->student->customer->id;
-        $invoice->location_id = $locationId;
-        $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
-        $invoice->save();
-        $startDate = \DateTime::createFromFormat('Y-m-d', $this->paymentCycle->startDate);
-        $endDate   = \DateTime::createFromFormat('Y-m-d', $this->paymentCycle->endDate);
-        $lessons = Lesson::find()
-            ->location($locationId)
-            ->andWhere(['courseId' => $this->courseId])
-            ->between($startDate, $endDate)
-            ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
-            ->all();
-        foreach ($lessons as $lesson) {
-            $invoice->addLineItem($lesson);
-            $invoice->save();
-        }
-        
-        return $invoice;
-    }
-
     public function hasProFormaInvoice()
     {
         return !empty($this->proFormaInvoice);

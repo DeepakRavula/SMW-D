@@ -116,10 +116,10 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
     }
 
-    public function getFirstLesson()
+    public function getFirstPaymentCycle()
     {
-        return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
-                ->orderBy(['date' => SORT_ASC]);
+        return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
+                ->orderBy(['startDate' => SORT_ASC]);
     }
 
     public function isMonthlyPaymentFrequency()

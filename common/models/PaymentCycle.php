@@ -65,9 +65,9 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $this->hasMany(PaymentCycleLesson::className(), ['paymentCycleId' => 'id']);
     }
 
-    public function getLesson()
+    public function getEnrolment()
     {
-        return $this->hasOne(PaymentCycleLesson::className(), ['paymentCycleId' => 'id']);
+        return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
     }
 
     public function getProFormaInvoice()
@@ -104,5 +104,29 @@ class PaymentCycle extends \yii\db\ActiveRecord
             $paymentCycleLesson->save();
         }
         return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function createProFormaInvoice()
+    {
+        $locationId = Yii::$app->session->get('location_id');
+        $invoice = new Invoice();
+        $invoice->user_id = $this->enrolment->student->customer->id;
+        $invoice->location_id = $locationId;
+        $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
+        $invoice->save();
+        $startDate = \DateTime::createFromFormat('Y-m-d', $this->startDate);
+        $endDate   = \DateTime::createFromFormat('Y-m-d', $this->endDate);
+        $lessons = Lesson::find()
+            ->location($locationId)
+            ->andWhere(['courseId' => $this->enrolment->courseId])
+            ->between($startDate, $endDate)
+            ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
+            ->all();
+        foreach ($lessons as $lesson) {
+            $invoice->addLineItem($lesson);
+            $invoice->save();
+        }
+
+        return $invoice;
     }
 }
