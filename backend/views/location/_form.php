@@ -19,14 +19,18 @@ $this->params['breadcrumbs'][] = 'Edit';
 
 	<?php $form = ActiveForm::begin(); ?>
 		<div class="row p-10">
-		<div class="col-md-4">
+		<div class="col-md-6">
 			<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 		</div>
-		<div class="col-md-4 ">
+		<div class="col-md-6 ">
 			<?php echo $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
 		</div>
-		<div class="col-md-4">
+                <div class="clearfix"></div>
+		<div class="col-md-6">
 			<?php echo $form->field($model, 'phone_number')->textInput() ?>
+		</div>
+                <div class="col-md-6">
+			<?php echo $form->field($model, 'email')->textInput() ?>
 		</div>
 		<div class="clearfix"></div>
 	</div>

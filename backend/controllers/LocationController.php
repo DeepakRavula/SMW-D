@@ -106,7 +106,7 @@ class LocationController extends Controller
 		$model->royaltyValue = $model->royalty->value;
 		$model->advertisementValue = $model->advertisement->value;
 
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 			$model->royalty->value = $model->royaltyValue;
 			$model->advertisement->value = $model->advertisementValue;	
 			$model->save();
