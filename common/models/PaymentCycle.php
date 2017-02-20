@@ -65,6 +65,11 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $this->hasMany(PaymentCycleLesson::className(), ['paymentCycleId' => 'id']);
     }
 
+    public function getLesson()
+    {
+        return $this->hasOne(PaymentCycleLesson::className(), ['paymentCycleId' => 'id']);
+    }
+
     public function getProFormaInvoice()
     {
         foreach ($this->paymentCycleLessons as $paymentCycleLesson) {

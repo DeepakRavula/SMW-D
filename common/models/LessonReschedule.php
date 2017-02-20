@@ -42,25 +42,22 @@ class LessonReschedule extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getPaymentCycleLessons()
+    public function getPaymentCycleLesson()
     {
-        return $this->hasMany(PaymentCycleLesson::className(), ['lessonId' => 'lessonId']);
+        return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'lessonId']);
     }
 
     public function afterSave($insert,$changedAttributes)
     {
         if ($insert) {
             $oldLesson = Lesson::findOne($this->lessonId);
-            if (!empty($oldLesson->invoiceLineItems)) {
-                $invoiceLineItems = $oldLesson->invoiceLineItems;
-                foreach ($invoiceLineItems as $invoiceLineItem) {
-                    $invoiceLineItem->item_id = $this->rescheduledLessonId;
-                    $invoiceLineItem->save();
-                }
+            if (!empty($oldLesson->invoiceLineItem)) {
+                $oldLesson->invoiceLineItem->item_id = $this->rescheduledLessonId;
+                $oldLesson->invoiceLineItem->save();
             }
-            foreach ($this->paymentCycleLessons as $paymentCycleLesson) {
-                $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
-                $paymentCycleLesson->save();
+            if (!empty($this->paymentCycleLesson)) {
+                $this->paymentCycleLesson->lessonId = $this->rescheduledLessonId;
+                $this->paymentCycleLesson->save();
             }
         }
 

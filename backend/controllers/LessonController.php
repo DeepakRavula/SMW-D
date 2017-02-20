@@ -609,22 +609,7 @@ class LessonController extends Controller
 				$message = 'Your enrolment has been updated successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
-				$locationId = Yii::$app->session->get('location_id');
-            	$startDate = new \DateTime($courseModel->startDate);
-				$endDate = $courseModel->enrolment->getLastLessonDateOfPaymentCycle($startDate);
-				$lessons = Lesson::find()
-                    ->andWhere(['courseId' => $courseModel->id])
-                    ->between($startDate, $endDate)
-                    ->all();
-				$invoice = new Invoice();
-				$invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
-				$invoice->user_id = $courseModel->enrolment->student->customer->id;
-				$invoice->location_id = $locationId;
-				$invoice->save();
-				foreach ($lessons as $lesson) {
-					$invoice->addLineItem($lesson);
-				}
-				$invoice->save();
+				$invoice = $courseModel->firstLesson->createProFormaInvoice();
 
 				return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
 			}
@@ -661,8 +646,6 @@ class LessonController extends Controller
 
 	public function actionMissed($id)
 	{
-		$session = Yii::$app->session;
-        $location_id = $session->get('location_id');
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
 		$lessonRequest = $request->post('Lesson');
@@ -670,21 +653,7 @@ class LessonController extends Controller
 			$model->status = Lesson::STATUS_MISSED;
 			$model->save();
 			if(empty($model->invoice)) {
-				$invoice = new Invoice();
-				$invoice->user_id = $model->enrolment->student->customer->id;
-				$invoice->location_id = $location_id;
-				$invoice->type = INVOICE::TYPE_INVOICE;
-				$invoice->save();
-				$invoice->addLineItem($model);
-				$invoice->save();
-				$proFormaInvoice      = Invoice::find()
-					->select(['invoice.id', 'SUM(payment.amount) as credit'])
-					->proFormaCredit($model->id)
-					->notDeleted()
-					->one();
-				if (!empty($proFormaInvoice)) {
-					$invoice->addPayment($proFormaInvoice);
-				}
+				$invoice = $model->createInvoice();
 
 				return $this->redirect(['invoice/view', 'id' => $invoice->id]);
 			} else {
@@ -701,30 +670,19 @@ class LessonController extends Controller
 	 public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);
-        $locationId = Yii::$app->session->get('location_id');
-        if(!$model->paymentCycle->hasProFormaInvoice()) {
-            $startDate = \DateTime::createFromFormat('Y-m-d', $model->paymentCycle->startDate);
-            $endDate   = \DateTime::createFromFormat('Y-m-d', $model->paymentCycle->endDate);
-            $lessons = Lesson::find()
-                ->location($locationId)
-                ->andWhere(['courseId' => $model->courseId])
-                ->between($startDate, $endDate)
-                ->all();
-            $invoice = new Invoice();
-            $invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
-            $invoice->user_id = $model->enrolment->student->customer->id;
-            $invoice->location_id = $locationId;
-            $invoice->save();
-            foreach ($lessons as $lesson) {
-                $invoice->addLineItem($lesson);
-            }
-            $invoice->save();
+        if(!$model->hasProFormaInvoice()) {
+            if (!$model->paymentCycle->hasProFormaInvoice()) {
+                $invoice = $model->paymentCycle->lesson->createProFormaInvoice();
 
-            return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
+                return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
+            } else {
+                $model->paymentCycle->proFormaInvoice->addLineItem($model);
+                $model->paymentCycle->proFormaInvoice->save();
+            }
         } else {
-            $model->paymentCycle->proFormaInvoice->makeInvoicePayment();
-            return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
+            $model->proFormaInvoice->makeInvoicePayment();
         }
+        return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
     }
 
 	public function actionSendMail($id)

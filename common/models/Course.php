@@ -223,6 +223,12 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['courseId' => 'id']);
     }
 
+    public function getFirstLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['courseId' => 'id'])
+                ->orderBy(['date' => SORT_ASC]);
+    }
+
     public function getEnrolments()
     {
         return $this->hasMany(Enrolment::className(), ['courseId' => 'id']);
