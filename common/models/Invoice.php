@@ -477,7 +477,11 @@ class Invoice extends \yii\db\ActiveRecord
             $lessonAmount                  = $lesson->course->program->rate / $courseCount;
             $invoiceLineItem->amount       = $lessonAmount;
         } else {
-            $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+                $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
+            } else {
+                $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+            }
             $invoiceLineItem->amount       = $lesson->enrolment->program->rate
                 * $invoiceLineItem->unit;
         }
