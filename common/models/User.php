@@ -439,7 +439,7 @@ class User extends ActiveRecord implements IdentityInterface
                 $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
             }
             $class = null;
-            if (!empty($lesson->proFormaInvoice)) {
+            if (!$lesson->hasProFormaInvoice()) {
                 if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
                     $class = 'proforma-paid';
                 } else {

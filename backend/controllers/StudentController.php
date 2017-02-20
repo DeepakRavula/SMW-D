@@ -214,18 +214,7 @@ class StudentController extends Controller
             $enrolmentModel->paymentFrequencyId = PaymentFrequency::PAYMENT_FREQUENCY_FULL;
             $enrolmentModel->save();
 
-			$lessons = Lesson::find()
-				->andWhere(['courseId' => $enrolmentModel->courseId])
-				->all();
-        	$invoice = new Invoice();
-			$invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
-            $invoice->user_id = $enrolmentModel->student->customer->id;
-            $invoice->location_id = $locationId;
-            $invoice->save();
-			foreach ($lessons as $lesson) {
-                $invoice->addLineItem($lesson);
-            }
-            $invoice->save();
+			$invoice = $enrolmentModel->firstPaymentCycle->createProFormaInvoice();
 
             return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
         }

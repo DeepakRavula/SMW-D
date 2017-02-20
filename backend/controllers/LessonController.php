@@ -586,6 +586,13 @@ class LessonController extends Controller
 				]);
 			}
 		}
+        if (!empty($courseModel->enrolment) && empty($courseRequest) &&
+            empty($vacationRequest) && empty($enrolmentRequest)) {
+            $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
+            $enrolmentModel->isConfirmed = true;
+            $enrolmentModel->save();
+            $enrolmentModel->setPaymentCycle();
+        }
 		if ($courseModel->program->isPrivate()) {
 			if (!empty($vacationId)) {
 				if ($vacationType === Vacation::TYPE_CREATE) {
@@ -602,22 +609,7 @@ class LessonController extends Controller
 				$message = 'Your enrolment has been updated successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
-				$locationId = Yii::$app->session->get('location_id');
-            	$startDate = new \DateTime($courseModel->startDate);
-				$endDate = $courseModel->enrolment->getLastLessonDateOfPaymentCycle($startDate);
-				$lessons = Lesson::find()
-				->andWhere(['courseId' => $courseModel->id])
-				->between($startDate, $endDate)
-				->all();
-				$invoice = new Invoice();
-				$invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
-				$invoice->user_id = $courseModel->enrolment->student->customer->id;
-				$invoice->location_id = $locationId;
-				$invoice->save();
-				foreach ($lessons as $lesson) {
-					$invoice->addLineItem($lesson);
-				}
-				$invoice->save();
+				$invoice = $courseModel->enrolment->firstPaymentCycle->createProFormaInvoice();
 
 				return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
 			}
@@ -654,8 +646,6 @@ class LessonController extends Controller
 
 	public function actionMissed($id)
 	{
-		$session = Yii::$app->session;
-        $location_id = $session->get('location_id');
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
 		$lessonRequest = $request->post('Lesson');
@@ -663,21 +653,7 @@ class LessonController extends Controller
 			$model->status = Lesson::STATUS_MISSED;
 			$model->save();
 			if(empty($model->invoice)) {
-				$invoice = new Invoice();
-				$invoice->user_id = $model->enrolment->student->customer->id;
-				$invoice->location_id = $location_id;
-				$invoice->type = INVOICE::TYPE_INVOICE;
-				$invoice->save();
-				$invoice->addLineItem($model);
-				$invoice->save();
-				$proFormaInvoice      = Invoice::find()
-					->select(['invoice.id', 'SUM(payment.amount) as credit'])
-					->proFormaCredit($model->id)
-					->notDeleted()
-					->one();
-				if (!empty($proFormaInvoice)) {
-					$invoice->addPayment($proFormaInvoice);
-				}
+				$invoice = $model->createInvoice();
 
 				return $this->redirect(['invoice/view', 'id' => $invoice->id]);
 			} else {
@@ -694,50 +670,18 @@ class LessonController extends Controller
 	 public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);
-        $locationId = Yii::$app->session->get('location_id');
         if(!$model->hasProFormaInvoice()) {
-            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-            if ($lessonDate->format('Y-m-d') === $lessonDate->format('Y-m-t')) {
-                $order = SORT_ASC;
-            } else {
-                $order = SORT_DESC;
-            }
-            $paymentCycleLesson = Lesson::find()
-                ->notDeleted()
-                ->location($locationId)
-                ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
-                ->andWhere(['between', 'DATE(date)', $lessonDate->format('Y-m-1'), $lessonDate->format('Y-m-t')])
-                ->orderBy(['date' => $order])
-                ->one();
-            if ($paymentCycleLesson->hasProFormaInvoice()) {
-                $paymentCycleLesson->proFormaInvoice->addLineItem($model);
-                $paymentCycleLesson->proFormaInvoice->save();
-            } else {
-                $startDate = $model->enrolment->getCurrentPaymentCycleStartDate();
-                $endDate = $model->course->enrolment->getLastLessonDateOfPaymentCycle($startDate);
-                $lessons = Lesson::find()
-                    ->location($locationId)
-                    ->andWhere(['courseId' => $model->courseId])
-                    ->between($startDate, $endDate)
-                    ->all();
-                $invoice = new Invoice();
-                $invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
-                $invoice->user_id = $model->enrolment->student->customer->id;
-                $invoice->location_id = $locationId;
-                $invoice->save();
-                foreach ($lessons as $lesson) {
-                    $invoice->addLineItem($lesson);
-                }
-                $invoice->save();
+            if (!$model->paymentCycle->hasProFormaInvoice()) {
+                $invoice = $model->paymentCycle->createProFormaInvoice();
 
                 return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
+            } else {
+                $model->paymentCycle->proFormaInvoice->addLineItem($model);
+                $model->paymentCycle->proFormaInvoice->save();
             }
-            return $this->redirect(['invoice/view', 'id' => $paymentCycleLesson->proFormaInvoice->id, '#' => 'payment']);
-		} else {
+        } else {
             $model->proFormaInvoice->makeInvoicePayment();
-            return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
         }
-        
         return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
     }
 
