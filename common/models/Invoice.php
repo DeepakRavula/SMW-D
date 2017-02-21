@@ -441,7 +441,11 @@ class Invoice extends \yii\db\ActiveRecord
                 $lesson->date);
         $invoiceLineItem             = new InvoiceLineItem();
         $invoiceLineItem->invoice_id = $this->id;
-        $invoiceLineItem->item_id    = $lesson->id;
+        if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+            $invoiceLineItem->item_id    = $lesson->paymentCycleLesson->id;
+        } else {
+            $invoiceLineItem->item_id    = $lesson->id;
+        }
         if (!empty($lesson->proFormaInvoiceLineItem)) {
             $invoiceLineItem->discount     = $lesson->proFormaInvoiceLineItem->discount;
             $invoiceLineItem->discountType = $lesson->proFormaInvoiceLineItem->discountType;
@@ -473,7 +477,11 @@ class Invoice extends \yii\db\ActiveRecord
             $lessonAmount                  = $lesson->course->program->rate / $courseCount;
             $invoiceLineItem->amount       = $lessonAmount;
         } else {
-            $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+                $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
+            } else {
+                $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+            }
             $invoiceLineItem->amount       = $lesson->enrolment->program->rate
                 * $invoiceLineItem->unit;
         }
@@ -521,15 +529,15 @@ class Invoice extends \yii\db\ActiveRecord
     public function makeInvoicePayment()
     {
         foreach($this->lineItems as $lineItem) {
-            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lineItem->lesson->date);
+            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lineItem->proFormaLesson->date);
             $currentDate = new \DateTime();
             if($lessonDate <= $currentDate) {
-                if (!$lineItem->lesson->hasInvoice()) {
-                    $invoice = $lineItem->lesson->createInvoice();
-                } else if (!$lineItem->lesson->invoice->isPaid()) {
-                    if ($lineItem->lesson->hasProFormaInvoice()) {
-                        if ($lineItem->lesson->proFormaInvoice->proFormaCredit >= $lineItem->lesson->proFormaInvoiceLineItem->amount) {
-                            $lineItem->lesson->invoice->addPayment($lineItem->lesson->proFormaInvoice);
+                if (!$lineItem->proFormaLesson->hasInvoice()) {
+                    $invoice = $lineItem->proFormaLesson->createInvoice();
+                } else if (!$lineItem->proFormaLesson->invoice->isPaid()) {
+                    if ($lineItem->proFormaLesson->hasProFormaInvoice()) {
+                        if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $lineItem->proFormaLesson->proFormaInvoiceLineItem->amount) {
+                            $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice);
                         }
                     }
                 }

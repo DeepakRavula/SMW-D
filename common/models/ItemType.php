@@ -15,6 +15,7 @@ class ItemType extends \yii\db\ActiveRecord
     const TYPE_MISC = 3;
     const TYPE_OPENING_BALANCE = 4;
     const TYPE_LESSON_CREDIT = 5;
+    const TYPE_PAYMENT_CYCLE_PRIVATE_LESSON = 6;
     /**
      * {@inheritdoc}
      */

@@ -32,32 +32,9 @@ class InvoiceController extends Controller
             ->between($priorDate, $priorDate)
 			->notDeleted()
             ->all();
-        $paymentCycleStartDate        = \DateTime::createFromFormat('Y-m-d',
-                $priorDate->format('Y-m-1'));
         if (!empty($matchedLessons)) {
             foreach ($matchedLessons as $matchedLesson) {
-                $paymentCycleEndDate = $matchedLesson->enrolment->getLastDateOfPaymentCycle();
-                if(!$matchedLesson->isFirstLessonDate($paymentCycleStartDate, $paymentCycleEndDate)) {
-                    continue;
-                }
-                $paymentCycleStartDate        = \DateTime::createFromFormat('Y-m-d',
-                        $priorDate->format('Y-m-1'));
-                $lessons             = Lesson::find()
-                        ->where(['courseId' => $matchedLesson->courseId])
-                        ->unInvoicedProForma()
-                        ->scheduled()
-                        ->between($paymentCycleStartDate, $paymentCycleEndDate)
-						->notDeleted()
-                        ->all();
-                $invoice              = new Invoice();
-                $invoice->type        = Invoice::TYPE_PRO_FORMA_INVOICE;
-                $invoice->location_id = $matchedLesson->enrolment->course->locationId;
-                $invoice->user_id     = $matchedLesson->enrolment->student->customer_id;
-                $invoice->save();
-                foreach ($lessons as $lesson) {
-					$invoice->addLineItem($lesson);
-                }
-                $invoice->save();
+                $invoice = $matchedLesson->paymentCycle->createProFormaInvoice();
                 $invoice->on(Invoice::EVENT_GENERATE, $invoice->sendEmail());
             }
         }

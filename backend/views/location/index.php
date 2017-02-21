@@ -34,6 +34,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
                 },
             ],
             'address',
+            'email',
         ],
     ]); ?>
 

@@ -48,8 +48,10 @@ class Location extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code'], 'required'],
+            [['email'], 'unique'],
+            [['email'], 'email'],
             [['slug'], 'safe'],
-			[['royaltyValue', 'advertisementValue'], 'number'],
+            [['royaltyValue', 'advertisementValue'], 'number'],
             [['city_id', 'province_id', 'country_id'], 'integer'],
             [['name'], 'string', 'max' => 32],
             [['address'], 'string', 'max' => 64],
@@ -72,8 +74,8 @@ class Location extends \yii\db\ActiveRecord
             'postal_code' => 'Postal Code',
             'country_id' => 'Country',
             'slug' => 'Slug',
-			'royaltyValue' => 'Royalty (%)',
-			'advertisementValue' => 'Advertisement (%)',
+            'royaltyValue' => 'Royalty (%)',
+            'advertisementValue' => 'Advertisement (%)',
         ];
     }
 

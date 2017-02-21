@@ -123,7 +123,7 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function unInvoicedProForma()
     {
-        $this->joinWith(['invoiceLineItem' => function ($query) {
+        $this->joinWith(['proFormaLineItem' => function ($query) {
             $query->joinWith('invoice');
             $query->where(['invoice.id' => null]);
         }]);
