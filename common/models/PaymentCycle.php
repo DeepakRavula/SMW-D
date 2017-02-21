@@ -16,6 +16,11 @@ use Yii;
  */
 class PaymentCycle extends \yii\db\ActiveRecord
 {
+    const PAYMENT_FREQUENCY_FULL_COUNT       = 1;
+    const PAYMENT_FREQUENCY_HALFYEARLY_COUNT = 2;
+    const PAYMENT_FREQUENCY_QUARTERLY_COUNT  = 4;
+    const PAYMENT_FREQUENCY_MONTHLY_COUNT    = 12;
+
     /**
      * @inheritdoc
      */

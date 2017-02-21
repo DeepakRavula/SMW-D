@@ -116,6 +116,31 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
     }
 
+    public function getLastLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
+                    ->orderBy(['date' => SORT_DESC]);
+    }
+
+    public function getPaymentCycleCount()
+    {
+        switch($this->paymentFrequencyId) {
+			case PaymentFrequency::PAYMENT_FREQUENCY_FULL :
+				$paymentCycleCount = PaymentCycle::PAYMENT_FREQUENCY_FULL_COUNT;
+			break;
+			case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY :
+				$paymentCycleCount = PaymentCycle::PAYMENT_FREQUENCY_HALFYEARLY_COUNT;
+			break;
+			case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY :
+				$paymentCycleCount = PaymentCycle::PAYMENT_FREQUENCY_QUARTERLY_COUNT;
+			break;
+			case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY :
+				$paymentCycleCount = PaymentCycle::PAYMENT_FREQUENCY_MONTHLY_COUNT;
+			break;
+		}
+		return $paymentCycleCount;
+    }
+
     public function getFirstPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
@@ -265,13 +290,16 @@ class Enrolment extends \yii\db\ActiveRecord
     public function setPaymentCycle()
     {
         $enrolmentStartDate      = \DateTime::createFromFormat('Y-m-d H:i:s', $this->course->startDate);
-        $endDate                 = $enrolmentStartDate->modify('first day of previous month');
-        $enrolmentLesson         = $this->lessons;
-        $enrolmentLastLesson     = end($enrolmentLesson);
+        $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
+        $enrolmentLastLesson     = $this->lastLesson;
         $enrolmentLastLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $enrolmentLastLesson->date);
-        
-        for ($i = 0; $i < (12 / $this->paymentFrequencyId) + 1; $i++) {
-            $paymentCycleStartDate = $endDate->modify('First day of next month');
+        for ($i = 0; $i < $this->paymentCycleCount + 1; $i++) {
+            if ($i !== 0) {
+                $paymentCycleStartDate     = $endDate->modify('First day of next month');
+            }
+            $paymentCycle              = new PaymentCycle();
+            $paymentCycle->enrolmentId = $this->id;
+            $paymentCycle->startDate   = $paymentCycleStartDate->format('Y-m-d');
             switch ($this->paymentFrequencyId) {
                 case PaymentFrequency::PAYMENT_FREQUENCY_FULL:
                     $endDate = $paymentCycleStartDate->modify('+1 year, -1 day');
@@ -286,14 +314,11 @@ class Enrolment extends \yii\db\ActiveRecord
                     $endDate = $paymentCycleStartDate->modify('+1 month, -1 day');
                     break;
             }
-            
-            if ($enrolmentLastLessonDate->format('Y-m-d') > $endDate->format('Y-m-1 ')) {
-                $paymentCycle              = new PaymentCycle();
-                $paymentCycle->enrolmentId = $this->id;
-                $paymentCycle->startDate   = $endDate->format('Y-m-1');
+
+            if ($enrolmentLastLessonDate->format('Y-m-d') > $endDate->format('Y-m-1')) {
+                $paymentCycle->id          = null;
+                $paymentCycle->isNewRecord = true;
                 $paymentCycle->endDate     = $endDate->format('Y-m-d');
-                $currentDate               = new \DateTime();
-                $paymentCycle->validFrom   = $currentDate->format('Y-m-d');
                 $paymentCycle->save();
             }
         }
