@@ -29,9 +29,7 @@ use yii\data\ActiveDataProvider;
         $teacherDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]); ?>
-	<div class="row">
-		<div class="col-md-6">
-			<div class="row">
+	<div class="row p-10">
 				<div class="col-md-6">
 					<?php
 					echo $form->field($model, 'programId')->dropDownList(
@@ -91,14 +89,12 @@ use yii\data\ActiveDataProvider;
 					]);
 					?>
 				</div>
-			</div>
 		</div>
 		<div class="col-md-11 teacher-availability">
 			<?php echo $this->render('_teacher-availability', [
         		'teacherDataProvider' => $teacherDataProvider,
     		]); ?>
 		</div>
-	</div>
     <div class="form-group p-l-10">
 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
 	['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
