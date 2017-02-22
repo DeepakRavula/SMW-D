@@ -62,8 +62,11 @@ class ItemType extends \yii\db\ActiveRecord
             case self::TYPE_OPENING_BALANCE:
                 $code = 'Opening Balance';
             break;
-			case self::TYPE_LESSON_CREDIT:
+            case self::TYPE_LESSON_CREDIT:
                 $code = 'Lesson Credit';
+            break;
+            case self::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON:
+                $code = 'PRIVATE LESSON';
             break;
         }
 
