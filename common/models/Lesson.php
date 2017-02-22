@@ -651,4 +651,18 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return !empty($this->invoice);
     }
+
+    public function addPaymentCycleLesson()
+    {
+        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+        $paymentCycle = PaymentCycle::find()
+            ->where(['AND', ['<=', 'startDate', $lessonDate->format('Y-m-d')],
+                ['>=', 'endDate', $lessonDate->format('Y-m-d')]
+            ])
+            ->one();
+        $paymentCycleLesson                 = new PaymentCycleLesson();
+        $paymentCycleLesson->paymentCycleId = $paymentCycle->id;
+        $paymentCycleLesson->lessonId       = $this->id;
+        $paymentCycleLesson->save();
+    }
 }

@@ -114,36 +114,37 @@ class LessonController extends Controller
      */
     public function actionCreate($studentId)
     {
-		$response = \Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
+        $response = \Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-		$model->setScenario(Lesson::SCENARIO_LESSON_CREATE);
-		$request = Yii::$app->request;
+        $model->setScenario(Lesson::SCENARIO_LESSON_CREATE);
+        $request = Yii::$app->request;
         if ($model->load($request->post())) {
-			$studentEnrolment = Enrolment::find()
-			   ->joinWith(['course' => function($query) use($model){
-				   $query->where(['course.programId' => $model->programId]);
-			   }])
-				->where(['studentId' => $studentId])
-				->one();
+            $studentEnrolment = Enrolment::find()
+                ->joinWith(['course' => function($query) use($model){
+                    $query->where(['course.programId' => $model->programId]);
+                }])
+                ->where(['studentId' => $studentId])
+                ->one();
             $model->courseId = $studentEnrolment->courseId;
             $model->status = Lesson::STATUS_SCHEDULED;
-		    $model->isDeleted = false;
+            $model->isDeleted = false;
             $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
-			$model->duration = $studentEnrolment->course->duration;
-
+            $model->duration = $studentEnrolment->course->duration;
+            
             if ($model->save()) {
-				$response = [
-					'status' => true,
-					'url' => Url::to(['lesson/view', 'id' => $model->id])
-				];
-			}
-			return $response;
-		}
+                $model->addPaymentCycleLesson();
+                $response = [
+                    'status' => true,
+                    'url' => Url::to(['lesson/view', 'id' => $model->id])
+                ];
+            }
+            return $response;
+        }
     }
 
-	 public function actionValidate($studentId)
+    public function actionValidate($studentId)
     {
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
