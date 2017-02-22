@@ -347,9 +347,9 @@ class Lesson extends \yii\db\ActiveRecord
     public function getProFormaInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
-            ->viaTable('invoice_line_item', ['item_id' => 'id'])
-                ->viaTable('payment_cycle_lesson', ['lessonId' => 'id'])
-                    ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE, 'invoice.isDeleted' => false]);
+                ->via('proFormaLineItem')
+                ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
+                    'invoice.isDeleted' => false]);
     }
 
     public function getLessonReschedule()
@@ -371,9 +371,8 @@ class Lesson extends \yii\db\ActiveRecord
 	public function getProFormaLineItem()
     {
         return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])
-			->viaTable('payment_cycle_lesson', ['lessonId' => 'id'])
-            ->joinWith('invoice')
-                ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE, 'invoice.isDeleted' => false]);
+			->via('paymentCycleLesson')
+            ->andWhere(['item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
     }
 	
     public function getStatus()
@@ -635,7 +634,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addLineItem($this);
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
-            if ($this->proFormaInvoice->proFormaCredit >= $this->proFormaInvoiceLineItem->amount) {
+            if ($this->proFormaInvoice->proFormaCredit >= $this->proFormaLineItem->amount) {
                 $invoice->addPayment($this->proFormaInvoice);
             }
         }

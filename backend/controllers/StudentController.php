@@ -211,7 +211,7 @@ class StudentController extends Controller
             $enrolmentModel->studentId = $model->id;
             $enrolmentModel->isDeleted = false;
             $enrolmentModel->isConfirmed = true;
-            $enrolmentModel->paymentFrequencyId = PaymentFrequency::PAYMENT_FREQUENCY_FULL;
+            $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
             $enrolmentModel->save();
 
 			$invoice = $enrolmentModel->firstPaymentCycle->createProFormaInvoice();

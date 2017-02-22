@@ -90,6 +90,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
     }
 
+    public function getPaymentsFrequency()
+    {
+        return $this->hasOne(PaymentFrequency::className(), ['id' => 'paymentFrequencyId']);
+    }
+
     public function getStudent()
     {
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
@@ -116,31 +121,6 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
     }
 
-    public function getLastLesson()
-    {
-        return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
-                    ->orderBy(['date' => SORT_DESC]);
-    }
-
-    public function getPaymentCycleCount()
-    {
-        switch($this->paymentFrequencyId) {
-			case PaymentFrequency::PAYMENT_FREQUENCY_FULL :
-				$paymentCycleCount = PaymentCycle::PAYMENT_FREQUENCY_FULL_COUNT;
-			break;
-			case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY :
-				$paymentCycleCount = PaymentCycle::PAYMENT_FREQUENCY_HALFYEARLY_COUNT;
-			break;
-			case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY :
-				$paymentCycleCount = PaymentCycle::PAYMENT_FREQUENCY_QUARTERLY_COUNT;
-			break;
-			case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY :
-				$paymentCycleCount = PaymentCycle::PAYMENT_FREQUENCY_MONTHLY_COUNT;
-			break;
-		}
-		return $paymentCycleCount;
-    }
-
     public function getFirstPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
@@ -149,22 +129,22 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function isMonthlyPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_MONTHLY;
+        return (int) $this->paymentFrequency === (int) self::LENGTH_MONTHLY;
     }
 
     public function isQuaterlyPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_QUARTERLY;
+        return (int) $this->paymentFrequency === (int) self::LENGTH_QUARTERLY;
     }
 
     public function isHalfYearlyPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_HALFYEARLY;
+        return (int) $this->paymentFrequency === (int) self::LENGTH_HALFYEARLY;
     }
 
     public function isAnnualPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_FULL;
+        return (int) $this->paymentFrequency === (int) self::LENGTH_FULL;
     }
 
     public function afterSave($insert, $changedAttributes)
@@ -200,87 +180,20 @@ class Enrolment extends \yii\db\ActiveRecord
         }
     }
 
-    public function getLastDateOfPaymentCycle()
-    {
-        $priorDate             = (new \DateTime())->modify('+15 day');
-        $paymentCycleStartDate = \DateTime::createFromFormat('Y-m-d', $priorDate->format('Y-m-1'));
-        switch ($this->paymentFrequencyId) {
-            case PaymentFrequency::PAYMENT_FREQUENCY_FULL:
-                $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 year, -1 day');
-                break;
-            case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY:
-                $paymentCycleEndDate = $paymentCycleStartDate->modify('+6 month, -1 day');
-                break;
-            case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY:
-                $paymentCycleEndDate = $paymentCycleStartDate->modify('+3 month, -1 day');
-                break;
-            case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY:
-                $paymentCycleEndDate = $paymentCycleStartDate->modify('+1 month, -1 day');
-                break;
-        }
-
-        return $paymentCycleEndDate;
-    }
-
-    public function getCurrentPaymentCycleStartDate()
-    {
-        $lastProFormaInvoicedLesson = Lesson::find()
-				->joinWith(['proFormaInvoice' => function($query) {
-					$query->andWhere(['invoice.isDeleted' => false]);
-				}])
-				->andWhere(['courseId' => $this->courseId])
-                ->orderBy(['lesson.date' => SORT_DESC])
-				->one();
-        if (empty($lastProFormaInvoicedLesson)) {
-            $enrolmentFirstLesson = Lesson::find()
-                ->notDeleted()
-                ->andWhere(['courseId' => $this->courseId])
-                ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
-                ->orderBy(['date' => SORT_ASC])
-                ->one();
-            $startDate = (new \DateTime($enrolmentFirstLesson->date))->modify('first day of this month');
-        } else {
-            $startDate = (new \DateTime($lastProFormaInvoicedLesson->date))->modify('first day of next month');
-        }
-
-        return $startDate;
-    }
-
-	public function getLastLessonDateOfPaymentCycle($startDate)
-    {
-        $startDate = \DateTime::createFromFormat('Y-m-d', $startDate->format('Y-m-1'));
-        switch ($this->paymentFrequencyId) {
-            case PaymentFrequency::PAYMENT_FREQUENCY_FULL:
-                $endDate = $startDate->modify('+1 year, -1 day');
-                break;
-            case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY:
-                $endDate = $startDate->modify('+6 month, -1 day');
-                break;
-            case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY:
-                $endDate = $startDate->modify('+3 month, -1 day');
-                break;
-            case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY:
-                $endDate = $startDate->modify('+1 month, -1 day');
-                break;
-        }
-
-        return $endDate;
-    }
-
-	public function getPaymentFrequency()
+    public function getPaymentFrequency()
 	{
 		$paymentFrequency = null;
 		switch($this->paymentFrequencyId) {
-			case PaymentFrequency::PAYMENT_FREQUENCY_FULL :
+			case PaymentFrequency::LENGTH_FULL :
 				$paymentFrequency = 'Annually';
 			break;
-			case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY :
+			case PaymentFrequency::LENGTH_HALFYEARLY :
 				$paymentFrequency = 'Semi-Annually';
 			break;
-			case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY :
+			case PaymentFrequency::LENGTH_QUARTERLY :
 				$paymentFrequency = 'Quarterly';
 			break;
-			case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY :
+			case PaymentFrequency::LENGTH_MONTHLY :
 				$paymentFrequency = 'Monthly';
 			break;
 		}
@@ -291,9 +204,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $enrolmentStartDate      = \DateTime::createFromFormat('Y-m-d H:i:s', $this->course->startDate);
         $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
-        $enrolmentLastLesson     = $this->lastLesson;
-        $enrolmentLastLessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $enrolmentLastLesson->date);
-        for ($i = 0; $i < $this->paymentCycleCount + 1; $i++) {
+        for ($i = 0; $i < 12 / $this->paymentsFrequency->frequencyLength; $i++) {
             if ($i !== 0) {
                 $paymentCycleStartDate     = $endDate->modify('First day of next month');
             }
@@ -301,26 +212,24 @@ class Enrolment extends \yii\db\ActiveRecord
             $paymentCycle->enrolmentId = $this->id;
             $paymentCycle->startDate   = $paymentCycleStartDate->format('Y-m-d');
             switch ($this->paymentFrequencyId) {
-                case PaymentFrequency::PAYMENT_FREQUENCY_FULL:
+                case PaymentFrequency::LENGTH_FULL:
                     $endDate = $paymentCycleStartDate->modify('+1 year, -1 day');
                     break;
-                case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY:
+                case PaymentFrequency::LENGTH_HALFYEARLY:
                     $endDate = $paymentCycleStartDate->modify('+6 month, -1 day');
                     break;
-                case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY:
+                case PaymentFrequency::LENGTH_QUARTERLY:
                     $endDate = $paymentCycleStartDate->modify('+3 month, -1 day');
                     break;
-                case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY:
+                case PaymentFrequency::LENGTH_MONTHLY:
                     $endDate = $paymentCycleStartDate->modify('+1 month, -1 day');
                     break;
             }
 
-            if ($enrolmentLastLessonDate->format('Y-m-d') > $endDate->format('Y-m-1')) {
-                $paymentCycle->id          = null;
-                $paymentCycle->isNewRecord = true;
-                $paymentCycle->endDate     = $endDate->format('Y-m-d');
-                $paymentCycle->save();
-            }
+            $paymentCycle->id          = null;
+            $paymentCycle->isNewRecord = true;
+            $paymentCycle->endDate     = $endDate->format('Y-m-d');
+            $paymentCycle->save();
         }
     }
 }
