@@ -503,16 +503,16 @@ class InvoiceController extends Controller
 
 	public function actionAllCompletedLessons()
 	{
-		$locationId = Yii::$app->session->get('location_id');
-		$lessons = Lesson::find()
-            ->location($locationId)
-            ->notDeleted()
-            ->completedUnInvoiced()
-            ->all();
-		foreach($lessons as $lesson) {
-			$lesson->createInvoice();
-		}
+            $locationId = Yii::$app->session->get('location_id');
+            $lessons = Lesson::find()
+                ->notDeleted()
+                ->completedUnInvoiced()
+                ->location($locationId)
+                ->all();
+            foreach($lessons as $lesson) {
+                $lesson->createInvoice();
+            }
 		
-        return $this->redirect(['index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE]);
+            return $this->redirect(['index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE]);
 	}
 }
