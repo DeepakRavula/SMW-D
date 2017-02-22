@@ -31,6 +31,9 @@ use kartik\editable\Editable;
           			<?php if (!empty($model->user->userLocation->location->phone_number)): ?>
                   <?= $model->user->userLocation->location->phone_number?>
           			<?php endif; ?> 
+                                <?php if (!empty($model->user->userLocation->location->email)): ?>
+                  <?= $model->user->userLocation->location->email?>
+          			<?php endif; ?> 
               </small> 
             </div>
             <?php if (!empty($customer)):?>
