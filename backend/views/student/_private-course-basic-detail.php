@@ -86,7 +86,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
         </div>
         <div class="clear-fix"></div>
         <div class="col-md-12">
-            <?= $form->field($model, 'paymentFrequency')->radioList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')) ?>
+            <?= $form->field($model, 'paymentFrequency')->radioList(ArrayHelper::map(PaymentFrequency::find()->all(), 'frequencyId', 'name')) ?>
 	    </div>
         <div id="course-rate-estimation" class="col-md-12">
         <hr class="default-hr">

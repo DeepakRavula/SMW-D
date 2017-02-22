@@ -446,9 +446,9 @@ class Invoice extends \yii\db\ActiveRecord
         } else {
             $invoiceLineItem->item_id    = $lesson->id;
         }
-        if (!empty($lesson->proFormaInvoiceLineItem)) {
-            $invoiceLineItem->discount     = $lesson->proFormaInvoiceLineItem->discount;
-            $invoiceLineItem->discountType = $lesson->proFormaInvoiceLineItem->discountType;
+        if (!empty($lesson->proFormaLineItem)) {
+            $invoiceLineItem->discount     = $lesson->proFormaLineItem->discount;
+            $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
 			if($lesson->course->program->isPrivate()) {
 				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : null;
@@ -536,7 +536,7 @@ class Invoice extends \yii\db\ActiveRecord
                     $invoice = $lineItem->proFormaLesson->createInvoice();
                 } else if (!$lineItem->proFormaLesson->invoice->isPaid()) {
                     if ($lineItem->proFormaLesson->hasProFormaInvoice()) {
-                        if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $lineItem->proFormaLesson->proFormaInvoiceLineItem->amount) {
+                        if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $lineItem->proFormaLesson->proFormaLineItem->amount) {
                             $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice);
                         }
                     }
