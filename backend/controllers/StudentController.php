@@ -213,8 +213,8 @@ class StudentController extends Controller
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
             $enrolmentModel->save();
-
-			$invoice = $enrolmentModel->firstPaymentCycle->createProFormaInvoice();
+            $enrolmentModel->setPaymentCycle();
+            $invoice = $enrolmentModel->firstPaymentCycle->createProFormaInvoice();
 
             return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
         }
