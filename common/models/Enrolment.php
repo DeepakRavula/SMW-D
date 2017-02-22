@@ -90,6 +90,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
     }
 
+    public function getPaymentsFrequency()
+    {
+        return $this->hasOne(PaymentFrequency::className(), ['id' => 'paymentFrequencyId']);
+    }
+
     public function getStudent()
     {
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
@@ -124,22 +129,22 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function isMonthlyPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_MONTHLY;
+        return (int) $this->paymentFrequency === (int) self::LENGTH_MONTHLY;
     }
 
     public function isQuaterlyPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_QUARTERLY;
+        return (int) $this->paymentFrequency === (int) self::LENGTH_QUARTERLY;
     }
 
     public function isHalfYearlyPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_HALFYEARLY;
+        return (int) $this->paymentFrequency === (int) self::LENGTH_HALFYEARLY;
     }
 
     public function isAnnualPaymentFrequency()
     {
-        return (int) $this->paymentFrequency === (int) self::PAYMENT_FREQUENCY_FULL;
+        return (int) $this->paymentFrequency === (int) self::LENGTH_FULL;
     }
 
     public function afterSave($insert, $changedAttributes)
@@ -179,16 +184,16 @@ class Enrolment extends \yii\db\ActiveRecord
 	{
 		$paymentFrequency = null;
 		switch($this->paymentFrequencyId) {
-			case PaymentFrequency::PAYMENT_FREQUENCY_FULL :
+			case PaymentFrequency::LENGTH_FULL :
 				$paymentFrequency = 'Annually';
 			break;
-			case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY :
+			case PaymentFrequency::LENGTH_HALFYEARLY :
 				$paymentFrequency = 'Semi-Annually';
 			break;
-			case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY :
+			case PaymentFrequency::LENGTH_QUARTERLY :
 				$paymentFrequency = 'Quarterly';
 			break;
-			case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY :
+			case PaymentFrequency::LENGTH_MONTHLY :
 				$paymentFrequency = 'Monthly';
 			break;
 		}
@@ -199,7 +204,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $enrolmentStartDate      = \DateTime::createFromFormat('Y-m-d H:i:s', $this->course->startDate);
         $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
-        for ($i = 0; $i < 12 / $this->paymentFrequencyId; $i++) {
+        for ($i = 0; $i < 12 / $this->paymentsFrequency->frequencyLength; $i++) {
             if ($i !== 0) {
                 $paymentCycleStartDate     = $endDate->modify('First day of next month');
             }
@@ -207,16 +212,16 @@ class Enrolment extends \yii\db\ActiveRecord
             $paymentCycle->enrolmentId = $this->id;
             $paymentCycle->startDate   = $paymentCycleStartDate->format('Y-m-d');
             switch ($this->paymentFrequencyId) {
-                case PaymentFrequency::PAYMENT_FREQUENCY_FULL:
+                case PaymentFrequency::LENGTH_FULL:
                     $endDate = $paymentCycleStartDate->modify('+1 year, -1 day');
                     break;
-                case PaymentFrequency::PAYMENT_FREQUENCY_HALFYEARLY:
+                case PaymentFrequency::LENGTH_HALFYEARLY:
                     $endDate = $paymentCycleStartDate->modify('+6 month, -1 day');
                     break;
-                case PaymentFrequency::PAYMENT_FREQUENCY_QUARTERLY:
+                case PaymentFrequency::LENGTH_QUARTERLY:
                     $endDate = $paymentCycleStartDate->modify('+3 month, -1 day');
                     break;
-                case PaymentFrequency::PAYMENT_FREQUENCY_MONTHLY:
+                case PaymentFrequency::LENGTH_MONTHLY:
                     $endDate = $paymentCycleStartDate->modify('+1 month, -1 day');
                     break;
             }

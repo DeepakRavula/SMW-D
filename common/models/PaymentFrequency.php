@@ -9,14 +9,14 @@ use Yii;
  *
  * @property string $id
  * @property string $name
- * @property string $frequencyId
+ * @property string $frequencyLength
  */
 class PaymentFrequency extends \yii\db\ActiveRecord
 {
-    const PAYMENT_FREQUENCY_MONTHLY    = 1;
-    const PAYMENT_FREQUENCY_QUARTERLY  = 3;
-    const PAYMENT_FREQUENCY_HALFYEARLY = 6;
-	const PAYMENT_FREQUENCY_FULL       = 12;
+    const LENGTH_MONTHLY    = 1;
+    const LENGTH_QUARTERLY  = 3;
+    const LENGTH_HALFYEARLY = 6;
+	const LENGTH_FULL       = 12;
 
     public $individualDiscountValue;
 	public $familyDiscountValue;
@@ -35,9 +35,9 @@ class PaymentFrequency extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'frequencyId'], 'required'],
+            [['name', 'frequencyLength'], 'required'],
             [['name'], 'string', 'max' => 20],
-            ['frequencyId', 'integer'],
+            ['frequencyLength', 'integer'],
 			[['individualDiscountValue', 'familyDiscountValue'], 'number']
         ];
     }

@@ -80,7 +80,7 @@ class CourseController extends Controller
                     'studentId' => $studentId,
                     'isDeleted' => false,
                     'isConfirmed' => true,
-                    'paymentFrequencyId' => PaymentFrequency::PAYMENT_FREQUENCY_FULL,
+                    'paymentFrequencyId' => PaymentFrequency::LENGTH_FULL,
                 ]);
                 $enrolment->save();
             }
