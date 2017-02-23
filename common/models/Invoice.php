@@ -384,6 +384,8 @@ class Invoice extends \yii\db\ActiveRecord
         } else {
             if ((int) $this->type === (int) self::TYPE_INVOICE) {
                 $status = self::STATUS_CREDIT;
+            } else {
+               $status = self::STATUS_PAID;
             }
         }
         return $status;
