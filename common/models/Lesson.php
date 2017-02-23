@@ -658,7 +658,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
         $paymentCycle = PaymentCycle::find()
             ->where(['enrolmentId' => $this->enrolment->id])
-            ->where(['AND', ['<=', 'startDate', $lessonDate->format('Y-m-d')],
+            ->andWhere(['AND', ['<=', 'startDate', $lessonDate->format('Y-m-d')],
                 ['>=', 'endDate', $lessonDate->format('Y-m-d')]
             ])
             ->one();
