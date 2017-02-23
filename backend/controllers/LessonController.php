@@ -683,7 +683,7 @@ class LessonController extends Controller
         } else {
             $model->proFormaInvoice->makeInvoicePayment();
         }
-        return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
+        return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id, '#' => 'payment']);
     }
 
 	public function actionSendMail($id)
