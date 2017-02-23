@@ -212,7 +212,7 @@ class Invoice extends \yii\db\ActiveRecord
             $subTotal    = $this->netSubtotal;
             $tax         = $this->lineItemTax;
             $discount    = $this->discount;
-            $totalAmount = ($subTotal + $tax) - $discount;
+            $totalAmount = ($subTotal + $tax) - Yii::$app->formatter->asDecimal($discount, 2);
             $this->updateAttributes([
                     'subTotal' => $subTotal,
                     'tax' => $tax,
@@ -377,9 +377,9 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getInvoiceStatus()
     {
-       if ((float) $this->subTotal === (float) $this->invoicePaymentTotal) {
+       if ((float) $this->total === (float) $this->invoicePaymentTotal) {
             $status = self::STATUS_PAID;
-        } elseif ((float) $this->subTotal > (float) $this->invoicePaymentTotal) {
+        } elseif ((float) $this->total > (float) $this->invoicePaymentTotal) {
             $status = self::STATUS_OWING;
         } else {
             if ((int) $this->type === (int) self::TYPE_INVOICE) {
@@ -517,7 +517,7 @@ class Invoice extends \yii\db\ActiveRecord
         $subtotal = 0.0;
         if (!empty($this->lineItems)) {
             foreach ($this->lineItems as $lineItem) {
-                $subtotal += $lineItem->amount;
+                $subtotal += $lineItem->netPrice;
             }
         }
 

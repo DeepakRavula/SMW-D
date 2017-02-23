@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use Yii;
 use common\models\ItemType;
 use common\models\TaxStatus;
 use common\models\query\InvoiceLineItemQuery;
@@ -214,6 +215,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return $this->amount - $this->discountValue;
+        return $this->amount - Yii::$app->formatter->asDecimal($this->discountValue, 2);
     }
 }
