@@ -42,27 +42,25 @@ class ReportController extends Controller {
 			$toDate = $currentDate;
 		}
 		$locationId = Yii::$app->session->get('location_id');
-		$invoiceTotal = Invoice::find()
-			->where(['location_id' => $locationId])
-			->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-			->notDeleted()
-			->sum('subTotal');
+		
 		$invoiceTaxTotal = Invoice::find()
-			->where(['location_id' => $locationId])
+			->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
+			->andWhere(['NOT', ['status' => Invoice::STATUS_OWING]])
 			->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 			->notDeleted()
 			->sum('tax');
 
 		$payments = Payment::find()
 			->joinWith(['invoice i' => function ($query) use ($locationId) {
-					$query->where(['i.location_id' => $locationId]);
+					$query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
 				}])
 			->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 			->sum('payment.amount');
 
 		$royaltyPayment = InvoiceLineItem::find()
 			->joinWith(['invoice i' => function ($query) use ($locationId) {
-					$query->where(['i.location_id' => $locationId, 'i.status' => Invoice::STATUS_PAID]);
+					$query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
+					$query->andWhere(['NOT', ['status' => Invoice::STATUS_OWING]]);
 				}])
 			->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 			->andWhere(['invoice_line_item.isRoyalty' => false])
@@ -70,7 +68,6 @@ class ReportController extends Controller {
 				
 		return $this->render('royalty', [
 			'searchModel' => $searchModel, 
-			'invoiceTotal' => $invoiceTotal,
 			'invoiceTaxTotal' => $invoiceTaxTotal,
 			'payments' => $payments,
 			'royaltyPayment' => $royaltyPayment
