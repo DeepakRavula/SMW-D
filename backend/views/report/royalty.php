@@ -23,6 +23,6 @@ $this->title = 'Royalty';
 	<div>Total : <?php $total = $payments - ($invoiceTaxTotal + $royaltyPayment); ?>  <?= !empty($total) ? $total : 0; ?></div>
 	<div>Advertisement : <?= !empty($location->advertisement->value) ? $location->advertisement->value . '%' : ' - '; ?></div>
 	<div>Royalty : <?= !empty($location->royalty->value) ? $location->royalty->value . '%' : ' - '; ?></div>
-	<div>Owe to head office : <?= $total - ($total * ($locationDebtAmount / 100)); ?> </div>
+	<div>Owe to head office : <?= round(($total - ($total * ($locationDebtAmount / 100))) ,2); ?> </div>
 	</h4>
 </div>
