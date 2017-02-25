@@ -105,7 +105,7 @@ use yii\bootstrap\Modal;
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Take Payment</span>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
         <?php endif; ?>
 		 <?php endif; ?>
-		<?php if(new \DateTime($model->date) >= new \DateTime() && $model->course->program->isPrivate()) : ?>
+		<?php if($model->course->program->isPrivate()) : ?>
 		<?php echo Html::a('<span class="label label-primary"> Split</span>', '#', [
 				'id' => 'split-lesson',
 				'class' => 'm-r-20 del-ce',
