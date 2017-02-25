@@ -7,7 +7,6 @@ use common\models\Lesson;
 use common\models\PrivateLesson;
 use common\models\Enrolment;
 use common\models\Course;
-use common\models\Invoice;
 use common\models\LessonReschedule;
 use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
@@ -16,12 +15,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
-use common\models\PaymentMethod;
 use common\models\Student;
 use yii\web\Response;
 use common\models\Vacation;
-use common\models\ItemType;
-use common\models\Payment;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 /**
@@ -246,56 +242,7 @@ class LessonController extends Controller
         }
         return $this->render($view, $data);
     }
-    /**
-     * Deletes an existing Lesson model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param string $id
-     *
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $model = $this->findModel($id);
-        $locationId = Yii::$app->session->get('location_id');
-		if($model->course->program->isPrivate()) {
-			$type = Lesson::TYPE_PRIVATE_LESSON;
-		} else {
-			$type = Lesson::TYPE_GROUP_LESSON;
-		}
-		if(!empty($model->proFormaInvoice->id) && $model->proFormaInvoice->isPaid()){
-			$invoice = new Invoice();
-            $invoice->user_id = $model->proFormaInvoice->user_id;
-            $invoice->location_id = $locationId;
-            $invoice->type = Invoice::TYPE_INVOICE;
-            $invoice->save();	
-
-			$invoiceLineItem = $model->proFormaLineItem;
-			$invoiceLineItem->id = null;
-			$invoiceLineItem->isNewRecord = true;
-			$invoiceLineItem->invoice_id = $invoice->id;
-            $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
-            $invoiceLineItem->description = 'Lesson Credit';
-            $invoiceLineItem->save();
-			
-			$invoice->tax = $invoiceLineItem->tax_rate;
-            $invoice->total = $invoice->subTotal + $invoice->tax;
-            $invoice->save();
-			
-			$paymentModel = new Payment();
-			$paymentModel->invoiceId = $invoice->id;
-			$paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
-			$paymentModel->amount = $invoice->total;
-			if($paymentModel->save()) {
-	    	  	$model->delete();
-			}
-		} else {
-	        $model->delete();
-		}
-
-        return $this->redirect(['index', 'LessonSearch[type]' => $type]);
-    }
-
+   
     /**
      * Finds the Lesson model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -709,4 +656,33 @@ class LessonController extends Controller
 			return $this->redirect(['view', 'id' => $model->id]);
 		}
     }
+
+	public function actionSplit($id) {
+		$model = $this->findModel($id);
+		$duration		 = \DateTime::createFromFormat('H:i:s', $model->duration);
+		$hours			 = $duration->format('H');
+		$minutes		 = $duration->format('i');
+		$lessonDuration	 = ($hours * 60)  + $minutes;
+		$request = Yii::$app->request;
+		$lessonIds = $request->post('splitLessonIds');
+        if (!empty($lessonIds) && is_array($lessonIds)) {
+			$numberOfLesson = count($lessonIds);
+			$duration = round($lessonDuration / $numberOfLesson);
+			foreach($lessonIds as $lessonId) {
+				$lesson = $this->findModel($lessonId);
+				$newDuration = new \DateTime($lesson->duration);
+				$newDuration->add(new \DateInterval('PT' . $duration . 'M'));	
+				$lesson->updateAttributes([
+					'duration' => $newDuration->format('H:i:s'),
+				]);
+			}
+			$model->delete();
+		}
+		
+		Yii::$app->session->setFlash('alert', [
+			'options' => ['class' => 'alert-success'],
+			'body' => 'Lesson duration has been splitted successfully.',
+		]);
+		return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
+	}
 }
