@@ -84,6 +84,9 @@ $this->params['breadcrumbs'][] = $this->title;
       <?php if (!empty($location->phone_number)): ?><br>
             <?= $location->phone_number; ?>
       <?php endif; ?> 
+      <?php if (!empty($location->email)): ?><br>
+            <?= $location->email; ?>
+      <?php endif; ?> 
       </small> 
       </div>
       <div class="clearfix"></div>
