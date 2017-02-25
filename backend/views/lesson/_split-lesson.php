@@ -18,6 +18,7 @@ $lessons = Lesson::find()
 
 $lessonDataProvider = new ActiveDataProvider([
 	'query' => $lessons,
+	'pagination' => false
 ]);
 ?>
 <div>
