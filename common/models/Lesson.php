@@ -7,6 +7,7 @@ use yii\db\Query;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use IntervalTree\IntervalTree;
 use common\components\intervalTree\DateRangeInclusive;
+use common\components\validators\LessonConflictValidator;
 
 /**
  * This is the model class for table "lesson".
@@ -70,7 +71,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
+            [['courseId', 'status', 'isDeleted', 'duration'], 'required'],
+			['teacherId', LessonConflictValidator::className()],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
