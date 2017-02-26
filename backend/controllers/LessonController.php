@@ -113,7 +113,7 @@ class LessonController extends Controller
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-        $model->setScenario(Lesson::SCENARIO_LESSON_CREATE);
+        $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
         if ($model->load($request->post())) {
             $studentEnrolment = Enrolment::find()
@@ -145,7 +145,7 @@ class LessonController extends Controller
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-		$model->setScenario(Lesson::SCENARIO_LESSON_CREATE);
+		$model->setScenario(Lesson::SCENARIO_CREATE);
 		$request = Yii::$app->request;
         if ($model->load($request->post())) {
 			$studentEnrolment = Enrolment::find()
@@ -215,8 +215,8 @@ class LessonController extends Controller
 				$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 			} else {
 				if (new \DateTime($oldDate) != new \DateTime($model->date) || $teacherId != $model->teacherId) {
-					$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
-					$validate = $model->validate();
+					$model->setScenario(Lesson::SCENARIO_EDIT);
+					//$validate = $model->validate();
 				}
 				$lessonConflict = $model->getErrors('date');
 				$message = current($lessonConflict);

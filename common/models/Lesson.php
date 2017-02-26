@@ -33,9 +33,9 @@ class Lesson extends \yii\db\ActiveRecord
 	const STATUS_MISSED = 6;
 	
     const SCENARIO_REVIEW = 'review';
-    const SCENARIO_PRIVATE_LESSON = 'private-lesson';
+    const SCENARIO_EDIT = 'edit';
     const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
-    const SCENARIO_LESSON_CREATE = 'lesson-create';
+    const SCENARIO_CREATE = 'create';
 
     public $programId;
     public $time;
@@ -76,16 +76,21 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
+			
+			[['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
+			[['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
+			[['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
+            [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
+			
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
+			
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
-            ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
-            ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
-            ['date', 'checkDateConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
-            ['teacherId', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
-			[['date'], HolidayValidator::className(), 'on' => self::SCENARIO_LESSON_CREATE],
-			[['date'], TeacherValidator::className(), 'on' => self::SCENARIO_LESSON_CREATE],
-			[['date'], StudentValidator::className(), 'on' => self::SCENARIO_LESSON_CREATE],
-            [['programId','date'], 'required', 'on' => self::SCENARIO_LESSON_CREATE],
+			
+            ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT],
+            ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
+            ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT],
+            ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
+			
         ];
     }
 
