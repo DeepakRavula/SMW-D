@@ -8,6 +8,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use IntervalTree\IntervalTree;
 use common\components\intervalTree\DateRangeInclusive;
 use common\components\validators\lesson\conflict\HolidayValidator;
+use common\components\validators\lesson\conflict\TeacherValidator;
+use common\components\validators\lesson\conflict\StudentValidator;
 
 /**
  * This is the model class for table "lesson".
@@ -81,8 +83,8 @@ class Lesson extends \yii\db\ActiveRecord
             ['date', 'checkDateConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
             ['teacherId', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
 			[['date'], HolidayValidator::className(), 'on' => self::SCENARIO_LESSON_CREATE],
-			['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_LESSON_CREATE],
-            ['date', 'checkLessonConflict', 'on' => self::SCENARIO_LESSON_CREATE],
+			[['date'], TeacherValidator::className(), 'on' => self::SCENARIO_LESSON_CREATE],
+			[['date'], StudentValidator::className(), 'on' => self::SCENARIO_LESSON_CREATE],
             [['programId','date'], 'required', 'on' => self::SCENARIO_LESSON_CREATE],
         ];
     }
