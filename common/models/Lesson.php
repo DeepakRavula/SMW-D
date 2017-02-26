@@ -7,7 +7,7 @@ use yii\db\Query;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use IntervalTree\IntervalTree;
 use common\components\intervalTree\DateRangeInclusive;
-use common\components\validators\LessonConflictValidator;
+use common\components\validators\lesson\conflict\HolidayValidator;
 
 /**
  * This is the model class for table "lesson".
@@ -71,10 +71,10 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['courseId', 'status', 'isDeleted', 'duration'], 'required'],
-			['teacherId', LessonConflictValidator::className()],
+            [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
+			[['date'], HolidayValidator::className(), 'on' => self::SCENARIO_LESSON_CREATE],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
@@ -83,7 +83,7 @@ class Lesson extends \yii\db\ActiveRecord
             ['teacherId', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
 			['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_LESSON_CREATE],
             ['date', 'checkLessonConflict', 'on' => self::SCENARIO_LESSON_CREATE],
-            ['date', 'checkDateConflict', 'on' => self::SCENARIO_LESSON_CREATE],
+           // ['date', 'checkDateConflict', 'on' => self::SCENARIO_LESSON_CREATE],
             [['programId','date'], 'required', 'on' => self::SCENARIO_LESSON_CREATE],
         ];
     }
