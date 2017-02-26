@@ -781,7 +781,7 @@ class UserController extends Controller
 			->notDraft()
 			->notDeleted()
 			->between($lessonSearch->fromDate, $lessonSearch->toDate)
-			->groupBy(['DATE(date)']);
+			->orderBy(['DATE(date)' => SORT_ASC]);
 			
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,
