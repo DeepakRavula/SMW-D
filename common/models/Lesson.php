@@ -86,9 +86,9 @@ class Lesson extends \yii\db\ActiveRecord
 			
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
 			
-            ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT],
-            ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT],
+            ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
+            ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
 			
         ];

@@ -30,7 +30,7 @@ class TeacherValidator extends Validator
             $intervals[] = new DateRangeInclusive(new \DateTime($otherLesson['date']), new \DateTime($otherLesson['date']), new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'), $otherLesson['id']);
         }
 		$tree = new IntervalTree($intervals);
-        $conflictedLessonsResults = $tree->search(new \DateTime($model->$attribute));
+        $conflictedLessonsResults = $tree->search(new \DateTime($model->date));
 		
         if ((!empty($conflictedLessonsResults))) {
             $this->addError($model,$attribute, 'Teacher occupied with another lesson');

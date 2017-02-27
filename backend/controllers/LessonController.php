@@ -216,7 +216,7 @@ class LessonController extends Controller
 			} else {
 				if (new \DateTime($oldDate) != new \DateTime($model->date) || $teacherId != $model->teacherId) {
 					$model->setScenario(Lesson::SCENARIO_EDIT);
-					//$validate = $model->validate();
+					$validate = $model->validate();
 				}
 				$lessonConflict = $model->getErrors('date');
 				$message = current($lessonConflict);
