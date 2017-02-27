@@ -90,7 +90,9 @@ class Lesson extends \yii\db\ActiveRecord
 			
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
-            ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT],
+			['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT, 'when' => function($model, $attribute) {
+				return $model->course->program->isPrivate();
+			}],
             ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
 			
         ];
