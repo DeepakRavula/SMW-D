@@ -374,8 +374,9 @@ class LessonController extends Controller
 				->all();
 			foreach ($draftLessons as $draftLesson) {
 				$draftLesson->setScenario('review');
+				$validate = $draftLesson->validate();
 			}
-			Model::validateMultiple($draftLessons);
+			//Model::validateMultiple($draftLessons);
 			foreach ($draftLessons as $draftLesson) {
 				if(!empty($draftLesson->getErrors('date'))) {
 					$conflictedLessonIds[] = $draftLesson->id;

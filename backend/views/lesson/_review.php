@@ -197,26 +197,9 @@ $this->title = 'Review Lessons';
                     }
                 },
             ],
-            [
-                'class' => 'kartik\grid\ExpandRowColumn',
-                'width' => '50px',
-                'value' => function ($model, $key, $index, $column) {
-                    return GridView::ROW_COLLAPSED;
-                },
-                'detail' => function ($model, $key, $index, $column) use ($conflicts) {
-                    return Yii::$app->controller->renderPartial('_conflict-lesson', ['model' => $model, 'conflicts' => $conflicts[$model->id]]);
-                },
-                'headerOptions' => ['class' => 'kartik-sheet-style'],
-                'expandOneOnly' => true,
-            ],
     ]; ?>
     <?= \kartik\grid\GridView::widget([
         'dataProvider' => $lessonDataProvider,
-        'rowOptions' => function ($model, $key, $index, $grid) use ($conflicts) {
-            if (!empty($conflicts[$model->id])) {
-                return ['class' => 'danger'];
-            }
-        },
         'pjax' => true,
             'pjaxSettings' => [
                 'neverTimeout' => true,
