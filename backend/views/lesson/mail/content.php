@@ -16,7 +16,7 @@ Dear <?php echo Html::encode($toName) ?>,<br>
         </tr>
         <tr>
             <td>Student</td>
-            <td><?= $model->enrolment->student->fullName; ?></td>
+            <td><?= !empty($model->enrolment->student->fullName) ?? null; ?></td>
         </tr>
         <tr>
             <td>Duration</td>
