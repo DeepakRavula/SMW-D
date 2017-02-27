@@ -10,6 +10,7 @@ use common\components\intervalTree\DateRangeInclusive;
 use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
+use common\components\validators\lesson\conflict\SplitValidator;
 
 /**
  * This is the model class for table "lesson".
@@ -36,6 +37,7 @@ class Lesson extends \yii\db\ActiveRecord
     const SCENARIO_EDIT = 'edit';
     const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
     const SCENARIO_CREATE = 'create';
+    const SCENARIO_SPLIT = 'split';
 
     public $programId;
     public $time;
@@ -95,6 +97,8 @@ class Lesson extends \yii\db\ActiveRecord
 			}],
             ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
 			
+            ['id', SplitValidator::className(), 'on' => self::SCENARIO_SPLIT],
+
         ];
     }
 

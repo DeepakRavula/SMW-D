@@ -20,6 +20,8 @@ use yii\web\Response;
 use common\models\Vacation;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use common\models\TeacherAvailability;
+
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -658,6 +660,7 @@ class LessonController extends Controller
     }
 
 	public function actionSplit($id) {
+		$locationId = Yii::$app->session->get('location_id');
 		$model = $this->findModel($id);
 		$duration		 = \DateTime::createFromFormat('H:i:s', $model->duration);
 		$hours			 = $duration->format('H');
@@ -668,6 +671,26 @@ class LessonController extends Controller
         if (!empty($lessonIds) && is_array($lessonIds)) {
 			$numberOfLesson = count($lessonIds);
 			$duration = round($lessonDuration / $numberOfLesson);
+			$lessons = Lesson::find()
+				->location($locationId)
+				->andWhere(['IN', 'lesson.id', $lessonIds])
+				->all();
+			foreach($lessons as $lesson) {
+				$day = (new \DateTime($lesson->date))->format('N');
+				$newDuration = new \DateTime($lesson->duration);
+				$newDuration->add(new \DateInterval('PT' . $duration . 'M'));
+				//print_r($newDuration);die;
+				$teacherAvailabilities = TeacherAvailability::find()
+					->joinWith(['userLocation' => function($query) use($lesson, $locationId){
+						$query->andWhere(['user_id' => $lesson->teacherId, 'location_id' => $locationId]);
+					}])
+					->andWhere(['day' => $day])
+					->all();
+				foreach($teacherAvailabilities as $teacherAvailability) {
+					echo $teacherAvailability->from_time;die;	
+				}
+			}
+			
 			foreach($lessonIds as $lessonId) {
 				$lesson = $this->findModel($lessonId);
 				$newDuration = new \DateTime($lesson->duration);
