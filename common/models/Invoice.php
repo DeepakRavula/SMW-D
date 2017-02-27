@@ -209,10 +209,10 @@ class Invoice extends \yii\db\ActiveRecord
     public function updateInvoiceAttributes()
     {
         if(!$this->isOpeningBalance()) {
-            $subTotal    = $this->lineItemTotal;
+            $subTotal    = yii::$app->formatter->asDecimal($this->netSubtotal, 2);
             $tax         = $this->lineItemTax;
             $discount    = $this->discount;
-            $totalAmount = ($subTotal + $tax) - $discount;
+            $totalAmount = $subTotal + $tax + $discount;
             $this->updateAttributes([
                     'subTotal' => $subTotal,
                     'tax' => $tax,
@@ -282,10 +282,10 @@ class Invoice extends \yii\db\ActiveRecord
     public function getInvoiceBalance()
     {
         if ((int) $this->type === self::TYPE_INVOICE) {
-            $balance = $this->total - $this->invoicePaymentTotal;
+            $balance = $this->subTotal - $this->invoicePaymentTotal;
         } else {
-            $balance = $this->total - $this->paymentTotal;
-		}
+            $balance = $this->subTotal - $this->paymentTotal;
+        }
         return $balance;
     }
 
@@ -377,18 +377,16 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getInvoiceStatus()
     {
-       if ((float) $this->total === (float) $this->invoicePaymentTotal) {
-            $this->status = self::STATUS_PAID;
-        } elseif ($this->total > $this->invoicePaymentTotal) {
-            $this->status = self::STATUS_OWING;
+       if ((float) $this->subTotal === (float) $this->invoicePaymentTotal) {
+            $status = self::STATUS_PAID;
+        } elseif ((float) $this->subTotal > (float) $this->invoicePaymentTotal) {
+            $status = self::STATUS_OWING;
         } else {
             if ((int) $this->type === (int) self::TYPE_INVOICE) {
-                $this->status = self::STATUS_CREDIT;
-            }else{
-            	$this->status = self::STATUS_PAID;
-			}
+                $status = self::STATUS_CREDIT;
+            }
         }
-        return $this->status;
+        return $status;
     }
 
     public function beforeSave($insert)
@@ -493,7 +491,7 @@ class Invoice extends \yii\db\ActiveRecord
 	public function addPayment($proFormaInvoice)
 	{
         $paymentModel = new Payment();
-		$paymentModel->amount = $this->total;
+		$paymentModel->amount = $this->subTotal;
 		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
 		$paymentModel->reference = $proFormaInvoice->id;
 		$paymentModel->invoiceId = $this->id;
@@ -536,7 +534,8 @@ class Invoice extends \yii\db\ActiveRecord
                     $invoice = $lineItem->proFormaLesson->createInvoice();
                 } else if (!$lineItem->proFormaLesson->invoice->isPaid()) {
                     if ($lineItem->proFormaLesson->hasProFormaInvoice()) {
-                        if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $lineItem->proFormaLesson->proFormaLineItem->amount) {
+                        $netPrice = yii::$app->formatter->asDecimal($lineItem->proFormaLesson->proFormaLineItem->netPrice, 2);
+                        if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $netPrice) {
                             $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice);
                         }
                     }

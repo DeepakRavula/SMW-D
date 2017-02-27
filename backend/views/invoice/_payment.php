@@ -142,8 +142,8 @@ $columns = [
 
     <?php
         $amount = 0.0;
-        if ($model->total > $model->invoicePaymentTotal) {
-            $amount = $model->invoiceBalance;
+        if ($model->subTotal > $model->invoicePaymentTotal) {
+            $amount = $model->balance;
         }
     ?>
 

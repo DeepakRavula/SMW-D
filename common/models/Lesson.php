@@ -634,7 +634,8 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addLineItem($this);
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
-            if ($this->proFormaInvoice->proFormaCredit >= $this->proFormaLineItem->amount) {
+            $netPrice = yii::$app->formatter->asDecimal($this->proFormaLineItem->netPrice, 2);
+            if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
                 $invoice->addPayment($this->proFormaInvoice);
             }
         }

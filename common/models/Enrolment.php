@@ -116,6 +116,12 @@ class Enrolment extends \yii\db\ActiveRecord
             ->viaTable('course', ['id' => 'courseId']);
     }
 
+    public function getFirstLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
+            ->orderBy(['date' => SORT_ASC]);
+    }
+
     public function getLessons()
     {
         return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
@@ -202,7 +208,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function setPaymentCycle()
     {
-        $enrolmentStartDate      = \DateTime::createFromFormat('Y-m-d H:i:s', $this->course->startDate);
+        $enrolmentStartDate      = \DateTime::createFromFormat('Y-m-d H:i:s', $this->firstLesson->date);
         $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
         for ($i = 0; $i < 12 / $this->paymentsFrequency->frequencyLength; $i++) {
             if ($i !== 0) {
