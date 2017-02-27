@@ -33,9 +33,9 @@ class Lesson extends \yii\db\ActiveRecord
 	const STATUS_MISSED = 6;
 	
     const SCENARIO_REVIEW = 'review';
-    const SCENARIO_PRIVATE_LESSON = 'private-lesson';
+    const SCENARIO_EDIT = 'edit';
     const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
-    const SCENARIO_LESSON_CREATE = 'lesson-create';
+    const SCENARIO_CREATE = 'create';
 
     public $programId;
     public $time;
@@ -76,53 +76,23 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
+			
+			[['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
+			[['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
+			[['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
+            [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
+			
             ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
+			
             [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
-            ['date', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
-            ['date', 'checkLessonConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
-            ['date', 'checkDateConflict', 'on' => self::SCENARIO_PRIVATE_LESSON],
-            ['teacherId', 'checkRescheduleLessonTime', 'on' => self::SCENARIO_PRIVATE_LESSON],
-			[['date'], HolidayValidator::className(), 'on' => self::SCENARIO_LESSON_CREATE],
-			[['date'], TeacherValidator::className(), 'on' => self::SCENARIO_LESSON_CREATE],
-			[['date'], StudentValidator::className(), 'on' => self::SCENARIO_LESSON_CREATE],
-            [['programId','date'], 'required', 'on' => self::SCENARIO_LESSON_CREATE],
+			
+            ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT],
+            ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
+            ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT],
+            ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
+			
         ];
     }
-
-    public function checkLessonConflict($attribute, $params)
-	{
-		$lessonIntervals = $this->lessonIntervals();
-        $tree = new IntervalTree($lessonIntervals);
-        $conflictedLessonIds = [];
-        $conflictedLessonsResults = $tree->search(new \DateTime($this->date));
-        foreach ($conflictedLessonsResults as $conflictedLessonsResult) {
-            $conflictedLessonIds[] = $conflictedLessonsResult->id;
-        }
-		$oldDate = $this->getOldAttribute('date');
-		$oldTeacherId = $this->getOldAttribute('teacherId'); 
-        if ((!empty($conflictedLessonIds))) {
-			if(new \DateTime($oldDate) != new \DateTime($this->date)) {
-            	$this->addError($attribute, 'Lesson date conflicts with another lesson');
-			} else {
-            	$this->addError($attribute, 'Teacher occupied with another lesson');
-			}
-        }
-	}
-
-	public function checkDateConflict($attribute, $params)
-	{
-		$intervals = $this->dateIntervals();
-        $tree = new IntervalTree($intervals);
-        $conflictedDates = [];
-        $conflictedDatesResults = $tree->search(new \DateTime($this->date));
-        foreach ($conflictedDatesResults as $conflictedDatesResult) {
-            $startDate = $conflictedDatesResult->getStart();
-            $conflictedDates[] = $startDate->format('Y-m-d');
-        }
-        if (!empty($conflictedDates)) {
-            $this->addError($attribute, 'Lesson time conflicts with holiday');
-        }
-	}
 
     public function checkRescheduleLessonTime($attribute, $params)
     {
