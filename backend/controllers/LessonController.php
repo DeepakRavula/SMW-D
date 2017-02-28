@@ -381,7 +381,6 @@ class LessonController extends Controller
 					$conflictedLessonIds[] = $draftLesson->id;
 				}
 				$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
-
 			}
 			$query = Lesson::find()
 				->orderBy(['lesson.date' => SORT_ASC]);
@@ -426,13 +425,11 @@ class LessonController extends Controller
             $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
         }
         $hasConflict = false;
-        foreach ($conflicts as $conflictLessons) {
-            foreach ($conflictLessons as $conflictLesson) {
-                if ((!empty($conflictLesson['lessonIds'])) || (!empty($conflictLesson['dates']))) {
-                    $hasConflict = true;
-                    break;
-                }
-            }
+        foreach ($conflicts as $conflict) {
+			if (!empty($conflict)) {
+				$hasConflict = true;
+				break;
+			}
         }
 
         return [

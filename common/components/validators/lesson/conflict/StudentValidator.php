@@ -20,6 +20,9 @@ class StudentValidator extends Validator
 			->all();
 
 		foreach ($studentLessons as $studentLesson) {
+			if(new \DateTime($studentLesson->date) == new \DateTime($model->date) && $studentLesson->isScheduled()) {
+				continue;
+			}
 			$otherLessons[] = [
 				'id' => $studentLesson->id,
 				'date' => $studentLesson->date,
