@@ -67,10 +67,6 @@ class UserImport extends Model
                 ->one();
 
             if (!empty($user)) {
-                $studentModel = Student::findOne(['last_name' => $row['Last Name']]);
-                if (!empty($studentModel)) {
-                    continue;
-                }
                 $student = new Student();
                 $student->first_name = $row['First Name'];
                 $student->last_name = $row['Last Name'];
