@@ -676,21 +676,18 @@ class LessonController extends Controller
 				->andWhere(['IN', 'lesson.id', $lessonIds])
 				->all();
 			foreach($lessons as $lesson) {
-				$day = (new \DateTime($lesson->date))->format('N');
+				$lesson->setScenario(Lesson::SCENARIO_SPLIT);
 				$newDuration = new \DateTime($lesson->duration);
 				$newDuration->add(new \DateInterval('PT' . $duration . 'M'));
-				//print_r($newDuration);die;
-				$teacherAvailabilities = TeacherAvailability::find()
-					->joinWith(['userLocation' => function($query) use($lesson, $locationId){
-						$query->andWhere(['user_id' => $lesson->teacherId, 'location_id' => $locationId]);
-					}])
-					->andWhere(['day' => $day])
-					->all();
-				foreach($teacherAvailabilities as $teacherAvailability) {
-					echo $teacherAvailability->from_time;die;	
-				}
+				$lesson->newDuration = $newDuration; 
 			}
-			
+			Model::validateMultiple($lessons);
+			$errors = [];
+			foreach($lessons as $lesson) {
+				$errors[] = $lesson->getErrors('duration');
+			}
+			print_r($errors);die;
+		die('fdgdf');	
 			foreach($lessonIds as $lessonId) {
 				$lesson = $this->findModel($lessonId);
 				$newDuration = new \DateTime($lesson->duration);

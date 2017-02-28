@@ -48,6 +48,8 @@ class Lesson extends \yii\db\ActiveRecord
 	public $toEmailAddress;
 	public $subject;
 	public $content;
+	public $newDuration;
+	
     /**
      * {@inheritdoc}
      */
@@ -97,7 +99,7 @@ class Lesson extends \yii\db\ActiveRecord
 			}],
             ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
 			
-            ['id', SplitValidator::className(), 'on' => self::SCENARIO_SPLIT],
+            ['duration', SplitValidator::className(), 'on' => self::SCENARIO_SPLIT],
 
         ];
     }
