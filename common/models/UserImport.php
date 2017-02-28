@@ -74,8 +74,10 @@ class UserImport extends Model
                 $student = new Student();
                 $student->first_name = $row['First Name'];
                 $student->last_name = $row['Last Name'];
-                $birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
-                $student->birth_date = $birthDate->format('d-m-Y');
+				if(!empty($row['Date of Birth'])) {
+	                $birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
+    	            $student->birth_date = $birthDate->format('d-m-Y');
+				}
                 $student->customer_id = $user->id;
                 $student->status = Student::STATUS_ACTIVE;
 
@@ -121,8 +123,10 @@ class UserImport extends Model
                 $student = new Student();
                 $student->first_name = $row['First Name'];
                 $student->last_name = $row['Last Name'];
-                $birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
-                $student->birth_date = $birthDate->format('d-m-Y');
+				if(!empty($row['Date of Birth'])) {
+                	$birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
+	                $student->birth_date = $birthDate->format('d-m-Y');
+				}
                 $student->customer_id = $user->id;
                 $student->status = Student::STATUS_ACTIVE;
 
