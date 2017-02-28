@@ -102,13 +102,11 @@ $this->title = 'Review Lessons';
 	<div class="clearfix"></div>
     <?php
     $hasConflict = false;
-    foreach ($conflicts as $conflictLessons) {
-        foreach ($conflictLessons as $conflictLesson) {
-            if ((!empty($conflictLesson['lessonIds'])) || (!empty($conflictLesson['dates']))) {
-                $hasConflict = true;
-                break;
-            }
-        }
+    foreach ($conflicts as $conflict) {
+		if (!empty($conflict)) {
+			$hasConflict = true;
+			break;
+		}
     }
     ?>
     <?php
@@ -193,7 +191,7 @@ $this->title = 'Review Lessons';
                 'label' => 'Conflict',
                 'value' => function ($data) use ($conflicts) {
                     if (!empty($conflicts[$data->id])) {
-                        return 'Conflict';
+                        return current($conflicts[$data->id]);
                     }
                 },
             ],
