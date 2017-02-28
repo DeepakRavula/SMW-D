@@ -660,8 +660,6 @@ class LessonController extends Controller
     }
 
 	public function actionSplit($id) {
-		$response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
 		$locationId = Yii::$app->session->get('location_id');
 		$model = $this->findModel($id);
 		$duration		 = \DateTime::createFromFormat('H:i:s', $model->duration);

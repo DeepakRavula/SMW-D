@@ -10,7 +10,7 @@ use common\components\intervalTree\DateRangeInclusive;
 use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
-use common\components\validators\lesson\conflict\SplitValidator;
+use common\components\validators\lesson\conflict\ TeacherAvailabilityValidator;
 
 /**
  * This is the model class for table "lesson".
@@ -99,7 +99,7 @@ class Lesson extends \yii\db\ActiveRecord
 			}],
             ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
 			
-            ['duration', SplitValidator::className(), 'on' => self::SCENARIO_SPLIT],
+            ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
 
         ];
     }

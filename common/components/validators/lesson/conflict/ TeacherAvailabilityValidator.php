@@ -4,11 +4,8 @@ namespace common\components\validators\lesson\conflict;
 use yii\validators\Validator;
 use Yii;
 use common\models\TeacherAvailability;
-use common\models\Lesson;
-use common\components\intervalTree\DateRangeInclusive;
-use IntervalTree\IntervalTree;
 
-class SplitValidator extends Validator
+class TeacherAvailabilityValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
