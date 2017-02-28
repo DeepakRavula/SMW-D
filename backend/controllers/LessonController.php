@@ -693,23 +693,25 @@ class LessonController extends Controller
 	 public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-        $currentDate = new \DateTime();
-		if(empty($model->proFormaInvoice)) {
-			$prepaidLessons = Lesson::find()
+        if(empty($model->proFormaInvoice)) {
+			$lastProFormaInvoicedLesson = Lesson::find()
 				->joinWith(['proFormaInvoice' => function($query) {
 					$query->andWhere(['invoice.isDeleted' => false]);
 				}])
 				->andWhere(['courseId' => $model->courseId])
-				->all();
-			$endLesson = end($prepaidLessons);
+                ->orderBy(['lesson.id' => SORT_DESC])
+				->one();
+            if (empty($lastProFormaInvoicedLesson)) {
+                $startDate = (new \DateTime($model->date))->modify('first day of this month');
+            } else {
+                $startDate = (new \DateTime($lastProFormaInvoicedLesson->date))->modify('first day of next month');
+            }
 			$locationId = Yii::$app->session->get('location_id');
-			$startDate = (new \DateTime($endLesson->date))->modify('first day of next month');
 			$endDate = $model->course->enrolment->getLastLessonDateOfPaymentCycle($startDate);
 			$lessons = Lesson::find()
-			->andWhere(['courseId' => $model->courseId])
-			->between($startDate, $endDate)
-			->all();
+                ->andWhere(['courseId' => $model->courseId])
+                ->between($startDate, $endDate)
+                ->all();
 			$invoice = new Invoice();
 			$invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
 			$invoice->user_id = $model->enrolment->student->customer->id;
@@ -721,9 +723,12 @@ class LessonController extends Controller
 			$invoice->save();
 
 			return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
-		}
-
-		return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
+		} else {
+            $model->proFormaInvoice->makeRealInvoicePayment();
+            return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);
+        }
+        
+        return $this->redirect(['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment']);
     }
 
 	public function actionSendMail($id)
