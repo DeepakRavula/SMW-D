@@ -660,6 +660,8 @@ class LessonController extends Controller
     }
 
 	public function actionSplit($id) {
+		$response = \Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
 		$locationId = Yii::$app->session->get('location_id');
 		$model = $this->findModel($id);
 		$duration		 = \DateTime::createFromFormat('H:i:s', $model->duration);
@@ -682,27 +684,32 @@ class LessonController extends Controller
 				$lesson->newDuration = $newDuration; 
 			}
 			Model::validateMultiple($lessons);
-			$errors = [];
+			$conflicts = [];
 			foreach($lessons as $lesson) {
-				$errors[] = $lesson->getErrors('duration');
+				$conflicts = $lesson->getErrors('duration');
 			}
-			print_r($errors);die;
-		die('fdgdf');	
-			foreach($lessonIds as $lessonId) {
-				$lesson = $this->findModel($lessonId);
-				$newDuration = new \DateTime($lesson->duration);
-				$newDuration->add(new \DateInterval('PT' . $duration . 'M'));	
-				$lesson->updateAttributes([
-					'duration' => $newDuration->format('H:i:s'),
+			if(empty($conflicts)) {
+				foreach($lessonIds as $lessonId) {
+					$lesson = $this->findModel($lessonId);
+					$newDuration = new \DateTime($lesson->duration);
+					$newDuration->add(new \DateInterval('PT' . $duration . 'M'));	
+					$lesson->updateAttributes([
+						'duration' => $newDuration->format('H:i:s'),
+					]);
+				}
+				$model->delete();
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-success'],
+					'body' => 'Lesson duration has been splitted successfully.',
 				]);
+				return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
+			} else {
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-danger'],
+					'body' => current($conflicts),
+				]);
+				return $this->redirect(['view', 'id' => $model->id]);	
 			}
-			$model->delete();
 		}
-		
-		Yii::$app->session->setFlash('alert', [
-			'options' => ['class' => 'alert-success'],
-			'body' => 'Lesson duration has been splitted successfully.',
-		]);
-		return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
 	}
 }

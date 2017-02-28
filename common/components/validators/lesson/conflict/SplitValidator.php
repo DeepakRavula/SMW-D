@@ -4,30 +4,29 @@ namespace common\components\validators\lesson\conflict;
 use yii\validators\Validator;
 use Yii;
 use common\models\TeacherAvailability;
+use common\models\Lesson;
+use common\components\intervalTree\DateRangeInclusive;
+use IntervalTree\IntervalTree;
 
 class SplitValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
-		$duration = $model->newDuration->format('H:i:s');
-		$timebits = explode(':', $duration);
-		$lessonDate = new \DateTime($model->date);
-		$lessonDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-		$time = $lessonDate->format('H:i:s');
-		$locationId = Yii::$app->session->get('location_id');
-		$day = (new \DateTime($model->date))->format('N');
-      	$teacherAvailabilities = TeacherAvailability::find()
-			->joinWith(['userLocation' => function($query) use($model, $locationId){
-				$query->andWhere(['user_id' => $model->teacherId, 'location_id' => $locationId]);
-			}])
-			->andWhere(['day' => $day])
-			->all();
-			foreach($teacherAvailabilities as $teacherAvailability) {
-				if($time >= $teacherAvailability->from_time && $time <= $teacherAvailability->to_time) {
-					continue;
-				} else {
-					$this->addError($model,$attribute, 'Teacher is not available at ' . $model->newDuration->format('g:i A'));
-				}
-			} 
+		$locationId = $model->teacher->userLocation->location_id; 
+		$teacherLocationId   = $model->teacher->userLocation->id;
+        $day                 = (new \DateTime($model->date))->format('N');
+        $start               = new \DateTime($model->date);
+        $duration            = $model->newDuration;
+        $end                 = $start->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
+        $teacherAvailability = TeacherAvailability::find()
+            ->andWhere(['day' => $day, 'teacher_location_id' => $teacherLocationId])
+            ->andWhere(['AND',
+                ['<=', 'from_time', $start->format('H:i:s')],
+                ['>=', 'to_time', $end->format('H:i:s')]
+            ])
+            ->one();
+		if(empty($teacherAvailability)) {
+			$this->addError($model,$attribute, 'Teacher is not available on ' . $end->format('l') . ' at ' . $end->format('g:i A'));
+		} 
     }
 }

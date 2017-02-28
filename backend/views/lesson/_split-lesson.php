@@ -28,6 +28,7 @@ $lessonDataProvider = new ActiveDataProvider([
     'id'=>'split-lesson-modal',
 ]);?>
 	<?php $form = ActiveForm::begin([
+		'id' => 'split-lesson-form',
 		'action' => Url::to(['lesson/split', 'id' => $model->id])
 	]); ?>
 	<?php
