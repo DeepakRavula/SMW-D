@@ -217,7 +217,7 @@ class UserImport extends Model
             'studentCount' => $studentCount,
             'customerCount' => $customerCount,
             'errors' => $errors,
-            'totalRows' => count($rows) / 2,
+            'totalRows' => count($rows),
         ];
     }
 }
