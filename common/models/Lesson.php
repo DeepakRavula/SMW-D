@@ -5,12 +5,10 @@ namespace common\models;
 use Yii;
 use yii\db\Query;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
-use IntervalTree\IntervalTree;
-use common\components\intervalTree\DateRangeInclusive;
 use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
-use common\components\validators\lesson\conflict\ReviewValidator;
+use common\components\validators\lesson\conflict\SameIntraLessonValidator;
 
 /**
  * This is the model class for table "lesson".
@@ -90,7 +88,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['date'], TeacherValidator::className(), 'on' => self::SCENARIO_REVIEW],
             [['date'], StudentValidator::className(), 'on' => self::SCENARIO_REVIEW],
             [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_REVIEW],
-            [['date'], ReviewValidator::className(), 'on' => self::SCENARIO_REVIEW],
+            [['date'], SameIntraLessonValidator::className(), 'on' => self::SCENARIO_REVIEW],
 			
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],

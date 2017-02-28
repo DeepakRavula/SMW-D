@@ -3,13 +3,11 @@ namespace common\components\validators\lesson\conflict;
 
 use Yii;
 use yii\validators\Validator;
-use common\models\Holiday;
-use common\models\Program;
 use common\models\Lesson;
 use IntervalTree\IntervalTree;
 use common\components\intervalTree\DateRangeInclusive;
 
-class ReviewValidator extends Validator
+class SameIntraLessonValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
