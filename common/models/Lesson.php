@@ -45,6 +45,8 @@ class Lesson extends \yii\db\ActiveRecord
 	public $toEmailAddress;
 	public $subject;
 	public $content;
+	public $vacationId;
+	
     /**
      * {@inheritdoc}
      */

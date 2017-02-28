@@ -374,6 +374,9 @@ class LessonController extends Controller
 				->all();
 			foreach ($draftLessons as $draftLesson) {
 				$draftLesson->setScenario('review');
+				if(!empty($vacationId)) {
+					$draftLesson->vacationId = $vacationId;	
+				}
 			}
 			Model::validateMultiple($draftLessons);
 			foreach ($draftLessons as $draftLesson) {
