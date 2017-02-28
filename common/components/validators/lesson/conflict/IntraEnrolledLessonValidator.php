@@ -7,7 +7,7 @@ use common\models\Lesson;
 use IntervalTree\IntervalTree;
 use common\components\intervalTree\DateRangeInclusive;
 
-class SameIntraLessonValidator extends Validator
+class IntraEnrolledLessonValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
