@@ -6,10 +6,6 @@
 		    <td><?= $model->total; ?></td>
 		  </tr>
                   <tr>
-		    <th style="width:50%">Invoice Subtotal:</th>
-		    <td><?= $model->subTotal; ?></td>
-		  </tr>
-		  <tr>
 		    <th>Invoice Paid</th>
 		    <td><?= $model->invoicePaymentTotal; ?></td>
 		  </tr>

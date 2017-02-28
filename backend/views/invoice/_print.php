@@ -236,7 +236,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <tr>
                         <td>SubTotal</td>
                         <td>
-                            <?= Yii::$app->formatter->format($model->netSubtotal, ['currency']); ?>
+                            <?= Yii::$app->formatter->format($model->subTotal, ['currency']); ?>
                         </td>
                     </tr>
                     <tr>
@@ -252,12 +252,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     <tr>
                         <td>Paid</td>
                         <td>
-                            <?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?>
+                            <?= Yii::$app->formatter->format($model->invoicePaymentTotal, ['currency']); ?>
                         </td>
                     </tr>
                     <tr class="last-balance">
                         <td class="p-t-0"><strong>Balance</strong></td>
-                        <td class="p-t-0"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
+                        <td class="p-t-0"><strong><?= Yii::$app->formatter->format($model->balance, ['currency']); ?></strong></td>
                     </tr>
                 </table>
             </td>

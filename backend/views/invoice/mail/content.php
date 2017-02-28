@@ -71,7 +71,7 @@ Dear <?php echo Html::encode($toName) ?>,<br>
                     <table class="table-invoice-childtable">
                      <tr>
                       <td>SubTotal</td>
-						<td><?= Yii::$app->formatter->format($model->netSubtotal, ['currency']); ?></td>
+						<td><?= Yii::$app->formatter->format($model->subTotal, ['currency']); ?></td>
                     </tr> 
                      <tr>
                       <td>Tax</td>
@@ -79,7 +79,7 @@ Dear <?php echo Html::encode($toName) ?>,<br>
                     </tr>
                      <tr>
                       <td>Paid</td>
-						<td><?= Yii::$app->formatter->format($model->paymentTotal, ['currency']); ?></td>
+						<td><?= Yii::$app->formatter->format($model->invoicePaymentTotal, ['currency']); ?></td>
                     </tr>
                      <tr>
                       <tr>

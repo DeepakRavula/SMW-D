@@ -209,10 +209,10 @@ class Invoice extends \yii\db\ActiveRecord
     public function updateInvoiceAttributes()
     {
         if(!$this->isOpeningBalance()) {
-            $subTotal    = yii::$app->formatter->asDecimal($this->netSubtotal, 2);
+            $subTotal    = $this->netSubtotal;
             $tax         = $this->lineItemTax;
             $discount    = $this->discount;
-            $totalAmount = $subTotal + $tax + $discount;
+            $totalAmount = ($subTotal + $tax) - $discount;
             $this->updateAttributes([
                     'subTotal' => $subTotal,
                     'tax' => $tax,
@@ -282,9 +282,9 @@ class Invoice extends \yii\db\ActiveRecord
     public function getInvoiceBalance()
     {
         if ((int) $this->type === self::TYPE_INVOICE) {
-            $balance = $this->subTotal - $this->invoicePaymentTotal;
+            $balance = $this->total - $this->invoicePaymentTotal;
         } else {
-            $balance = $this->subTotal - $this->paymentTotal;
+            $balance = $this->total - $this->paymentTotal;
         }
         return $balance;
     }
@@ -491,7 +491,7 @@ class Invoice extends \yii\db\ActiveRecord
 	public function addPayment($proFormaInvoice)
 	{
         $paymentModel = new Payment();
-		$paymentModel->amount = $this->subTotal;
+		$paymentModel->amount = $this->total;
 		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
 		$paymentModel->reference = $proFormaInvoice->id;
 		$paymentModel->invoiceId = $this->id;
@@ -514,14 +514,14 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getNetSubtotal()
     {
-        $netSubtotal = 0.0;
+        $subtotal = 0.0;
         if (!empty($this->lineItems)) {
             foreach ($this->lineItems as $lineItem) {
-                $netSubtotal += $lineItem->netPrice;
+                $subtotal += $lineItem->amount;
             }
         }
 
-        return $netSubtotal;
+        return $subtotal;
     }
 
     public function makeInvoicePayment()
