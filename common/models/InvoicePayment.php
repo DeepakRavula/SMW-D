@@ -59,7 +59,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
     }
 
 	public function afterSave($insert, $changedAttributes) {
-		if($this->invoice->isProFormaInvoice()) {
+		if($this->invoice->isProFormaInvoice() && !$this->payment->isCreditUsed()) {
 			foreach($this->invoice->lineItems as $lineItem) {
                 $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lineItem->lesson->date);
                 $currentDate = new \DateTime();

@@ -505,28 +505,12 @@ class InvoiceController extends Controller
 	{
 		$locationId = Yii::$app->session->get('location_id');
 		$lessons = Lesson::find()
-			->location($locationId)
-            ->unInvoiced()
-			->completed()
+            ->completedUnInvoiced()
+            ->location($locationId)
+            ->notDeleted()
 			->all();
 		foreach($lessons as $lesson) {
-			$invoice = new Invoice();
-			$invoice->type = Invoice::TYPE_INVOICE;
-			$invoice->user_id = $lesson->course->enrolment->student->customer_id;
-			$invoice->location_id = $locationId;
-			$invoice->save();
-			$invoice->addLineItem($lesson);
-			$invoice->save();
-
-			$proFormaInvoice      = Invoice::find()
-                ->select(['invoice.id', 'SUM(payment.amount) as credit'])
-                ->proFormaCredit($lesson->id)
-				->notDeleted()
-                ->one();
-
-            if (!empty($proFormaInvoice)) {
-				$invoice->addPayment($proFormaInvoice);
-            }
+			$lesson->createRealInvoice();
 		}
 		
         return $this->redirect(['index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE]);

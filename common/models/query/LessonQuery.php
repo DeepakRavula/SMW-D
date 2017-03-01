@@ -4,6 +4,7 @@ namespace common\models\query;
 
 use common\models\Lesson;
 use common\models\Program;
+use common\models\Invoice;
 
 /**
  * This is the ActiveQuery class for [[\common\models\Lesson]].
@@ -96,6 +97,20 @@ class LessonQuery extends \yii\db\ActiveQuery
             ->where(['invoice.id' => null]);
 
         return $this;
+    }
+
+    public function completedUnInvoiced()
+    {
+        $completedLessons = Lesson::find()
+            ->completed();
+		$invoicedLessons = Lesson::find()
+            ->invoiced();
+		$query = Lesson::find()
+            ->from(['completed_lesson' => $completedLessons])
+            ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'completed_lesson.id = invoiced_lesson.id')
+            ->where(['invoiced_lesson.id' => null]);
+
+        return $query;
     }
 
     public function invoiced()
