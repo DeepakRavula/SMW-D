@@ -211,8 +211,7 @@ class Invoice extends \yii\db\ActiveRecord
         if(!$this->isOpeningBalance()) {
             $subTotal    = $this->netSubtotal;
             $tax         = $this->lineItemTax;
-            $discount    = $this->discount;
-            $totalAmount = ($subTotal + $tax) - Yii::$app->formatter->asDecimal($discount, 2);
+            $totalAmount = $subTotal + $tax;
             $this->updateAttributes([
                     'subTotal' => $subTotal,
                     'tax' => $tax,
@@ -298,7 +297,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
         }
 
-        return $discount;
+        return Yii::$app->formatter->asDecimal($discount, 2);
     }
 
     public function getSumOfPayment($customerId)
@@ -523,7 +522,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
         }
 
-        return $subtotal;
+        return Yii::$app->formatter->asDecimal($subtotal, 2);
     }
 
     public function makeInvoicePayment()
