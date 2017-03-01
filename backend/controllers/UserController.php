@@ -314,6 +314,7 @@ class UserController extends Controller
 		if(!empty($lessonSearchModel)) {
 			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
+			$lessonSearch->summariseReport = $lessonSearchModel['summariseReport']; 
 		}
 		$teacherLessons = Lesson::find()
 			->location($locationId)
