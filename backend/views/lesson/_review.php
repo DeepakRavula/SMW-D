@@ -102,13 +102,11 @@ $this->title = 'Review Lessons';
 	<div class="clearfix"></div>
     <?php
     $hasConflict = false;
-    foreach ($conflicts as $conflictLessons) {
-        foreach ($conflictLessons as $conflictLesson) {
-            if ((!empty($conflictLesson['lessonIds'])) || (!empty($conflictLesson['dates']))) {
-                $hasConflict = true;
-                break;
-            }
-        }
+    foreach ($conflicts as $conflict) {
+		if (!empty($conflict)) {
+			$hasConflict = true;
+			break;
+		}
     }
     ?>
     <?php
@@ -193,30 +191,13 @@ $this->title = 'Review Lessons';
                 'label' => 'Conflict',
                 'value' => function ($data) use ($conflicts) {
                     if (!empty($conflicts[$data->id])) {
-                        return 'Conflict';
+                        return current($conflicts[$data->id]);
                     }
                 },
-            ],
-            [
-                'class' => 'kartik\grid\ExpandRowColumn',
-                'width' => '50px',
-                'value' => function ($model, $key, $index, $column) {
-                    return GridView::ROW_COLLAPSED;
-                },
-                'detail' => function ($model, $key, $index, $column) use ($conflicts) {
-                    return Yii::$app->controller->renderPartial('_conflict-lesson', ['model' => $model, 'conflicts' => $conflicts[$model->id]]);
-                },
-                'headerOptions' => ['class' => 'kartik-sheet-style'],
-                'expandOneOnly' => true,
             ],
     ]; ?>
     <?= \kartik\grid\GridView::widget([
         'dataProvider' => $lessonDataProvider,
-        'rowOptions' => function ($model, $key, $index, $grid) use ($conflicts) {
-            if (!empty($conflicts[$model->id])) {
-                return ['class' => 'danger'];
-            }
-        },
         'pjax' => true,
             'pjaxSettings' => [
                 'neverTimeout' => true,

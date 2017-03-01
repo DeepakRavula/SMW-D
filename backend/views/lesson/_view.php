@@ -1,13 +1,10 @@
 <?php
 
 use yii\helpers\Html;
-use common\models\Program;
-use common\models\Lesson;
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 use kartik\switchinput\SwitchInput;
 use yii\bootstrap\Modal;
-use common\models\Invoice;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -108,23 +105,16 @@ use common\models\Invoice;
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Take Payment</span>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
         <?php endif; ?>
 		 <?php endif; ?>
+		<?php if($model->course->program->isPrivate()) : ?>
+		<?php echo Html::a('<span class="label label-primary"> Split</span>', '#', [
+				'id' => 'split-lesson',
+				'class' => 'm-r-20 del-ce',
+			]) ?>	
+		<?php endif; ?>
 		<?php echo Html::a('<i class="fa fa-mail"></i> Email', '#' , [
 			'id' => 'lesson-mail-button',
 			'class' => 'btn btn-default btn-sm m-r-20 del-ce']) ?>	
-		<?php $message = 'Are you sure you want to delete this lesson?'; ?> 
-		<?php if(!empty($model->proFormaInvoice->id) && $model->proFormaInvoice->isPaid()) : ?>
-		<?php
-		$lessonPrePaymentAmount = $model->invoiceLineItem->amount;
-		$message = 'The lesson is already prepaid. $' . $lessonPrePaymentAmount . ' is automatically credited to ' . $model->proFormaInvoice->user->publicIdentity . ' account. Are you sure you want to delete this lesson?'; 
-		?>
-		<?php endif; ?>
-		<?php echo Html::a('<i class="fa fa-trash"></i> Delete', ['delete', 'id' => $model->id], [
-			'class' => 'btn btn-primary m-r-20 del-ce',
-			'data' => [
-            	'confirm' => $message,
-            	'method' => 'post',
-        	],
-			]) ?>
+		
 		<?php
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
 		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
@@ -162,10 +152,19 @@ Modal::begin([
 ]);
 Modal::end();
 ?>
+<?php
+echo $this->render('_split-lesson', [
+	'model' => $model,
+]);
+?>
 <script>
  $(document).ready(function() {
 	 $(document).on('click', '#lesson-mail-button', function (e) {
 		$('#lesson-mail-modal').modal('show');
+		return false;
+  	});
+	$(document).on('click', '#split-lesson', function (e) {
+		$('#split-lesson-modal').modal('show');
 		return false;
   	});
 	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
