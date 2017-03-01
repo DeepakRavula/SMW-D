@@ -51,6 +51,8 @@ class User extends ActiveRecord implements IdentityInterface
 	public $dateRange;	
 	public $invoiceStatus;
 	public $studentId;
+	public $teacherHourlyRate;
+	
     /**
      * {@inheritdoc}
      */
@@ -154,6 +156,11 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);
     }
 
+	public function getTeacherRate()
+    {
+        return $this->hasOne(TeacherRate::className(), ['teacherId' => 'id']);
+    }
+	
     /**
      * @return \yii\db\ActiveQuery
      */

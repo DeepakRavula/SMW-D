@@ -37,6 +37,7 @@ use common\models\PaymentMethod;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use common\models\TeacherRate;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -341,6 +342,27 @@ class UserController extends Controller
             }])
             ->groupBy('day')
             ->all();
+
+		$post = Yii::$app->request->post();
+		if (isset($post['hasEditable'])) {
+			$response = Yii::$app->response;
+			$response->format = Response::FORMAT_JSON;
+			if(! empty($post['teacherHourlyRate'])) {
+				if(!empty($model->teacherRate)) {
+					$model->teacherRate->hourlyRate = $post['teacherHourlyRate']; 
+					$model->teacherRate->save();
+					$result = $model->teacherRate->hourlyRate; 
+				} else {
+					$teacherRate = new TeacherRate();
+					$teacherRate->teacherId = $model->id;	
+					$teacherRate->hourlyRate = $post['teacherHourlyRate'];
+					$teacherRate->save();
+					$result = $teacherRate->hourlyRate; 
+				}
+				return ['output' => $result, 'message' => ''];
+			}
+		}
+		
         return $this->render('view', [
             'minTime' => $minTime,
             'maxTime' => $maxTime,

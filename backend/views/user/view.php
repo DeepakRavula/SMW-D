@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use common\models\Note;
 use yii\helpers\Url;
 use common\models\TeacherRoom;
+use common\models\TeacherRate;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
