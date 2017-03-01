@@ -149,16 +149,6 @@ $columns = [
 	],
 ];
 } else {
-	$totalDuration	 = 0;
-	if (!empty($teacherLessonDataProvider->getModels())) {
-		foreach ($teacherLessonDataProvider->getModels() as $key => $val) {
-			$duration		 = \DateTime::createFromFormat('H:i:s', $val->duration);
-			$hours			 = $duration->format('H');
-			$minutes		 = $duration->format('i');
-			$lessonDuration	 = $hours + ($minutes / 60);
-			$totalDuration += $lessonDuration;
-		}
-	}
 	$columns = [
 		[
 			'label' => 'Date',
@@ -173,7 +163,7 @@ $columns = [
 		],	
 		[
 			'label' => 'Duration(hrs)',
-			'value' => function ($data) use($totalDuration){
+			'value' => function ($data){
 				$locationId = Yii::$app->session->get('location_id');
 				$lessons = Lesson::find()
 					->location($locationId)
