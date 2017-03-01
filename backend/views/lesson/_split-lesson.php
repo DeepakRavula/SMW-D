@@ -27,6 +27,7 @@ $lessonDataProvider = new ActiveDataProvider([
     'header' => '<h4 class="m-0">Split Lesson</h4>',
     'id'=>'split-lesson-modal',
 ]);?>
+	<h5><strong><?= 'Please choose the lessons that should be extended when splitting this lesson.'; ?></strong></h5>
 	<?php $form = ActiveForm::begin([
 		'action' => Url::to(['lesson/split', 'id' => $model->id])
 	]); ?>
