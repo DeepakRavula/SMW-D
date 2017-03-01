@@ -317,6 +317,7 @@ class UserController extends Controller
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
 		}
 		$teacherLessons = Lesson::find()
+			->innerJoinWith('enrolment')
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
@@ -797,13 +798,14 @@ class UserController extends Controller
 			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
 		}
-        $teacherLessons = Lesson::find()
+		$teacherLessons = Lesson::find()
+			->innerJoinWith('enrolment')
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
 			->notDeleted()
 			->between($lessonSearch->fromDate, $lessonSearch->toDate)
-			->groupBy(['DATE(date)']);
+			->orderBy(['date' => SORT_ASC]);
 			
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,

@@ -29,7 +29,7 @@ $columns = [
 					4 => ['style' => 'text-align:right'],
 					6 => ['style' => 'text-align:right'],
 				],
-			'options'=>['style'=>'font-weight:bold;']
+				'options' => ['style' => 'font-weight:bold;']
 			];
 		}
 	],
@@ -50,7 +50,11 @@ $columns = [
 		[
 		'label' => 'Student',
 		'value' => function ($data) {
-			return !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
+			$student = ' - ';
+			if($data->course->program->isPrivate()) {
+				$student = !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
+			}
+			return $student;
 		},
 	],
 		[
@@ -59,32 +63,29 @@ $columns = [
 			return $data->getDuration();
 		},
 		'contentOptions' => ['class' => 'text-right'],
-			'hAlign'=>'right',
-			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
+		'hAlign' => 'right',
+		'pageSummary' => true,
+		'pageSummaryFunc' => GridView::F_SUM
 	],
-		[
-		'label' => 'Rate',
-		'value' => function ($data) {
-			return $data->course->program->rate;
-		},
-			'hAlign'=>'right',
-		'contentOptions' => ['class' => 'text-right'],
+	[
+	'label' => 'Rate/hour',
+	'value' => function ($data) {
+		return !empty($data->teacher->teacherRate->hourlyRate) ? $data->teacher->teacherRate->hourlyRate : null;
+	},
+	'hAlign' => 'right',
+	'contentOptions' => ['class' => 'text-right'],
 	],
-		[
+	[
 		'label' => 'Cost',
+		'format' => ['decimal', 2],
 		'value' => function ($data) {
-			if ($data->course->program->isPrivate()) {
-				$cost = $data->getDuration() * $data->course->program->rate;
-			} else {
-				$cost = $data->course->program->rate / $data->getGroupLessonCount();
-			}
-			return $cost;
+			$teacherRate = !empty($data->teacher->teacherRate->hourlyRate) ? $data->teacher->teacherRate->hourlyRate : null;
+			return $data->getDuration() * $teacherRate;
 		},
 		'contentOptions' => ['class' => 'text-right'],
-			'hAlign'=>'right',
-			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
+		'hAlign' => 'right',
+		'pageSummary' => true,
+		'pageSummaryFunc' => GridView::F_SUM
 	],
 ];
 ?>
@@ -106,7 +107,7 @@ GridView::widget([
 ]);
 ?>
 <script>
-	$(document).ready(function(){
-		window.print();
-	});
+    $(document).ready(function () {
+        window.print();
+    });
 </script>
