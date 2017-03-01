@@ -68,7 +68,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
                         $invoice = $lineItem->lesson->createRealInvoice();
                     } else if (!$lineItem->lesson->invoice->isPaid()) {
                         if (!empty($lineItem->lesson->proFormaInvoice)) {
-                            if ($lineItem->lesson->proFormaInvoice->proformaCredit >= $lineItem->lesson->proFormaInvoiceLineItem->amount) {
+                            if ($lineItem->lesson->proFormaInvoice->proFormaCredit >= $lineItem->lesson->proFormaInvoiceLineItem->amount) {
                                 $lineItem->lesson->invoice->addPayment($lineItem->lesson->proFormaInvoice);
                             }
                         }

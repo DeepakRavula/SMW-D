@@ -505,10 +505,10 @@ class InvoiceController extends Controller
 	{
 		$locationId = Yii::$app->session->get('location_id');
 		$lessons = Lesson::find()
-            ->completedUnInvoiced()
             ->location($locationId)
             ->notDeleted()
-			->all();
+            ->completedUnInvoiced()
+            ->all();
 		foreach($lessons as $lesson) {
 			$lesson->createRealInvoice();
 		}

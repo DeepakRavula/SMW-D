@@ -638,7 +638,7 @@ class LessonController extends Controller
         $currentDate = new \DateTime();
 
         if ($lessonDate <= $currentDate) {
-            $invoice = $model->createInvoice();
+            $invoice = $model->createRealInvoice();
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {

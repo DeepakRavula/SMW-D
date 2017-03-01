@@ -638,7 +638,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addLineItem($this);
         $invoice->save();
         if (!empty($this->proFormaInvoice)) {
-            if ($this->proFormaInvoice->proformaCredit >= $this->proFormaInvoiceLineItem->amount) {
+            if ($this->proFormaInvoice->proFormaCredit >= $this->proFormaInvoiceLineItem->amount) {
                 $invoice->addPayment($this->proFormaInvoice);
             }
         }

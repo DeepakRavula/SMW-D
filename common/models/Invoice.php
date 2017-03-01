@@ -269,7 +269,7 @@ class Invoice extends \yii\db\ActiveRecord
         return $invoicePaymentTotal;
     }
 
-    public function getProFormacredit()
+    public function getProFormaCredit()
     {
         $creditTotal = Payment::find()
             ->joinWith('invoicePayment ip')
