@@ -113,7 +113,7 @@ class LessonController extends Controller
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-        $model->setScenario(Lesson::SCENARIO_LESSON_CREATE);
+        $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
         if ($model->load($request->post())) {
             $studentEnrolment = Enrolment::find()
@@ -145,7 +145,7 @@ class LessonController extends Controller
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-		$model->setScenario(Lesson::SCENARIO_LESSON_CREATE);
+		$model->setScenario(Lesson::SCENARIO_CREATE);
 		$request = Yii::$app->request;
         if ($model->load($request->post())) {
 			$studentEnrolment = Enrolment::find()
@@ -215,7 +215,7 @@ class LessonController extends Controller
 				$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 			} else {
 				if (new \DateTime($oldDate) != new \DateTime($model->date) || $teacherId != $model->teacherId) {
-					$model->setScenario(Lesson::SCENARIO_PRIVATE_LESSON);
+					$model->setScenario(Lesson::SCENARIO_EDIT);
 					$validate = $model->validate();
 				}
 				$lessonConflict = $model->getErrors('date');
@@ -374,6 +374,9 @@ class LessonController extends Controller
 				->all();
 			foreach ($draftLessons as $draftLesson) {
 				$draftLesson->setScenario('review');
+				if(!empty($vacationId)) {
+					$draftLesson->vacationId = $vacationId;	
+				}
 			}
 			Model::validateMultiple($draftLessons);
 			foreach ($draftLessons as $draftLesson) {
@@ -381,7 +384,6 @@ class LessonController extends Controller
 					$conflictedLessonIds[] = $draftLesson->id;
 				}
 				$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
-
 			}
 			$query = Lesson::find()
 				->orderBy(['lesson.date' => SORT_ASC]);
@@ -426,13 +428,11 @@ class LessonController extends Controller
             $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
         }
         $hasConflict = false;
-        foreach ($conflicts as $conflictLessons) {
-            foreach ($conflictLessons as $conflictLesson) {
-                if ((!empty($conflictLesson['lessonIds'])) || (!empty($conflictLesson['dates']))) {
-                    $hasConflict = true;
-                    break;
-                }
-            }
+        foreach ($conflicts as $conflict) {
+			if (!empty($conflict)) {
+				$hasConflict = true;
+				break;
+			}
         }
 
         return [

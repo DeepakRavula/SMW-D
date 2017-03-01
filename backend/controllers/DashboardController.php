@@ -32,12 +32,13 @@ class DashboardController extends \yii\web\Controller
         }
         $locationId = Yii::$app->session->get('location_id');
         $invoiceTotal = Invoice::find()
-                        ->where(['location_id' => $locationId])
+                        ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
                         ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 						->notDeleted()
                         ->sum('subTotal');
         $invoiceTaxTotal = Invoice::find()
-                        ->where(['location_id' => $locationId])
+                        ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
+						->andWhere(['status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT]])
                         ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 						->notDeleted()
                         ->sum('tax');
@@ -61,15 +62,16 @@ class DashboardController extends \yii\web\Controller
 
         $payments = Payment::find()
                     ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                        $query->where(['i.location_id' => $locationId]);
+                        $query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
                     }])
                     ->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
                     ->sum('payment.amount');
 
         $royaltyPayment = InvoiceLineItem::find()
                     ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                        $query->where(['i.location_id' => $locationId, 'i.status' => Invoice::STATUS_PAID]);
+                        $query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
                     }])
+					->andWhere(['status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT]])
                     ->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
                     ->andWhere(['invoice_line_item.isRoyalty' => false])
                     ->sum('invoice_line_item.amount');
