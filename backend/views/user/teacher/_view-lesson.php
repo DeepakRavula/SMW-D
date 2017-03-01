@@ -149,6 +149,16 @@ $columns = [
 	],
 ];
 } else {
+	$totalDuration	 = 0;
+	if (!empty($teacherLessonDataProvider->getModels())) {
+		foreach ($teacherLessonDataProvider->getModels() as $key => $val) {
+			$duration		 = \DateTime::createFromFormat('H:i:s', $val->duration);
+			$hours			 = $duration->format('H');
+			$minutes		 = $duration->format('i');
+			$lessonDuration	 = $hours + ($minutes / 60);
+			$totalDuration += $lessonDuration;
+		}
+	}
 	$columns = [
 		[
 			'label' => 'Date',
@@ -161,6 +171,56 @@ $columns = [
 				return null;
 			},
 		],	
+		[
+			'label' => 'Duration',
+			'value' => function ($data) use($totalDuration){
+				$locationId = Yii::$app->session->get('location_id');
+				$lessons = Lesson::find()
+					->location($locationId)
+					->notDeleted()
+					->andWhere(['DATE(date)' => (new \DateTime($data->date))->format('Y-m-d'), 'lesson.teacherId' => $data->teacherId])
+					->all();
+				$totalDuration = 0;
+				foreach($lessons as $lesson) {
+					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->duration);
+					$hours			 = $duration->format('H');
+					$minutes		 = $duration->format('i');
+					$lessonDuration	 = $hours + ($minutes / 60);
+					$totalDuration += $lessonDuration;	
+				}
+				return $totalDuration;
+			},
+			'contentOptions' => ['class' => 'text-right'],
+			'hAlign'=>'right',
+			'pageSummary'=>true,
+            'pageSummaryFunc'=>GridView::F_SUM
+		],
+		[
+			'label' => 'Cost',
+		'format'=>['decimal',2],
+		'value' => function ($data) {
+				$locationId = Yii::$app->session->get('location_id');
+				$lessons = Lesson::find()
+					->location($locationId)
+					->notDeleted()
+					->andWhere(['DATE(date)' => (new \DateTime($data->date))->format('Y-m-d'), 'lesson.teacherId' => $data->teacherId])
+					->all();
+				$cost = 0;
+				foreach($lessons as $lesson) {
+					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->duration);
+					$hours			 = $duration->format('H');
+					$minutes		 = $duration->format('i');
+					$lessonDuration	 = $hours + ($minutes / 60);
+					$teacherRate = !empty($lesson->teacher->teacherRate->hourlyRate) ? $lesson->teacher->teacherRate->hourlyRate : null; 
+					$cost += $lessonDuration * $teacherRate;	
+				}
+				return $cost;
+		},
+		'contentOptions' => ['class' => 'text-right'],
+			'hAlign'=>'right',
+			'pageSummary'=>true,
+            'pageSummaryFunc'=>GridView::F_SUM
+	],
 	];
 }
 ?>
