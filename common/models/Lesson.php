@@ -465,16 +465,20 @@ class Lesson extends \yii\db\ActiveRecord
 
 	public function sendEmail()
     {
-        $subject                      = $this->subject;
-		return Yii::$app->mailer->compose('lesson-reschedule',
-			[
-				'toName' => $this->enrolment->student->customer->publicIdentity,
-				'content' => $this->content,
-			])
-			->setFrom(\Yii::$app->params['robotEmail'])
-			->setTo($this->toEmailAddress)
-			->setSubject($subject)
-			->send();
+		if(!empty($this->toEmailAddress)) {
+			foreach($this->toEmailAddress as $email) {
+				$subject                      = $this->subject;
+				$isSent = Yii::$app->mailer->compose('lesson-reschedule',
+					[
+						'content' => $this->content,
+					])
+					->setFrom(\Yii::$app->params['robotEmail'])
+					->setTo($email)
+					->setSubject($subject)
+					->send();
+			}
+		}
+		return $isSent;
 	}
 
     public function createInvoice()

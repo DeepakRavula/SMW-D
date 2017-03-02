@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 ?>
 
-Dear <?php echo Html::encode($toName) ?>,<br> 
+Dear Customer/Teacher,<br> 
   <?= $content; ?>
 <br>
 <table cellspacing="0" cellpadding="3" border="1" style="width:100%">

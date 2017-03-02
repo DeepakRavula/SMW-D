@@ -3,9 +3,10 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use dosamigos\ckeditor\CKEditor;
-use common\models\InvoiceLineItem;
-use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
+use common\models\Student;
+use yii\helpers\ArrayHelper;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -19,12 +20,19 @@ use yii\helpers\Url;
 		<div class="row">
         <div class="col-lg-12">
 			<?php 
-			$email = !empty($model->enrolment->student->customer->email) ? $model->enrolment->student->customer->email : null;
+			$teacherEmail = !empty($model->teacher->email) ? $model->teacher->email : null;
+			$students = Student::find()
+				->joinWith('enrolment')
+				->andWhere(['courseId' => $model->courseId])
+				->all();
+			$emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
+			array_push($emails,$teacherEmail);
+			$model->toEmailAddress = $emails; 	
 			$subject = $model->course->program->name . ' lesson reschedule';
 			$body = null;
 			?>
 			<?php if($model->isRescheduled()) : ?>
-        	<?php $body = $model->course->program->name . ' lesson has been rescheduled. Kindly verify your lesson details given below'; 
+        	<?php $body = $model->course->program->name . ' lesson has been rescheduled. Please verify the updated schedule given below'; 
 			?>
 			<?php endif; ?>
 			<?php $content = $this->render('content', [
@@ -32,7 +40,12 @@ use yii\helpers\Url;
 				'content' => $body,
 				'model' => $model,
 			]); ?>
-            <?php echo $form->field($model, 'toEmailAddress')->textInput(['value' => $email, 'readonly' => true]) ?>
+			 <?php echo $form->field($model, 'toEmailAddress')->widget(Select2::classname(), [
+				'pluginOptions' => [
+					'allowClear' => true,
+					'multiple' => true,
+				],
+        ]); ?>
         </div>
         </div>
 		<div class="row">
