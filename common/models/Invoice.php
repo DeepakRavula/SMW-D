@@ -303,7 +303,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
         }
 
-        return Yii::$app->formatter->asDecimal($discount, 2);
+        return $discount;
     }
 
     public function getSumOfPayment($customerId)
@@ -530,7 +530,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
         }
 
-        return Yii::$app->formatter->asDecimal($subtotal, 2);
+        return $subtotal;
     }
 
     public function makeInvoicePayment()
@@ -543,7 +543,7 @@ class Invoice extends \yii\db\ActiveRecord
                     $invoice = $lineItem->proFormaLesson->createInvoice();
                 } else if (!$lineItem->proFormaLesson->invoice->isPaid()) {
                     if ($lineItem->proFormaLesson->hasProFormaInvoice()) {
-                        $netPrice = yii::$app->formatter->asDecimal($lineItem->proFormaLesson->proFormaLineItem->netPrice, 2);
+                        $netPrice = $lineItem->proFormaLesson->proFormaLineItem->netPrice;
                         if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $netPrice) {
                             $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice);
                         }
