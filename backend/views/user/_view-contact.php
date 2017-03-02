@@ -34,7 +34,7 @@ use common\models\User;
 	<?php $rate = !empty($model->teacherRate->hourlyRate) ? $model->teacherRate->hourlyRate : null; ?> 
 	<div class="col-xs-4">
 		<div class="row-fluid">
-			<p class="c-title m-0"><i class="fa fa-dollar"></i> Hourly Rate</p>
+			<p class="c-title m-0"> Hourly Rate ($)</p>
 			<?=
 			 Editable::widget([
 				'name'=>'teacherHourlyRate', 
