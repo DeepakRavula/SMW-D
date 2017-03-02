@@ -108,9 +108,10 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function createProFormaInvoice()
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = $this->enrolment->student->customer->userLocation->location_id;
         $invoice = new Invoice();
         $invoice->user_id = $this->enrolment->student->customer->id;
+        $invoice->studentId = $this->enrolment->studentId;
         $invoice->location_id = $locationId;
         $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
         $invoice->save();
