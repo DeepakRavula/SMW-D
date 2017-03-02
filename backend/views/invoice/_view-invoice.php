@@ -15,10 +15,10 @@ use kartik\editable\Editable;
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="invoice-view p-10">
 		    <div class="row">
-            <a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo invoice-col col-sm-2">              
+            <a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo invoice-col col-sm-3">              
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-          <div class="col-sm-3 invoice-address invoice-col text-gray">
+          <div class="col-sm-4 invoice-address invoice-col text-gray">
               <div class="row-fluid">
                 <h2 class="m-0 text-inverse"><strong>
                   <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong>
@@ -37,7 +37,7 @@ use kartik\editable\Editable;
               </small> 
             </div>
             <?php if (!empty($customer)):?>
-            <div class="col-sm-4 invoice-col">
+            <div class="col-sm-2 invoice-col">
               To
               <address>
                 <strong>
@@ -76,7 +76,7 @@ use kartik\editable\Editable;
             </div>
              <?php endif; ?>
             <div class="col-sm-2 invoice-col">
-              <b>Invoice <?= '#'.$model->getInvoiceNumber()?></b><br>
+              <b>Invoice <?= '#'.$model->getInvoiceNumber()?></b><br><br>
               <b>Date:</b> <?= Yii::$app->formatter->asDate($model->date); ?><br>
               <b>Status:</b> <?= $model->getStatus(); ?>
             </div>
