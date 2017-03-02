@@ -32,7 +32,7 @@ use kartik\select2\Select2;
 			$body = null;
 			?>
 			<?php if($model->isRescheduled()) : ?>
-        	<?php $body = $model->course->program->name . ' lesson has been rescheduled. Please verify the updated schedule given below'; 
+        	<?php $body = $model->course->program->name . ' lesson has been rescheduled. Please check the updated schedule given below'; 
 			?>
 			<?php endif; ?>
 			<?php $content = $this->render('content', [
