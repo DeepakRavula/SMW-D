@@ -72,7 +72,7 @@ class Invoice extends \yii\db\ActiveRecord
             ['user_id', 'required'],
             [['reminderNotes'], 'string'],
             [['isSent'], 'boolean'],
-            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted'], 'safe'],
+            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCancelled'], 'safe'],
 			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
         ];
@@ -187,6 +187,16 @@ class Invoice extends \yii\db\ActiveRecord
         return (int) $this->status === (int) self::STATUS_CREDIT;
     }
 
+    public function hasMiscItem()
+    {
+        foreach($this->lineItems as $item) {
+            if($item->isMisc()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function getCreditAppliedTotal()
     {
         $creditUsageTotal = Payment::find()
@@ -214,7 +224,7 @@ class Invoice extends \yii\db\ActiveRecord
 	
     public function updateInvoiceAttributes()
     {
-        if(!$this->isOpeningBalance()) {
+        if(!$this->isOpeningBalance() && !$this->isLessonCredit()) {
             $subTotal    = $this->netSubtotal;
             $tax         = $this->lineItemTax;
             $totalAmount = $subTotal + $tax;
@@ -225,11 +235,7 @@ class Invoice extends \yii\db\ActiveRecord
             ]);
         }
         $status  = $this->getInvoiceStatus();
-		if($this->isLessonCredit()) {
-			$balance = -abs($this->total);
-		} else {
-	        $balance = $this->invoiceBalance;
-		}
+        $balance = $this->invoiceBalance;//echo $balance;die;
         return $this->updateAttributes([
                 'status'    => $status,
                 'balance'   => $balance,

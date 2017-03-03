@@ -23,6 +23,8 @@ use yii\web\Response;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\Note;
+use common\models\PaymentMethod;
+use common\models\InvoiceReverse;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -515,4 +517,38 @@ class InvoiceController extends Controller
 		
             return $this->redirect(['index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE]);
 	}
+
+    public function actionRevertInvoice($id)
+    {
+        $invoice                       = Invoice::findOne($id);
+        $invoice->isCanceled           = true;
+        $invoice->save();
+        $creditInvoice                 = new Invoice();
+        $creditInvoice->user_id        = $invoice->user_id;
+        $creditInvoice->location_id    = $invoice->location_id;
+        $creditInvoice->type           = INVOICE::TYPE_INVOICE;
+        $creditInvoice->save();
+        $invoiceLineItem               = new InvoiceLineItem();
+        $invoiceLineItem->invoice_id   = $creditInvoice->id;
+        $invoiceLineItem->item_id      = Invoice::ITEM_TYPE_OPENING_BALANCE;
+        $invoiceLineItem->discount     = 0.00;
+        $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+        $invoiceLineItem->unit         = 1;
+        $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
+        $invoiceLineItem->amount       = $invoice->lineItem->amount;
+        $invoiceLineItem->description  = "Lesson Credit";
+        $invoiceLineItem->save();
+        $creditInvoice->save();
+        $paymentModel                    = new Payment();
+        $paymentModel->amount            = $invoice->total;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
+        $paymentModel->reference         = null;
+        $paymentModel->invoiceId         = $creditInvoice->id;
+        $paymentModel->save();
+        $invoiceReverse                   = new InvoiceReverse();
+        $invoiceReverse->invoiceId        = $invoice->id;
+        $invoiceReverse->reversedInvoiceId = $creditInvoice->id;
+        $invoiceReverse->save();
+        return $this->redirect(['view', 'id' => $creditInvoice->id]);
+    }
 }
