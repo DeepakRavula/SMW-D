@@ -82,6 +82,8 @@ class UserImport extends Model
                 }
 
                 if ($student->save()) {
+					$this->StudentCsv($row, $student);
+					
                     ++$studentCount;
                     continue;
                 }
@@ -131,35 +133,7 @@ class UserImport extends Model
                 }
 
                 if ($student->save()) {
-					$studentCsv = new StudentCsv();
-					$studentCsv->studentId = $student->id;
-					$studentCsv->firstName = $row['First Name']; 
-					$studentCsv->lastName = $row['Last Name'];
-					$studentCsv->email = $row['Email Address'];
-					$studentCsv->address = $row['Address'];
-					$studentCsv->city = $row['City'];
-					$studentCsv->province = $row['Province'];
-					$studentCsv->postalCode = $row['Postal Code'];
-					$studentCsv->country = $row['Country'];
-					$studentCsv->homeTel = $row['Home Tel'];
-					$studentCsv->otherTel = $row['Other Tel'];
-					if(!empty($row['Date of Birth'])) {
-	                	$birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
-						$studentCsv->birthDate = $birthDate->format('Y-m-d');
-					}
-					$studentCsv->billingFirstName = $row['Billing First Name'];
-					$studentCsv->billingLastName = $row['Billing Last Name'];
-					$studentCsv->billingEmail = $row['Billing Email Address'];
-					$studentCsv->billingAddress = $row['Billing Address'];
-					$studentCsv->billingCity = $row['Billing City'];
-					$studentCsv->billingProvince = $row['Billing Province'];
-					$studentCsv->billingPostalCode = $row['Billing Postal Code'];
-					$studentCsv->billingCountry = $row['Billing Country'];
-					$studentCsv->billingHomeTel = $row['Billing Home Tel'];
-					$studentCsv->billingOtherTel = $row['Billing Other Tel'];
-					$studentCsv->billingWorkTel = $row['Billing Work Tel'];
-					$studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
-					$studentCsv->save();
+					$this->StudentCsv($row, $student);
 					
                     ++$studentCount;
                 }
@@ -245,4 +219,37 @@ class UserImport extends Model
             'totalRows' => count($rows),
         ];
     }
+
+	public function StudentCsv($row, $student) 
+	{
+		$studentCsv = new StudentCsv();
+		$studentCsv->studentId = $student->id;
+		$studentCsv->firstName = $row['First Name']; 
+		$studentCsv->lastName = $row['Last Name'];
+		$studentCsv->email = $row['Email Address'];
+		$studentCsv->address = $row['Address'];
+		$studentCsv->city = $row['City'];
+		$studentCsv->province = $row['Province'];
+		$studentCsv->postalCode = $row['Postal Code'];
+		$studentCsv->country = $row['Country'];
+		$studentCsv->homeTel = $row['Home Tel'];
+		$studentCsv->otherTel = $row['Other Tel'];
+		if(!empty($row['Date of Birth'])) {
+			$birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
+			$studentCsv->birthDate = $birthDate->format('Y-m-d');
+		}
+		$studentCsv->billingFirstName = $row['Billing First Name'];
+		$studentCsv->billingLastName = $row['Billing Last Name'];
+		$studentCsv->billingEmail = $row['Billing Email Address'];
+		$studentCsv->billingAddress = $row['Billing Address'];
+		$studentCsv->billingCity = $row['Billing City'];
+		$studentCsv->billingProvince = $row['Billing Province'];
+		$studentCsv->billingPostalCode = $row['Billing Postal Code'];
+		$studentCsv->billingCountry = $row['Billing Country'];
+		$studentCsv->billingHomeTel = $row['Billing Home Tel'];
+		$studentCsv->billingOtherTel = $row['Billing Other Tel'];
+		$studentCsv->billingWorkTel = $row['Billing Work Tel'];
+		$studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
+		$studentCsv->save();
+	}
 }
