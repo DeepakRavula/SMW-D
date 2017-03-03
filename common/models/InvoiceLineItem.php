@@ -215,6 +215,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return $this->amount - Yii::$app->formatter->asDecimal($this->discountValue, 2);
+        return $this->amount - $this->discountValue;
     }
 }

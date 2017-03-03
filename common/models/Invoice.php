@@ -30,17 +30,18 @@ class Invoice extends \yii\db\ActiveRecord
     const ITEM_TYPE_OPENING_BALANCE = 0;
     const USER_UNASSINGED = 0;
 
-	const EVENT_GENERATE = 'event-generate';
-	const EVENT_UPDATE = 'event-update';
+    const EVENT_GENERATE = 'event-generate';
+    const EVENT_UPDATE = 'event-update';
     const SCENARIO_DELETE = 'delete';
     const SCENARIO_DISCOUNT = 'discount';
 
+    public $studentId;
     public $customer_id;
     public $credit;
     public $discountApplied;
-	public $toEmailAddress;
-	public $subject;
-	public $content;
+    public $toEmailAddress;
+    public $subject;
+    public $content;
     /**
      * {@inheritdoc}
      */
@@ -155,8 +156,13 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
     }
-	
-    public function isOpeningBalance()
+
+    public function getStudent()
+    {
+        return $this->hasOne(Student::className(), ['id' => 'studentId']);
+    }
+
+        public function isOpeningBalance()
     {
         return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
     }
@@ -297,7 +303,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
         }
 
-        return Yii::$app->formatter->asDecimal($discount, 2);
+        return $discount;
     }
 
     public function getSumOfPayment($customerId)
@@ -475,6 +481,7 @@ class Invoice extends \yii\db\ActiveRecord
                 ->count('id');
             $lessonAmount                  = $lesson->course->program->rate / $courseCount;
             $invoiceLineItem->amount       = $lessonAmount;
+            $studentFullName               = $this->student->fullName;
         } else {
             if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
@@ -483,8 +490,9 @@ class Invoice extends \yii\db\ActiveRecord
             }
             $invoiceLineItem->amount       = $lesson->enrolment->program->rate
                 * $invoiceLineItem->unit;
+            $studentFullName               = $lesson->enrolment->student->fullName;
         }
-        $description                  = $lesson->enrolment->program->name.' for '.$lesson->enrolment->student->fullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
+        $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
         return $invoiceLineItem->save();
     }
@@ -522,7 +530,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
         }
 
-        return Yii::$app->formatter->asDecimal($subtotal, 2);
+        return $subtotal;
     }
 
     public function makeInvoicePayment()
@@ -535,7 +543,7 @@ class Invoice extends \yii\db\ActiveRecord
                     $invoice = $lineItem->proFormaLesson->createInvoice();
                 } else if (!$lineItem->proFormaLesson->invoice->isPaid()) {
                     if ($lineItem->proFormaLesson->hasProFormaInvoice()) {
-                        $netPrice = yii::$app->formatter->asDecimal($lineItem->proFormaLesson->proFormaLineItem->netPrice, 2);
+                        $netPrice = $lineItem->proFormaLesson->proFormaLineItem->netPrice;
                         if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $netPrice) {
                             $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice);
                         }

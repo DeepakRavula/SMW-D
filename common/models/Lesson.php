@@ -482,7 +482,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function createInvoice()
     {
-        $location_id = Yii::$app->session->get('location_id');
+        $location_id = $this->enrolment->student->customer->userLocation->location_id;
         $invoice = new Invoice();
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
@@ -491,7 +491,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addLineItem($this);
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
-            $netPrice = yii::$app->formatter->asDecimal($this->proFormaLineItem->netPrice, 2);
+            $netPrice = $this->proFormaLineItem->netPrice;
             if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
                 $invoice->addPayment($this->proFormaInvoice);
             }
