@@ -15,13 +15,14 @@ class RoyaltySearch extends Invoice
    	private $dateRange;
     public $fromDate;
     public $toDate;
+	public $summarizeResults = false;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['dateRange', 'fromDate', 'toDate'], 'safe'],
+            [['dateRange', 'fromDate', 'toDate', 'summarizeResults'], 'safe'],
         ];
     }
 

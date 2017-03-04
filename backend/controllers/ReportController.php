@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
+use yii\data\ActiveDataProvider;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -36,6 +37,7 @@ class ReportController extends Controller {
 		if ($searchModel->load($request->get())) {
 			$royaltyRequest = $request->get('RoyaltySearch');
 			$searchModel->dateRange = $royaltyRequest['dateRange'];
+			$searchModel->summarizeResults = $royaltyRequest['summarizeResults']; 
 		}
 		$toDate = $searchModel->toDate;
 		if ($toDate > $currentDate) {
@@ -43,6 +45,21 @@ class ReportController extends Controller {
 		}
 		$locationId = Yii::$app->session->get('location_id');
 		
+		$lineItems = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
+				$query->notDeleted()
+					->where(['location_id' => $locationId,
+						'type' => Invoice::TYPE_INVOICE,
+						'status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT]
+					])
+					->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')]);
+			}])
+			->andWhere(['isRoyalty' => true]);
+
+			$royaltyDataProvider = new ActiveDataProvider([
+				'query' => $lineItems,
+			]);
+			
 		$invoiceTaxTotal = Invoice::find()
 			->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
 			->andWhere(['NOT', ['status' => Invoice::STATUS_OWING]])
@@ -70,7 +87,8 @@ class ReportController extends Controller {
 			'searchModel' => $searchModel, 
 			'invoiceTaxTotal' => $invoiceTaxTotal,
 			'payments' => $payments,
-			'royaltyPayment' => $royaltyPayment
+			'royaltyPayment' => $royaltyPayment,
+			'royaltyDataProvider' => $royaltyDataProvider
 		]);
 	}
 
