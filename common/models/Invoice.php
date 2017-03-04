@@ -235,7 +235,7 @@ class Invoice extends \yii\db\ActiveRecord
             ]);
         }
         $status  = $this->getInvoiceStatus();
-        $balance = $this->invoiceBalance;//echo $balance;die;
+        $balance = $this->invoiceBalance;
         return $this->updateAttributes([
                 'status'    => $status,
                 'balance'   => $balance,
