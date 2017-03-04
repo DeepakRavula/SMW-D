@@ -72,7 +72,7 @@ class Invoice extends \yii\db\ActiveRecord
             ['user_id', 'required'],
             [['reminderNotes'], 'string'],
             [['isSent'], 'boolean'],
-            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCancelled'], 'safe'],
+            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
 			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
         ];
@@ -417,6 +417,7 @@ class Invoice extends \yii\db\ActiveRecord
             $this->subTotal       = 0.00;
             $this->total          = 0.00;
             $this->tax            = 0.00;
+            $this->isCanceled     = false;
             $reminderNotes = ReminderNote::find()->one();
             if (!empty($reminderNotes)) {
                 $this->reminderNotes = $reminderNotes->notes;
