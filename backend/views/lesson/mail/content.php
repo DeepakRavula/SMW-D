@@ -5,7 +5,7 @@ use yii\helpers\Html;
 Dear Customer/Teacher,<br> 
   <?= $content; ?>
 <br>
-<table cellspacing="0" cellpadding="3" border="1" style="width:100%">
+<table cellspacing="0" cellpadding="0" border="0">
         <tr>
             <td>Date</td>
             <td><?php echo Html::encode(Yii::$app->formatter->asDateTime($model->date)); ?></td>
