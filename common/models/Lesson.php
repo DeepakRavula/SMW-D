@@ -474,6 +474,7 @@ class Lesson extends \yii\db\ActiveRecord
                 	'content' => $this->content,
             	])
 				->setFrom(\Yii::$app->params['robotEmail'])
+				->setReplyTo($this->course->location->email)
 				->setTo($email)
 				->setSubject($subject);
 			}

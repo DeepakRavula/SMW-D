@@ -218,6 +218,11 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
     }
 
+	public function getLocation()
+    {
+        return $this->hasOne(Location::className(), ['id' => 'locationId']);
+    }
+
     public function getLessons()
     {
         return $this->hasMany(Lesson::className(), ['courseId' => 'id']);
