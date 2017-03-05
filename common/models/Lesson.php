@@ -121,7 +121,8 @@ class Lesson extends \yii\db\ActiveRecord
             'toTime' => 'To time',
             'colorCode' => 'Color Code',
 			'classroomId' => 'Classroom',
-			'summariseReport' => 'Summarize Results'
+			'summariseReport' => 'Summarize Results',
+			'toEmailAddress' => 'To'
         ];
     }
 
