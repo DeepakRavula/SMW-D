@@ -122,7 +122,8 @@ class Lesson extends \yii\db\ActiveRecord
             'toTime' => 'To time',
             'colorCode' => 'Color Code',
 			'classroomId' => 'Classroom',
-			'summariseReport' => 'Summarize Results'
+			'summariseReport' => 'Summarize Results',
+			'toEmailAddress' => 'To'
         ];
     }
 
@@ -474,6 +475,7 @@ class Lesson extends \yii\db\ActiveRecord
                 	'content' => $this->content,
             	])
 				->setFrom(\Yii::$app->params['robotEmail'])
+				->setReplyTo($this->course->location->email)
 				->setTo($email)
 				->setSubject($subject);
 			}

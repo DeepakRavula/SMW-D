@@ -15,28 +15,23 @@ Dear <?php echo Html::encode($toName) ?>,<br>
             'summary' => '',
             'columns' => [
                 [
-                    'label' => 'Code',
-                    'value' => function ($data) {
-			            return $data->itemType->itemCode;
-        			},
-                ],
-                [
                     'label' => 'Description',
+        			'contentOptions' => ['style' => 'width:250px;'],
                     'value' => function ($data) {
                         return $data->description;
                     },
                 ],
                 [
                     'attribute' => 'unit',
-                    'label' => 'Quantity',
+                    'label' => 'Qty',
                     'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center'],
+        			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
                     'enableSorting' => false,
                 ],
                 [
                     'label' => 'Price',
                     'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center'],
+        			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
                     'value' => function ($data) {
                         if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
                             return $data->lesson->enrolment->program->rate;
@@ -47,6 +42,7 @@ Dear <?php echo Html::encode($toName) ?>,<br>
                 ],
                 [
                     'attribute' => 'amount',
+        			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
                     'label' => 'Total',
                     'enableSorting' => false,
                 ],
