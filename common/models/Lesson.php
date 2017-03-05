@@ -36,6 +36,7 @@ class Lesson extends \yii\db\ActiveRecord
     const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
     const SCENARIO_CREATE = 'create';
 
+    public $studentFullName;
     public $programId;
     public $time;
     public $hours;

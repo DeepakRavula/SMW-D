@@ -35,7 +35,6 @@ class Invoice extends \yii\db\ActiveRecord
     const SCENARIO_DELETE = 'delete';
     const SCENARIO_DISCOUNT = 'discount';
 
-    public $studentId;
     public $customer_id;
     public $credit;
     public $discountApplied;
@@ -157,12 +156,7 @@ class Invoice extends \yii\db\ActiveRecord
         return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
     }
 
-    public function getStudent()
-    {
-        return $this->hasOne(Student::className(), ['id' => 'studentId']);
-    }
-
-        public function isOpeningBalance()
+    public function isOpeningBalance()
     {
         return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
     }
@@ -488,7 +482,7 @@ class Invoice extends \yii\db\ActiveRecord
                 ->count('id');
             $lessonAmount                  = $lesson->course->program->rate / $courseCount;
             $invoiceLineItem->amount       = $lessonAmount;
-            $studentFullName               = $this->student->fullName;
+            $studentFullName               = $lesson->studentFullName;
         } else {
             if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;

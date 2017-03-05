@@ -111,7 +111,6 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $locationId = $this->enrolment->student->customer->userLocation->location_id;
         $invoice = new Invoice();
         $invoice->user_id = $this->enrolment->student->customer->id;
-        $invoice->studentId = $this->enrolment->studentId;
         $invoice->location_id = $locationId;
         $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
         $invoice->save();
@@ -124,6 +123,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
             ->all();
         foreach ($lessons as $lesson) {
+            $lesson->studentFullName = $this->enrolment->student->fullName;
             $invoice->addLineItem($lesson);
             $invoice->save();
         }
