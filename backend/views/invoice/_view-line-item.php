@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 use common\models\TaxStatus;
 use common\models\InvoiceLineItem;
 use kartik\switchinput\SwitchInput;
+use common\models\ItemType;
 
 ?>
 <?php
@@ -61,8 +62,8 @@ $columns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left', 'style' => 'width:80px;'],
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
         'attribute' => 'discount',
         'value' => function ($model) {
             if ((int) $model->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
@@ -122,14 +123,28 @@ $columns = [
             ];
         },
     ],
+	[
+		'label' => 'Cost',
+        'format' => 'currency',
+		'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
+		'value' => function($data) {
+			$cost = 0.0;
+			$itemTypes = [ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON, ItemType::TYPE_GROUP_LESSON];
+			if(in_array($data->item_type_id,$itemTypes)) {
+				$cost = !empty($data->lesson->teacher->teacherRate->hourlyRate) ? $data->lesson->teacher->teacherRate->hourlyRate : null; 
+			} 
+		return $cost;
+		}
+	],
     [
         'class' => 'kartik\grid\EditableColumn',
         'format' => 'currency',
         'attribute' => 'amount',
         'label' => 'Price',
         'refreshGrid' => true,
-        'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left', 'style' => 'width:80px;'],
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
         'enableSorting' => false,
         'editableOptions' => function ($model, $key, $index) {
             if ($model->isOpeningBalance()) {
