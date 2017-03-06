@@ -94,6 +94,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $lessons = Lesson::find()
             ->notDeleted()
             ->location($locationId)
+            ->andWhere(['courseId' => $this->enrolment->course->id])
             ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
             ->between($startDate, $endDate)
             ->all();
