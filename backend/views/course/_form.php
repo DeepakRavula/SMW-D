@@ -71,7 +71,6 @@ use yii\data\ActiveDataProvider;
 						'clientOptions' => [
 							'changeMonth' => true,
 							'changeYear' => true,
-							'yearRange' => '-70:today',
 						],
 					]);
 					?>
@@ -84,7 +83,6 @@ use yii\data\ActiveDataProvider;
 						'clientOptions' => [
 							'changeMonth' => true,
 							'changeYear' => true,
-							'yearRange' => '-70:today',
 						],
 					]);
 					?>
