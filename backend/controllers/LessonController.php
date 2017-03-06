@@ -352,13 +352,12 @@ class LessonController extends Controller
 		$lessons = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
 			->all();	
-			
 		foreach ($lessons as $lesson) {
 			$lesson->setScenario(Lesson::SCENARIO_GROUP_ENROLMENT_REVIEW);
+			$lesson->studentId = $enrolment->student->id; 
 		}
 		Model::validateMultiple($lessons);
 		foreach ($lessons as $lesson) {
-			$lesson->studentId = $enrolment->student->id; 
 			if(!empty($lesson->getErrors('date'))) {
 				$conflictedLessonIds[] = $lesson->id;
 			}
