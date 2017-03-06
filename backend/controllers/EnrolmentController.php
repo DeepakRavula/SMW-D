@@ -148,7 +148,6 @@ class EnrolmentController extends Controller
 				if(new \DateTime($existingEndDate) < $endDate) {
 					$interval = new \DateInterval('P1D');
 					$period = new \DatePeriod($courseEndDate, $interval, $endDate);
-					$classroom = TeacherRoom::findOne(['teacherId' => $model->course->teacherId, 'day' => $model->course->day]);
 
 					foreach ($period as $day) {
 						$professionalDevelopmentDay = clone $day;
@@ -166,7 +165,6 @@ class EnrolmentController extends Controller
 								'date' => $day->format('Y-m-d H:i:s'),
 								'duration' => $model->course->duration,
 								'isDeleted' => false,
-								'classroomId' => !empty($classroom) ? $classroom->classroomId : null,
 							]);
 							$lesson->save();
 						}
