@@ -7,6 +7,7 @@ use common\models\Student;
 use yii\helpers\ArrayHelper;
 use kartik\select2\Select2;
 use yii\imperavi\Widget;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -20,13 +21,12 @@ use yii\imperavi\Widget;
 		<div class="row">
         <div class="col-lg-12">
 			<?php 
-			$teacherEmail = !empty($model->teacher->email) ? $model->teacher->email : null;
+			$data = ArrayHelper::map(User::find()->all(), 'email', 'email');
 			$students = Student::find()
 				->joinWith('enrolment')
 				->andWhere(['courseId' => $model->courseId])
 				->all();
 			$emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
-			array_push($emails,$teacherEmail);
 			$model->toEmailAddress = $emails; 	
 			$subject = $model->course->program->name . ' lesson reschedule';
 			$body = null;
@@ -43,7 +43,9 @@ use yii\imperavi\Widget;
 			$model->content = $content; 
 			?>
 			 <?php echo $form->field($model, 'toEmailAddress')->widget(Select2::classname(), [
+				 'data' => $data,
 				'pluginOptions' => [
+					'tags' => true,
 					'allowClear' => true,
 					'multiple' => true,
 				],
