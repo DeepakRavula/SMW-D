@@ -340,6 +340,7 @@ class LessonController extends Controller
 	public function actionGroupEnrolmentReview($courseId, $enrolmentId)
 	{
 		$model = new Lesson();
+		$enrolment = Enrolment::findOne(['id' => $enrolmentId]);
         $searchModel = new LessonSearch();
 		$request = Yii::$app->request;
         $lessonSearchRequest = $request->get('LessonSearch');
@@ -357,6 +358,7 @@ class LessonController extends Controller
 		}
 		Model::validateMultiple($lessons);
 		foreach ($lessons as $lesson) {
+			$lesson->studentId = $enrolment->student->id; 
 			if(!empty($lesson->getErrors('date'))) {
 				$conflictedLessonIds[] = $lesson->id;
 			}
@@ -380,7 +382,7 @@ class LessonController extends Controller
             'conflicts' => $conflicts,
 			'model' => $model,
             'searchModel' => $searchModel,
-			'enrolmentId' => $enrolmentId,
+			'enrolment' => $enrolment,
         ]);	
 	}
 

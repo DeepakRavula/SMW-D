@@ -11,12 +11,16 @@ class StudentValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
+		if($model->course->program->isPrivate()) {
+			$studentId = $model->course->enrolment->student->id; 
+		}
+		$studentId = !empty($model->studentId) ? $model->studentId : null;
        	$locationId = Yii::$app->session->get('location_id');
         $otherLessons = [];
         $intervals = [];
 
 		$studentLessons = Lesson::find()
-			->studentLessons($locationId, $model->course->enrolment->student->id)
+			->studentLessons($locationId, $studentId)
 			->all();
 
 		foreach ($studentLessons as $studentLesson) {

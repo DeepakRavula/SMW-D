@@ -27,7 +27,7 @@ $this->title = 'Review Lessons';
 <div class="user-details-wrapper">
 	<div class="row">
 	<div class="col-md-12">
-		<p class="users-name"><?= $courseModel->enrolment->student->fullName; ?></p>
+		<p class="users-name"><?= $enrolment->student->fullName; ?></p>
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Program Name">
 		<i class="fa fa-music detail-icon"></i> <?=    $courseModel->program->name; ?>
@@ -150,8 +150,7 @@ $this->title = 'Review Lessons';
 
     <div class="form-group">
 	<div class="p-10 text-center">
-		<?php $enrolment = Enrolment::findOne(['id' =>  $enrolmentId]); ?>
-		<?= Html::a('Confirm', ['confirm-group-enrolment', 'enrolmentId' => $enrolmentId], [
+		<?= Html::a('Confirm', ['confirm-group-enrolment', 'enrolmentId' => $enrolment->id], [
             'class' => 'btn btn-danger',
             'id' => 'confirm-button',
             'disabled' => $hasConflict,
@@ -170,7 +169,7 @@ $(document).ready(function(){
     }
 	$("#lessonsearch-showallreviewlessons").on("change", function() {
         var showAllReviewLessons = $(this).is(":checked");
-        var url = "<?php echo Url::to(['lesson/group-enrolment-review', 'courseId' => $courseModel->id, 'enrolmentId' => $enrolmentId]); ?>?LessonSearch[showAllReviewLessons]=" + (showAllReviewLessons | 0);
+        var url = "<?php echo Url::to(['lesson/group-enrolment-review', 'courseId' => $courseModel->id, 'enrolmentId' => $enrolment->id]); ?>?LessonSearch[showAllReviewLessons]=" + (showAllReviewLessons | 0);
         $.pjax.reload({url:url,container:"#review-lesson-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
 });
