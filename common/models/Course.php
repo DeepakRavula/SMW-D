@@ -61,6 +61,7 @@ class Course extends \yii\db\ActiveRecord
 			[['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
+            ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['startDate'], 'checkStartDate', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['endDate'], 'checkEndDate', 'on' => self::SCENARIO_GROUP_COURSE],
@@ -102,6 +103,15 @@ class Course extends \yii\db\ActiveRecord
         }
     }
 
+	public function checkDate($attribute, $params)
+	{
+		$oldEndDate = (new \DateTime($this->getOldAttribute('endDate')))->format('d-m-Y');
+		$endDate = (new \DateTime($this->endDate))->format('d-m-Y');
+		if ($endDate > $oldEndDate) {
+			return $this->addError($attribute, 'End date must be less than course end date');
+		}
+	}
+	
 	public function checkTime($attribute, $params)
     {
         $teacherAvailabilities = TeacherAvailability::find()
