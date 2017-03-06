@@ -337,6 +337,64 @@ class LessonController extends Controller
         }
     }
 
+	public function actionGroupEnrolmentReview($courseId, $enrolmentId)
+	{
+		$model = new Lesson();
+		$enrolment = Enrolment::findOne(['id' => $enrolmentId]);
+        $searchModel = new LessonSearch();
+		$request = Yii::$app->request;
+        $lessonSearchRequest = $request->get('LessonSearch');
+        $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
+        $courseModel = Course::findOne(['id' => $courseId]);
+		$conflicts = [];
+		$conflictedLessonIds = [];
+	
+		$lessons = Lesson::find()
+			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
+			->all();	
+		foreach ($lessons as $lesson) {
+			$lesson->setScenario(Lesson::SCENARIO_GROUP_ENROLMENT_REVIEW);
+			$lesson->studentId = $enrolment->student->id; 
+		}
+		Model::validateMultiple($lessons);
+		foreach ($lessons as $lesson) {
+			if(!empty($lesson->getErrors('date'))) {
+				$conflictedLessonIds[] = $lesson->id;
+			}
+			$conflicts[$lesson->id] = $lesson->getErrors('date');
+		}
+		$query = Lesson::find()
+			->orderBy(['lesson.date' => SORT_ASC]);
+		if(! $showAllReviewLessons) {
+			$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
+		}  else {
+				$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED]);
+		}
+        $lessonDataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+		
+        return $this->render('enrolment/_review', [
+            'courseModel' => $courseModel,
+            'courseId' => $courseId,
+            'lessonDataProvider' => $lessonDataProvider,
+            'conflicts' => $conflicts,
+			'model' => $model,
+            'searchModel' => $searchModel,
+			'enrolment' => $enrolment,
+        ]);	
+	}
+
+	public function actionConfirmGroupEnrolment($enrolmentId)
+	{
+		$enrolment = Enrolment::findOne(['id' => $enrolmentId]);
+		$enrolment->isConfirmed = true;
+		$enrolment->save();
+        $enrolment->setPaymentCycle();
+		$invoice = $enrolment->firstPaymentCycle->createProFormaInvoice();
+			return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
+	}
+	
     public function actionReview($courseId)
     {
 		$model = new Lesson();
@@ -369,9 +427,9 @@ class LessonController extends Controller
 				->andWhere(['>=', 'lesson.date', (new \DateTime($endDate))->format('Y-m-d')])
 				->unInvoicedProForma();
 		} else {
-			$draftLessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
-				->all();
+				$draftLessons = Lesson::find()
+					->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+					->all();
 			foreach ($draftLessons as $draftLesson) {
 				$draftLesson->setScenario('review');
 				if(!empty($vacationId)) {
@@ -390,9 +448,9 @@ class LessonController extends Controller
 			if(! $showAllReviewLessons) {
 				$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
 			}  else {
-				$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+					$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+				}
 			}
-		}
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
