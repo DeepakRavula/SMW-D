@@ -58,4 +58,9 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
                     ->viaTable('invoice_line_item', ['item_id' => 'id']);
     }
+
+	public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
+    }
 }
