@@ -35,6 +35,7 @@ class Lesson extends \yii\db\ActiveRecord
     const SCENARIO_EDIT = 'edit';
     const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
     const SCENARIO_CREATE = 'create';
+	const SCENARIO_GROUP_ENROLMENT_REVIEW = 'group-enrolment';
 
     public $studentFullName;
     public $programId;
@@ -101,6 +102,7 @@ class Lesson extends \yii\db\ActiveRecord
 				return $model->course->program->isPrivate();
 			}],
             ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
+            ['date', StudentValidator::className(), 'on' => self::SCENARIO_GROUP_ENROLMENT_REVIEW],
 			
         ];
     }

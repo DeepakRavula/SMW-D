@@ -13,5 +13,6 @@ return [
         'student/<studentId:\d+>/enrolment/<enrolmentId:\d+>/program-type/<programType:\d+>/delete-preview' => 'student/delete-enrolment-preview',
         'course/<courseId:\d+>/lesson-review' => 'lesson/review',
         'student/<id:\d+>/enrolment' => 'student/enrolment',
+        'course/<courseId:\d+>/enrolment/<enrolmentId:\d+>/lesson-review' => 'lesson/group-enrolment-review',
     ],
 ];
