@@ -58,7 +58,7 @@ class Course extends \yii\db\ActiveRecord
                 return (int) $model->program->type === Program::TYPE_GROUP_PROGRAM;
             },
             ],
-			[['locationId', 'rescheduleBeginDate'], 'safe'],
+			[['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
@@ -252,6 +252,7 @@ class Course extends \yii\db\ActiveRecord
         $fromTime = \DateTime::createFromFormat('h:i A', $this->fromTime);
         $this->fromTime = $fromTime->format('H:i:s');
         $timebits = explode(':', $this->fromTime);
+		$this->isConfirmed = false;
         if ((int) $this->program->type === Program::TYPE_GROUP_PROGRAM) {
             $startDate = new \DateTime($this->startDate);
             $startDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));

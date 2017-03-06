@@ -443,6 +443,9 @@ class LessonController extends Controller
     public function actionConfirm($courseId)
     {
         $courseModel = Course::findOne(['id' => $courseId]);
+		$courseModel->updateAttributes([
+			'isConfirmed' => true
+		]);
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
         $request = Yii::$app->request;
         if (!empty($courseModel->enrolment)) {
