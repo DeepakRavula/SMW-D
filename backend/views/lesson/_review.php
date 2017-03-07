@@ -126,10 +126,8 @@ $this->title = 'Review Lessons';
                        'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
                        'widgetClass' => '\bootui\datetimepicker\DateTimepicker',
 						'options' => [
-							//'format' => 'DD-MM-YYYY hh:mm A',
-							//'format' => 'hh:mm A',
+							'format' => 'YYYY-MM-DD hh:mm A',
 							'stepping' => 15,
-							
 						],
                        'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [

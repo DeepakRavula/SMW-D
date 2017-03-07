@@ -288,7 +288,7 @@ class LessonController extends Controller
 				}
 				if (isset($posted['date'])) {
 					if(! empty($posted['date'])) {
-						$model->date = $posted['date'];
+						$model->date = (new \DateTime($posted['date']))->format('Y-m-d H:i:s');
 						$output = Yii::$app->formatter->asDateTime($model->date);
 					} else {
 						$model->date = $existingDate;
