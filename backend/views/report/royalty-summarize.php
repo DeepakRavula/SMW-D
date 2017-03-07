@@ -21,10 +21,6 @@ $netPrice = round(($total - ($royaltyAmount + $advertisementAmount)), 2);
 }
 </style>
 <div class="col-md-12">
-    <div class="col-xs-12 col-md-6 p-10 p-r-0">
-		<?php echo $this->render('_search', ['model' => $searchModel]); ?>
-	</div>
-	<div class="clearfix"></div>
 	<div>
 		<table cellspacing="0" cellpadding="3" border="0" style="width:40%" class="table-invoice-childtable">
 			<tr>
