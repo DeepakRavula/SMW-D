@@ -2,7 +2,7 @@
 
 use yii\grid\GridView;
 
-$this->title = Yii::t('backend', 'Application timeline');
+$this->title = Yii::t('backend', 'Timeline');
 ?>
 <?php \yii\widgets\Pjax::begin() ?>
 <?php $columns = [
@@ -16,7 +16,7 @@ $this->title = Yii::t('backend', 'Application timeline');
                 'label' => 'Message',
 				'format' => 'raw',
                 'value' => function ($data) {
-                    return !empty($data->getOldAttribute('data')) ? $data->getOldAttribute('data') : null;
+                    return !empty($data->message) ? $data->message : null;
                 },
             ],
         ];
