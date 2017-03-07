@@ -36,7 +36,7 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
         $model->application = Yii::$app->id;
         $model->category = $command->category;
         $model->event = $command->event;
-        $model->data = json_encode($command->data, JSON_UNESCAPED_UNICODE);
+        $model->data = $command->data;
 
         return $model->save(false);
     }
