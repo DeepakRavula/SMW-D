@@ -288,34 +288,19 @@ class LessonController extends Controller
 				}
 				if (isset($posted['date'])) {
 					if(! empty($posted['date'])) {
-						$lessonTime = (new \DateTime($existingDate))->format('H:i:s');
-						$timebits = explode(':', $lessonTime);
-						$changedDate = new \DateTime($posted['date']);
-						$changedDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-						$model->date = $changedDate->format('Y-m-d H:i:s');
-						$output = Yii::$app->formatter->asDate($model->date);
+						$model->date = $posted['date'];
+						$output = Yii::$app->formatter->asDateTime($model->date);
 					} else {
 						$model->date = $existingDate;
 						$model->status = Lesson::STATUS_UNSCHEDULED;
 						$privateLessonModel = new PrivateLesson();
 						$privateLessonModel->lessonId = $model->id;
-						$date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+						$date = new \DateTime($model->date);
 						$expiryDate = $date->modify('90 days');
 						$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
 						$privateLessonModel->save();
 						$output = '  ';
 					}
-				}
-				if (!empty($posted['time'])) {
-					$existingDate = (new \DateTime($existingDate))->format('Y-m-d');
-					$existingDate = new \DateTime($existingDate);
-					$changedTime = new \DateTime($posted['time']);
-					$lessonTime = $changedTime->format('H:i:s');
-					$timebits = explode(':', $lessonTime);
-					$existingDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-					$model->date = $existingDate->format('Y-m-d H:i:s');
-					$newTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-					$output = Yii::$app->formatter->asTime($newTime);
 				}
 				if (!empty($posted['duration'])) {
 					$model->duration = $posted['duration'];

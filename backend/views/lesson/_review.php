@@ -112,9 +112,10 @@ $this->title = 'Review Lessons';
     <?php
     $columns = [
         [
+			'label' => 'Date/Time',
             'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'date',
-            'format' => 'date',
+            'format' => 'datetime',
             'refreshGrid' => true,
             'headerOptions' => ['class' => 'kv-sticky-column'],
             'contentOptions' => ['class' => 'kv-sticky-column'],
@@ -123,7 +124,13 @@ $this->title = 'Review Lessons';
                        'header' => 'Lesson Date',
                        'size' => 'md',
                        'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-                       'widgetClass' => '\yii\jui\DatePicker',
+                       'widgetClass' => '\bootui\datetimepicker\DateTimepicker',
+						'options' => [
+							//'format' => 'DD-MM-YYYY hh:mm A',
+							//'format' => 'hh:mm A',
+							'stepping' => 15,
+							
+						],
                        'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
 						   'editableError' => 'review.onEditableError',
@@ -132,35 +139,6 @@ $this->title = 'Review Lessons';
                    ];
             },
            ],
-           [
-               'class' => 'kartik\grid\EditableColumn',
-               'attribute' => 'time',
-               'refreshGrid' => true,
-               'value' => function ($model, $key, $index, $widget) {
-                   $lessonTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date)->format('H:i:s');
-                   return Yii::$app->formatter->asTime($lessonTime);
-               },
-               'headerOptions' => ['class' => 'kv-sticky-column'],
-               'contentOptions' => ['class' => 'kv-sticky-column'],
-               'editableOptions' => function ($model, $key, $index) {
-                   return [
-                       'header' => 'Lesson From Time',
-                       'size' => 'md',
-                       'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-                       'widgetClass' => 'bootui\datetimepicker\Timepicker',
-                       'options' => [
-							'format' => 'hh:mm A',
-							'stepping' => 15,
-							
-						],
-                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
-                       'pluginEvents' => [
-						   'editableError' => 'review.onEditableError',
-                           'editableSuccess' => 'review.onEditableGridSuccess',
-                       ],
-                   ];
-               },
-               ],
             [
                'class' => 'kartik\grid\EditableColumn',
                'attribute' => 'duration',
