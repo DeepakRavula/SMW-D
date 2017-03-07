@@ -15,8 +15,9 @@ use kartik\daterange\DateRangePicker;
         'action' => ['royalty'],
         'method' => 'get',
     ]); ?>
+	
     <div class="row">
-    <div class="col-md-7">
+    <div class="col-md-5">
    <?php 
    echo '<label>Date Range</label>';
    echo DateRangePicker::widget([
@@ -41,10 +42,16 @@ use kartik\daterange\DateRangePicker;
     ]);
    ?>
    </div>    
-    <div class="col-md-5 form-group m-t-25">
+	<div class="pull-right  m-r-20">
+        <div class="schedule-index">
+            <div class="royalty-report-summarize">
+				<?= $form->field($model, 'summarizeResults')->checkbox(['data-pjax' => true]); ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 form-group m-t-20">
         <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
         <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
-        <div class="clearfix"></div>
     </div>
     </div>
 
