@@ -97,6 +97,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 ->where(['invoice.type' => Invoice::TYPE_INVOICE]);
     }
 
+
     public function getIsRoyaltyExempted()
     {
         return $this->isRoyaltyExempted;
@@ -218,8 +219,38 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
     }
 
-    public function getNetPrice()
+	public function getNetPrice()
     {
         return $this->amount - $this->discountValue;
+    }
+	
+	public function getTaxLineItemTotal($date)
+    {
+		$locationId = $this->invoice->location_id;
+		$taxTotal = self::find()
+        	->taxRate($date, $locationId)
+            ->sum('tax_rate');
+
+		return $taxTotal;
+    }
+
+	public function getTaxLineItemAmount($date)
+    {
+		$locationId = $this->invoice->location_id;
+		$amount = self::find()
+        	->taxRate($date, $locationId)
+            ->sum('amount');
+
+		return $amount;
+    }
+
+	public function getTotal($date)
+    {
+		$locationId = $this->invoice->location_id;
+		$total = self::find()
+        	->taxRate($date, $locationId)
+            ->sum('amount+tax_rate');
+
+		return $total;
     }
 }

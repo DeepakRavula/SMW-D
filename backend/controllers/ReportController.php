@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Payment;
-use backend\models\search\RoyaltySearch;
+use backend\models\search\ReportSearch;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use common\models\Invoice;
@@ -28,14 +28,14 @@ class ReportController extends Controller {
 	}
 
 	public function actionRoyalty() {
-		$searchModel = new RoyaltySearch();
+		$searchModel = new ReportSearch();
 		$currentDate = new \DateTime();
 		$searchModel->fromDate = $currentDate->format('1-m-Y');
 		$searchModel->toDate = $currentDate->format('t-m-Y');
 		$searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
 		$request = Yii::$app->request;
 		if ($searchModel->load($request->get())) {
-			$royaltyRequest = $request->get('RoyaltySearch');
+			$royaltyRequest = $request->get('ReportSearch');
 			$searchModel->dateRange = $royaltyRequest['dateRange'];
 		}
 		$toDate = $searchModel->toDate;
@@ -76,14 +76,14 @@ class ReportController extends Controller {
 	}
 
 	public function actionTaxCollected() {
-		$searchModel = new RoyaltySearch();
+		$searchModel = new ReportSearch();
 		$currentDate = new \DateTime();
 		$searchModel->fromDate = $currentDate->format('1-m-Y');
 		$searchModel->toDate = $currentDate->format('t-m-Y');
 		$searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
 		$request = Yii::$app->request;
 		if ($searchModel->load($request->get())) {
-			$royaltyRequest = $request->get('RoyaltySearch');
+			$royaltyRequest = $request->get('ReportSearch');
 			$searchModel->dateRange = $royaltyRequest['dateRange'];
 			$searchModel->summarizeResults = $royaltyRequest['summarizeResults']; 
 		}
@@ -92,51 +92,30 @@ class ReportController extends Controller {
 			$toDate = $currentDate;
 		}
 		$locationId = Yii::$app->session->get('location_id');
-		
-		$lineItems = InvoiceLineItem::find()
+		$invoiceTaxes = InvoiceLineItem::find()
 			->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
-				$query->notDeleted()
-					->where(['location_id' => $locationId,
-						'type' => Invoice::TYPE_INVOICE,
-						'status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT]
-					])
-					->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')]);
+				$query->andWhere([
+					'location_id' => $locationId,
+					'type' => Invoice::TYPE_INVOICE,
+					'status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT],
+				])	
+				->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+				->notDeleted();
 			}])
-			->andWhere(['isRoyalty' => true]);
+			->andWhere(['>', 'tax_rate', 0]);
+			if($searchModel->summarizeResults) {
+				$invoiceTaxes->groupBy('DATE(invoice.date)');	
+			} else {
+				$invoiceTaxes->orderBy(['invoice.date' => SORT_ASC]);
+			}
 
-			$royaltyDataProvider = new ActiveDataProvider([
-				'query' => $lineItems,
-			]);
-			
-		$invoiceTaxTotal = Invoice::find()
-			->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
-			->andWhere(['NOT', ['status' => Invoice::STATUS_OWING]])
-			->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-			->notDeleted()
-			->sum('tax');
-
-		$payments = Payment::find()
-			->joinWith(['invoice i' => function ($query) use ($locationId) {
-					$query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
-				}])
-			->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-			->sum('payment.amount');
-
-		$royaltyPayment = InvoiceLineItem::find()
-			->joinWith(['invoice i' => function ($query) use ($locationId) {
-					$query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
-					$query->andWhere(['NOT', ['status' => Invoice::STATUS_OWING]]);
-				}])
-			->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-			->andWhere(['invoice_line_item.isRoyalty' => false])
-			->sum('invoice_line_item.amount');
+		$taxDataProvider = new ActiveDataProvider([
+			'query' => $invoiceTaxes, 
+		]);
 				
-		return $this->render('royalty', [
+		return $this->render('tax-collected', [
 			'searchModel' => $searchModel, 
-			'invoiceTaxTotal' => $invoiceTaxTotal,
-			'payments' => $payments,
-			'royaltyPayment' => $royaltyPayment,
-			'royaltyDataProvider' => $royaltyDataProvider
+			'taxDataProvider' => $taxDataProvider,
 		]);
 	}
 }

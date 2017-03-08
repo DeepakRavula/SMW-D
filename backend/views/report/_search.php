@@ -12,7 +12,7 @@ use kartik\daterange\DateRangePicker;
 <div class="user-search">
 
     <?php $form = ActiveForm::begin([
-        'action' => ['royalty'],
+        //'action' => ['royalty'],
         'method' => 'get',
     ]); ?>
 	
@@ -42,6 +42,15 @@ use kartik\daterange\DateRangePicker;
     ]);
    ?>
    </div>    
+	<?php if(Yii::$app->controller->action->id === 'tax-collected') : ?>
+	<div class="pull-right  m-r-20">
+		<div class="schedule-index">
+			<div class="royalty-report-summarize">
+				<?= $form->field($model, 'summarizeResults')->checkbox(['data-pjax' => true]); ?>
+			</div>
+		</div>
+	</div>
+	<?php endif; ?>
     <div class="col-md-5 form-group m-t-20">
         <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
         <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
