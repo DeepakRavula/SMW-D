@@ -42,13 +42,6 @@ use kartik\daterange\DateRangePicker;
     ]);
    ?>
    </div>    
-	<div class="pull-right  m-r-20">
-        <div class="schedule-index">
-            <div class="royalty-report-summarize">
-				<?= $form->field($model, 'summarizeResults')->checkbox(['data-pjax' => true]); ?>
-            </div>
-        </div>
-    </div>
     <div class="col-md-5 form-group m-t-20">
         <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
         <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
