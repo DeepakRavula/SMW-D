@@ -300,7 +300,14 @@ $bundle = BackendAsset::register($this);
 									'icon'=>'<i class="fa fa-cny"></i>',
 									'url'=>['report/tax-collected'],    
 									'visible'=>Yii::$app->user->can('owner'),
-									'active'=>(Yii::$app->controller->action->id === 'royalty')? true : false,
+									'active'=>(Yii::$app->controller->action->id === 'tax-collected')? true : false,
+                        		],
+								[
+									'label'=>Yii::t('backend', 'Royalty Free Items'),
+									'icon'=>'<i class="fa fa-cny"></i>',
+									'url'=>['report/royalty-free'],    
+									'visible'=>Yii::$app->user->can('owner'),
+									'active'=>(Yii::$app->controller->action->id === 'royalty-free')? true : false,
                         		],
 							]
 						],

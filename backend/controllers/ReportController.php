@@ -118,4 +118,42 @@ class ReportController extends Controller {
 			'taxDataProvider' => $taxDataProvider,
 		]);
 	}
+
+	public function actionRoyaltyFree() {
+		$searchModel = new ReportSearch();
+		$currentDate = new \DateTime();
+		$searchModel->fromDate = $currentDate->format('1-m-Y');
+		$searchModel->toDate = $currentDate->format('t-m-Y');
+		$searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+		$request = Yii::$app->request;
+		if ($searchModel->load($request->get())) {
+			$royaltyRequest = $request->get('ReportSearch');
+			$searchModel->dateRange = $royaltyRequest['dateRange'];
+		}
+		$toDate = $searchModel->toDate;
+		if ($toDate > $currentDate) {
+			$toDate = $currentDate;
+		}
+		$locationId = Yii::$app->session->get('location_id');
+		$royaltyFreeItems = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
+				$query->andWhere([
+					'location_id' => $locationId,
+					'type' => Invoice::TYPE_INVOICE,
+					'status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT],
+				])	
+				->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+				->notDeleted();
+			}])
+			->andWhere(['isRoyalty' => false]);
+
+		$royaltyFreeDataProvider = new ActiveDataProvider([
+			'query' => $royaltyFreeItems, 
+		]);
+				
+		return $this->render('royalty-free-item', [
+			'searchModel' => $searchModel, 
+			'royaltyFreeDataProvider' => $royaltyFreeDataProvider,
+		]);
+	}
 }
