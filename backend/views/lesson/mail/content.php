@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 ?>
 
-Dear Customer/Teacher,<br> 
+Dear Customer,<br> 
   <?= $content; ?>
 <br>
 <table cellspacing="0" cellpadding="0" border="0">
