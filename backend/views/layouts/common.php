@@ -295,6 +295,13 @@ $bundle = BackendAsset::register($this);
 									'visible'=>Yii::$app->user->can('owner'),
 									'active'=>(Yii::$app->controller->action->id === 'royalty')? true : false,
                         		],
+								[
+									'label'=>Yii::t('backend', 'Tax Collected'),
+									'icon'=>'<i class="fa fa-cny"></i>',
+									'url'=>['report/tax-collected'],    
+									'visible'=>Yii::$app->user->can('owner'),
+									'active'=>(Yii::$app->controller->action->id === 'royalty')? true : false,
+                        		],
 							]
 						],
                         [
@@ -308,27 +315,7 @@ $bundle = BackendAsset::register($this);
                             'label' => Yii::t('backend', 'System'),
                             'options' => ['class' => 'header'],
                         ],
-                        [
-                            'label' => Yii::t('backend', 'Access Control'),
-                            'url' => '#',
-                            'icon' => '<i class="fa fa-edit"></i>',
-                            'visible' => Yii::$app->user->can('administrator'),
-                            'options' => ['class' => 'treeview'],
-                            'items' => [
-                                ['label' => Yii::t('backend', 'Roles'), 'url' => ['admin/role'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                                ['label' => Yii::t('backend', 'Permissions'), 'url' => ['admin/permission'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                                ['label' => Yii::t('backend', 'Assignments'), 'url' => ['admin/assignment'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                                ['label' => Yii::t('backend', 'Routes'), 'url' => ['admin/route'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                                ['label' => Yii::t('backend', 'Rules'), 'url' => ['admin/rule'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                            ],
-                        ],
-                        [
-                            'label' => Yii::t('backend', 'Timeline'),
-                            'icon' => '<i class="fa fa-bar-chart-o"></i>',
-                            'url' => ['timeline-event/index'],
-                            'badge' => TimelineEvent::find()->today()->count(),
-                            'badgeBgClass' => 'label-success',
-                        ],
+                   
                         [
                             'label' => Yii::t('backend', 'Setup'),
                             'url' => '#',
@@ -435,6 +422,27 @@ $bundle = BackendAsset::register($this);
                                     'visible' => Yii::$app->user->can('administrator'),
                                 ],
                             ],
+                        ],
+						     [
+                            'label' => Yii::t('backend', 'Access Control'),
+                            'url' => '#',
+                            'icon' => '<i class="fa fa-edit"></i>',
+                            'visible' => Yii::$app->user->can('administrator'),
+                            'options' => ['class' => 'treeview'],
+                            'items' => [
+                                ['label' => Yii::t('backend', 'Roles'), 'url' => ['admin/role'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
+                                ['label' => Yii::t('backend', 'Permissions'), 'url' => ['admin/permission'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
+                                ['label' => Yii::t('backend', 'Assignments'), 'url' => ['admin/assignment'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
+                                ['label' => Yii::t('backend', 'Routes'), 'url' => ['admin/route'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
+                                ['label' => Yii::t('backend', 'Rules'), 'url' => ['admin/rule'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
+                            ],
+                        ],
+                        [
+                            'label' => Yii::t('backend', 'Timeline'),
+                            'icon' => '<i class="fa fa-bar-chart-o"></i>',
+                            'url' => ['timeline-event/index'],
+                            'badge' => TimelineEvent::find()->today()->count(),
+                            'badgeBgClass' => 'label-success',
                         ],
                     ],
                 ]) ?>
