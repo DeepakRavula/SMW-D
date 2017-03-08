@@ -184,6 +184,14 @@ class PaymentController extends Controller
             $paymentModel->invoiceId = $id;
             $paymentModel->save();
             $transaction->commit();
+			$staff = User::findOne(['id'=>Yii::$app->user->id]);
+			Yii::$app->commandBus->handle(new AddToTimelineCommand([
+				'category' => 'payment',
+				'event' => 'insert',
+				'data' => $paymentModel, 
+				'message' => $staff->publicIdentity . ' enrolled ' . $enrolmentModel->student->fullName . ' in ' .  $enrolmentModel->course->program->name . ' lessons with ' . $enrolmentModel->course->teacher->publicIdentity . ' on ' . $day . 's at ' . Yii::$app->formatter->asTime($enrolmentModel->course->startDate),
+				'foreignKeyId' => $paymentModel->id, 
+        	]));
             Yii::$app->session->setFlash('alert',
                 [
                 'options' => ['class' => 'alert-success'],

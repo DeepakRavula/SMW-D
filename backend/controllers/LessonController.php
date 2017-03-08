@@ -20,6 +20,8 @@ use yii\web\Response;
 use common\models\Vacation;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use common\commands\AddToTimelineCommand;
+use common\models\User;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -510,6 +512,17 @@ class LessonController extends Controller
             $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
+			$dayList = Course::getWeekdaysList();
+			$day = $dayList[$enrolmentModel->course->day];
+			$staff = User::findOne(['id'=>Yii::$app->user->id]);
+            $enrolment = Enrolment::find(['id' => $courseModel->enrolment->id])->asArray()->one();
+			Yii::$app->commandBus->handle(new AddToTimelineCommand([
+				'category' => 'enrolment',
+				'event' => 'insert',
+				'data' => $enrolment, 
+				'message' => $staff->publicIdentity . ' enrolled ' . $enrolmentModel->student->fullName . ' in ' .  $enrolmentModel->course->program->name . ' lessons with ' . $enrolmentModel->course->teacher->publicIdentity . ' on ' . $day . 's at ' . Yii::$app->formatter->asTime($enrolmentModel->course->startDate),
+				'foreignKeyId' => $enrolmentModel->id, 
+        	]));
         }
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');

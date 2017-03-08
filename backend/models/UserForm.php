@@ -269,7 +269,7 @@ class UserForm extends Model
 				'data' => [
 					'public_identity' => $model->getPublicIdentity(),
 					'user_id' => $model->getId(),
-					'created_at' => $model->created_at,
+					//'created_at' => $model->created_at,
 				],
 				'message' => $staff->publicIdentity . ' was created ' . $userProfileModel->fullName,
 				'foreignKeyId' => $model->getId(), 
