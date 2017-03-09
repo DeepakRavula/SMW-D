@@ -23,10 +23,8 @@ $this->title = 'Royalty Free Items';
 	'invoice.date:date',
 	'description:text',
 	[
-		'label' => 'Total w/Tax',
-		'value' => function ($data) {
-			return $data->amount + $data->tax_rate;
-        },
+		'label' => 'Total',
+		'attribute' => 'amount',
 		'format'=>['decimal',2],
 		'contentOptions' => ['class' => 'text-right'],
 		'hAlign'=>'right',
