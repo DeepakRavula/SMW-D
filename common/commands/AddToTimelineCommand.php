@@ -26,7 +26,6 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
     public $data;
     public $foreignKeyId;
     public $message;
-
     /**
      * @param AddToTimelineCommand $command
      *
