@@ -1,6 +1,6 @@
 <tr>
 	<td>SubTotal</td>
-	<td><?= Yii::$app->formatter->format($model->subTotal, ['currency']); ?></td>
+	<td><?= $model->subTotal; ?></td>
 </tr>
 <tr>
 	<td>Tax</td>
@@ -8,11 +8,11 @@
 </tr>
 <tr>
 	<td><strong>Total</strong></td>
-	<td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
+	<td><strong><?= $model->total; ?></strong></td>
 </tr>
 <tr>
 	<td>Paid</td>
-	<td><?= Yii::$app->formatter->format($model->invoicePaymentTotal, ['currency']); ?></td>
+	<td><?= $model->invoicePaymentTotal; ?></td>
 </tr>
 
 <td class="p-t-20"><strong>Balance</strong></td>
