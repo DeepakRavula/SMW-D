@@ -114,6 +114,17 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
 
+    public function getReversedInvoice()
+    {
+        return $this->hasOne(InvoiceReverse::className(), ['reversedInvoiceId' => 'id']);
+    }
+
+    public function getInvoiceReverse()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId'])
+                ->viaTable('invoice_reverse', ['reversedInvoiceId' => 'id']);
+    }
+
     public function getPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
@@ -481,6 +492,10 @@ class Invoice extends \yii\db\ActiveRecord
                 ->where(['courseId' => $lesson->courseId])
                 ->count('id');
             $lessonAmount                  = $lesson->course->program->rate / $courseCount;
+            if ($this->isReversedInvoice()) {
+                $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+                $lessonAmount = -($lessonAmount);
+            }
             $invoiceLineItem->amount       = $lessonAmount;
             $studentFullName               = $lesson->studentFullName;
         } else {
@@ -489,8 +504,12 @@ class Invoice extends \yii\db\ActiveRecord
             } else {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
             }
-            $invoiceLineItem->amount       = $lesson->enrolment->program->rate
-                * $invoiceLineItem->unit;
+            $amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
+            if ($this->isReversedInvoice()) {
+                $amount = -($amount);
+                $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+            }
+            $invoiceLineItem->amount       = $amount;
             $studentFullName               = $lesson->enrolment->student->fullName;
         }
         $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
@@ -552,5 +571,10 @@ class Invoice extends \yii\db\ActiveRecord
                 }
             }
         }
+    }
+
+    public function isReversedInvoice()
+    {
+        return !empty($this->invoiceReverse);
     }
 }
