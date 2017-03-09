@@ -139,7 +139,6 @@ $columns = [
 	],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'format' => 'currency',
         'attribute' => 'amount',
         'label' => 'Price',
         'refreshGrid' => true,
