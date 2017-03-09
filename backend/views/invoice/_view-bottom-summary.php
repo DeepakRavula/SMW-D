@@ -16,5 +16,5 @@
 </tr>
 
 <td class="p-t-20"><strong>Balance</strong></td>
-<td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->balance, ['currency']); ?></strong></td>
+<td class="p-t-20"><strong><?= $model->balance; ?></strong></td>
 </tr>

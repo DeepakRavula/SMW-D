@@ -15,8 +15,13 @@ $invoiceCredits = Invoice::find()
 $results = [];
 if (!empty($invoiceCredits)) {
     foreach ($invoiceCredits as $invoiceCredit) {
-        $lastInvoicePayment = $invoiceCredit->invoicePayments;
-        $lastInvoicePayment = end($lastInvoicePayment);
+        if ($invoiceCredit->isReversedInvoice()) {
+            $lastInvoicePayment = $invoiceCredit->invoiceReverse->invoicePayments;
+            $lastInvoicePayment = end($lastInvoicePayment);
+        } else {
+            $lastInvoicePayment = $invoiceCredit->invoicePayments;
+            $lastInvoicePayment = end($lastInvoicePayment);
+        }
         $lineItems = $invoiceCredit->lineItems;
         $lineItem = end($lineItems);
         if ((int) $lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE) {
