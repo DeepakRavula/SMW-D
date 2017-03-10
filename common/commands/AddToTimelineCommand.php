@@ -24,7 +24,8 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
      * @var mixed
      */
     public $data;
-
+    public $foreignKeyId;
+    public $message;
     /**
      * @param AddToTimelineCommand $command
      *
@@ -37,6 +38,8 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
         $model->category = $command->category;
         $model->event = $command->event;
         $model->data = json_encode($command->data, JSON_UNESCAPED_UNICODE);
+		$model->message = $command->message;
+		$model->foreignKeyId = $command->foreignKeyId;
 
         return $model->save(false);
     }

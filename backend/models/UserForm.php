@@ -10,8 +10,8 @@ use common\models\PhoneNumber;
 use common\models\Program;
 use common\models\Qualification;
 use common\models\UserLocation;
-use common\models\TeacherAvailability;
 use yii\base\Exception;
+use common\commands\AddToTimelineCommand;
 use yii\base\Model;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -262,7 +262,18 @@ class UserForm extends Model
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
-
+			$staff = User::findOne(['id'=>Yii::$app->user->id]);
+			Yii::$app->commandBus->handle(new AddToTimelineCommand([
+				'category' => 'user',
+				'event' => 'signup',
+				'data' => [
+					'public_identity' => $model->getPublicIdentity(),
+					'user_id' => $model->getId(),
+					//'created_at' => $model->created_at,
+				],
+				'message' => $staff->publicIdentity . ' was created ' . $userProfileModel->fullName,
+				'foreignKeyId' => $model->getId(), 
+        	]));
             $phoneNumberModel = PhoneNumber::findOne(['user_id' => $model->getId()]);
             if (empty($phoneNumberModel) || ($phoneNumberModel->label_id != $phonelabel)) {
                 $phoneNumberModel = new PhoneNumber();

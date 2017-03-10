@@ -15,6 +15,8 @@ use yii\widgets\ActiveForm;
 use yii\web\Response;
 use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
+use common\models\User;
+use common\commands\AddToTimelineCommand;
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
@@ -184,6 +186,15 @@ class PaymentController extends Controller
             $paymentModel->invoiceId = $id;
             $paymentModel->save();
             $transaction->commit();
+			$staff = User::findOne(['id'=>Yii::$app->user->id]);
+			$payment = Payment::find()->where(['id' => $paymentModel->id])->asArray()->one();
+			Yii::$app->commandBus->handle(new AddToTimelineCommand([
+				'category' => 'payment',
+				'event' => 'insert',
+				'data' => $payment, 
+				'message' => $staff->publicIdentity . ' recorded a payment of ' . Yii::$app->formatter->asCurrency($paymentModel->amount) . ' on invoice #' . $paymentModel->invoice->getInvoiceNumber(),
+				'foreignKeyId' => $paymentModel->id, 
+        	]));
             Yii::$app->session->setFlash('alert',
                 [
                 'options' => ['class' => 'alert-success'],
