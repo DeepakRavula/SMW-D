@@ -17,6 +17,9 @@ class Enrolment extends \yii\db\ActiveRecord
 {
     public $studentIds;
 	public $endDate;
+	public $toEmailAddress;
+	public $subject;
+	public $content;
 
 	const EDIT_RENEWAL = 'renewal';
 	const EDIT_LEAVE = 'leave';
@@ -238,4 +241,22 @@ class Enrolment extends \yii\db\ActiveRecord
             $paymentCycle->save();
         }
     }
+
+	public function sendEmail()
+    {
+		if(!empty($this->toEmailAddress)) {
+			$content = [];
+			foreach($this->toEmailAddress as $email) {
+				$subject                      = $this->subject;
+				$content[] = Yii::$app->mailer->compose('lesson-schedule', [
+                	'content' => $this->content,
+            	])
+				->setFrom(\Yii::$app->params['robotEmail'])
+				->setReplyTo($this->course->location->email)
+				->setTo($email)
+				->setSubject($subject);
+			}
+			return Yii::$app->mailer->sendMultiple($content);
+		}
+	}
 }

@@ -260,38 +260,27 @@ class EnrolmentController extends Controller
 
     public function actionSendMail($id)
     {
-        $model = $this->findModel($id);
-        $lessonDataProvider = new ActiveDataProvider([
-            'query' => Lesson::find()
-                ->where(['courseId' => $model->course->id])
-                ->orderBy(['lesson.date' => SORT_ASC]),
-            'pagination' => [
-                'pageSize' => 60,
-             ],
-        ]);
-        $subject = 'Schedule for '.$model->student->fullName;
-        if (!empty($model->student->customer->email)) {
-            Yii::$app->mailer->compose('lesson-schedule', [
-                'model' => $model,
-                'toName' => $model->student->customer->publicidentity,
-                'lessonDataProvider' => $lessonDataProvider,
-            ])
-                ->setFrom(\Yii::$app->params['robotEmail'])
-                ->setTo($model->student->customer->email)
-                ->setSubject($subject)
-                ->send();
-
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => ' Mail has been send successfully',
-            ]);
-        } else {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-danger'],
-                'body' => 'The customer doesn\'t have email id',
-            ]);
-        }
-
+		$model      = $this->findModel($id);
+		$enrolmentRequest = Yii::$app->request->post('Enrolment');
+		if($enrolmentRequest) {
+			$model->toEmailAddress = $enrolmentRequest['toEmailAddress'];
+			$model->subject = $enrolmentRequest['subject'];
+			$model->content = $enrolmentRequest['content'];
+			if($model->sendEmail())
+			{
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-success'],
+					'body' => ' Mail has been sent successfully',
+				]);
+			} else {
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-danger'],
+					'body' => 'The customer doesn\'t have email id',
+				]);
+			}
+			return $this->redirect(['view', 'id' => $model->id]);
+		}
+		
         return $this->redirect(['view', 'id' => $model->id]);
     }
 }
