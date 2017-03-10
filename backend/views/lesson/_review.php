@@ -266,7 +266,12 @@ $(document).ready(function(){
     }
 	$("#lessonsearch-showallreviewlessons").on("change", function() {
         var showAllReviewLessons = $(this).is(":checked");
-        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?LessonSearch[showAllReviewLessons]=" + (showAllReviewLessons | 0);
+		var vacationId = '<?= $vacationId; ?>'; 
+		var vacationType = '<?= $vacationType; ?>'; 
+		var params = $.param({ 'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0), 
+			'Vacation[id]' : vacationId, 'Vacation[type]' : vacationType 
+		});
+        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
         $.pjax.reload({url:url,container:"#review-lesson-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
 });
