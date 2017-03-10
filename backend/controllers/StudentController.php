@@ -228,7 +228,8 @@ class StudentController extends Controller
                     $query->where(['type' => Program::TYPE_GROUP_PROGRAM]);
                 }])
                 ->where(['NOT IN', 'course.id', $groupEnrolments])
-                ->andWhere(['locationId' => $locationId]);
+                ->andWhere(['locationId' => $locationId])
+				->confirmed();
         $groupCourseDataProvider = new ActiveDataProvider([
             'query' => $groupCourses,
         ]);
