@@ -6,7 +6,7 @@ use common\models\ItemType;
 
 ?>
 
-Dear <?php echo Html::encode($toName) ?>,<br>
+Dear Customer,<br>
         <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,

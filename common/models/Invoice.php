@@ -131,6 +131,11 @@ class Invoice extends \yii\db\ActiveRecord
                         ->via('invoicePayments');
     }
 
+	public function getLocation()
+    {
+        return $this->hasOne(Location::className(), ['id' => 'location_id']);
+    }
+	
     public function getInvoicePayments()
     {
         return $this->hasMany(InvoicePayment::className(), ['invoice_id' => 'id']);
@@ -435,21 +440,23 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function sendEmail()
     {
-        $subject                      = $this->subject;
-		Yii::$app->mailer->compose('generateInvoice',
-				[
-				'model' => $this,
-				'toName' => $this->user->publicIdentity,
-				'content' => $this->content,
-			])
-			->setFrom(\Yii::$app->params['robotEmail'])
-			->setTo($this->toEmailAddress)
-			->setSubject($subject)
-			->send();
-		$this->isSent = true;
-		$this->save();
-			
-        return $this->isSent;
+		if(!empty($this->toEmailAddress)) {
+			$content = [];
+			foreach($this->toEmailAddress as $email) {
+				$subject                      = $this->subject;
+				$content[] = Yii::$app->mailer->compose('generateInvoice', [
+                	'content' => $this->content,
+            	])
+				->setFrom(\Yii::$app->params['robotEmail'])
+				->setReplyTo($this->location->email)
+				->setTo($email)
+				->setSubject($subject);
+			}
+			Yii::$app->mailer->sendMultiple($content);
+			$this->isSent = true;
+			$this->save();
+			return $this->isSent;
+		}
     }
 
     public function addLineItem($lesson)

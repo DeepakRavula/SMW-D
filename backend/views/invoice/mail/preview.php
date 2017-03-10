@@ -6,6 +6,9 @@ use common\models\InvoiceLineItem;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 use yii\imperavi\Widget;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -14,6 +17,9 @@ use yii\imperavi\Widget;
 
 <div class="student-form">
 	<?php 
+		$data = ArrayHelper::map(User::find()->all(), 'email', 'email');
+		$email = !empty($model->user->email) ?$model->user->email : null;
+		$model->toEmailAddress = $email; 	
 		$invoiceLineItems             = InvoiceLineItem::find()->where(['invoice_id' => $model->id]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
@@ -27,13 +33,19 @@ use yii\imperavi\Widget;
 		'action' => Url::to(['invoice/send-mail', 'id' => $model->id])
 	]); ?>
 		<div class="row">
-        <div class="col-lg-12">
-			<?php $email = !empty($model->user->email) ?$model->user->email : null; ?>
-            <?php echo $form->field($model, 'toEmailAddress')->textInput(['value' => $email]) ?>
+        <div class="col-lg-10">
+            <?php echo $form->field($model, 'toEmailAddress')->widget(Select2::classname(), [
+				 'data' => $data,
+				'pluginOptions' => [
+					'tags' => true,
+					'allowClear' => true,
+					'multiple' => true,
+				],
+        ]); ?>
         </div>
         </div>
 		<div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-10">
             <?php echo $form->field($model, 'subject')->textInput(['value' => 'Invoice from '.Yii::$app->name]) ?>
         </div>
         </div>
