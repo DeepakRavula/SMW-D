@@ -229,7 +229,7 @@ $this->title = 'Review Lessons';
 			<?= Html::a('Cancel', ['student/view', 'id' => $courseModel->enrolment->studentId], ['class' => 'btn']);
             ?>
 		<?php else :?>
-		<?= Html::a('Cancel', ['course/view', 'id' => $courseModel->id], ['class' => 'btn']);
+		<?= Html::a('Cancel', ['course/index'], ['class' => 'btn']);
     ?>
    <?php endif; ?>
     </div>
