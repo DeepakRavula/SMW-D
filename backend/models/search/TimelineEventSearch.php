@@ -11,6 +11,10 @@ use yii\data\ActiveDataProvider;
  */
 class TimelineEventSearch extends TimelineEvent
 {
+	const CATEGORY_USER = 'user';
+	const CATEGORY_LESSON = 'lesson';
+	const CATEGORY_PAYMENT = 'payment';
+	const CATEGORY_ENROLMENT = 'enrolment';
     /**
      * {@inheritdoc}
      */
@@ -49,15 +53,27 @@ class TimelineEventSearch extends TimelineEvent
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'created_at' => $this->created_at,
-        ]);
-
-        $query->andFilterWhere(['like', 'application', $this->application]);
-        $query->andFilterWhere(['like', 'category', $this->category]);
-        $query->andFilterWhere(['like', 'event', $this->event]);
-
+		if ($this->category === self::CATEGORY_USER) {
+            $query->user();
+        } elseif ($this->category === self::CATEGORY_ENROLMENT) {
+            $query->enrolment();
+        } elseif ($this->category === self::CATEGORY_LESSON) {
+            $query->lesson();
+        } elseif ($this->category === self::CATEGORY_PAYMENT) {
+            $query->payment();
+        }
+		
         return $dataProvider;
     }
+	public static function categories()
+    {
+        return [
+           	'all' => 'All',
+            self::CATEGORY_LESSON => 'Lesson',
+			self::CATEGORY_PAYMENT => 'Payment',
+			self::CATEGORY_ENROLMENT => 'Enrolment',
+			self::CATEGORY_USER => 'User'
+        ];
+    }
+	
 }

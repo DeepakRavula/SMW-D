@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-
+use backend\models\search\TimelineEventSearch;
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\TimelineEventSearch */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -14,17 +14,16 @@ use yii\bootstrap\ActiveForm;
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
-
-    <?php echo $form->field($model, 'id') ?>
-
-    <?php echo $form->field($model, 'application') ?>
-
-    <?php echo $form->field($model, 'event') ?>
-
-    <div class="form-group">
+	Filter by Category
+<div class="row">   
+    <div class="col-md-3">
+        <?php echo $form->field($model, 'category')->dropDownList(TimeLineEventSearch::categories())->label(false); ?>
+    </div>
+    <div class="col-md-3 form-group m-t-3">
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
         <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
     </div>
+	</div>
 
     <?php ActiveForm::end(); ?>
 

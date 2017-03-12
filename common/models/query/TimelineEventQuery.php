@@ -18,4 +18,28 @@ class TimelineEventQuery extends ActiveQuery
 
         return $this;
     }
+
+	public function lesson()
+	{
+		$this->andWhere(['category' => 'lesson']);
+		return $this;
+	}
+
+	public function enrolment()
+	{
+		$this->andWhere(['category' => 'enrolment']);
+		return $this;
+	}
+
+	public function user()
+	{
+		$this->andWhere(['category' => 'user']);
+		return $this;
+	}
+
+	public function payment()
+	{
+		$this->andWhere(['category' => 'payment']);
+		return $this;
+	}
 }

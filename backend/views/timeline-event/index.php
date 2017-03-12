@@ -5,22 +5,23 @@ use yii\grid\GridView;
 $this->title = Yii::t('backend', 'Timeline');
 ?>
 <?php \yii\widgets\Pjax::begin() ?>
+<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <?php $columns = [
-            [
-                'label' => 'Date',
-                'value' => function ($data) {
-                    return Yii::$app->formatter->asDateTime($data->created_at);
-                },
-            ],
-            [
-                'label' => 'Message',
-				'format' => 'raw',
-                'value' => function ($data) {
-                    return !empty($data->message) ? $data->message : null;
-                },
-            ],
-        ];
-     ?>   
+		[
+			'label' => 'Date',
+			'value' => function ($data) {
+				return Yii::$app->formatter->asDateTime($data->created_at);
+			},
+		],
+		[
+			'label' => 'Message',
+			'format' => 'raw',
+			'value' => function ($data) {
+				return !empty($data->message) ? $data->message : null;
+			},
+		],
+	];
+ ?>   
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
