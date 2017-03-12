@@ -236,7 +236,10 @@ class LessonController extends Controller
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
+					$staff = User::findOne(['id'=>Yii::$app->user->id]);
+					$model->staffName = $staff->publicIdentity;
 					$model->save();
+					
 					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 				}
 			}

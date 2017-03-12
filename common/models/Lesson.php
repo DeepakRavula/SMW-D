@@ -9,6 +9,7 @@ use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
+use common\commands\AddToTimelineCommand;
 
 /**
  * This is the model class for table "lesson".
@@ -49,6 +50,7 @@ class Lesson extends \yii\db\ActiveRecord
 	public $content;
 	public $vacationId;
 	public $studentId;
+	public $staffName;
 	
     /**
      * {@inheritdoc}
@@ -323,6 +325,7 @@ class Lesson extends \yii\db\ActiveRecord
 
 	public function afterSave($insert, $changedAttributes)
     {
+		$lesson = Lesson::find(['id' => $this->id])->asArray()->one();
         if ((int) $this->status !== (int) self::STATUS_DRAFTED) {
             if (!$insert) {
                 if ((isset($changedAttributes['date']) && !empty($this->date)) || isset($changedAttributes['teacherId'])) {                
@@ -352,11 +355,38 @@ class Lesson extends \yii\db\ActiveRecord
 					}
                     $this->status = self::STATUS_SCHEDULED;
                     $this->save();
+					if(isset($changedAttributes['teacherId']) && (int)$changedAttributes['teacherId'] !== (int)$this->teacherId) {
+                    	Yii::$app->commandBus->handle(new AddToTimelineCommand([
+							'category' => 'lesson',
+							'event' => 'edit',
+							'data' => $lesson, 
+							'message' => $this->staffName . ' assigned ' . $this->teacher->publicIdentity . ' to teach ' . $this->course->enrolment->student->fullName . '\'s ' . $this->course->program->name . ' lesson', 
+							'foreignKeyId' => $this->id, 
+						]));	
+					}
+					if(isset($changedAttributes['date']) && !empty($this->date) && new \DateTime($changedAttributes['date']) !== new \DateTime($this->date)) {
+                    	Yii::$app->commandBus->handle(new AddToTimelineCommand([
+							'category' => 'lesson',
+							'event' => 'edit',
+							'data' => $lesson, 
+							'message' => $this->staffName . ' moved ' . $this->course->enrolment->student->fullName . '\'s ' . $this->course->program->name . ' lesson to ' . Yii::$app->formatter->asTime($this->date), 
+							'foreignKeyId' => $this->id, 
+						]));	
+					}
                     $lessonRescheduleModel = new LessonReschedule();
                     $lessonRescheduleModel->lessonId = $originalLessonId;
                     $lessonRescheduleModel->rescheduledLessonId = $this->id;
                     $lessonRescheduleModel->save();
                 }
+				if(isset($changedAttributes['classroomId']) && (int)$changedAttributes['classroomId'] !== (int)$this->classroomId && !isset($changedAttributes['teacherId'])) {
+					Yii::$app->commandBus->handle(new AddToTimelineCommand([
+						'category' => 'lesson',
+						'event' => 'edit',
+						'data' => $lesson, 
+						'message' => $this->staffName . ' moved ' . $this->course->enrolment->student->fullName . '\'s ' . $this->course->program->name . ' lesson to ' . $this->classroom->name, 
+						'foreignKeyId' => $this->id, 
+					]));	
+				}
             }
 
             return parent::afterSave($insert, $changedAttributes);
