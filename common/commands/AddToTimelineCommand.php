@@ -26,6 +26,7 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
     public $data;
     public $foreignKeyId;
     public $message;
+	public $createdUserId;
     /**
      * @param AddToTimelineCommand $command
      *
@@ -40,6 +41,7 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
         $model->data = json_encode($command->data, JSON_UNESCAPED_UNICODE);
 		$model->message = $command->message;
 		$model->foreignKeyId = $command->foreignKeyId;
+		$model->createdUserId = Yii::$app->user->id;
 
         return $model->save(false);
     }

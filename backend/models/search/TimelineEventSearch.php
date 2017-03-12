@@ -21,7 +21,7 @@ class TimelineEventSearch extends TimelineEvent
     public function rules()
     {
         return [
-            [['application', 'category', 'event', 'created_at'], 'safe'],
+            [['application', 'category', 'event', 'created_at', 'createdUserId'], 'safe'],
         ];
     }
 
@@ -62,6 +62,7 @@ class TimelineEventSearch extends TimelineEvent
         } elseif ($this->category === self::CATEGORY_PAYMENT) {
             $query->payment();
         }
+		$query->andFilterWhere(['createdUserId' => $this->createdUserId]);
 		
         return $dataProvider;
     }
