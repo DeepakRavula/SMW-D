@@ -1,6 +1,8 @@
 <?php
 
 use yii\grid\GridView;
+use common\models\TimelineEventLink;
+use yii\helpers\Html;
 
 $this->title = Yii::t('backend', 'Timeline');
 ?>
@@ -17,7 +19,19 @@ $this->title = Yii::t('backend', 'Timeline');
 			'label' => 'Message',
 			'format' => 'raw',
 			'value' => function ($data) {
-				return !empty($data->message) ? $data->message : null;
+				$message = $data->message; 
+				$regex = '/{{([^}]*)}}/';
+
+				$replace = preg_replace_callback($regex, function($match)
+				{
+					$index = $match[1];
+					$timelineEventLink = TimelineEventLink::findOne(['index' => $index]);
+					$url = $timelineEventLink->baseUrl . $timelineEventLink->path; 
+					$data[$index] = Html::a($index, $url);//'<a href=' . $url . '>' . $index . '</a>'; 
+					return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
+				}, $message);
+
+				return $replace;
 			},
 		],
 	];

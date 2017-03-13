@@ -24,7 +24,6 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
      * @var mixed
      */
     public $data;
-    public $foreignKeyId;
     public $message;
 	public $createdUserId;
 	public $locationId;
@@ -41,10 +40,10 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
         $model->event = $command->event;
         $model->data = json_encode($command->data, JSON_UNESCAPED_UNICODE);
 		$model->message = $command->message;
-		$model->foreignKeyId = $command->foreignKeyId;
 		$model->createdUserId = Yii::$app->user->id;
 		$model->locationId = Yii::$app->session->get('location_id');
-
-        return $model->save(false);
+		$model->save();
+		
+        return $model; 
     }
 }

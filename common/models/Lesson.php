@@ -10,6 +10,7 @@ use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
 use common\commands\AddToTimelineCommand;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "lesson".
@@ -356,22 +357,44 @@ class Lesson extends \yii\db\ActiveRecord
                     $this->status = self::STATUS_SCHEDULED;
                     $this->save();
 					if(isset($changedAttributes['teacherId']) && (int)$changedAttributes['teacherId'] !== (int)$this->teacherId) {
-                    	Yii::$app->commandBus->handle(new AddToTimelineCommand([
+                    	$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 							'category' => 'lesson',
 							'event' => 'edit',
 							'data' => $lesson, 
-							'message' => $this->staffName . ' assigned ' . $this->teacher->publicIdentity . ' to teach ' . $this->course->enrolment->student->fullName . '\'s ' . $this->course->program->name . ' lesson', 
-							'foreignKeyId' => $this->id, 
+							'message' => $this->staffName . ' assigned {{' . $this->teacher->publicIdentity . '}} to teach {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' {{lesson}}', 
 						]));	
+						$timelineEventLink = new TimelineEventLink();
+						$timelineEventLink->timelineEventId = $timelineEvent->id;
+						$timelineEventLink->index = $this->teacher->publicIdentity;
+						$timelineEventLink->baseUrl = Yii::$app->homeUrl;	
+						$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $this->teacher->id]);
+						$timelineEventLink->save();
+						
+						$timelineEventLink->id = null;
+						$timelineEventLink->isNewRecord = true;
+						$timelineEventLink->index = $this->course->enrolment->student->fullName;
+						$timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
+						$timelineEventLink->save();
+
+						$timelineEventLink->id = null;
+						$timelineEventLink->isNewRecord = true;
+						$timelineEventLink->index = 'lesson';
+						$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $this->id]);
+						$timelineEventLink->save();
 					}
 					if(isset($changedAttributes['date']) && !empty($this->date) && new \DateTime($changedAttributes['date']) !== new \DateTime($this->date)) {
-                    	Yii::$app->commandBus->handle(new AddToTimelineCommand([
+                    	$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 							'category' => 'lesson',
 							'event' => 'edit',
 							'data' => $lesson, 
-							'message' => $this->staffName . ' moved ' . $this->course->enrolment->student->fullName . '\'s ' . $this->course->program->name . ' lesson to ' . Yii::$app->formatter->asTime($this->date), 
-							'foreignKeyId' => $this->id, 
+							'message' => $this->staffName . ' moved {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' lesson to ' . Yii::$app->formatter->asTime($this->date), 
 						]));	
+						$timelineEventLink = new TimelineEventLink();
+						$timelineEventLink->timelineEventId = $timelineEvent->id;
+						$timelineEventLink->index = $this->course->enrolment->student->fullName;
+						$timelineEventLink->baseUrl = Yii::$app->homeUrl;	
+						$timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
+						$timelineEventLink->save();
 					}
                     $lessonRescheduleModel = new LessonReschedule();
                     $lessonRescheduleModel->lessonId = $originalLessonId;
@@ -379,13 +402,18 @@ class Lesson extends \yii\db\ActiveRecord
                     $lessonRescheduleModel->save();
                 }
 				if(isset($changedAttributes['classroomId']) && (int)$changedAttributes['classroomId'] !== (int)$this->classroomId && !isset($changedAttributes['teacherId'])) {
-					Yii::$app->commandBus->handle(new AddToTimelineCommand([
+					$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 						'category' => 'lesson',
 						'event' => 'edit',
 						'data' => $lesson, 
-						'message' => $this->staffName . ' moved ' . $this->course->enrolment->student->fullName . '\'s ' . $this->course->program->name . ' lesson to ' . $this->classroom->name, 
-						'foreignKeyId' => $this->id, 
+						'message' => $this->staffName . ' moved {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' lesson to ' . $this->classroom->name, 
 					]));	
+					$timelineEventLink = new TimelineEventLink();
+					$timelineEventLink->timelineEventId = $timelineEvent->id;
+					$timelineEventLink->index = $this->course->enrolment->student->fullName;
+					$timelineEventLink->baseUrl = Yii::$app->homeUrl;	
+					$timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
+					$timelineEventLink->save();
 				}
             }
 

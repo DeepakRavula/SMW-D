@@ -269,10 +269,8 @@ class UserForm extends Model
 				'data' => [
 					'public_identity' => $model->getPublicIdentity(),
 					'user_id' => $model->getId(),
-					//'created_at' => $model->created_at,
 				],
 				'message' => $staff->publicIdentity . ' was created ' . $userProfileModel->fullName,
-				'foreignKeyId' => $model->getId(), 
         	]));
             $phoneNumberModel = PhoneNumber::findOne(['user_id' => $model->getId()]);
             if (empty($phoneNumberModel) || ($phoneNumberModel->label_id != $phonelabel)) {

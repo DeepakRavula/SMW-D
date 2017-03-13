@@ -5,6 +5,8 @@ namespace common\models;
 use common\models\query\TimelineEventQuery;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use common\models\TimelineEventLink;
+use common\models\TimelineEventLinkParam;
 
 /**
  * This is the model class for table "timeline_event".
