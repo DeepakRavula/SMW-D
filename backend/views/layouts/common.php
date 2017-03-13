@@ -89,7 +89,9 @@ $bundle = BackendAsset::register($this);
                             <a href="<?php echo Url::to(['timeline-event/index']) ?>">
                                 <i class="fa fa-bell"></i>
                                 <span class="label label-success">
-                                    <?php echo TimelineEvent::find()->today()->count() ?>
+                                    <?php echo TimelineEvent::find()
+										->andWhere(['locationId' => Yii::$app->session->get('location_id')])
+										->today()->count() ?>
                                 </span>
                             </a>
                         </li>

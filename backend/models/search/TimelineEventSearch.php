@@ -3,6 +3,7 @@
 namespace backend\models\search;
 
 use common\models\TimelineEvent;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -43,7 +44,9 @@ class TimelineEventSearch extends TimelineEvent
      */
     public function search($params)
     {
-        $query = TimelineEvent::find();
+		$locationId = Yii::$app->session->get('location_id');
+        $query = TimelineEvent::find()
+					->andWhere(['locationId' => $locationId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

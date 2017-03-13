@@ -25,7 +25,13 @@ use common\models\User;
     </div>
 	<div class="form-group col-md-3">
         <?php echo $form->field($model, 'createdUserId')->widget(Select2::classname(), [
-	    'data' => ArrayHelper::map(User::find()->all(), 'id', 'userProfile.fullName'),
+	    'data' => ArrayHelper::map(User::find()
+                    ->joinWith('userLocation ul')
+                    ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+                    ->where(['raa.item_name' => [User::ROLE_OWNER, User::ROLE_STAFFMEMBER]])
+                    ->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                    ->all(),
+                'id', 'userProfile.fullName'),
             'pluginOptions' => [
 				'allowClear' => true,
 				'multiple' => false,
