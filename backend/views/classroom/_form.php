@@ -19,6 +19,9 @@ use yii\bootstrap\ActiveForm;
 	</div>
     <div class="form-group p-10">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+		<?php if (!$model->isNewRecord) : ?>
+         <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);?>
+		<?php endif; ?>            
     </div>
 
     <?php ActiveForm::end(); ?>
