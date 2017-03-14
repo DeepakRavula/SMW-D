@@ -2,8 +2,12 @@
 
 namespace common\models;
 
+use Yii;
 use yii\db\ActiveRecord;
 use common\models\query\PaymentQuery;
+use common\commands\AddToTimelineCommand;
+use common\models\TimelineEventLink;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "payments".
@@ -25,7 +29,8 @@ class Payment extends ActiveRecord
     public $invoiceNumber;
     public $lastAmount;
     public $differnce;
-
+	public $staffName;
+	
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_APPLY_CREDIT = 'apply-credit';
     const SCENARIO_CREDIT_APPLIED = 'credit-applied';
@@ -193,6 +198,20 @@ class Payment extends ActiveRecord
         $invoicePaymentModel->invoice_id = $this->invoiceId;
         $invoicePaymentModel->payment_id = $this->id;
         $invoicePaymentModel->save();
+		$payment = Payment::find()->where(['id' => $this->id])->asArray()->one();
+		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+			'category' => 'payment',
+			'event' => 'insert',
+			'data' => $payment, 
+			'message' => $this->staffName . ' recorded a payment of ' . Yii::$app->formatter->asCurrency($this->amount) . ' on {{invoice #' . $this->invoice->getInvoiceNumber() . '}}',
+		]));
+		$timelineEventLink = new TimelineEventLink();
+		$timelineEventLink->timelineEventId = $timelineEvent->id;
+		$timelineEventLink->index = 'invoice #' . $this->invoice->getInvoiceNumber();
+		$timelineEventLink->baseUrl = Yii::$app->homeUrl;	
+		$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $this->invoice->id, '#' => 'payment']);
+		$timelineEventLink->save();
+			
         if (!$this->isCreditUsed()) {
             $this->invoice->save();
         }

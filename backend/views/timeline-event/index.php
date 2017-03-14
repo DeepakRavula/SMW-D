@@ -1,10 +1,11 @@
 <?php
 
 use yii\grid\GridView;
+use common\models\TimelineEventLink;
+use yii\helpers\Html;
 
 $this->title = Yii::t('backend', 'Timeline');
 ?>
-<?php \yii\widgets\Pjax::begin() ?>
 <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <?php $columns = [
 		[
@@ -17,7 +18,19 @@ $this->title = Yii::t('backend', 'Timeline');
 			'label' => 'Message',
 			'format' => 'raw',
 			'value' => function ($data) {
-				return !empty($data->message) ? $data->message : null;
+				$message = $data->message; 
+				$regex = '/{{([^}]*)}}/';
+
+				$replace = preg_replace_callback($regex, function($match)
+				{
+					$index = $match[1];
+					$timelineEventLink = TimelineEventLink::findOne(['index' => $index]);
+					$url = $timelineEventLink->baseUrl . $timelineEventLink->path; 
+					$data[$index] = Html::a($index, $url);//'<a href=' . $url . '>' . $index . '</a>'; 
+					return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
+				}, $message);
+
+				return $replace;
 			},
 		],
 	];
@@ -28,5 +41,4 @@ $this->title = Yii::t('backend', 'Timeline');
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,
     ]); ?>
-<?php \yii\widgets\Pjax::end() ?>
 

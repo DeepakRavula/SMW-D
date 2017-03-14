@@ -22,6 +22,8 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\commands\AddToTimelineCommand;
 use common\models\User;
+use common\models\TimelineEvent;
+use common\models\TimelineEventLink;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -509,7 +511,6 @@ class LessonController extends Controller
 				'event' => 'insert',
 				'data' => $enrolment, 
 				'message' => $staff->publicIdentity . ' enrolled ' . $enrolmentModel->student->fullName . ' in ' .  $enrolmentModel->course->program->name . ' lessons with ' . $enrolmentModel->course->teacher->publicIdentity . ' on ' . $day . 's at ' . Yii::$app->formatter->asTime($enrolmentModel->course->startDate),
-				'foreignKeyId' => $enrolmentModel->id, 
         	]));
         }
         $courseRequest = $request->get('Course');
@@ -664,13 +665,25 @@ class LessonController extends Controller
 			$model->save();
 			$staff = User::findOne(['id'=>Yii::$app->user->id]);
             $lesson = Lesson::find(['id' => $model->id])->asArray()->one();
-			Yii::$app->commandBus->handle(new AddToTimelineCommand([
+			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 				'category' => 'lesson',
 				'event' => 'edit',
 				'data' => $lesson, 
-				'message' => $staff->publicIdentity . ' recorded ' . $model->course->enrolment->student->fullName . ' as absent from his/her ' . $model->course->program->name . ' lesson', 
-				'foreignKeyId' => $model->id, 
+				'message' => $staff->publicIdentity . ' recorded {{' . $model->course->enrolment->student->fullName . '}} as absent from his/her ' . $model->course->program->name . ' {{lesson}}', 
         	]));
+			
+			$timelineEventLink = new TimelineEventLink();
+			$timelineEventLink->timelineEventId = $timelineEvent->id;
+			$timelineEventLink->index = $model->course->enrolment->student->fullName;
+			$timelineEventLink->baseUrl = Yii::$app->homeUrl;	
+			$timelineEventLink->path = Url::to(['/student/view', 'id' => $model->course->enrolment->student->id]);
+			$timelineEventLink->save();
+			$timelineEventLink->id = null;
+			$timelineEventLink->isNewRecord = true;
+			$timelineEventLink->index = 'lesson';
+			$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $model->id]);
+			$timelineEventLink->save();
+			
 			if(empty($model->invoice)) {
 				$invoice = $model->createInvoice();
 
