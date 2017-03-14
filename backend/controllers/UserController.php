@@ -323,6 +323,7 @@ class UserController extends Controller
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
 			->notDeleted()
+			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
 			->between($lessonSearch->fromDate, $lessonSearch->toDate);
 			if($lessonSearch->summariseReport) {
 				$teacherLessons->groupBy('DATE(date)');	
@@ -349,26 +350,6 @@ class UserController extends Controller
             ->groupBy('day')
             ->all();
 
-		$post = Yii::$app->request->post();
-		if (isset($post['hasEditable'])) {
-			$response = Yii::$app->response;
-			$response->format = Response::FORMAT_JSON;
-			if(! empty($post['teacherHourlyRate'])) {
-				if(!empty($model->teacherRate)) {
-					$model->teacherRate->hourlyRate = $post['teacherHourlyRate']; 
-					$model->teacherRate->save();
-					$result = $model->teacherRate->hourlyRate; 
-				} else {
-					$teacherRate = new TeacherRate();
-					$teacherRate->teacherId = $model->id;	
-					$teacherRate->hourlyRate = $post['teacherHourlyRate'];
-					$teacherRate->save();
-					$result = $teacherRate->hourlyRate; 
-				}
-				return ['output' => $result, 'message' => ''];
-			}
-		}
-		
         return $this->render('view', [
             'minTime' => $minTime,
             'maxTime' => $maxTime,
@@ -802,6 +783,7 @@ class UserController extends Controller
 		if(!empty($lessonSearchModel)) {
 			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
+			$lessonSearch->summariseReport = $lessonSearchModel['summariseReport']; 
 		}
 		$teacherLessons = Lesson::find()
 			->innerJoinWith('enrolment')
@@ -809,8 +791,13 @@ class UserController extends Controller
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
 			->notDeleted()
-			->between($lessonSearch->fromDate, $lessonSearch->toDate)
-			->orderBy(['DATE(date)' => SORT_ASC]);
+			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
+			->between($lessonSearch->fromDate, $lessonSearch->toDate);
+			if($lessonSearch->summariseReport) {
+				$teacherLessons->groupBy('DATE(date)');	
+			} else {
+				$teacherLessons->orderBy(['date' => SORT_ASC]);
+			}
 			
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,
@@ -823,7 +810,8 @@ class UserController extends Controller
 			'model' => $model,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
 			'fromDate' => $lessonSearch->fromDate,
-			'toDate' => $lessonSearch->toDate
+			'toDate' => $lessonSearch->toDate,
+			'searchModel' => $lessonSearch
         ]);
     }
 

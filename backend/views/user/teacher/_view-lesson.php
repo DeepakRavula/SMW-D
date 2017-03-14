@@ -129,8 +129,9 @@ $columns = [
 	],
 		[
 		'label' => 'Rate/hour',
+		'format'=>['decimal',2],
 		'value' => function ($data) {
-			return !empty($data->teacher->teacherRate->hourlyRate) ? $data->teacher->teacherRate->hourlyRate : null;
+			return $data->teacherRate;
 		},
 		'hAlign'=>'right',
 		'contentOptions' => ['class' => 'text-right'],
@@ -139,8 +140,7 @@ $columns = [
 		'label' => 'Cost',
 		'format'=>['decimal',2],
 		'value' => function ($data) {
-			$teacherRate = !empty($data->teacher->teacherRate->hourlyRate) ? $data->teacher->teacherRate->hourlyRate : null;
-				return $data->getDuration() * $teacherRate;
+			return $data->getDuration() * $data->teacherRate;
 		},
 		'contentOptions' => ['class' => 'text-right'],
 			'hAlign'=>'right',
@@ -168,6 +168,7 @@ $columns = [
 				$lessons = Lesson::find()
 					->location($locationId)
 					->notDeleted()
+					->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
 					->andWhere(['DATE(date)' => (new \DateTime($data->date))->format('Y-m-d'), 'lesson.teacherId' => $data->teacherId])
 					->all();
 				$totalDuration = 0;
@@ -194,6 +195,7 @@ $columns = [
 					->location($locationId)
 					->notDeleted()
 					->andWhere(['DATE(date)' => (new \DateTime($data->date))->format('Y-m-d'), 'lesson.teacherId' => $data->teacherId])
+					->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
 					->all();
 				$cost = 0;
 				foreach($lessons as $lesson) {
@@ -201,8 +203,7 @@ $columns = [
 					$hours			 = $duration->format('H');
 					$minutes		 = $duration->format('i');
 					$lessonDuration	 = $hours + ($minutes / 60);
-					$teacherRate = !empty($lesson->teacher->teacherRate->hourlyRate) ? $lesson->teacher->teacherRate->hourlyRate : null; 
-					$cost += $lessonDuration * $teacherRate;	
+					$cost += $lessonDuration * $data->teacherRate;	
 				}
 				return $cost;
 		},
@@ -241,12 +242,17 @@ GridView::widget([
             'LessonSearch[toDate]': toDate, 'LessonSearch[summariseReport]': (summariesOnly | 0) });
         var url = '<?php echo Url::to(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]); ?>&' + params;
         $.pjax.reload({url:url,container:"#teacher-lesson-grid",replace:false,  timeout: 4000});  //Reload GridView
+		var printUrl = '<?= Url::to(['user/print', 'id' => $model->id]); ?>&' + params;
+		 $('#print-btn').attr('href', printUrl);
     });
         $("#teacher-lesson-search-form").on("submit", function () {
+        	var summariesOnly = $("#lessonsearch-summarisereport").val();
             var fromDate = $('#lessonsearch-fromdate').val();
             var toDate = $('#lessonsearch-todate').val();
             $.pjax.reload({container: "#teacher-lesson-grid", replace: false, timeout: 6000, data: $(this).serialize()});
-            var url = "<?= Url::to(['user/print', 'id' => $model->id]); ?>&LessonSearch[fromDate]=" + fromDate + "&LessonSearch[toDate]=" + toDate;
+			var params = $.param({ 'LessonSearch[fromDate]': fromDate,
+            'LessonSearch[toDate]': toDate, 'LessonSearch[summariseReport]': (summariesOnly | 0) });
+            var url = '<?= Url::to(['user/print', 'id' => $model->id]); ?>&' + params;
             $('#print-btn').attr('href', url);
             return false;
         });

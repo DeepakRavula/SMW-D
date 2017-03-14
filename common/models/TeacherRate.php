@@ -13,6 +13,9 @@ use Yii;
  */
 class TeacherRate extends \yii\db\ActiveRecord
 {
+	const TYPE_PRIVATE_LESSON = 1;
+	const TYPE_GROUP_LESSON = 2;
+	
     /**
      * @inheritdoc
      */
