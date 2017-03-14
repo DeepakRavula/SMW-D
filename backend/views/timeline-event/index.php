@@ -6,7 +6,6 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('backend', 'Timeline');
 ?>
-<?php \yii\widgets\Pjax::begin() ?>
 <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <?php $columns = [
 		[
@@ -42,5 +41,4 @@ $this->title = Yii::t('backend', 'Timeline');
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,
     ]); ?>
-<?php \yii\widgets\Pjax::end() ?>
 
