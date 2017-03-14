@@ -129,10 +129,14 @@ $columns = [
 		'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
 		'value' => function($data) {
-			$cost = 0.0;
+			$cost = 0;
 			$itemTypes = [ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON, ItemType::TYPE_GROUP_LESSON];
 			if(in_array($data->item_type_id,$itemTypes)) {
-				$cost = !empty($data->lesson->teacher->teacherRate->hourlyRate) ? $data->lesson->teacher->teacherRate->hourlyRate : null; 
+				if((int)$data->item_type_id === ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON) {
+					$cost = !empty($data->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ? $data->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate : null; 
+				} else {
+					$cost = !empty($data->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate) ? $data->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate : null; 
+				}
 			} 
 		return $cost;
 		}

@@ -2,8 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\ListView;
-use kartik\editable\Editable;
 use common\models\User;
+use dosamigos\editable\Editable;
+use yii\helpers\Url;
 ?>
 <div class="row p-10">
 	<div class="col-xs-4">
@@ -31,22 +32,45 @@ use common\models\User;
 		</div>
 	</div>
 	<?php if($searchModel->role_name === User::ROLE_TEACHER) : ?>
-	<?php $rate = !empty($model->teacherRate->hourlyRate) ? $model->teacherRate->hourlyRate : null; ?> 
+	<?php $privateLessonRate = !empty($model->teacherPrivateLessonRate->hourlyRate) ? $model->teacherPrivateLessonRate->hourlyRate : null; 
+	$groupLessonRate = !empty($model->teacherGroupLessonRate->hourlyRate) ? $model->teacherGroupLessonRate->hourlyRate : null;
+	?> 
 	<div class="col-xs-4">
-		<div class="row-fluid">
-			<p class="c-title m-0"> Hourly Rate ($)</p>
-			<?=
-			 Editable::widget([
-				'name'=>'teacherHourlyRate', 
-				'asPopover' => false,
-				'inputType' => Editable::INPUT_TEXT,
-				'value' => $rate,
-				'header' => 'Hourly Rate',
-				'submitOnEnter' => true,
-				'size'=>'lg',
-				'options' => ['class'=>'form-control', 'placeholder'=>'Hourly Rate'],
-			]);?>  
+		<p class="c-title m-0"> Hourly Rate ($)</p>
+		<div class="row-fluid m-t-10 m-b-20">
+			<div class="col-xs-4 p-0 c-title"> Private Lesson</div>
+			<div class="col-xs-4">
+			 <?= Editable::widget( [
+				'name' => 'privateLessonHourlyRate',
+				'value' => $privateLessonRate,
+				'url' => Url::to(['teacher-rate/update', 'id' => $model->id]),
+				'type' => 'text',
+				'mode' => 'pop',
+				'clientOptions' => [
+					'placement' => 'bottom',
+					'showbuttons' => 'bottom',
+				]
+			]);?></div>
+			<div class="clearfix"></div>
 		</div>
+		<div class="row-fluid m-t-10 m-b-20">
+			<div class="col-xs-4 p-0 c-title"> Group Lesson</div>
+			<div class="col-xs-4">
+				<?= Editable::widget( [
+				'name' => 'groupLessonHourlyRate',
+				'value' => $groupLessonRate,
+				'url' => Url::to(['teacher-rate/update', 'id' => $model->id]),
+				'type' => 'text',
+				'mode' => 'pop',
+				'clientOptions' => [
+					'placement' => 'bottom',
+					'showbuttons' => 'bottom',
+				]
+			]);?>
+			</div>
+			<div class="clearfix"></div>
+		</div>	
+			
 	</div>
 	<?php endif; ?>
 	<div class="clearfix"></div>
