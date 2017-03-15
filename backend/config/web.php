@@ -124,7 +124,7 @@ $config = [
 					'release-notes', 'lesson', 'invoice', 'timeline-event', 'enrolment','teacher-room',
 					'teacher-availability', 'group-course', 'group-lesson', 'group-enrolment', 
 					'payment', 'course', 'dashboard', 'log', 'invoice-line-item', 'holiday', 
-					'tax-code', 'vacation', 'customer-discount', 'classroom', 'report'
+					'tax-code', 'vacation', 'customer-discount', 'classroom', 'report', 'teacher-rate'
 				],
                 'allow' => true,
                 'roles' => ['staffmember'],
