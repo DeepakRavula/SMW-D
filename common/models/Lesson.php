@@ -147,7 +147,7 @@ class Lesson extends \yii\db\ActiveRecord
 	{
 		return (int) $this->status === self::STATUS_SCHEDULED;
 	}
-	
+
 	public function isUnscheduled()
 	{
 		return (int) $this->status === self::STATUS_UNSCHEDULED;
@@ -182,7 +182,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PrivateLesson::className(), ['lessonId' => 'id']);
     }
-	
+
 	public function getClassroom()
     {
         return $this->hasOne(Classroom::className(), ['id' => 'classroomId']);
@@ -246,7 +246,7 @@ class Lesson extends \yii\db\ActiveRecord
 			->via('paymentCycleLesson')
             ->andWhere(['item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
     }
-	
+
     public function getStatus()
     {
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
@@ -334,97 +334,93 @@ class Lesson extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
-	public function afterSave($insert, $changedAttributes)
+    public function afterSave($insert, $changedAttributes)
     {
-		$lesson = Lesson::find(['id' => $this->id])->asArray()->one();
-        if ((int) $this->status !== (int) self::STATUS_DRAFTED) {
+        $lesson = Lesson::find(['id' => $this->id])->asArray()->one();
+        if (!$this->isDraftLesson()) {
             if (!$insert) {
-                if ((isset($changedAttributes['date']) && !empty($this->date)) || isset($changedAttributes['teacherId'])) {                
-					$teacherId = $this->teacherId;
-					if(isset($changedAttributes['date']) && !empty($this->date)) {
-						$fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
-	                    $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-						
-						$this->updateAttributes([
-							'date' => $fromDate->format('Y-m-d H:i:s'),
-							'status' => self::STATUS_CANCELED,
+                if ($this->isRescheduledLesson($changedAttributes)) {
+                    $teacherId = $this->teacherId;
+                    if($this->isRescheduledByDate($changedAttributes)) {
+                        $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
+                        $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+
+                        $this->updateAttributes([
+                            'date' => $fromDate->format('Y-m-d H:i:s'),
+                            'status' => self::STATUS_CANCELED,
+                        ]);
+                        $this->date = $toDate->format('Y-m-d H:i:s');
+                    } else {
+                        $this->updateAttributes([
+                            'status' => self::STATUS_CANCELED,
+                            'teacherId' => $changedAttributes['teacherId']
                     	]);
-					} else {
-						$this->updateAttributes([
-							'status' => self::STATUS_CANCELED,
-							'teacherId' => $changedAttributes['teacherId']
-                    	]);	
-					}
+                        $this->teacherId = $teacherId;
+                    }
                     $originalLessonId = $this->id;
                     $this->id = null;
                     $this->isNewRecord = true;
-					if(isset($changedAttributes['date']) && !empty($this->date)) {
-                    	$this->date = $toDate->format('Y-m-d H:i:s');
-					}
-					if(isset($changedAttributes['teacherId'])) {
-                    	$this->teacherId = $teacherId;
-					}
                     $this->status = self::STATUS_SCHEDULED;
                     $this->save();
-					if(isset($changedAttributes['teacherId']) && (int)$changedAttributes['teacherId'] !== (int)$this->teacherId) {
+                    if($this->isRescheduledByTeacher($changedAttributes)) {
                     	$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-							'category' => 'lesson',
-							'event' => 'edit',
-							'data' => $lesson, 
-							'message' => $this->staffName . ' assigned {{' . $this->teacher->publicIdentity . '}} to teach {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' {{lesson}}', 
-						]));	
-						$timelineEventLink = new TimelineEventLink();
-						$timelineEventLink->timelineEventId = $timelineEvent->id;
-						$timelineEventLink->index = $this->teacher->publicIdentity;
-						$timelineEventLink->baseUrl = Yii::$app->homeUrl;	
-						$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $this->teacher->id]);
-						$timelineEventLink->save();
-						
-						$timelineEventLink->id = null;
-						$timelineEventLink->isNewRecord = true;
-						$timelineEventLink->index = $this->course->enrolment->student->fullName;
-						$timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
-						$timelineEventLink->save();
+                            'category' => 'lesson',
+                            'event' => 'edit',
+                            'data' => $lesson,
+                            'message' => $this->staffName . ' assigned {{' . $this->teacher->publicIdentity . '}} to teach {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' {{lesson}}',
+                        ]));
+                        $timelineEventLink = new TimelineEventLink();
+                        $timelineEventLink->timelineEventId = $timelineEvent->id;
+                        $timelineEventLink->index = $this->teacher->publicIdentity;
+                        $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+                        $timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $this->teacher->id]);
+                        $timelineEventLink->save();
 
-						$timelineEventLink->id = null;
-						$timelineEventLink->isNewRecord = true;
-						$timelineEventLink->index = 'lesson';
-						$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $this->id]);
-						$timelineEventLink->save();
-					}
-					if(isset($changedAttributes['date']) && !empty($this->date) && new \DateTime($changedAttributes['date']) !== new \DateTime($this->date)) {
+                        $timelineEventLink->id = null;
+                        $timelineEventLink->isNewRecord = true;
+                        $timelineEventLink->index = $this->course->enrolment->student->fullName;
+                        $timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
+                        $timelineEventLink->save();
+
+                        $timelineEventLink->id = null;
+                        $timelineEventLink->isNewRecord = true;
+                        $timelineEventLink->index = 'lesson';
+                        $timelineEventLink->path = Url::to(['/lesson/view', 'id' => $this->id]);
+                        $timelineEventLink->save();
+                    }
+                    if($this->isRescheduledByDate($changedAttributes)) {
                     	$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-							'category' => 'lesson',
-							'event' => 'edit',
-							'data' => $lesson, 
-							'message' => $this->staffName . ' moved {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' lesson to ' . Yii::$app->formatter->asTime($this->date), 
-						]));	
-						$timelineEventLink = new TimelineEventLink();
-						$timelineEventLink->timelineEventId = $timelineEvent->id;
-						$timelineEventLink->index = $this->course->enrolment->student->fullName;
-						$timelineEventLink->baseUrl = Yii::$app->homeUrl;	
-						$timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
-						$timelineEventLink->save();
-					}
+                            'category' => 'lesson',
+                            'event' => 'edit',
+                            'data' => $lesson,
+                            'message' => $this->staffName . ' moved {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' lesson to ' . Yii::$app->formatter->asTime($this->date),
+                        ]));
+                        $timelineEventLink = new TimelineEventLink();
+                        $timelineEventLink->timelineEventId = $timelineEvent->id;
+                        $timelineEventLink->index = $this->course->enrolment->student->fullName;
+                        $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+                        $timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
+                        $timelineEventLink->save();
+                    }
                     $lessonRescheduleModel = new LessonReschedule();
                     $lessonRescheduleModel->lessonId = $originalLessonId;
                     $lessonRescheduleModel->rescheduledLessonId = $this->id;
                     $lessonRescheduleModel->save();
                 }
-				if(isset($changedAttributes['classroomId']) && (int)$changedAttributes['classroomId'] !== (int)$this->classroomId && !isset($changedAttributes['teacherId'])) {
-					$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-						'category' => 'lesson',
-						'event' => 'edit',
-						'data' => $lesson, 
-						'message' => $this->staffName . ' moved {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' lesson to ' . $this->classroom->name, 
-					]));	
-					$timelineEventLink = new TimelineEventLink();
-					$timelineEventLink->timelineEventId = $timelineEvent->id;
-					$timelineEventLink->index = $this->course->enrolment->student->fullName;
-					$timelineEventLink->baseUrl = Yii::$app->homeUrl;	
-					$timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
-					$timelineEventLink->save();
-				}
+                if(isset($changedAttributes['classroomId']) && (int)$changedAttributes['classroomId'] !== (int)$this->classroomId && !isset($changedAttributes['teacherId'])) {
+                    $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+                        'category' => 'lesson',
+                        'event' => 'edit',
+                        'data' => $lesson,
+                        'message' => $this->staffName . ' moved {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' lesson to ' . $this->classroom->name,
+                    ]));
+                    $timelineEventLink = new TimelineEventLink();
+                    $timelineEventLink->timelineEventId = $timelineEvent->id;
+                    $timelineEventLink->index = $this->course->enrolment->student->fullName;
+                    $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+                    $timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
+                    $timelineEventLink->save();
+                }
             }
 
             return parent::afterSave($insert, $changedAttributes);
@@ -474,13 +470,37 @@ class Lesson extends \yii\db\ActiveRecord
         return $rootLessonId !== $this->id;
     }
 
+    public function isRescheduledByDate($changedAttributes)
+    {
+        return isset($changedAttributes['date']) &&
+            !empty($this->date) && new \DateTime($changedAttributes['date'])
+                !== new \DateTime($this->date);
+    }
+
+    public function isRescheduledByTeacher($changedAttributes)
+    {
+        return isset($changedAttributes['teacherId']) &&
+            (int)$changedAttributes['teacherId'] !== (int)$this->teacherId;
+    }
+
+    public function isDraftLesson()
+    {
+        return (int) $this->status === (int) self::STATUS_DRAFTED;
+    }
+
+    public function isRescheduledLesson($changedAttributes)
+    {
+        return $this->isRescheduledByDate($changedAttributes) ||
+            $this->isRescheduledByTeacher($changedAttributes);
+    }
+
 	public function getDuration()
     {
         $duration		 = \DateTime::createFromFormat('H:i:s', $this->duration);
 		$hours			 = $duration->format('H');
 		$minutes		 = $duration->format('i');
 		$lessonDuration	 = $hours + ($minutes / 60);
-		
+
 		return $lessonDuration;
     }
 
@@ -489,7 +509,7 @@ class Lesson extends \yii\db\ActiveRecord
         $courseCount  = Lesson::find()
 			->andWhere(['courseId' => $this->courseId])
 			->count('id');
-		
+
 		return $courseCount;
     }
 
