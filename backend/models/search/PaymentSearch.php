@@ -44,13 +44,16 @@ class PaymentSearch extends Payment
     {
         $locationId          = Yii::$app->session->get('location_id');
         $query               = Payment::find()
-            ->select(["DATE(payment.date) as paymentDate, payment.date"])
+            //->select(["DATE(payment.date) as paymentDate, payment.date"])
             ->location($locationId);
         $dataProvider        = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
         ]);
-        $query->groupBy('paymentDate');
+        $query->orderBy([
+			'DATE(payment.date)' => SORT_DESC,
+        	'payment_method_id' => SORT_ASC
+			]);
 
         if (!($this->load($params) && $this->validate())) {
             $this->fromDate      = new \DateTime();
