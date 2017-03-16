@@ -3,6 +3,7 @@
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use common\models\TeacherRoom;
+use common\models\TeacherAvailability;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -12,11 +13,12 @@ use common\models\TeacherRoom;
 <div id="availability-calendar"></div>
 <?php
     Modal::begin([
-        'header' => '<h4 class="m-0">Assign Classroom</h4>',
-        'id'=>'classroom-modal',
+        'header' => '<h4 class="m-0">Set Availability and Classroom</h4>',
+        'id' => 'teacher-availability-modal',
     ]);
-     echo $this->render('_form-classroom', [
-        'roomModel' => new TeacherRoom(),
+     echo $this->render('_form-teacher-availability', [
+        'model' => $model,
+        'teacherAvailabilityModel' => new TeacherAvailability(),
     ]);
     Modal::end();
 ?>
@@ -49,25 +51,22 @@ use common\models\TeacherRoom;
                 $("#availability-calendar").fullCalendar("refetchEvents");
             }
         },
-        eventRender: function(event, element) {
-            element.find("div.fc-content").prepend("<i class='fa fa-close pull-right text-danger'></i>");
-        },
         eventClick: function(event) {
-            var params = $.param({ id: event.id });
-                $('#classroom-modal').modal('show');
-                $('#teacher-availability-id').val(event.id);
-                $(".fa-close").click(function() {
-                var status = confirm("Are you sure to delete availability?");
-                if (status) {
-                    $.ajax({
-                        url    : '<?= Url::to(['user/delete-teacher-availability']) ?>?' + params,
-                        type   : 'POST',
-                        dataType: 'json',
-                        success: function()
-                        {
-                            $("#availability-calendar").fullCalendar("refetchEvents");
-                        }
-                    });
+            var params = $.param({ resourceId: null, id: event.id });
+            $.ajax({
+                url: '<?= Url::to(['user/modify-teacher-availability', 'teacherId' => $model->id]); ?>&' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#teacher-availability-modal .modal-body').html(response.data);
+                        $('#teacher-availability-modal').modal('show');
+                    } else {
+                        $('#teacher-availability-modal').yiiActiveForm('updateMessages',
+                                response.errors , true);
+                    }
                 }
             });
         },
@@ -112,48 +111,47 @@ use common\models\TeacherRoom;
             });
         },
         select: function( start, end, jsEvent, view, resourceObj ) {
-            var endTime = moment(end).format('HH:mm:ss');
-            var startTime = moment(start).format('HH:mm:ss');
-            var params = $.param({ resourceId: resourceObj.id, startTime: startTime, endTime: endTime });
+        var params = $.param({ resourceId: resourceObj.id, id: null });
             $.ajax({
-                url    : '<?= Url::to(['user/add-teacher-availability', 'id' => $model->id]) ?>&' + params,
-                type   : 'POST',
-                dataType: 'json',
-                success: function(response)
+                url: '<?= Url::to(['user/modify-teacher-availability', 'teacherId' => $model->id]); ?>&' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
                 {
-                    if (response) {
-                        $("#availability-calendar").fullCalendar("refetchEvents");
+                    if (response.status)
+                    {
+                        $('#teacher-availability-modal .modal-body').html(response.data);
+                        $('#teacher-availability-modal').modal('show');
                     } else {
-                        $('#flash-danger').text("Please choose availability within the location hours").fadeIn().delay(3000).fadeOut();
+                        $('#teacher-availability-modal').yiiActiveForm('updateMessages',
+                                response.errors , true);
                     }
                 }
             });
         }
     });
 
-    $(document).on('beforeSubmit', '#classroom-assign-form', function (event) {
+    $(document).on('beforeSubmit', '#teacher-availability-form', function (event) {
         $.ajax({
-			url    : '<?= Url::to(['user/assign-classroom']); ?>',
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
+            url    : event.currentTarget.action,
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+               if(response.status)
                 {
-					$('#classroom-modal').modal('hide');
-                    $('#flash-success').text("Classroom assigned to the selected teacher's availability successfully.").fadeIn().delay(3000).fadeOut();
+                    $('#teacher-availability-modal').modal('hide');
+                    $('#flash-success').text("Availability added successfully.").fadeIn().delay(3000).fadeOut();
                     $("#availability-calendar").fullCalendar("refetchEvents");
-				} else
-				{
-                    $('#classroom-assign-form').yiiActiveForm('updateMessages',
-					   response.errors
-					, true);
-				}
-			}
-		});
-		return false;
-	});
+                } else {
+                    $('#teacher-availability-form').yiiActiveForm('updateMessages',
+					   response.errors , true);
+                }
+            }
+        });
+    return false;
+    });
 
 </script>
 

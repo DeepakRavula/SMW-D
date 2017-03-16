@@ -16,6 +16,10 @@ use Yii;
 class TeacherAvailability extends \yii\db\ActiveRecord
 {
     public $name;
+    public $classroomId;
+
+    const SCENARIO_AVAILABIITY_EDIT = 'availability-edit';
+    
     /**
      * {@inheritdoc}
      */
@@ -32,7 +36,7 @@ class TeacherAvailability extends \yii\db\ActiveRecord
         return [
             [['day', 'from_time', 'to_time'], 'required'],
             [['day'], 'integer'],
-			[['teacher_location_id'], 'safe'],
+            [['teacher_location_id', 'classroomId'], 'safe'],
             [['from_time'], function ($attribute, $params) {
                 $locationId = Yii::$app->session->get('location_id');
                 $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId, 'day' => $this->day]);
@@ -71,6 +75,7 @@ class TeacherAvailability extends \yii\db\ActiveRecord
 				}
             },
             ],
+            [['classroomId'], 'validateClassroomAvailability', 'on' => self::SCENARIO_AVAILABIITY_EDIT ],
         ];
     }
     /**
@@ -84,6 +89,7 @@ class TeacherAvailability extends \yii\db\ActiveRecord
             'day' => 'Day',
             'from_time' => 'From Time',
             'to_time' => 'To Time',
+            'classroomId' => 'Classroom',
         ];
     }
 
@@ -121,5 +127,38 @@ class TeacherAvailability extends \yii\db\ActiveRecord
 	public function getTeacherRoom()
     {
         return $this->hasOne(TeacherRoom::className(), ['teacherAvailabilityId' => 'id']);
+    }
+
+    public function validateClassroomAvailability($attribute)
+    {
+        if (! empty ($this->classroomId)) {
+            $locationId = Yii::$app->session->get('location_id');
+            $teacherRooms        = TeacherRoom::find()
+                ->location($locationId)
+                ->day($this->day)
+                ->where(['classroomId' => $this->classroomId])
+                ->all();
+            foreach ($teacherRooms as $teacherRoom) {
+                $fromTime = (new \DateTime($teacherRoom->teacherAvailability->from_time))->format('h:i A');
+                $toTime   = (new \DateTime($teacherRoom->teacherAvailability->to_time))->format('h:i A');
+                $start    = new \DateTime($this->from_time);
+                $end      = new \DateTime($this->to_time);
+                $interval = new \DateInterval('PT15M');
+                $hours    = new \DatePeriod($start, $interval, $end);
+                $this->checkClassroomAvailability($hours, $fromTime, $toTime, $attribute);
+            }
+        }
+    }
+
+    public function checkClassroomAvailability($hours, $fromTime, $toTime, $attribute)
+    {
+        $availableHours = [];
+        foreach ($hours as $hour) {
+            $availableHours[] = Yii::$app->formatter->asTime($hour);
+        }
+
+        if (in_array($fromTime, $availableHours) || in_array($toTime, $availableHours)) {
+            return $this->addError($attribute,'Classroom Already Choosen!');
+        }
     }
 }
