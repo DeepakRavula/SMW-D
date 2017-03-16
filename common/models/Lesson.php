@@ -407,7 +407,7 @@ class Lesson extends \yii\db\ActiveRecord
                     $lessonRescheduleModel->rescheduledLessonId = $this->id;
                     $lessonRescheduleModel->save();
                 }
-                if(isset($changedAttributes['classroomId']) && (int)$changedAttributes['classroomId'] !== (int)$this->classroomId && !isset($changedAttributes['teacherId'])) {
+                if($this->isRescheduledByClassroom($changedAttributes)) {
                     $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
                         'category' => 'lesson',
                         'event' => 'edit',
@@ -475,6 +475,13 @@ class Lesson extends \yii\db\ActiveRecord
         return isset($changedAttributes['date']) &&
             !empty($this->date) && new \DateTime($changedAttributes['date'])
                 !== new \DateTime($this->date);
+    }
+
+	public function isRescheduledByClassroom($changedAttributes)
+    {
+        return isset($changedAttributes['classroomId']) &&
+            !empty($this->classroomId) && (int)$changedAttributes['classroomId']
+                !== (int)$this->classroomId;
     }
 
     public function isRescheduledByTeacher($changedAttributes)
