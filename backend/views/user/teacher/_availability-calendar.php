@@ -18,7 +18,7 @@ use common\models\TeacherAvailability;
     ]);
      echo $this->render('_form-teacher-availability', [
         'model' => $model,
-        'teacherAvailabilityModel' => new TeacherAvailability(),
+        'roomModel' => new TeacherRoom(),
     ]);
     Modal::end();
 ?>

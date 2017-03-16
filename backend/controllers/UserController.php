@@ -934,37 +934,40 @@ class UserController extends Controller
         }
         $fromTime         = new \DateTime($teacherAvailabilityModel->from_time);
         $toTime           = new \DateTime($teacherAvailabilityModel->to_time);
-        $teacherAvailabilityModel->from_time = $fromTime->format('g:i A');
-        $teacherAvailabilityModel->to_time   = $toTime->format('g:i A');
+        $roomModel->from_time = $fromTime->format('g:i A');
+        $roomModel->to_time   = $toTime->format('g:i A');
         if (empty($teacherAvailabilityModel->day)) {
             $teacherAvailabilityModel->day = $resourceId;
         }
         $post             = Yii::$app->request->post();
-        $teacherAvailabilityModel->setScenario(TeacherAvailability::SCENARIO_AVAILABIITY_EDIT);
+        $roomModel->setScenario(TeacherRoom::SCENARIO_AVAILABIITY_EDIT);
+        $roomModel->day = $teacherAvailabilityModel->day;
         $data =  $this->renderAjax('teacher/_form-teacher-availability', [
             'model' => $teacherModel,
+            'roomModel' => $roomModel,
             'teacherAvailabilityModel' => $teacherAvailabilityModel,
         ]);
         if ($post) {
-            $teacherAvailabilityModel->load($post);
-            $roomModel->classroomId = $teacherAvailabilityModel->classroomId;
-            $fromTime         = new \DateTime($teacherAvailabilityModel->from_time);
-            $toTime           = new \DateTime($teacherAvailabilityModel->to_time);
+            $roomModel->load($post);
+            $fromTime         = new \DateTime($roomModel->from_time);
+            $toTime           = new \DateTime($roomModel->to_time);
             $teacherAvailabilityModel->from_time = $fromTime->format('H:i:s');
             $teacherAvailabilityModel->to_time   = $toTime->format('H:i:s');
 
-            if ($teacherAvailabilityModel->validate()) {
+            if ($roomModel->validate()) {
                 $teacherAvailabilityModel->save();
                 if (!empty($roomModel->classroomId)) {
                     $roomModel->teacherAvailabilityId = $teacherAvailabilityModel->id;
                     $roomModel->save();
+                } else {
+                    TeacherRoom::deleteAll(['teacherAvailabilityId' => $teacherAvailabilityModel->id]);
                 }
 
                 return  [
                     'status' => true,
                 ];
             } else {
-                $errors = ActiveForm::validate($teacherAvailabilityModel);
+                $errors = ActiveForm::validate($roomModel);
                 return [
                     'status' => false,
                     'errors' => $errors,

@@ -25,24 +25,24 @@ use yii\helpers\Url;
         <?php $form       = ActiveForm::begin([
             'id' => 'teacher-availability-form',
             'action' => Url::to(['user/modify-teacher-availability', 
-                'resourceId' => $teacherAvailabilityModel->day, 'id' => $id,
+                'resourceId' => $roomModel->day, 'id' => $id,
                 'teacherId' => $model->id]),
         ]); ?>
         
         <div class="col-md-6 form-group">
-                <?= $form->field($teacherAvailabilityModel, 'from_time')->widget(TimePicker::classname(), [
+                <?= $form->field($roomModel, 'from_time')->widget(TimePicker::classname(), [
                     'options' => [
                         'id' => 'teacher-availability-from-time'
                     ]]); ?>
         </div>
         <div class="col-md-6 form-group">
-                <?= $form->field($teacherAvailabilityModel, 'to_time')->widget(TimePicker::classname(), ['options' => [
+                <?= $form->field($roomModel, 'to_time')->widget(TimePicker::classname(), ['options' => [
                         'id' => 'teacher-availability-to-time'
                     ]]); ?>
         </div>
         <div class="col-md-6 form-group">
             <?=
-            $form->field($teacherAvailabilityModel, 'classroomId')->widget(Select2::classname(), [
+            $form->field($roomModel, 'classroomId')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->all(),
                         'id', 'name'),
                 'options' => ['placeholder' => 'Select Classroom', 'class' => 'form-control'],
