@@ -12,18 +12,6 @@ use common\models\Payment;
  * and open the template in the editor.
  */
 
-
-$total = 0;
-/* $payments = Payment::find()
-  ->location($locationId)
-  ->andWhere(['between', 'DATE(payment.date)', $searchModel->fromDate->format('Y-m-d'),
-  $searchModel->toDate->format('Y-m-d')])
-  ->all();
-  foreach ($payments as $payment) {
-  $total += $payment->amount;
-  }
- * 
- */
 ?>
 <div class="payments-index p-10">
 	<?php if($searchModel->groupByMethod) : ?>
