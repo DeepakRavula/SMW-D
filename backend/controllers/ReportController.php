@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Payment;
+use backend\models\search\PaymentSearch;
 use backend\models\search\ReportSearch;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -27,6 +28,17 @@ class ReportController extends Controller {
 		];
 	}
 
+	public function actionPayment()
+    {
+        $searchModel = new PaymentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('payment/index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+	
 	public function actionRoyalty() {
 		$searchModel = new ReportSearch();
 		$currentDate = new \DateTime();

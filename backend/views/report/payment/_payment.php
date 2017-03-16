@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use common\models\PaymentMethod;
+use common\models\Payment;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -12,7 +13,6 @@ use common\models\PaymentMethod;
  */
 
 
-$locationId = Yii::$app->session->get('location_id');
 $total = 0;
 /* $payments = Payment::find()
   ->location($locationId)
@@ -26,6 +26,66 @@ $total = 0;
  */
 ?>
 <div class="payments-index p-10">
+	<?php if($searchModel->groupByMethod) : ?>
+	<?php $columns = [
+		[
+			'value' => function ($data) {
+				if (!empty($data->date)) {
+					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+					return $lessonDate->format('l, F jS, Y');
+				}
+
+				return null;
+			},
+			'group' => true,
+			'groupedRow' => true,
+			'groupFooter' => function ($model, $key, $index, $widget) {
+				return [
+					'mergeColumns' => [[1]],
+					'content' => [
+						2 => GridView::F_SUM,
+					],
+					'contentFormats' => [
+						2 => ['format' => 'number', 'decimals' => 2],
+					],
+					'contentOptions' => [
+						2 => ['style' => 'text-align:right'],
+					],
+					'options' => ['style' => 'font-weight:bold;']
+				];
+			}
+		],	
+		[
+			'label' => 'Payment Method',
+			'value' => function ($data) {
+				return $data->paymentMethod->name;
+			},
+		],
+		[
+			'label' => 'Amount',
+			'value' => function ($data) use($searchModel){
+				$locationId = Yii::$app->session->get('location_id');
+				$amount = 0;
+				$payments = Payment::find()
+					->location($locationId) 
+					->andWhere([
+						'payment_method_id' => $data->payment_method_id,
+						'DATE(payment.date)' => (new \DateTime($data->date))->format('Y-m-d')
+					])
+  					->all();
+  				foreach ($payments as $payment) {
+					$amount += $payment->amount;	
+				}
+					
+				return $amount;
+			},
+			'contentOptions' => ['class' => 'text-right'],
+			'hAlign' => 'right',
+			'pageSummary' => true,
+			'pageSummaryFunc' => GridView::F_SUM
+		],	
+	]; ?>
+	<?php else : ?>
 	<?php
 	$columns = [
 			[
@@ -102,15 +162,13 @@ $total = 0;
 		],
 	];
 	?>
-
+	<?php endif; ?>
 
 	<?=
 	GridView::widget([
 		'dataProvider' => $dataProvider,
 		'options' => ['class' => 'col-md-12'],
 		'showPageSummary' => true,
-		'footerRowOptions' => ['style' => 'font-weight:bold;text-align:right;'],
-		'showFooter' => true,
 		'tableOptions' => ['class' => 'table table-bordered table-responsive'],
 		'headerRowOptions' => ['class' => 'bg-light-gray-1'],
 		'pjax' => true,

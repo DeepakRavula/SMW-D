@@ -1,13 +1,11 @@
 <?php
 
 use yii\helpers\Html;
-use kartik\grid\GridView;
 use yii\helpers\Url;
-use common\models\Payment;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-
+$this->title = 'Payments';
 ?>
 
 <div class="payments-index p-10">
@@ -27,7 +25,7 @@ $(document).ready(function(){
         var toDate = $('#to-date').val();
         var params = $.param({ 'PaymentSearch[fromDate]': fromDate,
             'PaymentSearch[toDate]': toDate, 'PaymentSearch[groupByMethod]': (groupByMethod | 0) });
-        var url = '<?php echo Url::to(['payment/index']); ?>?' + params;
+        var url = '<?php echo Url::to(['report/payment']); ?>?' + params;
         $.pjax.reload({url:url,container:"#payment-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
     $("#print").on("click", function() {

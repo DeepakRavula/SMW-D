@@ -169,7 +169,7 @@ class PaymentController extends Controller
         
         $this->layout = '/print';
 
-        return $this->render('_print', [
+        return $this->render('/report/payment/_print', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
         ]);

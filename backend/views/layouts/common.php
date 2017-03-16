@@ -286,9 +286,9 @@ $bundle = BackendAsset::register($this);
 								[
 									'label'=>Yii::t('backend', 'Payments'),
 									'icon'=>'<i class="fa fa-dollar"></i>',
-									'url'=>['payment/index'],    
+									'url'=>['report/payment'],    
 									'visible'=>Yii::$app->user->can('owner'),
-									'active'=>(Yii::$app->controller->id === 'payment')? true : false,
+									'active'=>(Yii::$app->controller->action->id === 'payment')? true : false,
                         		],
 								[
 									'label'=>Yii::t('backend', 'Royalty'),
