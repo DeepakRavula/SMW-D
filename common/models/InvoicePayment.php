@@ -60,7 +60,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
 
 	public function afterSave($insert, $changedAttributes) {
 		if($this->invoice->isProFormaInvoice() && !$this->payment->isCreditUsed()) {
-			$this->invoice->makeRealInvoicePayment();
+			$this->invoice->makeInvoicePayment();
 		}
 		return parent::afterSave($insert, $changedAttributes);
 	}

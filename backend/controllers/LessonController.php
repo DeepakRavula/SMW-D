@@ -638,7 +638,7 @@ class LessonController extends Controller
         $currentDate = new \DateTime();
 
         if ($lessonDate <= $currentDate) {
-            $invoice = $model->createRealInvoice();
+            $invoice = $model->createInvoice();
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {
@@ -693,7 +693,7 @@ class LessonController extends Controller
 	 public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);
-        if(!$model->hasProFormaInvoice) {
+        if(!$model->hasProFormaInvoice()) {
 			$startDate = $model->enrolment->getCurrentPaymentCycleStartDate();
             $endDate = $model->course->enrolment->getLastLessonDateOfPaymentCycle($startDate);
             $locationId = Yii::$app->session->get('location_id');
@@ -713,7 +713,7 @@ class LessonController extends Controller
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
 		} else {
-            $model->proFormaInvoice->makeRealInvoicePayment();
+            $model->proFormaInvoice->makeInvoicePayment();
             return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);
         }
         

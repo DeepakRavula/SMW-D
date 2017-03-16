@@ -518,16 +518,16 @@ class Invoice extends \yii\db\ActiveRecord
         return $netSubtotal;
     }
 
-    public function makeRealInvoicePayment()
+    public function makeInvoicePayment()
     {
         foreach($this->lineItems as $lineItem) {
             $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lineItem->lesson->date);
             $currentDate = new \DateTime();
             if($lessonDate <= $currentDate) {
-                if ($lineItem->lesson->hasInvoice) {
-                    $invoice = $lineItem->lesson->createRealInvoice();
+                if ($lineItem->lesson->hasInvoice()) {
+                    $invoice = $lineItem->lesson->createInvoice();
                 } else if (!$lineItem->lesson->invoice->isPaid()) {
-                    if ($lineItem->lesson->hasProFormaInvoice) {
+                    if ($lineItem->lesson->hasProFormaInvoice()) {
                         if ($lineItem->lesson->proFormaInvoice->proFormaCredit >= $lineItem->lesson->proFormaInvoiceLineItem->amount) {
                             $lineItem->lesson->invoice->addPayment($lineItem->lesson->proFormaInvoice);
                         }

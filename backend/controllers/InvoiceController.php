@@ -510,7 +510,7 @@ class InvoiceController extends Controller
             ->completedUnInvoiced()
             ->all();
 		foreach($lessons as $lesson) {
-			$lesson->createRealInvoice();
+			$lesson->createInvoice();
 		}
 		
         return $this->redirect(['index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE]);

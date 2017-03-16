@@ -71,7 +71,7 @@ class InvoiceController extends Controller
             ->completedUnInvoiced()
             ->all();
 		foreach($lessons as $lesson) {
-			$lesson->createRealInvoice();
+			$lesson->createInvoice();
 		}
 		
         return true;

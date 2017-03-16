@@ -627,7 +627,7 @@ class Lesson extends \yii\db\ActiveRecord
 			->send();
 	}
 
-    public function createRealInvoice()
+    public function createInvoice()
     {
         $location_id = Yii::$app->session->get('location_id');
         $invoice = new Invoice();
@@ -646,21 +646,13 @@ class Lesson extends \yii\db\ActiveRecord
         return $invoice;
     }
 
-    public function getHasProFormaInvoice()
+    public function hasProFormaInvoice()
     {
-        if (!empty($this->proFormaInvoice)) {
-            return true;
-        } else {
-            return false;
-        }
+        return !empty($this->proFormaInvoice);
     }
 
-    public function getHasInvoice()
+    public function hasInvoice()
     {
-        if (!empty($this->invoice)) {
-            return true;
-        } else {
-            return false;
-        }
+        return !empty($this->invoice);
     }
 }
