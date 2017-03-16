@@ -693,36 +693,25 @@ class LessonController extends Controller
 	 public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);
-        if(empty($model->proFormaInvoice)) {
-			$lastProFormaInvoicedLesson = Lesson::find()
-				->joinWith(['proFormaInvoice' => function($query) {
-					$query->andWhere(['invoice.isDeleted' => false]);
-				}])
-				->andWhere(['courseId' => $model->courseId])
-                ->orderBy(['lesson.id' => SORT_DESC])
-				->one();
-            if (empty($lastProFormaInvoicedLesson)) {
-                $startDate = (new \DateTime($model->date))->modify('first day of this month');
-            } else {
-                $startDate = (new \DateTime($lastProFormaInvoicedLesson->date))->modify('first day of next month');
-            }
-			$locationId = Yii::$app->session->get('location_id');
-			$endDate = $model->course->enrolment->getLastLessonDateOfPaymentCycle($startDate);
-			$lessons = Lesson::find()
+        if(!$model->hasProFormaInvoice) {
+			$startDate = $model->enrolment->getCurrentPaymentCycleStartDate();
+            $endDate = $model->course->enrolment->getLastLessonDateOfPaymentCycle($startDate);
+            $locationId = Yii::$app->session->get('location_id');
+            $lessons = Lesson::find()
                 ->andWhere(['courseId' => $model->courseId])
                 ->between($startDate, $endDate)
                 ->all();
-			$invoice = new Invoice();
-			$invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
-			$invoice->user_id = $model->enrolment->student->customer->id;
-			$invoice->location_id = $locationId;
-			$invoice->save();
-			foreach ($lessons as $lesson) {
-				$invoice->addLineItem($lesson);
-			}
-			$invoice->save();
+            $invoice = new Invoice();
+            $invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
+            $invoice->user_id = $model->enrolment->student->customer->id;
+            $invoice->location_id = $locationId;
+            $invoice->save();
+            foreach ($lessons as $lesson) {
+                $invoice->addLineItem($lesson);
+            }
+            $invoice->save();
 
-			return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
+            return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
 		} else {
             $model->proFormaInvoice->makeRealInvoicePayment();
             return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);

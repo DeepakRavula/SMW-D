@@ -645,4 +645,22 @@ class Lesson extends \yii\db\ActiveRecord
 
         return $invoice;
     }
+
+    public function getHasProFormaInvoice()
+    {
+        if (!empty($this->proFormaInvoice)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getHasInvoice()
+    {
+        if (!empty($this->invoice)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
