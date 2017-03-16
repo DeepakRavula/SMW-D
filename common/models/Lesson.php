@@ -83,10 +83,19 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
-			
-			[['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
-			[['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
-			[['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
+	    [['date'], function ($attribute, $params) {
+                $date = (new \DateTime($this->date))->format('Y-m-d');
+                if($date < $this->enrolment->firstPaymentCycle->startDate ||
+                    $date > $this->enrolment->lastPaymentCycle->endDate) {
+                    return $this->addError($attribute, 'Please choose date within the course start and end date ' .
+                        $this->enrolment->firstPaymentCycle->startDate . '-' .
+                        $this->enrolment->lastPaymentCycle->endDate);
+                }
+            },
+            ],
+            [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
+            [['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
+            [['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
 			
             ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],

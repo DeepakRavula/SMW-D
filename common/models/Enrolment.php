@@ -137,6 +137,12 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->orderBy(['startDate' => SORT_ASC]);
     }
 
+    public function getlastPaymentCycle()
+    {
+        return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
+                ->orderBy(['endDate' => SORT_DESC]);
+    }
+
     public function isMonthlyPaymentFrequency()
     {
         return (int) $this->paymentFrequency === (int) self::LENGTH_MONTHLY;

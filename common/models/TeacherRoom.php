@@ -35,7 +35,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
             [['day', 'from_time', 'to_time'], 'required'],
             [['classroomId', 'teacherAvailabilityId'], 'integer'],
             [['classroomId'], 'validateClassroomAvailability', 'on' => self::SCENARIO_AVAILABIITY_EDIT ],
-                        [['from_time'], function ($attribute, $params) {
+            [['from_time'], function ($attribute, $params) {
                 $locationId = Yii::$app->session->get('location_id');
                 $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId, 'day' => $this->day]);
                 $fromTime = (new \DateTime($this->from_time))->format('H:i:s');
