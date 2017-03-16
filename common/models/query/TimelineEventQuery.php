@@ -12,6 +12,13 @@ use yii\db\ActiveQuery;
 
 class TimelineEventQuery extends ActiveQuery
 {
+	public function location($locationId)
+    {
+        $this->andWhere(['locationId' => $locationId]);
+
+        return $this;
+    }
+	
     public function today()
     {
         $this->andWhere(['>=', 'created_at', strtotime('today midnight')]);

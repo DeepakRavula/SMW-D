@@ -62,7 +62,7 @@ class TimelineEventSearch extends TimelineEvent
     {
 		$locationId = Yii::$app->session->get('location_id');
         $query = TimelineEvent::find()
-					->andWhere(['locationId' => $locationId]);
+			->location($locationId);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -72,6 +72,10 @@ class TimelineEventSearch extends TimelineEvent
             return $dataProvider;
         }
 
+		$query->where(['between', 'DATE(created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
+		
+		$query->location($locationId);
+		
 		if ($this->category === self::CATEGORY_USER) {
             $query->user();
         } elseif ($this->category === self::CATEGORY_ENROLMENT) {
@@ -81,9 +85,8 @@ class TimelineEventSearch extends TimelineEvent
         } elseif ($this->category === self::CATEGORY_PAYMENT) {
             $query->payment();
         }
-		$query->andFilterWhere(['createdUserId' => $this->createdUserId]);
 		
-		$query->where(['between', 'DATE(created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
+		$query->andFilterWhere(['createdUserId' => $this->createdUserId]);
 		
         return $dataProvider;
     }
