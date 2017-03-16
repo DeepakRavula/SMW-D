@@ -112,6 +112,22 @@ use common\models\Payment;
 				return $data->paymentMethod->name;
 			},
 				'group' => true,
+				 'subGroupOf'=>0 ,
+				'groupFooter'=>function ($model, $key, $index, $widget) { 
+                return [
+                    'mergeColumns'=>[[1, 4]], 
+                    'content'=>[              
+                        5=>GridView::F_SUM,
+                    ],
+                    'contentFormats'=>[     
+                        5 =>['format'=>'number', 'decimals'=>2],
+                    ],
+                    'contentOptions'=>[    
+                        5=>['style'=>'text-align:right'],
+                    ],
+                    'options'=>['class'=>'success','style'=>'font-weight:bold;']
+                ];
+            },
 		],
 			[
 			'label' => 'ID',
