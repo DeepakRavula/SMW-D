@@ -59,16 +59,8 @@ class InvoicePayment extends \yii\db\ActiveRecord
     }
 
 	public function afterSave($insert, $changedAttributes) {
-		if($this->invoice->isProFormaInvoice()) {
-			foreach($this->invoice->lineItems as $lineItem) {
-				if(new \DateTime($lineItem->lesson->date) > new \DateTime($this->payment->date)) {
-					continue;
-				}
-				if(new \DateTime($lineItem->lesson->date) <= new \DateTime($this->payment->date) && !empty($lineItem->lesson->invoice) && !$lineItem->lesson->invoice->isPaid()) {
-					$this->invoice->credit = $this->payment->amount; 
-					$lineItem->lesson->invoice->addPayment($this->invoice);
-				}
-			}
+		if($this->invoice->isProFormaInvoice() && !$this->payment->isCreditUsed()) {
+			$this->invoice->makeInvoicePayment();
 		}
 		return parent::afterSave($insert, $changedAttributes);
 	}

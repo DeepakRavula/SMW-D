@@ -191,10 +191,33 @@ class Enrolment extends \yii\db\ActiveRecord
         return $paymentCycleEndDate;
     }
 
+    public function getCurrentPaymentCycleStartDate()
+    {
+        $lastProFormaInvoicedLesson = Lesson::find()
+				->joinWith(['proFormaInvoice' => function($query) {
+					$query->andWhere(['invoice.isDeleted' => false]);
+				}])
+				->andWhere(['courseId' => $this->courseId])
+                ->orderBy(['lesson.date' => SORT_DESC])
+				->one();
+        if (empty($lastProFormaInvoicedLesson)) {
+            $enrolmentFirstLesson = Lesson::find()
+                ->notDeleted()
+                ->andWhere(['courseId' => $this->courseId])
+                ->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]])
+                ->orderBy(['date' => SORT_ASC])
+                ->one();
+            $startDate = (new \DateTime($enrolmentFirstLesson->date))->modify('first day of this month');
+        } else {
+            $startDate = (new \DateTime($lastProFormaInvoicedLesson->date))->modify('first day of next month');
+        }
+
+        return $startDate;
+    }
+
 	public function getLastLessonDateOfPaymentCycle($startDate)
     {
-//		$courseDate = new \DateTime($this->course->startDate);
-		$startDate = \DateTime::createFromFormat('Y-m-d', $startDate->format('Y-m-1'));
+        $startDate = \DateTime::createFromFormat('Y-m-d', $startDate->format('Y-m-1'));
         switch ($this->paymentFrequencyId) {
             case PaymentFrequency::PAYMENT_FREQUENCY_FULL:
                 $endDate = $startDate->modify('+1 year, -1 day');
