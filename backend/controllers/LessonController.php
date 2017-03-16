@@ -695,24 +695,42 @@ class LessonController extends Controller
     {
         $model = Lesson::findOne(['id' => $id]);
         if(!$model->hasProFormaInvoice()) {
-			$startDate = $model->enrolment->getCurrentPaymentCycleStartDate();
-            $endDate = $model->course->enrolment->getLastLessonDateOfPaymentCycle($startDate);
-            $locationId = Yii::$app->session->get('location_id');
-            $lessons = Lesson::find()
-                ->andWhere(['courseId' => $model->courseId])
-                ->between($startDate, $endDate)
-                ->all();
-            $invoice = new Invoice();
-            $invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
-            $invoice->user_id = $model->enrolment->student->customer->id;
-            $invoice->location_id = $locationId;
-            $invoice->save();
-            foreach ($lessons as $lesson) {
-                $invoice->addLineItem($lesson);
+            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+            if ($lessonDate->format('Y-m-d') === $lessonDate->format('Y-m-t')) {
+                $order = SORT_ASC;
+            } else {
+                $order = SORT_DESC;
             }
-            $invoice->save();
+            $paymentCycleLesson = Lesson::find()
+                ->notDeleted()
+                ->andWhere(['OR', ['status' => Lesson::STATUS_COMPLETED], ['status' => Lesson::STATUS_SCHEDULED]])
+                ->andWhere(['between', 'DATE(date)', $lessonDate->format('Y-m-1'), $lessonDate->format('Y-m-t')])
+                ->orderBy(['date' => $order])
+                ->one();
+            if ($paymentCycleLesson->hasProFormaInvoice()) {
+                $paymentCycleLesson->proFormaInvoice->addLineItem($model);
+                $paymentCycleLesson->proFormaInvoice->save();
+            } else {
+                $startDate = $model->enrolment->getCurrentPaymentCycleStartDate();
+                $endDate = $model->course->enrolment->getLastLessonDateOfPaymentCycle($startDate);
+                $locationId = Yii::$app->session->get('location_id');
+                $lessons = Lesson::find()
+                    ->andWhere(['courseId' => $model->courseId])
+                    ->between($startDate, $endDate)
+                    ->all();
+                $invoice = new Invoice();
+                $invoice->type = Invoice::TYPE_PRO_FORMA_INVOICE;
+                $invoice->user_id = $model->enrolment->student->customer->id;
+                $invoice->location_id = $locationId;
+                $invoice->save();
+                foreach ($lessons as $lesson) {
+                    $invoice->addLineItem($lesson);
+                }
+                $invoice->save();
 
-            return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
+                return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
+            }
+            return $this->redirect(['invoice/view', 'id' => $paymentCycleLesson->proFormaInvoice->id, '#' => 'payment']);
 		} else {
             $model->proFormaInvoice->makeInvoicePayment();
             return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);
