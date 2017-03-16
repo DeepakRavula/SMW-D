@@ -27,6 +27,7 @@ use common\models\Payment;
 			},
 			'group' => true,
 			'groupedRow' => true,
+			
 			'groupFooter' => function ($model, $key, $index, $widget) {
 				return [
 					'mergeColumns' => [[1]],
@@ -87,6 +88,8 @@ use common\models\Payment;
 			},
 			'group' => true,
 			'groupedRow' => true,
+			'groupOddCssClass'=>'kv-grouped-row',  
+            'groupEvenCssClass'=>'kv-grouped-row',
 			'groupFooter' => function ($model, $key, $index, $widget) {
 				return [
 					'mergeColumns' => [[1, 3]],
