@@ -83,10 +83,10 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
-			
-			[['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
-			[['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
-			[['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
+	    ['date', 'validateDate', 'on' => self::SCENARIO_CREATE],
+            [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
+            [['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
+            [['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
 			
             ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
@@ -143,7 +143,19 @@ class Lesson extends \yii\db\ActiveRecord
         return new \common\models\query\LessonQuery(get_called_class());
     }
 
-	public function isScheduled()
+    public function validateDate($attribute)
+    {
+        $date = (new \DateTime($this->date))->format('Y-m-d');
+        if($date < $this->enrolment->firstPaymentCycle->startDate ||
+            $date > $this->enrolment->lastPaymentCycle->endDate) {
+            return $this->addError($attribute, 'Lesson can not be scheduled outside of enrolment. '
+                . 'Please choose date within ' .
+                $this->enrolment->firstPaymentCycle->startDate . '-' .
+                $this->enrolment->lastPaymentCycle->endDate);
+        }
+    }
+
+    public function isScheduled()
 	{
 		return (int) $this->status === self::STATUS_SCHEDULED;
 	}

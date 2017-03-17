@@ -56,7 +56,7 @@ class UserController extends Controller
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
                'only' => ['edit-teacher-availability', 'add-teacher-availability', 'teacher-availability-events',
-                   'delete-availability', 'assign-classroom'],
+                   'delete-teacher-availability', 'modify-teacher-availability'],
                'formatParam' => '_format',
                'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -913,38 +913,70 @@ class UserController extends Controller
     public function actionDeleteTeacherAvailability($id)
     {
         $availabilityModel = TeacherAvailability::findOne($id);
-        return $availabilityModel->delete();
+        return [
+            'status' => $availabilityModel->delete()
+        ];
     }
 
-    public function actionAddTeacherAvailability($id, $resourceId, $startTime, $endTime)
+    public function actionModifyTeacherAvailability($resourceId, $id, $teacherId)
     {
-        $teacher                    = $this->findModel($id);
-        $model                      = new TeacherAvailability();
-        $model->teacher_location_id = $teacher->userLocation->id;
-        $model->day                 = $resourceId;
-        $model->from_time           = $startTime;
-        $model->to_time             = $endTime;
-        return $model->save();
-    }
+        $teacherModel = User::findOne($teacherId);
+        $teacherAvailabilityModel = TeacherAvailability::findOne($id);
+        if (empty ($teacherAvailabilityModel)) {
+            $teacherAvailabilityModel = new TeacherAvailability();
+            $teacherAvailabilityModel->teacher_location_id = $teacherModel->userLocation->id;
+            $roomModel = new TeacherRoom();
+        } else if (empty ($teacherAvailabilityModel->teacherRoom)) {
+            $roomModel = new TeacherRoom();
+        } else {
+            $roomModel = $teacherAvailabilityModel->teacherRoom;
+        }
+        $fromTime         = new \DateTime($teacherAvailabilityModel->from_time);
+        $toTime           = new \DateTime($teacherAvailabilityModel->to_time);
+        $roomModel->from_time = $fromTime->format('g:i A');
+        $roomModel->to_time   = $toTime->format('g:i A');
+        if (empty($teacherAvailabilityModel->day)) {
+            $teacherAvailabilityModel->day = $resourceId;
+        }
+        $post             = Yii::$app->request->post();
+        $roomModel->setScenario(TeacherRoom::SCENARIO_AVAILABIITY_EDIT);
+        $roomModel->day = $teacherAvailabilityModel->day;
+        $data =  $this->renderAjax('teacher/_form-teacher-availability', [
+            'model' => $teacherModel,
+            'roomModel' => $roomModel,
+            'teacherAvailabilityModel' => $teacherAvailabilityModel,
+        ]);
+        if ($post) {
+            $roomModel->load($post);
+            $fromTime         = new \DateTime($roomModel->from_time);
+            $toTime           = new \DateTime($roomModel->to_time);
+            $teacherAvailabilityModel->from_time = $fromTime->format('H:i:s');
+            $teacherAvailabilityModel->to_time   = $toTime->format('H:i:s');
 
-    public function actionAssignClassroom()
-    {
-        $teacherRoom = new TeacherRoom();
-        $post = Yii::$app->request->post();
-        $teacherRoom->load($post);
-        if ($teacherRoom->validate()) {
-                $teacherRoom->save();
-                $response =[
+            if ($roomModel->validate()) {
+                $teacherAvailabilityModel->save();
+                if (!empty($roomModel->classroomId)) {
+                    $roomModel->teacherAvailabilityId = $teacherAvailabilityModel->id;
+                    $roomModel->save();
+                } else {
+                    TeacherRoom::deleteAll(['teacherAvailabilityId' => $teacherAvailabilityModel->id]);
+                }
+
+                return  [
                     'status' => true,
                 ];
+            } else {
+                $errors = ActiveForm::validate($roomModel);
+                return [
+                    'status' => false,
+                    'errors' => $errors,
+                ];
+            }
         } else {
-            $errors = ActiveForm::validate($teacherRoom);
-            $response = [
-                'status' => false,
-                'errors' => $errors,
+            return [
+                'status' => true,
+                'data' => $data
             ];
         }
-    
-        return $response;
     }
 }
