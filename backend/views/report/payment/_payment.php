@@ -12,6 +12,16 @@ use common\models\Payment;
  * and open the template in the editor.
  */
 ?>
+<style>
+.table>thead>tr>th {
+    border-right: 2px solid transparent;
+}
+.table>tbody>tr>td {
+    border-right: 2px solid transparent;
+	border-bottom: 1px solid transparent;
+	background-color: white;
+}
+</style>
 <div class="payments-index p-10">
 	<?php if ($searchModel->groupByMethod) : ?>
 		<?php
@@ -81,15 +91,14 @@ use common\models\Payment;
 				'value' => function ($data) {
 					if (!empty($data->date)) {
 						$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-						return $lessonDate->format('l, F jS, Y');
+						return $lessonDate->format('Y-m-d');
 					}
 
 					return null;
 				},
+				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px'],
 				'group' => true,
 				'groupedRow' => true,
-				'groupOddCssClass' => 'kv-grouped-row',
-				'groupEvenCssClass' => 'kv-grouped-row',
 				'groupFooter' => function ($model, $key, $index, $widget) {
 					return [
 						'mergeColumns' => [[1, 3]],
@@ -102,7 +111,7 @@ use common\models\Payment;
 						'contentOptions' => [
 							5 => ['style' => 'text-align:right'],
 						],
-						'options' => ['style' => 'font-weight:bold;']
+						'options' => ['style' => 'font-weight:bold;font-size:14px;']
 					];
 				}
 			],
@@ -111,6 +120,7 @@ use common\models\Payment;
 				'value' => function ($data) {
 					return $data->paymentMethod->name;
 				},
+				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px'],
 				'group' => true,
 				'subGroupOf' => 0,
 				'groupFooter' => function ($model, $key, $index, $widget) {
@@ -125,7 +135,7 @@ use common\models\Payment;
 						'contentOptions' => [
 							5 => ['style' => 'text-align:right'],
 						],
-						'options' => ['class' => 'success', 'style' => 'font-weight:bold;']
+						'options' => ['class' => 'success', 'style' => 'font-weight:bold;font-size:14px']
 					];
 				},
 			],
@@ -133,16 +143,19 @@ use common\models\Payment;
 				'label' => 'ID',
 				'value' => function($data) {
 					return $data->invoicePayment->invoice->getInvoiceNumber();
-				}
+				},
+				'contentOptions' => ['style' => 'font-size:14px'],
 			],
 				[
 				'label' => 'Customer',
 				'value' => function ($data) {
 					return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
 				},
+				'contentOptions' => ['style' => 'font-size:14px'],
 			],
 				[
 				'label' => 'Reference',
+				'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
 				'value' => function ($data) {
 					if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
 						$invoiceNumber = str_pad($data->reference, 5, 0, STR_PAD_LEFT);
@@ -162,7 +175,7 @@ use common\models\Payment;
 				'value' => function ($data) {
 					return $data->amount;
 				},
-				'contentOptions' => ['class' => 'text-right'],
+				'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
 				'hAlign' => 'right',
 				'pageSummary' => true,
 				'pageSummaryFunc' => GridView::F_SUM
@@ -176,8 +189,7 @@ use common\models\Payment;
 		'dataProvider' => $dataProvider,
 		'options' => ['class' => 'col-md-12'],
 		'showPageSummary' => true,
-		'tableOptions' => ['class' => 'table table-bordered table-responsive'],
-		'headerRowOptions' => ['class' => 'bg-light-gray-1'],
+		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
 		'pjax' => true,
 		'pjaxSettings' => [
 			'neverTimeout' => true,
@@ -189,6 +201,3 @@ use common\models\Payment;
 	]);
 	?>
 </div>
-
-
-
