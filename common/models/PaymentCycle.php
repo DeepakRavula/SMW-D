@@ -86,6 +86,12 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return !empty($this->proFormaInvoice);
     }
 
+    public function beforeDelete()
+    {
+        PaymentCycleLesson::deleteAll(['paymentCycleId' => $this->id]);
+        return parent::beforeDelete();
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         $locationId = Yii::$app->session->get('location_id');

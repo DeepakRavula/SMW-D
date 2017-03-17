@@ -74,9 +74,13 @@ class EnrolmentController extends Controller
 			$response = Yii::$app->response;
 			$response->format = Response::FORMAT_JSON;
 			if(! empty($post['paymentFrequencyId'])) {
-				$model->paymentFrequencyId = $post['paymentFrequencyId'];
-				$model->save();
-				return ['output' => $model->getPaymentFrequency(), 'message' => ''];
+                            $oldPaymentFrequency = $model->paymentFrequencyId;
+                            $model->paymentFrequencyId = $post['paymentFrequencyId'];
+                            $model->save();
+                            if ((int) $oldPaymentFrequency !== (int) $post['paymentFrequencyId']) {
+                                $model->resetPaymentCycle();
+                            }
+                            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
 			}
 		}
         return $this->render('view', [
