@@ -87,7 +87,8 @@ class Lesson extends \yii\db\ActiveRecord
                 $date = (new \DateTime($this->date))->format('Y-m-d');
                 if($date < $this->enrolment->firstPaymentCycle->startDate ||
                     $date > $this->enrolment->lastPaymentCycle->endDate) {
-                    return $this->addError($attribute, 'Please choose date within the course start and end date ' .
+                    return $this->addError($attribute, 'Lesson can not be scheduled outside of enrolment. '
+                        . 'Please choose date within ' .
                         $this->enrolment->firstPaymentCycle->startDate . '-' .
                         $this->enrolment->lastPaymentCycle->endDate);
                 }

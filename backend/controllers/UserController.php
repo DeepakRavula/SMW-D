@@ -913,10 +913,9 @@ class UserController extends Controller
     public function actionDeleteTeacherAvailability($id)
     {
         $availabilityModel = TeacherAvailability::findOne($id);
-        $response = [
+        return [
             'status' => $availabilityModel->delete()
         ];
-        return $response;
     }
 
     public function actionModifyTeacherAvailability($resourceId, $id, $teacherId)
