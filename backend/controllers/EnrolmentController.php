@@ -124,10 +124,14 @@ class EnrolmentController extends Controller
 		if (isset($post['hasEditable'])) {
 			$response = Yii::$app->response;
 			$response->format = Response::FORMAT_JSON;
-			if(! empty($post['paymentFrequencyId'])) {
-				$model->paymentFrequencyId = $post['paymentFrequencyId'];
-				$model->save();
-				return ['output' => $model->getPaymentFrequency(), 'message' => ''];
+                        if(! empty($post['paymentFrequencyId'])) {
+                            $oldPaymentFrequency = $model->paymentFrequencyId;
+                            $model->paymentFrequencyId = $post['paymentFrequencyId'];
+                            $model->save();
+                            if ((int) $oldPaymentFrequency !== (int) $post['paymentFrequencyId']) {
+                                $model->resetPaymentCycle();
+                            }
+                            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
 			}
 		}
         $timebits = explode(':', $model->course->fromTime);
