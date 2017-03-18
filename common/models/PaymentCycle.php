@@ -125,6 +125,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $endDate   = \DateTime::createFromFormat('Y-m-d', $this->endDate);
         $lessons = Lesson::find()
             ->location($locationId)
+            ->unInvoicedProForma()
             ->andWhere(['courseId' => $this->enrolment->courseId])
             ->between($startDate, $endDate)
             ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
