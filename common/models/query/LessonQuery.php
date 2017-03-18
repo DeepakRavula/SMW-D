@@ -5,6 +5,7 @@ namespace common\models\query;
 use common\models\Lesson;
 use common\models\Program;
 use common\models\Invoice;
+use common\models\InvoiceLineItem;
 
 /**
  * This is the ActiveQuery class for [[\common\models\Lesson]].
@@ -123,10 +124,15 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function unInvoicedProForma()
     {
-        $this->joinWith(['proFormaLineItem' => function ($query) {
-            $query->joinWith('invoice');
-            $query->where(['invoice.id' => null]);
-        }]);
+        $pfli = InvoiceLineItem::find()
+            ->alias('pfli1')
+            ->join('LEFT JOIN', 'invoice_line_item pfli2', 'pfli1.item_id = pfli2.item_id AND pfli1.id < pfli2.id')
+            ->andWhere(['pfli2.item_id' => NULL]);
+            
+        $this->joinWith('paymentCycleLesson')
+            ->leftJoin(['pfli' => $pfli], 'pfli.item_id = payment_cycle_lesson.id')
+            ->join('LEFT JOIN', 'invoice', 'invoice.id = pfli.invoice_id')
+            ->andWhere(['OR', ['invoice.id' => null], ['invoice.isDeleted' => true]]);
 
         return $this;
     }
