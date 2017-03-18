@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
+use common\models\InvoicePayment;
+use common\models\Invoice;
 use common\models\PaymentMethod;
 use common\models\Payment;
 
