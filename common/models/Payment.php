@@ -163,7 +163,7 @@ class Payment extends ActiveRecord
 
     public function beforeDelete()
     {
-        $this->isDelete = true;
+        $this->isDeleted = true;
         $this->manageAccount();
         $this->invoicePayment->delete();
         return parent::beforeDelete();
@@ -293,14 +293,15 @@ class Payment extends ActiveRecord
         } else {
             $model->debit = null;
         }
+        $model->balance = $this->accountBalance();
         if ((int) $model->actionType === (int) CustomerAccount::ACTION_TYPE_DELETE) {
+            $model->balance += $model->amount;
             $model->credit = $this->amount;
             $model->description = 'Payment deleted';
         } else {
             $model->credit = null;
         }
         $model->actionUserId = Yii::$app->user->id;
-        $model->balance = $this->accountBalance();
         $model->date = (new \DateTime())->format('Y-m-d H:i:s');
         $model->save();
     }
