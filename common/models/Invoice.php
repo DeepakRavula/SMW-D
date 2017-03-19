@@ -221,13 +221,20 @@ class Invoice extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
-			if(empty($this->lineItems)) {
+            $oldTotal = clone $this;
+            if(empty($this->lineItems)) {
                 return parent::afterSave($insert, $changedAttributes);
             }
             $existingSubtotal = $this->subTotal;
             if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
                 $this->trigger(self::EVENT_GENERATE);
             }
+            if ($this->isDeleted) {
+                $this->manageAccount();
+            } else if ((float) $this->total !== (float) $oldTotal->total) {
+                $this->manageAccount();
+            }
+            
         }
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -331,10 +338,29 @@ class Invoice extends \yii\db\ActiveRecord
         return $sumOfPayment;
     }
 
+    public function getSumOfCustomerPayment($customerId)
+    {
+        $sumOfPayment = Payment::find()
+                ->where(['user_id' => $customerId])
+                ->andWhere(['NOT', ['payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
+                ->sum('payment.amount');
+
+        return $sumOfPayment;
+    }
+
     public function getSumOfInvoice($customerId)
     {
         $sumOfInvoice = self::find()
                 ->where(['user_id' => $customerId, 'type' => self::TYPE_INVOICE])
+                ->sum('invoice.total');
+
+        return $sumOfInvoice;
+    }
+
+    public function getSumOfAllInvoice($customerId)
+    {
+        $sumOfInvoice = self::find()
+                ->where(['user_id' => $customerId, 'isDeleted' => false])
                 ->sum('invoice.total');
 
         return $sumOfInvoice;
@@ -349,6 +375,14 @@ class Invoice extends \yii\db\ActiveRecord
         return $customerBalance;
     }
 
+    public function getCustomerAccountBalance($customerId)
+    {
+        $totalPayment = $this->getSumOfCustomerPayment($customerId);
+        $totalInvoice = $this->getSumOfAllInvoice($customerId);
+        $customerBalance = $totalInvoice - $totalPayment;
+
+        return $customerBalance;
+    }
 	public function checkPaymentExists($attribute, $params)
 	{
 		if (! empty($this->invoicePayments)) {
@@ -583,5 +617,54 @@ class Invoice extends \yii\db\ActiveRecord
     public function isReversedInvoice()
     {
         return !empty($this->invoiceReverse);
+    }
+
+    public function manageAccount()
+    {
+        $model = new CustomerAccount();
+        $model->foreignKeyId = $this->id;
+        $model->userId = $this->user_id;
+        $model->type = CustomerAccount::TYPE_INVOICE;
+        $model->actionType = $this->actionType();
+        $model->amount = $this->total;
+        if ((int) $model->actionType !== (int) CustomerAccount::ACTION_TYPE_DELETE){
+            $model->credit = $this->total;
+            if ((int) $model->actionType === (int) CustomerAccount::ACTION_TYPE_CREATE) {
+                $model->description = 'Invoice created';
+            } else {
+                $model->description = 'Invoice updated';
+            }
+        } else {
+            $model->credit = null;
+        }
+        if ((int) $model->actionType === (int) CustomerAccount::ACTION_TYPE_DELETE) {
+            $model->debit = $this->total;
+            $model->description = 'Invoice deleted';
+        } else {
+            $model->debit = null;
+        }
+        $model->actionUserId = Yii::$app->user->id;
+        $model->balance = $this->accountBalance();
+        $model->date = (new \DateTime())->format('Y-m-d H:i:s');
+        $model->save();
+    }
+
+    public function actionType()
+    {
+        $model = CustomerAccount::find()
+            ->where(['type' => CustomerAccount::TYPE_INVOICE, 'foreignKeyId' => $this->id])
+            ->one();
+        if ($this->isDeleted) {
+            return CustomerAccount::ACTION_TYPE_DELETE;
+        }else if (!empty($model)) {
+            return CustomerAccount::ACTION_TYPE_UPDATE;
+        } else {
+            return CustomerAccount::ACTION_TYPE_CREATE;
+        }
+    }
+
+    public function accountBalance()
+    {
+        return $this->getCustomerAccountBalance($this->user_id);
     }
 }

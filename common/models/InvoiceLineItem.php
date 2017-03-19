@@ -167,7 +167,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        $this->invoice->save();
+        if (!$insert) {
+            $this->invoice->save();
+        }
         
         return parent::afterSave($insert, $changedAttributes);
     }

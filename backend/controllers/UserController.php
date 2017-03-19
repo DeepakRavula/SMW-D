@@ -14,7 +14,7 @@ use common\models\Qualification;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
-use backend\models\search\InvoiceSearch;
+use common\models\CustomerAccount;
 use backend\models\search\LessonSearch;
 use common\models\Note;
 use common\models\Location;
@@ -350,6 +350,13 @@ class UserController extends Controller
             ->groupBy('day')
             ->all();
 
+        $account = CustomerAccount::find()
+            ->where(['userId' => $id]);
+
+        $accountDataProvider = new ActiveDataProvider([
+            'query' => $account,
+        ]);
+
         return $this->render('view', [
             'minTime' => $minTime,
             'maxTime' => $maxTime,
@@ -358,7 +365,7 @@ class UserController extends Controller
             'teacherDataProvider' => $teacherDataProvider,
             'model' => $model,
             'searchModel' => $searchModel,
-			'lessonSearchModel' => $lessonSearch,
+            'lessonSearchModel' => $lessonSearch,
             'program' => $program,
             'addressDataProvider' => $addressDataProvider,
             'phoneDataProvider' => $phoneDataProvider,
@@ -373,9 +380,10 @@ class UserController extends Controller
             'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
             'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
-			'teacherLessonDataProvider' => $teacherLessonDataProvider,
-			'noteDataProvider' => $noteDataProvider,
-			'teachersAvailabilities' => $teachersAvailabilities
+            'teacherLessonDataProvider' => $teacherLessonDataProvider,
+            'noteDataProvider' => $noteDataProvider,
+            'accountDataProvider' => $accountDataProvider,
+            'teachersAvailabilities' => $teachersAvailabilities
         ]);
     }
 
