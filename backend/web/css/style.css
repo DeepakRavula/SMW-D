@@ -1654,3 +1654,8 @@ hr.fc-divider {
     position: absolute;
     right:25px;
 }
+.royalty-report-summarize {
+	position: absolute;
+    right: -100px;
+    line-height: 37px;
+}

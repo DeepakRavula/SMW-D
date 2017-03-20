@@ -22,6 +22,9 @@ use dosamigos\ckeditor\CKEditor;
 
     <div class="form-group">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+		<?php if (!$model->isNewRecord) : ?>
+         <?= Html::a('Cancel', ['index'], ['class' => 'btn']);?>
+		<?php endif; ?> 
     </div>
 
     <?php ActiveForm::end(); ?>

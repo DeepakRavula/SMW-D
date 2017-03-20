@@ -268,11 +268,16 @@ class CourseController extends Controller
     public function actionPrint($id)
     {
         $model = $this->findModel($id);
-        $lessonDataProvider = new ActiveDataProvider([
+       	$lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->where(['courseId' => $model->id])
+				->andWhere([
+					'courseId' => $model->id,
+					'status' => Lesson::STATUS_SCHEDULED
+				])
+				->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
-        ]);
+				'pagination' => false,
+       	]);
 
         $this->layout = '/print';
 

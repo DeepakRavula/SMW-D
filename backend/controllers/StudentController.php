@@ -210,13 +210,11 @@ class StudentController extends Controller
             $enrolmentModel->courseId = current($post['courseId']);
             $enrolmentModel->studentId = $model->id;
             $enrolmentModel->isDeleted = false;
-            $enrolmentModel->isConfirmed = true;
+            $enrolmentModel->isConfirmed = false;
             $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
             $enrolmentModel->save();
-            $enrolmentModel->setPaymentCycle();
-            $invoice = $enrolmentModel->firstPaymentCycle->createProFormaInvoice();
 
-            return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
+            return $this->redirect(['lesson/group-enrolment-review', 'courseId' => $enrolmentModel->courseId, 'enrolmentId' => $enrolmentModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
         }
 
         $groupEnrolments = Enrolment::find()
@@ -224,13 +222,14 @@ class StudentController extends Controller
                 ->joinWith(['course' => function ($query) use ($locationId) {
                     $query->groupProgram($locationId);
                 }])
-                ->where(['enrolment.studentId' => $model->id]);
+                ->where(['enrolment.studentId' => $model->id, 'enrolment.isConfirmed' => true]);
         $groupCourses = Course::find()
                 ->joinWith(['program' => function ($query) {
                     $query->where(['type' => Program::TYPE_GROUP_PROGRAM]);
                 }])
                 ->where(['NOT IN', 'course.id', $groupEnrolments])
-                ->andWhere(['locationId' => $locationId]);
+                ->andWhere(['locationId' => $locationId])
+				->confirmed();
         $groupCourseDataProvider = new ActiveDataProvider([
             'query' => $groupCourses,
         ]);

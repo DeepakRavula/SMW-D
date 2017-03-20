@@ -102,21 +102,20 @@ $this->title = 'Review Lessons';
 	<div class="clearfix"></div>
     <?php
     $hasConflict = false;
-    foreach ($conflicts as $conflictLessons) {
-        foreach ($conflictLessons as $conflictLesson) {
-            if ((!empty($conflictLesson['lessonIds'])) || (!empty($conflictLesson['dates']))) {
-                $hasConflict = true;
-                break;
-            }
-        }
+    foreach ($conflicts as $conflict) {
+		if (!empty($conflict)) {
+			$hasConflict = true;
+			break;
+		}
     }
     ?>
     <?php
     $columns = [
         [
+			'label' => 'Date/Time',
             'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'date',
-            'format' => 'date',
+            'format' => 'datetime',
             'refreshGrid' => true,
             'headerOptions' => ['class' => 'kv-sticky-column'],
             'contentOptions' => ['class' => 'kv-sticky-column'],
@@ -125,7 +124,11 @@ $this->title = 'Review Lessons';
                        'header' => 'Lesson Date',
                        'size' => 'md',
                        'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-                       'widgetClass' => '\yii\jui\DatePicker',
+                       'widgetClass' => '\bootui\datetimepicker\DateTimepicker',
+						'options' => [
+							'format' => 'YYYY-MM-DD hh:mm A',
+							'stepping' => 15,
+						],
                        'formOptions' => ['action' => Url::to(['lesson/update-field'])],
                        'pluginEvents' => [
 						   'editableError' => 'review.onEditableError',
@@ -134,35 +137,6 @@ $this->title = 'Review Lessons';
                    ];
             },
            ],
-           [
-               'class' => 'kartik\grid\EditableColumn',
-               'attribute' => 'time',
-               'refreshGrid' => true,
-               'value' => function ($model, $key, $index, $widget) {
-                   $lessonTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date)->format('H:i:s');
-                   return Yii::$app->formatter->asTime($lessonTime);
-               },
-               'headerOptions' => ['class' => 'kv-sticky-column'],
-               'contentOptions' => ['class' => 'kv-sticky-column'],
-               'editableOptions' => function ($model, $key, $index) {
-                   return [
-                       'header' => 'Lesson From Time',
-                       'size' => 'md',
-                       'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-                       'widgetClass' => 'bootui\datetimepicker\Timepicker',
-                       'options' => [
-							'format' => 'hh:mm A',
-							'stepping' => 15,
-							
-						],
-                       'formOptions' => ['action' => Url::to(['lesson/update-field'])],
-                       'pluginEvents' => [
-						   'editableError' => 'review.onEditableError',
-                           'editableSuccess' => 'review.onEditableGridSuccess',
-                       ],
-                   ];
-               },
-               ],
             [
                'class' => 'kartik\grid\EditableColumn',
                'attribute' => 'duration',
@@ -193,30 +167,13 @@ $this->title = 'Review Lessons';
                 'label' => 'Conflict',
                 'value' => function ($data) use ($conflicts) {
                     if (!empty($conflicts[$data->id])) {
-                        return 'Conflict';
+                        return current($conflicts[$data->id]);
                     }
                 },
-            ],
-            [
-                'class' => 'kartik\grid\ExpandRowColumn',
-                'width' => '50px',
-                'value' => function ($model, $key, $index, $column) {
-                    return GridView::ROW_COLLAPSED;
-                },
-                'detail' => function ($model, $key, $index, $column) use ($conflicts) {
-                    return Yii::$app->controller->renderPartial('_conflict-lesson', ['model' => $model, 'conflicts' => $conflicts[$model->id]]);
-                },
-                'headerOptions' => ['class' => 'kartik-sheet-style'],
-                'expandOneOnly' => true,
             ],
     ]; ?>
     <?= \kartik\grid\GridView::widget([
         'dataProvider' => $lessonDataProvider,
-        'rowOptions' => function ($model, $key, $index, $grid) use ($conflicts) {
-            if (!empty($conflicts[$model->id])) {
-                return ['class' => 'danger'];
-            }
-        },
         'pjax' => true,
             'pjaxSettings' => [
                 'neverTimeout' => true,
@@ -272,7 +229,7 @@ $this->title = 'Review Lessons';
 			<?= Html::a('Cancel', ['student/view', 'id' => $courseModel->enrolment->studentId], ['class' => 'btn']);
             ?>
 		<?php else :?>
-		<?= Html::a('Cancel', ['course/view', 'id' => $courseModel->id], ['class' => 'btn']);
+		<?= Html::a('Cancel', ['course/index'], ['class' => 'btn']);
     ?>
    <?php endif; ?>
     </div>
@@ -309,7 +266,12 @@ $(document).ready(function(){
     }
 	$("#lessonsearch-showallreviewlessons").on("change", function() {
         var showAllReviewLessons = $(this).is(":checked");
-        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?LessonSearch[showAllReviewLessons]=" + (showAllReviewLessons | 0);
+		var vacationId = '<?= $vacationId; ?>'; 
+		var vacationType = '<?= $vacationType; ?>'; 
+		var params = $.param({ 'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0), 
+			'Vacation[id]' : vacationId, 'Vacation[type]' : vacationType 
+		});
+        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
         $.pjax.reload({url:url,container:"#review-lesson-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
 });

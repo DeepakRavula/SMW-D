@@ -6,6 +6,7 @@ use yii\bootstrap\Modal;
 use common\models\ClassroomUnavailability;
 
 $this->title = $model->name;
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
 <div id="classroom-unavailability" class="col-md-12">
 	<h4 class="pull-left m-r-20">Unavailabilities</h4>

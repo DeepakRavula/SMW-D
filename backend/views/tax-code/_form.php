@@ -16,7 +16,7 @@ use common\models\Province;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php echo $form->errorSummary($model); ?>
-	<div class="row">
+	<div class="row p-10">
         <div class="col-xs-4">
 		<?php
             echo $form->field($model, 'tax_type_id')->dropDownList(ArrayHelper::map(
@@ -48,8 +48,11 @@ use common\models\Province;
                 ]); ?>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group col-xs-4">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+		<?php if (!$model->isNewRecord) : ?>
+         <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);?>
+		<?php endif; ?> 
     </div>
 
     <?php ActiveForm::end(); ?>

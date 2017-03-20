@@ -22,6 +22,10 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\TeacherAvailability;
 
+use common\commands\AddToTimelineCommand;
+use common\models\User;
+use common\models\TimelineEvent;
+use common\models\TimelineEventLink;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -236,7 +240,10 @@ class LessonController extends Controller
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
+					$staff = User::findOne(['id'=>Yii::$app->user->id]);
+					$model->staffName = $staff->publicIdentity;
 					$model->save();
+					
 					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 				}
 			}
@@ -290,34 +297,19 @@ class LessonController extends Controller
 				}
 				if (isset($posted['date'])) {
 					if(! empty($posted['date'])) {
-						$lessonTime = (new \DateTime($existingDate))->format('H:i:s');
-						$timebits = explode(':', $lessonTime);
-						$changedDate = new \DateTime($posted['date']);
-						$changedDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-						$model->date = $changedDate->format('Y-m-d H:i:s');
-						$output = Yii::$app->formatter->asDate($model->date);
+						$model->date = (new \DateTime($posted['date']))->format('Y-m-d H:i:s');
+						$output = Yii::$app->formatter->asDateTime($model->date);
 					} else {
 						$model->date = $existingDate;
 						$model->status = Lesson::STATUS_UNSCHEDULED;
 						$privateLessonModel = new PrivateLesson();
 						$privateLessonModel->lessonId = $model->id;
-						$date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+						$date = new \DateTime($model->date);
 						$expiryDate = $date->modify('90 days');
 						$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
 						$privateLessonModel->save();
 						$output = '  ';
 					}
-				}
-				if (!empty($posted['time'])) {
-					$existingDate = (new \DateTime($existingDate))->format('Y-m-d');
-					$existingDate = new \DateTime($existingDate);
-					$changedTime = new \DateTime($posted['time']);
-					$lessonTime = $changedTime->format('H:i:s');
-					$timebits = explode(':', $lessonTime);
-					$existingDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-					$model->date = $existingDate->format('Y-m-d H:i:s');
-					$newTime = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-					$output = Yii::$app->formatter->asTime($newTime);
 				}
 				if (!empty($posted['duration'])) {
 					$model->duration = $posted['duration'];
@@ -339,6 +331,64 @@ class LessonController extends Controller
         }
     }
 
+	public function actionGroupEnrolmentReview($courseId, $enrolmentId)
+	{
+		$model = new Lesson();
+		$enrolment = Enrolment::findOne(['id' => $enrolmentId]);
+        $searchModel = new LessonSearch();
+		$request = Yii::$app->request;
+        $lessonSearchRequest = $request->get('LessonSearch');
+        $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
+        $courseModel = Course::findOne(['id' => $courseId]);
+		$conflicts = [];
+		$conflictedLessonIds = [];
+	
+		$lessons = Lesson::find()
+			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
+			->all();	
+		foreach ($lessons as $lesson) {
+			$lesson->setScenario(Lesson::SCENARIO_GROUP_ENROLMENT_REVIEW);
+			$lesson->studentId = $enrolment->student->id; 
+		}
+		Model::validateMultiple($lessons);
+		foreach ($lessons as $lesson) {
+			if(!empty($lesson->getErrors('date'))) {
+				$conflictedLessonIds[] = $lesson->id;
+			}
+			$conflicts[$lesson->id] = $lesson->getErrors('date');
+		}
+		$query = Lesson::find()
+			->orderBy(['lesson.date' => SORT_ASC]);
+		if(! $showAllReviewLessons) {
+			$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
+		}  else {
+				$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED]);
+		}
+        $lessonDataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+		
+        return $this->render('enrolment/_review', [
+            'courseModel' => $courseModel,
+            'courseId' => $courseId,
+            'lessonDataProvider' => $lessonDataProvider,
+            'conflicts' => $conflicts,
+			'model' => $model,
+            'searchModel' => $searchModel,
+			'enrolment' => $enrolment,
+        ]);	
+	}
+
+	public function actionConfirmGroupEnrolment($enrolmentId)
+	{
+		$enrolment = Enrolment::findOne(['id' => $enrolmentId]);
+		$enrolment->isConfirmed = true;
+		$enrolment->save();
+        $enrolment->setPaymentCycle();
+		$invoice = $enrolment->firstPaymentCycle->createProFormaInvoice();
+			return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
+	}
+	
     public function actionReview($courseId)
     {
 		$model = new Lesson();
@@ -371,11 +421,14 @@ class LessonController extends Controller
 				->andWhere(['>=', 'lesson.date', (new \DateTime($endDate))->format('Y-m-d')])
 				->unInvoicedProForma();
 		} else {
-			$draftLessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
-				->all();
+				$draftLessons = Lesson::find()
+					->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+					->all();
 			foreach ($draftLessons as $draftLesson) {
 				$draftLesson->setScenario('review');
+				if(!empty($vacationId)) {
+					$draftLesson->vacationId = $vacationId;	
+				}
 			}
 			Model::validateMultiple($draftLessons);
 			foreach ($draftLessons as $draftLesson) {
@@ -383,16 +436,15 @@ class LessonController extends Controller
 					$conflictedLessonIds[] = $draftLesson->id;
 				}
 				$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
-
 			}
 			$query = Lesson::find()
 				->orderBy(['lesson.date' => SORT_ASC]);
 			if(! $showAllReviewLessons) {
 				$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
 			}  else {
-				$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+					$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+				}
 			}
-		}
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -428,13 +480,11 @@ class LessonController extends Controller
             $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
         }
         $hasConflict = false;
-        foreach ($conflicts as $conflictLessons) {
-            foreach ($conflictLessons as $conflictLesson) {
-                if ((!empty($conflictLesson['lessonIds'])) || (!empty($conflictLesson['dates']))) {
-                    $hasConflict = true;
-                    break;
-                }
-            }
+        foreach ($conflicts as $conflict) {
+			if (!empty($conflict)) {
+				$hasConflict = true;
+				break;
+			}
         }
 
         return [
@@ -445,12 +495,25 @@ class LessonController extends Controller
     public function actionConfirm($courseId)
     {
         $courseModel = Course::findOne(['id' => $courseId]);
+		$courseModel->updateAttributes([
+			'isConfirmed' => true
+		]);
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
         $request = Yii::$app->request;
         if (!empty($courseModel->enrolment)) {
             $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
+			$dayList = Course::getWeekdaysList();
+			$day = $dayList[$enrolmentModel->course->day];
+			$staff = User::findOne(['id'=>Yii::$app->user->id]);
+            $enrolment = Enrolment::find(['id' => $courseModel->enrolment->id])->asArray()->one();
+			Yii::$app->commandBus->handle(new AddToTimelineCommand([
+				'category' => 'enrolment',
+				'event' => 'insert',
+				'data' => $enrolment, 
+				'message' => $staff->publicIdentity . ' enrolled ' . $enrolmentModel->student->fullName . ' in ' .  $enrolmentModel->course->program->name . ' lessons with ' . $enrolmentModel->course->teacher->publicIdentity . ' on ' . $day . 's at ' . Yii::$app->formatter->asTime($enrolmentModel->course->startDate),
+        	]));
         }
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');
@@ -602,6 +665,27 @@ class LessonController extends Controller
 		if(!$lessonRequest['present']) {
 			$model->status = Lesson::STATUS_MISSED;
 			$model->save();
+			$staff = User::findOne(['id'=>Yii::$app->user->id]);
+            $lesson = Lesson::find(['id' => $model->id])->asArray()->one();
+			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+				'category' => 'lesson',
+				'event' => 'edit',
+				'data' => $lesson, 
+				'message' => $staff->publicIdentity . ' recorded {{' . $model->course->enrolment->student->fullName . '}} as absent from his/her ' . $model->course->program->name . ' {{lesson}}', 
+        	]));
+			
+			$timelineEventLink = new TimelineEventLink();
+			$timelineEventLink->timelineEventId = $timelineEvent->id;
+			$timelineEventLink->index = $model->course->enrolment->student->fullName;
+			$timelineEventLink->baseUrl = Yii::$app->homeUrl;	
+			$timelineEventLink->path = Url::to(['/student/view', 'id' => $model->course->enrolment->student->id]);
+			$timelineEventLink->save();
+			$timelineEventLink->id = null;
+			$timelineEventLink->isNewRecord = true;
+			$timelineEventLink->index = 'lesson';
+			$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $model->id]);
+			$timelineEventLink->save();
+			
 			if(empty($model->invoice)) {
 				$invoice = $model->createInvoice();
 

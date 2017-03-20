@@ -37,6 +37,7 @@ use common\models\PaymentMethod;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use common\models\TeacherRate;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -55,7 +56,7 @@ class UserController extends Controller
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
                'only' => ['edit-teacher-availability', 'add-teacher-availability', 'teacher-availability-events',
-                   'delete-availability', 'assign-classroom'],
+                   'delete-teacher-availability', 'modify-teacher-availability'],
                'formatParam' => '_format',
                'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -314,14 +315,21 @@ class UserController extends Controller
 		if(!empty($lessonSearchModel)) {
 			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
+			$lessonSearch->summariseReport = $lessonSearchModel['summariseReport']; 
 		}
 		$teacherLessons = Lesson::find()
+			->innerJoinWith('enrolment')
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
 			->notDeleted()
-			->between($lessonSearch->fromDate, $lessonSearch->toDate)
-			->orderBy(['date' => SORT_ASC]);
+			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
+			->between($lessonSearch->fromDate, $lessonSearch->toDate);
+			if($lessonSearch->summariseReport) {
+				$teacherLessons->groupBy('DATE(date)');	
+			} else {
+				$teacherLessons->orderBy(['date' => SORT_ASC]);
+			}
 			
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,
@@ -341,6 +349,7 @@ class UserController extends Controller
             }])
             ->groupBy('day')
             ->all();
+
         return $this->render('view', [
             'minTime' => $minTime,
             'maxTime' => $maxTime,
@@ -774,14 +783,21 @@ class UserController extends Controller
 		if(!empty($lessonSearchModel)) {
 			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
+			$lessonSearch->summariseReport = $lessonSearchModel['summariseReport']; 
 		}
-        $teacherLessons = Lesson::find()
+		$teacherLessons = Lesson::find()
+			->innerJoinWith('enrolment')
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
 			->notDraft()
 			->notDeleted()
-			->between($lessonSearch->fromDate, $lessonSearch->toDate)
-			->groupBy(['DATE(date)']);
+			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
+			->between($lessonSearch->fromDate, $lessonSearch->toDate);
+			if($lessonSearch->summariseReport) {
+				$teacherLessons->groupBy('DATE(date)');	
+			} else {
+				$teacherLessons->orderBy(['date' => SORT_ASC]);
+			}
 			
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,
@@ -794,7 +810,8 @@ class UserController extends Controller
 			'model' => $model,
 			'teacherLessonDataProvider' => $teacherLessonDataProvider,
 			'fromDate' => $lessonSearch->fromDate,
-			'toDate' => $lessonSearch->toDate
+			'toDate' => $lessonSearch->toDate,
+			'searchModel' => $lessonSearch
         ]);
     }
 
@@ -896,38 +913,70 @@ class UserController extends Controller
     public function actionDeleteTeacherAvailability($id)
     {
         $availabilityModel = TeacherAvailability::findOne($id);
-        return $availabilityModel->delete();
+        return [
+            'status' => $availabilityModel->delete()
+        ];
     }
 
-    public function actionAddTeacherAvailability($id, $resourceId, $startTime, $endTime)
+    public function actionModifyTeacherAvailability($resourceId, $id, $teacherId)
     {
-        $teacher                    = $this->findModel($id);
-        $model                      = new TeacherAvailability();
-        $model->teacher_location_id = $teacher->userLocation->id;
-        $model->day                 = $resourceId;
-        $model->from_time           = $startTime;
-        $model->to_time             = $endTime;
-        return $model->save();
-    }
+        $teacherModel = User::findOne($teacherId);
+        $teacherAvailabilityModel = TeacherAvailability::findOne($id);
+        if (empty ($teacherAvailabilityModel)) {
+            $teacherAvailabilityModel = new TeacherAvailability();
+            $teacherAvailabilityModel->teacher_location_id = $teacherModel->userLocation->id;
+            $roomModel = new TeacherRoom();
+        } else if (empty ($teacherAvailabilityModel->teacherRoom)) {
+            $roomModel = new TeacherRoom();
+        } else {
+            $roomModel = $teacherAvailabilityModel->teacherRoom;
+        }
+        $fromTime         = new \DateTime($teacherAvailabilityModel->from_time);
+        $toTime           = new \DateTime($teacherAvailabilityModel->to_time);
+        $roomModel->from_time = $fromTime->format('g:i A');
+        $roomModel->to_time   = $toTime->format('g:i A');
+        if (empty($teacherAvailabilityModel->day)) {
+            $teacherAvailabilityModel->day = $resourceId;
+        }
+        $post             = Yii::$app->request->post();
+        $roomModel->setScenario(TeacherRoom::SCENARIO_AVAILABIITY_EDIT);
+        $roomModel->day = $teacherAvailabilityModel->day;
+        $data =  $this->renderAjax('teacher/_form-teacher-availability', [
+            'model' => $teacherModel,
+            'roomModel' => $roomModel,
+            'teacherAvailabilityModel' => $teacherAvailabilityModel,
+        ]);
+        if ($post) {
+            $roomModel->load($post);
+            $fromTime         = new \DateTime($roomModel->from_time);
+            $toTime           = new \DateTime($roomModel->to_time);
+            $teacherAvailabilityModel->from_time = $fromTime->format('H:i:s');
+            $teacherAvailabilityModel->to_time   = $toTime->format('H:i:s');
 
-    public function actionAssignClassroom()
-    {
-        $teacherRoom = new TeacherRoom();
-        $post = Yii::$app->request->post();
-        $teacherRoom->load($post);
-        if ($teacherRoom->validate()) {
-                $teacherRoom->save();
-                $response =[
+            if ($roomModel->validate()) {
+                $teacherAvailabilityModel->save();
+                if (!empty($roomModel->classroomId)) {
+                    $roomModel->teacherAvailabilityId = $teacherAvailabilityModel->id;
+                    $roomModel->save();
+                } else {
+                    TeacherRoom::deleteAll(['teacherAvailabilityId' => $teacherAvailabilityModel->id]);
+                }
+
+                return  [
                     'status' => true,
                 ];
+            } else {
+                $errors = ActiveForm::validate($roomModel);
+                return [
+                    'status' => false,
+                    'errors' => $errors,
+                ];
+            }
         } else {
-            $errors = ActiveForm::validate($teacherRoom);
-            $response = [
-                'status' => false,
-                'errors' => $errors,
+            return [
+                'status' => true,
+                'data' => $data
             ];
         }
-    
-        return $response;
     }
 }

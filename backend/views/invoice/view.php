@@ -67,6 +67,10 @@ Modal::end();
 			Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id],
 				[
 				'class' => 'btn btn-primary pull-right',
+                                'data' => [
+                                    'confirm' => 'Are you sure you want to delete this invoice?',
+                                    'method' => 'post',
+                                ],
 				'id' => 'delete-button',
 			])
 			?>
@@ -83,7 +87,18 @@ Modal::end();
             ])->label(false);
             ?>
 			</div>
-		<?php endif; ?>
+		<?php elseif(!$model->hasMiscItem() && $model->isPaid() && !$model->isCanceled): ?>
+                    <?=
+			Html::a('<i class="fa fa-remove"></i> Revert this invoice', ['revert-invoice', 'id' => $model->id],
+				[
+				'class' => 'btn btn-primary pull-right',
+                                'data' => [
+                                    'confirm' => 'Are you sure you want to revert this invoice?',
+                                ],
+				'id' => 'revert-button',
+			])
+			?>
+                <?php endif; ?>
     <?php ActiveForm::end(); ?>
 </div>
 <?php if(empty($model->lineItem) || $model->lineItem->isMisc()) : ?>

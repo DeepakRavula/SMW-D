@@ -2,48 +2,37 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
+use yii\helpers\Html;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\GroupCourseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 ?>
-<?php
-$this->registerJs("
-    $('.group-course-student-index td').click(function (e) {
-        var id = $(this).closest('tr').data('id');
-        if(e.target == this)
-            location.href = '" .Url::to(['course/'.$model->id.'/student'])."/' +id;
-    });
-
-");
-?>
 <div class="group-course-student-index"> 
-    <?php yii\widgets\Pjax::begin([
-        'timeout' => 6000,
-    ]) ?>
     <?php echo GridView::widget([
         'dataProvider' => $studentDataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'rowOptions' => function ($model, $key, $index, $grid) {
-            return ['data-id' => $model->id];
-        },
         'columns' => [
             [
                 'label' => 'Student Name',
+				'format' => 'raw',
                 'value' => function ($data) {
-                    return !empty($data->fullName) ? $data->fullName : null;
+					$url = Yii::$app->homeUrl . Url::to(['student/view', 'id' => $data->id]); 
+                    return Html::a($data->fullName, $url);
                 },
             ],
             [
                 'label' => 'Customer Name',
+				'format' => 'raw',
                 'value' => function ($data) {
-                    return !empty($data->customer->publicIdentity) ? $data->customer->publicIdentity : null;
+					$url = Yii::$app->homeUrl . Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $data->customer->id]); 
+                    return Html::a($data->customer->publicIdentity, $url);
                 },
             ],
         ],
     ]); ?>
-    <?php \yii\widgets\Pjax::end(); ?>
 
 </div>

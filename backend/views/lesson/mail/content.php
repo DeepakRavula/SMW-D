@@ -2,10 +2,10 @@
 use yii\helpers\Html;
 ?>
 
-Dear <?php echo Html::encode($toName) ?>,<br> 
+Dear Customer,<br> 
   <?= $content; ?>
 <br>
-<table cellspacing="0" cellpadding="3" border="1" style="width:100%">
+<table cellspacing="0" cellpadding="0" border="0">
         <tr>
             <td>Date</td>
             <td><?php echo Html::encode(Yii::$app->formatter->asDateTime($model->date)); ?></td>
@@ -16,7 +16,7 @@ Dear <?php echo Html::encode($toName) ?>,<br>
         </tr>
         <tr>
             <td>Student</td>
-            <td><?= !empty($model->enrolment->student->fullName) ?? null; ?></td>
+            <td><?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null; ?></td>
         </tr>
         <tr>
             <td>Duration</td>

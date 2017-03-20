@@ -2,10 +2,15 @@
 /* @var $this yii\web\View */
 
 use common\models\Location;
+use yii\helpers\Url;
 
 $this->title = 'Royalty';
 ?>
-<?php
+    <div class="col-xs-12 col-md-6 p-10 p-r-0">
+		<?php echo $this->render('_search', ['model' => $searchModel]); ?>
+	</div>
+	<div class="clearfix"></div>
+	<?php
 $total = $payments - ($invoiceTaxTotal + $royaltyPayment);
 $location = Location::findOne(['id' => Yii::$app->session->get('location_id')]);
 $advertisement = !empty($location->advertisement->value) ? $location->advertisement->value : 0;
@@ -21,10 +26,6 @@ $netPrice = round(($total - ($royaltyAmount + $advertisementAmount)), 2);
 }
 </style>
 <div class="col-md-12">
-    <div class="col-xs-12 col-md-6 p-10 p-r-0">
-		<?php echo $this->render('_search', ['model' => $searchModel]); ?>
-	</div>
-	<div class="clearfix"></div>
 	<div>
 		<table cellspacing="0" cellpadding="3" border="0" style="width:40%" class="table-invoice-childtable">
 			<tr>
@@ -52,7 +53,7 @@ $netPrice = round(($total - ($royaltyAmount + $advertisementAmount)), 2);
 				<td class="p-t-10"><?= round($royaltyAmount, 2); ?></td>
 			</tr>
 			<tr>
-				<td class="p-t-10"><strong>Owe to head office</strong></td>
+				<td class="p-t-10"><strong>Owed to Head Office</strong></td>
 				<td><strong><?= $netPrice; ?></strong></td>
 			</tr>
 		</table>

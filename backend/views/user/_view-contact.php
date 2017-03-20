@@ -2,7 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\ListView;
-
+use common\models\User;
+use dosamigos\editable\Editable;
+use yii\helpers\Url;
 ?>
 <div class="row p-10">
 	<div class="col-xs-4">
@@ -29,6 +31,48 @@ use yii\widgets\ListView;
 			<div class="clearfix"></div>
 		</div>
 	</div>
+	<?php if($searchModel->role_name === User::ROLE_TEACHER) : ?>
+	<?php $privateLessonRate = !empty($model->teacherPrivateLessonRate->hourlyRate) ? $model->teacherPrivateLessonRate->hourlyRate : null; 
+	$groupLessonRate = !empty($model->teacherGroupLessonRate->hourlyRate) ? $model->teacherGroupLessonRate->hourlyRate : null;
+	?> 
+	<div class="col-xs-4">
+		<p class="c-title m-0"> Hourly Rate ($)</p>
+		<div class="row-fluid m-t-10 m-b-20">
+			<div class="col-xs-4 p-0 c-title"> Private Lesson</div>
+			<div class="col-xs-4">
+			 <?= Editable::widget( [
+				'name' => 'privateLessonHourlyRate',
+				'value' => $privateLessonRate,
+				'url' => Url::to(['teacher-rate/update', 'id' => $model->id]),
+				'type' => 'text',
+				'mode' => 'pop',
+				'clientOptions' => [
+					'placement' => 'bottom',
+					'showbuttons' => 'bottom',
+				]
+			]);?></div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="row-fluid m-t-10 m-b-20">
+			<div class="col-xs-4 p-0 c-title"> Group Lesson</div>
+			<div class="col-xs-4">
+				<?= Editable::widget( [
+				'name' => 'groupLessonHourlyRate',
+				'value' => $groupLessonRate,
+				'url' => Url::to(['teacher-rate/update', 'id' => $model->id]),
+				'type' => 'text',
+				'mode' => 'pop',
+				'clientOptions' => [
+					'placement' => 'bottom',
+					'showbuttons' => 'bottom',
+				]
+			]);?>
+			</div>
+			<div class="clearfix"></div>
+		</div>	
+			
+	</div>
+	<?php endif; ?>
 	<div class="clearfix"></div>
 	<div class="col-xs-12">
 		<?php echo Html::a('<i class="fa fa-pencil"></i> Edit Contact Information', ['update', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'contact'], ['class' => 'm-R-20']) ?>

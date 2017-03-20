@@ -74,9 +74,13 @@ class EnrolmentController extends Controller
 			$response = Yii::$app->response;
 			$response->format = Response::FORMAT_JSON;
 			if(! empty($post['paymentFrequencyId'])) {
-				$model->paymentFrequencyId = $post['paymentFrequencyId'];
-				$model->save();
-				return ['output' => $model->getPaymentFrequency(), 'message' => ''];
+                            $oldPaymentFrequency = $model->paymentFrequencyId;
+                            $model->paymentFrequencyId = $post['paymentFrequencyId'];
+                            $model->save();
+                            if ((int) $oldPaymentFrequency !== (int) $post['paymentFrequencyId']) {
+                                $model->resetPaymentCycle();
+                            }
+                            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
 			}
 		}
         return $this->render('view', [
@@ -120,10 +124,14 @@ class EnrolmentController extends Controller
 		if (isset($post['hasEditable'])) {
 			$response = Yii::$app->response;
 			$response->format = Response::FORMAT_JSON;
-			if(! empty($post['paymentFrequencyId'])) {
-				$model->paymentFrequencyId = $post['paymentFrequencyId'];
-				$model->save();
-				return ['output' => $model->getPaymentFrequency(), 'message' => ''];
+                        if(! empty($post['paymentFrequencyId'])) {
+                            $oldPaymentFrequency = $model->paymentFrequencyId;
+                            $model->paymentFrequencyId = $post['paymentFrequencyId'];
+                            $model->save();
+                            if ((int) $oldPaymentFrequency !== (int) $post['paymentFrequencyId']) {
+                                $model->resetPaymentCycle();
+                            }
+                            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
 			}
 		}
         $timebits = explode(':', $model->course->fromTime);
@@ -148,7 +156,6 @@ class EnrolmentController extends Controller
 				if(new \DateTime($existingEndDate) < $endDate) {
 					$interval = new \DateInterval('P1D');
 					$period = new \DatePeriod($courseEndDate, $interval, $endDate);
-					$classroom = TeacherRoom::findOne(['teacherId' => $model->course->teacherId, 'day' => $model->course->day]);
 
 					foreach ($period as $day) {
 						$professionalDevelopmentDay = clone $day;
@@ -166,7 +173,6 @@ class EnrolmentController extends Controller
 								'date' => $day->format('Y-m-d H:i:s'),
 								'duration' => $model->course->duration,
 								'isDeleted' => false,
-								'classroomId' => !empty($classroom) ? $classroom->classroomId : null,
 							]);
 							$lesson->save();
 						}
@@ -262,38 +268,27 @@ class EnrolmentController extends Controller
 
     public function actionSendMail($id)
     {
-        $model = $this->findModel($id);
-        $lessonDataProvider = new ActiveDataProvider([
-            'query' => Lesson::find()
-                ->where(['courseId' => $model->course->id])
-                ->orderBy(['lesson.date' => SORT_ASC]),
-            'pagination' => [
-                'pageSize' => 60,
-             ],
-        ]);
-        $subject = 'Schedule for '.$model->student->fullName;
-        if (!empty($model->student->customer->email)) {
-            Yii::$app->mailer->compose('lesson-schedule', [
-                'model' => $model,
-                'toName' => $model->student->customer->publicidentity,
-                'lessonDataProvider' => $lessonDataProvider,
-            ])
-                ->setFrom(\Yii::$app->params['robotEmail'])
-                ->setTo($model->student->customer->email)
-                ->setSubject($subject)
-                ->send();
-
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => ' Mail has been send successfully',
-            ]);
-        } else {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-danger'],
-                'body' => 'The customer doesn\'t have email id',
-            ]);
-        }
-
+		$model      = $this->findModel($id);
+		$enrolmentRequest = Yii::$app->request->post('Enrolment');
+		if($enrolmentRequest) {
+			$model->toEmailAddress = $enrolmentRequest['toEmailAddress'];
+			$model->subject = $enrolmentRequest['subject'];
+			$model->content = $enrolmentRequest['content'];
+			if($model->sendEmail())
+			{
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-success'],
+					'body' => ' Mail has been sent successfully',
+				]);
+			} else {
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-danger'],
+					'body' => 'The customer doesn\'t have email id',
+				]);
+			}
+			return $this->redirect(['view', 'id' => $model->id]);
+		}
+		
         return $this->redirect(['view', 'id' => $model->id]);
     }
 }

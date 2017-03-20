@@ -86,6 +86,12 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return !empty($this->proFormaInvoice);
     }
 
+    public function beforeDelete()
+    {
+        PaymentCycleLesson::deleteAll(['paymentCycleId' => $this->id]);
+        return parent::beforeDelete();
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         $locationId = Yii::$app->session->get('location_id');
@@ -94,6 +100,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $lessons = Lesson::find()
             ->notDeleted()
             ->location($locationId)
+            ->andWhere(['courseId' => $this->enrolment->course->id])
             ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
             ->between($startDate, $endDate)
             ->all();
@@ -108,7 +115,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function createProFormaInvoice()
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = $this->enrolment->student->customer->userLocation->location_id;
         $invoice = new Invoice();
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $locationId;
@@ -118,11 +125,13 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $endDate   = \DateTime::createFromFormat('Y-m-d', $this->endDate);
         $lessons = Lesson::find()
             ->location($locationId)
+            ->unInvoicedProForma()
             ->andWhere(['courseId' => $this->enrolment->courseId])
             ->between($startDate, $endDate)
             ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
             ->all();
         foreach ($lessons as $lesson) {
+            $lesson->studentFullName = $this->enrolment->student->fullName;
             $invoice->addLineItem($lesson);
             $invoice->save();
         }

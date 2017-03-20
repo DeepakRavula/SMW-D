@@ -38,7 +38,7 @@ use common\models\Invoice;
         [
             'label' => 'Student Name',
             'value' => function ($data) {
-                return !empty($data->lineItems[0]->lesson->enrolment->student->fullName) ? $data->lineItems[0]->lesson->enrolment->student->fullName.' ('.$data->lineItems[0]->lesson->enrolment->program->name.')' : null;
+                return !empty($data->lineItems[0]->paymentCycleLesson->lesson->enrolment->student->fullName) ? $data->lineItems[0]->paymentCycleLesson->lesson->enrolment->student->fullName.' ('.$data->lineItems[0]->paymentCycleLesson->lesson->enrolment->program->name.')' : null;
             },
         ],
         [

@@ -4,11 +4,13 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Payment;
-use backend\models\search\RoyaltySearch;
+use backend\models\search\PaymentSearch;
+use backend\models\search\ReportSearch;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
+use yii\data\ActiveDataProvider;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -26,15 +28,26 @@ class ReportController extends Controller {
 		];
 	}
 
+	public function actionPayment()
+    {
+        $searchModel = new PaymentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('payment/index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+	
 	public function actionRoyalty() {
-		$searchModel = new RoyaltySearch();
+		$searchModel = new ReportSearch();
 		$currentDate = new \DateTime();
 		$searchModel->fromDate = $currentDate->format('1-m-Y');
 		$searchModel->toDate = $currentDate->format('t-m-Y');
 		$searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
 		$request = Yii::$app->request;
 		if ($searchModel->load($request->get())) {
-			$royaltyRequest = $request->get('RoyaltySearch');
+			$royaltyRequest = $request->get('ReportSearch');
 			$searchModel->dateRange = $royaltyRequest['dateRange'];
 		}
 		$toDate = $searchModel->toDate;
@@ -70,8 +83,89 @@ class ReportController extends Controller {
 			'searchModel' => $searchModel, 
 			'invoiceTaxTotal' => $invoiceTaxTotal,
 			'payments' => $payments,
-			'royaltyPayment' => $royaltyPayment
+			'royaltyPayment' => $royaltyPayment,
 		]);
 	}
 
+	public function actionTaxCollected() {
+		$searchModel = new ReportSearch();
+		$currentDate = new \DateTime();
+		$searchModel->fromDate = $currentDate->format('1-m-Y');
+		$searchModel->toDate = $currentDate->format('t-m-Y');
+		$searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+		$request = Yii::$app->request;
+		if ($searchModel->load($request->get())) {
+			$royaltyRequest = $request->get('ReportSearch');
+			$searchModel->dateRange = $royaltyRequest['dateRange'];
+			$searchModel->summarizeResults = $royaltyRequest['summarizeResults']; 
+		}
+		$toDate = $searchModel->toDate;
+		if ($toDate > $currentDate) {
+			$toDate = $currentDate;
+		}
+		$locationId = Yii::$app->session->get('location_id');
+		$invoiceTaxes = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
+				$query->andWhere([
+					'location_id' => $locationId,
+					'type' => Invoice::TYPE_INVOICE,
+					'status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT],
+				])	
+				->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+				->notDeleted();
+			}])
+			->andWhere(['>', 'tax_rate', 0]);
+			if($searchModel->summarizeResults) {
+				$invoiceTaxes->groupBy('DATE(invoice.date)');	
+			} else {
+				$invoiceTaxes->orderBy(['invoice.date' => SORT_ASC]);
+			}
+
+		$taxDataProvider = new ActiveDataProvider([
+			'query' => $invoiceTaxes, 
+		]);
+				
+		return $this->render('tax-collected', [
+			'searchModel' => $searchModel, 
+			'taxDataProvider' => $taxDataProvider,
+		]);
+	}
+
+	public function actionRoyaltyFree() {
+		$searchModel = new ReportSearch();
+		$currentDate = new \DateTime();
+		$searchModel->fromDate = $currentDate->format('1-m-Y');
+		$searchModel->toDate = $currentDate->format('t-m-Y');
+		$searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+		$request = Yii::$app->request;
+		if ($searchModel->load($request->get())) {
+			$royaltyRequest = $request->get('ReportSearch');
+			$searchModel->dateRange = $royaltyRequest['dateRange'];
+		}
+		$toDate = $searchModel->toDate;
+		if ($toDate > $currentDate) {
+			$toDate = $currentDate;
+		}
+		$locationId = Yii::$app->session->get('location_id');
+		$royaltyFreeItems = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
+				$query->andWhere([
+					'location_id' => $locationId,
+					'type' => Invoice::TYPE_INVOICE,
+					'status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT],
+				])	
+				->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+				->notDeleted();
+			}])
+			->andWhere(['isRoyalty' => false]);
+
+		$royaltyFreeDataProvider = new ActiveDataProvider([
+			'query' => $royaltyFreeItems, 
+		]);
+				
+		return $this->render('royalty-free-item', [
+			'searchModel' => $searchModel, 
+			'royaltyFreeDataProvider' => $royaltyFreeDataProvider,
+		]);
+	}
 }

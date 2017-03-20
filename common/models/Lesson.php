@@ -5,11 +5,12 @@ namespace common\models;
 use Yii;
 use yii\db\Query;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
-use IntervalTree\IntervalTree;
-use common\components\intervalTree\DateRangeInclusive;
 use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
+use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
+use common\commands\AddToTimelineCommand;
+use yii\helpers\Url;
 use common\components\validators\lesson\conflict\ TeacherAvailabilityValidator;
 
 /**
@@ -39,6 +40,7 @@ class Lesson extends \yii\db\ActiveRecord
     const SCENARIO_CREATE = 'create';
     const SCENARIO_SPLIT = 'split';
 
+    public $studentFullName;
     public $programId;
     public $time;
     public $hours;
@@ -80,17 +82,22 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
-			
-			[['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
-			[['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
-			[['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
+	    ['date', 'validateDate', 'on' => self::SCENARIO_CREATE],
+            [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
+            [['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
+            [['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
 			
             ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
             ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
 			
-            [['date'], 'checkConflict', 'on' => self::SCENARIO_REVIEW],
+            [['date'], TeacherValidator::className(), 'on' => self::SCENARIO_REVIEW],
+            [['date'], StudentValidator::className(), 'on' => self::SCENARIO_REVIEW, 'when' => function($model, $attribute) {
+				return $model->course->program->isPrivate();
+			}],
+            [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_REVIEW],
+            [['date'], IntraEnrolledLessonValidator::className(), 'on' => self::SCENARIO_REVIEW],
 			
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
@@ -98,107 +105,13 @@ class Lesson extends \yii\db\ActiveRecord
 				return $model->course->program->isPrivate();
 			}],
             ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
+            ['date', StudentValidator::className(), 'on' => self::SCENARIO_GROUP_ENROLMENT_REVIEW],
 			
             ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
 
         ];
     }
 
-    public function checkConflict($attribute, $params)
-    {
-        $intervals = $this->dateIntervals();
-        $tree = new IntervalTree($intervals);
-        $conflictedDates = [];
-        $conflictedDatesResults = $tree->search(new \DateTime($this->date));
-        foreach ($conflictedDatesResults as $conflictedDatesResult) {
-            $startDate = $conflictedDatesResult->getStart();
-            $conflictedDates[] = $startDate->format('Y-m-d');
-        }
-        $lessonIntervals = $this->lessonIntervals();
-        $tree = new IntervalTree($lessonIntervals);
-        $conflictedLessonIds = [];
-        $conflictedLessonsResults = $tree->search(new \DateTime($this->date));
-        foreach ($conflictedLessonsResults as $conflictedLessonsResult) {
-            $conflictedLessonIds[] = $conflictedLessonsResult->id;
-        }
-        if ((!empty($conflictedDates)) || (!empty($conflictedLessonIds))) {
-            $this->addError($attribute, [
-               'lessonIds' => $conflictedLessonIds,
-               'dates' => $conflictedDates,
-           ]);
-        }
-    }
-
-    public function dateIntervals()
-    {
-        $holidays = Holiday::find()
-            ->all();
-
-        $intervals = [];
-        foreach ($holidays as $holiday) {
-            $intervals[] = new DateRangeInclusive(new \DateTime($holiday->date), new \DateTime($holiday->date));
-        }
-        
-        return $intervals;
-    }
-
-    public function lessonIntervals()
-    {
-        $locationId = Yii::$app->session->get('location_id');
-        $otherLessons = [];
-        $intervals = [];
-
-        if ((int) $this->course->program->type === (int) Program::TYPE_PRIVATE_PROGRAM) {
-            $studentLessons = self::find()
-				->studentLessons($locationId, $this->course->enrolment->student->id)
-				->all();
-			
-            foreach ($studentLessons as $studentLesson) {
-				if(new \DateTime($studentLesson->date) == new \DateTime($this->date) && (int)$studentLesson->status === Lesson::STATUS_SCHEDULED){
-					continue;
-				}
-                $otherLessons[] = [
-                    'id' => $studentLesson->id,
-                    'date' => $studentLesson->date,
-                    'duration' => $studentLesson->course->duration,
-                ];
-            }
-        }
-        $teacherLessons = self::find()
-            ->teacherLessons($locationId, $this->teacherId)
-            ->all();
-        foreach ($teacherLessons as $teacherLesson) {
-			$oldDate = $this->getOldAttribute('date');
-			$oldTeacherId = $this->getOldAttribute('teacherId'); 
-			if((int)$oldTeacherId == $this->teacherId && $oldDate == new \DateTime($this->date)) {
-				if(new \DateTime($teacherLesson->date) == new \DateTime($this->date) && (int)$teacherLesson->status === Lesson::STATUS_SCHEDULED){
-					continue;
-				}
-			}
-            $otherLessons[] = [
-                'id' => $teacherLesson->id,
-                'date' => $teacherLesson->date,
-                'duration' => $teacherLesson->course->duration,
-            ];
-        }
-        $draftLessons = self::find()
-            ->where(['courseId' => $this->courseId, 'status' => self::STATUS_DRAFTED])
-            ->andWhere(['NOT', ['id' => $this->id]])
-            ->all();
-        foreach ($draftLessons as $draftLesson) {
-            $otherLessons[] = [
-                'id' => $draftLesson->id,
-                'date' => $draftLesson->date,
-                'duration' => $draftLesson->course->duration,
-            ];
-        }
-        foreach ($otherLessons as $otherLesson) {
-            $timebits = explode(':', $otherLesson['duration']);
-            $intervals[] = new DateRangeInclusive(new \DateTime($otherLesson['date']), new \DateTime($otherLesson['date']), new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'), $otherLesson['id']);
-        }
-
-        return $intervals;
-    }
     /**
      * {@inheritdoc}
      */
@@ -215,7 +128,9 @@ class Lesson extends \yii\db\ActiveRecord
             'time' => 'From Time',
             'toTime' => 'To time',
             'colorCode' => 'Color Code',
-			'classroomId' => 'Classroom'
+			'classroomId' => 'Classroom',
+			'summariseReport' => 'Summarize Results',
+			'toEmailAddress' => 'To'
         ];
     }
 
@@ -229,11 +144,23 @@ class Lesson extends \yii\db\ActiveRecord
         return new \common\models\query\LessonQuery(get_called_class());
     }
 
-	public function isScheduled()
+    public function validateDate($attribute)
+    {
+        $date = (new \DateTime($this->date))->format('Y-m-d');
+        if($date < $this->enrolment->firstPaymentCycle->startDate ||
+            $date > $this->enrolment->lastPaymentCycle->endDate) {
+            return $this->addError($attribute, 'Lesson can not be scheduled outside of enrolment. '
+                . 'Please choose date within ' .
+                $this->enrolment->firstPaymentCycle->startDate . '-' .
+                $this->enrolment->lastPaymentCycle->endDate);
+        }
+    }
+
+    public function isScheduled()
 	{
 		return (int) $this->status === self::STATUS_SCHEDULED;
 	}
-	
+
 	public function isUnscheduled()
 	{
 		return (int) $this->status === self::STATUS_UNSCHEDULED;
@@ -268,7 +195,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PrivateLesson::className(), ['lessonId' => 'id']);
     }
-	
+
 	public function getClassroom()
     {
         return $this->hasOne(Classroom::className(), ['id' => 'classroomId']);
@@ -316,13 +243,23 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
+	public function getTeacherRate()
+    {
+		if($this->course->program->isPrivate()) {
+			$rate = !empty($this->teacher->teacherPrivateLessonRate->hourlyRate) ? $this->teacher->teacherPrivateLessonRate->hourlyRate : 0;  
+		} else {
+			$rate = !empty($this->teacher->teacherGroupLessonRate->hourlyRate) ? $this->teacher->teacherGroupLessonRate->hourlyRate : 0; 
+		}
+		return $rate;
+    }
+
 	public function getProFormaLineItem()
     {
         return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])
 			->via('paymentCycleLesson')
             ->andWhere(['item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
     }
-	
+
     public function getStatus()
     {
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
@@ -410,41 +347,92 @@ class Lesson extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
-	public function afterSave($insert, $changedAttributes)
+    public function afterSave($insert, $changedAttributes)
     {
-        if ((int) $this->status !== (int) self::STATUS_DRAFTED) {
+        $lesson = Lesson::find(['id' => $this->id])->asArray()->one();
+        if (!$this->isDraftLesson()) {
             if (!$insert) {
-                if ((isset($changedAttributes['date']) && !empty($this->date)) || isset($changedAttributes['teacherId'])) {                
-					$teacherId = $this->teacherId;
-					if(isset($changedAttributes['date']) && !empty($this->date)) {
-						$fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
-	                    $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-						
-						$this->updateAttributes([
-							'date' => $fromDate->format('Y-m-d H:i:s'),
-							'status' => self::STATUS_CANCELED,
+                if ($this->isRescheduledLesson($changedAttributes)) {
+                    $teacherId = $this->teacherId;
+                    if($this->isRescheduledByDate($changedAttributes)) {
+                        $fromDate = \DateTime::createFromFormat('Y-m-d H:i:s', $changedAttributes['date']);
+                        $toDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+
+                        $this->updateAttributes([
+                            'date' => $fromDate->format('Y-m-d H:i:s'),
+                            'status' => self::STATUS_CANCELED,
+                        ]);
+                        $this->date = $toDate->format('Y-m-d H:i:s');
+                    } else {
+                        $this->updateAttributes([
+                            'status' => self::STATUS_CANCELED,
+                            'teacherId' => $changedAttributes['teacherId']
                     	]);
-					} else {
-						$this->updateAttributes([
-							'status' => self::STATUS_CANCELED,
-							'teacherId' => $changedAttributes['teacherId']
-                    	]);	
-					}
+                        $this->teacherId = $teacherId;
+                    }
                     $originalLessonId = $this->id;
                     $this->id = null;
                     $this->isNewRecord = true;
-					if(isset($changedAttributes['date']) && !empty($this->date)) {
-                    	$this->date = $toDate->format('Y-m-d H:i:s');
-					}
-					if(isset($changedAttributes['teacherId'])) {
-                    	$this->teacherId = $teacherId;
-					}
                     $this->status = self::STATUS_SCHEDULED;
                     $this->save();
+                    if($this->isRescheduledByTeacher($changedAttributes)) {
+                    	$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+                            'category' => 'lesson',
+                            'event' => 'edit',
+                            'data' => $lesson,
+                            'message' => $this->staffName . ' assigned {{' . $this->teacher->publicIdentity . '}} to teach {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' {{lesson}}',
+                        ]));
+                        $timelineEventLink = new TimelineEventLink();
+                        $timelineEventLink->timelineEventId = $timelineEvent->id;
+                        $timelineEventLink->index = $this->teacher->publicIdentity;
+                        $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+                        $timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $this->teacher->id]);
+                        $timelineEventLink->save();
+
+                        $timelineEventLink->id = null;
+                        $timelineEventLink->isNewRecord = true;
+                        $timelineEventLink->index = $this->course->enrolment->student->fullName;
+                        $timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
+                        $timelineEventLink->save();
+
+                        $timelineEventLink->id = null;
+                        $timelineEventLink->isNewRecord = true;
+                        $timelineEventLink->index = 'lesson';
+                        $timelineEventLink->path = Url::to(['/lesson/view', 'id' => $this->id]);
+                        $timelineEventLink->save();
+                    }
+                    if($this->isRescheduledByDate($changedAttributes)) {
+                    	$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+                            'category' => 'lesson',
+                            'event' => 'edit',
+                            'data' => $lesson,
+                            'message' => $this->staffName . ' moved {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' lesson to ' . Yii::$app->formatter->asTime($this->date),
+                        ]));
+                        $timelineEventLink = new TimelineEventLink();
+                        $timelineEventLink->timelineEventId = $timelineEvent->id;
+                        $timelineEventLink->index = $this->course->enrolment->student->fullName;
+                        $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+                        $timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
+                        $timelineEventLink->save();
+                    }
                     $lessonRescheduleModel = new LessonReschedule();
                     $lessonRescheduleModel->lessonId = $originalLessonId;
                     $lessonRescheduleModel->rescheduledLessonId = $this->id;
                     $lessonRescheduleModel->save();
+                }
+                if($this->isRescheduledByClassroom($changedAttributes)) {
+                    $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+                        'category' => 'lesson',
+                        'event' => 'edit',
+                        'data' => $lesson,
+                        'message' => $this->staffName . ' moved {{' . $this->course->enrolment->student->fullName . '}}\'s ' . $this->course->program->name . ' lesson to ' . $this->classroom->name,
+                    ]));
+                    $timelineEventLink = new TimelineEventLink();
+                    $timelineEventLink->timelineEventId = $timelineEvent->id;
+                    $timelineEventLink->index = $this->course->enrolment->student->fullName;
+                    $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+                    $timelineEventLink->path = Url::to(['/student/view', 'id' => $this->course->enrolment->student->id]);
+                    $timelineEventLink->save();
                 }
             }
 
@@ -495,13 +483,44 @@ class Lesson extends \yii\db\ActiveRecord
         return $rootLessonId !== $this->id;
     }
 
+    public function isRescheduledByDate($changedAttributes)
+    {
+        return isset($changedAttributes['date']) &&
+            !empty($this->date) && new \DateTime($changedAttributes['date'])
+                !== new \DateTime($this->date);
+    }
+
+	public function isRescheduledByClassroom($changedAttributes)
+    {
+        return isset($changedAttributes['classroomId']) &&
+            !empty($this->classroomId) && (int)$changedAttributes['classroomId']
+                !== (int)$this->classroomId;
+    }
+
+    public function isRescheduledByTeacher($changedAttributes)
+    {
+        return isset($changedAttributes['teacherId']) &&
+            (int)$changedAttributes['teacherId'] !== (int)$this->teacherId;
+    }
+
+    public function isDraftLesson()
+    {
+        return (int) $this->status === (int) self::STATUS_DRAFTED;
+    }
+
+    public function isRescheduledLesson($changedAttributes)
+    {
+        return $this->isRescheduledByDate($changedAttributes) ||
+            $this->isRescheduledByTeacher($changedAttributes);
+    }
+
 	public function getDuration()
     {
         $duration		 = \DateTime::createFromFormat('H:i:s', $this->duration);
 		$hours			 = $duration->format('H');
 		$minutes		 = $duration->format('i');
 		$lessonDuration	 = $hours + ($minutes / 60);
-		
+
 		return $lessonDuration;
     }
 
@@ -510,7 +529,7 @@ class Lesson extends \yii\db\ActiveRecord
         $courseCount  = Lesson::find()
 			->andWhere(['courseId' => $this->courseId])
 			->count('id');
-		
+
 		return $courseCount;
     }
 
@@ -559,21 +578,25 @@ class Lesson extends \yii\db\ActiveRecord
 
 	public function sendEmail()
     {
-        $subject                      = $this->subject;
-		return Yii::$app->mailer->compose('lesson-reschedule',
-			[
-				'toName' => $this->enrolment->student->customer->publicIdentity,
-				'content' => $this->content,
-			])
-			->setFrom(\Yii::$app->params['robotEmail'])
-			->setTo($this->toEmailAddress)
-			->setSubject($subject)
-			->send();
+		if(!empty($this->toEmailAddress)) {
+			$content = [];
+			foreach($this->toEmailAddress as $email) {
+				$subject                      = $this->subject;
+				$content[] = Yii::$app->mailer->compose('lesson-reschedule', [
+                	'content' => $this->content,
+            	])
+				->setFrom(\Yii::$app->params['robotEmail'])
+				->setReplyTo($this->course->location->email)
+				->setTo($email)
+				->setSubject($subject);
+			}
+			return Yii::$app->mailer->sendMultiple($content);
+		}
 	}
 
     public function createInvoice()
     {
-        $location_id = Yii::$app->session->get('location_id');
+        $location_id = $this->enrolment->student->customer->userLocation->location_id;
         $invoice = new Invoice();
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
@@ -582,7 +605,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addLineItem($this);
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
-            $netPrice = yii::$app->formatter->asDecimal($this->proFormaLineItem->netPrice, 2);
+            $netPrice = $this->proFormaLineItem->netPrice;
             if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
                 $invoice->addPayment($this->proFormaInvoice);
             }

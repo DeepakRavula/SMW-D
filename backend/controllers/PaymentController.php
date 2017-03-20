@@ -15,6 +15,7 @@ use yii\widgets\ActiveForm;
 use yii\web\Response;
 use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
+use common\models\User;
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
@@ -168,7 +169,7 @@ class PaymentController extends Controller
         
         $this->layout = '/print';
 
-        return $this->render('_print', [
+        return $this->render('/report/payment/_print', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
         ]);
@@ -180,10 +181,13 @@ class PaymentController extends Controller
         $db = \Yii::$app->db;
         $transaction = $db->beginTransaction();
         $request = Yii::$app->request;
+		$staff = User::findOne(['id'=>Yii::$app->user->id]);
         if ($paymentModel->load($request->post())) {
             $paymentModel->invoiceId = $id;
+			$paymentModel->staffName = $staff->publicIdentity; 
             $paymentModel->save();
             $transaction->commit();
+			
             Yii::$app->session->setFlash('alert',
                 [
                 'options' => ['class' => 'alert-success'],
@@ -200,11 +204,13 @@ class PaymentController extends Controller
         $paymentModel = new Payment();
         $paymentModel->setScenario('apply-credit');
         $request = Yii::$app->request;
+		$staff = User::findOne(['id'=>Yii::$app->user->id]);
         if ($paymentModel->load($request->post())) {
             $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
             $paymentModel->reference = $paymentModel->sourceId;
             $paymentModel->invoiceId = $model->id;
             if ($paymentModel->validate()) {
+				$paymentModel->staffName = $staff->publicIdentity; 
                 $paymentModel->save();
 
                 $creditPaymentId = $paymentModel->id;

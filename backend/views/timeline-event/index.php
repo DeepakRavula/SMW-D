@@ -1,57 +1,44 @@
 <?php
-/**
- * Eugine Terentev <eugine@terentev.net>.
- *
- * @var \yii\web\View
- * @var $model        \common\models\TimelineEvent
- * @var $dataProvider \yii\data\ActiveDataProvider
- */
-$this->title = Yii::t('backend', 'Application timeline');
-$icons = [
-    'user' => '<i class="fa fa-user bg-blue"></i>',
-];
+
+use yii\grid\GridView;
+use common\models\TimelineEventLink;
+use yii\helpers\Html;
+
+$this->title = Yii::t('backend', 'Timeline');
 ?>
-<?php \yii\widgets\Pjax::begin() ?>
-<div class="row">
-    <div class="col-md-12">
-        <?php if ($dataProvider->count > 0): ?>
-            <ul class="timeline">
-                <?php foreach ($dataProvider->getModels() as $model): ?>
-                    <?php if (!isset($date) || $date != Yii::$app->formatter->asDate($model->created_at)): ?>
-                        <!-- timeline time label -->
-                        <li class="time-label">
-                            <span class="bg-blue">
-                                <?php echo Yii::$app->formatter->asDate($model->created_at) ?>
-                            </span>
-                        </li>
-                        <?php $date = Yii::$app->formatter->asDate($model->created_at) ?>
-                    <?php endif; ?>
-                    <li>
-                        <?php
-                            try {
-                                $viewFile = sprintf('%s/%s', $model->category, $model->event);
-                                echo $this->render($viewFile, ['model' => $model]);
-                            } catch (\yii\base\InvalidParamException $e) {
-                                echo $this->render('_item', ['model' => $model]);
-                            }
-                        ?>
-                    </li>
-                <?php endforeach; ?>
-                <li>
-                    <i class="fa fa-clock-o">
-                    </i>
-                </li>
-            </ul>
-        <?php else: ?>
-            <?php echo Yii::t('backend', 'No events found') ?>
-        <?php endif; ?>
-    </div>
-    <div class="col-md-12 text-center">
-        <?php echo \yii\widgets\LinkPager::widget([
-            'pagination' => $dataProvider->pagination,
-            'options' => ['class' => 'pagination'],
-        ]) ?>
-    </div>
-</div>
-<?php \yii\widgets\Pjax::end() ?>
+<?php echo $this->render('_search', ['model' => $searchModel]); ?>
+<?php $columns = [
+		[
+			'label' => 'Date',
+			'value' => function ($data) {
+				return Yii::$app->formatter->asDateTime($data->created_at);
+			},
+		],
+		[
+			'label' => 'Message',
+			'format' => 'raw',
+			'value' => function ($data) {
+				$message = $data->message; 
+				$regex = '/{{([^}]*)}}/';
+
+				$replace = preg_replace_callback($regex, function($match)
+				{
+					$index = $match[1];
+					$timelineEventLink = TimelineEventLink::findOne(['index' => $index]);
+					$url = $timelineEventLink->baseUrl . $timelineEventLink->path; 
+					$data[$index] = Html::a($index, $url);//'<a href=' . $url . '>' . $index . '</a>'; 
+					return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
+				}, $message);
+
+				return $replace;
+			},
+		],
+	];
+ ?>   
+    <?php echo GridView::widget([
+        'dataProvider' => $dataProvider,
+        'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'columns' => $columns,
+    ]); ?>
 

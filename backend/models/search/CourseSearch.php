@@ -46,7 +46,8 @@ class CourseSearch extends Course
     {
         $locationId = Yii::$app->session->get('location_id');
         $query = Course::find()
-                ->groupProgram($locationId);
+                ->groupProgram($locationId)
+				->confirmed();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -76,6 +76,11 @@ class Student extends \yii\db\ActiveRecord
         return $this->hasOne(UserProfile::className(), ['user_id' => 'customer_id']);
     }
 
+	public function getStudentCsv()
+    {
+        return $this->hasOne(StudentCsv::className(), ['studentId' => 'id']);
+    }
+	
     public function getEnrolment()
     {
         return $this->hasMany(Enrolment::className(), ['studentId' => 'id']);

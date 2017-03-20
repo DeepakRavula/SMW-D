@@ -17,6 +17,9 @@ class Enrolment extends \yii\db\ActiveRecord
 {
     public $studentIds;
 	public $endDate;
+	public $toEmailAddress;
+	public $subject;
+	public $content;
 
 	const EDIT_RENEWAL = 'renewal';
 	const EDIT_LEAVE = 'leave';
@@ -65,6 +68,7 @@ class Enrolment extends \yii\db\ActiveRecord
             'studentIds' => 'Enrolled Student Name',
             'isDeleted' => 'Is Deleted',
             'paymentFrequencyId' => 'Payment Frequency',
+			'toEmailAddress' => 'To'
         ];
     }
 
@@ -100,6 +104,12 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
     }
 
+    public function getPaymentCycles()
+    {
+        return $this->hasMany(PaymentCycle::className(), ['enrolmentId' => 'id'])
+            ->orderBy(['payment_cycle.startDate' => SORT_ASC]);
+    }
+
 	public function getPaymentFrequencyDiscount()
     {
         return $this->hasOne(PaymentFrequencyDiscount::className(), ['paymentFrequencyId' => 'paymentFrequency']);
@@ -131,6 +141,35 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
                 ->orderBy(['startDate' => SORT_ASC]);
+    }
+
+    public function getFirstUnInvoicedProFormaPaymentCycle()
+    {
+        foreach ($this->paymentCycles as $paymentCycle) {
+            if (!$paymentCycle->hasProFormaInvoice()) {
+                return $paymentCycle;
+            }
+        }
+
+        return null;
+    }
+
+    public function getUnInvoicedProFormaPaymentCycles()
+    {
+        $models = [];
+        foreach ($this->paymentCycles as $paymentCycle) {
+            if (!$paymentCycle->hasProFormaInvoice()) {
+                $models[] = $paymentCycle;
+            }
+        }
+
+        return $models;
+    }
+
+    public function getlastPaymentCycle()
+    {
+        return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
+                ->orderBy(['endDate' => SORT_DESC]);
     }
 
     public function isMonthlyPaymentFrequency()
@@ -206,6 +245,52 @@ class Enrolment extends \yii\db\ActiveRecord
 		return $paymentFrequency;
 	}
 
+    public function deleteUnInvoicedProformaPaymentCycles()
+    {
+        foreach ($this->unInvoicedProFormaPaymentCycles as $model) {
+            $model->delete();
+        }
+    }
+
+    public function resetPaymentCycle()
+    {
+        if (!empty($this->firstUnInvoicedProFormaPaymentCycle)) {
+            $startDate = \DateTime::createFromFormat('Y-m-d',
+                $this->firstUnInvoicedProFormaPaymentCycle->startDate);
+            $enrolmentLastPaymentCycleEndDate = \DateTime::createFromFormat('Y-m-d',
+                $this->lastPaymentCycle->endDate);
+            $interval = $startDate->diff($enrolmentLastPaymentCycleEndDate);
+            $this->deleteUnInvoicedProformaPaymentCycles();
+            for ($i = 0; $i < $interval->format('%m') / $this->paymentsFrequency->frequencyLength; $i++) {
+                if ($i !== 0) {
+                    $startDate     = $endDate->modify('First day of next month');
+                }
+                $paymentCycle              = new PaymentCycle();
+                $paymentCycle->enrolmentId = $this->id;
+                $paymentCycle->startDate   = $startDate->format('Y-m-d');
+                switch ($this->paymentFrequencyId) {
+                    case PaymentFrequency::LENGTH_FULL:
+                        $endDate = $startDate->modify('+1 year, -1 day');
+                        break;
+                    case PaymentFrequency::LENGTH_HALFYEARLY:
+                        $endDate = $startDate->modify('+6 month, -1 day');
+                        break;
+                    case PaymentFrequency::LENGTH_QUARTERLY:
+                        $endDate = $startDate->modify('+3 month, -1 day');
+                        break;
+                    case PaymentFrequency::LENGTH_MONTHLY:
+                        $endDate = $startDate->modify('+1 month, -1 day');
+                        break;
+                }
+
+                $paymentCycle->id          = null;
+                $paymentCycle->isNewRecord = true;
+                $paymentCycle->endDate     = $endDate->format('Y-m-d');
+                $paymentCycle->save();
+            }
+        }
+    }
+
     public function setPaymentCycle()
     {
         $enrolmentStartDate      = \DateTime::createFromFormat('Y-m-d H:i:s', $this->firstLesson->date);
@@ -238,4 +323,22 @@ class Enrolment extends \yii\db\ActiveRecord
             $paymentCycle->save();
         }
     }
+
+	public function sendEmail()
+    {
+		if(!empty($this->toEmailAddress)) {
+			$content = [];
+			foreach($this->toEmailAddress as $email) {
+				$subject                      = $this->subject;
+				$content[] = Yii::$app->mailer->compose('lesson-schedule', [
+                	'content' => $this->content,
+            	])
+				->setFrom(\Yii::$app->params['robotEmail'])
+				->setReplyTo($this->course->location->email)
+				->setTo($email)
+				->setSubject($subject);
+			}
+			return Yii::$app->mailer->sendMultiple($content);
+		}
+	}
 }

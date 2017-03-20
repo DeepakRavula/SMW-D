@@ -14,7 +14,7 @@ class PaymentSearch extends Payment
 {
     public $fromDate;
     public $toDate;
-    public $groupByMethod;
+    public $groupByMethod = false;
     public $query;
     /**
      * {@inheritdoc}
@@ -44,14 +44,16 @@ class PaymentSearch extends Payment
     {
         $locationId          = Yii::$app->session->get('location_id');
         $query               = Payment::find()
-            ->select(["DATE(payment.date) as paymentDate, payment.date"])
             ->location($locationId);
         $dataProvider        = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
         ]);
-        $query->groupBy('paymentDate');
-
+		
+		$query->orderBy([
+			'DATE(payment.date)' => SORT_DESC,
+			'payment_method_id' => SORT_ASC
+			]);
         if (!($this->load($params) && $this->validate())) {
             $this->fromDate      = new \DateTime();
             $this->toDate        = new \DateTime();
@@ -59,6 +61,9 @@ class PaymentSearch extends Payment
                 $this->toDate->format('Y-m-d')]);
             return $dataProvider;
         }
+		if($this->groupByMethod) {
+			$query->groupBy('DATE(payment.date), payment_method_id');
+		} 
         $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
         $this->toDate   = \DateTime::createFromFormat('d-m-Y', $this->toDate);
         $query->andWhere(['between', 'DATE(payment.date)', $this->fromDate->format('Y-m-d'),

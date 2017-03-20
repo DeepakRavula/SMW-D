@@ -89,7 +89,9 @@ $bundle = BackendAsset::register($this);
                             <a href="<?php echo Url::to(['timeline-event/index']) ?>">
                                 <i class="fa fa-bell"></i>
                                 <span class="label label-success">
-                                    <?php echo TimelineEvent::find()->today()->count() ?>
+                                    <?php echo TimelineEvent::find()
+										->andWhere(['locationId' => Yii::$app->session->get('location_id')])
+										->today()->count() ?>
                                 </span>
                             </a>
                         </li>
@@ -284,9 +286,9 @@ $bundle = BackendAsset::register($this);
 								[
 									'label'=>Yii::t('backend', 'Payments'),
 									'icon'=>'<i class="fa fa-dollar"></i>',
-									'url'=>['payment/index'],    
+									'url'=>['report/payment'],    
 									'visible'=>Yii::$app->user->can('owner'),
-									'active'=>(Yii::$app->controller->id === 'payment')? true : false,
+									'active'=>(Yii::$app->controller->action->id === 'payment')? true : false,
                         		],
 								[
 									'label'=>Yii::t('backend', 'Royalty'),
@@ -294,6 +296,20 @@ $bundle = BackendAsset::register($this);
 									'url'=>['report/royalty'],    
 									'visible'=>Yii::$app->user->can('owner'),
 									'active'=>(Yii::$app->controller->action->id === 'royalty')? true : false,
+                        		],
+								[
+									'label'=>Yii::t('backend', 'Tax Collected'),
+									'icon'=>'<i class="fa fa-cny"></i>',
+									'url'=>['report/tax-collected'],    
+									'visible'=>Yii::$app->user->can('owner'),
+									'active'=>(Yii::$app->controller->action->id === 'tax-collected')? true : false,
+                        		],
+								[
+									'label'=>Yii::t('backend', 'Royalty Free Items'),
+									'icon'=>'<i class="fa fa-cny"></i>',
+									'url'=>['report/royalty-free'],    
+									'visible'=>Yii::$app->user->can('owner'),
+									'active'=>(Yii::$app->controller->action->id === 'royalty-free')? true : false,
                         		],
 							]
 						],
@@ -308,27 +324,7 @@ $bundle = BackendAsset::register($this);
                             'label' => Yii::t('backend', 'System'),
                             'options' => ['class' => 'header'],
                         ],
-                        [
-                            'label' => Yii::t('backend', 'Access Control'),
-                            'url' => '#',
-                            'icon' => '<i class="fa fa-edit"></i>',
-                            'visible' => Yii::$app->user->can('administrator'),
-                            'options' => ['class' => 'treeview'],
-                            'items' => [
-                                ['label' => Yii::t('backend', 'Roles'), 'url' => ['admin/role'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                                ['label' => Yii::t('backend', 'Permissions'), 'url' => ['admin/permission'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                                ['label' => Yii::t('backend', 'Assignments'), 'url' => ['admin/assignment'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                                ['label' => Yii::t('backend', 'Routes'), 'url' => ['admin/route'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                                ['label' => Yii::t('backend', 'Rules'), 'url' => ['admin/rule'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                            ],
-                        ],
-                        [
-                            'label' => Yii::t('backend', 'Timeline'),
-                            'icon' => '<i class="fa fa-bar-chart-o"></i>',
-                            'url' => ['timeline-event/index'],
-                            'badge' => TimelineEvent::find()->today()->count(),
-                            'badgeBgClass' => 'label-success',
-                        ],
+                   
                         [
                             'label' => Yii::t('backend', 'Setup'),
                             'url' => '#',
@@ -435,6 +431,27 @@ $bundle = BackendAsset::register($this);
                                     'visible' => Yii::$app->user->can('administrator'),
                                 ],
                             ],
+                        ],
+						     [
+                            'label' => Yii::t('backend', 'Access Control'),
+                            'url' => '#',
+                            'icon' => '<i class="fa fa-edit"></i>',
+                            'visible' => Yii::$app->user->can('administrator'),
+                            'options' => ['class' => 'treeview'],
+                            'items' => [
+                                ['label' => Yii::t('backend', 'Roles'), 'url' => ['admin/role'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
+                                ['label' => Yii::t('backend', 'Permissions'), 'url' => ['admin/permission'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
+                                ['label' => Yii::t('backend', 'Assignments'), 'url' => ['admin/assignment'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
+                                ['label' => Yii::t('backend', 'Routes'), 'url' => ['admin/route'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
+                                ['label' => Yii::t('backend', 'Rules'), 'url' => ['admin/rule'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
+                            ],
+                        ],
+                        [
+                            'label' => Yii::t('backend', 'Timeline'),
+                            'icon' => '<i class="fa fa-bar-chart-o"></i>',
+                            'url' => ['timeline-event/index'],
+                            'badge' => TimelineEvent::find()->today()->count(),
+                            'badgeBgClass' => 'label-success',
                         ],
                     ],
                 ]) ?>

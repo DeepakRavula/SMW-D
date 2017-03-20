@@ -69,6 +69,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Lesson::className(), ['id' => 'item_id']);
     }
+	
+	public function getPaymentCycleLesson()
+    {
+        return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'item_id']);
+    }
 
     public function getItemType()
     {
@@ -91,6 +96,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
                 ->where(['invoice.type' => Invoice::TYPE_INVOICE]);
     }
+
 
     public function getIsRoyaltyExempted()
     {
@@ -213,8 +219,38 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
     }
 
-    public function getNetPrice()
+	public function getNetPrice()
     {
-        return $this->amount - Yii::$app->formatter->asDecimal($this->discountValue, 2);
+        return $this->amount - $this->discountValue;
+    }
+	
+	public function getTaxLineItemTotal($date)
+    {
+		$locationId = $this->invoice->location_id;
+		$taxTotal = self::find()
+        	->taxRate($date, $locationId)
+            ->sum('tax_rate');
+
+		return $taxTotal;
+    }
+
+	public function getTaxLineItemAmount($date)
+    {
+		$locationId = $this->invoice->location_id;
+		$amount = self::find()
+        	->taxRate($date, $locationId)
+            ->sum('amount');
+
+		return $amount;
+    }
+
+	public function getTotal($date)
+    {
+		$locationId = $this->invoice->location_id;
+		$total = self::find()
+        	->taxRate($date, $locationId)
+            ->sum('amount+tax_rate');
+
+		return $total;
     }
 }

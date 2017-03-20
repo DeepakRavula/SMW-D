@@ -2,15 +2,10 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
-use common\models\Course;
-use yii\bootstrap\ActiveForm;
-use common\models\Lesson;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Lessons';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="grid-row-open p-10">

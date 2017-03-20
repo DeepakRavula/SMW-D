@@ -58,9 +58,10 @@ class Course extends \yii\db\ActiveRecord
                 return (int) $model->program->type === Program::TYPE_GROUP_PROGRAM;
             },
             ],
-			[['locationId', 'rescheduleBeginDate'], 'safe'],
+			[['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
+            ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['startDate'], 'checkStartDate', 'on' => self::SCENARIO_GROUP_COURSE],
 			[['endDate'], 'checkEndDate', 'on' => self::SCENARIO_GROUP_COURSE],
@@ -102,6 +103,15 @@ class Course extends \yii\db\ActiveRecord
         }
     }
 
+	public function checkDate($attribute, $params)
+	{
+		$oldEndDate = (new \DateTime($this->getOldAttribute('endDate')))->format('d-m-Y');
+		$endDate = (new \DateTime($this->endDate))->format('d-m-Y');
+		if ($endDate > $oldEndDate) {
+			return $this->addError($attribute, 'End date must be less than course end date');
+		}
+	}
+	
 	public function checkTime($attribute, $params)
     {
         $teacherAvailabilities = TeacherAvailability::find()
@@ -218,6 +228,11 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
     }
 
+	public function getLocation()
+    {
+        return $this->hasOne(Location::className(), ['id' => 'locationId']);
+    }
+
     public function getLessons()
     {
         return $this->hasMany(Lesson::className(), ['courseId' => 'id']);
@@ -247,6 +262,7 @@ class Course extends \yii\db\ActiveRecord
         $fromTime = \DateTime::createFromFormat('h:i A', $this->fromTime);
         $this->fromTime = $fromTime->format('H:i:s');
         $timebits = explode(':', $this->fromTime);
+		$this->isConfirmed = false;
         if ((int) $this->program->type === Program::TYPE_GROUP_PROGRAM) {
             $startDate = new \DateTime($this->startDate);
             $startDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));

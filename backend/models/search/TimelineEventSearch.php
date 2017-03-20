@@ -3,6 +3,7 @@
 namespace backend\models\search;
 
 use common\models\TimelineEvent;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -11,13 +12,33 @@ use yii\data\ActiveDataProvider;
  */
 class TimelineEventSearch extends TimelineEvent
 {
+	const CATEGORY_USER = 'user';
+	const CATEGORY_LESSON = 'lesson';
+	const CATEGORY_PAYMENT = 'payment';
+	const CATEGORY_ENROLMENT = 'enrolment';
+
+	private $fromDate;
+    private $toDate;
+
+
+	public function init()
+    {
+        $fromDate = new \DateTime('today');
+        $toDate   = clone $fromDate;
+        $toDate->modify('tomorrow');
+        $toDate->modify('1 second ago');
+		$this->fromDate = $fromDate->format('d-m-Y');
+		$this->toDate = $toDate->format('d-m-Y');
+		
+        return parent::init();
+    }
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['application', 'category', 'event', 'created_at'], 'safe'],
+            [['dateRange','application', 'category', 'event', 'created_at', 'createdUserId'], 'safe'],
         ];
     }
 
@@ -39,25 +60,56 @@ class TimelineEventSearch extends TimelineEvent
      */
     public function search($params)
     {
-        $query = TimelineEvent::find();
+		$locationId = Yii::$app->session->get('location_id');
+        $query = TimelineEvent::find()
+			->location($locationId);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+		$query->andWhere(['between', 'DATE(created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'created_at' => $this->created_at,
-        ]);
-
-        $query->andFilterWhere(['like', 'application', $this->application]);
-        $query->andFilterWhere(['like', 'category', $this->category]);
-        $query->andFilterWhere(['like', 'event', $this->event]);
-
+		$query->where(['between', 'DATE(created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
+		
+		$query->location($locationId);
+		
+		if ($this->category === self::CATEGORY_USER) {
+            $query->user();
+        } elseif ($this->category === self::CATEGORY_ENROLMENT) {
+            $query->enrolment();
+        } elseif ($this->category === self::CATEGORY_LESSON) {
+            $query->lesson();
+        } elseif ($this->category === self::CATEGORY_PAYMENT) {
+            $query->payment();
+        }
+		
+		$query->andFilterWhere(['createdUserId' => $this->createdUserId]);
+		
         return $dataProvider;
+    }
+	public static function categories()
+    {
+        return [
+           	'all' => 'All',
+            self::CATEGORY_LESSON => 'Lesson',
+			self::CATEGORY_PAYMENT => 'Payment',
+			self::CATEGORY_ENROLMENT => 'Enrolment',
+			self::CATEGORY_USER => 'User'
+        ];
+    }
+	
+	public function setDateRange($dateRange)
+    {
+        list($fromDate, $toDate) = explode(" - ", $dateRange);
+        $this->fromDate = $fromDate;
+        $this->toDate   = $toDate;
+    }
+
+    public function getDateRange()
+    {
+        return $this->fromDate . ' - ' . $this->toDate;
     }
 }

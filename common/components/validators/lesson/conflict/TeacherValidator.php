@@ -19,6 +19,9 @@ class TeacherValidator extends Validator
             ->teacherLessons($locationId, $model->teacherId)
             ->all();
         foreach ($teacherLessons as $teacherLesson) {
+			if(!empty($model->vacationId) && new \DateTime($teacherLesson->date) == new \DateTime($model->date) && $teacherLesson->isScheduled()) {
+				continue;
+			}
             $otherLessons[] = [
                 'id' => $teacherLesson->id,
                 'date' => $teacherLesson->date,

@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use common\commands\AddToTimelineCommand;
 use common\models\query\UserQuery;
 use Yii;
 use yii\behaviors\AttributeBehavior;
@@ -51,6 +50,10 @@ class User extends ActiveRecord implements IdentityInterface
 	public $dateRange;	
 	public $invoiceStatus;
 	public $studentId;
+	public $privateLessonHourlyRate;
+	public $groupLessonHourlyRate;
+	
+	
     /**
      * {@inheritdoc}
      */
@@ -154,6 +157,18 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);
     }
 
+	public function getTeacherPrivateLessonRate()
+    {
+        return $this->hasOne(TeacherRate::className(), ['teacherId' => 'id'])
+			->onCondition(['type' => TeacherRate::TYPE_PRIVATE_LESSON]);
+    }
+
+	public function getTeacherGroupLessonRate()
+    {
+        return $this->hasOne(TeacherRate::className(), ['teacherId' => 'id'])
+			->onCondition(['type' => TeacherRate::TYPE_GROUP_LESSON]);
+    }
+	
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -366,15 +381,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function afterSignup(array $profileData = [])
     {
         $this->refresh();
-        Yii::$app->commandBus->handle(new AddToTimelineCommand([
-            'category' => 'user',
-            'event' => 'signup',
-            'data' => [
-                'public_identity' => $this->getPublicIdentity(),
-                'user_id' => $this->getId(),
-                'created_at' => $this->created_at,
-            ],
-        ]));
+        
         $profile = new UserProfile();
         $profile->locale = Yii::$app->language;
         $profile->load($profileData, '');

@@ -30,17 +30,17 @@ class Invoice extends \yii\db\ActiveRecord
     const ITEM_TYPE_OPENING_BALANCE = 0;
     const USER_UNASSINGED = 0;
 
-	const EVENT_GENERATE = 'event-generate';
-	const EVENT_UPDATE = 'event-update';
+    const EVENT_GENERATE = 'event-generate';
+    const EVENT_UPDATE = 'event-update';
     const SCENARIO_DELETE = 'delete';
     const SCENARIO_DISCOUNT = 'discount';
 
     public $customer_id;
     public $credit;
     public $discountApplied;
-	public $toEmailAddress;
-	public $subject;
-	public $content;
+    public $toEmailAddress;
+    public $subject;
+    public $content;
     /**
      * {@inheritdoc}
      */
@@ -71,7 +71,7 @@ class Invoice extends \yii\db\ActiveRecord
             ['user_id', 'required'],
             [['reminderNotes'], 'string'],
             [['isSent'], 'boolean'],
-            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted'], 'safe'],
+            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
 			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
         ];
@@ -114,12 +114,28 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
 
+    public function getReversedInvoice()
+    {
+        return $this->hasOne(InvoiceReverse::className(), ['reversedInvoiceId' => 'id']);
+    }
+
+    public function getInvoiceReverse()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId'])
+                ->viaTable('invoice_reverse', ['reversedInvoiceId' => 'id']);
+    }
+
     public function getPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
                         ->via('invoicePayments');
     }
 
+	public function getLocation()
+    {
+        return $this->hasOne(Location::className(), ['id' => 'location_id']);
+    }
+	
     public function getInvoicePayments()
     {
         return $this->hasMany(InvoicePayment::className(), ['invoice_id' => 'id']);
@@ -155,7 +171,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
     }
-	
+
     public function isOpeningBalance()
     {
         return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
@@ -179,6 +195,16 @@ class Invoice extends \yii\db\ActiveRecord
     public function hasCredit()
     {
         return (int) $this->status === (int) self::STATUS_CREDIT;
+    }
+
+    public function hasMiscItem()
+    {
+        foreach($this->lineItems as $item) {
+            if($item->isMisc()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function getCreditAppliedTotal()
@@ -208,11 +234,10 @@ class Invoice extends \yii\db\ActiveRecord
 	
     public function updateInvoiceAttributes()
     {
-        if(!$this->isOpeningBalance()) {
+        if(!$this->isOpeningBalance() && !$this->isLessonCredit()) {
             $subTotal    = $this->netSubtotal;
             $tax         = $this->lineItemTax;
-            $discount    = $this->discount;
-            $totalAmount = ($subTotal + $tax) - Yii::$app->formatter->asDecimal($discount, 2);
+            $totalAmount = $subTotal + $tax;
             $this->updateAttributes([
                     'subTotal' => $subTotal,
                     'tax' => $tax,
@@ -220,11 +245,7 @@ class Invoice extends \yii\db\ActiveRecord
             ]);
         }
         $status  = $this->getInvoiceStatus();
-		if($this->isLessonCredit()) {
-			$balance = -abs($this->total);
-		} else {
-	        $balance = $this->invoiceBalance;
-		}
+        $balance = $this->invoiceBalance;
         return $this->updateAttributes([
                 'status'    => $status,
                 'balance'   => $balance,
@@ -377,9 +398,9 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getInvoiceStatus()
     {
-       if ((float) $this->total === (float) $this->invoicePaymentTotal) {
+       if ((int) $this->total === (int) $this->invoicePaymentTotal) {
             $status = self::STATUS_PAID;
-        } elseif ((float) $this->total > (float) $this->invoicePaymentTotal) {
+        } elseif ((int) $this->total > (int) $this->invoicePaymentTotal) {
             $status = self::STATUS_OWING;
         } else {
             if ((int) $this->type === (int) self::TYPE_INVOICE) {
@@ -406,6 +427,7 @@ class Invoice extends \yii\db\ActiveRecord
             $this->subTotal       = 0.00;
             $this->total          = 0.00;
             $this->tax            = 0.00;
+            $this->isCanceled     = false;
             $reminderNotes = ReminderNote::find()->one();
             if (!empty($reminderNotes)) {
                 $this->reminderNotes = $reminderNotes->notes;
@@ -418,21 +440,23 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function sendEmail()
     {
-        $subject                      = $this->subject;
-		Yii::$app->mailer->compose('generateInvoice',
-				[
-				'model' => $this,
-				'toName' => $this->user->publicIdentity,
-				'content' => $this->content,
-			])
-			->setFrom(\Yii::$app->params['robotEmail'])
-			->setTo($this->toEmailAddress)
-			->setSubject($subject)
-			->send();
-		$this->isSent = true;
-		$this->save();
-			
-        return $this->isSent;
+		if(!empty($this->toEmailAddress)) {
+			$content = [];
+			foreach($this->toEmailAddress as $email) {
+				$subject                      = $this->subject;
+				$content[] = Yii::$app->mailer->compose('generateInvoice', [
+                	'content' => $this->content,
+            	])
+				->setFrom(\Yii::$app->params['robotEmail'])
+				->setReplyTo($this->location->email)
+				->setTo($email)
+				->setSubject($subject);
+			}
+			Yii::$app->mailer->sendMultiple($content);
+			$this->isSent = true;
+			$this->save();
+			return $this->isSent;
+		}
     }
 
     public function addLineItem($lesson)
@@ -475,17 +499,27 @@ class Invoice extends \yii\db\ActiveRecord
                 ->where(['courseId' => $lesson->courseId])
                 ->count('id');
             $lessonAmount                  = $lesson->course->program->rate / $courseCount;
+            if ($this->isReversedInvoice()) {
+                $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+                $lessonAmount = -($lessonAmount);
+            }
             $invoiceLineItem->amount       = $lessonAmount;
+            $studentFullName               = $lesson->studentFullName;
         } else {
             if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
             } else {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
             }
-            $invoiceLineItem->amount       = $lesson->enrolment->program->rate
-                * $invoiceLineItem->unit;
+            $amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
+            if ($this->isReversedInvoice()) {
+                $amount = -($amount);
+                $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+            }
+            $invoiceLineItem->amount       = $amount;
+            $studentFullName               = $lesson->enrolment->student->fullName;
         }
-        $description                  = $lesson->enrolment->program->name.' for '.$lesson->enrolment->student->fullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
+        $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
         return $invoiceLineItem->save();
     }
@@ -536,7 +570,7 @@ class Invoice extends \yii\db\ActiveRecord
                     $invoice = $lineItem->proFormaLesson->createInvoice();
                 } else if (!$lineItem->proFormaLesson->invoice->isPaid()) {
                     if ($lineItem->proFormaLesson->hasProFormaInvoice()) {
-                        $netPrice = yii::$app->formatter->asDecimal($lineItem->proFormaLesson->proFormaLineItem->netPrice, 2);
+                        $netPrice = $lineItem->proFormaLesson->proFormaLineItem->netPrice;
                         if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $netPrice) {
                             $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice);
                         }
@@ -544,5 +578,10 @@ class Invoice extends \yii\db\ActiveRecord
                 }
             }
         }
+    }
+
+    public function isReversedInvoice()
+    {
+        return !empty($this->invoiceReverse);
     }
 }

@@ -46,11 +46,6 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['
      <div class="tabbable-line">
 <?php 
 
-$enrolmentContent = $this->render('_group-enrolment', [
-    'courseId' => $courseId,
-    'model' => new Enrolment(),
-]);
-
 $studentContent = $this->render('_student', [
     'studentDataProvider' => $studentDataProvider,
     'model' => $model,
@@ -63,13 +58,6 @@ $lessonContent = $this->render('_lesson', [
 ?>
 <?php echo Tabs::widget([
     'items' => [
-        [
-            'label' => 'Enrolments',
-            'content' => $enrolmentContent,
-            'options' => [
-                      'id' => 'enrolment',
-            ],
-        ],
         [
             'label' => 'Students',
             'content' => $studentContent,
