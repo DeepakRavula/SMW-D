@@ -52,6 +52,8 @@ class Lesson extends \yii\db\ActiveRecord
 	public $vacationId;
 	public $studentId;
 	public $staffName;
+	private $fromTime;
+	private $toTime;
 	
     /**
      * {@inheritdoc}
@@ -82,8 +84,8 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId'], 'safe'],
-	    ['date', 'validateDate', 'on' => self::SCENARIO_CREATE],
+            [['date', 'programId','colorCode', 'classroomId', 'fromTime', 'toTime'], 'safe'],
+	    	['date', 'validateDate', 'on' => self::SCENARIO_CREATE],
             [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
@@ -111,6 +113,32 @@ class Lesson extends \yii\db\ActiveRecord
         ];
     }
 
+	public function setFromTime($fromTime)
+    {
+        $this->fromTime = \DateTime::createFromFormat('H:i:s', $fromTime);
+    }
+
+    public function getFromTime()
+    {
+        $this->fromTime = (new \DateTime($this->date))->format('H:i:s');
+
+        return $this->fromTime;
+    }
+
+	public function setToTime($toTime)
+    {
+        $this->toTime = \DateTime::createFromFormat('H:i:s', $toTime);
+    }
+
+    public function getToTime()
+    {
+		$lessonDate = new \DateTime($this->date); 
+		$duration = explode(':', $this->duration);
+		$lessonDate->add(new \DateInterval('PT' . $duration[0] . 'H' . $duration[1] . 'M'));
+        $this->toTime = $lessonDate->format('H:i:s');
+
+        return $this->toTime;
+    }
     /**
      * {@inheritdoc}
      */
