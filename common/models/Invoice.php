@@ -629,17 +629,11 @@ class Invoice extends \yii\db\ActiveRecord
         $model->amount = $this->total;
         if ((int) $model->actionType !== (int) CustomerAccount::ACTION_TYPE_DELETE){
             $model->credit = $this->total;
-            if ((int) $model->actionType === (int) CustomerAccount::ACTION_TYPE_CREATE) {
-                $model->description = 'Invoice created';
-            } else {
-                $model->description = 'Invoice updated';
-            }
         } else {
             $model->credit = null;
         }
         if ((int) $model->actionType === (int) CustomerAccount::ACTION_TYPE_DELETE) {
             $model->debit = $this->total;
-            $model->description = 'Invoice deleted';
         } else {
             $model->debit = null;
         }

@@ -10,7 +10,6 @@ use Yii;
  * @property string $id
  * @property string $foreignKeyId
  * @property integer $type
- * @property string $description
  * @property integer $actionType
  * @property double $amount
  * @property double $credit
@@ -42,7 +41,6 @@ class CustomerAccount extends \yii\db\ActiveRecord
             [['foreignKeyId', 'type', 'actionType', 'amount', 'balance'], 'required'],
             [['foreignKeyId', 'type', 'actionType'], 'integer'],
             [['amount', 'credit', 'debit', 'balance'], 'number'],
-            [['description'], 'string', 'max' => 355],
         ];
     }
 
@@ -55,7 +53,6 @@ class CustomerAccount extends \yii\db\ActiveRecord
             'id' => 'ID',
             'foreignKeyId' => 'Foreign Key',
             'type' => 'Type',
-            'description' => 'Description',
             'actionType' => 'Action Type',
             'amount' => 'Amount',
             'credit' => 'Credit',

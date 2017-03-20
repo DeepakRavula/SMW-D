@@ -285,11 +285,6 @@ class Payment extends ActiveRecord
         $model->amount = $this->amount;
         if ((int) $model->actionType !== (int) CustomerAccount::ACTION_TYPE_DELETE){
             $model->debit = $this->amount;
-            if ((int) $model->actionType === (int) CustomerAccount::ACTION_TYPE_CREATE) {
-                $model->description = 'Payment created';
-            } else {
-                $model->description = 'Payment updated';
-            }
         } else {
             $model->debit = null;
         }
@@ -297,7 +292,6 @@ class Payment extends ActiveRecord
         if ((int) $model->actionType === (int) CustomerAccount::ACTION_TYPE_DELETE) {
             $model->balance += $model->amount;
             $model->credit = $this->amount;
-            $model->description = 'Payment deleted';
         } else {
             $model->credit = null;
         }
