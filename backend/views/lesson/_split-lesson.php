@@ -30,8 +30,12 @@ $lessonDataProvider = new ActiveDataProvider([
 	<h5><strong><?= 'Please choose the lessons that should be extended when splitting this lesson.'; ?></strong></h5>
 	<?php $form = ActiveForm::begin([
 		'id' => 'split-lesson-form',
-		'action' => Url::to(['lesson/split', 'id' => $model->id])
+		'action' => Url::to(['lesson/split', 'id' => $model->id]),
+		'enableAjaxValidation' => true,
+		'enableClientValidation' => false,
 	]); ?>
+	<div><?php echo $form->field($model, 'duration')->hiddenInput()->label(false); ?></div>
+	<div>
 	<?php
     echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
@@ -96,6 +100,7 @@ $lessonDataProvider = new ActiveDataProvider([
         ],
     ]);
 	?>
+	</div>
 	<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 	<?php ActiveForm::end(); ?>
 <?php Modal::end(); ?>
