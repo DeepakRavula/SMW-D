@@ -77,4 +77,33 @@ class CustomerAccount extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'actionUserId']);
     }
+
+    public function getAccountActionType()
+    {
+        switch($this->actionType) {
+            case self::ACTION_TYPE_CREATE :
+                $actionType = 'created';
+            break;
+            case self::ACTION_TYPE_UPDATE :
+                $actionType = 'updated';
+            break;
+            case self::ACTION_TYPE_DELETE :
+                $actionType = 'deleted';
+            break;
+        }
+        return $actionType;
+    }
+
+    public function getAccountType()
+    {
+        switch($this->type) {
+            case self::TYPE_INVOICE :
+                $type = 'Invoice';
+            break;
+            case self::TYPE_PAYMENT :
+                $type = 'Payment';
+            break;
+        }
+        return $type;
+    }
 }

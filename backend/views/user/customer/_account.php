@@ -16,22 +16,47 @@ echo GridView::widget([
 'tableOptions' => ['class' => 'table table-bordered m-0'],
 'headerRowOptions' => ['class' => 'bg-light-gray'],
 'columns' => [
-    'foreignKeyId',
-    'description',
-    'amount',
     [
-    'label' => 'Credit',
-    'value' => function ($data) {
-        return !empty($data->credit) ? $data->credit : 0;
-    }
+        'headerOptions' => ['class' => 'text-left'],
+        'contentOptions' => ['class' => 'text-left'],
+        'label' => 'Description',
+        'value'=> function ($data) {
+            return $data->getAccountType() . ' #' . $data->foreignKeyId. ' '
+                . $data->getAccountActionType();
+        }
     ],
     [
-    'label' => 'Debit',
-    'value' => function ($data) {
+        'headerOptions' => ['class' => 'text-right'],
+        'format' => 'currency',
+        'contentOptions' => ['class' => 'text-right'],
+        'label' => 'Amount',
+        'value'=> 'amount'
+    ],
+    [
+        'headerOptions' => ['class' => 'text-right'],
+        'format' => 'currency',
+        'contentOptions' => ['class' => 'text-right'],
+        'label' => 'Credit',
+        'value' => function ($data) {
+            return !empty($data->credit) ? $data->credit : 0;
+        }
+    ],
+    [
+        'headerOptions' => ['class' => 'text-right'],
+        'format' => 'currency',
+        'contentOptions' => ['class' => 'text-right'],
+        'label' => 'Debit',
+        'value' => function ($data) {
         return !empty($data->debit) ? $data->debit : 0;
-    }
+        }
     ],
-    'balance',
+    [
+        'headerOptions' => ['class' => 'text-right'],
+        'format' => 'currency',
+        'contentOptions' => ['class' => 'text-right'],
+        'label' => 'Balance',
+        'value' => 'balance'
+    ],
     [
     'label' => 'Date',
     'value' => function ($data) {
