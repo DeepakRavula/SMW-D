@@ -82,8 +82,8 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId'], 'safe'],
-	    ['date', 'validateDate', 'on' => self::SCENARIO_CREATE],
+            [['date', 'programId','colorCode', 'classroomId', 'fromTime', 'toTime'], 'safe'],
+	    	['date', 'validateDate', 'on' => self::SCENARIO_CREATE],
             [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
