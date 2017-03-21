@@ -27,40 +27,36 @@ echo GridView::widget([
     ],
     [
         'headerOptions' => ['class' => 'text-right'],
-        'format' => 'currency',
         'contentOptions' => ['class' => 'text-right'],
-        'label' => 'Amount',
+        'label' => 'Amount ($)',
         'value'=> 'amount'
     ],
     [
         'headerOptions' => ['class' => 'text-right'],
-        'format' => 'currency',
         'contentOptions' => ['class' => 'text-right'],
-        'label' => 'Credit',
+        'label' => 'Credit ($)',
         'value' => function ($data) {
             return !empty($data->credit) ? $data->credit : 0;
         }
     ],
     [
         'headerOptions' => ['class' => 'text-right'],
-        'format' => 'currency',
         'contentOptions' => ['class' => 'text-right'],
-        'label' => 'Debit',
+        'label' => 'Debit ($)',
         'value' => function ($data) {
         return !empty($data->debit) ? $data->debit : 0;
         }
     ],
     [
         'headerOptions' => ['class' => 'text-right'],
-        'format' => 'currency',
         'contentOptions' => ['class' => 'text-right'],
-        'label' => 'Balance',
+        'label' => 'Balance ($)',
         'value' => 'balance'
     ],
     [
     'label' => 'Date',
     'value' => function ($data) {
-        return (new \DateTime($data->date))->format('Y-m-d H:i:s');
+        return (new \DateTime($data->date))->format('d-m-Y g:i A');
     }
     ],
     [
