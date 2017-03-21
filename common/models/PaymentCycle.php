@@ -133,9 +133,8 @@ class PaymentCycle extends \yii\db\ActiveRecord
         foreach ($lessons as $lesson) {
             $lesson->studentFullName = $this->enrolment->student->fullName;
             $invoice->addLineItem($lesson);
-            $invoice->save();
         }
-
+        $invoice->save();
         return $invoice;
+        }
     }
-}

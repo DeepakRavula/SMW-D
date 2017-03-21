@@ -20,6 +20,7 @@ use yii\helpers\Url;
  */
 class Payment extends ActiveRecord
 {
+    public $isDeleted;
     public $invoiceId;
     public $credit;
     public $amountNeeded;
@@ -162,6 +163,8 @@ class Payment extends ActiveRecord
 
     public function beforeDelete()
     {
+        $this->isDeleted = true;
+        $this->manageAccount();
         $this->invoicePayment->delete();
         return parent::beforeDelete();
     }
@@ -191,6 +194,12 @@ class Payment extends ActiveRecord
                 $this->updateCreditUsed();
             }
             $this->invoice->save();
+            if (!$this->isCreditUsed()) {
+                if (isset($changedAttributes['amount']) && (float) $this->amount !==
+                    (float) $changedAttributes['amount']) {
+                    $this->manageAccount();
+                }
+            }
 
             return parent::afterSave($insert, $changedAttributes);
         }
@@ -213,6 +222,7 @@ class Payment extends ActiveRecord
 		$timelineEventLink->save();
 			
         if (!$this->isCreditUsed()) {
+            $this->manageAccount();
             $this->invoice->save();
         }
 
@@ -263,5 +273,49 @@ class Payment extends ActiveRecord
     public function isAccountEntry()
     {
         return (int) $this->payment_method_id === (int) PaymentMethod::TYPE_ACCOUNT_ENTRY;
+    }
+
+    public function manageAccount()
+    {
+        $model = new CustomerAccount();
+        $model->foreignKeyId = $this->id;
+        $model->userId = $this->user_id;
+        $model->type = CustomerAccount::TYPE_PAYMENT;
+        $model->actionType = $this->actionType();
+        $model->amount = $this->amount;
+        if ((int) $model->actionType !== (int) CustomerAccount::ACTION_TYPE_DELETE){
+            $model->debit = $this->amount;
+        } else {
+            $model->debit = null;
+        }
+        $model->balance = $this->accountBalance();
+        if ((int) $model->actionType === (int) CustomerAccount::ACTION_TYPE_DELETE) {
+            $model->balance += $model->amount;
+            $model->credit = $this->amount;
+        } else {
+            $model->credit = null;
+        }
+        $model->actionUserId = Yii::$app->user->id;
+        $model->date = (new \DateTime())->format('Y-m-d H:i:s');
+        $model->save();
+    }
+
+    public function actionType()
+    {
+        $model = CustomerAccount::find()
+            ->where(['type' => CustomerAccount::TYPE_PAYMENT, 'foreignKeyId' => $this->id])
+            ->one();
+        if ($this->isDeleted) {
+            return CustomerAccount::ACTION_TYPE_DELETE;
+        }else if (!empty($model)) {
+            return CustomerAccount::ACTION_TYPE_UPDATE;
+        } else {
+            return CustomerAccount::ACTION_TYPE_CREATE;
+        }
+    }
+
+    public function accountBalance()
+    {
+        return $this->invoice->getCustomerAccountBalance($this->user_id);
     }
 }
