@@ -20,6 +20,7 @@ use common\models\TeacherAvailability;
 use common\models\ExamResult;
 use common\models\Note;
 use yii\widgets\ActiveForm;
+use common\models\StudentLog;
 use common\models\PaymentFrequency;
 
 /**
@@ -138,18 +139,20 @@ class StudentController extends Controller
         if ($model->load($request->post())) {
         	$model->status = Student::STATUS_ACTIVE;
             $model->customer_id = $user['id'];
-            $model->save();
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Student has been created successfully',
-            ]);
-            $roles = ArrayHelper::getColumn(
-                Yii::$app->authManager->getRolesByUser($model->customer_id),
-            'name'
-        );
-            $role = end($roles);
+            if($model->save()) {
+            	$model->on(Student::EVENT_CREATE, StudentLog::create($model));
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-success'],
+					'body' => 'Student has been created successfully',
+				]);
+				$roles = ArrayHelper::getColumn(
+					Yii::$app->authManager->getRolesByUser($model->customer_id),
+				'name'
+			);
+				$role = end($roles);
 
-            return $this->redirect(['view', 'id' => $model->id]);
+				return $this->redirect(['view', 'id' => $model->id]);
+			}
         } else {
             return $this->render('create', [
                 'model' => $model,

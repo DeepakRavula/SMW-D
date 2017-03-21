@@ -19,6 +19,8 @@ class Student extends \yii\db\ActiveRecord
 	const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
 
+    const EVENT_CREATE = 'event-create';
+	
 	public $vacationId;
     /**
      * {@inheritdoc}
@@ -117,6 +119,12 @@ class Student extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
+	public function afterSave($insert, $changedAttributes) {
+		if($insert) {
+			$this->trigger(self::EVENT_CREATE);
+		}
+		return parent::afterSave($insert, $changedAttributes);
+	}
     public function getStudentIdentity()
     {
         if ($this->getFullname()) {
