@@ -10,7 +10,11 @@ class HolidayValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
-       $holidays = Holiday::find()
+		$currentDate = new \DateTime();
+		$currentDate->setDate($currentDate->format('Y'), 01, 01);
+		$firstDayOfCurrentYear = $currentDate->format('Y-m-d'); 
+       	$holidays = Holiday::find()
+			->andWhere(['>=', 'DATE(date)', $firstDayOfCurrentYear])
             ->all();
 		$holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
     		return (new \DateTime($element->date))->format('Y-m-d');
