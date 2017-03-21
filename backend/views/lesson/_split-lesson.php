@@ -31,10 +31,7 @@ $lessonDataProvider = new ActiveDataProvider([
 	<?php $form = ActiveForm::begin([
 		'id' => 'split-lesson-form',
 		'action' => Url::to(['lesson/split', 'id' => $model->id]),
-		'enableAjaxValidation' => true,
-		'enableClientValidation' => false,
 	]); ?>
-	<div><?php echo $form->field($model, 'duration')->hiddenInput()->label(false); ?></div>
 	<div>
 	<?php
     echo GridView::widget([
