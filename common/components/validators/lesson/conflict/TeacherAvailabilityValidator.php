@@ -16,6 +16,13 @@ class TeacherAvailabilityValidator extends Validator
         $day                 = (new \DateTime($model->date))->format('N');
         $start               = new \DateTime($model->date);
         $duration            = $model->newDuration;
+		$lessonDuration = explode(':', $model->duration);
+		$lessonStart = (new \DateTime($model->date));
+		$lessonStart->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));	
+		$intervals = [];
+		$oldDuration = new \DateTime($model->duration);
+		$durationDifference = $duration->diff($oldDuration);	
+		
         $end                 = $start->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
         $teacherAvailability = TeacherAvailability::find()
             ->andWhere(['day' => $day, 'teacher_location_id' => $teacherLocationId])
@@ -24,19 +31,16 @@ class TeacherAvailabilityValidator extends Validator
                 ['>=', 'to_time', $end->format('H:i:s')]
             ])
             ->one();
+		
 		if(empty($teacherAvailability)) {
 			$this->addError($model,$attribute, 'Teacher is not available on ' . $end->format('l') . ' at ' . $end->format('g:i A'));
 		} else {
         	$locationId = Yii::$app->session->get('location_id');
 			$teacherLessons = Lesson::find()
-				->where([
-					'lesson.status' => Lesson::STATUS_SCHEDULED,
-					'lesson.teacherId' => $model->teacherId,
-				])
-				->andWhere(['NOT IN', 'courseId', $model->courseId])
-				->location($locationId)
-				->notDeleted()
+				->teacherLessons($locationId, $model->teacherId)
+				->andWhere(['NOT IN', 'lesson.id', $model->id])
 				->all();
+			
 			$otherLessons = [];
 			foreach ($teacherLessons as $teacherLesson) {
 				$otherLessons[] = [
@@ -45,12 +49,11 @@ class TeacherAvailabilityValidator extends Validator
 					'duration' => $teacherLesson->course->duration,
 				];
 			}
-			$intervals = [];
 			foreach ($otherLessons as $otherLesson) {
-				$intervals[] = new DateRangeInclusive(new \DateTime($otherLesson['date']), new \DateTime($otherLesson['date']), new \DateInterval('PT'.$duration->format('H').'H'.$duration->format('i').'M'), $otherLesson['id']);
+				$intervals[] = new DateRangeInclusive(new \DateTime($otherLesson['date']), new \DateTime($otherLesson['date']), new \DateInterval('PT'.$durationDifference->h.'H'.$durationDifference->i.'M'), $otherLesson['id']);
 			}
 			$tree = new IntervalTree($intervals);
-			$conflictedLessonsResults = $tree->search(new \DateTime($model->date));
+			$conflictedLessonsResults = $tree->search($lessonStart);
 
         if ((!empty($conflictedLessonsResults))) {
             $this->addError($model,$attribute, 'Teacher occupied with another lesson');
