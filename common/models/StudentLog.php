@@ -20,40 +20,20 @@ use common\models\TimelineEventLink;
  */
 class StudentLog extends Student
 {
-	public static function tableName()
-    {
-        return '{{%student}}';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['first_name', 'last_name'], 'required'],
-            [['first_name', 'last_name'], 'string', 'min' => 2, 'max' => 30],
-            [[ 'status'], 'integer'],
-            [['birth_date'], 'date', 'format' => 'php:d-m-Y'],
-            [['customer_id'], 'safe'],
-        ];
-    }
-
-
-	public static function create($model) {
-		$student = Student::find(['id' => $model->id])->asArray()->one();
-		$user = User::findOne(['id' => Yii::$app->user->id]);
+	public function create($event) {
+		$studentModel = $event->sender;
+		$student = Student::find(['id' => $studentModel->id])->asArray()->one();
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'category' => 'student',
 			'event' => 'create',
 			'data' => $student,
-			'message' => $user->publicIdentity . ' created a new student {{' . $model->fullName . '}}',
+			'message' => $studentModel->userName . ' created a new student {{' . $studentModel->fullName . '}}',
 		]));
 		$timelineEventLink = new TimelineEventLink();
 		$timelineEventLink->timelineEventId = $timelineEvent->id;
-		$timelineEventLink->index = $model->fullName;
+		$timelineEventLink->index = $studentModel->fullName;
 		$timelineEventLink->baseUrl = Yii::$app->homeUrl;
-		$timelineEventLink->path = Url::to(['/student/view', 'id' => $model->id]);
+		$timelineEventLink->path = Url::to(['/student/view', 'id' => $studentModel->id]);
 		$timelineEventLink->save();
 	}
 }

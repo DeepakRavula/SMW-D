@@ -22,6 +22,8 @@ class Student extends \yii\db\ActiveRecord
     const EVENT_CREATE = 'event-create';
 	
 	public $vacationId;
+	public $userName;
+	
     /**
      * {@inheritdoc}
      */
