@@ -20,6 +20,8 @@ use yii\web\Response;
 use common\models\Vacation;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use common\models\TeacherAvailability;
+
 use common\commands\AddToTimelineCommand;
 use common\models\User;
 use common\models\TimelineEvent;
@@ -742,6 +744,7 @@ class LessonController extends Controller
     }
 
 	public function actionSplit($id) {
+		$locationId = Yii::$app->session->get('location_id');
 		$model = $this->findModel($id);
 		$duration		 = \DateTime::createFromFormat('H:i:s', $model->duration);
 		$hours			 = $duration->format('H');
@@ -752,21 +755,43 @@ class LessonController extends Controller
         if (!empty($lessonIds) && is_array($lessonIds)) {
 			$numberOfLesson = count($lessonIds);
 			$duration = round($lessonDuration / $numberOfLesson);
-			foreach($lessonIds as $lessonId) {
-				$lesson = $this->findModel($lessonId);
+			$lessons = Lesson::find()
+				->location($locationId)
+				->andWhere(['IN', 'lesson.id', $lessonIds])
+				->all();
+			foreach($lessons as $lesson) {
+				$lesson->setScenario(Lesson::SCENARIO_SPLIT);
 				$newDuration = new \DateTime($lesson->duration);
-				$newDuration->add(new \DateInterval('PT' . $duration . 'M'));	
-				$lesson->updateAttributes([
-					'duration' => $newDuration->format('H:i:s'),
-				]);
+				$newDuration->add(new \DateInterval('PT' . $duration . 'M'));
+				$lesson->newDuration = $newDuration; 
 			}
-			$model->delete();
+			Model::validateMultiple($lessons);
+			$conflicts = [];
+			foreach($lessons as $lesson) {
+				$conflicts = $lesson->getErrors('duration');
+			}
+			if(empty($conflicts)) {
+				foreach($lessonIds as $lessonId) {
+					$lesson = $this->findModel($lessonId);
+					$newDuration = new \DateTime($lesson->duration);
+					$newDuration->add(new \DateInterval('PT' . $duration . 'M'));	
+					$lesson->updateAttributes([
+						'duration' => $newDuration->format('H:i:s'),
+					]);
+				}
+				$model->delete();
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-success'],
+					'body' => 'Lesson duration has been splitted successfully.',
+				]);
+				return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
+			} else {
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-danger'],
+					'body' => current($conflicts),
+				]);
+				return $this->redirect(['view', 'id' => $model->id]);	
+			}
 		}
-		
-		Yii::$app->session->setFlash('alert', [
-			'options' => ['class' => 'alert-success'],
-			'body' => 'Lesson duration has been splitted successfully.',
-		]);
-		return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
 	}
 }

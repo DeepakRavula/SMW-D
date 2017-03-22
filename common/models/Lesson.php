@@ -4,13 +4,15 @@ namespace common\models;
 
 use Yii;
 use yii\db\Query;
+use yii\helpers\Url;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
 use common\commands\AddToTimelineCommand;
-use yii\helpers\Url;
+use common\components\validators\lesson\conflict\TeacherAvailabilityValidator;
+use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
 
 /**
  * This is the model class for table "lesson".
@@ -37,6 +39,7 @@ class Lesson extends \yii\db\ActiveRecord
     const SCENARIO_EDIT = 'edit';
     const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
     const SCENARIO_CREATE = 'create';
+    const SCENARIO_SPLIT = 'split';
 	const SCENARIO_GROUP_ENROLMENT_REVIEW = 'group-enrolment';
 
     public $studentFullName;
@@ -49,6 +52,7 @@ class Lesson extends \yii\db\ActiveRecord
 	public $toEmailAddress;
 	public $subject;
 	public $content;
+	public $newDuration;
 	public $vacationId;
 	public $studentId;
 	public $staffName;
@@ -82,7 +86,7 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId', 'fromTime', 'toTime'], 'safe'],
+            [['date', 'programId','colorCode', 'classroomId'], 'safe'],
 	    	['date', 'validateDate', 'on' => self::SCENARIO_CREATE],
             [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
@@ -108,6 +112,9 @@ class Lesson extends \yii\db\ActiveRecord
             ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['date', StudentValidator::className(), 'on' => self::SCENARIO_GROUP_ENROLMENT_REVIEW],
 			
+            ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
+            ['duration', StudentAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
+
         ];
     }
 
