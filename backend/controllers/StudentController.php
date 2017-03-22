@@ -134,13 +134,13 @@ class StudentController extends Controller
     public function actionCreate()
     {
         $model = new Student();
+        $model->on(Student::EVENT_CREATE, StudentLog::create($model));
         $request = Yii::$app->request;
         $user = $request->post('User');
         if ($model->load($request->post())) {
         	$model->status = Student::STATUS_ACTIVE;
             $model->customer_id = $user['id'];
             if($model->save()) {
-            	$model->on(Student::EVENT_CREATE, StudentLog::create($model));
 				Yii::$app->session->setFlash('alert', [
 					'options' => ['class' => 'alert-success'],
 					'body' => 'Student has been created successfully',
