@@ -35,7 +35,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
         return [
             [['day', 'from_time', 'to_time'], 'required'],
             [['classroomId', 'teacherAvailabilityId'], 'integer'],
-            [['day'], 'validateAvailabilityOverlap', 'on' => self::SCENARIO_AVAILABIITY_EDIT ],
+            [['from_time', 'to_time'], 'validateAvailabilityOverlap', 'on' => self::SCENARIO_AVAILABIITY_EDIT ],
             [['classroomId'], 'validateClassroomAvailability', 'on' => self::SCENARIO_AVAILABIITY_EDIT ],
             [['from_time'], function ($attribute, $params) {
                 $locationId = Yii::$app->session->get('location_id');
