@@ -14,6 +14,7 @@ use Yii;
  */
 class TeacherRoom extends \yii\db\ActiveRecord
 {
+    public $availabilityId;
     public $teacher_location_id;
     public $day;
     public $from_time;
@@ -159,6 +160,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
     {
         $availabilities = TeacherAvailability::find()
             ->where(['day' => $this->day, 'teacher_location_id' => $this->teacher_location_id])
+            ->andWhere(['NOT', ['id' => $this->availabilityId]])
             ->andWhere(['OR', 
                 [
                     'between', 'from_time', (new \DateTime($this->from_time))->format('H:i:s'),

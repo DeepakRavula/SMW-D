@@ -931,6 +931,9 @@ class UserController extends Controller
         } else {
             $roomModel = $teacherAvailabilityModel->teacherRoom;
         }
+        if (!empty($teacherAvailabilityModel)) {
+            $roomModel->availabilityId = $teacherAvailabilityModel->id;
+        }
         $roomModel->teacher_location_id = $teacherModel->userLocation->id;
         $fromTime         = new \DateTime($teacherAvailabilityModel->from_time);
         $toTime           = new \DateTime($teacherAvailabilityModel->to_time);
