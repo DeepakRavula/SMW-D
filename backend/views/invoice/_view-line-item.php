@@ -9,7 +9,7 @@ use common\models\ItemType;
 use yii\widgets\ActiveForm;
 
 ?>
-<?php if ($searchModel->show) {
+<?php if ($searchModel->toggleAdditionalColumns) {
     $columns = [
         [
             'headerOptions' => ['class' => 'text-left'],

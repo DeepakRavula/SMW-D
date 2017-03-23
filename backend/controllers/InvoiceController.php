@@ -105,9 +105,8 @@ class InvoiceController extends Controller
     {
         $model = $this->findModel($id);
         $request = Yii::$app->request;
-        $invoiceSearchRequest = $request->get('InvoiceSearch');
         $searchModel = new InvoiceSearch();
-        $searchModel->show = $invoiceSearchRequest['show'];
+        $searchModel->load($request->get());
         $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,

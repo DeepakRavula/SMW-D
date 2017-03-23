@@ -110,7 +110,7 @@ use kartik\editable\Editable;
         $lastRole->name === User::ROLE_OWNER)) :?>
     <div class="pull-right m-r-20">
         <a id="show-column"><i class="fa fa-caret-left fa-2x"></i></a>
-        <a id="hide-column"><i class="fa fa-caret-down fa-2x"></i></a>
+        <a id="hide-column" style="display:none"><i class="fa fa-caret-down fa-2x"></i></a>
     </div>
     <?php endif; ?>
 	<?php echo $this->render('_line-item', [
@@ -203,7 +203,6 @@ var payment = {
     },
 }
 $(document).ready(function() {
-    $('#hide-column').hide();
     $('#add-misc-item').click(function(){
     $('input[type="text"]').val('');
     $('.tax-compute').hide();
@@ -232,17 +231,17 @@ $(document).ready(function() {
     });
     
     $('#show-column').click(function(){
-        var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]); ?>&InvoiceSearch[show]="  + 1;
+        var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]); ?>&InvoiceSearch[toggleAdditionalColumns]="  + 1;
         $.pjax.reload({url:url,container:"#line-item-listing",replace:false,  timeout: 4000});  //Reload GridView
         $('#show-column').hide();
-        $('#hide-column').show();
+        $('#hide-column').toggle();
     });
 
     $('#hide-column').click(function(){
-        var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]); ?>&InvoiceSearch[show]="  + 0;
+        var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]); ?>&InvoiceSearch[toggleAdditionalColumns]="  + 0;
         $.pjax.reload({url:url,container:"#line-item-listing",replace:false,  timeout: 4000});  //Reload GridView
         $('#hide-column').hide();
-        $('#show-column').show();
+        $('#show-column').toggle();
     });
 });
 </script>
