@@ -14,6 +14,7 @@ use Yii;
  */
 class TeacherRoom extends \yii\db\ActiveRecord
 {
+    public $teacher_location_id;
     public $day;
     public $from_time;
     public $to_time;
@@ -34,6 +35,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
         return [
             [['day', 'from_time', 'to_time'], 'required'],
             [['classroomId', 'teacherAvailabilityId'], 'integer'],
+            [['day'], 'validateAvailabilityOverlap', 'on' => self::SCENARIO_AVAILABIITY_EDIT ],
             [['classroomId'], 'validateClassroomAvailability', 'on' => self::SCENARIO_AVAILABIITY_EDIT ],
             [['from_time'], function ($attribute, $params) {
                 $locationId = Yii::$app->session->get('location_id');
@@ -150,6 +152,37 @@ class TeacherRoom extends \yii\db\ActiveRecord
 
         if (in_array($fromTime, $availableHours) || in_array($toTime, $availableHours)) {
             return $this->addError($attribute,'Classroom Already Choosen!');
+        }
+    }
+
+    public function validateAvailabilityOverlap($attribute)
+    {
+        $availabilities = TeacherAvailability::find()
+            ->where(['day' => $this->day, 'teacher_location_id' => $this->teacher_location_id])
+            ->andWhere(['OR', 
+                [
+                    'between', 'from_time', (new \DateTime($this->from_time))->format('H:i:s'),
+                    (new \DateTime($this->to_time))->format('H:i:s')
+                ],
+                [
+                    'between', 'to_time', (new \DateTime($this->from_time))->format('H:i:s'),
+                    (new \DateTime($this->to_time))->format('H:i:s')
+                ],
+                [
+                    'AND',
+                    [
+                        '<=', 'from_time', $this->from_time
+                    ],
+                    [
+                        '>=', 'to_time', $this->to_time
+                    ]
+                    
+                ]
+            ])
+            ->all();
+        
+        if (!empty($availabilities)) {
+            return $this->addError($attribute,'Availability overlaped');
         }
     }
 }

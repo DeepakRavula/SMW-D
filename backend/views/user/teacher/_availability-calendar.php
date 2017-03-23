@@ -37,10 +37,10 @@ use common\models\TeacherAvailability;
         minTime: "<?php echo $minTime; ?>",
         maxTime: "<?php echo $maxTime; ?>",
         slotDuration: "00:15:00",
-        editable: true,
         selectable: true,
-        draggable: false,
-        droppable: false,
+        eventOverlap: function(stillEvent, movingEvent) {
+            return stillEvent.allDay && movingEvent.allDay;
+        },
         resources: [{'id':'1', 'title':'Monday'}, {'id':'2','title':'Tuesday'},
             {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'},
             {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
@@ -52,7 +52,7 @@ use common\models\TeacherAvailability;
             }
         },
         eventClick: function(event) {
-            var params = $.param({ resourceId: null, id: event.id });
+            var params = $.param({ id: event.id });
             $.ajax({
                 url: '<?= Url::to(['user/modify-teacher-availability', 'teacherId' => $model->id]); ?>&' + params,
                 type: 'get',
@@ -70,48 +70,8 @@ use common\models\TeacherAvailability;
                 }
             });
         },
-        eventResize: function(event) {
-            var endTime = moment(event.end).format('HH:mm:ss');
-            var startTime = moment(event.start).format('HH:mm:ss');
-            var id = $.param({ id: event.id });
-            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
-            $.ajax({
-                url    : '<?= Url::to(['user/edit-teacher-availability']) ?>?' + id + '&' + params,
-                type   : 'POST',
-                dataType: 'json',
-                success: function(response)
-                {
-                    if (response) {
-                        $("#availability-calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#flash-danger').text("Please choose availability within the location hours").fadeIn().delay(3000).fadeOut();
-                        $("#availability-calendar").fullCalendar("refetchEvents");
-                    }
-                }
-            });
-        },
-        eventDrop: function(event) {
-            var endTime = moment(event.end).format('HH:mm:ss');
-            var startTime = moment(event.start).format('HH:mm:ss');
-            var id = $.param({ id: event.id });
-            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
-            $.ajax({
-                url    : '<?= Url::to(['user/edit-teacher-availability']) ?>?' + id + '&' + params,
-                type   : 'POST',
-                dataType: 'json',
-                success: function(response)
-                {
-                    if (response) {
-                        $("#availability-calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#flash-danger').text("Please choose availability within the location hours").fadeIn().delay(3000).fadeOut();
-                        $("#availability-calendar").fullCalendar("refetchEvents");
-                    }
-                }
-            });
-        },
         select: function( start, end, jsEvent, view, resourceObj ) {
-        var params = $.param({ resourceId: resourceObj.id, id: null });
+        var params = $.param({ id: null });
             $.ajax({
                 url: '<?= Url::to(['user/modify-teacher-availability', 'teacherId' => $model->id]); ?>&' + params,
                 type: 'get',

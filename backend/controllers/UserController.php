@@ -352,7 +352,7 @@ class UserController extends Controller
 
         $account = CustomerAccount::find()
             ->where(['userId' => $id])
-            ->orderBy(['id' => SORT_DESC]);
+            ->orderBy(['id' => SORT_ASC]);
 
         $accountDataProvider = new ActiveDataProvider([
             'query' => $account,
@@ -910,15 +910,6 @@ class UserController extends Controller
         return $events;
     }
 
-    public function actionEditTeacherAvailability($id, $resourceId, $startTime, $endTime)
-    {
-        $availabilityModel            = TeacherAvailability::findOne($id);
-        $availabilityModel->day       = $resourceId;
-        $availabilityModel->from_time = $startTime;
-        $availabilityModel->to_time   = $endTime;
-        return $availabilityModel->save();
-    }
-
     public function actionDeleteTeacherAvailability($id)
     {
         $availabilityModel = TeacherAvailability::findOne($id);
@@ -927,7 +918,7 @@ class UserController extends Controller
         ];
     }
 
-    public function actionModifyTeacherAvailability($resourceId, $id, $teacherId)
+    public function actionModifyTeacherAvailability($id, $teacherId)
     {
         $teacherModel = User::findOne($teacherId);
         $teacherAvailabilityModel = TeacherAvailability::findOne($id);
@@ -940,13 +931,11 @@ class UserController extends Controller
         } else {
             $roomModel = $teacherAvailabilityModel->teacherRoom;
         }
+        $roomModel->teacher_location_id = $teacherModel->userLocation->id;
         $fromTime         = new \DateTime($teacherAvailabilityModel->from_time);
         $toTime           = new \DateTime($teacherAvailabilityModel->to_time);
         $roomModel->from_time = $fromTime->format('g:i A');
         $roomModel->to_time   = $toTime->format('g:i A');
-        if (empty($teacherAvailabilityModel->day)) {
-            $teacherAvailabilityModel->day = $resourceId;
-        }
         $post             = Yii::$app->request->post();
         $roomModel->setScenario(TeacherRoom::SCENARIO_AVAILABIITY_EDIT);
         $roomModel->day = $teacherAvailabilityModel->day;
@@ -961,7 +950,7 @@ class UserController extends Controller
             $toTime           = new \DateTime($roomModel->to_time);
             $teacherAvailabilityModel->from_time = $fromTime->format('H:i:s');
             $teacherAvailabilityModel->to_time   = $toTime->format('H:i:s');
-
+            $teacherAvailabilityModel->day = $roomModel->day;
             if ($roomModel->validate()) {
                 $teacherAvailabilityModel->save();
                 if (!empty($roomModel->classroomId)) {

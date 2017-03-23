@@ -6,6 +6,7 @@ use kartik\select2\Select2;
 use common\models\Classroom;
 use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
+use common\models\TeacherAvailability;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -25,8 +26,7 @@ use yii\helpers\Url;
         <?php $form       = ActiveForm::begin([
             'id' => 'teacher-availability-form',
             'action' => Url::to(['user/modify-teacher-availability', 
-                'resourceId' => $roomModel->day, 'id' => $id,
-                'teacherId' => $model->id]),
+                'teacherId' => $model->id, 'id' => $id]),
         ]); ?>
         
         <div class="col-md-6 form-group">
@@ -39,6 +39,9 @@ use yii\helpers\Url;
                 <?= $form->field($roomModel, 'to_time')->widget(TimePicker::classname(), ['options' => [
                         'id' => 'teacher-availability-to-time'
                     ]]); ?>
+        </div>
+        <div class="col-md-6 form-group">
+            <?php echo $form->field($roomModel, 'day')->dropdownList(TeacherAvailability::getWeekdaysList(), ['prompt' => 'select day']) ?>
         </div>
         <div class="col-md-6 form-group">
             <?=
