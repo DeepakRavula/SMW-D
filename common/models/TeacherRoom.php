@@ -96,13 +96,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
         return new TeacherRoomQuery(get_called_class());
     }
 
-    public function beforeSave($insert)
-    {
-        self::deleteAll(['teacherAvailabilityId' => $this->teacherAvailabilityId]);
-		return parent::beforeSave($insert);
-    }
-
-	public function getClassroom()
+    public function getClassroom()
     {
         return $this->hasOne(Classroom::className(), ['id' => 'classroomId']);
     }
@@ -129,8 +123,9 @@ class TeacherRoom extends \yii\db\ActiveRecord
             $locationId = Yii::$app->session->get('location_id');
             $teacherRooms        = TeacherRoom::find()
                 ->location($locationId)
+                ->andWhere(['NOT', ['teacher_room.id' => $this->id]])
                 ->day($this->day)
-                ->where(['classroomId' => $this->classroomId])
+                ->andWhere(['classroomId' => $this->classroomId])
                 ->all();
             foreach ($teacherRooms as $teacherRoom) {
                 $fromTime = (new \DateTime($teacherRoom->teacherAvailability->from_time))->format('h:i A');
