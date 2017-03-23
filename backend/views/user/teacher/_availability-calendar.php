@@ -71,7 +71,7 @@ use common\models\TeacherAvailability;
             });
         },
         select: function( start, end, jsEvent, view, resourceObj ) {
-        var params = $.param({ id: null });
+            var params = $.param({ id: null });
             $.ajax({
                 url: '<?= Url::to(['user/modify-teacher-availability', 'teacherId' => $model->id]); ?>&' + params,
                 type: 'get',
@@ -82,6 +82,9 @@ use common\models\TeacherAvailability;
                     {
                         $('#teacher-availability-modal .modal-body').html(response.data);
                         $('#teacher-availability-modal').modal('show');
+                        $('#teacher-availability-from-time').val(moment(start).format('h:mm A'));
+                        $('#teacher-availability-to-time').val(moment(start).add(1, 'hour').format('hh:mm A'));
+                        $('#teacherroom-day').val(resourceObj.id);
                     } else {
                         $('#teacher-availability-modal').yiiActiveForm('updateMessages',
                                 response.errors , true);
