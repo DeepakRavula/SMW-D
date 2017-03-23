@@ -543,10 +543,10 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $courseId             = $this->courseId;
         $enrolmentFirstLesson = self::find()
-                ->where(['courseId' => $courseId])
-                ->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED]])
-                ->orderBy(['date' => SORT_ASC])
-                ->one();
+			->where(['courseId' => $courseId])
+			->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED]])
+			->orderBy(['date' => SORT_ASC])
+			->one();
         return $enrolmentFirstLesson->date === $this->date;
     }
 
@@ -569,12 +569,12 @@ class Lesson extends \yii\db\ActiveRecord
         if (!empty($teacherAvailability->teacherRoom)) {
             $classroomId = $teacherAvailability->teacherRoom->classroomId;
             $unavailability = ClassroomUnavailability::find()
-                    ->andWhere(['classroomId' => $classroomId])
-                    ->andWhere(['AND',
-                        ['<=', 'DATE(fromDate)', $start->format('Y-m-d')],
-                        ['>=', 'DATE(toDate)', $start->format('Y-m-d')]
-                    ])
-                    ->one();
+				->andWhere(['classroomId' => $classroomId])
+				->andWhere(['AND',
+					['<=', 'DATE(fromDate)', $start->format('Y-m-d')],
+					['>=', 'DATE(toDate)', $start->format('Y-m-d')]
+				])
+				->one();
             if (!empty($unavailability)) {
                 $classroomId = null;
             }
