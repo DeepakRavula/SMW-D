@@ -14,15 +14,16 @@ use common\models\Invoice;
  */
 class InvoiceSearch extends Invoice
 {
-	const STATUS_MAIL_SENT = 1;
-	const STATUS_MAIL_NOT_SENT = 2;
-	const STATUS_ALL = 3;
+    const STATUS_MAIL_SENT = 1;
+    const STATUS_MAIL_NOT_SENT = 2;
+    const STATUS_ALL = 3;
+    public $show;
     public $fromDate;
     public $toDate;
     public $type;
     public $query;
-	public $mailStatus;
-	public $invoiceStatus;
+    public $mailStatus;
+    public $invoiceStatus;
     /**
      * {@inheritdoc}
      */

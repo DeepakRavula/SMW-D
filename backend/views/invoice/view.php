@@ -35,7 +35,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         position: relative;
     }
 </style>
-<?php 
+<?php
 $lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->id]);
 if (!empty($lineItem)) {
     $itemTypeId = $lineItem->item_type_id;
@@ -144,6 +144,7 @@ $guestContent = $this->render('_guest', [
 $invoiceContent = $this->render('_view-invoice', [
     'model' => $model,
     'customer' => $customer,
+    'searchModel' => $searchModel,
     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 ]);
 $paymentContent = $this->render('_payment', [

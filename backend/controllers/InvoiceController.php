@@ -104,13 +104,15 @@ class InvoiceController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
+        $request = Yii::$app->request;
+        $invoiceSearchRequest = $request->get('InvoiceSearch');
+        $searchModel = new InvoiceSearch();
+        $searchModel->show = $invoiceSearchRequest['show'];
         $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
-			'pagination' => false,
+            'pagination' => false,
         ]);
-
-        $request = Yii::$app->request;
         $invoiceRequest = $request->post('Invoice');
         $customerId = $invoiceRequest['customer_id'];
         if (!empty($model->user_id)) {
@@ -178,33 +180,34 @@ class InvoiceController extends Controller
                 }
             }
         }
-		$post = Yii::$app->request->post();
-		if (isset($post['hasEditable'])) {
-			$response = Yii::$app->response;
-			$response->format = Response::FORMAT_JSON;
-			if(! empty($post['notes'])) {
-				$model->notes = $post['notes'];
-				$model->save();
-				return ['output' => $model->notes, 'message' => ''];
-			}
-		}
+        $post = Yii::$app->request->post();
+        if (isset($post['hasEditable'])) {
+                $response = Yii::$app->response;
+                $response->format = Response::FORMAT_JSON;
+                if(! empty($post['notes'])) {
+                        $model->notes = $post['notes'];
+                        $model->save();
+                        return ['output' => $model->notes, 'message' => ''];
+                }
+        }
 
-		$notes = Note::find()
-			->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE])
-			->orderBy(['createdOn' => SORT_DESC]);
+        $notes = Note::find()
+                ->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE])
+                ->orderBy(['createdOn' => SORT_DESC]);
 
         $noteDataProvider = new ActiveDataProvider([
             'query' => $notes,
         ]);
 
         return $this->render('view', [
-			'model' => $model,
-			'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-			'invoicePayments' => $customerInvoicePaymentsDataProvider,
-			'customer' => empty($customer) ? new User() : $customer,
-			'userModel' => $userModel,
-			'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-			'noteDataProvider' => $noteDataProvider
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+            'invoicePayments' => $customerInvoicePaymentsDataProvider,
+            'customer' => empty($customer) ? new User() : $customer,
+            'userModel' => $userModel,
+            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+            'noteDataProvider' => $noteDataProvider
         ]);
     }
 
