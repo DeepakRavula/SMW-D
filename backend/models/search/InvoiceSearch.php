@@ -14,15 +14,16 @@ use common\models\Invoice;
  */
 class InvoiceSearch extends Invoice
 {
-	const STATUS_MAIL_SENT = 1;
-	const STATUS_MAIL_NOT_SENT = 2;
-	const STATUS_ALL = 3;
+    const STATUS_MAIL_SENT = 1;
+    const STATUS_MAIL_NOT_SENT = 2;
+    const STATUS_ALL = 3;
+    public $toggleAdditionalColumns;
     public $fromDate;
     public $toDate;
     public $type;
     public $query;
-	public $mailStatus;
-	public $invoiceStatus;
+    public $mailStatus;
+    public $invoiceStatus;
     /**
      * {@inheritdoc}
      */
@@ -30,8 +31,8 @@ class InvoiceSearch extends Invoice
     {
         return [
             [['fromDate', 'toDate'], 'date', 'format' => 'php:d-m-Y'],
-			[['mailStatus', 'invoiceStatus'], 'integer'],
-            [['type', 'query'], 'safe'],
+            [['mailStatus', 'invoiceStatus'], 'integer'],
+            [['type', 'query', 'toggleAdditionalColumns'], 'safe'],
         ];
     }
 

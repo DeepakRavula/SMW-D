@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use backend\models\search\InvoiceSearch;
 use yii\helpers\Url;
-use common\models\Invoice;
+use common\models\User;
 use yii\widgets\ActiveForm;
 use kartik\editable\Editable;
 
@@ -102,13 +102,23 @@ use kartik\editable\Editable;
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Apply Discount</a>
 	<div class="clearfix"></div>
     </div>
-	</div>
+    </div>
+    <?php endif; ?>
+    <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+    $lastRole = end($roles);
+    if(!empty($model->lineItem) && ($lastRole->name === User::ROLE_ADMINISTRATOR ||
+        $lastRole->name === User::ROLE_OWNER)) :?>
+    <div class="pull-right m-r-20">
+        <a id="show-column"><i class="fa fa-caret-left fa-2x"></i></a>
+        <a id="hide-column" style="display:none"><i class="fa fa-caret-down fa-2x"></i></a>
+    </div>
     <?php endif; ?>
 	<?php echo $this->render('_line-item', [
         'invoiceModel' => $model,
     ]) ?>
 	<?php echo $this->render('_view-line-item', [
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        'searchModel' => $searchModel,
     ]) ?>
     <div class="row">
         <!-- /.col -->
@@ -193,12 +203,12 @@ var payment = {
     },
 }
 $(document).ready(function() {
-	$('#add-misc-item').click(function(){
+    $('#add-misc-item').click(function(){
     $('input[type="text"]').val('');
     $('.tax-compute').hide();
     $('#invoicelineitem-tax_status').val('');
-	$('#invoice-line-item-modal').modal('show');
-  		return false;
+    $('#invoice-line-item-modal').modal('show');
+        return false;
     });
 
     $('#apply-discount').click(function(){
@@ -206,7 +216,7 @@ $(document).ready(function() {
   		return false;
     });
     
-	$('input[name="Invoice[isSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+    $('input[name="Invoice[isSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
 	$.ajax({
             url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>',
             type   : 'POST',
@@ -218,26 +228,40 @@ $(document).ready(function() {
             }
         });
         return false;
-	});
-  });
+    });
+    
+    $('#show-column').click(function(){
+        var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]); ?>&InvoiceSearch[toggleAdditionalColumns]="  + 1;
+        $.pjax.reload({url:url,container:"#line-item-listing",replace:false,  timeout: 4000});  //Reload GridView
+        $('#show-column').hide();
+        $('#hide-column').toggle();
+    });
+
+    $('#hide-column').click(function(){
+        var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]); ?>&InvoiceSearch[toggleAdditionalColumns]="  + 0;
+        $.pjax.reload({url:url,container:"#line-item-listing",replace:false,  timeout: 4000});  //Reload GridView
+        $('#hide-column').hide();
+        $('#show-column').toggle();
+    });
+});
 </script>
 <script>
 $('#delete-button').click(function(){
-	$.ajax({
-		url    : '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
-		type   : 'post',
-		dataType: 'json',
-		success: function(response)
-		{
-		   if(response.status)
-		   {
-			   window.location.href = response.url;
-			}else
-			{
-				$('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
-			}
-		}
-		});
-		return false;
+    $.ajax({
+        url    : '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
+        type   : 'post',
+        dataType: 'json',
+        success: function(response)
+        {
+           if(response.status)
+           {
+                window.location.href = response.url;
+                }else
+                {
+                    $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                }
+        }
+    });
+    return false;
 });
 </script>
