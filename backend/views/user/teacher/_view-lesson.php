@@ -246,7 +246,7 @@ GridView::widget([
 		 $('#print-btn').attr('href', printUrl);
     });
         $("#teacher-lesson-search-form").on("submit", function () {
-        	var summariesOnly = $("#lessonsearch-summarisereport").val();
+        	var summariesOnly = $("#lessonsearch-summarisereport").is(":checked");
             var fromDate = $('#lessonsearch-fromdate').val();
             var toDate = $('#lessonsearch-todate').val();
             $.pjax.reload({container: "#teacher-lesson-grid", replace: false, timeout: 6000, data: $(this).serialize()});
