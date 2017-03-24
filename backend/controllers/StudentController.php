@@ -136,20 +136,15 @@ class StudentController extends Controller
         $request = Yii::$app->request;
         $user = $request->post('User');
         if ($model->load($request->post())) {
-        	$model->status = Student::STATUS_ACTIVE;
             $model->customer_id = $user['id'];
-            $model->save();
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Student has been created successfully',
-            ]);
-            $roles = ArrayHelper::getColumn(
-                Yii::$app->authManager->getRolesByUser($model->customer_id),
-            'name'
-        );
-            $role = end($roles);
-
-            return $this->redirect(['view', 'id' => $model->id]);
+            if($model->save()) {
+				Yii::$app->session->setFlash('alert', [
+					'options' => ['class' => 'alert-success'],
+					'body' => 'Student has been created successfully',
+				]);
+				
+				return $this->redirect(['view', 'id' => $model->id]);
+			}
         } else {
             return $this->render('create', [
                 'model' => $model,

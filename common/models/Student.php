@@ -109,10 +109,13 @@ class Student extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        if (!empty($this->birth_date)) {
-            $birthDate = \DateTime::createFromFormat('d-m-Y', $this->birth_date);
-            $this->birth_date = $birthDate->format('Y-m-d');
-        }
+		if (!empty($this->birth_date)) {
+			$birthDate = \DateTime::createFromFormat('d-m-Y', $this->birth_date);
+			$this->birth_date = $birthDate->format('Y-m-d');
+		}
+		if($insert) {
+        	$this->status = self::STATUS_ACTIVE;
+		}
 
         return parent::beforeSave($insert);
     }
