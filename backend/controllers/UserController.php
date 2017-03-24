@@ -910,6 +910,38 @@ class UserController extends Controller
         return $events;
     }
 
+    public function actionEditTeacherAvailability($id, $resourceId, $startTime, $endTime)
+    {
+        $availabilityModel            = TeacherAvailability::findOne($id);
+        $availabilityModel->day       = $resourceId;
+        $availabilityModel->from_time = $startTime;
+        $availabilityModel->to_time   = $endTime;
+        if (!empty($availabilityModel->teacherRoom)) {
+            $roomModel = $availabilityModel->teacherRoom;
+        } else {
+            $roomModel = new TeacherRoom();
+            $roomModel->teacherAvailabilityId = $id;
+        }
+        $roomModel->setScenario(TeacherRoom::SCENARIO_AVAILABIITY_EDIT);
+        $roomModel->availabilityId = $id;
+        $roomModel->from_time = $startTime;
+        $roomModel->to_time = $endTime;
+        $roomModel->day = $resourceId;
+        $roomModel->teacher_location_id = $availabilityModel->teacher_location_id;
+        if ($roomModel->validate()) {
+            $availabilityModel->save();
+            return  [
+                'status' => true,
+            ];
+        } else {
+            $errors = ActiveForm::validate($roomModel);
+            return [
+                'status' => false,
+                'errors' => $errors
+            ];
+        }
+    }
+
     public function actionDeleteTeacherAvailability($id)
     {
         $availabilityModel = TeacherAvailability::findOne($id);
