@@ -506,14 +506,8 @@ class LessonController extends Controller
             $enrolmentModel->save();
 			$dayList = Course::getWeekdaysList();
 			$day = $dayList[$enrolmentModel->course->day];
-			$staff = User::findOne(['id'=>Yii::$app->user->id]);
-            $enrolment = Enrolment::find(['id' => $courseModel->enrolment->id])->asArray()->one();
-			Yii::$app->commandBus->handle(new AddToTimelineCommand([
-				'category' => 'enrolment',
-				'event' => 'insert',
-				'data' => $enrolment, 
-				'message' => $staff->publicIdentity . ' enrolled ' . $enrolmentModel->student->fullName . ' in ' .  $enrolmentModel->course->program->name . ' lessons with ' . $enrolmentModel->course->teacher->publicIdentity . ' on ' . $day . 's at ' . Yii::$app->formatter->asTime($enrolmentModel->course->startDate),
-        	]));
+			$user = User::findOne(['id' => Yii::$app->user->id]);
+			$enrolmentModel->on(Enrolment::EVENT_CREATE,[new TimelineEventEnrolment(), 'create'], ['userName' => $user->publicIdentity]);	
         }
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');

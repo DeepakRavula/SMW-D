@@ -24,6 +24,7 @@ class Enrolment extends \yii\db\ActiveRecord
 	const EDIT_RENEWAL = 'renewal';
 	const EDIT_LEAVE = 'leave';
 
+	const EVENT_CREATE = 'create';
     /**
      * {@inheritdoc}
      */

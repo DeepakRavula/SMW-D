@@ -5,8 +5,9 @@ namespace common\models;
 use common\models\query\TimelineEventQuery;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use common\models\TimelineEventEnrolment;
+use common\models\TimelineEventLesson;
 use common\models\TimelineEventLink;
-use common\models\TimelineEventLinkParam;
 
 /**
  * This is the model class for table "timeline_event".
@@ -57,12 +58,16 @@ class TimelineEvent extends ActiveRecord
     public function rules()
     {
         return [
-            [['application', 'category', 'event'], 'required'],
             [['data'], 'safe'],
-            [['application', 'category', 'event'], 'string', 'max' => 64],
         ];
     }
 
+	public function attributeLabels()
+    {
+        return [
+            'created_at' => 'CreatedOn',
+        ];
+    }
     /**
      * {@inheritdoc}
      */
@@ -78,5 +83,15 @@ class TimelineEvent extends ActiveRecord
     public function getFullEventName()
     {
         return sprintf('%s.%s', $this->category, $this->event);
+    }
+
+	public function getTimelineEventEnrolment()
+    {
+        return $this->hasOne(TimelineEventEnrolment::className(), ['timelineEventId' => 'id']);
+    }
+
+	public function getTimelineEventLesson()
+    {
+        return $this->hasOne(TimelineEventLesson::className(), ['timelineEventId' => 'id']);
     }
 }

@@ -39,6 +39,10 @@ echo $this->render('_profile', [
 			'studentModel' => $model,
 		]);
 
+		$logContent = $this->render('log/index', [
+			'model' => $model,
+		]);
+
 		$examResultContent = $this->render('exam-result/view', [
 			'model' => new ExamResult(),
 			'studentModel' => $model,
@@ -98,6 +102,13 @@ echo $this->render('_profile', [
 				'content' => $vacationContent,
 				'options' => [
 					'id' => 'vacation',
+				],
+			],
+			[
+				'label' => 'Logs',
+				'content' => $logContent,
+				'options' => [
+					'id' => 'log',
 				],
 			],
 		];
