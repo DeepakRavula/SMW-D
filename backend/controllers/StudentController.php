@@ -20,6 +20,8 @@ use common\models\TeacherAvailability;
 use common\models\ExamResult;
 use common\models\Note;
 use yii\widgets\ActiveForm;
+use common\models\StudentLog;
+use common\models\User;
 use common\models\PaymentFrequency;
 
 /**
@@ -133,6 +135,9 @@ class StudentController extends Controller
     public function actionCreate()
     {
         $model = new Student();
+		$userModel = User::findOne(['id' => Yii::$app->user->id]);
+        $model->on(Student::EVENT_CREATE, [new StudentLog(), 'create']);
+		$model->userName = $userModel->publicIdentity;
         $request = Yii::$app->request;
         $user = $request->post('User');
         if ($model->load($request->post())) {
