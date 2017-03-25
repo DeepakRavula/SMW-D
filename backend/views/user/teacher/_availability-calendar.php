@@ -52,44 +52,12 @@ use common\models\TeacherAvailability;
             }
         },
         eventResize: function(event) {
-            var endTime = moment(event.end).format('HH:mm:ss');
-            var startTime = moment(event.start).format('HH:mm:ss');
-            var id = $.param({ id: event.id });
-            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
-            $.ajax({
-                url    : '<?= Url::to(['user/edit-teacher-availability']) ?>?' + id + '&' + params,
-                type   : 'POST',
-                dataType: 'json',
-                success: function(response)
-                {
-                    if (response) {
-                        $("#availability-calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#flash-danger').text("Please choose availability within the location hours").fadeIn().delay(3000).fadeOut();
-                        $("#availability-calendar").fullCalendar("refetchEvents");
-                    }
-                }
-            });
+            var params = $.param({ id: event.id });
+            update(params, event.start, event.end, event.resourceId);
         },
         eventDrop: function(event) {
-            var endTime = moment(event.end).format('HH:mm:ss');
-            var startTime = moment(event.start).format('HH:mm:ss');
-            var id = $.param({ id: event.id });
-            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
-            $.ajax({
-                url    : '<?= Url::to(['user/edit-teacher-availability']) ?>?' + id + '&' + params,
-                type   : 'POST',
-                dataType: 'json',
-                success: function(response)
-                {
-                    if (response) {
-                        $("#availability-calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#flash-danger').text("Please choose availability within the location hours").fadeIn().delay(3000).fadeOut();
-                        $("#availability-calendar").fullCalendar("refetchEvents");
-                    }
-                }
-            });
+            var params = $.param({ id: event.id });
+            update(params, event.start, event.end, event.resourceId);
         },
         eventClick: function(event) {
             var params = $.param({ id: event.id });
@@ -123,7 +91,7 @@ use common\models\TeacherAvailability;
                         $('#teacher-availability-modal .modal-body').html(response.data);
                         $('#teacher-availability-modal').modal('show');
                         $('#teacher-availability-from-time').val(moment(start).format('h:mm A'));
-                        $('#teacher-availability-to-time').val(moment(start).add(1, 'hour').format('hh:mm A'));
+                        $('#teacher-availability-to-time').val(moment(end).format('hh:mm A'));
                         $('#teacherroom-day').val(resourceObj.id);
                     } else {
                         $('#teacher-availability-modal').yiiActiveForm('updateMessages',
@@ -155,6 +123,32 @@ use common\models\TeacherAvailability;
         });
     return false;
     });
-
+    
+    function update(params, start, end, resourceId) {
+        $.ajax({
+            url: '<?= Url::to(['user/modify-teacher-availability', 'teacherId' => $model->id]); ?>&' + params,
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('#teacher-availability-modal .modal-body').html(response.data);
+                    $('#teacher-availability-modal').modal('show');
+                    $('#teacher-availability-from-time').val(moment(start).format('h:mm A'));
+                    $('#teacher-availability-to-time').val(moment(end).format('hh:mm A'));
+                    $('#teacherroom-day').val(resourceId);
+                } else {
+                    $('#teacher-availability-modal').yiiActiveForm('updateMessages',
+                            response.errors , true);
+                }
+            }
+        });
+    }
+$(document).ready(function () {
+    $('#teacher-availability-modal').on('hide.bs.modal', function () {
+        $("#availability-calendar").fullCalendar("refetchEvents");
+    });
+});
 </script>
 
