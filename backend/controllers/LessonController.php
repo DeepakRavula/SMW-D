@@ -21,6 +21,8 @@ use common\models\Vacation;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\TimelineEventEnrolment;
+use common\models\TeacherAvailability;
+use common\models\LessonLog;
 use common\commands\AddToTimelineCommand;
 use common\models\User;
 use common\models\TimelineEventLink;
@@ -174,6 +176,14 @@ class LessonController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+		$oldDate = $model->date;
+		$oldTeacherId = $model->teacherId;
+		$user = User::findOne(['id'=>Yii::$app->user->id]);
+		$model->userName = $user->publicIdentity;
+		$model->on(Lesson::EVENT_RESCHEDULE_ATTEMPTED,
+			[new LessonReschedule(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
+		$model->on(Lesson::EVENT_RESCHEDULED,
+			[new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
         $currentDate = new \DateTime();
         if ($lessonDate < $currentDate) {
@@ -210,15 +220,13 @@ class LessonController extends Controller
             $data = ['model' => $model, 'privateLessonModel' => $privateLessonModel];
         }
         if ($model->load(Yii::$app->request->post())) {
-			$oldDate = $model->getOldAttribute('date');
-			$teacherId = $model->getOldAttribute('teacherId');
 			if(empty($model->date)) {
-				$model->date =  $model->getOldAttribute('date');
+				$model->date =  $oldDate;
 				$model->status = Lesson::STATUS_UNSCHEDULED;
 				$model->save();
 				$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 			} else {
-				if (new \DateTime($oldDate) != new \DateTime($model->date) || $teacherId != $model->teacherId) {
+				if (new \DateTime($oldDate) != new \DateTime($model->date) || $oldTeacherId != $model->teacherId) {
 					$model->setScenario(Lesson::SCENARIO_EDIT);
 					$validate = $model->validate();
 				}
@@ -238,8 +246,6 @@ class LessonController extends Controller
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
-					$staff = User::findOne(['id'=>Yii::$app->user->id]);
-					$model->staffName = $staff->publicIdentity;
 					$model->save();
 					
 					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
