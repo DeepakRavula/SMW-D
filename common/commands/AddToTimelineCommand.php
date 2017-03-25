@@ -12,17 +12,6 @@ use trntv\bus\interfaces\SelfHandlingCommand;
  */
 class AddToTimelineCommand extends Object implements SelfHandlingCommand
 {
-    /**
-     * @var string
-     */
-    public $category;
-    /**
-     * @var string
-     */
-    public $event;
-    /**
-     * @var mixed
-     */
     public $data;
     public $message;
 	public $createdUserId;
@@ -35,9 +24,6 @@ class AddToTimelineCommand extends Object implements SelfHandlingCommand
     public function handle($command)
     {
         $model = new TimelineEvent();
-        $model->application = Yii::$app->id;
-        $model->category = $command->category;
-        $model->event = $command->event;
         $model->data = json_encode($command->data, JSON_UNESCAPED_UNICODE);
 		$model->message = $command->message;
 		$model->createdUserId = Yii::$app->user->id;

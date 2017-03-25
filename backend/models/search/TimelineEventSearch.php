@@ -12,13 +12,12 @@ use yii\data\ActiveDataProvider;
  */
 class TimelineEventSearch extends TimelineEvent
 {
-	const CATEGORY_USER = 'user';
 	const CATEGORY_LESSON = 'lesson';
-	const CATEGORY_PAYMENT = 'payment';
 	const CATEGORY_ENROLMENT = 'enrolment';
 
 	private $fromDate;
     private $toDate;
+	public $category;
 
 
 	public function init()
@@ -38,7 +37,7 @@ class TimelineEventSearch extends TimelineEvent
     public function rules()
     {
         return [
-            [['dateRange','application', 'category', 'event', 'created_at', 'createdUserId'], 'safe'],
+            [['dateRange', 'category', 'created_at', 'createdUserId'], 'safe'],
         ];
     }
 
@@ -72,19 +71,17 @@ class TimelineEventSearch extends TimelineEvent
             return $dataProvider;
         }
 
+		if ($this->category === self::CATEGORY_ENROLMENT) {
+            $query->enrolment();
+        } elseif ($this->category === self::CATEGORY_LESSON) {
+            $query->lesson();
+        }  
+		
 		$query->where(['between', 'DATE(created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
 		
 		$query->location($locationId);
 		
-		if ($this->category === self::CATEGORY_USER) {
-            $query->user();
-        } elseif ($this->category === self::CATEGORY_ENROLMENT) {
-            $query->enrolment();
-        } elseif ($this->category === self::CATEGORY_LESSON) {
-            $query->lesson();
-        } elseif ($this->category === self::CATEGORY_PAYMENT) {
-            $query->payment();
-        }
+		
 		
 		$query->andFilterWhere(['createdUserId' => $this->createdUserId]);
 		
@@ -95,9 +92,7 @@ class TimelineEventSearch extends TimelineEvent
         return [
            	'all' => 'All',
             self::CATEGORY_LESSON => 'Lesson',
-			self::CATEGORY_PAYMENT => 'Payment',
 			self::CATEGORY_ENROLMENT => 'Enrolment',
-			self::CATEGORY_USER => 'User'
         ];
     }
 	

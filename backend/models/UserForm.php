@@ -262,16 +262,7 @@ class UserForm extends Model
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
-			$staff = User::findOne(['id'=>Yii::$app->user->id]);
-			Yii::$app->commandBus->handle(new AddToTimelineCommand([
-				'category' => 'user',
-				'event' => 'signup',
-				'data' => [
-					'public_identity' => $model->getPublicIdentity(),
-					'user_id' => $model->getId(),
-				],
-				'message' => $staff->publicIdentity . ' was created ' . $userProfileModel->fullName,
-        	]));
+			
             $phoneNumberModel = PhoneNumber::findOne(['user_id' => $model->getId()]);
             if (empty($phoneNumberModel) || ($phoneNumberModel->label_id != $phonelabel)) {
                 $phoneNumberModel = new PhoneNumber();

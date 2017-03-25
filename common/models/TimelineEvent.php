@@ -8,6 +8,7 @@ use yii\db\ActiveRecord;
 use common\models\TimelineEventEnrolment;
 use common\models\TimelineEventLesson;
 use common\models\TimelineEventLink;
+use yii\helpers\Html;
 
 /**
  * This is the model class for table "timeline_event".
@@ -85,6 +86,21 @@ class TimelineEvent extends ActiveRecord
         return sprintf('%s.%s', $this->category, $this->event);
     }
 
+	public function getMessage()
+	{
+		$message = $this->message;
+		$regex = '/{{([^}]*)}}/';
+		$replace = preg_replace_callback($regex, function($match)
+		{
+			$index = $match[1];
+			$timelineEventLink = TimelineEventLink::findOne(['index' => $index]);
+			$url = $timelineEventLink->baseUrl . $timelineEventLink->path; 
+			$data[$index] = Html::a($index, $url);//'<a href=' . $url . '>' . $index . '</a>'; 
+			return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
+		}, $message);
+		
+		return $replace;
+	}
 	public function getTimelineEventEnrolment()
     {
         return $this->hasOne(TimelineEventEnrolment::className(), ['timelineEventId' => 'id']);

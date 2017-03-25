@@ -27,7 +27,13 @@ $dataProvider = new ActiveDataProvider([
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [
 		'created_at:datetime', 
-		'message:raw'
+		[
+			'label' => 'Message',
+			'format' => 'raw',
+			'value' => function ($data) {
+				return $data->getMessage();
+			},
+		],
 	],
 ]); ?>
 </div>

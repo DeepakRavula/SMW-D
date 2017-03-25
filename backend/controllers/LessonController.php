@@ -20,11 +20,9 @@ use yii\web\Response;
 use common\models\Vacation;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-use common\models\TeacherAvailability;
-
+use common\models\TimelineEventEnrolment;
 use common\commands\AddToTimelineCommand;
 use common\models\User;
-use common\models\TimelineEvent;
 use common\models\TimelineEventLink;
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -504,10 +502,9 @@ class LessonController extends Controller
             $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
-			$dayList = Course::getWeekdaysList();
-			$day = $dayList[$enrolmentModel->course->day];
 			$user = User::findOne(['id' => Yii::$app->user->id]);
 			$enrolmentModel->on(Enrolment::EVENT_CREATE,[new TimelineEventEnrolment(), 'create'], ['userName' => $user->publicIdentity]);	
+			$enrolmentModel->trigger(Enrolment::EVENT_CREATE);	
         }
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');
