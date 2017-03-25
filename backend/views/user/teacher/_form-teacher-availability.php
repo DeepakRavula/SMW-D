@@ -57,6 +57,7 @@ use yii\helpers\Url;
         </div>
         <div class="col-md-12 p-l-20 form-group">
             <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
+            <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-primary']); ?>
         <?php if (!empty($teacherAvailabilityModel->id)) : ?>
             <?= Html::a('<i class="fa fa-close"></i> Delete', [
                     'delete-teacher-availability', 'id' => $teacherAvailabilityModel->id
@@ -73,3 +74,11 @@ use yii\helpers\Url;
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+
+<script>
+$(document).ready(function () {
+    $('#cancel').click(function() {debugger;
+        $('#teacher-availability-modal').modal('hide');
+    });
+});
+</script>
