@@ -6,6 +6,7 @@ use Yii;
 use common\commands\AddToTimelineCommand;
 use common\models\TimelineEventLink;
 use yii\helpers\Url;
+use common\models\TimelineEventLesson;
 
 /**
  * This is the model class for table "lesson_reschedule".
@@ -24,8 +25,6 @@ class LessonLog extends Lesson {
 		$rescheduledByTeacher = (int) $lessonModel->teacherId !== (int) $oldLessonModel['teacherId'];
 		if ($rescheduledByTeacher) {
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-				'category' => 'lesson',
-				'event' => 'edit',
 				'data' => $lesson,
 				'message' => $lessonModel->userName . ' assigned {{' . $lessonModel->teacher->publicIdentity . '}} to teach {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}}',
 			]));
@@ -48,12 +47,16 @@ class LessonLog extends Lesson {
 				$timelineEventLink->index = 'lesson';
 				$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $lessonModel->id]);
 				$timelineEventLink->save();
+
+				$timelineEventLesson = new TimelineEventLesson();
+				$timelineEventLesson->lessonId = $lessonModel->id; 
+				$timelineEventLesson->timelineEventId = $timelineEvent->id;
+				$timelineEventLesson->action = 'edit';
+				$timelineEventLesson->save();
 			}
 		}
 		if ($rescheduledByDate) {
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-				'category' => 'lesson',
-				'event' => 'edit',
 				'data' => $lesson,
 				'message' => $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' lesson to ' . Yii::$app->formatter->asTime($lessonModel->date),
 			]));
@@ -64,12 +67,16 @@ class LessonLog extends Lesson {
 				$timelineEventLink->baseUrl = Yii::$app->homeUrl;
 				$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
 				$timelineEventLink->save();
+
+				$timelineEventLesson = new TimelineEventLesson();
+				$timelineEventLesson->lessonId = $lessonModel->id; 
+				$timelineEventLesson->timelineEventId = $timelineEvent->id;
+				$timelineEventLesson->action = 'edit';
+				$timelineEventLesson->save();
 			}
 		}
 		if ((int) $oldLessonModel['classroomId'] !== (int) $lessonModel->classroomId) {
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-				'category' => 'lesson',
-				'event' => 'edit',
 				'data' => $lesson,
 				'message' => $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' lesson to ' . $lessonModel->classroom->name,
 			]));
@@ -81,6 +88,12 @@ class LessonLog extends Lesson {
 			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
 			$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
 			$timelineEventLink->save();
+			
+			$timelineEventLesson = new TimelineEventLesson();
+			$timelineEventLesson->lessonId = $lessonModel->id; 
+			$timelineEventLesson->timelineEventId = $timelineEvent->id;
+			$timelineEventLesson->action = 'edit';
+			$timelineEventLesson->save();
 		}
 	}
 
