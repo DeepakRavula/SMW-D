@@ -125,29 +125,12 @@ class TeacherRoom extends \yii\db\ActiveRecord
                 ->location($locationId)
                 ->andWhere(['NOT', ['teacher_room.id' => $this->id]])
                 ->day($this->day)
+                ->between($this->from_time, $this->to_time)
                 ->andWhere(['classroomId' => $this->classroomId])
                 ->all();
-            foreach ($teacherRooms as $teacherRoom) {
-                $fromTime = (new \DateTime($teacherRoom->teacherAvailability->from_time))->format('h:i A');
-                $toTime   = (new \DateTime($teacherRoom->teacherAvailability->to_time))->format('h:i A');
-                $start    = new \DateTime($this->from_time);
-                $end      = new \DateTime($this->to_time);
-                $interval = new \DateInterval('PT15M');
-                $hours    = new \DatePeriod($start, $interval, $end);
-                $this->checkClassroomAvailability($hours, $fromTime, $toTime, $attribute);
+            if (!empty($teacherRooms)) {
+                return $this->addError($attribute,'Classroom Already Choosen!');
             }
-        }
-    }
-
-    public function checkClassroomAvailability($hours, $fromTime, $toTime, $attribute)
-    {
-        $availableHours = [];
-        foreach ($hours as $hour) {
-            $availableHours[] = Yii::$app->formatter->asTime($hour);
-        }
-
-        if (in_array($fromTime, $availableHours) || in_array($toTime, $availableHours)) {
-            return $this->addError($attribute,'Classroom Already Choosen!');
         }
     }
 
