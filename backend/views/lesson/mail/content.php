@@ -12,7 +12,7 @@ Dear Customer,<br>
         </tr>
         <tr>
             <td>Teacher</td>
-            <td><?= $model->teacher->publicIdentity; ?></td>
+            <td><?= !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null; ?></td>
         </tr>
         <tr>
             <td>Student</td>
