@@ -20,6 +20,7 @@ class Student extends \yii\db\ActiveRecord
     const STATUS_INACTIVE = 2;
 
     const EVENT_CREATE = 'event-create';
+    const EVENT_UPDATE = 'event-update';
 	
 	public $vacationId;
 	public $userName;
@@ -127,6 +128,11 @@ class Student extends \yii\db\ActiveRecord
 	public function afterSave($insert, $changedAttributes) {
 		if($insert) {
 			$this->trigger(self::EVENT_CREATE);
+		} else {
+			$birthDate = $this->getOldAttribute('birth_date');
+			if(new \DateTime($this->birth_date) != new \DateTime($birthDate)) {
+				$this->trigger(self::EVENT_UPDATE);
+			}
 		}
 		return parent::afterSave($insert, $changedAttributes);
 	}
