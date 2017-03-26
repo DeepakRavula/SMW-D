@@ -130,7 +130,7 @@ class Student extends \yii\db\ActiveRecord
 			$this->trigger(self::EVENT_CREATE);
 		} else {
 			$birthDate = $this->getOldAttribute('birth_date');
-			if(new \DateTime($this->birth_date) != new \DateTime($birthDate)) {
+			if(new \DateTime($this->birth_date) != new \DateTime($changedAttributes['birth_date'])) {
 				$this->trigger(self::EVENT_UPDATE);
 			}
 		}

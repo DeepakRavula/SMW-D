@@ -165,7 +165,7 @@ class StudentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->on(Student::EVENT_UPDATE, [new StudentLog(), 'update']);
+        $model->on(Student::EVENT_UPDATE, [new StudentLog(), 'edit']);
 		$userModel = User::findOne(['id' => Yii::$app->user->id]);
 		$model->userName = $userModel->publicIdentity;	
         if ($model->load(Yii::$app->request->post()) && $model->save()) {

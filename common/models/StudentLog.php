@@ -44,12 +44,12 @@ class StudentLog extends Student {
 		}
 	}
 	
-	public function update($event) {
+	public function edit($event) {
 		$studentModel = $event->sender;
 		$student = Student::find(['id' => $studentModel->id])->asArray()->one();
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $student,
-			'message' => $studentModel->userName . ' changed {{' . $studentModel->fullName . '}}\s date of birth ' . Yii::$app->formatter->asDate($studentModel->birth_date),
+			'message' => $studentModel->userName . ' changed {{' . $studentModel->fullName . '}}\'s date of birth to ' . Yii::$app->formatter->asDate($studentModel->birth_date),
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
