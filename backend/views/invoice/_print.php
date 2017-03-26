@@ -88,12 +88,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     }
 </style>
-<div class="invoice-view p-10">
-<div class="row">
-            <a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo invoice-col col-sm-2">              
+<div class="invoice-view">
+<div class="row-fluid">
+            <div class="logo invoice-col" style="width: 150px">              
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
-            </a>
-          <div class="col-sm-3 invoice-col text-gray" style="font-size:18px;">
+            </div>
+          <div class="invoice-col text-gray" style="font-size:18px; width: 180px;">
               <div class="row-fluid">
                 <h2 class="m-0 text-inverse"><strong>
                   <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong>
@@ -111,7 +111,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php endif; ?> 
               </small> 
             </div>
-            <div class="col-sm-4 invoice-col">
+            <div class="invoice-col" style="width: 220px;">
               To<br>
               <strong>
                <?php echo isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?>
@@ -150,14 +150,14 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
               </address>
             </div>
-            <div class="col-sm-2 invoice-col">
+            <div class="invoice-col"  style="width: 125px;">
               <b><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Invoice No.:'?></b> <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#'.$model->invoice_number?><br>
               <b>Date:</b> <?= Yii::$app->formatter->asDate($model->date); ?><br>
               <b>Status:</b> <?= $model->getStatus(); ?>
             </div>
           <div class="clearfix"></div>
         </div>
-    <div class="row invoice-info m-t-10">
+    <div class="row-fluid invoice-info m-t-10">
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
@@ -226,14 +226,51 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <table class="table-responsive below-description ">
         <tr>
+          <?php if (!empty($model->notes)):?>
             <td class="notes-table">
-                <?php if (!empty($model->notes)):?>
+                
                 <div class="row-fluid m-t-15 m-b-15">
                     <em><strong> Notes: </strong><Br>
                     <?php echo $model->notes; ?></em>
                 </div>
-                <?php endif; ?>
+                
             </td>
+          <?php endif; ?>
+            <?php if (!empty($model->payments)) : ?>
+              <td class="payment-method-table p-t-10">              
+                    <?php yii\widgets\Pjax::begin(['id' => 'payment-index']); ?>
+                    <?php echo GridView::widget([
+                          'dataProvider' => $paymentsDataProvider,
+                          'tableOptions' => ['class' => 'table  m-0 table-more-condensed inner-payment-table'],
+                          'headerRowOptions' => ['class' => 'bg-light-gray'],
+                          'columns' => [
+                              [
+                                  'label' => 'Payment',
+                                  'value' => function ($data) {
+                                      return $data->paymentMethod->name;
+                                  },
+                                  'headerOptions' => ['class' => 'text-left'],
+                                  'contentOptions' => ['class' => 'text-left'],
+                              ],
+              [
+                                  'value' => function ($data) {
+                                      return !empty($data->reference) ? $data->reference : null;
+                                  },
+                              ],
+                              [
+                                  'format' => 'currency',
+                                  'value' => function ($data) {
+                                    return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
+                                  },
+                                  'headerOptions' => ['class' => 'text-left'],
+                                  'contentOptions' => ['class' => 'text-left', 'style' => 'width:80px;'],
+                              ],
+                          ],
+                    ]); ?>
+                    <?php yii\widgets\Pjax::end(); ?>
+                
+              </td>
+            <?php endif; ?>
             <td rowspan="2" class="subtotal-table p-t-10">
                 <table class="table-invoice-childtable table-more-condensed">
                     <tr>
@@ -265,46 +302,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 </table>
             </td>
         </tr>
-        <tr>
-            <td class="payment-method-table">
-              <?php if (!empty($model->payments)) : ?>
-                    <?php yii\widgets\Pjax::begin(['id' => 'payment-index']); ?>
-                    <?php echo GridView::widget([
-                          'dataProvider' => $paymentsDataProvider,
-                          'tableOptions' => ['class' => 'table  m-0 table-more-condensed inner-payment-table'],
-                          'headerRowOptions' => ['class' => 'bg-light-gray'],
-                          'columns' => [
-                              [
-                                  'label' => 'Payment',
-                                  'value' => function ($data) {
-                                      return $data->paymentMethod->name;
-                                  },
-                                  'headerOptions' => ['class' => 'text-left'],
-                                  'contentOptions' => ['class' => 'text-left'],
-                              ],
-							[
-                                  'value' => function ($data) {
-                                      return !empty($data->reference) ? $data->reference : null;
-                                  },
-                              ],
-                              [
-                                  'format' => 'currency',
-                                  'value' => function ($data) {
-                                    return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
-                                  },
-                                  'headerOptions' => ['class' => 'text-left'],
-                                  'contentOptions' => ['class' => 'text-left', 'style' => 'width:80px;'],
-                              ],
-                          ],
-                    ]); ?>
-                    <?php yii\widgets\Pjax::end(); ?>
-                <?php endif; ?>
-            </td>
-        </tr>
     </table>
         <!-- /.col -->
         </div>
-    <div class="reminder_notes text-muted well well-sm no-shadow">
+    <div class="reminder_notes text-muted well well-sm no-shadow" style="clear:both; margin-top: 20px; position: relative;">
         <?php echo $model->reminderNotes; ?>
     </div>
 </div>
