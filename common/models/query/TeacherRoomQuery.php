@@ -33,21 +33,51 @@ class TeacherRoomQuery extends \yii\db\ActiveQuery
         return parent::one($db);
     }
 
-    public function location($locationId) {
+    public function location($locationId)
+    {
         $this->joinWith(['teacherAvailability' => function ($query) use ($locationId) {
             $query->joinWith(['userLocation' => function ($query) use ($locationId) {
                 $query->where(['location_id' => $locationId]);
             }]);
         }]);
-			
-		return $this;
-	}
 
-    public function day($day) {
+        return $this;
+    }
+
+    public function day($day)
+    {
         $this->joinWith(['teacherAvailability' => function ($query) use ($day) {
             $query->where(['day' => $day]);
         }]);
 
-		return $this;
-	}
+        return $this;
+    }
+
+    public function between($fromTime, $toTime)
+    {
+        $this->joinWith(['teacherAvailability' => function ($query) use ($fromTime, $toTime) {
+            $query->andWhere(['OR', 
+                [
+                    'between', 'from_time', (new \DateTime($fromTime))->format('H:i:s'),
+                    (new \DateTime($toTime))->format('H:i:s')
+                ],
+                [
+                    'between', 'to_time', (new \DateTime($fromTime))->format('H:i:s'),
+                    (new \DateTime($toTime))->format('H:i:s')
+                ],
+                [
+                    'AND',
+                    [
+                        '<=', 'from_time', $fromTime
+                    ],
+                    [
+                        '>=', 'to_time', $toTime
+                    ]
+
+                ]
+            ]);
+        }]);
+
+        return $this;
+    }
 }

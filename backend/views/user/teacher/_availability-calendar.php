@@ -38,9 +38,9 @@ use common\models\TeacherAvailability;
         maxTime: "<?php echo $maxTime; ?>",
         slotDuration: "00:15:00",
         selectable: true,
-        eventOverlap: function(stillEvent, movingEvent) {
-            return stillEvent.allDay && movingEvent.allDay;
-        },
+        editable: true,
+        draggable: false,
+        droppable: false,
         resources: [{'id':'1', 'title':'Monday'}, {'id':'2','title':'Tuesday'},
             {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'},
             {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
@@ -50,6 +50,14 @@ use common\models\TeacherAvailability;
             error: function() {
                 $("#availability-calendar").fullCalendar("refetchEvents");
             }
+        },
+        eventResize: function(event) {
+            var params = $.param({ id: event.id });
+            update(params, event.start, event.end, event.resourceId);
+        },
+        eventDrop: function(event) {
+            var params = $.param({ id: event.id });
+            update(params, event.start, event.end, event.resourceId);
         },
         eventClick: function(event) {
             var params = $.param({ id: event.id });
@@ -83,7 +91,7 @@ use common\models\TeacherAvailability;
                         $('#teacher-availability-modal .modal-body').html(response.data);
                         $('#teacher-availability-modal').modal('show');
                         $('#teacher-availability-from-time').val(moment(start).format('h:mm A'));
-                        $('#teacher-availability-to-time').val(moment(start).add(1, 'hour').format('hh:mm A'));
+                        $('#teacher-availability-to-time').val(moment(end).format('hh:mm A'));
                         $('#teacherroom-day').val(resourceObj.id);
                     } else {
                         $('#teacher-availability-modal').yiiActiveForm('updateMessages',
@@ -115,6 +123,32 @@ use common\models\TeacherAvailability;
         });
     return false;
     });
-
+    
+    function update(params, start, end, resourceId) {
+        $.ajax({
+            url: '<?= Url::to(['user/modify-teacher-availability', 'teacherId' => $model->id]); ?>&' + params,
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('#teacher-availability-modal .modal-body').html(response.data);
+                    $('#teacher-availability-modal').modal('show');
+                    $('#teacher-availability-from-time').val(moment(start).format('h:mm A'));
+                    $('#teacher-availability-to-time').val(moment(end).format('hh:mm A'));
+                    $('#teacherroom-day').val(resourceId);
+                } else {
+                    $('#teacher-availability-modal').yiiActiveForm('updateMessages',
+                            response.errors , true);
+                }
+            }
+        });
+    }
+$(document).ready(function () {
+    $('#teacher-availability-modal').on('hide.bs.modal', function () {
+        $("#availability-calendar").fullCalendar("refetchEvents");
+    });
+});
 </script>
 
