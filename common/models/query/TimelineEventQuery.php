@@ -28,14 +28,18 @@ class TimelineEventQuery extends ActiveQuery
 
 	public function lesson()
 	{
-		$this->joinWith(['timelineEventLesson']);
+		$this->joinWith(['timelineEventLesson' => function($query){
+			$query->innerJoinWith('lesson');
+		}]);
 		
 		return $this;
 	}
 
 	public function enrolment()
 	{
-		$this->joinWith(['timelineEventEnrolment']);
+		$this->joinWith(['timelineEventEnrolment' => function($query){
+			$query->innerJoinWith('enrolment');
+		}]);
 		
 		return $this;
 	}

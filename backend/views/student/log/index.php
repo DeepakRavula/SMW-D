@@ -10,13 +10,30 @@ use yii\data\ActiveDataProvider;
 
 ?> 
 <?php
-$logs = TimelineEvent::find()
+$studentLog = TimelineEvent::find()
+	->joinWith(['timelineEventStudent' => function($query) use($model){
+		$query->andWhere(['studentId' => $model->id]);
+	}]);
+	
+$enrolmentLog = TimelineEvent::find()
 	->joinWith(['timelineEventEnrolment' => function($query) use($model) {
 		$query->joinWith(['enrolment' => function($query) use($model) {
 			$query->andWhere(['studentId' => $model->id]);
 		}]);
 	}]);
-	
+
+$lessonLog = TimelineEvent::find()
+	->joinWith(['timelineEventLesson' => function($query) use($model) {
+		$query->joinWith(['lesson' => function($query) use($model) {
+			$query->joinWith(['course' => function($query) use($model) {
+				$query->joinWith(['enrolment' => function($query) use($model) {
+					$query->andWhere(['studentId' => $model->id]);
+				}]);
+			}]);
+		}]);
+	}]);
+$logs = $enrolmentLog->union($lessonLog);	
+$logs->union($studentLog);	
 $dataProvider = new ActiveDataProvider([
 	'query' => $logs,
 ]);?>
