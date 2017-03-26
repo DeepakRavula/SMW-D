@@ -215,7 +215,6 @@ class PaymentController extends Controller
                 $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
                 $paymentModel->invoiceId = $paymentModel->sourceId;
                 $paymentModel->reference = $model->id;
-				$paymentModel->staffName = $staff->publicIdentity; 
                 $paymentModel->save();
 
                 $debitPaymentId = $paymentModel->id;
