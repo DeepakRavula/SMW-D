@@ -20,10 +20,6 @@ $this->params['breadcrumbs'][] = $this->title;
     .table-invoice-childtable>tbody>tr>td:last-of-type {
         text-align: right;
     }
-    /*table>thead>tr>th:last-child,
-    table>tbody>tr>td:last-child{
-      text-align: right;
-    }*/
     .table-invoice-childtable>tbody>tr>td:first-of-type{
       width: 230px;
     }
@@ -191,8 +187,8 @@ $this->params['breadcrumbs'][] = $this->title;
 				[
                     'format' => 'currency',
                     'label' => 'Sell',
-                    'headerOptions' => ['class' => 'text-left'],
-                    'contentOptions' => ['class' => 'text-left', 'style' => 'width:80px;'],
+                    'headerOptions' => ['class' => 'text-right'],
+                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
                     'value' => function ($data) {
                         if ((int) $data->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON) {
                             return $data->lesson->enrolment->program->rate;
@@ -206,8 +202,8 @@ $this->params['breadcrumbs'][] = $this->title;
 					'value' => function ($data) {
                         return $data->unit;
                     },
-                    'headerOptions' => ['class' => 'text-left'],
-					'contentOptions' => ['class' => 'text-left', 'style' => 'width:50px;'],
+                    'headerOptions' => ['class' => 'text-right'],
+					'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
 				],
 				[
                     'format' => 'currency',
@@ -215,8 +211,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($data) {
                         return $data->netPrice;
                     },
-                    'headerOptions' => ['class' => 'text-left'],
-                    'contentOptions' => ['class' => 'text-left', 'style' => 'width:80px;'],
+                    'headerOptions' => ['class' => 'text-right'],
+                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
                 ],
             ],
         ]); ?>
