@@ -206,8 +206,6 @@ class StudentController extends Controller
             $enrolmentModel = new Enrolment();
             $enrolmentModel->courseId = current($post['courseId']);
             $enrolmentModel->studentId = $model->id;
-            $enrolmentModel->isDeleted = false;
-            $enrolmentModel->isConfirmed = false;
             $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
             $enrolmentModel->save();
 
@@ -219,10 +217,11 @@ class StudentController extends Controller
                 ->joinWith(['course' => function ($query) use ($locationId) {
                     $query->groupProgram($locationId);
                 }])
-                ->where(['enrolment.studentId' => $model->id, 'enrolment.isConfirmed' => true]);
+                ->where(['enrolment.studentId' => $model->id])
+				->isConfirmed();
         $groupCourses = Course::find()
                 ->joinWith(['program' => function ($query) {
-                    $query->where(['type' => Program::TYPE_GROUP_PROGRAM]);
+                    $query->group();
                 }])
                 ->where(['NOT IN', 'course.id', $groupEnrolments])
                 ->andWhere(['locationId' => $locationId])

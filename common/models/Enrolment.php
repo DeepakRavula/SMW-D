@@ -193,6 +193,13 @@ class Enrolment extends \yii\db\ActiveRecord
         return (int) $this->paymentFrequency === (int) self::LENGTH_FULL;
     }
 
+	public function beforeSave($insert) {
+		if($insert) {
+			$this->isDeleted = false;
+			$this->isConfirmed = false;
+		}
+		return parent::beforeSave($insert);
+	}
     public function afterSave($insert, $changedAttributes)
     {
         if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
