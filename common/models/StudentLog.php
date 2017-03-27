@@ -19,8 +19,8 @@ use common\models\TimelineEventStudent;
  * @property string $birth_date
  * @property int $customer_id
  */
-class StudentLog extends Student
-{
+class StudentLog extends Student {
+	
 	public function create($event) {
 		$studentModel = $event->sender;
 		$student = Student::find(['id' => $studentModel->id])->asArray()->one();
@@ -40,6 +40,29 @@ class StudentLog extends Student
 			$timelineEventStudent->studentId = $studentModel->id;
 			$timelineEventStudent->timelineEventId = $timelineEvent->id;
 			$timelineEventStudent->action = 'create';
+			$timelineEventStudent->save();
+		}
+	}
+	
+	public function edit($event) {
+		$studentModel = $event->sender;
+		$student = Student::find(['id' => $studentModel->id])->asArray()->one();
+		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+			'data' => $student,
+			'message' => $studentModel->userName . ' changed {{' . $studentModel->fullName . '}}\'s date of birth to ' . Yii::$app->formatter->asDate($studentModel->birth_date),
+		]));
+		if($timelineEvent) {
+			$timelineEventLink = new TimelineEventLink();
+			$timelineEventLink->timelineEventId = $timelineEvent->id;
+			$timelineEventLink->index = $studentModel->fullName;
+			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->path = Url::to(['/student/view', 'id' => $studentModel->id]);
+			$timelineEventLink->save();
+
+			$timelineEventStudent = new TimelineEventStudent();
+			$timelineEventStudent->studentId = $studentModel->id;
+			$timelineEventStudent->timelineEventId = $timelineEvent->id;
+			$timelineEventStudent->action = 'edit';
 			$timelineEventStudent->save();
 		}
 	}
