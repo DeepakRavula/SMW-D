@@ -48,45 +48,19 @@ class Course extends \yii\db\ActiveRecord
     {
         return [
             [['programId', 'teacherId', 'day', 'fromTime', 'duration', 'startDate'], 'required'],
-            [['startDate', 'endDate'], 'date', 'format' => 'php:d-m-Y', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'paymentFrequency'], 'integer'],
             [['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
             },'except' => self::SCENARIO_EDIT_ENROLMENT 
-            ],
-			[['endDate'], 'required', 'when' => function ($model, $attribute) {
-                return (int) $model->program->type === Program::TYPE_GROUP_PROGRAM;
-            },
             ],
 			[['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
-			[['startDate'], 'checkStartDate', 'on' => self::SCENARIO_GROUP_COURSE],
-			[['endDate'], 'checkEndDate', 'on' => self::SCENARIO_GROUP_COURSE],
             ['fromTime', 'checkTime', 'on' => self::SCENARIO_GROUP_COURSE],
-            ['fromTime', 'checkConflict', 'on' => self::SCENARIO_GROUP_COURSE],
         ];
     }
-
-	public function checkStartDate($attribute, $params)
-	{
-		$startDate = (new \DateTime($this->startDate))->format('d-m-Y');
-		$endDate = (new \DateTime($this->endDate))->format('d-m-Y');
-		if ($startDate > $endDate) {
-			return $this->addError($attribute, 'Start date must be less than "End date"');
-		}
-	}
-
-	public function checkEndDate($attribute, $params)
-	{
-		$startDate = (new \DateTime($this->startDate))->format('d-m-Y');
-		$endDate = (new \DateTime($this->endDate))->format('d-m-Y');
-		if ($endDate < $startDate) {
-			return $this->addError($attribute, 'End date must be greater than "Start date"');
-		}
-	}
 
 	public function checkTeacherAvailableDay($attribute, $params)
     {
@@ -138,37 +112,6 @@ class Course extends \yii\db\ActiveRecord
         }
     }
 
-	public function checkConflict($attribute, $params)
-    {
-		$locationId = Yii::$app->session->get('location_id');
-		$otherLessons = [];
-        $intervals = [];
-
-		$teacherLessons = Lesson::find()
-            ->teacherLessons($locationId, $this->teacherId)
-            ->all();
-        foreach ($teacherLessons as $teacherLesson) {
-            $otherLessons[] = [
-                'id' => $teacherLesson->id,
-                'date' => $teacherLesson->date,
-                'duration' => $teacherLesson->course->duration,
-            ];
-        }
-		foreach ($otherLessons as $otherLesson) {
-            $timebits = explode(':', $otherLesson['duration']);
-            $intervals[] = new DateRangeInclusive(new \DateTime($otherLesson['date']), new \DateTime($otherLesson['date']), new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'), $otherLesson['id']);
-        }
-        $tree = new IntervalTree($intervals);
-        $conflictedLessonIds = [];
-		$lessonDate = $this->startDate . ' ' . $this->fromTime;
-        $conflictedLessonsResults = $tree->search(new \DateTime($lessonDate));
-        foreach ($conflictedLessonsResults as $conflictedLessonsResult) {
-            $conflictedLessonIds[] = $conflictedLessonsResult->id;
-        }
-        if (!empty($conflictedLessonIds)) {
-            $this->addError($attribute, "Course time conflicts with teacher's other lesson");
-        }
-    }
     /**
      * {@inheritdoc}
      */
@@ -264,10 +207,11 @@ class Course extends \yii\db\ActiveRecord
         $timebits = explode(':', $this->fromTime);
 		$this->isConfirmed = false;
         if ((int) $this->program->type === Program::TYPE_GROUP_PROGRAM) {
-            $startDate = new \DateTime($this->startDate);
+			$dateRange = explode(' - ', $this->startDate);
+            $startDate = new \DateTime($dateRange[0]);
             $startDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
             $this->startDate = $startDate->format('Y-m-d H:i:s');
-            $endDate = new \DateTime($this->endDate);
+            $endDate = new \DateTime($dateRange[1]);
             $this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
             $endDate = \DateTime::createFromFormat('d-m-Y', $this->startDate);

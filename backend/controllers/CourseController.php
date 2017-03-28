@@ -143,15 +143,15 @@ class CourseController extends Controller
         $model = new Course();
 		$model->setScenario(Course::SCENARIO_GROUP_COURSE);
         $teacherModel = ArrayHelper::map(User::find()
-                    ->joinWith(['userLocation ul' => function ($query) {
-                        $query->joinWith('teacherAvailability');
-                    }])
-                    ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-                    ->where(['raa.item_name' => 'teacher'])
-                    ->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
-                    ->all(),
-                'id', 'userProfile.fullName'
-            );
+				->joinWith(['userLocation ul' => function ($query) {
+					$query->joinWith('teacherAvailability');
+				}])
+				->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+				->where(['raa.item_name' => 'teacher'])
+				->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+				->all(),
+			'id', 'userProfile.fullName'
+		);
         $model->locationId = Yii::$app->session->get('location_id');
         if ($model->load(Yii::$app->request->post())) {
 			if(Yii::$app->request->isAjax) {

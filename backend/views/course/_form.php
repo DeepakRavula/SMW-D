@@ -9,6 +9,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use common\models\TeacherAvailability;
 use yii\data\ActiveDataProvider;
+use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
@@ -63,28 +64,27 @@ use yii\data\ActiveDataProvider;
 
 					<?= $form->field($model, 'fromTime')->widget(TimePicker::classname(), []); ?>
 				</div>
+				<?php 
+				$currentDate = new \DateTime();
+				$endDate = $currentDate->modify('last day of this month');
+				$model->startDate = (new \DateTime())->format('d-m-Y') . ' - ' . $endDate->format('d-m-Y');?>
 				<div class="col-md-6">
-					<?php
-					echo $form->field($model, 'startDate')->widget(\yii\jui\DatePicker::classname(),
-						[
-						'options' => ['class' => 'form-control'],
-						'clientOptions' => [
-							'changeMonth' => true,
-							'changeYear' => true,
-						],
-					]);
-					?>
-				</div>
-				<div class="col-md-6">
-					<?php
-					echo $form->field($model, 'endDate')->widget(\yii\jui\DatePicker::classname(),
-						[
-						'options' => ['class' => 'form-control'],
-						'clientOptions' => [
-							'changeMonth' => true,
-							'changeYear' => true,
-						],
-					]);
+					<?php 
+					   echo '<label>Date Range</label>';
+					   echo DateRangePicker::widget([
+						'model' => $model,
+						'attribute' => 'startDate',
+						'convertFormat' => true,
+						'initRangeExpr' => true,
+						'pluginOptions' => [
+							'autoApply' => true,
+							'locale' => [
+								'format' => 'd-m-Y',
+							],
+							'opens' => 'left',
+							],
+
+						]);
 					?>
 				</div>
 		</div>
