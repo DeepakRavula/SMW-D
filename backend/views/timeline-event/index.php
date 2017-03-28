@@ -6,6 +6,8 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('backend', 'Timeline');
 ?>
+<div class="box">
+<div class="box-body p-10">
 <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <?php $columns = [
 		[
@@ -30,3 +32,5 @@ $this->title = Yii::t('backend', 'Timeline');
         'columns' => $columns,
     ]); ?>
 
+</div>
+</div>
