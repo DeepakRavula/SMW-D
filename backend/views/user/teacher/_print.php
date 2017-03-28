@@ -3,8 +3,68 @@
 use kartik\grid\GridView;
 use common\models\Lesson;
 ?>
-<h3><?= $model->publicIdentity; ?></h3>
-<h4><?= $fromDate->format('l, jS Y') . ' to ' . $toDate->format('l, jS Y'); ?></h4>
+<div class="row-fluid">
+	<div class="logo invoice-col" style="width: 150px">              
+		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
+	</div>
+	<div class="invoice-col text-gray" style="font-size:18px; width: 180px;">
+		<small>
+			<?php if (!empty($model->userLocation->location->address)): ?>
+				<?= $model->userLocation->location->address ?><br>
+			<?php endif; ?>
+			<?php if (!empty($model->userLocation->location->phone_number)): ?>
+				<?= $model->userLocation->location->phone_number ?>
+			<?php endif; ?>
+			<?php if (!empty($model->userLocation->location->email)): ?>
+				<?= $model->userLocation->location->email ?>
+			<?php endif; ?> 
+		</small> 
+	</div>
+	<div class="invoice-col" style="width: 220px;">
+		To<br>
+		<strong>
+			<?php echo isset($model->publicIdentity) ? $model->publicIdentity : null ?>
+		</strong>
+		<address>
+			<?php
+			$addresses = $model->addresses;
+			foreach ($addresses as $address) {
+				if ($address->label === 'Billing') {
+					$billingAddress = $address;
+					break;
+				}
+			}
+			$phoneNumber = $model->phoneNumber;
+			?>
+			<!-- Billing address -->
+			<?php if (!empty($billingAddress)) {
+				?>
+				<?php
+				echo $billingAddress->address . '<br> ' . $billingAddress->city->name . ', ';
+				echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ' ';
+				echo $billingAddress->postal_code;
+			}
+			?>
+			<div class="row-fluid m-t-5">
+				<?php if (!empty($model->email)): ?>
+					<?php echo 'E: '; ?><?php echo $model->user->email ?>
+				<?php endif; ?>
+			</div>
+            <!-- Phone number -->
+            <div class="row-fluid text-gray">
+				<?php if (!empty($phoneNumber)) {
+					?><?php echo 'P: '; ?>
+					<?php echo $phoneNumber->number;
+				}
+				?>
+            </div>
+		</address>
+	</div>
+	<div class="invoice-col"  style="width: 125px;">
+		<b>Date:</b> <?= $fromDate->format('l, jS Y') . ' to ' . $toDate->format('l, jS Y'); ?><br>
+	</div>
+	<div class="clearfix"></div>
+</div>
 <?php
 if(!$searchModel->summariseReport) {
 $columns = [
