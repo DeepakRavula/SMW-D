@@ -4,7 +4,7 @@ namespace common\components\validators\lesson\conflict;
 use Yii;
 use yii\validators\Validator;
 use IntervalTree\IntervalTree;
-use common\components\intervalTree\DateRangeInclusive;
+use common\components\intervalTree\DateRangeExclusive;
 use common\models\Lesson;
 
 class StudentValidator extends Validator
@@ -37,13 +37,13 @@ class StudentValidator extends Validator
             $timebits = explode(':', $otherLesson['duration']);
 			$endDate = new \DateTime($otherLesson['date']);
 			$endDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-            $intervals[] = new DateRangeInclusive(new \DateTime($otherLesson['date']),$endDate,null, $otherLesson['id']);
+            $intervals[] = new DateRangeExclusive(new \DateTime($otherLesson['date']),$endDate,null, $otherLesson['id']);
         }
 		$tree = new IntervalTree($intervals);
 		$duration = explode(':', $model->duration);
 		$toDate = new \DateTime($model->date);
 		$toDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
-		$searchRange = new DateRangeInclusive(new \DateTime($model->date), $toDate);
+		$searchRange = new DateRangeExclusive(new \DateTime($model->date), $toDate);
         $conflictedLessonsResults = $tree->search($searchRange);
 		
         if ((!empty($conflictedLessonsResults))) {
