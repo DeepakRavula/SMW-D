@@ -67,7 +67,11 @@ $this->title = 'Dashboard';
          'title' => ['text' => 'Income'],
       ],
       'series' => [
-         ['name' => 'Month', 'data' => Dashboard::income()],
+         [
+         'name' => 'Month', 
+         'data' => Dashboard::income(),
+         'color'=> '#E12E2B'
+         ],
       ],
    ],
 ]); ?>
@@ -90,7 +94,7 @@ $this->title = 'Dashboard';
             [ // new opening bracket
                 'type' => 'pie',
                 'name' => 'Hours',
-                'data' => $completedPrograms,
+                'data' => $completedPrograms
             ], // new closing bracket
         ],
     ],
