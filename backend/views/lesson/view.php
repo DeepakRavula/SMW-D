@@ -28,6 +28,10 @@ $studentContent = $this->render('student/view', [
 	'studentDataProvider' => $studentDataProvider
 ]);
 
+$logContent = $this->render('log', [
+	'model' => $model,
+]);
+
 $items = [
 	[
 		'label' => 'Details',
@@ -41,6 +45,13 @@ $items = [
 		'content' => $noteContent,
 		'options' => [
 			'id' => 'note',
+		],
+	],
+	[
+		'label' => 'Logs',
+		'content' => $logContent,
+		'options' => [
+			'id' => 'log',
 		],
 	],
 ];
