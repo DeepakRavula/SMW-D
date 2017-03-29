@@ -25,6 +25,7 @@ use yii\widgets\ActiveForm;
 use common\models\Note;
 use common\models\PaymentMethod;
 use common\models\InvoiceReverse;
+use common\models\InvoiceLog;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -309,6 +310,9 @@ class InvoiceController extends Controller
         }
         $dataProvider = null;
         $invoice = new Invoice();
+        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
+		$user = User::findOne(['id' => Yii::$app->user->id]);
+		$invoice->userName = $user->publicIdentity;
         $request = Yii::$app->request;
         $invoiceRequest = $request->get('Invoice');
         $invoice->type = $invoiceRequest['type'];

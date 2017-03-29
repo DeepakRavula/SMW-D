@@ -34,6 +34,7 @@ class Invoice extends \yii\db\ActiveRecord
     const EVENT_UPDATE = 'event-update';
     const SCENARIO_DELETE = 'delete';
     const SCENARIO_DISCOUNT = 'discount';
+	const EVENT_CREATE = 'create';
 
     public $customer_id;
     public $credit;
@@ -41,6 +42,7 @@ class Invoice extends \yii\db\ActiveRecord
     public $toEmailAddress;
     public $subject;
     public $content;
+	public $userName;
     /**
      * {@inheritdoc}
      */
@@ -235,7 +237,9 @@ class Invoice extends \yii\db\ActiveRecord
                 $this->manageAccount();
             }
             
-        }
+        } else {
+			$this->trigger(self::EVENT_CREATE);
+		}
         return parent::afterSave($insert, $changedAttributes);
     }
 	
