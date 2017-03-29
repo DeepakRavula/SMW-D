@@ -25,6 +25,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     const DISCOUNT_FLAT            = 0;
     const DISCOUNT_PERCENTAGE      = 1;
 
+	const EVENT_EDIT = 'edit';
     /**
      * {@inheritdoc}
      */

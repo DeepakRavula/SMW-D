@@ -46,4 +46,30 @@ class InvoiceLog extends Invoice {
 			$timelineEventInvoice->save();
 		}
 	}
+	
+	public function edit($event) {
+		$invoiceLineItemModel = $event->sender;
+		$data = current($event->data);
+		$invoice = Invoice::find()->andWhere(['id' => $invoiceLineItemModel->invoice->id])->asArray()->one();
+		if($data['description'] !== $invoiceLineItemModel->description) {	
+			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+				'data' => $invoice,
+				'message' => $invoiceLineItemModel->invoice->userName . ' changed an {{invoice #' . $invoiceLineItemModel->invoice->getInvoiceNumber() . '}} description to ' . $invoiceLineItemModel->description,
+			]));
+			if ($timelineEvent) {
+				$timelineEventLink = new TimelineEventLink();
+				$timelineEventLink->timelineEventId = $timelineEvent->id;
+				$timelineEventLink->index = 'invoice #' . $invoiceLineItemModel->invoice->getInvoiceNumber();
+				$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+				$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $invoiceLineItemModel->invoice_id]);
+				$timelineEventLink->save();
+
+				$timelineEventInvoice = new TimelineEventInvoice();
+				$timelineEventInvoice->timelineEventId = $timelineEvent->id;
+				$timelineEventInvoice->invoiceId = $invoiceLineItemModel->invoice_id;
+				$timelineEventInvoice->action = 'edit';
+				$timelineEventInvoice->save();
+			}
+		}
+	}
 }
