@@ -15,6 +15,7 @@ class TimelineEventSearch extends TimelineEvent
 	const CATEGORY_LESSON = 'lesson';
 	const CATEGORY_ENROLMENT = 'enrolment';
 	const CATEGORY_STUDENT = 'student';
+	const CATEGORY_INVOICE = 'invoice';
 
 	private $fromDate;
     private $toDate;
@@ -78,6 +79,8 @@ class TimelineEventSearch extends TimelineEvent
             $query->lesson();
         } elseif($this->category === self::CATEGORY_STUDENT) {
             $query->student();
+        } elseif($this->category === self::CATEGORY_INVOICE) {
+            $query->invoice();
         }
 		
 		$query->where(['between', 'DATE(created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
@@ -97,6 +100,7 @@ class TimelineEventSearch extends TimelineEvent
             self::CATEGORY_LESSON => 'Lesson',
 			self::CATEGORY_ENROLMENT => 'Enrolment',
 			self::CATEGORY_STUDENT => 'Student',
+			self::CATEGORY_INVOICE => 'Invoice',
         ];
     }
 	
