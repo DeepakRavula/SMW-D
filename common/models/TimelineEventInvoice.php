@@ -46,4 +46,9 @@ class TimelineEventInvoice extends \yii\db\ActiveRecord
             'action' => 'Action',
         ];
     }
+
+	public function getInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId']);
+    }
 }

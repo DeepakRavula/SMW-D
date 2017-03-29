@@ -156,6 +156,9 @@ $noteContent = $this->render('note/view', [
 	'model' => new Note(),
 	'noteDataProvider' => $noteDataProvider
 ]);
+$logContent = $this->render('log', [
+	'model' => $model,
+]);
 ?>
 <?php echo Tabs::widget([
     'items' => [
@@ -178,6 +181,13 @@ $noteContent = $this->render('note/view', [
             'content' => $paymentContent,
             'options' => [
                     'id' => 'payment',
+                ],
+        ],
+		[
+            'label' => 'Logs',
+            'content' => $logContent,
+            'options' => [
+                    'id' => 'log',
                 ],
         ],
     ],
