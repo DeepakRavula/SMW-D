@@ -530,7 +530,10 @@ class Lesson extends \yii\db\ActiveRecord
     public function createInvoice()
     {
         $location_id = $this->enrolment->student->customer->userLocation->location_id;
+		$user = User::findOne(['id' => Yii::$app->user->id]);
         $invoice = new Invoice();
+        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
+		$invoice->userName = $user->publicIdentity;
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
         $invoice->type = INVOICE::TYPE_INVOICE;

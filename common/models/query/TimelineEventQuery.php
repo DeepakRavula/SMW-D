@@ -51,4 +51,12 @@ class TimelineEventQuery extends ActiveQuery
 		
 		return $this;
 	}
+	public function invoice()
+	{
+		$this->joinWith(['timelineEventInvoice' => function($query){
+			$query->innerJoinWith('invoice');
+		}]);
+		
+		return $this;
+	}
 }
