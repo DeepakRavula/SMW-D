@@ -46,11 +46,8 @@ class InvoiceLineItemController extends Controller
     public function actionEdit($id)
     {
         if (Yii::$app->request->post('hasEditable')) {
-			$user = User::findOne(['id' => Yii::$app->user->id]);
             $lineItemIndex = Yii::$app->request->post('editableIndex');
             $model = InvoiceLineItem::findOne(['id' => $id]);
-			$model->invoice->userName = $user->publicIdentity;
-        	$model->on(Invoice::EVENT_EDIT, [new InvoiceLog(), 'edit'], ['oldAttributes' => $model->getOldAttributes()]);
             $result = [
                 'output' => '',
                 'message' => '',
@@ -59,7 +56,6 @@ class InvoiceLineItemController extends Controller
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['description'])) {
                 $model->description = $post['InvoiceLineItem'][$lineItemIndex]['description'];
                 $model->save();
-				$model->trigger(InvoiceLineItem::EVENT_EDIT);
             }
             if (isset($post['InvoiceLineItem'][$lineItemIndex]['isRoyalty'])) {
                 $model->isRoyalty = $post['InvoiceLineItem'][$lineItemIndex]['isRoyalty'];

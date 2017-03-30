@@ -662,26 +662,6 @@ class LessonController extends Controller
 		if(!$lessonRequest['present']) {
 			$model->status = Lesson::STATUS_MISSED;
 			$model->save();
-			$staff = User::findOne(['id'=>Yii::$app->user->id]);
-            $lesson = Lesson::find(['id' => $model->id])->asArray()->one();
-			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-				'category' => 'lesson',
-				'event' => 'edit',
-				'data' => $lesson, 
-				'message' => $staff->publicIdentity . ' recorded {{' . $model->course->enrolment->student->fullName . '}} as absent from his/her ' . $model->course->program->name . ' {{lesson}}', 
-        	]));
-			
-			$timelineEventLink = new TimelineEventLink();
-			$timelineEventLink->timelineEventId = $timelineEvent->id;
-			$timelineEventLink->index = $model->course->enrolment->student->fullName;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;	
-			$timelineEventLink->path = Url::to(['/student/view', 'id' => $model->course->enrolment->student->id]);
-			$timelineEventLink->save();
-			$timelineEventLink->id = null;
-			$timelineEventLink->isNewRecord = true;
-			$timelineEventLink->index = 'lesson';
-			$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $model->id]);
-			$timelineEventLink->save();
 			
 			if(empty($model->invoice)) {
 				$invoice = $model->createInvoice();
