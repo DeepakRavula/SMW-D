@@ -131,7 +131,7 @@ class LessonController extends Controller
             $model->courseId = $studentEnrolment->courseId;
             $model->status = Lesson::STATUS_SCHEDULED;
             $model->isDeleted = false;
-            $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+            $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
             $model->duration = $studentEnrolment->course->duration;
             

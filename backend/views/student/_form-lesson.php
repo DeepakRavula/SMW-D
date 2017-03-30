@@ -3,7 +3,7 @@
 use common\models\Lesson;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use kartik\datetime\DateTimePicker;
+use kartik\date\DatePicker;
 use kartik\depdrop\DepDrop;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
@@ -22,7 +22,7 @@ use yii\helpers\Url;
 	'action' => Url::to(['lesson/create', 'studentId' => $studentModel->id]),
 ]); ?>
 <div class="row">
-        <div class="col-md-6">
+        <div id="lesson-program" class="col-md-6">
             <?php echo $form->field($model, 'programId')->dropDownList(
                     ArrayHelper::map(
                         Program::find()
@@ -35,7 +35,7 @@ use yii\helpers\Url;
                      'id', 'name'), ['prompt' => 'Select Program'])->label()
             ?>  
         </div>
-    	<div class="col-md-6">
+    	<div id="lesson-teacher" class="col-md-6">
         <?php
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
@@ -48,21 +48,22 @@ use yii\helpers\Url;
         ]);
         ?>
         </div>
-		<div class="col-md-6">
-            <?php
-                echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-                    'options' => [
-                    	'value' => Yii::$app->formatter->asDateTime((new \DateTime())->format('d-m-Y g:i A')),
-               		],
-                'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+        <div id="lesson-date" class="col-md-6">
+            <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
+                'options' => [
+                    'id' => 'extra-lesson-date',
+                    'value' =>Yii::$app->formatter->asDate((new \DateTime())->format('d-m-Y')),
+                ],
+                'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy HH:ii P',
-                    'showMeridian' => true,
-                    'minuteStep' => 15,
+                    'format' => 'dd-mm-yyyy',
                 ],
-              ]);
+            ]);
             ?>
+        </div>
+        <div class="col-md-12">
+            <div id="lesson-calendar"></div>
         </div>
         <div class="clearfix"></div>
     <div class="col-md-12 p-l-20 form-group">
