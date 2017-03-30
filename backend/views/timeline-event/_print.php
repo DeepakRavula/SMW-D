@@ -5,6 +5,7 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 ?>
+<h2><?= $searchModel->getDateRange(); ?></h2>
 <?php
 $columns = [
 		[
@@ -22,7 +23,6 @@ $columns = [
 		'value' => function ($data) {
 			$message = $data->message;
 			return preg_replace('/[{{|}}]/', '', $message);
-			;
 		},
 	],
 ];
@@ -30,7 +30,7 @@ $columns = [
 <?php
 echo GridView::widget([
 	'dataProvider' => $dataProvider,
-	'tableOptions' => ['class' => 'table table-bordered'],
+	'tableOptions' => ['class' => 'table table-bordered table-more-condensed'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => $columns,
 ]);
