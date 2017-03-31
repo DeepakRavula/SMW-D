@@ -30,7 +30,7 @@ class Payment extends ActiveRecord
     public $invoiceNumber;
     public $lastAmount;
     public $differnce;
-	public $staffName;
+	public $userName;
 	
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_APPLY_CREDIT = 'apply-credit';
@@ -38,6 +38,9 @@ class Payment extends ActiveRecord
     const SCENARIO_OPENING_BALANCE = 'allow-negative-payments';
     const SCENARIO_CREDIT_USED = 'credit-used';
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
+	
+	const EVENT_CREATE = 'create';
+	const EVENT_EDIT = 'edit';
 
     /**
      * {@inheritdoc}
@@ -213,6 +216,8 @@ class Payment extends ActiveRecord
             $this->invoice->save();
         }
 
+		$this->trigger(self::EVENT_CREATE);
+		
         return parent::afterSave($insert, $changedAttributes);
     }
 
