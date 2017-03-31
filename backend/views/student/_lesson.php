@@ -2,7 +2,7 @@
 
 use yii\helpers\Url;
 use common\models\Lesson;
-use common\models\Invoice;
+use common\models\LocationAvailability;
 use yii\grid\GridView;
 use yii\bootstrap\Modal;
 
@@ -112,3 +112,106 @@ use yii\bootstrap\Modal;
     </div>
     <?php \yii\widgets\Pjax::end(); ?>    
 </div>
+
+<?php
+    $locationId = Yii::$app->session->get('location_id');
+    $minLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['fromTime' => SORT_ASC])
+        ->one();
+    $maxLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['toTime' => SORT_DESC])
+        ->one();
+    $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+    $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
+
+<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#extra-lesson-date').on('change', function () {
+            refresh();
+        });
+
+        $(document).on('change', '#lesson-teacherid', function () {
+            refresh();
+        });
+
+        function refreshCalendar(availableHours, events, date) {
+            $('#lesson-calendar').fullCalendar('destroy');
+            $('#lesson-calendar').fullCalendar({
+                defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'agendaWeek'
+                },
+                allDaySlot: false,
+                slotDuration: '00:15:00',
+                titleFormat: 'DD-MMM-YYYY, dddd',
+                defaultView: 'agendaWeek',
+                minTime: "<?php echo $from_time; ?>",
+                maxTime: "<?php echo $to_time; ?>",
+                selectConstraint: 'businessHours',
+                eventConstraint: 'businessHours',
+                businessHours: availableHours,
+                overlapEvent: false,
+                overlapEventsSeparate: true,
+                events: events,
+                select: function (start, end, allDay) {
+                    $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
+                    $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
+                    var endtime = start.clone();
+                    moment(endtime.add(30, 'minutes'));
+                    $('#lesson-calendar').fullCalendar('renderEvent',
+                        {
+                            id: 'newEnrolment',
+                            start: start,
+                            end: endtime,
+                            allDay: false
+                        },
+                    true // make the event "stick"
+                    );
+                    $('#lesson-calendar').fullCalendar('unselect');
+                },
+                eventAfterAllRender: function (view) {
+                    $('.fc-short').removeClass('fc-short');
+                },
+                selectable: true,
+                selectHelper: true,
+            });
+        }
+
+        function refresh() {
+            var events, availableHours;
+            var teacherId = $('#lesson-teacherid').val();
+            var date = $('#extra-lesson-date').val();
+            if (date === '') {
+                $('#lesson-calendar').fullCalendar('destroy');
+                $('#new-lesson-modal .modal-dialog').css({'width': '600px'});
+                $('#lesson-program').removeClass('col-md-4');
+                $('#lesson-teacher').removeClass('col-md-4');
+                $('#lesson-date').removeClass('col-md-4');
+            } else {
+                $('#lesson-program').addClass('col-md-4');
+                $('#lesson-teacher').addClass('col-md-4');
+                $('#lesson-date').addClass('col-md-4');
+                $('#new-lesson-modal .modal-dialog').css({'width': '1000px'});
+                $.ajax({
+                    url: '/teacher-availability/availability-with-events?id=' + teacherId,
+                    type: 'get',
+                    dataType: "json",
+                    success: function (response)
+                    {
+                        events = response.events;
+                        availableHours = response.availableHours;
+                        refreshCalendar(availableHours, events, date);
+                    }
+                });
+            }
+        }
+    });
+</script>
+
