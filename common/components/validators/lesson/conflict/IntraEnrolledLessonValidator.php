@@ -25,18 +25,18 @@ class IntraEnrolledLessonValidator extends Validator
 			->andWhere(['DATE(date)' => $lessonDate])
             ->andWhere(['OR', 
                 [
-                    'between', 'TIME(DATE)', $lessonStartTime, $lessonEndTime
+                    'between', 'TIME(lesson.date)', $lessonStartTime, $lessonEndTime
                 ],
                 [
-                    'between', 'DATE_SUB(ADDTIME(TIME(DATE),lesson.duration), INTERVAL 1 second)', $lessonStartTime, $lessonEndTime
+                    'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $lessonStartTime, $lessonEndTime
                 ],
                 [
                     'AND',
                     [
-                        '<', 'TIME(DATE)', $lessonStartTime
+                        '<', 'TIME(lesson.date)', $lessonStartTime
                     ],
                     [
-                        '>', 'DATE_SUB(ADDTIME(TIME(DATE),lesson.duration), INTERVAL 1 second)', $lessonEndTime
+                        '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $lessonEndTime
                     ]
                     
                 ]
