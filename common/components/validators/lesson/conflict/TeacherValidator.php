@@ -19,6 +19,7 @@ class TeacherValidator extends Validator
 		$lessonDuration = explode(':', $model->duration);
 		$date = new \DateTime($model->date);
 		$date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));	
+		$date->modify('-1 second');
 		$lessonEndTime = $date->format('H:i:s');
 		$teacherLessons = Lesson::find()
             ->teacherLessons($locationId, $model->teacherId)
@@ -28,21 +29,20 @@ class TeacherValidator extends Validator
                     'between', 'TIME(DATE)', $lessonStartTime, $lessonEndTime
                 ],
                 [
-                    'between', 'ADDTIME(TIME(DATE),lesson.duration)', $lessonStartTime, $lessonEndTime
+                    'between', 'DATE_SUB(ADDTIME(TIME(DATE),lesson.duration), INTERVAL 1 second)', $lessonStartTime, $lessonEndTime
                 ],
                 [
                     'AND',
                     [
-                        '<=', 'TIME(DATE)', $lessonStartTime
+                        '<', 'TIME(DATE)', $lessonStartTime
                     ],
                     [
-                        '>=', 'ADDTIME(TIME(DATE),lesson.duration)', $lessonEndTime
+                        '>', 'DATE_SUB(ADDTIME(TIME(DATE),lesson.duration), INTERVAL 1 second)', $lessonEndTime
                     ]
                     
                 ]
             ])
             ->all();
-		
         if ((!empty($teacherLessons))) {
             $this->addError($model,$attribute, 'Teacher occupied with another lesson');
 		}

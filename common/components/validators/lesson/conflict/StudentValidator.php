@@ -22,24 +22,25 @@ class StudentValidator extends Validator
 		$lessonDuration = explode(':', $model->duration);
 		$date = new \DateTime($model->date);
 		$date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));	
+		$date->modify('-1 second');
 		$lessonEndTime = $date->format('H:i:s');
 		$studentLessons = Lesson::find()
 			->studentLessons($locationId, $studentId)
 			->andWhere(['DATE(date)' => $lessonDate])
-            ->andWhere(['OR', 
+           ->andWhere(['OR', 
                 [
                     'between', 'TIME(DATE)', $lessonStartTime, $lessonEndTime
                 ],
                 [
-                    'between', 'ADDTIME(TIME(DATE),lesson.duration)', $lessonStartTime, $lessonEndTime
+                    'between', 'DATE_SUB(ADDTIME(TIME(DATE),lesson.duration), INTERVAL 1 second)', $lessonStartTime, $lessonEndTime
                 ],
                 [
                     'AND',
                     [
-                        '<=', 'TIME(DATE)', $lessonStartTime
+                        '<', 'TIME(DATE)', $lessonStartTime
                     ],
                     [
-                        '>=', 'ADDTIME(TIME(DATE),lesson.duration)', $lessonEndTime
+                        '>', 'DATE_SUB(ADDTIME(TIME(DATE),lesson.duration), INTERVAL 1 second)', $lessonEndTime
                     ]
                     
                 ]
