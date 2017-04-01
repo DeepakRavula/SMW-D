@@ -16,6 +16,7 @@ use yii\web\Response;
 use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
 use common\models\User;
+use common\models\TimelineEventPayment;
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
@@ -178,6 +179,9 @@ class PaymentController extends Controller
     public function actionInvoicePayment($id)
     {
         $paymentModel = new Payment();
+		$userModel = User::findOne(['id' => Yii::$app->user->id]);
+        $paymentModel->on(Payment::EVENT_CREATE, [new TimelineEventPayment(), 'create']);
+		$paymentModel->userName = $userModel->publicIdentity;
         $db = \Yii::$app->db;
         $transaction = $db->beginTransaction();
         $request = Yii::$app->request;
@@ -200,6 +204,9 @@ class PaymentController extends Controller
     {
         $model = Invoice::findOne(['id' => $id]);
         $paymentModel = new Payment();
+		$userModel = User::findOne(['id' => Yii::$app->user->id]);
+        $paymentModel->on(Payment::EVENT_CREATE, [new TimelineEventPayment(), 'create']);
+		$paymentModel->userName = $userModel->publicIdentity;
         $paymentModel->setScenario('apply-credit');
         $request = Yii::$app->request;
         if ($paymentModel->load($request->post())) {
@@ -248,6 +255,9 @@ class PaymentController extends Controller
         if ($request->post('hasEditable')) {
             $paymentIndex = $request->post('editableIndex');
             $model = Payment::findOne(['id' => $id]);
+			$userModel = User::findOne(['id' => Yii::$app->user->id]);
+        	$model->on(Payment::EVENT_EDIT, [new TimelineEventPayment(), 'edit'], ['oldAttributes' => $model->getOldAttributes()]);
+			$model->userName = $userModel->publicIdentity;
             if (!empty($post['Payment'][$paymentIndex]['amount'])) {
                 $newAmount = $post['Payment'][$paymentIndex]['amount'];
                 if ($model->isOtherPayments()) {
@@ -277,7 +287,7 @@ class PaymentController extends Controller
     {
         $model->amount = $newAmount;
         $model->save();
-
+		$model->trigger(Payment::EVENT_EDIT);
         $result = [
             'output' => $newAmount,
             'message' => '',

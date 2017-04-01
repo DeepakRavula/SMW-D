@@ -10,16 +10,27 @@ use yii\data\ActiveDataProvider;
 
 ?> 
 <?php
-$logs = TimelineEvent::find()
+$invoiceLog = TimelineEvent::find()
 	->joinWith(['timelineEventInvoice' => function($query) use($model) {
 		$query->joinWith(['invoice' => function($query) use($model) {
 			$query->andWhere(['invoice.id' => $model->id]);
 		}]);
 	}]);
-
+	
+$paymentLog = TimelineEvent::find()
+	->joinWith(['timelineEventPayment' => function($query) use($model){
+		$query->joinWith(['payment' => function($query) use($model) {
+			$query->joinWith(['invoice' => function($query) use($model) {
+				$query->andWhere(['invoice_id' => $model->id]);
+			}]);
+		}]);
+	}]);
+$logs = $invoiceLog->union($paymentLog);	
 $dataProvider = new ActiveDataProvider([
 	'query' => $logs,
-]);?>
+]);
+
+?>
 <div class="student-index">  
 <?php echo GridView::widget([
 	'dataProvider' => $dataProvider,
