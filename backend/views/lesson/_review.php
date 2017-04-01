@@ -185,7 +185,6 @@ $this->title = 'Review Lessons';
 ],
 'columns' => $columns,
 'emptyText' => 'No conflicts here! You are ready to confirm!',
-'showPageSummary' => true,
 ]); ?>
 <div class="form-group">
   <div class="p-10 text-center">
