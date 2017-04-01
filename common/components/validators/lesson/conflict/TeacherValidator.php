@@ -23,25 +23,7 @@ class TeacherValidator extends Validator
 		$lessonEndTime = $date->format('H:i:s');
 		$teacherLessons = Lesson::find()
             ->teacherLessons($locationId, $model->teacherId)
-			->andWhere(['DATE(date)' => $lessonDate])
-            ->andWhere(['OR', 
-                [
-                    'between', 'TIME(lesson.date)', $lessonStartTime, $lessonEndTime
-                ],
-                [
-                    'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $lessonStartTime, $lessonEndTime
-                ],
-                [
-                    'AND',
-                    [
-                        '<', 'TIME(lesson.date)', $lessonStartTime
-                    ],
-                    [
-                        '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $lessonEndTime
-                    ]
-                    
-                ]
-            ])
+			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
             ->all();
         if ((!empty($teacherLessons))) {
             $this->addError($model,$attribute, 'Teacher occupied with another lesson');

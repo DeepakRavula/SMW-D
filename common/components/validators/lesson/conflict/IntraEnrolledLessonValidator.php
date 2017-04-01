@@ -22,25 +22,7 @@ class IntraEnrolledLessonValidator extends Validator
       	$draftLessons = Lesson::find()
             ->where(['courseId' => $model->courseId, 'status' => Lesson::STATUS_DRAFTED])
             ->andWhere(['NOT', ['id' => $model->id]])
-			->andWhere(['DATE(date)' => $lessonDate])
-            ->andWhere(['OR', 
-                [
-                    'between', 'TIME(lesson.date)', $lessonStartTime, $lessonEndTime
-                ],
-                [
-                    'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $lessonStartTime, $lessonEndTime
-                ],
-                [
-                    'AND',
-                    [
-                        '<', 'TIME(lesson.date)', $lessonStartTime
-                    ],
-                    [
-                        '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $lessonEndTime
-                    ]
-                    
-                ]
-            ])
+			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
             ->all();
         
         if (!empty($draftLessons)) {
