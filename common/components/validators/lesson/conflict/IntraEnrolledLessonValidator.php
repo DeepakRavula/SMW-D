@@ -4,8 +4,6 @@ namespace common\components\validators\lesson\conflict;
 use Yii;
 use yii\validators\Validator;
 use common\models\Lesson;
-use IntervalTree\IntervalTree;
-use common\components\intervalTree\DateRangeExclusive;
 
 class IntraEnrolledLessonValidator extends Validator
 {

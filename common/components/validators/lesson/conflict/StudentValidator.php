@@ -3,8 +3,6 @@ namespace common\components\validators\lesson\conflict;
 
 use Yii;
 use yii\validators\Validator;
-use IntervalTree\IntervalTree;
-use common\components\intervalTree\DateRangeExclusive;
 use common\models\Lesson;
 
 class StudentValidator extends Validator
