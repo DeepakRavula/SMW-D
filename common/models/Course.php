@@ -207,11 +207,11 @@ class Course extends \yii\db\ActiveRecord
         $timebits = explode(':', $this->fromTime);
 		$this->isConfirmed = false;
         if ((int) $this->program->type === Program::TYPE_GROUP_PROGRAM) {
-			$dateRange = explode(' - ', $this->startDate);
-            $startDate = new \DateTime($dateRange[0]);
+			list($startDate, $endDate) = explode(' - ', $this->startDate);
+            $startDate = new \DateTime($startDate);
             $startDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
             $this->startDate = $startDate->format('Y-m-d H:i:s');
-            $endDate = new \DateTime($dateRange[1]);
+            $endDate = new \DateTime($endDate);
             $this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
             $endDate = \DateTime::createFromFormat('d-m-Y', $this->startDate);
