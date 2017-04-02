@@ -41,6 +41,13 @@ class InvoiceController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			[
+				'class' => 'yii\filters\ContentNegotiator',
+				'only' => ['delete'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,
+				],
+        	],
         ];
     }
 
@@ -392,12 +399,13 @@ class InvoiceController extends Controller
     public function actionDelete($id)
 	{
 		$model = $this->findModel($id);
-		$response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
+		$userModel = User::findOne(['id' => Yii::$app->user->id]);
+        $model->on(Invoice::EVENT_DELETE, [new InvoiceLog(), 'deleteInvoice']);
+		$model->userName = $userModel->publicIdentity;
 		$model->setScenario(Invoice::SCENARIO_DELETE);
 		if ($model->validate()) {
 			$model->delete();
-			$model->save();
+			$model->trigger(Invoice::EVENT_DELETE);
 			$response = [
 				'status' => true,
 				'url' => Url::to(['index', 'InvoiceSearch[type]' => $model->type]),
