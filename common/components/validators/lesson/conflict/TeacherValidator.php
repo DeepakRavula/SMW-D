@@ -23,6 +23,7 @@ class TeacherValidator extends Validator
 		$lessonEndTime = $date->format('H:i:s');
 		$teacherLessons = Lesson::find()
             ->teacherLessons($locationId, $model->teacherId)
+			->andWhere(['NOT', ['lesson.id' => $model->id]])
 			->andWhere(['DATE(date)' => $lessonDate])
             ->andWhere(['OR', 
                 [

@@ -26,8 +26,9 @@ class StudentValidator extends Validator
 		$lessonEndTime = $date->format('H:i:s');
 		$studentLessons = Lesson::find()
 			->studentLessons($locationId, $studentId)
+			->andWhere(['NOT', ['lesson.id' => $model->id]])
 			->andWhere(['DATE(date)' => $lessonDate])
-           ->andWhere(['OR', 
+           	->andWhere(['OR', 
                 [
                     'between', 'TIME(lesson.date)', $lessonStartTime, $lessonEndTime
                 ],
