@@ -1,11 +1,32 @@
 <?php
 
 use yii\grid\GridView;
-
+use common\models\Location;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 ?>
-<h2><?= $searchModel->getDateRange(); ?></h2>
+<style>
+.text-left{
+	text-align: left !important;
+  }
+  </style>
+<div class="row">
+	<a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo invoice-col col-sm-3">              
+		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
+	</a>
+	<div class="col-sm-4 invoice-address invoice-col text-gray">
+		<small>
+			<?php $location = Location::findOne(['id' => Yii::$app->session->get('location_id')]); ?>
+				<?= $location->address ?><br>
+				<?= $location->phone_number ?>
+				<?= $location->email ?>
+		</small> 
+	</div>
+	<div class="col-sm-2 invoice-col">
+		<b>Date:</b> <?= $searchModel->getDateRange(); ?><br>
+	</div>
+	<div class="clearfix"></div>
+</div>
 <?php
 $columns = [
 		[
