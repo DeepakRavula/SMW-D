@@ -78,7 +78,7 @@ class LessonLog extends Lesson {
 		if ((int) $oldLessonModel['classroomId'] !== (int) $lessonModel->classroomId) {
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 				'data' => $lesson,
-				'message' => $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' lesson to ' . $lessonModel->classroom->name,
+				'message' => $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}} to ' . $lessonModel->classroom->name,
 			]));
 		}
 		if ($timelineEvent) {
@@ -87,6 +87,13 @@ class LessonLog extends Lesson {
 			$timelineEventLink->index = $lessonModel->course->enrolment->student->fullName;
 			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
 			$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
+			$timelineEventLink->save();
+
+			$timelineEventLink->id = null;
+			$timelineEventLink->isNewRecord = true;
+			$timelineEventLink->index = 'lesson';
+			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $lessonModel->id]);
 			$timelineEventLink->save();
 			
 			$timelineEventLesson = new TimelineEventLesson();
