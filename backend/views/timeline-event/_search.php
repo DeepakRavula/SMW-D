@@ -6,6 +6,7 @@ use backend\models\search\TimelineEventSearch;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\User;
+use yii\helpers\Url;
 use kartik\daterange\DateRangePicker;
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\TimelineEventSearch */
@@ -73,10 +74,25 @@ use kartik\daterange\DateRangePicker;
     </div>  
     <div class="col-md-3 form-group m-t-3">
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
+    <div id="print-timeline" class="btn btn-default">
+        <?= Html::a('<i class="fa fa-print"></i> Print') ?>
+    </div>
     </div>
 	</div>
 
     <?php ActiveForm::end(); ?>
 
 </div>
+<script>
+$(document).ready(function(){
+    $("#print-timeline").on("click", function() {
+        var category = $("#timelineeventsearch-category").val();
+        var user = $('#timelineeventsearch-createduserid').val();
+        var dateRange = $('#timelineeventsearch-daterange').val();
+        var params = $.param({ 'TimelineEventSearch[category]': category,
+            'TimelineEventSearch[createdUserId]': user, 'TimelineEventSearch[dateRange]': dateRange });
+        var url = '<?php echo Url::to(['timeline-event/print']); ?>?' + params;
+        window.open(url,'_blank');
+    });
+});
+</script>

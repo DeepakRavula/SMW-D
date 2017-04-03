@@ -30,4 +30,19 @@ class TimelineEventController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+
+	public function actionPrint()
+    {
+        $searchModel = new TimelineEventSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->sort = [
+            'defaultOrder' => ['created_at' => SORT_DESC],
+        ];
+        $this->layout = '/print';
+
+        return $this->render('_print', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ]);
+    }
 }
