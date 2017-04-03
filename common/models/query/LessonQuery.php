@@ -56,7 +56,7 @@ class LessonQuery extends \yii\db\ActiveQuery
 	public function studentEnrolment($locationId, $studentId)
 	{
 		$this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {
-			$query->joinWith(['enrolment' => function ($query) use ($locationId, $studentId) {
+			$query->joinWith(['enrolment' => function ($query) use ($studentId) {
 				$query->where(['enrolment.studentId' => $studentId])
 					->isConfirmed();
 			}])
@@ -231,6 +231,30 @@ class LessonQuery extends \yii\db\ActiveQuery
 				$query->isConfirmed();
 			}]);
 		}]);
+		return $this;
+	}
+
+	public function overlap($date, $fromTime, $toTime)
+	{
+		$this->andWhere(['DATE(date)' => $date])
+            ->andWhere(['OR', 
+                [
+                    'between', 'TIME(lesson.date)', $fromTime, $toTime
+                ],
+                [
+                    'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $fromTime, $toTime
+                ],
+                [
+                    'AND',
+                    [
+                        '<', 'TIME(lesson.date)', $fromTime
+                    ],
+                    [
+                        '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $toTime
+                    ]
+                    
+                ]
+            ]);
 		return $this;
 	}
 }
