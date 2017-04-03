@@ -425,9 +425,9 @@ class Lesson extends \yii\db\ActiveRecord
 
 	public function isRescheduledByClassroom($changedAttributes)
     {
-        return isset($changedAttributes['classroomId']) &&
-            !empty($this->classroomId) && (int)$changedAttributes['classroomId']
-                !== (int)$this->classroomId;
+        return empty($changedAttributes['classroomId']) ||
+            (!empty($changedAttributes['classroomId']) && (int)$changedAttributes['classroomId']
+                !== (int)$this->classroomId);
     }
 
     public function isRescheduledByTeacher($changedAttributes)
