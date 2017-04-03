@@ -28,7 +28,7 @@ class Course extends \yii\db\ActiveRecord
 	const SCENARIO_GROUP_COURSE = 'group-course';
 	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
 
-	public $lessonStatus;
+        public $lessonStatus;
     public $studentId;
     public $paymentFrequency;
 	public $rescheduleBeginDate;
@@ -47,8 +47,8 @@ class Course extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['programId', 'teacherId'], 'required'],
-            [['day', 'fromTime', 'duration', 'startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
+            [['programId', 'teacherId', 'endDate'], 'required'],
+            [['day', 'fromTime', 'duration', 'startDate'], 'safe'],
             [['programId', 'teacherId', 'paymentFrequency'], 'integer'],
             [['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
@@ -204,7 +204,7 @@ class Course extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::beforeSave($insert);
 		}
-        $fromTime = \DateTime::createFromFormat('h:i:s', $this->fromTime);
+        $fromTime = \DateTime::createFromFormat('H:i:s', $this->fromTime);
         $this->fromTime = $fromTime->format('H:i:s');
         $timebits = explode(':', $this->fromTime);
 		$this->isConfirmed = false;

@@ -27,8 +27,6 @@ use common\models\LocationAvailability;
 	<?php
 	$form			 = ActiveForm::begin([
                         'id' => 'group-course-form',
-			'enableAjaxValidation' => true,
-			'enableClientValidation' => false
 	]);
 	?>
 	<div class="row p-10">
