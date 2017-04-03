@@ -47,4 +47,8 @@ class TimelineEventLink extends \yii\db\ActiveRecord
 			'path' => 'Path'
         ];
     }
+	public function getTimelineEvent()
+    {
+        return $this->hasMany(TimelineEvent::className(), ['id' => 'timelineEventId']);
+    }
 }
