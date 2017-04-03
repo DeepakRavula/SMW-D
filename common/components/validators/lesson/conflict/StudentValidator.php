@@ -24,6 +24,7 @@ class StudentValidator extends Validator
 		$lessonEndTime = $date->format('H:i:s');
 		$studentLessons = Lesson::find()
 			->studentLessons($locationId, $studentId)
+			->andWhere(['NOT', ['lesson.id' => $model->id]])
 			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
 			->all();		
         if ((!empty($studentLessons))) {

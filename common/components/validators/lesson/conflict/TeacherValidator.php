@@ -29,6 +29,7 @@ class TeacherValidator extends Validator
         $teacherAvailabilityDay = TeacherAvailability::find()
             ->teacher($model->teacherId)
 			->day($day)
+			->andWhere(['NOT', ['lesson.id' => $model->id]])
             ->all();
 		if (empty($teacherAvailabilityDay)) {
             $this->addError($model,$attribute, 'Teacher is not available on '.(new \DateTime($model->date))->format('l'));
