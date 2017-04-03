@@ -4,13 +4,11 @@ namespace common\models;
 
 use Yii;
 use yii\db\Query;
-use yii\helpers\Url;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
-use common\commands\AddToTimelineCommand;
 use common\components\validators\lesson\conflict\TeacherAvailabilityValidator;
 use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
 
@@ -46,6 +44,7 @@ class Lesson extends \yii\db\ActiveRecord
 	const EVENT_RESCHEDULED			 = 'Rescheduled';
 	const EVENT_UNSCHEDULE_ATTEMPTED	 = 'UnscheduleAttempted';
 	const EVENT_UNSCHEDULED			 = 'Unscheduled';
+	const EVENT_MISSED = 'missed';
 
     public $studentFullName;
     public $programId;
