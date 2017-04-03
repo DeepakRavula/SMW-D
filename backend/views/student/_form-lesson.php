@@ -73,6 +73,7 @@ use yii\helpers\Url;
 		<?php endif; ?>
     </div>
     </div>
+    <?php echo $form->field($model, 'duration')->textInput() ?>
 <?php ActiveForm::end(); ?>
 
 </div>

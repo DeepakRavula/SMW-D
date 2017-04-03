@@ -133,8 +133,7 @@ class LessonController extends Controller
             $model->isDeleted = false;
             $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
-            $model->duration = $studentEnrolment->course->duration;
-            
+
             if ($model->save()) {
                 $model->addPaymentCycleLesson();
                 $response = [
