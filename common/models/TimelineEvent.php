@@ -99,8 +99,8 @@ class TimelineEvent extends ActiveRecord
 				}])
 				->andWhere(['index' => $index])
 				->one();
-			$url = $timelineEventLink->baseUrl . $timelineEventLink->path; 
-			$data[$index] = Html::a($index, $url); 
+				$url = $timelineEventLink->baseUrl . $timelineEventLink->path; 
+				$data[$index] = Html::a($index, $url); 
 			return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
 		}, $message);
 		

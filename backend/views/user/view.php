@@ -150,6 +150,9 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$logContent = $this->render('teacher/log', [
 			'model' => $model,
 		]);
+		$customerLogContent = $this->render('customer/log', [
+			'model' => $model,
+		]);
 
         ?>
 		<?php
@@ -286,6 +289,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 					'id' => 'discount',
 				],
        		],
+			[
+        	    'label' => 'Logs',
+    	        'content' => $customerLogContent,
+	            'options' => [
+                	'id' => 'log',
+            	],
+        	],
         ];
         if (in_array($role->name, ['teacher'])) {
             $items = array_merge($items, $teacherItems);

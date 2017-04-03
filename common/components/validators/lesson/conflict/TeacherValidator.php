@@ -20,6 +20,7 @@ class TeacherValidator extends Validator
 		$lessonEndTime = $date->format('H:i:s');
 		$teacherLessons = Lesson::find()
             ->teacherLessons($locationId, $model->teacherId)
+			->andWhere(['NOT', ['lesson.id' => $model->id]])
 			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
             ->all();
         if ((!empty($teacherLessons))) {
@@ -29,7 +30,6 @@ class TeacherValidator extends Validator
         $teacherAvailabilityDay = TeacherAvailability::find()
             ->teacher($model->teacherId)
 			->day($day)
-			->andWhere(['NOT', ['lesson.id' => $model->id]])
             ->all();
 		if (empty($teacherAvailabilityDay)) {
             $this->addError($model,$attribute, 'Teacher is not available on '.(new \DateTime($model->date))->format('l'));
