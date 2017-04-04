@@ -26,7 +26,13 @@ use common\models\Payment;
 .table-striped > tbody > tr:nth-of-type(odd),
 td.kv-group-even,
 td.kv-group-odd{
-	background-color: transparent;
+	background-color: rgba(0, 0, 0, 0.02) !important
+}
+tr.success>td, tr:hover, tr>td:hover{
+    background: transparent !important;
+}
+tr.success>td{
+    border-bottom: 1px solid #efefef !important;
 }
 .kv-page-summary{
 	border-top: 0;
