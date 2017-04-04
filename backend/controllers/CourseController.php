@@ -176,7 +176,7 @@ public function getHolidayEvent($date)
             return $this->redirect(['lesson/review', 'courseId' => $model->id]);
         } else {
             return $this->render('create', [
-                'model' => new Course(),
+                'model' => $model,
                 'teacher' => $teacherModel,
             ]);
         }

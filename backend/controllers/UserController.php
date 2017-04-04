@@ -979,8 +979,7 @@ class UserController extends Controller
             'roomModel' => $roomModel,
             'teacherAvailabilityModel' => $teacherAvailabilityModel,
         ]);
-        if ($post) {
-            $roomModel->load($post);
+        if ($roomModel->load($post)) {
             $fromTime         = new \DateTime($roomModel->from_time);
             $toTime           = new \DateTime($roomModel->to_time);
             $teacherAvailabilityModel->from_time = $fromTime->format('H:i:s');
@@ -989,6 +988,7 @@ class UserController extends Controller
             if ($roomModel->validate()) {
                 $teacherAvailabilityModel->save();
                 if (!empty($roomModel->classroomId)) {
+                    $roomModel->availabilityId = $teacherAvailabilityModel->id;
                     $roomModel->teacherAvailabilityId = $teacherAvailabilityModel->id;
                     $roomModel->save();
                 } else {

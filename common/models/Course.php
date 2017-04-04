@@ -47,8 +47,11 @@ class Course extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['programId', 'teacherId', 'endDate'], 'required'],
-            [['day', 'fromTime', 'duration', 'startDate'], 'safe'],
+            [['programId', 'teacherId'], 'required'],
+            [['day', 'fromTime'], 'safe'],
+            [['startDate', 'duration'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
+            ['endDate', 'required', 'on' => self::SCENARIO_GROUP_COURSE],
+            [['duration', 'startDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'paymentFrequency'], 'integer'],
             [['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
@@ -204,7 +207,7 @@ class Course extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::beforeSave($insert);
 		}
-        $fromTime = \DateTime::createFromFormat('H:i:s', $this->fromTime);
+        $fromTime = new \DateTime($this->fromTime);
         $this->fromTime = $fromTime->format('H:i:s');
         $timebits = explode(':', $this->fromTime);
 		$this->isConfirmed = false;
@@ -219,7 +222,7 @@ class Course extends \yii\db\ActiveRecord
             $startDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
             $this->startDate = $startDate->format('Y-m-d H:i:s');
             $endDate->add(new \DateInterval('P1Y'));
-            $this->endDate = $endDate->format('Y-m-d H:i:s');
+            $this->endDate = $endDate->format('Y-m-d 00:00:00');
         }
 
         return parent::beforeSave($insert);
