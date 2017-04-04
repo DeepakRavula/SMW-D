@@ -49,9 +49,16 @@ class PaymentQuery extends ActiveQuery
         return $this;
     }
 
-	public function location($locationId) {
-		$this->joinWith('invoice')
-			->where(['location_id' => $locationId]);
-		return $this;
-	}
+    public function location($locationId) {
+            $this->joinWith('invoice')
+                    ->where(['location_id' => $locationId]);
+            return $this;
+    }
+
+    public function notDeleted()
+    {
+        $this->andWhere(['payment.isDeleted' => false]);
+
+        return $this;
+    }
 }

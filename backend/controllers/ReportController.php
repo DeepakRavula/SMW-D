@@ -68,6 +68,7 @@ class ReportController extends Controller {
 					$query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
 				}])
 			->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                        ->notDeleted()
 			->sum('payment.amount');
 
 		$royaltyPayment = InvoiceLineItem::find()

@@ -68,6 +68,7 @@ use common\models\Payment;
 					$amount = 0;
 					$payments = Payment::find()
 						->location($locationId)
+                                                ->notDeleted()
 						->andWhere([
 							'payment_method_id' => $data->payment_method_id,
 							'DATE(payment.date)' => (new \DateTime($data->date))->format('Y-m-d')

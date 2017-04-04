@@ -273,7 +273,8 @@ class UserController extends Controller
 
         $paymentDataProvider = new ActiveDataProvider([
             'query' => payment::find()
-                ->where(['user_id' => $model->id]),
+                ->where(['user_id' => $model->id])
+                ->notDeleted(),
         ]);
 
         $openingBalanceCredit = Invoice::find()
@@ -301,7 +302,8 @@ class UserController extends Controller
                         }]);
                     }]);
                 }])
-                ->where(['payment.user_id' => $model->id, 'payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
+                ->where(['payment.user_id' => $model->id, 'payment_method_id' => PaymentMethod::TYPE_CREDIT_USED])
+                ->notDeleted();
 
         $openingBalanceDataProvider = new ActiveDataProvider([
             'query' => $openingBalanceQuery,

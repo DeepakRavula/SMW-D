@@ -136,7 +136,8 @@ class InvoiceController extends Controller
                 ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                     $query->where(['ip.invoice_id' => $model->id]);
                 }])
-                ->where(['user_id' => $model->user_id]);
+                ->where(['user_id' => $model->user_id])
+                ->notDeleted();
 
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
@@ -146,6 +147,7 @@ class InvoiceController extends Controller
                 ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                     $query->where(['ip.invoice_id' => $model->id]);
                 }])
+                ->notDeleted()
                 ->orderBy(['date' => SORT_DESC]);
 
         $invoicePaymentsDataProvider = new ActiveDataProvider([
@@ -467,6 +469,7 @@ class InvoiceController extends Controller
             ->joinWith(['invoicePayments' => function ($query) use ($id) {
                 $query->where(['invoice_id' => $id]);
             }])
+            ->notDeleted()
             ->groupBy('payment.payment_method_id');
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,

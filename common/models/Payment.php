@@ -20,7 +20,6 @@ use yii\helpers\Url;
  */
 class Payment extends ActiveRecord
 {
-    public $isDeleted;
     public $invoiceId;
     public $credit;
     public $amountNeeded;
@@ -63,7 +62,7 @@ class Payment extends ActiveRecord
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
                     self::SCENARIO_CREDIT_USED, ]],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
-           [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 'sourceId', 'credit'], 'safe'],
+           [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 'sourceId', 'credit', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -164,12 +163,11 @@ class Payment extends ActiveRecord
         return $this->hasOne(PaymentCheque::className(), ['payment_id' => 'id']);
     }
 
-    public function beforeDelete()
+    public function softDelete()
     {
         $this->isDeleted = true;
+        $this->save();
         $this->manageAccount();
-        $this->invoicePayment->delete();
-        return parent::beforeDelete();
     }
 
     public function beforeSave($insert)
@@ -179,6 +177,7 @@ class Payment extends ActiveRecord
         }
         $model = Invoice::findOne(['id' => $this->invoiceId]);
         $this->user_id = $model->user_id;
+        $this->isDeleted = false;
         $this->date = (new \DateTime())->format('Y-m-d H:i:s');
         if ($this->isCreditUsed()) {
             $this->amount = -abs($this->amount);
@@ -216,7 +215,7 @@ class Payment extends ActiveRecord
             $this->invoice->save();
         }
 
-		$this->trigger(self::EVENT_CREATE);
+        $this->trigger(self::EVENT_CREATE);
 		
         return parent::afterSave($insert, $changedAttributes);
     }

@@ -61,6 +61,7 @@ class PaymentMethod extends \yii\db\ActiveRecord
                 ->location($locationId)
                 ->andWhere(['between', 'payment.date', $fromDate->format('Y-m-d 00:00:00'),
                     $toDate->format('Y-m-d 23:59:59')])
+                ->andWhere(['payment.isDeleted' => false])
                 ->sum('payment.amount');
     }
 }
