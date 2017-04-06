@@ -16,6 +16,7 @@ class TimelineEventSearch extends TimelineEvent
 	const CATEGORY_ENROLMENT = 'enrolment';
 	const CATEGORY_INVOICE = 'invoice';
 	const CATEGORY_PAYMENT = 'payment';
+	const ALL = 'all';
 
 	private $fromDate;
     private $toDate;
@@ -97,7 +98,9 @@ class TimelineEventSearch extends TimelineEvent
             	$query->payment();
 			}
         }
-		
+		if(!empty($this->student) && $this->category === self::ALL)	{
+			$query->student($this->student);
+		}
 		$query->where(['between', 'DATE(timeline_event.created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
 		
 		$query->location($locationId);
@@ -108,7 +111,7 @@ class TimelineEventSearch extends TimelineEvent
 	public static function categories()
     {
         return [
-           	'all' => 'All',
+           	self::ALL  => 'All',
             self::CATEGORY_LESSON => 'Lesson',
 			self::CATEGORY_ENROLMENT => 'Enrolment',
 			self::CATEGORY_INVOICE => 'Invoice',

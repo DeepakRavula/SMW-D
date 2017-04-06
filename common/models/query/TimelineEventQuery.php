@@ -9,6 +9,7 @@
 namespace common\models\query;
 
 use yii\db\ActiveQuery;
+use common\models\TimelineEvent;
 
 class TimelineEventQuery extends ActiveQuery
 {
@@ -114,6 +115,56 @@ class TimelineEventQuery extends ActiveQuery
 			}]);
 		}]);
 		
+		return $this;
+	}
+	public function student($studentId)
+	{
+		$this->joinWith(['timelineEventEnrolment' => function($query) use($studentId){
+			$query->innerJoinWith(['enrolment' => function($query) use($studentId){
+				$query->joinWith(['student' => function($query) use($studentId) {
+					$query->andWhere(['student.id' => $studentId]);
+				}]);
+			}]);
+		}]);
+
+		$studentLog = TimelineEvent::find()
+			->joinWith(['timelineEventStudent' => function($query) use($studentId){
+				$query->andWhere(['studentId' => $studentId]);
+			}]);
+		$lessonLog = TimelineEvent::find()
+			->joinWith(['timelineEventLesson' => function($query) use($studentId) {
+				$query->joinWith(['lesson' => function($query) use($studentId) {
+					$query->joinWith(['enrolment' => function($query) use($studentId) {
+						$query->andWhere(['studentId' => $studentId]);
+					}]);
+				}]);
+			}]);	
+		$paymentLog = TimelineEvent::find()
+			->joinWith(['timelineEventPayment' => function($query) use($studentId){
+			$query->innerJoinWith(['payment' => function($query) use($studentId){
+				$query->innerJoinWith(['invoice' => function($query) use($studentId){
+					$query->joinWith(['user' => function($query) use($studentId) {
+						$query->joinWith(['student' => function($query) use($studentId) {
+							$query->andWhere(['student.id' => $studentId]);
+						}]);
+					}]);
+				}]);
+			}]);
+		}]);
+		$invoiceLog = TimelineEvent::find()
+			->joinWith(['timelineEventInvoice' => function($query) use($studentId){
+			$query->innerJoinWith(['invoice' => function($query) use($studentId){
+				$query->joinWith(['user' => function($query) use($studentId) {
+					$query->joinWith(['student' => function($query) use($studentId) {
+						$query->andWhere(['student.id' => $studentId]);
+					}]);
+				}]);
+			}]);
+		}]);
+		$this->union($studentLog);
+		$this->union($lessonLog);
+		$this->union($paymentLog);
+		$this->union($invoiceLog);
 		return $this;
 	}
 }
