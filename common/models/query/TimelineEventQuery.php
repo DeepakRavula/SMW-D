@@ -43,14 +43,7 @@ class TimelineEventQuery extends ActiveQuery
 		
 		return $this;
 	}
-	public function student()
-	{
-		$this->joinWith(['timelineEventStudent' => function($query){
-			$query->innerJoinWith('student');
-		}]);
-		
-		return $this;
-	}
+	
 	public function invoice()
 	{
 		$this->joinWith(['timelineEventInvoice' => function($query){
@@ -63,6 +56,61 @@ class TimelineEventQuery extends ActiveQuery
 	{
 		$this->joinWith(['timelineEventPayment' => function($query){
 			$query->innerJoinWith('payment');
+		}]);
+		
+		return $this;
+	}
+	public function studentEnrolment($studentId)
+	{
+		$this->joinWith(['timelineEventEnrolment' => function($query) use($studentId){
+			$query->innerJoinWith(['enrolment' => function($query) use($studentId){
+				$query->joinWith(['student' => function($query) use($studentId) {
+					$query->andWhere(['student.id' => $studentId]);
+				}]);
+			}]);
+		}]);
+		
+		return $this;
+	}
+	public function studentLesson($studentId)
+	{
+		$this->joinWith(['timelineEventLesson' => function($query) use($studentId){
+			$query->innerJoinWith(['lesson' => function($query) use($studentId){
+				$query->joinWith(['enrolment' => function($query) use($studentId) {
+					$query->joinWith(['student' => function($query) use($studentId) {
+						$query->andWhere(['student.id' => $studentId]);
+					}]);
+				}]);
+			}]);
+		}]);
+		
+		return $this;
+	}
+	public function studentInvoice($studentId)
+	{
+		$this->joinWith(['timelineEventInvoice' => function($query) use($studentId){
+			$query->innerJoinWith(['invoice' => function($query) use($studentId){
+				$query->joinWith(['user' => function($query) use($studentId) {
+					$query->joinWith(['student' => function($query) use($studentId) {
+						$query->andWhere(['student.id' => $studentId]);
+					}]);
+				}]);
+			}]);
+		}]);
+		
+		return $this;
+	}
+	public function studentPayment($studentId)
+	{
+		$this->joinWith(['timelineEventPayment' => function($query) use($studentId){
+			$query->innerJoinWith('payment');
+			$query->innerJoinWith(['invoice' => function($query) use($studentId){
+				$query->joinWith(['user' => function($query) use($studentId) {
+					$query->joinWith(['student' => function($query) use($studentId) {
+						$query->andWhere(['student.id' => $studentId]);
+					}]);
+				}]);
+			}]);
 		}]);
 		
 		return $this;

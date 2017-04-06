@@ -30,7 +30,7 @@ use common\models\Student;
     <div class="col-md-2">
         <?php echo $form->field($model, 'category')->dropDownList(TimeLineEventSearch::categories())->label(false); ?>
     </div>
-	<div class="form-group col-md-2">
+	<div class="form-group col-md-3">
         <?php echo $form->field($model, 'createdUserId')->widget(Select2::classname(), [
 	    'data' => ArrayHelper::map(User::find()
                     ->joinWith('userLocation ul')
@@ -46,7 +46,7 @@ use common\models\Student;
 			],
         ])->label(false); ?>
     </div>  
-	<div class="form-group col-md-2">
+	<div class="form-group col-md-3">
         <?php $locationId = Yii::$app->session->get('location_id');
 		echo $form->field($model, 'student')->widget(Select2::classname(), [
 	    'data' => ArrayHelper::map(Student::find()

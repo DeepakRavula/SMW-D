@@ -73,22 +73,35 @@ class TimelineEventSearch extends TimelineEvent
             return $dataProvider;
         }
 		if ($this->category === self::CATEGORY_ENROLMENT) {
-            $query->enrolment();
+			if(!empty($this->student)) {
+				$query->studentEnrolment($this->student);
+			} else {
+	            $query->enrolment();
+			}
         } elseif ($this->category === self::CATEGORY_LESSON) {
-            $query->lesson();
+			if(!empty($this->student)) {
+				$query->studentLesson($this->student);
+			} else {
+            	$query->lesson();
+			}
         } elseif($this->category === self::CATEGORY_INVOICE) {
-            $query->invoice();
+			if(!empty($this->student)) {
+				$query->studentInvoice($this->student);
+			} else {
+            	$query->invoice();
+			}
         } elseif($this->category === self::CATEGORY_PAYMENT) {
-            $query->payment();
+			if(!empty($this->student)) {
+				$query->studentPayment($this->student);
+			} else {
+            	$query->payment();
+			}
         }
 		
-		$query->where(['between', 'DATE(created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
+		$query->where(['between', 'DATE(timeline_event.created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
 		
 		$query->location($locationId);
 		$query->andFilterWhere(['createdUserId' => $this->createdUserId]);
-		if(!empty($this->student)) {
-			$query->student();
-		}
 		
         return $dataProvider;
     }
