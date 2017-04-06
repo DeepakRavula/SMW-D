@@ -106,12 +106,24 @@ class Payment extends ActiveRecord
         ];
     }
 
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+				'replaceRegularDelete' => true
+            ],
+        ];
+    }
     /**
      * @return UserQuery
      */
     public static function find()
     {
-        return new PaymentQuery(get_called_class());
+        return new PaymentQuery(get_called_class(),parent::find()->notDeleted());
     }
 
     public function getUser()
@@ -161,13 +173,6 @@ class Payment extends ActiveRecord
     public function getPaymentCheque()
     {
         return $this->hasOne(PaymentCheque::className(), ['payment_id' => 'id']);
-    }
-
-    public function softDelete()
-    {
-        $this->isDeleted = true;
-        $this->save();
-        $this->manageAccount();
     }
 
     public function beforeSave($insert)

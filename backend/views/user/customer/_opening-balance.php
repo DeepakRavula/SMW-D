@@ -15,7 +15,6 @@ use common\models\Payment;
         ->joinWith(['invoicePayment' => function ($query) use ($openingBalanceCredit) {
             $query->where(['invoice_id' => $openingBalanceCredit->id]);
         }])
-        ->notDeleted()
         ->one();
 ?>
 <div class="p-t-20 p-b-20">

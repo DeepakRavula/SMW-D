@@ -127,19 +127,19 @@ class PaymentController extends Controller
         if ($model->isCreditApplied()) {
             $creditUsedPaymentModel        = $model->creditUsage->debitUsagePayment;
             $creditUsedPaymentInvoiceModel = $model->creditUsage->debitUsagePayment->invoice;
-            $creditUsedPaymentModel->softDelete();
+            $creditUsedPaymentModel->delete();
             $creditUsedPaymentInvoiceModel->save();
             $model->creditUsage->delete();
         } elseif ($model->isCreditUsed()) {
             $creditAppliedPaymentInvoiceModel = $model->debitUsage->creditUsagePayment->invoice;
             $creditAppliedPaymentModel = $model->debitUsage->creditUsagePayment;
-            $creditAppliedPaymentModel->softDelete();
+            $creditAppliedPaymentModel->delete();
             $creditAppliedPaymentInvoiceModel->save();
-            $model->debitUsage->softDelete();
+            $model->debitUsage->delete();
         } elseif ($model->isAccountEntry()) {
             $modelInvoice->lineItem->delete();
         }
-        $model->softDelete();
+        $model->delete();
         $modelInvoice->save();
         return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);
     }

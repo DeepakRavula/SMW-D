@@ -131,8 +131,8 @@ class Invoice extends \yii\db\ActiveRecord
     public function getPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
-                        ->via('invoicePayments')
-                        ->andWhere(['payment.isDeleted' => false]);
+			->via('invoicePayments')
+            ->andWhere(['payment.isDeleted' => false]);
     }
 
 	public function getLocation()
@@ -217,7 +217,6 @@ class Invoice extends \yii\db\ActiveRecord
             ->joinWith('invoicePayment ip')
             ->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
             ->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_APPLIED])
-            ->notDeleted()
             ->sum('payment.amount');
 
         return $creditUsageTotal;
@@ -272,7 +271,6 @@ class Invoice extends \yii\db\ActiveRecord
             ->joinWith('invoicePayment ip')
             ->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
             ->andWhere(['NOT', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
-            ->notDeleted()
             ->sum('payment.amount');
 
         return !empty($paymentTotal) ? $paymentTotal : 0;
@@ -286,7 +284,6 @@ class Invoice extends \yii\db\ActiveRecord
         $invoicePaymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
             ->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
-            ->notDeleted()
             ->sum('payment.amount');
 
         return $invoicePaymentTotal;
@@ -301,7 +298,6 @@ class Invoice extends \yii\db\ActiveRecord
                 'payment.user_id' => $this->user_id,
             ])
             ->andWhere(['NOT IN', 'payment.payment_method_id', [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]])
-            ->notDeleted()
             ->sum('payment.amount');
 
         return $invoicePaymentTotal;
@@ -312,7 +308,6 @@ class Invoice extends \yii\db\ActiveRecord
         $creditTotal = Payment::find()
             ->joinWith('invoicePayment ip')
             ->andWhere([ 'ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
-            ->notDeleted()
             ->sum('payment.amount');
 
         return $creditTotal;
@@ -344,7 +339,6 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $sumOfPayment = Payment::find()
                 ->where(['user_id' => $customerId])
-                ->notDeleted()
                 ->sum('payment.amount');
 
         return $sumOfPayment;
@@ -355,7 +349,6 @@ class Invoice extends \yii\db\ActiveRecord
         $sumOfPayment = Payment::find()
                 ->where(['user_id' => $customerId])
                 ->andWhere(['NOT', ['payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
-                ->notDeleted()
                 ->sum('payment.amount');
 
         return $sumOfPayment;

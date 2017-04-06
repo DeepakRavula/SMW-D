@@ -61,7 +61,6 @@ class Dashboard extends \yii\db\ActiveRecord
                        $query->where(['i.location_id' => $locationId]);
                    }])
                     ->andWhere(['between', 'payment.date', $fromDate, $toDate])
-                    ->notDeleted()
                     ->sum('payment.amount');
 
             $monthlyRevenue = !empty($revenue) ? (int) $revenue : 0;
