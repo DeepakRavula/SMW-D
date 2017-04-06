@@ -35,7 +35,8 @@ class Invoice extends \yii\db\ActiveRecord
     const SCENARIO_DELETE = 'delete';
     const SCENARIO_DISCOUNT = 'discount';
 	const EVENT_CREATE = 'create';
-
+	const EVENT_DELETE = 'deleteInvoice';
+	
     public $customer_id;
     public $credit;
     public $discountApplied;

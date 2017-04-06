@@ -23,8 +23,22 @@ use common\models\Payment;
 	border-bottom: 1px solid transparent;
 	background-color: white;
 }
+.table-striped > tbody > tr:nth-of-type(odd),
+td.kv-group-even,
+td.kv-group-odd{
+	background-color: rgba(0, 0, 0, 0.02) !important
+}
+tr.success>td, tr:hover, tr>td:hover{
+    background: transparent !important;
+}
+tr.success>td{
+    border-bottom: 1px solid #efefef !important;
+}
+.kv-page-summary{
+	border-top: 0;
+}
 </style>
-<div class="payments-index p-10">
+<div class="payments-index">
 	<?php if ($searchModel->groupByMethod) : ?>
 		<?php
 		$columns = [
@@ -189,8 +203,9 @@ use common\models\Payment;
 	<?=
 	GridView::widget([
 		'dataProvider' => $dataProvider,
-		'options' => ['class' => 'col-md-12'],
+		'options' => ['class' => ''],
 		'showPageSummary' => true,
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
 		'pjax' => true,
 		'pjaxSettings' => [

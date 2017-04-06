@@ -3,8 +3,6 @@ namespace common\components\validators\lesson\conflict;
 
 use Yii;
 use yii\validators\Validator;
-use IntervalTree\IntervalTree;
-use common\components\intervalTree\DateRangeExclusive;
 use common\models\Lesson;
 
 class StudentValidator extends Validator
@@ -26,25 +24,8 @@ class StudentValidator extends Validator
 		$lessonEndTime = $date->format('H:i:s');
 		$studentLessons = Lesson::find()
 			->studentLessons($locationId, $studentId)
-			->andWhere(['DATE(date)' => $lessonDate])
-           ->andWhere(['OR', 
-                [
-                    'between', 'TIME(lesson.date)', $lessonStartTime, $lessonEndTime
-                ],
-                [
-                    'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $lessonStartTime, $lessonEndTime
-                ],
-                [
-                    'AND',
-                    [
-                        '<', 'TIME(lesson.date)', $lessonStartTime
-                    ],
-                    [
-                        '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $lessonEndTime
-                    ]
-                    
-                ]
-            ])
+			->andWhere(['NOT', ['lesson.id' => $model->id]])
+			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
 			->all();		
         if ((!empty($studentLessons))) {
             $this->addError($model,$attribute, 'Lesson time conflicts with student\'s another lesson');

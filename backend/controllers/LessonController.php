@@ -21,11 +21,9 @@ use common\models\Vacation;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\TimelineEventEnrolment;
-use common\models\TeacherAvailability;
 use common\models\LessonLog;
-use common\commands\AddToTimelineCommand;
 use common\models\User;
-use common\models\TimelineEventLink;
+use common\models\TimelineEventLesson;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -133,8 +131,7 @@ class LessonController extends Controller
             $model->isDeleted = false;
             $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
-            $model->duration = $studentEnrolment->course->duration;
-            
+
             if ($model->save()) {
                 $model->addPaymentCycleLesson();
                 $response = [
@@ -658,11 +655,14 @@ class LessonController extends Controller
 	{
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
+		$model->on(Lesson::EVENT_MISSED, [new TimelineEventLesson(), 'missed']);
+		$user = User::findOne(['id' => Yii::$app->user->id]);
+		$model->userName = $user->publicIdentity;
 		$lessonRequest = $request->post('Lesson');
 		if(!$lessonRequest['present']) {
 			$model->status = Lesson::STATUS_MISSED;
 			$model->save();
-			
+			$model->trigger(Lesson::EVENT_MISSED);	
 			if(empty($model->invoice)) {
 				$invoice = $model->createInvoice();
 

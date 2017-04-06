@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="logo invoice-col" style="width: 150px">              
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </div>
-          <div class="invoice-col text-gray" style="font-size:18px; width: 180px;">
+          <div class="invoice-col text-gray" style="font-size:18px; width: 240px;">
               <div class="row-fluid">
                 <h2 class="m-0 text-inverse"><strong>
                   <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong>
@@ -107,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php endif; ?> 
               </small> 
             </div>
-            <div class="invoice-col" style="width: 220px;">
+            <div class="invoice-col" style="width: 200px;">
               To<br>
               <strong>
                <?php echo isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?>

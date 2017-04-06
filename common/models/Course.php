@@ -28,7 +28,7 @@ class Course extends \yii\db\ActiveRecord
 	const SCENARIO_GROUP_COURSE = 'group-course';
 	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
 
-	public $lessonStatus;
+        public $lessonStatus;
     public $studentId;
     public $paymentFrequency;
 	public $rescheduleBeginDate;
@@ -47,13 +47,18 @@ class Course extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['programId', 'teacherId', 'day', 'fromTime', 'duration', 'startDate'], 'required'],
+            [['programId', 'teacherId'], 'required'],
+            [['day', 'fromTime'], 'safe'],
+            [['startDate', 'duration'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
+            ['endDate', 'required', 'on' => self::SCENARIO_GROUP_COURSE],
+            [['duration', 'startDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'paymentFrequency'], 'integer'],
             [['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
             },'except' => self::SCENARIO_EDIT_ENROLMENT 
             ],
-			[['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
+            [['startDate', 'duration', 'endDate'], 'string'],
+            [['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],
@@ -202,24 +207,22 @@ class Course extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::beforeSave($insert);
 		}
-        $fromTime = \DateTime::createFromFormat('h:i A', $this->fromTime);
+        $fromTime = new \DateTime($this->fromTime);
         $this->fromTime = $fromTime->format('H:i:s');
         $timebits = explode(':', $this->fromTime);
 		$this->isConfirmed = false;
         if ((int) $this->program->type === Program::TYPE_GROUP_PROGRAM) {
-			list($startDate, $endDate) = explode(' - ', $this->startDate);
-            $startDate = new \DateTime($startDate);
-            $startDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
+            $startDate = new \DateTime($this->startDate);
             $this->startDate = $startDate->format('Y-m-d H:i:s');
-            $endDate = new \DateTime($endDate);
-            $this->endDate = $endDate->format('Y-m-d H:i:s');
+            $endDate = new \DateTime($this->endDate);
+            $this->endDate = $endDate->format('Y-m-d 00:00:00');
         } else {
             $endDate = \DateTime::createFromFormat('d-m-Y', $this->startDate);
             $startDate = new \DateTime($this->startDate);
             $startDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
             $this->startDate = $startDate->format('Y-m-d H:i:s');
             $endDate->add(new \DateInterval('P1Y'));
-            $this->endDate = $endDate->format('Y-m-d H:i:s');
+            $this->endDate = $endDate->format('Y-m-d 00:00:00');
         }
 
         return parent::beforeSave($insert);

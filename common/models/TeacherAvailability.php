@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\query\TeacherAvailabilityQuery;
 
 /**
  * This is the model class for table "teacher_availability_day".
@@ -49,6 +50,12 @@ class TeacherAvailability extends \yii\db\ActiveRecord
         ];
     }
 
+	public static function find()
+    {
+        return new TeacherAvailabilityQuery(get_called_class());
+    }
+
+	
     public static function getWeekdaysList()
     {
         return [

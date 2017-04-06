@@ -46,4 +46,33 @@ class InvoiceLog extends Invoice {
 			$timelineEventInvoice->save();
 		}
 	}
+	public function deleteInvoice($event) {
+		$invoiceModel = $event->sender;
+		$invoice = Invoice::find()->andWhere(['id' => $invoiceModel->id])->asArray()->one();
+		
+		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+			'data' => $invoice,
+			'message' => $invoiceModel->userName . ' deleted an {{invoice #' . $invoiceModel->getInvoiceNumber() . '}} for {{' . $invoiceModel->user->publicIdentity . '}}',
+		]));
+		if ($timelineEvent) {
+			$timelineEventLink = new TimelineEventLink();
+			$timelineEventLink->timelineEventId = $timelineEvent->id;
+			$timelineEventLink->index = 'invoice #' . $invoiceModel->getInvoiceNumber();
+			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $invoiceModel->id]);
+			$timelineEventLink->save();
+
+			$timelineEventLink->id = null;
+			$timelineEventLink->isNewRecord = true;
+			$timelineEventLink->index = $invoiceModel->user->publicIdentity;
+			$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'customer', 'id' => $invoiceModel->user->id]);
+			$timelineEventLink->save();
+
+			$timelineEventInvoice = new TimelineEventInvoice();
+			$timelineEventInvoice->timelineEventId = $timelineEvent->id;
+			$timelineEventInvoice->invoiceId = $invoiceModel->id;
+			$timelineEventInvoice->action = 'delete';
+			$timelineEventInvoice->save();
+		}
+	}
 }

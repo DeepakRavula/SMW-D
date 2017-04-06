@@ -147,7 +147,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'model' => $model,
 		]);
 
-		$logContent = $this->render('teacher/log', [
+		$logContent = $this->render('log', [
 			'model' => $model,
 		]);
 
@@ -161,8 +161,15 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                     'id' => 'contact',
                 ],
             ],
+			[
+        	    'label' => 'Logs',
+    	        'content' => $logContent,
+	            'options' => [
+                	'id' => 'log',
+            	],
+        	],
         ];
-
+		$logItem = $items[1];
         $teacherItems = [
             [
                 'label' => 'Qualifications',
@@ -213,15 +220,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                 	'id' => 'note',
             	],
         	],
-			[
-        	    'label' => 'Logs',
-    	        'content' => $logContent,
-	            'options' => [
-                	'id' => 'log',
-            	],
-        	],
         ];
-
         $customerItems = [
             [
                 'label' => 'Students',
@@ -287,12 +286,17 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 				],
        		],
         ];
+		
         if (in_array($role->name, ['teacher'])) {
             $items = array_merge($items, $teacherItems);
+			unset($items[1]);
+			array_push($items, $logItem);
         }
 
         if (in_array($role->name, ['customer'])) {
             $items = array_merge($items, $customerItems);
+			unset($items[1]);
+			array_push($items, $logItem);
         }
         ?>
 		<?php
