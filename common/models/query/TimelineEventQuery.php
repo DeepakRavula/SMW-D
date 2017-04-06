@@ -103,11 +103,12 @@ class TimelineEventQuery extends ActiveQuery
 	public function studentPayment($studentId)
 	{
 		$this->joinWith(['timelineEventPayment' => function($query) use($studentId){
-			$query->innerJoinWith('payment');
-			$query->innerJoinWith(['invoice' => function($query) use($studentId){
-				$query->joinWith(['user' => function($query) use($studentId) {
-					$query->joinWith(['student' => function($query) use($studentId) {
-						$query->andWhere(['student.id' => $studentId]);
+			$query->innerJoinWith(['payment' => function($query) use($studentId){
+				$query->innerJoinWith(['invoice' => function($query) use($studentId){
+					$query->joinWith(['user' => function($query) use($studentId) {
+						$query->joinWith(['student' => function($query) use($studentId) {
+							$query->andWhere(['student.id' => $studentId]);
+						}]);
 					}]);
 				}]);
 			}]);
