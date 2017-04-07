@@ -180,18 +180,10 @@ class InvoiceController extends Controller
                 }
             }
         }
-        $post = Yii::$app->request->post();
-        if (isset($post['hasEditable'])) {
+		if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
 			$response = Yii::$app->response;
 			$response->format = Response::FORMAT_JSON;
-			$post = [
-				'Invoice' => [
-					'notes' => $post['notes']
-					]
-				];
-			if ($model->load($post) && $model->save()) {
                 return ['output' => $model->notes, 'message' => ''];
-            }
         }
 
         $notes = Note::find()
