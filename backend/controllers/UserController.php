@@ -438,6 +438,29 @@ class UserController extends Controller
      *
      * @return mixed
      */
+	public function saveAddressAndPhone($model, $addressModels, $phoneNumberModels)
+	{
+        $transaction = \Yii::$app->db->beginTransaction();
+		if ($flag = $model->save(false)) {
+			foreach ($addressModels as $addressModel) {
+				if (!($flag = $addressModel->save(false))) {
+					$transaction->rollBack();
+					break;
+				}
+				$model->getModel()->link('addresses', $addressModel);
+			}
+
+			foreach ($phoneNumberModels as $phoneNumberModel) {
+				$phoneNumberModel->user_id = $model->getModel()->id;
+				if (!($flag = $phoneNumberModel->save(false))) {
+					$transaction->rollBack();
+					break;
+				}
+			}
+		}
+        $transaction->commit();
+		return $flag;
+	}
     public function actionCreate()
     {
         $session = Yii::$app->session;
@@ -458,9 +481,8 @@ class UserController extends Controller
         $request = Yii::$app->request;
         $response = Yii::$app->response;
         if ($model->load($request->post())) {
-            $addressModels = UserForm::createMultiple(Address::classname());
-            Model::loadMultiple($addressModels, $request->post());
-
+			$addressModels = UserForm::createMultiple(Address::classname());
+	        Model::loadMultiple($addressModels, $request->post());	
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
             Model::loadMultiple($phoneNumberModels, $request->post());
 
@@ -475,30 +497,9 @@ class UserController extends Controller
             $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels)) && $valid;
 
             if ($valid) {
-                $transaction = \Yii::$app->db->beginTransaction();
-
                 try {
-                    if ($flag = $model->save(false)) {
-                        foreach ($addressModels as $addressModel) {
-                            if (!($flag = $addressModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                            $model->getModel()->link('addresses', $addressModel);
-                        }
-
-                        foreach ($phoneNumberModels as $phoneNumberModel) {
-                            $phoneNumberModel->user_id = $model->getModel()->id;
-                            if (!($flag = $phoneNumberModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-                     
-                    }
-
-                    if ($flag) {
-                        $transaction->commit();
+					$success = $this->saveAddressAndPhone($model, $addressModels, $phoneNumberModels);
+                    if ($success) {
                         Yii::$app->session->setFlash('alert', [
                                 'options' => ['class' => 'alert-success'],
                                 'body' => ucwords($model->roles).' profile has been created successfully',
@@ -513,12 +514,12 @@ class UserController extends Controller
         }
 
         return $this->render('create', [
-                    'model' => $model,
-                    'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-                    'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
-                    'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
-                    'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
-                    'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
+			'model' => $model,
+			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+			'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
+			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
+			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
+			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
         ]);
     }
 
