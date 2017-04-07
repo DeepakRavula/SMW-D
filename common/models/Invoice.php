@@ -44,6 +44,7 @@ class Invoice extends \yii\db\ActiveRecord
     public $subject;
     public $content;
 	public $userName;
+	public $hasEditable;
     /**
      * {@inheritdoc}
      */
@@ -77,6 +78,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
 			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
+			[['hasEditable'], 'safe']
         ];
     }
 
