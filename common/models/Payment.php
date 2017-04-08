@@ -315,4 +315,10 @@ class Payment extends ActiveRecord
     {
         return $this->invoice->getCustomerAccountBalance($this->user_id);
     }
+
+    public function afterSoftDelete()
+    {
+        $this->invoice->save();
+        return $this->manageAccount();
+    }
 }
