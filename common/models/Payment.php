@@ -8,6 +8,7 @@ use common\models\query\PaymentQuery;
 use common\commands\AddToTimelineCommand;
 use common\models\TimelineEventLink;
 use yii\helpers\Url;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "payments".
@@ -123,7 +124,7 @@ class Payment extends ActiveRecord
      */
     public static function find()
     {
-        return new PaymentQuery(get_called_class(),parent::find()->notDeleted());
+        return new PaymentQuery(get_called_class(),parent::find()->where(['payment.isDeleted' => false]));
     }
 
     public function getUser()
