@@ -8,6 +8,7 @@ use common\models\query\PaymentQuery;
 use common\commands\AddToTimelineCommand;
 use common\models\TimelineEventLink;
 use yii\helpers\Url;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "payments".
@@ -20,7 +21,6 @@ use yii\helpers\Url;
  */
 class Payment extends ActiveRecord
 {
-    public $isDeleted;
     public $invoiceId;
     public $credit;
     public $amountNeeded;
@@ -63,7 +63,7 @@ class Payment extends ActiveRecord
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
                     self::SCENARIO_CREDIT_USED, ]],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
-           [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 'sourceId', 'credit'], 'safe'],
+           [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 'sourceId', 'credit', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -107,12 +107,24 @@ class Payment extends ActiveRecord
         ];
     }
 
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+				'replaceRegularDelete' => true
+            ],
+        ];
+    }
     /**
      * @return UserQuery
      */
     public static function find()
     {
-        return new PaymentQuery(get_called_class());
+        return new PaymentQuery(get_called_class(),parent::find()->where(['payment.isDeleted' => false]));
     }
 
     public function getUser()
@@ -164,14 +176,6 @@ class Payment extends ActiveRecord
         return $this->hasOne(PaymentCheque::className(), ['payment_id' => 'id']);
     }
 
-    public function beforeDelete()
-    {
-        $this->isDeleted = true;
-        $this->manageAccount();
-        $this->invoicePayment->delete();
-        return parent::beforeDelete();
-    }
-
     public function beforeSave($insert)
     {
         if (!$insert) {
@@ -179,6 +183,7 @@ class Payment extends ActiveRecord
         }
         $model = Invoice::findOne(['id' => $this->invoiceId]);
         $this->user_id = $model->user_id;
+        $this->isDeleted = false;
         $this->date = (new \DateTime())->format('Y-m-d H:i:s');
         if ($this->isCreditUsed()) {
             $this->amount = -abs($this->amount);
@@ -216,7 +221,7 @@ class Payment extends ActiveRecord
             $this->invoice->save();
         }
 
-		$this->trigger(self::EVENT_CREATE);
+        $this->trigger(self::EVENT_CREATE);
 		
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -309,5 +314,11 @@ class Payment extends ActiveRecord
     public function accountBalance()
     {
         return $this->invoice->getCustomerAccountBalance($this->user_id);
+    }
+
+    public function afterSoftDelete()
+    {
+        $this->invoice->save();
+        return $this->manageAccount();
     }
 }

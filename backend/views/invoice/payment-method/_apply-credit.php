@@ -16,11 +16,11 @@ $results = [];
 if (!empty($invoiceCredits)) {
     foreach ($invoiceCredits as $invoiceCredit) {
         if ($invoiceCredit->isReversedInvoice()) {
-            $lastInvoicePayment = $invoiceCredit->invoiceReverse->invoicePayments;
-            $lastInvoicePayment = end($lastInvoicePayment);
+            $lastInvoicePayments = $invoiceCredit->invoiceReverse->payments;
+            $lastInvoicePayment = end($lastInvoicePayments);
         } else {
-            $lastInvoicePayment = $invoiceCredit->invoicePayments;
-            $lastInvoicePayment = end($lastInvoicePayment);
+            $lastInvoicePayments = $invoiceCredit->payments;
+            $lastInvoicePayment = end($lastInvoicePayments);
         }
         $lineItems = $invoiceCredit->lineItems;
         $lineItem = end($lineItems);
@@ -34,7 +34,7 @@ if (!empty($invoiceCredits)) {
             $source = 'Invoice';
             $type = 'invoice';
         }
-        $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->payment->date);
+        $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
         $results[] = [
             'id' => $invoiceCredit->id,
             'date' => $paymentDate->format('d-m-Y'),
