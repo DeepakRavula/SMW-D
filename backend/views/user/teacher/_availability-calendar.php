@@ -45,7 +45,7 @@ use common\models\TeacherAvailability;
             {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'},
             {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
         events: {
-            url: '<?= Url::to(['user/teacher-availability-events', 'id' => $model->id]) ?>',
+            url: '<?= Url::to(['teacher-availability/events', 'id' => $model->id]) ?>',
             type: 'POST',
             error: function() {
                 $("#availability-calendar").fullCalendar("refetchEvents");
@@ -62,7 +62,7 @@ use common\models\TeacherAvailability;
         eventClick: function(event) {
             var params = $.param({ id: event.id });
             $.ajax({
-                url: '<?= Url::to(['user/modify-teacher-availability', 'teacherId' => $model->id]); ?>&' + params,
+                url: '<?= Url::to(['teacher-availability/modify', 'teacherId' => $model->id]); ?>&' + params,
                 type: 'get',
                 dataType: "json",
                 success: function (response)
@@ -81,7 +81,7 @@ use common\models\TeacherAvailability;
         select: function( start, end, jsEvent, view, resourceObj ) {
             var params = $.param({ id: null });
             $.ajax({
-                url: '<?= Url::to(['user/modify-teacher-availability', 'teacherId' => $model->id]); ?>&' + params,
+                url: '<?= Url::to(['teacher-availability/modify', 'teacherId' => $model->id]); ?>&' + params,
                 type: 'get',
                 dataType: "json",
                 success: function (response)
@@ -126,7 +126,7 @@ use common\models\TeacherAvailability;
     
     function update(params, start, end, resourceId) {
         $.ajax({
-            url: '<?= Url::to(['user/modify-teacher-availability', 'teacherId' => $model->id]); ?>&' + params,
+            url: '<?= Url::to(['teacher-availability/modify', 'teacherId' => $model->id]); ?>&' + params,
             type: 'get',
             dataType: "json",
             success: function (response)
