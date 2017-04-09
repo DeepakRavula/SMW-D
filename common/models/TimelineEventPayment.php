@@ -52,7 +52,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
 
 	public function getPayment()
     {
-        return $this->hasOne(Payment::className(), ['id' => 'paymentId']);
+        return $this->hasOne(Payment::className(), ['id' => 'paymentId'])->orWhere(['payment.isDeleted' => true]);
     }
 	
 	public function create($event) {
