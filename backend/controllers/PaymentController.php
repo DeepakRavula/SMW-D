@@ -123,6 +123,9 @@ class PaymentController extends Controller
     public function actionDelete($id)
     {
         $model        = $this->findModel($id);
+		$userModel = User::findOne(['id' => Yii::$app->user->id]);
+        $model->on(Payment::EVENT_DELETE, [new TimelineEventPayment(), 'deletePayment']);
+		$model->userName = $userModel->publicIdentity;
         $modelInvoice = $model->invoice;
         if ($model->isCreditApplied()) {
             $creditUsedPaymentModel        = $model->creditUsage->debitUsagePayment;
@@ -140,7 +143,9 @@ class PaymentController extends Controller
             $modelInvoice->lineItem->delete();
         }
         $model->delete();
-        $modelInvoice->save();
+        if($modelInvoice->save()) {
+			$model->trigger(Payment::EVENT_DELETE);
+		}
         return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);
     }
 
