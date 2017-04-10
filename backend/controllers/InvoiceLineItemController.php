@@ -198,9 +198,14 @@ class InvoiceLineItemController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+		$model->on(InvoiceLineItem::EVENT_DELETE, [new InvoiceLog(), 'deleteLineItem']);
+		$user = User::findOne(['id' => Yii::$app->user->id]);
+		$model->userName = $user->publicIdentity;
         $invoiceModel = $model->invoice;
-        $model->delete();
-        $invoiceModel->save();
+        if($model->delete()) {
+        	$invoiceModel->save();
+			$model->trigger(InvoiceLineItem::EVENT_DELETE);
+		}
         Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Line Item has been deleted successfully',

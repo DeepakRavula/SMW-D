@@ -122,4 +122,27 @@ class InvoiceLog extends Invoice {
 			}
 		} 
 	}
+	public function deleteLineItem($event) {
+		$lineItemModel = $event->sender;
+		$lineItem = Invoice::find()->andWhere(['id' => $lineItemModel->id])->asArray()->one();
+		
+		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+			'data' => $lineItem,
+			'message' => $lineItemModel->userName . ' deleted a line item for an {{invoice #' . $lineItemModel->invoice->getInvoiceNumber() . '}}',
+		]));
+		if ($timelineEvent) {
+			$timelineEventLink = new TimelineEventLink();
+			$timelineEventLink->timelineEventId = $timelineEvent->id;
+			$timelineEventLink->index = 'invoice #' . $lineItemModel->invoice->getInvoiceNumber();
+			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $lineItemModel->invoice->id]);
+			$timelineEventLink->save();
+
+			$timelineEventInvoice = new TimelineEventInvoice();
+			$timelineEventInvoice->timelineEventId = $timelineEvent->id;
+			$timelineEventInvoice->invoiceId = $lineItemModel->invoice->id;
+			$timelineEventInvoice->action = 'delete';
+			$timelineEventInvoice->save();
+		}
+	}
 }

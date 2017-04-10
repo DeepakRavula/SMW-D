@@ -26,6 +26,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     const DISCOUNT_PERCENTAGE      = 1;
 
 	const EVENT_EDIT = 'edit';
+	const EVENT_DELETE = 'deleteLineItem';
 
 	public $userName;
     /**
