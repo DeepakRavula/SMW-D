@@ -50,7 +50,7 @@ $this->title = 'Review Lessons';
   </div>
   <div class="clearfix"></div>
 </div>
-<div class="row-fluid teacher-availability">
+  <h3>Teacher Availabilities</h3>
   <?php
     $locationId = Yii::$app->session->get('location_id');
     $query = TeacherAvailability::find()
@@ -60,15 +60,11 @@ $this->title = 'Review Lessons';
     'query' => $query,
     ]);
   ?>
-  <?php yii\widgets\Pjax::begin() ?>
-  <div class="col-md-12">
-    <h4>Availabilities </h4>
-  </div>
   <?php
     echo GridView::widget([
       'dataProvider' => $teacherAvailabilityDataProvider,
       'options' => ['class' => 'col-md-5'],
-      'tableOptions' => ['class' => 'table table-bordered'],
+      'tableOptions' => ['class' => 'table table-bordered table-more-condensed'],
       'headerRowOptions' => ['class' => 'bg-light-gray'],
       'columns' => [
           [
@@ -97,8 +93,6 @@ $this->title = 'Review Lessons';
       ],
     ]);
   ?>
-  <?php \yii\widgets\Pjax::end(); ?>
-</div>
 <div class="clearfix"></div>
 <?php
   $hasConflict = false;
