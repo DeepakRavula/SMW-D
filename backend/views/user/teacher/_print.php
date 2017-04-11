@@ -47,7 +47,7 @@ use common\models\Lesson;
 			?>
 			<div class="row-fluid m-t-5">
 				<?php if (!empty($model->email)): ?>
-					<?php echo 'E: '; ?><?php echo $model->user->email ?>
+					<?php echo 'E: '; ?><?php echo $model->email ?>
 				<?php endif; ?>
 			</div>
             <!-- Phone number -->
