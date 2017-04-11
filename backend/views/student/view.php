@@ -168,6 +168,26 @@ echo $this->render('_profile', [
                 }
             });
         });
+		 $(document).on('click', '.enrolment-delete', function () {
+            $.ajax({
+                url: '<?= Url::to(['enrolment/preview']); ?>?id=' + $(this).parent().parent().data('key'),
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+						console.log(response.data);
+                        $('#new-exam-result-modal .modal-body').html(response.data);
+                        $('#new-exam-result-modal').modal('show');
+                    } else {
+                        $('#lesson-form').yiiActiveForm('updateMessages',
+                                response.errors
+                                , true);
+                    }
+                }
+            });
+        });
         $(document).on('beforeSubmit', '#lesson-form', function (e) {
             $.ajax({
                 url: $(this).attr('action'),

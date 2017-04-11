@@ -269,19 +269,6 @@ class StudentController extends Controller
         return $this->redirect(['view', 'id' => $studentId, '#' => 'enrolment']);
     }
 
-    public function actionDeleteEnrolmentPreview($studentId, $enrolmentId, $programType)
-    {
-        $model = $this->findModel($studentId);
-        $enrolmentModel = Enrolment::findOne(['id' => $enrolmentId]);
-
-        return $this->render('delete-enrolment-preview', [
-            'model' => $model,
-            'enrolmentId' => $enrolmentId,
-            'programType' => $programType,
-            'enrolmentModel' => $enrolmentModel,
-        ]);
-    }
-
     /**
      * Finds the Student model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

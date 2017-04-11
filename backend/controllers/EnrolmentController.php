@@ -15,6 +15,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\TeacherRoom;
+use yii\filters\ContentNegotiator;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -29,6 +30,14 @@ class EnrolmentController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			'contentNegotiator' => [
+				'class' => ContentNegotiator::className(),
+				'only' => ['preview'],
+				'formatParam' => '_format',
+				'formats' => [
+				   'application/json' => Response::FORMAT_JSON,
+				],
+			],	 
         ];
     }
 
@@ -108,6 +117,17 @@ class EnrolmentController extends Controller
         }
     }
 
+	public function actionPreview($id)
+	{
+		$model = $this->findModel($id);
+		$data =  $this->renderAjax('/student/enrolment-preview', [
+            'model' => $model,
+        ]);	
+		return [
+			'status' => true,
+			'data' => $data
+		];
+	}
     /**
      * Updates an existing Enrolment model.
      * If update is successful, the browser will be redirected to the 'view' page.
