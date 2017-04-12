@@ -6,6 +6,7 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use common\models\query\InvoiceQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "invoice".
@@ -63,6 +64,12 @@ class Invoice extends \yii\db\ActiveRecord
                 ],
 				'replaceRegularDelete' => true
             ],
+			[
+				'class' => TimestampBehavior::className(),
+				'createdAtAttribute' => 'createdOn',
+				'updatedAtAttribute' => 'updatedOn',
+				'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+			]
         ];
     }
 	

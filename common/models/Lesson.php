@@ -536,6 +536,8 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
         $invoice->type = INVOICE::TYPE_INVOICE;
+		$invoice->createdUserId = Yii::$app->user->id;
+		$invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
         $invoice->addLineItem($this);
         $invoice->save();

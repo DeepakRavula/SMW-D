@@ -389,6 +389,8 @@ class UserController extends Controller
             $invoice->user_id = $model->id;
             $invoice->location_id = $locationId;
             $invoice->type = Invoice::TYPE_INVOICE;
+			$invoice->createdUserId = Yii::$app->user->id;
+			$invoice->updatedUserId = Yii::$app->user->id;
             $invoice->save();
 
             $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
