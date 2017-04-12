@@ -22,6 +22,7 @@ class Note extends \yii\db\ActiveRecord
 	const INSTANCE_TYPE_LESSON = 3;
 	const INSTANCE_TYPE_INVOICE = 4;
 	
+	public $hasEditable;
     /**
      * @inheritdoc
      */
@@ -39,7 +40,7 @@ class Note extends \yii\db\ActiveRecord
             [['content'], 'required'],
             [['instanceId', 'instanceType', 'createdUserId'], 'integer'],
             [['content'], 'string'],
-            [['createdOn', 'updatedOn'], 'safe'],
+            [['createdOn', 'updatedOn', 'hasEditable'], 'safe'],
         ];
     }
 

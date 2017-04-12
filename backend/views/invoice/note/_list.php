@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Html;
-use dosamigos\editable\Editable;
 use yii\helpers\Url;
+use kartik\editable\Editable;
 ?>
 <div class="col-sm-10">
 <div class="panel panel-default">
@@ -16,14 +16,14 @@ use yii\helpers\Url;
 <div class="panel-body">
 <?= Editable::widget( [
     'name' => 'content',
+    'asPopover' => true,
     'value' => $model->content,
-    'url' => Url::to(['note/update', 'id' => $model->id]),
-    'type' => 'textarea',
-    'mode' => 'pop',
-    'clientOptions' => [
-        'placement' => 'right',
-	'showbuttons' => 'bottom',
-    ]
+    'inputType' => Editable::INPUT_TEXTAREA,
+    'header' => 'Notes',
+	'submitOnEnter' => false,
+    'size'=>'lg',
+    'options' => ['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Enter notes...'],
+    'formOptions' => ['action' => Url::to(['/note/update', 'id' => $model->id])],
 ]);?>
 </div><!-- /panel-body -->
 </div><!-- /panel panel-default -->
