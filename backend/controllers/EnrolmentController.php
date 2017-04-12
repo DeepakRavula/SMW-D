@@ -32,7 +32,7 @@ class EnrolmentController extends Controller
             ],
 			'contentNegotiator' => [
 				'class' => ContentNegotiator::className(),
-				'only' => ['preview'],
+				'only' => ['preview', 'delete'],
 				'formatParam' => '_format',
 				'formats' => [
 				   'application/json' => Response::FORMAT_JSON,
@@ -260,11 +260,33 @@ class EnrolmentController extends Controller
      *
      * @return mixed
      */
+	    /**
+     * Deletes an existing Student model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
+     * @param int $id
+     *
+     * @return mixed
+     */
+  
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id);
+        
+		if ($model->course->program->isPrivate()) {
+            $lessons = Lesson::find()
+                    ->where(['courseId' => $model->courseId])
+                    ->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
+                    ->all();
+            foreach ($lessons as $lesson) {
+                $lesson->softDelete();
+            }
+			$model->softDelete();
+        }
+       
+        return [
+			'status' => true,
+		];
     }
 
     /**

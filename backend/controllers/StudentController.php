@@ -239,37 +239,6 @@ class StudentController extends Controller
     }
 
     /**
-     * Deletes an existing Student model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
-    public function actionDeleteEnrolment($enrolmentId, $programType, $studentId)
-    {
-        $this->findModel($studentId);
-        $enrolment = Enrolment::findOne(['id' => $enrolmentId]);
-        $enrolment->softDelete();
-
-        if ((int) $programType === Program::TYPE_PRIVATE_PROGRAM) {
-            $lessons = Lesson::find()
-                    ->where(['courseId' => $enrolment->courseId])
-                    ->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
-                    ->all();
-            foreach ($lessons as $lesson) {
-                $lesson->softDelete();
-            }
-        }
-        Yii::$app->session->setFlash('alert', [
-            'options' => ['class' => 'alert-success'],
-            'body' => 'Enrolment has been deleted successfully',
-        ]);
-
-        return $this->redirect(['view', 'id' => $studentId, '#' => 'enrolment']);
-    }
-
-    /**
      * Finds the Student model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *

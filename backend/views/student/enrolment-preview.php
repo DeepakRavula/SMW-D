@@ -2,6 +2,8 @@
 use yii\helpers\Html;
 use common\models\Invoice;
 use common\models\Program;
+use yii\widgets\ActiveForm;
+use yii\helpers\Url;
 
 ?>
 <?php if (!empty($model)):?>
@@ -56,8 +58,8 @@ if (!empty($proFormaInvoiceCredits)) {
     }
 }
 ?>
-<div class="smw-box col-md-6 m-l-20 m-b-30">
-<h4>Customer Name & Billing Address : 
+<div class="smw-box col-md-10 m-l-20 m-b-30">
+<h4>Customer Name : 
 <div class="row-fluid">
     <div class="col-md-12 p-t-10">
         <p class="users-name pull-left"><?= $model->student->customer->publicidentity ?>
@@ -66,6 +68,7 @@ if (!empty($proFormaInvoiceCredits)) {
             </em> 
         </p>
     </div>
+	Billing Address :
     <div class="row-fluid">
 		<div id="w3" class="list-view">
             <div data-key="351">
@@ -92,18 +95,23 @@ if (!empty($proFormaInvoiceCredits)) {
 <h4>Number Of Invoice Partial Payment : <?= !empty($count) ? $count : 0; ?></h4>
 <h4>Unused Invoice Credit : <?= !empty($originalInvoiceCredit) ? abs($originalInvoiceCredit) : 0; ?></h4>
 <?php if ($model->course->program->isPrivate()):?>
-<h4>Unused Pro Forma Invoice Credit: <?= !empty($proFormaCredit) ? $proFormaCredit : 0; ?></h4>
+<h4>Unused Pro Forma Invoice Credit : <?= !empty($proFormaCredit) ? $proFormaCredit : 0; ?></h4>
 <?php endif; ?>
 </div>
 <div class="clearfix"></div>
+<?php $form = ActiveForm::begin([
+	'id' => 'enrolment-delete-form',
+	'action' => Url::to(['enrolment/delete', 'id' => $model->id])
+]); ?>
 <div>
-<?= Html::a('Confirm', ['delete', 'id' => $model->id], [
-        'class' => 'btn btn-danger',
+<?= Html::a('Delete','#', [
+        'class' => 'btn btn-danger enrolment-delete-button',
         'data' => [
             'confirm' => 'Are you sure you want to delete this item?',
             'method' => 'post',
         ],
 ]) ?>
-<?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']); ?>
+<?= Html::a('Cancel','#', ['class' => 'btn enrolment-delete-cancel-button']); ?>
 </div>
+<?php ActiveForm::end(); ?>
 <?php endif; ?>

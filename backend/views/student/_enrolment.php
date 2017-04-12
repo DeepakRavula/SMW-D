@@ -20,13 +20,11 @@ use yii\bootstrap\Modal;
         'header' => '<h4 class="m-0">Delete Enrolment Preview</h4>',
         'id' => 'enrolment-preview-modal',
     ]);
-     echo $this->render('enrolment-preview', [
-        'model' => new Enrolment(),
-    ]);
     Modal::end();
 ?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin([
+		'id' => 'enrolment-grid',
         'timeout' => 6000,
     ]) ?>
     <?php

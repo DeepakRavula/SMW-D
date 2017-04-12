@@ -17,6 +17,7 @@ echo $this->render('_profile', [
 	'model' => $model,
 ]);
 ?>
+<div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div class="tabbable-panel">
 	<div class="tabbable-line">
 		<?php
@@ -177,17 +178,33 @@ echo $this->render('_profile', [
                 {
                     if (response.status)
                     {
-						console.log(response.data);
-                        $('#new-exam-result-modal .modal-body').html(response.data);
-                        $('#new-exam-result-modal').modal('show');
-                    } else {
-                        $('#lesson-form').yiiActiveForm('updateMessages',
-                                response.errors
-                                , true);
+                        $('#enrolment-preview-modal .modal-body').html(response.data);
+                        $('#enrolment-preview-modal').modal('show');
                     }
                 }
             });
         });
+		$(document).on('click', '.enrolment-delete-cancel-button', function () {
+            $('#enrolment-preview-modal').modal('hide');
+		});
+		$(document).on('beforeSubmit', '#enrolment-delete-form', function (e) {
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'post',
+                dataType: "json",
+                data: $(this).serialize(),
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+            			$('#enrolment-preview-modal').modal('hide');
+                        $.pjax.reload({container: '#enrolment-grid', timeout: 6000});
+                    	$('#enrolment-delete-success').text("Enrolment has been deleted successfully").fadeIn().delay(3000).fadeOut();
+                    }
+                }
+            });
+            return false;
+		});
         $(document).on('beforeSubmit', '#lesson-form', function (e) {
             $.ajax({
                 url: $(this).attr('action'),
