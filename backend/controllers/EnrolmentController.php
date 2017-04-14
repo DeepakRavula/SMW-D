@@ -78,26 +78,23 @@ class EnrolmentController extends Controller
             'pagination' => false,
         ]);
 		
-		$post = Yii::$app->request->post();
-		if (isset($post['hasEditable'])) {
-			$response = Yii::$app->response;
-			$response->format = Response::FORMAT_JSON;
-			if(! empty($post['paymentFrequencyId'])) {
-                            $oldPaymentFrequency = $model->paymentFrequencyId;
-                            $model->paymentFrequencyId = $post['paymentFrequencyId'];
-                            $model->save();
-                            if ((int) $oldPaymentFrequency !== (int) $post['paymentFrequencyId']) {
-                                $model->resetPaymentCycle();
-                            }
-                            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
-			}
-		}
         return $this->render('view', [
                 'model' => $model,
                 'lessonDataProvider' => $lessonDataProvider,
             ]);
     }
 
+	public function actionEdit($id)
+	{
+		$model = $this->findModel($id);
+        $oldPaymentFrequency = $model->paymentFrequencyId;
+		if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
+			 if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
+				$model->resetPaymentCycle();
+			}
+            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
+        }
+	}
     /**
      * Creates a new Enrolment model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -139,21 +136,6 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		
-		$post = Yii::$app->request->post();
-		if (isset($post['hasEditable'])) {
-			$response = Yii::$app->response;
-			$response->format = Response::FORMAT_JSON;
-                        if(! empty($post['paymentFrequencyId'])) {
-                            $oldPaymentFrequency = $model->paymentFrequencyId;
-                            $model->paymentFrequencyId = $post['paymentFrequencyId'];
-                            $model->save();
-                            if ((int) $oldPaymentFrequency !== (int) $post['paymentFrequencyId']) {
-                                $model->resetPaymentCycle();
-                            }
-                            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
-			}
-		}
         $timebits = explode(':', $model->course->fromTime);
 		$courseEndDate = (new \DateTime($model->course->endDate))->format('Y-m-d');
 		$courseEndDate = new \DateTime($courseEndDate);

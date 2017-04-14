@@ -52,6 +52,7 @@ class User extends ActiveRecord implements IdentityInterface
 	public $studentId;
 	public $privateLessonHourlyRate;
 	public $groupLessonHourlyRate;
+	public $hasEditable;
 	
 	
     /**
@@ -122,6 +123,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
             [['email'], 'email'],
+			[['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate'], 'safe']
         ];
     }
 

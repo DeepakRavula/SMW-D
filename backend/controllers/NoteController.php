@@ -26,7 +26,7 @@ class NoteController extends Controller
             ],
 			[
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['create'],
+				'only' => ['create', 'update'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -110,9 +110,9 @@ class NoteController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $request = Yii::$app->request;
-        $model->content = $request->post('value'); 
-        $model->save();
+		if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
+            return ['output' => $model->content, 'message' => ''];
+        }
     }
 
     /**

@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ListView;
 use common\models\User;
-use dosamigos\editable\Editable;
+use kartik\editable\Editable;
 use yii\helpers\Url;
 ?>
 <div class="row p-10">
@@ -40,33 +40,38 @@ use yii\helpers\Url;
 		<div class="row-fluid m-t-10 m-b-20">
 			<div class="col-xs-4 p-0 c-title"> Private Lesson</div>
 			<div class="col-xs-4">
-			 <?= Editable::widget( [
-				'name' => 'privateLessonHourlyRate',
-				'value' => $privateLessonRate,
-				'url' => Url::to(['teacher-rate/update', 'id' => $model->id]),
-				'type' => 'text',
-				'mode' => 'pop',
-				'clientOptions' => [
-					'placement' => 'bottom',
-					'showbuttons' => 'bottom',
-				]
-			]);?></div>
+				<?=
+				 Editable::widget([
+					'name'=>'privateLessonHourlyRate',
+					'asPopover' => true,
+					'value' => $privateLessonRate,
+					'inputType' => Editable::INPUT_TEXT,
+					'header' => 'Private Lesson Hourly Rate',
+                    'placement' => 'bottom',
+					'submitOnEnter' => true,
+					'size'=>'md',
+					'formOptions' => ['action' => Url::to(['teacher-rate/update', 'id' => $model->id])],
+				])
+				?> 
+			</div>
 			<div class="clearfix"></div>
 		</div>
 		<div class="row-fluid m-t-10 m-b-20">
 			<div class="col-xs-4 p-0 c-title"> Group Lesson</div>
 			<div class="col-xs-4">
-				<?= Editable::widget( [
-				'name' => 'groupLessonHourlyRate',
-				'value' => $groupLessonRate,
-				'url' => Url::to(['teacher-rate/update', 'id' => $model->id]),
-				'type' => 'text',
-				'mode' => 'pop',
-				'clientOptions' => [
-					'placement' => 'bottom',
-					'showbuttons' => 'bottom',
-				]
-			]);?>
+				<?=
+				 Editable::widget([
+					'name'=>'groupLessonHourlyRate',
+					'asPopover' => true,
+					'value' => $groupLessonRate,
+					'inputType' => Editable::INPUT_TEXT,
+                    'placement' => 'bottom',
+					'header' => 'Group Lesson Hourly Rate',
+					'submitOnEnter' => true,
+					'size'=>'md',
+					'formOptions' => ['action' => Url::to(['teacher-rate/update', 'id' => $model->id])],
+				])
+				?> 
 			</div>
 			<div class="clearfix"></div>
 		</div>	
