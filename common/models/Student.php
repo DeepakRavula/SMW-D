@@ -125,12 +125,15 @@ class Student extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
+	public function isChangeBirthDate($changedAttributes) {
+		return isset($changedAttributes['birth_date']) && new \DateTime($this->birth_date) != new \DateTime($changedAttributes['birth_date']);	
+	}
+	
 	public function afterSave($insert, $changedAttributes) {
 		if($insert) {
 			$this->trigger(self::EVENT_CREATE);
 		} else {
-			$birthDate = $this->getOldAttribute('birth_date');
-			if(new \DateTime($this->birth_date) != new \DateTime($changedAttributes['birth_date'])) {
+			if($this->isChangeBirthDate($changedAttributes)) {
 				$this->trigger(self::EVENT_UPDATE);
 			}
 		}

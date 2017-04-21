@@ -35,6 +35,13 @@ class StudentController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			[
+				'class' => 'yii\filters\ContentNegotiator',
+				'only' => ['update'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,
+				],
+        	],
         ];
     }
 
@@ -165,25 +172,17 @@ class StudentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->on(Student::EVENT_UPDATE, [new StudentLog(), 'edit']);
+		$model->on(Student::EVENT_UPDATE, [new StudentLog(), 'edit']);
 		$userModel = User::findOne(['id' => Yii::$app->user->id]);
 		$model->userName = $userModel->publicIdentity;	
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Student profile has been updated successfully',
-            ]);
-            if ((int) $model->status === (int) Student::STATUS_INACTIVE) {
-                $url = ['index', 'StudentSearch[showAllStudents]' => false];
-            } else {
-                $url = ['view', 'id' => $model->id];
-            }
-
-            return $this->redirect($url);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+		
+		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			return  [
+				'status' => true,
+				'data' => $this->renderAjax('_profile', [
+					'model' => $model,
+					])
+			];
         }
     }
 

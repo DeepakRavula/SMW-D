@@ -1,9 +1,10 @@
 <?php
 
 use yii\helpers\Html;
-
+use yii\bootstrap\Modal;
+use yii\helpers\Url;
 ?>
-<div class="user-details-wrapper">
+<div class="student-profile user-details-wrapper">
 	<div class="row">
 		<div class="col-md-12">
 			<p class="users-name"><?php echo $model->first_name; ?> <?php echo $model->last_name; ?></p>
@@ -28,9 +29,20 @@ use yii\helpers\Html;
 		<div class="clearfix"></div>
 		<div class="student-view">
 			<div class="col-md-12 action-btns">
-				<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
+				<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20 student-profile-edit-button']) ?>
 		    </div>
 		    <div class="clearfix"></div>
 		</div>		
 	</div>
 </div>
+<?php
+	Modal::begin([
+		'header' => '<h4 class="m-0">Edit Student Profile</h4>',
+		'id'=>'student-profile-modal',
+	]);
+	echo $this->render('_form', [
+		'model' => $model,
+		'customer' => $model->customer
+	]);
+	Modal::end();
+	?>
