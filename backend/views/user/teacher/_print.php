@@ -3,12 +3,20 @@
 use kartik\grid\GridView;
 use common\models\Lesson;
 ?>
-<div class="row-fluid">
-	<div class="logo invoice-col" style="width: 150px">              
+<style>
+@media print{
+	.text-left{
+        text-align: left !important;
+      }
+}
+</style>
+<div class="row-fluid col-md-12">
+	<div class="logo invoice-col" style="width: 250px">              
 		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
 	</div>
-	<div class="invoice-col text-gray" style="font-size:18px; width: 180px;">
+	<div class="invoice-col text-gray" style="font-size:18px; width: 200px;">
 		<small>
+			Arcadia Music Academy ( <?= $model->userLocation->location->name;?> )<br>
 			<?php if (!empty($model->userLocation->location->address)): ?>
 				<?= $model->userLocation->location->address ?><br>
 			<?php endif; ?>
@@ -47,7 +55,7 @@ use common\models\Lesson;
 			?>
 			<div class="row-fluid m-t-5">
 				<?php if (!empty($model->email)): ?>
-					<?php echo 'E: '; ?><?php echo $model->user->email ?>
+					<?php echo 'E: '; ?><?php echo $model->email ?>
 				<?php endif; ?>
 			</div>
             <!-- Phone number -->
@@ -65,6 +73,7 @@ use common\models\Lesson;
 	</div>
 	<div class="clearfix"></div>
 </div>
+<h4 class="col-md-12"><b>Teacher Time Voucher for <?= $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h4>
 <?php
 if(!$searchModel->summariseReport) {
 $columns = [
@@ -74,6 +83,7 @@ $columns = [
 			$date = $lessonDate->format('l, F jS, Y');
 			return !empty($date) ? $date : null;
 		},
+		'contentOptions' => ['class' => 'text-left'],
 		'group' => true,
 		'groupedRow' => true,
 		'groupFooter' => function ($model, $key, $index, $widget) {

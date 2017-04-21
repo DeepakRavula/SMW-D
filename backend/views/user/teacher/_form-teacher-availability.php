@@ -25,7 +25,7 @@ use yii\helpers\Url;
         ?>
         <?php $form       = ActiveForm::begin([
             'id' => 'teacher-availability-form',
-            'action' => Url::to(['user/modify-teacher-availability', 
+            'action' => Url::to(['teacher-availability/modify', 
                 'teacherId' => $model->id, 'id' => $id]),
         ]); ?>
         
@@ -60,7 +60,7 @@ use yii\helpers\Url;
             <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-primary']); ?>
         <?php if (!empty($teacherAvailabilityModel->id)) : ?>
             <?= Html::a('<i class="fa fa-close"></i> Delete', [
-                    'delete-teacher-availability', 'id' => $teacherAvailabilityModel->id
+                    'teacher-availability/delete', 'id' => $teacherAvailabilityModel->id
                 ],
                 [
                     'class' => 'btn btn-primary',
@@ -77,7 +77,7 @@ use yii\helpers\Url;
 
 <script>
 $(document).ready(function () {
-    $('#cancel').click(function() {debugger;
+    $('#cancel').click(function() {
         $('#teacher-availability-modal').modal('hide');
     });
 });

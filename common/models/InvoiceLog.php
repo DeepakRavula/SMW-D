@@ -75,4 +75,74 @@ class InvoiceLog extends Invoice {
 			$timelineEventInvoice->save();
 		}
 	}
+	public function edit($event) {
+		$lineItemModel = $event->sender;
+		$data = current($event->data);
+		$lineItem = Invoice::find()->andWhere(['id' => $lineItemModel->id])->asArray()->one();
+		$oldAmount = $data['amount'];
+		$oldDescription = $data['description'];
+		
+		if($oldDescription !== $lineItemModel->description) {
+			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+				'data' => $lineItem,
+				'message' => $lineItemModel->userName . ' changed an {{invoice #' . $lineItemModel->invoice->getInvoiceNumber() . '}} line item discount to ' . $lineItemModel->description,
+			]));
+			if ($timelineEvent) {
+				$timelineEventLink = new TimelineEventLink();
+				$timelineEventLink->timelineEventId = $timelineEvent->id;
+				$timelineEventLink->index = 'invoice #' . $lineItemModel->invoice->getInvoiceNumber();
+				$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+				$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $lineItemModel->invoice->id]);
+				$timelineEventLink->save();
+
+				$timelineEventInvoice = new TimelineEventInvoice();
+				$timelineEventInvoice->timelineEventId = $timelineEvent->id;
+				$timelineEventInvoice->invoiceId = $lineItemModel->invoice->id;
+				$timelineEventInvoice->action = 'edit';
+				$timelineEventInvoice->save();
+			}
+		} else if($oldAmount !== $lineItemModel->amount) {
+			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+				'data' => $lineItem,
+				'message' => $lineItemModel->userName . ' changed an {{invoice #' . $lineItemModel->invoice->getInvoiceNumber() . '}} line item price from ' . Yii::$app->formatter->asCurrency($oldAmount) . ' to ' . Yii::$app->formatter->asCurrency($lineItemModel->amount),
+			]));
+			if ($timelineEvent) {
+				$timelineEventLink = new TimelineEventLink();
+				$timelineEventLink->timelineEventId = $timelineEvent->id;
+				$timelineEventLink->index = 'invoice #' . $lineItemModel->invoice->getInvoiceNumber();
+				$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+				$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $lineItemModel->invoice->id]);
+				$timelineEventLink->save();
+
+				$timelineEventInvoice = new TimelineEventInvoice();
+				$timelineEventInvoice->timelineEventId = $timelineEvent->id;
+				$timelineEventInvoice->invoiceId = $lineItemModel->invoice->id;
+				$timelineEventInvoice->action = 'edit';
+				$timelineEventInvoice->save();
+			}
+		} 
+	}
+	public function deleteLineItem($event) {
+		$lineItemModel = $event->sender;
+		$lineItem = Invoice::find()->andWhere(['id' => $lineItemModel->id])->asArray()->one();
+		
+		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+			'data' => $lineItem,
+			'message' => $lineItemModel->userName . ' deleted a line item for an {{invoice #' . $lineItemModel->invoice->getInvoiceNumber() . '}}',
+		]));
+		if ($timelineEvent) {
+			$timelineEventLink = new TimelineEventLink();
+			$timelineEventLink->timelineEventId = $timelineEvent->id;
+			$timelineEventLink->index = 'invoice #' . $lineItemModel->invoice->getInvoiceNumber();
+			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $lineItemModel->invoice->id]);
+			$timelineEventLink->save();
+
+			$timelineEventInvoice = new TimelineEventInvoice();
+			$timelineEventInvoice->timelineEventId = $timelineEvent->id;
+			$timelineEventInvoice->invoiceId = $lineItemModel->invoice->id;
+			$timelineEventInvoice->action = 'delete';
+			$timelineEventInvoice->save();
+		}
+	}
 }

@@ -3,6 +3,7 @@ use common\models\Course;
 use kartik\editable\Editable;
 use common\models\PaymentFrequency;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 ?>
 <div class="group-course-view">
 	<div class="row-fluid user-details-wrapper">
@@ -51,7 +52,8 @@ use yii\helpers\ArrayHelper;
 			'header' => 'Payment Frequency',
 			'submitOnEnter' => false,
 			'size'=>'md',
-			'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')
+			'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'),
+    		'formOptions' => ['action' => Url::to(['/enrolment/edit', 'id' => $model->id])],
 		])
 		?> 
 	</div>

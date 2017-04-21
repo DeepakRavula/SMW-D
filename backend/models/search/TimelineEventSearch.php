@@ -14,14 +14,14 @@ class TimelineEventSearch extends TimelineEvent
 {
 	const CATEGORY_LESSON = 'lesson';
 	const CATEGORY_ENROLMENT = 'enrolment';
-	const CATEGORY_STUDENT = 'student';
 	const CATEGORY_INVOICE = 'invoice';
 	const CATEGORY_PAYMENT = 'payment';
+	const ALL = 'all';
 
 	private $fromDate;
     private $toDate;
 	public $category;
-
+	public $student;
 
 	public function init()
     {
@@ -40,7 +40,7 @@ class TimelineEventSearch extends TimelineEvent
     public function rules()
     {
         return [
-            [['dateRange', 'category', 'created_at', 'createdUserId'], 'safe'],
+            [['dateRange', 'category', 'created_at', 'createdUserId', 'student'], 'safe'],
         ];
     }
 
@@ -73,25 +73,37 @@ class TimelineEventSearch extends TimelineEvent
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
 		if ($this->category === self::CATEGORY_ENROLMENT) {
-            $query->enrolment();
+			if(!empty($this->student)) {
+				$query->studentEnrolment($this->student);
+			} else {
+	            $query->enrolment();
+			}
         } elseif ($this->category === self::CATEGORY_LESSON) {
-            $query->lesson();
-        } elseif($this->category === self::CATEGORY_STUDENT) {
-            $query->student();
+			if(!empty($this->student)) {
+				$query->studentLesson($this->student);
+			} else {
+            	$query->lesson();
+			}
         } elseif($this->category === self::CATEGORY_INVOICE) {
-            $query->invoice();
+			if(!empty($this->student)) {
+				$query->studentInvoice($this->student);
+			} else {
+            	$query->invoice();
+			}
         } elseif($this->category === self::CATEGORY_PAYMENT) {
-            $query->payment();
+			if(!empty($this->student)) {
+				$query->studentPayment($this->student);
+			} else {
+            	$query->payment();
+			}
         }
-		
-		$query->where(['between', 'DATE(created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
+		if(!empty($this->student) && $this->category === self::ALL)	{
+			$query->student($this->student);
+		}
+		$query->where(['between', 'DATE(timeline_event.created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
 		
 		$query->location($locationId);
-		
-		
-		
 		$query->andFilterWhere(['createdUserId' => $this->createdUserId]);
 		
         return $dataProvider;
@@ -99,10 +111,9 @@ class TimelineEventSearch extends TimelineEvent
 	public static function categories()
     {
         return [
-           	'all' => 'All',
+           	self::ALL  => 'All',
             self::CATEGORY_LESSON => 'Lesson',
 			self::CATEGORY_ENROLMENT => 'Enrolment',
-			self::CATEGORY_STUDENT => 'Student',
 			self::CATEGORY_INVOICE => 'Invoice',
 			self::CATEGORY_PAYMENT => 'Payment',
         ];

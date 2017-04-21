@@ -104,6 +104,8 @@ class InvoiceController extends Controller
         }
         $location_id = Yii::$app->session->get('location_id');
         $invoice->location_id = $location_id;
+		$invoice->createdUserId = Yii::$app->user->id;
+		$invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
 
         return $this->redirect(['view', 'id' => $invoice->id]);
@@ -319,6 +321,9 @@ class InvoiceController extends Controller
         $invoiceRequest = $request->get('Invoice');
         $invoice->type = $invoiceRequest['type'];
         $location_id = Yii::$app->session->get('location_id');
+		$invoice->createdUserId = Yii::$app->user->id;
+		$invoice->updatedUserId = Yii::$app->user->id;
+				
         if (isset($invoiceRequest['customer_id'])) {
             $customer = User::findOne(['id' => $invoiceRequest['customer_id']]);
 
@@ -535,6 +540,8 @@ class InvoiceController extends Controller
         $creditInvoice                 = new Invoice();
         $creditInvoice->user_id        = $invoice->user_id;
         $creditInvoice->location_id    = $invoice->location_id;
+		$creditInvoice->createdUserId = Yii::$app->user->id;
+		$creditInvoice->updatedUserId = Yii::$app->user->id;
         $creditInvoice->type           = INVOICE::TYPE_INVOICE;
         $creditInvoice->save();
         $invoiceReverse                   = new InvoiceReverse();

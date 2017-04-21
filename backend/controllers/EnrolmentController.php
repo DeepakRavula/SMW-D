@@ -15,6 +15,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\TeacherRoom;
+use yii\filters\ContentNegotiator;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -29,6 +30,14 @@ class EnrolmentController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			'contentNegotiator' => [
+				'class' => ContentNegotiator::className(),
+				'only' => ['preview', 'delete', 'edit'],
+				'formatParam' => '_format',
+				'formats' => [
+				   'application/json' => Response::FORMAT_JSON,
+				],
+			],	 
         ];
     }
 
@@ -77,20 +86,6 @@ class EnrolmentController extends Controller
             'pagination' => false,
         ]);
 		
-		$post = Yii::$app->request->post();
-		if (isset($post['hasEditable'])) {
-			$response = Yii::$app->response;
-			$response->format = Response::FORMAT_JSON;
-			if(! empty($post['paymentFrequencyId'])) {
-                $oldPaymentFrequency = $model->paymentFrequencyId;
-                $model->paymentFrequencyId = $post['paymentFrequencyId'];
-                $model->save();
-                if ((int) $oldPaymentFrequency !== (int) $post['paymentFrequencyId']) {
-                    $model->resetPaymentCycle();
-                }
-                return ['output' => $model->getPaymentFrequency(), 'message' => ''];
-			}
-		}
         return $this->render('view', [
             'model' => $model,
             'lessonDataProvider' => $lessonDataProvider,
@@ -98,6 +93,17 @@ class EnrolmentController extends Controller
         ]);
     }
 
+	public function actionEdit($id)
+	{
+		$model = $this->findModel($id);
+        $oldPaymentFrequency = $model->paymentFrequencyId;
+		if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
+			 if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
+				$model->resetPaymentCycle();
+			}
+            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
+        }
+	}
     /**
      * Creates a new Enrolment model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -117,6 +123,17 @@ class EnrolmentController extends Controller
         }
     }
 
+	public function actionPreview($id)
+	{
+		$model = $this->findModel($id);
+		$data =  $this->renderAjax('/student/enrolment-preview', [
+            'model' => $model,
+        ]);	
+		return [
+			'status' => true,
+			'data' => $data
+		];
+	}
     /**
      * Updates an existing Enrolment model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -128,21 +145,6 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		
-		$post = Yii::$app->request->post();
-		if (isset($post['hasEditable'])) {
-			$response = Yii::$app->response;
-			$response->format = Response::FORMAT_JSON;
-                        if(! empty($post['paymentFrequencyId'])) {
-                            $oldPaymentFrequency = $model->paymentFrequencyId;
-                            $model->paymentFrequencyId = $post['paymentFrequencyId'];
-                            $model->save();
-                            if ((int) $oldPaymentFrequency !== (int) $post['paymentFrequencyId']) {
-                                $model->resetPaymentCycle();
-                            }
-                            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
-			}
-		}
         $timebits = explode(':', $model->course->fromTime);
 		$courseEndDate = (new \DateTime($model->course->endDate))->format('Y-m-d');
 		$courseEndDate = new \DateTime($courseEndDate);
@@ -249,11 +251,33 @@ class EnrolmentController extends Controller
      *
      * @return mixed
      */
+	    /**
+     * Deletes an existing Student model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
+     * @param int $id
+     *
+     * @return mixed
+     */
+  
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id);
+        
+		if ($model->course->program->isPrivate()) {
+            $lessons = Lesson::find()
+                    ->where(['courseId' => $model->courseId])
+                    ->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
+                    ->all();
+            foreach ($lessons as $lesson) {
+                $lesson->softDelete();
+            }
+			$model->softDelete();
+        }
+       
+        return [
+			'status' => true,
+		];
     }
 
     /**

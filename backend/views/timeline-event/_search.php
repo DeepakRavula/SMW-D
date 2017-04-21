@@ -8,6 +8,7 @@ use yii\helpers\ArrayHelper;
 use common\models\User;
 use yii\helpers\Url;
 use kartik\daterange\DateRangePicker;
+use common\models\Student;
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\TimelineEventSearch */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -26,7 +27,7 @@ use kartik\daterange\DateRangePicker;
     ]); ?>
 	<label class="control-label">Filter by Category</label>
 <div class="row">   
-    <div class="col-md-3">
+    <div class="col-md-2">
         <?php echo $form->field($model, 'category')->dropDownList(TimeLineEventSearch::categories())->label(false); ?>
     </div>
 	<div class="form-group col-md-3">
@@ -41,7 +42,21 @@ use kartik\daterange\DateRangePicker;
             'pluginOptions' => [
 				'allowClear' => true,
 				'multiple' => false,
-				'placeholder' => 'Select User',
+				'placeholder' => 'User',
+			],
+        ])->label(false); ?>
+    </div>  
+	<div class="form-group col-md-3">
+        <?php $locationId = Yii::$app->session->get('location_id');
+		echo $form->field($model, 'student')->widget(Select2::classname(), [
+	    'data' => ArrayHelper::map(Student::find()
+			->location($locationId)
+			->active()
+            ->all(), 'id', 'fullName'),
+            'pluginOptions' => [
+				'allowClear' => true,
+				'multiple' => false,
+				'placeholder' => 'Student',
 			],
         ])->label(false); ?>
     </div>  

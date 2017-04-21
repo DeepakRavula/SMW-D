@@ -6,6 +6,7 @@ use common\models\Enrolment;
 use common\models\Program;
 use yii\helpers\Html;
 use common\models\Course;
+use yii\bootstrap\Modal;
 
 ?>
 <div class="row p-10">
@@ -14,8 +15,16 @@ use common\models\Course;
     <?= Html::a('<i class="fa fa-plus"></i>', ['enrolment', 'id' => $model->id], ['class' => 'add-new-lesson text-add-new']); ?>
     <div class="clearfix"></div>
     </div>
+	<?php
+    Modal::begin([
+        'header' => '<h4 class="m-0">Delete Enrolment Preview</h4>',
+        'id' => 'enrolment-preview-modal',
+    ]);
+    Modal::end();
+?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin([
+		'id' => 'enrolment-grid',
         'timeout' => 6000,
     ]) ?>
     <?php
@@ -79,10 +88,13 @@ use common\models\Course;
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{delete-enrolment-preview}',
+                'template' => '{delete}',
                 'buttons' => [
-                    'delete-enrolment-preview' => function ($url, $model, $key) {
-                        return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['delete-enrolment-preview', 'studentId' => $model->student->id, 'enrolmentId' => $model->id, 'programType' => $model->course->program->type]);
+                    'delete' => function ($url, $model, $key) {
+						return Html::a('<i class="fa fa-times" aria-hidden="true"></i>','#', [
+							'id' => 'enrolment-delete-' . $model->id,
+							'class' => 'enrolment-delete m-l-20'
+						]);
                     },
                 ],
             ],

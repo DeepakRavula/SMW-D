@@ -20,7 +20,8 @@ class Enrolment extends \yii\db\ActiveRecord
 	public $toEmailAddress;
 	public $subject;
 	public $content;
-
+	public $hasEditable;
+	
 	const EDIT_RENEWAL = 'renewal';
 	const EDIT_LEAVE = 'leave';
 
@@ -53,7 +54,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
-            [['paymentFrequencyId', 'isDeleted', 'isConfirmed'], 'safe'],
+            [['paymentFrequencyId', 'isDeleted', 'isConfirmed', 'hasEditable'], 'safe'],
         ];
     }
 

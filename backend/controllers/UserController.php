@@ -53,15 +53,6 @@ class UserController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-            'contentNegotiator' => [
-               'class' => ContentNegotiator::className(),
-               'only' => ['edit-teacher-availability', 'add-teacher-availability', 'teacher-availability-events',
-                   'delete-teacher-availability', 'modify-teacher-availability'],
-               'formatParam' => '_format',
-               'formats' => [
-                   'application/json' => Response::FORMAT_JSON,
-               ],
-           ],
         ];
     }
 
@@ -398,6 +389,8 @@ class UserController extends Controller
             $invoice->user_id = $model->id;
             $invoice->location_id = $locationId;
             $invoice->type = Invoice::TYPE_INVOICE;
+			$invoice->createdUserId = Yii::$app->user->id;
+			$invoice->updatedUserId = Yii::$app->user->id;
             $invoice->save();
 
             $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
@@ -438,6 +431,29 @@ class UserController extends Controller
      *
      * @return mixed
      */
+	public function saveAddressAndPhone($model, $addressModels, $phoneNumberModels)
+	{
+        $transaction = \Yii::$app->db->beginTransaction();
+		if ($flag = $model->save(false)) {
+			foreach ($addressModels as $addressModel) {
+				if (!($flag = $addressModel->save(false))) {
+					$transaction->rollBack();
+					break;
+				}
+				$model->getModel()->link('addresses', $addressModel);
+			}
+
+			foreach ($phoneNumberModels as $phoneNumberModel) {
+				$phoneNumberModel->user_id = $model->getModel()->id;
+				if (!($flag = $phoneNumberModel->save(false))) {
+					$transaction->rollBack();
+					break;
+				}
+			}
+		}
+        $transaction->commit();
+		return $flag;
+	}
     public function actionCreate()
     {
         $session = Yii::$app->session;
@@ -458,9 +474,8 @@ class UserController extends Controller
         $request = Yii::$app->request;
         $response = Yii::$app->response;
         if ($model->load($request->post())) {
-            $addressModels = UserForm::createMultiple(Address::classname());
-            Model::loadMultiple($addressModels, $request->post());
-
+			$addressModels = UserForm::createMultiple(Address::classname());
+	        Model::loadMultiple($addressModels, $request->post());	
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
             Model::loadMultiple($phoneNumberModels, $request->post());
 
@@ -475,30 +490,9 @@ class UserController extends Controller
             $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels)) && $valid;
 
             if ($valid) {
-                $transaction = \Yii::$app->db->beginTransaction();
-
                 try {
-                    if ($flag = $model->save(false)) {
-                        foreach ($addressModels as $addressModel) {
-                            if (!($flag = $addressModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                            $model->getModel()->link('addresses', $addressModel);
-                        }
-
-                        foreach ($phoneNumberModels as $phoneNumberModel) {
-                            $phoneNumberModel->user_id = $model->getModel()->id;
-                            if (!($flag = $phoneNumberModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-                     
-                    }
-
-                    if ($flag) {
-                        $transaction->commit();
+					$success = $this->saveAddressAndPhone($model, $addressModels, $phoneNumberModels);
+                    if ($success) {
                         Yii::$app->session->setFlash('alert', [
                                 'options' => ['class' => 'alert-success'],
                                 'body' => ucwords($model->roles).' profile has been created successfully',
@@ -513,12 +507,12 @@ class UserController extends Controller
         }
 
         return $this->render('create', [
-                    'model' => $model,
-                    'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-                    'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
-                    'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
-                    'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
-                    'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
+			'model' => $model,
+			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+			'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
+			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
+			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
+			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
         ]);
     }
 
@@ -868,148 +862,5 @@ class UserController extends Controller
 			'invoiceDataProvider' => $invoiceDataProvider,
 			'dateRange' => $model->dateRange,
         ]);
-    }
-
-    public function actionTeacherAvailabilityEvents($id)
-    {
-        $session    = Yii::$app->session;
-        $locationId = $session->get('location_id');
-        $location   = Location::findOne($locationId);
-        $events     = [];
-        foreach ($location->locationAvailabilities as $availability) {
-            $startTime = new \DateTime($availability->fromTime);
-            $endTime   = new \DateTime($availability->toTime);
-            $events[]  = [
-                'resourceId' => $availability->day,
-                'start'      => $startTime->format('Y-m-d H:i:s'),
-                'end'        => $endTime->format('Y-m-d H:i:s'),
-                'rendering'  => 'background',
-                'backgroundColor' => '#ffffff',
-            ];
-        }
-        $teacherAvailabilities = TeacherAvailability::find()
-                ->joinWith('userLocation')
-                ->where(['user_id' => $id])
-                ->all();
-        foreach ($teacherAvailabilities as $teacherAvailability) {
-            $title = null;
-            if (!empty($teacherAvailability->teacherRoom->classroom->name)) {
-                $title = $teacherAvailability->teacherRoom->classroom->name;
-            }
-            $startTime = new \DateTime($teacherAvailability->from_time);
-            $endTime   = new \DateTime($teacherAvailability->to_time);
-            $events[]  = [
-                'title'      => $title,
-                'id'         => $teacherAvailability->id,
-                'resourceId' => $teacherAvailability->day,
-                'start'      => $startTime->format('Y-m-d H:i:s'),
-                'end'        => $endTime->format('Y-m-d H:i:s'),
-                'backgroundColor' => '#97ef83',
-            ];
-        }
-        return $events;
-    }
-
-    public function actionEditTeacherAvailability($id, $resourceId, $startTime, $endTime)
-    {
-        $availabilityModel            = TeacherAvailability::findOne($id);
-        $availabilityModel->day       = $resourceId;
-        $availabilityModel->from_time = $startTime;
-        $availabilityModel->to_time   = $endTime;
-        if (!empty($availabilityModel->teacherRoom)) {
-            $roomModel = $availabilityModel->teacherRoom;
-        } else {
-            $roomModel = new TeacherRoom();
-            $roomModel->teacherAvailabilityId = $id;
-        }
-        $roomModel->setScenario(TeacherRoom::SCENARIO_AVAILABIITY_EDIT);
-        $roomModel->availabilityId = $id;
-        $roomModel->from_time = $startTime;
-        $roomModel->to_time = $endTime;
-        $roomModel->day = $resourceId;
-        $roomModel->teacher_location_id = $availabilityModel->teacher_location_id;
-        if ($roomModel->validate()) {
-            $availabilityModel->save();
-            return  [
-                'status' => true,
-            ];
-        } else {
-            $errors = ActiveForm::validate($roomModel);
-            return [
-                'status' => false,
-                'errors' => $errors
-            ];
-        }
-    }
-
-    public function actionDeleteTeacherAvailability($id)
-    {
-        $availabilityModel = TeacherAvailability::findOne($id);
-        return [
-            'status' => $availabilityModel->delete()
-        ];
-    }
-
-    public function actionModifyTeacherAvailability($id, $teacherId)
-    {
-        $teacherModel = User::findOne($teacherId);
-        $teacherAvailabilityModel = TeacherAvailability::findOne($id);
-        if (empty ($teacherAvailabilityModel)) {
-            $teacherAvailabilityModel = new TeacherAvailability();
-            $teacherAvailabilityModel->teacher_location_id = $teacherModel->userLocation->id;
-            $roomModel = new TeacherRoom();
-        } else if (empty ($teacherAvailabilityModel->teacherRoom)) {
-            $roomModel = new TeacherRoom();
-        } else {
-            $roomModel = $teacherAvailabilityModel->teacherRoom;
-        }
-        if (!empty($teacherAvailabilityModel)) {
-            $roomModel->availabilityId = $teacherAvailabilityModel->id;
-        }
-        $roomModel->teacher_location_id = $teacherModel->userLocation->id;
-        $fromTime         = new \DateTime($teacherAvailabilityModel->from_time);
-        $toTime           = new \DateTime($teacherAvailabilityModel->to_time);
-        $roomModel->from_time = $fromTime->format('g:i A');
-        $roomModel->to_time   = $toTime->format('g:i A');
-        $post             = Yii::$app->request->post();
-        $roomModel->setScenario(TeacherRoom::SCENARIO_AVAILABIITY_EDIT);
-        $roomModel->day = $teacherAvailabilityModel->day;
-        $data =  $this->renderAjax('teacher/_form-teacher-availability', [
-            'model' => $teacherModel,
-            'roomModel' => $roomModel,
-            'teacherAvailabilityModel' => $teacherAvailabilityModel,
-        ]);
-        if ($roomModel->load($post)) {
-            $fromTime         = new \DateTime($roomModel->from_time);
-            $toTime           = new \DateTime($roomModel->to_time);
-            $teacherAvailabilityModel->from_time = $fromTime->format('H:i:s');
-            $teacherAvailabilityModel->to_time   = $toTime->format('H:i:s');
-            $teacherAvailabilityModel->day = $roomModel->day;
-            if ($roomModel->validate()) {
-                $teacherAvailabilityModel->save();
-                if (!empty($roomModel->classroomId)) {
-                    $roomModel->availabilityId = $teacherAvailabilityModel->id;
-                    $roomModel->teacherAvailabilityId = $teacherAvailabilityModel->id;
-                    $roomModel->save();
-                } else {
-                    TeacherRoom::deleteAll(['teacherAvailabilityId' => $teacherAvailabilityModel->id]);
-                }
-
-                return  [
-                    'status' => true,
-                ];
-            } else {
-                $errors = ActiveForm::validate($roomModel);
-                return [
-                    'status' => false,
-                    'errors' => $errors,
-                ];
-            }
-        } else {
-            return [
-                'status' => true,
-                'data' => $data
-            ];
-        }
     }
 }

@@ -26,6 +26,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     const DISCOUNT_PERCENTAGE      = 1;
 
 	const EVENT_EDIT = 'edit';
+	const EVENT_DELETE = 'deleteLineItem';
+
+	public $userName;
     /**
      * {@inheritdoc}
      */
@@ -57,7 +60,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
             ],
-            [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate'], 'safe'],
+            [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate', 'userName'], 'safe'],
         ];
     }
 

@@ -48,6 +48,9 @@ class InvoiceLineItemController extends Controller
         if (Yii::$app->request->post('hasEditable')) {
             $lineItemIndex = Yii::$app->request->post('editableIndex');
             $model = InvoiceLineItem::findOne(['id' => $id]);
+			$model->on(InvoiceLineItem::EVENT_EDIT, [new InvoiceLog(), 'edit'],['oldAttribute' => $model->getOldAttributes()]);
+			$user = User::findOne(['id' => Yii::$app->user->id]);
+			$model->userName = $user->publicIdentity;
             $result = [
                 'output' => '',
                 'message' => '',
@@ -55,7 +58,9 @@ class InvoiceLineItemController extends Controller
             $post = Yii::$app->request->post();
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['description'])) {
                 $model->description = $post['InvoiceLineItem'][$lineItemIndex]['description'];
-                $model->save();
+                if($model->save()) {
+					$model->trigger(InvoiceLineItem::EVENT_EDIT);
+				}
             }
             if (isset($post['InvoiceLineItem'][$lineItemIndex]['isRoyalty'])) {
                 $model->isRoyalty = $post['InvoiceLineItem'][$lineItemIndex]['isRoyalty'];
@@ -83,7 +88,7 @@ class InvoiceLineItemController extends Controller
                 $model->discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
                 $model->discountType = $post['InvoiceLineItem'][$lineItemIndex]['discountType'];
                 $model->save();
-            }
+				}
             if (!empty($post['InvoiceLineItem'][$lineItemIndex]['amount'])) {
                 $newAmount = $post['InvoiceLineItem'][$lineItemIndex]['amount'];
                 if ($model->isOpeningBalance()) {
@@ -149,7 +154,9 @@ class InvoiceLineItemController extends Controller
     public function actionEditOtherItems($model, $newAmount)
     {
         $model->amount = $newAmount;
-        $model->save();
+        if($model->save()) {
+			$model->trigger(InvoiceLineItem::EVENT_EDIT);
+		}
         $result = [
             'output' => $newAmount,
             'message' => '',
@@ -191,9 +198,14 @@ class InvoiceLineItemController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
+		$model->on(InvoiceLineItem::EVENT_DELETE, [new InvoiceLog(), 'deleteLineItem']);
+		$user = User::findOne(['id' => Yii::$app->user->id]);
+		$model->userName = $user->publicIdentity;
         $invoiceModel = $model->invoice;
-        $model->delete();
-        $invoiceModel->save();
+        if($model->delete()) {
+        	$invoiceModel->save();
+			$model->trigger(InvoiceLineItem::EVENT_DELETE);
+		}
         Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Line Item has been deleted successfully',
