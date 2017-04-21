@@ -3,6 +3,13 @@
 use kartik\grid\GridView;
 use common\models\Lesson;
 ?>
+<style>
+@media print{
+	.text-left{
+        text-align: left !important;
+      }
+}
+</style>
 <div class="row-fluid col-md-12">
 	<div class="logo invoice-col" style="width: 250px">              
 		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
@@ -76,6 +83,7 @@ $columns = [
 			$date = $lessonDate->format('l, F jS, Y');
 			return !empty($date) ? $date : null;
 		},
+		'contentOptions' => ['class' => 'text-left'],
 		'group' => true,
 		'groupedRow' => true,
 		'groupFooter' => function ($model, $key, $index, $widget) {
