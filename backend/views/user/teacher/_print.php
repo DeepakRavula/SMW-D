@@ -8,6 +8,11 @@ use common\models\Lesson;
 	.text-left{
         text-align: left !important;
     }
+	.location-address {
+	  font-weight: bold;
+	  text-align : right;
+	  font-size : 18px;
+	}
 	.boxed {
 	  border: 4px solid #949599;
 	  height: 200px;
@@ -26,14 +31,17 @@ use common\models\Lesson;
 	  border-bottom: 1px solid #999999;
 	  font-weight: normal;
 	}
+	.login-logo-img {
+		width: 500px;
+		height:100px;	
+	}
 }
 </style>
-<div class="row-fluid col-md-12">
-	<div class="logo invoice-col" style="width: 250px">              
+<div class="row-fluid">
+	<div class="logo invoice-col">              
 		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
 	</div>
-	<div class="invoice-col text-gray" style="font-size:18px; width: 200px;">
-		<small>
+	<div class="text-gray location-address">
 			Arcadia Music Academy ( <?= $model->userLocation->location->name;?> )<br>
 			<?php if (!empty($model->userLocation->location->address)): ?>
 				<?= $model->userLocation->location->address ?><br>
@@ -44,50 +52,6 @@ use common\models\Lesson;
 			<?php if (!empty($model->userLocation->location->email)): ?>
 				<?= $model->userLocation->location->email ?>
 			<?php endif; ?> 
-		</small> 
-	</div>
-	<div class="invoice-col" style="width: 220px;">
-		To<br>
-		<strong>
-			<?php echo isset($model->publicIdentity) ? $model->publicIdentity : null ?>
-		</strong>
-		<address>
-			<?php
-			$addresses = $model->addresses;
-			foreach ($addresses as $address) {
-				if ($address->label === 'Billing') {
-					$billingAddress = $address;
-					break;
-				}
-			}
-			$phoneNumber = $model->phoneNumber;
-			?>
-			<!-- Billing address -->
-			<?php if (!empty($billingAddress)) {
-				?>
-				<?php
-				echo $billingAddress->address . '<br> ' . $billingAddress->city->name . ', ';
-				echo $billingAddress->province->name . '<br>' . $billingAddress->country->name . ' ';
-				echo $billingAddress->postal_code;
-			}
-			?>
-			<div class="row-fluid m-t-5">
-				<?php if (!empty($model->email)): ?>
-					<?php echo 'E: '; ?><?php echo $model->email ?>
-				<?php endif; ?>
-			</div>
-            <!-- Phone number -->
-            <div class="row-fluid text-gray">
-				<?php if (!empty($phoneNumber)) {
-					?><?php echo 'P: '; ?>
-					<?php echo $phoneNumber->number;
-				}
-				?>
-            </div>
-		</address>
-	</div>
-	<div class="invoice-col"  style="width: 125px;">
-		<b>Date:</b> <?= $fromDate->format('l, jS Y') . ' to ' . $toDate->format('l, jS Y'); ?><br>
 	</div>
 	<div class="clearfix"></div>
 </div>
