@@ -7,7 +7,25 @@ use common\models\Lesson;
 @media print{
 	.text-left{
         text-align: left !important;
-      }
+    }
+	.boxed {
+	  border: 4px solid #949599;
+	  height: 200px;
+	  margin: 20px;
+	  padding: 20px;
+	  width: 580px;
+	}
+	.sign {
+	  font-weight: bold;
+	  text-align : right;
+	  font-size : 28px;
+	}
+	.sign span {
+	  width: 250px;
+	  display: inline-block;
+	  border-bottom: 1px solid #999999;
+	  font-weight: normal;
+	}
 }
 </style>
 <div class="row-fluid col-md-12">
@@ -231,7 +249,7 @@ $columns = [
 GridView::widget([
 	'dataProvider' => $teacherLessonDataProvider,
 	'options' => ['class' => 'col-md-12'],
-	'tableOptions' => ['class' => 'table table-responsive'],
+	'tableOptions' => ['class' => 'table table-responsive table-more-condensed'],
 	'headerRowOptions' => ['class' => 'bg-light-gray-1'],
 	'pjax' => true,
 	'showPageSummary' => true,
@@ -244,6 +262,17 @@ GridView::widget([
 	'columns' => $columns,
 ]);
 ?>
+<div class="boxed col-md-12 pull-right">
+<div class="sign">
+ Teacher Signature <span></span>
+</div>
+<div class="sign">
+Authorizing Signature <span></span>
+</div>
+<div class="sign">
+ Date <span></span>
+</div>
+</div>
 <script>
     $(document).ready(function () {
         window.print();
