@@ -308,9 +308,8 @@ echo $this->render('_profile', [
                 {
                     if (response.status)
                     {
-						console.log(response.data);
-						$('#student-profile').html(response.data);
                         $('#student-profile-modal').modal('hide');
+						$('.student-profile').html(response.data);
                     }
                 }
             });
