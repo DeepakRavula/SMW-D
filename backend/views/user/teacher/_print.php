@@ -3,12 +3,13 @@
 use kartik\grid\GridView;
 use common\models\Lesson;
 ?>
-<div class="row-fluid">
-	<div class="logo invoice-col" style="width: 150px">              
+<div class="row-fluid col-md-12">
+	<div class="logo invoice-col" style="width: 250px">              
 		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
 	</div>
-	<div class="invoice-col text-gray" style="font-size:18px; width: 180px;">
+	<div class="invoice-col text-gray" style="font-size:18px; width: 200px;">
 		<small>
+			Arcadia Music Academy ( <?= $model->userLocation->location->name;?> )<br>
 			<?php if (!empty($model->userLocation->location->address)): ?>
 				<?= $model->userLocation->location->address ?><br>
 			<?php endif; ?>
