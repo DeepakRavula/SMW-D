@@ -2,20 +2,25 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
+use yii\bootstrap\Modal;
 
 ?>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Students </h4> 
 	<a href="#" class="add-new-student text-add-new"><i class="fa fa-plus"></i></a>
-	<?php //echo Html::a('<i class="fa fa-plus-circle"></i> Add new student', ['student/create'], ['class' => 'add-new-program text-add-new'])?>
 	<div class="clearfix"></div>
 </div>
-<div class="dn show-create-student-form">
-	<?php echo $this->render('//student/create', [
+	<?php
+	Modal::begin([
+		'header' => '<h4 class="m-0">Add Student</h4>',
+		'id'=>'student-create-modal',
+	]);
+	echo $this->render('//student/_form', [
         'model' => $student,
         'customer' => $model,
-    ]) ?>
-</div>
+    ]);
+	Modal::end();
+	?>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin() ?>
 <?php

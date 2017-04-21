@@ -19,6 +19,7 @@ use common\models\ExamResult;
 use common\models\Note;
 use common\models\StudentLog;
 use common\models\User;
+use yii\helpers\Url;
 use common\models\PaymentFrequency;
 
 /**
@@ -37,7 +38,7 @@ class StudentController extends Controller
             ],
 			[
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['update'],
+				'only' => ['create', 'update'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -147,17 +148,11 @@ class StudentController extends Controller
         if ($model->load($request->post())) {
             $model->customer_id = $user['id'];
             if($model->save()) {
-				Yii::$app->session->setFlash('alert', [
-					'options' => ['class' => 'alert-success'],
-					'body' => 'Student has been created successfully',
-				]);
-				
-				return $this->redirect(['view', 'id' => $model->id]);
+				return  [
+					'status' => true,
+					'url' => Url::to(['/student/view', 'id' => $model->id])
+				];
 			}
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
         }
     }
 

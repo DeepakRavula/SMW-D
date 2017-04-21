@@ -298,7 +298,7 @@ echo $this->render('_profile', [
 		$(document).on('click', '.student-profile-cancel-button', function () {
 			$('#student-profile-modal').modal('hide');
 		});
-		 $(document).on('beforeSubmit', '#student-form', function (e) {
+		$(document).on('beforeSubmit', '#student-form', function (e) {
             $.ajax({
                 url: $(this).attr('action'),
                 type: 'post',

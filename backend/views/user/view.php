@@ -312,7 +312,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$('.teacher-availability-create').show();
 	});
 	$('.add-new-student').click(function () {
-		$('.show-create-student-form').show();
+		$('#student-create-modal').modal('show');
 	});
 	$('.add-address').bind('click', function () {
 		$('.address-fields').show();
@@ -362,6 +362,23 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 				 $('#user-note-form').yiiActiveForm('updateMessages',
 					   response.errors
 					, true);
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#student-form', function (e) {
+		$.ajax({
+			url: $(this).attr('action'),
+			type: 'post',
+			dataType: "json",
+			data: $(this).serialize(),
+			success: function (response)
+			{
+				if (response.status)
+				{
+					$('#student-create-modal').modal('hide');
+                    window.location.href = response.url;
 				}
 			}
 		});
