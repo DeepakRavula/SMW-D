@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\User;
-use common\models\TeacherAvailability;
+use common\models\PaymentCycle;
 use common\models\Enrolment;
 use common\models\Lesson;
 use common\models\Course;
@@ -68,25 +68,34 @@ class EnrolmentController extends Controller
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
         ]);
+        
+        $paymentCycleDataProvider = new ActiveDataProvider([
+            'query' => PaymentCycle::find()
+				->andWhere([
+					'enrolmentId' => $id,
+				]),
+            'pagination' => false,
+        ]);
 		
 		$post = Yii::$app->request->post();
 		if (isset($post['hasEditable'])) {
 			$response = Yii::$app->response;
 			$response->format = Response::FORMAT_JSON;
 			if(! empty($post['paymentFrequencyId'])) {
-                            $oldPaymentFrequency = $model->paymentFrequencyId;
-                            $model->paymentFrequencyId = $post['paymentFrequencyId'];
-                            $model->save();
-                            if ((int) $oldPaymentFrequency !== (int) $post['paymentFrequencyId']) {
-                                $model->resetPaymentCycle();
-                            }
-                            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
+                $oldPaymentFrequency = $model->paymentFrequencyId;
+                $model->paymentFrequencyId = $post['paymentFrequencyId'];
+                $model->save();
+                if ((int) $oldPaymentFrequency !== (int) $post['paymentFrequencyId']) {
+                    $model->resetPaymentCycle();
+                }
+                return ['output' => $model->getPaymentFrequency(), 'message' => ''];
 			}
 		}
         return $this->render('view', [
-                'model' => $model,
-                'lessonDataProvider' => $lessonDataProvider,
-            ]);
+            'model' => $model,
+            'lessonDataProvider' => $lessonDataProvider,
+            'paymentCycleDataProvider' => $paymentCycleDataProvider,
+        ]);
     }
 
     /**
