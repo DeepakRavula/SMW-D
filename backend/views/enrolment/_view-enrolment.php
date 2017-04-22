@@ -1,7 +1,6 @@
 <?php
 use common\models\Course;
 use kartik\editable\Editable;
-use common\models\Enrolment;
 use common\models\PaymentFrequency;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -42,7 +41,8 @@ use yii\helpers\Url;
 	</div>
     <div class="clearfix"></div>
 	<?php if($model->course->program->isPrivate()) : ?>
-	<div class="col-md-1 p-0 hand" data-toggle="tooltip" data-placement="bottom" title="Payment Frequency">
+	<div data-toggle="tooltip" data-placement="bottom" title="Payment Frequency">
+        <h5><strong><?= 'Payment Frequency' ?> </strong></h5> 
 		<?=
 		 Editable::widget([
 			'name'=>'paymentFrequencyId',
@@ -59,5 +59,6 @@ use yii\helpers\Url;
 	</div>
 	<?php endif; ?>
     <div class="clearfix"></div>
+</div>
 </div>
 </div>
