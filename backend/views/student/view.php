@@ -154,6 +154,10 @@ echo $this->render('_profile', [
             $('#new-exam-result-modal').modal('hide');
             return false;
         });
+		$(document).on('click', '.extra-lesson-cancel-button', function () {
+            $('#new-lesson-modal').modal('hide');
+            return false;
+        });
         $(document).on('click', '.edit-button', function () {
             $.ajax({
                 url: '<?= Url::to(['exam-result/update']); ?>?id=' + $(this).parent().parent().data('key'),
