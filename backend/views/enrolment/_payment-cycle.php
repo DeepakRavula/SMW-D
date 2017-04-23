@@ -13,8 +13,8 @@ use yii\helpers\Url;
         'summary' => '',
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'startDate',
-            'endDate',
+            'startDate:date',
+            'endDate:date',
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view} {create}',
                 'buttons' => [
@@ -23,8 +23,9 @@ use yii\helpers\Url;
                         if ($model->hasProFormaInvoice()) {
                             return null;
                         }
-                        return Html::a('<span class="glyphicon glyphicon-plus"></span>', $url, [
+                        return Html::a('Create PFI', $url, [
                             'title' => Yii::t('yii', 'Create PFI'),
+							'class' => ['btn-success btn-sm']
                         ]);                                
                     },
                     'view' => function ($url, $model) { 
@@ -32,8 +33,9 @@ use yii\helpers\Url;
                             return null;
                         }
                         $url = Url::to(['invoice/view', 'id' => $model->proFormaInvoice->id]);
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                        return Html::a('View PFI', $url, [
                             'title' => Yii::t('yii', 'View PFI'),
+							'class' => ['btn-info btn-sm']
                         ]);                                
                     }
                 ]                            
