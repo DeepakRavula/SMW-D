@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Student;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -14,24 +15,27 @@ use common\models\Student;
     $session = Yii::$app->session;
     $locationId = $session->get('location_id');
     ?>
-    <?php $form = ActiveForm::begin($model->isNewRecord ? ['action' => '/student/create'] : null); ?>
+    <?php $form = ActiveForm::begin($model->isNewRecord ? ['action' => '/student/create'] : [
+		'action' => Url::to(['/student/update', 'id' => $model->id]),
+		'id' => 'student-form'
+		]); ?>
 
     <div class="row">
-        <div class="col-xs-4">
+        <div class="col-xs-6">
             <?php echo $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-6">
              <?php
             $customerName = $model->isNewRecord ? $customer->userProfile->lastname : null;
         ?>
             <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-6">
             <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname(), [
                     'options' => ['class' => 'form-control'],
                 ]); ?>
         </div>
-			<div class="col-xs-4">
+			<div class="col-xs-6">
 				<?php if (!$model->isNewRecord) : ?>
 					<?php echo $form->field($model, 'status')->dropDownList(Student::statuses()) ?>
 				<?php endif; ?>
@@ -44,7 +48,7 @@ use common\models\Student;
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php 
             if (!$model->isNewRecord) {
-                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+                echo Html::a('Cancel','#', ['class' => 'btn student-profile-cancel-button']);
             }
         ?>
     </div>

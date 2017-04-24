@@ -177,6 +177,7 @@ echo $this->render('_profile', [
                 }
             });
         });
+		
 		 $(document).on('click', '.enrolment-delete', function () {
             $.ajax({
                 url: '<?= Url::to(['enrolment/preview']); ?>?id=' + $(this).parent().parent().data('key'),
@@ -293,6 +294,30 @@ echo $this->render('_profile', [
                         $('#student-note-form').yiiActiveForm('updateMessages',
                                 response.errors
                                 , true);
+                    }
+                }
+            });
+            return false;
+        });
+		$(document).on('click', '.student-profile-edit-button', function () {
+			$('#student-profile-modal').modal('show');
+			return false;
+		});
+		$(document).on('click', '.student-profile-cancel-button', function () {
+			$('#student-profile-modal').modal('hide');
+		});
+		 $(document).on('beforeSubmit', '#student-form', function (e) {
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'post',
+                dataType: "json",
+                data: $(this).serialize(),
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#student-profile-modal').modal('hide');
+						$('.student-profile').html(response.data);
                     }
                 }
             });
