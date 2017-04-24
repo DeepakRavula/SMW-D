@@ -23,7 +23,7 @@ use yii\web\Response;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\Note;
-use common\models\PaymentMethod;
+use common\models\PaymentCycle;
 use common\models\InvoiceReverse;
 use common\models\InvoiceLog;
 
@@ -552,5 +552,13 @@ class InvoiceController extends Controller
         $creditInvoice->save();
         
         return $this->redirect(['view', 'id' => $creditInvoice->id]);
+    }
+    
+    public function actionInvoicePaymentCycle($id)
+    {
+        $paymentCycle = PaymentCycle::findOne($id);
+        $paymentCycle->createProFormaInvoice();
+        
+        return $this->redirect(['view', 'id' => $paymentCycle->proFormaInvoice->id]);
     }
 }

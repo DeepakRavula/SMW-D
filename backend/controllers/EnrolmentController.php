@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\User;
-use common\models\TeacherAvailability;
+use common\models\PaymentCycle;
 use common\models\Enrolment;
 use common\models\Lesson;
 use common\models\Course;
@@ -77,11 +77,20 @@ class EnrolmentController extends Controller
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
         ]);
+        
+        $paymentCycleDataProvider = new ActiveDataProvider([
+            'query' => PaymentCycle::find()
+				->andWhere([
+					'enrolmentId' => $id,
+				]),
+            'pagination' => false,
+        ]);
 		
         return $this->render('view', [
-                'model' => $model,
-                'lessonDataProvider' => $lessonDataProvider,
-            ]);
+            'model' => $model,
+            'lessonDataProvider' => $lessonDataProvider,
+            'paymentCycleDataProvider' => $paymentCycleDataProvider,
+        ]);
     }
 
 	public function actionEdit($id)

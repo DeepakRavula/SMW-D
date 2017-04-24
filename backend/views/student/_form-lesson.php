@@ -68,12 +68,10 @@ use yii\helpers\Url;
         <div class="clearfix"></div>
     <div class="col-md-12 p-l-20 form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-		<?php if(! $model->isNewRecord) : ?>
-            <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']); ?>
-		<?php endif; ?>
+        <?= Html::a('Cancel', '', ['class' => 'btn extra-lesson-cancel-button']); ?>
     </div>
     </div>
-    <?php echo $form->field($model, 'duration')->textInput() ?>
+    <?php echo $form->field($model, 'duration')->hiddenInput()->label(false) ?>
 <?php ActiveForm::end(); ?>
 
 </div>

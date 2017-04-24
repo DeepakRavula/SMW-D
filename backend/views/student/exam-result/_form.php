@@ -69,6 +69,7 @@ use wbraganca\selectivity\SelectivityWidget;
     <div class="col-md-12 p-l-20 form-group">
 		<?=  $form->field($model, 'id')->hiddenInput()->label(false);?>
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Cancel'), ['class' => 'btn btn-default exam-result-cancel-button', 'name' => 'signup-button']) ?>
     </div>
     </div>
 <?php ActiveForm::end(); ?>
