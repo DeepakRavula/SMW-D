@@ -312,9 +312,6 @@ echo $this->render('_profile', [
 						$('.student-profile').html(response.data);
                     }
                 }
-            });
-            return false;
-        });
     });
 </script>
 

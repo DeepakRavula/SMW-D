@@ -375,11 +375,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			data: $(this).serialize(),
 			success: function (response)
 			{
-				if (response.status)
-				{
-					$('#student-create-modal').modal('hide');
-                    window.location.href = response.url;
-				}
+				
 			}
 		});
 		return false;

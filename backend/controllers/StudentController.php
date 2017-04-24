@@ -148,10 +148,7 @@ class StudentController extends Controller
         if ($model->load($request->post())) {
             $model->customer_id = $user['id'];
             if($model->save()) {
-				return  [
-					'status' => true,
-					'url' => Url::to(['/student/view', 'id' => $model->id])
-				];
+				return $this->redirect(['/student/view', 'id' => $model->id]);
 			}
         }
     }
