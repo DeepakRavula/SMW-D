@@ -21,12 +21,12 @@ $this->title = 'Review Lessons';
 </div>
 <?php ActiveForm::end(); ?>
 <?=
-$this->render('review/details', [
+$this->render('review/_details', [
 	'courseModel' => $courseModel,
 ]);
 ?>
 <?=
-$this->render('review/teacher-availability', [
+$this->render('review/_teacher-availability', [
 	'courseModel' => $courseModel,
 ]);
 ?>
@@ -118,7 +118,7 @@ $columns = [
 	'emptyText' => 'No conflicts here! You are ready to confirm!',
 ]);
 ?>
-<?= $this->render('review/button', [
+<?= $this->render('review/_button', [
 	'vacationId' => $vacationId,
 	'hasConflict' => $hasConflict,
 	'rescheduleBeginDate' => $rescheduleBeginDate,

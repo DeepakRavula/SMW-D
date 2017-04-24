@@ -5,7 +5,7 @@ use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 ?>
 <div class="clearfix"></div>
-<div class="col-md-8">
+<div class="col-md-10">
 <div class="box box-default collapsed-box">
   <div class="box-header with-border">
     <h3 class="box-title">Teacher Availabilities</h3>
@@ -13,7 +13,7 @@ use yii\grid\GridView;
       <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
     </div><!-- /.box-tools -->
   </div><!-- /.box-header -->
-  <div class="box-body">
+  <div class="box-body ">
      <?php
     $locationId = Yii::$app->session->get('location_id');
     $query = TeacherAvailability::find()
