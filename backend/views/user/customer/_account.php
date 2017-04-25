@@ -34,24 +34,26 @@ echo GridView::widget([
     [
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right'],
-        'label' => 'Credit ($)',
+        'label' => 'Credit',
         'value' => function ($data) {
-            return !empty($data->credit) ? $data->credit : 0;
+            return !empty($data->credit) ? Yii::$app->formatter->asCurrency($data->credit) : null;
         }
     ],
     [
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right'],
-        'label' => 'Debit ($)',
+        'label' => 'Debit',
         'value' => function ($data) {
-        return !empty($data->debit) ? $data->debit : 0;
+        return !empty($data->debit) ? Yii::$app->formatter->asCurrency($data->debit) : null;
         }
     ],
     [
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right'],
-        'label' => 'Balance ($)',
-        'value' => 'balance'
+        'label' => 'Balance',
+        'value' => function ($data) {
+        	return !empty($data->balance) ? Yii::$app->formatter->asCurrency($data->balance) : '$0.00';
+        }
     ],
    
 ],
