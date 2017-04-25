@@ -16,6 +16,12 @@ echo GridView::widget([
 'tableOptions' => ['class' => 'table table-bordered m-0'],
 'headerRowOptions' => ['class' => 'bg-light-gray'],
 'columns' => [
+	 [
+    'label' => 'Date',
+    'value' => function ($data) {
+        return Yii::$app->formatter->asDate($data->date);
+    }
+    ],
     [
         'headerOptions' => ['class' => 'text-left'],
         'contentOptions' => ['class' => 'text-left'],
@@ -24,12 +30,6 @@ echo GridView::widget([
             return $data->getAccountType() . ' #' . $data->foreignKeyId. ' '
                 . $data->getAccountActionType();
         }
-    ],
-    [
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right'],
-        'label' => 'Amount ($)',
-        'value'=> 'amount'
     ],
     [
         'headerOptions' => ['class' => 'text-right'],
@@ -53,19 +53,7 @@ echo GridView::widget([
         'label' => 'Balance ($)',
         'value' => 'balance'
     ],
-    [
-    'label' => 'Date',
-    'value' => function ($data) {
-        return (new \DateTime($data->date))->format('d-m-Y g:i A');
-    }
-    ],
-    [
-    'label' => 'By User',
-    'value' => function ($data) {
-        return !empty($data->actionUser->publicIdentity) ?
-            $data->actionUser->publicIdentity : null;
-    }
-    ]
+   
 ],
 ]);
 ?>

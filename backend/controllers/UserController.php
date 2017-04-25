@@ -343,7 +343,7 @@ class UserController extends Controller
 
         $account = CustomerAccount::find()
             ->where(['userId' => $id])
-            ->orderBy(['id' => SORT_ASC]);
+            ->orderBy(['id' => SORT_DESC]);
 
         $accountDataProvider = new ActiveDataProvider([
             'query' => $account,
