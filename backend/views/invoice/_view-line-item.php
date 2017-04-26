@@ -20,7 +20,6 @@ use yii\widgets\ActiveForm;
             },
         ],
         [
-            'class' => 'kartik\grid\EditableColumn',
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:50px;'],
             'attribute' => 'isRoyalty',
@@ -28,41 +27,12 @@ use yii\widgets\ActiveForm;
             'value' => function ($model) {
                 return $model->isRoyalty ? 'Yes' : 'No';
             },
-            'refreshGrid' => true,
-            'editableOptions' => function ($model, $key, $index) {
-                return [
-                    'header' => 'Royalty',
-                    'size' => 'md',
-                    'placement' => 'top',
-                    'inputType' => \kartik\editable\Editable::INPUT_SWITCH,
-                    'options' => [
-                        'pluginOptions' => [
-                            'handleWidth' => 60,
-                            'onText' => 'Yes',
-                            'offText' => 'No',
-                        ],
-                    ],
-                    'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
-                ];
-            },
         ],
         [
-            'class' => 'kartik\grid\EditableColumn',
             'headerOptions' => ['class' => 'text-left'],
             'attribute' => 'description',
-            'refreshGrid' => true,
-            'editableOptions' => function ($model, $key, $index) {
-                return [
-                   'header' => 'Description',
-                   'size' => 'md',
-                               'placement' => 'top',
-                   'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-                   'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
-               ];
-            },
         ],
         [
-            'class' => 'kartik\grid\EditableColumn',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
             'attribute' => 'discount',
@@ -73,56 +43,11 @@ use yii\widgets\ActiveForm;
                     return $model->discount . '%';
                 }
             },
-            'refreshGrid' => true,
-            'editableOptions' => function ($model, $key, $index) {
-                return [
-                    'header' => 'Discount',
-                    'size' => 'md',
-                    'placement' => 'left',
-                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-                    'options' => [
-                        'value' => $model->discount,
-                    ],
-                    'afterInput' => function ($form, $widget) use ($model, $index) {
-                        echo $form->field($model, "[{$index}]discountType")->widget(SwitchInput::classname(),
-                            [
-                            'name' => 'discountType',
-                            'pluginOptions' => [
-                                'handleWidth' => 60,
-                                'onText' => '%',
-                                'offText' => '$',
-                            ],
-                        ])->label(false);
-                    },
-                    'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
-                    'pluginEvents' => [
-                        'editableSuccess' => 'invoice.onEditableGridSuccess',
-                    ],
-                ];
-            },
         ],
         [
-            'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'tax_status',
-            'refreshGrid' => true,
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:85px;'],
-            'editableOptions' => function ($model, $key, $index) {
-                return [
-                    'header' => 'Tax Status',
-                    'size' => 'md',
-                    'placement' => 'top',
-                    'inputType' => \kartik\editable\Editable::INPUT_DROPDOWN_LIST,
-                    'data' => ArrayHelper::map(TaxStatus::find()->all(), 'id', 'name'),
-                    'options' => [
-                        'prompt' => 'Select Tax'
-                    ],
-                    'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
-                    'pluginEvents' => [
-                        'editableSuccess' => 'invoice.onEditableGridSuccess',
-                    ],
-                ];
-            },
         ],
         [
             'label' => 'Cost',
@@ -143,43 +68,10 @@ use yii\widgets\ActiveForm;
             }
         ],
         [
-            'class' => 'kartik\grid\EditableColumn',
-            'attribute' => 'amount',
             'label' => 'Price',
-            'refreshGrid' => true,
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
-            'enableSorting' => false,
-            'editableOptions' => function ($model, $key, $index) {
-                if ($model->isOpeningBalance()) {
-                    $model->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
-                }
-                return [
-                    'header' => 'Price',
-                    'size' => 'md',
-                    'placement' => 'left',
-                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-                    'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
-                    'pluginEvents' => [
-                        'editableSuccess' => 'invoice.onEditableGridSuccess',
-                    ],
-                ];
-            },
-        ],
-        [
-            'class' => kartik\grid\ActionColumn::className(),
-            'template' => '{delete}',
-            'headerOptions' => ['class' => 'text-left'],
-            'buttons' => [
-                'delete' => function ($url, $model, $key) {
-                    return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['invoice-line-item/delete', 'id' => $model->id], [
-              'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-                  ]);
-                },
-            ],
+			'value' => function($data) {
+				return Yii::$app->formatter->asCurrency($data->amount - $data->discount);	
+			},
         ],
     ];
 } else {
@@ -193,63 +85,20 @@ use yii\widgets\ActiveForm;
             },
         ],
         [
-            'class' => 'kartik\grid\EditableColumn',
             'headerOptions' => ['class' => 'text-left'],
             'attribute' => 'description',
-            'refreshGrid' => true,
-            'editableOptions' => function ($model, $key, $index) {
-                return [
-                   'header' => 'Description',
-                   'size' => 'md',
-                               'placement' => 'top',
-                   'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-                   'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
-               ];
-            },
         ],
         [
-            'class' => 'kartik\grid\EditableColumn',
-            'attribute' => 'amount',
             'label' => 'Price',
-            'refreshGrid' => true,
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
-            'enableSorting' => false,
-            'editableOptions' => function ($model, $key, $index) {
-                if ($model->isOpeningBalance()) {
-                    $model->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
-                }
-                return [
-                    'header' => 'Price',
-                    'size' => 'md',
-                    'placement' => 'left',
-                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-                    'formOptions' => ['action' => Url::to(['invoice-line-item/edit', 'id' => $model->id])],
-                    'pluginEvents' => [
-                        'editableSuccess' => 'invoice.onEditableGridSuccess',
-                    ],
-                ];
-            },
-        ],
-        [
-            'class' => kartik\grid\ActionColumn::className(),
-            'template' => '{delete}',
-            'headerOptions' => ['class' => 'text-left'],
-            'buttons' => [
-                'delete' => function ($url, $model, $key) {
-                    return Html::a('<i class="fa fa-times" aria-hidden="true"></i>', ['invoice-line-item/delete', 'id' => $model->id], [
-              'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-                  ]);
-                },
-            ],
+			'value' => function($data) {
+				return Yii::$app->formatter->asCurrency($data->amount - $data->discount);	
+			},
         ],
     ];
 }?>
 
 <?= \kartik\grid\GridView::widget([
+	'id' => 'line-item-grid',
     'dataProvider' => $invoiceLineItemsDataProvider,
     'pjax' => true,
     'pjaxSettings' => [

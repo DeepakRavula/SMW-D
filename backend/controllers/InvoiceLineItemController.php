@@ -34,7 +34,7 @@ class InvoiceLineItemController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'apply-discount'],
+                'only' => ['edit', 'apply-discount', 'update'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -43,66 +43,31 @@ class InvoiceLineItemController extends Controller
         ];
     }
 
-    public function actionEdit($id)
-    {
-        if (Yii::$app->request->post('hasEditable')) {
-            $lineItemIndex = Yii::$app->request->post('editableIndex');
-            $model = InvoiceLineItem::findOne(['id' => $id]);
-			$model->on(InvoiceLineItem::EVENT_EDIT, [new InvoiceLog(), 'edit'],['oldAttribute' => $model->getOldAttributes()]);
-			$user = User::findOne(['id' => Yii::$app->user->id]);
-			$model->userName = $user->publicIdentity;
-            $result = [
-                'output' => '',
-                'message' => '',
-            ];
-            $post = Yii::$app->request->post();
-            if (!empty($post['InvoiceLineItem'][$lineItemIndex]['description'])) {
-                $model->description = $post['InvoiceLineItem'][$lineItemIndex]['description'];
-                if($model->save()) {
-					$model->trigger(InvoiceLineItem::EVENT_EDIT);
-				}
-            }
-            if (isset($post['InvoiceLineItem'][$lineItemIndex]['isRoyalty'])) {
-                $model->isRoyalty = $post['InvoiceLineItem'][$lineItemIndex]['isRoyalty'];
-                $model->save();
-            }
-            if (!empty($post['InvoiceLineItem'][$lineItemIndex]['tax_status'])) {
-                $tax_status     = $post['InvoiceLineItem'][$lineItemIndex]['tax_status'];
-                $today         = (new \DateTime())->format('Y-m-d H:i:s');
-                $locationId    = Yii::$app->session->get('location_id');
-                $locationModel = Location::findOne(['id' => $locationId]);
-                $taxCode = TaxCode::find()
-                    ->joinWith(['taxStatus' => function ($query) use ($tax_status) {
-                        $query->where(['tax_status.id' => $tax_status]);
-                    }])
-                    ->where(['<=', 'start_date', $today])
-                    ->andWhere(['province_id' => $locationModel->province_id])
-                    ->orderBy('start_date DESC')
-                    ->one();
-                $model->tax_status = $taxCode->taxStatus->name;
-                $model->tax_type   = $taxCode->taxType->name;
-                $model->save();
-            }
-            if (isset($post['InvoiceLineItem'][$lineItemIndex]['discount']) &&
-                    isset($post['InvoiceLineItem'][$lineItemIndex]['discountType'])) {
-                $model->discount = $post['InvoiceLineItem'][$lineItemIndex]['discount'];
-                $model->discountType = $post['InvoiceLineItem'][$lineItemIndex]['discountType'];
-                $model->save();
-				}
-            if (!empty($post['InvoiceLineItem'][$lineItemIndex]['amount'])) {
-                $newAmount = $post['InvoiceLineItem'][$lineItemIndex]['amount'];
-                if ($model->isOpeningBalance()) {
-                    $result = Yii::$app->runAction('invoice-line-item/edit-opening-balance',
-                        ['model' => $model, 'newAmount' => $newAmount]);
-                }
-                if ($model->isOtherLineItems()) {
-                    $result = Yii::$app->runAction('invoice-line-item/edit-other-items',
-                        ['model' => $model, 'newAmount' => $newAmount]);
-                }
-            }
-            return $result;
-        }
-    }
+	public function actionUpdate($id) 
+	{
+		$model = $this->findModel($id);
+		$data = $this->renderAjax('/invoice/line-item/_form', [
+			'model' => $model,
+		]);
+        if ($model->load(Yii::$app->request->post())) {
+			if($model->save()) {
+				$response = [
+					'status' => true,
+				];	
+			} else {
+				$response = [
+					'status' => false,
+					'errors' => ActiveForm::validate($model),
+				];	
+			}
+			return $response;
+		} else {
+			return [
+				'status' => true,
+				'data' => $data,
+			];
+		}
+	}
 
     public function actionEditOpeningBalance($model, $newAmount)
     {
