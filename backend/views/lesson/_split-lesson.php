@@ -9,9 +9,42 @@ use yii\helpers\Html;
 ?>
 <?php
 $locationId = Yii::$app->session->get('location_id');
+
+$lessonDate = (new \DateTime($model->date))->format('Y-m-d');
+$lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
+$lessonDuration =  \DateTime::createFromFormat('H:i:s', $model->duration);
+$lessonDuration->modify('+15 minutes');
+$newDuration = explode(':', ($lessonDuration->format('H:i:s')));
+$date = new \DateTime($model->date);
+$date->add(new \DateInterval('PT' . $newDuration[0] . 'H' . $newDuration[1] . 'M'));	
+$date->modify('-1 second');
+$lessonEndTime = $date->format('H:i:s');
+$studentId = $model->course->enrolment->student->id;
+$teacherLessons = Lesson::find()
+	->teacherLessons($locationId, $model->teacherId)
+	->andWhere(['NOT', ['lesson.id' => $model->id]])
+	->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
+	->all();
+$conflictedLessonIds = [];
+if(!empty($teacherLessons)) {
+	foreach($teacherLessons as $teacherLesson) {
+		$conflictedLessonIds[] = $teacherLesson->id;	
+	}
+}
+$studentLessons = Lesson::find()
+	->studentLessons($locationId, $studentId)
+	->andWhere(['NOT', ['lesson.id' => $model->id]])
+	->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
+	->all();	
+if(!empty($studentLessons)) {
+	foreach($studentLessons as $studentLesson) {
+		$conflictedLessonIds[] = $studentLesson->id;	
+	}
+}
 $lessons = Lesson::find()
 	->location($locationId)
 	->andWhere(['>', 'DATE(date)', (new \DateTime($model->date))->format('Y-m-d')])
+	->andWhere(['NOT IN', 'lesson.id', $conflictedLessonIds])
 	->andWhere(['courseId' => $model->courseId])
 	->scheduled()
     ->notDeleted();
