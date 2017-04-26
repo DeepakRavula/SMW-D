@@ -25,12 +25,15 @@ use yii\helpers\Url;
 				}
 			],
 			[
-				'label' => 'Paid?',
+				'label' => 'Status',
 				'value' => function($data) {
-					$result = 'No';
+					$result = 'Owing';
 					$paymentCycleLesson = current($data->paymentCycleLessons);
+					if(empty($paymentCycleLesson->proFormaInvoice)) {
+						$result = '-';
+					}
 					if(!empty($paymentCycleLesson->proFormaInvoice) && $paymentCycleLesson->proFormaInvoice->isPaid()) {
-						$result = 'Yes';
+						$result = 'Paid';
 					}	
 					return $result;
 				}
