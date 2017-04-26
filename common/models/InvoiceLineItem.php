@@ -29,6 +29,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 	const EVENT_DELETE = 'deleteLineItem';
 
 	public $userName;
+	public $price;
+	public $cost;
     /**
      * {@inheritdoc}
      */
@@ -123,6 +125,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'item_type_id' => 'Code',
             'invoice_id' => 'Invoice ID',
             'lesson_id' => 'Lesson ID',
             'unit' => 'Quantity',
@@ -258,5 +261,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             ->sum('amount+tax_rate');
 
 		return $total;
+    }
+	public function getRoyalty()
+    {
+		$royalty = 'No';
+		if($this->isRoyalty) {
+			$royalty = 'Yes';
+		}
+
+		return $royalty;
     }
 }

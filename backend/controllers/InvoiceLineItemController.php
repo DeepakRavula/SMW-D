@@ -49,6 +49,7 @@ class InvoiceLineItemController extends Controller
 		$data = $this->renderAjax('/invoice/line-item/_form', [
 			'model' => $model,
 		]);
+//		print_r($_POST);die;
         if ($model->load(Yii::$app->request->post())) {
 			if($model->save()) {
 				$response = [
@@ -62,6 +63,7 @@ class InvoiceLineItemController extends Controller
 			}
 			return $response;
 		} else {
+			
 			return [
 				'status' => true,
 				'data' => $data,
