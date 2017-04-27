@@ -18,7 +18,8 @@ class TeacherAvailabilityValidator extends Validator
         $start               = new \DateTime($model->date);
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');
 		$lessonStartTime = $start->format('H:i:s');
-		$lessonDuration = explode(':', $model->newDuration);
+		$duration = $model->newDuration->format('H:i:s'); 
+		$lessonDuration = explode(':', $duration);
 		$start->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));	
 		$start->modify('-1 second');
 		$lessonEndTime = $start->format('H:i:s');
