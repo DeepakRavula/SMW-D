@@ -20,17 +20,22 @@ use common\models\query\InvoiceLineItemQuery;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
     private $isRoyaltyExempted;
+    //public $taxStatus;
 
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
     const DISCOUNT_FLAT            = 0;
     const DISCOUNT_PERCENTAGE      = 1;
 
-	const EVENT_EDIT = 'edit';
-	const EVENT_DELETE = 'deleteLineItem';
+    const EVENT_EDIT = 'edit';
+    const EVENT_DELETE = 'deleteLineItem';
+    
+    const STATUS_DEFAULT = 'Default';
+    const STATUS_NO_TAX = 'No Tax';
+    const STATUS_GST_ONLY = 'GST Only';
 
-	public $userName;
-	public $price;
-	public $cost;
+    public $userName;
+    public $price;
+    public $cost;
     /**
      * {@inheritdoc}
      */
@@ -62,7 +67,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
             ],
-            [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 'tax_status', 'tax_type', 'tax_rate', 'userName'], 'safe'],
+            [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 
+                'tax_status', 'tax_type', 'tax_rate', 'userName', 'discount', 'discountType'], 'safe'],
         ];
     }
 
@@ -84,6 +90,28 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getItemType()
     {
         return $this->hasOne(ItemType::className(), ['id' => 'item_type_id']);
+    }
+    
+    public function getTaxStatus()
+    {
+        switch ($this->tax_status) {
+            case self::STATUS_DEFAULT:
+                $code = TaxStatus::STATUS_DEFAULT;
+            break;
+            case self::STATUS_NO_TAX:
+                $code = TaxStatus::STATUS_NO_TAX;
+            break;
+            case self::STATUS_GST_ONLY:
+                $code = TaxStatus::STATUS_GST_ONLY;
+            break;
+        }
+
+        return $code;
+    }
+    
+    public function getCode()
+    {
+        return $this->itemType->getItemCode();
     }
 
     public function getInvoice()
@@ -170,6 +198,20 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $this->tax_rate = $this->amount * $this->taxType->taxCode->rate / 100;
         }
         return parent::beforeSave($insert);
+    }
+    
+    public function getCost()
+    {
+        $cost = 0;
+        $itemTypes = [ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON, ItemType::TYPE_GROUP_LESSON];
+        if(in_array($this->item_type_id,$itemTypes)) {
+            if((int)$this->item_type_id === ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON) {
+                $cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ? $this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate : null;
+            } else {
+                $cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate) ? $this->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate : null;
+            }
+        }
+        return $cost;
     }
 
     public function afterSave($insert, $changedAttributes)

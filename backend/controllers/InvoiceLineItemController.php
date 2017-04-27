@@ -43,33 +43,47 @@ class InvoiceLineItemController extends Controller
         ];
     }
 
-	public function actionUpdate($id) 
-	{
-		$model = $this->findModel($id);
-		$data = $this->renderAjax('/invoice/line-item/_form', [
-			'model' => $model,
-		]);
-//		print_r($_POST);die;
-        if ($model->load(Yii::$app->request->post())) {
-			if($model->save()) {
-				$response = [
-					'status' => true,
-				];	
-			} else {
-				$response = [
-					'status' => false,
-					'errors' => ActiveForm::validate($model),
-				];	
-			}
-			return $response;
-		} else {
-			
-			return [
-				'status' => true,
-				'data' => $data,
-			];
-		}
-	}
+    public function actionUpdate($id) 
+    {
+        $model = $this->findModel($id);
+        $data = $this->renderAjax('/invoice/line-item/_form', [
+            'model' => $model,
+        ]);
+	$post = Yii::$app->request->post();
+        if ($model->load($post)) {
+            $taxStatus     = $post['InvoiceLineItem']['taxStatus'];
+            $today         = (new \DateTime())->format('Y-m-d H:i:s');
+            $locationId    = Yii::$app->session->get('location_id');
+            $locationModel = Location::findOne(['id' => $locationId]);
+            $taxCode = TaxCode::find()
+                ->joinWith(['taxStatus' => function ($query) use ($taxStatus) {
+                    $query->where(['tax_status.id' => $taxStatus]);
+                }])
+                ->where(['<=', 'start_date', $today])
+                ->andWhere(['province_id' => $locationModel->province_id])
+                ->orderBy('start_date DESC')
+                ->one();
+            $model->tax_status = $taxCode->taxStatus->name;
+            $model->tax_type   = $taxCode->taxType->name;
+            if($model->save()) {
+                $response = [
+                    'status' => true,
+                ];	
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model),
+                ];	
+            }
+            return $response;
+        } else {
+
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
+    }
 
     public function actionEditOpeningBalance($model, $newAmount)
     {
