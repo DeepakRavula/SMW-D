@@ -6,22 +6,14 @@ use kartik\date\DatePicker;
 use common\models\Program;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
-use common\models\TeacherAvailability;
-use yii\data\ActiveDataProvider;
 use common\models\LocationAvailability;
+use kartik\depdrop\DepDrop;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<?php
-	$query = TeacherAvailability::find()
-                ->joinWith('userLocation')
-                ->where(['user_id' => key($teacher)]);
-        $teacherDataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]); ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="group-course-form p-10">
 	<?php
@@ -33,13 +25,23 @@ use common\models\LocationAvailability;
             <div class="col-md-4">
                     <?php
                     echo $form->field($model, 'programId')->dropDownList(
-                            ArrayHelper::map(Program::find()->active()
-                                            ->where(['type' => Program::TYPE_GROUP_PROGRAM])
-                                            ->all(), 'id', 'name'), ['prompt' => 'Select Program'])
+                            ArrayHelper::map(Program::find()->group()->active()
+                               ->all(), 'id', 'name'), ['prompt' => 'Select Program'])
                     ?>
             </div>
             <div class="col-md-4">
-                <?php echo $form->field($model, 'teacherId')->dropDownList($teacher) ?>
+				<?php
+					// Dependent Dropdown
+					echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
+						[
+						'options' => ['id' => 'course-teacherid'],
+						'pluginOptions' => [
+							'depends' => ['course-programid'],
+							'placeholder' => 'Select...',
+							'url' => Url::to(['course/teachers']),
+						],
+					]);
+					?>
             </div>
             <div class="col-md-4">
                 <?php echo $form->field($model, 'endDate')->widget(DatePicker::classname(), [

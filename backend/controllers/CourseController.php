@@ -160,16 +160,7 @@ public function getHolidayEvent($date)
     {
         $model = new Course();
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
-        $teacherModel = ArrayHelper::map(User::find()
-                ->joinWith(['userLocation ul' => function ($query) {
-                        $query->joinWith('teacherAvailability');
-                }])
-                ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-                ->where(['raa.item_name' => 'teacher'])
-                ->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
-                ->all(),
-                'id', 'userProfile.fullName'
-        );
+        
         $model->locationId = Yii::$app->session->get('location_id');
         if ($model->load(Yii::$app->request->post())) {
             $model->save();
@@ -177,7 +168,6 @@ public function getHolidayEvent($date)
         } else {
             return $this->render('create', [
                 'model' => $model,
-                'teacher' => $teacherModel,
             ]);
         }
     }
@@ -383,14 +373,14 @@ public function getLessons($date)
         $location_id = $session->get('location_id');
         $programId = $_POST['depdrop_parents'][0];
         $qualifications = Qualification::find()
-                    ->joinWith(['teacher' => function ($query) use ($location_id) {
-                        $query->joinWith(['userLocation' => function ($query) use ($location_id) {
-                            $query->joinWith('teacherAvailability')
-                        ->where(['location_id' => $location_id]);
-                        }]);
-                    }])
-                    ->where(['program_id' => $programId])
-                    ->all();
+			->joinWith(['teacher' => function ($query) use ($location_id) {
+				$query->joinWith(['userLocation' => function ($query) use ($location_id) {
+					$query->joinWith('teacherAvailability')
+				->where(['location_id' => $location_id]);
+				}]);
+			}])
+			->where(['program_id' => $programId])
+			->all();
         $result = [];
         $output = [];
         foreach ($qualifications as  $qualification) {
