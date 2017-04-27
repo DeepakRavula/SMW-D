@@ -16,6 +16,7 @@ $allLessons = Lesson::find()
 	->scheduled()
     ->notDeleted()
 	->all();
+	$conflictedLessonIds = [];
 foreach($allLessons as $lesson) {
 	$lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
 	$lessonStartTime = (new \DateTime($lesson->date))->format('H:i:s');
@@ -27,7 +28,6 @@ foreach($allLessons as $lesson) {
 	$date->modify('-1 second');
 	$lessonEndTime = $date->format('H:i:s');
 	$studentId = $lesson->course->enrolment->student->id;
-	$conflictedLessonIds = null;
 	$teacherLessons = Lesson::find()
 		->teacherLessons($locationId, $lesson->teacherId)
 		->andWhere(['NOT', ['lesson.id' => $lesson->id]])
