@@ -158,14 +158,28 @@ class UserController extends Controller
         ]);
         $program = null;
         $qualifications = Qualification::find()
-                ->joinWith('program')
+				->joinWith(['program' => function($query){
+					$query->privateProgram();
+				}])
                 ->where(['teacher_id' => $id])
                 ->all();
         foreach ($qualifications as $qualification) {
             $program .= "{$qualification->program->name}, ";
         }
         $program = substr($program, 0, -2);
-
+		
+		$groupPrograms = null;
+        $groupProgramQualifications = Qualification::find()
+               ->joinWith(['program' => function($query){
+					$query->group();
+				}])
+                ->where(['teacher_id' => $id])
+                ->all();
+        foreach ($groupProgramQualifications as $groupProgramQualification) {
+            $groupPrograms .= "{$groupProgramQualification->program->name}, ";
+        }
+        $groupPrograms = substr($groupPrograms, 0, -2);
+		
         $addressDataProvider = new ActiveDataProvider([
             'query' => $model->getAddresses(),
             'sort' => [
@@ -375,7 +389,8 @@ class UserController extends Controller
             'teacherLessonDataProvider' => $teacherLessonDataProvider,
             'noteDataProvider' => $noteDataProvider,
             'accountDataProvider' => $accountDataProvider,
-            'teachersAvailabilities' => $teachersAvailabilities
+            'teachersAvailabilities' => $teachersAvailabilities,
+			'groupPrograms' => $groupPrograms
         ]);
     }
 
@@ -509,7 +524,8 @@ class UserController extends Controller
         return $this->render('create', [
 			'model' => $model,
 			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-			'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
+			'privatePrograms' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
+			'groupPrograms' => ArrayHelper::map(Program::find()->group()->active()->all(), 'id', 'name'),
 			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
 			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
 			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
@@ -622,7 +638,8 @@ class UserController extends Controller
         return $this->render('update', [
                     'model' => $model,
                     'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-                    'programs' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
+                    'privatePrograms' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
+					'groupPrograms' => ArrayHelper::map(Program::find()->group()->active()->all(), 'id', 'name'),
                     'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
                     'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
                     'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,

@@ -39,7 +39,7 @@ use yii\bootstrap\Tabs;
     $profileContent = $this->render('_form-profile', [
         'model' => $model,
         'form' => $form,
-        'programs' => $programs,
+        'programs' => $privatePrograms,
         'roles' => $roles,
         'locations' => $locations,
     ]);
@@ -53,7 +53,8 @@ use yii\bootstrap\Tabs;
     $qualificationContent = $this->render('teacher/_form-qualification', [
         'model' => $model,
         'form' => $form,
-        'programs' => $programs,
+		'privatePrograms' => $privatePrograms,
+        'groupPrograms' => $groupPrograms,
         'roles' => $roles,
     ]);
 

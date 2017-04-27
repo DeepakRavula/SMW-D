@@ -42,6 +42,7 @@ class UserForm extends Model
     public $phoneNumbers;
     public $addresses;
     public $section;
+	public $groupProgramQualifications;
 
     /**
      * {@inheritdoc}
@@ -67,7 +68,13 @@ class UserForm extends Model
             [['status'], 'integer'],
             [['qualifications'], 'each',
                 'rule' => ['in', 'range' => ArrayHelper::getColumn(
-                    Program::find()->active()->all(),
+                    Program::find()->privateProgram()->active()->all(),
+                    'id'
+                )],
+            ],
+			[['groupProgramQualifications'], 'each',
+                'rule' => ['in', 'range' => ArrayHelper::getColumn(
+                    Program::find()->group()->active()->all(),
                     'id'
                 )],
             ],
@@ -157,9 +164,22 @@ class UserForm extends Model
         }
 
         $this->qualifications = ArrayHelper::getColumn(
-            Qualification::find()->where(['teacher_id' => $model->getId()])->all(), 'program_id'
+            Qualification::find()
+			->joinWith(['program' => function($query) {
+				$query->privateProgram();
+			}])
+			->where(['teacher_id' => $model->getId()])->all(), 'program_id'
         );
         $this->qualifications = array_map('strval', $this->qualifications);
+
+		$this->groupProgramQualifications = ArrayHelper::getColumn(
+            Qualification::find()
+			->joinWith(['program' => function($query) {
+				$query->group();
+			}])
+			->where(['teacher_id' => $model->getId()])->all(), 'program_id'
+        );
+        $this->groupProgramQualifications = array_map('strval', $this->groupProgramQualifications);
 
         return $this->model;
     }
@@ -299,6 +319,14 @@ class UserForm extends Model
                     foreach ($this->qualifications as $qualification) {
                         $qualificationModel = new Qualification();
                         $qualificationModel->program_id = $qualification;
+                        $qualificationModel->teacher_id = $model->getId();
+                        $qualificationModel->save();
+                    }
+                }
+				if ($this->groupProgramQualifications && is_array($this->groupProgramQualifications)) {
+                    foreach ($this->groupProgramQualifications as $groupProgramQualification) {
+                        $qualificationModel = new Qualification();
+                        $qualificationModel->program_id = $groupProgramQualification;
                         $qualificationModel->teacher_id = $model->getId();
                         $qualificationModel->save();
                     }

@@ -104,6 +104,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 
         $qualificationContent = $this->render('teacher/_view-qualification', [
             'program' => $program,
+            'groupPrograms' => $groupPrograms,
             'model' => $model,
             'searchModel' => $searchModel,
         ]);

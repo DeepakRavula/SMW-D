@@ -12,14 +12,32 @@ use wbraganca\selectivity\SelectivityWidget;
 	<div class="quali-fields form-well p-l-20">
 		<!-- <h4>Choose qualifications</h4> -->
 		<div class="row">
+			<strong>Private Program</strong>
 			<div class="col-md-12">
 				<?=
                 $form->field($model, 'qualifications')->widget(SelectivityWidget::classname(), [
                     'pluginOptions' => [
                         'allowClear' => true,
                         'multiple' => true,
-                        'items' => $programs,
+                        'items' => $privatePrograms,
                         'value' => $model->qualifications,
+                        'placeholder' => 'Select Qualification',
+                    ],
+                ]);
+                ?>
+
+			</div>
+		</div>
+		<div class="row">
+		<strong>Group Program </strong>
+			<div class="col-md-12">
+				<?=
+                $form->field($model, 'groupProgramQualifications')->widget(SelectivityWidget::classname(), [
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'multiple' => true,
+                        'items' => $groupPrograms,
+                        'value' => $model->groupProgramQualifications,
                         'placeholder' => 'Select Qualification',
                     ],
                 ]);
