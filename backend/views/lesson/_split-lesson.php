@@ -27,9 +27,10 @@ foreach($allLessons as $lesson) {
 	$date->modify('-1 second');
 	$lessonEndTime = $date->format('H:i:s');
 	$studentId = $lesson->course->enrolment->student->id;
+	$conflictedLessonIds = null;
 	$teacherLessons = Lesson::find()
 		->teacherLessons($locationId, $lesson->teacherId)
-		->andWhere(['NOT IN', 'lesson.id', $lesson->id])
+		->andWhere(['NOT', ['lesson.id' => $lesson->id]])
 		->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
 		->all();
 	$studentLessons = Lesson::find()
@@ -44,7 +45,7 @@ foreach($allLessons as $lesson) {
 $lessons = Lesson::find()
 	->location($locationId)
 	->andWhere(['>', 'DATE(date)', (new \DateTime($model->date))->format('Y-m-d')])
-	->andWhere(['NOT IN', 'lesson.id', $conflictedLessonIds])
+	->andWhere(['NOT', ['lesson.id' => $conflictedLessonIds]])
 	->andWhere(['courseId' => $model->courseId])
 	->scheduled()
 	->notDeleted();
