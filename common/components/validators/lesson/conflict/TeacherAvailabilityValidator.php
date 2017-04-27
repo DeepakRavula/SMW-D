@@ -13,51 +13,34 @@ class TeacherAvailabilityValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
 		$teacherLocationId   = $model->teacher->userLocation->id;
+        $locationId = Yii::$app->session->get('location_id');
         $day                 = (new \DateTime($model->date))->format('N');
         $start               = new \DateTime($model->date);
-        $duration            = $model->newDuration;
-		$lessonDuration = explode(':', $model->duration);
-		$lessonStart = (new \DateTime($model->date));
-		$lessonStart->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));	
-		$intervals = [];
-		$oldDuration = new \DateTime($model->duration);
-		$durationDifference = $duration->diff($oldDuration);	
-		
-        $end                 = $start->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
+		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');
+		$lessonStartTime = $start->format('H:i:s');
+		$lessonDuration = explode(':', $model->newDuration);
+		$start->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));	
+		$start->modify('-1 second');
+		$lessonEndTime = $start->format('H:i:s');
         $teacherAvailability = TeacherAvailability::find()
             ->andWhere(['day' => $day, 'teacher_location_id' => $teacherLocationId])
             ->andWhere(['AND',
-                ['<=', 'from_time', $start->format('H:i:s')],
-                ['>=', 'to_time', $end->format('H:i:s')]
+                ['<=', 'from_time', $lessonStartTime],
+                ['>=', 'to_time', $lessonEndTime]
             ])
             ->one();
 		
 		if(empty($teacherAvailability)) {
-			$this->addError($model,$attribute, 'Teacher is not available on ' . $end->format('l') . ' at ' . $end->format('g:i A'));
+			$this->addError($model,$attribute, 'Teacher is not available');
 		} else {
-        	$locationId = Yii::$app->session->get('location_id');
 			$teacherLessons = Lesson::find()
 				->teacherLessons($locationId, $model->teacherId)
-				->andWhere(['NOT IN', 'lesson.id', $model->id])
+				->andWhere(['NOT', ['lesson.id' => $model->id]])
+				->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
 				->all();
-			
-			$otherLessons = [];
-			foreach ($teacherLessons as $teacherLesson) {
-				$otherLessons[] = [
-					'id' => $teacherLesson->id,
-					'date' => $teacherLesson->date,
-					'duration' => $teacherLesson->course->duration,
-				];
+			if ((!empty($teacherLessons))) {
+				$this->addError($model,$attribute, 'Teacher occupied with another lesson');
 			}
-			foreach ($otherLessons as $otherLesson) {
-				$intervals[] = new DateRangeInclusive(new \DateTime($otherLesson['date']), new \DateTime($otherLesson['date']), new \DateInterval('PT'.$durationDifference->h.'H'.$durationDifference->i.'M'), $otherLesson['id']);
-			}
-			$tree = new IntervalTree($intervals);
-			$conflictedLessonsResults = $tree->search($lessonStart);
-
-        if ((!empty($conflictedLessonsResults))) {
-            $this->addError($model,$attribute, 'Teacher occupied with another lesson');
-        }
 		} 
     }
 }
