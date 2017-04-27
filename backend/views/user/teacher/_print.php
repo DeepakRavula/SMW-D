@@ -9,7 +9,6 @@ use common\models\Lesson;
         text-align: left !important;
     }
 	.location-address {
-	  font-weight: bold;
 	  text-align : right;
 	  font-size : 18px;
 	}
@@ -41,7 +40,7 @@ use common\models\Lesson;
 	<div class="logo invoice-col">              
 		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
 	</div>
-	<div class="text-gray location-address">
+	<div class="location-address">
 			Arcadia Music Academy ( <?= $model->userLocation->location->name;?> )<br>
 			<?php if (!empty($model->userLocation->location->address)): ?>
 				<?= $model->userLocation->location->address ?><br>
