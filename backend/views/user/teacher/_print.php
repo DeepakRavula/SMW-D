@@ -32,8 +32,8 @@ use common\models\Lesson;
 	  font-weight: normal;
 	}
 	.login-logo-img {
-		width: 500px;
-		height:100px;	
+		width: 600px;
+		height:50px;	
 	}
 }
 </style>
@@ -46,16 +46,16 @@ use common\models\Lesson;
 			<?php if (!empty($model->userLocation->location->address)): ?>
 				<?= $model->userLocation->location->address ?><br>
 			<?php endif; ?>
-			<?php if (!empty($model->userLocation->location->phone_number)): ?>
-				<?= $model->userLocation->location->phone_number ?>
+			<?php if (!empty($model->userLocation->location->city_id)): ?>
+				<?= $model->userLocation->location->city->name ?>
 			<?php endif; ?>
-			<?php if (!empty($model->userLocation->location->email)): ?>
-				<?= $model->userLocation->location->email ?>
+			<?php if (!empty($model->userLocation->location->province_id)): ?>
+				<?= ', ' . $model->userLocation->location->province->name ?>
 			<?php endif; ?> 
 	</div>
 	<div class="clearfix"></div>
 </div>
-<h4 class="col-md-12"><b>Teacher Time Voucher for <?= $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h4>
+<h2 class="col-md-12"><b>Teacher Time Voucher for <?= $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h2>
 <?php
 if(!$searchModel->summariseReport) {
 $columns = [
