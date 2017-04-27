@@ -20,24 +20,13 @@ use common\models\TaxStatus;
 ]); ?>
    <div class="row">
 	   <div class="col-md-6">
-			<?= $form->field($model, 'description')->textarea();?>
+			<?= $form->field($model, 'unit')->textInput(['readOnly' => true]);?>
         </div>
 	   <div class="col-md-6">
-			<?= $form->field($model, 'unit')->textInput(['readOnly' => true]);?>
+			<?= $form->field($model, 'description')->textarea();?>
         </div>
 	    <div class="col-md-6">
 			<?= $form->field($model, 'amount')->textInput()->label('Base Price');?>
-        </div>
-	    <div class="col-md-6">
-			<?= $form->field($model, 'discount')->textInput();?>
-        </div>
-	   <div class="col-md-6">
-			<?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
-                            TaxStatus::find()->all(), 'id', 'name'
-            ));?>
-        </div>
-	   <div class="col-md-6">
-			<?= $form->field($model, 'isRoyalty')->textInput(['value' => $model->getRoyalty()]);?>
         </div>
     <div class="col-md-12 p-l-20 form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>

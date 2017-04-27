@@ -70,7 +70,7 @@ use yii\widgets\ActiveForm;
         [
             'label' => 'Price',
 			'value' => function($data) {
-				return Yii::$app->formatter->asCurrency($data->amount - $data->discount);	
+				return Yii::$app->formatter->asCurrency($data->amount - $data->getDiscountValue());	
 			},
         ],
     ];
