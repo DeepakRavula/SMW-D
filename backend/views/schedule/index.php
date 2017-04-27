@@ -184,7 +184,7 @@ $(document).ready(function() {
 		allDaySlot:false,
         eventClick: function(event) {
             $(location).attr('href', event.url);
-        }
+        },
     });
 });
 

@@ -118,10 +118,6 @@ a:focus {
 }
 
 
-/*#calendar .fc-today {
-    background: #FFF !important;
-}*/
-
 .fc-nonbusiness {
     background-color: #FFFF00 !important;
 }
@@ -132,11 +128,6 @@ a:focus {
     border: 1px solid #da0f0f !important;
     background-color: #da0f0f !important;
 }
-
-
-/*.fc-event-vert .fc-event-time{
-  color: #5EAD1C;
-}*/
 
 .proforma-paid,
 .fc-agenda .proforma-paid .fc-event-time,
@@ -1458,8 +1449,8 @@ hr.fc-divider {
 }
 
 .fc-event .fc-content .fc-title {
-    font-size: 9.2px!important;
-    line-height: 9px;
+    font-size: 10.5px!important;
+    line-height: 10px;
     width: 95%!important;
     margin-bottom: 2px;
     opacity: 1;
