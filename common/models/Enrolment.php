@@ -270,7 +270,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 $this->lastPaymentCycle->endDate);
             $interval = $startDate->diff($enrolmentLastPaymentCycleEndDate);
             $this->deleteUnInvoicedProformaPaymentCycles();
-            for ($i = 0; $i < $interval->format('%m') / $this->paymentsFrequency->frequencyLength; $i++) {
+            for ($i = 0; $i <= $interval->format('%m') / $this->paymentsFrequency->frequencyLength; $i++) {
                 if ($i !== 0) {
                     $startDate     = $endDate->modify('First day of next month');
                 }
@@ -295,7 +295,12 @@ class Enrolment extends \yii\db\ActiveRecord
                 $paymentCycle->id          = null;
                 $paymentCycle->isNewRecord = true;
                 $paymentCycle->endDate     = $endDate->format('Y-m-d');
-                $paymentCycle->save();
+                if ($enrolmentLastPaymentCycleEndDate->format('Y-m-d') < $paymentCycle->endDate) {
+                    $paymentCycle->endDate = $enrolmentLastPaymentCycleEndDate->format('Y-m-d');
+                } 
+                if ($enrolmentLastPaymentCycleEndDate->format('Y-m-d') > $paymentCycle->startDate) {
+                    $paymentCycle->save();
+                }
             }
         }
     }

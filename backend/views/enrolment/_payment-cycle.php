@@ -16,26 +16,24 @@ use yii\helpers\Url;
 			[
 				'label' => 'Pro-Forma Invoice',
 				'value' => function($data) {
-					$invoiceNumber = '-';
-					if($data->hasProformaInvoice()) {
-						$paymentCycleLesson = current($data->paymentCycleLessons);
-						$invoiceNumber = $paymentCycleLesson->proFormaInvoice->getInvoiceNumber();
-					}
-					return $invoiceNumber; 
+                                    $invoiceNumber = '-';
+                                    if($data->hasProformaInvoice()) {
+                                        $invoiceNumber = $data->proFormaInvoice->getInvoiceNumber();
+                                    }
+                                    return $invoiceNumber; 
 				}
 			],
 			[
 				'label' => 'Status',
 				'value' => function($data) {
-					$result = 'Owing';
-					$paymentCycleLesson = current($data->paymentCycleLessons);
-					if(empty($paymentCycleLesson->proFormaInvoice)) {
-						$result = '-';
-					}
-					if(!empty($paymentCycleLesson->proFormaInvoice) && $paymentCycleLesson->proFormaInvoice->isPaid()) {
-						$result = 'Paid';
-					}	
-					return $result;
+                                    $result = 'Owing';
+                                    if(empty($data->proFormaInvoice)) {
+                                        $result = '-';
+                                    }
+                                    if(!empty($data->proFormaInvoice) && $data->proFormaInvoice->isPaid()) {
+                                        $result = 'Paid';
+                                    }	
+                                    return $result;
 				}
 				
 			],

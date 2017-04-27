@@ -122,6 +122,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
 		$invoice->userName = $user->publicIdentity;
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $locationId;
+        $invoice->date = $this->enrolment->firstPaymentCycle->startDate;
         $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
 		$invoice->createdUserId = Yii::$app->user->id;
 		$invoice->updatedUserId = Yii::$app->user->id;

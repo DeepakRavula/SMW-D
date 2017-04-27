@@ -557,8 +557,19 @@ class InvoiceController extends Controller
     public function actionInvoicePaymentCycle($id)
     {
         $paymentCycle = PaymentCycle::findOne($id);
-        $paymentCycle->createProFormaInvoice();
-        
-        return $this->redirect(['view', 'id' => $paymentCycle->proFormaInvoice->id]);
+        $currentDate  = new \DateTime();
+        $paymentCycleStartDate  = new \DateTime($paymentCycle->startDate);
+        $priorDate    = $paymentCycleStartDate->modify('-15 days');
+        if ($currentDate->format('Y-m-d') >= $priorDate->format('Y-m-d')) {
+            $paymentCycle->createProFormaInvoice();
+
+            return $this->redirect(['view', 'id' => $paymentCycle->proFormaInvoice->id]);
+        } else {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => 'Invoice can be generated only after 15days prior than payment cycle start date.',
+            ]);
+            return $this->redirect(['enrolment/view', 'id' => $paymentCycle->enrolment->id, '#' => 'payment-cycle']);
+        }
     }
 }

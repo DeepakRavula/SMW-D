@@ -54,6 +54,12 @@ use common\models\Invoice;
             },
         ],
         [
+            'label' => 'Payment Frequency',
+            'value' => function ($data) {
+                return $data->proformaEnrolment->getPaymentFrequency();
+            },
+        ],
+        [
             'attribute' => 'total',
             'label' => 'Total',
             'headerOptions' => ['class' => 'text-right'],

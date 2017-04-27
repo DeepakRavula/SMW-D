@@ -120,10 +120,33 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id']);
     }
-
+    
     public function getLineItem()
     {
         return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id']);
+    }
+    
+    public function getProformaPaymentFrequency()
+    {
+        return $this->hasOne(ProformaPaymentFrequency::className(), ['invoiceId' => 'id']);
+    }
+    
+    public function getProformaPaymentCycleLesson()
+    {
+        return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'item_id'])
+                ->via('lineItem');
+    }
+    
+    public function getProformaPaymentCycle()
+    {
+        return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
+                ->via('proformaPaymentCycleLesson');
+    }
+    
+    public function getProformaEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId'])
+                ->via('proformaPaymentCycle');
     }
 
     public function getReversedInvoice()
@@ -234,6 +257,9 @@ class Invoice extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
+            if ($this->isProFormaInvoice() && empty($this->proformaPaymentFrequency) && !empty($this->lineItem)) {   
+                $this->createProformaPaymentFrequency();
+            }
             $oldTotal = clone $this;
             if(empty($this->lineItems)) {
                 return parent::afterSave($insert, $changedAttributes);
@@ -249,11 +275,19 @@ class Invoice extends \yii\db\ActiveRecord
             }
             
         } else {
-			$this->trigger(self::EVENT_CREATE);
-		}
+            $this->trigger(self::EVENT_CREATE);
+        }
         return parent::afterSave($insert, $changedAttributes);
     }
-	
+    
+    public function createProformaPaymentFrequency() 
+    {
+        $model = new ProformaPaymentFrequency();
+        $model->invoiceId = $this->id;
+        $model->paymentFrequencyId = $this->proformaEnrolment->paymentFrequencyId;
+        $model->save();
+    }
+
     public function updateInvoiceAttributes()
     {
         if(!$this->isOpeningBalance() && !$this->isLessonCredit()) {
@@ -470,7 +504,9 @@ class Invoice extends \yii\db\ActiveRecord
                 $invoiceNumber = $lastInvoice->invoice_number + 1;
             }
             $this->invoice_number = $invoiceNumber;
-            $this->date           = (new \DateTime())->format('Y-m-d');
+            if ($this->isInvoice()) {
+                $this->date           = (new \DateTime())->format('Y-m-d');
+            }
             $this->status         = Invoice::STATUS_OWING;
             $this->isSent         = false;
             $this->subTotal       = 0.00;
