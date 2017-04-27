@@ -16,6 +16,8 @@ use Yii;
  */
 class PaymentCycle extends \yii\db\ActiveRecord
 {
+    const PFI_CREATION_THRESHOLD_ADVANCED_DAYS  = -15;
+
     /**
      * @inheritdoc
      */
