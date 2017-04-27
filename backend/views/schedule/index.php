@@ -185,9 +185,6 @@ $(document).ready(function() {
         eventClick: function(event) {
             $(location).attr('href', event.url);
         },
-		eventRender: function(event, element) {
-     		$(element).tooltip({title: event.content});             
-  		}
     });
 });
 
