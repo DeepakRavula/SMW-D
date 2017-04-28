@@ -251,6 +251,9 @@ class TeacherAvailabilityController extends Controller
             $teacherAvailabilityModel->from_time = $fromTime->format('H:i:s');
             $teacherAvailabilityModel->to_time   = $toTime->format('H:i:s');
             $teacherAvailabilityModel->day = $roomModel->day;
+            $roomModel->from_time = $fromTime->format('H:i:s');
+            $roomModelToTime = $toTime->modify('-1 second');
+            $roomModel->to_time = $roomModelToTime->format('H:i:s');
             if ($roomModel->validate()) {
                 $teacherAvailabilityModel->save();
                 if (!empty($roomModel->classroomId)) {
