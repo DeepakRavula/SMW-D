@@ -561,6 +561,12 @@ class Lesson extends \yii\db\ActiveRecord
 			$paymentCycleLesson->paymentCycleId = $paymentCycle->id;
 			$paymentCycleLesson->lessonId       = $this->id;
 			$paymentCycleLesson->save();
-		}
+		} else {
+            $paymentCycle              = new PaymentCycle();
+			$paymentCycle->enrolmentId = $this->enrolment->id;
+			$paymentCycle->startDate   = (new \DateTime($this->date))->format('Y-m-1');
+            $paymentCycle->endDate     = (new \DateTime($this->date))->format('Y-m-t');
+			$paymentCycle->save();
+        }
     }
 }

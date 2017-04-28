@@ -685,7 +685,7 @@ class LessonController extends Controller
             if (!$model->paymentCycle->hasProFormaInvoice()) {
                 $invoice = $model->paymentCycle->createProFormaInvoice();
 
-                return $this->redirect(['invoice/view', 'id' => $invoice->id, '#' => 'payment']);
+                return $this->redirect(['invoice/view', 'id' => $invoice->id]);
             } else {
                 $model->paymentCycle->proFormaInvoice->addLineItem($model);
                 $model->paymentCycle->proFormaInvoice->save();
@@ -693,7 +693,7 @@ class LessonController extends Controller
         } else {
             $model->proFormaInvoice->makeInvoicePayment();
         }
-        return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id, '#' => 'payment']);
+        return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
     }
 
 	public function actionSendMail($id)
