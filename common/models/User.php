@@ -180,6 +180,21 @@ class User extends ActiveRecord implements IdentityInterface
           ->viaTable('user_address', ['user_id' => 'id']);
     }
 
+	public function getQualifications()
+	{
+		return $this->hasMany(Qualification::className(), ['teacherId' => 'id']);
+	}
+
+	public function getGroupProgramQualifications()
+	{
+		return $this->hasMany(Qualification::className(), ['teacherId' => 'id']);
+	}
+
+	public function getTeacherRate()
+	{
+		return $this->hasOne(TeacherRate::className(), ['qualificationId' => 'id'])
+			->via('qualifications');
+	}
     /**
      * @return \yii\db\ActiveQuery
      */

@@ -4,14 +4,11 @@ namespace backend\models;
 
 use common\models\User;
 use common\models\UserProfile;
-use common\models\UserAddress;
 use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\Program;
-use common\models\Qualification;
 use common\models\UserLocation;
 use yii\base\Exception;
-use common\commands\AddToTimelineCommand;
 use yii\base\Model;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -139,47 +136,23 @@ class UserForm extends Model
             $this->addresses = [new Address()];
         }
 
+		if (count($model->qualifications) > 0) {
+            $this->qualifications = $model->qualifications;
+        } else {
+            $this->qualifications = [new TeacherRate()];
+        }
+
+		 if (count($model->groupProgramQualifications) > 0) {
+            $this->groupProgramQualifications = $model->groupProgramQualifications;
+        } else {
+            $this->groupProgramQualifications = [new TeacherRate()];
+        }
+
         $userFirstName = UserProfile::findOne(['user_id' => $model->getId()]);
         if (!empty($userFirstName)) {
             $this->firstname = $userFirstName->firstname;
             $this->lastname = $userFirstName->lastname;
         }
-
-        $phoneNumber = PhoneNumber::findOne(['user_id' => $model->getId()]);
-        if (!empty($phoneNumber)) {
-            $this->phoneextension = $phoneNumber->extension;
-            $this->phonenumber = $phoneNumber->number;
-            $this->phonelabel = $phoneNumber->label_id;
-        }
-
-        $address = Address::findByUserId($model->getId());
-
-        if (!empty($address)) {
-            $this->address = $address->address;
-            $this->addresslabel = $address->label;
-            $this->city = $address->city_id;
-            $this->country = $address->country_id;
-            $this->province = $address->province_id;
-            $this->postalcode = $address->postal_code;
-        }
-
-        $this->qualifications = ArrayHelper::getColumn(
-            Qualification::find()
-			->joinWith(['program' => function($query) {
-				$query->privateProgram();
-			}])
-			->where(['teacher_id' => $model->getId()])->all(), 'program_id'
-        );
-        $this->qualifications = array_map('strval', $this->qualifications);
-
-		$this->groupProgramQualifications = ArrayHelper::getColumn(
-            Qualification::find()
-			->joinWith(['program' => function($query) {
-				$query->group();
-			}])
-			->where(['teacher_id' => $model->getId()])->all(), 'program_id'
-        );
-        $this->groupProgramQualifications = array_map('strval', $this->groupProgramQualifications);
 
         return $this->model;
     }
@@ -244,15 +217,7 @@ class UserForm extends Model
 
             $lastname = $this->lastname;
             $firstname = $this->firstname;
-            $phonenumber = $this->phonenumber;
-            $phonelabel = $this->phonelabel;
-            $phoneextension = $this->phoneextension;
-            $address = $this->address;
-            $addresslabel = $this->addresslabel;
-            $city = $this->city;
-            $country = $this->country;
-            $province = $this->province;
-            $postalcode = $this->postalcode;
+         
             if (!$model->save()) {
                 throw new Exception('Model not saved');
             }
@@ -283,56 +248,6 @@ class UserForm extends Model
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
 			
-            $phoneNumberModel = PhoneNumber::findOne(['user_id' => $model->getId()]);
-            if (empty($phoneNumberModel) || ($phoneNumberModel->label_id != $phonelabel)) {
-                $phoneNumberModel = new PhoneNumber();
-                $phoneNumberModel->user_id = $model->getId();
-            }
-            $phoneNumberModel->extension = $phoneextension;
-            $phoneNumberModel->number = $phonenumber;
-            $phoneNumberModel->label_id = $phonelabel;
-            $phoneNumberModel->save();
-
-            $addressModel = Address::findByUserId($model->getId());
-            if (empty($addressModel) || ($addressModel->label != $addresslabel)) {
-                $addressModel = new Address();
-            }
-            $addressModel->city_id = $city;
-            $addressModel->address = $address;
-            $addressModel->label = $addresslabel;
-            $addressModel->postal_code = $postalcode;
-            $addressModel->country_id = $country;
-            $addressModel->province_id = $province;
-            $addressModel->save();
-
-            $userAddressModel = UserAddress::findOne(['user_id' => $model->getId()]);
-            if (empty($userAddressModel)) {
-                $userAddressModel = new UserAddress();
-            }
-            $userAddressModel->user_id = $model->id;
-            $userAddressModel->address_id = $addressModel->id;
-            $userAddressModel->save();
-
-            if (current(Yii::$app->authManager->getRolesByUser($model->getId()))->name === User::ROLE_TEACHER) {
-                Qualification::deleteAll(['teacher_id' => $model->getId()]);
-                if ($this->qualifications && is_array($this->qualifications)) {
-                    foreach ($this->qualifications as $qualification) {
-                        $qualificationModel = new Qualification();
-                        $qualificationModel->program_id = $qualification;
-                        $qualificationModel->teacher_id = $model->getId();
-                        $qualificationModel->save();
-                    }
-                }
-				if ($this->groupProgramQualifications && is_array($this->groupProgramQualifications)) {
-                    foreach ($this->groupProgramQualifications as $groupProgramQualification) {
-                        $qualificationModel = new Qualification();
-                        $qualificationModel->program_id = $groupProgramQualification;
-                        $qualificationModel->teacher_id = $model->getId();
-                        $qualificationModel->save();
-                    }
-                }
-            }
-
             return !$model->hasErrors();
         }
 
