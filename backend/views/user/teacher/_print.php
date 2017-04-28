@@ -54,7 +54,7 @@ use common\models\Lesson;
 	</div>
 	<div class="clearfix"></div>
 </div>
-<h2 class="col-md-12"><b>Teacher Time Voucher for <?= $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h2>
+<h2 class="col-md-12"><b><?= $model->publicIdentity . '\'s Time Voucher for ' . $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h2>
 <?php
 if(!$searchModel->summariseReport) {
 $columns = [
