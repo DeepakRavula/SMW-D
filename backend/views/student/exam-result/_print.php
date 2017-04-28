@@ -55,7 +55,7 @@ use yii\grid\GridView;
 			[
 				'label' => 'Program',
 				'value' => function($data) {
-					return !empty($data->program) ? $data->program : null;
+					return !empty($data->programId) ? $data->program->name : null;
 				}
 			],
 			[
