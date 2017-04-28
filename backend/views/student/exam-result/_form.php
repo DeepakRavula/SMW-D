@@ -5,7 +5,9 @@ use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use yii\helpers\ArrayHelper;
 use common\models\User;
-use wbraganca\selectivity\SelectivityWidget;
+use common\models\Program;
+use kartik\depdrop\DepDrop;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -48,22 +50,26 @@ use wbraganca\selectivity\SelectivityWidget;
 		<?=  $form->field($model, 'level')->textInput();?>
     </div>
 	<div class="col-md-6">
-		<?=  $form->field($model, 'program')->textInput();?>
-    </div>
-	<div class="col-md-6">
 		<?=  $form->field($model, 'type')->textInput();?>
     </div>
 	<div class="col-md-6">
-        <?=
-        $form->field($model, 'teacherId')->widget(SelectivityWidget::classname(), [
-            'pluginOptions' => [
-                'allowClear' => true,
-                'multiple' => false,
-                'items' => $teachers,
-                'placeholder' => 'Select Teacher',
-            ],
-        ]);
-    	?>
+		<?= $form->field($model, 'programId')->dropDownList(
+			ArrayHelper::map(Program::find()->all(), 'id', 'name'), ['prompt' => 'Select Program']);?>
+    </div>
+	<div class="col-md-6">
+		<?php $teacher = !empty($model->teacherId) ? $model->teacher->publicIdentity : null; ?>
+        <?php
+			$teacherId = !empty($model->teacherId) ? $model->teacherId : null; 
+		echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
+			[
+			'data' => [$teacherId => $teacher],
+			'pluginOptions' => [
+				'depends' => ['examresult-programid'],
+				'placeholder' => 'Select...',
+				'url' => Url::to(['course/teachers']),
+			],
+		]);
+		?>
         </div>
         <div class="clearfix"></div>
     <div class="col-md-12 p-l-20 form-group">
