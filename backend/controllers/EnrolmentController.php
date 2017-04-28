@@ -93,17 +93,17 @@ class EnrolmentController extends Controller
         ]);
     }
 
-	public function actionEdit($id)
-	{
-		$model = $this->findModel($id);
+    public function actionEdit($id)
+    {
+        $model = $this->findModel($id);
         $oldPaymentFrequency = $model->paymentFrequencyId;
-		if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
-			 if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
-				$model->resetPaymentCycle();
-			}
+        if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
+            if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
+                $model->resetPaymentCycle();
+            }
             return ['output' => $model->getPaymentFrequency(), 'message' => ''];
         }
-	}
+    }
     /**
      * Creates a new Enrolment model.
      * If creation is successful, the browser will be redirected to the 'view' page.

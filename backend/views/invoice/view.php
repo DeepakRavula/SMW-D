@@ -194,6 +194,12 @@ $logContent = $this->render('log', [
 ]); ?>
 </div>
 </div>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Edit Line Item</h4>',
+    'id' => 'line-item-edit-modal',
+]); ?>
+<div id="line-item-edit-content"></div>
+<?php Modal::end();?>
 <script>
  $(document).ready(function() {
 	 $(document).on('click', '#invoice-note', function (e) {
@@ -227,5 +233,47 @@ $logContent = $this->render('log', [
 		});
 		return false;
 	});
+	$(document).on("click", "#line-item-grid-container tbody > tr", function() {
+		var lineItemId = $(this).data('key');	
+		$.ajax({
+			url    : '<?= Url::to(['invoice-line-item/update']); ?>?id=' + lineItemId,
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$('#line-item-edit-content').html(response.data);
+					$('#line-item-edit-modal').modal('show');
+				}
+			}
+		});
+		return false;
 	});
+	$(document).on('beforeSubmit', '#line-item-edit-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+                    $.pjax.reload({container: '#line-item-grid', timeout: 6000});
+					$('#line-item-edit-modal').modal('hide');
+				}else
+				{
+				 $('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on("click", '.line-item-cancel', function() {
+		$('#line-item-edit-modal').modal('hide');
+		return false;
+	});
+});
 </script>
