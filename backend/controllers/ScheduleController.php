@@ -361,6 +361,8 @@ class ScheduleController extends Controller
                 $length = explode(':', $lesson->duration);
                 $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
                 if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+					$description = '<b>Program:</b> ' . $lesson->course->program->name . '<br>' .
+						 '<b>Student Count:</b> ' . $lesson->course->getEnrolmentsCount(); 
                     $title = $lesson->course->program->name;
                     $class = 'group-lesson';
                     $backgroundColor = null;
@@ -386,6 +388,12 @@ class ScheduleController extends Controller
                             $class = 'teacher-substituted';
                         }
                     }
+					if(! empty($lesson->classroomId)) {
+                    	$classroom = $lesson->classroom->name;
+						$description = '<b>Student:</b> ' . $title . '<br>' . '<b>Program:</b> ' . 
+							$lesson->course->program->name . '<br>' . 
+							'<b>Classroom:</b> ' . $classroom;
+                	}
                 }
 
                 $events[] = [
@@ -396,6 +404,7 @@ class ScheduleController extends Controller
                     'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
                     'className' => $class,
                     'backgroundColor' => $backgroundColor,
+					'description' => $description, 
                 ];
             }
             unset($lesson);
