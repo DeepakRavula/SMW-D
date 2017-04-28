@@ -32,7 +32,7 @@ class ExamResult extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['mark', 'level', 'programId'], 'required'],
+            [['mark', 'level', 'programId', 'teacherId'], 'required'],
             [['studentId', 'mark', 'teacherId', 'programId'], 'integer'],
             [['date'], 'safe'],
             [['type'], 'string', 'max' => 30],
