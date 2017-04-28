@@ -32,10 +32,9 @@ class ExamResult extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['mark', 'level', 'program'], 'required'],
-            [['studentId', 'mark', 'teacherId'], 'integer'],
+            [['mark', 'level', 'programId'], 'required'],
+            [['studentId', 'mark', 'teacherId', 'programId'], 'integer'],
             [['date'], 'safe'],
-            [['program'], 'string', 'max' => 50],
             [['type'], 'string', 'max' => 30],
         ];
     }
@@ -51,7 +50,7 @@ class ExamResult extends \yii\db\ActiveRecord
             'date' => 'Exam Date',
             'mark' => 'Mark',
             'level' => 'Level',
-            'program' => 'Program',
+            'programId' => 'Program',
             'type' => 'Type',
             'teacherId' => 'Teacher',
         ];
@@ -62,6 +61,11 @@ class ExamResult extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
+	public function getProgram()
+    {
+        return $this->hasOne(Program::className(), ['id' => 'programId']);
+    }
+	
 	public function beforeSave($insert)
 	{
 		$this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');

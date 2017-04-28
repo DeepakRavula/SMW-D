@@ -56,7 +56,12 @@ use yii\helpers\Url;
 			],
 			'mark',
 			'level',
-			'program',
+			 [
+				'label' => 'Program',
+				'value' => function($data) {
+					return !empty($data->programId) ? $data->program->name : null;
+				}
+			],
 			[
 				'label' => 'Type',
 				'value' => function($data) {

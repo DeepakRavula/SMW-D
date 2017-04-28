@@ -147,6 +147,10 @@ echo $this->render('_profile', [
             return false;
         });
         $(document).on('click', '#new-exam-result', function (e) {
+    		$('input[type="text"]').val('');
+			$('#examresult-date').val(moment(new Date()).format('DD-MM-YYYY'));
+			$('#examresult-programid').val('');
+			$('#examresult-teacherid').val('');
             $('#new-exam-result-modal').modal('show');
             return false;
         });
