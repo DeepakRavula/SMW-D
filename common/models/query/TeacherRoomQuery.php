@@ -68,10 +68,10 @@ class TeacherRoomQuery extends \yii\db\ActiveQuery
                 [
                     'AND',
                     [
-                        '<=', 'from_time', $fromTime
+                        '<=', 'from_time', (new \DateTime($fromTime))->format('H:i:s')
                     ],
                     [
-                        '>=', 'DATE_SUB(to_time, INTERVAL 1 SECOND)', $toTime
+                        '>=', 'DATE_SUB(to_time, INTERVAL 1 SECOND)', (new \DateTime($toTime))->format('H:i:s')
                     ]
 
                 ]

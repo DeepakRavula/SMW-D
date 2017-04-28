@@ -139,26 +139,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
         $availabilities = TeacherAvailability::find()
             ->where(['day' => $this->day, 'teacher_location_id' => $this->teacher_location_id])
             ->andWhere(['NOT', ['id' => $this->availabilityId]])
-            ->andWhere(['OR', 
-                [
-                    'between', 'from_time', (new \DateTime($this->from_time))->format('H:i:s'),
-                    (new \DateTime($this->to_time))->format('H:i:s')
-                ],
-                [
-                    'between', 'DATE_SUB(to_time, INTERVAL 1 SECOND)', (new \DateTime($this->from_time))->format('H:i:s'),
-                    (new \DateTime($this->to_time))->format('H:i:s')
-                ],
-                [
-                    'AND',
-                    [
-                        '<=', 'from_time', $this->from_time
-                    ],
-                    [
-                        '>=', 'DATE_SUB(to_time, INTERVAL 1 SECOND)', $this->to_time
-                    ]
-                    
-                ]
-            ])
+            ->between($this->from_time, $this->to_time)
             ->all();
         
         if (!empty($availabilities)) {
