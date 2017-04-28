@@ -33,7 +33,7 @@ class PaymentController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'credit-payment'],
+                'only' => ['edit', 'credit-payment', 'update'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -102,13 +102,27 @@ class PaymentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $data = $this->renderAjax('/invoice/payment/_form', [
+            'model' => $model,
+        ]);
+      	$post = Yii::$app->request->post();
+        if ($model->load($post)) {
+			if($model->save()) {
+                $response = [
+                    'status' => true,
+                ];	
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model),
+                ];	
+            }
+            return $response;
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
         }
     }
 

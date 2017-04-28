@@ -89,6 +89,7 @@ $columns = [
 	<?=
     \kartik\grid\GridView::widget([
         'dataProvider' => $invoicePaymentsDataProvider,
+		'id' => 'payment-grid',
         'pjax' => true,
         'pjaxSettings' => [
             'neverTimeout' => true,
@@ -100,6 +101,7 @@ $columns = [
         'responsive' => false,
     ]);
     ?>
+
 <div class="col-md-9 m-t-10">  
     <?php $buttons = [];
     ?>
