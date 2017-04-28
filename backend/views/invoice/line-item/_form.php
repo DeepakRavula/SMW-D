@@ -69,8 +69,10 @@ use common\models\TaxStatus;
             <?= $form->field($model, 'description')->textarea();?>
         </div>
     <div class="col-md-12 p-l-20 form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
-        <?= Html::a('<i class="fa fa-close"></i> Delete', [
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+        
+        <?= Html::a('Cancel', '', ['class' => 'btn btn-default line-item-cancel']);?>
+        <?= Html::a('Delete', [
             'delete', 'id' => $model->id
         ],
         [
@@ -80,8 +82,7 @@ use common\models\TaxStatus;
                 'method' => 'post',
             ]
         ]); ?>
-		<?= Html::a('Cancel', '', ['class' => 'btn btn-default line-item-cancel']);?>
-		<div class="clearfix"></div>
+        <div class="clearfix"></div>
 	</div>
 	</div>
 	<?php ActiveForm::end(); ?>
