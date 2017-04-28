@@ -27,8 +27,20 @@ class StudentValidator extends Validator
 			->andWhere(['NOT', ['lesson.id' => $model->id]])
 			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
 			->all();		
-        if ((!empty($studentLessons))) {
+       
+		 if ((!empty($studentLessons)) && empty($model->vacationId)) {
             $this->addError($model,$attribute, 'Lesson time conflicts with student\'s another lesson');
-        }
+		}
+		if(!empty($model->vacationId) && !empty($studentLessons)) {
+			foreach($studentLessons as $studentLesson) {
+				if(new \DateTime($model->date) == new \DateTime($studentLesson->date) && (int) $studentLesson->status === Lesson::STATUS_SCHEDULED) {
+					continue;
+				}
+				$conflictedLessonIds[] = $model->id; 
+			}	
+			if(!empty($conflictedLessonIds)) {
+            	$this->addError($model,$attribute, 'Lesson time conflicts with student\'s another lesson');
+			}
+		}
     }
 }

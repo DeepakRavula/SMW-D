@@ -121,6 +121,7 @@ $columns = [
 <?= $this->render('review/_button', [
 	'vacationId' => $vacationId,
 	'hasConflict' => $hasConflict,
+	'vacationType' => $vacationType,
 	'rescheduleBeginDate' => $rescheduleBeginDate,
 	'endDate' => $endDate,
 	'courseId' => $courseId,
