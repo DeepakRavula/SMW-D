@@ -1,11 +1,59 @@
 <?php
 
-use yii\grid\GridView;
-use common\models\Invoice;
-use yii\data\ArrayDataProvider;
+use kartik\grid\GridView;
+use yii\helpers\Html;
+use common\models\CustomerPaymentPreference;
+use yii\bootstrap\Modal;
+use yii\data\ActiveDataProvider;
+use yii\helpers\Url;
 
 ?>
-
+<?php 
+    if (empty($model->customerPaymentPreference)) {
+        echo Html::a('Add payment preference', null, ['class' => 'btn btn-success btn-sm', 'id' => 'payment-preference']);
+    } else {
+        
+        $paymentPreferenceDataProvider = new ActiveDataProvider([
+            'query' => CustomerPaymentPreference::find()
+            ->where(['userId' => $model->id]),
+        ]);
+        
+        $columns = [
+            [
+                'label' => 'Payment Method',
+                'value' => function ($data) {
+                    return $data->getPaymentMethod();
+                }
+            ],
+            'dayOfMonth'
+        ];
+        
+        echo GridView::widget([
+            'id' => 'payment-preference-grid',
+            'dataProvider' => $paymentPreferenceDataProvider,
+            'pjax' => true,
+            'pjaxSettings' => [
+                'neverTimeout' => true,
+                'options' => [
+                    'id' => 'payment-preference-listing',
+                ],
+            ],
+            'columns' => $columns,
+            'responsive' => false,
+        ]); 
+    }
+    ?>
+<?php
+    Modal::begin([
+        'header' => '<h4 class="m-0">Payment Preference</h4>',
+        'id'=>'payment-preference-modal',
+    ]);
+?>
+    <div id="payment-preference-content"></div>
+<?php
+    Modal::end();
+?>
+<div>
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
 ]) ?>
@@ -61,3 +109,38 @@ echo GridView::widget([
 ?>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
+</div>
+
+<script>
+$(document).ready(function() {
+    $(document).on('click', '#payment-preference', function (e) {
+		modifyPaymentPreference();
+  	});
+    
+    $(document).on('click', '#cancel', function (e) {
+		$('#payment-preference-modal').modal('hide');
+		return false;
+  	});
+});
+
+$(document).on("click", "#payment-preference-grid tbody > tr", function() {
+    modifyPaymentPreference();
+});
+
+function modifyPaymentPreference() {
+    $.ajax({
+        url    : '<?= Url::to(['customer-payment-preference/modify', 'id' => $model->id]); ?>',
+        type   : 'post',
+        dataType: "json",
+        success: function(response)
+        {
+           if(response.status)
+            {
+                $('#payment-preference-content').html(response.data);
+                $('#payment-preference-modal').modal('show');
+            }
+        }
+    });
+    return false;
+}
+</script>		
