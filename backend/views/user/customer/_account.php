@@ -8,6 +8,8 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 
 ?>
+<div class="col-md-12 p-b-20">
+<h5><strong><?= 'Payment Preference' ?> </strong></h5> 
 <?php 
     if (empty($model->customerPaymentPreference)) {
         echo Html::a('Add payment preference', null, ['class' => 'btn btn-success btn-sm', 'id' => 'payment-preference']);
@@ -43,6 +45,7 @@ use yii\helpers\Url;
         ]); 
     }
     ?>
+</div>
 <?php
     Modal::begin([
         'header' => '<h4 class="m-0">Payment Preference</h4>',
@@ -53,11 +56,12 @@ use yii\helpers\Url;
 <?php
     Modal::end();
 ?>
-<div>
+
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
 ]) ?>
 <div class="col-md-12 p-b-20">
+<h5><strong><?= 'Accounts' ?> </strong></h5> 
 <?php
 echo GridView::widget([
 'dataProvider' => $accountDataProvider,
@@ -109,7 +113,6 @@ echo GridView::widget([
 ?>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
-</div>
 
 <script>
 $(document).ready(function() {
