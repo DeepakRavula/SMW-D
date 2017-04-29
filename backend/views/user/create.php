@@ -25,10 +25,10 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Create')];
         'model' => $model,
         'roles' => $roles,
         'locations' => $locations,
-        'privatePrograms' => $privatePrograms,
-        'groupPrograms' => $groupPrograms,
+        'programs' => $programs,
         'phoneNumberModels' => $phoneNumberModels,
         'addressModels' => $addressModels,
+		'qualificationModels' => $qualificationModels,
     ]) ?>
 
 </div>

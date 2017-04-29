@@ -103,8 +103,8 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         ]);
 
         $qualificationContent = $this->render('teacher/_view-qualification', [
-            'program' => $program,
-            'groupPrograms' => $groupPrograms,
+			'privateQualificationDataProvider' => $privateQualificationDataProvider,
+			'groupQualificationDataProvider' => $groupQualificationDataProvider,
             'model' => $model,
             'searchModel' => $searchModel,
         ]);
@@ -320,6 +320,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$('.hr-ad').hide();
 		setTimeout(function () {
 			$('.add-address').addClass('add-item');
+		}, 100);
+	});
+	$('.add-qualification').bind('click', function () {
+		$('.qualification-fields').show();
+		$('.hr-quali').hide();
+		setTimeout(function () {
+			$('.add-qualification').addClass('add-item');
 		}, 100);
 	});
 	$('.add-phone').bind('click', function () {

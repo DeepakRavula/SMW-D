@@ -30,11 +30,11 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('backend', 'Edit')];
     <?php echo $this->render('_form', [
         'model' => $model,
         'roles' => $roles,
+        'programs' => $programs,
         'locations' => $locations,
-        'privatePrograms' => $privatePrograms,
-        'groupPrograms' => $groupPrograms,
         'phoneNumberModels' => $phoneNumberModels,
         'addressModels' => $addressModels,
+		'qualificationModels' => $qualificationModels
     ]) ?>
 
 </div>

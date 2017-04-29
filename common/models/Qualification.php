@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use Yii;
+
 /**
  * This is the model class for table "qualification".
  *
@@ -11,6 +13,9 @@ namespace common\models;
  */
 class Qualification extends \yii\db\ActiveRecord
 {
+	const TYPE_HOURLY = 1;
+	const TYPE_FIXED = 2;
+	
     /**
      * {@inheritdoc}
      */
@@ -25,8 +30,8 @@ class Qualification extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['teacher_id', 'program_id'], 'required'],
-            [['teacher_id', 'program_id'], 'integer'],
+            [['teacher_id', 'program_id', 'rate', 'type'], 'required'],
+            [['teacher_id', 'program_id', 'type'], 'integer'],
         ];
     }
 
@@ -39,6 +44,7 @@ class Qualification extends \yii\db\ActiveRecord
             'id' => 'ID',
             'teacher_id' => 'Teacher Name',
             'program_id' => 'Program Name ',
+			'rate' => 'Rate ($)'
         ];
     }
 
@@ -56,5 +62,13 @@ class Qualification extends \yii\db\ActiveRecord
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'program_id']);
+    }
+
+	public static function Types()
+    {
+        return [
+            self::TYPE_HOURLY => Yii::t('common', 'Hourly'),
+            self::TYPE_FIXED => Yii::t('common', 'Fixed'),
+        ];
     }
 }

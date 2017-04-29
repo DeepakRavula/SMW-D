@@ -156,29 +156,6 @@ class UserController extends Controller
         $teacherDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        $program = null;
-        $qualifications = Qualification::find()
-				->joinWith(['program' => function($query){
-					$query->privateProgram();
-				}])
-                ->where(['teacher_id' => $id])
-                ->all();
-        foreach ($qualifications as $qualification) {
-            $program .= "{$qualification->program->name}, ";
-        }
-        $program = substr($program, 0, -2);
-		
-		$groupPrograms = null;
-        $groupProgramQualifications = Qualification::find()
-               ->joinWith(['program' => function($query){
-					$query->group();
-				}])
-                ->where(['teacher_id' => $id])
-                ->all();
-        foreach ($groupProgramQualifications as $groupProgramQualification) {
-            $groupPrograms .= "{$groupProgramQualification->program->name}, ";
-        }
-        $groupPrograms = substr($groupPrograms, 0, -2);
 		
         $addressDataProvider = new ActiveDataProvider([
             'query' => $model->getAddresses(),
@@ -363,6 +340,26 @@ class UserController extends Controller
             'query' => $account,
         ]);
 
+		$privatePrograms = Qualification::find()
+			->joinWith(['program' => function($query) {
+				$query->privateProgram();
+			}])
+			->andWhere(['teacher_id' => $id]);
+
+		$privateQualificationDataProvider = new ActiveDataProvider([
+            'query' => $privatePrograms,
+        ]);
+
+		$groupPrograms = Qualification::find()
+			->joinWith(['program' => function($query) {
+				$query->group();
+			}])
+			->andWhere(['teacher_id' => $id]);
+
+		$groupQualificationDataProvider = new ActiveDataProvider([
+            'query' => $groupPrograms,
+        ]);
+		
         return $this->render('view', [
             'minTime' => $minTime,
             'maxTime' => $maxTime,
@@ -372,7 +369,6 @@ class UserController extends Controller
             'model' => $model,
             'searchModel' => $searchModel,
             'lessonSearchModel' => $lessonSearch,
-            'program' => $program,
             'addressDataProvider' => $addressDataProvider,
             'phoneDataProvider' => $phoneDataProvider,
             'lessonDataProvider' => $lessonDataProvider,
@@ -390,7 +386,8 @@ class UserController extends Controller
             'noteDataProvider' => $noteDataProvider,
             'accountDataProvider' => $accountDataProvider,
             'teachersAvailabilities' => $teachersAvailabilities,
-			'groupPrograms' => $groupPrograms
+			'privateQualificationDataProvider' => $privateQualificationDataProvider,
+			'groupQualificationDataProvider' => $groupQualificationDataProvider,
         ]);
     }
 
@@ -446,7 +443,7 @@ class UserController extends Controller
      *
      * @return mixed
      */
-	public function saveAddressAndPhone($model, $addressModels, $phoneNumberModels)
+	public function saveAddressAndPhone($model, $addressModels, $phoneNumberModels, $qualificationModels)
 	{
         $transaction = \Yii::$app->db->beginTransaction();
 		if ($flag = $model->save(false)) {
@@ -465,6 +462,13 @@ class UserController extends Controller
 					break;
 				}
 			}
+			foreach ($qualificationModels as $qualificationModel) {
+				$qualificationModel->teacher_id = $model->getModel()->id;
+				if (!($flag = $qualificationModel->save(false))) {
+					$transaction->rollBack();
+					break;
+				}
+			}
 		}
         $transaction->commit();
 		return $flag;
@@ -477,7 +481,8 @@ class UserController extends Controller
         $model = new UserForm();
         $addressModels = [new Address()];
         $phoneNumberModels = [new PhoneNumber()];
-
+		$qualificationModels = [new Qualification()];
+		
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
         if ($model->roles === User::ROLE_STAFFMEMBER) {
@@ -493,20 +498,22 @@ class UserController extends Controller
 	        Model::loadMultiple($addressModels, $request->post());	
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
             Model::loadMultiple($phoneNumberModels, $request->post());
+			$qualificationModels = UserForm::createMultiple(Qualification::classname());
+            Model::loadMultiple($qualificationModels, $request->post());
 
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
 
                 return ArrayHelper::merge(
-                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels)
+                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($qualificationModels)
                 );
             }
             $valid = $model->validate();
-            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels)) && $valid;
+            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels) || Model::validateMultiple($qualificationModels)) && $valid;
 
             if ($valid) {
                 try {
-					$success = $this->saveAddressAndPhone($model, $addressModels, $phoneNumberModels);
+					$success = $this->saveAddressAndPhone($model, $addressModels, $phoneNumberModels, $qualificationModels);
                     if ($success) {
                         Yii::$app->session->setFlash('alert', [
                                 'options' => ['class' => 'alert-success'],
@@ -524,10 +531,10 @@ class UserController extends Controller
         return $this->render('create', [
 			'model' => $model,
 			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-			'privatePrograms' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
-			'groupPrograms' => ArrayHelper::map(Program::find()->group()->active()->all(), 'id', 'name'),
+			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
 			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
+			'qualificationModels' => (empty($qualificationModels)) ? [new Qualification()] : $qualificationModels,
 			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
         ]);
     }
@@ -569,6 +576,7 @@ class UserController extends Controller
 
         $addressModels = $model->addresses;
         $phoneNumberModels = $model->phoneNumbers;
+        $qualificationModels = $model->qualifications;
 
         $request = Yii::$app->request;
         $response = Yii::$app->response;
@@ -582,18 +590,19 @@ class UserController extends Controller
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
             Model::loadMultiple($phoneNumberModels, $request->post());
             $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
-
-
+			$oldQualificationIDs = ArrayHelper::map($qualificationModels, 'id', 'id');
+            $qualificationModels = UserForm::createMultiple(Qualification::classname(), $qualificationModels);
+            Model::loadMultiple($qualificationModels, $request->post());
+            $deletedQualificationIDs = array_diff($oldQualificationIDs, array_filter(ArrayHelper::map($qualificationModels, 'id', 'id')));
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
 
                 return ArrayHelper::merge(
-                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels)
+                    ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($qualificationModels)
                 );
             }
             $valid = $model->validate();
-            $valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels)) && $valid;
-
+            $valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels) && Model::validateMultiple($qualificationModels)) && $valid;
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
@@ -618,6 +627,17 @@ class UserController extends Controller
                                 break;
                             }
                         }
+						 if (!empty($deletedQualificationIDs)) {
+                            Qualification::deleteAll(['id' => $deletedQualificationIDs]);
+                        }
+						print_r($qualificationModels);die;
+                        foreach ($qualificationModels as $qualificationModel) {
+                            $qualificationModel->teacher_id = $id;
+                            if (!($flag = $qualificationModel->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
                     }
                     if ($flag) {
                         $transaction->commit();
@@ -636,13 +656,13 @@ class UserController extends Controller
         }
 
         return $this->render('update', [
-                    'model' => $model,
-                    'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-                    'privatePrograms' => ArrayHelper::map(Program::find()->privateProgram()->active()->all(), 'id', 'name'),
-					'groupPrograms' => ArrayHelper::map(Program::find()->group()->active()->all(), 'id', 'name'),
-                    'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
-                    'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
-                    'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
+			'model' => $model,
+			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
+			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
+			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
+			'qualificationModels' => (empty($qualificationModels)) ? [new Qualification()] : $qualificationModels,
         ]);
     }
 

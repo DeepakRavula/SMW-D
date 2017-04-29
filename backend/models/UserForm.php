@@ -39,7 +39,6 @@ class UserForm extends Model
     public $phoneNumbers;
     public $addresses;
     public $section;
-	public $groupProgramQualifications;
 
     /**
      * {@inheritdoc}
@@ -63,18 +62,6 @@ class UserForm extends Model
             }],
 
             [['status'], 'integer'],
-            [['qualifications'], 'each',
-                'rule' => ['in', 'range' => ArrayHelper::getColumn(
-                    Program::find()->privateProgram()->active()->all(),
-                    'id'
-                )],
-            ],
-			[['groupProgramQualifications'], 'each',
-                'rule' => ['in', 'range' => ArrayHelper::getColumn(
-                    Program::find()->group()->active()->all(),
-                    'id'
-                )],
-            ],
             ['roles', 'required'],
             [['locations', 'phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
             [['addresslabel', 'postalcode', 'province', 'city', 'country'], 'safe'],
@@ -139,13 +126,7 @@ class UserForm extends Model
 		if (count($model->qualifications) > 0) {
             $this->qualifications = $model->qualifications;
         } else {
-            $this->qualifications = [new TeacherRate()];
-        }
-
-		 if (count($model->groupProgramQualifications) > 0) {
-            $this->groupProgramQualifications = $model->groupProgramQualifications;
-        } else {
-            $this->groupProgramQualifications = [new TeacherRate()];
+            $this->qualifications = [new Qualification()];
         }
 
         $userFirstName = UserProfile::findOne(['user_id' => $model->getId()]);
