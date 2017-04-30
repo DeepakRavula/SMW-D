@@ -485,7 +485,8 @@ class UserController extends Controller
         $model = new UserForm();
         $addressModels = [new Address()];
         $phoneNumberModels = [new PhoneNumber()];
-		$qualificationModels = [new Qualification()];
+		$privateQualificationModels = [new Qualification()];
+		$groupQualificationModels = [new Qualification()];
 		
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
@@ -538,7 +539,8 @@ class UserController extends Controller
 			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
 			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
-			'qualificationModels' => (empty($qualificationModels)) ? [new Qualification()] : $qualificationModels,
+			'privateQualificationModels' => (empty($privateQualificationModels)) ? [new Qualification()] : $privateQualificationModels,
+			'groupQualificationModels' => (empty($groupQualificationModels)) ? [new Qualification()] : $groupQualificationModels,
 			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
         ]);
     }

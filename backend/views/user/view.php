@@ -324,6 +324,15 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	});
 	$('.add-qualification').bind('click', function () {
 		$('.qualification-fields').show();
+		$('#group').hide();
+		$('.hr-quali').hide();
+		setTimeout(function () {
+			$('.add-qualification').addClass('add-item');
+		}, 100);
+	});
+	$('.add-group-qualification').bind('click', function () {
+		$('.qualification-fields').show();
+		$('#private').hide();
 		$('.hr-quali').hide();
 		setTimeout(function () {
 			$('.add-qualification').addClass('add-item');
