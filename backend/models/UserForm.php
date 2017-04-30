@@ -12,7 +12,7 @@ use yii\base\Exception;
 use yii\base\Model;
 use Yii;
 use yii\helpers\ArrayHelper;
-
+use common\models\Qualification;
 /**
  * Create user form.
  */

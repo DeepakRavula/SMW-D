@@ -30,7 +30,7 @@ class Qualification extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['teacher_id', 'program_id', 'rate', 'type'], 'required'],
+            [['program_id', 'rate', 'type'], 'required'],
             [['teacher_id', 'program_id', 'type'], 'integer'],
         ];
     }

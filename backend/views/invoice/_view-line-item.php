@@ -1,12 +1,6 @@
 <?php
-use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
-use common\models\TaxStatus;
 use common\models\InvoiceLineItem;
-use kartik\switchinput\SwitchInput;
-use common\models\ItemType;
-use yii\widgets\ActiveForm;
+use common\models\Qualification;
 
 ?>
 <?php if ($searchModel->toggleAdditionalColumns) {
@@ -55,16 +49,10 @@ use yii\widgets\ActiveForm;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
             'value' => function($data) {
-                $cost = 0;
-                $itemTypes = [ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON, ItemType::TYPE_GROUP_LESSON];
-                if(in_array($data->item_type_id,$itemTypes)) {
-                    if((int)$data->item_type_id === ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON) {
-                        $cost = !empty($data->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ? $data->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate : null;
-                    } else {
-                        $cost = !empty($data->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate) ? $data->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate : null;
-                    }
-                }
-                return $cost;
+                //$cost = 0;
+				$qualification = Qualification::findOne(['teacher_id' => $data->paymentCycleLesson->lesson->teacher->id, 'program_id' => $data->paymentCycleLesson->lesson->course->program->id]);
+				return !empty($qualification->rate) ? $qualification->rate : '$0.00';
+                
             }
         ],
         [

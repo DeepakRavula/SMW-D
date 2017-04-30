@@ -253,16 +253,6 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
-	public function getTeacherRate()
-    {
-		if($this->course->program->isPrivate()) {
-			$rate = !empty($this->teacher->teacherPrivateLessonRate->hourlyRate) ? $this->teacher->teacherPrivateLessonRate->hourlyRate : 0;  
-		} else {
-			$rate = !empty($this->teacher->teacherGroupLessonRate->hourlyRate) ? $this->teacher->teacherGroupLessonRate->hourlyRate : 0; 
-		}
-		return $rate;
-    }
-
 	public function getProFormaLineItem()
     {
         return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])

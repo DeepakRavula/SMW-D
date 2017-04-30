@@ -2,6 +2,7 @@
 
 use kartik\grid\GridView;
 use common\models\Lesson;
+use common\models\Qualification;
 ?>
 <style>
 @media print{
@@ -124,7 +125,8 @@ $columns = [
 		'label' => 'Rate/hour',
 		'format'=>['decimal',2],
 		'value' => function ($data) {
-			return $data->teacherRate;
+			$qualification = Qualification::findone(['teacher_id' => $data->teacherId, 'program_id' => $data->course->program->id]);
+			return $data->getDuration() * $qualification->rate;
 		},
 		'hAlign' => 'right',
 		'contentOptions' => ['class' => 'text-right'],
@@ -192,11 +194,12 @@ $columns = [
 					->all();
 				$cost = 0;
 				foreach($lessons as $lesson) {
+					$qualification = Qualification::findone(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
 					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->duration);
 					$hours			 = $duration->format('H');
 					$minutes		 = $duration->format('i');
 					$lessonDuration	 = $hours + ($minutes / 60);
-					$cost += $lessonDuration * $data->teacherRate;	
+					$cost += $lessonDuration * $qualification->rate;	
 				}
 				return $cost;
 		},

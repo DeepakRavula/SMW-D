@@ -590,6 +590,7 @@ class UserController extends Controller
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
             Model::loadMultiple($phoneNumberModels, $request->post());
             $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
+			
 			$oldQualificationIDs = ArrayHelper::map($qualificationModels, 'id', 'id');
             $qualificationModels = UserForm::createMultiple(Qualification::classname(), $qualificationModels);
             Model::loadMultiple($qualificationModels, $request->post());
@@ -630,7 +631,6 @@ class UserController extends Controller
 						 if (!empty($deletedQualificationIDs)) {
                             Qualification::deleteAll(['id' => $deletedQualificationIDs]);
                         }
-						print_r($qualificationModels);die;
                         foreach ($qualificationModels as $qualificationModel) {
                             $qualificationModel->teacher_id = $id;
                             if (!($flag = $qualificationModel->save(false))) {
