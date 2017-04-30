@@ -30,7 +30,7 @@ class Qualification extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['program_id', 'rate', 'type'], 'required'],
+            [['program_id', 'rate'], 'required'],
             [['teacher_id', 'program_id', 'type'], 'integer'],
         ];
     }
@@ -62,13 +62,5 @@ class Qualification extends \yii\db\ActiveRecord
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'program_id']);
-    }
-
-	public static function Types()
-    {
-        return [
-            self::TYPE_HOURLY => Yii::t('common', 'Hourly'),
-            self::TYPE_FIXED => Yii::t('common', 'Fixed'),
-        ];
     }
 }

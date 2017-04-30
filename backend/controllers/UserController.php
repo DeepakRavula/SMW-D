@@ -464,6 +464,10 @@ class UserController extends Controller
 			}
 			foreach ($qualificationModels as $qualificationModel) {
 				$qualificationModel->teacher_id = $model->getModel()->id;
+				$qualificationModel->type = Qualification::TYPE_HOURLY;	
+				if($qualificationModel->program->isGroup()) {
+					$qualificationModel->type = Qualification::TYPE_FIXED;	
+				}
 				if (!($flag = $qualificationModel->save(false))) {
 					$transaction->rollBack();
 					break;
@@ -633,6 +637,10 @@ class UserController extends Controller
                         }
                         foreach ($qualificationModels as $qualificationModel) {
                             $qualificationModel->teacher_id = $id;
+							$qualificationModel->type = Qualification::TYPE_HOURLY;	
+							if($qualificationModel->program->isGroup()) {
+								$qualificationModel->type = Qualification::TYPE_FIXED;	
+							}
                             if (!($flag = $qualificationModel->save(false))) {
                                 $transaction->rollBack();
                                 break;

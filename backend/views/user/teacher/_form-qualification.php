@@ -71,11 +71,6 @@ DynamicFormWidget::begin([
 					<div class="col-sm-4">
 	<?= $form->field($qualificationModel, "[{$index}]rate")->textInput(['maxlength' => true]) ?>
 					</div>
-					<div class="col-sm-4">
-						<?=
-						$form->field($qualificationModel, "[{$index}]type")->dropDownList(Qualification::types())
-						?>
-					</div>
 					<div class="clearfix"></div>
 				</div>
 			</div><!-- widgetBody -->
