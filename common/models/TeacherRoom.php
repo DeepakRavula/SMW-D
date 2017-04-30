@@ -129,7 +129,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
                 ->andWhere(['classroomId' => $this->classroomId])
                 ->all();
             if (!empty($teacherRooms)) {
-                return $this->addError($attribute,'Classroom Already Choosen!');
+                return $this->addError($attribute,'Classroom already chosen');
             }
         }
     }
@@ -143,7 +143,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
             ->all();
         
         if (!empty($availabilities)) {
-            return $this->addError($attribute,'Availability overlaped');
+            return $this->addError($attribute,'Availability overlapped');
         }
     }
 }
