@@ -70,7 +70,8 @@ class Enrolment extends \yii\db\ActiveRecord
             'studentIds' => 'Enrolled Student Name',
             'isDeleted' => 'Is Deleted',
             'paymentFrequencyId' => 'Payment Frequency',
-			'toEmailAddress' => 'To'
+			'toEmailAddress' => 'To',
+			'showAllEnrolments' => 'Show All'
         ];
     }
 
