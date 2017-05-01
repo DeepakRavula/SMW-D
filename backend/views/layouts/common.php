@@ -197,6 +197,13 @@ $bundle = BackendAsset::register($this);
                             'visible' => Yii::$app->user->can('staffmember'),
                             'active' => (Yii::$app->controller->id === 'schedule') ? true : false,
                         ],
+						[
+                            'label' => Yii::t('backend', 'Enrolments'),
+                            'icon' => '<i class="fa  fa-book"></i>',
+                            'url' => ['enrolment/index'],
+                            'visible' => Yii::$app->user->can('staffmember'),
+                            'active' => (Yii::$app->controller->id === 'enrolment') ? true : false,
+                        ],
                         [
                             'label' => Yii::t('backend', 'Students'),
                             'icon' => '<i class="fa fa-lg fa-fw fa-child"></i>',
