@@ -31,12 +31,15 @@ use yii\helpers\Url;
    			<?php echo $form->field($model, 'isRoyaltyExempted')->checkbox()?>
         </div>
 	</div>
-	    <div class="row tax-compute">
-        <div class="col-xs-8">
+	<div class="row tax-compute">
+        <div class="col-xs-3">
             <?php echo $form->field($model, 'tax_type')->textInput(['readonly' => true])?>
         </div>
-        <div class="col-xs-2">
+		 <div class="col-xs-2">
                <?php echo $form->field($model, 'tax_code')->textInput(['readonly' => true])?>
+        </div>
+		<div class="col-xs-2">
+            <?php echo $form->field($model, 'tax')->textInput(['readonly' => true])?>
         </div>
 		 <div class="col-xs-2">
                <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true])?>
