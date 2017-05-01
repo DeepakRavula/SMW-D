@@ -36,6 +36,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public $userName;
     public $price;
     public $cost;
+	public $tax;
     /**
      * {@inheritdoc}
      */
@@ -165,6 +166,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'tax_status' => 'Tax Status',
             'isRoyaltyExempted' => 'Exempt from Royalty',
             'isRoyalty' => 'Royalty',
+			'tax' => 'Tax (%)'
         ];
     }
 
