@@ -204,13 +204,16 @@ var payment = {
 }
 $(document).ready(function() {
     $('#add-misc-item').click(function(){
-    $('input[type="text"]').val('');
-    $('.tax-compute').hide();
-    $('#invoicelineitem-tax_status').val('');
-    $('#invoice-line-item-modal').modal('show');
+		$('input[type="text"]').val('');
+		$('.tax-compute').hide();
+		$('#invoicelineitem-tax_status').val('');
+		$('#invoice-line-item-modal').modal('show');
         return false;
     });
-
+	$('.add-misc-cancel').click(function(){
+    	$('#invoice-line-item-modal').modal('hide');
+   		return false;
+    });
     $('#apply-discount').click(function(){
         $('#apply-discount-modal').modal('show');
   		return false;

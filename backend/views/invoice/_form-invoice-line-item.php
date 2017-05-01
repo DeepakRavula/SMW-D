@@ -44,6 +44,9 @@ use yii\helpers\Url;
 		 <div class="col-xs-2">
                <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true])?>
         </div>
+		<div class="col-xs-3">
+	        <?= Html::a('Calculate Tax', '', ['class' => 'btn btn-success btn-xs m-t-30 calculate-tax-button']);?>
+		</div>
     </div>
 
  	<div class="row">
@@ -56,12 +59,34 @@ use yii\helpers\Url;
         </div>
 	</div>
     <div class="form-group">
-       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+		<?= Html::a('Cancel', '', ['class' => 'btn btn-default add-misc-cancel']);?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
+	$('.calculate-tax-button').click(function(){
+		var amount = $('#invoicelineitem-amount').val();
+		var tax = $('#invoicelineitem-tax').val();
+		$.ajax({
+			url: "<?php echo Url::to(['invoice-line-item/compute-tax']); ?>",
+			type: "POST",
+			contentType: 'application/json',
+			dataType: "json",
+			data: JSON.stringify({
+				'amount' :amount,
+				'tax' : tax,
+			}),
+			success: function(response) {
+				var response =  jQuery.parseJSON(JSON.stringify(response));
+            	$('#invoicelineitem-tax_rate').val(response);          
+			},
+			error: function() {
+			}
+		});	
+		return false;
+	});
 	$('#invoicelineitem-tax_status').change(function(){
 		var taxStatusId = $(this).val();
 		if(taxStatusId && parseInt(taxStatusId) === 2){
@@ -69,6 +94,7 @@ $(document).ready(function() {
 			$('#invoicelineitem-tax_type').val('NO TAX');
 			$('#invoicelineitem-tax_code').val('ON');
 			$('#invoicelineitem-tax_rate').val(0.00);
+			$('#invoicelineitem-tax').val(0.00);
 		} else {
 			var amount = $('#invoicelineitem-amount').val();
 			var taxStatusName = $(this).children("option").filter(":selected").text();
@@ -87,6 +113,7 @@ $(document).ready(function() {
 		            $('.tax-compute').show();
 					$('#invoicelineitem-tax_type').val(response.tax_type);
 					$('#invoicelineitem-tax_code').val(response.code);
+					$('#invoicelineitem-tax').val(response.tax);
 					$('#invoicelineitem-tax_rate').val(response.rate);
 				},
 				error: function() {

@@ -289,6 +289,7 @@ class InvoiceController extends Controller
             'code' => $taxCode->code,
             'rate' => $rate,
             'tax_status' => $data['taxStatusName'],
+			'tax' => $taxCode->rate,
         ];
     }
 

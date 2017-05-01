@@ -24,14 +24,14 @@ class ProgramQuery extends ActiveQuery
 
 	public function privateProgram()
     {
-        $this->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+        $this->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM]);
 
         return $this;
     }
 
 	public function group()
     {
-        $this->andWhere(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+        $this->andWhere(['type' => Program::TYPE_GROUP_PROGRAM]);
 
         return $this;
     }
