@@ -49,7 +49,7 @@ use yii\helpers\Url;
 		</div>
     </div>
 
- 	<div class="row">
+ 	<div class="row misc-tax-status">
 		<div class="col-xs-4">
    			<?php
             echo $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
@@ -69,6 +69,9 @@ $(document).ready(function() {
 	$('.calculate-tax-button').click(function(){
 		var amount = $('#invoicelineitem-amount').val();
 		var tax = $('#invoicelineitem-tax').val();
+		if(tax == '') {
+			var tax = 5;
+		}
 		$.ajax({
 			url: "<?php echo Url::to(['invoice-line-item/compute-tax']); ?>",
 			type: "POST",
@@ -139,9 +142,7 @@ $(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
 				$('#invoice-line-item-modal').modal('hide');
 			}else
 			{
-			 $(this).yiiActiveForm('updateMessages',
-				   response.errors
-				, true);
+			 $(this).yiiActiveForm('updateMessages', response.errors, true);
 			}
 		}
 		});
