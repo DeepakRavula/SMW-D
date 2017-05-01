@@ -49,26 +49,8 @@ $columns = [
         },
         ],
         [
-            'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'amount',
-            'refreshGrid' => true,
-            'editableOptions' => function ($model, $key, $index) {
-                if ($model->isAccountEntry()) {
-                    $model->setScenario(Payment::SCENARIO_OPENING_BALANCE);
-                } elseif ($model->isCreditUsed()) {
-                    $model->setScenario(Payment::SCENARIO_CREDIT_USED);
-                }
-
-                return [
-                    'header' => 'Amount',
-                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-                    'formOptions' => ['action' => Url::to(['payment/edit', 'id' => $model->id])],
-                    'pluginEvents' => [
-                        'editableSuccess' => 'payment.onEditableGridSuccess',
-                    ],
-                    'asPopover' => false,
-                ];
-            },
+			'format' => 'currency',
         ],
         [
             'class' => kartik\grid\ActionColumn::className(),

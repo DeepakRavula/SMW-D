@@ -12,23 +12,13 @@ use yii\helpers\Html;
 <div class=" p-10">
 <?php $form = ActiveForm::begin([
     'id' => 'payment-edit-form',
-	'action' => Url::to(['payment/update', 'id' => $model->id]),
-//	'enableAjaxValidation' => true,
-//	'enableClientValidation' => false
+	'action' => Url::to(['payment/edit', 'id' => $model->id]),
+	'enableAjaxValidation' => true,
+	'enableClientValidation' => false
 ]); ?>
    <div class="row">
         <div class="col-md-6">
-            <?= $form->field($model, 'date')->widget(DatePicker::classname(), [
-				'options' => [
-					'value' => Yii::$app->formatter->asDate($model->date),
-		   ],
-			'type' => DatePicker::TYPE_COMPONENT_APPEND,
-			'pluginOptions' => [
-				'autoclose' => true,
-				'format' => 'dd-mm-yyyy',
-			],
-		  ]);
-		?>
+            <?= $form->field($model, 'amount')->textInput();?>
         </div>
         <div class="clearfix"></div>
 	   <div class="col-md-6 form-group">

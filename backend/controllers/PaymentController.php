@@ -269,37 +269,32 @@ class PaymentController extends Controller
 
     public function actionEdit($id)
     {
+        $model = Payment::findOne(['id' => $id]);
+		$userModel = User::findOne(['id' => Yii::$app->user->id]);
+		$model->on(Payment::EVENT_EDIT, [new TimelineEventPayment(), 'edit'], ['oldAttributes' => $model->getOldAttributes()]);
+		$model->userName = $userModel->publicIdentity;
         $request = Yii::$app->request;
-        $post = $request->post();
-        if ($request->post('hasEditable')) {
-            $paymentIndex = $request->post('editableIndex');
-            $model = Payment::findOne(['id' => $id]);
-			$userModel = User::findOne(['id' => Yii::$app->user->id]);
-        	$model->on(Payment::EVENT_EDIT, [new TimelineEventPayment(), 'edit'], ['oldAttributes' => $model->getOldAttributes()]);
-			$model->userName = $userModel->publicIdentity;
-            if (!empty($post['Payment'][$paymentIndex]['amount'])) {
-                $newAmount = $post['Payment'][$paymentIndex]['amount'];
-                if ($model->isOtherPayments()) {
-                    $response = Yii::$app->runAction('payment/edit-other-payments',
-                        ['model' => $model, 'newAmount' => $newAmount]);
-                }
-                if ($model->isAccountEntry()) {
-                    $response = Yii::$app->runAction('payment/edit-account-entry',
-                        ['model' => $model, 'newAmount' => $newAmount]);
-                }
-                if ($model->isCreditApplied()) {
-                    $response = Yii::$app->runAction('payment/edit-credit-applied',
-                        ['model' => $model, 'newAmount' => $newAmount]);
-                }
-
-                if ($model->isCreditUsed()) {
-                    $response = Yii::$app->runAction('payment/edit-credit-used',
-                        ['model' => $model, 'newAmount' => $newAmount]);
-                }
-
-                return $response;
-            }
-        }
+        if ($model->load($request->post())) {
+			if ($model->isAccountEntry()) {
+				$model->setScenario(Payment::SCENARIO_OPENING_BALANCE);
+				$response = Yii::$app->runAction('payment/edit-account-entry',
+					['model' => $model, 'newAmount' => $model->amount]);
+			} 
+			if ($model->isOtherPayments()) {
+				$response = Yii::$app->runAction('payment/edit-other-payments',
+					['model' => $model, 'newAmount' => $model->amount]);
+			}
+			if ($model->isCreditApplied()) {
+				$response = Yii::$app->runAction('payment/edit-credit-applied',
+					['model' => $model, 'newAmount' => $model->amount]);
+			}
+			if ($model->isCreditUsed()) {
+				$model->setScenario(Payment::SCENARIO_CREDIT_USED);
+				$response = Yii::$app->runAction('payment/edit-credit-used',
+					['model' => $model, 'newAmount' => $model->amount]);
+			}
+			return $response;
+		}
     }
 
     public function actionEditOtherPayments($model, $newAmount)
@@ -308,8 +303,7 @@ class PaymentController extends Controller
         $model->save();
 		$model->trigger(Payment::EVENT_EDIT);
         $result = [
-            'output' => $newAmount,
-            'message' => '',
+            'status' => true,
         ];
 
         return $result;
@@ -333,8 +327,7 @@ class PaymentController extends Controller
         $invoiceModel->save();
 
         $result = [
-            'output' => $newAmount,
-            'message' => '',
+            'status' => true,
         ];
 
         return $result;
@@ -350,15 +343,13 @@ class PaymentController extends Controller
             $model->save();
 
             $result = [
-                'output' => $newAmount,
-                'message' => '',
+            	'status' => true,
             ];
         } else {
             $errors = ActiveForm::validate($model);
-
             $result = [
-                'output' => false,
-                'message' => $errors['payment-amount'],
+                'status' => false,
+                'errors' => $errors['payment-amount'],
             ];
         }
 
@@ -375,15 +366,13 @@ class PaymentController extends Controller
             $model->save();
 
             $result = [
-                'output' => $newAmount,
-                'message' => '',
+                'status' => true,
             ];
         } else {
             $errors = ActiveForm::validate($model);
-
             $result = [
-                'output' => false,
-                'message' => $errors['payment-amount'],
+                'status' => false,
+                'errors' => $errors['payment-amount'],
             ];
         }
 

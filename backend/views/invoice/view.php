@@ -306,15 +306,16 @@ $logContent = $this->render('log', [
 			{
 			   if(response.status)
 			   {
-                    $.pjax.reload({container: '#payment-grid', timeout: 6000});
+					$.pjax.reload({container : '#payment-grid', timeout : 6000});
+					payment.onEditableGridSuccess();
 					$('#payment-edit-modal').modal('hide');
 				}else
 				{
-				 $('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
+				 $(this).yiiActiveForm('updateMessages', response.errors, true);
 				}
 			}
-		});
-		return false;
+			});
+			return false;
 	});
 	$(document).on("click", '.line-item-cancel', function() {
 		$('#line-item-edit-modal').modal('hide');
