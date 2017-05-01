@@ -203,7 +203,13 @@ $(document).ready(function() {
 					text: event.description,
 				},
 				position: {
-        			my: 'top center',
+        			my: 'top left',
+					at: 'top center',
+					target: 'mouse',
+					adjust: {
+						screen: true
+					},
+					viewport: $(window) // Keep it on-screen at all times if possible
 				},
 				style: {
 					classes: 'my-qtip',
@@ -380,7 +386,13 @@ function refreshCalendar(date) {
 					text: event.description,
 				},
 				position: {
-        			my: 'top center',
+        			my: 'top left',
+					at: 'top center',
+					target: 'mouse',
+					adjust: {
+						screen: true
+					},
+					viewport: $(window) // Keep it on-screen at all times if possible
 				},
 				style: {
 					classes: 'my-qtip',
