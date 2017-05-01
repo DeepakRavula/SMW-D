@@ -485,8 +485,7 @@ class UserController extends Controller
         $model = new UserForm();
         $addressModels = [new Address()];
         $phoneNumberModels = [new PhoneNumber()];
-		$privateQualificationModels = [new Qualification()];
-		$groupQualificationModels = [new Qualification()];
+		$qualificationModels = [new Qualification()];
 		
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
@@ -505,7 +504,6 @@ class UserController extends Controller
             Model::loadMultiple($phoneNumberModels, $request->post());
 			$qualificationModels = UserForm::createMultiple(Qualification::classname());
             Model::loadMultiple($qualificationModels, $request->post());
-
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
 
@@ -539,8 +537,7 @@ class UserController extends Controller
 			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
 			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
-			'privateQualificationModels' => (empty($privateQualificationModels)) ? [new Qualification()] : $privateQualificationModels,
-			'groupQualificationModels' => (empty($groupQualificationModels)) ? [new Qualification()] : $groupQualificationModels,
+			'qualificationModels' => (empty($qualificationModels)) ? [new Qualification()] : $qualificationModels,
 			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
         ]);
     }

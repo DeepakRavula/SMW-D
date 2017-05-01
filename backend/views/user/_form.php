@@ -52,8 +52,7 @@ use yii\bootstrap\Tabs;
     $qualificationContent = $this->render('teacher/_form-qualification', [
         'model' => $model,
         'form' => $form,
-		'groupQualificationModels' => $groupQualificationModels,
-		'privateQualificationModels' => $privateQualificationModels,
+		'qualificationModels' => $qualificationModels,
     ]);
 
     $items = [

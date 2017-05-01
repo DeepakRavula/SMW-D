@@ -37,7 +37,7 @@ DynamicFormWidget::begin([
 	'min' => 0, // 0 or 1 (default 1)
 	'insertButton' => '.qualification-add-item', // css class
 	'deleteButton' => '.qualification-remove-item', // css class
-	'model' => $privateQualificationModels[0],
+	'model' => $qualificationModels[0],
 	'formId' => 'dynamic-form',
 	'formFields' => [
 		'program_id',
@@ -53,7 +53,7 @@ DynamicFormWidget::begin([
 		<div class="clearfix"></div>
 	</div>
 	<div class="qualification-container-items qualification-fields form-well">
-		<?php foreach ($privateQualificationModels as $index => $privateQualificationModel): ?>
+		<?php foreach ($qualificationModels as $index => $qualificationModel): ?>
 			<div class="item-block qualification-item"><!-- widgetBody -->
 				<h4>
 					<span class="panel-title-qualification pull-left">Qualification: <?= ($index + 1) ?></span>
@@ -61,17 +61,17 @@ DynamicFormWidget::begin([
 					<div class="clearfix"></div>
 				</h4>
 				<?php
-				if (!$privateQualificationModel->isNewRecord) {
-					echo Html::activeHiddenInput($privateQualificationModel, "[{$index}]id");
+				if (!$qualificationModel->isNewRecord) {
+					echo Html::activeHiddenInput($qualificationModel, "[{$index}]id");
 				}
 				$privatePrograms = ArrayHelper::map(Program::find()->privateProgram()->all(), 'id', 'name'); 
 				?>
 				<div class="row">
 					<div class="col-sm-4">
-						<?= $form->field($privateQualificationModel, "[{$index}]program_id")->dropDownList($privatePrograms);?>
+						<?= $form->field($qualificationModel, "[{$index}]program_id")->dropDownList($privatePrograms);?>
 					</div>
 					<div class="col-sm-4">
-	<?= $form->field($privateQualificationModel, "[{$index}]rate")->textInput(['maxlength' => true]) ?>
+	<?= $form->field($qualificationModel, "[{$index}]rate")->textInput(['maxlength' => true]) ?>
 					</div>
 					<div class="clearfix"></div>
 				</div>

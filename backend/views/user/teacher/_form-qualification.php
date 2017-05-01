@@ -4,14 +4,14 @@
     echo $this->render('_form-private-qualification', [
         'model' => $model,
         'form' => $form,
-		'privateQualificationModels' => $privateQualificationModels,
+		'qualificationModels' => $qualificationModels,
     ]);
     ?>
 	<?php
     echo $this->render('_form-group-qualification', [
         'model' => $model,
         'form' => $form,
-		'groupQualificationModels' => $groupQualificationModels,
+		'qualificationModels' => $qualificationModels,
     ]);
     ?>
 </div>
