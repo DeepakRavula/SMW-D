@@ -11,7 +11,7 @@ use common\models\Enrolment;
  */
 class EnrolmentSearch extends Enrolment
 {
-    public $showAllEnrolments;
+    public $showAllEnrolments = false;
     /**
      * {@inheritdoc}
      */
@@ -53,7 +53,7 @@ class EnrolmentSearch extends Enrolment
             return $dataProvider;
         }
 
-		 if ($this->showAllEnrolments) {
+		 if (! $this->showAllEnrolments) {
 			 $query->joinWith(['course' => function($query) {
 				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
 					->isConfirmed();

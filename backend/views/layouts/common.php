@@ -200,7 +200,7 @@ $bundle = BackendAsset::register($this);
 						[
                             'label' => Yii::t('backend', 'Enrolments'),
                             'icon' => '<i class="fa  fa-book"></i>',
-                            'url' => ['enrolment/index'],
+                            'url' => ['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false],
                             'visible' => Yii::$app->user->can('staffmember'),
                             'active' => (Yii::$app->controller->id === 'enrolment') ? true : false,
                         ],
