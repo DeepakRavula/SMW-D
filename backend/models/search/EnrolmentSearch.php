@@ -39,7 +39,13 @@ class EnrolmentSearch extends Enrolment
      */
     public function search($params)
     {
-        $query = Enrolment::find();
+        $query = Enrolment::find()
+			->joinWith(['course' => function($query) {
+				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
+				->isConfirmed();
+			}])
+			->notDeleted()
+			->isConfirmed();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

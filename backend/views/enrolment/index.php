@@ -12,24 +12,37 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="enrolment-index">
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]);?>
-
     <p>
         <?php echo Html::a('Create Enrolment', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'courseId',
-            'studentId',
-            'isDeleted',
-
-            ['class' => 'yii\grid\ActionColumn'],
+			[
+				'label' => 'Program',
+				'value' => function($data) {
+					return $data->course->program->name;
+				}
+			],
+			[
+				'label' => 'Student',
+				'value' => function($data) {
+					return $data->student->fullName;
+				}
+			],
+			[
+				'label' => 'Teacher',
+				'value' => function($data) {
+					return $data->course->teacher->publicIdentity;
+				}
+			],
+			[
+				'label' => 'Expiry Date',
+				'value' => function($data) {
+					return Yii::$app->formatter->asDate($data->course->endDate);
+				}
+			],
         ],
     ]); ?>
 
