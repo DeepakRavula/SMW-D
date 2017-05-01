@@ -41,7 +41,7 @@ use kartik\editable\Editable;
               To
               <address>
                 <strong>
-                  <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id, '#' => 'student']) ?>">
+                  <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id]) ?>">
                         <?= isset($customer->publicIdentity) ? $customer->publicIdentity : null?>
                   </a></strong>
                   <br>
