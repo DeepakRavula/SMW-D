@@ -258,7 +258,7 @@ $logContent = $this->render('log', [
 		});
 		return false;
 	});
-	$(document).on("click", "#payment-grid-container tbody > tr", function() {
+	$(document).on("click", "#payment-grid tbody > tr", function() {
 		var paymentId = $(this).data('key');	
 		$.ajax({
 			url    : '<?= Url::to(['payment/update']); ?>?id=' + paymentId,
@@ -306,7 +306,7 @@ $logContent = $this->render('log', [
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#payment-grid', timeout : 6000});
+					$.pjax.reload({container : '#invoice-payment-listing', timeout : 6000});
 					payment.onEditableGridSuccess();
 					$('#payment-edit-modal').modal('hide');
 				}else

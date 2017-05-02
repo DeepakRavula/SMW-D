@@ -5,6 +5,7 @@ use common\models\Invoice;
 use common\models\PaymentMethod;
 use yii\bootstrap\ButtonGroup;
 use yii\helpers\Url;
+use yii\grid\GridView;
 
 ?>
 <style>
@@ -53,7 +54,7 @@ $columns = [
 			'format' => 'currency',
         ],
         [
-            'class' => kartik\grid\ActionColumn::className(),
+            'class' => 'yii\grid\ActionColumn',
             'template' => '{delete}',
             'buttons' => [
                 'delete' => function ($url, $model, $key) {
@@ -68,22 +69,19 @@ $columns = [
             ]
         ]
     ]; ?>
-	<?=
-    \kartik\grid\GridView::widget([
-        'dataProvider' => $invoicePaymentsDataProvider,
+<div>
+	<?php yii\widgets\Pjax::begin([
+		'id' => 'invoice-payment-listing',
+		'timeout' => 6000,
+	]) ?>
+	<?= GridView::widget([
 		'id' => 'payment-grid',
-        'pjax' => true,
-        'pjaxSettings' => [
-            'neverTimeout' => true,
-            'options' => [
-                'id' => 'invoice-payment-listing',
-            ],
-        ],
+        'dataProvider' => $invoicePaymentsDataProvider,
         'columns' => $columns,
-        'responsive' => false,
     ]);
     ?>
-
+<?php \yii\widgets\Pjax::end(); ?>	
+</div>
 <div class="col-md-9 m-t-10">  
     <?php $buttons = [];
     ?>
