@@ -20,6 +20,10 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+<script type="text/javascript" src="/plugins/qtip/jquery.qtip.js"></script>
+<script type="text/javascript" src="/plugins/jquery.qtip.min.js"></script>
+<link type="text/css" href="/plugins/qtip/jquery.qtip.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/qtip/jquery.qtip.min.css" rel='stylesheet' />
 <?php
     $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
     $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
@@ -185,6 +189,25 @@ $(document).ready(function() {
         eventClick: function(event) {
             $(location).attr('href', event.url);
         },
+		eventRender: function(event, element) {
+			element.qtip({
+				content: {
+					text: event.description,
+				},
+				position: {
+        			my: 'top left',
+					at: 'top center',
+					adjust: {
+						screen: true
+					},
+					viewport: $(window) // Keep it on-screen at all times if possible
+				},
+				style      : {
+					widget: true,
+					classes: 'ui-tooltip-rounded'
+			  }
+			});
+		}
     });
 });
 
@@ -348,7 +371,26 @@ function refreshCalendar(date) {
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
             }
-        }
+        },
+		eventRender: function(event, element) {
+			element.qtip({
+				content: {
+					text: event.description,
+				},
+				position: {
+        			my: 'top left',
+					at: 'top center',
+					adjust: {
+						screen: true
+					},
+					viewport: $(window) // Keep it on-screen at all times if possible
+				},
+				style      : {
+					widget: true,
+					classes: 'ui-tooltip-rounded'
+			  }
+			});
+		}
     });
 }
 </script>

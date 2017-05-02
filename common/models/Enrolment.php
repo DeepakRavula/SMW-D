@@ -70,7 +70,8 @@ class Enrolment extends \yii\db\ActiveRecord
             'studentIds' => 'Enrolled Student Name',
             'isDeleted' => 'Is Deleted',
             'paymentFrequencyId' => 'Payment Frequency',
-			'toEmailAddress' => 'To'
+			'toEmailAddress' => 'To',
+			'showAllEnrolments' => 'Show All'
         ];
     }
 
@@ -155,12 +156,39 @@ class Enrolment extends \yii\db\ActiveRecord
 
         return null;
     }
+    
+    public function getFirstUnPaidProFormaPaymentCycle()
+    {
+        foreach ($this->paymentCycles as $paymentCycle) {
+            if (!$paymentCycle->hasProFormaInvoice()) {
+                return $paymentCycle;
+            } else if (!$paymentCycle->proformaInvoice->isPaid()) {
+                return $paymentCycle;
+            }
+        }
+
+        return null;
+    }
 
     public function getUnInvoicedProFormaPaymentCycles()
     {
         $models = [];
         foreach ($this->paymentCycles as $paymentCycle) {
             if (!$paymentCycle->hasProFormaInvoice()) {
+                $models[] = $paymentCycle;
+            }
+        }
+
+        return $models;
+    }
+    
+    public function getUnPaidProFormaPaymentCycles()
+    {
+        $models = [];
+        foreach ($this->paymentCycles as $paymentCycle) {
+            if (!$paymentCycle->hasProFormaInvoice()) {
+                $models[] = $paymentCycle;
+            } else if (!$paymentCycle->proformaInvoice->isPaid()) {
                 $models[] = $paymentCycle;
             }
         }
@@ -254,22 +282,22 @@ class Enrolment extends \yii\db\ActiveRecord
 		return $paymentFrequency;
 	}
 
-    public function deleteUnInvoicedProformaPaymentCycles()
+    public function deleteUnPaidProformaPaymentCycles()
     {
-        foreach ($this->unInvoicedProFormaPaymentCycles as $model) {
+        foreach ($this->unPaidProFormaPaymentCycles as $model) {
             $model->delete();
         }
     }
 
     public function resetPaymentCycle()
     {
-        if (!empty($this->firstUnInvoicedProFormaPaymentCycle)) {
+        if (!empty($this->firstUnPaidProFormaPaymentCycle)) {
             $startDate = \DateTime::createFromFormat('Y-m-d',
-                $this->firstUnInvoicedProFormaPaymentCycle->startDate);
+                $this->firstUnPaidProFormaPaymentCycle->startDate);
             $enrolmentLastPaymentCycleEndDate = \DateTime::createFromFormat('Y-m-d',
                 $this->lastPaymentCycle->endDate);
             $interval = $startDate->diff($enrolmentLastPaymentCycleEndDate);
-            $this->deleteUnInvoicedProformaPaymentCycles();
+            $this->deleteUnPaidProformaPaymentCycles();
             for ($i = 0; $i <= $interval->format('%m') / $this->paymentsFrequency->frequencyLength; $i++) {
                 if ($i !== 0) {
                     $startDate     = $endDate->modify('First day of next month');

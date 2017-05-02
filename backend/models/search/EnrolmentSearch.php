@@ -11,6 +11,7 @@ use common\models\Enrolment;
  */
 class EnrolmentSearch extends Enrolment
 {
+    public $showAllEnrolments = false;
     /**
      * {@inheritdoc}
      */
@@ -18,6 +19,7 @@ class EnrolmentSearch extends Enrolment
     {
         return [
             [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
+			[['showAllEnrolments'], 'safe']
         ];
     }
 
@@ -39,7 +41,9 @@ class EnrolmentSearch extends Enrolment
      */
     public function search($params)
     {
-        $query = Enrolment::find();
+        $query = Enrolment::find()
+			->notDeleted()
+			->isConfirmed();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -49,12 +53,12 @@ class EnrolmentSearch extends Enrolment
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'courseId' => $this->courseId,
-            'studentId' => $this->studentId,
-            'isDeleted' => $this->isDeleted,
-        ]);
+		 if (! $this->showAllEnrolments) {
+			 $query->joinWith(['course' => function($query) {
+				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
+					->isConfirmed();
+			 }]);
+        }
 
         return $dataProvider;
     }

@@ -91,9 +91,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
-	    	['date', 'validateDate', 'on' => self::SCENARIO_CREATE],
             [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
-            [['date'], TeacherValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
 			
@@ -152,18 +150,6 @@ class Lesson extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\LessonQuery(get_called_class());
-    }
-
-    public function validateDate($attribute)
-    {
-        $date = (new \DateTime($this->date))->format('Y-m-d');
-        if($date < $this->enrolment->firstPaymentCycle->startDate ||
-            $date > $this->enrolment->lastPaymentCycle->endDate) {
-            return $this->addError($attribute, 'Lesson can not be scheduled outside of enrolment. '
-                . 'Please choose date within ' .
-                $this->enrolment->firstPaymentCycle->startDate . '-' .
-                $this->enrolment->lastPaymentCycle->endDate);
-        }
     }
 
     public function isScheduled()
@@ -570,9 +556,17 @@ class Lesson extends \yii\db\ActiveRecord
                 ['>=', 'endDate', $lessonDate->format('Y-m-d')]
             ])
             ->one();
-        $paymentCycleLesson                 = new PaymentCycleLesson();
-        $paymentCycleLesson->paymentCycleId = $paymentCycle->id;
-        $paymentCycleLesson->lessonId       = $this->id;
-        $paymentCycleLesson->save();
+		if(!empty($paymentCycle)) {
+			$paymentCycleLesson                 = new PaymentCycleLesson();
+			$paymentCycleLesson->paymentCycleId = $paymentCycle->id;
+			$paymentCycleLesson->lessonId       = $this->id;
+			$paymentCycleLesson->save();
+		} else {
+            $paymentCycle              = new PaymentCycle();
+			$paymentCycle->enrolmentId = $this->enrolment->id;
+			$paymentCycle->startDate   = (new \DateTime($this->date))->format('Y-m-1');
+            $paymentCycle->endDate     = (new \DateTime($this->date))->format('Y-m-t');
+			$paymentCycle->save();
+        }
     }
 }
