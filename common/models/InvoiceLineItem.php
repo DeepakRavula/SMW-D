@@ -200,42 +200,32 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             if ($this->invoice->isReversedInvoice()) {
                 $this->amount = -($this->amount);
                 $this->setScenario(self::SCENARIO_OPENING_BALANCE);
-            } else if ($this->invoice->isProFormaInvoice()) {
-                if ((int) $this->proFormaLesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                    $courseCount  = Lesson::find()
-                        ->where(['courseId' => $this->proFormaLesson->courseId])
-                        ->count('id');
-                    $this->amount = $this->proFormaLesson->course->program->rate / $courseCount;
-                } else {
-                    $this->amount = $this->proFormaLesson->enrolment->program->rate * $this->unit;
-                }
-            } else if ($this->invoice->isInvoice()) {
-                if ((int) $this->lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                    $courseCount  = Lesson::find()
-                        ->where(['courseId' => $this->lesson->courseId])
-                        ->count('id');
-                    $this->amount = $this->lesson->course->program->rate / $courseCount;
-                } else {
-                    $this->amount = $this->lesson->enrolment->program->rate * $this->unit;
-                }
             }
             $this->tax_rate = $this->amount * $this->taxType->taxCode->rate / 100;
         }
         return parent::beforeSave($insert);
     }
     
-    public function getCost()
+    public function computeTaxCode($taxStatus)
     {
-        $cost = 0;
-        $itemTypes = [ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON, ItemType::TYPE_GROUP_LESSON];
-        if(in_array($this->item_type_id,$itemTypes)) {
-            if((int)$this->item_type_id === ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON) {
-                $cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ? $this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate : null;
-            } else {
-                $cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate) ? $this->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate : null;
-            }
-        }
-        return $cost;
+        $today         = (new \DateTime())->format('Y-m-d H:i:s');
+        $locationId    = Yii::$app->session->get('location_id');
+        $locationModel = Location::findOne(['id' => $locationId]);
+        $taxCode = TaxCode::find()
+            ->joinWith(['taxStatus' => function ($query) use ($taxStatus) {
+                $query->where(['tax_status.id' => $taxStatus]);
+            }])
+            ->where(['<=', 'start_date', $today])
+            ->andWhere(['province_id' => $locationModel->province_id])
+            ->orderBy('start_date DESC')
+            ->one();
+            
+        return $taxCode;
+    }
+    
+    public function getTaxPercentage()
+    {
+        return $this->taxType->taxCode->rate;
     }
 
     public function afterSave($insert, $changedAttributes)

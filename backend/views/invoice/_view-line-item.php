@@ -60,8 +60,9 @@ use yii\widgets\ActiveForm;
         ],
         [
             'label' => 'Price',
+            'format' => 'currency',
 			'value' => function($data) {
-				return Yii::$app->formatter->asCurrency($data->amount - $data->getDiscountValue());	
+				return $data->netPrice;	
 			},
         ],
     ];
@@ -72,7 +73,7 @@ use yii\widgets\ActiveForm;
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:120px;'],
             'label' => 'Code',
             'value' => function ($data) {
-                return $data->itemType->itemCode;
+                return $data->code;
             },
         ],
         [
@@ -81,8 +82,9 @@ use yii\widgets\ActiveForm;
         ],
         [
             'label' => 'Price',
+            'format' => 'currency',
 			'value' => function($data) {
-				return Yii::$app->formatter->asCurrency($data->amount - $data->getDiscountValue());	
+				return $data->netPrice;	
 			},
         ],
     ];

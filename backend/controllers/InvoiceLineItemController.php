@@ -35,7 +35,7 @@ class InvoiceLineItemController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'apply-discount', 'update'],
+                'only' => ['edit', 'apply-discount', 'update', 'compute-net-price'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -52,26 +52,17 @@ class InvoiceLineItemController extends Controller
 
         return $rate;
     }
+    
     public function actionUpdate($id) 
     {
         $model = $this->findModel($id);
         $data = $this->renderAjax('/invoice/line-item/_form', [
             'model' => $model,
         ]);
-	$post = Yii::$app->request->post();
+        $post = Yii::$app->request->post();
         if ($model->load($post)) {
-            $taxStatus     = $post['InvoiceLineItem']['taxStatus'];
-            $today         = (new \DateTime())->format('Y-m-d H:i:s');
-            $locationId    = Yii::$app->session->get('location_id');
-            $locationModel = Location::findOne(['id' => $locationId]);
-            $taxCode = TaxCode::find()
-                ->joinWith(['taxStatus' => function ($query) use ($taxStatus) {
-                    $query->where(['tax_status.id' => $taxStatus]);
-                }])
-                ->where(['<=', 'start_date', $today])
-                ->andWhere(['province_id' => $locationModel->province_id])
-                ->orderBy('start_date DESC')
-                ->one();
+            $taxStatus         = $post['InvoiceLineItem']['taxStatus'];
+            $taxCode           = $model->computeTaxCode($taxStatus);
             $model->tax_status = $taxCode->taxStatus->name;
             $model->tax_type   = $taxCode->taxType->name;
             if($model->save()) {
@@ -221,5 +212,22 @@ class InvoiceLineItemController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    
+    public function actionComputeNetPrice($id)
+    {
+        $rawData = Yii::$app->request->rawBody;
+        $data = Json::decode($rawData, true);
+        $invoiceLineItem = InvoiceLineItem::findOne($id);
+        $invoiceLineItem->load($data, '');
+        $taxCode           = $invoiceLineItem->computeTaxCode($data['taxStatus']);
+        $invoiceLineItem->tax_status = $taxCode->taxStatus->name;
+        $invoiceLineItem->tax_type   = $taxCode->taxType->name;
+        $invoiceLineItem->tax_rate   = $invoiceLineItem->amount * $invoiceLineItem->taxType->taxCode->rate / 100;
+        return [
+            'netPrice' => $invoiceLineItem->netPrice,
+            'taxRate' => $invoiceLineItem->tax_rate,
+            'taxPercentage' => $invoiceLineItem->taxType->taxCode->rate
+        ];
     }
 }
