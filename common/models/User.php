@@ -189,6 +189,11 @@ class User extends ActiveRecord implements IdentityInterface
           ->viaTable('user_address', ['user_id' => 'id']);
     }
 
+    public function getCustomerPaymentPreference()
+    {
+        return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id']);
+    }
+    
     /**
      * @return \yii\db\ActiveQuery
      */

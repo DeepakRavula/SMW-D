@@ -13,14 +13,6 @@ use common\models\Program;
 
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 ?>
-<style>
-	.my-qtip .qtip-content{
-		font-size: 14px;
-		background-color: lightskyblue;
-		width: 200px;
-		height: 80px;
-	}
-	</style>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
@@ -205,15 +197,15 @@ $(document).ready(function() {
 				position: {
         			my: 'top left',
 					at: 'top center',
-					target: 'mouse',
 					adjust: {
 						screen: true
 					},
 					viewport: $(window) // Keep it on-screen at all times if possible
 				},
-				style: {
-					classes: 'my-qtip',
-				}
+				style      : {
+					widget: true,
+					classes: 'ui-tooltip-rounded'
+			  }
 			});
 		}
     });
@@ -388,15 +380,15 @@ function refreshCalendar(date) {
 				position: {
         			my: 'top left',
 					at: 'top center',
-					target: 'mouse',
 					adjust: {
 						screen: true
 					},
 					viewport: $(window) // Keep it on-screen at all times if possible
 				},
-				style: {
-					classes: 'my-qtip',
-				}
+				style      : {
+					widget: true,
+					classes: 'ui-tooltip-rounded'
+			  }
 			});
 		}
     });

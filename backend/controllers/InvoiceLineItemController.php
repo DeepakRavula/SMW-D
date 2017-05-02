@@ -17,6 +17,7 @@ use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use common\models\User;
 use common\models\InvoiceLog;
+use yii\helpers\Json;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -43,6 +44,14 @@ class InvoiceLineItemController extends Controller
         ];
     }
 
+	public function actionComputeTax()
+    {
+        $data = Yii::$app->request->rawBody;
+        $data = Json::decode($data, true);
+        $rate = $data['amount'] * ($data['tax'] / 100);
+
+        return $rate;
+    }
     public function actionUpdate($id) 
     {
         $model = $this->findModel($id);
