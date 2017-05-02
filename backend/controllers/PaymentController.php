@@ -260,8 +260,6 @@ class PaymentController extends Controller
     {
         $model = Payment::findOne(['id' => $id]);
 		$userModel = User::findOne(['id' => Yii::$app->user->id]);
-//		$model->on(Payment::EVENT_EDIT, [new TimelineEventPayment(), 'edit'], ['oldAttributes' => $model->getOldAttributes()]);
-//		$model->userName = $userModel->publicIdentity;
         $request = Yii::$app->request;
         if ($model->load($request->post())) {
 			if ($model->isAccountEntry()) {
@@ -290,7 +288,6 @@ class PaymentController extends Controller
     {
         $model->amount = $newAmount;
         $model->save();
-		$model->trigger(Payment::EVENT_EDIT);
         $result = [
             'status' => true,
         ];
