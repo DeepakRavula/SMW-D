@@ -5,7 +5,7 @@ namespace backend\models\search;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Enrolment;
-
+use Yii;
 /**
  * EnrolmentSearch represents the model behind the search form about `common\models\Enrolment`.
  */
@@ -41,7 +41,11 @@ class EnrolmentSearch extends Enrolment
      */
     public function search($params)
     {
+		$locationId = Yii::$app->session->get('location_id');
         $query = Enrolment::find()
+			->joinWith(['course' => function($query) use($locationId) {
+				$query->location($locationId);
+			}])
 			->notDeleted()
 			->isConfirmed();
 
@@ -54,10 +58,8 @@ class EnrolmentSearch extends Enrolment
         }
 
 		 if (! $this->showAllEnrolments) {
-			 $query->joinWith(['course' => function($query) {
 				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
-					->isConfirmed();
-			 }]);
+				->isConfirmed();
         }
 
         return $dataProvider;
