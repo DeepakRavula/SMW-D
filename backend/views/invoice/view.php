@@ -317,6 +317,24 @@ $logContent = $this->render('log', [
 			});
 			return false;
 	});
+	$(document).on('click', '#payment-delete-button', function (e) {
+		var paymentId = $('#payment-grid tbody > tr').data('key'); 
+		$.ajax({
+			url    : '<?= Url::to(['payment/delete']); ?>?id=' + paymentId,
+			type   : 'get',
+			success: function(response)
+			{
+				console.log(response);
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#invoice-payment-listing', timeout : 6000});
+					payment.onEditableGridSuccess();
+					$('#payment-edit-modal').modal('hide');
+				} 
+			}
+			});
+			return false;
+	});
 	$(document).on("click", '.line-item-cancel', function() {
 		$('#line-item-edit-modal').modal('hide');
 		return false;

@@ -33,7 +33,7 @@ class PaymentController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'credit-payment', 'update'],
+                'only' => ['edit', 'credit-payment', 'update', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -142,11 +142,14 @@ class PaymentController extends Controller
         } elseif ($model->isAccountEntry()) {
             $modelInvoice->lineItem->delete();
         }
-        $model->delete();
-        if($modelInvoice->save()) {
+        if($model->delete()) {
+        	$modelInvoice->save();
 			$model->trigger(Payment::EVENT_DELETE);
 		}
-        return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);
+		
+		return [
+			'status' => true,
+		];
     }
 
     /**
@@ -287,7 +290,7 @@ class PaymentController extends Controller
     {
         $model->amount = $newAmount;
         $model->save();
-			$model->trigger(Payment::EVENT_EDIT);
+		$model->trigger(Payment::EVENT_EDIT);
         $result = [
             'status' => true,
         ];

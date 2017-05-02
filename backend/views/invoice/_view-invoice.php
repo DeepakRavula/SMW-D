@@ -225,7 +225,7 @@ $(document).ready(function() {
 		$('.tax-compute').show();
 		$('.misc-tax-status').hide();
 		$('input[type="text"]').val('');
-		$('#invoicelineitem-tax_type').val('GST Only');
+		$('#invoicelineitem-tax_type').val('GST');
 		$('#invoicelineitem-tax_code').val('ON');
 		$('#invoicelineitem-tax').val('5.00');
 		$('#invoicelineitem-tax_status').val('3');

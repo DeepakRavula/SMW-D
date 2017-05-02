@@ -53,21 +53,21 @@ $columns = [
             'attribute' => 'amount',
 			'format' => 'currency',
         ],
-        [
-            'class' => 'yii\grid\ActionColumn',
-            'template' => '{delete}',
-            'buttons' => [
-                'delete' => function ($url, $model, $key) {
-                    return Html::a('<i class="fa fa-times" aria-hidden="true"></i>',
-                        ['payment/delete', 'id' => $model->id],
-                        ['data' => [
-                            'confirm' => 'Are you sure you want to delete this item?',
-                            'method' => 'post',
-                        ],
-                    ]);
-                },
-            ]
-        ]
+//        [
+//            'class' => 'yii\grid\ActionColumn',
+//            'template' => '{delete}',
+//            'buttons' => [
+//                'delete' => function ($url, $model, $key) {
+//                    return Html::a('<i class="fa fa-times" aria-hidden="true"></i>',
+//                        ['payment/delete', 'id' => $model->id],
+//                        ['data' => [
+//                            'confirm' => 'Are you sure you want to delete this item?',
+//                            'method' => 'post',
+//                        ],
+//                    ]);
+//                },
+//            ]
+//        ]
     ]; ?>
 <div>
 	<?php yii\widgets\Pjax::begin([
