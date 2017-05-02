@@ -21,13 +21,13 @@ use common\models\TaxStatus;
 ]); ?>
    <div class="row">
         <div class="col-md-4">
-            <?= $form->field($model, 'code')->textInput(['readOnly' => true]);?>
+            <?= $form->field($model, 'code')->textInput();?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($model, 'unit')->textInput(['readOnly' => true]);?>
+            <?= $form->field($model, 'unit')->textInput();?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($model, 'cost')->textInput(['readOnly' => true]);?>
+            <?= $form->field($model, 'cost')->textInput();?>
         </div>
         <div class="col-md-2">
             <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true])->label('Net Price');?>

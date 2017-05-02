@@ -20,8 +20,7 @@ use common\models\query\InvoiceLineItemQuery;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
     private $isRoyaltyExempted;
-    //public $taxStatus;
-
+   
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
     const DISCOUNT_FLAT            = 0;
     const DISCOUNT_PERCENTAGE      = 1;
@@ -35,8 +34,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public $userName;
     public $price;
-    public $cost;
-	public $tax;
+    public $tax;
+    
     /**
      * {@inheritdoc}
      */
@@ -69,7 +68,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             },
             ],
             [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 
-                'tax_status', 'tax_type', 'tax_rate', 'userName', 'discount', 'discountType'], 'safe'],
+                'tax_status', 'tax_type', 'tax_rate', 'userName', 'discount', 
+                'discountType', 'cost', 'code'], 'safe'],
         ];
     }
 
@@ -110,7 +110,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $code;
     }
     
-    public function getCode()
+    public function getItemCode()
     {
         return $this->itemType->getItemCode();
     }
@@ -197,6 +197,28 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
         
         if (!$insert) {
+            if ($this->invoice->isReversedInvoice()) {
+                $this->amount = -($this->amount);
+                $this->setScenario(self::SCENARIO_OPENING_BALANCE);
+            } else if ($this->invoice->isProFormaInvoice()) {
+                if ((int) $this->proFormaLesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+                    $courseCount  = Lesson::find()
+                        ->where(['courseId' => $this->proFormaLesson->courseId])
+                        ->count('id');
+                    $this->amount = $this->proFormaLesson->course->program->rate / $courseCount;
+                } else {
+                    $this->amount = $this->proFormaLesson->enrolment->program->rate * $this->unit;
+                }
+            } else if ($this->invoice->isInvoice()) {
+                if ((int) $this->lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+                    $courseCount  = Lesson::find()
+                        ->where(['courseId' => $this->lesson->courseId])
+                        ->count('id');
+                    $this->amount = $this->lesson->course->program->rate / $courseCount;
+                } else {
+                    $this->amount = $this->lesson->enrolment->program->rate * $this->unit;
+                }
+            }
             $this->tax_rate = $this->amount * $this->taxType->taxCode->rate / 100;
         }
         return parent::beforeSave($insert);

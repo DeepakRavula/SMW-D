@@ -560,6 +560,8 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
 			if($lesson->course->program->isPrivate()) {
+                $invoiceLineItem->cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ? 
+                    $this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate : 0.0;
 				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : null;
 				if($this->user->getNumberOfStudents() > 1) {
 					$discount = $this->user->familyDiscount($lesson->course->enrolment->paymentFrequencyId);	
@@ -569,6 +571,8 @@ class Invoice extends \yii\db\ActiveRecord
 				$invoiceLineItem->discount     = $customerDiscount + $discount;
 				$invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
 			} else {
+                $invoiceLineItem->cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate) ? 
+                $this->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate : 0.0;
 				$invoiceLineItem->discount     = 0;
 	            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
 			}
@@ -604,6 +608,7 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->amount       = $amount;
             $studentFullName               = $lesson->enrolment->student->fullName;
         }
+        $invoiceLineItem->code        = $invoiceLineItem->getItemCode();
         $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
         return $invoiceLineItem->save();

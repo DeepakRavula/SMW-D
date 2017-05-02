@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:120px;'],
             'label' => 'Code',
             'value' => function ($data) {
-                return $data->itemType->itemCode;
+                return $data->code;
             },
         ],
         [
@@ -54,18 +54,9 @@ use yii\widgets\ActiveForm;
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
-            'value' => function($data) {
-                $cost = 0;
-                $itemTypes = [ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON, ItemType::TYPE_GROUP_LESSON];
-                if(in_array($data->item_type_id,$itemTypes)) {
-                    if((int)$data->item_type_id === ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON) {
-                        $cost = !empty($data->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ? $data->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate : null;
-                    } else {
-                        $cost = !empty($data->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate) ? $data->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate : null;
-                    }
-                }
-                return $cost;
-            }
+            'value' => function ($data) {
+                return $data->cost;
+            },
         ],
         [
             'label' => 'Price',
