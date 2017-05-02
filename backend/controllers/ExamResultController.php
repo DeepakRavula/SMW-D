@@ -5,12 +5,14 @@ namespace backend\controllers;
 use Yii;
 use common\models\Student;
 use common\models\ExamResult;
+use common\models\User;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Url;
+use common\models\ExamResultLog;
 
 /**
  * ExamResultController implements the CRUD actions for ExamResult model.
@@ -26,6 +28,8 @@ class ExamResultController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            
+                       
         ];
     }
 
@@ -62,12 +66,15 @@ class ExamResultController extends Controller
      * @return mixed
      */
     public function actionCreate($studentId)
-    {
-		$response = Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
-        $model = new ExamResult();
-
-        if ($model->load(Yii::$app->request->post())) {
+    {   
+        
+        $response = Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;  
+                $model = new ExamResult();
+                $userModel = User::findOne(['id' => Yii::$app->user->id]);
+                $model->on(ExamResult::EVENT_CREATE, [new ExamResultLog(), 'create']);      
+        $model->userName = $userModel->publicIdentity;
+               if ($model->load(Yii::$app->request->post())) {
 			$model->studentId = $studentId;
 			if ($model->validate()) {
 	            $model->save();
@@ -81,8 +88,16 @@ class ExamResultController extends Controller
 					'errors' =>  $errors
 				];
 			}
+                        
+                        
+                        
+                        
 			return $response;
         }
+        
+             
+        
+        
     }
 
     /**
@@ -165,4 +180,8 @@ class ExamResultController extends Controller
 			'examResultDataProvider' => $examResultDataProvider,
         ]);
 	}
+        
+        
+        
+        
 }
