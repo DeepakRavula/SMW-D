@@ -65,6 +65,7 @@ $config = [
 			'classroom-unavailability/*',
 			'report/*',
 			'teacher-rate/*',
+            'customer-payment-preference/*'
 
             // The actions listed here will be allowed to everyone including guests.
             // So, 'admin/*' should not appear here in the production, of course.
