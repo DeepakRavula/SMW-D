@@ -111,7 +111,9 @@ class ExamResultController extends Controller
 		$response = Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
-
+ $userModel = User::findOne(['id' => Yii::$app->user->id]);
+                $model->on(ExamResult::EVENT_UPDATE, [new ExamResultLog(), 'edit']);      
+        $model->userName = $userModel->publicIdentity;
 		$data =  $this->renderAjax('//student/exam-result/_form', [
 			'model' => $model,
 		]);

@@ -48,11 +48,12 @@ class ExamResultLog extends ExamResult
 	}
 	
 	public function edit($event) {
-		$studentModel = $event->sender;
-		$student = Student::find(['id' => $studentModel->id])->asArray()->one();
-		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-			'data' => $student,
-			'message' => $studentModel->userName . ' changed {{' . $studentModel->fullName . '}}\'s date of birth to ' . Yii::$app->formatter->asDate($studentModel->birth_date),
+	$examresultModel = $event->sender;
+		$examresult = ExamResult::find(['id' => $examresultModel->id])->asArray()->one();
+		$studentModel=Student::findOne(['id' =>$examresultModel->studentId ]);
+                $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+			'data' => $examresult,
+			'message' => $examresultModel->userName.' Edited {{' .$studentModel->fullName . '}}\'s Exam Result',
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -65,7 +66,7 @@ class ExamResultLog extends ExamResult
 			$timelineEventStudent = new TimelineEventStudent();
 			$timelineEventStudent->studentId = $studentModel->id;
 			$timelineEventStudent->timelineEventId = $timelineEvent->id;
-			$timelineEventStudent->action = 'edit';
+			$timelineEventStudent->action = 'examresult';
 			$timelineEventStudent->save();
 		}
 	}
