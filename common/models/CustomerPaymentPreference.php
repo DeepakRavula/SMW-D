@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "customer_auto_payment".
+ * This is the model class for table "customer_payment_preference".
  *
  * @property string $id
  * @property string $userId
