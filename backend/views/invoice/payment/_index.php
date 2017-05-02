@@ -5,6 +5,7 @@ use common\models\Invoice;
 use common\models\PaymentMethod;
 use yii\bootstrap\ButtonGroup;
 use yii\helpers\Url;
+use yii\grid\GridView;
 
 ?>
 <style>
@@ -49,57 +50,38 @@ $columns = [
         },
         ],
         [
-            'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'amount',
-            'refreshGrid' => true,
-            'editableOptions' => function ($model, $key, $index) {
-                if ($model->isAccountEntry()) {
-                    $model->setScenario(Payment::SCENARIO_OPENING_BALANCE);
-                } elseif ($model->isCreditUsed()) {
-                    $model->setScenario(Payment::SCENARIO_CREDIT_USED);
-                }
-
-                return [
-                    'header' => 'Amount',
-                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-                    'formOptions' => ['action' => Url::to(['payment/edit', 'id' => $model->id])],
-                    'pluginEvents' => [
-                        'editableSuccess' => 'payment.onEditableGridSuccess',
-                    ],
-                    'asPopover' => false,
-                ];
-            },
+			'format' => 'currency',
         ],
-        [
-            'class' => kartik\grid\ActionColumn::className(),
-            'template' => '{delete}',
-            'buttons' => [
-                'delete' => function ($url, $model, $key) {
-                    return Html::a('<i class="fa fa-times" aria-hidden="true"></i>',
-                        ['payment/delete', 'id' => $model->id],
-                        ['data' => [
-                            'confirm' => 'Are you sure you want to delete this item?',
-                            'method' => 'post',
-                        ],
-                    ]);
-                },
-            ]
-        ]
+//        [
+//            'class' => 'yii\grid\ActionColumn',
+//            'template' => '{delete}',
+//            'buttons' => [
+//                'delete' => function ($url, $model, $key) {
+//                    return Html::a('<i class="fa fa-times" aria-hidden="true"></i>',
+//                        ['payment/delete', 'id' => $model->id],
+//                        ['data' => [
+//                            'confirm' => 'Are you sure you want to delete this item?',
+//                            'method' => 'post',
+//                        ],
+//                    ]);
+//                },
+//            ]
+//        ]
     ]; ?>
-	<?=
-    \kartik\grid\GridView::widget([
+<div>
+	<?php yii\widgets\Pjax::begin([
+		'id' => 'invoice-payment-listing',
+		'timeout' => 6000,
+	]) ?>
+	<?= GridView::widget([
+		'id' => 'payment-grid',
         'dataProvider' => $invoicePaymentsDataProvider,
-        'pjax' => true,
-        'pjaxSettings' => [
-            'neverTimeout' => true,
-            'options' => [
-                'id' => 'invoice-payment-listing',
-            ],
-        ],
         'columns' => $columns,
-        'responsive' => false,
     ]);
     ?>
+<?php \yii\widgets\Pjax::end(); ?>	
+</div>
 <div class="col-md-9 m-t-10">  
     <?php $buttons = [];
     ?>
