@@ -20,8 +20,7 @@ use common\models\TimelineEventStudent;
  * @property int $customer_id
  */
 class ExamResultLog extends ExamResult
-{
-	
+{	
 	public function create($event) {
             
 		$examresultModel = $event->sender;
@@ -29,7 +28,7 @@ class ExamResultLog extends ExamResult
 		$studentModel=Student::findOne(['id' =>$examresultModel->studentId ]);
                 $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $examresult,
-			'message' => $examresultModel->userName.' created new Evaluation for {{' .$studentModel->fullName . '}}',
+			'message' => $examresultModel->userName.' created new Exam Result for {{' .$studentModel->fullName . '}}',
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -42,7 +41,7 @@ class ExamResultLog extends ExamResult
 			$timelineEventStudent = new TimelineEventStudent();
 			$timelineEventStudent->studentId = $studentModel->id;
 			$timelineEventStudent->timelineEventId = $timelineEvent->id;
-			$timelineEventStudent->action = 'examresult';
+			$timelineEventStudent->action = 'create';
 			$timelineEventStudent->save();
 		}
 	}
@@ -66,8 +65,38 @@ class ExamResultLog extends ExamResult
 			$timelineEventStudent = new TimelineEventStudent();
 			$timelineEventStudent->studentId = $studentModel->id;
 			$timelineEventStudent->timelineEventId = $timelineEvent->id;
-			$timelineEventStudent->action = 'examresult';
+			$timelineEventStudent->action = 'edit';
 			$timelineEventStudent->save();
 		}
 	}
+      
+        
+        public function deleteItem($event) {
+	$examresultModel = $event->sender;
+		$examresult = ExamResult::find(['id' => $examresultModel->id])->asArray()->one();
+		$studentModel=Student::findOne(['id' =>$examresultModel->studentId ]);
+                $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+			'data' => $examresult,
+			'message' => $examresultModel->userName.' deleted {{' .$studentModel->fullName . '}}\'s Exam Result',
+		]));
+		if($timelineEvent) {
+			$timelineEventLink = new TimelineEventLink();
+			$timelineEventLink->timelineEventId = $timelineEvent->id;
+			$timelineEventLink->index = $studentModel->fullName;
+			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->path = Url::to(['/student/view', 'id' => $studentModel->id]);
+			$timelineEventLink->save();
+
+			$timelineEventStudent = new TimelineEventStudent();
+			$timelineEventStudent->studentId = $studentModel->id;
+			$timelineEventStudent->timelineEventId = $timelineEvent->id;
+			$timelineEventStudent->action = 'delete';
+			$timelineEventStudent->save();
+		}
+	}
+      
+        
+        
+        
+        
 }

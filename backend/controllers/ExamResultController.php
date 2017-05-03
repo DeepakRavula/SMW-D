@@ -142,7 +142,11 @@ class ExamResultController extends Controller
         $response->format = Response::FORMAT_JSON;
 		
 		$model = $this->findModel($id);
+               	$model->on(ExamResult::EVENT_DELETE, [new ExamResultLog(), 'deleteItem']);
+		$user = User::findOne(['id' => Yii::$app->user->id]);
+		$model->userName = $user->publicIdentity;
         if($model->delete()) {
+            $model->trigger(ExamResult::EVENT_DELETE);
 			$url = Url::to(['student/view', 'id' => $model->studentId, '#' => 'exam-result']);
         	return [
 				'status' => true,
