@@ -95,12 +95,24 @@ $privatePrograms = ArrayHelper::map(Program::find()
 		<div class="clearfix"></div>
         <div id="course-rate-estimation">
         	<hr class="default-hr">
-				<p class="text-info text-center">
-				<strong>What's that per month?</strong></p>
-            	<div class="col-md-4"></div>
-			<div class="smw-box col-md-offset-4 col-md-4 m-l-0 m-b-30 course-monthly-estimate text-center">
-				<div>
-			Four <span id="duration"></span>min Lessons @ $<span id="rate-30-min"></span> each = $<span id="rate-month-30-min"></span>/mn
+				<div class="col-md-6">
+					<p class="text-info">
+					<strong>What's that per month?</strong></p>
+					<div class="col-md-4"></div>
+				<div class="smw-box col-md-offset-4 col-md-8 m-l-0 m-b-30 course-monthly-estimate text-center">
+					<div>
+				Four <span id="duration"></span>min Lessons @ $<span id="rate-30-min"></span> each = $<span id="rate-month-30-min"></span>/mn
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<p class="text-info">
+					<strong>After Discount</strong></p>
+					<div class="col-md-6"></div>
+				<div class="smw-box col-md-offset-4 col-md-8 m-l-0 m-b-30 course-monthly-estimate text-center">
+					<div>
+				Four <span id="duration"></span>min Lessons @ $<span id="discount-rate"></span> each = $<span id="discount-rate-month"></span>/mn
+						</div>
 					</div>
 				</div>
 			</div>
@@ -122,7 +134,7 @@ $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s'
 $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <script>
-	function rateEstimation(duration, programRate) {
+	function rateEstimation(duration, programRate, discount) {
 		var timeArray = duration.split(':');
     	var hours = parseInt(timeArray[0]);
     	var minutes = parseInt(timeArray[1]);
@@ -133,9 +145,18 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 		$('#rate-30-min').text(amount);
 		var ratePerMonth30 = ((amount) * 4).toFixed(2);
 		$('#rate-month-30-min').text(ratePerMonth30);
+		if(discount === '') {
+			var discountedRate = amount; 
+			var discountedMonthlyRate = ratePerMonth30; 
+		} else {
+			var discountedRate = (amount * (discount / 100)).toFixed(2);
+			var discountedMonthlyRate = (discountedRate * 4).toFixed(2); 
+		}
+		$('#discount-rate').text(discountedRate);
+		$('#discount-rate-month').text(discountedMonthlyRate);
 		$('#course-rate-estimation').show();
 	}
-	function fetchProgram(duration, programId) {
+	function fetchProgram(duration, programId, discount) {
 		$.ajax({
 			url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?id=' + programId,
 			type: 'get',
@@ -143,7 +164,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 			success: function (response)
 			{
 				programRate = response;
-				rateEstimation(duration,programRate);
+				rateEstimation(duration,programRate, discount);
 			}
 		});
 	}
@@ -152,13 +173,23 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 		$(document).on('change', '#course-programid', function(){
 			var duration = $('#course-duration').val();
 			var programId = $('#course-programid').val();
-			fetchProgram(duration, programId);
+			var discount = $('#course-discount').val();
+			fetchProgram(duration, programId, discount);
 		});
 		$(document).on('change', '#course-duration', function(){
 			var duration = $('#course-duration').val();
 			var programId = $('#course-programid').val();
-			if (duration && programId) {
-				fetchProgram(duration, programId);
+			var discount = $('#course-discount').val();
+			if (duration && programId || discount) {
+				fetchProgram(duration, programId, discount);
+			}
+		});
+		$(document).on('change', '#course-discount', function(){
+			var duration = $('#course-duration').val();
+			var programId = $('#course-programid').val();
+			var discount = $('#course-discount').val();
+			if (duration && programId || discount) {
+				fetchProgram(duration, programId, discount);
 			}
 		});
 		$('#stepwizard_step1_next').click(function() {
