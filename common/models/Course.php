@@ -5,8 +5,7 @@ namespace common\models;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\Lesson;
-use IntervalTree\IntervalTree;
-use common\components\intervalTree\DateRangeInclusive;
+use common\models\EnrolmentDiscount;
 use Yii;
 /**
  * This is the model class for table "course".
@@ -32,6 +31,7 @@ class Course extends \yii\db\ActiveRecord
     public $studentId;
     public $paymentFrequency;
 	public $rescheduleBeginDate;
+	public $discount;
 
     /**
      * {@inheritdoc}
@@ -48,6 +48,7 @@ class Course extends \yii\db\ActiveRecord
     {
         return [
             [['programId', 'teacherId'], 'required'],
+			[['discount'], 'safe'],
             [['day', 'fromTime'], 'safe'],
             [['startDate', 'duration'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
             ['endDate', 'required', 'on' => self::SCENARIO_GROUP_COURSE],
@@ -238,7 +239,14 @@ class Course extends \yii\db\ActiveRecord
             $enrolmentModel->courseId = $this->id;
             $enrolmentModel->studentId = $this->studentId;
             $enrolmentModel->paymentFrequencyId = $this->paymentFrequency;
-            $enrolmentModel->save();
+            if($enrolmentModel->save()) {
+				if(!empty($this->discount)) {
+					$enrolmentDiscount = new EnrolmentDiscount();
+					$enrolmentDiscount->enrolmentId = $enrolmentModel->id;
+					$enrolmentDiscount->discount = $this->discount;	
+					$enrolmentDiscount->save();
+				}
+			}
         }
         if ((int) $this->program->type === Program::TYPE_GROUP_PROGRAM) {
             $interval = new \DateInterval('P1D');

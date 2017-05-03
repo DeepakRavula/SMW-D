@@ -561,7 +561,8 @@ class Invoice extends \yii\db\ActiveRecord
         } else {
 			if($lesson->course->program->isPrivate()) {
 				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
-				$invoiceLineItem->discount     = $customerDiscount;
+				$enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0; 
+				$invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
 				$invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
 			} else {
 				$invoiceLineItem->discount     = 0;

@@ -85,22 +85,27 @@ $privatePrograms = ArrayHelper::map(Program::find()
             ?>
         </div>
         <div class="clear-fix"></div>
-        <div class="col-md-12">
-            <?= $form->field($model, 'paymentFrequency')->radioList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')) ?>
+        <div class="col-md-4">
+            <?= $form->field($model, 'paymentFrequency')->dropdownList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')) ?>
 	    </div>
-        <div id="course-rate-estimation" class="col-md-12">
-        <hr class="default-hr">
-			<p class="text-info text-center">
-			<strong>What's that per month?</strong></p>
-            <div class="col-md-4"></div>
+		<div class="col-md-2">
+            <?= $form->field($model, 'discount')->textInput() ?>
+	    </div>
+		<div class="col-md-1 p-20">%</div>
+		<div class="clearfix"></div>
+        <div id="course-rate-estimation">
+        	<hr class="default-hr">
+				<p class="text-info text-center">
+				<strong>What's that per month?</strong></p>
+            	<div class="col-md-4"></div>
 			<div class="smw-box col-md-offset-4 col-md-4 m-l-0 m-b-30 course-monthly-estimate text-center">
 				<div>
 			Four <span id="duration"></span>min Lessons @ $<span id="rate-30-min"></span> each = $<span id="rate-month-30-min"></span>/mn
+					</div>
 				</div>
 			</div>
-		</div>
-	</div>
-</div>
+					</div>
+				</div>
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <?php
