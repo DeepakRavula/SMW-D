@@ -26,100 +26,124 @@ $this->title = 'New Enrolment';
 </div>
 <div class="container">
 	<?php $form = ActiveForm::begin(); ?>
-		<div class="form-group">
-			<label for="firstName" class="col-sm-3 control-label">Program</label>
-			<div class="col-sm-7">
+		 <div class="form-group">
+			<label class="col-sm-2 control-label">Program</label>
+			<div class="col-sm-4">
 				<?php
             echo $form->field($model, 'programId')->dropDownList(
                 ArrayHelper::map(Program::find()
 					->active()
-					->all(), 'id', 'name'), ['prompt' => 'Select..'])->label(false);
+					->all(), 'id', 'name'))->label(false);
             ?>
 			</div>
 		</div>
-		<div class="form-group">
-			<label class="col-sm-3 control-label"></label>
-			<div class="col-sm-9">
-				<input type="email" id="email" placeholder="Email" class="form-control">
-			</div>
+	<div class="clearfix"></div>
+	 <div class="form-group">
+		<label  class="col-sm-2 control-label">Length of Lessons</label>
+		<div class="col-sm-3">
+			<?php
+            echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+                [
+                'options' => ['id' => 'course-duration'],
+                'pluginOptions' => [
+                    'showMeridian' => false,
+                    'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+                ],
+            ])->label(false);
+            ?>
 		</div>
-		<div class="form-group">
-			<label for="password" class="col-sm-3 control-label">Password</label>
-			<div class="col-sm-9">
-				<input type="password" id="password" placeholder="Password" class="form-control">
-			</div>
+		<label  class="col-sm-2 control-label">Check The Schedule</label>
+		<div class="col-sm-3">
+			<?php
+            echo $form->field($model, 'startDate')->widget(DatePicker::classname(),
+                [
+                'type' => DatePicker::TYPE_BUTTON,
+                'options' => [
+                    'value' => (new \DateTime())->format('d-m-Y'),
+                ],
+                'pluginOptions' => [
+                    'format' => 'dd-mm-yyyy',
+                    'todayHighlight' => true,
+                    'autoclose' => true,
+                ],
+            ])->label(false);
+            ?>
 		</div>
-		<div class="form-group">
-			<label for="birthDate" class="col-sm-3 control-label">Date of Birth</label>
-			<div class="col-sm-9">
-				<input type="date" id="birthDate" class="form-control">
-			</div>
+	</div>
+	<div class="clearfix"></div>
+	<div class="form-group">
+		<label  class="col-sm-2 control-label p-10">Teacher</label>
+		<div class="col-sm-5">
+		Teacher Name	
 		</div>
-		<div class="form-group">
-			<label for="country" class="col-sm-3 control-label">Country</label>
-			<div class="col-sm-9">
-				<select id="country" class="form-control">
-					<option>Afghanistan</option>
-					<option>Bahamas</option>
-					<option>Cambodia</option>
-					<option>Denmark</option>
-					<option>Ecuador</option>
-					<option>Fiji</option>
-					<option>Gabon</option>
-					<option>Haiti</option>
-				</select>
-			</div>
-		</div> <!-- /.form-group -->
-		<div class="form-group">
-			<label class="control-label col-sm-3">Gender</label>
-			<div class="col-sm-6">
-				<div class="row">
-					<div class="col-sm-4">
-						<label class="radio-inline">
-							<input type="radio" id="femaleRadio" value="Female">Female
-						</label>
-					</div>
-					<div class="col-sm-4">
-						<label class="radio-inline">
-							<input type="radio" id="maleRadio" value="Male">Male
-						</label>
-					</div>
-					<div class="col-sm-4">
-						<label class="radio-inline">
-							<input type="radio" id="uncknownRadio" value="Unknown">Unknown
-						</label>
-					</div>
-				</div>
-			</div>
-		</div> <!-- /.form-group -->
-		<div class="form-group">
-			<label class="control-label col-sm-3">Meal Preference</label>
-			<div class="col-sm-9">
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" id="calorieCheckbox" value="Low calorie">Low calorie
-					</label>
-				</div>
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" id="saltCheckbox" value="Low salt">Low salt
-					</label>
-				</div>
-			</div>
-		</div> <!-- /.form-group -->
-		<div class="form-group">
-			<div class="col-sm-9 col-sm-offset-3">
-				<div class="checkbox">
-					<label>
-						<input type="checkbox">I accept <a href="#">terms</a>
-					</label>
-				</div>
-			</div>
-		</div> <!-- /.form-group -->
-		<div class="form-group">
-			<div class="col-sm-9 col-sm-offset-3">
-				<button type="submit" class="btn btn-primary btn-block">Register</button>
-			</div>
+	</div>
+	<div class="clearfix"></div>
+	<div class="form-group">
+		<label  class="col-sm-2 control-label p-10">Day, Time & Duration</label>
+		<div class="col-sm-5">
+		Tuesdays @ 5.00pm	
 		</div>
+	</div>
+	<div class="clearfix"></div>
+	<div class="form-group">
+		<label  class="col-sm-2 control-label">Payment Frequency</label>
+		<div class="col-sm-3">
+			<?= $form->field($model, 'paymentFrequency')->dropDownList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'))->label(false) ?>	
+		</div>
+	</div>
+	<div class="clearfix"></div>
+	<div class="form-group">
+		<label  class="col-sm-2 control-label">Discount</label>
+		<div class="col-sm-1">
+		<?= $form->field($model, 'discount')->textInput()->label(false);?>
+		</div>
+		<span class="col-sm-1">%</span>
+	</div>
+	<div class="clearfix"></div>
+	<div class="form-group">
+		<label  class="col-sm-2 control-label p-10">Rate Per Lesson</label>
+		<div class="col-sm-5">
+			
+		</div>
+	</div>
+	<div class="clearfix"></div>
+	<div class="form-group">
+		<label  class="col-sm-2 control-label p-10">Rate Per Month</label>
+		<div class="col-sm-5">
+			
+		</div>
+	</div>
+	<div class="clearfix"></div>
 		<?php ActiveForm::end(); ?>
 </div> <!-- ./container -->
+<script>
+function rateEstimation(duration, programRate) {
+		var timeArray = duration.split(':');
+    	var hours = parseInt(timeArray[0]);
+    	var minutes = parseInt(timeArray[1]);
+		var unit = ((hours * 60) + (minutes)) / 60;
+		var duration = (hours * 60) + minutes;
+		$('#duration').text(duration);
+		var amount = (programRate * unit).toFixed(2);
+		$('#rate-30-min').text(amount);
+		var ratePerMonth30 = ((amount) * 4).toFixed(2);
+		$('#rate-month-30-min').text(ratePerMonth30);
+		$('#course-rate-estimation').show();
+	}
+	function fetchProgram(duration, programId) {
+		$.ajax({
+			url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?id=' + programId,
+			type: 'get',
+			dataType: "json",
+			success: function (response)
+			{
+				programRate = response;
+				rateEstimation(duration,programRate);
+			}
+		});
+	}
+$(document).ready(function(){
+	var duration = $('#course-duration').val();
+	var programId = $('#course-programid').val();	
+});
+</script>

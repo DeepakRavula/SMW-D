@@ -28,10 +28,11 @@ class Course extends \yii\db\ActiveRecord
 	const SCENARIO_GROUP_COURSE = 'group-course';
 	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
 
-        public $lessonStatus;
+    public $lessonStatus;
     public $studentId;
     public $paymentFrequency;
 	public $rescheduleBeginDate;
+	public $discount;
 
     /**
      * {@inheritdoc}
@@ -58,7 +59,7 @@ class Course extends \yii\db\ActiveRecord
             },'except' => self::SCENARIO_EDIT_ENROLMENT 
             ],
             [['startDate', 'duration', 'endDate'], 'string'],
-            [['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
+            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'discount'], 'safe'],
             ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],

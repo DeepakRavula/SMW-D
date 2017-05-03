@@ -262,6 +262,14 @@ class Enrolment extends \yii\db\ActiveRecord
         }
     }
 
+	public static function getPaymentFrequencies()
+    {
+        return [
+            self::STATUS_COMPLETED => Yii::t('common', 'Completed'),
+            self::STATUS_SCHEDULED => Yii::t('common', 'Scheduled'),
+        ];
+    }
+	
     public function getPaymentFrequency()
 	{
 		$paymentFrequency = null;
