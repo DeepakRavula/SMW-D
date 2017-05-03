@@ -13,14 +13,14 @@ use yii\helpers\ArrayHelper;
 /* @var $permissions yii\rbac\Permission[] */
 
 $js = '
-jQuery(".dynamicform_qualification").on("afterInsert", function(e, item) {
-    jQuery(".dynamicform_qualification .panel-title-qualification").each(function(index) {
+jQuery(".group_dynamicform_qualification").on("afterInsert", function(e, item) {
+    jQuery(".group_dynamicform_qualification .panel-title-qualification").each(function(index) {
         jQuery(this).html("Qualification: " + (index + 1))
     });
 });
 
-jQuery(".dynamicform_qualification").on("afterDelete", function(e) {
-    jQuery(".dynamicform_qualification .panel-title-qualification").each(function(index) {
+jQuery(".group_dynamicform_qualification").on("afterDelete", function(e) {
+    jQuery(".group_dynamicform_qualification .panel-title-qualification").each(function(index) {
         jQuery(this).html("Qualification: " + (index + 1))
     });
 });
@@ -30,13 +30,13 @@ $this->registerJs($js);
 ?>
 <?php
 DynamicFormWidget::begin([
-	'widgetContainer' => 'dynamicform_qualification', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
-	'widgetBody' => '.qualification-container-items', // required: css class selector
-	'widgetItem' => '.qualification-item', // required: css class
+	'widgetContainer' => 'group_dynamicform_qualification', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
+	'widgetBody' => '.group-qualification-container-items', // required: css class selector
+	'widgetItem' => '.group-qualification-item', // required: css class
 	'limit' => 10, // the maximum times, an element can be cloned (default 999)
 	'min' => 0, // 0 or 1 (default 1)
-	'insertButton' => '.qualification-add-item', // css class
-	'deleteButton' => '.qualification-remove-item', // css class
+	'insertButton' => '.group-qualification-add-item', // css class
+	'deleteButton' => '.group-qualification-remove-item', // css class
 	'model' => $qualificationModels[0],
 	'formId' => 'dynamic-form',
 	'formFields' => [
@@ -49,15 +49,15 @@ DynamicFormWidget::begin([
 <div class="row-fluid">
 	<div class="col-md-12">
 		<h4 class="pull-left m-r-20">Group Programs</h4>
-		<a href="#" class="add-qualification text-add-new qualification-add-item"><i class="fa fa-plus"></i></a>
+		<a href="#" class="add-group-qualification text-add-new group-qualification-add-item"><i class="fa fa-plus"></i></a>
 		<div class="clearfix"></div>
 	</div>
-	<div class="qualification-container-items qualification-fields form-well">
+	<div class="group-qualification-container-items group-qualification-fields form-well">
 		<?php foreach ($qualificationModels as $index => $qualificationModel): ?>
-			<div class="item-block qualification-item"><!-- widgetBody -->
+			<div class="item-block group-qualification-item"><!-- widgetBody -->
 				<h4>
 					<span class="panel-title-qualification pull-left">Qualification: <?= ($index + 1) ?></span>
-					<button type="button" class="pull-right qualification-remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
+					<button type="button" class="pull-right group-qualification-remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
 					<div class="clearfix"></div>
 				</h4>
 				<?php

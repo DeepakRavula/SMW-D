@@ -322,22 +322,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			$('.add-address').addClass('add-item');
 		}, 100);
 	});
-	$('.add-qualification').bind('click', function () {
-		$('.qualification-fields').show();
-		//$('#group').hide();
-		$('.hr-quali').hide();
-		setTimeout(function () {
-			$('.add-qualification').addClass('add-item');
-		}, 100);
-	});
-	$('.add-group-qualification').bind('click', function () {
-		$('.qualification-fields').show();
-	//	$('#private').hide();
-		$('.hr-quali').hide();
-		setTimeout(function () {
-			$('.add-qualification').addClass('add-item');
-		}, 100);
-	});
+	
 	$('.add-phone').bind('click', function () {
 		$('.phone-fields').show();
 		$('.hr-ph').hide();
@@ -348,7 +333,16 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');
   	});
-	$(document).ready(function(){
+$(document).ready(function(){
+	$(document).on('click', '.add-group-qualification', function () {
+		$('.group-qualification-fields').show();
+		$('.hr-quali').hide();
+	});
+	$(document).on('click', '.add-qualification', function () {
+		$('.qualification-fields').show();
+		$('.hr-quali').hide();
+	});
+	
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function (event) {
         if(event.currentTarget.text === 'Availability') {
             $('#availability-calendar').fullCalendar('render');

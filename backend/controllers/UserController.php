@@ -486,7 +486,7 @@ class UserController extends Controller
         $addressModels = [new Address()];
         $phoneNumberModels = [new PhoneNumber()];
 		$qualificationModels = [new Qualification()];
-		
+	//print_r($_POST);die;	
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
         if ($model->roles === User::ROLE_STAFFMEMBER) {
