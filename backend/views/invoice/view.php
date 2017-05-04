@@ -324,7 +324,6 @@ $logContent = $this->render('log', [
 			type   : 'get',
 			success: function(response)
 			{
-				console.log(response);
 			   if(response.status)
 			   {
 					$.pjax.reload({container : '#invoice-payment-listing', timeout : 6000});
