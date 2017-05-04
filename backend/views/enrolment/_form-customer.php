@@ -2,6 +2,12 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+use common\models\PhoneNumber;
+use common\models\Address;
+use yii\helpers\ArrayHelper;
+use common\models\City;
+use common\models\Country;
+use common\models\Province;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
@@ -21,63 +27,73 @@ $this->title = 'New Enrolment';
 	<?php $form = ActiveForm::begin(); ?>
 		 <div class="form-group">
 			<label class="col-sm-2 control-label">Name</label>
-			<div class="col-sm-4">
+			<div class="col-sm-3">
 				<?php
-            echo $form->field($userProfile, 'firstname')->textInput(['placeholder' => 'First Name']); ?>
+            echo $form->field($userProfile, 'firstname')->textInput(['placeholder' => 'First Name'])->label(false); ?>
 			</div>
-			<div class="col-sm-4">
+			<div class="col-sm-3">
 				<?php
-            echo $form->field($userProfile, 'lastname')->textInput(['placeholder' => 'Last Name']); ?>
+            echo $form->field($userProfile, 'lastname')->textInput(['placeholder' => 'Last Name'])->label(false); ?>
 			</div>
 		</div>
 	<div class="clearfix"></div>
 	 <div class="form-group">
 		<label  class="col-sm-2 control-label">Email</label>
-		<div class="col-sm-3">
-			
+		<div class="col-sm-6">
+		<?php
+            echo $form->field($model, 'email')->textInput(['placeholder' => 'Email'])->label(false); ?>	
 		</div>
+		</div>
+	<div class="clearfix"></div>
+	 <div class="form-group">
+		<label  class="col-sm-2 control-label">Phone Number</label>
+		<div class="col-sm-3">
+			<?= $form->field($phoneModel, 'number')->textInput(['placeholder' => 'Number'])->label(false); ?>
+		</div>
+		<div class="col-sm-1">
+			<?= $form->field($phoneModel, 'extension')->textInput(['placeholder' => 'Ext'])->label(false); ?>
+		</div>
+		<div class="col-sm-2">
+			<?= $form->field($phoneModel, 'label_id')->dropDownList(PhoneNumber::phoneLabels())->label(false);; ?>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+	<div class="form-group">
+		<label  class="col-sm-2 control-label">Address</label>
+		<div class="col-sm-3">
+			<?= $form->field($addressModel, 'label')->dropDownList(Address::labels())->label(false); ?>
+		</div>	
+	</div>	
+	<div class="clearfix"></div>
+	<div class="form-group">
 		<label  class="col-sm-2 control-label"></label>
-		<div class="col-sm-1">
-            <span class="fa fa-calendar fa-4"></span>
-		</div>
-	</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Teacher</label>
-		<div class="col-sm-5">
-		</div>
-	</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Day, Time & Duration</label>
-		<div class="col-sm-5">
-		Tuesdays @ 5.00pm	
-		</div>
-	</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label">Payment Frequency</label>
 		<div class="col-sm-3">
-				
+			<?= $form->field($addressModel, 'address')->textInput(['placeholder' => 'Street Address'])->label(false); ?>
+		</div>	
+	</div>	
+	<div class="clearfix"></div>
+	<div class="form-group">
+		<label  class="col-sm-2 control-label"></label>
+		<div class="col-sm-3">
+			<?= $form->field($addressModel, 'city_id')->dropDownList(
+                ArrayHelper::map(City::find()->all(), 'id', 'name'));?>
+		</div>	
+		<div class="col-sm-3">
+			<?= $form->field($addressModel, 'province_id')->dropDownList(
+                ArrayHelper::map(Province::find()->all(), 'id', 'name')); ?>
 		</div>
-	</div>
+	</div>	
 	<div class="clearfix"></div>
 	<div class="form-group">
-		<label  class="col-sm-2 control-label">Discount</label>
-		<div class="col-sm-1">
+		<label  class="col-sm-2 control-label"></label>
+		<div class="col-sm-3">
+			<?= $form->field($addressModel, 'country_id')->dropDownList(
+                ArrayHelper::map(Country::find()->all(), 'id', 'name'));?>
+		</div>	
+		<div class="col-sm-3">
+			<?= $form->field($addressModel, 'postal_code')->textInput(['placeholder' => 'Postal Code'])->label(false); ?>
 		</div>
-		<span class="col-sm-1">%</span>
-	</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Rate Per Lesson</label>
-		<div class="col-sm-5" id="rate"></div>
-	</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Rate Per Month</label>
-		<div class="col-sm-5" id="monthly-rate"></div>
-	</div>
+	</div>	
 	<div class="clearfix"></div>
 		<?php ActiveForm::end(); ?>
 </div> <!-- ./container -->
