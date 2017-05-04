@@ -586,7 +586,16 @@ class UserController extends Controller
 
         $request = Yii::$app->request;
         $response = Yii::$app->response;
+		$teacherQualifications = $request->post('Qualification');
         if ($model->load($request->post())) {
+            $oldQualificationIds = ArrayHelper::map($qualificationModels, 'id', 'id');
+			$qualificationModels = [];
+			foreach($teacherQualifications as $teacherQualification) {
+				foreach($teacherQualification as $qualification) {
+					$qualificationModels[] = $qualification;
+				}
+			}
+			$newQualificationIds = ArrayHelper::map($qualificationModels, 'id', 'id');
             $oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
             $addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
             Model::loadMultiple($addressModels, $request->post());
