@@ -60,11 +60,12 @@ class CustomerDiscountController extends Controller
      */
     public function actionCreate($id)
     {
-        $model = new CustomerDiscount();
-
-        if ($model->load(Yii::$app->request->post())) {
-			$model->customerId = $id;
-			$model->save();
+		$customerDiscountModel = CustomerDiscount::findOne(['customerId' => $id]);
+		if(empty($customerDiscountModel)) {
+        	$customerDiscountModel = new CustomerDiscount();
+			$customerDiscountModel->customerId = $id;
+		}	
+        if ($customerDiscountModel->load(Yii::$app->request->post()) && $customerDiscountModel->save()) {
             	return $this->redirect(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $id, '#' => 'discount']);
         }
     }
