@@ -86,9 +86,9 @@ class ExamResult extends \yii\db\ActiveRecord
 			$this->trigger(self::EVENT_CREATE);
 		} 
                 
-                if($changedAttributes) {
+                
 			$this->trigger(self::EVENT_UPDATE);
-		} 
+		
 		return parent::afterSave($insert, $changedAttributes);
 	}
         

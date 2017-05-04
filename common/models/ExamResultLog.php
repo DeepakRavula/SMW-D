@@ -23,12 +23,12 @@ class ExamResultLog extends ExamResult
 {	
 	public function create($event) {
             
-		$examresultModel = $event->sender;
-		$examresult = ExamResult::find(['id' => $examresultModel->id])->asArray()->one();
-		$studentModel=Student::findOne(['id' =>$examresultModel->studentId ]);
+		$examResultModel = $event->sender;
+		$examresult = ExamResult::find(['id' => $examResultModel->id])->asArray()->one();
+		$studentModel=Student::findOne(['id' =>$examResultModel->studentId ]);
                 $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $examresult,
-			'message' => $examresultModel->userName.' created new Exam Result for {{' .$studentModel->fullName . '}}',
+			'message' => $examResultModel->userName.' created new Exam Result for {{' .$studentModel->fullName . '}}',
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -47,12 +47,12 @@ class ExamResultLog extends ExamResult
 	}
 	
 	public function edit($event) {
-	$examresultModel = $event->sender;
-		$examresult = ExamResult::find(['id' => $examresultModel->id])->asArray()->one();
-		$studentModel=Student::findOne(['id' =>$examresultModel->studentId ]);
+	$examResultModel = $event->sender;
+		$examresult = ExamResult::find(['id' => $examResultModel->id])->asArray()->one();
+		$studentModel=Student::findOne(['id' =>$examResultModel->studentId ]);
                 $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $examresult,
-			'message' => $examresultModel->userName.' Edited {{' .$studentModel->fullName . '}}\'s Exam Result',
+			'message' => $examResultModel->userName.' Edited {{' .$studentModel->fullName . '}}\'s Exam Result',
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -71,13 +71,13 @@ class ExamResultLog extends ExamResult
 	}
       
         
-        public function deleteItem($event) {
-	$examresultModel = $event->sender;
-		$examresult = ExamResult::find(['id' => $examresultModel->id])->asArray()->one();
-		$studentModel=Student::findOne(['id' =>$examresultModel->studentId ]);
+        public function deleteEvaluation($event) {
+	$examResultModel = $event->sender;
+		$examresult = ExamResult::find(['id' => $examResultModel->id])->asArray()->one();
+		$studentModel=Student::findOne(['id' =>$examResultModel->studentId ]);
                 $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $examresult,
-			'message' => $examresultModel->userName.' deleted {{' .$studentModel->fullName . '}}\'s Exam Result',
+			'message' => $examResultModel->userName.' deleted {{' .$studentModel->fullName . '}}\'s Exam Result',
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();

@@ -142,7 +142,7 @@ class ExamResultController extends Controller
         $response->format = Response::FORMAT_JSON;
 		
 		$model = $this->findModel($id);
-               	$model->on(ExamResult::EVENT_DELETE, [new ExamResultLog(), 'deleteItem']);
+               	$model->on(ExamResult::EVENT_DELETE, [new ExamResultLog(), 'deleteEvaluation']);
 		$user = User::findOne(['id' => Yii::$app->user->id]);
 		$model->userName = $user->publicIdentity;
         if($model->delete()) {
