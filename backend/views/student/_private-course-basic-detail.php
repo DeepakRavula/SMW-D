@@ -101,7 +101,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 					<div class="col-md-4"></div>
 				<div class="smw-box col-md-offset-4 col-md-8 m-l-0 m-b-30 course-monthly-estimate text-center">
 					<div>
-				Four <span id="duration"></span>min Lessons @ $<span id="rate-30-min"></span> each = $<span id="rate-month-30-min"></span>/mn
+				Four <span class="duration"></span>min Lessons @ $<span id="rate-30-min"></span> each = $<span id="rate-month-30-min"></span>/mn
 						</div>
 					</div>
 				</div>
@@ -111,7 +111,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 					<div class="col-md-6"></div>
 				<div class="smw-box col-md-offset-4 col-md-8 m-l-0 m-b-30 course-monthly-estimate text-center">
 					<div>
-				Four <span id="duration"></span>min Lessons @ $<span id="discount-rate"></span> each = $<span id="discount-rate-month"></span>/mn
+				Four <span class="duration"></span>min Lessons @ $<span id="discount-rate"></span> each = $<span id="discount-rate-month"></span>/mn
 						</div>
 					</div>
 				</div>
@@ -140,7 +140,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
     	var minutes = parseInt(timeArray[1]);
 		var unit = ((hours * 60) + (minutes)) / 60;
 		var duration = (hours * 60) + minutes;
-		$('#duration').text(duration);
+		$('.duration').text(duration);
 		var amount = (programRate * unit).toFixed(2);
 		$('#rate-30-min').text(amount);
 		var ratePerMonth30 = ((amount) * 4).toFixed(2);
@@ -149,7 +149,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 			var discountedRate = amount; 
 			var discountedMonthlyRate = ratePerMonth30; 
 		} else {
-			var discountedRate = (amount * (discount / 100)).toFixed(2);
+			var discountedRate = (amount - ((amount * (discount / 100)))).toFixed(2);
 			var discountedMonthlyRate = (discountedRate * 4).toFixed(2); 
 		}
 		$('#discount-rate').text(discountedRate);
