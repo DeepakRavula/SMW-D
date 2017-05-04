@@ -204,7 +204,6 @@ var invoice = {
 }
 var payment = {
 	onEditableGridSuccess :function(event, val, form, data) {
-		$.pjax.reload({container : '#line-item-listing', timeout : 4000});
         invoice.updateSummarySectionAndStatus();
     },
 }

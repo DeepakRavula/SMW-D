@@ -368,12 +368,6 @@ $bundle = BackendAsset::register($this);
                                     'url' => ['location/index'],
                                     'visible' => Yii::$app->user->can('staffmember'),
                                 ],
-								[
-                                    'label' => Yii::t('backend', 'Discount'),
-                                    'icon' => '<i class="fa fa-dollar"></i>',
-                                    'url' => ['discount/edit'],
-                                    'visible' => Yii::$app->user->can('administrator'),
-                                ],
                                 [
                                     'label' => Yii::t('backend', 'Holidays'),
                                     'icon' => '<i class="fa fa-car"></i>',

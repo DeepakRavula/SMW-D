@@ -182,6 +182,12 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
     }
 
+	public function getEnrolmentDiscount()
+    {
+        return $this->hasOne(EnrolmentDiscount::className(), ['enrolmentId' => 'id'])
+			->via('enrolment');
+    }
+
     public function getCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);

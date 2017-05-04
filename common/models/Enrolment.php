@@ -113,11 +113,6 @@ class Enrolment extends \yii\db\ActiveRecord
             ->orderBy(['payment_cycle.startDate' => SORT_ASC]);
     }
 
-	public function getPaymentFrequencyDiscount()
-    {
-        return $this->hasOne(PaymentFrequencyDiscount::className(), ['paymentFrequencyId' => 'paymentFrequency']);
-    }
-
 	public function getVacation()
     {
         return $this->hasOne(Vacation::className(), ['studentId' => 'studentId']);
