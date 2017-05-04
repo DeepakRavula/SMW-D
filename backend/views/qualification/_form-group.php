@@ -22,14 +22,14 @@ use common\models\Qualification;
 ]); ?>
 	<?php 
 		$groupQualifications = Qualification::find()
-		->joinWith(['program' => function($query) {
-			$query->group();
-		}])
-		->andWhere(['teacher_id' => $userModel->id])
-		->all();
+			->joinWith(['program' => function($query) {
+				$query->group();
+			}])
+			->andWhere(['teacher_id' => $userModel->id])
+			->all();
 		$groupQualificationIds = ArrayHelper::getColumn($groupQualifications, 'program_id'); 
 		$groupPrograms = Program::find()->group()
-			->andWhere(['NOT IN', 'program.id', $groupQualifications])->all();
+			->andWhere(['NOT IN', 'program.id', $groupQualificationIds])->all();
 ?>
    <div class="row">
 	   <div class="col-md-6">
