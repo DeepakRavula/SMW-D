@@ -8,6 +8,9 @@ use backend\models\search\QualificationSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
+use yii\filters\ContentNegotiator;
+use yii\widgets\ActiveForm;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -21,6 +24,14 @@ class QualificationController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+			'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['update'],
+                'formatParam' => '_format',
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -86,14 +97,23 @@ class QualificationController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+		$data = $this->renderAjax('update', [
+			'model' => $model,
+		]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            $response = [
+				'status' => true,
+			];
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
+			$response = [
+				'status' => true,
+				'errors' => ActiveForm::validate($model)
+			];	
+		} 
+		return [
+			'status' => true,
+			'data' => $data
+		];
     }
 
     /**
@@ -108,7 +128,6 @@ class QualificationController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "qualification".
@@ -31,10 +32,22 @@ class Qualification extends \yii\db\ActiveRecord
     {
         return [
             [['program_id', 'rate'], 'required'],
-            [['teacher_id', 'program_id', 'type'], 'integer'],
+            [['teacher_id', 'program_id', 'type', 'isDeleted'], 'integer'],
         ];
     }
 
+		public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+				'replaceRegularDelete' => true
+            ],
+        ];
+    }
     /**
      * {@inheritdoc}
      */
@@ -46,6 +59,11 @@ class Qualification extends \yii\db\ActiveRecord
             'program_id' => 'Program Name ',
 			'rate' => 'Rate ($)'
         ];
+    }
+	public static function find()
+    {
+        return new QualificationQuery(get_called_class(),parent::find()
+			->andWhere(['qualification.isDeleted' => false]));
     }
 
     /**

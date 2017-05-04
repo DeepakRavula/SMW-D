@@ -5,23 +5,86 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\Program;
+use yii\helpers\Url;
+use kartik\select2\Select2;
+use common\models\Qualification;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Qualification */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="qualification-form">
+<div class="lesson-qualify p-10">
 
-    <?php $form = ActiveForm::begin(); ?>
-
-  	<?php echo $form->field($model, 'teacher_id')->dropDownList(ArrayHelper::map(User::findByRole(User::ROLE_TEACHER), 'id', 'userProfile.fullName')) ?>
-	<?php echo $form->field($model, 'program_id')->dropDownList(ArrayHelper::map(Program::find()->active()->all(), 'id', 'name')) ?>
-
-    <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
-
+<?php $form = ActiveForm::begin([
+    'id' => 'qualification-form',
+	'action' => Url::to(['qualification/update', 'id' => $model->id]),
+	'enableAjaxValidation' => true,
+	'enableClientValidation' => false
+]); ?>
+	<?php 
+	$privateQualifications = Qualification::find()
+		->joinWith(['program' => function($query) {
+			$query->privateProgram();
+		}])
+		->andWhere(['teacher_id' => $model->id])
+		->andWhere(['NOT', ['qualification.id' => $model->id]])
+		->all();
+		$privateQualificationIds = ArrayHelper::getColumn($privateQualifications, 'program_id'); 
+		$privatePrograms = Program::find()->privateProgram()
+			->andWhere(['NOT IN', 'program.id', $privateQualificationIds])->all();
+		$groupQualifications = Qualification::find()
+		->joinWith(['program' => function($query) {
+			$query->group();
+		}])
+		->andWhere(['teacher_id' => $model->id])
+		->andWhere(['NOT', ['qualification.id' => $model->id]])
+		->all();
+		$groupQualificationIds = ArrayHelper::getColumn($privateQualifications, 'program_id'); 
+		$groupPrograms = Program::find()->group()
+			->andWhere(['NOT IN', 'program.id', $privateQualificationIds])->all();
+?>
+   <div class="row">
+	   <?php if($model->program->isPrivate()) : ?>
+        <div class="col-md-6">
+            <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
+	    		'data' => ArrayHelper::map($privatePrograms, 'id', 'name'),
+				'pluginOptions' => [
+					'allowClear' => true,
+					'multiple' => false,
+				],
+			]); ?>
+        </div>
+	   <?php else : ?>
+	   <div class="col-md-6">
+            <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
+	    		'data' => ArrayHelper::map($groupPrograms, 'id', 'name'),
+				'pluginOptions' => [
+					'allowClear' => true,
+					'multiple' => false,
+				],
+			]); ?>
+        </div>
+	   <?php endif; ?>
+        <div class="col-md-6">
+            <?= $form->field($model, 'rate')->textInput();?>
+        </div>
+    <div class="col-md-12 p-l-20 form-group">
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+        
+        <?= Html::a('Cancel', '', ['class' => 'btn btn-default qualification-cancel']);?>
+        <?= Html::a('Delete', [
+            'delete', 'id' => $model->id
+        ],
+        [
+            'class' => 'btn btn-primary',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this qualification?',
+                'method' => 'post',
+            ]
+        ]); ?>
+        <div class="clearfix"></div>
+	</div>
+	</div>
+	<?php ActiveForm::end(); ?>
 </div>

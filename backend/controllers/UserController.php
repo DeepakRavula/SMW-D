@@ -467,6 +467,7 @@ class UserController extends Controller
 				$qualification->program_id = $qualificationModel['program_id'];
 				$qualification->rate = $qualificationModel['rate'];
 				$qualification->teacher_id = $model->getModel()->id;
+				$qualification->isDeleted = false;
 				$qualification->type = Qualification::TYPE_HOURLY;	
 				if($qualification->program->isGroup()) {
 					$qualification->type = Qualification::TYPE_FIXED;	

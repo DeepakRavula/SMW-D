@@ -379,7 +379,7 @@ public function getLessons($date)
 				->where(['location_id' => $location_id]);
 				}]);
 			}])
-			->where(['program_id' => $programId])
+			->andWhere(['program_id' => $programId])
 			->all();
         $result = [];
         $output = [];
