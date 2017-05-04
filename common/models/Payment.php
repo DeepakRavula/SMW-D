@@ -180,6 +180,7 @@ class Payment extends ActiveRecord
     public function beforeSave($insert)
     {
         if (!$insert) {
+        	$this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             return parent::beforeSave($insert);
         }
         $model = Invoice::findOne(['id' => $this->invoiceId]);

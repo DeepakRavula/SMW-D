@@ -3,16 +3,20 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\CustomerDiscount;
+use common\models\CustomerPaymentPreference;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\User;
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
+use yii\helpers\Url;
 
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
  */
-class CustomerDiscountController extends Controller
+class CustomerPaymentPreferenceController extends Controller
 {
     public function behaviors()
     {
@@ -21,6 +25,14 @@ class CustomerDiscountController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['modify'],
+                'formatParam' => '_format',
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -58,15 +70,28 @@ class CustomerDiscountController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($id)
+    public function actionModify($id)
     {
-		$customerDiscountModel = CustomerDiscount::findOne(['customerId' => $id]);
-		if(empty($customerDiscountModel)) {
-        	$customerDiscountModel = new CustomerDiscount();
-			$customerDiscountModel->customerId = $id;
-		}	
-        if ($customerDiscountModel->load(Yii::$app->request->post()) && $customerDiscountModel->save()) {
-            	return $this->redirect(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $id, '#' => 'discount']);
+        $userModel = User::findOne($id);
+        if (empty($userModel->customerPaymentPreference)) {
+            $model = new CustomerPaymentPreference();
+            $model->userId = $id;
+        } else {
+            $model = $userModel->customerPaymentPreference;
+        }
+        $data = $this->renderAjax('/user/customer/_form-payment-preference', [
+            'model' => $model,
+            'userModel' => $userModel,
+        ]);
+        if ($model->load(Yii::$app->request->post())) {
+			if ($model->save()) {
+                return $this->redirect(['user/view', 'id' => $userModel->id, '#' => 'account']);
+            }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
         }
     }
 
@@ -97,9 +122,11 @@ class CustomerDiscountController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id);
+        $userId = $model->userId;
+        $model->delete();
+        
+        return $this->redirect(['user/view', 'id' => $userId, '#' => 'account']);
     }
 
     /**
@@ -111,7 +138,7 @@ class CustomerDiscountController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = CustomerDiscount::findOne($id)) !== null) {
+        if (($model = CustomerPaymentPreference::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

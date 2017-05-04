@@ -18,8 +18,6 @@ class PaymentFrequency extends \yii\db\ActiveRecord
     const LENGTH_HALFYEARLY = 3;
     const LENGTH_FULL       = 4;
 
-    public $individualDiscountValue;
-	public $familyDiscountValue;
 	
     /**
      * @inheritdoc
@@ -38,7 +36,6 @@ class PaymentFrequency extends \yii\db\ActiveRecord
             [['name', 'frequencyLength'], 'required'],
             [['name'], 'string', 'max' => 20],
             ['frequencyLength', 'integer'],
-			[['individualDiscountValue', 'familyDiscountValue'], 'number']
         ];
     }
 
@@ -51,15 +48,5 @@ class PaymentFrequency extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
         ];
-    }
-
-	public function getPaymentFrequencyDiscount()
-    {
-        return $this->hasOne(PaymentFrequencyDiscount::className(), ['paymentFrequencyId' => 'id']);
-    }
-
-	public function getFamilyDiscount()
-    {
-        return $this->hasOne(FamilyDiscount::className(), ['paymentFrequencyId' => 'id']);
     }
 }

@@ -194,6 +194,11 @@ class User extends ActiveRecord implements IdentityInterface
           ->viaTable('user_address', ['user_id' => 'id']);
     }
 
+    public function getCustomerPaymentPreference()
+    {
+        return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id']);
+    }
+    
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -474,28 +479,4 @@ class User extends ActiveRecord implements IdentityInterface
             'events' => $events,
         ];
     }
-
-	public function getNumberOfStudents()
-	{
-		$count = self::find()
-			->joinWith(['student' => function($query){
-				$query->innerJoinWith('enrolment')
-					->andWhere(['customer_id' => $this->id])
-					->active();
-			}])
-			->count();
-			
-		return $count;
-	}
-	public function prePaymentDiscount($paymentFrequencyId) {
-   		$paymentFrequencyDiscount = PaymentFrequencyDiscount::findOne(['paymentFrequencyId' => $paymentFrequencyId]);
-		
-		return $paymentFrequencyDiscount->value;
-	}
-
-	public function familyDiscount($paymentFrequencyId) {
-  		$familyDiscount = FamilyDiscount::findOne(['paymentFrequencyId' => $paymentFrequencyId]);
-		
-		return $familyDiscount->value; 
-	}
 }

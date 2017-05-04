@@ -33,7 +33,7 @@ class PaymentController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'credit-payment'],
+                'only' => ['edit', 'credit-payment', 'update', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -102,14 +102,14 @@ class PaymentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
+        $data = $this->renderAjax('/invoice/payment/_form', [
+            'model' => $model,
+        ]);
+      	
+		return [
+			'status' => true,
+			'data' => $data,
+		];
     }
 
     /**
@@ -142,11 +142,14 @@ class PaymentController extends Controller
         } elseif ($model->isAccountEntry()) {
             $modelInvoice->lineItem->delete();
         }
-        $model->delete();
-        if($modelInvoice->save()) {
+        if($model->delete()) {
+        	$modelInvoice->save();
 			$model->trigger(Payment::EVENT_DELETE);
 		}
-        return $this->redirect(['invoice/view', 'id' => $model->invoice->id, '#' => 'payment']);
+		
+		return [
+			'status' => true,
+		];
     }
 
     /**
@@ -255,47 +258,38 @@ class PaymentController extends Controller
 
     public function actionEdit($id)
     {
+        $model = Payment::findOne(['id' => $id]);
+		$userModel = User::findOne(['id' => Yii::$app->user->id]);
         $request = Yii::$app->request;
-        $post = $request->post();
-        if ($request->post('hasEditable')) {
-            $paymentIndex = $request->post('editableIndex');
-            $model = Payment::findOne(['id' => $id]);
-			$userModel = User::findOne(['id' => Yii::$app->user->id]);
-        	$model->on(Payment::EVENT_EDIT, [new TimelineEventPayment(), 'edit'], ['oldAttributes' => $model->getOldAttributes()]);
-			$model->userName = $userModel->publicIdentity;
-            if (!empty($post['Payment'][$paymentIndex]['amount'])) {
-                $newAmount = $post['Payment'][$paymentIndex]['amount'];
-                if ($model->isOtherPayments()) {
-                    $response = Yii::$app->runAction('payment/edit-other-payments',
-                        ['model' => $model, 'newAmount' => $newAmount]);
-                }
-                if ($model->isAccountEntry()) {
-                    $response = Yii::$app->runAction('payment/edit-account-entry',
-                        ['model' => $model, 'newAmount' => $newAmount]);
-                }
-                if ($model->isCreditApplied()) {
-                    $response = Yii::$app->runAction('payment/edit-credit-applied',
-                        ['model' => $model, 'newAmount' => $newAmount]);
-                }
-
-                if ($model->isCreditUsed()) {
-                    $response = Yii::$app->runAction('payment/edit-credit-used',
-                        ['model' => $model, 'newAmount' => $newAmount]);
-                }
-
-                return $response;
-            }
-        }
+        if ($model->load($request->post())) {
+			if ($model->isAccountEntry()) {
+				$model->setScenario(Payment::SCENARIO_OPENING_BALANCE);
+				$response = Yii::$app->runAction('payment/edit-account-entry',
+					['model' => $model, 'newAmount' => $model->amount]);
+			} 
+			if ($model->isOtherPayments()) {
+				$response = Yii::$app->runAction('payment/edit-other-payments',
+					['model' => $model, 'newAmount' => $model->amount]);
+			}
+			if ($model->isCreditApplied()) {
+				$response = Yii::$app->runAction('payment/edit-credit-applied',
+					['model' => $model, 'newAmount' => $model->amount]);
+			}
+			if ($model->isCreditUsed()) {
+				$model->setScenario(Payment::SCENARIO_CREDIT_USED);
+				$response = Yii::$app->runAction('payment/edit-credit-used',
+					['model' => $model, 'newAmount' => $model->amount]);
+			}
+			return $response;
+		}
     }
 
     public function actionEditOtherPayments($model, $newAmount)
     {
         $model->amount = $newAmount;
         $model->save();
-		$model->trigger(Payment::EVENT_EDIT);
         $result = [
-            'output' => $newAmount,
-            'message' => '',
+            'status' => true,
         ];
 
         return $result;
@@ -319,8 +313,7 @@ class PaymentController extends Controller
         $invoiceModel->save();
 
         $result = [
-            'output' => $newAmount,
-            'message' => '',
+            'status' => true,
         ];
 
         return $result;
@@ -336,15 +329,13 @@ class PaymentController extends Controller
             $model->save();
 
             $result = [
-                'output' => $newAmount,
-                'message' => '',
+            	'status' => true,
             ];
         } else {
             $errors = ActiveForm::validate($model);
-
             $result = [
-                'output' => false,
-                'message' => $errors['payment-amount'],
+                'status' => false,
+                'errors' => $errors['payment-amount'],
             ];
         }
 
@@ -361,15 +352,13 @@ class PaymentController extends Controller
             $model->save();
 
             $result = [
-                'output' => $newAmount,
-                'message' => '',
+                'status' => true,
             ];
         } else {
             $errors = ActiveForm::validate($model);
-
             $result = [
-                'output' => false,
-                'message' => $errors['payment-amount'],
+                'status' => false,
+                'errors' => $errors['payment-amount'],
             ];
         }
 

@@ -46,6 +46,11 @@ class CourseQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+	public function isConfirmed()
+    {
+        return $this->andWhere(['course.isConfirmed' => true]);
+    }
+	
 	public function location($locationId) {
 		return $this->andWhere(['locationId' => $locationId]);
 	}

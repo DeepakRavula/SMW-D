@@ -10,7 +10,6 @@ use common\models\TeacherAvailability;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\PaymentFrequencyDiscount */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <div class="calendar-event-color-form">

@@ -41,7 +41,7 @@ use kartik\editable\Editable;
               To
               <address>
                 <strong>
-                  <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id, '#' => 'student']) ?>">
+                  <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id]) ?>">
                         <?= isset($customer->publicIdentity) ? $customer->publicIdentity : null?>
                   </a></strong>
                   <br>
@@ -89,12 +89,18 @@ use kartik\editable\Editable;
 
 		
 	<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
-	<div id="add-misc-item" class="col-sm-1">
+	<div id="add-misc-item" class="col-sm-2">
     <div class="m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Misc</a>
 	<div class="clearfix"></div>
     </div>
 	</div>
+	<div id="add-book" class="col-sm-2">
+		<div class="m-b-20">
+		<a href="#" class="text-add-new"><i class="fa fa-plus-circle"></i> Add Book</a>
+		<div class="clearfix"></div>
+		</div>
+ 	</div>
     <?php endif; ?>
     <?php if(!empty($model->lineItem) && (!$model->lineItem->isOpeningBalance())) :?>
     <div id="apply-discount" class="col-sm-2">
@@ -198,19 +204,33 @@ var invoice = {
 }
 var payment = {
 	onEditableGridSuccess :function(event, val, form, data) {
-		$.pjax.reload({container : '#line-item-listing', timeout : 4000});
         invoice.updateSummarySectionAndStatus();
     },
 }
 $(document).ready(function() {
     $('#add-misc-item').click(function(){
-    $('input[type="text"]').val('');
-    $('.tax-compute').hide();
-    $('#invoicelineitem-tax_status').val('');
-    $('#invoice-line-item-modal').modal('show');
+		$('input[type="text"]').val('');
+		$('.tax-compute').hide();
+		$('#invoicelineitem-tax_status').val('');
+		$('.misc-tax-status').show();
+		$('#invoice-line-item-modal').modal('show');
         return false;
     });
-
+	$('.add-misc-cancel').click(function(){
+    	$('#invoice-line-item-modal').modal('hide');
+   		return false;
+    });
+	$('#add-book').click(function(){
+		$('.tax-compute').show();
+		$('.misc-tax-status').hide();
+		$('input[type="text"]').val('');
+		$('#invoicelineitem-tax_type').val('GST');
+		$('#invoicelineitem-tax_code').val('ON');
+		$('#invoicelineitem-tax').val('5.00');
+		$('#invoicelineitem-tax_status').val('3');
+		$('#invoice-line-item-modal').modal('show');
+       	return false;
+    });
     $('#apply-discount').click(function(){
         $('#apply-discount-modal').modal('show');
   		return false;

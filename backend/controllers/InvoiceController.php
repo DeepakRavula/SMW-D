@@ -226,6 +226,9 @@ class InvoiceController extends Controller
             $invoiceLineItemModel->invoice_id = $model->id;
             $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
             $invoiceLineItemModel->discount = 0.0;
+			if($invoiceLineItemModel->tax_rate == '') {
+				$invoiceLineItemModel->tax_rate = $invoiceLineItemModel->amount * ( 5 / 100);	
+			}
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
                 $model->save();
@@ -253,7 +256,7 @@ class InvoiceController extends Controller
         $summary = $this->renderPartial('_view-bottom-summary', [
             'model' => $model,
         ]);
-        $InvoicePaymentDetails = $this->renderPartial('_invoice-summary', [
+        $InvoicePaymentDetails = $this->renderPartial('payment/_invoice-summary', [
             'model' => $model,
         ]);
         $status = $model->getStatus();
@@ -289,6 +292,7 @@ class InvoiceController extends Controller
             'code' => $taxCode->code,
             'rate' => $rate,
             'tax_status' => $data['taxStatusName'],
+			'tax' => $taxCode->rate,
         ];
     }
 

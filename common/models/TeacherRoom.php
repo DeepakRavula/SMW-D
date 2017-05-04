@@ -129,7 +129,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
                 ->andWhere(['classroomId' => $this->classroomId])
                 ->all();
             if (!empty($teacherRooms)) {
-                return $this->addError($attribute,'Classroom Already Choosen!');
+                return $this->addError($attribute,'Classroom already chosen');
             }
         }
     }
@@ -139,30 +139,11 @@ class TeacherRoom extends \yii\db\ActiveRecord
         $availabilities = TeacherAvailability::find()
             ->where(['day' => $this->day, 'teacher_location_id' => $this->teacher_location_id])
             ->andWhere(['NOT', ['id' => $this->availabilityId]])
-            ->andWhere(['OR', 
-                [
-                    'between', 'from_time', (new \DateTime($this->from_time))->format('H:i:s'),
-                    (new \DateTime($this->to_time))->format('H:i:s')
-                ],
-                [
-                    'between', 'to_time', (new \DateTime($this->from_time))->format('H:i:s'),
-                    (new \DateTime($this->to_time))->format('H:i:s')
-                ],
-                [
-                    'AND',
-                    [
-                        '<=', 'from_time', $this->from_time
-                    ],
-                    [
-                        '>=', 'to_time', $this->to_time
-                    ]
-                    
-                ]
-            ])
+            ->between($this->from_time, $this->to_time)
             ->all();
         
         if (!empty($availabilities)) {
-            return $this->addError($attribute,'Availability overlaped');
+            return $this->addError($attribute,'Availability overlapped');
         }
     }
 }
