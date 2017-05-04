@@ -15,6 +15,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\TeacherRoom;
+use common\models\PhoneNumber;
+use common\models\Address;
+use common\models\UserProfile;
 use yii\filters\ContentNegotiator;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -121,6 +124,21 @@ class EnrolmentController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+	public function actionCustomer()
+    {
+        $model = new User();
+		$phoneModel = new PhoneNumber();
+		$addressModel = new Address();
+		$userProfile = new UserProfile();
+
+		return $this->render('_form-customer', [
+			'model' => $model,
+			'phoneModel' => $phoneModel,
+			'addressModel' => $addressModel, 
+			'userProfile' => $userProfile
+		]);
     }
 
 	public function actionPreview($id)

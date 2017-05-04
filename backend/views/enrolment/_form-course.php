@@ -33,7 +33,7 @@ $this->title = 'New Enrolment';
             echo $form->field($model, 'programId')->dropDownList(
                 ArrayHelper::map(Program::find()
 					->active()
-					->all(), 'id', 'name'))->label(false);
+					->all(), 'id', 'name'), ['prompt' => 'Select..'])->label(false);
             ?>
 			</div>
 		</div>
@@ -53,21 +53,8 @@ $this->title = 'New Enrolment';
             ?>
 		</div>
 		<label  class="col-sm-2 control-label">Check The Schedule</label>
-		<div class="col-sm-3">
-			<?php
-            echo $form->field($model, 'startDate')->widget(DatePicker::classname(),
-                [
-                'type' => DatePicker::TYPE_BUTTON,
-                'options' => [
-                    'value' => (new \DateTime())->format('d-m-Y'),
-                ],
-                'pluginOptions' => [
-                    'format' => 'dd-mm-yyyy',
-                    'todayHighlight' => true,
-                    'autoclose' => true,
-                ],
-            ])->label(false);
-            ?>
+		<div class="col-sm-1">
+            <span class="fa fa-calendar fa-4"></span>
 		</div>
 	</div>
 	<div class="clearfix"></div>
@@ -102,35 +89,35 @@ $this->title = 'New Enrolment';
 	<div class="clearfix"></div>
 	<div class="form-group">
 		<label  class="col-sm-2 control-label p-10">Rate Per Lesson</label>
-		<div class="col-sm-5">
-			
-		</div>
+		<div class="col-sm-5" id="rate"></div>
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
 		<label  class="col-sm-2 control-label p-10">Rate Per Month</label>
-		<div class="col-sm-5">
-			
-		</div>
+		<div class="col-sm-5" id="monthly-rate"></div>
 	</div>
 	<div class="clearfix"></div>
-		<?php ActiveForm::end(); ?>
+	<div class="form-group">
+        <?php echo Html::a('Next',['enrolment/customer'], ['class' => 'btn btn-primary']); ?>
+	</div>
+	<?php ActiveForm::end(); ?>
 </div> <!-- ./container -->
 <script>
-function rateEstimation(duration, programRate) {
+	function rateEstimation(duration, programRate, discount) {
 		var timeArray = duration.split(':');
     	var hours = parseInt(timeArray[0]);
     	var minutes = parseInt(timeArray[1]);
 		var unit = ((hours * 60) + (minutes)) / 60;
-		var duration = (hours * 60) + minutes;
-		$('#duration').text(duration);
 		var amount = (programRate * unit).toFixed(2);
-		$('#rate-30-min').text(amount);
-		var ratePerMonth30 = ((amount) * 4).toFixed(2);
-		$('#rate-month-30-min').text(ratePerMonth30);
-		$('#course-rate-estimation').show();
+		if(discount === '') {
+			var discount = 0;
+		} 
+		var discountedRate = (amount - ((amount * (discount / 100)))).toFixed(2);
+		var discountedMonthlyRate = (discountedRate * 4).toFixed(2); 
+		$('#rate').text('$' + discountedRate);
+		$('#monthly-rate').text('$' + discountedMonthlyRate);
 	}
-	function fetchProgram(duration, programId) {
+	function fetchProgram(duration, programId, discount) {
 		$.ajax({
 			url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?id=' + programId,
 			type: 'get',
@@ -138,12 +125,34 @@ function rateEstimation(duration, programRate) {
 			success: function (response)
 			{
 				programRate = response;
-				rateEstimation(duration,programRate);
+				rateEstimation(duration,programRate, discount);
 			}
 		});
 	}
-$(document).ready(function(){
-	var duration = $('#course-duration').val();
-	var programId = $('#course-programid').val();	
+    $(document).ready(function () {
+		$('#rate').text('$0.00');
+		$('#monthly-rate').text('$0.00');
+		$(document).on('change', '#course-programid', function(){
+			var duration = $('#course-duration').val();
+			var programId = $('#course-programid').val();
+			var discount = $('#course-discount').val();
+			fetchProgram(duration, programId, discount);
+		});
+		$(document).on('change', '#course-duration', function(){
+			var duration = $('#course-duration').val();
+			var programId = $('#course-programid').val();
+			var discount = $('#course-discount').val();
+			if (duration && programId || discount) {
+				fetchProgram(duration, programId, discount);
+			}
+		});
+		$(document).on('change', '#course-discount', function(){
+			var duration = $('#course-duration').val();
+			var programId = $('#course-programid').val();
+			var discount = $('#course-discount').val();
+			if (duration && programId || discount) {
+				fetchProgram(duration, programId, discount);
+			}
+		});
 });
 </script>
