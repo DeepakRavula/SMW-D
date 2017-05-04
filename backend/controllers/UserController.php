@@ -463,15 +463,15 @@ class UserController extends Controller
 				}
 			}
 			foreach ($qualificationModels as $qualificationModel) {
-				$qualificationModel->teacher_id = $model->getModel()->id;
-				$qualificationModel->type = Qualification::TYPE_HOURLY;	
-				if($qualificationModel->program->isGroup()) {
-					$qualificationModel->type = Qualification::TYPE_FIXED;	
+				$qualification = new Qualification();
+				$qualification->program_id = $qualificationModel['program_id'];
+				$qualification->rate = $qualificationModel['rate'];
+				$qualification->teacher_id = $model->getModel()->id;
+				$qualification->type = Qualification::TYPE_HOURLY;	
+				if($qualification->program->isGroup()) {
+					$qualification->type = Qualification::TYPE_FIXED;	
 				}
-				if (!($flag = $qualificationModel->save(false))) {
-					$transaction->rollBack();
-					break;
-				}
+				$qualification->save();
 			}
 		}
         $transaction->commit();
@@ -485,8 +485,6 @@ class UserController extends Controller
         $model = new UserForm();
         $addressModels = [new Address()];
         $phoneNumberModels = [new PhoneNumber()];
-		$qualificationModels = [new Qualification()];
-	//print_r($_POST);die;	
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
         if ($model->roles === User::ROLE_STAFFMEMBER) {
@@ -494,25 +492,30 @@ class UserController extends Controller
                 throw new ForbiddenHttpException();
             }
         }
-
         $request = Yii::$app->request;
         $response = Yii::$app->response;
+		$teacherQualifications = $request->post('Qualification');
         if ($model->load($request->post())) {
+			$qualificationModels = [];
+			foreach($teacherQualifications as $teacherQualification) {
+				foreach($teacherQualification as $qualification) {
+					$qualificationModels[] = $qualification;
+				}
+			}
 			$addressModels = UserForm::createMultiple(Address::classname());
 	        Model::loadMultiple($addressModels, $request->post());	
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
             Model::loadMultiple($phoneNumberModels, $request->post());
-			$qualificationModels = UserForm::createMultiple(Qualification::classname());
-            Model::loadMultiple($qualificationModels, $request->post());
+			
+			
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
 
                 return ArrayHelper::merge(
-                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($qualificationModels)
-                );
+                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels));
             }
             $valid = $model->validate();
-            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels) || Model::validateMultiple($qualificationModels)) && $valid;
+            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels)) && $valid;
 
             if ($valid) {
                 try {

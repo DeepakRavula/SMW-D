@@ -62,16 +62,16 @@ DynamicFormWidget::begin([
 				</h4>
 				<?php
 				if (!$qualificationModel->isNewRecord) {
-					echo Html::activeHiddenInput($qualificationModel, "[{$index}]id");
+					echo Html::activeHiddenInput($qualificationModel, "[{$index}][private]id");
 				}
 				$privatePrograms = ArrayHelper::map(Program::find()->privateProgram()->all(), 'id', 'name'); 
 				?>
 				<div class="row">
 					<div class="col-sm-4">
-						<?= $form->field($qualificationModel, "[{$index}]program_id")->dropDownList($privatePrograms);?>
+						<?= $form->field($qualificationModel, "[{$index}][private]program_id")->dropDownList($privatePrograms);?>
 					</div>
 					<div class="col-sm-4">
-	<?= $form->field($qualificationModel, "[{$index}]rate")->textInput(['maxlength' => true]) ?>
+	<?= $form->field($qualificationModel, "[{$index}][private]rate")->textInput(['maxlength' => true]) ?>
 					</div>
 					<div class="clearfix"></div>
 				</div>
