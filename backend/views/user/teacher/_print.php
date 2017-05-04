@@ -126,7 +126,8 @@ $columns = [
 		'format'=>['decimal',2],
 		'value' => function ($data) {
 			$qualification = Qualification::findone(['teacher_id' => $data->teacherId, 'program_id' => $data->course->program->id]);
-			return $data->getDuration() * $qualification->rate;
+			$rate = !empty($qualification->rate) ? $qualification->rate : 0;
+			return $data->getDuration() * $rate;
 		},
 		'hAlign' => 'right',
 		'contentOptions' => ['class' => 'text-right'],
@@ -135,7 +136,9 @@ $columns = [
 		'label' => 'Cost',
 		'format' => ['decimal', 2],
 		'value' => function ($data) {
-			return $data->getDuration() * $data->teacherRate;
+			$qualification = Qualification::findone(['teacher_id' => $data->teacherId, 'program_id' => $data->course->program->id]);
+			$rate = !empty($qualification->rate) ? $qualification->rate : 0;
+			return $data->getDuration() * $rate;
 		},
 		'contentOptions' => ['class' => 'text-right'],
 		'hAlign' => 'right',
@@ -195,11 +198,12 @@ $columns = [
 				$cost = 0;
 				foreach($lessons as $lesson) {
 					$qualification = Qualification::findone(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
+					$rate = !empty($qualification->rate) ? $qualification->rate : 0;
 					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->duration);
 					$hours			 = $duration->format('H');
 					$minutes		 = $duration->format('i');
 					$lessonDuration	 = $hours + ($minutes / 60);
-					$cost += $lessonDuration * $qualification->rate;	
+					$cost += $lessonDuration * $rate;	
 				}
 				return $cost;
 		},

@@ -10,7 +10,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="qualification-create">
 
-    <?php echo $this->render('_form', [
+    <?php echo $this->render('_form-create', [
         'model' => $model,
     ]) ?>
 

@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
+use common\models\Qualification;
 ?>
 <div class="row-fluid m-t-20 p-10">
 	<div>
@@ -13,7 +14,9 @@ use yii\bootstrap\Modal;
 	<div class="row p-10">
 	<div class="col-xs-6">
 		<div class="row-fluid">
-		<p class="c-title m-0 p-10"><i class="fa fa-music"></i> Private Programs </p>
+			<h4 class="pull-left m-r-20">Private Programs </h4> 
+			<a href="#" class="add-new-qualification text-add-new"><i class="fa fa-plus"></i></a>
+		<div class="clearfix"></div>
 		 <?php echo GridView::widget([
 			 'id' => 'qualification-grid',
 			'dataProvider' => $privateQualificationDataProvider,
@@ -28,7 +31,8 @@ use yii\bootstrap\Modal;
 	</div>
 	<div class="col-xs-6">
 		<div class="row-fluid">
-			<p class="c-title m-0 p-10 "><i class="fa fa-music"></i> Group Programs</p>
+			<h4 class="pull-left m-r-20">Group Programs </h4> 
+			<a href="#" class="add-new-group-qualification text-add-new"><i class="fa fa-plus"></i></a>
 			<?php echo GridView::widget([
 			 'id' => 'qualification-grid',
 				'dataProvider' => $groupQualificationDataProvider,
@@ -53,8 +57,36 @@ use yii\bootstrap\Modal;
 	]);?>
 	<div id="qualification-edit-content"></div>
 	<?php Modal::end();?>		
+<?php
+	Modal::begin([
+		'header' => '<h4 class="m-0">Add Private Qualification</h4>',
+		'id'=>'private-qualification-modal',
+	]);
+	echo $this->render('/qualification/_form-private', [
+		'model' => new Qualification(),
+		'userModel' => $model, 
+	]);
+	Modal::end();?>	
+	<?php
+	Modal::begin([
+		'header' => '<h4 class="m-0">Add Group Qualification</h4>',
+		'id'=>'group-qualification-modal',
+	]);
+	echo $this->render('/qualification/_form-group', [
+		'model' => new Qualification(),
+		'userModel' => $model, 
+	]);
+	 Modal::end();?>	
 <script>
 $(document).ready(function() {
+	$(document).on('click', '.add-new-qualification', function (e) {
+		$('#private-qualification-modal').modal('show');
+		return false;
+	});
+	$(document).on('click', '.add-new-group-qualification', function (e) {
+		$('#group-qualification-modal').modal('show');
+		return false;
+	});
 	$(document).on("click", "#qualification-grid tbody > tr", function() {
 		var qualificationId = $(this).data('key');	
 		$.ajax({
@@ -75,6 +107,8 @@ $(document).ready(function() {
 	});
 	$(document).on("click", '.qualification-cancel', function() {
 		$('#qualification-edit-modal').modal('hide');
+		$('#group-qualification-modal').modal('hide');
+		$('#private-qualification-modal').modal('hide');
 		return false;
 	});
 	$(document).on('beforeSubmit', '#qualification-form', function (e) {
@@ -92,6 +126,48 @@ $(document).ready(function() {
 				}else
 				{
 				 $('#qualification-form').yiiActiveForm('updateMessages', response.errors, true);
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#qualification-form-create', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+                    $.pjax.reload({container: '#qualification-grid', timeout: 6000});
+					$('#group-qualification-modal').modal('hide');
+					$('#private-qualification-modal').modal('hide');
+				}else
+				{
+				 $('#qualification-form-create').yiiActiveForm('updateMessages', response.errors, true);
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#group-qualification-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+                    $.pjax.reload({container: '#qualification-grid', timeout: 6000});
+					$('#group-qualification-modal').modal('hide');
+					$('#private-qualification-modal').modal('hide');
+				}else
+				{
+				 $('#qualification-form-create').yiiActiveForm('updateMessages', response.errors, true);
 				}
 			}
 		});

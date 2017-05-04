@@ -17,35 +17,21 @@ use common\models\Qualification;
 <div class="lesson-qualify p-10">
 
 <?php $form = ActiveForm::begin([
-    'id' => 'qualification-form',
-	'action' => Url::to(['qualification/update', 'id' => $model->id]),
-	'enableAjaxValidation' => true,
-	'enableClientValidation' => false
+    'id' => 'qualification-form-create',
+	'action' => Url::to(['qualification/create', 'id' => $userModel->id]),
 ]); ?>
 	<?php 
 	$privateQualifications = Qualification::find()
 		->joinWith(['program' => function($query) {
 			$query->privateProgram();
 		}])
-		->andWhere(['teacher_id' => $model->id])
-		->andWhere(['NOT', ['qualification.id' => $model->id]])
+		->andWhere(['teacher_id' => $userModel->id])
 		->all();
 		$privateQualificationIds = ArrayHelper::getColumn($privateQualifications, 'program_id'); 
 		$privatePrograms = Program::find()->privateProgram()
 			->andWhere(['NOT IN', 'program.id', $privateQualificationIds])->all();
-		$groupQualifications = Qualification::find()
-		->joinWith(['program' => function($query) {
-			$query->group();
-		}])
-		->andWhere(['teacher_id' => $model->id])
-		->andWhere(['NOT', ['qualification.id' => $model->id]])
-		->all();
-		$groupQualificationIds = ArrayHelper::getColumn($groupQualifications, 'program_id'); 
-		$groupPrograms = Program::find()->group()
-			->andWhere(['NOT IN', 'program.id', $groupQualifications])->all();
 ?>
    <div class="row">
-	   <?php if($model->program->isPrivate()) : ?>
         <div class="col-md-6">
             <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
 	    		'data' => ArrayHelper::map($privatePrograms, 'id', 'name'),
@@ -55,17 +41,6 @@ use common\models\Qualification;
 				],
 			]); ?>
         </div>
-	   <?php else : ?>
-	   <div class="col-md-6">
-            <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
-	    		'data' => ArrayHelper::map($groupPrograms, 'id', 'name'),
-				'pluginOptions' => [
-					'allowClear' => true,
-					'multiple' => false,
-				],
-			]); ?>
-        </div>
-	   <?php endif; ?>
         <div class="col-md-6">
             <?= $form->field($model, 'rate')->textInput();?>
         </div>
@@ -73,17 +48,6 @@ use common\models\Qualification;
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
         
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default qualification-cancel']);?>
-        <?= Html::a('Delete', [
-            'delete', 'id' => $model->id
-        ],
-        [
-			'id' => 'qualification-delete',
-            'class' => 'btn btn-primary',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this qualification?',
-                'method' => 'post',
-            ]
-        ]); ?>
         <div class="clearfix"></div>
 	</div>
 	</div>

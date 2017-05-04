@@ -28,7 +28,7 @@ class QualificationController extends Controller
             ],
 			'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['update', 'delete'],
+                'only' => ['update', 'delete', 'create', 'add-group'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -73,16 +73,47 @@ class QualificationController extends Controller
      *
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
         $model = new Qualification();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        if ($model->load(Yii::$app->request->post())) {
+			$model->teacher_id = $id;
+			$model->type = Qualification::TYPE_HOURLY;
+			$model->isDeleted = false;
+			if($model->save()) {
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$response = [
+					'status' => false,
+					'errors' => ActiveForm::validate($model)
+				];	
+			}
+			return $response;
+        }
+    }
+
+	public function actionAddGroup($id)
+    {
+        $model = new Qualification();
+
+        if ($model->load(Yii::$app->request->post())) {
+			$model->teacher_id = $id;
+			$model->type = Qualification::TYPE_FIXED;
+			$model->isDeleted = false;
+			if($model->save()) {
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$response = [
+					'status' => false,
+					'errors' => ActiveForm::validate($model)
+				];	
+			}
+			return $response;
         }
     }
 

@@ -159,18 +159,6 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);
     }
 
-	public function getTeacherPrivateLessonRate()
-    {
-        return $this->hasOne(TeacherRate::className(), ['teacherId' => 'id'])
-			->onCondition(['type' => TeacherRate::TYPE_PRIVATE_LESSON]);
-    }
-
-	public function getTeacherGroupLessonRate()
-    {
-        return $this->hasOne(TeacherRate::className(), ['teacherId' => 'id'])
-			->onCondition(['type' => TeacherRate::TYPE_GROUP_LESSON]);
-    }
-	
     /**
      * @return \yii\db\ActiveQuery
      */
