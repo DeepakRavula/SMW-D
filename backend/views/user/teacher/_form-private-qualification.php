@@ -15,13 +15,13 @@ use yii\helpers\ArrayHelper;
 $js = '
 jQuery(".dynamicform_qualification").on("afterInsert", function(e, item) {
     jQuery(".dynamicform_qualification .panel-title-qualification").each(function(index) {
-        jQuery(this).html("Qualification: " + (index + 1))
+        jQuery(this).html("Private Programs: " + (index + 1))
     });
 });
 
 jQuery(".dynamicform_qualification").on("afterDelete", function(e) {
     jQuery(".dynamicform_qualification .panel-title-qualification").each(function(index) {
-        jQuery(this).html("Qualification: " + (index + 1))
+        jQuery(this).html("Private Programs: " + (index + 1))
     });
 });
 ';
@@ -56,7 +56,7 @@ DynamicFormWidget::begin([
 		<?php foreach ($qualificationModels as $index => $qualificationModel): ?>
 			<div class="item-block qualification-item"><!-- widgetBody -->
 				<h4>
-					<span class="panel-title-qualification pull-left">Qualification: <?= ($index + 1) ?></span>
+					<span class="panel-title-qualification pull-left">Private Programs: <?= ($index + 1) ?></span>
 					<button type="button" class="pull-right qualification-remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
 					<div class="clearfix"></div>
 				</h4>

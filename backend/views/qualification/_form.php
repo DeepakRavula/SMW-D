@@ -77,6 +77,7 @@ use common\models\Qualification;
             'delete', 'id' => $model->id
         ],
         [
+			'id' => 'qualification-delete',
             'class' => 'btn btn-primary',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this qualification?',

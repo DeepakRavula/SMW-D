@@ -28,7 +28,7 @@ class QualificationController extends Controller
             ],
 			'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['update'],
+                'only' => ['update', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -127,7 +127,9 @@ class QualificationController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+		return [
+			'status' => true,
+		];
     }
 
     /**

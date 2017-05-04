@@ -9,7 +9,7 @@ use yii\bootstrap\Modal;
 	<div>
 		<h5 class="m-t-5"><i class="fa fa-graduation-cap"></i> Qualifications</h5>
 	</div>
-    <?php yii\widgets\Pjax::begin(['id' => 'private-qualification-grid']); ?>
+    <?php yii\widgets\Pjax::begin(['id' => 'qualification-grid']); ?>
 	<div class="row p-10">
 	<div class="col-xs-6">
 		<div class="row-fluid">
@@ -49,9 +49,9 @@ use yii\bootstrap\Modal;
 <?php
 	Modal::begin([
 		'header' => '<h4 class="m-0">Edit Qualification</h4>',
-		'id'=>'private-qualification-modal',
+		'id'=>'qualification-edit-modal',
 	]);?>
-	<div id="edit-private-qualification"></div>
+	<div id="qualification-edit-content"></div>
 	<?php Modal::end();?>		
 <script>
 $(document).ready(function() {
@@ -66,15 +66,15 @@ $(document).ready(function() {
 			{
 			   if(response.status)
 			   {
-					$('#edit-private-qualification').html(response.data);
-					$('#private-qualification-modal').modal('show');
+					$('#qualification-edit-content').html(response.data);
+					$('#qualification-edit-modal').modal('show');
 				}
 			}
 		});
 		return false;
 	});
 	$(document).on("click", '.qualification-cancel', function() {
-		$('#private-qualification-modal').modal('hide');
+		$('#qualification-edit-modal').modal('hide');
 		return false;
 	});
 	$(document).on('beforeSubmit', '#qualification-form', function (e) {
@@ -87,8 +87,8 @@ $(document).ready(function() {
 			{
 			   if(response.status)
 			   {
-                    $.pjax.reload({container: '#private-qualification-grid', timeout: 6000});
-					$('#private-qualification-modal').modal('hide');
+                    $.pjax.reload({container: '#qualification-grid', timeout: 6000});
+					$('#qualification-edit-modal').modal('hide');
 				}else
 				{
 				 $('#qualification-form').yiiActiveForm('updateMessages', response.errors, true);
@@ -96,6 +96,23 @@ $(document).ready(function() {
 			}
 		});
 		return false;
+	});
+	$(document).on('click', '#qualification-delete', function (e) {
+		var qualificationId = $('#qualification-grid tbody > tr').data('key'); 
+		$.ajax({
+			url    : '<?= Url::to(['qualification/delete']); ?>?id=' + qualificationId,
+			type   : 'post',
+			success: function(response)
+			{
+				   console.log(response);
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#qualification-grid', timeout : 6000});
+					$('#qualification-edit-modal').modal('hide');
+				} 
+			}
+			});
+			return false;
 	});
 });
 </script>

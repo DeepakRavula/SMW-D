@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use common\models\query\QualificationQuery;
 
 /**
  * This is the model class for table "qualification".
@@ -32,7 +33,8 @@ class Qualification extends \yii\db\ActiveRecord
     {
         return [
             [['program_id', 'rate'], 'required'],
-            [['teacher_id', 'program_id', 'type', 'isDeleted'], 'integer'],
+            [['teacher_id', 'program_id', 'type',], 'integer'],
+			[['isDeleted'], 'safe']
         ];
     }
 

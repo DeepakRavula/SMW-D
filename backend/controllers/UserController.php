@@ -498,9 +498,11 @@ class UserController extends Controller
 		$teacherQualifications = $request->post('Qualification');
         if ($model->load($request->post())) {
 			$qualificationModels = [];
-			foreach($teacherQualifications as $teacherQualification) {
-				foreach($teacherQualification as $qualification) {
-					$qualificationModels[] = $qualification;
+			if(!empty($teacherQualifications)) {
+				foreach($teacherQualifications as $teacherQualification) {
+					foreach($teacherQualification as $qualification) {
+						$qualificationModels[] = $qualification;
+					}
 				}
 			}
 			$addressModels = UserForm::createMultiple(Address::classname());
