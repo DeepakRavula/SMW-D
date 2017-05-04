@@ -95,5 +95,8 @@ $this->title = 'New Enrolment';
 		</div>
 	</div>	
 	<div class="clearfix"></div>
+	<div class="form-group">
+        <?php echo Html::a('Next',['enrolment/student'], ['class' => 'btn btn-primary']); ?>
+	</div>
 		<?php ActiveForm::end(); ?>
 </div> <!-- ./container -->

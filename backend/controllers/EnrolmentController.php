@@ -14,7 +14,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use common\models\TeacherRoom;
+use common\models\Student;
 use common\models\PhoneNumber;
 use common\models\Address;
 use common\models\UserProfile;
@@ -124,6 +124,15 @@ class EnrolmentController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+	public function actionStudent()
+    {
+        $model = new Student();
+
+		return $this->render('_form-student', [
+			'model' => $model,
+		]);
     }
 
 	public function actionCustomer()
