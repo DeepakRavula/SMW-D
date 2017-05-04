@@ -16,8 +16,7 @@ use common\models\TaxStatus;
 <?php $form = ActiveForm::begin([
     'id' => 'line-item-edit-form',
 	'action' => Url::to(['invoice-line-item/update', 'id' => $model->id]),
-	'enableAjaxValidation' => true,
-	'enableClientValidation' => false
+	'enableClientValidation' => true
 ]); ?>
    <div class="row">
         <div class="col-md-4">
@@ -97,46 +96,45 @@ use common\models\TaxStatus;
 
 <script>
     $(document).on("change", '#amount-line', function() {
-		computeNetPrice();
-		return false;
-	});
+        computeNetPrice();
+        return false;
+    });
     
     $(document).on("change", '#invoicelineitem-discount', function() {
-		computeNetPrice();
-		return false;
-	});
+        computeNetPrice();
+        return false;
+    });
     
     $(document).on("change", '#invoicelineitem-discounttype', function() {
-		computeNetPrice();
-		return false;
-	});
+        computeNetPrice();
+        return false;
+    });
     
     $(document).on("change", '#invoicelineitem-taxstatus', function() {
-		computeNetPrice();
-		return false;
-	});
+        computeNetPrice();
+        return false;
+    });
     
     function computeNetPrice()
     {
         $.ajax({
-			url: "<?php echo Url::to(['invoice-line-item/compute-net-price', 'id' => $model->id]); ?>",
-			type: "POST",
-			contentType: 'application/json',
-			dataType: "json",
-			data: JSON.stringify({
+            url: "<?php echo Url::to(['invoice-line-item/compute-net-price', 'id' => $model->id]); ?>",
+            type: "POST",
+            contentType: 'application/json',
+            dataType: "json",
+            data: JSON.stringify({
                 'amount' : $('#amount-line').val(),
-				'unit' : $('#unit-line').val(),
-                'discount' : $('#invoicelineitem-discount').val(),
+		'discount' : $('#invoicelineitem-discount').val(),
                 'discountType' : $('#invoicelineitem-discounttype').val(),
                 'taxStatus' : $('#invoicelineitem-taxstatus').val()
-			}),
-			success: function(response) {
-				$('#invoicelineitem-netprice').val(response.netPrice);
+            }),
+            success: function(response) {
+                $('#invoicelineitem-netprice').val(response.netPrice);
                 $('#invoicelineitem-taxpercentage').val(response.taxPercentage);          
                 $('#lineitem-tax_rate').val(response.taxRate);          
-			},
-			error: function() {
-			}
-		});	
+            },
+            error: function() {
+            }
+        });	
     }
 </script>

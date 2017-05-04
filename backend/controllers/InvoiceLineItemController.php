@@ -56,6 +56,7 @@ class InvoiceLineItemController extends Controller
     public function actionUpdate($id) 
     {
         $model = $this->findModel($id);
+        $model->setScenario(InvoiceLineItem::SCENARIO_EDIT);
         $data = $this->renderAjax('/invoice/line-item/_form', [
             'model' => $model,
         ]);

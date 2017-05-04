@@ -80,7 +80,7 @@ Modal::end();
                 [
                 'name' => 'isSent',
                 'pluginOptions' => [
-                    'handleWidth' => 60,
+                    'handleWidth' => 60, 
                     'onText' => 'Sent',
                     'offText' => 'Not Sent',
                 ],

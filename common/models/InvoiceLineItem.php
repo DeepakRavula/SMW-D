@@ -22,6 +22,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     private $isRoyaltyExempted;
    
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
+    const SCENARIO_EDIT = 'edit';
     const DISCOUNT_FLAT            = 0;
     const DISCOUNT_PERCENTAGE      = 1;
 
@@ -35,7 +36,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public $userName;
     public $price;
     public $tax;
-    
+    public $taxStatus;
+
+
     /**
      * {@inheritdoc}
      */
@@ -50,6 +53,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['taxStatus', 'required', 'on' => self::SCENARIO_EDIT],
+            ['code', 'required'],
             [['unit', 'amount', 'description', 'tax_status'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
@@ -63,8 +68,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
             ],
-            [['unit'], 'integer', 'when' => function ($model, $attribute) {
-                return (int) $model->item_type_id === ItemType::TYPE_MISC;
+            [['unit'], 'number', 'when' => function ($model, $attribute) {
+                return (int) $model->item_type_id !== ItemType::TYPE_MISC;
             },
             ],
             [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 
