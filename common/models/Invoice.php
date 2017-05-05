@@ -560,11 +560,20 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
 			if($lesson->course->program->isPrivate()) {
+                            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+                                $invoiceLineItem->cost = !empty($lesson->teacher->teacherPrivateLessonRate->hourlyRate) ?
+                                    $lesson->teacher->teacherPrivateLessonRate->hourlyRate : 0.0;
+                            } else {
+                                $invoiceLineItem->cost = ($lesson->teacher->teacherPrivateLessonRate->hourlyRate) ?
+                                    $lesson->teacher->teacherPrivateLessonRate->hourlyRate : 0.0;
+                            }
 				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
 				$enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0; 
 				$invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
 				$invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
 			} else {
+                $invoiceLineItem->cost = !empty($lesson->teacher->teacherGroupLessonRate->hourlyRate) ?
+                $lesson->teacher->teacherGroupLessonRate->hourlyRate : 0.0;
 				$invoiceLineItem->discount     = 0;
 	            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
 			}
@@ -600,6 +609,7 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->amount       = $amount;
             $studentFullName               = $lesson->enrolment->student->fullName;
         }
+        $invoiceLineItem->code        = $invoiceLineItem->getItemCode();
         $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
         return $invoiceLineItem->save();
