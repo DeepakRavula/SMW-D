@@ -585,20 +585,10 @@ class UserController extends Controller
 
         $addressModels = $model->addresses;
         $phoneNumberModels = $model->phoneNumbers;
-        $qualificationModels = $model->qualifications;
 
         $request = Yii::$app->request;
         $response = Yii::$app->response;
-		$teacherQualifications = $request->post('Qualification');
         if ($model->load($request->post())) {
-            $oldQualificationIds = ArrayHelper::map($qualificationModels, 'id', 'id');
-			$qualificationModels = [];
-			foreach($teacherQualifications as $teacherQualification) {
-				foreach($teacherQualification as $qualification) {
-					$qualificationModels[] = $qualification;
-				}
-			}
-			$newQualificationIds = ArrayHelper::map($qualificationModels, 'id', 'id');
             $oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
             $addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
             Model::loadMultiple($addressModels, $request->post());
@@ -609,19 +599,14 @@ class UserController extends Controller
             Model::loadMultiple($phoneNumberModels, $request->post());
             $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
 			
-			$oldQualificationIDs = ArrayHelper::map($qualificationModels, 'id', 'id');
-            $qualificationModels = UserForm::createMultiple(Qualification::classname(), $qualificationModels);
-            Model::loadMultiple($qualificationModels, $request->post());
-            $deletedQualificationIDs = array_diff($oldQualificationIDs, array_filter(ArrayHelper::map($qualificationModels, 'id', 'id')));
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
 
                 return ArrayHelper::merge(
-                    ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($qualificationModels)
-                );
+                    ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels));
             }
             $valid = $model->validate();
-            $valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels) && Model::validateMultiple($qualificationModels)) && $valid;
+            $valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels)) && $valid;
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
@@ -642,20 +627,6 @@ class UserController extends Controller
                         foreach ($phoneNumberModels as $phoneNumberModel) {
                             $phoneNumberModel->user_id = $id;
                             if (!($flag = $phoneNumberModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-						 if (!empty($deletedQualificationIDs)) {
-                            Qualification::deleteAll(['id' => $deletedQualificationIDs]);
-                        }
-                        foreach ($qualificationModels as $qualificationModel) {
-                            $qualificationModel->teacher_id = $id;
-							$qualificationModel->type = Qualification::TYPE_HOURLY;	
-							if($qualificationModel->program->isGroup()) {
-								$qualificationModel->type = Qualification::TYPE_FIXED;	
-							}
-                            if (!($flag = $qualificationModel->save(false))) {
                                 $transaction->rollBack();
                                 break;
                             }
@@ -684,7 +655,6 @@ class UserController extends Controller
 			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
 			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
 			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
-			'qualificationModels' => (empty($qualificationModels)) ? [new Qualification()] : $qualificationModels,
         ]);
     }
 

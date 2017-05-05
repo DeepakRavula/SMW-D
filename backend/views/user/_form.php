@@ -47,14 +47,16 @@ use yii\bootstrap\Tabs;
         'addressModels' => $addressModels,
         'phoneNumberModels' => $phoneNumberModels,
         'form' => $form,
-    ]);
-
+    ]); ?>
+	<?php if($model->getModel()->isNewRecord) : ?>
+	<?php
     $qualificationContent = $this->render('teacher/_form-qualification', [
         'model' => $model,
         'form' => $form,
 		'qualificationModels' => $qualificationModels,
-    ]);
-
+    ]);?>
+	<?php endif; ?>
+<?php
     $items = [
         [
             'label' => 'Profile',
