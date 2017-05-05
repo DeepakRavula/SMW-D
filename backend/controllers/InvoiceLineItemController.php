@@ -57,11 +57,11 @@ class InvoiceLineItemController extends Controller
     {
         $model = $this->findModel($id);
         $model->setScenario(InvoiceLineItem::SCENARIO_EDIT);
+        $model->tax_status = $model->taxStatus;
         $data = $this->renderAjax('/invoice/line-item/_form', [
             'model' => $model,
         ]);
         $post = Yii::$app->request->post();
-        unset($post['InvoiceLineItem']['taxStatus']);
         if ($model->load($post)) {
             $taxStatus         = $post['InvoiceLineItem']['tax_status'];
             $taxCode           = $model->computeTaxCode($taxStatus);
