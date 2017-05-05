@@ -118,7 +118,6 @@ use yii\bootstrap\Modal;
 		<?php
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
 		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
-		<?php if (($lessonDate <= $currentDate && !$model->isCanceled() && !$model->isUnscheduled()) || $model->isCompleted()) : ?>
 		  <?php	$form = ActiveForm::begin(['id' => 'lesson-present-form']);?>
 		<?php $model->present = $model->isMissed() ? false : true; ?> 
 		<div class="m-r-20 del-ce">
@@ -135,8 +134,6 @@ use yii\bootstrap\Modal;
             ?>
 			</div>
 		<?php ActiveForm::end(); ?>
-		<?php endif; ?>
-		
 	    </div>
 		<?php endif; ?>
 		</div>
@@ -168,16 +165,21 @@ echo $this->render('_split-lesson', [
 		return false;
   	});
 	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
-	$.ajax({
-            url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
-            type   : 'POST',
-            dataType: "json",
-			data   : $('#lesson-present-form').serialize(),
-            success: function(response)
-            {
-            }
-        });
-        return false;
-	});
+		 var success = confirm("Do you wish to generate invoice for this lesson?");
+        if (success) {
+			$.ajax({
+				url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
+				type   : 'POST',
+				dataType: "json",
+				data   : $('#lesson-present-form').serialize(),
+				success: function(response)
+				{
+				}
+			});
+			return false;
+		} else {
+			
+		}
+	});	
 });
 </script>
