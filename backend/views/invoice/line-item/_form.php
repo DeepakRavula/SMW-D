@@ -61,18 +61,15 @@ use common\models\TaxStatus;
             ])->label('Is Royalty');?>
         </div>
         <div class="col-md-3">
-            <?= $form->field($model, 'taxStatus')->dropDownList(ArrayHelper::map(
+            <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
                             TaxStatus::find()->all(), 'id', 'name'
-            ), ['prompt' => 'Select']);?>
+            ), ['prompt' => 'Select', 'id' => 'lineitem-tax_status']);?>
         </div>
         <div class="col-xs-2">
             <?php echo $form->field($model, 'taxPercentage')->textInput(['readonly' => true])->label('Tax (%)') ?>
         </div>
         <div class="col-xs-2">
             <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true, 'id' => 'lineitem-tax_rate'])?>
-        </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'tax_status')->hiddenInput(['id' => 'line-tax-status'])->label(false); ?>
         </div>
         <div class="col-md-12">
             <?= $form->field($model, 'description')->textarea();?>
@@ -113,8 +110,7 @@ use common\models\TaxStatus;
         return false;
     });
     
-    $(document).on("change", '#invoicelineitem-taxstatus', function() {
-        $('#line-tax-status').val($('#invoicelineitem-taxstatus').val());
+    $(document).on("change", '#lineitem-tax_status', function() {
         computeNetPrice();
         return false;
     });
@@ -130,7 +126,7 @@ use common\models\TaxStatus;
                 'amount' : $('#amount-line').val(),
 		'discount' : $('#invoicelineitem-discount').val(),
                 'discountType' : $('input[name="InvoiceLineItem[discountType]"]').is(":checked"),
-                'taxStatus' : $('#invoicelineitem-taxstatus').val()
+                'taxStatus' : $('#lineitem-tax_status').val()
             }),
             success: function(response) {
                 $('#invoicelineitem-netprice').val(response.netPrice);
