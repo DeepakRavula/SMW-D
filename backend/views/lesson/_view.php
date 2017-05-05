@@ -167,6 +167,7 @@ echo $this->render('_split-lesson', [
 	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
 		 var success = confirm("Do you wish to generate invoice for this lesson?");
         if (success) {
+			console.log(success);
 			$.ajax({
 				url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
 				type   : 'POST',

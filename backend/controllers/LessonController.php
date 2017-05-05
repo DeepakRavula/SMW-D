@@ -673,7 +673,9 @@ class LessonController extends Controller
 		} else {
 			$model->status = Lesson::STATUS_COMPLETED;
 			$model->save();
-			$model->invoice->delete();
+			if(!empty($model->invoice)) {
+				$model->invoice->delete();
+			}
 		}
 		
 	}
