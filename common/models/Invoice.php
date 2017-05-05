@@ -560,8 +560,13 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
 			if($lesson->course->program->isPrivate()) {
-                            $invoiceLineItem->cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ?
-                    $this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate : 0.0;
+                            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+                                $invoiceLineItem->cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ?
+                                    $this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate : 0.0;
+                            } else {
+                                $invoiceLineItem->cost = ($this->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ?
+                                    $this->lesson->teacher->teacherPrivateLessonRate->hourlyRate : 0.0;
+                            }
 				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
 				$enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0; 
 				$invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
