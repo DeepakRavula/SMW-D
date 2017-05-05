@@ -561,19 +561,19 @@ class Invoice extends \yii\db\ActiveRecord
         } else {
 			if($lesson->course->program->isPrivate()) {
                             if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
-                                $invoiceLineItem->cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ?
-                                    $this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate : 0.0;
+                                $invoiceLineItem->cost = !empty($lesson->teacher->teacherPrivateLessonRate->hourlyRate) ?
+                                    $lesson->teacher->teacherPrivateLessonRate->hourlyRate : 0.0;
                             } else {
-                                $invoiceLineItem->cost = ($this->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ?
-                                    $this->lesson->teacher->teacherPrivateLessonRate->hourlyRate : 0.0;
+                                $invoiceLineItem->cost = ($lesson->teacher->teacherPrivateLessonRate->hourlyRate) ?
+                                    $lesson->teacher->teacherPrivateLessonRate->hourlyRate : 0.0;
                             }
 				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
 				$enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0; 
 				$invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
 				$invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
 			} else {
-                $invoiceLineItem->cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate) ? 
-                $this->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate : 0.0;
+                $invoiceLineItem->cost = !empty($lesson->teacher->teacherGroupLessonRate->hourlyRate) ?
+                $lesson->teacher->teacherGroupLessonRate->hourlyRate : 0.0;
 				$invoiceLineItem->discount     = 0;
 	            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
 			}
