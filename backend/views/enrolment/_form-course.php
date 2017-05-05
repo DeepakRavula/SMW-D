@@ -16,14 +16,6 @@ use yii\helpers\Url;
 
 $this->title = 'New Enrolment';
 ?>
-<div class="wizard">
-    <ul class="steps">
-        <li class="active">Program<span class="chevron"></span></li>
-        <li>Customer<span class="chevron"></span></li>
-        <li>Student<span class="chevron"></span></li>
-        <li>Preview<span class="chevron"></span></li>
-    </ul>
-</div>
 <div class="container">
 	<?php $form = ActiveForm::begin(); ?>
 		 <div class="form-group">
@@ -98,7 +90,7 @@ $this->title = 'New Enrolment';
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
-        <?php echo Html::a('Next',['enrolment/customer'], ['class' => 'btn btn-primary']); ?>
+        <?php //echo Html::a('Next',['enrolment/customer'], ['class' => 'btn btn-primary']); ?>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div> <!-- ./container -->

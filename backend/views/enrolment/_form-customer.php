@@ -15,14 +15,6 @@ use common\models\Province;
 
 $this->title = 'New Enrolment';
 ?>
-<div class="wizard">
-    <ul class="steps">
-		<li><?= Html::a('Program', ['enrolment/create']); ?><span class="chevron"></span></li>
-        <li class="active">Customer<span class="chevron"></span></li>
-        <li>Student<span class="chevron"></span></li>
-        <li>Preview<span class="chevron"></span></li>
-    </ul>
-</div>
 <div class="container">
 	<?php $form = ActiveForm::begin(); ?>
 		 <div class="form-group">
@@ -96,7 +88,7 @@ $this->title = 'New Enrolment';
 	</div>	
 	<div class="clearfix"></div>
 	<div class="form-group">
-        <?php echo Html::a('Next',['enrolment/student'], ['class' => 'btn btn-primary']); ?>
+        <?php //echo Html::a('Next',['enrolment/student'], ['class' => 'btn btn-primary']); ?>
 	</div>
 		<?php ActiveForm::end(); ?>
 </div> <!-- ./container -->

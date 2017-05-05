@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="enrolment-create">
 
-    <?php echo $this->render('_form-course', [
+    <?php echo $this->render('_index', [
         'model' => new Course(),
     ]) ?>
 
