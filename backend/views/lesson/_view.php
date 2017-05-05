@@ -9,6 +9,7 @@ use yii\bootstrap\Modal;
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
 ?>
+<script src="/plugins/bootbox/bootbox.min.js"></script>
 <style>
 	.student_customer{
 		margin-left:-5px;
@@ -130,6 +131,9 @@ use yii\bootstrap\Modal;
                     'onText' => 'Present',
                     'offText' => 'Absent',
                 ],
+//				'pluginEvents' => [
+//                    "switchChange.bootstrapSwitch" => 'lesson.missed',
+//                ],
             ])->label(false);
             ?>
 			</div>
@@ -155,6 +159,31 @@ echo $this->render('_split-lesson', [
 ]);
 ?>
 <script>
+//	 var lesson = {
+//        missed: function (event, state) {
+//            var instanOff = $(this), msg;
+//            instanOff.bootstrapSwitch('state', !state, true);
+//            console.log(state);
+//
+//            if (state) {
+//                msg = 'Callers won\'t be able to make anymore appointments for today only. Are you sure?';
+//            } else {
+//                msg = 'Caller will be able to make appointment until regular appt. time over. Are you sure?'
+//            }
+//            bootbox.confirm(msg, function (result) {
+//                if (result) {
+//                    instanOff.bootstrapSwitch('state', state & 1, true);
+//                    var consultantSessionId = instanOff.data('consultant-session-id');
+//                    $.ajax({
+//                        method: "POST",
+//                        url: "<?= Url::to(['consultant-session/switch-consulting-over']); ?>?consultantSessionId=" + consultantSessionId + "&state=" + (state & 1)
+//                    })
+//                            .done(function (msg) {
+//                            });
+//                }
+//            });
+//        }
+//    }
  $(document).ready(function() {
 	 $(document).on('click', '#lesson-mail-button', function (e) {
 		$('#lesson-mail-modal').modal('show');
@@ -165,11 +194,49 @@ echo $this->render('_split-lesson', [
 		return false;
   	});
 	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
-		 var success = confirm("Do you wish to generate invoice for this lesson?");
-        if (success) {
-			console.log(success);
+			if(! state) {
+				bootbox.confirm({
+				message: "Do you wish to generate an invoice for this lesson?",
+				buttons: {
+					confirm: {
+						label: 'Yes',
+						className: 'btn-success'
+					},
+					cancel: {
+						label: 'No',
+						className: 'btn-danger'
+					}
+				},
+				callback: function (result) {
+					if(result) {
+						$.ajax({
+							url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
+							type   : 'POST',
+							dataType: "json",
+							data   : $('#lesson-present-form').serialize(),
+							success: function(response)
+							{
+							}
+						});
+					} else {
+						$.ajax({
+							url    : '<?= Url::to(['lesson/absent', 'id' => $model->id]) ?>',
+							type   : 'POST',
+							dataType: "json",
+							data   : $('#lesson-present-form').serialize(),
+							success: function(response)
+							{
+								if(respose.status) {
+									$('.modal-dialog').hide();
+								}
+							}
+						});
+					}
+				}
+			});
+		} else {
 			$.ajax({
-				url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
+				url    : '<?= Url::to(['lesson/present', 'id' => $model->id]) ?>',
 				type   : 'POST',
 				dataType: "json",
 				data   : $('#lesson-present-form').serialize(),
@@ -177,9 +244,6 @@ echo $this->render('_split-lesson', [
 				{
 				}
 			});
-			return false;
-		} else {
-			
 		}
 	});	
 });
