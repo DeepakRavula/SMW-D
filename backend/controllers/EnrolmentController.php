@@ -126,30 +126,6 @@ class EnrolmentController extends Controller
         }
     }
 
-	public function actionStudent()
-    {
-        $model = new Student();
-
-		return $this->render('_form-student', [
-			'model' => $model,
-		]);
-    }
-
-	public function actionCustomer()
-    {
-        $model = new User();
-		$phoneModel = new PhoneNumber();
-		$addressModel = new Address();
-		$userProfile = new UserProfile();
-
-		return $this->render('_form-customer', [
-			'model' => $model,
-			'phoneModel' => $phoneModel,
-			'addressModel' => $addressModel, 
-			'userProfile' => $userProfile
-		]);
-    }
-
 	public function actionPreview($id)
 	{
 		$model = $this->findModel($id);
