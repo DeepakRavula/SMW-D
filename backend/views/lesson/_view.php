@@ -131,9 +131,6 @@ use yii\bootstrap\Modal;
                     'onText' => 'Present',
                     'offText' => 'Absent',
                 ],
-//				'pluginEvents' => [
-//                    "switchChange.bootstrapSwitch" => 'lesson.missed',
-//                ],
             ])->label(false);
             ?>
 			</div>
@@ -159,31 +156,6 @@ echo $this->render('_split-lesson', [
 ]);
 ?>
 <script>
-//	 var lesson = {
-//        missed: function (event, state) {
-//            var instanOff = $(this), msg;
-//            instanOff.bootstrapSwitch('state', !state, true);
-//            console.log(state);
-//
-//            if (state) {
-//                msg = 'Callers won\'t be able to make anymore appointments for today only. Are you sure?';
-//            } else {
-//                msg = 'Caller will be able to make appointment until regular appt. time over. Are you sure?'
-//            }
-//            bootbox.confirm(msg, function (result) {
-//                if (result) {
-//                    instanOff.bootstrapSwitch('state', state & 1, true);
-//                    var consultantSessionId = instanOff.data('consultant-session-id');
-//                    $.ajax({
-//                        method: "POST",
-//                        url: "<?= Url::to(['consultant-session/switch-consulting-over']); ?>?consultantSessionId=" + consultantSessionId + "&state=" + (state & 1)
-//                    })
-//                            .done(function (msg) {
-//                            });
-//                }
-//            });
-//        }
-//    }
  $(document).ready(function() {
 	 $(document).on('click', '#lesson-mail-button', function (e) {
 		$('#lesson-mail-modal').modal('show');
