@@ -14,7 +14,10 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use common\models\TeacherRoom;
+use common\models\Student;
+use common\models\PhoneNumber;
+use common\models\Address;
+use common\models\UserProfile;
 use yii\filters\ContentNegotiator;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
