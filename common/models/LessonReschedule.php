@@ -93,6 +93,7 @@ class LessonReschedule extends \yii\db\ActiveRecord
 		}
 
 		$originalLessonId	 = $lessonModel->id;
+		$classroomId = $lessonModel->classroomId;
 		$lessonModel->id			 = null;
 		$lessonModel->isNewRecord	 = true;
 		
@@ -107,6 +108,9 @@ class LessonReschedule extends \yii\db\ActiveRecord
 		
 		$lessonModel->status = Lesson::STATUS_SCHEDULED;
 		if($lessonModel->save()) {
+			$lessonModel->updateAttributes([
+				'classroomId' => $classroomId,
+			]);	
 			$lessonRescheduleModel						 = new LessonReschedule();
 			$lessonRescheduleModel->lessonId			 = $originalLessonId;
 			$lessonRescheduleModel->rescheduledLessonId	 = $lessonModel->id;
