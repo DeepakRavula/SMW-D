@@ -61,8 +61,9 @@ class InvoiceLineItemController extends Controller
             'model' => $model,
         ]);
         $post = Yii::$app->request->post();
+        unset($post['InvoiceLineItem']['taxStatus']);
         if ($model->load($post)) {
-            $taxStatus         = $post['InvoiceLineItem']['taxStatus'];
+            $taxStatus         = $post['InvoiceLineItem']['tax_status'];
             $taxCode           = $model->computeTaxCode($taxStatus);
             $model->tax_status = $taxCode->taxStatus->name;
             $model->tax_type   = $taxCode->taxType->name;

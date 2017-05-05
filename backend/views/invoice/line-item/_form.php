@@ -71,6 +71,9 @@ use common\models\TaxStatus;
         <div class="col-xs-2">
             <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true, 'id' => 'lineitem-tax_rate'])?>
         </div>
+        <div class="col-md-3">
+            <?= $form->field($model, 'tax_status')->hiddenInput(['id' => 'line-tax-status'])->label(false); ?>
+        </div>
         <div class="col-md-12">
             <?= $form->field($model, 'description')->textarea();?>
         </div>
@@ -104,13 +107,14 @@ use common\models\TaxStatus;
         computeNetPrice();
         return false;
     });
-    
-    $(document).on("change", '#invoicelineitem-discounttype', function() {
+
+    $('input[name="InvoiceLineItem[discountType]"]').on('switchChange.bootstrapSwitch', function() {
         computeNetPrice();
         return false;
     });
     
     $(document).on("change", '#invoicelineitem-taxstatus', function() {
+        $('#line-tax-status').val($('#invoicelineitem-taxstatus').val());
         computeNetPrice();
         return false;
     });
@@ -125,7 +129,7 @@ use common\models\TaxStatus;
             data: JSON.stringify({
                 'amount' : $('#amount-line').val(),
 		'discount' : $('#invoicelineitem-discount').val(),
-                'discountType' : $('#invoicelineitem-discounttype').val(),
+                'discountType' : $('input[name="InvoiceLineItem[discountType]"]').is(":checked"),
                 'taxStatus' : $('#invoicelineitem-taxstatus').val()
             }),
             success: function(response) {

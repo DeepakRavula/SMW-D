@@ -36,8 +36,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public $userName;
     public $price;
     public $tax;
-    public $taxStatus;
-
 
     /**
      * {@inheritdoc}
@@ -100,6 +98,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     
     public function getTaxStatus()
     {
+        $code = null;
         switch ($this->tax_status) {
             case self::STATUS_DEFAULT:
                 $code = TaxStatus::STATUS_DEFAULT;
