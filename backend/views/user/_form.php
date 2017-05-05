@@ -71,7 +71,7 @@ use yii\bootstrap\Tabs;
                 ],
         ],
     ];
-    if (in_array($model->roles, ['teacher'])) {
+    if (in_array($model->roles, ['teacher']) && $model->getModel()->isNewRecord) {
         $items[] = [
             'label' => 'Qualifications',
             'content' => $qualificationContent,
