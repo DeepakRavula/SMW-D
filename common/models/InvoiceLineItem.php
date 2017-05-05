@@ -20,9 +20,9 @@ use common\models\query\InvoiceLineItemQuery;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
     private $isRoyaltyExempted;
-    //public $taxStatus;
-
+   
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
+    const SCENARIO_EDIT = 'edit';
     const DISCOUNT_FLAT            = 0;
     const DISCOUNT_PERCENTAGE      = 1;
 
@@ -35,8 +35,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public $userName;
     public $price;
-    public $cost;
-	public $tax;
+    public $tax;
+
     /**
      * {@inheritdoc}
      */
@@ -51,6 +51,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['taxStatus', 'required', 'on' => self::SCENARIO_EDIT],
+            ['code', 'required'],
             [['unit', 'amount', 'description', 'tax_status'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
@@ -64,12 +66,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
             ],
-            [['unit'], 'integer', 'when' => function ($model, $attribute) {
-                return (int) $model->item_type_id === ItemType::TYPE_MISC;
+            [['unit'], 'number', 'when' => function ($model, $attribute) {
+                return (int) $model->item_type_id !== ItemType::TYPE_MISC;
             },
             ],
             [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 
-                'tax_status', 'tax_type', 'tax_rate', 'userName', 'discount', 'discountType'], 'safe'],
+                'tax_status', 'tax_type', 'tax_rate', 'userName', 'discount', 
+                'discountType', 'cost', 'code'], 'safe'],
         ];
     }
 
@@ -95,6 +98,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     
     public function getTaxStatus()
     {
+        $code = null;
         switch ($this->tax_status) {
             case self::STATUS_DEFAULT:
                 $code = TaxStatus::STATUS_DEFAULT;
@@ -110,7 +114,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $code;
     }
     
-    public function getCode()
+    public function getItemCode()
     {
         return $this->itemType->getItemCode();
     }
@@ -197,23 +201,35 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
         
         if (!$insert) {
+            if ($this->invoice->isReversedInvoice()) {
+                $this->amount = -($this->amount);
+                $this->setScenario(self::SCENARIO_OPENING_BALANCE);
+            }
             $this->tax_rate = $this->amount * $this->taxType->taxCode->rate / 100;
         }
         return parent::beforeSave($insert);
     }
     
-    public function getCost()
+    public function computeTaxCode($taxStatus)
     {
-        $cost = 0;
-        $itemTypes = [ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON, ItemType::TYPE_GROUP_LESSON];
-        if(in_array($this->item_type_id,$itemTypes)) {
-            if((int)$this->item_type_id === ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON) {
-                $cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate) ? $this->paymentCycleLesson->lesson->teacher->teacherPrivateLessonRate->hourlyRate : null;
-            } else {
-                $cost = !empty($this->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate) ? $this->paymentCycleLesson->lesson->teacher->teacherGroupLessonRate->hourlyRate : null;
-            }
-        }
-        return $cost;
+        $today         = (new \DateTime())->format('Y-m-d H:i:s');
+        $locationId    = Yii::$app->session->get('location_id');
+        $locationModel = Location::findOne(['id' => $locationId]);
+        $taxCode = TaxCode::find()
+            ->joinWith(['taxStatus' => function ($query) use ($taxStatus) {
+                $query->where(['tax_status.id' => $taxStatus]);
+            }])
+            ->where(['<=', 'start_date', $today])
+            ->andWhere(['province_id' => $locationModel->province_id])
+            ->orderBy('start_date DESC')
+            ->one();
+            
+        return $taxCode;
+    }
+    
+    public function getTaxPercentage()
+    {
+        return $this->taxType->taxCode->rate;
     }
 
     public function afterSave($insert, $changedAttributes)

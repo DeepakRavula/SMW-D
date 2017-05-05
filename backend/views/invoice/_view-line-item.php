@@ -10,7 +10,7 @@ use common\models\Qualification;
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:120px;'],
             'label' => 'Code',
             'value' => function ($data) {
-                return $data->itemType->itemCode;
+                return $data->code;
             },
         ],
         [
@@ -48,17 +48,15 @@ use common\models\Qualification;
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
-            'value' => function($data) {
-                //$cost = 0;
-				$qualification = Qualification::findOne(['teacher_id' => $data->paymentCycleLesson->lesson->teacher->id, 'program_id' => $data->paymentCycleLesson->lesson->course->program->id]);
-				return !empty($qualification->rate) ? $qualification->rate : '$0.00';
-                
-            }
+            'value' => function ($data) {
+                return $data->cost;
+            },
         ],
         [
             'label' => 'Price',
+            'format' => 'currency',
 			'value' => function($data) {
-				return Yii::$app->formatter->asCurrency($data->amount - $data->getDiscountValue());	
+				return $data->netPrice;	
 			},
         ],
     ];
@@ -69,7 +67,7 @@ use common\models\Qualification;
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:120px;'],
             'label' => 'Code',
             'value' => function ($data) {
-                return $data->itemType->itemCode;
+                return $data->code;
             },
         ],
         [
@@ -78,8 +76,9 @@ use common\models\Qualification;
         ],
         [
             'label' => 'Price',
+            'format' => 'currency',
 			'value' => function($data) {
-				return Yii::$app->formatter->asCurrency($data->amount - $data->getDiscountValue());	
+				return $data->netPrice;	
 			},
         ],
     ];
