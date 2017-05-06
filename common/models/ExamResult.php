@@ -18,9 +18,14 @@ use Yii;
  */
 class ExamResult extends \yii\db\ActiveRecord
 {
+    
+    const EVENT_CREATE = 'event-create';
+    const EVENT_UPDATE = 'event-update';
+    const EVENT_DELETE = 'event-delete';
     /**
      * @inheritdoc
      */
+    public $userName;
     public static function tableName()
     {
         return 'exam_result';
@@ -66,10 +71,29 @@ class ExamResult extends \yii\db\ActiveRecord
         return $this->hasOne(Program::className(), ['id' => 'programId']);
     }
 	
+
 	public function beforeSave($insert)
 	{
 		$this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
 		
 		return parent::beforeSave($insert);
 	}
-}
+
+        
+        
+        public function afterSave($insert, $changedAttributes) {
+		if($insert) {
+			$this->trigger(self::EVENT_CREATE);
+		} 
+                
+                
+			$this->trigger(self::EVENT_UPDATE);
+		
+		return parent::afterSave($insert, $changedAttributes);
+	}
+        
+        
+        
+        
+        
+        }

@@ -365,7 +365,7 @@ public function getLessons($date)
         }
     }
 
-    public function actionTeachers()
+  public function actionTeachers()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
@@ -379,7 +379,7 @@ public function getLessons($date)
 				->where(['location_id' => $location_id]);
 				}]);
 			}])
-			->andWhere(['program_id' => $programId])
+			->where(['program_id' => $programId])
 			->all();
         $result = [];
         $output = [];
