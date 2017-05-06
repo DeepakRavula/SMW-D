@@ -156,4 +156,20 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $invoice->save();
         return $invoice;
     }
+
+    public function isLastPaymentCycle()
+    {
+        return new \DateTime($this->endDate) <= new \DateTime();
+    }
+
+    public function isCurrentPaymentCycle()
+    {
+        return new \DateTime($this->startDate) <= new \DateTime() &&
+            new \DateTime($this->endDate) >= new \DateTime();
+    }
+
+    public function isNextPaymentCycle()
+    {
+        return $this->enrolment->nextPaymentCycle->id === $this->id;
+    }
 }

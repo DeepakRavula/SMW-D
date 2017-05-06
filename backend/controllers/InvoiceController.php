@@ -561,17 +561,15 @@ class InvoiceController extends Controller
     public function actionInvoicePaymentCycle($id)
     {
         $paymentCycle = PaymentCycle::findOne($id);
-        $currentDate  = new \DateTime();
-        $paymentCycleStartDate  = new \DateTime($paymentCycle->startDate);
-        $priorDate    = $paymentCycleStartDate->modify('-1 month');
-        if ($currentDate->format('Y-m-d') >= $priorDate->format('Y-m-d')) {
+
+        if ($paymentCycle->isLastPaymentCycle() || $paymentCycle->isCurrentPaymentCycle() || $paymentCycle->isNextPaymentCycle()) {
             $paymentCycle->createProFormaInvoice();
 
             return $this->redirect(['view', 'id' => $paymentCycle->proFormaInvoice->id]);
         } else {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
-                'body' => 'ProForma-Invoice can be generated only before one month prior than payment cycle start date.',
+                'body' => 'ProForma-Invoice can be generated only for current and next payment cycle only.',
             ]);
             return $this->redirect(['enrolment/view', 'id' => $paymentCycle->enrolment->id, '#' => 'payment-cycle']);
         }

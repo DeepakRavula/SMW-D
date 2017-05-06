@@ -124,6 +124,27 @@ class Enrolment extends \yii\db\ActiveRecord
             ->viaTable('course', ['id' => 'courseId']);
     }
 
+    public function getCurrentPaymentCycle()
+    {
+        return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
+            ->where(['AND',
+                ['<=', 'startDate', (new \DateTime())->format('Y-m-d')],
+                ['>=', 'endDate', (new \DateTime())->format('Y-m-d')]
+            ]);
+    }
+
+    public function getNextPaymentCycle()
+    {
+        $currentPaymentCycleEndDate = new \DateTime($this->currentPaymentCycle->endDate);
+        $nextPaymentCycleStartDate  = $currentPaymentCycleEndDate->modify('+1 day');
+
+        return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
+            ->where(['AND',
+                ['<=', 'startDate', $nextPaymentCycleStartDate->format('Y-m-d')],
+                ['>=', 'endDate', $nextPaymentCycleStartDate->format('Y-m-d')]
+            ]);
+    }
+
     public function getFirstLesson()
     {
         return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
