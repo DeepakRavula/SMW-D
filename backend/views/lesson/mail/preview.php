@@ -8,6 +8,7 @@ use yii\helpers\ArrayHelper;
 use kartik\select2\Select2;
 use yii\imperavi\Widget;
 use common\models\User;
+use common\models\Lesson;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -30,13 +31,22 @@ use common\models\User;
 			$model->toEmailAddress = $emails; 	
 			$subject = $model->course->program->name . ' lesson reschedule';
 			$body = null;
+			$to = !empty($model->enrolment->student->customer->publicIdentity) ? $model->enrolment->student->customer->publicIdentity : null;
 			?>
-			<?php if($model->isRescheduled()) : ?>
-        	<?php $body = $model->course->program->name . ' lesson has been rescheduled. Please check the updated schedule given below'; 
+			<?php if($model->isRescheduled()) : ?> 
+        	<?php $lesson = Lesson::findOne(['lesson.id' => $model->reschedule->lessonId]); ?>
+			<?php  if(!empty($model->date) && new \DateTime($model->date) !== new \DateTime($lesson->date)) : ?>
+			<?php 
+			$duration		 = \DateTime::createFromFormat('H:i:s', $model->duration);
+			$lessonDuration	 = ($duration->format('H') * 60) + $duration->format('i');
+			$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->duration);
+			$oldLessonDuration	 = ($duration->format('H') * 60) + $duration->format('i');
+			$body = $lesson->enrolment->student->fullname . '\'s ' . $lesson->course->program->name . ' lesson with ' . $lesson->teacher->publicIdentity . ' on ' . (new \DateTime($lesson->date))->format('l, F jS, Y') . ' @ ' . Yii::$app->formatter->asTime($lesson->date) . ' for ' . $oldLessonDuration . ' minutes has been rescheduled to ' . (new \DateTime($model->date))->format('l, F jS, Y') . ' @ ' . Yii::$app->formatter->asTime($model->date) . ' for ' . $lessonDuration . ' minutes.'; 
 			?>
 			<?php endif; ?>
+			<?php endif; ?>
 			<?php $content = $this->render('content', [
-				'toName' => !empty($model->enrolment->student->customer->publicIdentity) ? $model->enrolment->student->customer->publicIdentity : null,
+				'toName' => $to,
 				'content' => $body,
 				'model' => $model,
 			]); 
