@@ -160,18 +160,7 @@ $bundle = BackendAsset::register($this);
             <!-- sidebar: style can be found in sidebar.less -->
             <section class="sidebar">
                 <!-- Sidebar user panel -->
-                <div class="user-panel">
-                    <div class="pull-left image">
-                        <img src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/anonymous.jpg')) ?>" class="img-circle" />
-                    </div>
-                    <div class="pull-left info">
-                        <p><?php echo Yii::t('backend', '{username}', ['username' => Yii::$app->user->identity->userProfile->fullName]) ?></p>
-                        <a href="<?php echo Url::to(['sign-in/profile']) ?>">
-                            <i class="fa fa-circle text-success"></i>
-                            <?php echo Yii::$app->formatter->asDatetime(time()) ?>
-                        </a>
-                    </div>
-                </div>
+               
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <?php echo Menu::widget([
                     'options' => ['class' => 'sidebar-menu'],
