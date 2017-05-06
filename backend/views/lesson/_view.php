@@ -1,9 +1,6 @@
 <?php
 
-use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\bootstrap\ActiveForm;
-use kartik\switchinput\SwitchInput;
 use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
@@ -20,6 +17,10 @@ use yii\bootstrap\Modal;
 	}
 	.hand{
 		text-transform: capitalize;
+	}
+	.bootstrap-switch-id-lesson-present {
+		left:397px;
+		top:-30px;
 	}
 </style>
 <div class="lesson-view">
@@ -84,60 +85,17 @@ use yii\bootstrap\Modal;
 			<i class="fa fa-home"></i> <?php echo !empty($model->classroomId) ? $model->classroom->name : null; ?>
 		</div>
       
-		<?php if (Yii::$app->controller->action->id === 'view'):?>
 	</div>
+	<?php if (Yii::$app->controller->action->id === 'view'):?>
 	<div class="row-fluid">
     	<div class="col-md-12">
         	<hr class="default-hr">    		
     	</div>
     </div>
-	<div class="row-fluid">
-	<div class="col-md-12 action-btns m-b-20">
-		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-pencil"></i> Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
-		<?php if($model->invoice) : ?>
-		<?= Html::a('<span class="label label-primary">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-20 del-ce'])?>
-		<?php else : ?>
-		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
-        <?php endif; ?>
-			<?php if($model->isScheduled()) : ?>
-		<?php if(!empty($model->proFormaInvoice->id) && $model->proFormaInvoice->isPaid()) : ?>
-		<?= Html::a('<span class="label label-primary">View Payment</span>', ['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment'], ['class' => 'm-r-20 del-ce'])?>
-		<?php else : ?>
-		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Take Payment</span>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
-        <?php endif; ?>
-		 <?php endif; ?>
-		<?php if($model->course->program->isPrivate()) : ?>
-		<?php echo Html::a('<span class="label label-primary"> Split</span>', '#', [
-				'id' => 'split-lesson',
-				'class' => 'm-r-20 del-ce',
-			]) ?>	
+	<?= $this->render('_buttons', [
+		'model' => $model,
+	]); ?>
 		<?php endif; ?>
-		<?php echo Html::a('<i class="fa fa-mail"></i> Email', '#' , [
-			'id' => 'lesson-mail-button',
-			'class' => 'btn btn-default btn-sm m-r-20 del-ce']) ?>	
-		
-		<?php
-		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
-		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
-		  <?php	$form = ActiveForm::begin(['id' => 'lesson-present-form']);?>
-		<?php $model->present = $model->isMissed() ? false : true; ?> 
-		<div class="m-r-20 del-ce">
-			<?=
-            $form->field($model, 'present')->widget(SwitchInput::classname(),
-                [
-                'name' => 'present',
-                'pluginOptions' => [
-                    'handleWidth' => 60,
-                    'onText' => 'Present',
-                    'offText' => 'Absent',
-                ],
-            ])->label(false);
-            ?>
-			</div>
-		<?php ActiveForm::end(); ?>
-	    </div>
-		<?php endif; ?>
-		</div>
 <div class="clearfix"></div>
 </div>
 <?php

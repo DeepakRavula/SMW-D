@@ -32,6 +32,9 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_CANCELED = 4;
 	const STATUS_UNSCHEDULED = 5;
 	const STATUS_MISSED = 6;
+
+	const TYPE_REGULAR = 1;
+	const TYPE_EXTRA = 2;
 	
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_EDIT = 'edit';
@@ -89,7 +92,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
-            [['courseId', 'status'], 'integer'],
+            [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
             [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
@@ -229,6 +232,14 @@ class Lesson extends \yii\db\ActiveRecord
                     'invoice.isDeleted' => false]);
     }
 
+	public function getExtraLessonProFormaInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+                ->via('invoiceLineItem')
+                ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
+                    'invoice.isDeleted' => false]);
+    }
+
     public function getLessonReschedule()
     {
         return $this->hasOne(LessonReschedule::className(), ['lessonId' => 'id']);
@@ -322,6 +333,10 @@ class Lesson extends \yii\db\ActiveRecord
         return ((int) $this->course->program->type === (int) Program::TYPE_PRIVATE_PROGRAM);
     }
 
+	public function isExtra()
+    {
+        return ((int) $this->type === (int) self::TYPE_EXTRA);
+    }
     public function beforeSave($insert)
     {
 		if (isset($this->colorCode)) {
@@ -338,6 +353,9 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         if ($insert) {
+			if(empty($this->type)) {
+				$this->type = Lesson::TYPE_REGULAR;
+			}
             $this->classroomId = $this->getTeacherClassroomId();
         }
 
