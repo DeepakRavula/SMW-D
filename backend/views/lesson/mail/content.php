@@ -5,24 +5,5 @@ use yii\helpers\Html;
 Dear Customer,<br> 
   <?= $content; ?>
 <br>
-<table cellspacing="0" cellpadding="0" border="0">
-        <tr>
-            <td>Date</td>
-            <td><?php echo Html::encode(Yii::$app->formatter->asDateTime($model->date)); ?></td>
-        </tr>
-        <tr>
-            <td>Teacher</td>
-            <td><?= !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null; ?></td>
-        </tr>
-        <tr>
-            <td>Student</td>
-            <td><?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null; ?></td>
-        </tr>
-        <tr>
-            <td>Duration</td>
-            <td><?= (new \DateTime($model->duration))->format('H:i'); ?></td>
-        </tr>
-	</table>
-<br>
 Thank you<br>
 Arcadia Music Academy Team.<br>
