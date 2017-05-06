@@ -16,16 +16,16 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class Enrolment extends \yii\db\ActiveRecord
 {
     public $studentIds;
-	public $endDate;
-	public $toEmailAddress;
-	public $subject;
-	public $content;
-	public $hasEditable;
-	
-	const EDIT_RENEWAL = 'renewal';
-	const EDIT_LEAVE = 'leave';
+    public $endDate;
+    public $toEmailAddress;
+    public $subject;
+    public $content;
+    public $hasEditable;
 
-	const EVENT_CREATE = 'create';
+    const EDIT_RENEWAL = 'renewal';
+    const EDIT_LEAVE = 'leave';
+
+    const EVENT_CREATE = 'create';
     /**
      * {@inheritdoc}
      */
@@ -266,24 +266,48 @@ class Enrolment extends \yii\db\ActiveRecord
     }
 	
     public function getPaymentFrequency()
-	{
-		$paymentFrequency = null;
-		switch($this->paymentFrequencyId) {
-			case PaymentFrequency::LENGTH_FULL :
-				$paymentFrequency = 'Annually';
-			break;
-			case PaymentFrequency::LENGTH_HALFYEARLY :
-				$paymentFrequency = 'Semi-Annually';
-			break;
-			case PaymentFrequency::LENGTH_QUARTERLY :
-				$paymentFrequency = 'Quarterly';
-			break;
-			case PaymentFrequency::LENGTH_MONTHLY :
-				$paymentFrequency = 'Monthly';
-			break;
-		}
-		return $paymentFrequency;
-	}
+    {
+        $paymentFrequency = null;
+        switch($this->paymentFrequencyId) {
+            case PaymentFrequency::LENGTH_FULL :
+                $paymentFrequency = 'Annually';
+            break;
+            case PaymentFrequency::LENGTH_HALFYEARLY :
+                $paymentFrequency = 'Semi-Annually';
+            break;
+            case PaymentFrequency::LENGTH_QUARTERLY :
+                $paymentFrequency = 'Quarterly';
+            break;
+            case PaymentFrequency::LENGTH_MONTHLY :
+                $paymentFrequency = 'Monthly';
+            break;
+            case PaymentFrequency::LENGTH_BI_MONTHLY:
+                $paymentFrequency = 'Bi-Monthly';
+            break;
+            case PaymentFrequency::LENGTH_EVERY_FOUR_MONTH:
+                $paymentFrequency = 'Every Four Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_FIVE_MONTH:
+                $paymentFrequency = 'Every Five Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_SEVEN_MONTH:
+                $paymentFrequency = 'Every Seven Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_EIGHT_MONTH:
+                $paymentFrequency = 'Every Eight Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_NINE_MONTH:
+                $paymentFrequency = 'Every Nine Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_TEN_MONTH:
+                $paymentFrequency = 'Every Ten Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_ELEVEN_MONTH:
+                $paymentFrequency = 'Every Eleven Month';
+                break;
+        }
+        return $paymentFrequency;
+    }
 
     public function deleteUnPaidProformaPaymentCycles()
     {
@@ -292,16 +316,26 @@ class Enrolment extends \yii\db\ActiveRecord
         }
     }
 
+    public function diffInMonths($date1, $date2)
+    {
+        $diff =  $date1->diff($date2);
+
+        $months = $diff->y * 12 + $diff->m + (int) ($diff->d / 30);
+
+        return (int) $months;
+    }
+
     public function resetPaymentCycle()
     {
         if (!empty($this->firstUnPaidProFormaPaymentCycle)) {
             $startDate = \DateTime::createFromFormat('Y-m-d',
-                $this->firstUnPaidProFormaPaymentCycle->startDate);
+                $this->firstUnPaidProFormaPaymentCycle->startDate);        
             $enrolmentLastPaymentCycleEndDate = \DateTime::createFromFormat('Y-m-d',
                 $this->lastPaymentCycle->endDate);
-            $interval = $startDate->diff($enrolmentLastPaymentCycleEndDate);
+            $intervalMonths = $this->diffInMonths($startDate, $enrolmentLastPaymentCycleEndDate);
             $this->deleteUnPaidProformaPaymentCycles();
-            for ($i = 0; $i <= $interval->format('%m') / $this->paymentsFrequency->frequencyLength; $i++) {
+            $paymentCycleCount = (int) ($intervalMonths / $this->paymentsFrequency->frequencyLength);
+            for ($i = 0; $i <= $paymentCycleCount; $i++) {
                 if ($i !== 0) {
                     $startDate     = $endDate->modify('First day of next month');
                 }
@@ -321,6 +355,30 @@ class Enrolment extends \yii\db\ActiveRecord
                     case PaymentFrequency::LENGTH_MONTHLY:
                         $endDate = $startDate->modify('+1 month, -1 day');
                         break;
+                    case PaymentFrequency::LENGTH_BI_MONTHLY:
+                        $endDate = $startDate->modify('+2 month, -1 day');
+                    break;
+                    case PaymentFrequency::LENGTH_EVERY_FOUR_MONTH:
+                        $endDate = $startDate->modify('+4 month, -1 day');
+                        break;
+                    case PaymentFrequency::LENGTH_EVERY_FIVE_MONTH:
+                        $endDate = $startDate->modify('+5 month, -1 day');
+                        break;
+                    case PaymentFrequency::LENGTH_EVERY_SEVEN_MONTH:
+                        $endDate = $startDate->modify('+7 month, -1 day');
+                        break;
+                    case PaymentFrequency::LENGTH_EVERY_EIGHT_MONTH:
+                        $endDate = $startDate->modify('+8 month, -1 day');
+                        break;
+                    case PaymentFrequency::LENGTH_EVERY_NINE_MONTH:
+                        $endDate = $startDate->modify('+9 month, -1 day');
+                        break;
+                    case PaymentFrequency::LENGTH_EVERY_TEN_MONTH:
+                        $endDate = $startDate->modify('+10 month, -1 day');
+                        break;
+                    case PaymentFrequency::LENGTH_EVERY_ELEVEN_MONTH:
+                        $endDate = $startDate->modify('+11 month, -1 day');
+                        break;
                 }
 
                 $paymentCycle->id          = null;
@@ -328,7 +386,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 $paymentCycle->endDate     = $endDate->format('Y-m-d');
                 if ($enrolmentLastPaymentCycleEndDate->format('Y-m-d') < $paymentCycle->endDate) {
                     $paymentCycle->endDate = $enrolmentLastPaymentCycleEndDate->format('Y-m-d');
-                } 
+                }
                 if ($enrolmentLastPaymentCycleEndDate->format('Y-m-d') > $paymentCycle->startDate) {
                     $paymentCycle->save();
                 }
@@ -340,7 +398,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $enrolmentStartDate      = \DateTime::createFromFormat('Y-m-d H:i:s', $this->firstLesson->date);
         $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
-        for ($i = 0; $i < 12 / $this->paymentsFrequency->frequencyLength; $i++) {
+        for ($i = 0; $i <= (int) 12 / $this->paymentsFrequency->frequencyLength; $i++) {
             if ($i !== 0) {
                 $paymentCycleStartDate     = $endDate->modify('First day of next month');
             }
@@ -360,12 +418,41 @@ class Enrolment extends \yii\db\ActiveRecord
                 case PaymentFrequency::LENGTH_MONTHLY:
                     $endDate = $paymentCycleStartDate->modify('+1 month, -1 day');
                     break;
+                case PaymentFrequency::LENGTH_BI_MONTHLY:
+                    $endDate = $paymentCycleStartDate->modify('+2 month, -1 day');
+                    break;
+                case PaymentFrequency::LENGTH_EVERY_FOUR_MONTH:
+                    $endDate = $paymentCycleStartDate->modify('+4 month, -1 day');
+                    break;
+                case PaymentFrequency::LENGTH_EVERY_FIVE_MONTH:
+                    $endDate = $paymentCycleStartDate->modify('+5 month, -1 day');
+                    break;
+                case PaymentFrequency::LENGTH_EVERY_SEVEN_MONTH:
+                    $endDate = $paymentCycleStartDate->modify('+7 month, -1 day');
+                    break;
+                case PaymentFrequency::LENGTH_EVERY_EIGHT_MONTH:
+                    $endDate = $paymentCycleStartDate->modify('+8 month, -1 day');
+                    break;
+                case PaymentFrequency::LENGTH_EVERY_NINE_MONTH:
+                    $endDate = $paymentCycleStartDate->modify('+9 month, -1 day');
+                    break;
+                case PaymentFrequency::LENGTH_EVERY_TEN_MONTH:
+                    $endDate = $paymentCycleStartDate->modify('+10 month, -1 day');
+                    break;
+                case PaymentFrequency::LENGTH_EVERY_ELEVEN_MONTH:
+                    $endDate = $paymentCycleStartDate->modify('+11 month, -1 day');
+                    break;
             }
 
             $paymentCycle->id          = null;
             $paymentCycle->isNewRecord = true;
             $paymentCycle->endDate     = $endDate->format('Y-m-d');
-            $paymentCycle->save();
+            if ((new \DateTime($this->course->endDate))->format('Y-m-d') < $paymentCycle->endDate) {
+                $paymentCycle->endDate = (new \DateTime($this->course->endDate))->format('Y-m-t');
+            }
+            if ((new \DateTime($this->course->endDate))->format('Y-m-d') > $paymentCycle->startDate) {
+                $paymentCycle->save();
+            }
         }
     }
 
