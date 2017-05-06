@@ -194,7 +194,7 @@ use yii\bootstrap\Modal;
         function refresh() {
             var events, availableHours;
             var teacherId = $('#lesson-teacherid').val();
-            var date = $('#extra-lesson-date').val();
+            var date = moment($('#extra-lesson-date').val()).format('DD-MM-YYYY');
             if (date === '') {
                 $('#lesson-calendar').fullCalendar('destroy');
                 $('#new-lesson-modal .modal-dialog').css({'width': '600px'});
