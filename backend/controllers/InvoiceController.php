@@ -563,7 +563,7 @@ class InvoiceController extends Controller
         $paymentCycle = PaymentCycle::findOne($id);
         $currentDate  = new \DateTime();
         $paymentCycleStartDate  = new \DateTime($paymentCycle->startDate);
-        $priorDate    = $paymentCycleStartDate->modify('' . PaymentCycle::PFI_CREATION_THRESHOLD_ADVANCED_DAYS . ' days');
+        $priorDate    = $paymentCycleStartDate->modify('-1 month');
         if ($currentDate->format('Y-m-d') >= $priorDate->format('Y-m-d')) {
             $paymentCycle->createProFormaInvoice();
 
@@ -571,7 +571,7 @@ class InvoiceController extends Controller
         } else {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
-                'body' => 'ProForma-Invoice can be generated only after 15 days prior than payment cycle start date.',
+                'body' => 'ProForma-Invoice can be generated only before one month prior than payment cycle start date.',
             ]);
             return $this->redirect(['enrolment/view', 'id' => $paymentCycle->enrolment->id, '#' => 'payment-cycle']);
         }
