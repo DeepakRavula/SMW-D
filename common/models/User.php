@@ -54,7 +54,18 @@ class User extends ActiveRecord implements IdentityInterface
 	public $groupLessonHourlyRate;
 	public $hasEditable;
 	
-	
+	public static $roleNames = [
+        self::ROLE_ADMINISTRATOR => 'Admin',
+        self::ROLE_OWNER => 'Owner',
+        self::ROLE_STAFFMEMBER => 'Staff Member',
+        self::ROLE_TEACHER => 'Teacher',
+    ];
+    public static $roleBootstrapClasses = [
+		self::ROLE_ADMINISTRATOR => 'danger',
+        self::ROLE_OWNER => 'success',
+        self::ROLE_STAFFMEMBER => 'info',
+        self::ROLE_TEACHER => 'default',
+    ];	
     /**
      * {@inheritdoc}
      */
@@ -466,5 +477,18 @@ class User extends ActiveRecord implements IdentityInterface
             'availableHours' => $availableHours,
             'events' => $events,
         ];
+    }
+
+	public function getRoleName()
+    {
+		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+		$role = end($roles);
+        return self::$roleNames[$role->name];
+    }
+    public function getRoleBootstrapClass()
+    {
+		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+		$role = end($roles);
+        return self::$roleBootstrapClasses[$role->name];
     }
 }
