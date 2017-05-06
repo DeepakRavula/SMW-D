@@ -69,7 +69,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function getFirstLesson()
     {
-        return $this->hasOne(lesson::className(), ['id' => 'lessonId'])
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
             ->viaTable('payment_cycle_lesson', ['paymentCycleId' => 'id'])
             ->orderBy(['lesson.date' => SORT_ASC]);
     }

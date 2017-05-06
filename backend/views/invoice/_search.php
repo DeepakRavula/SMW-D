@@ -41,8 +41,8 @@ use kartik\daterange\DateRangePicker;
         <?php echo $form->field($model, 'invoiceStatus')->dropDownList(InvoiceSearch::invoiceStatuses())->label('Invoice Status'); ?>
     </div>
     <div class="col-md-3">
+    <label>Due Date Range</label>
     <?php
-        echo '<label>Due Date Range</label>';
         echo DateRangePicker::widget([
             'model' => $model,
             'attribute' => 'dateRange',
