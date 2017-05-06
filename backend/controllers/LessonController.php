@@ -653,31 +653,45 @@ class LessonController extends Controller
 
 	public function actionMissed($id)
 	{
-		$request = Yii::$app->request;
         $model = $this->findModel($id);
 		$model->on(Lesson::EVENT_MISSED, [new TimelineEventLesson(), 'missed']);
 		$user = User::findOne(['id' => Yii::$app->user->id]);
 		$model->userName = $user->publicIdentity;
-		$lessonRequest = $request->post('Lesson');
-		if(!$lessonRequest['present']) {
-			$model->status = Lesson::STATUS_MISSED;
-			$model->save();
-			$model->trigger(Lesson::EVENT_MISSED);	
-			if(empty($model->invoice)) {
-				$invoice = $model->createInvoice();
-
-				return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-			} else {
-        	   return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
-			}
+		$model->status = Lesson::STATUS_MISSED;
+		$model->save();
+		$model->trigger(Lesson::EVENT_MISSED);	
+		if(empty($model->invoice)) {
+			$invoice = $model->createInvoice();
+			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
 		} else {
-			$model->status = Lesson::STATUS_COMPLETED;
-			$model->save();
-			$model->invoice->delete();
+		   return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
 		}
-		
 	}
 	
+	public function actionPresent($id)
+	{
+        $model = $this->findModel($id);
+		$currentDate = new \DateTime();
+		$lessonDate = new \DateTime($model->date);
+		$model->status = Lesson::STATUS_SCHEDULED;
+		if($currentDate >= $lessonDate) {
+			$model->status = Lesson::STATUS_COMPLETED;
+		}
+		$model->save();
+		if(!empty($model->invoice)) {
+			$model->invoice->delete();
+		}
+	}
+
+	public function actionAbsent($id)
+	{
+        $model = $this->findModel($id);
+		$model->status = Lesson::STATUS_MISSED;
+		$model->save();
+		return [
+			'status' => true,
+		];
+	}
 	 public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);
