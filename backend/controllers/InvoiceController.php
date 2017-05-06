@@ -59,22 +59,25 @@ class InvoiceController extends Controller
     public function actionIndex()
     {
         $searchModel = new InvoiceSearch();
-		$request = Yii::$app->request;
-		$invoiceSearchRequest = $request->get('InvoiceSearch');
-		if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
-			$currentDate				 = new \DateTime();
-			$searchModel->toDate		 = $currentDate->format('d-m-Y');
-			$fromDate					 = clone $currentDate;
-			$fromDate		 = $fromDate->modify('-90 days');
-			$searchModel->fromDate = $fromDate->format('d-m-Y');
-			$searchModel->invoiceStatus	 = Invoice::STATUS_OWING;
-			$searchModel->mailStatus	 = InvoiceSearch::STATUS_MAIL_NOT_SENT;
-		} else {
-			$searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
-			$searchModel->toDate = (new \DateTime('last day of this month'))->format('d-m-Y');
-		}
+        $request = Yii::$app->request;
+        $invoiceSearchRequest = $request->get('InvoiceSearch');
+        if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
+            $currentDate                = new \DateTime();
+            $searchModel->toDate        = $currentDate->format('d-m-Y');
+            $fromDate                   = clone $currentDate;
+            $fromDate                   = $fromDate->modify('-90 days');
+            $searchModel->fromDate      = $fromDate->format('d-m-Y');
+            $searchModel->invoiceStatus = Invoice::STATUS_OWING;
+            $searchModel->mailStatus    = InvoiceSearch::STATUS_MAIL_NOT_SENT;
+            $searchModel->dueFromDate      = $currentDate->format('1-m-Y');
+            $searchModel->dueToDate        = $currentDate->format('t-m-Y');
+            $searchModel->dateRange     = $searchModel->fromDate.' - '.$searchModel->toDate;
+        } else {
+            $searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
+            $searchModel->toDate   = (new \DateTime('last day of this month'))->format('d-m-Y');
+        }
 
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
                     'searchModel' => $searchModel,

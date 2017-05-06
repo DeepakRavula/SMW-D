@@ -20,6 +20,9 @@ class InvoiceSearch extends Invoice
     public $toggleAdditionalColumns;
     public $fromDate;
     public $toDate;
+    public $dateRange;
+    public $dueToDate;
+    public $dueFromDate;
     public $type;
     public $query;
     public $mailStatus;
@@ -32,7 +35,8 @@ class InvoiceSearch extends Invoice
         return [
             [['fromDate', 'toDate'], 'date', 'format' => 'php:d-m-Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
-            [['type', 'query', 'toggleAdditionalColumns'], 'safe'],
+            [['type', 'query', 'toggleAdditionalColumns', 'dateRange',
+                'dueFromDate', 'dueToDate'], 'safe'],
         ];
     }
 
@@ -43,6 +47,22 @@ class InvoiceSearch extends Invoice
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
+    }
+
+    public function setDateRange($dateRange)
+    {
+        list($fromDate, $toDate) = explode(' - ', $dateRange);
+        $this->dueFromDate = \DateTime::createFromFormat('d-m-Y', $fromDate);
+        $this->dueToDate = \DateTime::createFromFormat('d-m-Y', $toDate);
+    }
+
+    public function getDateRange()
+    {
+        $fromDate = $this->dueFromDate->format('d-m-Y');
+        $toDate = $this->dueToDate->format('d-m-Y');
+        $this->dateRange = $fromDate.' - '.$toDate;
+
+        return $this->dateRange;
     }
 
     /**
@@ -80,18 +100,20 @@ class InvoiceSearch extends Invoice
         $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
         $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
 
-		if ((int) $this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
-			if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
-				$query->mailSent();
-			} elseif ((int) $this->mailStatus === self::STATUS_MAIL_NOT_SENT) {
-				$query->mailNotSent();
-			}
-			if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
-				$query->unpaid()->proFromaInvoice();
-			} elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
-				$query->paid()->proFromaInvoice();
-			}
-		}
+        if ((int) $this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+            if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
+                $query->mailSent();
+            } elseif ((int) $this->mailStatus === self::STATUS_MAIL_NOT_SENT) {
+                $query->mailNotSent();
+            }
+            if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
+                $query->unpaid()->proFromaInvoice();
+            } elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
+                $query->paid()->proFromaInvoice();
+            }
+            $query->andWhere(['between', 'invoice.dueDate', (new \DateTime($this->dueFromDate))->format('Y-m-d'),
+                    (new \DateTime($this->dueToDate))->format('Y-m-d')]);
+        }
         $query->andWhere(['between', 'invoice.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 
         $query->andFilterWhere(['type' => $this->type]);
