@@ -708,7 +708,7 @@ class LessonController extends Controller
 			{
 				Yii::$app->session->setFlash('alert', [
 					'options' => ['class' => 'alert-success'],
-					'body' => ' Mail has been send successfully',
+					'body' => ' Mail has been sent successfully',
 				]);
 			} else {
 				Yii::$app->session->setFlash('alert', [
