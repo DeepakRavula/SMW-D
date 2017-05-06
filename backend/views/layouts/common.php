@@ -185,7 +185,7 @@ $bundle = BackendAsset::register($this);
                         ],
                         [
                             'label' => Yii::t('backend', 'Dashboard'),
-                            'icon' => '<i class="fa fa-home""></i>',
+                            'icon' => '<i class="fa fa-tachometer"></i>',
                             'url' => ['dashboard/index'],
                             'visible' => Yii::$app->user->can('staffmember'),
                             'active' => (Yii::$app->controller->id === 'dashboard') ? true : false,
