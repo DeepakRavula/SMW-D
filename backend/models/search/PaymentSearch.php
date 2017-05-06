@@ -6,7 +6,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Payment;
 use Yii;
-
+use common\models\PaymentMethod;
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
  */
@@ -45,6 +45,7 @@ class PaymentSearch extends Payment
         $locationId          = Yii::$app->session->get('location_id');
         $query               = Payment::find()
             ->location($locationId)
+			->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
             ->notDeleted();
         $dataProvider        = new ActiveDataProvider([
             'query' => $query,
