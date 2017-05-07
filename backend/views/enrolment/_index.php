@@ -6,7 +6,10 @@ use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\User;
 use common\models\Student;
+use yii\bootstrap\Modal;
 ?>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <style>
 	.enrolment{    
 		background-color: #fff;
@@ -60,7 +63,7 @@ use common\models\Student;
 								<div class="col-lg-8">
 									<div>
 										<?=
-										$this->render('_form-course', [
+										$this->render('new/_form-course', [
 											'model' => new Course(),
 										]);
 										?>
@@ -82,7 +85,7 @@ use common\models\Student;
 						<div class="enrolment-step-body">
 							<div class="row">
 								<?=
-								$this->render('_form-customer', [
+								$this->render('new/_form-customer', [
 									'model' => new User(),
 									'phoneModel' => new PhoneNumber(),
 									'addressModel' => new Address(),
@@ -103,7 +106,7 @@ use common\models\Student;
 							<div class="row">
 								<div class="form-group">
 									<?=
-									$this->render('_form-student', [
+									$this->render('new/_form-student', [
 										'model' => new Student(),
 									]);
 									?> 
@@ -127,57 +130,36 @@ use common\models\Student;
 		</div>
 	</div>
 </div>
+<?php
+	Modal::begin([
+		'header' => '<h4 class="m-0">Choose Teacher, Day and Time</h4>',
+		'id'=>'new-enrolment-modal',
+	]);?>
+	<div class="schedule-index">
+        <div class="row schedule-filter">
+            <div class="col-md-4 pull-right">
+                <div id="datepicker" class="input-group date">
+                    <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="clearfix"></div>
+	<div class="new-enrolment-calendar"></div>
+	<?php Modal::end();?>
 <script>
-	function rateEstimation(duration, programRate, discount) {
-		var timeArray = duration.split(':');
-    	var hours = parseInt(timeArray[0]);
-    	var minutes = parseInt(timeArray[1]);
-		var unit = ((hours * 60) + (minutes)) / 60;
-		var amount = (programRate * unit).toFixed(2);
-		if(discount === '') {
-			var discount = 0;
-		} 
-		var discountedRate = (amount - ((amount * (discount / 100)))).toFixed(2);
-		var discountedMonthlyRate = (discountedRate * 4).toFixed(2); 
-		$('#rate').text('$' + discountedRate);
-		$('#monthly-rate').text('$' + discountedMonthlyRate);
-	}
-	function fetchProgram(duration, programId, discount) {
-		$.ajax({
-			url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?id=' + programId,
-			type: 'get',
-			dataType: "json",
-			success: function (response)
-			{
-				programRate = response;
-				rateEstimation(duration,programRate, discount);
-			}
-		});
-	}
-    $(document).ready(function () {
-		$('#rate').text('$0.00');
-		$('#monthly-rate').text('$0.00');
-		$(document).on('change', '#course-programid', function(){
-			var duration = $('#course-duration').val();
-			var programId = $('#course-programid').val();
-			var discount = $('#course-discount').val();
-			fetchProgram(duration, programId, discount);
-		});
-		$(document).on('change', '#course-duration', function(){
-			var duration = $('#course-duration').val();
-			var programId = $('#course-programid').val();
-			var discount = $('#course-discount').val();
-			if (duration && programId || discount) {
-				fetchProgram(duration, programId, discount);
-			}
-		});
-		$(document).on('change', '#course-discount', function(){
-			var duration = $('#course-duration').val();
-			var programId = $('#course-programid').val();
-			var discount = $('#course-discount').val();
-			if (duration && programId || discount) {
-				fetchProgram(duration, programId, discount);
-			}
-		});
-});
+	$(document).ready(function(){
+		$('#datepicker').datepicker ({
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+        todayHighlight: true
+    });
+	var programId = $('#course-programid').val();
+	$(document).on('click', '.enrolment-calendar', function(){
+		$('#new-enrolment-modal').modal('show');
+	});
+	});
 </script>
