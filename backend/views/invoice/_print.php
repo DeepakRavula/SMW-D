@@ -184,19 +184,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'headerOptions' => ['class' => 'text-left'],
                     'contentOptions' => ['class' => 'text-left'],
                 ],
-				[
-                    'format' => 'currency',
-                    'label' => 'Sell',
-                    'headerOptions' => ['class' => 'text-right'],
-                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
-                    'value' => function ($data) {
-                        if ((int) $data->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON) {
-                            return $data->lesson->enrolment->program->rate;
-                        } else {
-                            return $data->amount;
-                        }
-                    },
-                ],
                 [
 					'label' => 'Qty',
 					'value' => function ($data) {

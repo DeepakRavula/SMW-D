@@ -26,6 +26,14 @@ use common\models\Qualification;
             'headerOptions' => ['class' => 'text-left'],
             'attribute' => 'description',
         ],
+		[
+			'label' => 'Qty',
+			'value' => function ($data) {
+				return $data->unit;
+			},
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+		],
         [
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
@@ -74,6 +82,14 @@ use common\models\Qualification;
             'headerOptions' => ['class' => 'text-left'],
             'attribute' => 'description',
         ],
+		 [
+			'label' => 'Qty',
+			'value' => function ($data) {
+				return $data->unit;
+			},
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+		],
         [
             'label' => 'Price',
             'format' => 'currency',
