@@ -83,9 +83,9 @@ class Invoice extends \yii\db\ActiveRecord
             [['reminderNotes'], 'string'],
             [['isSent'], 'boolean'],
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
-			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
+            [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
-			[['hasEditable'], 'safe']
+            [['hasEditable', 'dueDate'], 'safe']
         ];
     }
 
@@ -497,16 +497,14 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-		if ($insert) {
+        if ($insert) {
             $lastInvoice   = $this->lastInvoice();
             $invoiceNumber = 1;
             if (!empty($lastInvoice)) {
                 $invoiceNumber = $lastInvoice->invoice_number + 1;
             }
             $this->invoice_number = $invoiceNumber;
-            if ($this->isInvoice()) {
-                $this->date           = (new \DateTime())->format('Y-m-d');
-            }
+            $this->date           = (new \DateTime())->format('Y-m-d');
             $this->status         = Invoice::STATUS_OWING;
             $this->isSent         = false;
             $this->subTotal       = 0.00;
@@ -517,7 +515,7 @@ class Invoice extends \yii\db\ActiveRecord
             if (!empty($reminderNotes)) {
                 $this->reminderNotes = $reminderNotes->notes;
             }
-			$this->isDeleted = false;
+            $this->isDeleted = false;
         }
 		
      	return parent::beforeSave($insert);

@@ -59,22 +59,25 @@ class InvoiceController extends Controller
     public function actionIndex()
     {
         $searchModel = new InvoiceSearch();
-		$request = Yii::$app->request;
-		$invoiceSearchRequest = $request->get('InvoiceSearch');
-		if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
-			$currentDate				 = new \DateTime();
-			$searchModel->toDate		 = $currentDate->format('d-m-Y');
-			$fromDate					 = clone $currentDate;
-			$fromDate		 = $fromDate->modify('-90 days');
-			$searchModel->fromDate = $fromDate->format('d-m-Y');
-			$searchModel->invoiceStatus	 = Invoice::STATUS_OWING;
-			$searchModel->mailStatus	 = InvoiceSearch::STATUS_MAIL_NOT_SENT;
-		} else {
-			$searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
-			$searchModel->toDate = (new \DateTime('last day of this month'))->format('d-m-Y');
-		}
+        $request = Yii::$app->request;
+        $invoiceSearchRequest = $request->get('InvoiceSearch');
+        if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
+            $currentDate                = new \DateTime();
+            $searchModel->toDate        = $currentDate->format('d-m-Y');
+            $fromDate                   = clone $currentDate;
+            $fromDate                   = $fromDate->modify('-90 days');
+            $searchModel->fromDate      = $fromDate->format('d-m-Y');
+            $searchModel->invoiceStatus = Invoice::STATUS_OWING;
+            $searchModel->mailStatus    = InvoiceSearch::STATUS_MAIL_NOT_SENT;
+            $searchModel->dueFromDate      = $currentDate->format('1-m-Y');
+            $searchModel->dueToDate        = $currentDate->format('t-m-Y');
+            $searchModel->dateRange     = $searchModel->fromDate.' - '.$searchModel->toDate;
+        } else {
+            $searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
+            $searchModel->toDate   = (new \DateTime('last day of this month'))->format('d-m-Y');
+        }
 
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
                     'searchModel' => $searchModel,
@@ -562,17 +565,15 @@ class InvoiceController extends Controller
     public function actionInvoicePaymentCycle($id)
     {
         $paymentCycle = PaymentCycle::findOne($id);
-        $currentDate  = new \DateTime();
-        $paymentCycleStartDate  = new \DateTime($paymentCycle->startDate);
-        $priorDate    = $paymentCycleStartDate->modify('' . PaymentCycle::PFI_CREATION_THRESHOLD_ADVANCED_DAYS . ' days');
-        if ($currentDate->format('Y-m-d') >= $priorDate->format('Y-m-d')) {
+
+        if ($paymentCycle->isLastPaymentCycle() || $paymentCycle->isCurrentPaymentCycle() || $paymentCycle->isNextPaymentCycle()) {
             $paymentCycle->createProFormaInvoice();
 
             return $this->redirect(['view', 'id' => $paymentCycle->proFormaInvoice->id]);
         } else {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
-                'body' => 'ProForma-Invoice can be generated only after 15 days prior than payment cycle start date.',
+                'body' => 'ProForma-Invoice can be generated only for current and next payment cycle only.',
             ]);
             return $this->redirect(['enrolment/view', 'id' => $paymentCycle->enrolment->id, '#' => 'payment-cycle']);
         }
