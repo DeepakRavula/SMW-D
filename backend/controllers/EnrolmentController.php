@@ -157,7 +157,10 @@ class EnrolmentController extends Controller
 
         $lessons = [];
         $lessons = Lesson::find()
-            ->joinWith(['course' => function ($query) {
+            ->joinWith(['course' => function ($query) use($programId){
+            	$query->joinWith(['program' => function ($query) use($programId){
+					$query->andWhere(['program.id' => $programId]);
+				}]);
                 $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
             }])
         	->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])

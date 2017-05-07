@@ -16,7 +16,6 @@ use yii\helpers\Json;
     $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
     $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
-
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <script>
