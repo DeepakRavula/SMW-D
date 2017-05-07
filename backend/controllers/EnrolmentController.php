@@ -14,11 +14,12 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use common\models\Student;
-use common\models\PhoneNumber;
+use common\models\Invoice;
 use common\models\Address;
 use common\models\UserProfile;
 use yii\filters\ContentNegotiator;
+use common\models\TeacherAvailability;
+use common\models\Program;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -124,6 +125,78 @@ class EnrolmentController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+	 public function actionSchedule($programId)
+    {
+		$session = Yii::$app->session;
+        $response = Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        $locationId = $session->get('location_id');
+        $teacherAvailabilities = TeacherAvailability::find()
+			->joinWith(['userLocation' => function ($query) use ($programId) {
+				$query->joinWith(['userProfile' => function ($query) use ($programId) {
+					$query->joinWith(['user' => function($query) use($programId) {
+						$query->joinWith(['qualifications' => function($query) use($programId) {
+							$query->andWhere(['program_id' => $programId]);
+						}]);
+					}]);
+				}]);
+			}])
+			->all();
+        $availableHours = [];
+        foreach ($teacherAvailabilities as $teacherAvailability) {
+            $availableHours[] = [
+                'start' => $teacherAvailability->from_time,
+                'end' => $teacherAvailability->to_time,
+                'dow' => [$teacherAvailability->day],
+                'className' => 'teacher-available',
+                'rendering' => 'inverse-background',
+            ];
+        }
+
+        $lessons = [];
+        $lessons = Lesson::find()
+            ->joinWith(['course' => function ($query) {
+                $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
+            }])
+        	->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
+			->notDeleted()
+            ->all();
+        $events = [];
+        foreach ($lessons as &$lesson) {
+            $toTime = new \DateTime($lesson->date);
+            $length = explode(':', $lesson->duration);
+            $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+            if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+                $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
+            } else {
+                $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
+            }
+            $class = null;
+            if (!empty($lesson->proFormaInvoice)) {
+                if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
+                    $class = 'proforma-paid';
+                } else {
+                    $class = 'proforma-unpaid';
+                }
+            }
+            $events[] = [
+                'start' => $lesson->date,
+                'end' => $toTime->format('Y-m-d H:i:s'),
+                'className' => $class,
+                'title' => $title,
+            ];
+        }
+        unset($lesson);
+		$data = $this->renderAjax('new/_calendar', [
+			'availableHours' => $availableHours,
+            'events' => $events,	
+		]);
+        return [
+            'status' => true,
+			'data' => $data,
+        ];	 
     }
 
 	public function actionPreview($id)

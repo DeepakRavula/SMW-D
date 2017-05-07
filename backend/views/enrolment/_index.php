@@ -7,6 +7,7 @@ use common\models\PhoneNumber;
 use common\models\User;
 use common\models\Student;
 use yii\bootstrap\Modal;
+use yii\helpers\Url;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -135,20 +136,7 @@ use yii\bootstrap\Modal;
 		'header' => '<h4 class="m-0">Choose Teacher, Day and Time</h4>',
 		'id'=>'new-enrolment-modal',
 	]);?>
-	<div class="schedule-index">
-        <div class="row schedule-filter">
-            <div class="col-md-4 pull-right">
-                <div id="datepicker" class="input-group date">
-                    <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-<div class="clearfix"></div>
-	<div class="new-enrolment-calendar"></div>
+<div id="new-enrolment-calendar"></div>
 	<?php Modal::end();?>
 <script>
 	$(document).ready(function(){
@@ -157,9 +145,23 @@ use yii\bootstrap\Modal;
         autoclose: true,
         todayHighlight: true
     });
-	var programId = $('#course-programid').val();
 	$(document).on('click', '.enrolment-calendar', function(){
-		$('#new-enrolment-modal').modal('show');
+		var programId = $('#course-programid').val();
+		$.ajax({
+			url: '<?= Url::to(['enrolment/schedule']); ?>?programId=' + programId,
+			type: 'get',
+			dataType: "json",
+			success: function (response)
+			{
+				if (response.status)
+				{
+                    $('#new-enrolment-modal .modal-body').html(response.data);
+					//$('#new-enrolment-calendar').html(response.data);
+					$('#new-enrolment-modal').modal('show');
+				} else {
+				}
+			}
+		});
 	});
 	});
 </script>
