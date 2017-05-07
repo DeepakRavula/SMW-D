@@ -29,11 +29,32 @@ use common\models\TaxStatus;
             <?= $form->field($model, 'cost')->textInput();?>
         </div>
         <div class="col-md-3">
-            <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true])->label('Net Price');?>
-        </div>
-        <div class="col-md-3">
             <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
         </div>
+        <div class="col-md-4">
+            <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
+                            TaxStatus::find()->all(), 'id', 'name'
+            ), ['prompt' => 'Select', 'id' => 'lineitem-tax_status']);?>
+        </div>
+        <div class="col-xs-2">
+            <?php echo $form->field($model, 'taxPercentage')->textInput(['readonly' => true])->label('Tax (%)') ?>
+        </div>
+        <div class="col-xs-3">
+            <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true, 'id' => 'lineitem-tax_rate'])?>
+        </div>
+	   <div class="col-md-3">
+            <?= $form->field($model, 'isRoyalty')->widget(SwitchInput::classname(),
+                [
+                'name' => 'isRoyalty',
+                'pluginOptions' => [
+                    'handleWidth' => 30,
+                    'onText' => 'Yes',
+                    'offText' => 'No',
+                ],
+            ])->label('Is Royalty');?>
+        </div>
+	   <div class="clearfix"></div>
+	   
         <div class="col-md-3">
             <?= $form->field($model, 'discount')->textInput()->label('Discount');?>
         </div>
@@ -48,29 +69,9 @@ use common\models\TaxStatus;
                 ],
             ])->label('Discount Type');?>
         </div>
-        
-        <div class="col-md-3">
-            <?= $form->field($model, 'isRoyalty')->widget(SwitchInput::classname(),
-                [
-                'name' => 'isRoyalty',
-                'pluginOptions' => [
-                    'handleWidth' => 30,
-                    'onText' => 'Yes',
-                    'offText' => 'No',
-                ],
-            ])->label('Is Royalty');?>
-        </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
-                            TaxStatus::find()->all(), 'id', 'name'
-            ), ['prompt' => 'Select', 'id' => 'lineitem-tax_status']);?>
-        </div>
-        <div class="col-xs-2">
-            <?php echo $form->field($model, 'taxPercentage')->textInput(['readonly' => true])->label('Tax (%)') ?>
-        </div>
-        <div class="col-xs-2">
-            <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true, 'id' => 'lineitem-tax_rate'])?>
-        </div>
+       <div class="col-md-3">
+            <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true])->label('Net Price');?>
+        </div> 
         <div class="col-md-12">
             <?= $form->field($model, 'description')->textarea();?>
         </div>
