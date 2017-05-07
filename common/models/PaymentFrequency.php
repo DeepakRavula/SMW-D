@@ -14,7 +14,7 @@ use Yii;
 class PaymentFrequency extends \yii\db\ActiveRecord
 {
     const LENGTH_MONTHLY            = 1;
-    const LENGTH_BI_MONTHLY         = 2;
+    const LENGTH_EVERY_TWO_MONTH    = 2;
     const LENGTH_QUARTERLY          = 3;
     const LENGTH_EVERY_FOUR_MONTH   = 4;
     const LENGTH_EVERY_FIVE_MONTH   = 5;
