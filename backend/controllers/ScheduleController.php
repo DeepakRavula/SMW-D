@@ -388,11 +388,10 @@ class ScheduleController extends Controller
                             $class = 'teacher-substituted';
                         }
                     }
+					$description = '<b>Student:</b> ' . $title . '<br>' . '<b>Program:</b> ' . $lesson->course->program->name;
 					if(! empty($lesson->classroomId)) {
                     	$classroom = $lesson->classroom->name;
-						$description = '<b>Student:</b> ' . $title . '<br>' . '<b>Program:</b> ' . 
-							$lesson->course->program->name . '<br>' . 
-							'<b>Classroom:</b> ' . $classroom;
+						$description = $description . '<br>' . '<b>Classroom:</b> ' . $classroom;
                 	}
                 }
 
