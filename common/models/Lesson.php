@@ -180,6 +180,11 @@ class Lesson extends \yii\db\ActiveRecord
 		return (int) $this->status === self::STATUS_CANCELED;
 	}
 
+	public function isDeletable()
+	{
+		return $this->isExtra() && !empty($this->extraLessonProFormaInvoice->id) && !$this->extraLessonProFormaInvoice->isPaid();
+	}
+
 	public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);

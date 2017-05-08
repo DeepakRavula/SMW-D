@@ -62,7 +62,7 @@ use kartik\switchinput\SwitchInput;
 			?>
 		</div>
 		<?php ActiveForm::end(); ?>
-		<?php if ($model->isExtra() && !empty($model->extraLessonProFormaInvoice->id) && $model->extraLessonProFormaInvoice->isPaid()) : ?>
+		<?php if ($model->isDeletable()) : ?>
 			<?php
 			echo Html::a(' Delete', ['private-lesson/delete', 'id' => $model->id], [
 				'id' => 'extra-lesson-delete',
