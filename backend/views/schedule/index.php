@@ -325,7 +325,26 @@ function showclassroomCalendar(date) {
             error: function() {
                 $("#classroom-calendar").fullCalendar("refetchEvents");
             }
-        }
+        },
+		eventRender: function(event, element) {
+			element.qtip({
+				content: {
+					text: event.description,
+				},
+				position: {
+        			my: 'top left',
+					at: 'top center',
+					adjust: {
+						screen: true
+					},
+					viewport: $(window) // Keep it on-screen at all times if possible
+				},
+				style      : {
+					widget: true,
+					classes: 'ui-tooltip-rounded'
+			  }
+			});
+		}
     });
 }
 
