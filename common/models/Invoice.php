@@ -228,6 +228,11 @@ class Invoice extends \yii\db\ActiveRecord
         return (int) $this->status === (int) self::STATUS_PAID;
     }
 
+    public function isPartialyPaid()
+    {
+        return $this->paymentTotal != 0;
+    }
+
     public function hasCredit()
     {
         return (int) $this->status === (int) self::STATUS_CREDIT;
