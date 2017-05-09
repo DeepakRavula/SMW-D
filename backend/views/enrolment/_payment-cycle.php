@@ -13,30 +13,37 @@ use yii\helpers\Url;
         'columns' => [
             'startDate:date',
             'endDate:date',
-			[
-				'label' => 'Pro-Forma Invoice',
-				'value' => function($data) {
-                                    $invoiceNumber = '-';
-                                    if($data->hasProformaInvoice()) {
-                                        $invoiceNumber = $data->proFormaInvoice->getInvoiceNumber();
-                                    }
-                                    return $invoiceNumber; 
-				}
-			],
-			[
-				'label' => 'Status',
-				'value' => function($data) {
-                                    $result = 'Owing';
-                                    if(empty($data->proFormaInvoice)) {
-                                        $result = '-';
-                                    }
-                                    if(!empty($data->proFormaInvoice) && $data->proFormaInvoice->isPaid()) {
-                                        $result = 'Paid';
-                                    }	
-                                    return $result;
-				}
-				
-			],
+            [
+                'label' => 'Due Date',
+                'value' => function($data) {
+                    return !empty($data->proFormaInvoice->dueDate) ? 
+                        (new \DateTime($data->proFormaInvoice->dueDate))->format('d-m-Y') : '-';
+                }
+            ],
+            [
+                'label' => 'Pro-Forma Invoice',
+                'value' => function($data) {
+                    $invoiceNumber = '-';
+                    if($data->hasProformaInvoice()) {
+                        $invoiceNumber = $data->proFormaInvoice->getInvoiceNumber();
+                    }
+                    return $invoiceNumber; 
+                }
+            ],
+            [
+                'label' => 'Status',
+                'value' => function($data) {
+                    $result = 'Owing';
+                    if(empty($data->proFormaInvoice)) {
+                        $result = '-';
+                    }
+                    if(!empty($data->proFormaInvoice) && $data->proFormaInvoice->isPaid()) {
+                        $result = 'Paid';
+                    }	
+                    return $result;
+                }
+
+            ],
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view} {create}',
                 'buttons' => [
