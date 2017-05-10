@@ -24,6 +24,8 @@ use common\models\TimelineEventEnrolment;
 use common\models\LessonLog;
 use common\models\User;
 use common\models\TimelineEventLesson;
+use yii\filters\ContentNegotiator;
+
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -36,6 +38,14 @@ class LessonController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['modify-classroom'],
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -782,4 +792,11 @@ class LessonController extends Controller
 			}
 		}
 	}
+
+    public function actionModifyClassroom($id, $classroomId)
+    {
+        $model = Lesson::findOne($id);
+        $model->classroomId = $classroomId;
+        return $model->save();
+    }
 }

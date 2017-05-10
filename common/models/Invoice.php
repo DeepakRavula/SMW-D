@@ -228,7 +228,7 @@ class Invoice extends \yii\db\ActiveRecord
         return (int) $this->status === (int) self::STATUS_PAID;
     }
 
-    public function isPartialyPaid()
+    public function hasPayments()
     {
         return $this->paymentTotal != 0;
     }
