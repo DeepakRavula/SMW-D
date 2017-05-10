@@ -5,10 +5,6 @@ use yii\helpers\Url;
 use yii\bootstrap\Tabs;
 use common\models\CalendarEventColor;
 
-use wbraganca\selectivity\SelectivityWidget;
-use yii\helpers\ArrayHelper;
-use common\models\Program;
-
 /* @var $this yii\web\View */
 
 $this->title = 'Calendar for ' .(new \DateTime())->format('l, F jS, Y');
@@ -62,38 +58,6 @@ $this->title = 'Calendar for ' .(new \DateTime())->format('l, F jS, Y');
     top: -45px;
 }
 </style>
-<div class="p-10 calendar-filter">
-        <div class="pull-right m-1-20">
-		<span class="filter_by_calendar">Filter by</span>
-            <?=
-            SelectivityWidget::widget([
-                'name' => 'Program',
-                'id' => 'program-selector',
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'items' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-                    'value' => null,
-                    'placeholder' => 'Program',
-                ],
-            ]);
-            ?>
-
-
-            <?=
-            SelectivityWidget::widget([
-                'name' => 'Teacher',
-                'id' => 'teacher-selector',
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'items' => ArrayHelper::map($availableTeachersDetails, 'id', 'name'),
-                    'value' => null,
-                    'placeholder' => 'Teacher',
-                ],
-            ]);
-            ?>
-       </div>
-
-</div>
 <div class="tabbable-panel">
     <div class="tabbable-line">
         <?php
@@ -140,13 +104,13 @@ $this->title = 'Calendar for ' .(new \DateTime())->format('l, F jS, Y');
 </div>
 
 <script type="text/javascript">
-var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
+var locationId = locationAvailabilities[0].locationId;
 $(document).ready(function() {
-    var params = $.param({ date: moment(new Date()).format('YYYY-MM-DD'),
-        programId: '',
-        teacherId: '',
-        loctionId: locationAvailabilities.locationId});
+    var params = $.param({
+        date: moment(new Date()).format('YYYY-MM-DD'),
+        locationId: locationId
+    });
     $('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
@@ -158,20 +122,20 @@ $(document).ready(function() {
         editable: false,
         droppable: false,
         resources: {
-            url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
+            url: '<?= Url::to(['calendar/render-resources']) ?>?' + params,
             type: 'POST',
             error: function() {
                 $("#calendar").fullCalendar("refetchResources");
             }
         },
         events: {
-            url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
+            url: '<?= Url::to(['calendar/render-day-events']) ?>?' + params,
             type: 'POST',
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
             }
         },
-		allDaySlot:false,
+        allDaySlot:false,
         eventClick: function(event) {
             $(location).attr('href', event.url);
         }
@@ -192,34 +156,6 @@ $(document).ready(function () {
     });
 });
 
-function loadTeachers(program) {
-    var teachers = [];
-    if((program == 'undefined') || (program == null)) {
-        $.each( availableTeachersDetails, function( key, value ) {
-            value.text = value.name;
-            teachers.push(value);
-        });
-    }else {
-        $.each( availableTeachersDetails, function( key, value ) {
-            if ($.inArray(parseInt(program), value.programs) != -1) {
-                value.text= value.name;
-                teachers.push(value);
-            }
-        });
-    }
-    setTeachers(teachers);
-}
-
-function setTeachers(teachers){
-    $('#teacher-selector').selectivity('destroy');
-    $('#teacher-selector').selectivity({
-        allowClear: true,
-        items: teachers,
-        value: null,
-        placeholder: 'Select Teacher',
-    });
- }
-
 $(document).ready(function () {
     $('#datepicker').datepicker ({
         format: 'dd-mm-yyyy',
@@ -227,35 +163,27 @@ $(document).ready(function () {
         todayHighlight: true
     });
 
-    setTimeout(function(){
-	$('#program-selector').on('change', function(e){
-        var date = $('#calendar').fullCalendar('getDate');
-        refreshCalendar(moment(date));
-        loadTeachers(e.value);
-	}); }, 3000);
-
-    setTimeout(function(){
-	$('#teacher-selector').on('change', function(){
-        var date = $('#calendar').fullCalendar('getDate');
-        refreshCalendar(moment(date));
-	}); }, 3000);
-
     $('#datepicker').on('change', function(){
         var date = $('#datepicker').datepicker("getDate");
         var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
         $(".content-header h1").text("Schedule for " + formattedDate);
-		if ($('.nav-tabs .active').text() === 'Classroom View') {
+        if ($('.nav-tabs .active').text() === 'Classroom View') {
             showclassroomCalendar(moment(date));
         } else {
             refreshCalendar(moment(date));
         }
-	});
+    });
 });
 
 function showclassroomCalendar(date) {
-    var resourceParams = $.param({ date: moment(date).format('YYYY-MM-DD') });
-    var eventParms     = $.param({ date: moment(date).format('YYYY-MM-DD'),
-        locationId: locationAvailabilities.locationId });
+    var resourceParams = $.param({
+        date: moment(date).format('YYYY-MM-DD'),
+        locationId: locationId
+    });
+    var eventParms     = $.param({
+        date: moment(date).format('YYYY-MM-DD'),
+        locationId: locationId
+    });
     var fromTime       = "09:00:00";
     var toTime         = "17:00:00";
     var day            = moment(date).day();
@@ -278,31 +206,30 @@ function showclassroomCalendar(date) {
         minTime: fromTime,
         maxTime: toTime,
         slotDuration: "00:15:00",
-		allDaySlot:false,
+        allDaySlot:false,
         editable: false,
         droppable: false,
         resources: {
-            url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + resourceParams,
+            url: '<?= Url::to(['calendar/render-classroom-resources']) ?>?' + resourceParams,
             type: 'POST',
             error: function() {
                 $("#classroom-calendar").fullCalendar("refetchResources");
             }
         },
         events: {
-            url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + eventParms,
+            url: '<?= Url::to(['calendar/render-classroom-events']) ?>?' + eventParms,
             type: 'POST',
             error: function() {
                 $("#classroom-calendar").fullCalendar("refetchEvents");
             }
-        }
     });
 }
 
 function refreshCalendar(date) {
-    var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
-        programId: $('#program-selector').selectivity('value'),
-        teacherId: $('#teacher-selector').selectivity('value'),
-        loctionId: locationAvailabilities.locationId });
+    var params = $.param({
+        date: moment(date).format('YYYY-MM-DD'),
+        locationId: locationId
+    });
     var minTime = "09:00:00";
     var maxTime = "17:00:00";
     var day     = moment(date).day();
@@ -325,22 +252,21 @@ function refreshCalendar(date) {
         minTime: minTime,
         maxTime: maxTime,
         slotDuration: "00:15:00",
-		allDaySlot:false,
+        allDaySlot:false,
         editable: false,
         droppable: false,
         resources: {
-            url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
+            url: '<?= Url::to(['calendar/render-resources']) ?>?' + params,
             type: 'POST',
             error: function() {
                 $("#calendar").fullCalendar("refetchResources");
             }
         },
         events: {
-            url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
+            url: '<?= Url::to(['calendar/render-day-events']) ?>?' + params,
             type: 'POST',
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
-            }
         }
     });
 }
