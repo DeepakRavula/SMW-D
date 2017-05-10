@@ -356,7 +356,12 @@ function showclassroomCalendar(date) {
                 dataType: "json",
                 success: function (response)
                 {
-                    $("#classroom-calendar").fullCalendar("refetchEvents");
+                    if (response.status) {
+                        $("#classroom-calendar").fullCalendar("refetchEvents");
+                    } else {
+                        $('#notification').html('Classroom already chosen!').fadeIn().delay(5000).fadeOut();
+                        $("#classroom-calendar").fullCalendar("refetchEvents");
+                    }
                 }
             });
         }

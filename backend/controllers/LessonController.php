@@ -796,7 +796,21 @@ class LessonController extends Controller
     public function actionModifyClassroom($id, $classroomId)
     {
         $model = Lesson::findOne($id);
+        $model->setScenario(Lesson::SCENARIO_EDIT_CLASSROOM);
         $model->classroomId = $classroomId;
-        return $model->save();
+        if ($model->validate()) {
+            $model->save();
+            $response = [
+                'status' => true,
+            ];
+        } else {
+            $model = ActiveForm::validate($model);
+            $response = [
+                'status' => false,
+                'errors' => $model,
+            ];
+        }
+
+        return $response;
     }
 }

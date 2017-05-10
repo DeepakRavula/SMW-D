@@ -49,8 +49,7 @@ use yii\helpers\Url;
                 'buttons' => [
                     'create' => function ($url, $model) { 
                         $url = Url::to(['invoice/invoice-payment-cycle', 'id' => $model->id]);
-                        if (($model->isCurrentPaymentCycle() || $model->isNextPaymentCycle() || $model->isLastPaymentCycle())
-                            && (!$model->hasProFormaInvoice())) {
+                        if ($model->canRiseProformaInvoice() && !$model->hasProFormaInvoice()) {
                             return Html::a('Create PFI', $url, [
                                 'title' => Yii::t('yii', 'Create PFI'),
                                                             'class' => ['btn-success btn-sm']
