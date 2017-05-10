@@ -396,6 +396,7 @@ class ScheduleController extends Controller
                 }
 
                 $events[] = [
+                    'lessonId' => $lesson->id,
                     'resourceId' => $lesson->teacherId,
                     'title' => $title,
                     'start' => $lesson->date,
@@ -456,6 +457,7 @@ class ScheduleController extends Controller
                     $classroomId = $lesson->classroomId;
 					$description = '<b>Teacher:</b> ' . $title . '<br><b>Student:</b> ' . $lesson->enrolment->student->fullName . '<br>' . '<b>Program:</b> ' . $lesson->course->program->name;
                     $events[] = [
+                        'id' => $lesson->id,
                         'resourceId' => $classroomId,
                         'title' => $title,
                         'start' => $lesson->date,
