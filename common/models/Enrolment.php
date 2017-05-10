@@ -178,7 +178,8 @@ class Enrolment extends \yii\db\ActiveRecord
         foreach ($this->paymentCycles as $paymentCycle) {
             if (!$paymentCycle->hasProFormaInvoice()) {
                 return $paymentCycle;
-            } else if (!$paymentCycle->proformaInvoice->isPaid()) {
+            } else if (!$paymentCycle->proformaInvoice->isPaid() &&
+                !$paymentCycle->proformaInvoice->isPartialyPaid()) {
                 return $paymentCycle;
             }
         }
@@ -204,7 +205,8 @@ class Enrolment extends \yii\db\ActiveRecord
         foreach ($this->paymentCycles as $paymentCycle) {
             if (!$paymentCycle->hasProFormaInvoice()) {
                 $models[] = $paymentCycle;
-            } else if (!$paymentCycle->proformaInvoice->isPaid()) {
+            } else if (!$paymentCycle->proformaInvoice->isPaid() &&
+                !$paymentCycle->proformaInvoice->isPartialyPaid()) {
                 $models[] = $paymentCycle;
             }
         }
@@ -364,16 +366,16 @@ class Enrolment extends \yii\db\ActiveRecord
                 $paymentCycle->enrolmentId = $this->id;
                 $paymentCycle->startDate   = $startDate->format('Y-m-d');
                 $endDate = $startDate->modify('+' . $this->paymentsFrequency->frequencyLength . ' month, -1 day');
-            }
-
-            $paymentCycle->id          = null;
-            $paymentCycle->isNewRecord = true;
-            $paymentCycle->endDate     = $endDate->format('Y-m-d');
-            if ($enrolmentLastPaymentCycleEndDate->format('Y-m-d') < $paymentCycle->endDate) {
-                $paymentCycle->endDate = $enrolmentLastPaymentCycleEndDate->format('Y-m-d');
-            }
-            if ($enrolmentLastPaymentCycleEndDate->format('Y-m-d') > $paymentCycle->startDate) {
-                $paymentCycle->save();
+            
+                $paymentCycle->id          = null;
+                $paymentCycle->isNewRecord = true;
+                $paymentCycle->endDate     = $endDate->format('Y-m-d');
+                if ($enrolmentLastPaymentCycleEndDate->format('Y-m-d') < $paymentCycle->endDate) {
+                    $paymentCycle->endDate = $enrolmentLastPaymentCycleEndDate->format('Y-m-d');
+                }
+                if ($enrolmentLastPaymentCycleEndDate->format('Y-m-d') > $paymentCycle->startDate) {
+                    $paymentCycle->save();
+                }
             }
         }
     }
