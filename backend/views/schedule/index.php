@@ -309,8 +309,8 @@ function showclassroomCalendar(date) {
         minTime: fromTime,
         maxTime: toTime,
         slotDuration: "00:15:00",
-		allDaySlot:false,
-        editable: false,
+        allDaySlot:false,
+        editable: true,
         droppable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + params,
@@ -326,25 +326,40 @@ function showclassroomCalendar(date) {
                 $("#classroom-calendar").fullCalendar("refetchEvents");
             }
         },
-		eventRender: function(event, element) {
-			element.qtip({
-				content: {
-					text: event.description,
-				},
-				position: {
-        			my: 'top left',
-					at: 'top center',
-					adjust: {
-						screen: true
-					},
-					viewport: $(window) // Keep it on-screen at all times if possible
-				},
-				style      : {
-					widget: true,
-					classes: 'ui-tooltip-rounded'
-			  }
-			});
-		}
+        eventRender: function(event, element) {
+            element.qtip({
+                content: {
+                    text: event.description,
+                },
+                position: {
+                    my: 'top left',
+                    at: 'top center',
+                    adjust: {
+                        screen: true
+                    },
+                    viewport: $(window) // Keep it on-screen at all times if possible
+                },
+                style: {
+                    widget: true,
+                    classes: 'ui-tooltip-rounded'
+                }
+            });
+        },
+        eventDrop: function(event) {
+            var params = $.param({
+                id: event.id,
+                classroomId: event.resourceId
+            });
+            $.ajax({
+                url: '<?= Url::to(['lesson/modify-classroom']); ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    $("#classroom-calendar").fullCalendar("refetchEvents");
+                }
+            });
+        }
     });
 }
 
@@ -374,7 +389,7 @@ function refreshCalendar(date) {
         minTime: minTime,
         maxTime: maxTime,
         slotDuration: "00:15:00",
-		allDaySlot:false,
+        allDaySlot:false,
         editable: false,
         droppable: false,
         resources: {

@@ -179,7 +179,7 @@ class Enrolment extends \yii\db\ActiveRecord
             if (!$paymentCycle->hasProFormaInvoice()) {
                 return $paymentCycle;
             } else if (!$paymentCycle->proformaInvoice->isPaid() &&
-                !$paymentCycle->proformaInvoice->isPartialyPaid()) {
+                !$paymentCycle->proformaInvoice->hasPayments()) {
                 return $paymentCycle;
             }
         }
@@ -206,7 +206,7 @@ class Enrolment extends \yii\db\ActiveRecord
             if (!$paymentCycle->hasProFormaInvoice()) {
                 $models[] = $paymentCycle;
             } else if (!$paymentCycle->proformaInvoice->isPaid() &&
-                !$paymentCycle->proformaInvoice->isPartialyPaid()) {
+                !$paymentCycle->proformaInvoice->hasPayments()) {
                 $models[] = $paymentCycle;
             }
         }
