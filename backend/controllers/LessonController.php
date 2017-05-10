@@ -799,7 +799,7 @@ class LessonController extends Controller
         $model->setScenario(Lesson::SCENARIO_EDIT_CLASSROOM);
         $model->classroomId = $classroomId;
         if ($model->validate()) {
-            $model->save();
+            $model->save(false);
             $response = [
                 'status' => true,
             ];

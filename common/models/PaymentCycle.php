@@ -173,7 +173,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $this->enrolment->nextPaymentCycle->id === $this->id;
     }
 
-    public function canRiseProformaInvoice()
+    public function canRaiseProformaInvoice()
     {
         return $this->isLastPaymentCycle() || $this->isCurrentPaymentCycle() ||
             $this->isNextPaymentCycle();
