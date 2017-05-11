@@ -699,9 +699,17 @@ class LessonController extends Controller
 			'status' => true,
 		];
 	}
-	 public function actionTakePayment($id)
+    public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);
+        if (!$model->paymentCycle->canRaiseProformaInvoice()) {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => 'ProForma-Invoice can be generated only for current and next payment cycle only.',
+            ]);
+
+            return $this->redirect(['lesson/view', 'id' => $id]);
+        }
         if(!$model->hasProFormaInvoice()) {
             if (!$model->paymentCycle->hasProFormaInvoice()) {
                 $invoice = $model->paymentCycle->createProFormaInvoice();
