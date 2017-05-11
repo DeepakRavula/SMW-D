@@ -567,7 +567,7 @@ class InvoiceController extends Controller
     {
         $paymentCycle = PaymentCycle::findOne($id);
 
-        if ($paymentCycle->isLastPaymentCycle() || $paymentCycle->isCurrentPaymentCycle() || $paymentCycle->isNextPaymentCycle()) {
+        if ($paymentCycle->canRaiseProformaInvoice()) {
             $paymentCycle->createProFormaInvoice();
 
             return $this->redirect(['view', 'id' => $paymentCycle->proFormaInvoice->id]);
