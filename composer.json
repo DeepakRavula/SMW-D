@@ -23,6 +23,23 @@
     "issues": "https://github.com/trntv/yii2-starter-kit/issues?state=open",
     "source": "https://github.com/trntv/yii2-starter-kit"
   },
+	"repositories": [
+		{
+			"type": "package",
+			"package": {
+				"name": "wbraganca/yii2-dynamicform",
+				"version": "dev-master",
+				"source": {
+					"url": "https://github.com/TimNZ/yii2-dynamicform",
+					"type": "git",
+					"reference": "master"
+				},
+				"autoload": {
+					"classmap": [""]
+				}
+			}
+		}
+	],
   "require": {
     "php": ">=5.5.0",
     "ext-intl": "*",
