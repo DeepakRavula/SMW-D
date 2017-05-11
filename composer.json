@@ -30,7 +30,7 @@
 				"name": "wbraganca/yii2-dynamicform",
 				"version": "dev-master",
 				"source": {
-					"url": "https://github.com/TimNZ/yii2-dynamicform",
+					"url": "https://github.com/senguttuvang/yii2-dynamicform",
 					"type": "git",
 					"reference": "master"
 				},
