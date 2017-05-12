@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap\Tabs;
 
 $this->title = $model->student->fullName.' - '.$model->course->program->name;
@@ -8,7 +9,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['st
 ?>
 <div class="tabbable-panel">
     <div class="tabbable-line">
-<?php 
+<?php
 
     $detailContent = $this->render('_view-enrolment', [
         'model' => $model,
@@ -54,3 +55,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['st
 ?>
     </div>
 </div>
+
+<script>
+    var paymentFrequency = {
+	onEditableSuccess :function(event, val, form, data) {debugger;
+            var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
+            $.pjax.reload({url:url,container:"#payment-cycle-listing",replace:false,  timeout: 4000});
+        },
+    }
+
+</script>
