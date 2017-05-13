@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f535ba2ae9889dc5e43ee6e2c29c9ef",
+    "content-hash": "389d8e905358f52837a80ba30b1d08a0",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -4235,7 +4235,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/TimNZ/yii2-dynamicform",
+                "url": "https://github.com/senguttuvang/yii2-dynamicform",
                 "reference": "master"
             },
             "type": "library",
@@ -4244,7 +4244,7 @@
                     ""
                 ]
             },
-            "time": "2015-06-30 19:48:37"
+            "time": "2017-05-11 04:55:15"
         },
         {
             "name": "wbraganca/yii2-selectivity",
