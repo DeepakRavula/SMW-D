@@ -1,12 +1,18 @@
 <?php
 
-use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
 
-    <?php echo GridView::widget([
+    <?php echo \kartik\grid\GridView::widget([
         'dataProvider' => $paymentCycleDataProvider,
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'payment-cycle-listing',
+            ],
+        ],
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => '',

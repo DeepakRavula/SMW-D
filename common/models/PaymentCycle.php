@@ -157,7 +157,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $invoice;
     }
 
-    public function isLastPaymentCycle()
+    public function isPastPaymentCycle()
     {
         return new \DateTime($this->endDate) <= new \DateTime();
     }
@@ -175,7 +175,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function canRaiseProformaInvoice()
     {
-        return $this->isLastPaymentCycle() || $this->isCurrentPaymentCycle() ||
+        return $this->isPastPaymentCycle() || $this->isCurrentPaymentCycle() ||
             $this->isNextPaymentCycle();
     }
 }
