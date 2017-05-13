@@ -183,20 +183,27 @@ class LessonController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$oldDate = $model->date;
-		$oldTeacherId = $model->teacherId;
-		$user = User::findOne(['id'=>Yii::$app->user->id]);
-		$model->userName = $user->publicIdentity;
-		$model->on(Lesson::EVENT_RESCHEDULE_ATTEMPTED,
-			[new LessonReschedule(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
-		$model->on(Lesson::EVENT_RESCHEDULED,
-			[new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
+        $oldDate = $model->date;
+        $oldTeacherId = $model->teacherId;
+        $user = User::findOne(['id'=>Yii::$app->user->id]);
+        $model->userName = $user->publicIdentity;
+        $model->on(Lesson::EVENT_RESCHEDULE_ATTEMPTED,
+                [new LessonReschedule(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
+        $model->on(Lesson::EVENT_RESCHEDULED,
+                [new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
         $currentDate = new \DateTime();
-        if ($lessonDate < $currentDate) {
+        if ($lessonDate < $currentDate && !$model->isUnscheduled()) {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
-                'body' => 'Completed lessons cannot be editable!.',
+                'body' => 'Completed lessons cannot be edited.',
+            ]);
+
+            return $this->redirect(['lesson/view', 'id' => $id, '#' => 'details']);
+        } else if ($model->isUnscheduled() && $model->isExpired()) {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => 'Expired Un-scheduled lessons cannot be edited!.',
             ]);
 
             return $this->redirect(['lesson/view', 'id' => $id, '#' => 'details']);
