@@ -196,14 +196,14 @@ class LessonController extends Controller
         if ($lessonDate < $currentDate && !$model->isUnscheduled()) {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
-                'body' => 'Completed lessons cannot be editable!.',
+                'body' => 'Completed lessons cannot be edited.',
             ]);
 
             return $this->redirect(['lesson/view', 'id' => $id, '#' => 'details']);
         } else if ($model->isUnscheduled() && $model->isExpired()) {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
-                'body' => 'Expired Un-scheduled lessons cannot be editable!.',
+                'body' => 'Expired Un-scheduled lessons cannot be edited!.',
             ]);
 
             return $this->redirect(['lesson/view', 'id' => $id, '#' => 'details']);
