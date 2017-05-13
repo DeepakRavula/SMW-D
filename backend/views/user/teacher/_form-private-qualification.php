@@ -68,7 +68,11 @@ DynamicFormWidget::begin([
 				?>
 				<div class="row">
 					<div class="col-sm-4">
-						<?= $form->field($qualificationModel, "[{$index}][private]program_id")->dropDownList($privatePrograms);?>
+						<?= $form->field($qualificationModel, "[{$index}][private]program_id")->widget(Select2::classname(), [
+    'data' => $privatePrograms,
+    'options' => ['placeholder' => 'Select a private program ...'],
+    
+]);	?>
 					</div>
 					<div class="col-sm-4">
 	<?= $form->field($qualificationModel, "[{$index}][private]rate")->textInput(['maxlength' => true]) ?>

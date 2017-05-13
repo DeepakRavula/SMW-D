@@ -68,7 +68,11 @@ DynamicFormWidget::begin([
 				?>
 				<div class="row">
 					<div class="col-sm-4">
-						<?= $form->field($qualificationModel, "[{$index}][group]program_id")->dropDownList($groupPrograms);?>
+						<?= $form->field($qualificationModel, "[{$index}][group]program_id")->widget(Select2::classname(), [
+    'data' => $groupPrograms,
+    'options' => ['placeholder' => 'Select a group program ...'],
+    
+]);?>
 					</div>
 					<div class="col-sm-4">
 	<?= $form->field($qualificationModel, "[{$index}][group]rate")->textInput(['maxlength' => true]) ?>
