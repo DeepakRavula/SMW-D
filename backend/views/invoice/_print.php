@@ -149,6 +149,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="invoice-col"  style="width: 125px;">
               <b><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Invoice No.:'?></b> <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#'.$model->invoice_number?><br>
               <b>Date:</b> <?= Yii::$app->formatter->asDate($model->date); ?><br>
+              <?php if (!$model->isInvoice()) : ?>
+              <b>Due Date:</b> <?= Yii::$app->formatter->asDate($model->dueDate); ?><br>
+              <?php endif; ?>
               <b>Status:</b> <?= $model->getStatus(); ?>
             </div>
           <div class="clearfix"></div>
