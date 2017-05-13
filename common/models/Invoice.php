@@ -550,7 +550,7 @@ class Invoice extends \yii\db\ActiveRecord
                 $lesson->date);
         $invoiceLineItem             = new InvoiceLineItem();
         $invoiceLineItem->invoice_id = $this->id;
-        if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+        if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE && !$lesson->isExtra()) {
             $invoiceLineItem->item_id    = $lesson->paymentCycleLesson->id;
         } else {
             $invoiceLineItem->item_id    = $lesson->id;
@@ -590,7 +590,7 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->amount       = $lessonAmount;
             $studentFullName               = $lesson->studentFullName;
         } else {
-            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE && !$lesson->isExtra()) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
             } else {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;

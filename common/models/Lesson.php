@@ -180,10 +180,10 @@ class Lesson extends \yii\db\ActiveRecord
 		return (int) $this->status === self::STATUS_CANCELED;
 	}
 
-	public function isDeletable()
-	{
-		return $this->isExtra() && !empty($this->extraLessonProFormaInvoice->id) && !$this->extraLessonProFormaInvoice->isPaid();
-	}
+    public function isDeletable()
+    {
+        return $this->isExtra() && !$this->extraLessonProFormaInvoice->hasPayments();
+    }
 
 	public function getEnrolment()
     {
@@ -571,26 +571,20 @@ class Lesson extends \yii\db\ActiveRecord
         return !empty($this->invoice);
     }
 
-    public function addPaymentCycleLesson()
+    public function addExtraLessonProformaInvoice()
     {
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-        $paymentCycle = PaymentCycle::find()
-            ->where(['enrolmentId' => $this->enrolment->id])
-            ->andWhere(['AND', ['<=', 'startDate', $lessonDate->format('Y-m-d')],
-                ['>=', 'endDate', $lessonDate->format('Y-m-d')]
-            ])
-            ->one();
-		if(!empty($paymentCycle)) {
-			$paymentCycleLesson                 = new PaymentCycleLesson();
-			$paymentCycleLesson->paymentCycleId = $paymentCycle->id;
-			$paymentCycleLesson->lessonId       = $this->id;
-			$paymentCycleLesson->save();
-		} else {
-            $paymentCycle              = new PaymentCycle();
-			$paymentCycle->enrolmentId = $this->enrolment->id;
-			$paymentCycle->startDate   = (new \DateTime($this->date))->format('Y-m-1');
-            $paymentCycle->endDate     = (new \DateTime($this->date))->format('Y-m-t');
-			$paymentCycle->save();
-        }
+        $locationId = $this->enrolment->student->customer->userLocation->location_id;
+        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $invoice = new Invoice();
+        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
+        $invoice->userName = $user->publicIdentity;
+        $invoice->user_id = $this->enrolment->student->customer->id;
+        $invoice->location_id = $locationId;
+        $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
+        $invoice->createdUserId = Yii::$app->user->id;
+        $invoice->updatedUserId = Yii::$app->user->id;
+        $invoice->save();
+        $invoice->addLineItem($this);
+        $invoice->save();
     }
 }
