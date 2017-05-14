@@ -6,6 +6,7 @@ use Yii;
 use yii\db\Query;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\lesson\conflict\HolidayValidator;
+use common\components\validators\lesson\conflict\ClassroomValidator;
 use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
@@ -41,28 +42,29 @@ class Lesson extends \yii\db\ActiveRecord
     const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
     const SCENARIO_CREATE = 'create';
     const SCENARIO_SPLIT = 'split';
-	const SCENARIO_GROUP_ENROLMENT_REVIEW = 'group-enrolment';
-	
-	const EVENT_RESCHEDULE_ATTEMPTED	 = 'RescheduleAttempted';
-	const EVENT_RESCHEDULED			 = 'Rescheduled';
-	const EVENT_UNSCHEDULE_ATTEMPTED	 = 'UnscheduleAttempted';
-	const EVENT_UNSCHEDULED			 = 'Unscheduled';
-	const EVENT_MISSED = 'missed';
+    const SCENARIO_GROUP_ENROLMENT_REVIEW = 'group-enrolment';
+    const SCENARIO_EDIT_CLASSROOM = 'classroom-edit';
+    
+    const EVENT_RESCHEDULE_ATTEMPTED	 = 'RescheduleAttempted';
+    const EVENT_RESCHEDULED			 = 'Rescheduled';
+    const EVENT_UNSCHEDULE_ATTEMPTED	 = 'UnscheduleAttempted';
+    const EVENT_UNSCHEDULED			 = 'Unscheduled';
+    const EVENT_MISSED = 'missed';
 
     public $studentFullName;
     public $programId;
     public $time;
     public $hours;
     public $program_name;
-	public $showAllReviewLessons = false;
-	public $present;
-	public $toEmailAddress;
-	public $subject;
-	public $content;
-	public $newDuration;
-	public $vacationId;
-	public $studentId;
-	public $userName;
+    public $showAllReviewLessons = false;
+    public $present;
+    public $toEmailAddress;
+    public $subject;
+    public $content;
+    public $newDuration;
+    public $vacationId;
+    public $studentId;
+    public $userName;
 	
     /**
      * {@inheritdoc}
@@ -94,6 +96,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
             [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
+            [['classroomId'], ClassroomValidator::className(), 'on' => self::SCENARIO_EDIT_CLASSROOM],
             [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
             [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
@@ -342,6 +345,13 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return ((int) $this->type === (int) self::TYPE_EXTRA);
     }
+    public function isExpired()
+    {
+        $currentDate = new \DateTime();
+        $expiryDate  = new \DateTime($this->privateLesson->expiryDate);
+        return $currentDate > $expiryDate;
+    }
+
     public function beforeSave($insert)
     {
 		if (isset($this->colorCode)) {

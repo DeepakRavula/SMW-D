@@ -53,9 +53,14 @@ use yii\helpers\Url;
 			'submitOnEnter' => false,
 			'size'=>'md',
 			'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'),
-    		'formOptions' => ['action' => Url::to(['/enrolment/edit', 'id' => $model->id])],
+                        'formOptions' => [
+                            'action' => Url::to(['/enrolment/edit', 'id' => $model->id]),
+                        ],
+                        'pluginEvents' => [
+                            'editableSuccess' => 'paymentFrequency.onEditableSuccess',
+                        ],
 		])
-		?> 
+		?>
 	</div>
 	<?php endif; ?>
     <div class="clearfix"></div>

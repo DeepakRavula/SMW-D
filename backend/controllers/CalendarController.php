@@ -108,11 +108,11 @@ class CalendarController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         return $this->render('view', [
-			'availableTeachersDetails' => $availableTeachersDetails,
+            'availableTeachersDetails' => $availableTeachersDetails,
             'locationAvailabilities'   => $locationAvailabilities,
-			'from_time'                => $from_time,
-			'to_time'                  => $to_time,
-		]);
+            'from_time'                => $from_time,
+            'to_time'                  => $to_time,
+        ]);
     }
 
     public function getHolidayEvent($date, $locationId)
@@ -171,17 +171,11 @@ class CalendarController extends Controller
         return $resources;
     }
 
-    public function getLessons($date, $programId, $teacherId, $locationId)
+    public function getLessons($date, $locationId)
     {
         $lessons = Lesson::find()
-                ->joinWith(['course' => function ($query) use($programId, $teacherId, $locationId) {
+                ->joinWith(['course' => function ($query) use($locationId) {
                     $query->andWhere(['course.locationId' => $locationId]);
-                    if(!empty($programId) && $programId != 'undefined') {
-                        $query->andWhere(['course.programId' => $programId]);
-                    }
-                    if(!empty($teacherId) && $teacherId != 'undefined') {
-                        $query->andWhere(['course.teacherId' => $teacherId]);
-                    }
                 }])
                 ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
                 ->between($date, $date)
@@ -206,155 +200,57 @@ class CalendarController extends Controller
         return $resources;
     }
 
-    public function actionRenderResources($date, $programId, $teacherId, $locationId)
+    public function actionRenderResources($date, $locationId)
     {
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
         $resources  = $this->getHolidayResources($date, $locationId);
         if (empty($resources)) {
-            if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
-                && ($programId == 'undefined')) {
-                $teachersAvailabilities = TeacherAvailability::find()
-                            ->joinWith(['userLocation' => function ($query) use ($locationId) {
-                                $query->where(['user_location.location_id' => $locationId]);
-                            }])
-                            ->andWhere(['day' => $date->format('N')])
-                            ->all();
-                if (!empty($teachersAvailabilities)) {
-                    foreach ($teachersAvailabilities as $teachersAvailability) {
-                        $resources[] = [
-                            'id'    => $teachersAvailability->teacher->id,
-                            'title' => $teachersAvailability->teacher->getPublicIdentity(),
-                        ];
-                    }
-                } else {
-                    $resources[] = [
-                        'id'    => '0',
-                        'title' => 'No Teacher Available Today'
-                    ];
-                }
-            }
-            if (!empty($teacherId) && $teacherId != 'undefined') {
-                $teachersAvailabilities = TeacherAvailability::find()
-                        ->joinWith(['userLocation' => function ($query) use ($teacherId) {
-                            $query->where(['user_location.user_id' => $teacherId]);
-                        }])
-                        ->andWhere(['day' => $date->format('N')])
-                        ->groupBy(['teacher_location_id'])
-                        ->all();
-                if (!empty($teachersAvailabilities)) {
-                    foreach ($teachersAvailabilities as $teachersAvailability) {
-                        $resources[] = [
-                            'id'    => $teachersAvailability->teacher->id,
-                            'title' => $teachersAvailability->teacher->getPublicIdentity(),
-                        ];
-                    }
-                } else {
-                    $resources[] = [
-                        'id'    => '0',
-                        'title' => 'Selected Teacher Not Available Today'
-                    ];
-                }
-            } else if (!empty($programId) && $programId != 'undefined') {
-                $teachersAvailabilities = TeacherAvailability::find()
-                        ->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
+            $teachersAvailabilities = TeacherAvailability::find()
+                        ->joinWith(['userLocation' => function ($query) use ($locationId) {
                             $query->where(['user_location.location_id' => $locationId]);
-                            $query->joinWith(['qualifications'  => function ($query) use ($programId) {
-                                $query->andWhere(['qualification.program_id' => $programId]);
-                            }]);
                         }])
                         ->andWhere(['day' => $date->format('N')])
-                        ->groupBy(['teacher_location_id'])
                         ->all();
-                if (!empty($teachersAvailabilities)) {
-                    foreach ($teachersAvailabilities as $teachersAvailability) {
-                        $resources[] = [
-                            'id'    => $teachersAvailability->teacher->id,
-                            'title' => $teachersAvailability->teacher->getPublicIdentity(),
-                        ];
-                    }
-                } else {
+            if (!empty($teachersAvailabilities)) {
+                foreach ($teachersAvailabilities as $teachersAvailability) {
                     $resources[] = [
-                        'id'    => '0',
-                        'title' => 'No Teacher Available Today for the Selected Program'
+                        'id'    => $teachersAvailability->teacher->id,
+                        'title' => $teachersAvailability->teacher->getPublicIdentity(),
                     ];
                 }
+            } else {
+                $resources[] = [
+                    'id'    => '0',
+                    'title' => 'No Teacher Available Today'
+                ];
             }
         }
         return $resources;
     }
 
-    public function actionRenderDayEvents($date, $programId, $teacherId, $locationId)
+    public function actionRenderDayEvents($date, $locationId)
     {
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
         $events     = $this->getHolidayEvent($date, $locationId);
         if (empty($events)) {
-            if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
-                && ($programId == 'undefined')) {
-                $teachersAvailabilities = TeacherAvailability::find()
-                    ->where(['day' => $date->format('N')])
-                    ->all();
+            $teachersAvailabilities = TeacherAvailability::find()
+                ->where(['day' => $date->format('N')])
+                ->all();
 
-                foreach ($teachersAvailabilities as $teachersAvailability) {
-                    $start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-                        ' ' . $teachersAvailability->from_time);
-                    $end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-                        ' ' . $teachersAvailability->to_time);
-                    $events[] = [
-                        'resourceId' => $teachersAvailability->teacher->id,
-                        'title'      => '',
-                        'start'      => $start->format('Y-m-d H:i:s'),
-                        'end'        => $end->format('Y-m-d H:i:s'),
-                        'rendering'  => 'background',
-                    ];
-                }
+            foreach ($teachersAvailabilities as $teachersAvailability) {
+                $start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
+                    ' ' . $teachersAvailability->from_time);
+                $end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
+                    ' ' . $teachersAvailability->to_time);
+                $events[] = [
+                    'resourceId' => $teachersAvailability->teacher->id,
+                    'title'      => '',
+                    'start'      => $start->format('Y-m-d H:i:s'),
+                    'end'        => $end->format('Y-m-d H:i:s'),
+                    'rendering'  => 'background',
+                ];
             }
-            if (!empty($teacherId) && $teacherId != 'undefined') {
-                $teachersAvailabilities = TeacherAvailability::find()
-                    ->joinWith(['userLocation' => function ($query) use ($teacherId) {
-                        $query->where(['user_location.user_id' => $teacherId]);
-                    }])
-                    ->andWhere(['day' => $date->format('N')])
-                    ->all();
-
-                foreach ($teachersAvailabilities as $teachersAvailability) {
-                    $start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-                        ' ' . $teachersAvailability->from_time);
-                    $end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-                        ' ' . $teachersAvailability->to_time);
-                    $events[] = [
-                        'resourceId' => $teachersAvailability->teacher->id,
-                        'title'      => '',
-                        'start'      => $start->format('Y-m-d H:i:s'),
-                        'end'        => $end->format('Y-m-d H:i:s'),
-                        'rendering'  => 'background',
-                    ];
-                }
-            } else if (!empty($programId) && $programId != 'undefined') {
-                $teachersAvailabilities = TeacherAvailability::find()
-                    ->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
-                        $query->where(['user_location.location_id' => $locationId]);
-                        $query->joinWith(['qualifications'  => function ($query) use ($programId) {
-                            $query->andWhere(['qualification.program_id' => $programId]);
-                        }]);
-                    }])
-                    ->andWhere(['day' => $date->format('N')])
-                    ->all();
-
-                foreach ($teachersAvailabilities as $teachersAvailability) {
-                    $start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-                        ' ' . $teachersAvailability->from_time);
-                    $end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-                        ' ' . $teachersAvailability->to_time);
-                    $events[] = [
-                        'resourceId' => $teachersAvailability->teacher->id,
-                        'title'      => '',
-                        'start'      => $start->format('Y-m-d H:i:s'),
-                        'end'        => $end->format('Y-m-d H:i:s'),
-                        'rendering'  => 'background',
-                    ];
-                }
-            }
-            $lessons = $this->getLessons($date, $programId, $teacherId, $locationId);
+            $lessons = $this->getLessons($date, $locationId);
             foreach ($lessons as &$lesson) {
                 $toTime = new \DateTime($lesson->date);
                 $length = explode(':', $lesson->duration);

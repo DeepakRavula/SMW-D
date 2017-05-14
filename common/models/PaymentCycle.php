@@ -67,6 +67,13 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $this->hasMany(PaymentCycleLesson::className(), ['paymentCycleId' => 'id']);
     }
 
+    public function getFirstLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+            ->viaTable('payment_cycle_lesson', ['paymentCycleId' => 'id'])
+            ->orderBy(['lesson.date' => SORT_ASC]);
+    }
+
     public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
@@ -122,16 +129,16 @@ class PaymentCycle extends \yii\db\ActiveRecord
     public function createProFormaInvoice()
     {
         $locationId = $this->enrolment->student->customer->userLocation->location_id;
-		$user = User::findOne(['id' => Yii::$app->user->id]);
+        $user = User::findOne(['id' => Yii::$app->user->id]);
         $invoice = new Invoice();
-		$invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
-		$invoice->userName = $user->publicIdentity;
+        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
+        $invoice->userName = $user->publicIdentity;
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $locationId;
-        $invoice->date = $this->enrolment->firstPaymentCycle->startDate;
+        $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
         $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
-		$invoice->createdUserId = Yii::$app->user->id;
-		$invoice->updatedUserId = Yii::$app->user->id;
+        $invoice->createdUserId = Yii::$app->user->id;
+        $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
         $startDate = \DateTime::createFromFormat('Y-m-d', $this->startDate);
         $endDate   = \DateTime::createFromFormat('Y-m-d', $this->endDate);
@@ -148,5 +155,27 @@ class PaymentCycle extends \yii\db\ActiveRecord
         }
         $invoice->save();
         return $invoice;
-        }
     }
+
+    public function isPastPaymentCycle()
+    {
+        return new \DateTime($this->endDate) <= new \DateTime();
+    }
+
+    public function isCurrentPaymentCycle()
+    {
+        return new \DateTime($this->startDate) <= new \DateTime() &&
+            new \DateTime($this->endDate) >= new \DateTime();
+    }
+
+    public function isNextPaymentCycle()
+    {
+        return $this->enrolment->nextPaymentCycle->id === $this->id;
+    }
+
+    public function canRaiseProformaInvoice()
+    {
+        return $this->isPastPaymentCycle() || $this->isCurrentPaymentCycle() ||
+            $this->isNextPaymentCycle();
+    }
+}

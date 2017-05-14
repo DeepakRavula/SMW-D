@@ -20,158 +20,13 @@ $bundle = BackendAsset::register($this);
 ?>
 <?php $this->beginContent('@backend/views/layouts/base.php'); ?>
     <div class="wrapper">
-        <!-- header logo: style can be found in header.less -->
-        <header class="main-header">
-            <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
-                <!-- Add the class icon to your logo image or logo icon to add the margining -->                
-                <img src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/logo.png')) ?>"  />        
-            </a>
-            <!-- Header Navbar: style can be found in header.less -->
-            <nav class="navbar navbar-static-top" role="navigation">
-                <!-- Sidebar toggle button-->
-                <a href="#" class="sidebar-toggle m-r-10" data-toggle="offcanvas" role="button">
-                    <span class="sr-only"><?php echo Yii::t('backend', 'Toggle navigation') ?></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-
-				<?php 
-                $roles = ArrayHelper::getColumn(
-                    Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
-                        'name'
-                    );
-                $role = end($roles);
-                if ($role !== User::ROLE_ADMINISTRATOR) {
-                    $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-                    Yii::$app->session->set('location_id', $userLocation->location_id);
-                }
-                ?>
-                    <?php if ($role === User::ROLE_ADMINISTRATOR):?>
-                        <div class="pull-left">
-                            <?php $form = Html::beginForm(); ?>                        
-                                 <?= Html::dropDownList('location_id', null,
-                                  ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'location_id', 'options' => [Yii::$app->session->get('location_id') => ['Selected' => 'selected']], 'onChange' => new JsExpression(
-                                "$.ajax({
-                                    type     :'POST',
-                                    cache    : false,
-                                    url  : '/location/change-location',
-                                    data: {
-                                        location_id: $('#location_id').val()
-                                    },
-                                    success  : function(response) {
-                                        location.reload();
-                                    }
-                                });")]
-                            ) ?>
-                            <?php Html::endForm() ?>
-                            </div>
-                        <?php else:?>
-                        <?php
-                            $userLocationId = Yii::$app->session->get('location_id');
-                            $location = Location::findOne(['id' => $userLocationId]);
-                            echo '<div class="p-t-15 pull-left" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i>'.$location->name.'</div>';
-                        ?>
-                        <?php endif; ?>
-                <div class="navbar-custom-menu">
-                    <ul class="nav navbar-nav">
-						 <li class="notifications-menu" data-toggle="tooltip" data-original-title="Blog" data-placement="bottom">
-                            <a href="<?php echo Url::to(['blog/list']) ?>">
-                                <i class="fa fa-newspaper-o" aria-hidden="true"></i>
-                            </a>
-                        </li>
-                        <li class="notifications-menu" data-toggle="tooltip" data-original-title="Give a feedback" data-placement="bottom">
-                            <a href="" onclick="FreshWidget.show(); return false;">
-                                <i class="fa fa-comment"></i>
-                            </a>
-                        </li>
-                        <li id="timeline-notifications" class="notifications-menu"  data-toggle="tooltip" data-original-title="Notifications" data-placement="bottom">
-                            <a href="<?php echo Url::to(['timeline-event/index']) ?>">
-                                <i class="fa fa-bell"></i>
-                                <span class="label label-success">
-                                    <?php echo TimelineEvent::find()
-										->andWhere(['locationId' => Yii::$app->session->get('location_id')])
-										->today()->count() ?>
-                                </span>
-                            </a>
-                        </li>
-                        <!-- Notifications: style can be found in dropdown.less -->
-                        <li id="log-dropdown" class="dropdown notifications-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-warning"></i>
-                            <span class="label label-danger">
-                                <?php echo \backend\models\SystemLog::find()->count() ?>
-                            </span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="header"><?php echo Yii::t('backend', 'You have {num} log items', ['num' => \backend\models\SystemLog::find()->count()]) ?></li>
-                                <li>
-                                    <!-- inner menu: contains the actual data -->
-                                    <ul class="menu">
-                                        <?php foreach (\backend\models\SystemLog::find()->orderBy(['log_time' => SORT_DESC])->limit(5)->all() as $logEntry): ?>
-                                            <li>
-                                                <a href="<?php echo Yii::$app->urlManager->createUrl(['log/view', 'id' => $logEntry->id]) ?>">
-                                                    <i class="fa fa-warning <?php echo $logEntry->level == \yii\log\Logger::LEVEL_ERROR ? 'text-red' : 'text-yellow' ?>"></i>
-                                                    <?php echo $logEntry->category ?>
-                                                </a>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                </li>
-                                <li class="footer">
-                                    <?php echo Html::a(Yii::t('backend', 'View all'), ['log/index']) ?>
-                                </li>
-                            </ul>
-                        </li>
-                        <!-- User Account: style can be found in dropdown.less -->
-                        <li class="dropdown user user-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="user-menu"><span><?php echo Yii::$app->user->identity->userProfile->fullName ?> <i class="caret"></i></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <!-- User image -->
-                                <li class="user-header light-blue">
-                                    <img src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/anonymous.jpg')) ?>" class="img-circle" alt="User Image" />
-                                    <p>
-                                        <?php echo Yii::$app->user->identity->userProfile->fullName ?>
-                                        <small>
-                                            <?php echo Yii::t('backend', 'Member since {0, date, short}', Yii::$app->user->identity->created_at) ?>
-                                        </small>
-                                </li>
-                                <!-- Menu Footer-->
-                                <li class="user-footer">
-                                    <div class="pull-left">
-                                        <?php echo Html::a(Yii::t('backend', 'Profile'), ['sign-in/profile'], ['class' => 'btn btn-default btn-flat']) ?>
-                                    </div>
-                                    <div class="pull-right">
-                                        <?php echo Html::a(Yii::t('backend', 'Logout'), ['sign-in/logout'], ['class' => 'btn btn-default btn-flat', 'data-method' => 'post']) ?>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <?php echo Html::a('<i class="fa fa-cogs"></i>', ['site/settings'])?>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
+      <?= $this->render('_header'); ?>
         <!-- Left side column. contains the logo and sidebar -->
         <aside class="main-sidebar">
             <!-- sidebar: style can be found in sidebar.less -->
             <section class="sidebar">
                 <!-- Sidebar user panel -->
-                <div class="user-panel">
-                    <div class="pull-left image">
-                        <img src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/anonymous.jpg')) ?>" class="img-circle" />
-                    </div>
-                    <div class="pull-left info">
-                        <p><?php echo Yii::t('backend', '{username}', ['username' => Yii::$app->user->identity->userProfile->fullName]) ?></p>
-                        <a href="<?php echo Url::to(['sign-in/profile']) ?>">
-                            <i class="fa fa-circle text-success"></i>
-                            <?php echo Yii::$app->formatter->asDatetime(time()) ?>
-                        </a>
-                    </div>
-                </div>
+               
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <?php echo Menu::widget([
                     'options' => ['class' => 'sidebar-menu'],
@@ -179,10 +34,7 @@ $bundle = BackendAsset::register($this);
                     'submenuTemplate' => "\n<ul class=\"treeview-menu\">\n{items}\n</ul>\n",
                     'activateParents' => true,
                     'items' => [
-                        [
-                            'label' => Yii::t('backend', 'Main'),
-                            'options' => ['class' => 'header'],
-                        ],
+                       
                         [
                             'label' => Yii::t('backend', 'Dashboard'),
                             'icon' => '<i class="fa fa-tachometer"></i>',
@@ -328,7 +180,7 @@ $bundle = BackendAsset::register($this);
                             'active' => (Yii::$app->controller->id === 'release-notes') ? true : false,
                         ],
                         [
-                            'label' => Yii::t('backend', 'System'),
+                            'label' => Yii::t('backend', 'Admin'),
                             'options' => ['class' => 'header'],
                         ],
                    
@@ -406,24 +258,6 @@ $bundle = BackendAsset::register($this);
                                     'visible' => Yii::$app->user->can('staffmember'),
                                 ],
                                 [
-                                    'label' => Yii::t('backend', 'Key-Value Storage'),
-                                    'url' => ['key-storage/index'],
-                                    'icon' => '<i class="fa fa-angle-double-right"></i>',
-                                    'visible' => Yii::$app->user->can('administrator'),
-                                ],
-                                [
-                                    'label' => Yii::t('backend', 'Cache'),
-                                    'url' => ['cache/index'],
-                                    'icon' => '<i class="fa fa-angle-double-right"></i>',
-                                    'visible' => Yii::$app->user->can('administrator'),
-                                ],
-                                [
-                                    'label' => Yii::t('backend', 'System Information'),
-                                    'url' => ['system-information/index'],
-                                    'icon' => '<i class="fa fa-angle-double-right"></i>',
-                                    'visible' => Yii::$app->user->can('administrator'),
-                                ],
-                                [
                                     'label' => Yii::t('backend', 'Logs'),
                                     'url' => ['log/index'],
                                     'icon' => '<i class="fa fa-angle-double-right"></i>',
@@ -446,13 +280,6 @@ $bundle = BackendAsset::register($this);
                                 ['label' => Yii::t('backend', 'Routes'), 'url' => ['admin/route'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
                                 ['label' => Yii::t('backend', 'Rules'), 'url' => ['admin/rule'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
                             ],
-                        ],
-                        [
-                            'label' => Yii::t('backend', 'Timeline'),
-                            'icon' => '<i class="fa fa-bar-chart-o"></i>',
-                            'url' => ['timeline-event/index'],
-                            'badge' => TimelineEvent::find()->today()->count(),
-                            'badgeBgClass' => 'label-success',
                         ],
                     ],
                 ]) ?>
@@ -481,27 +308,10 @@ $bundle = BackendAsset::register($this);
                     <div class="clearfix"></div>
                 </h1>
 
-                <?php //echo Breadcrumbs::widget([
-                    // 'tag'=>'ol',
-                    // 'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-                // ])?>
             </section>
 
             <!-- Main content -->
             <section class="content">
-                <?php
-                $latestNotes = $this->params['latestNotes'];
-                $unReadNotes = $this->params['unReadNotes'];
-                ?>
-                <?php if ($role === User::ROLE_ADMINISTRATOR || $role === User::ROLE_STAFFMEMBER || $role === User::ROLE_OWNER) : ?>
-                    <?php if (empty($unReadNotes) && !empty($latestNotes)) : ?>
-                       <?php Yii::$app->session->setFlash('alert', [
-                            'options' => ['class' => 'alert alert-warning release-notes', 'data-id' => $latestNotes->id],
-                            'body' => $latestNotes->notes,
-                        ]);
-                        ?>
-                    <?php endif; ?>
-                <?php endif; ?>
                 <?php if (Yii::$app->session->hasFlash('alert')):?>
                     <?php echo \yii\bootstrap\Alert::widget([
                         'body' => ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'body'),

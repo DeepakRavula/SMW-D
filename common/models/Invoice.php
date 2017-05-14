@@ -83,9 +83,9 @@ class Invoice extends \yii\db\ActiveRecord
             [['reminderNotes'], 'string'],
             [['isSent'], 'boolean'],
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
-			[['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
+            [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
-			[['hasEditable'], 'safe']
+            [['hasEditable', 'dueDate'], 'safe']
         ];
     }
 
@@ -226,6 +226,11 @@ class Invoice extends \yii\db\ActiveRecord
     public function isPaid()
     {
         return (int) $this->status === (int) self::STATUS_PAID;
+    }
+
+    public function hasPayments()
+    {
+        return $this->paymentTotal != 0;
     }
 
     public function hasCredit()
@@ -497,16 +502,14 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-		if ($insert) {
+        if ($insert) {
             $lastInvoice   = $this->lastInvoice();
             $invoiceNumber = 1;
             if (!empty($lastInvoice)) {
                 $invoiceNumber = $lastInvoice->invoice_number + 1;
             }
             $this->invoice_number = $invoiceNumber;
-            if ($this->isInvoice()) {
-                $this->date           = (new \DateTime())->format('Y-m-d');
-            }
+            $this->date           = (new \DateTime())->format('Y-m-d');
             $this->status         = Invoice::STATUS_OWING;
             $this->isSent         = false;
             $this->subTotal       = 0.00;
@@ -517,7 +520,7 @@ class Invoice extends \yii\db\ActiveRecord
             if (!empty($reminderNotes)) {
                 $this->reminderNotes = $reminderNotes->notes;
             }
-			$this->isDeleted = false;
+            $this->isDeleted = false;
         }
 		
      	return parent::beforeSave($insert);
@@ -555,22 +558,22 @@ class Invoice extends \yii\db\ActiveRecord
         } else {
             $invoiceLineItem->item_id    = $lesson->id;
         }
+        $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
+        $rate = !empty($qualification->rate) ? $qualification->rate : 0;
+        $invoiceLineItem->cost = $rate;
         if (!empty($lesson->proFormaLineItem)) {
             $invoiceLineItem->discount     = $lesson->proFormaLineItem->discount;
             $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
-			$qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
-			$rate = !empty($qualification->rate) ? $qualification->rate : 0;
-			$invoiceLineItem->cost = $rate;
-			if($lesson->course->program->isPrivate()) {
-				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
-				$enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0; 
-				$invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
-				$invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
-			} else {
-				$invoiceLineItem->discount     = 0;
-	            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
-			}
+            if($lesson->course->program->isPrivate()) {
+                $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
+                $enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0;
+                $invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
+                $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
+            } else {
+                $invoiceLineItem->discount     = 0;
+                $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+            }
         }
         $getDuration                 = \DateTime::createFromFormat('H:i:s',
                 $lesson->duration);

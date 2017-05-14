@@ -13,12 +13,19 @@ use Yii;
  */
 class PaymentFrequency extends \yii\db\ActiveRecord
 {
-    const LENGTH_MONTHLY    = 1;
-    const LENGTH_QUARTERLY  = 2;
-    const LENGTH_HALFYEARLY = 3;
-    const LENGTH_FULL       = 4;
+    const LENGTH_MONTHLY            = 1;
+    const LENGTH_EVERY_TWO_MONTH    = 2;
+    const LENGTH_QUARTERLY          = 3;
+    const LENGTH_EVERY_FOUR_MONTH   = 4;
+    const LENGTH_EVERY_FIVE_MONTH   = 5;
+    const LENGTH_HALFYEARLY         = 6;
+    const LENGTH_EVERY_SEVEN_MONTH  = 7;
+    const LENGTH_EVERY_EIGHT_MONTH  = 8;
+    const LENGTH_EVERY_NINE_MONTH   = 9;
+    const LENGTH_EVERY_TEN_MONTH    = 10;
+    const LENGTH_EVERY_ELEVEN_MONTH = 11;
+    const LENGTH_FULL               = 12;
 
-	
     /**
      * @inheritdoc
      */
