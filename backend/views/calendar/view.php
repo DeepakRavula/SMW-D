@@ -59,36 +59,6 @@ $this->title = 'Calendar for ' .(new \DateTime())->format('l, F jS, Y');
 }
 </style>
 <div class="tabbable-panel">
-    <div class="tabbable-line">
-        <?php
-
-        $teacher = $this->render('_teacher-view',[
-            'availableTeachersDetails' => $availableTeachersDetails
-        ]);
-
-        $classroom = $this->render('_classroom-view');
-
-        ?>
-
-        <?php echo Tabs::widget([
-            'items' => [
-                [
-                    'label' => 'Teacher View',
-                    'content' => $teacher,
-                    'options' => [
-                            'id' => 'teacher-view',
-                        ],
-                ],
-                [
-                    'label' => 'Classroom View',
-                    'content' => $classroom,
-                    'options' => [
-                            'id' => 'classroom-view',
-                        ],
-                ],
-            ],
-        ]);?>
-    </div>
     <div class="schedule-index">
         <div class="row schedule-filter">
             <div class="col-md-2 pull-right">
@@ -102,6 +72,7 @@ $this->title = 'Calendar for ' .(new \DateTime())->format('l, F jS, Y');
         </div>
     </div>
 </div>
+<div id='calendar'></div>
 
 <script type="text/javascript">
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
@@ -143,20 +114,6 @@ $(document).ready(function() {
 });
 
 $(document).ready(function () {
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        var tab  = e.target.text;
-        var date = $('#datepicker').datepicker("getDate");
-        if (tab === "Classroom View") {
-            showclassroomCalendar(moment(date));
-            $('.calendar-filter').hide();
-        } else {
-            refreshCalendar(moment(date));
-            $('.calendar-filter').show();
-        }
-    });
-});
-
-$(document).ready(function () {
     $('#datepicker').datepicker ({
         format: 'dd-mm-yyyy',
         autoclose: true,
@@ -175,55 +132,6 @@ $(document).ready(function () {
     });
 });
 
-function showclassroomCalendar(date) {
-    var resourceParams = $.param({
-        date: moment(date).format('YYYY-MM-DD'),
-        locationId: locationId
-    });
-    var eventParms     = $.param({
-        date: moment(date).format('YYYY-MM-DD'),
-        locationId: locationId
-    });
-    var fromTime       = "09:00:00";
-    var toTime         = "17:00:00";
-    var day            = moment(date).day();
-    $.each( locationAvailabilities, function( key, value ) {
-        if (day === 0) {
-            day = 7;
-        }
-        if (day === value.day) {
-            fromTime = value.fromTime;
-            toTime   = value.toTime;
-        }
-    });
-    $('#classroom-calendar').html('');
-    $('#classroom-calendar').unbind().removeData().fullCalendar({
-        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        header: false,
-        defaultDate: date,
-        titleFormat: 'DD-MMM-YYYY, dddd',
-        defaultView: 'agendaDay',
-        minTime: fromTime,
-        maxTime: toTime,
-        slotDuration: "00:15:00",
-        allDaySlot:false,
-        editable: false,
-        droppable: false,
-        resources: {
-            url: '<?= Url::to(['calendar/render-classroom-resources']) ?>?' + resourceParams,
-            type: 'POST',
-            error: function() {
-                $("#classroom-calendar").fullCalendar("refetchResources");
-            }
-        },
-        events: {
-            url: '<?= Url::to(['calendar/render-classroom-events']) ?>?' + eventParms,
-            type: 'POST',
-            error: function() {
-                $("#classroom-calendar").fullCalendar("refetchEvents");
-            }
-    });
-}
 
 function refreshCalendar(date) {
     var params = $.param({
@@ -267,6 +175,7 @@ function refreshCalendar(date) {
             type: 'POST',
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
+            }
         }
     });
 }
