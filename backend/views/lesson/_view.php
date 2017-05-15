@@ -120,12 +120,15 @@ use yii\bootstrap\Modal;
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
 		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
 		  <?php	$form = ActiveForm::begin(['id' => 'lesson-present-form']);?>
-		<?php $model->present = $model->isMissed() ? false : true; ?> 
+		<?php $model->present = $model->isMissed() ? false : true; 
+                $disabled = $model->isMissed() ? true : false;
+                ?> 
 		<div class="m-r-20 del-ce">
 			<?=
             $form->field($model, 'present')->widget(SwitchInput::classname(),
                 [
                 'name' => 'present',
+                'disabled' => $disabled,
                 'pluginOptions' => [
                     'handleWidth' => 60,
                     'onText' => 'Present',
@@ -166,57 +169,13 @@ echo $this->render('_split-lesson', [
 		return false;
   	});
 	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
-			if(! state) {
-				bootbox.confirm({
-				message: "Do you wish to generate an invoice for this lesson?",
-				buttons: {
-					confirm: {
-						label: 'Yes',
-						className: 'btn-success'
-					},
-					cancel: {
-						label: 'No',
-						className: 'btn-danger'
-					}
-				},
-				callback: function (result) {
-					if(result) {
-						$.ajax({
-							url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
-							type   : 'POST',
-							dataType: "json",
-							data   : $('#lesson-present-form').serialize(),
-							success: function(response)
-							{
-							}
-						});
-					} else {
-						$.ajax({
-							url    : '<?= Url::to(['lesson/absent', 'id' => $model->id]) ?>',
-							type   : 'POST',
-							dataType: "json",
-							data   : $('#lesson-present-form').serialize(),
-							success: function(response)
-							{
-								if(respose.status) {
-									$('.modal-dialog').hide();
-								}
-							}
-						});
-					}
-				}
-			});
-		} else {
-			$.ajax({
-				url    : '<?= Url::to(['lesson/present', 'id' => $model->id]) ?>',
-				type   : 'POST',
-				dataType: "json",
-				data   : $('#lesson-present-form').serialize(),
-				success: function(response)
-				{
-				}
-			});
-		}
+            $.ajax({
+                url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
+                type   : 'POST',
+                dataType: "json",
+                data   : $('#lesson-present-form').serialize(),
+                success: function(response) {}
+            });
 	});	
 });
 </script>
