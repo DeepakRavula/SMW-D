@@ -668,44 +668,44 @@ class LessonController extends Controller
         }
     }
 
-	public function actionMissed($id)
-	{
+    public function actionMissed($id)
+    {
         $model = $this->findModel($id);
-		$model->on(Lesson::EVENT_MISSED, [new TimelineEventLesson(), 'missed']);
-		$user = User::findOne(['id' => Yii::$app->user->id]);
-		$model->userName = $user->publicIdentity;
-		$model->status = Lesson::STATUS_MISSED;
-		$model->save();
-		$model->trigger(Lesson::EVENT_MISSED);	
-		if(empty($model->invoice)) {
-			$invoice = $model->createInvoice();
-			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-		} else {
-		   return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
-		}
+	$model->on(Lesson::EVENT_MISSED, [new TimelineEventLesson(), 'missed']);
+	$user = User::findOne(['id' => Yii::$app->user->id]);
+	$model->userName = $user->publicIdentity;
+	$model->status = Lesson::STATUS_MISSED;
+	$model->save();
+	$model->trigger(Lesson::EVENT_MISSED);	
+	if(empty($model->invoice)) {
+            $invoice = $model->createInvoice();
+            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
+	} else {
+	    return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
 	}
+    }
 	
-	public function actionPresent($id)
-	{
-        $model = $this->findModel($id);
-		$currentDate = new \DateTime();
-		$lessonDate = new \DateTime($model->date);
-		$model->status = Lesson::STATUS_SCHEDULED;
-		if($currentDate >= $lessonDate) {
-			$model->status = Lesson::STATUS_COMPLETED;
-		}
-		$model->save();
-	}
-
-	public function actionAbsent($id)
-	{
-        $model = $this->findModel($id);
-		$model->status = Lesson::STATUS_MISSED;
-		$model->save();
-		return [
-			'status' => true,
-		];
-	}
+//	public function actionPresent($id)
+//	{
+//        $model = $this->findModel($id);
+//		$currentDate = new \DateTime();
+//		$lessonDate = new \DateTime($model->date);
+//		$model->status = Lesson::STATUS_SCHEDULED;
+//		if($currentDate >= $lessonDate) {
+//			$model->status = Lesson::STATUS_COMPLETED;
+//		}
+//		$model->save();
+//	}
+//
+//	public function actionAbsent($id)
+//	{
+//        $model = $this->findModel($id);
+//		$model->status = Lesson::STATUS_MISSED;
+//		$model->save();
+//		return [
+//			'status' => true,
+//		];
+//	}
     public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);

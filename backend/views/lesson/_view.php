@@ -166,57 +166,13 @@ echo $this->render('_split-lesson', [
 		return false;
   	});
 	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
-			if(! state) {
-				bootbox.confirm({
-				message: "Do you wish to generate an invoice for this lesson?",
-				buttons: {
-					confirm: {
-						label: 'Yes',
-						className: 'btn-success'
-					},
-					cancel: {
-						label: 'No',
-						className: 'btn-danger'
-					}
-				},
-				callback: function (result) {
-					if(result) {
-						$.ajax({
-							url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
-							type   : 'POST',
-							dataType: "json",
-							data   : $('#lesson-present-form').serialize(),
-							success: function(response)
-							{
-							}
-						});
-					} else {
-						$.ajax({
-							url    : '<?= Url::to(['lesson/absent', 'id' => $model->id]) ?>',
-							type   : 'POST',
-							dataType: "json",
-							data   : $('#lesson-present-form').serialize(),
-							success: function(response)
-							{
-								if(respose.status) {
-									$('.modal-dialog').hide();
-								}
-							}
-						});
-					}
-				}
-			});
-		} else {
-			$.ajax({
-				url    : '<?= Url::to(['lesson/present', 'id' => $model->id]) ?>',
-				type   : 'POST',
-				dataType: "json",
-				data   : $('#lesson-present-form').serialize(),
-				success: function(response)
-				{
-				}
-			});
-		}
+            $.ajax({
+                url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
+                type   : 'POST',
+                dataType: "json",
+                data   : $('#lesson-present-form').serialize(),
+                success: function(response) {}
+                });
 	});	
 });
 </script>
