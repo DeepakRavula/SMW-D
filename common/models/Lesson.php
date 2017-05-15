@@ -42,6 +42,9 @@ class Lesson extends \yii\db\ActiveRecord
     const SCENARIO_GROUP_ENROLMENT_REVIEW = 'group-enrolment';
     const SCENARIO_EDIT_CLASSROOM = 'classroom-edit';
     
+	const TEACHER_VIEW = 1;
+	const CLASS_ROOM_VIEW = 2;
+	
     const EVENT_RESCHEDULE_ATTEMPTED	 = 'RescheduleAttempted';
     const EVENT_RESCHEDULED			 = 'Rescheduled';
     const EVENT_UNSCHEDULE_ATTEMPTED	 = 'UnscheduleAttempted';
