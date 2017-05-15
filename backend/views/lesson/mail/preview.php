@@ -21,44 +21,38 @@ use common\models\Lesson;
 	]); ?>
 		<div class="row">
         <div class="col-lg-12">
-			<?php 
-			$data = ArrayHelper::map(User::find()->all(), 'email', 'email');
-			$students = Student::find()
-				->joinWith('enrolment')
-				->andWhere(['courseId' => $model->courseId])
-				->all();
-			$emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
-			$model->toEmailAddress = $emails; 	
-			$subject = $model->course->program->name . ' lesson reschedule';
-			$body = null;
-			$to = !empty($model->enrolment->student->customer->publicIdentity) ? $model->enrolment->student->customer->publicIdentity : null;
-			?>
-			<?php if($model->isRescheduled()) : ?> 
-        	<?php $lesson = Lesson::findOne(['lesson.id' => $model->reschedule->lessonId]); ?>
-			<?php  if(!empty($model->date) && new \DateTime($model->date) !== new \DateTime($lesson->date)) : ?>
-			<?php 
-			$duration		 = \DateTime::createFromFormat('H:i:s', $model->duration);
-			$lessonDuration	 = ($duration->format('H') * 60) + $duration->format('i');
-			$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->duration);
-			$oldLessonDuration	 = ($duration->format('H') * 60) + $duration->format('i');
-			$body = $lesson->enrolment->student->fullname . '\'s ' . $lesson->course->program->name . ' lesson with ' . $lesson->teacher->publicIdentity . ' on ' . (new \DateTime($lesson->date))->format('l, F jS, Y') . ' @ ' . Yii::$app->formatter->asTime($lesson->date) . ' for ' . $oldLessonDuration . ' minutes has been rescheduled to ' . (new \DateTime($model->date))->format('l, F jS, Y') . ' @ ' . Yii::$app->formatter->asTime($model->date) . ' for ' . $lessonDuration . ' minutes.'; 
-			?>
-			<?php endif; ?>
-			<?php endif; ?>
-			<?php $content = $this->render('content', [
-				'toName' => $to,
-				'content' => $body,
-				'model' => $model,
-			]); 
-			$model->content = $content; 
-			?>
-			 <?php echo $form->field($model, 'toEmailAddress')->widget(Select2::classname(), [
-				 'data' => $data,
-				'pluginOptions' => [
-					'tags' => true,
-					'allowClear' => true,
-					'multiple' => true,
-				],
+           <?php 
+            $data = ArrayHelper::map(User::find()->all(), 'email', 'email');
+            $students = Student::find()
+                    ->joinWith('enrolment')
+                    ->andWhere(['courseId' => $model->courseId])
+                    ->all();
+            $emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
+            $customerName = $model->enrolment->student->customer->publicIdentity;
+            $to = !empty($customerName) ? $customerName : null;
+            $model->toEmailAddress = $emails; 	
+            $subject = $model->course->program->name . ' lesson reschedule';
+            $body = null;?>
+            <?php if ($model->getReschedule()) : ?>
+             <?php $body = $this->render('body', [
+                'model' => $model,
+        ]); ?>
+            <?php endif; ?>
+          
+        <?php $content = $this->render('content', [
+                'toName' => $to,
+                'content' => $body,
+                'model' => $model,
+        ]); 
+        $model->content = $content; 
+        ?>
+         <?php echo $form->field($model, 'toEmailAddress')->widget(Select2::classname(), [
+                 'data' => $data,
+                'pluginOptions' => [
+                        'tags' => true,
+                        'allowClear' => true,
+                        'multiple' => true,
+                ],
         ]); ?>
         </div>
         </div>
