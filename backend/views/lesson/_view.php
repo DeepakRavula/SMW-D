@@ -120,12 +120,15 @@ use yii\bootstrap\Modal;
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');;
 		$currentDate = (new \DateTime())->format('Y-m-d'); ?>
 		  <?php	$form = ActiveForm::begin(['id' => 'lesson-present-form']);?>
-		<?php $model->present = $model->isMissed() ? false : true; ?> 
+		<?php $model->present = $model->isMissed() ? false : true; 
+                $disabled = $model->isMissed() ? true : false;
+                ?> 
 		<div class="m-r-20 del-ce">
 			<?=
             $form->field($model, 'present')->widget(SwitchInput::classname(),
                 [
                 'name' => 'present',
+                'disabled' => $disabled,
                 'pluginOptions' => [
                     'handleWidth' => 60,
                     'onText' => 'Present',
