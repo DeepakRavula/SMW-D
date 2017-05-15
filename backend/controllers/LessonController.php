@@ -144,7 +144,6 @@ class LessonController extends Controller
             $model->date = $lessonDate->format('Y-m-d H:i:s');
 
             if ($model->save()) {
-                $model->addExtraLessonProformaInvoice();
                 $response = [
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
@@ -711,7 +710,10 @@ class LessonController extends Controller
     {
         $model = Lesson::findOne(['id' => $id]);
         if ($model->isExtra()) {
-            $model->addExtraLessonProformaInvoice();
+            if (!$model->extraLessonProFormaInvoice) {
+                $extraLessonProFormaInvoice = $model->addExtraLessonProformaInvoice();
+                return $this->redirect(['invoice/view', 'id' => $extraLessonProFormaInvoice->id]);
+            }
             return $this->redirect(['invoice/view', 'id' => $model->extraLessonProFormaInvoice->id]);
         }
         if (!$model->paymentCycle->canRaiseProformaInvoice()) {

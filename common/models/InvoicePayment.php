@@ -58,10 +58,15 @@ class InvoicePayment extends \yii\db\ActiveRecord
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
     }
 
-	public function afterSave($insert, $changedAttributes) {
-            if($this->invoice->isProFormaInvoice() && !$this->payment->isCreditUsed()) {
+    public function afterSave($insert, $changedAttributes)
+    {
+        if($this->invoice->isProFormaInvoice() && !$this->payment->isCreditUsed()) {
+            if ($this->invoice->isExtraLessonProformaInvoice()) {
+                $this->invoice->makeExtraLessonInvoicePayment();
+            } else {
                 $this->invoice->makeInvoicePayment();
             }
+        }
         return parent::afterSave($insert, $changedAttributes);
     }
 }
