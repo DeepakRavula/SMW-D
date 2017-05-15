@@ -431,8 +431,8 @@ class ScheduleController extends Controller
                     $length = explode(':', $lesson->duration);
                     $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
                     if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-					$description = '<b>Teacher:</b> ' . $lesson->teacher->publicIdentity . '<b>Program:</b> ' . $lesson->course->program->name . '<br>' .
-					 '<b>Student Count:</b> ' . $lesson->course->getEnrolmentsCount(); 
+					$description = 'Teacher: ' . $lesson->teacher->publicIdentity . 'Program: ' . $lesson->course->program->name . '' .
+					 'Student Count: ' . $lesson->course->getEnrolmentsCount(); 
 						$title = $lesson->teacher->publicIdentity;
                         $class = 'group-lesson';
                         $backgroundColor = null;
