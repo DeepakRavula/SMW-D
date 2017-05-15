@@ -684,28 +684,7 @@ class LessonController extends Controller
 	    return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
 	}
     }
-	
-//	public function actionPresent($id)
-//	{
-//        $model = $this->findModel($id);
-//		$currentDate = new \DateTime();
-//		$lessonDate = new \DateTime($model->date);
-//		$model->status = Lesson::STATUS_SCHEDULED;
-//		if($currentDate >= $lessonDate) {
-//			$model->status = Lesson::STATUS_COMPLETED;
-//		}
-//		$model->save();
-//	}
-//
-//	public function actionAbsent($id)
-//	{
-//        $model = $this->findModel($id);
-//		$model->status = Lesson::STATUS_MISSED;
-//		$model->save();
-//		return [
-//			'status' => true,
-//		];
-//	}
+
     public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);

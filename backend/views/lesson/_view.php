@@ -172,7 +172,7 @@ echo $this->render('_split-lesson', [
                 dataType: "json",
                 data   : $('#lesson-present-form').serialize(),
                 success: function(response) {}
-                });
+            });
 	});	
 });
 </script>
