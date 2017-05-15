@@ -111,7 +111,7 @@
                 text-transform: capitalize;
             }
             .invoice-print-address ul li {
-                font-size: 14px;
+                font-size: 16px;
                 font-weight: 300;
                 color: #000;
             }
@@ -183,8 +183,7 @@
                 <div class="invoice-status">
                     <div class="invoice-col" style="width: 125px; text-align:right;">
                         <p class="invoice-number" style="font-weight:700; font-size:16px;">
-                            <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : ''?>
-                                <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#'.$model->invoice_number?>
+                            <h3><strong><?= $model->getInvoiceNumber();?></strong></h3>
                         </p>
                         <p>
                             <?= Yii::$app->formatter->asDate($model->date); ?>
@@ -198,16 +197,24 @@
             <div class="invoice-col " style="clear: both;">
                 <div class="invoice-print-address">
                     <ul>
+						<li><strong>Arcadia Music Academy ( <?= $model->location->name; ?> )</strong></li>
                         <li>
-                            <h1 class="m-0 text-inverse" style="font-size:14px; font-weight:600;">
-                     <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Invoice'?> 
-                  </h1>
+                            <?php if (!empty($model->location->address)): ?>
+                                <?= $model->location->address;?>
+                            <?php endif; ?>
                         </li>
-                        <li>
-                            <?php if (!empty($model->user->userLocation->location->address)): ?>
-                                <?= $model->user->userLocation->location->address?>
-                                    <br>
-                                    <?php endif; ?>
+						<li>
+                            <?php if (!empty($model->location->city_id)): ?>
+                                <?= $model->location->city->name;?>
+                            <?php endif; ?>
+							<?php if (!empty($model->location->province_id)): ?>
+                                <?= ', ' . $model->location->province->name;?>
+                            <?php endif; ?>
+						</li>
+						<li>
+							<?php if (!empty($model->location->postal_code)): ?>
+                                <?= $model->location->postal_code;?>
+                            <?php endif; ?>
                         </li>
                     </ul>
                     <ul>
@@ -215,14 +222,17 @@
                             </br>
                         </li>
                         <li>
-                            <?php if (!empty($model->user->userLocation->location->phone_number)): ?>
-                                <?= $model->user->userLocation->location->phone_number?>
-                                    <?php endif; ?>
+                            <?php if (!empty($model->location->phone_number)): ?>
+                                <?= $model->location->phone_number?>
+                            <?php endif; ?>
                         </li>
                         <li>
-                            <?php if (!empty($model->user->userLocation->location->email)): ?>
-                                <?= $model->user->userLocation->location->email?>
-                                    <?php endif; ?>
+                            <?php if (!empty($model->location->email)): ?>
+                                <?= $model->location->email?>
+                            <?php endif; ?>
+                        </li>
+						<li>
+                           www.arcadiamusicacademy.com
                         </li>
                     </ul>
                 </div>
@@ -230,14 +240,16 @@
             <div class="invoice-col" style="clear:both; ">
                 <div class="invoice-print-address">
                     <ul>
+						<li>
+						<strong>Customer</strong>
+						</li>
                         <li>
-                            <h1 class="m-0" style="font-size:14px; font-weight:600;">To
+                            <h1 class="m-0" style="font-size:14px;">
                      <?php echo isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?>
                   </h1>
                         </li>
-                        <li>
-                            <?php
-                     $addresses = $model->user->addresses;
+						<?php 
+						 $addresses = $model->user->addresses;
                      foreach ($addresses as $address) {
                      	if ($address->label === 'Billing') {
                      		$billingAddress = $address;
@@ -245,56 +257,44 @@
                      	}
                      }
                      $phoneNumber = $model->user->phoneNumber;
-
-                     ?>
-                                <!-- Billing address -->
-                                <?php if (!empty($billingAddress)) {
-                     ?>
-                                    <?php 
-                     echo $billingAddress->address.'<br> '.$billingAddress->city->name.', ';
-                     echo $billingAddress->province->name.'<br>'.$billingAddress->country->name.' ';
-                     echo $billingAddress->postal_code;
-                     } ?>address
-                        </li>
+					 ?>
+                        <li>
+                            <!-- Billing address -->
+                            <?php if (!empty($billingAddress->address)) : ?>
+								<?= $billingAddress->address; ?>
+							<?php endif; ?>
+						</li>
+						<li>                          
+                            <?php if (!empty($billingAddress->city->name)) : ?>
+								<?= $billingAddress->city->name; ?>
+							<?php endif; ?>                          
+                            <?php if (!empty($billingAddress->province->name)) : ?>
+								<?= ', ' . $billingAddress->province->name; ?>
+							<?php endif; ?>
+						</li>
+						<li>                           
+                            <?php if (!empty($billingAddress->postal_code)) : ?>
+								<?= $billingAddress->postal_code; ?>
+							<?php endif; ?>
+						</li>
                     </ul>
                     <ul>
                         <li>
                             </br>
                         </li>
+						<li>
+                            <!-- Phone number -->
+                            <?php if (!empty($phoneNumber)) : ?>
+                                <?php echo $phoneNumber->number; ?>
+							<?php endif; ?>
+                        </li>
                         <li>
                             <?php if (!empty($model->user->email)): ?>
-                                <?php echo 'E: '; ?>
-                                    <?php echo $model->user->email?>
-                                        <?php endif; ?>
-                                            544-75-769
-                        </li>
-                        <li>
-                            <!-- Phone number -->
-                            <?php if (!empty($phoneNumber)) {
-                     ?>
-                                <?php echo 'P: '; ?>
-                                    <?php echo $phoneNumber->number;
-                     } ?>
-                                        544-75-768
-                        </li>
+                                <?php echo $model->user->email?>
+                            <?php endif; ?>
+                        </li>   
                     </ul>
                 </div>
-            <!-- Phone number -->
-            <div class="row-fluid text-gray">
-              <?php if (!empty($phoneNumber)) {
-                    ?><?php echo 'P: '; ?>
-              <?php echo $phoneNumber->number;
-                } ?>
-            </div>
-              </address>
-            </div>
-            <div class="invoice-col"  style="width: 125px;">
-              <b><?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'Invoice No.:'?></b> <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : '#'.$model->invoice_number?><br>
-              <b>Date:</b> <?= Yii::$app->formatter->asDate($model->date); ?><br>
-              <?php if (!$model->isInvoice()) : ?>
-              <b>Due Date:</b> <?= Yii::$app->formatter->asDate($model->dueDate); ?><br>
-              <?php endif; ?>
-              <b>Status:</b> <?= $model->getStatus(); ?>
             </div>
         </div>
         <div class="row-fluid invoice-info m-t-10">
