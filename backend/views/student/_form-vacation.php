@@ -2,19 +2,31 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use kartik\daterange\DateRangePicker;
 
 ?>
-<div class="form-well p-l-20 payments-form p-t-15 m-t-20 m-b-20">
+<div class="p-l-20 ">
 	<?php $form = ActiveForm::begin([
-        'action' => Url::to(['vacation/create', 'studentId' => $studentModel->id]),
+		'id' => 'vacation-form',
+        //'action' => Url::to(['vacation/create', 'enrolmentId' => $enrolmentId]),
     ]); ?>
-	<div class="row">
-        <div class="col-xs-4">
-            <?php echo $form->field($model, 'fromDate')->widget(\yii\jui\DatePicker::classname())->textInput(['placeholder' => 'From date'])->label(false); ?>
-        </div>
-		<div class="col-xs-4">
-            <?php echo $form->field($model, 'toDate')->widget(\yii\jui\DatePicker::classname())->textInput(['placeholder' => 'To date'])->label(false); ?>
-        </div>
+	   <div class="col-md-7">
+	   <?php 
+	   echo DateRangePicker::widget([
+		'model' => $model,
+		'attribute' => 'dateRange',
+		'convertFormat' => true,
+		'initRangeExpr' => true,
+		'pluginOptions' => [
+			'autoApply' => true,
+			'locale' => [
+				'format' => 'd-m-Y',
+			],
+			'opens' => 'left',
+			],
+
+		]);
+	   ?>
 	</div>
 	<div class="form-group">
 		<?php echo Html::submitButton(Yii::t('backend', 'Continue'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>

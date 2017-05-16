@@ -2,7 +2,7 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
-use common\models\Enrolment;
+use common\models\vacation;
 use common\models\Program;
 use yii\helpers\Html;
 use common\models\Course;
@@ -22,6 +22,13 @@ use yii\bootstrap\Modal;
     ]);
     Modal::end();
 ?>
+	<?php
+    Modal::begin([
+        'header' => '<h4 class="m-0">Add Vacation</h4>',
+        'id' => 'vacation-modal',
+    ]);?>
+	<div class="vacation-content"></div>
+   <?php Modal::end();?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin([
 		'id' => 'enrolment-grid',
@@ -29,6 +36,7 @@ use yii\bootstrap\Modal;
     ]) ?>
     <?php
     echo GridView::widget([
+		'id' => 'enrolment-grid',
         'dataProvider' => $enrolmentDataProvider,
             'rowOptions' => function ($model, $key, $index, $grid) {
                 $url = Url::to(['enrolment/view', 'id' => $model->id]);
@@ -88,12 +96,19 @@ use yii\bootstrap\Modal;
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{delete}',
+                'template' => '{add-vacation}{delete}',
                 'buttons' => [
+					'add-vacation' => function ($url, $model) { 
+                        $url = Url::to(['vacation/create', 'enrolmentId' => $model->id]);
+						return Html::a('Add Vacation', '#', [
+							'title' => Yii::t('yii', 'Add Vacation'),
+							'class' => ['btn-success btn-sm add-new-vacation']
+						]);
+                    },
                     'delete' => function ($url, $model, $key) {
-						return Html::a('<i class="fa fa-times" aria-hidden="true"></i>','#', [
+						return Html::a('Delete','#', [
 							'id' => 'enrolment-delete-' . $model->id,
-							'class' => 'enrolment-delete m-l-20'
+							'class' => 'enrolment-delete m-l-10 btn-danger btn-sm'
 						]);
                     },
                 ],

@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use common\models\Lesson;
 use common\models\Enrolment;
 use common\models\Course;
+use yii\web\Response;
 /**
  * VacationController implements the CRUD actions for Vacation model.
  */
@@ -25,6 +26,13 @@ class VacationController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			[
+				'class' => 'yii\filters\ContentNegotiator',
+				'only' => ['create'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,
+				],
+        	],
         ];
     }
 
@@ -60,26 +68,30 @@ class VacationController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($studentId)
+    public function actionCreate($enrolmentId)
     {
-		$session = Yii::$app->session;
+		$enrolment = Enrolment::findOne(['id' => $enrolmentId]);
+		$data = $this->renderAjax('/student/_form-vacation', [
+			'model' => new Vacation(),
+			'enrolmentId' => $enrolmentId,
+		]);
+		
 		$request = Yii::$app->request;
         $model = new Vacation();
-		$locationId = $session->get('location_id');
         if ($model->load($request->post())) {
-			$model->studentId = $studentId;
-			$enrolment = Enrolment::find()
-				->location($locationId)
-				->programs()
-				->privateProgram()
-				->andWhere(['studentId' => $model->studentId])
-				->notDeleted()
-				->isConfirmed()
-				->one();
+			$model->enrolmentId = $enrolmentId;
+//			$enrolment = Enrolment::find()
+//				->location($locationId)
+//				->programs()
+//				->privateProgram()
+//				->andWhere(['studentId' => $model->studentId])
+//				->notDeleted()
+//				->isConfirmed()
+//				->one();
 			$db = Yii::$app->db;
             $transaction = $db->beginTransaction();
 			Vacation::deleteAll([
-				'studentId' => $studentId,
+				'enrolmentId' => $enrolmentId,
 				'isConfirmed' => false,
 			]);
 			Lesson::deleteAll([
@@ -97,9 +109,10 @@ class VacationController extends Controller
 				'Vacation[type]' => Vacation::TYPE_CREATE
 			]);
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            return [
+				'status' => true,
+				'data' => $data,
+			]; 
         }
     }
 

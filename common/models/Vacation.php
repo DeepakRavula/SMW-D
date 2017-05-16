@@ -18,6 +18,7 @@ class Vacation extends \yii\db\ActiveRecord
 	const TYPE_CREATE = 'create';
 	const TYPE_DELETE = 'delete';
 	public $type;
+	public $dateRange;
     /**
      * @inheritdoc
      */
@@ -32,8 +33,9 @@ class Vacation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['studentId', 'isConfirmed'], 'integer'],
+            [['enrolmentId', 'isConfirmed'], 'integer'],
             [['fromDate', 'toDate'], 'required'],
+			[['dateRange'], 'safe']
         ];
     }
 
@@ -61,6 +63,7 @@ class Vacation extends \yii\db\ActiveRecord
 		if(! $insert) {
         	return parent::beforeSave($insert);
 		}
+		list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
         $fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
         $this->fromDate = $fromDate->format('Y-m-d H:i:s');
 		$toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
