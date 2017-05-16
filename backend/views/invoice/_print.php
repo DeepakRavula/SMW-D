@@ -94,7 +94,7 @@
             .invoice-view .logo>img {
                 padding: 0;
                 position: relative;
-                left: -2px;
+                left: -1px;
             }
             .invoice-print-address {
                 width: 700px;
@@ -103,7 +103,8 @@
             .invoice-print-address ul {
                 display: block;
                 float: left;
-                width: 300px;
+                    width: 45%;
+
             }
             .invoice-print-address h1 {
                 margin: 0;
@@ -164,14 +165,14 @@
             .invoice-number {
                 font-weight: bold;
             }
-            .invoice-status p {
+            .invoice-status p, .invoice-status h3{
                 padding: 0;
                 margin: 0;
             }
         }
         
         .invoice-print-address ul li {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 300;
             color: #000;
         }
