@@ -18,6 +18,8 @@ class PaymentCycle extends \yii\db\ActiveRecord
 {
     const PFI_CREATION_THRESHOLD_ADVANCED_DAYS  = -15;
 
+    const SCENARIO_CAN_RAISE_PFI = 'can-raise-PFI';
+
     /**
      * @inheritdoc
      */
@@ -32,6 +34,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['id', 'validateCanRaisePFI', 'on' => self::SCENARIO_CAN_RAISE_PFI],
             [['enrolmentId', 'startDate', 'endDate'], 'required'],
             [['enrolmentId'], 'integer'],
             [['startDate', 'endDate', 'validFrom', 'validThru'], 'safe'],
@@ -177,5 +180,13 @@ class PaymentCycle extends \yii\db\ActiveRecord
     {
         return $this->isPastPaymentCycle() || $this->isCurrentPaymentCycle() ||
             $this->isNextPaymentCycle();
+    }
+
+    public function validateCanRaisePFI($attribute)
+    {
+        if (!$this->canRaiseProformaInvoice()) {
+            $this->addError($attribute,
+                'ProForma-Invoice can be generated only for current and next payment cycle only.');
+        }
     }
 }

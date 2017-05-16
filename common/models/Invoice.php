@@ -228,9 +228,14 @@ class Invoice extends \yii\db\ActiveRecord
         return (int) $this->status === (int) self::STATUS_PAID;
     }
 
-    public function hasPayments()
+    public function hasProformaPayments()
     {
         return $this->paymentTotal != 0;
+    }
+
+    public function hasInvoicePayments()
+    {
+        return $this->invoicePaymentTotal != 0;
     }
 
     public function hasCredit()

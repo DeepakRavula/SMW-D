@@ -586,7 +586,7 @@ class Lesson extends \yii\db\ActiveRecord
             if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
                 $invoice->addPayment($this->proFormaInvoice);
             }
-        } else if ($this->isExtra() && $this->hasExtraLessonProFormaInvoice()) {
+        } else if ($this->isExtra() && $this->hasProFormaInvoice()) {
             $netPrice = $this->extraLessonProFormaInvoice->lineItem->netPrice;
             if ($this->extraLessonProFormaInvoice->proFormaCredit >= $netPrice) {
                 $invoice->addPayment($this->extraLessonProFormaInvoice);
@@ -598,7 +598,11 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function hasProFormaInvoice()
     {
-        return !empty($this->proFormaInvoice);
+        if ($this->isExtra()) {
+            return $this->hasExtraLessonProFormaInvoice();
+        } else {
+            return !empty($this->proFormaInvoice);
+        }
     }
 
     public function hasInvoice()
@@ -609,7 +613,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function addExtraLessonProformaInvoice()
     {
         $locationId = $this->enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $user = User::findOne(['id' => $this->enrolment->student->customer->id]);
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
         $invoice->userName = $user->publicIdentity;

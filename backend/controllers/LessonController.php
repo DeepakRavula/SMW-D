@@ -25,6 +25,7 @@ use common\models\LessonLog;
 use common\models\User;
 use common\models\TimelineEventLesson;
 use yii\filters\ContentNegotiator;
+use common\models\PaymentCycle;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -709,34 +710,36 @@ class LessonController extends Controller
     public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);
+        if ($model->paymentCycle) {
+            $model->paymentCycle->setScenario(PaymentCycle::SCENARIO_CAN_RAISE_PFI);
+            if (!$model->paymentCycle->validate()) {
+                $errors	 = ActiveForm::validate($model);
+                Yii::$app->session->setFlash('alert', [
+                    'options' => ['class' => 'alert-danger'],
+                    'body' => $errors['id'],
+                ]);
+                return $this->redirect(['lesson/view', 'id' => $id]);
+            }
+            if(!$model->hasProFormaInvoice()) {
+                if (!$model->paymentCycle->hasProFormaInvoice()) {
+                    $invoice = $model->paymentCycle->createProFormaInvoice();
+
+                    return $this->redirect(['invoice/view', 'id' => $invoice->id]);
+                } else {
+                    $model->paymentCycle->proFormaInvoice->addLineItem($model);
+                    $model->paymentCycle->proFormaInvoice->save();
+                }
+            } else {
+                $model->proFormaInvoice->makeInvoicePayment();
+            }
+            return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
+        }
         if ($model->isExtra()) {
-            if (!$model->extraLessonProFormaInvoice) {
-                $extraLessonProFormaInvoice = $model->addExtraLessonProformaInvoice();
-                return $this->redirect(['invoice/view', 'id' => $extraLessonProFormaInvoice->id]);
+            if (!$model->hasProFormaInvoice()) {
+                $model->addExtraLessonProformaInvoice();
             }
             return $this->redirect(['invoice/view', 'id' => $model->extraLessonProFormaInvoice->id]);
         }
-        if (!$model->paymentCycle->canRaiseProformaInvoice()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-danger'],
-                'body' => 'ProForma-Invoice can be generated only for current and next payment cycle only.',
-            ]);
-
-            return $this->redirect(['lesson/view', 'id' => $id]);
-        }
-        if(!$model->hasProFormaInvoice()) {
-            if (!$model->paymentCycle->hasProFormaInvoice()) {
-                $invoice = $model->paymentCycle->createProFormaInvoice();
-
-                return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-            } else {
-                $model->paymentCycle->proFormaInvoice->addLineItem($model);
-                $model->paymentCycle->proFormaInvoice->save();
-            }
-        } else {
-            $model->proFormaInvoice->makeInvoicePayment();
-        }
-        return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
     }
 
 	public function actionSendMail($id)
