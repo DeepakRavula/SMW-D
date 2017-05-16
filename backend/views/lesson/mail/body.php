@@ -3,7 +3,9 @@
 use common\models\Lesson;
 ?>
 
-<?php $lesson = Lesson::findOne(['lesson.id' => $model->reschedule->lessonId]); 
+<?php if(!empty($model->reschedule)) : ?>
+<?php 
+$lesson = Lesson::findOne(['lesson.id' => $model->reschedule->lessonId]); 
 $duration = \DateTime::createFromFormat('H:i:s', $model->duration);
 $lessonDuration = ($duration->format('H') * 60) + $duration->format('i');
 $duration = \DateTime::createFromFormat('H:i:s', $lesson->duration);
@@ -21,4 +23,5 @@ $newTeacherName = $model->teacher->publicIdentity;
     <?= $studentName . '\'s ' . $programName . ' lesson with ' . $teacherName . ' on ' . $oldLessonDate . ' @ ' . $oldLessonTime . ' for ' . $oldLessonDuration . ' minutes has been rescheduled to ' . $lessonDate . ' @ ' . $lessonTime . ' for ' . $lessonDuration . ' minutes.'; ?>
 <?php elseif ((int)$model->teacherId !== (int)$lesson->teacherId) : ?>
     <?= $studentName . '\'s ' . $programName . ' lesson with ' . $teacherName . ' on ' . $oldLessonDate . ' @ ' . $oldLessonTime . ' for ' . $oldLessonDuration . ' minutes has been rescheduled to ' . $lessonDate . ' @ ' . $lessonTime . ' for ' . $lessonDuration . ' minutes ' . $newTeacherName; ?>
+<?php endif; ?>
 <?php endif; ?>
