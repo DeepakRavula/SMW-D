@@ -99,7 +99,7 @@ use yii\bootstrap\Modal;
                 'template' => '{add-vacation}{delete}',
                 'buttons' => [
 					'add-vacation' => function ($url, $model) { 
-                        $url = Url::to(['vacation/create', 'enrolmentId' => $model->id]);
+                        //$url = Url::to(['vacation/create', 'enrolmentId' => $model->id]);
 						return Html::a('Add Vacation', '#', [
 							'title' => Yii::t('yii', 'Add Vacation'),
 							'class' => ['btn-success btn-sm add-new-vacation']
@@ -112,6 +112,11 @@ use yii\bootstrap\Modal;
 						]);
                     },
                 ],
+				'visibleButtons' => [
+                    'add-vacation' => function  ($model, $key, $index) {
+                        return $model->course->program->isPrivate();
+                    },
+                ]	
             ],
         ],
     ]);

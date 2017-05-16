@@ -35,7 +35,7 @@ echo $this->render('_profile', [
 			'dataProvider' => $unscheduledLessonDataProvider,
 		]);
 
-		$vacationContent = $this->render('_vacation', [
+		$vacationContent = $this->render('vacation/_index', [
 			'model' => new Vacation(),
 			'studentModel' => $model,
 		]);
@@ -323,6 +323,9 @@ echo $this->render('_profile', [
 		});
 		$(document).on('click', '.student-profile-cancel-button', function () {
 			$('#student-profile-modal').modal('hide');
+		});
+		$(document).on('click', '.vacation-cancel-button', function () {
+			$('#vacation-modal').modal('hide');
 		});
 		$(document).on('beforeSubmit', '#student-form', function (e) {
             $.ajax({
