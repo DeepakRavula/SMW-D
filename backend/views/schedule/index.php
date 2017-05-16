@@ -20,10 +20,15 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<script type="text/javascript" src="/plugins/qtip/jquery.qtip.js"></script>
-<script type="text/javascript" src="/plugins/jquery.qtip.min.js"></script>
-<link type="text/css" href="/plugins/qtip/jquery.qtip.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/qtip/jquery.qtip.min.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.min.js"></script>
+<script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.js"></script>
+<link type="text/css" href="/plugins/poshytip/tip-darkgray/tip-darkgray.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-green/tip-green.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-skyblue/tip-skyblue.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-twitter/tip-twitter.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-violet/tip-violet.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-yellow/tip-yellow.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-yellowsimple/tip-yellowsimple.css" rel='stylesheet' />
 <?php
     $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
     $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
@@ -238,18 +243,11 @@ $(document).ready(function() {
             $(location).attr('href', event.url);
         },
 		eventRender: function(event, element) {
-			element.qtip({
-				content: {
-					text: event.description,
-				},
-				position: {
-             target: 'mouse', // Track the mouse as the positioning target
-             adjust: { mouse: false } // Offset it slightly from under the mouse
-         },
-				style      : {
-					widget: true,
-					classes: 'ui-tooltip-rounded'
-			  }
+			element.poshytip({
+				className: 'tip-twitter',
+				content : function(updateCallback) {
+					return event.description;
+				}
 			});
 		}
     });
@@ -370,21 +368,14 @@ function showclassroomCalendar(date) {
                 $("#classroom-calendar").fullCalendar("refetchEvents");
             }
         },
-        eventRender: function(event, element) {
-            element.qtip({
-                content: {
-                    text: event.description,
-                },
-                position: {
-             target: 'mouse', // Track the mouse as the positioning target
-             adjust: { mouse: false } // Offset it slightly from under the mouse
-         },
-                style: {
-                    widget: true,
-                    classes: 'ui-tooltip-rounded'
-                }
-            });
-        },
+  		eventRender: function(event, element) {
+			element.poshytip({
+				className: 'tip-twitter',
+				content : function(updateCallback) {
+					return event.description;
+				}
+			});
+		},
         eventDrop: function(event) {
             var params = $.param({
                 id: event.id,
@@ -452,18 +443,11 @@ function refreshCalendar(date) {
             }
         },
 		eventRender: function(event, element) {
-			element.qtip({
-				content: {
-					text: event.description,
-				},
-				position: {
-             target: 'mouse', // Track the mouse as the positioning target
-             adjust: { mouse: false } // Offset it slightly from under the mouse
-         },
-				style      : {
-					widget: true,
-					classes: 'ui-tooltip-rounded'
-			  }
+			element.poshytip({
+				className: 'tip-twitter',
+				content : function(updateCallback) {
+					return event.description;
+				}
 			});
 		}
     });
