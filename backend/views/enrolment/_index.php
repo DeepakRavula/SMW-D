@@ -136,7 +136,7 @@ use yii\helpers\Url;
 		'header' => '<h4 class="m-0">Choose Teacher, Day and Time</h4>',
 		'id'=>'new-enrolment-modal',
 	]);?>
-<div id="new-enrolment-calendar"></div>
+<div id="enrolment-calendar"></div>
 	<?php Modal::end();?>
 <script>
 	$(document).ready(function(){
@@ -155,8 +155,7 @@ use yii\helpers\Url;
 			{
 				if (response.status)
 				{
-                    $('#new-enrolment-modal .modal-body').html(response.data);
-					//$('#new-enrolment-calendar').html(response.data);
+                    $('#enrolment-calendar').html(response.data);
 					$('#new-enrolment-modal').modal('show');
 				} else {
 				}
@@ -165,4 +164,3 @@ use yii\helpers\Url;
 	});
 	});
 </script>
-</div>

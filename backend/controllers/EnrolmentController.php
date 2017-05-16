@@ -129,72 +129,11 @@ class EnrolmentController extends Controller
 
 	 public function actionSchedule($programId)
     {
-		$session = Yii::$app->session;
         $response = Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $locationId = $session->get('location_id');
-        $teacherAvailabilities = TeacherAvailability::find()
-			->joinWith(['userLocation' => function ($query) use ($programId) {
-				$query->joinWith(['userProfile' => function ($query) use ($programId) {
-					$query->joinWith(['user' => function($query) use($programId) {
-						$query->joinWith(['qualifications' => function($query) use($programId) {
-							$query->andWhere(['program_id' => $programId]);
-						}]);
-					}]);
-				}]);
-			}])
-			->all();
-        $availableHours = [];
-        foreach ($teacherAvailabilities as $teacherAvailability) {
-            $availableHours[] = [
-                'start' => $teacherAvailability->from_time,
-                'end' => $teacherAvailability->to_time,
-                'dow' => [$teacherAvailability->day],
-                'className' => 'teacher-available',
-                'rendering' => 'inverse-background',
-            ];
-        }
 
-        $lessons = [];
-        $lessons = Lesson::find()
-            ->joinWith(['course' => function ($query) use($programId){
-            	$query->joinWith(['program' => function ($query) use($programId){
-					$query->andWhere(['program.id' => $programId]);
-				}]);
-                $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
-            }])
-        	->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
-			->notDeleted()
-            ->all();
-        $events = [];
-        foreach ($lessons as &$lesson) {
-            $toTime = new \DateTime($lesson->date);
-            $length = explode(':', $lesson->duration);
-            $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-            if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
-            } else {
-                $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
-            }
-            $class = null;
-            if (!empty($lesson->proFormaInvoice)) {
-                if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
-                    $class = 'proforma-paid';
-                } else {
-                    $class = 'proforma-unpaid';
-                }
-            }
-            $events[] = [
-                'start' => $lesson->date,
-                'end' => $toTime->format('Y-m-d H:i:s'),
-                'className' => $class,
-                'title' => $title,
-            ];
-        }
-        unset($lesson);
 		$data = $this->renderAjax('new/_calendar', [
-			'availableHours' => $availableHours,
-            'events' => $events,	
+			'programId' => $programId,
 		]);
         return [
             'status' => true,
