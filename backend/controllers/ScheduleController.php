@@ -180,7 +180,7 @@ class ScheduleController extends Controller
                         $query->andWhere(['course.teacherId' => $teacherId]);
                     }
                 }])
-                ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
+                ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
                 ->between($date, $date)
                 ->notDeleted()
                 ->all();
