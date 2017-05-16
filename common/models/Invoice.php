@@ -228,6 +228,11 @@ class Invoice extends \yii\db\ActiveRecord
         return (int) $this->status === (int) self::STATUS_PAID;
     }
 
+    public function hasPayments()
+    {
+        return $this->paymentTotal != 0;
+    }
+
     public function hasCredit()
     {
         return (int) $this->status === (int) self::STATUS_CREDIT;
@@ -553,22 +558,22 @@ class Invoice extends \yii\db\ActiveRecord
         } else {
             $invoiceLineItem->item_id    = $lesson->id;
         }
+        $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
+        $rate = !empty($qualification->rate) ? $qualification->rate : 0;
+        $invoiceLineItem->cost = $rate;
         if (!empty($lesson->proFormaLineItem)) {
             $invoiceLineItem->discount     = $lesson->proFormaLineItem->discount;
             $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
-			$qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
-			$rate = !empty($qualification->rate) ? $qualification->rate : 0;
-			$invoiceLineItem->cost = $rate;
-			if($lesson->course->program->isPrivate()) {
-				$customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
-				$enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0; 
-				$invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
-				$invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
-			} else {
-				$invoiceLineItem->discount     = 0;
-	            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
-			}
+            if($lesson->course->program->isPrivate()) {
+                $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
+                $enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0;
+                $invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
+                $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
+            } else {
+                $invoiceLineItem->discount     = 0;
+                $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+            }
         }
         $getDuration                 = \DateTime::createFromFormat('H:i:s',
                 $lesson->duration);

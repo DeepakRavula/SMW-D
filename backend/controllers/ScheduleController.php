@@ -180,7 +180,7 @@ class ScheduleController extends Controller
                         $query->andWhere(['course.teacherId' => $teacherId]);
                     }
                 }])
-                ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
+                ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
                 ->between($date, $date)
                 ->notDeleted()
                 ->all();
@@ -361,8 +361,10 @@ class ScheduleController extends Controller
                 $length = explode(':', $lesson->duration);
                 $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
                 if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-					$description = '<b>Program:</b> ' . $lesson->course->program->name . '<br>' .
-						 '<b>Student Count:</b> ' . $lesson->course->getEnrolmentsCount(); 
+					$description = $this->renderAjax('group-lesson-description', [
+						'lesson' => $lesson,
+						'view' => Lesson::TEACHER_VIEW
+					]);
                     $title = $lesson->course->program->name;
                     $class = 'group-lesson';
                     $backgroundColor = null;
@@ -388,15 +390,16 @@ class ScheduleController extends Controller
                             $class = 'teacher-substituted';
                         }
                     }
-					if(! empty($lesson->classroomId)) {
-                    	$classroom = $lesson->classroom->name;
-						$description = '<b>Student:</b> ' . $title . '<br>' . '<b>Program:</b> ' . 
-							$lesson->course->program->name . '<br>' . 
-							'<b>Classroom:</b> ' . $classroom;
-                	}
+					
+					$description = $this->renderAjax('private-lesson-description', [
+						'title' => $title,
+						'lesson' => $lesson,
+						'view' => Lesson::TEACHER_VIEW
+					]);
                 }
 
                 $events[] = [
+                    'lessonId' => $lesson->id,
                     'resourceId' => $lesson->teacherId,
                     'title' => $title,
                     'start' => $lesson->date,
@@ -426,15 +429,20 @@ class ScheduleController extends Controller
                     $length = explode(':', $lesson->duration);
                     $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
                     if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                        $title = $lesson->teacher->publicIdentity . ' [' . $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ' . ']';
+						$title = $lesson->teacher->publicIdentity;
                         $class = 'group-lesson';
                         $backgroundColor = null;
                         if (!empty($lesson->colorCode)) {
                             $class = null;
                             $backgroundColor = $lesson->colorCode;
                         }
+						$description = $this->renderAjax('group-lesson-description', [
+							'title' => $title,
+							'lesson' => $lesson,
+							'view' => Lesson::CLASS_ROOM_VIEW
+						]);
                     } else {
-                        $title = $lesson->teacher->publicIdentity . ' [' . $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ' . ']';
+                        $title = $lesson->teacher->publicIdentity;
                         $class = 'private-lesson';
                         $backgroundColor = null;
                         if (!empty($lesson->colorCode)) {
@@ -453,7 +461,15 @@ class ScheduleController extends Controller
                         }
                     }
                     $classroomId = $lesson->classroomId;
+					$description = $this->renderAjax('private-lesson-description', [
+						'title' => $title,
+						'lesson' => $lesson,
+						'view' => Lesson::CLASS_ROOM_VIEW
+					]);
+					 	
+						
                     $events[] = [
+                        'id' => $lesson->id,
                         'resourceId' => $classroomId,
                         'title' => $title,
                         'start' => $lesson->date,
@@ -461,6 +477,7 @@ class ScheduleController extends Controller
                         'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
                         'className' => $class,
                         'backgroundColor' => $backgroundColor,
+						'description' => $description,
                     ];
                 }
             }

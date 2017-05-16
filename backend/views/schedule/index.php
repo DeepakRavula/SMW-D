@@ -60,7 +60,7 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
             background-color: " . $missedLesson->code . " !important; }"
     );
 ?>
-<style>
+<style type="text/css">
     .schedule-index {
         position: absolute;
         top: -45px;
@@ -75,7 +75,55 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 .box-body .fc{
     margin:0 !important;
 }
-
+.qtip{
+    }
+.ui-widget-content{
+    font-size: 12px;
+    line-height: 20px;
+    overflow: inherit;
+    color: #333333;
+    padding: 10px;
+    background-color: #ffffff;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    background-image: none;
+    text-transform: capitalize;
+    position: absolute;
+    top: -182px;
+    width: 150px;
+    border: none;
+}
+.ui-widget-content b{
+	display:block;
+	color:#ff0000;
+	font-size:13px;
+	font-weight:400;
+	border-top:1px solid #ccc;
+	padding-top:5px;
+	padding-bottom:0;
+}
+.ui-widget-content b:first-child{
+	padding:0;
+	border:none;
+}
+.ui-widget-content:before{
+	content:"";
+	width: 0;
+height: 0;
+border-style: solid;
+border-width: 10px 10px 0 10px;
+border-color: #fff transparent transparent transparent;
+position:absolute;
+left:45%;
+bottom:-10px;
+}	
 </style>
 <div class=" calendar-filter">
         <div class="pull-right m-1-20">
@@ -195,13 +243,9 @@ $(document).ready(function() {
 					text: event.description,
 				},
 				position: {
-        			my: 'top left',
-					at: 'top center',
-					adjust: {
-						screen: true
-					},
-					viewport: $(window) // Keep it on-screen at all times if possible
-				},
+             target: 'mouse', // Track the mouse as the positioning target
+             adjust: { mouse: false } // Offset it slightly from under the mouse
+         },
 				style      : {
 					widget: true,
 					classes: 'ui-tooltip-rounded'
@@ -309,8 +353,8 @@ function showclassroomCalendar(date) {
         minTime: fromTime,
         maxTime: toTime,
         slotDuration: "00:15:00",
-		allDaySlot:false,
-        editable: false,
+        allDaySlot:false,
+        editable: true,
         droppable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + params,
@@ -325,6 +369,41 @@ function showclassroomCalendar(date) {
             error: function() {
                 $("#classroom-calendar").fullCalendar("refetchEvents");
             }
+        },
+        eventRender: function(event, element) {
+            element.qtip({
+                content: {
+                    text: event.description,
+                },
+                position: {
+             target: 'mouse', // Track the mouse as the positioning target
+             adjust: { mouse: false } // Offset it slightly from under the mouse
+         },
+                style: {
+                    widget: true,
+                    classes: 'ui-tooltip-rounded'
+                }
+            });
+        },
+        eventDrop: function(event) {
+            var params = $.param({
+                id: event.id,
+                classroomId: event.resourceId
+            });
+            $.ajax({
+                url: '<?= Url::to(['lesson/modify-classroom']); ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status) {
+                        $("#classroom-calendar").fullCalendar("refetchEvents");
+                    } else {
+                        $('#notification').html('Classroom already chosen!').fadeIn().delay(5000).fadeOut();
+                        $("#classroom-calendar").fullCalendar("refetchEvents");
+                    }
+                }
+            });
         }
     });
 }
@@ -355,7 +434,7 @@ function refreshCalendar(date) {
         minTime: minTime,
         maxTime: maxTime,
         slotDuration: "00:15:00",
-		allDaySlot:false,
+        allDaySlot:false,
         editable: false,
         droppable: false,
         resources: {
@@ -378,13 +457,9 @@ function refreshCalendar(date) {
 					text: event.description,
 				},
 				position: {
-        			my: 'top left',
-					at: 'top center',
-					adjust: {
-						screen: true
-					},
-					viewport: $(window) // Keep it on-screen at all times if possible
-				},
+             target: 'mouse', // Track the mouse as the positioning target
+             adjust: { mouse: false } // Offset it slightly from under the mouse
+         },
 				style      : {
 					widget: true,
 					classes: 'ui-tooltip-rounded'

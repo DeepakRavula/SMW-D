@@ -165,3 +165,4 @@ use yii\helpers\Url;
 	});
 	});
 </script>
+</div>

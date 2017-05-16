@@ -123,7 +123,7 @@ $config = [
                 'controllers' => ['schedule', 'student', 'exam-result','note','classroom-unavailability', 
 					'release-notes', 'lesson', 'invoice', 'timeline-event', 'enrolment','teacher-room',
 					'teacher-availability', 'group-course', 'group-lesson', 'group-enrolment', 
-					'payment', 'course', 'dashboard', 'log', 'invoice-line-item', 'holiday', 
+					'payment', 'course', 'dashboard', 'log', 'invoice-line-item', 'holiday', 'qualification',
 					'tax-code', 'vacation', 'customer-discount', 'classroom', 'report', 'teacher-rate'
 				],
                 'allow' => true,

@@ -78,6 +78,9 @@ use kartik\editable\Editable;
             <div class="col-sm-2 invoice-col">
               <b>Invoice <?= '#'.$model->getInvoiceNumber()?></b><br><br>
               <b>Date:</b> <?= Yii::$app->formatter->asDate($model->date); ?><br>
+              <?php if (!$model->isInvoice()) : ?>
+              <b>Due Date:</b> <?= Yii::$app->formatter->asDate($model->dueDate); ?><br>
+              <?php endif; ?>
               <b>Status:</b> <?= $model->getStatus(); ?>
             </div>
           <div class="clearfix"></div>

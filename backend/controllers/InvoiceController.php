@@ -229,6 +229,7 @@ class InvoiceController extends Controller
             $invoiceLineItemModel->invoice_id = $model->id;
             $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
             $invoiceLineItemModel->code        = $invoiceLineItemModel->getItemCode();
+            $invoiceLineItemModel->cost        = 0.0;
             $invoiceLineItemModel->discount = 0.0;
 			if($invoiceLineItemModel->tax_rate == '') {
 				$invoiceLineItemModel->tax_rate = $invoiceLineItemModel->amount * ( 5 / 100);	
@@ -566,7 +567,7 @@ class InvoiceController extends Controller
     {
         $paymentCycle = PaymentCycle::findOne($id);
 
-        if ($paymentCycle->isLastPaymentCycle() || $paymentCycle->isCurrentPaymentCycle() || $paymentCycle->isNextPaymentCycle()) {
+        if ($paymentCycle->canRaiseProformaInvoice()) {
             $paymentCycle->createProFormaInvoice();
 
             return $this->redirect(['view', 'id' => $paymentCycle->proFormaInvoice->id]);
