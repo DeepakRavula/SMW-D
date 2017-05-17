@@ -44,11 +44,16 @@ use common\models\Qualification;
 		height:auto;
 	}
 	.report-grid #teacher-lesson-grid table thead{
-		border:1px solid #000;
-		
+		border-bottom: 1px ridge;
+	}
+	.report-grid #teacher-lesson-grid table tbody tr.kv-grid-group-row{
+		border-bottom: 1px ridge;
+	}
+	.report-grid #teacher-lesson-grid table tbody tr.kv-group-footer{
+		border-top: 1px ridge;
 	}
 	.report-grid .table-bordered{
-		border: 1px solid #000;
+		border: 1px solid transparent;
 	}
 	.report-grid .table-bordered>thead>tr>th, .report-grid .table-bordered>tbody>tr>th,.report-grid  .table-bordered>tfoot>tr>th,.report-grid  .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .report-grid .table-bordered>tfoot>tr>td{
 		border:none !important;
