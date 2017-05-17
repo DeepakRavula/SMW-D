@@ -135,7 +135,7 @@ use yii\helpers\Url;
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <?php
 	Modal::begin([
-		'header' => '<h4 class="m-0 col-md-12">Choose Teacher, Day and Time</h4>',
+		'header' => '<h4 class="m-20">Choose Teacher, Day and Time</h4>',
 		'id'=>'new-enrolment-modal',
 	]);?>
 <div id="new-enrolment"></div>

@@ -189,8 +189,9 @@ $(document).ready(function() {
 });
 
 function refreshCalendar(date) {
+	var programId = '<?= $programId;?>';
     var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
-        programId: '' });
+        programId: programId });
     var minTime = "09:00:00";
     var maxTime = "17:00:00";
     var day     = moment(date).day();
