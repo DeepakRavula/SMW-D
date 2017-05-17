@@ -4,9 +4,9 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 
 ?>
-<div class="form-well p-l-20 payments-form p-t-15 m-t-20 m-b-20">
+<div class="p-l-20 payments-form">
 	<?php $form = ActiveForm::begin([
-        'action' => Url::to(['vacation/create', 'studentId' => $studentModel->id]),
+        //'action' => Url::to(['vacation/create', 'enrolmentId' => $enrod]),
     ]); ?>
 	<div class="row">
         <div class="col-xs-4">
@@ -18,6 +18,7 @@ use yii\helpers\Url;
 	</div>
 	<div class="form-group">
 		<?php echo Html::submitButton(Yii::t('backend', 'Continue'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+        <?= Html::a('Cancel', '#', ['class' => 'btn vacation-cancel-button']); ?>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>

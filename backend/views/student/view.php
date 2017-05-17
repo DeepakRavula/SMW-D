@@ -35,7 +35,7 @@ echo $this->render('_profile', [
 			'dataProvider' => $unscheduledLessonDataProvider,
 		]);
 
-		$vacationContent = $this->render('_vacation', [
+		$vacationContent = $this->render('vacation/_index', [
 			'model' => new Vacation(),
 			'studentModel' => $model,
 		]);
@@ -134,8 +134,22 @@ echo $this->render('_profile', [
 <script>
     $(document).ready(function () {
         $(document).on('click', '.add-new-vacation', function (e) {
-            $('.vacation-create').show();
-            return false;
+            var enrolmentId = $(this).parent().parent().data('key');	
+			$.ajax({
+				url    : '<?= Url::to(['vacation/create']); ?>?enrolmentId=' + enrolmentId,
+				type   : 'post',
+				dataType: "json",
+				data   : $(this).serialize(),
+				success: function(response)
+				{
+				   if(response.status)
+				   {
+						$('.vacation-content').html(response.data);
+						$('#vacation-modal').modal('show');
+					}
+				}
+			});
+			return false;
         });
         $(document).on('click', '#new-lesson', function (e) {
             $('#new-lesson-modal').modal('show');
@@ -309,6 +323,9 @@ echo $this->render('_profile', [
 		});
 		$(document).on('click', '.student-profile-cancel-button', function () {
 			$('#student-profile-modal').modal('hide');
+		});
+		$(document).on('click', '.vacation-cancel-button', function () {
+			$('#vacation-modal').modal('hide');
 		});
 		$(document).on('beforeSubmit', '#student-form', function (e) {
             $.ajax({
