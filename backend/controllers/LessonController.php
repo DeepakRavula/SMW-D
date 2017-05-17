@@ -193,21 +193,7 @@ class LessonController extends Controller
                 [new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
         $currentDate = new \DateTime();
-        if ($lessonDate < $currentDate && !$model->isUnscheduled()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-danger'],
-                'body' => 'Completed lessons cannot be edited.',
-            ]);
 
-            return $this->redirect(['lesson/view', 'id' => $id, '#' => 'details']);
-        } else if ($model->isUnscheduled() && $model->isExpired()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-danger'],
-                'body' => 'Expired Un-scheduled lessons cannot be edited!.',
-            ]);
-
-            return $this->redirect(['lesson/view', 'id' => $id, '#' => 'details']);
-        }
         $data = ['model' => $model];
         $view = '_form-group-lesson';
         if ($model->course->program->isPrivate()) {
