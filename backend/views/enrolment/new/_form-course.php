@@ -45,7 +45,7 @@ $this->title = 'New Enrolment';
             ?>
 		</div>
 		<label  class="col-sm-2 control-label">Check The Schedule</label>
-		<div class="col-sm-1 enrolment-calendar-icon hand">
+		<div class="col-sm-1  hand enrolment-calendar-icon">
             <span class="fa fa-calendar"></span>
 		</div>
 	</div>

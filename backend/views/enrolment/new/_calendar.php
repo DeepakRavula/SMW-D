@@ -95,8 +95,11 @@ use common\models\Invoice;
 }
 
 </style>
-<div id="enrolment-calendar"></div>
+<div class-p-10>
+	<div id="enrolment-calendar"></div>
+</div>
 <script type="text/javascript">
+$(document).ready(function(){
   $('#enrolment-calendar').fullCalendar({
     header: {
       left: 'prev,next today',
@@ -116,4 +119,5 @@ use common\models\Invoice;
     overlapEventsSeparate: true,
     events: <?php echo Json::encode($events); ?>,
   });
+ });
 </script>
