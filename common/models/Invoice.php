@@ -230,20 +230,6 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function hasPayments()
     {
-        if ($this->isInvoice()) {
-            return $this->hasInvoicePayments();
-        } else {
-            return $this->hasProformaPayments();
-        }
-    }
-
-    public function hasProformaPayments()
-    {
-        return $this->paymentTotal != 0;
-    }
-
-    public function hasInvoicePayments()
-    {
         return $this->invoicePaymentTotal != 0;
     }
 
