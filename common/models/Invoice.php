@@ -230,7 +230,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function hasPayments()
     {
-        return $this->paymentTotal != 0;
+        return $this->invoicePaymentTotal != 0;
     }
 
     public function hasCredit()
@@ -259,10 +259,21 @@ class Invoice extends \yii\db\ActiveRecord
         return $creditUsageTotal;
     }
 
+    public function isExtraLessonProformaInvoice()
+    {
+        return $this->lineItem->lesson->isExtra();
+    }
+
+    public function isProformaPaymentFrequencyApplicabe()
+    {
+        return $this->isProFormaInvoice() && !$this->isExtraLessonProformaInvoice()
+            && !$this->proformaPaymentFrequency && $this->lineItem;
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
-            if ($this->isProFormaInvoice() && empty($this->proformaPaymentFrequency) && !empty($this->lineItem)) {   
+            if ($this->isProformaPaymentFrequencyApplicabe()) {
                 $this->createProformaPaymentFrequency();
             }
             $oldTotal = clone $this;
@@ -318,6 +329,7 @@ class Invoice extends \yii\db\ActiveRecord
         $paymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
             ->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['payment.isDeleted' => false])
             ->andWhere(['NOT', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
             ->sum('payment.amount');
 
@@ -437,13 +449,13 @@ class Invoice extends \yii\db\ActiveRecord
 
         return $customerBalance;
     }
-	public function checkPaymentExists($attribute, $params)
-	{
-		if (! empty($this->invoicePayments)) {
-			$this->addError($attribute,
-				'Pro-forma invoice can\'t be deleted when there payments associated. Please delete the payments and try again');
-		}
-	}
+    public function checkPaymentExists($attribute, $params)
+    {
+        if ($this->hasPayments()) {
+            $this->addError($attribute,
+                    'Pro-forma invoice can\'t be deleted when there payments associated. Please delete the payments and try again');
+        }
+    }
 
     public function getStatus()
     {
@@ -553,7 +565,7 @@ class Invoice extends \yii\db\ActiveRecord
                 $lesson->date);
         $invoiceLineItem             = new InvoiceLineItem();
         $invoiceLineItem->invoice_id = $this->id;
-        if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+        if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE && !$lesson->isExtra()) {
             $invoiceLineItem->item_id    = $lesson->paymentCycleLesson->id;
         } else {
             $invoiceLineItem->item_id    = $lesson->id;
@@ -593,7 +605,7 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->amount       = $lessonAmount;
             $studentFullName               = $lesson->studentFullName;
         } else {
-            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE && !$lesson->isExtra()) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
             } else {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
@@ -612,29 +624,29 @@ class Invoice extends \yii\db\ActiveRecord
         return $invoiceLineItem->save();
     }
 
-	public function addPayment($proFormaInvoice)
-	{
+    public function addPayment($proFormaInvoice)
+    {
         $paymentModel = new Payment();
-		$paymentModel->amount = $this->total;
-		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-		$paymentModel->reference = $proFormaInvoice->id;
-		$paymentModel->invoiceId = $this->id;
-		$paymentModel->save();
+        $paymentModel->amount = $this->total;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+        $paymentModel->reference = $proFormaInvoice->id;
+        $paymentModel->invoiceId = $this->id;
+        $paymentModel->save();
 
-		$creditPaymentId = $paymentModel->id;
-		$paymentModel->id = null;
-		$paymentModel->isNewRecord = true;
-		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-		$paymentModel->invoiceId = $proFormaInvoice->id;
-		$paymentModel->reference = $this->id;
-		$paymentModel->save();
+        $creditPaymentId = $paymentModel->id;
+        $paymentModel->id = null;
+        $paymentModel->isNewRecord = true;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+        $paymentModel->invoiceId = $proFormaInvoice->id;
+        $paymentModel->reference = $this->id;
+        $paymentModel->save();
 
-		$debitPaymentId = $paymentModel->id;
-		$creditUsageModel = new CreditUsage();
-		$creditUsageModel->credit_payment_id = $creditPaymentId;
-		$creditUsageModel->debit_payment_id = $debitPaymentId;
-		$creditUsageModel->save();
-	}
+        $debitPaymentId = $paymentModel->id;
+        $creditUsageModel = new CreditUsage();
+        $creditUsageModel->credit_payment_id = $creditPaymentId;
+        $creditUsageModel->debit_payment_id = $debitPaymentId;
+        $creditUsageModel->save();
+    }
 
     public function getNetSubtotal()
     {
@@ -662,6 +674,24 @@ class Invoice extends \yii\db\ActiveRecord
                         if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $netPrice) {
                             $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    public function makeExtraLessonInvoicePayment()
+    {
+        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->lineItem->lesson->date);
+        $currentDate = new \DateTime();
+        if($lessonDate <= $currentDate) {
+            if (!$this->lineItem->lesson->hasInvoice()) {
+                $invoice = $this->lineItem->lesson->createInvoice();
+            } else if (!$this->lineItem->lesson->invoice->isPaid()) {
+                if ($this->lineItem->lesson->hasProFormaInvoice()) {
+                    $netPrice = $this->lineItem->lesson->proFormaInvoice->lineItem->netPrice;
+                    if ($this->lineItem->lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
+                        $this->lineItem->lesson->invoice->addPayment($this->lineItem->lesson->proFormaInvoice);
                     }
                 }
             }
