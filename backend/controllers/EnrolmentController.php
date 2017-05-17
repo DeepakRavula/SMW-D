@@ -16,10 +16,11 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\Invoice;
 use common\models\Address;
-use common\models\UserProfile;
+use yii\helpers\ArrayHelper;
 use yii\filters\ContentNegotiator;
 use common\models\TeacherAvailability;
 use common\models\Program;
+use common\models\LocationAvailability;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -131,14 +132,111 @@ class EnrolmentController extends Controller
     {
         $response = Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
+		$locationId             = Yii::$app->session->get('location_id');
+		$teachersAvailabilities = TeacherAvailability::find()
+			->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
+				$query->where(['user_location.location_id' => $locationId]);
+				$query->joinWith(['qualifications'  => function ($query) use ($programId) {
+					$query->andWhere(['qualification.program_id' => $programId]);
+				}]);
+			}])
+			->andWhere(['day' => (new \DateTime())->format('N')])
+			->groupBy(['teacher_location_id'])
+			->all();
+        $availableTeachersDetails = ArrayHelper::toArray($teachersAvailabilities, [
+            'common\models\TeacherAvailability' => [
+                'id' => function ($teachersAvailability) {
+                    return $teachersAvailability->userLocation->user_id;
+                },
+                'name' => function ($teachersAvailability) {
+                    return $teachersAvailability->teacher->getPublicIdentity();
+                },
+            ],
+        ]);
+
+        $date = new \DateTime();
+        $locationAvailabilities = LocationAvailability::find()
+            ->where(['locationId' => $locationId])
+            ->all();
+        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
+            'day' => $date->format('N')]);
+        if (empty($locationAvailability)) {
+            $from_time = LocationAvailability::DEFAULT_FROM_TIME;
+            $to_time   = LocationAvailability::DEFAULT_TO_TIME;
+        } else {
+            $from_time = $locationAvailability->fromTime;
+            $to_time   = $locationAvailability->toTime;
+        }
 
 		$data = $this->renderAjax('new/_calendar', [
 			'programId' => $programId,
+			'availableTeachersDetails' => $availableTeachersDetails,
+            'locationAvailabilities'   => $locationAvailabilities,
+			'from_time'                => $from_time,
+			'to_time'                  => $to_time,
 		]);
         return [
             'status' => true,
 			'data' => $data,
         ];	 
+    }
+
+	public function getHolidayResources($date)
+    {
+        $locationId = Yii::$app->session->get('location_id');
+        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
+            'day' => $date->format('N')]);
+        $resources  = [];
+        if (empty($locationAvailability)) {
+            $resources[] = [
+                'id'    => '0',
+                'title' => 'Holiday',
+            ];
+        } else {
+            $holiday    = Holiday::find()
+                ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
+                ->one();
+            if (!empty($holiday)) {
+                $resources[] = [
+                    'id'    => '0',
+                    'title' => 'Holiday',
+                ];
+            }
+        }
+        return $resources;
+    }
+	
+	public function actionRenderResources($date, $programId)
+    {
+        $locationId = Yii::$app->session->get('location_id');
+        $date       = \DateTime::createFromFormat('Y-m-d', $date);
+        $resources  = $this->getHolidayResources($date);
+        if (empty($resources) && !empty($programId)) {
+			$teachersAvailabilities = TeacherAvailability::find()
+				->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
+					$query->where(['user_location.location_id' => $locationId]);
+					$query->joinWith(['qualifications'  => function ($query) use ($programId) {
+						$query->andWhere(['qualification.program_id' => $programId]);
+					}]);
+				}])
+				->andWhere(['day' => $date->format('N')])
+				->groupBy(['teacher_location_id'])
+				->all();
+			if (!empty($teachersAvailabilities)) {
+				foreach ($teachersAvailabilities as $teachersAvailability) {
+					$resources[] = [
+						'id'    => $teachersAvailability->teacher->id,
+						'title' => $teachersAvailability->teacher->getPublicIdentity(),
+					];
+				}
+			} else {
+				$resources[] = [
+					'id'    => '0',
+					'title' => 'No Teacher Available Today for the Selected Program'
+				];
+			}
+        }
+        return $resources;
     }
 
 	public function actionPreview($id)
