@@ -8,6 +8,7 @@ use backend\models\search\PrivateLessonSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\Lesson;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
@@ -107,8 +108,11 @@ class PrivateLessonController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+		Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Lesson has been deleted successfully',
+            ]);
+        return $this->redirect(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
     }
 
     /**
@@ -123,7 +127,7 @@ class PrivateLessonController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = PrivateLesson::findOne($id)) !== null) {
+        if (($model = Lesson::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
