@@ -136,7 +136,7 @@ use yii\helpers\Url;
 		'header' => '<h4 class="m-0">Choose Teacher, Day and Time</h4>',
 		'id'=>'new-enrolment-modal',
 	]);?>
-<div id="enrolment-calendar"></div>
+<div id="new-enrolment"></div>
 	<?php Modal::end();?>
 <script>
 	$(document).ready(function(){
@@ -145,7 +145,7 @@ use yii\helpers\Url;
         autoclose: true,
         todayHighlight: true
     });
-	$(document).on('click', '.enrolment-calendar', function(){
+	$(document).on('click', '.enrolment-calendar-icon', function(){
 		var programId = $('#course-programid').val();
 		$.ajax({
 			url: '<?= Url::to(['enrolment/schedule']); ?>?programId=' + programId,
@@ -155,7 +155,7 @@ use yii\helpers\Url;
 			{
 				if (response.status)
 				{
-                    $('#enrolment-calendar').html(response.data);
+                    $('#new-enrolment').html(response.data);
 					$('#new-enrolment-modal').modal('show');
 				} else {
 				}

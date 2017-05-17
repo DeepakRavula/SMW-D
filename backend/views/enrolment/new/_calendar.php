@@ -95,6 +95,7 @@ use common\models\Invoice;
 }
 
 </style>
+<div id="enrolment-calendar"></div>
 <script type="text/javascript">
   $('#enrolment-calendar').fullCalendar({
     header: {
