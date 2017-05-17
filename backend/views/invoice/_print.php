@@ -119,6 +119,10 @@
             .invoice-info {
                 margin-top: 15px;
             }
+			.invoice-info .grid-view{
+				clear:both;
+				padding-top:10px;
+			}
             .text-gray {
                 color: gray !important;
             }
@@ -178,7 +182,7 @@
         }
     </style>
     <div class="invoice-view">
-        <div class="row-fluid" style="overflow: auto;">
+        <div class="row-fluid" >
             <div class="logo invoice-col" style="width: 100%">
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png" />
                 <div class="invoice-status">
