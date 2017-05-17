@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use common\models\Lesson;
 use common\models\Enrolment;
 use common\models\Course;
+use yii\web\Response;
 /**
  * VacationController implements the CRUD actions for Vacation model.
  */
@@ -25,6 +26,13 @@ class VacationController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			[
+				'class' => 'yii\filters\ContentNegotiator',
+				'only' => ['create'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,
+				],
+        	],
         ];
     }
 
@@ -60,46 +68,44 @@ class VacationController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($studentId)
+    public function actionCreate($enrolmentId)
     {
-		$session = Yii::$app->session;
+		$enrolment = Enrolment::findOne(['id' => $enrolmentId]);
+		$data = $this->renderAjax('/student/vacation/_form', [
+			'model' => new Vacation(),
+			'enrolmentId' => $enrolmentId,
+		]);
+		
 		$request = Yii::$app->request;
         $model = new Vacation();
-		$locationId = $session->get('location_id');
         if ($model->load($request->post())) {
-			$model->studentId = $studentId;
-			$enrolment = Enrolment::find()
-				->location($locationId)
-				->programs()
-				->privateProgram()
-				->andWhere(['studentId' => $model->studentId])
-				->notDeleted()
-				->isConfirmed()
-				->one();
 			$db = Yii::$app->db;
             $transaction = $db->beginTransaction();
 			Vacation::deleteAll([
-				'studentId' => $studentId,
+				'enrolmentId' => $enrolmentId,
 				'isConfirmed' => false,
 			]);
 			Lesson::deleteAll([
 				'courseId' => $enrolment->course->id,
 				'status' => Lesson::STATUS_DRAFTED
 			]);
-			$model->save();
             $transaction->commit();
-            $model->on(Course::EVENT_VACATION_CREATE_PREVIEW, $enrolment->course->pushLessons($model->fromDate, $model->toDate));
+			$model->enrolmentId = $enrolmentId;
+			if($model->save()) {
+				$model->on(Course::EVENT_VACATION_CREATE_PREVIEW, $enrolment->course->pushLessons($model->fromDate, $model->toDate));
 
-            return $this->redirect([
-				'lesson/review',
-				'courseId' => $enrolment->course->id,
-				'Vacation[id]' => $model->id,
-				'Vacation[type]' => Vacation::TYPE_CREATE
-			]);
+				return $this->redirect([
+					'lesson/review',
+					'courseId' => $enrolment->course->id,
+					'Vacation[id]' => $model->id,
+					'Vacation[type]' => Vacation::TYPE_CREATE
+				]);
+			}
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            return [
+				'status' => true,
+				'data' => $data,
+			]; 
         }
     }
 
@@ -130,28 +136,17 @@ class VacationController extends Controller
      */
     public function actionDelete($id)
     {
-		$session = Yii::$app->session;
-		$locationId = $session->get('location_id');
         $model = $this->findModel($id);
-		$enrolment = Enrolment::find()
-			->location($locationId)
-			->programs()
-			->privateProgram()
-			->andWhere(['studentId' => $model->studentId])
-			->notDeleted()
-			->isConfirmed()
-			->one();
-		$db = Yii::$app->db;
 		Lesson::deleteAll([
-			'courseId' => $enrolment->courseId,
+			'courseId' => $model->enrolment->courseId,
 			'status' => Lesson::STATUS_DRAFTED
 		]);
 	    $model->trigger(Course::EVENT_VACATION_DELETE_PREVIEW);
-        $model->on(Course::EVENT_VACATION_DELETE_PREVIEW, $enrolment->course->restoreLessons($model->fromDate, $model->toDate));
+        $model->on(Course::EVENT_VACATION_DELETE_PREVIEW, $model->enrolment->course->restoreLessons($model->fromDate, $model->toDate));
 		
         return $this->redirect([
 			'lesson/review',
-			'courseId' => $enrolment->courseId,
+			'courseId' => $model->enrolment->courseId,
 			'Vacation[id]' => $model->id,
 			'Vacation[type]' => Vacation::TYPE_DELETE
 		]);

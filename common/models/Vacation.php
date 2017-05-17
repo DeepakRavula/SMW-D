@@ -32,7 +32,7 @@ class Vacation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['studentId', 'isConfirmed'], 'integer'],
+            [['enrolmentId', 'isConfirmed'], 'integer'],
             [['fromDate', 'toDate'], 'required'],
         ];
     }
@@ -79,4 +79,8 @@ class Vacation extends \yii\db\ActiveRecord
 		
 		return parent::afterSave($insert, $changedAttributes);
 	}
+	public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
+    }
 }
