@@ -188,12 +188,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isDeletable()
     {
-        if ($this->isExtra()) {
+        if ($this->isExtra() && !$this->isDeleted) {
             if (!$this->hasProFormaInvoice() && !$this->hasInvoice()) {
                 return true;
             }
             if ($this->hasProFormaInvoice()) {
-                if (!$this->extraLessonProFormaInvoice->hasPayments()) {
+                if (!$this->proFormaInvoice->hasPayments()) {
                     return true;
                 }
             } else if ($this->hasInvoice()) {
@@ -373,11 +373,6 @@ class Lesson extends \yii\db\ActiveRecord
     public function isExtra()
     {
         return ((int) $this->type === (int) self::TYPE_EXTRA);
-    }
-
-    public function hasExtraLessonProFormaInvoice()
-    {
-        return $this->extraLessonProFormaInvoice;
     }
 
     public function isExpired()
