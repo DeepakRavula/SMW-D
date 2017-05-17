@@ -6,12 +6,20 @@ use common\models\Qualification;
 ?>
 <style>
 @media print{
+	.print-container{
+		margin-top:5px;
+	}
 	.text-left{
         text-align: left !important;
     }
 	.location-address {
 	  text-align : right;
 	  font-size : 18px;
+	}
+	.location-address p{
+		margin:0;
+		padding:0;
+		font-weight:normal;
 	}
 	.boxed {
 	  border: 4px solid #949599;
@@ -32,30 +40,48 @@ use common\models\Qualification;
 	  font-weight: normal;
 	}
 	.login-logo-img {
-		width: 600px;
-		height:50px;	
+		width:300px !important;
+		height:auto;
+	}
+	.report-grid #teacher-lesson-grid table thead{
+		border:1px solid #000;
+		
+	}
+	.report-grid .table-bordered{
+		border: 1px solid #000;
+	}
+	.report-grid .table-bordered>thead>tr>th, .report-grid .table-bordered>tbody>tr>th,.report-grid  .table-bordered>tfoot>tr>th,.report-grid  .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .report-grid .table-bordered>tfoot>tr>td{
+		border:none !important;
+	}
+	.report-grid .table-bordered > tbody > tr:nth-child(even){
+		
 	}
 }
+@page{
+  size: auto;
+  margin: 3mm;
+}
 </style>
-<div class="row-fluid">
+<div class="row-fluid print-container">
 	<div class="logo invoice-col">              
 		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
 	</div>
 	<div class="location-address">
-			Arcadia Music Academy ( <?= $model->userLocation->location->name;?> )<br>
-			<?php if (!empty($model->userLocation->location->address)): ?>
+			<p>Arcadia Music Academy ( <?= $model->userLocation->location->name;?> )</p>
+			<p><?php if (!empty($model->userLocation->location->address)): ?>
 				<?= $model->userLocation->location->address ?><br>
-			<?php endif; ?>
-			<?php if (!empty($model->userLocation->location->city_id)): ?>
+			<?php endif; ?></p>
+			<p><?php if (!empty($model->userLocation->location->city_id)): ?>
 				<?= $model->userLocation->location->city->name ?>
 			<?php endif; ?>
 			<?php if (!empty($model->userLocation->location->province_id)): ?>
 				<?= ', ' . $model->userLocation->location->province->name ?>
-			<?php endif; ?> 
+			<?php endif; ?> </p>
 	</div>
 	<div class="clearfix"></div>
 </div>
 <h2 class="col-md-12"><b><?= $model->publicIdentity . '\'s Time Voucher for ' . $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h2>
+<div class="report-grid">
 <?php
 if(!$searchModel->summariseReport) {
 $columns = [
@@ -232,6 +258,7 @@ GridView::widget([
 	'columns' => $columns,
 ]);
 ?>
+</div>
 <div class="boxed col-md-12 pull-right">
 <div class="sign">
  Teacher Signature <span></span>
