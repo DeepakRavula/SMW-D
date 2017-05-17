@@ -11,25 +11,14 @@ use yii\helpers\Html;
 ?>
 <div class="col-md-12">
 	<h4 class="pull-left m-r-20">Vacations</h4>
-	<a href="#" class="add-new-vacation text-add-new"><i class="fa fa-plus"></i></a>
-	<div class="clearfix"></div>
-</div>
-<div class="dn vacation-create section-tab">
-	<?php
-	echo $this->render('_form-vacation', [
-		'model' => new Vacation(),
-		'studentModel' => $studentModel,
-	])
-	?>
-
 </div>
 
 <?php
 $vacations = Vacation::find()
-	->where([
-	'studentId' => $studentModel->id,
-	'isConfirmed' => true,
-]);
+	->joinWith(['enrolment' => function($query) use($studentModel){
+		$query->andWhere(['studentId' => $studentModel->id]);	
+	}])
+	->andWhere(['vacation.isConfirmed' => true]);
 $vacationDataProvider = new ActiveDataProvider([
 	'query' => $vacations,
 ]);
@@ -45,6 +34,13 @@ echo GridView::widget([
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'columns' => [
+		[
+            'label' => 'Program',
+            'value' => function ($data) {
+                return  $data->enrolment->course->program->name;
+
+            },
+        ],
         [
             'label' => 'From Date',
             'value' => function ($data) {
