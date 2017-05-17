@@ -25,6 +25,9 @@ use common\models\LessonLog;
 use common\models\User;
 use common\models\TimelineEventLesson;
 use yii\filters\ContentNegotiator;
+use common\models\PaymentCycle;
+use common\models\Invoice;
+use common\models\InvoiceLog;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -139,11 +142,11 @@ class LessonController extends Controller
             $model->courseId = $studentEnrolment->courseId;
             $model->status = Lesson::STATUS_SCHEDULED;
             $model->isDeleted = false;
+            $model->type = Lesson::TYPE_EXTRA;
             $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
 
             if ($model->save()) {
-                $model->addPaymentCycleLesson();
                 $response = [
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
@@ -641,7 +644,11 @@ class LessonController extends Controller
         $currentDate = new \DateTime();
 
         if ($lessonDate <= $currentDate) {
-            $invoice = $model->createInvoice();
+            if ($model->hasInvoice()) {
+                $invoice = $model->invoice;
+            } else {
+                $invoice = $model->createInvoice();
+            }
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {
@@ -654,50 +661,93 @@ class LessonController extends Controller
         }
     }
 
-    public function actionMissed($id)
-    {
+	public function actionMissed($id)
+	{
         $model = $this->findModel($id);
-	$model->on(Lesson::EVENT_MISSED, [new TimelineEventLesson(), 'missed']);
-	$user = User::findOne(['id' => Yii::$app->user->id]);
-	$model->userName = $user->publicIdentity;
-	$model->status = Lesson::STATUS_MISSED;
-	$model->save();
-	$model->trigger(Lesson::EVENT_MISSED);	
-	if(empty($model->invoice)) {
-            $invoice = $model->createInvoice();
-            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-	} else {
-	    return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
+		$model->on(Lesson::EVENT_MISSED, [new TimelineEventLesson(), 'missed']);
+		$user = User::findOne(['id' => Yii::$app->user->id]);
+		$model->userName = $user->publicIdentity;
+		$model->status = Lesson::STATUS_MISSED;
+		$model->save();
+		$model->trigger(Lesson::EVENT_MISSED);	
+		if(empty($model->invoice)) {
+			$invoice = $model->createInvoice();
+			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
+		} else {
+		   return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
+		}
 	}
-    }
+	
+	public function actionPresent($id)
+	{
+        $model = $this->findModel($id);
+		$currentDate = new \DateTime();
+		$lessonDate = new \DateTime($model->date);
+		$model->status = Lesson::STATUS_SCHEDULED;
+		if($currentDate >= $lessonDate) {
+			$model->status = Lesson::STATUS_COMPLETED;
+		}
+		$model->save();
+	}
 
+	public function actionAbsent($id)
+	{
+        $model = $this->findModel($id);
+		$model->status = Lesson::STATUS_MISSED;
+		$model->save();
+		return [
+			'status' => true,
+		];
+	}
     public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);
-        if (!$model->paymentCycle->canRaiseProformaInvoice()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-danger'],
-                'body' => 'ProForma-Invoice can be generated only for current and next payment cycle only.',
-            ]);
-
-            return $this->redirect(['lesson/view', 'id' => $id]);
-        }
-        if(!$model->hasProFormaInvoice()) {
-            if (!$model->paymentCycle->hasProFormaInvoice()) {
-                $invoice = $model->paymentCycle->createProFormaInvoice();
-
-                return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-            } else {
-                $model->paymentCycle->proFormaInvoice->addLineItem($model);
-                $model->paymentCycle->proFormaInvoice->save();
+        if ($model->paymentCycle) {
+            $model->paymentCycle->setScenario(PaymentCycle::SCENARIO_CAN_RAISE_PFI);
+            if (!$model->paymentCycle->validate()) {
+                $errors	 = ActiveForm::validate($model->paymentCycle);
+                Yii::$app->session->setFlash('alert', [
+                    'options' => ['class' => 'alert-danger'],
+                    'body' => end($errors['paymentcycle-id']),
+                ]);
+                return $this->redirect(['lesson/view', 'id' => $id]);
             }
-        } else {
-            $model->proFormaInvoice->makeInvoicePayment();
+            if(!$model->hasProFormaInvoice()) {
+                if (!$model->paymentCycle->hasProFormaInvoice()) {
+                    $invoice = $model->paymentCycle->createProFormaInvoice();
+
+                    return $this->redirect(['invoice/view', 'id' => $invoice->id]);
+                } else {
+                    $model->paymentCycle->proFormaInvoice->addLineItem($model);
+                    $model->paymentCycle->proFormaInvoice->save();
+                }
+            } else {
+                $model->proFormaInvoice->makeInvoicePayment();
+            }
+            return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
+        } else if ($model->isExtra()) {
+            if (!$model->hasProFormaInvoice()) {
+                $locationId = $model->enrolment->student->customer->userLocation->location_id;
+                $user = User::findOne(['id' => $model->enrolment->student->customer->id]);
+                $invoice = new Invoice();
+                $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
+                $invoice->userName = $user->publicIdentity;
+                $invoice->user_id = $model->enrolment->student->customer->id;
+                $invoice->location_id = $locationId;
+                $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
+                $invoice->createdUserId = Yii::$app->user->id;
+                $invoice->updatedUserId = Yii::$app->user->id;
+                $invoice->save();
+                $invoice->addLineItem($model);
+                $invoice->save();
+            } else {
+                $invoice = $model->proFormaInvoice;
+            }
+            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         }
-        return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
     }
 
-	public function actionSendMail($id)
+    public function actionSendMail($id)
     {
         $model      = $this->findModel($id);
 		$lessonRequest = Yii::$app->request->post('Lesson');
