@@ -151,6 +151,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->andWhere(['courseId' => $this->enrolment->courseId])
             ->between($startDate, $endDate)
             ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
+            ->andWhere(['NOT', ['lesson.type' => Lesson::TYPE_EXTRA]])
             ->all();
         foreach ($lessons as $lesson) {
             $lesson->studentFullName = $this->enrolment->student->fullName;

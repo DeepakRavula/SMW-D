@@ -26,6 +26,8 @@ use common\models\User;
 use common\models\TimelineEventLesson;
 use yii\filters\ContentNegotiator;
 use common\models\PaymentCycle;
+use common\models\Invoice;
+use common\models\InvoiceLog;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -656,7 +658,11 @@ class LessonController extends Controller
         $currentDate = new \DateTime();
 
         if ($lessonDate <= $currentDate) {
-            $invoice = $model->createInvoice();
+            if ($model->hasInvoice()) {
+                $invoice = $model->invoice;
+            } else {
+                $invoice = $model->createInvoice();
+            }
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {
@@ -713,10 +719,10 @@ class LessonController extends Controller
         if ($model->paymentCycle) {
             $model->paymentCycle->setScenario(PaymentCycle::SCENARIO_CAN_RAISE_PFI);
             if (!$model->paymentCycle->validate()) {
-                $errors	 = ActiveForm::validate($model);
+                $errors	 = ActiveForm::validate($model->paymentCycle);
                 Yii::$app->session->setFlash('alert', [
                     'options' => ['class' => 'alert-danger'],
-                    'body' => $errors['id'],
+                    'body' => end($errors['paymentcycle-id']),
                 ]);
                 return $this->redirect(['lesson/view', 'id' => $id]);
             }
@@ -733,16 +739,29 @@ class LessonController extends Controller
                 $model->proFormaInvoice->makeInvoicePayment();
             }
             return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
-        }
-        if ($model->isExtra()) {
+        } else if ($model->isExtra()) {
             if (!$model->hasProFormaInvoice()) {
-                $model->addExtraLessonProformaInvoice();
+                $locationId = $model->enrolment->student->customer->userLocation->location_id;
+                $user = User::findOne(['id' => $model->enrolment->student->customer->id]);
+                $invoice = new Invoice();
+                $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
+                $invoice->userName = $user->publicIdentity;
+                $invoice->user_id = $model->enrolment->student->customer->id;
+                $invoice->location_id = $locationId;
+                $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
+                $invoice->createdUserId = Yii::$app->user->id;
+                $invoice->updatedUserId = Yii::$app->user->id;
+                $invoice->save();
+                $invoice->addLineItem($model);
+                $invoice->save();
+            } else {
+                $invoice = $model->proFormaInvoice;
             }
-            return $this->redirect(['invoice/view', 'id' => $model->extraLessonProFormaInvoice->id]);
+            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         }
     }
 
-	public function actionSendMail($id)
+    public function actionSendMail($id)
     {
         $model      = $this->findModel($id);
 		$lessonRequest = Yii::$app->request->post('Lesson');

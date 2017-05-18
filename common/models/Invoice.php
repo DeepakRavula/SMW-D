@@ -228,6 +228,15 @@ class Invoice extends \yii\db\ActiveRecord
         return (int) $this->status === (int) self::STATUS_PAID;
     }
 
+    public function hasPayments()
+    {
+        if ($this->isInvoice()) {
+            return $this->hasInvoicePayments();
+        } else {
+            return $this->hasProformaPayments();
+        }
+    }
+
     public function hasProformaPayments()
     {
         return $this->paymentTotal != 0;
@@ -694,9 +703,9 @@ class Invoice extends \yii\db\ActiveRecord
                 $invoice = $this->lineItem->lesson->createInvoice();
             } else if (!$this->lineItem->lesson->invoice->isPaid()) {
                 if ($this->lineItem->lesson->hasProFormaInvoice()) {
-                    $netPrice = $this->lineItem->lesson->lineItem->netPrice;
-                    if ($this->lineItem->lesson->extraLessonProFormaInvoice->proFormaCredit >= $netPrice) {
-                        $this->lineItem->lesson->invoice->addPayment($this->lineItem->lesson->extraLessonProFormaInvoice);
+                    $netPrice = $this->lineItem->lesson->proFormaInvoice->lineItem->netPrice;
+                    if ($this->lineItem->lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
+                        $this->lineItem->lesson->invoice->addPayment($this->lineItem->lesson->proFormaInvoice);
                     }
                 }
             }

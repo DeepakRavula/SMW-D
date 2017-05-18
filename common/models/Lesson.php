@@ -186,10 +186,10 @@ class Lesson extends \yii\db\ActiveRecord
     public function isDeletable()
     {
         if ($this->isExtra()) {
-            if (!$this->hasExtraLessonProFormaInvoice() && !$this->hasInvoice()) {
+            if (!$this->hasProFormaInvoice() && !$this->hasInvoice()) {
                 return true;
             }
-            if ($this->hasExtraLessonProFormaInvoice()) {
+            if ($this->hasProFormaInvoice()) {
                 if (!$this->extraLessonProFormaInvoice->hasPayments()) {
                     return true;
                 }
@@ -248,18 +248,19 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaInvoice()
     {
-        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
-                ->via('proFormaLineItem')
-                ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
-                    'invoice.isDeleted' => false]);
-    }
-
-    public function getExtraLessonProFormaInvoice()
-    {
-        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+        if (!$this->isExtra()) {
+            return Invoice::find()
+                    ->joinWith('lineItems')
+                    ->andWhere(['invoice_line_item.item_id' => $this->paymentCycleLesson->id])
+                    ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
+                        'invoice.isDeleted' => false])
+                    ->one();
+        } else {
+            return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
                 ->viaTable('invoice_line_item', ['item_id' => 'id'])
                 ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
                     'invoice.isDeleted' => false]);
+        }
     }
 
     public function getLessonReschedule()
@@ -285,9 +286,20 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaLineItem()
     {
-        return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])
-            ->via('paymentCycleLesson')
-            ->andWhere(['item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
+        if ($this->isExtra()) {
+            return InvoiceLineItem::find()
+                ->joinWith('invoice')
+                ->andWhere(['invoice.isDeleted' => false])
+                ->andWhere(['invoice_line_item.item_id' => $this->id])
+                ->one();
+        } else {
+            return InvoiceLineItem::find()
+                ->joinWith('invoice')
+                ->andWhere(['invoice.isDeleted' => false])
+                ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
+                ->andWhere(['invoice_line_item.item_id' => $this->paymentCycleLesson->id])
+                ->one();
+        }
     }
 
     public function getStatus()
@@ -569,7 +581,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function createInvoice()
     {
         $location_id = $this->enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $user = User::findOne(['id' => $this->enrolment->student->customer]);
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
         $invoice->userName = $user->publicIdentity;
@@ -581,15 +593,10 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->save();
         $invoice->addLineItem($this);
         $invoice->save();
-        if (!$this->isExtra() && $this->hasProFormaInvoice()) {
+        if ($this->hasProFormaInvoice()) {
             $netPrice = $this->proFormaLineItem->netPrice;
             if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
                 $invoice->addPayment($this->proFormaInvoice);
-            }
-        } else if ($this->isExtra() && $this->hasProFormaInvoice()) {
-            $netPrice = $this->extraLessonProFormaInvoice->lineItem->netPrice;
-            if ($this->extraLessonProFormaInvoice->proFormaCredit >= $netPrice) {
-                $invoice->addPayment($this->extraLessonProFormaInvoice);
             }
         }
 
@@ -598,33 +605,11 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function hasProFormaInvoice()
     {
-        if ($this->isExtra()) {
-            return $this->hasExtraLessonProFormaInvoice();
-        } else {
-            return !empty($this->proFormaInvoice);
-        }
+        return !empty($this->proFormaInvoice);
     }
 
     public function hasInvoice()
     {
         return !empty($this->invoice);
-    }
-
-    public function addExtraLessonProformaInvoice()
-    {
-        $locationId = $this->enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => $this->enrolment->student->customer->id]);
-        $invoice = new Invoice();
-        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
-        $invoice->userName = $user->publicIdentity;
-        $invoice->user_id = $this->enrolment->student->customer->id;
-        $invoice->location_id = $locationId;
-        $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
-        $invoice->createdUserId = Yii::$app->user->id;
-        $invoice->updatedUserId = Yii::$app->user->id;
-        $invoice->save();
-        $invoice->addLineItem($this);
-        $invoice->save();
-        return $invoice;
     }
 }
