@@ -45,22 +45,23 @@ $this->title = 'New Enrolment';
             ?>
 		</div>
 		<label  class="col-sm-2 control-label">Check The Schedule</label>
-		<div class="col-sm-1">
-            <span class="fa fa-calendar fa-4"></span>
+		<div class="col-sm-1  hand enrolment-calendar-icon">
+            <span class="fa fa-calendar"></span>
 		</div>
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
 		<label  class="col-sm-2 control-label p-10">Teacher</label>
-		<div class="col-sm-5">
-		Teacher Name	
+    	<?php echo $form->field($model, 'teacherId')->hiddenInput()->label(false) ?>
+		<div class="col-sm-5 new-enrolment-teaher">
 		</div>
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
 		<label  class="col-sm-2 control-label p-10">Day, Time & Duration</label>
-		<div class="col-sm-5">
-		Tuesdays @ 5.00pm	
+    	<?php echo $form->field($model, 'duration')->hiddenInput()->label(false) ?>
+    	<?php echo $form->field($model, 'fromTime')->hiddenInput()->label(false) ?>
+		<div class="col-sm-5 new-enrolment-time">
 		</div>
 	</div>
 	<div class="clearfix"></div>
