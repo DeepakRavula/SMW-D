@@ -176,7 +176,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isExploded()
     {
-        return $this->isExploded;
+        return !empty($this->lessonSplit);
     }
 
     public function isCompleted()
@@ -215,7 +215,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canExplode()
     {
-        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded;
+        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded();
     }
 
     public function getEnrolment()

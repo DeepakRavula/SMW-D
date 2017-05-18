@@ -53,4 +53,23 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
     {
         return new \common\models\query\LessonSplitUsageQuery(get_called_class());
     }
+    
+    public static function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+            ->viaTable('lesson_split', ['id' => 'lessonSplitId']);
+    }
+
+    public function getLessonSplit()
+    {
+        $model = self::findOne(['lessonSplitId' => $this->lessonSplitId]);
+        if (!empty($model)) {
+            foreach ($this->lesson->lessonSplit as $split) {
+                if ($split->id !== $this->lessonSplitId) {
+                    return $split->id;
+                }
+            }
+        }
+        return $this->lessonSplitId;
+    }
 }

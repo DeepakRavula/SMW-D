@@ -80,20 +80,6 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-    public function durationAvailable()
-    {
-        return $this->joinWith(['lessonSplit' => function ($query) {
-            $query->joinWith(['lessonSplitUsage' => function ($query) {
-                $query->andWhere(['lessonSplitId' => null]);
-            }]);
-        }]);
-    }
-
-    public function exploded()
-    {
-        return $this->andWhere(['lesson.isExploded' => true]);
-    }
-	
     public function student($id)
     {
         $this->joinWith(['enrolment' => function ($query) use ($id) {

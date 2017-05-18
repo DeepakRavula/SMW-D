@@ -134,7 +134,7 @@ echo $this->render('_merge-lesson', [
                     if (response.status) {
 			$('#merge-lesson-modal').modal('hide');
                     } else {
-                        $('#notification').html('Lesson cannot be merged').fadeIn().delay(5000).fadeOut();
+                        $('#error-notification').html('Lesson cannot be merged').fadeIn().delay(5000).fadeOut();
                     }
                 }
             });

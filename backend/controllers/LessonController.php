@@ -777,8 +777,6 @@ class LessonController extends Controller
     {
         $model = $this->findModel($id);
         $lessonDurationSec = $model->durationSec;
-        $model->isExploded = true;
-        $model->save();
         for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
             $lesssonSplit = new LessonSplit();
             $lesssonSplit->lessonId = $id;
@@ -805,6 +803,7 @@ class LessonController extends Controller
         if ($model->save()) {
             $lessonSplitUsage = new LessonSplitUsage();
             $lessonSplitUsage->lessonSplitId = $post['radioButtonSelection'];
+            $lessonSplitUsage->lessonSplitId = $lessonSplitUsage->getLessonSplit();
             $lessonSplitUsage->extendedLessonId = $id;
             $lessonSplitUsage->mergedOn = (new \DateTime())->format('Y-m-d H:i:s');
             $lessonSplitUsage->save();
