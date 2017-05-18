@@ -85,6 +85,7 @@ $(document).ready(function() {
     $('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
+		 height: "auto",
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
         minTime: "<?php echo $from_time; ?>",
@@ -154,6 +155,7 @@ function refreshCalendar(date) {
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
+		 height: "auto",
         defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
