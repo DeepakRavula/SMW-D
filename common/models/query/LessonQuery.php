@@ -4,7 +4,7 @@ namespace common\models\query;
 
 use common\models\Lesson;
 use common\models\Program;
-use common\models\Invoice;
+use common\models\LessonSplitUsage;
 use common\models\InvoiceLineItem;
 
 /**
@@ -74,11 +74,25 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-	public function unscheduled()
-	{
-		$this->andWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
-		return $this;
-	}
+    public function unscheduled()
+    {
+        $this->andWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
+        return $this;
+    }
+
+    public function durationAvailable()
+    {
+        return $this->joinWith(['lessonSplit' => function ($query) {
+            $query->joinWith(['lessonSplitUsage' => function ($query) {
+                $query->andWhere(['lessonSplitId' => null]);
+            }]);
+        }]);
+    }
+
+    public function exploded()
+    {
+        return $this->andWhere(['lesson.isExploded' => true]);
+    }
 	
     public function student($id)
     {

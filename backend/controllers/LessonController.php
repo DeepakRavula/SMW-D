@@ -28,6 +28,8 @@ use yii\filters\ContentNegotiator;
 use common\models\PaymentCycle;
 use common\models\Invoice;
 use common\models\InvoiceLog;
+use common\models\LessonSplitUsage;
+use common\models\LessonSplit;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -45,7 +47,7 @@ class LessonController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['modify-classroom'],
+                'only' => ['modify-classroom', 'merge'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -250,7 +252,7 @@ class LessonController extends Controller
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
 					$model->save();
-					
+
 					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 				}
 			}
@@ -258,7 +260,7 @@ class LessonController extends Controller
         }
         return $this->render($view, $data);
     }
-   
+
     /**
      * Finds the Lesson model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -349,13 +351,13 @@ class LessonController extends Controller
         $courseModel = Course::findOne(['id' => $courseId]);
 		$conflicts = [];
 		$conflictedLessonIds = [];
-	
+
 		$lessons = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
-			->all();	
+			->all();
 		foreach ($lessons as $lesson) {
 			$lesson->setScenario(Lesson::SCENARIO_GROUP_ENROLMENT_REVIEW);
-			$lesson->studentId = $enrolment->student->id; 
+			$lesson->studentId = $enrolment->student->id;
 		}
 		Model::validateMultiple($lessons);
 		foreach ($lessons as $lesson) {
@@ -374,7 +376,7 @@ class LessonController extends Controller
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-		
+
         return $this->render('enrolment/_review', [
             'courseModel' => $courseModel,
             'courseId' => $courseId,
@@ -383,7 +385,7 @@ class LessonController extends Controller
 			'model' => $model,
             'searchModel' => $searchModel,
 			'enrolment' => $enrolment,
-        ]);	
+        ]);
 	}
 
 	public function actionConfirmGroupEnrolment($enrolmentId)
@@ -395,7 +397,7 @@ class LessonController extends Controller
 		$invoice = $enrolment->firstPaymentCycle->createProFormaInvoice();
 			return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
 	}
-	
+
     public function actionReview($courseId)
     {
 		$model = new Lesson();
@@ -434,7 +436,7 @@ class LessonController extends Controller
 			foreach ($draftLessons as $draftLesson) {
 				$draftLesson->setScenario('review');
 				if(!empty($vacationId)) {
-					$draftLesson->vacationId = $vacationId;	
+					$draftLesson->vacationId = $vacationId;
 				}
 			}
 			Model::validateMultiple($draftLessons);
@@ -512,8 +514,8 @@ class LessonController extends Controller
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
 			$user = User::findOne(['id' => Yii::$app->user->id]);
-			$enrolmentModel->on(Enrolment::EVENT_CREATE,[new TimelineEventEnrolment(), 'create'], ['userName' => $user->publicIdentity]);	
-			$enrolmentModel->trigger(Enrolment::EVENT_CREATE);	
+			$enrolmentModel->on(Enrolment::EVENT_CREATE,[new TimelineEventEnrolment(), 'create'], ['userName' => $user->publicIdentity]);
+			$enrolmentModel->trigger(Enrolment::EVENT_CREATE);
         }
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');
@@ -669,7 +671,7 @@ class LessonController extends Controller
 		$model->userName = $user->publicIdentity;
 		$model->status = Lesson::STATUS_MISSED;
 		$model->save();
-		$model->trigger(Lesson::EVENT_MISSED);	
+		$model->trigger(Lesson::EVENT_MISSED);
 		if(empty($model->invoice)) {
 			$invoice = $model->createInvoice();
 			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
@@ -677,7 +679,7 @@ class LessonController extends Controller
 		   return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
 		}
 	}
-	
+
 	public function actionPresent($id)
 	{
         $model = $this->findModel($id);
@@ -750,78 +752,76 @@ class LessonController extends Controller
     public function actionSendMail($id)
     {
         $model      = $this->findModel($id);
-		$lessonRequest = Yii::$app->request->post('Lesson');
-		if($lessonRequest) {
-			$model->toEmailAddress = $lessonRequest['toEmailAddress'];
-			$model->subject = $lessonRequest['subject'];
-			$model->content = $lessonRequest['content'];
-			if($model->sendEmail())
-			{
-				Yii::$app->session->setFlash('alert', [
-					'options' => ['class' => 'alert-success'],
-					'body' => ' Mail has been sent successfully',
-				]);
-			} else {
-				Yii::$app->session->setFlash('alert', [
-					'options' => ['class' => 'alert-danger'],
-					'body' => 'The customer doesn\'t have email id',
-				]);
-			}
-			return $this->redirect(['view', 'id' => $model->id]);
-		}
+        $lessonRequest = Yii::$app->request->post('Lesson');
+        if($lessonRequest) {
+            $model->toEmailAddress = $lessonRequest['toEmailAddress'];
+            $model->subject = $lessonRequest['subject'];
+            $model->content = $lessonRequest['content'];
+            if($model->sendEmail())
+            {
+                Yii::$app->session->setFlash('alert', [
+                    'options' => ['class' => 'alert-success'],
+                    'body' => ' Mail has been sent successfully',
+                ]);
+            } else {
+                Yii::$app->session->setFlash('alert', [
+                    'options' => ['class' => 'alert-danger'],
+                    'body' => 'The customer doesn\'t have email id',
+                ]);
+            }
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
     }
 
-	public function actionSplit($id) {
-		$locationId = Yii::$app->session->get('location_id');
-		$model = $this->findModel($id);
-		$duration		 = \DateTime::createFromFormat('H:i:s', $model->duration);
-		$hours			 = $duration->format('H');
-		$minutes		 = $duration->format('i');
-		$lessonDuration	 = ($hours * 60)  + $minutes;
-		$request = Yii::$app->request;
-		$lessonIds = $request->post('splitLessonIds');
-        if (!empty($lessonIds) && is_array($lessonIds)) {
-			$numberOfLesson = count($lessonIds);
-			$duration = round($lessonDuration / $numberOfLesson);
-			$lessons = Lesson::find()
-				->location($locationId)
-				->andWhere(['IN', 'lesson.id', $lessonIds])
-				->all();
-			foreach($lessons as $lesson) {
-				$lesson->setScenario(Lesson::SCENARIO_SPLIT);
-				$newDuration = new \DateTime($lesson->duration);
-				$newDuration->add(new \DateInterval('PT' . $duration . 'M'));
-				$lesson->newDuration = $newDuration; 
-			}
-			Model::validateMultiple($lessons);
-			$conflicts = [];
-			foreach($lessons as $lesson) {
-				$conflicts = $lesson->getErrors('duration');
-			}
-			if(empty($conflicts)) {
-				foreach($lessonIds as $lessonId) {
-					$lesson = $this->findModel($lessonId);
-					$newDuration = new \DateTime($lesson->duration);
-					$newDuration->add(new \DateInterval('PT' . $duration . 'M'));	
-					$lesson->updateAttributes([
-						'duration' => $newDuration->format('H:i:s'),
-					]);
-				}
-				$model->delete();
-				Yii::$app->session->setFlash('alert', [
-					'options' => ['class' => 'alert-success'],
-					'body' => 'Lesson duration has been splitted successfully.',
-				]);
-				return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
-			} else {
-				Yii::$app->session->setFlash('alert', [
-					'options' => ['class' => 'alert-danger'],
-					'body' => current($conflicts),
-				]);
-				return $this->redirect(['view', 'id' => $model->id]);	
-			}
-		}
-	}
+    public function actionSplit($id)
+    {
+        $model = $this->findModel($id);
+        $lessonDurationSec = $model->durationSec;
+        $model->isExploded = true;
+        $model->save();
+        for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
+            $lesssonSplit = new LessonSplit();
+            $lesssonSplit->lessonId = $id;
+            $lesssonSplit->unit = Lesson::DEFAULT_MERGE_DURATION;
+            $lesssonSplit->save();
+        }
+        Yii::$app->session->setFlash('alert', [
+            'options' => ['class' => 'alert-success'],
+            'body' => 'Lesson duration has been splitted successfully.',
+        ]);
+        return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
+    }
+
+    public function actionMerge($id)
+    {
+        $model = $this->findModel($id);
+        $model->setScenario(Lesson::SCENARIO_EDIT);
+        $post = Yii::$app->request->post();
+        $additionalDuration = new \DateTime(Lesson::DEFAULT_MERGE_DURATION);
+        $lessonDuration = new \DateTime($model->duration);
+        $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
+            . 'H' . $additionalDuration->format('i') . 'M'));
+        $model->duration = $lessonDuration->format('H:i:s');
+        if ($model->save()) {
+            $lessonSplitUsage = new LessonSplitUsage();
+            $lessonSplitUsage->lessonSplitId = $post['radioButtonSelection'];
+            $lessonSplitUsage->extendedLessonId = $id;
+            $lessonSplitUsage->mergedOn = (new \DateTime())->format('Y-m-d H:i:s');
+            $lessonSplitUsage->save();
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Lesson duration has been extended successfully.',
+            ]);
+
+            return $this->redirect(['lesson/view', 'id' => $id]);
+        } else {
+            $errors = ActiveForm::validate($model);
+            return [
+                'errors' => $errors,
+                'status' => false
+            ];
+        }
+    }
 
     public function actionModifyClassroom($id, $classroomId)
     {

@@ -56,7 +56,8 @@ use common\models\Invoice;
         [
             'label' => 'Payment Frequency',
             'value' => function ($data) {
-                return $data->proformaEnrolment->getPaymentFrequency();
+                return !empty($data->proformaEnrolment->getPaymentFrequency()) ?
+                    $data->proformaEnrolment->getPaymentFrequency() : null;
             },
         ],
         [

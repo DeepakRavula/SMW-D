@@ -108,22 +108,38 @@ Modal::begin([
 ]);
 Modal::end();
 ?>
+
 <?php
-echo $this->render('_split-lesson', [
+echo $this->render('_merge-lesson', [
 	'model' => $model,
 ]);
 ?>
 <script>
- $(document).ready(function() {
-	 $(document).on('click', '#lesson-mail-button', function (e) {
-		$('#lesson-mail-modal').modal('show');
-		return false;
+    $(document).ready(function() {
+        $(document).on('click', '#lesson-mail-button', function (e) {
+            $('#lesson-mail-modal').modal('show');
+            return false;
   	});
-	$(document).on('click', '#split-lesson', function (e) {
-		$('#split-lesson-modal').modal('show');
-		return false;
+	$(document).on('click', '#merge-lesson', function (e) {
+            $('#merge-lesson-modal').modal('show');
+            return false;
   	});
-	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+        $('#merge-lesson-form').on('beforeSubmit', function() {
+            $.ajax({
+                url    : '<?= Url::to(['lesson/merge', 'id' => $model->id]) ?>',
+                type   : 'POST',
+                dataType: "json",
+                data   : $('#merge-lesson-form').serialize(),
+                success: function(response) {
+                    if (response.status) {
+			$('#merge-lesson-modal').modal('hide');
+                    } else {
+                        $('#notification').html('Lesson cannot be merged').fadeIn().delay(5000).fadeOut();
+                    }
+                }
+            });
+	});
+        $('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
             $.ajax({
                 url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
                 type   : 'POST',
@@ -132,5 +148,5 @@ echo $this->render('_split-lesson', [
                 success: function(response) {}
             });
 	});	
-});
+    });
 </script>
