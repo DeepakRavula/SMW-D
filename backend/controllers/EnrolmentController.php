@@ -127,57 +127,6 @@ class EnrolmentController extends Controller
         }
     }
 
-	 public function actionSchedule($programId)
-    {
-		$locationId             = Yii::$app->session->get('location_id');
-		$teachersAvailabilities = TeacherAvailability::find()
-			->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
-				$query->where(['user_location.location_id' => $locationId]);
-				$query->joinWith(['qualifications'  => function ($query) use ($programId) {
-					$query->andWhere(['qualification.program_id' => $programId]);
-				}]);
-			}])
-			->andWhere(['day' => (new \DateTime())->format('N')])
-			->groupBy(['teacher_location_id'])
-			->all();
-        $availableTeachersDetails = ArrayHelper::toArray($teachersAvailabilities, [
-            'common\models\TeacherAvailability' => [
-                'id' => function ($teachersAvailability) {
-                    return $teachersAvailability->userLocation->user_id;
-                },
-                'name' => function ($teachersAvailability) {
-                    return $teachersAvailability->teacher->getPublicIdentity();
-                },
-            ],
-        ]);
-
-        $date = new \DateTime();
-        $locationAvailabilities = LocationAvailability::find()
-            ->where(['locationId' => $locationId])
-            ->all();
-        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
-            'day' => $date->format('N')]);
-        if (empty($locationAvailability)) {
-            $from_time = LocationAvailability::DEFAULT_FROM_TIME;
-            $to_time   = LocationAvailability::DEFAULT_TO_TIME;
-        } else {
-            $from_time = $locationAvailability->fromTime;
-            $to_time   = $locationAvailability->toTime;
-        }
-
-		$data = $this->renderAjax('new/_calendar', [
-			'programId' => $programId,
-			'availableTeachersDetails' => $availableTeachersDetails,
-            'locationAvailabilities'   => $locationAvailabilities,
-			'from_time'                => $from_time,
-			'to_time'                  => $to_time,
-		]);
-        return [
-            'status' => true,
-			'data' => $data,
-        ];	 
-    }
-
 	public function getHolidayResources($date)
     {
         $locationId = Yii::$app->session->get('location_id');

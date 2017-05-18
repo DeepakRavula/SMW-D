@@ -2,33 +2,12 @@
 
 use yii\helpers\Json;
 use yii\helpers\Url;
-use yii\bootstrap\Tabs;
 use common\models\CalendarEventColor;
-
-use wbraganca\selectivity\SelectivityWidget;
-use yii\helpers\ArrayHelper;
-use common\models\Program;
-
+use common\models\LocationAvailability;
 /* @var $this yii\web\View */
 
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 ?>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.min.js"></script>
-<script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.js"></script>
-<link type="text/css" href="/plugins/poshytip/tip-darkgray/tip-darkgray.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-green/tip-green.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-skyblue/tip-skyblue.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-twitter/tip-twitter.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-violet/tip-violet.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-yellow/tip-yellow.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-yellowsimple/tip-yellowsimple.css" rel='stylesheet' />
 <?php
     $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
     $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
@@ -141,11 +120,25 @@ bottom:-10px;
 	</div>
 </div>
 <div id="enrolment-calendar"></div>
+<?php
+	$locationId = Yii::$app->session->get('location_id');
+	$locationAvailabilities = LocationAvailability::find()
+		->where(['locationId' => $locationId])
+		->all();
+	$locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
+		'day' => (new \DateTime())->format('N')]);
+	if (empty($locationAvailability)) {
+		$from_time = LocationAvailability::DEFAULT_FROM_TIME;
+		$to_time   = LocationAvailability::DEFAULT_TO_TIME;
+	} else {
+		$from_time = $locationAvailability->fromTime;
+		$to_time   = $locationAvailability->toTime;
+	}
+	?>
 <script type="text/javascript">
-var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
-var programId = '<?php echo $programId; ?>';
 $(document).ready(function() {
+		var programId = $('#course-programid').val();
     var params = $.param({ date: moment(new Date()).format('YYYY-MM-DD'),
         programId: programId});
     $('#enrolment-calendar').fullCalendar({
@@ -189,11 +182,11 @@ $(document).ready(function() {
 });
 
 function refreshCalendar(date) {
-	var programId = '<?= $programId;?>';
+		var programId = $('#course-programid').val();
     var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
         programId: programId });
-    var minTime = "09:00:00";
-    var maxTime = "17:00:00";
+    var minTime = "<?php echo $from_time; ?>";
+    var maxTime = "<?php echo $to_time; ?>";
     var day     = moment(date).day();
     $.each( locationAvailabilities, function( key, value ) {
         if (day === 0) {
@@ -215,8 +208,9 @@ function refreshCalendar(date) {
         maxTime: maxTime,
         slotDuration: "00:15:00",
         allDaySlot:false,
-        editable: false,
+        editable: true,
         droppable: false,
+		selectable:true,
         resources: {
             url: '<?= Url::to(['enrolment/render-resources']) ?>?' + params,
             type: 'POST',
@@ -231,6 +225,25 @@ function refreshCalendar(date) {
                 $("#enrolment-calendar").fullCalendar("refetchEvents");
             }
         },
+		select: function (start, end, allDay) {
+			$('#calendar').fullCalendar('removeEvents', 'newEnrolment');
+			$('#course-day').val(moment(start).format('dddd'));
+			$('#course-fromtime').val(moment(start).format('h:mm A'));
+			$('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
+			var endtime = start.clone();
+			var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
+			moment(endtime.add(durationMinutes, 'minutes'));
+			$('#enrolment-calendar').fullCalendar('renderEvent',
+				{
+					id: 'newEnrolment',
+					start: start,
+					end: endtime,
+					allDay: false
+				},
+			true // make the event "stick"
+			);
+			$('#enrolment-calendar').fullCalendar('unselect');
+		},
     });
 }
 </script>

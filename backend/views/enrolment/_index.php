@@ -8,9 +8,16 @@ use common\models\User;
 use common\models\Student;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
+use common\models\LocationAvailability;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+
 <style>
 	.enrolment{    
 		background-color: #fff;
@@ -131,38 +138,21 @@ use yii\helpers\Url;
 		</div>
 	</div>
 </div>
-<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <?php
 	Modal::begin([
 		'header' => '<h4 class="m-20">Choose Teacher, Day and Time</h4>',
 		'id'=>'new-enrolment-modal',
 	]);?>
-<div id="new-enrolment"></div>
+<?php echo $this->render('new/_calendar', [
+	
+]);?>
 	<?php Modal::end();?>
+
 <script>
-	$(document).ready(function(){
-		$('#datepicker').datepicker ({
-        format: 'dd-mm-yyyy',
-        autoclose: true,
-        todayHighlight: true
-    });
+$(document).ready(function(){
 	$(document).on('click', '.enrolment-calendar-icon', function(){
-		var programId = $('#course-programid').val();
-		$.ajax({
-			url: '<?= Url::to(['enrolment/schedule']); ?>?programId=' + programId,
-			type: 'get',
-			dataType: "json",
-			success: function (response)
-			{
-				if (response.status)
-				{
-                    $('#new-enrolment').html(response.data);
-					$('#new-enrolment-modal').modal('show');
-				} else {
-				}
-			}
-		});
+		$('#new-enrolment-modal').modal('show');
 	});
-	});
+});
+
 </script>
