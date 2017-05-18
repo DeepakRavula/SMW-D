@@ -138,34 +138,14 @@ bottom:-10px;
 <script type="text/javascript">
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
 $(document).ready(function() {
-		var programId = $('#course-programid').val();
-    var params = $.param({ date: moment(new Date()).format('YYYY-MM-DD'),
-        programId: programId});
-    $('#enrolment-calendar').fullCalendar({
-        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        header: false,
-        titleFormat: 'DD-MMM-YYYY, dddd',
-        defaultView: 'agendaDay',
-        minTime: "<?php echo $from_time; ?>",
-        maxTime: "<?php echo $to_time; ?>",
-        slotDuration: "00:15:00",
-        editable: false,
-        droppable: false,
-        resources: {
-            url: '<?= Url::to(['enrolment/render-resources']) ?>?' + params,
-            type: 'POST',
-            error: function() {
-                $("#enrolment-calendar").fullCalendar("refetchResources");
-            }
-        },
-        events: {
-            url: '<?= Url::to(['enrolment/render-day-events']) ?>?' + params,
-            type: 'POST',
-            error: function() {
-                $("#enrolment-calendar").fullCalendar("refetchEvents");
-            }
-        },
-		allDaySlot:false,
+    $(document).on('click', '.enrolment-calendar-icon', function(){
+        $('#new-enrolment-modal').modal('show');
+        $('#new-enrolment-modal .modal-dialog').css({'width': '1000px'});
+        setTimeout(function () {
+            var date = new Date();
+            refreshCalendar(moment(date));
+        }, 200);
+        
     });
     $('#datepicker').datepicker ({
         format: 'dd-mm-yyyy',
@@ -178,72 +158,72 @@ $(document).ready(function() {
         var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
         $(".content-header h1").text("Schedule for " + formattedDate);
             refreshCalendar(moment(date));
-	});
-});
-
-function refreshCalendar(date) {
-		var programId = $('#course-programid').val();
-    var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
-        programId: programId });
-    var minTime = "<?php echo $from_time; ?>";
-    var maxTime = "<?php echo $to_time; ?>";
-    var day     = moment(date).day();
-    $.each( locationAvailabilities, function( key, value ) {
-        if (day === 0) {
-            day = 7;
-        }
-        if (day === value.day) {
-            minTime = value.fromTime;
-            maxTime = value.toTime;
-        }
     });
+
+    function refreshCalendar(date) {
+        var programId = $('#course-programid').val();
+        var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
+            programId: programId });
+        var minTime = "<?php echo $from_time; ?>";
+        var maxTime = "<?php echo $to_time; ?>";
+        var day     = moment(date).day();
+        $.each( locationAvailabilities, function( key, value ) {
+            if (day === 0) {
+                day = 7;
+            }
+            if (day === value.day) {
+                minTime = value.fromTime;
+                maxTime = value.toTime;
+            }
+        });
     $('#enrolment-calendar').html('');
     $('#enrolment-calendar').unbind().removeData().fullCalendar({
-        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        header: false,
-        defaultDate: date,
-        titleFormat: 'DD-MMM-YYYY, dddd',
-        defaultView: 'agendaDay',
-        minTime: minTime,
-        maxTime: maxTime,
-        slotDuration: "00:15:00",
-        allDaySlot:false,
-        editable: true,
-        droppable: false,
-		selectable:true,
-        resources: {
-            url: '<?= Url::to(['enrolment/render-resources']) ?>?' + params,
-            type: 'POST',
-            error: function() {
-                $("#enrolment-calendar").fullCalendar("refetchResources");
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            header: false,
+            defaultDate: date,
+            titleFormat: 'DD-MMM-YYYY, dddd',
+            defaultView: 'agendaDay',
+            minTime: minTime,
+            maxTime: maxTime,
+            slotDuration: "00:15:00",
+            allDaySlot:false,
+            editable: true,
+            droppable: false,
+                    selectable:true,
+            resources: {
+                url: '<?= Url::to(['enrolment/render-resources']) ?>?' + params,
+                type: 'POST',
+                error: function() {
+                    $("#enrolment-calendar").fullCalendar("refetchResources");
+                }
+            },
+            events: {
+                url: '<?= Url::to(['enrolment/render-day-events']) ?>?' + params,
+                type: 'POST',
+                error: function() {
+                    $("#enrolment-calendar").fullCalendar("refetchEvents");
+                }
+            },
+            select: function (start, end, allDay) {
+                $('#calendar').fullCalendar('removeEvents', 'newEnrolment');
+                $('#course-day').val(moment(start).format('dddd'));
+                $('#course-fromtime').val(moment(start).format('h:mm A'));
+                $('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
+                var endtime = start.clone();
+                var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
+                moment(endtime.add(durationMinutes, 'minutes'));
+                $('#enrolment-calendar').fullCalendar('renderEvent',
+                    {
+                        id: 'newEnrolment',
+                        start: start,
+                        end: endtime,
+                        allDay: false
+                    },
+                true // make the event "stick"
+                );
+                $('#enrolment-calendar').fullCalendar('unselect');
             }
-        },
-        events: {
-            url: '<?= Url::to(['enrolment/render-day-events']) ?>?' + params,
-            type: 'POST',
-            error: function() {
-                $("#enrolment-calendar").fullCalendar("refetchEvents");
-            }
-        },
-		select: function (start, end, allDay) {
-			$('#calendar').fullCalendar('removeEvents', 'newEnrolment');
-			$('#course-day').val(moment(start).format('dddd'));
-			$('#course-fromtime').val(moment(start).format('h:mm A'));
-			$('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
-			var endtime = start.clone();
-			var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
-			moment(endtime.add(durationMinutes, 'minutes'));
-			$('#enrolment-calendar').fullCalendar('renderEvent',
-				{
-					id: 'newEnrolment',
-					start: start,
-					end: endtime,
-					allDay: false
-				},
-			true // make the event "stick"
-			);
-			$('#enrolment-calendar').fullCalendar('unselect');
-		},
-    });
-}
+        });
+    }
+});
 </script>

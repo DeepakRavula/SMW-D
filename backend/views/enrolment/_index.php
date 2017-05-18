@@ -148,11 +148,4 @@ use common\models\LocationAvailability;
 ]);?>
 	<?php Modal::end();?>
 
-<script>
-$(document).ready(function(){
-	$(document).on('click', '.enrolment-calendar-icon', function(){
-		$('#new-enrolment-modal').modal('show');
-	});
-});
 
-</script>
