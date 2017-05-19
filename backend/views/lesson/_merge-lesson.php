@@ -13,11 +13,11 @@ use yii\helpers\Html;
 $locationId = Yii::$app->session->get('location_id');
 $lessons = LessonSplit::find()
         ->joinWith(['lesson' => function ($query) use ($locationId) {
-                $query->location($locationId);
+            $query->location($locationId);
         }])
-        ->joinWith('privateLesson')
-        ->andWhere(['>', 'private_lesson.expiryDate',
-            (new \DateTime())->format('Y-m-d H:i:s')])
+        ->joinWith(['privateLesson' => function ($query) {
+            $query->isNotExpired();
+        }])
 	->joinWith('lessonSplitUsage')
         ->andWhere(['lesson_split_usage.lessonSplitId' => null])
         ->groupBy(['lesson_split.lessonId']);
