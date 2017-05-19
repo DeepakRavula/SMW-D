@@ -217,6 +217,7 @@ $(document).ready(function() {
     $('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
+		height:'auto',
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
         minTime: "<?php echo $from_time; ?>",
@@ -345,6 +346,7 @@ function showclassroomCalendar(date) {
     $('#classroom-calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
+		height: "auto",
         defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -419,6 +421,7 @@ function refreshCalendar(date) {
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
+		height: "auto",
         defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
