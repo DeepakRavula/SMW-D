@@ -7,8 +7,6 @@ use common\models\PhoneNumber;
 use common\models\User;
 use common\models\Student;
 use yii\bootstrap\Modal;
-use yii\helpers\Url;
-use common\models\LocationAvailability;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -140,7 +138,7 @@ use common\models\LocationAvailability;
 </div>
 <?php
 	Modal::begin([
-		'header' => '<h4 class="m-20">Choose Teacher, Day and Time</h4>',
+		'header' => '<h4 class="m-0">Choose Teacher, Day and Time</h4>',
 		'id'=>'new-enrolment-modal',
 	]);?>
 <?php echo $this->render('new/_calendar', [

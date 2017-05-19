@@ -107,15 +107,11 @@ left:45%;
 bottom:-10px;
 }	
 </style>
-<div class="schedule-index">
-	<div class="row schedule-filter">
-		<div class="col-md-4 pull-right">
-			<div id="datepicker" class="input-group date">
-				<input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
-				<div class="input-group-addon">
-					<span class="glyphicon glyphicon-calendar"></span>
-				</div>
-			</div>
+<div class="col-md-3 pull-right">
+	<div id="datepicker" class="input-group date">
+		<input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
+		<div class="input-group-addon">
+			<span class="glyphicon glyphicon-calendar"></span>
 		</div>
 	</div>
 </div>
@@ -183,13 +179,14 @@ $(document).ready(function() {
             defaultDate: date,
             titleFormat: 'DD-MMM-YYYY, dddd',
             defaultView: 'agendaDay',
+			height: 'auto',
             minTime: minTime,
             maxTime: maxTime,
             slotDuration: "00:15:00",
             allDaySlot:false,
             editable: true,
             droppable: false,
-                    selectable:true,
+            selectable:true,
             resources: {
                 url: '<?= Url::to(['enrolment/render-resources']) ?>?' + params,
                 type: 'POST',
