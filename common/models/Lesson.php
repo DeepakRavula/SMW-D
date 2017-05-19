@@ -215,7 +215,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canExplode()
     {
-        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded();
+        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded()
+            && !$this->privateLesson->isExpired();
     }
 
     public function getEnrolment()
