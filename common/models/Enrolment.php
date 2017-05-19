@@ -421,4 +421,15 @@ class Enrolment extends \yii\db\ActiveRecord
 			return Yii::$app->mailer->sendMultiple($content);
 		}
 	}
+
+    public function hasExplodedLesson()
+    {
+        $lessons = Lesson::find()
+            ->andWhere(['lesson.courseId' => $this->courseId])
+            ->joinWith('lessonSplit')
+            ->andWhere(['NOT', ['lessonId' => null]])
+            ->one();
+
+        return !empty($lessons);
+    }
 }

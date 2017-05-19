@@ -485,7 +485,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lesson->status = self::STATUS_SCHEDULED;
         $lesson->isDeleted = false;
 
-        return $lesson->validate() && $this->enrolment->student->hasExplodedLesson()
+        return $lesson->validate() && $this->enrolment->hasExplodedLesson()
             && !$this->isUnscheduled();
     }
 
