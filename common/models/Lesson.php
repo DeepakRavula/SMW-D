@@ -33,10 +33,13 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_CANCELED = 4;
     const STATUS_UNSCHEDULED = 5;
     const STATUS_MISSED = 6;
+    const DEFAULT_MERGE_DURATION = '00:15:00';
+    const DEFAULT_EXPLODE_DURATION_SEC = 900;
 
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA = 2;
-	
+
+    const SCENARIO_MERGE = 'merge';
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_EDIT = 'edit';
     const SCENARIO_EDIT_REVIEW_LESSON = 'edit-review-lesson';
@@ -100,11 +103,11 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 'on' => self::SCENARIO_EDIT_CLASSROOM],
-            [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_CREATE],
-            [['date'], StudentValidator::className(), 'on' => self::SCENARIO_CREATE],
+            [['date'], HolidayValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
+            [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
             [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
 			
-            ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
+            ['date', TeacherValidator::className(), 'on' => [self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_MERGE]],
             ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
 			
@@ -113,7 +116,7 @@ class Lesson extends \yii\db\ActiveRecord
 				return $model->course->program->isPrivate();
 			}],
             [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_REVIEW],
-            [['date'], IntraEnrolledLessonValidator::className(), 'on' => self::SCENARIO_REVIEW],
+            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
 			
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
@@ -171,6 +174,11 @@ class Lesson extends \yii\db\ActiveRecord
         return (int) $this->status === self::STATUS_UNSCHEDULED;
     }
 
+    public function isExploded()
+    {
+        return !empty($this->lessonSplit);
+    }
+
     public function isCompleted()
     {
         return (int) $this->status === self::STATUS_COMPLETED;
@@ -205,6 +213,11 @@ class Lesson extends \yii\db\ActiveRecord
         return false;
     }
 
+    public function canExplode()
+    {
+        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded();
+    }
+
     public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
@@ -214,6 +227,11 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(EnrolmentDiscount::className(), ['enrolmentId' => 'id'])
 			->via('enrolment');
+    }
+
+    public function getLessonSplit()
+    {
+        return $this->hasMany(LessonSplit::className(), ['lessonId' => 'id']);
     }
 
     public function getCourse()
@@ -452,6 +470,24 @@ class Lesson extends \yii\db\ActiveRecord
         return $lessonId;
     }
 
+    public function canMerge()
+    {
+        $lessonDuration = new \DateTime($this->duration);
+        $date = new \DateTime($this->date);
+        $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
+        $lesson = new Lesson();
+        $lesson->setScenario(self::SCENARIO_MERGE);
+        $lesson->date = $date->format('Y-m-d H:i:s');
+        $lesson->duration = self::DEFAULT_MERGE_DURATION;
+        $lesson->teacherId = $this->teacherId;
+        $lesson->courseId = $this->courseId;
+        $lesson->status = self::STATUS_SCHEDULED;
+        $lesson->isDeleted = false;
+
+        return $lesson->validate() && $this->enrolment->student->hasExplodedLesson()
+            && !$this->isUnscheduled();
+    }
+
     public function getRootLesson()
     {
         $rootLessonId = $this->getRootLessonId($this->id);
@@ -502,6 +538,16 @@ class Lesson extends \yii\db\ActiveRecord
         $hours			 = $duration->format('H');
         $minutes		 = $duration->format('i');
         $lessonDuration	 = $hours + ($minutes / 60);
+
+        return $lessonDuration;
+    }
+
+    public function getDurationSec()
+    {
+        $duration		 = \DateTime::createFromFormat('H:i:s', $this->duration);
+        $hours			 = $duration->format('H');
+        $minutes		 = $duration->format('i');
+        $lessonDuration	 = (($hours) * 60) * 60 + ($minutes * 60);
 
         return $lessonDuration;
     }

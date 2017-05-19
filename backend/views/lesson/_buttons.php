@@ -29,13 +29,21 @@ use kartik\switchinput\SwitchInput;
 				<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Take Payment</span>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 			<?php endif; ?>
 		<?php endif; ?>
-		<?php if ($model->course->program->isPrivate()) : ?>
-			<?php
-			echo Html::a('<span class="label label-primary"> Split</span>', '#', [
-				'id' => 'split-lesson',
-				'class' => 'm-r-20 del-ce',
-			])
-			?>	
+		<?php if ($model->canExplode()) : ?>
+                <?php
+                    echo Html::a('<span class="label label-primary"> Explode</span>', ['lesson/split', 'id' => $model->id], [
+                            'id' => 'split-lesson',
+                            'class' => 'm-r-20 del-ce',
+                    ])
+                ?>
+		<?php endif; ?>
+                <?php if ($model->canMerge()) : ?>
+                <?php
+                    echo Html::a('<span class="label label-primary"> Merge</span>', '#', [
+                            'id' => 'merge-lesson',
+                            'class' => 'm-r-20 del-ce',
+                    ])
+                ?>
 		<?php endif; ?>
 		<?php
 		echo Html::a('<i class="fa fa-mail"></i> Email', '#', [
