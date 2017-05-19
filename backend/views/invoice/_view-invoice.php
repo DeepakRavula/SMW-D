@@ -81,7 +81,7 @@ use kartik\editable\Editable;
               <?php if (!$model->isInvoice()) : ?>
               <b>Due Date:</b> <?= Yii::$app->formatter->asDate($model->dueDate); ?><br>
               <?php endif; ?>
-              <b>Status:</b> <?= $model->getStatus(); ?>
+               <b>Status:</b> <div id="invoice-status"><?= $model->getStatus(); ?></div>
             </div>
           <div class="clearfix"></div>
         </div>

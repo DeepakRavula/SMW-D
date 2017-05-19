@@ -6,7 +6,18 @@ use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\User;
 use common\models\Student;
+use yii\bootstrap\Modal;
+use yii\helpers\Url;
+use common\models\LocationAvailability;
 ?>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+
 <style>
 	.enrolment{    
 		background-color: #fff;
@@ -60,7 +71,7 @@ use common\models\Student;
 								<div class="col-lg-8">
 									<div>
 										<?=
-										$this->render('_form-course', [
+										$this->render('new/_form-course', [
 											'model' => new Course(),
 										]);
 										?>
@@ -82,7 +93,7 @@ use common\models\Student;
 						<div class="enrolment-step-body">
 							<div class="row">
 								<?=
-								$this->render('_form-customer', [
+								$this->render('new/_form-customer', [
 									'model' => new User(),
 									'phoneModel' => new PhoneNumber(),
 									'addressModel' => new Address(),
@@ -103,7 +114,7 @@ use common\models\Student;
 							<div class="row">
 								<div class="form-group">
 									<?=
-									$this->render('_form-student', [
+									$this->render('new/_form-student', [
 										'model' => new Student(),
 									]);
 									?> 
@@ -127,3 +138,21 @@ use common\models\Student;
 		</div>
 	</div>
 </div>
+<?php
+	Modal::begin([
+		'header' => '<h4 class="m-20">Choose Teacher, Day and Time</h4>',
+		'id'=>'new-enrolment-modal',
+	]);?>
+<?php echo $this->render('new/_calendar', [
+	
+]);?>
+	<?php Modal::end();?>
+
+<script>
+$(document).ready(function(){
+	$(document).on('click', '.enrolment-calendar-icon', function(){
+		$('#new-enrolment-modal').modal('show');
+	});
+});
+
+</script>
