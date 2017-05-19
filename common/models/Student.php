@@ -103,6 +103,12 @@ class Student extends \yii\db\ActiveRecord
             ->viaTable('enrolment', ['studentId' => 'id']);
     }
 
+    public function getLessons()
+    {
+        return $this->hasMany(Lesson::className(), ['courseId' => 'courseId'])
+            ->viaTable('enrolment', ['studentId' => 'id']);
+    }
+
     public function getFullName()
     {
         if ($this->first_name || $this->last_name) {
@@ -154,5 +160,16 @@ class Student extends \yii\db\ActiveRecord
             self::STATUS_ACTIVE => Yii::t('common', 'Active'),
             self::STATUS_INACTIVE => Yii::t('common', 'Inactive'),
         ];
+    }
+
+    public function hasExplodedLesson()
+    {
+        foreach ($this->lessons as $lesson) {
+            if ($lesson->isExploded()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
