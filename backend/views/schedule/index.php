@@ -245,7 +245,13 @@ $(document).ready(function() {
         },
 		eventRender: function(event, element) {
 			element.poshytip({
-				className: 'tip-twitter',
+				className: 'tip-yellowsimple',
+				alignTo: 'cursor',
+				alignX: 'center',
+				alignY : 'top',
+				offsetY: 5,
+				followCursor: false,
+				slide: false,
 				content : function(updateCallback) {
 					return event.description;
 				}
@@ -372,7 +378,13 @@ function showclassroomCalendar(date) {
         },
   		eventRender: function(event, element) {
 			element.poshytip({
-				className: 'tip-twitter',
+				className: 'tip-yellowsimple',
+				alignTo: 'cursor',
+				alignX: 'center',
+				alignY : 'top',
+				offsetY: 5,
+				followCursor: false,
+				slide: false,
 				content : function(updateCallback) {
 					return event.description;
 				}
@@ -447,7 +459,13 @@ function refreshCalendar(date) {
         },
 		eventRender: function(event, element) {
 			element.poshytip({
-				className: 'tip-twitter',
+				className: 'tip-yellowsimple',
+				alignTo: 'cursor',
+				alignX: 'center',
+				alignY : 'top',
+				offsetY: 5,
+				followCursor: false,
+				slide: false,
 				content : function(updateCallback) {
 					return event.description;
 				}
