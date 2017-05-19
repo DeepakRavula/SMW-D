@@ -4,9 +4,10 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use common\models\CalendarEventColor;
 use common\models\LocationAvailability;
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
 /* @var $this yii\web\View */
 
-$this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 ?>
 <?php
     $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
@@ -45,17 +46,6 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
     );
 ?>
 <style type="text/css">
-    .schedule-index {
-        position: absolute;
-        top: -45px;
-    }
-.selectivity-single-select{
-    margin-right: 10px;
-    padding-bottom:2px;
-}
-.tab-content{
-    padding:0 !important;
-}
 .box-body .fc{
     margin:0 !important;
 }
@@ -107,14 +97,31 @@ left:45%;
 bottom:-10px;
 }	
 </style>
-<div class="col-md-3 pull-right">
-	<div id="datepicker" class="input-group date">
-		<input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
-		<div class="input-group-addon">
-			<span class="glyphicon glyphicon-calendar"></span>
+<?php $form = ActiveForm::begin(); ?>
+<div class="form-group">
+	<div class="col-sm-2">
+		<?= $form->field($model, 'teacherId')->textInput(['readOnly' => true])->label('Teacher'); ?>
+	</div>
+	<div class="col-sm-2">
+		<?= $form->field($model, 'startDate')->textInput(['readOnly' => true])->label('Date & Time'); ?>
+	</div>
+	<div class="col-sm-2">
+		<?= $form->field($model, 'day')->textInput(['readOnly' => true])->label('Duration'); ?>
+	</div>
+	<div class="col-sm-2">
+		<?= Html::submitButton(Yii::t('backend', 'Apply'),
+	['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+    </div>
+	<div class="col-md-3 pull-right">
+		<div id="datepicker" class="input-group date">
+			<input type="text" class="form-control" value=<?= (new \DateTime())->format('d-m-Y') ?>>
+			<div class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</div>
 		</div>
 	</div>
 </div>
+<?php ActiveForm::end(); ?>
 <div id="enrolment-calendar"></div>
 <?php
 	$locationId = Yii::$app->session->get('location_id');

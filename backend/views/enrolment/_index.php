@@ -142,7 +142,7 @@ use yii\bootstrap\Modal;
 		'id'=>'new-enrolment-modal',
 	]);?>
 <?php echo $this->render('new/_calendar', [
-	
+	'model' => new course(),	
 ]);?>
 	<?php Modal::end();?>
 
