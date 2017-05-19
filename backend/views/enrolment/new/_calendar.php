@@ -102,7 +102,7 @@ bottom:-10px;
 	<div class="col-sm-2">
 		<?= $form->field($model, 'teacherId')->textInput(['readOnly' => true])->label('Teacher'); ?>
 	</div>
-	<div class="col-sm-2">
+	<div class="col-sm-3">
 		<?= $form->field($model, 'startDate')->textInput(['readOnly' => true])->label('Date & Time'); ?>
 	</div>
 	<div class="col-sm-2">
@@ -158,9 +158,7 @@ $(document).ready(function() {
 
     $('#datepicker').on('change', function(){
         var date = $('#datepicker').datepicker("getDate");
-        var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-        $(".content-header h1").text("Schedule for " + formattedDate);
-            refreshCalendar(moment(date));
+        refreshCalendar(moment(date));
     });
 
     function refreshCalendar(date) {
@@ -191,7 +189,7 @@ $(document).ready(function() {
             maxTime: maxTime,
             slotDuration: "00:15:00",
             allDaySlot:false,
-            editable: true,
+            editable: false,
             droppable: false,
             selectable:true,
             resources: {
@@ -208,11 +206,12 @@ $(document).ready(function() {
                     $("#enrolment-calendar").fullCalendar("refetchEvents");
                 }
             },
-            select: function (start, end, allDay) {
+            select: function(start, end, jsEvent, view, resource) {
+				console.log(resource.title);
                 $('#calendar').fullCalendar('removeEvents', 'newEnrolment');
                 $('#course-day').val(moment(start).format('dddd'));
-                $('#course-fromtime').val(moment(start).format('h:mm A'));
-                $('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
+                $('#course-teacherid').text(resource.title);
+                $('#course-startdate').val(moment(start).format('DD-MM-YYYY h:mm A'));
                 var endtime = start.clone();
                 var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
