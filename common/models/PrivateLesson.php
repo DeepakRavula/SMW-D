@@ -53,4 +53,10 @@ class PrivateLesson extends \yii\db\ActiveRecord
     {
         return new \common\models\query\PrivateLessonQuery(get_called_class());
     }
+
+    public function isExpired()
+    {
+        return (new \DateTime($this->expiryDate))->format('Y-m-d H:i:s') <
+                (new \DateTime())->format('Y-m-d H:i:s');
+    }
 }

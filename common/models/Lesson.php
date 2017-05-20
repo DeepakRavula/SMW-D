@@ -215,7 +215,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canExplode()
     {
-        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded();
+        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded()
+            && !$this->privateLesson->isExpired();
     }
 
     public function getEnrolment()
@@ -484,7 +485,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lesson->status = self::STATUS_SCHEDULED;
         $lesson->isDeleted = false;
 
-        return $lesson->validate() && $this->enrolment->student->hasExplodedLesson()
+        return $lesson->validate() && $this->enrolment->hasExplodedLesson()
             && !$this->isUnscheduled();
     }
 

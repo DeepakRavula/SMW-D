@@ -161,15 +161,4 @@ class Student extends \yii\db\ActiveRecord
             self::STATUS_INACTIVE => Yii::t('common', 'Inactive'),
         ];
     }
-
-    public function hasExplodedLesson()
-    {
-        foreach ($this->lessons as $lesson) {
-            if ($lesson->isExploded()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }
