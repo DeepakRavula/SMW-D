@@ -13,9 +13,18 @@ use kartik\switchinput\SwitchInput;
 		left:719px;
 		top:-78px;	
 	}
+	.lesson-buttons a{
+		margin-bottom:20px;
+		width:100%;
+		display:block;
+	}
+	.lesson-buttons a span{
+		display:block;
+		widrg:100%;
+	}
 </style>
 <div class="row-fluid">
-	<div class="col-md-12 action-btns m-b-20">
+	<div class="col-md-12 action-btns m-b-20 lesson-buttons">
 		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-pencil"></i> Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 		<?php if ($model->invoice) : ?>
 			<?= Html::a('<span class="label label-primary">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-20 del-ce']) ?>

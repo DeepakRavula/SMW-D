@@ -22,9 +22,14 @@ use yii\bootstrap\Modal;
 		left:397px;
 		top:-30px;
 	}
+	.student_customer {
+    
+    margin-bottom: 10px;
+}
 </style>
-<div class="lesson-view">
-	<div class="row student_customer">
+<div class="row lesson-view">
+<div class="col-md-9">
+	<div class=" student_customer">
         	<?php if ($model->course->program->isPrivate()):?>
         	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Student">
         		<p class="m-b-0">Student</p>
@@ -40,11 +45,7 @@ use yii\bootstrap\Modal;
         	<div class="clearfix"></div>
 		<?php endif; ?>
     </div>
-    <div class="row-fluid">
-    	<div class="col-md-12">
-        	<hr class="default-hr">    		
-    	</div>
-    </div>
+   
     <div class="row-fluid">
 			<?php if (! $model->isUnscheduled()) : ?>
 			<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
@@ -86,19 +87,20 @@ use yii\bootstrap\Modal;
 		</div>
       
 	</div>
+	</div>
+	
+	<div class="col-md-3">
 	<?php if (Yii::$app->controller->action->id === 'view'):?>
-	<div class="row-fluid">
-    	<div class="col-md-12">
-        	<hr class="default-hr">    		
-    	</div>
-    </div>
+	
 	<?= $this->render('_buttons', [
 		'model' => $model,
 	]); ?>
 		<?php endif; ?>
 <div class="clearfix"></div>
 </div>
+</div>
 <?php
+
 Modal::begin([
     'header' => '<h4 class="m-0">Email Preview</h4>',
     'id'=>'lesson-mail-modal',
