@@ -68,10 +68,13 @@ use kartik\switchinput\SwitchInput;
 		$currentDate = (new \DateTime())->format('Y-m-d');
 		?>
 			<?php $form = ActiveForm::begin(['id' => 'lesson-present-form']); ?>
-			<?php $model->present = $model->isMissed() ? false : true; ?> 
+			<?php $model->present = $model->isMissed() ? false : true; 
+			$disabled = $model->isMissed() ? true : false;
+			?> 
 			<?=
 			$form->field($model, 'present')->widget(SwitchInput::classname(), [
 				'name' => 'present',
+				'disabled' => $disabled,
 				'pluginOptions' => [
 					'handleWidth' => 61,
 					'onText' => 'Present',
