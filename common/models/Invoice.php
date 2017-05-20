@@ -116,6 +116,26 @@ class Invoice extends \yii\db\ActiveRecord
         return new InvoiceQuery(get_called_class());
     }
 
+	public static function invoiceCount()
+	{
+		$locationId = Yii::$app->session->get('location_id');
+		return self::find()
+			->location($locationId)
+			->notDeleted()
+			->invoice()
+			->andWhere(['isCanceled' => false])
+			->count();
+	}
+	public static function pfiCount()
+	{
+		$locationId = Yii::$app->session->get('location_id');
+		return self::find()
+			->location($locationId)
+			->notDeleted()
+			->proFormaInvoice()
+			->andWhere(['isCanceled' => false])
+			->count();
+	}
     public function getLineItems()
     {
         return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id']);

@@ -491,4 +491,53 @@ class User extends ActiveRecord implements IdentityInterface
 		$role = end($roles);
         return self::$roleBootstrapClasses[$role->name];
     }
+	public static function customerCount()
+    {
+		return self::find()
+			->joinWith('userLocation ul')
+			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+			->where(['raa.item_name' => 'customer'])
+			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+			->active()
+			->count();
+    }
+	
+	public static function teacherCount()
+    {
+		return self::find()
+			->joinWith('userLocation ul')
+			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+			->where(['raa.item_name' => 'teacher'])
+			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+			->active()
+			->count();
+    }
+	public static function staffCount()
+    {
+		return self::find()
+			->joinWith('userLocation ul')
+			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+			->where(['raa.item_name' => 'staffmember'])
+			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+			->active()
+			->count();
+    }
+	public static function ownerCount()
+    {
+		return self::find()
+			->joinWith('userLocation ul')
+			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+			->where(['raa.item_name' => 'owner'])
+			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+			->active()
+			->count();
+    }
+	public static function adminCount()
+    {
+		return self::find()
+			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+			->where(['raa.item_name' => 'administrator'])
+			->active()
+			->count();
+    }
 }

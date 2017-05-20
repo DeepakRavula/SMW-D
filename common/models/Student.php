@@ -161,4 +161,11 @@ class Student extends \yii\db\ActiveRecord
             self::STATUS_INACTIVE => Yii::t('common', 'Inactive'),
         ];
     }
+	public static function count()
+    {
+		$locationId = Yii::$app->session->get('location_id');
+        return self::find()
+			->location($locationId)
+			->count();
+    }
 }

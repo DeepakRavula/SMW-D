@@ -357,4 +357,16 @@ class Course extends \yii\db\ActiveRecord
 		}
 		$this->generateLessons($lessons, $startDate);
 	}
+	public static function groupCourseCount()
+	{
+		$locationId = Yii::$app->session->get('location_id');
+		return self::find()
+			->joinWith(['program' => function($query) {
+				$query->group()
+					->active();
+			}])
+			->location($locationId)
+			->confirmed()
+			->count();
+	}
 }
