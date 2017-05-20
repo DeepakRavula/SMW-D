@@ -243,6 +243,7 @@
                 </div>
             </div>
             <div class="invoice-col" style="clear:both; ">
+				<?php if(!empty($model->user)) : ?>
                 <div class="invoice-print-address">
                     <ul>
 						<li>
@@ -300,6 +301,7 @@
                         </li>   
                     </ul>
                 </div>
+			<?php endif; ?>
             </div>
         </div>
         <div class="row-fluid invoice-info m-t-10">
