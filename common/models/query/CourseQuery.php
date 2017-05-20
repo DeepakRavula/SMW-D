@@ -67,15 +67,6 @@ class CourseQuery extends \yii\db\ActiveQuery
 			[
 				'between', 'DATE(endDate)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')
 			],
-			[
-			'AND',
-				[
-					'>=', 'DATE(startDate)',$fromDate->format('Y-m-d')
-				],
-				[
-					'<=', 'DATE(endDate)', $toDate->format('Y-m-d')
-				]
-			]
 		]);
 		return $this;
 	}
