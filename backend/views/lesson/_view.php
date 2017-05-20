@@ -31,16 +31,16 @@ use yii\bootstrap\Modal;
 <div class="col-md-9">
 	<div class=" student_customer">
         	<?php if ($model->course->program->isPrivate()):?>
-        	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Student">
-        		<p class="m-b-0">Student</p>
+        	<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Student">
+        		<p class="m-b-0"><strong>Student</strong></p>
                 <a href= "<?= Url::to(['student/view', 'id' => $model->enrolment->student->id]) ?>">
-					<strong><?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null ?></strong>
+					<h4><strong><?= !empty($model->enrolment->student->fullName) ? $model->enrolment->student->fullName : null ?></strong></h4>
 				</a>
         	</div>
-        	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
-        		<p class="m-b-0">Customer</p>
+        	<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
+        		<p class="m-b-0"><strong>Customer</strong></p>
                 <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $model->enrolment->student->customer->id]) ?>">
-				<strong><?= !empty($model->enrolment->student->customer->userProfile->fullName) ? $model->enrolment->student->customer->userProfile->fullName : null ?></strong></a>
+				<h4><strong><?= !empty($model->enrolment->student->customer->userProfile->fullName) ? $model->enrolment->student->customer->userProfile->fullName : null ?></strong></h4></a>
         	</div>
         	<div class="clearfix"></div>
 		<?php endif; ?>
@@ -48,14 +48,14 @@ use yii\bootstrap\Modal;
    
     <div class="row-fluid">
 			<?php if (! $model->isUnscheduled()) : ?>
-			<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
+			<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
 			<i class="fa fa-calendar"></i>
 				<?php echo !empty(Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>
 			</div>
 		<?php endif; ?>
         <?php if($model->isRescheduled()) : ?>
         <?php $rootLesson = $model->getRootLesson(); ?>
-        <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Original Lesson Date">
+        <div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Original Lesson Date">
             <i class="fa fa-calendar-plus-o"></i> <?php echo Yii::$app->formatter->asDateTime($rootLesson->date); ?>
         </div>
         <?php endif; ?>
@@ -74,21 +74,23 @@ use yii\bootstrap\Modal;
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
 			<i class="fa fa-info-circle detail-icon"></i> <?php echo !empty($model->status) ? $model->getStatus() : null; ?>
 		</div>
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
+		<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
 			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null; ?>
 		</div>
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Expiry Date">
+		</div>
+		<div class="clearfix"></div>
+		<div class="row-fluid p-10">
+		<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Expiry Date">
 			<?php if (!empty($model->privateLesson->expiryDate)) :?>
 				<i class="fa fa-calendar-plus-o"></i> <?php echo !empty($model->privateLesson->expiryDate) ? (Yii::$app->formatter->asDate($model->privateLesson->expiryDate)) : null; ?>
 		    <?php endif; ?>
 		</div>
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Classroom">
+		<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Classroom">
 			<i class="fa fa-home"></i> <?php echo !empty($model->classroomId) ? $model->classroom->name : null; ?>
 		</div>
       
 	</div>
 	</div>
-	
 	<div class="col-md-3">
 	<?php if (Yii::$app->controller->action->id === 'view'):?>
 	
@@ -96,7 +98,6 @@ use yii\bootstrap\Modal;
 		'model' => $model,
 	]); ?>
 		<?php endif; ?>
-<div class="clearfix"></div>
 </div>
 </div>
 <?php

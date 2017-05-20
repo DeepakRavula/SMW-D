@@ -25,9 +25,9 @@ use kartik\switchinput\SwitchInput;
 </style>
 <div class="row-fluid">
 	<div class="col-md-12 action-btns m-b-20 lesson-buttons">
-		<?php echo Html::a('<span class="label label-primary"><i class="fa fa-pencil"></i> Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
+		<?php echo Html::a('<span class="btn btn-info	">Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 		<?php if ($model->invoice) : ?>
-			<?= Html::a('<span class="label label-primary">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-20 del-ce']) ?>
+			<?= Html::a('<span class="btn btn-info">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-20 del-ce']) ?>
 		<?php else : ?>
 			<?php echo Html::a('<span class="label label-primary"><i class="fa fa-dollar"></i> Invoice this Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 		<?php endif; ?>
