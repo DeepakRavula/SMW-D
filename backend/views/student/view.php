@@ -155,6 +155,10 @@ echo $this->render('_profile', [
             $('#new-lesson-modal').modal('show');
             return false;
         });
+		 $(document).on('click', '.note-cancel-button', function (e) {
+            $('#student-note-modal').modal('hide');
+            return false;
+        });
         $(document).on('click', '#student-note', function (e) {
             $('#note-content').val('');
             $('#student-note-modal').modal('show');

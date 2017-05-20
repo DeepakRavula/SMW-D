@@ -17,8 +17,8 @@ use yii\helpers\Url;
         </div>
 	</div>
 	<div class="form-group">
-		<?php echo Html::submitButton(Yii::t('backend', 'Continue'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-        <?= Html::a('Cancel', '#', ['class' => 'btn vacation-cancel-button']); ?>
+		<?php echo Html::submitButton(Yii::t('backend', 'Continue'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
+        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default vacation-cancel-button']); ?>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>

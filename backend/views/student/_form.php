@@ -45,10 +45,10 @@ use yii\helpers\Url;
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
     <div class="row-fluid">
     <div class="form-group">
-       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
 		<?php 
             if (!$model->isNewRecord) {
-                echo Html::a('Cancel','#', ['class' => 'btn student-profile-cancel-button']);
+                echo Html::a('Cancel','#', ['class' => 'btn btn-default student-profile-cancel-button']);
             }
         ?>
     </div>

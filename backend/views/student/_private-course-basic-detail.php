@@ -169,6 +169,8 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 		});
 	}
     $(document).ready(function () {
+		$('.next-step').removeClass('btn-default');
+		$('.next-step').addClass('btn-success');
 		$('#course-rate-estimation').hide();
 		$(document).on('change', '#course-programid', function(){
 			var duration = $('#course-duration').val();
