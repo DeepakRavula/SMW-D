@@ -6,8 +6,9 @@ use kartik\switchinput\SwitchInput;
 ?>
 <style>
 	.bootstrap-switch-id-lesson-present {
-		left:530px;
-		top:-31px;
+		left:0;
+	top:0;
+	width:100% !important;
 	}
 	#extra-lesson-delete {
 		left:719px;
@@ -21,6 +22,17 @@ use kartik\switchinput\SwitchInput;
 	.lesson-buttons a span{
 		display:block;
 		widrg:100%;
+	}
+	.field-lesson-present .bootstrap-switch-label{
+		
+		display:none !important;
+	}
+	.bootstrap-switch-container{
+		margin-left:0 !important;
+	}
+	.field-lesson-present .bootstrap-switch-primary,.field-lesson-present .bootstrap-switch-default{
+		width:49.8% !Important;
+		    display: inline-block !important
 	}
 </style>
 <div class="row-fluid">
