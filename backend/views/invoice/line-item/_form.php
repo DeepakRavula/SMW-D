@@ -51,7 +51,7 @@ use common\models\TaxStatus;
                     'onText' => 'Yes',
                     'offText' => 'No',
                 ],
-            ])->label('Is Royalty');?>
+            ]);?>
         </div>
 	   <div class="clearfix"></div>
 	   

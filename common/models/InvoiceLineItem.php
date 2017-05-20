@@ -169,7 +169,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'tax_rate' => 'Tax',
             'tax_status' => 'Tax Status',
             'isRoyaltyExempted' => 'Exempt from Royalty',
-            'isRoyalty' => 'Royalty',
+            'isRoyalty' => 'Royalty Free',
 			'tax' => 'Tax (%)'
         ];
     }
