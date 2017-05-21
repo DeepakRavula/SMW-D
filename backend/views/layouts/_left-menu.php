@@ -8,6 +8,11 @@ use common\models\Invoice;
 use common\models\Student;
 use common\models\Course;
 ?>
+<style>
+	.label{
+		font-size:80%;
+	}
+</style>
 <?php
 echo Menu::widget([
 	'options' => ['class' => 'sidebar-menu'],
