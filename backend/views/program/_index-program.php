@@ -59,7 +59,7 @@ $lastRole = end($roles);
 <?php if ($lastRole->name === User::ROLE_ADMINISTRATOR):?>
 <div class="col-md-8">
 <h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
-<a href="#" class="add-new-program pull-right text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add</a>
+<a href="#" class="add-new-program  text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add</a>
 <div class="clearfix"></div>
 </div>
 <?php endif; ?>
