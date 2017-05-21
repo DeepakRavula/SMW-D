@@ -14,7 +14,7 @@ use kartik\daterange\DateRangePicker;
     top: -49px;
   }
   .apply-button {
-    left: 790px;
+    left: 920px;
     top: -49px;
   }
 </style>
