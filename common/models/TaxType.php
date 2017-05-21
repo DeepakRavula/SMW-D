@@ -12,6 +12,7 @@ namespace common\models;
  */
 class TaxType extends \yii\db\ActiveRecord
 {
+	const HST = 1;
     /**
      * {@inheritdoc}
      */
