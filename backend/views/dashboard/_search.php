@@ -10,12 +10,12 @@ use kartik\daterange\DateRangePicker;
 ?>
 <style>
   .e1Div{
-    right: 100px;
+    right: 150px;
     top: -49px;
   }
   .apply-button {
-    left: 850px;
-    top: -47px;
+    left: 790px;
+    top: -49px;
   }
 </style>
 <div class="user-search">
