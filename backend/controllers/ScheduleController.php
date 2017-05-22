@@ -15,6 +15,7 @@ use yii\helpers\Url;
 use common\models\Holiday;
 use common\models\TeacherAvailability;
 use common\models\LocationAvailability;
+use common\models\ClassroomUnavailability;
 use common\models\Classroom;
 
 /**
@@ -420,6 +421,32 @@ class ScheduleController extends Controller
         $date = \DateTime::createFromFormat('Y-m-d', $date);
         $events = $this->getHolidayEvent($date);
         if (empty($events)) {
+			$classroomUnavailabilities = ClassroomUnavailability::find()
+				->andWhere(['AND',
+					['<=', 'DATE(fromDate)', $date->format('Y-m-d')],
+					['>=', 'DATE(toDate)', $date->format('Y-m-d')]
+				])
+				->all();
+			$locationAvailability = LocationAvailability::find()
+				->andWhere([
+					'locationId' => Yii::$app->session->get('location_id'),
+					'day' => $date->format('N')
+				])
+				->one();
+			foreach ($classroomUnavailabilities as $classroomUnavailability) {
+				list($fromTime['hours'], $fromTime['minutes'], $fromTime['seconds']) = explode(':', $locationAvailability->fromTime);	 
+				$start = $date->setTime($fromTime['hours'], $fromTime['minutes'], $fromTime['seconds']);
+				$end = clone $date;
+				list($toTime['hours'], $toTime['minutes'], $toTime['seconds']) = explode(':', $locationAvailability->toTime);
+				$end = $end->setTime($toTime['hours'], $toTime['minutes'], $toTime['seconds']);
+				$events[] = [
+					'resourceId' => $classroomUnavailability->classroomId,
+					'title'      => '',
+					'start'      => $start->format('Y-m-d H:i:s'),
+					'end'        => $end->format('Y-m-d H:i:s'),
+					'rendering'  => 'background',
+				];
+			}
             $programId = null;
             $teacherId = null;
             $lessons = $this->getLessons($date, $programId, $teacherId);

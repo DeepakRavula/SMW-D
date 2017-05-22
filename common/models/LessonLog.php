@@ -87,7 +87,7 @@ class LessonLog extends Lesson {
 				'data' => $lesson,
 				'message' => $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}} to ' . $lessonModel->classroom->name,
 			]));
-		}
+		
 		if ($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
@@ -109,6 +109,7 @@ class LessonLog extends Lesson {
 			$timelineEventLesson->action = 'edit';
 			$timelineEventLesson->save();
 		}
+    }
 	}
 
 }

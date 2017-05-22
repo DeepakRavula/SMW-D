@@ -836,7 +836,7 @@ class LessonController extends Controller
             $model = ActiveForm::validate($model);
             $response = [
                 'status' => false,
-                'errors' => $model,
+                'errors' => current($model),
             ];
         }
 

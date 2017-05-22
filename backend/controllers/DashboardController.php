@@ -43,22 +43,26 @@ class DashboardController extends \yii\web\Controller
 						->notDeleted()
                         ->sum('tax');
         $enrolments = Enrolment::find()
-                    ->notDeleted()
-                    ->program($locationId, $currentDate)
-                    ->where([
-						'program.type' => Program::TYPE_PRIVATE_PROGRAM,
-						'enrolment.isConfirmed' => true,
-					])
-                    ->count('studentId');
+			->joinWith(['course' => function($query) use($locationId, $searchModel) {
+				$query->joinWith(['program' => function($query) {
+					$query->privateProgram();
+				}])
+				->confirmed()
+				->location($locationId)
+				->between($searchModel->fromDate, $searchModel->toDate);
+			}])
+            ->count('studentId');
 
         $groupEnrolments = Enrolment::find()
-                    ->notDeleted()
-                    ->program($locationId, $currentDate)
-                    ->where([
-						'program.type' => Program::TYPE_GROUP_PROGRAM,
-						'enrolment.isConfirmed' => true,
-					])
-                    ->count('studentId');
+            ->joinWith(['course' => function($query) use($locationId, $searchModel) {
+				$query->joinWith(['program' => function($query) {
+					$query->group();
+				}])
+				->confirmed()
+				->location($locationId)
+				->between($searchModel->fromDate, $searchModel->toDate);
+			}])
+            ->count('studentId');
 
         $payments = Payment::find()
                     ->joinWith(['invoice i' => function ($query) use ($locationId) {
@@ -77,13 +81,12 @@ class DashboardController extends \yii\web\Controller
                     ->sum('invoice_line_item.amount');
 
         $students = Student::find()
-            ->joinWith(['enrolment' => function ($query) use ($locationId, $currentDate) {
-                $query->joinWith(['course' => function ($query) use ($locationId, $currentDate) {
-                    $query->andWhere(['locationId' => $locationId])
-                        ->andWhere(['NOT', ['studentId' => null]])
-                        ->andWhere(['>=', 'endDate', $currentDate->format('Y-m-d')]);
-                }])
-				->where(['enrolment.isConfirmed' => true]);
+            ->joinWith(['enrolment' => function ($query) use ($locationId, $searchModel) {
+                $query->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+                $query->confirmed()
+					->location($locationId)
+					->between($searchModel->fromDate, $searchModel->toDate);
+                }]);
             }])
 			->active()
             ->distinct(['enrolment.studentId'])
