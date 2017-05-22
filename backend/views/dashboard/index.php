@@ -103,6 +103,58 @@ $this->title = 'Dashboard';
 			]);
 			?>
 		</div>
+		<div class="m-t-20 instruction_hours_piechart">
+			<?=
+			Highcharts::widget([
+				'options' => [
+					'title' => ['text' => 'Enrolment Gains'],
+					'plotOptions' => [
+						'pie' => [
+							'size' => '80%',
+							'cursor' => 'pointer',
+							'dataLabels' => [
+								'enabled' => true,
+								'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+							],
+						],
+					],
+					'series' => [
+						[
+							'type' => 'pie',
+							'name' => 'Hours',
+							'data' => $completedPrograms
+						], 
+					],
+				],
+			]);
+			?>
+		</div>
+		<div class="m-t-20 instruction_hours_piechart">
+			<?=
+			Highcharts::widget([
+				'options' => [
+					'title' => ['text' => 'Enrolment Losses'],
+					'plotOptions' => [
+						'pie' => [
+							'size' => '80%',
+							'cursor' => 'pointer',
+							'dataLabels' => [
+								'enabled' => true,
+								'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+							],
+						],
+					],
+					'series' => [
+						[
+							'type' => 'pie',
+							'name' => 'Hours',
+							'data' => $completedPrograms
+						], 
+					],
+				],
+			]);
+			?>
+		</div>
 	</div>
 	<div class="col-md-2 col-sm-4 p-r-0">
 		<div class="pad box-pane-right bg-green" style="min-height: 280px">

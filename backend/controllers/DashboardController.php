@@ -109,6 +109,23 @@ class DashboardController extends \yii\web\Controller
             array_push($completedPrograms, $completedProgram);
         }
 
+		$enrolments = [];
+        $programs = Enrolment::find()
+                    ->notDeleted()
+                    ->program($locationId, $currentDate)
+                    ->where([
+						'program.type' => Program::TYPE_PRIVATE_PROGRAM,
+						'enrolment.isConfirmed' => true,
+					])
+                    ->groupBy(['course.programId'])
+                    ->all();
+        foreach ($programs as $program) {
+            $completedProgram = [];
+            $completedProgram['name'] = $program->program_name;
+            $completedProgram['y'] = $program->hours / 6000;
+            array_push($completedPrograms, $completedProgram);
+        }
+
         return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students, 'completedPrograms' => $completedPrograms, 'royaltyPayment' => $royaltyPayment]);
     }
 }
