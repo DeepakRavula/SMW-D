@@ -112,26 +112,55 @@ class DashboardController extends \yii\web\Controller
             array_push($completedPrograms, $completedProgram);
         }
 
-		$enrolments = [];
-        $programs = Lesson::find()
-                    ->select(['sum(course.duration) as hours, program.name as program_name'])
-                    ->joinWith(['course' => function ($query) use ($locationId) {
-                        $query->where(['course.locationId' => $locationId]);
-                        $query->joinWith(['program' => function ($query) {
-                        }]);
-                    }])
-                    ->andWhere(['between', 'lesson.date', $searchModel->fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
-                    ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
-                    ->notDeleted()
-                    ->groupBy(['course.programId'])
-                    ->all();
-        foreach ($programs as $program) {
-            $completedProgram = [];
-            $completedProgram['name'] = $program->program_name;
-            $completedProgram['y'] = $program->hours / 6000;
-            array_push($completedPrograms, $completedProgram);
+		$enrolmentGains = [];
+        $allEnrolments = Enrolment::find()
+            ->select(['COUNT(enrolment.id) as enrolmentCount, program.name as programName'])
+            ->joinWith(['course' => function($query) use($locationId, $searchModel) {
+				$query->joinWith(['program' => function($query) {
+				}])
+				->confirmed()
+				->location($locationId)
+				->between($searchModel->fromDate, $searchModel->toDate);
+			}])
+            ->groupBy(['course.programId'])
+            ->all();
+        foreach ($allEnrolments as $allEnrolment) {
+            $enrolmentGain = [];
+            $enrolmentGain['name'] = $allEnrolment->programName;
+            $enrolmentGain['y'] = round($allEnrolment->enrolmentCount,2);
+            array_push($enrolmentGains, $enrolmentGain);
+        }
+		$enrolmentLosses = [];
+        $allLossEnrolments = Enrolment::find()
+            ->select(['COUNT(enrolment.id) as enrolmentCount, program.name as programName'])
+            ->joinWith(['course' => function($query) use($locationId, $searchModel) {
+				$query->joinWith(['program' => function($query) {
+				}])
+				->confirmed()
+				->location($locationId)
+				->betweenEndDate($searchModel->fromDate, $searchModel->toDate);
+			}])
+            ->groupBy(['course.programId'])
+            ->all();
+        foreach ($allLossEnrolments as $allLossEnrolment) {
+            $enrolmentLoss = [];
+            $enrolmentLoss['name'] = $allLossEnrolment->programName;
+            $enrolmentLoss['y'] = round($allLossEnrolment->enrolmentCount);
+            array_push($enrolmentLosses, $enrolmentLoss);
         }
 
-        return $this->render('index', ['searchModel' => $searchModel, 'invoiceTotal' => $invoiceTotal, 'invoiceTaxTotal' => $invoiceTaxTotal, 'enrolments' => $enrolments, 'groupEnrolments' => $groupEnrolments, 'payments' => $payments, 'students' => $students, 'completedPrograms' => $completedPrograms, 'royaltyPayment' => $royaltyPayment]);
+        return $this->render('index', [
+			'searchModel' => $searchModel,
+			'invoiceTotal' => $invoiceTotal,
+			'invoiceTaxTotal' => $invoiceTaxTotal,
+			'enrolments' => $enrolments,
+			'groupEnrolments' => $groupEnrolments,
+			'payments' => $payments,
+			'students' => $students,
+			'completedPrograms' => $completedPrograms,
+			'royaltyPayment' => $royaltyPayment,
+			'enrolmentGains' => $enrolmentGains,	
+			'enrolmentLosses' => $enrolmentLosses,	
+		]);
     }
 }

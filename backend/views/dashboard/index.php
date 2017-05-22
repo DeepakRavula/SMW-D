@@ -6,7 +6,6 @@ use common\models\Dashboard;
 
 $this->title = 'Dashboard';
 ?>
-
 		<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <div class="clearfix"></div>
 <?php yii\widgets\Pjax::begin(['id' => 'dashboard']); ?>
@@ -77,7 +76,8 @@ $this->title = 'Dashboard';
 			]);
 			?>
 		</div>
-		<div class="m-t-20     instruction_hours_piechart">
+		<?php if(!empty($completedPrograms)) : ?>
+		<div class="m-t-20 instruction_hours_piechart">
 			<?=
 			Highcharts::widget([
 				'options' => [
@@ -103,7 +103,9 @@ $this->title = 'Dashboard';
 			]);
 			?>
 		</div>
-		<div class="m-t-20 instruction_hours_piechart">
+		<?php endif; ?>
+		<?php if($enrolmentGains) : ?>
+		<div class="m-t-20">
 			<?=
 			Highcharts::widget([
 				'options' => [
@@ -121,15 +123,17 @@ $this->title = 'Dashboard';
 					'series' => [
 						[
 							'type' => 'pie',
-							'name' => 'Hours',
-							'data' => $completedPrograms
+							'name' => 'Gain Count',
+							'data' => $enrolmentGains
 						], 
 					],
 				],
 			]);
 			?>
 		</div>
-		<div class="m-t-20 instruction_hours_piechart">
+		<?php endif;?>
+		<?php if(!empty($enrolmentLosses)) : ?>
+		<div class="m-t-20">
 			<?=
 			Highcharts::widget([
 				'options' => [
@@ -147,14 +151,15 @@ $this->title = 'Dashboard';
 					'series' => [
 						[
 							'type' => 'pie',
-							'name' => 'Hours',
-							'data' => $completedPrograms
+							'name' => 'Loss Count',
+							'data' => $enrolmentLosses
 						], 
 					],
 				],
 			]);
 			?>
 		</div>
+		<?php endif; ?>
 	</div>
 	<div class="col-md-2 col-sm-4 p-r-0">
 		<div class="pad box-pane-right bg-green" style="min-height: 280px">
