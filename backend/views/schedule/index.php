@@ -404,8 +404,10 @@ function showclassroomCalendar(date) {
                     if (response.status) {
                         $("#classroom-calendar").fullCalendar("refetchEvents");
                     } else {
-                        $('#notification').html('Classroom already chosen!').fadeIn().delay(5000).fadeOut();
+                        $('#notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                         $("#classroom-calendar").fullCalendar("refetchEvents");
+				 		$(window).scrollTop(0);
+						
                     }
                 }
             });
