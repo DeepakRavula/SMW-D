@@ -11,6 +11,8 @@ use yii\filters\VerbFilter;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use yii\data\ActiveDataProvider;
+use common\models\PaymentMethod;
+
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -58,22 +60,22 @@ class ReportController extends Controller {
 		
 		$invoiceTaxTotal = Invoice::find()
 			->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
-			->andWhere(['NOT', ['status' => Invoice::STATUS_OWING]])
 			->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 			->notDeleted()
 			->sum('tax');
 
 		$payments = Payment::find()
 			->joinWith(['invoice i' => function ($query) use ($locationId) {
-					$query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
-				}])
+				$query->where(['i.location_id' => $locationId]);
+			}])
+			->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
+            ->notDeleted()
 			->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 			->sum('payment.amount');
 
 		$royaltyPayment = InvoiceLineItem::find()
 			->joinWith(['invoice i' => function ($query) use ($locationId) {
 					$query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
-					$query->andWhere(['NOT', ['status' => Invoice::STATUS_OWING]]);
 				}])
 			->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 			->andWhere(['invoice_line_item.isRoyalty' => false])
@@ -109,7 +111,6 @@ class ReportController extends Controller {
 				$query->andWhere([
 					'location_id' => $locationId,
 					'type' => Invoice::TYPE_INVOICE,
-					'status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT],
 				])	
 				->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 				->notDeleted();
@@ -152,7 +153,6 @@ class ReportController extends Controller {
 				$query->andWhere([
 					'location_id' => $locationId,
 					'type' => Invoice::TYPE_INVOICE,
-					'status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT],
 				])	
 				->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 				->notDeleted();
