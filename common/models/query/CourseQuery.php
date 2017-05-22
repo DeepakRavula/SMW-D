@@ -58,4 +58,10 @@ class CourseQuery extends \yii\db\ActiveQuery
 	public function confirmed() {
 		return $this->andWhere(['course.isConfirmed' => true]);
 	}
+	public function between($fromDate, $toDate)
+	{
+		$this->andWhere(['between', 'DATE(startDate)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
+			
+		return $this;
+	}
 }
