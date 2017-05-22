@@ -110,13 +110,16 @@ class DashboardController extends \yii\web\Controller
         }
 
 		$enrolments = [];
-        $programs = Enrolment::find()
+        $programs = Lesson::find()
+                    ->select(['sum(course.duration) as hours, program.name as program_name'])
+                    ->joinWith(['course' => function ($query) use ($locationId) {
+                        $query->where(['course.locationId' => $locationId]);
+                        $query->joinWith(['program' => function ($query) {
+                        }]);
+                    }])
+                    ->andWhere(['between', 'lesson.date', $searchModel->fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+                    ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
                     ->notDeleted()
-                    ->program($locationId, $currentDate)
-                    ->where([
-						'program.type' => Program::TYPE_PRIVATE_PROGRAM,
-						'enrolment.isConfirmed' => true,
-					])
                     ->groupBy(['course.programId'])
                     ->all();
         foreach ($programs as $program) {
