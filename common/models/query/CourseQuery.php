@@ -60,14 +60,8 @@ class CourseQuery extends \yii\db\ActiveQuery
 	}
 	public function between($fromDate, $toDate)
 	{
-		$this->andWhere(['OR', 
-			[
-				'between', 'DATE(startDate)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')
-			],
-			[
-				'between', 'DATE(endDate)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')
-			],
-		]);
+		$this->andWhere(['between', 'DATE(startDate)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
+			
 		return $this;
 	}
 }

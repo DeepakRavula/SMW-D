@@ -81,13 +81,12 @@ class DashboardController extends \yii\web\Controller
                     ->sum('invoice_line_item.amount');
 
         $students = Student::find()
-            ->joinWith(['enrolment' => function ($query) use ($locationId, $currentDate) {
-                $query->joinWith(['course' => function ($query) use ($locationId, $currentDate) {
-                    $query->andWhere(['locationId' => $locationId])
-                        ->andWhere(['NOT', ['studentId' => null]])
-                        ->andWhere(['>=', 'endDate', $currentDate->format('Y-m-d')]);
-                }])
-				->where(['enrolment.isConfirmed' => true]);
+            ->joinWith(['enrolment' => function ($query) use ($locationId, $searchModel) {
+                $query->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+                $query->confirmed()
+					->location($locationId)
+					->between($searchModel->fromDate, $searchModel->toDate);
+                }]);
             }])
 			->active()
             ->distinct(['enrolment.studentId'])
