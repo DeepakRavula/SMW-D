@@ -434,11 +434,11 @@ class ScheduleController extends Controller
 				])
 				->one();
 			foreach ($classroomUnavailabilities as $classroomUnavailability) {
-				$fromTime = explode(':', $locationAvailability->fromTime);	
-				$start = $date->setTime($fromTime[0], $fromTime[1], $fromTime[2]);
+				list($fromTime['hours'], $fromTime['minutes'], $fromTime['seconds']) = explode(':', $locationAvailability->fromTime);	 
+				$start = $date->setTime($fromTime['hours'], $fromTime['minutes'], $fromTime['seconds']);
 				$end = clone $date;
-				$toTime = explode(':', $locationAvailability->toTime);
-				$end = $end->setTime($toTime[0], $toTime[1], $toTime[2]);
+				list($toTime['hours'], $toTime['minutes'], $toTime['seconds']) = explode(':', $locationAvailability->toTime);
+				$end = $end->setTime($toTime['hours'], $toTime['minutes'], $toTime['seconds']);
 				$events[] = [
 					'resourceId' => $classroomUnavailability->classroomId,
 					'title'      => '',
