@@ -822,11 +822,16 @@ class LessonController extends Controller
         }
     }
 
-    public function actionModifyClassroom($id, $classroomId)
+    public function actionModifyClassroom($id, $classroomId, $startTime, $endTime)
     {
         $model = Lesson::findOne($id);
         $model->setScenario(Lesson::SCENARIO_EDIT_CLASSROOM);
         $model->classroomId = $classroomId;
+        $model->date = (new \DateTime($startTime))->format('Y-m-d H:i:s');
+        $startTime = new \DateTime($startTime);
+        $endTime = new \DateTime($endTime);
+        $interval = $startTime->diff($endTime);
+        $model->duration = $interval->format("%H:%I:%S");
         if ($model->validate()) {
             $model->save(false);
             $response = [
