@@ -103,14 +103,12 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 'on' => self::SCENARIO_EDIT_CLASSROOM],
-            [['date'], HolidayValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
-                self::SCENARIO_EDIT_CLASSROOM]],
-            [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE, 
-                self::SCENARIO_EDIT_CLASSROOM]],
+            [['date'], HolidayValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
+            [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
             [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
 			
             ['date', TeacherValidator::className(), 'on' => [self::SCENARIO_EDIT_REVIEW_LESSON, 
-                self::SCENARIO_MERGE, self::SCENARIO_EDIT_CLASSROOM]],
+                self::SCENARIO_MERGE]],
             ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
 			
@@ -119,8 +117,7 @@ class Lesson extends \yii\db\ActiveRecord
 				return $model->course->program->isPrivate();
 			}],
             [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_REVIEW],
-            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE, 
-                            self::SCENARIO_EDIT_CLASSROOM]],
+            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
 			['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT, 'when' => function($model, $attribute) {

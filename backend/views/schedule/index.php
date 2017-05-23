@@ -361,6 +361,7 @@ function showclassroomCalendar(date) {
         slotDuration: "00:15:00",
         allDaySlot:false,
         editable: true,
+        eventDurationEditable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + params,
             type: 'POST',
@@ -389,40 +390,10 @@ function showclassroomCalendar(date) {
                 }
             });
         },
-        eventResize: function(event) {
-            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
-            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
-            var params = $.param({
-                id: event.id,
-                classroomId: event.resourceId,
-                startTime: startTime,
-                endTime: endTime
-            });
-            $.ajax({
-                url    : '<?= Url::to(['lesson/modify-classroom']); ?>?' + params,
-                type   : 'POST',
-                dataType: 'json',
-                success: function(response)
-                {
-                    if (response.status) {
-                        $("#classroom-calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#notification').html(response.errors).fadeIn().delay(5000).fadeOut();
-                        $("#classroom-calendar").fullCalendar("refetchEvents");
-                        $(window).scrollTop(0);
-
-                    }
-                }
-            });
-        },
         eventDrop: function(event) {
-            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
-            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
             var params = $.param({
                 id: event.id,
                 classroomId: event.resourceId,
-                startTime: startTime,
-                endTime: endTime
             });
             $.ajax({
                 url: '<?= Url::to(['lesson/modify-classroom']); ?>?' + params,
