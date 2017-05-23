@@ -64,4 +64,10 @@ class CourseQuery extends \yii\db\ActiveQuery
 			
 		return $this;
 	}
+	public function betweenEndDate($fromDate, $toDate)
+	{
+		$this->andWhere(['between', 'DATE(endDate)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
+			
+		return $this;
+	}
 }
