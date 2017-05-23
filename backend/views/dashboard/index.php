@@ -12,7 +12,7 @@ $this->title = 'Dashboard';
 <div class="col-md-12">
     <div class="col-md-10 p-0">
 		<div class="row text-center bg-gray disabled color-palette">
-			<div class="col-md-3 p-0 ">
+			<div class="col-md-2 p-0 ">
 				<div class="small-box">
 					<div class="inner">
 						<h3><?= !empty($invoiceTotal) ? $invoiceTotal : 0 ?></h3>
@@ -20,11 +20,27 @@ $this->title = 'Dashboard';
 					</div>
 				</div>
 			</div>
-			<div class="col-md-3 p-0">
+			<div class="col-md-2 p-0">
 				<div class="small-box">
 					<div class="inner">
 						<h3><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h3>
 						<p>Invoice Tax Total</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2 p-0">
+				<div class="small-box">
+					<div class="inner">
+						<h3><?= !empty($enrolmentGainCount) ? $enrolmentGainCount : 0 ?></h3>
+						<p>Enrolment Gains</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-1 p-0">
+				<div class="small-box">
+					<div class="inner">
+						<h3><?= !empty($enrolmentLossCount) ? $enrolmentLossCount : 0 ?></h3>
+						<p>Enrolment Losses</p>
 					</div>
 				</div>
 			</div>
@@ -36,7 +52,7 @@ $this->title = 'Dashboard';
 					</div>
 				</div>
 			</div>
-			<div class="col-md-2 p-0">
+			<div class="col-md-1 p-0">
 				<div class="small-box">
 					<div class="inner">
 						<h3><?= $groupEnrolments ?></h3>

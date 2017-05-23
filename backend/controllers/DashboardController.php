@@ -8,7 +8,6 @@ use common\models\InvoiceLineItem;
 use common\models\Lesson;
 use common\models\Enrolment;
 use common\models\Payment;
-use common\models\Program;
 use common\models\Student;
 use backend\models\search\DashboardSearch;
 
@@ -149,6 +148,24 @@ class DashboardController extends \yii\web\Controller
             array_push($enrolmentLosses, $enrolmentLoss);
         }
 
+		$enrolmentGainCount = Enrolment::find()
+            ->joinWith(['course' => function($query) use($locationId, $searchModel) {
+				$query->joinWith(['program' => function($query) {
+				}])
+				->confirmed()
+				->location($locationId)
+				->between($searchModel->fromDate, $searchModel->toDate);
+			}])
+            ->count();
+		$enrolmentLossCount = Enrolment::find()
+            ->joinWith(['course' => function($query) use($locationId, $searchModel) {
+				$query->joinWith(['program' => function($query) {
+				}])
+				->confirmed()
+				->location($locationId)
+				->betweenEndDate($searchModel->fromDate, $searchModel->toDate);
+			}])
+            ->count();
         return $this->render('index', [
 			'searchModel' => $searchModel,
 			'invoiceTotal' => $invoiceTotal,
@@ -161,6 +178,8 @@ class DashboardController extends \yii\web\Controller
 			'royaltyPayment' => $royaltyPayment,
 			'enrolmentGains' => $enrolmentGains,	
 			'enrolmentLosses' => $enrolmentLosses,	
+			'enrolmentGainCount' => $enrolmentGainCount,
+			'enrolmentLossCount' => $enrolmentLossCount,
 		]);
     }
 }
