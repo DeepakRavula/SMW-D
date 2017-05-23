@@ -361,7 +361,6 @@ function showclassroomCalendar(date) {
         slotDuration: "00:15:00",
         allDaySlot:false,
         editable: true,
-        draggable: true,
         resources: {
             url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + params,
             type: 'POST',
