@@ -8,7 +8,7 @@ use kartik\switchinput\SwitchInput;
 	.bootstrap-switch-id-lesson-present {
 		left:0;
 		top:0;
-		width:100% !important;
+		width:90% !important;
 	}
 	#extra-lesson-delete {
 		left:719px;
