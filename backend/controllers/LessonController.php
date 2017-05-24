@@ -783,10 +783,6 @@ class LessonController extends Controller
             $lesssonSplit->unit = Lesson::DEFAULT_MERGE_DURATION;
             $lesssonSplit->save();
         }
-        Yii::$app->session->setFlash('alert', [
-            'options' => ['class' => 'alert-success'],
-            'body' => 'Lesson duration has been splitted successfully.',
-        ]);
         return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
     }
 

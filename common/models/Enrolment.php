@@ -21,6 +21,8 @@ class Enrolment extends \yii\db\ActiveRecord
     public $subject;
     public $content;
     public $hasEditable;
+	public $programName;
+	public $enrolmentCount;
 
     const EDIT_RENEWAL = 'renewal';
     const EDIT_LEAVE = 'leave';

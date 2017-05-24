@@ -6,14 +6,13 @@ use common\models\Dashboard;
 
 $this->title = 'Dashboard';
 ?>
-
 		<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <div class="clearfix"></div>
 <?php yii\widgets\Pjax::begin(['id' => 'dashboard']); ?>
 <div class="col-md-12">
     <div class="col-md-10 p-0">
 		<div class="row text-center bg-gray disabled color-palette">
-			<div class="col-md-3 p-0 ">
+			<div class="col-md-2 p-0 ">
 				<div class="small-box">
 					<div class="inner">
 						<h3><?= !empty($invoiceTotal) ? $invoiceTotal : 0 ?></h3>
@@ -21,11 +20,27 @@ $this->title = 'Dashboard';
 					</div>
 				</div>
 			</div>
-			<div class="col-md-3 p-0">
+			<div class="col-md-2 p-0">
 				<div class="small-box">
 					<div class="inner">
 						<h3><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h3>
 						<p>Invoice Tax Total</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2 p-0">
+				<div class="small-box">
+					<div class="inner">
+						<h3><?= !empty($enrolmentGainCount) ? $enrolmentGainCount : 0 ?></h3>
+						<p>Enrolment Gains</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-1 p-0">
+				<div class="small-box">
+					<div class="inner">
+						<h3><?= !empty($enrolmentLossCount) ? $enrolmentLossCount : 0 ?></h3>
+						<p>Enrolment Losses</p>
 					</div>
 				</div>
 			</div>
@@ -37,7 +52,7 @@ $this->title = 'Dashboard';
 					</div>
 				</div>
 			</div>
-			<div class="col-md-2 p-0">
+			<div class="col-md-1 p-0">
 				<div class="small-box">
 					<div class="inner">
 						<h3><?= $groupEnrolments ?></h3>
@@ -77,7 +92,8 @@ $this->title = 'Dashboard';
 			]);
 			?>
 		</div>
-		<div class="m-t-20     instruction_hours_piechart">
+		<?php if(!empty($completedPrograms)) : ?>
+		<div class="m-t-20 instruction_hours_piechart">
 			<?=
 			Highcharts::widget([
 				'options' => [
@@ -103,6 +119,63 @@ $this->title = 'Dashboard';
 			]);
 			?>
 		</div>
+		<?php endif; ?>
+		<?php if($enrolmentGains) : ?>
+		<div class="m-t-20">
+			<?=
+			Highcharts::widget([
+				'options' => [
+					'title' => ['text' => 'Enrolment Gains'],
+					'plotOptions' => [
+						'pie' => [
+							'size' => '80%',
+							'cursor' => 'pointer',
+							'dataLabels' => [
+								'enabled' => true,
+								'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+							],
+						],
+					],
+					'series' => [
+						[
+							'type' => 'pie',
+							'name' => 'Gain Count',
+							'data' => $enrolmentGains
+						], 
+					],
+				],
+			]);
+			?>
+		</div>
+		<?php endif;?>
+		<?php if(!empty($enrolmentLosses)) : ?>
+		<div class="m-t-20">
+			<?=
+			Highcharts::widget([
+				'options' => [
+					'title' => ['text' => 'Enrolment Losses'],
+					'plotOptions' => [
+						'pie' => [
+							'size' => '80%',
+							'cursor' => 'pointer',
+							'dataLabels' => [
+								'enabled' => true,
+								'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+							],
+						],
+					],
+					'series' => [
+						[
+							'type' => 'pie',
+							'name' => 'Loss Count',
+							'data' => $enrolmentLosses
+						], 
+					],
+				],
+			]);
+			?>
+		</div>
+		<?php endif; ?>
 	</div>
 	<div class="col-md-2 col-sm-4 p-r-0">
 		<div class="pad box-pane-right bg-green" style="min-height: 280px">
