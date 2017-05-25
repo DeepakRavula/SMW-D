@@ -224,6 +224,9 @@ class InvoiceController extends Controller
         $response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
         $invoiceLineItemModel = new InvoiceLineItem();
+        $userModel = User::findOne(['id' => Yii::$app->user->id]);
+                $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
+                $invoiceLineItemModel->userName = $userModel->publicIdentity;
         if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
             $invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC;
             $invoiceLineItemModel->invoice_id = $model->id;
@@ -237,6 +240,8 @@ class InvoiceController extends Controller
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
                 $model->save();
+                $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
+
                 $response = [
                     'invoiceStatus' => $model->getStatus(),
                     'status' => true,
