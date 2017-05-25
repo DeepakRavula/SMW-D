@@ -81,7 +81,7 @@ use yii\helpers\Html;
     ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
 	<div class="form-group">
-		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary group-course-save', 'name' => 'signup-button']) ?>
+		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success group-course-save', 'name' => 'signup-button']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

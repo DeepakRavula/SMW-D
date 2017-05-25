@@ -16,10 +16,8 @@ use yii\bootstrap\ActiveForm;
         <?php echo $form->field($model, 'content')->textarea(['rows' => '10'])->label(false)?>
     </div>
     <div class="form-group">
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-		<?php if(! $model->isNewRecord) : ?>
-            <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']); ?>
-		<?php endif; ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
+        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default note-cancel-button']); ?>
     </div>
 </div>
 <div class="clearfix"></div>

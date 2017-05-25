@@ -245,7 +245,13 @@ $(document).ready(function() {
         },
 		eventRender: function(event, element) {
 			element.poshytip({
-				className: 'tip-twitter',
+				className: 'tip-yellowsimple',
+				alignTo: 'cursor',
+				alignX: 'center',
+				alignY : 'top',
+				offsetY: 5,
+				followCursor: false,
+				slide: false,
 				content : function(updateCallback) {
 					return event.description;
 				}
@@ -346,7 +352,7 @@ function showclassroomCalendar(date) {
     $('#classroom-calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
-		height: "auto",
+        height: "auto",
         defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -355,7 +361,7 @@ function showclassroomCalendar(date) {
         slotDuration: "00:15:00",
         allDaySlot:false,
         editable: true,
-        droppable: false,
+        eventDurationEditable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + params,
             type: 'POST',
@@ -370,18 +376,24 @@ function showclassroomCalendar(date) {
                 $("#classroom-calendar").fullCalendar("refetchEvents");
             }
         },
-  		eventRender: function(event, element) {
-			element.poshytip({
-				className: 'tip-twitter',
-				content : function(updateCallback) {
-					return event.description;
-				}
-			});
-		},
+        eventRender: function(event, element) {
+            element.poshytip({
+                className: 'tip-yellowsimple',
+                alignTo: 'cursor',
+                alignX: 'center',
+                alignY : 'top',
+                offsetY: 5,
+                followCursor: false,
+                slide: false,
+                content : function(updateCallback) {
+                        return event.description;
+                }
+            });
+        },
         eventDrop: function(event) {
             var params = $.param({
                 id: event.id,
-                classroomId: event.resourceId
+                classroomId: event.resourceId,
             });
             $.ajax({
                 url: '<?= Url::to(['lesson/modify-classroom']); ?>?' + params,
@@ -392,8 +404,10 @@ function showclassroomCalendar(date) {
                     if (response.status) {
                         $("#classroom-calendar").fullCalendar("refetchEvents");
                     } else {
-                        $('#notification').html('Classroom already chosen!').fadeIn().delay(5000).fadeOut();
+                        $('#notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                         $("#classroom-calendar").fullCalendar("refetchEvents");
+                        $(window).scrollTop(0);
+						
                     }
                 }
             });
@@ -447,7 +461,13 @@ function refreshCalendar(date) {
         },
 		eventRender: function(event, element) {
 			element.poshytip({
-				className: 'tip-twitter',
+				className: 'tip-yellowsimple',
+				alignTo: 'cursor',
+				alignX: 'center',
+				alignY : 'top',
+				offsetY: 5,
+				followCursor: false,
+				slide: false,
 				content : function(updateCallback) {
 					return event.description;
 				}

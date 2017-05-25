@@ -38,6 +38,7 @@ class TimelineEventController extends Controller
         $dataProvider->sort = [
             'defaultOrder' => ['created_at' => SORT_DESC],
         ];
+		$dataProvider->pagination = false;
         $this->layout = '/print';
 
         return $this->render('_print', [

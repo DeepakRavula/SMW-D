@@ -161,15 +161,11 @@ class Student extends \yii\db\ActiveRecord
             self::STATUS_INACTIVE => Yii::t('common', 'Inactive'),
         ];
     }
-
-    public function hasExplodedLesson()
+	public static function count()
     {
-        foreach ($this->lessons as $lesson) {
-            if ($lesson->isExploded()) {
-                return true;
-            }
-        }
-
-        return false;
+		$locationId = Yii::$app->session->get('location_id');
+        return self::find()
+			->location($locationId)
+			->count();
     }
 }

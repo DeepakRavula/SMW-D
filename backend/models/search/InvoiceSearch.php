@@ -107,9 +107,9 @@ class InvoiceSearch extends Invoice
                 $query->mailNotSent();
             }
             if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
-                $query->unpaid()->proFromaInvoice();
+                $query->unpaid()->proFormaInvoice();
             } elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
-                $query->paid()->proFromaInvoice();
+                $query->paid()->proFormaInvoice();
             }
             $query->andWhere(['between', 'invoice.dueDate', (new \DateTime($this->dueFromDate))->format('Y-m-d'),
                     (new \DateTime($this->dueToDate))->format('Y-m-d')]);

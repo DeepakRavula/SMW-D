@@ -107,7 +107,8 @@ class Lesson extends \yii\db\ActiveRecord
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
             [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
 			
-            ['date', TeacherValidator::className(), 'on' => [self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_MERGE]],
+            ['date', TeacherValidator::className(), 'on' => [self::SCENARIO_EDIT_REVIEW_LESSON, 
+                self::SCENARIO_MERGE]],
             ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
 			
@@ -117,7 +118,6 @@ class Lesson extends \yii\db\ActiveRecord
 			}],
             [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_REVIEW],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
-			
             ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
 			['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT, 'when' => function($model, $attribute) {
@@ -215,7 +215,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canExplode()
     {
-        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded();
+        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded()
+            && !$this->privateLesson->isExpired();
     }
 
     public function getEnrolment()
@@ -484,7 +485,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lesson->status = self::STATUS_SCHEDULED;
         $lesson->isDeleted = false;
 
-        return $lesson->validate() && $this->enrolment->student->hasExplodedLesson()
+        return $lesson->validate() && $this->enrolment->hasExplodedLesson()
             && !$this->isUnscheduled();
     }
 

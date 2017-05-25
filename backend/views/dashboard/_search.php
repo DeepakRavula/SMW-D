@@ -8,17 +8,25 @@ use kartik\daterange\DateRangePicker;
 /* @var $model backend\models\search\UserSearch */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-
+<style>
+  .e1Div{
+    right: 150px;
+    top: -49px;
+  }
+  .apply-button {
+    left: 920px;
+    top: -49px;
+  }
+</style>
 <div class="user-search">
 
     <?php $form = ActiveForm::begin([
+		'id' => 'dashboard-search-form',
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
-    <div class="row">
-    <div class="col-md-7">
+    <div class="e1Div col-md-3">
    <?php 
-   echo '<label>Date Range</label>';
    echo DateRangePicker::widget([
     'model' => $model,
     'attribute' => 'dateRange',
@@ -40,14 +48,18 @@ use kartik\daterange\DateRangePicker;
 
     ]);
    ?>
-   </div>    
-    <div class="col-md-5 form-group m-t-25">
-        <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
-        <div class="clearfix"></div>
-    </div>
-    </div>
-
+	</div>
+	<div class=" col-md-3 apply-button">
+	    <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary ']) ?>
+		</div>
     <?php ActiveForm::end(); ?>
-
-</div>
+    </div>
+<script>
+    $(document).ready(function () {
+$("#dashboard-search-form").on("submit", function () {
+            var dateRange = $('#dashboardsearch-daterange').val();
+            $.pjax.reload({container: "#dashboard", replace: false, timeout: 6000, data: $(this).serialize()});
+            return false;
+        });
+    });
+</script>

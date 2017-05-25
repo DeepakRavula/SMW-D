@@ -513,20 +513,6 @@ table tr {
     border-radius: 3px;
 }
 
-.btn-primary {
-    background-color: #E12E2B;
-    border-color: #E12E2B;
-    -webkit-transition: all 0.3s;
-    transition: all 0.3s;
-}
-
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:focus {
-    background-color: #a81010;
-    border-color: #a81010;
-}
-
 .btn-outline-info {
     color: #E12E2B;
     background-image: none;

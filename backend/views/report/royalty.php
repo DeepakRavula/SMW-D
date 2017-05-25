@@ -3,6 +3,8 @@
 
 use common\models\Location;
 use yii\helpers\Url;
+use common\models\TaxCode;
+use common\models\TaxType;
 
 $this->title = 'Royalty';
 ?>
@@ -11,14 +13,13 @@ $this->title = 'Royalty';
 	</div>
 	<div class="clearfix"></div>
 	<?php
-$total = $payments - ($invoiceTaxTotal + $royaltyPayment);
+$total = $payments - $invoiceTaxTotal - $royaltyPayment;
 $location = Location::findOne(['id' => Yii::$app->session->get('location_id')]);
 $advertisement = !empty($location->advertisement->value) ? $location->advertisement->value : 0;
 $royalty = !empty($location->royalty->value) ? $location->royalty->value : 0;
 $locationDebtAmount = $royalty + $advertisement;
 $royaltyAmount = ($total * ($royalty / 100));
 $advertisementAmount = ($total * ($advertisement / 100)); 
-$netPrice = round(($total - ($royaltyAmount + $advertisementAmount)), 2);
 ?>
 <style>
 .table-invoice-childtable>tbody>tr>td:last-of-type {
@@ -41,7 +42,7 @@ $netPrice = round(($total - ($royaltyAmount + $advertisementAmount)), 2);
 				<td class="p-t-10"><?= !empty($royaltyPayment) ? $royaltyPayment : 0; ?></td>
 			</tr>
 			<tr>
-				<td class="p-t-10"><strong>Total</strong></td>
+				<td class="p-t-10"><strong>Revenue</strong></td>
 				<td class="p-t-10"><strong><?= !empty($total) ? $total : 0; ?></strong></td>
 			</tr>
 			<tr>
@@ -53,8 +54,27 @@ $netPrice = round(($total - ($royaltyAmount + $advertisementAmount)), 2);
 				<td class="p-t-10"><?= round($royaltyAmount, 2); ?></td>
 			</tr>
 			<tr>
-				<td class="p-t-10"><strong>Owed to Head Office</strong></td>
-				<td><strong><?= $netPrice; ?></strong></td>
+				<td class="p-t-10">Subtotal</td>
+				<?php $subtotal = $royaltyAmount + $advertisementAmount;?> 
+				<td class="p-t-10"><?= round($subtotal, 2); ?></td>
+			</tr>
+			<tr>
+				<td class="p-t-10">Tax</td>
+				<?php 
+				$taxCode = TaxCode::find()
+					->andWhere(['province_id' => $location->province_id,
+						'tax_type_id' => TaxType::HST
+					])
+					->orderBy(['id' => SORT_DESC])
+					->one();
+				$taxPercentage = $taxCode->rate;
+				$tax = $subtotal * ($taxPercentage / 100);
+				?>
+				<td class="p-t-10"><?= round($tax, 2); ?></td>
+			</tr>
+			<tr>
+				<td class="p-t-10"><strong>Total</strong></td>
+				<td><strong><?= round(($subtotal + $tax), 2); ?></strong></td>
 			</tr>
 		</table>
 	</div>

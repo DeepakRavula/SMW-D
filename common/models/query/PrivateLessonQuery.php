@@ -33,4 +33,10 @@ class PrivateLessonQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function isNotExpired()
+    {
+        return $this->andWhere(['>', 'private_lesson.expiryDate',
+            (new \DateTime())->format('Y-m-d H:i:s')]);
+    }
 }

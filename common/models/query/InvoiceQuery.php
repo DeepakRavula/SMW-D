@@ -43,6 +43,12 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this;
     }
 	
+	public function location($locationId)
+    {
+        $this->andWhere(['invoice.location_id' => $locationId]);
+        return $this;
+    }
+	
     public function student($id)
     {
         $this->joinWith(['lineItems' => function ($query) use ($id) {
@@ -116,13 +122,20 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 		]);
 	}
 
-	public function proFromaInvoice()
+	public function proFormaInvoice()
 	{
 		return $this->andFilterWhere([
 			'type' => Invoice::TYPE_PRO_FORMA_INVOICE
 		]);
 	}
 
+	public function invoice()
+	{
+		return $this->andFilterWhere([
+			'type' => Invoice::TYPE_INVOICE
+		]);
+	}
+	
 	public function paid()
 	{
 		return $this->andFilterWhere([
