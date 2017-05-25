@@ -97,6 +97,16 @@ left:45%;
 bottom:-10px;
 }	
 </style>
+<div>
+<div class="col-md-3 pull-right">
+	<div id="datepicker" class="input-group date">
+		<input type="text" class="form-control" value=<?= (new \DateTime())->format('d-m-Y') ?>>
+		<div class="input-group-addon">
+			<span class="glyphicon glyphicon-calendar"></span>
+		</div>
+	</div>
+</div>
+<div id="enrolment-calendar"></div>
 <?php $form = ActiveForm::begin(); ?>
 <div class="form-group">
 	<div class="col-sm-2">
@@ -109,20 +119,11 @@ bottom:-10px;
 		<?= $form->field($model, 'day')->textInput(['readOnly' => true])->label('Duration'); ?>
 	</div>
 	<div class="col-sm-2">
-		<?= Html::submitButton(Yii::t('backend', 'Apply'),
-	['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+		<?= Html::a('Apply', '#', ['class' => 'btn btn-info enrolment-apply-button']) ?>
     </div>
-	<div class="col-md-3 pull-right">
-		<div id="datepicker" class="input-group date">
-			<input type="text" class="form-control" value=<?= (new \DateTime())->format('d-m-Y') ?>>
-			<div class="input-group-addon">
-				<span class="glyphicon glyphicon-calendar"></span>
-			</div>
-		</div>
-	</div>
 </div>
 <?php ActiveForm::end(); ?>
-<div id="enrolment-calendar"></div>
+</div>
 <?php
 	$locationId = Yii::$app->session->get('location_id');
 	$locationAvailabilities = LocationAvailability::find()
@@ -141,6 +142,16 @@ bottom:-10px;
 <script type="text/javascript">
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
 $(document).ready(function() {
+    $(document).on('click', '.enrolment-apply-button', function(){
+		var teacherName = $('#course-teacherid').val(); 
+		var day = $('#course-day').val(); 
+		var date = $('#course-startdate').val(); 
+		var time = moment(date,'DD-MM-YYYY h:mm A').format('h:mm A');
+		var duration = $('#course-duration').val();
+        $('#new-enrolment-modal').modal('hide');
+		$('.new-enrolment-teacher').text(teacherName);
+		$('.new-enrolment-time').text(day + ', ' + time + ' & ' + duration);
+	});
     $(document).on('click', '.enrolment-calendar-icon', function(){
         $('#new-enrolment-modal').modal('show');
         $('#new-enrolment-modal .modal-dialog').css({'width': '1000px'});
@@ -192,6 +203,7 @@ $(document).ready(function() {
             editable: false,
             droppable: false,
             selectable:true,
+			selectHelper:true,
             resources: {
                 url: '<?= Url::to(['enrolment/render-resources']) ?>?' + params,
                 type: 'POST',
@@ -207,24 +219,16 @@ $(document).ready(function() {
                 }
             },
             select: function(start, end, jsEvent, view, resource) {
-				console.log(resource.title);
-                $('#calendar').fullCalendar('removeEvents', 'newEnrolment');
                 $('#course-day').val(moment(start).format('dddd'));
-                $('#course-teacherid').text(resource.title);
+				$('input[name="Course[teacherId]"]').val(resource.title);
                 $('#course-startdate').val(moment(start).format('DD-MM-YYYY h:mm A'));
                 var endtime = start.clone();
                 var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
-                $('#enrolment-calendar').fullCalendar('renderEvent',
-                    {
-                        id: 'newEnrolment',
-                        start: start,
-                        end: endtime,
-                        allDay: false
-                    },
-                true // make the event "stick"
-                );
-                $('#enrolment-calendar').fullCalendar('unselect');
+                eventData = {
+                    start: start,
+                    end: endtime
+                };
             }
         });
     }

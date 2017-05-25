@@ -25,7 +25,7 @@ $this->title = 'New Enrolment';
             echo $form->field($model, 'programId')->dropDownList(
                 ArrayHelper::map(Program::find()
 					->active()
-					->all(), 'id', 'name'), ['prompt' => 'Select..'])->label(false);
+					->all(), 'id', 'name'))->label(false);
             ?>
 			</div>
 		</div>
@@ -53,7 +53,7 @@ $this->title = 'New Enrolment';
 	<div class="form-group">
 		<label  class="col-sm-2 control-label p-10">Teacher</label>
     	<?php echo $form->field($model, 'teacherId')->hiddenInput()->label(false) ?>
-		<div class="col-sm-5 new-enrolment-teaher">
+		<div class="col-sm-5 new-enrolment-teacher">
 		</div>
 	</div>
 	<div class="clearfix"></div>
