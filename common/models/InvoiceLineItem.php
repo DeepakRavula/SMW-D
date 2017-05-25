@@ -28,6 +28,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     const EVENT_EDIT = 'edit';
     const EVENT_DELETE = 'deleteLineItem';
+    const EVENT_CREATE= 'newLineItem';
     
     const STATUS_DEFAULT = 'Default';
     const STATUS_NO_TAX = 'No Tax';
