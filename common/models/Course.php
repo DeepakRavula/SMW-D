@@ -32,6 +32,7 @@ class Course extends \yii\db\ActiveRecord
     public $paymentFrequency;
 	public $rescheduleBeginDate;
 	public $discount;
+	public $teacherName;
 
     /**
      * {@inheritdoc}

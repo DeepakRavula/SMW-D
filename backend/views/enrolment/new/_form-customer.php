@@ -1,7 +1,5 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
-use yii\helpers\Html;
 use common\models\PhoneNumber;
 use common\models\Address;
 use yii\helpers\ArrayHelper;
@@ -16,7 +14,6 @@ use common\models\Province;
 $this->title = 'New Enrolment';
 ?>
 <div class="container">
-	<?php $form = ActiveForm::begin(); ?>
 		 <div class="form-group">
 			<label class="col-sm-2 control-label">Name</label>
 			<div class="col-sm-3">
@@ -87,8 +84,4 @@ $this->title = 'New Enrolment';
 		</div>
 	</div>	
 	<div class="clearfix"></div>
-	<div class="form-group">
-        <?php //echo Html::a('Next',['enrolment/student'], ['class' => 'btn btn-primary']); ?>
-	</div>
-		<?php ActiveForm::end(); ?>
 </div> <!-- ./container -->

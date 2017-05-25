@@ -1639,3 +1639,40 @@ hr.fc-divider {
     right: -100px;
     line-height: 37px;
 }
+.enrolment{    
+	background-color: #fff;
+   border:1px solid #eaefe9;
+   font-size: 14px;
+}
+.panel{
+	margin-bottom: 0px;
+}
+.enrolment-step {
+	border-top: 1px solid #f2f2f2;
+	color: #666;
+	font-size: 14px;
+	padding: 10px;
+	position: relative;
+}
+.enrolment-step-number {
+	border-radius: 50%;
+	border: 1px solid #666;
+	display: inline-block;
+	font-size: 12px;
+	height: 32px;
+	margin-right: 26px;
+	padding: 6px;
+	text-align: center;
+	width: 32px;
+}
+.enrolment-step-title{
+	font-size: 18px;
+	font-weight: 500;
+	vertical-align: middle;
+	display: inline-block;
+	margin: 0px;
+}
+.enrolment-step-body{
+	padding-left: 60px;
+	padding-top: 30px;
+}

@@ -1,5 +1,5 @@
 <?php
-
+use yii\helpers\Url;
 use common\models\Course;
 use common\models\UserProfile;
 use common\models\Address;
@@ -7,6 +7,7 @@ use common\models\PhoneNumber;
 use common\models\User;
 use common\models\Student;
 use yii\bootstrap\Modal;
+use yii\bootstrap\ActiveForm;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -16,45 +17,7 @@ use yii\bootstrap\Modal;
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 
-<style>
-	.enrolment{    
-		background-color: #fff;
-	   border:1px solid #eaefe9;
-	   font-size: 14px;
-	}
-	.panel{
-		margin-bottom: 0px;
-	}
-	.enrolment-step {
-		border-top: 1px solid #f2f2f2;
-		color: #666;
-		font-size: 14px;
-		padding: 10px;
-		position: relative;
-	}
-	.enrolment-step-number {
-		border-radius: 50%;
-		border: 1px solid #666;
-		display: inline-block;
-		font-size: 12px;
-		height: 32px;
-		margin-right: 26px;
-		padding: 6px;
-		text-align: center;
-		width: 32px;
-	}
-	.enrolment-step-title{
-		font-size: 18px;
-		font-weight: 500;
-		vertical-align: middle;
-		display: inline-block;
-		margin: 0px;
-	}
-	.enrolment-step-body{
-		padding-left: 60px;
-		padding-top: 30px;
-	}
-</style>
+<?php $form = ActiveForm::begin(); ?>
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
@@ -71,6 +34,7 @@ use yii\bootstrap\Modal;
 										<?=
 										$this->render('new/_form-course', [
 											'model' => new Course(),
+											'form' => $form,
 										]);
 										?>
 									</div>
@@ -79,6 +43,7 @@ use yii\bootstrap\Modal;
 
 								<!-- /.col-lg-6 -->
 							</div>
+							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
 							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Next </a>
 						</div>
 					</div>
@@ -95,10 +60,13 @@ use yii\bootstrap\Modal;
 									'model' => new User(),
 									'phoneModel' => new PhoneNumber(),
 									'addressModel' => new Address(),
-									'userProfile' => new UserProfile()
+									'userProfile' => new UserProfile(),
+									'form' => $form,
 								]);
 								?> 
 							</div>
+							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
+							<a class="collapsed btn btn-default" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"> Back </a>
 							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree"> Next </a>
 						</div>
 					</div>
@@ -114,10 +82,13 @@ use yii\bootstrap\Modal;
 									<?=
 									$this->render('new/_form-student', [
 										'model' => new Student(),
+										'form' => $form,
 									]);
 									?> 
 								</div>
 							</div>
+							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
+							<a class="collapsed btn btn-default" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Back </a>
 							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"> Next </a>
 						</div>
 					</div>
@@ -136,14 +107,18 @@ use yii\bootstrap\Modal;
 		</div>
 	</div>
 </div>
+<?php ActiveForm::end(); ?>
 <?php
-	Modal::begin([
-		'header' => '<h4 class="m-0">Choose Teacher, Day and Time</h4>',
-		'id'=>'new-enrolment-modal',
-	]);?>
-<?php echo $this->render('new/_calendar', [
-	'model' => new course(),	
-]);?>
-	<?php Modal::end();?>
+Modal::begin([
+	'header' => '<h4 class="m-0">Choose Teacher, Day and Time</h4>',
+	'id' => 'new-enrolment-modal',
+]);
+?>
+<?php
+echo $this->render('new/_calendar', [
+	'model' => new course(),
+]);
+?>
+<?php Modal::end(); ?>
 
 

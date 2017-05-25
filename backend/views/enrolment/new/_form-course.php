@@ -1,13 +1,9 @@
 <?php
 
 use common\models\Program;
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
 use common\models\PaymentFrequency;
-use kartik\date\DatePicker;
-use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -17,7 +13,6 @@ use yii\helpers\Url;
 $this->title = 'New Enrolment';
 ?>
 <div class="container">
-	<?php $form = ActiveForm::begin(); ?>
 		 <div class="form-group">
 			<label class="col-sm-2 control-label">Program</label>
 			<div class="col-sm-4">
@@ -90,7 +85,6 @@ $this->title = 'New Enrolment';
 		<div class="col-sm-5" id="monthly-rate"></div>
 	</div>
 	<div class="clearfix"></div>
-	<?php ActiveForm::end(); ?>
 </div> <!-- ./container -->
 <script>
 	function rateEstimation(duration, programRate, discount) {

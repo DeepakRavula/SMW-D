@@ -110,7 +110,7 @@ bottom:-10px;
 <?php $form = ActiveForm::begin(); ?>
 <div class="form-group">
 	<div class="col-sm-2">
-		<?= $form->field($model, 'teacherId')->textInput(['readOnly' => true])->label('Teacher'); ?>
+		<?= $form->field($model, 'teacherName')->textInput(['readOnly' => true])->label('Teacher'); ?>
 	</div>
 	<div class="col-sm-3">
 		<?= $form->field($model, 'startDate')->textInput(['readOnly' => true])->label('Date & Time'); ?>
@@ -143,7 +143,7 @@ bottom:-10px;
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
 $(document).ready(function() {
     $(document).on('click', '.enrolment-apply-button', function(){
-		var teacherName = $('#course-teacherid').val(); 
+		var teacherName = $('#course-teachername').val(); 
 		var day = $('#course-day').val(); 
 		var date = $('#course-startdate').val(); 
 		var time = moment(date,'DD-MM-YYYY h:mm A').format('h:mm A');
@@ -219,8 +219,9 @@ $(document).ready(function() {
                 }
             },
             select: function(start, end, jsEvent, view, resource) {
+                $('#course-teacherid').val(resource.id);
                 $('#course-day').val(moment(start).format('dddd'));
-				$('input[name="Course[teacherId]"]').val(resource.title);
+                $('#course-teachername').val(resource.title);
                 $('#course-startdate').val(moment(start).format('DD-MM-YYYY h:mm A'));
                 var endtime = start.clone();
                 var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
