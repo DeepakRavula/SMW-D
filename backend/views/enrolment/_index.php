@@ -79,7 +79,7 @@ use yii\bootstrap\Modal;
 
 								<!-- /.col-lg-6 -->
 							</div>
-							<a class="collapsed btn btn-default" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Next </a>
+							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Next </a>
 						</div>
 					</div>
 				</div>
@@ -99,7 +99,7 @@ use yii\bootstrap\Modal;
 								]);
 								?> 
 							</div>
-							<a class="collapsed btn btn-default" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree"> Next </a>
+							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree"> Next </a>
 						</div>
 					</div>
 				</div>
@@ -118,7 +118,7 @@ use yii\bootstrap\Modal;
 									?> 
 								</div>
 							</div>
-							<a class="collapsed btn btn-default" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"> Next </a>
+							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"> Next </a>
 						</div>
 					</div>
 				</div>

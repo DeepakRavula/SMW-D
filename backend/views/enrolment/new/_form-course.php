@@ -90,9 +90,6 @@ $this->title = 'New Enrolment';
 		<div class="col-sm-5" id="monthly-rate"></div>
 	</div>
 	<div class="clearfix"></div>
-	<div class="form-group">
-        <?php //echo Html::a('Next',['enrolment/customer'], ['class' => 'btn btn-primary']); ?>
-	</div>
 	<?php ActiveForm::end(); ?>
 </div> <!-- ./container -->
 <script>
