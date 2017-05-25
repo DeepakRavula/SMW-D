@@ -297,6 +297,7 @@ class Payment extends ActiveRecord
         $model->actionUserId = Yii::$app->user->id;
         $model->date = (new \DateTime())->format('Y-m-d H:i:s');
         $model->save();
+        $this->trigger(self::EVENT_EDIT);
     }
 
     public function actionType()
