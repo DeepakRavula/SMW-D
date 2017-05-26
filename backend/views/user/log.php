@@ -11,12 +11,21 @@ use common\models\User;
 ?> 
 <?php $locationId = Yii::$app->session->get('location_id'); ?>
 <?php if(Yii::$app->authManager->checkAccess($model->id, User::ROLE_TEACHER)) : ?>
-<?php $logs = TimelineEvent::find()
+<?php $lessonLogs = TimelineEvent::find()
 	->joinWith(['timelineEventLesson' => function($query) use($model) {
 		$query->joinWith(['lesson' => function($query) use($model) {
 			$query->andWhere(['teacherId' => $model->id]);
 		}]);
 	}]);
+    
+    $availabilityLogs = TimelineEvent::find()
+        ->joinWith(['timelineEventUser' => function($query) use($model) {
+            $query->joinWith(['userProfile' => function($query) use($model) {
+                    $query->andWhere(['user_id' => $model->id]);
+                }]);
+        }]);
+    $logs=$lessonLogs->union($availabilityLogs);
+    
 ?>
 <?php elseif(Yii::$app->authManager->checkAccess($model->id, User::ROLE_CUSTOMER)) : ?>
 <?php $invoiceLogs = TimelineEvent::find()

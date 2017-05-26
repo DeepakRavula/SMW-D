@@ -17,6 +17,9 @@ use common\models\query\TeacherAvailabilityQuery;
 class TeacherAvailability extends \yii\db\ActiveRecord
 {
     public $name;
+    public $userName;
+
+    const EVENT_CREATE = 'event-create';
 
     /**
      * {@inheritdoc}
@@ -91,6 +94,9 @@ class TeacherAvailability extends \yii\db\ActiveRecord
     {
         return $this->hasOne(TeacherRoom::className(), ['teacherAvailabilityId' => 'id']);
     }
+    public function afterSave($insert, $changedAttributes)
+    {
 
-    
+        $this->trigger(TeacherAvailability::EVENT_CREATE);
+    }
 }
