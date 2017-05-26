@@ -123,4 +123,28 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
 			$timelineEventPayment->save();
 		}
 	}
+    public function editPayment($event)
+    {
+        $paymentModel = $event->sender;
+        $data = current($event->data);
+        $payment = Payment::find(['id' => $paymentModel->id])->asArray()->one();
+        $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+            'data' => $payment,
+           'message' => $paymentModel->userName . ' changed  '.$paymentModel->paymentMethod->name.'  payment  amount  from  '.Yii::$app->formatter->asCurrency($data['amount']) . ' to ' . Yii::$app->formatter->asCurrency($paymentModel->amount).'  for an  {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}',
+        ]));
+        if ($timelineEvent) {
+            $timelineEventLink = new TimelineEventLink();
+            $timelineEventLink->timelineEventId = $timelineEvent->id;
+            $timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber();
+            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->path = Url::to(['/invoice/view', 'id' => $paymentModel->invoice->id]);
+            $timelineEventLink->save();
+
+            $timelineEventPayment = new TimelineEventPayment();
+            $timelineEventPayment->paymentId = $paymentModel->id;
+            $timelineEventPayment->timelineEventId = $timelineEvent->id;
+            $timelineEventPayment->action = 'edit';
+            $timelineEventPayment->save();
+        }
+    }
 }

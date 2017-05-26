@@ -260,6 +260,8 @@ class PaymentController extends Controller
     {
         $model = Payment::findOne(['id' => $id]);
 		$userModel = User::findOne(['id' => Yii::$app->user->id]);
+        $model->on(Payment::EVENT_EDIT, [new TimelineEventPayment(), 'editPayment'], ['oldAttributes' => $model->getOldAttributes()]);
+        $model->userName = $userModel->publicIdentity;
         $request = Yii::$app->request;
         if ($model->load($request->post())) {
 			if ($model->isAccountEntry()) {
