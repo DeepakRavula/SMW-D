@@ -101,8 +101,8 @@ class PaymentCycle extends \yii\db\ActiveRecord
     public function beforeDelete()
     {
         if ($this->proformaInvoice && !$this->proformaInvoice->isPaid()) {
-            $this->proformaInvoice->delete();
             $this->proformaInvoice->trigger(Invoice::EVENT_DELETE);
+            $this->proformaInvoice->delete();
         }
         PaymentCycleLesson::deleteAll(['paymentCycleId' => $this->id]);
         return parent::beforeDelete();
@@ -168,8 +168,24 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function isCurrentPaymentCycle()
     {
-        return new \DateTime($this->startDate) <= new \DateTime() &&
-            new \DateTime($this->endDate) >= new \DateTime();
+        if (new \DateTime($this->startDate) <= new \DateTime() &&
+            new \DateTime($this->endDate) >= new \DateTime()) {
+            return true;
+        } else if ($this->isFirstPaymentCycle()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function isFirstPaymentCycle()
+    {
+        $firstPaymentCycle = self::find()
+            ->where(['enrolmentId' => $this->enrolmentId])
+            ->orderBy(['startDate' => SORT_ASC])
+            ->one();
+
+        return $this->id === $firstPaymentCycle->id;
     }
 
     public function isNextPaymentCycle()

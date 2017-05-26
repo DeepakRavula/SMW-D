@@ -55,13 +55,3 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['st
 ?>
     </div>
 </div>
-
-<script>
-    var paymentFrequency = {
-	onEditableSuccess :function(event, val, form, data) {debugger;
-            var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
-            $.pjax.reload({url:url,container:"#payment-cycle-listing",replace:false,  timeout: 4000});
-        },
-    }
-
-</script>

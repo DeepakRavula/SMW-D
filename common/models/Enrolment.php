@@ -128,11 +128,18 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function getCurrentPaymentCycle()
     {
-        return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-            ->where(['AND',
+        $currentPaymentCycle = PaymentCycle::find()
+            ->where(['enrolmentId' => $this->id])
+            ->andWhere(['AND',
                 ['<=', 'startDate', (new \DateTime())->format('Y-m-d')],
                 ['>=', 'endDate', (new \DateTime())->format('Y-m-d')]
-            ]);
+            ])
+            ->one();
+        if (!empty($currentPaymentCycle)) {
+            return $currentPaymentCycle;
+        } else {
+            return $this->firstPaymentCycle;
+        }
     }
 
     public function getNextPaymentCycle()

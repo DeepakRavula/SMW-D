@@ -67,3 +67,12 @@ use yii\helpers\Url;
 </div>
 </div>
 </div>
+
+<script>
+    var paymentFrequency = {
+	onEditableSuccess :function(event, val, form, data) {
+            var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
+            $.pjax.reload({url:url,container:"#payment-cycle-listing",replace:false,  timeout: 4000});
+        },
+    }
+</script>
