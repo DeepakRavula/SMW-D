@@ -96,7 +96,10 @@ class TeacherAvailability extends \yii\db\ActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
-
-        $this->trigger(TeacherAvailability::EVENT_CREATE);
+        if ($insert) {
+            $this->trigger(TeacherAvailability::EVENT_CREATE);
+        } else {
+            return parent::afterSave($insert, $changedAttributes);
+        }
     }
 }
