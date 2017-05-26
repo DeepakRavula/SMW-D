@@ -168,8 +168,24 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function isCurrentPaymentCycle()
     {
-        return new \DateTime($this->startDate) <= new \DateTime() &&
-            new \DateTime($this->endDate) >= new \DateTime();
+        if (new \DateTime($this->startDate) <= new \DateTime() &&
+            new \DateTime($this->endDate) >= new \DateTime()) {
+            return true;
+        } else if ($this->isFirstPaymentCycle()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function isFirstPaymentCycle()
+    {
+        $firstPaymentCycle = self::find()
+            ->where(['enrolmentId' => $this->enrolmentId])
+            ->orderBy(['startDate' => SORT_ASC])
+            ->one();
+
+        return $this->id === $firstPaymentCycle->id;
     }
 
     public function isNextPaymentCycle()
