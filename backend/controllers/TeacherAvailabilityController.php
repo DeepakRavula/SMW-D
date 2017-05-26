@@ -19,7 +19,7 @@ use yii\filters\ContentNegotiator;
 use common\models\TeacherRoom;
 use yii\bootstrap\ActiveForm;
 use common\models\Location;
-
+use common\models\TeacherAvailabilityLog;
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
@@ -222,6 +222,9 @@ class TeacherAvailabilityController extends Controller
         $teacherAvailabilityModel = TeacherAvailability::findOne($id);
         if (empty ($teacherAvailabilityModel)) {
             $teacherAvailabilityModel = new TeacherAvailability();
+            $userModel = User::findOne(['id' => Yii::$app->user->id]);
+            $teacherAvailabilityModel->userName = $userModel->publicIdentity;
+            $teacherAvailabilityModel->on(TeacherAvailability::EVENT_CREATE, [new TeacherAvailabilityLog(), 'create']);
             $teacherAvailabilityModel->teacher_location_id = $teacherModel->userLocation->id;
             $roomModel = new TeacherRoom();
         } else if (empty ($teacherAvailabilityModel->teacherRoom)) {
