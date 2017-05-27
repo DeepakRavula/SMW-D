@@ -123,6 +123,7 @@ echo $this->render('_merge-lesson', [
             $('#lesson-mail-modal').modal('show');
             return false;
   	});
+	
 	$(document).on('click', '#merge-lesson', function (e) {
             $('#merge-lesson-modal').modal('show');
             return false;
