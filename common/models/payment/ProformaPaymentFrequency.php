@@ -76,24 +76,6 @@ class ProformaPaymentFrequency extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id'])
                 ->via(invoice);
     }
-
-    public function getUserProfile()
-    {
-        return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
-    }
-
-    public function getPublicIdentity()
-    {
-        if ($this->userProfile && $this->userProfile->getFullname()) {
-            return $this->userProfile->getFullname();
-        }
-        if ($this->username) {
-            return $this->username;
-        }
-
-        return $this->email;
-    }
-
     public function getPaymentFrequency()
     {
         return $this->hasOne(PaymentFrequency::className(), ['id' => 'paymentFrequencyId']);
