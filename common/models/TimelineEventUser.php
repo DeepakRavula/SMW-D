@@ -52,4 +52,8 @@ class TimelineEventUser extends \yii\db\ActiveRecord
     {
         return $this->hasOne(UserProfile::className(), ['user_id' => 'userId']);
     }
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'userId']);
+    }
 }

@@ -48,7 +48,16 @@ $paymentLogs = TimelineEvent::find()
 			}]);
 		}]);
 	}]);
-$logs = $invoiceLogs->union($paymentLogs); ?>
+    $userLogs = TimelineEvent::find()
+        ->location($locationId)
+        ->joinWith(['timelineEventUser' => function($query) use($model) {
+
+            $query->joinWith(['user' => function($query) use($model) {
+                    $query->andWhere(['user.id' => $model->id]);
+                }]);
+        }]);
+
+    $logs = $invoiceLogs->union($paymentLogs)->union($userLogs); ?>
 <?php else : ?>
 <?php $logs = TimelineEvent::find()
 	->location($locationId)

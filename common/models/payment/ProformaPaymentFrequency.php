@@ -1,0 +1,101 @@
+<?php
+
+namespace common\models\payment;
+
+use Yii;
+use common\models\Invoice;
+use common\models\User;
+use common\models\UserProfile;
+use common\models\PaymentFrequency;
+/**
+ * This is the model class for table "proforma_payment_frequency".
+ *
+ * @property string $id
+ * @property string $invoiceId
+ * @property integer $paymentFrequencyId
+ */
+class ProformaPaymentFrequency extends \yii\db\ActiveRecord
+{
+    const EVENT_CREATE = 'event-create';
+
+    public $userName;
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'proforma_payment_frequency';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['invoiceId', 'paymentFrequencyId'], 'required'],
+            [['invoiceId', 'paymentFrequencyId'], 'integer'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'invoiceId' => 'Invoice ID',
+            'paymentFrequencyId' => 'Payment Frequency ID',
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     * @return \common\models\query\ProformaPaymentFrequencyQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new \common\models\query\ProformaPaymentFrequencyQuery(get_called_class());
+    }
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+            $this->trigger(self::EVENT_CREATE);
+        }
+    }
+
+    public function getInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId']);
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id'])
+                ->via(invoice);
+    }
+
+    public function getUserProfile()
+    {
+        return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
+    }
+
+    public function getPublicIdentity()
+    {
+        if ($this->userProfile && $this->userProfile->getFullname()) {
+            return $this->userProfile->getFullname();
+        }
+        if ($this->username) {
+            return $this->username;
+        }
+
+        return $this->email;
+    }
+
+    public function getPaymentFrequency()
+    {
+        return $this->hasOne(PaymentFrequency::className(), ['id' => 'paymentFrequencyId']);
+    }
+}
