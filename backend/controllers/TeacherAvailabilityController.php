@@ -127,9 +127,19 @@ class TeacherAvailabilityController extends Controller
    
     public function actionDelete($id)
     {
+        $status=false;
         $availabilityModel = $this->findModel($id);
+        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $availabilityModel->userName = $user->publicIdentity;
+        $availabilityModel->on(TeacherAvailability::EVENT_DELETE, [new TeacherAvailabilityLog(), 'deleteAvailability']);
+
+        if ($availabilityModel->delete()) {
+            $status=true;
+            $availabilityModel->trigger(TeacherAvailability::EVENT_DELETE);
+        }
+
         return [
-            'status' => $availabilityModel->delete()
+            'status' => $status
         ];
     }
     /**

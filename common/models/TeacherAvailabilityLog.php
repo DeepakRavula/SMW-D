@@ -73,4 +73,29 @@ class TeacherAvailabilityLog extends TeacherAvailability
             $timelineEventUser->save();
         }
     }
+     public function deleteAvailability($event)
+    {
+        $teacherAvailabilityModel = $event->sender;
+        $teacheravailability = TeacherAvailability::find(['id' => $teacherAvailabilityModel->id])->asArray()->one();
+        $dayList = TeacherAvailability::getWeekdaysList();
+        $day = $dayList[$teacherAvailabilityModel->day];
+        $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+            'data' => $teacheravailability,
+            'message' => $teacherAvailabilityModel->userName . '   deleted  {{' . $teacherAvailabilityModel->teacher->publicIdentity . '}} availability  on  ' . $day . '  from  ' . Yii::$app->formatter->asTime($teacherAvailabilityModel->from_time) . '  to  ' . Yii::$app->formatter->asTime($teacherAvailabilityModel->to_time),
+        ]));
+        if ($timelineEvent) {
+            $timelineEventLink = new TimelineEventLink();
+            $timelineEventLink->timelineEventId = $timelineEvent->id;
+            $timelineEventLink->index = $teacherAvailabilityModel->teacher->publicIdentity;
+            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->path = Url::to(['/user/view', 'id' => $teacherAvailabilityModel->teacher->id]);
+            $timelineEventLink->save();
+
+            $timelineEventUser = new TimelineEventUser();
+            $timelineEventUser->userId = $teacherAvailabilityModel->teacher->id;
+            $timelineEventUser->timelineEventId = $timelineEvent->id;
+            $timelineEventUser->action = 'delete';
+            $timelineEventUser->save();
+        }
+    }
 }

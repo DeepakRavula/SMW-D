@@ -21,6 +21,7 @@ class TeacherAvailability extends \yii\db\ActiveRecord
 
     const EVENT_CREATE = 'event-create';
     const EVENT_UPDATE = 'event-update';
+    const EVENT_DELETE = 'event-delete';
 
     /**
      * {@inheritdoc}
