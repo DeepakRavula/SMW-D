@@ -11,12 +11,7 @@ use common\models\User;
 
 $this->title = 'Holidays';
 ?>
-
-<?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-$lastRole = end($roles);?>
-<?php if ($lastRole->name === User::ROLE_ADMINISTRATOR):?>
 <?php $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['create'], ['class' => 'btn btn-primary btn-sm']);?>
-<?php endif; ?>
 
 <div class="grid-row-open">
 

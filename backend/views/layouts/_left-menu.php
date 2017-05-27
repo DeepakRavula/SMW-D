@@ -182,11 +182,71 @@ echo Menu::widget([
 			'visible' => Yii::$app->user->can('administrator'),
 			'active' => (Yii::$app->controller->id === 'release-notes') ? true : false,
 		],
-			[
+		[
 			'label' => Yii::t('backend', 'Admin'),
-			'options' => ['class' => 'header'],
+			'url' => '#',
+			'icon' => '<i class="fa fa-user"></i>',
+			'visible' => Yii::$app->user->can('administrator'),
+			'options' => ['class' => 'treeview'],
+			'items' => [
+				[
+					'label' => Yii::t('backend', 'Cities'),
+					'icon' => '<i class="fa fa-building"></i>',
+					'url' => ['city/index'],
+					'visible' => Yii::$app->user->can('staffmember'),
+				],
+				[
+					'label' => Yii::t('backend', 'Provinces'),
+					'icon' => '<i class="fa  fa-upload"></i>',
+					'url' => ['province/index'],
+					'visible' => Yii::$app->user->can('staffmember'),
+				],
+				[
+					'label' => Yii::t('backend', 'Countries'),
+					'icon' => '<i class="fa fa-globe"></i>',
+					'url' => ['country/index'],
+					'visible' => Yii::$app->user->can('staffmember'),
+				],
+				[
+					'label' => Yii::t('backend', 'Taxes'),
+					'icon' => '<i class="fa  fa-cny"></i>',
+					'url' => ['tax-code/index'],
+					'visible' => Yii::$app->user->can('staffmember'),
+				],
+				
+					[
+					'label' => Yii::t('backend', 'Classrooms'),
+					'icon' => '<i class="fa fa-home"></i>',
+					'url' => ['classroom/index'],
+					'visible' => Yii::$app->user->can('staffmember'),
+				],
+				[
+					'label' => Yii::t('backend', 'Color Code'),
+					'icon' => '<i class="fa fa-newspaper-o"></i>',
+					'url' => ['calendar-event-color/edit'],
+					'visible' => Yii::$app->user->can('administrator'),
+				],
+				[
+					'label' => Yii::t('backend', 'Reminder Notes'),
+					'icon' => '<i class="fa  fa-bell"></i>',
+					'url' => ['/reminder-note/index'],
+					'visible' => Yii::$app->user->can('administrator'),
+				],
+				[
+					'label' => Yii::t('backend', 'Blogs'),
+					'icon' => '<i class="fa fa-newspaper-o"></i>',
+					'url' => ['blog/index'],
+					'visible' => Yii::$app->user->can('administrator'),
+				],
+				[
+					'label' => Yii::t('backend', 'Locations'),
+					'icon' => '<i class="fa  fa-map-marker"></i>',
+					'url' => ['location/index'],
+					'visible' => Yii::$app->user->can('staffmember'),
+				],
+			],
 		],
-			[
+		[
 			'label' => Yii::t('backend', 'Setup'),
 			'url' => '#',
 			'icon' => '<i class="fa fa-cogs"></i>',
@@ -198,31 +258,7 @@ echo Menu::widget([
 					'url' => ['classroom/index'],
 					'visible' => Yii::$app->user->can('staffmember'),
 				],
-					[
-					'label' => Yii::t('backend', 'Color Code'),
-					'icon' => '<i class="fa fa-newspaper-o"></i>',
-					'url' => ['calendar-event-color/edit'],
-					'visible' => Yii::$app->user->can('administrator'),
-				],
-					[
-					'label' => Yii::t('backend', 'Reminder Notes'),
-					'icon' => '<i class="fa  fa-bell"></i>',
-					'url' => ['/reminder-note/index'],
-					'visible' => Yii::$app->user->can('administrator'),
-				],
-					[
-					'label' => Yii::t('backend', 'Blogs'),
-					'icon' => '<i class="fa fa-newspaper-o"></i>',
-					'url' => ['blog/index'],
-					'visible' => Yii::$app->user->can('administrator'),
-				],
-					[
-					'label' => Yii::t('backend', 'Locations'),
-					'icon' => '<i class="fa  fa-map-marker"></i>',
-					'url' => ['location/index'],
-					'visible' => Yii::$app->user->can('staffmember'),
-				],
-					[
+				[
 					'label' => Yii::t('backend', 'Holidays'),
 					'icon' => '<i class="fa fa-car"></i>',
 					'url' => ['holiday/index'],
@@ -233,38 +269,6 @@ echo Menu::widget([
 					'icon' => '<i class="fa  fa-upload"></i>',
 					'url' => ['user/import'],
 					'visible' => Yii::$app->user->can('staffmember'),
-				],
-					[
-					'label' => Yii::t('backend', 'Cities'),
-					'icon' => '<i class="fa fa-building"></i>',
-					'url' => ['city/index'],
-					'visible' => Yii::$app->user->can('staffmember'),
-				],
-					[
-					'label' => Yii::t('backend', 'Provinces'),
-					'icon' => '<i class="fa  fa-upload"></i>',
-					'url' => ['province/index'],
-					'visible' => Yii::$app->user->can('staffmember'),
-				],
-					[
-					'label' => Yii::t('backend', 'Taxes'),
-					'icon' => '<i class="fa  fa-cny"></i>',
-					'url' => ['tax-code/index'],
-					'visible' => Yii::$app->user->can('staffmember'),
-				],
-					[
-					'label' => Yii::t('backend', 'Countries'),
-					'icon' => '<i class="fa fa-globe"></i>',
-					'url' => ['country/index'],
-					'visible' => Yii::$app->user->can('staffmember'),
-				],
-					[
-					'label' => Yii::t('backend', 'Logs'),
-					'url' => ['log/index'],
-					'icon' => '<i class="fa fa-angle-double-right"></i>',
-					'badge' => \backend\models\SystemLog::find()->count(),
-					'badgeBgClass' => 'label-danger',
-					'visible' => Yii::$app->user->can('administrator'),
 				],
 			],
 		],
