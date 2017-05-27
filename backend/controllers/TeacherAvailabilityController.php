@@ -127,9 +127,19 @@ class TeacherAvailabilityController extends Controller
    
     public function actionDelete($id)
     {
+        $status=false;
         $availabilityModel = $this->findModel($id);
+        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $availabilityModel->userName = $user->publicIdentity;
+        $availabilityModel->on(TeacherAvailability::EVENT_DELETE, [new TeacherAvailabilityLog(), 'deleteAvailability']);
+
+        if ($availabilityModel->delete()) {
+            $status=true;
+            $availabilityModel->trigger(TeacherAvailability::EVENT_DELETE);
+        }
+
         return [
-            'status' => $availabilityModel->delete()
+            'status' => $status
         ];
     }
     /**
@@ -233,6 +243,9 @@ class TeacherAvailabilityController extends Controller
             $roomModel = $teacherAvailabilityModel->teacherRoom;
         }
         if (!empty($teacherAvailabilityModel)) {
+            $userModel = User::findOne(['id' => Yii::$app->user->id]);
+            $teacherAvailabilityModel->userName = $userModel->publicIdentity;
+            $teacherAvailabilityModel->on(TeacherAvailability::EVENT_UPDATE, [new TeacherAvailabilityLog(), 'edit'], ['oldAttributes' => $teacherAvailabilityModel->getOldAttributes()]);
             $roomModel->availabilityId = $teacherAvailabilityModel->id;
         }
         $roomModel->teacher_location_id = $teacherModel->userLocation->id;
