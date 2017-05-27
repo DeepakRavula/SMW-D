@@ -20,6 +20,7 @@ class TeacherAvailability extends \yii\db\ActiveRecord
     public $userName;
 
     const EVENT_CREATE = 'event-create';
+    const EVENT_UPDATE = 'event-update';
 
     /**
      * {@inheritdoc}
@@ -96,10 +97,9 @@ class TeacherAvailability extends \yii\db\ActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert) {
-            $this->trigger(TeacherAvailability::EVENT_CREATE);
-        } else {
-            return parent::afterSave($insert, $changedAttributes);
+      if (!$insert) {
+            $this->trigger(TeacherAvailability::EVENT_UPDATE);
         }
+        $this->trigger(TeacherAvailability::EVENT_CREATE);
     }
 }

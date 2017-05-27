@@ -233,6 +233,9 @@ class TeacherAvailabilityController extends Controller
             $roomModel = $teacherAvailabilityModel->teacherRoom;
         }
         if (!empty($teacherAvailabilityModel)) {
+            $userModel = User::findOne(['id' => Yii::$app->user->id]);
+            $teacherAvailabilityModel->userName = $userModel->publicIdentity;
+            $teacherAvailabilityModel->on(TeacherAvailability::EVENT_UPDATE, [new TeacherAvailabilityLog(), 'edit'], ['oldAttributes' => $teacherAvailabilityModel->getOldAttributes()]);
             $roomModel->availabilityId = $teacherAvailabilityModel->id;
         }
         $roomModel->teacher_location_id = $teacherModel->userLocation->id;
