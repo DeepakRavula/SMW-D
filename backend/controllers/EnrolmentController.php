@@ -127,6 +127,20 @@ class EnrolmentController extends Controller
         }
     }
 
+	public function actionAdd()
+    {
+		print_r($_POST);die;
+        $model = new Enrolment();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
+    }
+
 	public function getHolidayResources($date)
     {
         $locationId = Yii::$app->session->get('location_id');
