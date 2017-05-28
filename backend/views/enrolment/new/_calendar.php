@@ -49,6 +49,12 @@ use yii\helpers\Html;
 .box-body .fc{
     margin:0 !important;
 }
+.apply-button {
+	margin-top:25px;
+}
+#datepicker {
+	margin-top:25px;
+}
 .ui-widget-content{
     font-size: 12px;
     line-height: 20px;
@@ -97,16 +103,6 @@ left:45%;
 bottom:-10px;
 }	
 </style>
-<div>
-<div class="col-md-3 pull-right">
-	<div id="datepicker" class="input-group date">
-		<input type="text" class="form-control" value=<?= (new \DateTime())->format('d-m-Y') ?>>
-		<div class="input-group-addon">
-			<span class="glyphicon glyphicon-calendar"></span>
-		</div>
-	</div>
-</div>
-<div id="enrolment-calendar"></div>
 <?php $form = ActiveForm::begin(); ?>
 <div class="form-group">
 	<div class="col-sm-2">
@@ -118,12 +114,22 @@ bottom:-10px;
 	<div class="col-sm-2">
 		<?= $form->field($model, 'day')->textInput(['readOnly' => true])->label('Duration'); ?>
 	</div>
-	<div class="col-sm-2">
+	<div class="col-sm-2 apply-button">
 		<?= Html::a('Apply', '#', ['class' => 'btn btn-info enrolment-apply-button']) ?>
     </div>
 </div>
 <?php ActiveForm::end(); ?>
+<div class="col-md-3 pull-right">
+	<div id="datepicker" class="input-group date">
+		<input type="text" class="form-control" value=<?= (new \DateTime())->format('d-m-Y') ?>>
+		<div class="input-group-addon">
+			<span class="glyphicon glyphicon-calendar"></span>
+		</div>
+	</div>
 </div>
+<div class="clearfix"></div>
+<div id="enrolment-calendar"></div>
+
 <?php
 	$locationId = Yii::$app->session->get('location_id');
 	$locationAvailabilities = LocationAvailability::find()
