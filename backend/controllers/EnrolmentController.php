@@ -19,7 +19,12 @@ use common\models\TeacherAvailability;
 use common\models\Program;
 use common\models\LocationAvailability;
 use yii\helpers\Url;
+use common\models\UserLocation;
 use common\models\Holiday;
+use common\models\User;
+use common\models\UserProfile;
+use common\models\PhoneNumber;
+use common\models\Address;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -129,16 +134,36 @@ class EnrolmentController extends Controller
 
 	public function actionAdd()
     {
-		print_r($_POST);die;
-        $model = new Enrolment();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+		$locationId = Yii::$app->session->get('location_id');
+		$request = Yii::$app->request;
+		$courseModel = new Course();
+		$user = new User();
+		$userProfile = new UserProfile();
+		$phoneNumber = new PhoneNumber();
+		$address = new Address();
+		$userLocation = new UserLocation();
+		$courseModel->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
+		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
+		$userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
+		$phoneNumber->load(Yii::$app->getRequest()->getBodyParams(), 'PhoneNumber');
+		$address->load(Yii::$app->getRequest()->getBodyParams(), 'Address');
+        if($user->save()){
+			$userProfile->save();
+			$userLocation->location_id = $locationId;
+			$userLocation->user_id = $user->id;
+			$userLocation->save();
+			//save address and phone number
+			$address->save();
+			$user->link('address', $address);
+			$phoneNumber->user_id = $user->id;
+			$phoneNumber->save();
+			//save student
+			$student->customer_id = $user->id;
+			$student->save();
+			//save course
+			
+			
+		}
     }
 
 	public function getHolidayResources($date)

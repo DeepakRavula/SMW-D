@@ -54,7 +54,8 @@ $this->title = 'New Enrolment';
 	<div class="clearfix"></div>
 	<div class="form-group">
 		<label  class="col-sm-2 control-label p-10">Day, Time & Duration</label>
-    	<?php echo $form->field($model, 'duration')->hiddenInput()->label(false) ?>
+    	<?php echo $form->field($model, 'startDate')->hiddenInput()->label(false) ?>
+    	<?php echo $form->field($model, 'day')->hiddenInput()->label(false) ?>
     	<?php echo $form->field($model, 'fromTime')->hiddenInput()->label(false) ?>
 		<div class="col-sm-5 new-enrolment-time">
 		</div>
