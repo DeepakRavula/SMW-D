@@ -10,11 +10,14 @@ use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
 use common\models\User;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <div class="lesson-qualify">
 
 	<?=
@@ -31,19 +34,15 @@ use common\models\User;
         ]); ?>
    <div class="row">
 	   <div class="col-md-4">
-			<?php
-            echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-                'options' => [
-                    'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
-                ],
-                'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+            <?php
+            echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+                [
+                'options' => ['id' => 'course-duration'],
                 'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'dd-mm-yyyy HH:ii P',
-                    'showMeridian' => true,
-                    'minuteStep' => 15,
+                    'showMeridian' => false,
+                    'defaultTime' => Yii::$app->formatter->asDateTime($model->duration),
                 ],
-            ])->label('Reschedule Date');
+            ]);
             ?>
         </div>
 	   <div class="col-md-4">
@@ -65,17 +64,16 @@ use common\models\User;
 		))->label();
             ?>  
         </div>
-        <div class="col-md-4">
-            <?php
-            echo $form->field($model, 'duration')->widget(TimePicker::classname(),
-                [
-                'options' => ['id' => 'course-duration'],
-                'pluginOptions' => [
-                    'showMeridian' => false,
-                    'defaultTime' => Yii::$app->formatter->asDateTime($model->duration),
-                ],
-            ]);
-            ?>
+	   
+	   <div class="col-md-3">
+			<?php
+			echo $form->field($model, 'date')->textInput([
+				'readOnly' => true,
+				'value' => (new \DateTime($model->date))->format('d-m-Y g:i A')	
+			])->label('Check The Schedule'); ?>
+		   	<div class="col-md-2  hand lesson-edit-calendar">
+            	<span class="fa fa-calendar"></span>
+			</div>
         </div>
 		<div class="col-md-4">
 			<?php
@@ -129,3 +127,14 @@ use common\models\User;
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>
+<?php
+Modal::begin([
+	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+	'id' => 'lesson-edit-modal',
+]);
+?>
+<?php
+echo $this->render('_calendar', [
+]);
+?>
+<?php Modal::end(); ?>
