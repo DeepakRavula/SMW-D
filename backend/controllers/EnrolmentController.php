@@ -14,6 +14,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
+use common\models\Student;
 use yii\filters\ContentNegotiator;
 use common\models\TeacherAvailability;
 use common\models\Program;
@@ -136,33 +137,43 @@ class EnrolmentController extends Controller
     {
 		$locationId = Yii::$app->session->get('location_id');
 		$request = Yii::$app->request;
-		$courseModel = new Course();
+		$course = new Course();
 		$user = new User();
 		$userProfile = new UserProfile();
 		$phoneNumber = new PhoneNumber();
 		$address = new Address();
 		$userLocation = new UserLocation();
-		$courseModel->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
+		$student = new Student();
+		
+		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
 		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
 		$userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
 		$phoneNumber->load(Yii::$app->getRequest()->getBodyParams(), 'PhoneNumber');
 		$address->load(Yii::$app->getRequest()->getBodyParams(), 'Address');
+		$student->load(Yii::$app->getRequest()->getBodyParams(), 'Student');
+		
+		$user->status = User::STATUS_ACTIVE;
         if($user->save()){
+			$userProfile->user_id = $user->id;
 			$userProfile->save();
 			$userLocation->location_id = $locationId;
 			$userLocation->user_id = $user->id;
 			$userLocation->save();
 			//save address and phone number
 			$address->save();
-			$user->link('address', $address);
+			$user->link('addresses', $address);
 			$phoneNumber->user_id = $user->id;
 			$phoneNumber->save();
 			//save student
 			$student->customer_id = $user->id;
 			$student->save();
 			//save course
-			
-			
+			$dayList = Course::getWeekdaysList();
+			$course->locationId = $locationId;
+			$course->day = array_search($course->day, $dayList);
+			$course->studentId = $student->id;
+			$course->save();
+			return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false]);	
 		}
     }
 

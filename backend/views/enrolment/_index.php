@@ -102,7 +102,11 @@ use yii\bootstrap\ActiveForm;
 					</div>
 					<div id="collapseFour" class="panel-collapse collapse">
 						<div class="checkout-step-body">
+							<?=
+								$this->render('new/_preview', [
 
+								]);
+								?> 
 						</div>
 					</div>
 				</div>

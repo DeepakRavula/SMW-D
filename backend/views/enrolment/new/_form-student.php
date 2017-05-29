@@ -1,5 +1,7 @@
 <?php
 
+use kartik\date\DatePicker;
+
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -22,9 +24,14 @@ $this->title = 'New Enrolment';
 	 <div class="form-group">
 		<label  class="col-sm-2 control-label">Date of Birth</label>
 		<div class="col-sm-3">
-		<?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname(), [
-                    'options' => ['class' => 'form-control'],
-                ])->label(false); ?>
+		<?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(), [
+                'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd-mm-yyyy',
+                ],
+            ])->label(false);
+            ?>
         </div>
 	</div>
 	<div class="clearfix"></div>
