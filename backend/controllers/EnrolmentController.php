@@ -20,6 +20,9 @@ use common\models\Program;
 use common\models\LocationAvailability;
 use yii\helpers\Url;
 use common\models\Holiday;
+use common\models\User;
+use common\models\payment\ProformaPaymentFrequency;
+use common\models\payment\ProformaPaymentFrequencyLog;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -100,8 +103,11 @@ class EnrolmentController extends Controller
     public function actionEdit($id)
     {
         $model = $this->findModel($id);
-        $oldPaymentFrequency = $model->paymentFrequencyId;
+        $model->on(ProformaPaymentFrequency::EVENT_EDIT, [new ProformaPaymentFrequencyLog(), 'edit'], ['oldAttributes' => $model->getOldAttributes()]);
+        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $model->userName = $user->publicIdentity;
         if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
+            $model->trigger(ProformaPaymentFrequency::EVENT_EDIT);
             if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
                 $model->resetPaymentCycle();
             }

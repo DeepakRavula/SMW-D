@@ -23,7 +23,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public $hasEditable;
 	public $programName;
 	public $enrolmentCount;
-
+    public $userName;
     const EDIT_RENEWAL = 'renewal';
     const EDIT_LEAVE = 'leave';
 
@@ -316,6 +316,49 @@ class Enrolment extends \yii\db\ActiveRecord
             case PaymentFrequency::LENGTH_EVERY_TWO_MONTH:
                 $paymentFrequency = 'Bi-Monthly';
             break;
+            case PaymentFrequency::LENGTH_EVERY_FOUR_MONTH:
+                $paymentFrequency = 'Every Four Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_FIVE_MONTH:
+                $paymentFrequency = 'Every Five Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_SEVEN_MONTH:
+                $paymentFrequency = 'Every Seven Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_EIGHT_MONTH:
+                $paymentFrequency = 'Every Eight Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_NINE_MONTH:
+                $paymentFrequency = 'Every Nine Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_TEN_MONTH:
+                $paymentFrequency = 'Every Ten Month';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_ELEVEN_MONTH:
+                $paymentFrequency = 'Every Eleven Month';
+                break;
+        }
+        return $paymentFrequency;
+    }
+    public function paymentFrequencyName($frequencyid)
+    {
+        $paymentFrequency = null;
+        switch ($frequencyid) {
+            case PaymentFrequency::LENGTH_FULL :
+                $paymentFrequency = 'Annually';
+                break;
+            case PaymentFrequency::LENGTH_HALFYEARLY :
+                $paymentFrequency = 'Semi-Annually';
+                break;
+            case PaymentFrequency::LENGTH_QUARTERLY :
+                $paymentFrequency = 'Quarterly';
+                break;
+            case PaymentFrequency::LENGTH_MONTHLY :
+                $paymentFrequency = 'Monthly';
+                break;
+            case PaymentFrequency::LENGTH_EVERY_TWO_MONTH:
+                $paymentFrequency = 'Bi-Monthly';
+                break;
             case PaymentFrequency::LENGTH_EVERY_FOUR_MONTH:
                 $paymentFrequency = 'Every Four Month';
                 break;
