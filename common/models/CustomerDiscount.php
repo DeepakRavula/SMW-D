@@ -13,9 +13,13 @@ use Yii;
  */
 class CustomerDiscount extends \yii\db\ActiveRecord
 {
+    public $userName;
+
     /**
      * @inheritdoc
      */
+    const EVENT_CREATE = 'event-create';
+
     public static function tableName()
     {
         return 'customer_discount';
@@ -44,4 +48,16 @@ class CustomerDiscount extends \yii\db\ActiveRecord
             'value' => 'Value',
         ];
     }
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+            $this->trigger(self::EVENT_CREATE);
+        }
+        return parent::afterSave($insert, $changedAttributes);
+    }
+    public function getCustomer()
+    {
+        return $this->hasOne(User::className(), ['id' => 'customerId']);
+    }
+
 }
