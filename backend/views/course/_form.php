@@ -8,12 +8,16 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use common\models\LocationAvailability;
 use kartik\depdrop\DepDrop;
+use kartik\time\TimePicker;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
+<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="group-course-form p-10">
 	<?php
@@ -26,8 +30,7 @@ use kartik\depdrop\DepDrop;
                     <?php
                     echo $form->field($model, 'programId')->dropDownList(
                             ArrayHelper::map(Program::find()->group()->active()
-                               ->all(), 'id', 'name'), ['prompt' => 'Select Program'])
-                    ?>
+                               ->all(), 'id', 'name'), ['prompt' => 'Select Program'])->label('Program');?>
             </div>
             <div class="col-md-4">
 				<?php
@@ -40,32 +43,34 @@ use kartik\depdrop\DepDrop;
 							'placeholder' => 'Select...',
 							'url' => Url::to(['course/teachers']),
 						],
-					]);
+					])->label('Teacher');
 					?>
             </div>
             <div class="col-md-4">
-                <?php echo $form->field($model, 'endDate')->widget(DatePicker::classname(), [
-                    'options' => [
-                        'value' =>Yii::$app->formatter->asDate((new \DateTime())->format('d-m-Y')),
-                    ],
-                    'type' => DatePicker::TYPE_COMPONENT_APPEND,
-                    'pluginOptions' => [
-                        'autoclose' => true,
-                        'format' => 'dd-mm-yyyy',
-                    ],
-                ]);
-                ?>
-            </div>
-            <div class="col-md-12">
-                <div id="group-course-calendar"> </div>
-            </div>
-            <div class="col-md-3">
                     <?php
-                    echo $form->field($model, 'duration')->hiddenInput()->label(false);
-                    ?>
+                    echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+                [
+                'options' => ['id' => 'course-duration'],
+                'pluginOptions' => [
+                    'showMeridian' => false,
+                    'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+                ],
+            ]);
+            ?>
+            </div>
+        <div class="col-md-4  hand group-course-calendar-icon">
+			<label>Check The Schedule</label>
+            <span class="fa fa-calendar"></span>
+		</div>
+		<div class="col-md-4">
+				<?= $form->field($model, 'weeksCount')->textInput()->label('Number Of Weeks');?>
+        </div>
+		 <div class="col-md-4">
+				<?= $form->field($model, 'lessonsPerWeekCount')->textInput(['readOnly' => true, 'value' => 1])->label('Number Of Lessons Per Week');
+					?>
             </div>
             <div class="col-md-3">
-                    <?php echo $form->field($model, 'day')->hiddenInput()->label(false); ?>
+                 <?php echo $form->field($model, 'day')->hiddenInput()->label(false); ?>
             </div>
             <div class="col-md-3">
                     <?= $form->field($model, 'fromTime')->hiddenInput()->label(false); ?>
@@ -85,109 +90,14 @@ if (!$model->isNewRecord) {
     </div>
 <?php ActiveForm::end(); ?>
 </div>
-
 <?php
-    $locationId = Yii::$app->session->get('location_id');
-    $minLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+Modal::begin([
+	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+	'id' => 'group-course-calendar-modal',
+]);
 ?>
-
-<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
-<script>
-$(document).ready(function(){
-    var date = moment(new Date()).format('DD-MM-YYYY');
-    renderCalendar(date);
-    $(document).on('change', '#course-teacherid', function () {
-        var date = $('#group-course-calendar').fullCalendar('getDate');
-        renderCalendar(date);
-    });
-
-    function renderCalendar(date) {
-        var events, availableHours;
-        var teacherId = $('#course-teacherid').val();
-        $.ajax({
-            url: '/teacher-availability/availability-with-events?id=' + teacherId,
-            type: 'get',
-            dataType: "json",
-            success: function (response)
-            {
-                events = response.events;
-                availableHours = response.availableHours;
-                refreshCalendar(availableHours, events, date);
-            }
-        });
-    }
-
-    function refreshCalendar(availableHours, events, date) {
-        $('#group-course-calendar').fullCalendar('destroy');
-        $('#group-course-calendar').fullCalendar({
-            defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
-            header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'agendaWeek'
-            },
-            allDaySlot: false,
-            slotDuration: '00:15:00',
-            titleFormat: 'DD-MMM-YYYY, dddd',
-            defaultView: 'agendaWeek',
-            minTime: "<?php echo $from_time; ?>",
-            maxTime: "<?php echo $to_time; ?>",
-            selectConstraint: 'businessHours',
-            eventConstraint: 'businessHours',
-            businessHours: availableHours,
-            overlapEvent: false,
-            overlapEventsSeparate: true,
-            events: events,
-            select: function (start, end, allDay) {
-                $('#course-day').val(moment(start).day());
-                $('#course-startdate').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
-                $('#course-fromtime').val(moment(start).format('HH:mm:ss'));
-                $('#group-course-calendar').fullCalendar('removeEvents', 'newEnrolment');
-                var endtime = start.clone();
-                var differenceInMinute = moment(end).minute() - moment(start).minute();
-                if (differenceInMinute === 15) {
-                    moment(endtime.add(30, 'minutes'));
-                } else {
-                    endtime = end;
-                }
-                var duration = moment.utc(moment(endtime, "HH:mm:ss").diff(moment(start, "HH:mm:ss"))).format("HH:mm:ss");
-                $('#course-duration').val(duration);
-                $('#group-course-calendar').fullCalendar('renderEvent',
-                    {
-                        id: 'newEnrolment',
-                        start: start,
-                        end: endtime,
-                        allDay: false
-                    },
-                true // make the event "stick"
-                );
-                $('#group-course-calendar').fullCalendar('unselect');
-            },
-            eventAfterAllRender: function (view) {
-                $('.fc-short').removeClass('fc-short');
-            },
-            selectable: true,
-            selectHelper: true,
-        });
-    }
-
-    $('#group-course-form').on('beforeSubmit', function (e) {
-        var courseDay = $('#course-day').val();
-        if( ! courseDay) {
-            $('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
-            $(window).scrollTop(0);
-            return false;
-        }
-    });
-});
-</script>
+<?php
+echo $this->render('_calendar', [
+]);
+?>
+<?php Modal::end(); ?>

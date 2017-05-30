@@ -7,6 +7,8 @@ use common\models\Program;
 use common\models\Lesson;
 use common\models\EnrolmentDiscount;
 use Yii;
+use common\models\CourseGroup;
+
 /**
  * This is the model class for table "course".
  *
@@ -33,6 +35,8 @@ class Course extends \yii\db\ActiveRecord
 	public $rescheduleBeginDate;
 	public $discount;
 	public $teacherName;
+	public $weeksCount;
+	public $lessonsPerWeekCount;
 
     /**
      * {@inheritdoc}
@@ -52,9 +56,8 @@ class Course extends \yii\db\ActiveRecord
 			[['discount'], 'safe'],
             [['day', 'fromTime'], 'safe'],
             [['startDate', 'duration'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
-            ['endDate', 'required', 'on' => self::SCENARIO_GROUP_COURSE],
-            [['duration', 'startDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
-            [['programId', 'teacherId', 'paymentFrequency'], 'integer'],
+            [['duration', 'startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
+            [['programId', 'teacherId', 'paymentFrequency', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
             [['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
             },'except' => self::SCENARIO_EDIT_ENROLMENT 
@@ -213,11 +216,10 @@ class Course extends \yii\db\ActiveRecord
         $this->fromTime = $fromTime->format('H:i:s');
         $timebits = explode(':', $this->fromTime);
 		$this->isConfirmed = false;
-        if ((int) $this->program->type === Program::TYPE_GROUP_PROGRAM) {
+        if ((int) $this->program->isGroup()) {
             $startDate = new \DateTime($this->startDate);
-            $this->startDate = $startDate->format('Y-m-d H:i:s');
-            $endDate = new \DateTime($this->endDate);
-            $this->endDate = $endDate->format('Y-m-d 00:00:00');
+            $endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));
+            $this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
             $endDate = \DateTime::createFromFormat('d-m-Y', $this->startDate);
             $startDate = new \DateTime($this->startDate);
@@ -235,7 +237,7 @@ class Course extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::afterSave($insert, $changedAttributes);
 		}
-        if ((int) $this->program->type === Program::TYPE_PRIVATE_PROGRAM) {
+        if ((int) $this->program->isPrivate()) {
             $enrolmentModel = new Enrolment();
             $enrolmentModel->courseId = $this->id;
             $enrolmentModel->studentId = $this->studentId;
@@ -249,7 +251,12 @@ class Course extends \yii\db\ActiveRecord
 				}
 			}
         }
-        if ((int) $this->program->type === Program::TYPE_GROUP_PROGRAM) {
+        if ((int) $this->program->isGroup()) {
+			$groupCourse = new CourseGroup();
+			$groupCourse->courseId = $this->id;
+			$groupCourse->weeksCount = $this->weeksCount;
+			$groupCourse->lessonsPerWeekCount = $this->lessonsPerWeekCount;
+			$groupCourse->save();
             $interval = new \DateInterval('P1D');
             $startDate = $this->startDate;
             $endDate = $this->endDate;
@@ -279,7 +286,7 @@ class Course extends \yii\db\ActiveRecord
                 }
             }
         }
-        	return parent::afterSave($insert, $changedAttributes);
+        return parent::afterSave($insert, $changedAttributes);
     }
 
 	public function generateLessons($lessons, $startDate)

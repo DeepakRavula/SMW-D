@@ -16,6 +16,7 @@ use common\models\Student;
 use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
+use common\models\CourseGroup;
 use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\PaymentFrequency;
@@ -160,10 +161,8 @@ public function getHolidayEvent($date)
     {
         $model = new Course();
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
-        
         $model->locationId = Yii::$app->session->get('location_id');
-        if ($model->load(Yii::$app->request->post())) {
-            $model->save();
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['lesson/review', 'courseId' => $model->id]);
         } else {
             return $this->render('create', [
