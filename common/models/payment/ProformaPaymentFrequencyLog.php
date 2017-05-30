@@ -50,12 +50,12 @@ class ProformaPaymentFrequencyLog extends ProformaPaymentFrequency
         $paymentFrequency = PaymentFrequency::find()->andWhere(['id' => $enrolmentModel->paymentFrequencyId])->asArray()->one();
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $paymentFrequency,
-            'message' => $enrolmentModel->userName . ' updated  {{' . $enrolmentModel->student->customerProfile->fullName . '}}' . ' Payment Frequency  from  '.$data.' to ' . $enrolmentModel->paymentFrequency,
+            'message' => $enrolmentModel->userName . ' updated  {{' . $enrolmentModel->student->customer->publicIdentity . '}}' . ' Payment Frequency  from  '.$data.' to ' . $enrolmentModel->paymentFrequency,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
-            $timelineEventLink->index = $enrolmentModel->student->customerProfile->fullName;
+            $timelineEventLink->index = $enrolmentModel->student->customer->publicIdentity;
             $timelineEventLink->baseUrl = Yii::$app->homeUrl;
             $timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'customer', 'id' => $enrolmentModel->student->customer->id]);
             $timelineEventLink->save();
