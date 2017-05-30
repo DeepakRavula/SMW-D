@@ -33,7 +33,7 @@ use yii\bootstrap\Modal;
              ]
         ]); ?>
    <div class="row">
-	   <div class="col-md-4">
+	   <div class="col-md-3">
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
                 [
@@ -65,12 +65,21 @@ use yii\bootstrap\Modal;
             ?>  
         </div>
 	   
-	   <div class="col-md-3">
+	   <div class="col-md-4">
 			<?php
-			echo $form->field($model, 'date')->textInput([
-				'readOnly' => true,
-				'value' => (new \DateTime($model->date))->format('d-m-Y g:i A')	
-			])->label('Check The Schedule'); ?>
+            echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
+                'options' => [
+                    'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
+                ],
+                'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd-mm-yyyy HH:ii P',
+                    'showMeridian' => true,
+                    'minuteStep' => 15,
+                ],
+            ])->label('Reschedule Date');
+            ?>
 		   	<div class="col-md-2  hand lesson-edit-calendar">
             	<span class="fa fa-calendar"></span>
 			</div>

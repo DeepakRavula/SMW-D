@@ -66,6 +66,7 @@ $paymentLogs = TimelineEvent::find()
 	->joinWith('timelineEventInvoice')
 	->joinWith('timelineEventEnrolment')
 	->joinWith('timelineEventLesson')
+    ->joinWith('timelineEventUser')
 	->andWhere(['createdUserId' => $model->id]);?>
 <?php endif; ?>
 <?php $dataProvider = new ActiveDataProvider([

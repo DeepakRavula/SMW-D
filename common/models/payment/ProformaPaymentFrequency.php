@@ -17,6 +17,7 @@ use common\models\PaymentFrequency;
 class ProformaPaymentFrequency extends \yii\db\ActiveRecord
 {
     const EVENT_CREATE = 'event-create';
+    const EVENT_EDIT='event-edit';
 
     public $userName;
 
