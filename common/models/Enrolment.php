@@ -23,7 +23,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public $hasEditable;
 	public $programName;
 	public $enrolmentCount;
-
+    public $userName;
     const EDIT_RENEWAL = 'renewal';
     const EDIT_LEAVE = 'leave';
 
@@ -340,6 +340,7 @@ class Enrolment extends \yii\db\ActiveRecord
         }
         return $paymentFrequency;
     }
+    
 
     public function deleteUnPaidProformaPaymentCycles()
     {

@@ -8,7 +8,8 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use common\models\User;
+use common\models\CustomerDiscountLog;
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
  */
@@ -64,6 +65,9 @@ class CustomerDiscountController extends Controller
 		if(empty($customerDiscountModel)) {
         	$customerDiscountModel = new CustomerDiscount();
 			$customerDiscountModel->customerId = $id;
+            $userModel = User::findOne(['id' => Yii::$app->user->id]);
+                $customerDiscountModel->on(CustomerDiscount::EVENT_CREATE, [new CustomerDiscountLog(), 'create']);      
+        $customerDiscountModel->userName = $userModel->publicIdentity;
 		}	
         if ($customerDiscountModel->load(Yii::$app->request->post()) && $customerDiscountModel->save()) {
             	return $this->redirect(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $id, '#' => 'discount']);
