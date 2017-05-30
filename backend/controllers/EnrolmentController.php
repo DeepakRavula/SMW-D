@@ -103,7 +103,9 @@ class EnrolmentController extends Controller
     public function actionEdit($id)
     {
         $model = $this->findModel($id);
-        $model->on(ProformaPaymentFrequency::EVENT_EDIT, [new ProformaPaymentFrequencyLog(), 'edit'], ['oldAttributes' => $model->getOldAttributes()]);
+        $oldPaymentFrequency = $model->paymentFrequencyId;
+        $lastPaymentFrequency = $model->getPaymentFrequency();
+        $model->on(ProformaPaymentFrequency::EVENT_EDIT, [new ProformaPaymentFrequencyLog(), 'edit'], ['lastPaymentFrequency' => $lastPaymentFrequency]);
         $user = User::findOne(['id' => Yii::$app->user->id]);
         $model->userName = $user->publicIdentity;
         if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
