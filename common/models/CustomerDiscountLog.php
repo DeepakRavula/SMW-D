@@ -26,14 +26,14 @@ class CustomerDiscountLog extends CustomerDiscount
 		$customerdiscount = CustomerDiscount::find(['id' => $customerDiscountModel->id])->asArray()->one();
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $customerdiscount,
-			'message' => $customerDiscountModel->userName.' Set  '.$customerDiscountModel->value.'  % as Discount for {{' .$customerDiscountModel->customer->publicIdentity . '}}',
+			'message' => $customerDiscountModel->userName.' set  '.$customerDiscountModel->value.'  % as Discount for {{' .$customerDiscountModel->customer->publicIdentity . '}}',
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $customerDiscountModel->customer->publicIdentity;
 			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
-			$timelineEventLink->path = Url::to(['user/view', 'UserSearch[role_name]' => 'customer','id' => $customerDiscountModel->customerId]);
+			$timelineEventLink->path = Url::to(['user/view', 'User Search[role_name]' => 'customer','id' => $customerDiscountModel->customerId]);
 			$timelineEventLink->save();
 
 			$timelineEventUser = new TimelineEventUser();
