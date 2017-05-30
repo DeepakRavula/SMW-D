@@ -5,7 +5,7 @@ use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
 use kartik\color\ColorInput;
-use common\models\Lesson;
+use common\models\LessonSplit;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
@@ -34,6 +34,17 @@ use yii\bootstrap\Modal;
         ]); ?>
    <div class="row">
 	   <div class="col-md-3">
+		   <?php if($model->isUnscheduled()) : ?>
+		   <?php $lessonCreditUsage = LessonSplit::find()
+			   ->select(['SEC_TO_TIME(SUM(TIME_TO_SEC(lesson_split.unit))) as unit'])
+			   ->innerJoinWith('lessonSplitUsage')
+			   ->andWhere(['lessonId' => $model->id])
+			   ->all();
+		   print_r($lessonCreditUsage);die;
+		   ?>
+		   <?php else : ?>
+		   <?php $duration = Yii::$app->formatter->asDateTime($model->duration); ?> 
+		   <?php endif; ?>
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
                 [

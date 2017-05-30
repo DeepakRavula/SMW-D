@@ -235,6 +235,12 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasMany(LessonSplit::className(), ['lessonId' => 'id']);
     }
 
+	public function getLessonSplitUsage()
+    {
+        return $this->hasOne(LessonSplitUsage::className(), ['lessonSplitId' => 'id'])
+			->via('lessonSplit');
+    }
+
     public function getCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
