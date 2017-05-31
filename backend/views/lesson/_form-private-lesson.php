@@ -33,7 +33,7 @@ use yii\bootstrap\Modal;
              ]
         ]); ?>
    <div class="row">
-	   <div class="col-md-3">
+	   <div class="col-md-4">
 		    <?php if($model->isUnscheduled()) : ?>
 				<?php $model->duration = $model->getCreditUsage(); ?> 
 		    <?php endif; ?>
@@ -68,24 +68,33 @@ use yii\bootstrap\Modal;
         </div>
 	   
 	   <div class="col-md-4">
-			<?php
-            echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-                'options' => [
-                    'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
-                ],
-                'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'dd-mm-yyyy HH:ii P',
-                    'showMeridian' => true,
-                    'minuteStep' => 15,
-                ],
-            ])->label('Reschedule Date');
-            ?>
-		   	<div class="col-md-2  hand lesson-edit-calendar">
-            	<span class="fa fa-calendar"></span>
+		   <div class="row">
+			<div class="col-md-9" style="width:72%;">
+				<?php
+				echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
+					'options' => [
+						'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
+					],
+					'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+					'pluginOptions' => [
+						'autoclose' => true,
+						'format' => 'dd-mm-yyyy HH:ii P',
+						'showMeridian' => true,
+						'minuteStep' => 15,
+					],
+				])->label('Reschedule Date');
+				?>
 			</div>
+			<div class="col-md-3" style="padding:0;">
+					<div class="hand lesson-edit-calendar">
+					<p> <label> Calendar View </label></p>
+					<span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
+				</div>
+			</div>
+		   </div>
         </div>
+	</div>
+	<div class="row">
 		<div class="col-md-4">
 			<?php
                 if ($privateLessonModel->isNewRecord) {
@@ -120,7 +129,7 @@ use yii\bootstrap\Modal;
                 ]);
                 ?>
 		</div>
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-4">
         <?php echo $form->field($model, 'colorCode')->widget(ColorInput::classname(), [
                 'options' => [
                     'placeholder' => 'Select color ...',
@@ -129,7 +138,8 @@ use yii\bootstrap\Modal;
         ]);
         ?>
         </div>
-    <div class="col-md-12 p-l-20 form-group">
+	</div>
+   <div class="col-md-12 p-l-20 form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
 		<?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
         ?>
