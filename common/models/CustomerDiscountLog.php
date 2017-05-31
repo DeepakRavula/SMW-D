@@ -6,8 +6,8 @@ use Yii;
 use common\models\CustomerDiscount;
 use common\commands\AddToTimelineCommand;
 use yii\helpers\Url;
-use common\models\TimelineEventLink;
-use common\models\TimelineEventUser;
+use common\models\timelineevent\TimelineEventLink;
+use common\models\timelineevent\TimelineEventUser;
 
 /**
  * This is the model class for table "student".

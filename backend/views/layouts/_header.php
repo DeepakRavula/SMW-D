@@ -3,7 +3,7 @@
  * @var yii\web\View
  */
 use backend\assets\BackendAsset;
-use common\models\TimelineEvent;
+use common\models\timelineevent\TimelineEvent;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;

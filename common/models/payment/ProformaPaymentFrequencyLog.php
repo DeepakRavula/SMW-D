@@ -6,8 +6,8 @@ use common\models\payment\ProformaPaymentFrequency;
 use common\models\PaymentFrequency;
 use common\commands\AddToTimelineCommand;
 use yii\helpers\Url;
-use common\models\TimelineEventLink;
-use common\models\TimelineEventUser;
+use common\models\timelineevent\TimelineEventLink;
+use common\models\timelineevent\TimelineEventUser;
 
 /**
  * This is the model class for table "ProformaPaymentFrequencyLog".

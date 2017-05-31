@@ -9,7 +9,7 @@
 namespace common\models\query;
 
 use yii\db\ActiveQuery;
-use common\models\TimelineEvent;
+use common\models\timelineevent\TimelineEvent;
 
 class TimelineEventQuery extends ActiveQuery
 {

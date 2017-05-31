@@ -1,13 +1,13 @@
 <?php
 
-namespace common\models;
+namespace common\models\timelineevent;
 
 use common\models\query\TimelineEventQuery;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
-use common\models\TimelineEventEnrolment;
-use common\models\TimelineEventLesson;
-use common\models\TimelineEventLink;
+use common\models\timelineevent\TimelineEventEnrolment;
+use common\models\timelineevent\TimelineEventLesson;
+use common\models\timelineevent\TimelineEventLink;
 use yii\helpers\Html;
 
 /**

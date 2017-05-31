@@ -1,7 +1,7 @@
 <?php
 
 use yii\grid\GridView;
-use common\models\TimelineEvent;
+use common\models\timelineevent\TimelineEvent;
 use yii\data\ActiveDataProvider;
 use common\models\User;
 

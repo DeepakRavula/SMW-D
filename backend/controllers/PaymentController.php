@@ -16,7 +16,7 @@ use yii\web\Response;
 use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
 use common\models\User;
-use common\models\TimelineEventPayment;
+use common\models\timelineevent\TimelineEventPayment;
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */

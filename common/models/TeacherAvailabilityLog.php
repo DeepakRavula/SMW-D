@@ -5,8 +5,8 @@ use Yii;
 use common\models\TeacherAvailability;
 use common\commands\AddToTimelineCommand;
 use yii\helpers\Url;
-use common\models\TimelineEventLink;
-use common\models\TimelineEventTeacher;
+use common\models\timelineevent\TimelineEventLink;
+use common\models\timelineevent\TimelineEventUser;
 
 /**
  * This is the model class for table "student".
