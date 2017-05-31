@@ -69,7 +69,11 @@ class CustomerDiscountController extends Controller
                 $customerDiscountModel->on(CustomerDiscount::EVENT_CREATE, [new CustomerDiscountLog(), 'create']);      
         $customerDiscountModel->userName = $userModel->publicIdentity;
 		}	
+        $userModel = User::findOne(['id' => Yii::$app->user->id]);
+                $customerDiscountModel->on(CustomerDiscount::EVENT_EDIT, [new CustomerDiscountLog(), 'edit'], ['oldAttributes' => $customerDiscountModel->getOldAttributes()]);
+                $customerDiscountModel->userName = $userModel->publicIdentity;
         if ($customerDiscountModel->load(Yii::$app->request->post()) && $customerDiscountModel->save()) {
+            $customerDiscountModel->trigger(CustomerDiscount::EVENT_EDIT);
             	return $this->redirect(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $id, '#' => 'discount']);
         }
     }

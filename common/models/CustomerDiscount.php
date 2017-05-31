@@ -19,6 +19,7 @@ class CustomerDiscount extends \yii\db\ActiveRecord
      * @inheritdoc
      */
     const EVENT_CREATE = 'event-create';
+    const EVENT_EDIT = 'event-edit';
 
     public static function tableName()
     {
