@@ -36,11 +36,15 @@ use yii\bootstrap\Modal;
 	   <div class="col-md-3">
 		   <?php if($model->isUnscheduled()) : ?>
 		   <?php $lessonCreditUsage = LessonSplit::find()
-			   ->select(['SEC_TO_TIME(SUM(TIME_TO_SEC(lesson_split.unit))) as unit'])
+			   ->select(['SEC_TO_TIME( SUM( TIME_TO_SEC(unit) ) ) AS totalDuration'])
 			   ->innerJoinWith('lessonSplitUsage')
 			   ->andWhere(['lessonId' => $model->id])
 			   ->all();
-		   print_r($lessonCreditUsage);die;
+		   if(!empty($lessonCreditUsage)) {
+			   print_r($lessonCreditUsage->);die;}
+		   list($hours, $minutes, $seconds) = explode(':', $model->duration);
+		   $lessonSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
+		   echo $lessonSeconds - $lessonCreditUsage;die;
 		   ?>
 		   <?php else : ?>
 		   <?php $duration = Yii::$app->formatter->asDateTime($model->duration); ?> 

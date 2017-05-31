@@ -11,6 +11,7 @@ namespace common\models;
  */
 class LessonSplit extends \yii\db\ActiveRecord
 {
+	public $totalDuration;
     /**
      * {@inheritdoc}
      */
