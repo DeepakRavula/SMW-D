@@ -34,20 +34,16 @@ use yii\bootstrap\Modal;
         ]); ?>
    <div class="row">
 	   <div class="col-md-3">
-		   <?php if($model->isUnscheduled()) : ?>
-		   <?php $lessonCreditUsage = LessonSplit::find()
-			   ->select(['SEC_TO_TIME( SUM( TIME_TO_SEC(unit) ) ) AS totalDuration'])
-			   ->innerJoinWith('lessonSplitUsage')
-			   ->andWhere(['lessonId' => $model->id])
-			   ->all();
-		   if(!empty($lessonCreditUsage)) {
-			   print_r($lessonCreditUsage->);die;}
-		   list($hours, $minutes, $seconds) = explode(':', $model->duration);
-		   $lessonSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
-		   echo $lessonSeconds - $lessonCreditUsage;die;
-		   ?>
-		   <?php else : ?>
-		   <?php $duration = Yii::$app->formatter->asDateTime($model->duration); ?> 
+		    <?php if($model->isUnscheduled()) : ?>
+			   <?php 
+			   $lessonCreditUsage = LessonSplit::find()
+				   ->select(['SEC_TO_TIME( SUM( TIME_TO_SEC(unit))) as unit'])
+				   ->innerJoinWith('lessonSplitUsage')
+				   ->andWhere(['lessonId' => $model->id])
+				   ->one(); ?>
+			   <?php if(!empty($lessonCreditUsage->unit)): ?>
+					<?php $model->duration = (new \DateTime($lessonCreditUsage->unit))->format('H:i');?>
+			   <?php endif; ?>
 		   <?php endif; ?>
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
@@ -55,7 +51,6 @@ use yii\bootstrap\Modal;
                 'options' => ['id' => 'course-duration'],
                 'pluginOptions' => [
                     'showMeridian' => false,
-                    'defaultTime' => Yii::$app->formatter->asDateTime($model->duration),
                 ],
             ]);
             ?>
