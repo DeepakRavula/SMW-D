@@ -13,6 +13,9 @@ $courseId = $model->courseId;
 $locationId = Yii::$app->session->get('location_id');
 $lessons = LessonSplit::find()
         ->joinWith(['lesson' => function ($query) use ($locationId, $courseId) {
+			$query->joinWith(['lessonReschedule' => function($query) {
+				$query->andWhere(['lesson_reschedule.lessonId' => null]);
+			}]);
             $query->location($locationId)
                 ->andWhere(['lesson.courseId' => $courseId]);
         }])

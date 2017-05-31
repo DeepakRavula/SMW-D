@@ -663,4 +663,18 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return !empty($this->invoice);
     }
+
+	public function getCreditUsage()
+    {
+		$duration = $this->duration;
+	    $lessonCreditUsage = LessonSplit::find()
+		   ->select(['SEC_TO_TIME( SUM( TIME_TO_SEC(unit))) as unit'])
+		   ->innerJoinWith('lessonSplitUsage')
+		   ->andWhere(['lessonId' => $this->id])
+		   ->one();
+		if(!empty($lessonCreditUsage->unit)) {
+			$duration = (new \DateTime($lessonCreditUsage->unit))->format('H:i');
+		}
+		return $duration;
+	}
 }

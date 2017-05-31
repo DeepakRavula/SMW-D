@@ -35,16 +35,8 @@ use yii\bootstrap\Modal;
    <div class="row">
 	   <div class="col-md-3">
 		    <?php if($model->isUnscheduled()) : ?>
-			   <?php 
-			   $lessonCreditUsage = LessonSplit::find()
-				   ->select(['SEC_TO_TIME( SUM( TIME_TO_SEC(unit))) as unit'])
-				   ->innerJoinWith('lessonSplitUsage')
-				   ->andWhere(['lessonId' => $model->id])
-				   ->one(); ?>
-			   <?php if(!empty($lessonCreditUsage->unit)): ?>
-					<?php $model->duration = (new \DateTime($lessonCreditUsage->unit))->format('H:i');?>
-			   <?php endif; ?>
-		   <?php endif; ?>
+				<?php $model->duration = $model->getCreditUsage(); ?> 
+		    <?php endif; ?>
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
                 [
