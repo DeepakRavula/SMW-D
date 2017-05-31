@@ -94,15 +94,9 @@ $(document).ready(function(){
                 $('#course-startdate').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
                 $('#course-fromtime').val(moment(start).format('HH:mm:ss'));
                 $('#group-course-calendar').fullCalendar('removeEvents', 'newEnrolment');
-                var endtime = start.clone();
-                var differenceInMinute = moment(end).minute() - moment(start).minute();
-                if (differenceInMinute === 15) {
-                    moment(endtime.add(30, 'minutes'));
-                } else {
-                    endtime = end;
-                }
-                var duration = moment.utc(moment(endtime, "HH:mm:ss").diff(moment(start, "HH:mm:ss"))).format("HH:mm:ss");
-                $('#course-duration').val(duration);
+				var endtime = start.clone();
+                var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
+                moment(endtime.add(durationMinutes, 'minutes'));
                 $('#group-course-calendar').fullCalendar('renderEvent',
                     {
                         id: 'newEnrolment',
