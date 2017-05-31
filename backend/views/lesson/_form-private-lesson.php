@@ -5,7 +5,7 @@ use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
 use kartik\color\ColorInput;
-use common\models\Lesson;
+use common\models\LessonSplit;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
@@ -34,13 +34,15 @@ use yii\bootstrap\Modal;
         ]); ?>
    <div class="row">
 	   <div class="col-md-3">
+		    <?php if($model->isUnscheduled()) : ?>
+				<?php $model->duration = $model->getCreditUsage(); ?> 
+		    <?php endif; ?>
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
                 [
                 'options' => ['id' => 'course-duration'],
                 'pluginOptions' => [
                     'showMeridian' => false,
-                    'defaultTime' => Yii::$app->formatter->asDateTime($model->duration),
                 ],
             ]);
             ?>

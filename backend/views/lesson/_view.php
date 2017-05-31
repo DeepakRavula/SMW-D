@@ -68,8 +68,13 @@ use yii\bootstrap\Modal;
 				<?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
 				</a>
 		</div>
+		<?php if($model->isUnscheduled()) : ?>
+			<?php $duration = $model->getCreditUsage(); ?> 
+		<?php else: ?>
+		<?php $duration = $model->duration; ?>
+		<?php endif; ?>
         <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Duration">
-			<i class="fa fa-clock-o"></i> <?php echo !empty($model->duration) ? (new \DateTime($model->duration))->format('H:i') : null ?>
+			<i class="fa fa-clock-o"></i> <?= (new \DateTime($duration))->format('H:i') ?>
 		</div>
 		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
 			<i class="fa fa-info-circle detail-icon"></i> <?php echo !empty($model->status) ? $model->getStatus() : null; ?>
