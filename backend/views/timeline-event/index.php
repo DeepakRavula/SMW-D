@@ -1,7 +1,7 @@
 <?php
 
 use yii\grid\GridView;
-use common\models\timelineevent\TimelineEventLink;
+use common\models\timelineEvent\TimelineEventLink;
 use yii\helpers\Html;
 
 $this->title = Yii::t('backend', 'Timeline');

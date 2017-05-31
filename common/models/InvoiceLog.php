@@ -4,9 +4,9 @@ namespace common\models;
 
 use Yii;
 use common\commands\AddToTimelineCommand;
-use common\models\timelineevent\TimelineEventLink;
+use common\models\timelineEvent\TimelineEventLink;
 use yii\helpers\Url;
-use common\models\timelineevent\TimelineEventInvoice;
+use common\models\timelineEvent\TimelineEventInvoice;
 
 /**
  * This is the model class for table "lesson_reschedule".

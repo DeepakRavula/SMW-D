@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models\timelineevent;
+namespace common\models\timelineEvent;
 
 use Yii;
 use common\models\Invoice;

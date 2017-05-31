@@ -1,12 +1,12 @@
 <?php
 
-namespace common\models\timelineevent;
+namespace common\models\timelineEvent;
 
 use Yii;
 use common\models\Enrolment;
 use common\models\Course;
 use common\commands\AddToTimelineCommand;
-use common\models\timelineevent\TimelineEventLink;
+use common\models\timelineEvent\TimelineEventLink;
 use yii\helpers\Url;
 /**
  * This is the model class for table "timeline_event_enrolment".

@@ -7,8 +7,8 @@ use common\models\ExamResult;
 use common\models\Student;
 use common\commands\AddToTimelineCommand;
 use yii\helpers\Url;
-use common\models\timelineevent\TimelineEventLink;
-use common\models\timelineevent\TimelineEventStudent;
+use common\models\timelineEvent\TimelineEventLink;
+use common\models\timelineEvent\TimelineEventStudent;
 
 /**
  * This is the model class for table "student".
