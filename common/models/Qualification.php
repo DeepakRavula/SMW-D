@@ -59,7 +59,7 @@ class Qualification extends \yii\db\ActiveRecord
             'id' => 'ID',
             'teacher_id' => 'Teacher Name',
             'program_id' => 'Program Name ',
-			'rate' => 'Rate ($)'
+			'rate' => 'Rate ($/hr)'
         ];
     }
 	public static function find()
