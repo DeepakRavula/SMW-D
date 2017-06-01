@@ -51,9 +51,10 @@ class CustomerDiscount extends \yii\db\ActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert) {
-            $this->trigger(self::EVENT_CREATE);
+         if (!$insert) {
+            $this->trigger(CustomerDiscount::EVENT_EDIT);
         }
+        $this->trigger(CustomerDiscount::EVENT_CREATE);
         return parent::afterSave($insert, $changedAttributes);
     }
     public function getCustomer()
