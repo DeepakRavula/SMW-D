@@ -28,7 +28,7 @@ class Course extends \yii\db\ActiveRecord
 	const EVENT_VACATION_DELETE_PREVIEW = 'vacation-delete-preview';
 	const SCENARIO_GROUP_COURSE = 'group-course';
 	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
-
+    const EVENT_CREATE = 'event-create';
     public $lessonStatus;
     public $studentId;
     public $paymentFrequency;
@@ -37,7 +37,7 @@ class Course extends \yii\db\ActiveRecord
 	public $teacherName;
 	public $weeksCount;
 	public $lessonsPerWeekCount;
-
+    public $userName;
     /**
      * {@inheritdoc}
      */
