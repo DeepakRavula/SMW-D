@@ -673,7 +673,10 @@ class Lesson extends \yii\db\ActiveRecord
 		   ->andWhere(['lessonId' => $this->id])
 		   ->one();
 		if(!empty($lessonCreditUsage->unit)) {
-			$duration = (new \DateTime($lessonCreditUsage->unit))->format('H:i');
+			$originalCredits = new \DateTime($this->duration);
+			$usedCredits = new \DateTime($lessonCreditUsage->unit);
+			$difference = $originalCredits->diff($usedCredits );
+			$duration = $difference ->format('%H:%I');;
 		}
 		return $duration;
 	}
