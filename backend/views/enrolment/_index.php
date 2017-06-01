@@ -17,7 +17,10 @@ use yii\bootstrap\ActiveForm;
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 
-<?php $form = ActiveForm::begin(); ?>
+<?php $form = ActiveForm::begin([
+	'id' => 'new-enrolment-form',
+	'action' => Url::to(['enrolment/add'])
+]); ?>
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
@@ -89,7 +92,7 @@ use yii\bootstrap\ActiveForm;
 							</div>
 							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
 							<a class="collapsed btn btn-default" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Back </a>
-							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"> Next </a>
+							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" id="step3-btn" data-parent="#accordion" href="#collapseFour"> Next </a>
 						</div>
 					</div>
 				</div>
@@ -99,7 +102,11 @@ use yii\bootstrap\ActiveForm;
 					</div>
 					<div id="collapseFour" class="panel-collapse collapse">
 						<div class="checkout-step-body">
+							<?=
+								$this->render('new/_preview', [
 
+								]);
+								?> 
 						</div>
 					</div>
 				</div>
@@ -120,5 +127,22 @@ echo $this->render('new/_calendar', [
 ]);
 ?>
 <?php Modal::end(); ?>
-
-
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#step3-btn').click(function(){
+			$.ajax({
+                url: $('#new-enrolment-form').attr('action'),
+                type: 'post',
+                dataType: "json",
+                data: $('#new-enrolment-form').serialize(),
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+            			
+                    }
+                }
+            });
+		});	
+	});
+</script>

@@ -14,13 +14,18 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
+use common\models\Student;
 use yii\filters\ContentNegotiator;
 use common\models\TeacherAvailability;
 use common\models\Program;
 use common\models\LocationAvailability;
 use yii\helpers\Url;
+use common\models\UserLocation;
 use common\models\Holiday;
 use common\models\User;
+use common\models\UserProfile;
+use common\models\PhoneNumber;
+use common\models\Address;
 use common\models\payment\ProformaPaymentFrequency;
 use common\models\payment\ProformaPaymentFrequencyLog;
 /**
@@ -133,6 +138,50 @@ class EnrolmentController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+	public function actionAdd()
+    {
+		$locationId = Yii::$app->session->get('location_id');
+		$request = Yii::$app->request;
+		$course = new Course();
+		$user = new User();
+		$userProfile = new UserProfile();
+		$phoneNumber = new PhoneNumber();
+		$address = new Address();
+		$userLocation = new UserLocation();
+		$student = new Student();
+		
+		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
+		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
+		$userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
+		$phoneNumber->load(Yii::$app->getRequest()->getBodyParams(), 'PhoneNumber');
+		$address->load(Yii::$app->getRequest()->getBodyParams(), 'Address');
+		$student->load(Yii::$app->getRequest()->getBodyParams(), 'Student');
+		
+		$user->status = User::STATUS_ACTIVE;
+        if($user->save()){
+			$userProfile->user_id = $user->id;
+			$userProfile->save();
+			$userLocation->location_id = $locationId;
+			$userLocation->user_id = $user->id;
+			$userLocation->save();
+			//save address and phone number
+			$address->save();
+			$user->link('addresses', $address);
+			$phoneNumber->user_id = $user->id;
+			$phoneNumber->save();
+			//save student
+			$student->customer_id = $user->id;
+			$student->save();
+			//save course
+			$dayList = Course::getWeekdaysList();
+			$course->locationId = $locationId;
+			$course->day = array_search($course->day, $dayList);
+			$course->studentId = $student->id;
+			$course->save();
+			return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false]);	
+		}
     }
 
 	public function getHolidayResources($date)

@@ -157,6 +157,8 @@ $(document).ready(function() {
         $('#new-enrolment-modal').modal('hide');
 		$('.new-enrolment-teacher').text(teacherName);
 		$('.new-enrolment-time').text(day + ', ' + time + ' & ' + duration);
+		$('#course-fromtime').val(time);
+		$('#course-startdate').val(moment(date,'DD-MM-YYYY h:mm A').format('DD-MM-YYYY'));
 	});
     $(document).on('click', '.enrolment-calendar-icon', function(){
         $('#new-enrolment-modal').modal('show');
@@ -225,10 +227,10 @@ $(document).ready(function() {
                 }
             },
             select: function(start, end, jsEvent, view, resource) {
+				$('input[name="Course[startDate]"]').val(moment(start).format('DD-MM-YYYY h:mm A'));
+				$('input[name="Course[day]"]').val(moment(start).format('dddd'));
                 $('#course-teacherid').val(resource.id);
-                $('#course-day').val(moment(start).format('dddd'));
                 $('#course-teachername').val(resource.title);
-                $('#course-startdate').val(moment(start).format('DD-MM-YYYY h:mm A'));
                 var endtime = start.clone();
                 var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
