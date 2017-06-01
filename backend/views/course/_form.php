@@ -58,9 +58,9 @@ use yii\bootstrap\Modal;
             ]);
             ?>
             </div>
-        <div class="col-md-4  hand group-course-calendar-icon">
-			<label>Check The Schedule</label>
-            <span class="fa fa-calendar"></span>
+        <div class="col-md-4  hand group-course-calendar-icon" style="margin-top:25px;">
+			<label style="margin-right:15px;    border: 1px solid #ccc;       padding: 6px 12px;    width: 100%;    height: 34px;">Check The Schedule</label>
+            <span class="fa fa-calendar" style="    font-size: 22px;    position: absolute;    right: 25px;    top: 6px;"></span>
 		</div>
 		<div class="col-md-4">
 				<?= $form->field($model, 'weeksCount')->textInput()->label('Number Of Weeks');?>
