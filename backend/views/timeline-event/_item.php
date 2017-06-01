@@ -2,7 +2,7 @@
 /**
  * @author Eugene Terentev <eugene@terentev.net>
  *
- * @var common\models\TimelineEvent
+ * @var common\models\timelineEvent\TimelineEvent
  */
 ?>
 <div class="timeline-item">
