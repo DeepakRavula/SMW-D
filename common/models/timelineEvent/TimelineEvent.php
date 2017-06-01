@@ -131,4 +131,8 @@ class TimelineEvent extends ActiveRecord
     {
         return $this->hasOne(TimelineEventUser::className(), ['timelineEventId' => 'id']);
     }
+     public function getTimelineEventCourse()
+    {
+        return $this->hasOne(TimelineEventCourse::className(), ['timelineEventId' => 'id']);
+    }
 }
