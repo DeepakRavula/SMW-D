@@ -1,8 +1,9 @@
 <?php
-namespace common\models;
+namespace common\models\timelineEvent;
 
 use Yii;
 use common\models\UserProfile;
+use common\models\User;
 
 /**
  * This is the model class for table "timeline_event_user".

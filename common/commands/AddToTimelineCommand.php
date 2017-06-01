@@ -4,7 +4,7 @@ namespace common\commands;
 
 use Yii;
 use yii\base\Object;
-use common\models\TimelineEvent;
+use common\models\timelineEvent\TimelineEvent;
 use trntv\bus\interfaces\SelfHandlingCommand;
 
 /**

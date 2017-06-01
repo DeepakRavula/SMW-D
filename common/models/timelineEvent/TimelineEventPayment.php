@@ -1,11 +1,12 @@
 <?php
 
-namespace common\models;
+namespace common\models\timelineEvent;
 
 use Yii;
 use common\commands\AddToTimelineCommand;
-use common\models\TimelineEventPayment;
-use common\models\TimelineEventLink;
+use common\models\timelineEvent\TimelineEventPayment;
+use common\models\timelineEvent\TimelineEventLink;
+use common\models\Payment;
 use yii\helpers\Url;
 /**
  * This is the model class for table "timeline_event_payment".

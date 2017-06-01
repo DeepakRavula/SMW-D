@@ -1,11 +1,11 @@
 <?php
 
-namespace common\models;
+namespace common\models\timelineEvent;
 
 use Yii;
 use common\models\Lesson;
-use common\models\TimelineEventLesson;
-use common\models\TimelineEventLink;
+use common\models\timelineEvent\TimelineEventLesson;
+use common\models\timelineEvent\TimelineEventLink;
 use common\commands\AddToTimelineCommand;
 use yii\helpers\Url;
 /**

@@ -7,8 +7,8 @@ use common\models\query\StudentQuery;
 use common\models\Student;
 use common\commands\AddToTimelineCommand;
 use yii\helpers\Url;
-use common\models\TimelineEventLink;
-use common\models\TimelineEventStudent;
+use common\models\timelineEvent\TimelineEventLink;
+use common\models\timelineEvent\TimelineEventStudent;
 
 /**
  * This is the model class for table "student".

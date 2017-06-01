@@ -6,7 +6,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use common\models\query\PaymentQuery;
 use common\commands\AddToTimelineCommand;
-use common\models\TimelineEventLink;
+use common\models\timelineEvent\TimelineEventLink;
 use yii\helpers\Url;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
