@@ -86,7 +86,7 @@ class StudentController extends Controller
         $currentDate = new \DateTime();
         $lessons = Lesson::find()
 			->studentEnrolment($locationId, $model->id)
-            ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+            ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
             ->orderBy(['lesson.date' => SORT_ASC])
             ->notDeleted();
 
