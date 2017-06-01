@@ -33,24 +33,7 @@ class ClassroomUnavailability extends \yii\db\ActiveRecord
             [['classroomId'], 'integer'],
             [['fromDate', 'toDate'], 'required'],
             [['reason'], 'string'],
-            [['fromDate', 'toDate'], 'checkLessonClassroom'],
         ];
-    }
-
-	public function checkLessonClassroom($attribute, $params)
-    {
-		$locationId = Yii::$app->session->get('location_id');
-		$fromDate = (new \DateTime($this->fromDate))->format('Y-m-d');
-		$toDate = (new \DateTime($this->toDate))->format('Y-m-d');
-		$lessons = Lesson::find()
-			->location($locationId)
-            ->andWhere(['classroomId' => $this->classroomId])
-			->andWhere(['BETWEEN','DATE(date)', $fromDate, $toDate])
-			->all();
-		if(!empty($lessons)) {	
-       		$this->addError($attribute, $this->classroom->name . ' is already booked for lesson scheduled on ' . Yii::$app->formatter->asDate($lessons[0]->date));
-		}
-		
     }
 
     /**
