@@ -63,6 +63,30 @@ $config = [
 				'as globalAccess' => [
         'class' => '\common\behaviors\GlobalAccessBehavior',
         'rules' => [
+			[
+                'controllers' => ['/user/sign-in'],
+                'allow' => true,
+                'roles' => ['?'],
+                'actions' => ['login', 'request-password-reset', 'reset-password'],
+            ],
+			[
+                'controllers' => ['/user/sign-in'],
+                'allow' => true,
+                'roles' => ['teacher'],
+                'actions' => ['logout', 'profile', 'account'],
+            ],
+			[
+                'controllers' => ['site'],
+                'allow' => true,
+                'roles' => ['?', '@'],
+                'actions' => ['error'],
+            ],
+			[
+                'controllers' => ['site'],
+                'allow' => true,
+                'roles' => ['@'],
+                'actions' => ['index'],
+            ],
             [
                 'controllers' => ['schedule'],
                 'allow' => true,
