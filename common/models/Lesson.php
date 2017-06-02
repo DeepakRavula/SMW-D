@@ -664,6 +664,21 @@ class Lesson extends \yii\db\ActiveRecord
         return !empty($this->invoice);
     }
 
+	public function getPresent()
+	{
+		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+		$currentDate = new \DateTime();
+		if($lessonDate > $currentDate) {
+			$result = '-';
+		}
+		if($lessonDate < $currentDate) {
+			$result = 'Yes';
+		}
+		if($this->isMissed()) {
+			$result = 'No';
+		} 
+		return $result;
+	}
 	public function getCreditUsage()
     {
 		$duration = $this->duration;
