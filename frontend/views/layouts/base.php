@@ -28,10 +28,6 @@ $this->beginContent('@frontend/views/layouts/_clear.php')
                 'visible' => !Yii::$app->user->isGuest,
                 'items' => [
                     [
-                        'label' => Yii::t('frontend', 'Settings'),
-                        'url' => ['/user/default/index'],
-                    ],
-                    [
                         'label' => Yii::t('frontend', 'Backend'),
                         'url' => Yii::getAlias('@backendUrl'),
                         'visible' => Yii::$app->user->can('manager'),

@@ -70,9 +70,14 @@ $config = [
                 'actions' => ['login', 'request-password-reset', 'reset-password'],
             ],
 			[
+                'controllers' => ['debug/default'],
+                'allow' => true,
+                'roles' => ['?'],
+            ],
+			[
                 'controllers' => ['/user/sign-in'],
                 'allow' => true,
-                'roles' => ['teacher'],
+                'roles' => ['@'],
                 'actions' => ['logout', 'profile', 'account'],
             ],
 			[
