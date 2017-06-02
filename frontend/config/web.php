@@ -60,6 +60,16 @@ $config = [
             'as afterLogin' => 'common\behaviors\LoginTimestampBehavior',
         ],
     ],
+				'as globalAccess' => [
+        'class' => '\common\behaviors\GlobalAccessBehavior',
+        'rules' => [
+            [
+                'controllers' => ['schedule'],
+                'allow' => true,
+                'roles' => ['teacher'],
+            ],
+        ],
+    ],
 ];
 
 if (YII_ENV_DEV) {
