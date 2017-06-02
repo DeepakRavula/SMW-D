@@ -13,6 +13,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use common\models\Student;
 use yii\filters\ContentNegotiator;
@@ -44,7 +45,7 @@ class EnrolmentController extends Controller
             ],
 			'contentNegotiator' => [
 				'class' => ContentNegotiator::className(),
-				'only' => ['preview', 'delete', 'edit', 'render-day-events','render-resources','schedule'],
+				'only' => ['add', 'preview', 'delete', 'edit', 'render-day-events','render-resources','schedule'],
 				'formatParam' => '_format',
 				'formats' => [
 				   'application/json' => Response::FORMAT_JSON,
@@ -179,10 +180,69 @@ class EnrolmentController extends Controller
 			$course->locationId = $locationId;
 			$course->day = array_search($course->day, $dayList);
 			$course->studentId = $student->id;
-			$course->save();
-			return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false]);	
+				if($course->save()) {
+				$lesson = new Lesson();
+				$conflicts = [];
+				$conflictedLessonIds = [];
+
+				$draftLessons = Lesson::find()
+					->where(['courseId' => $course->id, 'status' => Lesson::STATUS_DRAFTED])
+					->all();
+					foreach ($draftLessons as $draftLesson) {
+						$draftLesson->setScenario('review');
+					}
+					Model::validateMultiple($draftLessons);
+					foreach ($draftLessons as $draftLesson) {
+						if(!empty($draftLesson->getErrors('date'))) {
+							$conflictedLessonIds[] = $draftLesson->id;
+						}
+						$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+					}
+					$query = Lesson::find()
+						->orderBy(['lesson.date' => SORT_ASC])
+						->andWhere(['courseId' => $course->id, 'status' => Lesson::STATUS_DRAFTED]);
+				$lessonDataProvider = new ActiveDataProvider([
+					'query' => $query,
+					'pagination' => false,
+				]);
+				$data = $this->renderAjax('new/_preview', [
+					'courseModel' => $course,
+					'lessonDataProvider' => $lessonDataProvider,
+					'conflicts' => $conflicts,
+					'model' => $lesson,
+				]);
+			}
+			return [
+				'status' => true,
+				'data' => $data,
+			];	
 		}
     }
+
+	public function actionConfirm($courseId)
+    {
+        $courseModel = Course::findOne(['id' => $courseId]);
+		$courseModel->updateAttributes([
+			'isConfirmed' => true
+		]);
+        $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+		foreach ($lessons as $lesson) {
+			$lesson->updateAttributes([
+				'status' => Lesson::STATUS_SCHEDULED,
+			]);
+		}
+        if (!empty($courseModel->enrolment)) {
+            $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
+            $enrolmentModel->isConfirmed = true;
+            $enrolmentModel->save();
+            $enrolmentModel->setPaymentCycle();
+        }
+		Yii::$app->session->setFlash('alert', [
+			'options' => ['class' => 'alert-success'],
+			'body' => 'Enrolment has been created successfully',
+		]);
+		return $this->redirect(['student/view', 'id' => $enrolmentModel->student->id]);
+	}
 
 	public function getHolidayResources($date)
     {
