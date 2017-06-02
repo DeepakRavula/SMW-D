@@ -101,12 +101,7 @@ use yii\bootstrap\ActiveForm;
 						<h4 class="enrolment-step-title"> <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"  > Preview </a> </h4>
 					</div>
 					<div id="collapseFour" class="panel-collapse collapse">
-						<div class="checkout-step-body">
-							<?=
-								$this->render('new/_preview', [
-
-								]);
-								?> 
+						<div class="checkout-step-body step-preview">
 						</div>
 					</div>
 				</div>
@@ -139,7 +134,7 @@ echo $this->render('new/_calendar', [
                 {
                     if (response.status)
                     {
-            			
+            		$('.step-preview').html(response.data);	
                     }
                 }
             });
