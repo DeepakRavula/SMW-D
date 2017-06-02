@@ -25,9 +25,11 @@ class CourseLog extends Course
 
         $groupCourseModel = $event->sender;
         $groupCourse = Course::find(['id' => $groupCourseModel->id])->asArray()->one();
+        $dayList = Course::getWeekdaysList();
+		$day = $dayList[$groupCourseModel->day];
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $groupCourse,
-            'message' => $groupCourseModel->userName . ' created new    {{' .$groupCourseModel->program->name. '}}' . '',
+            'message' => $groupCourseModel->userName . ' created new    {{' .$groupCourseModel->program->name. '}}   classes   with  '.$groupCourseModel->teacher->publicIdentity.'   on   '.$day . 's at ' . Yii::$app->formatter->asTime($groupCourseModel->startDate),
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
