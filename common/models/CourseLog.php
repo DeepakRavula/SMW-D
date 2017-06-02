@@ -27,12 +27,12 @@ class CourseLog extends Course
         $groupCourse = Course::find(['id' => $groupCourseModel->id])->asArray()->one();
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $groupCourse,
-            'message' => $groupCourseModel->userName . ' created new{{' . ' Group Course' . '}}' . '',
+            'message' => $groupCourseModel->userName . ' created new    {{' .$groupCourseModel->program->name. '}}' . '',
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
-            $timelineEventLink->index = " Group Course";
+            $timelineEventLink->index = $groupCourseModel->program->name;
             $timelineEventLink->baseUrl = Yii::$app->homeUrl;
             $timelineEventLink->path = Url::to(['/course/view', 'id' => $groupCourseModel->id]);
             $timelineEventLink->save();

@@ -28,6 +28,7 @@ class Enrolment extends \yii\db\ActiveRecord
     const EDIT_LEAVE = 'leave';
 
     const EVENT_CREATE = 'create';
+    const EVENT_GROUP='group-course-enroll';
     /**
      * {@inheritdoc}
      */
