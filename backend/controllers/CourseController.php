@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Course;
-use common\models\CourseLog;
+use common\models\timelineEvent\CourseLog;
 use common\models\Lesson;
 use common\models\Qualification;
 use backend\models\search\CourseSearch;

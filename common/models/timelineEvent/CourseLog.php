@@ -1,5 +1,5 @@
 <?php
-namespace common\models;
+namespace common\models\timelineEvent;
 
 use Yii;
 use common\models\Course;
