@@ -30,7 +30,7 @@ use common\models\Invoice;
 use common\models\InvoiceLog;
 use common\models\LessonSplitUsage;
 use common\models\LessonSplit;
-
+use common\models\timelineEvent\VacationLog;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -509,14 +509,6 @@ class LessonController extends Controller
 		]);
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
         $request = Yii::$app->request;
-        if (!empty($courseModel->enrolment)) {
-            $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
-            $enrolmentModel->isConfirmed = true;
-            $enrolmentModel->save();
-			$user = User::findOne(['id' => Yii::$app->user->id]);
-			$enrolmentModel->on(Enrolment::EVENT_CREATE,[new TimelineEventEnrolment(), 'create'], ['userName' => $user->publicIdentity]);
-			$enrolmentModel->trigger(Enrolment::EVENT_CREATE);
-        }
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');
         $enrolmentRequest = $request->get('Enrolment');
@@ -542,6 +534,10 @@ class LessonController extends Controller
 					$oldLesson->status = Lesson::STATUS_CANCELED;
 					$oldLesson->save();
 				}
+                $userModel = User::findOne(['id' => Yii::$app->user->id]);
+                $vacation->on(Vacation::EVENT_CREATE, [new VacationLog(), 'create']);
+                $vacation->userName = $userModel->publicIdentity;
+                $vacation->trigger(Vacation::EVENT_CREATE); 
 			} else {
 				$oldLessons = Lesson::find()
 				->where(['courseId' => $courseId])
@@ -607,6 +603,9 @@ class LessonController extends Controller
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
             $enrolmentModel->setPaymentCycle();
+            $user = User::findOne(['id' => Yii::$app->user->id]);
+			$enrolmentModel->on(Enrolment::EVENT_CREATE,[new TimelineEventEnrolment(), 'create'], ['userName' => $user->publicIdentity]);
+			$enrolmentModel->trigger(Enrolment::EVENT_CREATE);
         }
 		if ($courseModel->program->isPrivate()) {
 			if (!empty($vacationId)) {

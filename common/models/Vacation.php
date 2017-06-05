@@ -17,7 +17,10 @@ class Vacation extends \yii\db\ActiveRecord
 {
 	const TYPE_CREATE = 'create';
 	const TYPE_DELETE = 'delete';
+    const EVENT_CREATE='create';
+    const EVENT_DELETE='delete';
 	public $type;
+    public $userName;
     /**
      * @inheritdoc
      */
