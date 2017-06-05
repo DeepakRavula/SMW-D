@@ -88,4 +88,36 @@ class TimelineEventEnrolment extends \yii\db\ActiveRecord
 			$timelineEventEnrolment->save();
 		}
 	}
+  public function groupCourseEnrolment($event)
+	{
+		$enrolmentModel = $event->sender;
+		$data = $event->data;
+		$dayList = Course::getWeekdaysList();
+		$day = $dayList[$enrolmentModel->course->day];
+		$enrolment = Enrolment::find(['id' => $enrolmentModel->id])->asArray()->one();
+		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+			'data' => $enrolment, 
+			'message' => $data['userName'] . ' enrolled {{' . $enrolmentModel->student->fullName . '}} in ' .  $enrolmentModel->course->program->name . ' lessons with {{' . $enrolmentModel->course->teacher->publicIdentity . '}} on ' . $day . 's at ' . Yii::$app->formatter->asTime($enrolmentModel->course->startDate),
+		]));
+		if($timelineEvent) {
+			$timelineEventLink = new TimelineEventLink();
+			$timelineEventLink->timelineEventId = $timelineEvent->id;
+			$timelineEventLink->index = $enrolmentModel->course->teacher->publicIdentity;
+			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $enrolmentModel->course->teacher->id]);
+			$timelineEventLink->save();
+
+			$timelineEventLink->id = null;
+			$timelineEventLink->isNewRecord = true;
+			$timelineEventLink->index = $enrolmentModel->student->fullName;
+			$timelineEventLink->path = Url::to(['/student/view', 'id' => $enrolmentModel->student->id]);
+			$timelineEventLink->save();	
+
+			$timelineEventEnrolment = new TimelineEventEnrolment();
+			$timelineEventEnrolment->timelineEventId = $timelineEvent->id;
+			$timelineEventEnrolment->enrolmentId = $enrolmentModel->id;
+			$timelineEventEnrolment->action = 'create';
+			$timelineEventEnrolment->save();
+		}  
+    }
 }

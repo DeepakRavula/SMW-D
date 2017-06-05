@@ -54,6 +54,9 @@ $lessonContent = $this->render('_lesson', [
     'lessonDataProvider' => $lessonDataProvider,
     'model' => $model,
 ]);
+$logContent = $this->render('log', [
+    'model' => $model,
+    ]);
 
 ?>
 <?php echo Tabs::widget([
@@ -70,6 +73,13 @@ $lessonContent = $this->render('_lesson', [
             'content' => $lessonContent,
             'options' => [
                 'id' => 'lesson',
+            ],
+        ],
+        [
+            'label' => 'Logs',
+            'content' => $logContent,
+            'options' => [
+                      'id' => 'logs',
             ],
         ],
     ],
