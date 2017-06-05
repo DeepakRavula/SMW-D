@@ -306,9 +306,11 @@ $logContent = $this->render('log', [
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#invoice-payment-listing', timeout : 6000});
+					$.pjax.reload({container : '#invoice-payment-listing', async:false});
+					$('input[name="Payment[amount]"]').val(response.amount);
+					$.pjax.reload({container : '.payment-method-section', async:false});
 					payment.onEditableGridSuccess();
-                                        $('#payment-edit-modal').modal('hide');
+                    $('#payment-edit-modal').modal('hide');
 				}else
 				{
 				 $(this).yiiActiveForm('updateMessages', response.errors, true);
