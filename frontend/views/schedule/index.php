@@ -28,7 +28,6 @@ $(document).ready(function() {
 			center: 'title',
 			right: 'month,agendaWeek,agendaDay'
 		},
-		height:'auto',
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
         minTime: "<?php echo $from_time; ?>",
