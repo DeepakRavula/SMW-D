@@ -21,7 +21,6 @@ $this->beginContent('@frontend/views/layouts/_clear.php')
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => Yii::t('frontend', 'Schedule'), 'url' => ['/schedule/index']],
-            ['label' => Yii::t('frontend', 'Home'), 'url' => ['/site/index']],
             ['label' => Yii::t('frontend', 'Login'), 'url' => ['/user/sign-in/login'], 'visible' => Yii::$app->user->isGuest],
             [
                 'label' => Yii::$app->user->isGuest ? '' : Yii::$app->user->identity->getPublicIdentity(),
