@@ -214,7 +214,6 @@ class ScheduleController extends Controller
 				'title' => $title,
 				'start' => $lesson->date,
 				'end' => $toTime->format('Y-m-d H:i:s'),
-				'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
 				'className' => $class,
 				'backgroundColor' => $backgroundColor,
 				'description' => $description, 
