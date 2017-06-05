@@ -3,93 +3,16 @@
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
-use common\models\CalendarEventColor;
-
-use wbraganca\selectivity\SelectivityWidget;
-use yii\helpers\ArrayHelper;
-use common\models\Program;
-use common\assets\fullcalendar\Scheduler;
-
-$bundle = Scheduler::register($this, yii\web\View::POS_BEGIN);
-
-//$this->registerAssetBundle(yii\web\JqueryAsset::className(), View::POS_HEAD);
-
-/* @var $this yii\web\View */
 
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 ?>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.min.js"></script>
-<script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.js"></script>
-<link type="text/css" href="/plugins/poshytip/tip-darkgray/tip-darkgray.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-green/tip-green.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-skyblue/tip-skyblue.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-twitter/tip-twitter.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-violet/tip-violet.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-yellow/tip-yellow.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-yellowsimple/tip-yellowsimple.css" rel='stylesheet' />
-<?php
-    $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
-    $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
-    $teacherUnavailability = CalendarEventColor::findOne(['cssClass' => 'teacher-unavailability']);
-    $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
-    $groupLesson = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
-    $firstLesson = CalendarEventColor::findOne(['cssClass' => 'first-lesson']);
-    $teacherSubstitutedLesson = CalendarEventColor::findOne(['cssClass' => 'teacher-substituted']);
-    $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
-    $missedLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-missed']);
-    $this->registerCss(
-        ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
-        .holiday, .fc-event .holiday .fc-event-time, .holiday a { background-color: " . $storeClosed->code . " !important;
-            border: 1px solid " . $storeClosed->code . " !important; }
-        .fc-bg { background-color: " . $teacherUnavailability->code . " !important; }
-        .fc-today { background-color: " . $teacherUnavailability->code . " !important; }
-        .private-lesson, .fc-event .private-lesson .fc-event-time, .private-lesson a {
-            border: 1px solid " . $privateLesson->code . " !important;
-            background-color: " . $privateLesson->code . " !important; }
-        .first-lesson, .fc-event .first-lesson .fc-event-time, .first-lesson a {
-            border: 1px solid " . $firstLesson->code . " !important;
-            background-color: " . $firstLesson->code . " !important; }
-        .group-lesson, .fc-event .group-lesson .fc-event-time, .group-lesson a {
-            border: 1px solid " . $groupLesson->code . " !important;
-            background-color: " . $groupLesson->code . " !important; }
-        .teacher-substituted, .fc-event .teacher-substituted .fc-event-time, .teacher-substituted a {
-            border: 1px solid " . $teacherSubstitutedLesson->code . " !important;
-            background-color: " . $teacherSubstitutedLesson->code . " !important; }
-        .lesson-rescheduled, .fc-event .lesson-rescheduled .fc-event-time, .lesson-rescheduled a {
-            border: 1px solid " . $rescheduledLesson->code . " !important;
-            background-color: " . $rescheduledLesson->code . " !important; }
-        .lesson-missed, .fc-event .lesson-missed .fc-event-time, .lesson-missed a {
-            border: 1px solid " . $missedLesson->code . " !important;
-            background-color: " . $missedLesson->code . " !important; }"
-    );
-?>
+
 <style type="text/css">
-.fc-view-container {
-  width: auto;
-}
-
-.fc-view-container .fc-view {
-  overflow-x: scroll;
-}
-
-.fc-view-container .fc-view > table {
-  width: 2500px;
-}
-    .schedule-index {
-        position: absolute;
-        top: -45px;
-    }
-.selectivity-single-select{
-    margin-right: 10px;
-    padding-bottom:2px;
-}
 .tab-content{
     padding:0 !important;
 }
@@ -146,38 +69,6 @@ left:45%;
 bottom:-10px;
 }	
 </style>
-<div class=" calendar-filter">
-        <div class="pull-right m-1-20">
-		<span class="filter_by_calendar">Filter by</span>
-            <?=
-            SelectivityWidget::widget([
-                'name' => 'Program',
-                'id' => 'program-selector',
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'items' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-                    'value' => null,
-                    'placeholder' => 'Program',
-                ],
-            ]);
-            ?>
-       
-        
-            <?=
-            SelectivityWidget::widget([
-                'name' => 'Teacher',
-                'id' => 'teacher-selector',
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'items' => ArrayHelper::map($availableTeachersDetails, 'id', 'name'),
-                    'value' => null,
-                    'placeholder' => 'Teacher',
-                ],
-            ]);
-            ?>
-       </div>
-   
-</div>
 <div class="tabbable-panel">
     <div class="tabbable-line">
         <?php
@@ -209,30 +100,20 @@ bottom:-10px;
             ],
         ]);?>
     </div>
-    <div class="schedule-index">
-        <div class="row schedule-filter">
-            <div class="col-md-2 pull-right">
-                <div id="datepicker" class="input-group date">
-                    <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-
+<?php $teacherId = Yii::$app->user->id;?>
 <script type="text/javascript">
-var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
+var teacherId = '<?php echo $teacherId; ?>';
 $(document).ready(function() {
-    var params = $.param({ date: moment(new Date()).format('YYYY-MM-DD'),
-        programId: '',
-        teacherId: '' });
+    var params = $.param({ teacherId: teacherId });
     $('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        header: false,
+        header: {
+			left: 'prev,next today',
+			center: 'title',
+			right: 'month,agendaWeek,agendaDay'
+		},
 		height:'auto',
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
@@ -241,218 +122,82 @@ $(document).ready(function() {
         slotDuration: "00:15:00",
         editable: false,
         droppable: false,
-        resources: {
-            url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
-            type: 'POST',
-            error: function() {
-                $("#calendar").fullCalendar("refetchResources");
-            }
-        },
         events: {
             url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
             }
         },
 		allDaySlot:false,
-        eventClick: function(event) {
-            $(location).attr('href', event.url);
-        },
-		eventRender: function(event, element) {
-			element.poshytip({
-				className: 'tip-yellowsimple',
-				alignTo: 'cursor',
-				alignX: 'center',
-				alignY : 'top',
-				offsetY: 5,
-				followCursor: false,
-				slide: false,
-				content : function(updateCallback) {
-					return event.description;
-				}
-			});
-		}
     });
 });
 
 $(document).ready(function () {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         var tab  = e.target.text;
-        var date = $('#datepicker').datepicker("getDate");
         if (tab === "Classroom View") {
-            showclassroomCalendar(moment(date));
+            showclassroomCalendar();
             $('.calendar-filter').hide();
         } else {
-            refreshCalendar(moment(date));
+            refreshCalendar();
             $('.calendar-filter').show();
         }
     });
 });
-
-function loadTeachers(program) {
-    var teachers = [];
-    if((program == 'undefined') || (program == null)) {
-        $.each( availableTeachersDetails, function( key, value ) {
-            value.text = value.name;
-            teachers.push(value);
-        });
-    }else {
-        $.each( availableTeachersDetails, function( key, value ) {
-            if ($.inArray(parseInt(program), value.programs) != -1) {
-                value.text= value.name;
-                teachers.push(value);
-            }
-        });
-    }
-    setTeachers(teachers);
-}
-
-function setTeachers(teachers){
-    $('#teacher-selector').selectivity('destroy');
-    $('#teacher-selector').selectivity({
-        allowClear: true,
-        items: teachers,
-        value: null,
-        placeholder: 'Select Teacher',
-    });
- }
-
-$(document).ready(function () {
-    $('#datepicker').datepicker ({
-        format: 'dd-mm-yyyy',
-        autoclose: true,
-        todayHighlight: true
-    });
-    
-    setTimeout(function(){
-	$('#program-selector').on('change', function(e){
-        var date = $('#calendar').fullCalendar('getDate');
-        refreshCalendar(moment(date));
-        loadTeachers(e.value);
-	}); }, 3000);
-
-    setTimeout(function(){
-	$('#teacher-selector').on('change', function(){
-        var date = $('#calendar').fullCalendar('getDate');
-        refreshCalendar(moment(date));
-	}); }, 3000);
-
-    $('#datepicker').on('change', function(){
-        var date = $('#datepicker').datepicker("getDate");
-        var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-        $(".content-header h1").text("Schedule for " + formattedDate);
-		if ($('.nav-tabs .active').text() === 'Classroom View') {
-            showclassroomCalendar(moment(date));
-        } else {
-            refreshCalendar(moment(date));
-        }
-	});
-});
-
-function showclassroomCalendar(date) {
-    var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
+function showclassroomCalendar() {
+    var params = $.param({ teacherId: teacherId });
     var fromTime = "09:00:00";
     var toTime   = "17:00:00";
-    var day      = moment(date).day();
-    $.each( locationAvailabilities, function( key, value ) {
-        if (day === 0) {
-            day = 7;
-        }
-        if (day === value.day) {
-            fromTime = value.fromTime;
-            toTime   = value.toTime;
-        }
-    });
+
     $('#classroom-calendar').html('');
     $('#classroom-calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        header: false,
+       header: {
+			left: 'prev,next today',
+			center: 'title',
+			right: 'month,agendaWeek,agendaDay'
+		},
         height: "auto",
-        defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
         minTime: fromTime,
         maxTime: toTime,
         slotDuration: "00:15:00",
         allDaySlot:false,
-        editable: true,
+        editable: false,
         eventDurationEditable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#classroom-calendar").fullCalendar("refetchResources");
             }
         },
         events: {
             url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#classroom-calendar").fullCalendar("refetchEvents");
             }
         },
-        eventRender: function(event, element) {
-            element.poshytip({
-                className: 'tip-yellowsimple',
-                alignTo: 'cursor',
-                alignX: 'center',
-                alignY : 'top',
-                offsetY: 5,
-                followCursor: false,
-                slide: false,
-                content : function(updateCallback) {
-                        return event.description;
-                }
-            });
-        },
-        eventDrop: function(event) {
-            var params = $.param({
-                id: event.id,
-                classroomId: event.resourceId,
-            });
-            $.ajax({
-                url: '<?= Url::to(['lesson/modify-classroom']); ?>?' + params,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status) {
-                        $("#classroom-calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#notification').html(response.errors).fadeIn().delay(5000).fadeOut();
-                        $("#classroom-calendar").fullCalendar("refetchEvents");
-                        $(window).scrollTop(0);
-						
-                    }
-                }
-            });
-        }
     });
 }
 
-function refreshCalendar(date) {
-    var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
-        programId: $('#program-selector').selectivity('value'),
-        teacherId: $('#teacher-selector').selectivity('value') });
+function refreshCalendar() {
+    var params = $.param({ teacherId: '<?php echo $teacherId; ?>' });
     var minTime = "09:00:00";
     var maxTime = "17:00:00";
-    var day     = moment(date).day();
-    $.each( locationAvailabilities, function( key, value ) {
-        if (day === 0) {
-            day = 7;
-        }
-        if (day === value.day) {
-            minTime = value.fromTime;
-            maxTime = value.toTime;
-        }
-    });
+
     $('#calendar').html('');
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        header: false,
+        header: {
+			left: 'prev,next today',
+			center: 'title',
+			right: 'month,agendaWeek,agendaDay'
+		},
 		height: "auto",
-        defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
         minTime: minTime,
@@ -461,34 +206,13 @@ function refreshCalendar(date) {
         allDaySlot:false,
         editable: false,
         droppable: false,
-        resources: {
-            url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
-            type: 'POST',
-            error: function() {
-                $("#calendar").fullCalendar("refetchResources");
-            }
-        },
         events: {
             url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
             }
         },
-		eventRender: function(event, element) {
-			element.poshytip({
-				className: 'tip-yellowsimple',
-				alignTo: 'cursor',
-				alignX: 'center',
-				alignY : 'top',
-				offsetY: 5,
-				followCursor: false,
-				slide: false,
-				content : function(updateCallback) {
-					return event.description;
-				}
-			});
-		}
     });
 }
 </script>
