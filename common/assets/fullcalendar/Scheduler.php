@@ -11,10 +11,11 @@ class Scheduler extends AssetBundle
     public $js = [
 		'scheduler.js',
     ];
+
 	public $css = [
-		'shceduler.css'
+		'scheduler.css'
 	];
 	public $depends = [
-		common\assets\fullcalendar\FullCalendar::class
+		\common\assets\fullcalendar\FullCalendar::class
 	];
 }

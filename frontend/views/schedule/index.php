@@ -8,13 +8,16 @@ use common\models\CalendarEventColor;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
+use common\assets\fullcalendar\Scheduler;
+
+$bundle = Scheduler::register($this, yii\web\View::POS_BEGIN);
+
+//$this->registerAssetBundle(yii\web\JqueryAsset::className(), View::POS_HEAD);
 
 /* @var $this yii\web\View */
 
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 ?>
-<script src="//code.jquery.com/jquery.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />

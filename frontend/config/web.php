@@ -60,11 +60,11 @@ $config = [
             'as afterLogin' => 'common\behaviors\LoginTimestampBehavior',
         ],
     ],
-				'as globalAccess' => [
+		'as globalAccess' => [
         'class' => '\common\behaviors\GlobalAccessBehavior',
         'rules' => [
 			[
-                'controllers' => ['/user/sign-in'],
+                'controllers' => ['user/sign-in'],
                 'allow' => true,
                 'roles' => ['?'],
                 'actions' => ['login', 'request-password-reset', 'reset-password'],
@@ -72,10 +72,9 @@ $config = [
 			[
                 'controllers' => ['debug/default'],
                 'allow' => true,
-                'roles' => ['?'],
             ],
 			[
-                'controllers' => ['/user/sign-in'],
+                'controllers' => ['user/sign-in'],
                 'allow' => true,
                 'roles' => ['@'],
                 'actions' => ['logout', 'profile', 'account'],
