@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Course;
+use common\models\timelineEvent\CourseLog;
 use common\models\Lesson;
 use common\models\Qualification;
 use backend\models\search\CourseSearch;
@@ -162,7 +163,11 @@ public function getHolidayEvent($date)
         $model = new Course();
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
         $model->locationId = Yii::$app->session->get('location_id');
+        $userModel = User::findOne(['id' => Yii::$app->user->id]);
+        $model->on(Course::EVENT_CREATE, [new CourseLog(), 'create']);
+        $model->userName = $userModel->publicIdentity;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+              $model->trigger(Course::EVENT_CREATE);
             return $this->redirect(['lesson/review', 'courseId' => $model->id]);
         } else {
             return $this->render('create', [
