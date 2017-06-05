@@ -60,6 +60,44 @@ $config = [
             'as afterLogin' => 'common\behaviors\LoginTimestampBehavior',
         ],
     ],
+		'as globalAccess' => [
+        'class' => '\common\behaviors\GlobalAccessBehavior',
+        'rules' => [
+			[
+                'controllers' => ['user/sign-in'],
+                'allow' => true,
+                'roles' => ['?'],
+                'actions' => ['login', 'request-password-reset', 'reset-password'],
+            ],
+			[
+                'controllers' => ['debug/default'],
+                'allow' => true,
+            ],
+			[
+                'controllers' => ['user/sign-in'],
+                'allow' => true,
+                'roles' => ['@'],
+                'actions' => ['logout', 'profile', 'account'],
+            ],
+			[
+                'controllers' => ['site'],
+                'allow' => true,
+                'roles' => ['?', '@'],
+                'actions' => ['error'],
+            ],
+			[
+                'controllers' => ['site'],
+                'allow' => true,
+                'roles' => ['@'],
+                'actions' => ['index'],
+            ],
+            [
+                'controllers' => ['schedule'],
+                'allow' => true,
+                'roles' => ['teacher'],
+            ],
+        ],
+    ],
 ];
 
 if (YII_ENV_DEV) {
