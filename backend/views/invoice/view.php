@@ -240,7 +240,7 @@ $logContent = $this->render('log', [
 		});
 		return false;
 	});
-	$(document).on("click", "#line-item-grid-container tbody > tr", function() {
+	$(document).on("click", "#line-item-grid tbody > tr", function() {
 		var lineItemId = $(this).data('key');	
 		$.ajax({
 			url    : '<?= Url::to(['invoice-line-item/update']); ?>?id=' + lineItemId,

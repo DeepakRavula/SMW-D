@@ -137,11 +137,10 @@ $(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
 		{
 		   if(response.status)
 		   {
-			   console.log(response.amount);
 				$.pjax.reload({container : '#line-item-listing', async:false});
-                invoice.updateSummarySectionAndStatus();
 				$('input[name="Payment[amount]"]').val(response.amount);
 				$.pjax.reload({container : '.payment-method-section', async:false});
+                invoice.updateSummarySectionAndStatus();
 				$('#invoice-line-item-modal').modal('hide');
 			}else
 			{
