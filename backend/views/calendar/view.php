@@ -53,6 +53,17 @@ $this->title = 'Calendar for ' .(new \DateTime())->format('l, F jS, Y');
     );
 ?>
 <style>
+	.fc-view-container {
+  width: auto;
+}
+
+.fc-view-container .fc-view {
+  overflow-x: scroll;
+}
+
+.fc-view-container .fc-view > table {
+  width: 2500px;
+}
     .schedule-index {
     position: absolute;
     top: -45px;
@@ -95,14 +106,14 @@ $(document).ready(function() {
         droppable: false,
         resources: {
             url: '<?= Url::to(['calendar/render-resources']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#calendar").fullCalendar("refetchResources");
             }
         },
         events: {
             url: '<?= Url::to(['calendar/render-day-events']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
             }
@@ -125,11 +136,7 @@ $(document).ready(function () {
         var date = $('#datepicker').datepicker("getDate");
         var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
         $(".content-header h1").text("Schedule for " + formattedDate);
-        if ($('.nav-tabs .active').text() === 'Classroom View') {
-            showclassroomCalendar(moment(date));
-        } else {
-            refreshCalendar(moment(date));
-        }
+        refreshCalendar(moment(date));
     });
 });
 
@@ -167,14 +174,14 @@ function refreshCalendar(date) {
         droppable: false,
         resources: {
             url: '<?= Url::to(['calendar/render-resources']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#calendar").fullCalendar("refetchResources");
             }
         },
         events: {
             url: '<?= Url::to(['calendar/render-day-events']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
             }
