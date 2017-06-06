@@ -51,7 +51,12 @@ $config = [
         ],
         'request' => [
             'cookieValidationKey' => env('FRONTEND_COOKIE_VALIDATION_KEY'),
+			'baseUrl' => '',
         ],
+		'urlManager' => [
+			'enablePrettyUrl' => true,
+			'showScriptName' => false,
+		],
         'user' => [
             'class' => 'yii\web\User',
             'identityClass' => 'common\models\User',
