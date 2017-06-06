@@ -238,14 +238,14 @@ $(document).ready(function() {
         droppable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#calendar").fullCalendar("refetchResources");
             }
         },
         events: {
             url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
             }
@@ -375,14 +375,14 @@ function showclassroomCalendar(date) {
         eventDurationEditable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#classroom-calendar").fullCalendar("refetchResources");
             }
         },
         events: {
             url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#classroom-calendar").fullCalendar("refetchEvents");
             }
@@ -458,14 +458,14 @@ function refreshCalendar(date) {
         droppable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#calendar").fullCalendar("refetchResources");
             }
         },
         events: {
             url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
-            type: 'POST',
+            type: 'GET',
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
             }
