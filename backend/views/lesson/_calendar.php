@@ -91,7 +91,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 			var teacherId = $('#lesson-teacherid').val();
 			var date = $('#course-startdate').val();
 			$.ajax({
-				url: '/teacher-availability/availability-with-events?id=' + teacherId,
+				url: '/admin/teacher-availability/availability-with-events?id=' + teacherId,
 				type: 'get',
 				dataType: "json",
 				success: function (response)
