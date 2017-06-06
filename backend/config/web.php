@@ -25,7 +25,12 @@ $config = [
         ],
         'request' => [
             'cookieValidationKey' => env('BACKEND_COOKIE_VALIDATION_KEY'),
+			'baseUrl' => '/admin',
         ],
+		'urlManager' => [
+			'enablePrettyUrl' => true,
+			'showScriptName' => false,
+		],
         'user' => [
             'class' => 'yii\web\User',
             'identityClass' => 'common\models\User',
