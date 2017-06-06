@@ -12,15 +12,24 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+<script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.min.js"></script>
+<script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.js"></script>
+<link type="text/css" href="/plugins/poshytip/tip-darkgray/tip-darkgray.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-green/tip-green.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-skyblue/tip-skyblue.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-twitter/tip-twitter.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-violet/tip-violet.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-yellow/tip-yellow.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/poshytip/tip-yellowsimple/tip-yellowsimple.css" rel='stylesheet' />
 <?php $this->render('_color-code'); ?>
 <div class="clearfix"></div>
 <div id='calendar'></div>
-<?php $teacherId = Yii::$app->user->id;?>
+<?php $userId = Yii::$app->user->id;?>
 <script type="text/javascript">
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
-var teacherId = '<?php echo $teacherId; ?>';
+var userId = '<?php echo $userId; ?>';
 $(document).ready(function() {
-    var params = $.param({ teacherId: teacherId });
+    var params = $.param({ userId: userId });
     $('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: {
@@ -42,6 +51,20 @@ $(document).ready(function() {
                 $("#calendar").fullCalendar("refetchEvents");
             }
         },
+		eventRender: function(event, element) {
+			element.poshytip({
+				className: 'tip-yellowsimple',
+				alignTo: 'cursor',
+				alignX: 'center',
+				alignY : 'top',
+				offsetY: 5,
+				followCursor: false,
+				slide: false,
+				content : function(updateCallback) {
+					return event.description;
+				}
+			});
+		},
 		allDaySlot:false,
     });
 });

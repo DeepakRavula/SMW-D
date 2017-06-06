@@ -11,7 +11,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\Program;
-use yii\helpers\Url;
+use common\models\User;
 use common\models\TeacherAvailability;
 use common\models\LocationAvailability;
 use common\models\Classroom;
@@ -60,9 +60,9 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {
-		$teacherId = Yii::$app->user->id; 
-		$teacherLocation = UserLocation::findOne(['user_id' => $teacherId]);
-        $locationId = $teacherLocation->location_id;
+		$userId = Yii::$app->user->id; 
+		$userLocation = UserLocation::findOne(['user_id' => $userId]);
+        $locationId = $userLocation->location_id;
 
         $date = new \DateTime();
         $locationAvailabilities = LocationAvailability::find()
@@ -85,26 +85,41 @@ class ScheduleController extends Controller
 		]);
     }
 
-    public function getLessons($teacherId)
+    public function getLessons($userId)
     {
-		$teacherLocation = UserLocation::findOne(['user_id' => $teacherId]);
-        $locationId = $teacherLocation->location_id;
-        $lessons = Lesson::find()
+		$user = User::findOne(['id' => $userId]);
+		$roles = Yii::$app->authManager->getRolesByUser($userId);
+		$role = end($roles);
+		if($role->name === User::ROLE_CUSTOMER)	{
+			$studentIds = ArrayHelper::getColumn($user->student, 'id');
+		}
+		$userLocation = UserLocation::findOne(['user_id' => $userId]);
+        $locationId = $userLocation->location_id;
+        $query = Lesson::find()
 			->joinWith(['course' => function ($query) use($locationId) {
 				$query->andWhere(['course.locationId' => $locationId]);
-			}])
-			->andWhere(['lesson.teacherId' => $teacherId])
-			->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
-			->notDeleted()
-			->all();
+			}]);
+			if(!empty($studentIds)) {
+				$query->joinWith(['enrolment' => function($query) use($studentIds) {
+					$query->joinWith(['student' => function($query) use($studentIds) {
+						$query->andWhere(['student.id' => $studentIds]);
+					}]);
+				}]);	
+			}
+			if($role->name === User::ROLE_TEACHER) {
+				$query->andWhere(['lesson.teacherId' => $userId]);
+			}
+			$query->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+				->notDeleted();
+		$lessons = $query->all();
         return $lessons;
     }
 
-    public function actionRenderDayEvents($teacherId)
+    public function actionRenderDayEvents($userId)
     {
 		$teachersAvailabilities = TeacherAvailability::find()
-			->joinWith(['userLocation' => function ($query) use ($teacherId) {
-				$query->where(['user_location.user_id' => $teacherId]);
+			->joinWith(['userLocation' => function ($query) use ($userId) {
+				$query->where(['user_location.user_id' => $userId]);
 			}])
 			->all();
 
@@ -119,7 +134,7 @@ class ScheduleController extends Controller
 				'rendering'  => 'background',
 			];
 		}
-		$lessons = $this->getLessons($teacherId);
+		$lessons = $this->getLessons($userId);
 		foreach ($lessons as &$lesson) {
 			$toTime = new \DateTime($lesson->date);
 			$length = explode(':', $lesson->duration);

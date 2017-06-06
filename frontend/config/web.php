@@ -99,7 +99,7 @@ $config = [
             [
                 'controllers' => ['schedule'],
                 'allow' => true,
-                'roles' => ['teacher'],
+                'roles' => ['teacher', 'customer'],
             ],
         ],
     ],
