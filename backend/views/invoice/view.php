@@ -240,7 +240,7 @@ $logContent = $this->render('log', [
 		});
 		return false;
 	});
-	$(document).on("click", "#line-item-grid-container tbody > tr", function() {
+	$(document).on("click", "#line-item-grid tbody > tr", function() {
 		var lineItemId = $(this).data('key');	
 		$.ajax({
 			url    : '<?= Url::to(['invoice-line-item/update']); ?>?id=' + lineItemId,
@@ -306,9 +306,11 @@ $logContent = $this->render('log', [
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#invoice-payment-listing', timeout : 6000});
+					$.pjax.reload({container : '#invoice-payment-listing', async:false});
+					$('input[name="Payment[amount]"]').val(response.amount);
+					$.pjax.reload({container : '.payment-method-section', async:false});
 					payment.onEditableGridSuccess();
-                                        $('#payment-edit-modal').modal('hide');
+                    $('#payment-edit-modal').modal('hide');
 				}else
 				{
 				 $(this).yiiActiveForm('updateMessages', response.errors, true);

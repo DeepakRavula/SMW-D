@@ -1,7 +1,7 @@
 <?php
 use common\models\InvoiceLineItem;
 use common\models\Qualification;
-
+use yii\grid\GridView;
 ?>
 <?php if ($searchModel->toggleAdditionalColumns) {
     $columns = [
@@ -99,17 +99,14 @@ use common\models\Qualification;
         ],
     ];
 }?>
-
-<?= \kartik\grid\GridView::widget([
-	'id' => 'line-item-grid',
-    'dataProvider' => $invoiceLineItemsDataProvider,
-    'pjax' => true,
-    'pjaxSettings' => [
-        'neverTimeout' => true,
-        'options' => [
-            'id' => 'line-item-listing',
-        ],
-    ],
-    'columns' => $columns,
-    'responsive' => false,
-]); ?>
+<?php yii\widgets\Pjax::begin([
+		'id' => 'line-item-listing',
+		'timeout' => 6000,
+	]) ?>
+	<?= GridView::widget([
+		'id' => 'line-item-grid',
+        'dataProvider' => $invoiceLineItemsDataProvider,
+        'columns' => $columns,
+    ]);
+    ?>
+<?php \yii\widgets\Pjax::end(); ?>	

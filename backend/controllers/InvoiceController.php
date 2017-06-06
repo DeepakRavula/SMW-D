@@ -225,8 +225,8 @@ class InvoiceController extends Controller
         $model = $this->findModel($id);
         $invoiceLineItemModel = new InvoiceLineItem();
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
-                $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
-                $invoiceLineItemModel->userName = $userModel->publicIdentity;
+        $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
+        $invoiceLineItemModel->userName = $userModel->publicIdentity;
         if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
             $invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC;
             $invoiceLineItemModel->invoice_id = $model->id;
@@ -245,6 +245,7 @@ class InvoiceController extends Controller
                 $response = [
                     'invoiceStatus' => $model->getStatus(),
                     'status' => true,
+					'amount' => $model->invoiceBalance
                 ];
             } else {
                 $invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);

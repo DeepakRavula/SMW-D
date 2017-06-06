@@ -177,6 +177,14 @@ class Payment extends ActiveRecord
         return $this->hasOne(PaymentCheque::className(), ['payment_id' => 'id']);
     }
 
+	public function getInvoiceBalance()
+	{
+		$amount = 0.0;
+        if ($this->invoice->total > $this->invoice->invoicePaymentTotal) {
+            $amount = $this->invoice->balance;
+        }
+		return $amount;
+	}
     public function beforeSave($insert)
     {
         if (!$insert) {
