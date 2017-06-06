@@ -6,7 +6,7 @@
 		    <td><?= $model->total; ?></td>
 		  </tr>
                   <tr>
-		    <th>Invoice Paid</th>
+		    <th>Invoice Paid:</th>
 		    <td><?= $model->invoicePaymentTotal; ?></td>
 		  </tr>
 		  <tr>

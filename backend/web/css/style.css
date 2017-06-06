@@ -853,11 +853,10 @@ Licensed under MIT
 }
 
 .invoice-address {
-    /*border-left: 1px solid #f1f1f1;*/
     padding: 0px 30px 10px;
     margin-left: 30px;
     line-height: 23px;
-    font-size: 22px;
+    font-size: 19px;
 }
 .invoice-view ul {
         padding: 0; 

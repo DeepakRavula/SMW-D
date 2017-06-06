@@ -67,7 +67,7 @@ $columns = [
     ?>
 <?php \yii\widgets\Pjax::end(); ?>	
 </div>
-<div class="col-md-9 m-t-10">  
+<div class="col-md-8 m-t-10">  
     <?php $buttons = [];
     ?>
     <?php foreach (PaymentMethod::find()
@@ -139,7 +139,7 @@ $columns = [
 
 <?php if ((int) $model->type === Invoice::TYPE_INVOICE):?>
 
-<div id="invoice-payment-detail" class="pull-right col-md-3  m-b-20">
+<div id="invoice-payment-detail" class="pull-right col-md-4  m-b-20">
 <?php echo $this->render('_invoice-summary', [
         'model' => $model,
     ]) ?>

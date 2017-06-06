@@ -18,7 +18,7 @@ use kartik\editable\Editable;
             <a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo invoice-col col-sm-3">              
                 <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
             </a>
-          <div class="col-sm-4 invoice-address invoice-col text-gray">
+          <div class="col-sm-3 invoice-address invoice-col text-gray">
               <div class="row-fluid">
                 <h2 class="m-0 text-inverse"><strong>
                   <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong>
@@ -37,7 +37,7 @@ use kartik\editable\Editable;
               </small> 
             </div>
             <?php if (!empty($customer)):?>
-            <div class="col-sm-2 invoice-col">
+            <div class="col-sm-3 invoice-col">
               To
               <address>
                 <strong>
@@ -60,10 +60,10 @@ use kartik\editable\Editable;
                     echo $billingAddress->address.'<br> '.$billingAddress->city->name.', ';
                     echo $billingAddress->province->name.'<br>'.$billingAddress->country->name.' ';
                     echo $billingAddress->postal_code;
-                } ?>
+                } ?><br>
             
                <?php if (!empty($customer->email)): ?>
-               <?= 'E: '; ?><?= $customer->email?><br>
+               <?= 'E: ' . $customer->email?><br>
                <?php endif; ?>
             
             <!-- Phone number -->
@@ -81,7 +81,7 @@ use kartik\editable\Editable;
               <?php if (!$model->isInvoice()) : ?>
               <b>Due Date:</b> <?= Yii::$app->formatter->asDate($model->dueDate); ?><br>
               <?php endif; ?>
-               <b>Status:</b> <div id="invoice-status"><?= $model->getStatus(); ?></div>
+               <b>Status:</b><?= $model->getStatus(); ?>
             </div>
           <div class="clearfix"></div>
         </div>
