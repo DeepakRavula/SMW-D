@@ -30,6 +30,7 @@ class LoginForm extends Model
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
+            ['identity', 'validateUser'],
         ];
     }
 
@@ -52,6 +53,18 @@ class LoginForm extends Model
             $user = $this->getUser();
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError('password', Yii::t('frontend', 'Incorrect username or password.'));
+            }
+        }
+    }
+
+	public function validateUser()
+    {
+        if (!$this->hasErrors()) {
+            $user = $this->getUser();
+			$roles = Yii::$app->authManager->getRolesByUser($user->id);
+			$role = end($roles);
+            if (!$user || !in_array($role->name, [User::ROLE_TEACHER, User::ROLE_CUSTOMER])) {
+                $this->addError('identity', Yii::t('frontend', 'You are not allowed to login.'));
             }
         }
     }
