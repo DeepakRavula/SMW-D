@@ -63,32 +63,6 @@ class ScheduleController extends Controller
 		$teacherId = Yii::$app->user->id; 
 		$teacherLocation = UserLocation::findOne(['user_id' => $teacherId]);
         $locationId = $teacherLocation->location_id;
-        $teachersAvailabilities = TeacherAvailability::find()
-            ->joinWith(['userLocation' => function ($query) use ($locationId, $teacherId) {
-                $query->joinWith(['userProfile'])
-                ->where(['user_location.location_id' => $locationId, 'user_location.user_id' => $teacherId]);
-            }])
-            ->orderBy(['teacher_availability_day.id' => SORT_DESC])
-            ->groupBy('teacher_location_id')
-            ->all();
-        $availableTeachersDetails = ArrayHelper::toArray($teachersAvailabilities, [
-            'common\models\TeacherAvailability' => [
-                'id' => function ($teachersAvailability) {
-                    return $teachersAvailability->userLocation->user_id;
-                },
-                'name' => function ($teachersAvailability) {
-                    return $teachersAvailability->teacher->getPublicIdentity();
-                },
-                'programs' => function ($teachersAvailability) {
-                    $qualifications = $teachersAvailability->userLocation->qualifications;
-                    $programs = [];
-                    foreach ($qualifications as $qualification) {
-                        $programs[] = $qualification->program_id;
-                    }
-                    return $programs;
-                },
-            ],
-        ]);
 
         $date = new \DateTime();
         $locationAvailabilities = LocationAvailability::find()
@@ -105,7 +79,6 @@ class ScheduleController extends Controller
         }
 
         return $this->render('index', [
-			'availableTeachersDetails' => $availableTeachersDetails,
             'locationAvailabilities'   => $locationAvailabilities,
 			'from_time'                => $from_time,
 			'to_time'                  => $to_time,
@@ -125,25 +98,6 @@ class ScheduleController extends Controller
 			->notDeleted()
 			->all();
         return $lessons;
-    }
-
-    public function actionRenderClassroomResources($teacherId)
-    {
-		$teacherLocation = UserLocation::findOne(['user_id' => $teacherId]);
-        $locationId = $teacherLocation->location_id;
-		$classrooms = Classroom::find()
-			->joinWith(['lessons' => function($query) use($teacherId) {
-				$query->andWhere(['lesson.teacherId' => $teacherId]);
-			}])
-			->andWhere(['locationId' => $locationId])
-			->all();
-		foreach ($classrooms as $classroom) {
-			$resources[] = [
-				'id'    => $classroom->id,
-				'title' => $classroom->name,
-			];
-		}
-        return $resources;
     }
 
     public function actionRenderDayEvents($teacherId)
@@ -218,74 +172,6 @@ class ScheduleController extends Controller
 				'backgroundColor' => $backgroundColor,
 				'description' => $description, 
 			];
-		}
-		unset($lesson);
-        return $events;
-    }
-
-    public function actionRenderClassroomEvents($teacherId)
-    {
-		$teacherLocation = UserLocation::findOne(['user_id' => $teacherId]);
-        $locationId = $teacherLocation->location_id;
-		
-		$lessons = $this->getLessons($teacherId);
-		foreach ($lessons as &$lesson) {
-			if(! empty($lesson->classroomId)) {
-				$toTime = new \DateTime($lesson->date);
-				$length = explode(':', $lesson->duration);
-				$toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-				if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-					$title = $lesson->teacher->publicIdentity;
-					$class = 'group-lesson';
-					$backgroundColor = null;
-					if (!empty($lesson->colorCode)) {
-						$class = null;
-						$backgroundColor = $lesson->colorCode;
-					}
-					$description = $this->renderAjax('group-lesson-description', [
-						'title' => $title,
-						'lesson' => $lesson,
-						'view' => Lesson::CLASS_ROOM_VIEW
-					]);
-				} else {
-					$title = $lesson->teacher->publicIdentity;
-					$class = 'private-lesson';
-					$backgroundColor = null;
-					if (!empty($lesson->colorCode)) {
-						$class = null;
-						$backgroundColor = $lesson->colorCode;
-					} else if ($lesson->status === Lesson::STATUS_MISSED) {
-						$class = 'lesson-missed';
-					} else if($lesson->isEnrolmentFirstlesson()) {
-						$class = 'first-lesson';
-					} else if ($lesson->getRootLesson()) {
-						$class = 'lesson-rescheduld';
-						$rootLesson = $lesson->getRootLesson();
-						if ($rootLesson->teacherId !== $lesson->teacherId) {
-							$class = 'teacher-substituted';
-						}
-					}
-				}
-				$classroomId = $lesson->classroomId;
-				$description = $this->renderAjax('private-lesson-description', [
-					'title' => $title,
-					'lesson' => $lesson,
-					'view' => Lesson::CLASS_ROOM_VIEW
-				]);
-
-
-				$events[] = [
-					'id' => $lesson->id,
-					'resourceId' => $classroomId,
-					'title' => $title,
-					'start' => $lesson->date,
-					'end' => $toTime->format('Y-m-d H:i:s'),
-					'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
-					'className' => $class,
-					'backgroundColor' => $backgroundColor,
-					'description' => $description,
-				];
-			}
 		}
 		unset($lesson);
         return $events;
