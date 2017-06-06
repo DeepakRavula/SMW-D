@@ -292,6 +292,7 @@ class PaymentController extends Controller
         $model->save();
         $result = [
             'status' => true,
+			'amount' => $model->invoiceBalance,
         ];
 
         return $result;
@@ -316,6 +317,7 @@ class PaymentController extends Controller
 
         $result = [
             'status' => true,
+			'amount' => $model->invoiceBalance,
         ];
 
         return $result;
@@ -332,6 +334,7 @@ class PaymentController extends Controller
 
             $result = [
             	'status' => true,
+				'amount' => $model->invoiceBalance,
             ];
         } else {
             $errors = ActiveForm::validate($model);
@@ -355,6 +358,7 @@ class PaymentController extends Controller
 
             $result = [
                 'status' => true,
+				'amount' => $model->invoiceBalance,
             ];
         } else {
             $errors = ActiveForm::validate($model);

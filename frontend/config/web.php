@@ -3,7 +3,7 @@
 $config = [
     'homeUrl' => Yii::getAlias('@frontendUrl'),
     'controllerNamespace' => 'frontend\controllers',
-    'defaultRoute' => 'site/index',
+    'defaultRoute' => 'schedule/index',
     'bootstrap' => ['maintenance'],
     'modules' => [
         'user' => [
@@ -51,13 +51,56 @@ $config = [
         ],
         'request' => [
             'cookieValidationKey' => env('FRONTEND_COOKIE_VALIDATION_KEY'),
+			'baseUrl' => '',
         ],
+		'urlManager' => [
+			'enablePrettyUrl' => true,
+			'showScriptName' => false,
+		],
         'user' => [
             'class' => 'yii\web\User',
             'identityClass' => 'common\models\User',
             'loginUrl' => ['/user/sign-in/login'],
             'enableAutoLogin' => true,
             'as afterLogin' => 'common\behaviors\LoginTimestampBehavior',
+        ],
+    ],
+		'as globalAccess' => [
+        'class' => '\common\behaviors\GlobalAccessBehavior',
+        'rules' => [
+			[
+                'controllers' => ['user/sign-in'],
+                'allow' => true,
+                'roles' => ['?'],
+                'actions' => ['login', 'request-password-reset', 'reset-password'],
+            ],
+			[
+                'controllers' => ['debug/default'],
+                'allow' => true,
+            ],
+			[
+                'controllers' => ['user/sign-in'],
+                'allow' => true,
+                'roles' => ['@'],
+                'actions' => ['logout', 'profile', 'account'],
+            ],
+			[
+                'controllers' => ['site'],
+                'allow' => true,
+                'roles' => ['?', '@'],
+                'actions' => ['error'],
+            ],
+			[
+                'controllers' => ['site'],
+                'allow' => true,
+                'roles' => ['@'],
+                'actions' => ['index'],
+            ],
+            [
+                'controllers' => ['schedule'],
+                'allow' => true,
+                'roles' => ['teacher'],
+            ],
         ],
     ],
 ];
