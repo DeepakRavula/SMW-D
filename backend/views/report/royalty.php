@@ -47,16 +47,16 @@ $advertisementAmount = ($total * ($advertisement / 100));
 			</tr>
 			<tr>
 				<td class="p-t-10">Advertisement <?= !empty($location->advertisement->value) ? ' (' . $location->advertisement->value . '%)' : ' - '; ?></td>
-				<td  class="p-t-10"><?= round($advertisementAmount, 2); ?></td>
+                <td  class="p-t-10"><?php  if($advertisementAmount>0){ echo round($advertisementAmount, 2);} else { echo '0'; } ?></td>
 			</tr>
 			<tr>
 				<td class="p-t-10">Royalty <?= !empty($location->royalty->value) ? ' (' . $location->royalty->value . '%)' : ' - '; ?></td>
-				<td class="p-t-10"><?= round($royaltyAmount, 2); ?></td>
+				<td class="p-t-10"><?php  if($royaltyAmount>0){ echo round($royaltyAmount, 2);} else { echo '0'; } ?></td>
 			</tr>
 			<tr>
 				<td class="p-t-10">Subtotal</td>
 				<?php $subtotal = $royaltyAmount + $advertisementAmount;?> 
-				<td class="p-t-10"><?= round($subtotal, 2); ?></td>
+				<td class="p-t-10"><?php  if($subtotal>0){ echo round($subtotal, 2);} else { echo '0'; } ?></td>
 			</tr>
 			<tr>
 				<td class="p-t-10">Tax</td>
@@ -70,11 +70,11 @@ $advertisementAmount = ($total * ($advertisement / 100));
 				$taxPercentage = $taxCode->rate;
 				$tax = $subtotal * ($taxPercentage / 100);
 				?>
-				<td class="p-t-10"><?= round($tax, 2); ?></td>
+				<td class="p-t-10"><?php  if($tax>0){ echo round($tax, 2);} else { echo '0'; } ?></td>
 			</tr>
 			<tr>
 				<td class="p-t-10"><strong>Total</strong></td>
-				<td><strong><?= round(($subtotal + $tax), 2); ?></strong></td>
+				<td><strong><?php  if(($subtotal+$tax)>0){ echo round(($subtotal+$tax), 2);} else { echo '0'; } ?></strong></td>
 			</tr>
 		</table>
 	</div>
