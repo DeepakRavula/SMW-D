@@ -61,18 +61,18 @@ $logContent = $this->render('log', [
 ?>
 <?php echo Tabs::widget([
     'items' => [
-        [
-            'label' => 'Students',
-            'content' => $studentContent,
-            'options' => [
-                      'id' => 'student',
-            ],
-        ],
 		[
             'label' => 'Lessons',
             'content' => $lessonContent,
             'options' => [
                 'id' => 'lesson',
+            ],
+        ],
+		[
+            'label' => 'Students',
+            'content' => $studentContent,
+            'options' => [
+                      'id' => 'student',
             ],
         ],
         [
