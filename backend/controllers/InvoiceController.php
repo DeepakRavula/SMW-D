@@ -245,7 +245,7 @@ class InvoiceController extends Controller
                 $response = [
                     'invoiceStatus' => $model->getStatus(),
                     'status' => true,
-					'amount' => $model->invoiceBalance
+					'amount' => round($model->invoiceBalance, 2)
                 ];
             } else {
                 $invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);
