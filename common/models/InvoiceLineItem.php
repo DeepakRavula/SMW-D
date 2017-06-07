@@ -190,15 +190,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->tax_code     = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
                 $this->tax_status   = $taxStatus->name;
                 $this->isRoyalty    = true;
-				}
+            }
             if ($this->isOpeningBalance()) {
-				$this->discount     = 0.0;
+                $this->discount     = 0.0;
                 $this->discountType = 0;
                 $this->isRoyalty  = false;
             }
-			if($this->isLessonCredit()) {
-        		return parent::beforeSave($insert);
-			}
+            if($this->isLessonCredit()) {
+                return parent::beforeSave($insert);
+            }
         }
         
         if (!$insert) {
@@ -255,7 +255,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $isOtherLineItems;
     }
 	
-	public function isLessonCredit()
+    public function isLessonCredit()
     {
         return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
     }
@@ -331,5 +331,23 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 		}
 
 		return $royalty;
+    }
+
+    public function getLessonCreditAmount($splitId)
+    {
+        $lesson = Lesson::find()
+                    ->joinWith('lessonSplits')
+                    ->andWhere(['lesson_split.id' => $splitId])
+                    ->one();
+        return $lesson->enrolment->program->rate * $this->unit;
+    }
+
+    public function getLessonCreditUnit($splitId)
+    {
+        $split       = LessonSplit::findOne($splitId);
+        $getDuration = \DateTime::createFromFormat('H:i:s', $split->unit);
+        $hours       = $getDuration->format('H');
+        $minutes     = $getDuration->format('i');
+        return (($hours * 60) + $minutes) / 60;
     }
 }

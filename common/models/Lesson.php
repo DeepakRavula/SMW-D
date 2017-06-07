@@ -232,7 +232,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getLessonSplit()
     {
-        return $this->hasMany(LessonSplit::className(), ['lessonId' => 'id']);
+        return $this->hasOne(LessonSplit::className(), ['lessonId' => 'id']);
+    }
+
+    public function getExtendedLessons()
+    {
+        return $this->hasMany(LessonSplitUsage::className(), ['extendedLessonId' => 'id']);
     }
 
 	public function getLessonSplitUsage()
@@ -267,10 +272,16 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id']);
     }
 
+    public function getLessonSplits()
+    {
+        return $this->hasMany(LessonSplit::className(), ['lessonId' => 'id']);
+    }
+
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
             ->viaTable('invoice_line_item', ['item_id' => 'id'])
+            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON])
             ->onCondition(['invoice.type' => Invoice::TYPE_INVOICE, 'invoice.isDeleted' => false]);
     }
 
@@ -643,6 +654,11 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
         $invoice->addLineItem($this);
+        if (!empty($this->extendedLessons)) {
+            foreach ($this->extendedLessons as $extendedLesson) {
+                $this->invoice->addLessonCreditApplied($extendedLesson->lessonSplitId);
+            }
+        }
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
             $netPrice = $this->proFormaLineItem->netPrice;
