@@ -7,6 +7,7 @@ use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use backend\models\search\LessonSearch;
+use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\UserProfile;
 use common\models\Payment;
@@ -315,66 +316,21 @@ class InvoiceController extends Controller
      */
     public function actionCreate()
     {
-        $searchModel = new LessonSearch();
-        $currentMonth = new \DateTime();
-        $searchModel->fromDate = $currentMonth->format('15-m-Y');
-        $currentMonth->add(new \DateInterval('P1M'));
-        $searchModel->toDate = $currentMonth->format('15-m-Y');
-        $params = Yii::$app->request->queryParams;
-        if (!empty($params['Invoice']['customer_id'])) {
-            $params['LessonSearch']['customerId'] = $params['Invoice']['customer_id'];
-        }
-        if (!empty($params['Invoice']['type'])) {
-            $params['LessonSearch']['invoiceType'] = $params['Invoice']['type'];
-        }
-        $dataProvider = null;
-        $invoice = new Invoice();
-        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
-		$user = User::findOne(['id' => Yii::$app->user->id]);
-		$invoice->userName = $user->publicIdentity;
         $request = Yii::$app->request;
         $invoiceRequest = $request->get('Invoice');
-        $invoice->type = $invoiceRequest['type'];
-        $location_id = Yii::$app->session->get('location_id');
-		$invoice->createdUserId = Yii::$app->user->id;
-		$invoice->updatedUserId = Yii::$app->user->id;
-				
-        if (isset($invoiceRequest['customer_id'])) {
-            $customer = User::findOne(['id' => $invoiceRequest['customer_id']]);
-
-            $dataProvider = $searchModel->search($params);
-
-            if (empty($customer)) {
-                throw new NotFoundHttpException('The requested page does not exist.');
-            }
-
-            $currentDate = new \DateTime();
-            $invoice->customer_id = $customer->id;
-            $searchModel->customerId = $customer->id;
-            $searchModel->invoiceType = $invoice->type;
-        }
-        $post = $request->post();
-        if ((!empty($post['selection'])) && is_array($post['selection']) && (!empty($customer->id))) {
-            $invoice->type = $invoiceRequest['type'];
-            $invoice->user_id = $customer->id;
-            $invoice->location_id = $location_id;
-            $invoice->notes = $post['Invoice']['notes'];
-            $invoice->save();
-            foreach ($post['selection'] as $selection) {
-                $lesson = Lesson::findOne(['id' => $selection]);
-                $invoice->addLineItem($lesson);
-            }
-            $invoice->save();
-
-            return $this->redirect(['view', 'id' => $invoice->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $invoice,
-                'dataProvider' => $dataProvider,
-                'customer' => (empty($customer)) ? [new User()] : $customer,
-                'searchModel' => $searchModel,
-            ]);
-        }
+		$customerId = $invoiceRequest['customer_id'];
+		$user = User::findOne(['id' => $customerId]);
+		$studentIds = ArrayHelper::getColumn($user->student, 'id');
+		$paymentCycleDataProvider = new ActiveDataProvider([
+			'query' => PaymentCycle::find()
+				->joinWith(['enrolment' => function($query) use($studentIds) {
+					$query->andWhere(['studentId' => $studentIds]);
+				}]),
+			'pagination' => false,
+		]);
+		return $this->render('create', [
+			'paymentCycleDataProvider' => $paymentCycleDataProvider
+		]);
     }
 
     /**

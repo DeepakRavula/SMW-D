@@ -12,10 +12,9 @@ use kartik\switchinput\SwitchInput;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $searchModel backend\models\search\InvoiceSearch */
 
-$proFormaAddButton = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['invoice/create', 'Invoice[type]' => $searchModel->type], ['class' => 'btn btn-success btn-sm']);
 $invoiceAddButton = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['invoice/blank-invoice'], ['class' => 'btn btn-success btn-sm']);
 
-$actionButton = (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ? $proFormaAddButton : $invoiceAddButton;
+$actionButton = (int) $searchModel->type === Invoice::TYPE_INVOICE ?  $invoiceAddButton : null;
 
 $this->title = (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoices' : 'Invoices';
 $this->params['action-button'] = $actionButton;
