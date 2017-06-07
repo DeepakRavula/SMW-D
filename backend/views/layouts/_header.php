@@ -119,3 +119,21 @@ $bundle = BackendAsset::register($this);
                 </div>
             </nav>
         </header>
+<script>
+$(document).ready(function(){
+	$('#location_id').change(function(){
+		$.ajax({
+			type     :'POST',
+			cache    : false,
+			url  : '<?= Url::to(['/location/change-location']); ?>',
+			data: {
+				location_id: $('#location_id').val()
+			},
+			success  : function(response) {
+				location.reload();
+			}
+		});	
+		return false;
+	});
+});	
+</script>
