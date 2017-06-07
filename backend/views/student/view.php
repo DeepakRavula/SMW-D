@@ -259,9 +259,9 @@ echo $this->render('_profile', [
             var examResultId = $('#examresult-id').val();
 
             if (examResultId) {
-                var url = '/admin/exam-result/update?id=' + examResultId;
+                var url = '<?= Url::to(['/exam-result/update']);?>?id=' + examResultId;
             } else {
-                var url = '/admin/exam-result/create?studentId=' + studentId;
+                var url = '<?= Url::to(['/exam-result/create']);?>?studentId=' + studentId;
             }
             $.ajax({
                 url: url,

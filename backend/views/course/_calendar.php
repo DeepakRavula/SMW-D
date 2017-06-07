@@ -3,6 +3,7 @@
 use common\models\LocationAvailability;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
@@ -55,7 +56,7 @@ $(document).ready(function(){
         var events, availableHours;
         var teacherId = $('#course-teacherid').val();
         $.ajax({
-            url: '/admin/teacher-availability/availability-with-events?id=' + teacherId,
+            url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
             type: 'get',
             dataType: "json",
             success: function (response)

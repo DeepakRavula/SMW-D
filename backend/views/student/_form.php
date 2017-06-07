@@ -15,7 +15,7 @@ use yii\helpers\Url;
     $session = Yii::$app->session;
     $locationId = $session->get('location_id');
     ?>
-    <?php $form = ActiveForm::begin($model->isNewRecord ? ['action' => '/admin/student/create'] : [
+    <?php $form = ActiveForm::begin($model->isNewRecord ? ['action' => Url::to(['/student/create'])] : [
 		'action' => Url::to(['/student/update', 'id' => $model->id]),
 		'id' => 'student-form'
 		]); ?>
