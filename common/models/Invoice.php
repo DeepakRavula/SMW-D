@@ -739,8 +739,12 @@ class Invoice extends \yii\db\ActiveRecord
         if ($invoiceLineItem->save()) {
             $this->save();
         }
-        if ($this->addLessonCreditAppliedPayment($invoiceLineItem->amount, $lessonSplit->lesson->invoice)) {
-            $lessonSplit->lesson->invoice->save();
+        $creditUsedInvoice = $lessonSplit->lesson->invoice;
+        if (!$lessonSplit->lesson->hasInvoice()) {
+            $creditUsedInvoice = $lessonSplit->lesson->proFormaInvoice;
+        }
+        if ($this->addLessonCreditAppliedPayment($invoiceLineItem->amount, $creditUsedInvoice)) {
+            $creditUsedInvoice->save();
         }
     }
 

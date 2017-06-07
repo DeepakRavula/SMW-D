@@ -150,7 +150,8 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->unInvoicedProForma()
             ->andWhere(['courseId' => $this->enrolment->courseId])
             ->between($startDate, $endDate)
-            ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
+            ->andWhere(['OR', 'lesson.status' => Lesson::STATUS_SCHEDULED,
+                'lesson.status' => Lesson::STATUS_UNSCHEDULED])
             ->andWhere(['NOT', ['lesson.type' => Lesson::TYPE_EXTRA]])
             ->all();
         foreach ($lessons as $lesson) {
