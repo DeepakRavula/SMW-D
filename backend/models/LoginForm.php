@@ -31,6 +31,7 @@ class LoginForm extends Model
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
+            ['username', 'validateUser'],
         ];
     }
 
@@ -46,6 +47,17 @@ class LoginForm extends Model
         ];
     }
 
+	public function validateUser()
+    {
+        if (!$this->hasErrors()) {
+            $user = $this->getUser();
+			$roles = Yii::$app->authManager->getRolesByUser($user->id);
+			$role = end($roles);
+            if (!$user || !in_array($role->name, [User::ROLE_STAFFMEMBER, User::ROLE_OWNER, User::ROLE_ADMINISTRATOR])) {
+                $this->addError('username', Yii::t('backend', 'You are not allowed to login.'));
+            }
+        }
+    }
     /**
      * Validates the password.
      * This method serves as the inline validation for password.
