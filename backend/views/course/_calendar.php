@@ -55,7 +55,7 @@ $(document).ready(function(){
         var events, availableHours;
         var teacherId = $('#course-teacherid').val();
         $.ajax({
-            url: '/teacher-availability/availability-with-events?id=' + teacherId,
+            url: '/admin/teacher-availability/availability-with-events?id=' + teacherId,
             type: 'get',
             dataType: "json",
             success: function (response)

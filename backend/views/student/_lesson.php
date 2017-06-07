@@ -198,7 +198,7 @@ use yii\bootstrap\Modal;
                 $('#lesson-date').addClass('col-md-4');
                 $('#new-lesson-modal .modal-dialog').css({'width': '1000px'});
                 $.ajax({
-                    url: '/teacher-availability/availability-with-events?id=' + teacherId,
+                    url: '/admin/teacher-availability/availability-with-events?id=' + teacherId,
                     type: 'get',
                     dataType: "json",
                     success: function (response)
