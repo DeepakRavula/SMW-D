@@ -213,13 +213,6 @@ echo Menu::widget([
 					'url' => ['tax-code/index'],
 					'visible' => Yii::$app->user->can('staffmember'),
 				],
-				
-					[
-					'label' => Yii::t('backend', 'Classrooms'),
-					'icon' => '<i class="fa fa-home"></i>',
-					'url' => ['classroom/index'],
-					'visible' => Yii::$app->user->can('staffmember'),
-				],
 				[
 					'label' => Yii::t('backend', 'Color Code'),
 					'icon' => '<i class="fa fa-newspaper-o"></i>',
