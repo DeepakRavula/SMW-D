@@ -306,9 +306,8 @@ $logContent = $this->render('log', [
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#invoice-payment-listing', async:false});
+					$.pjax.reload({container : '#invoice-payment-listing', timeout:6000});
 					$('input[name="Payment[amount]"]').val(response.amount);
-					$.pjax.reload({container : '.payment-method-section', async:false});
 					payment.onEditableGridSuccess();
                     $('#payment-edit-modal').modal('hide');
 				}else

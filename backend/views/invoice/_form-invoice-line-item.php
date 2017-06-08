@@ -137,9 +137,8 @@ $(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
 		{
 		   if(response.status)
 		   {
-				$.pjax.reload({container : '#line-item-listing', async:false});
+				$.pjax.reload({container : '#line-item-listing', tiimeout:6000});
 				$('input[name="Payment[amount]"]').val(response.amount);
-				$.pjax.reload({container : '.payment-method-section', async:false});
                 invoice.updateSummarySectionAndStatus();
 				$('#invoice-line-item-modal').modal('hide');
 			}else
