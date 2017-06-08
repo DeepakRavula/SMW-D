@@ -38,7 +38,6 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
     $firstLesson = CalendarEventColor::findOne(['cssClass' => 'first-lesson']);
     $teacherSubstitutedLesson = CalendarEventColor::findOne(['cssClass' => 'teacher-substituted']);
     $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
-    $missedLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-missed']);
     $this->registerCss(
         ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
         .holiday, .fc-event .holiday .fc-event-time, .holiday a { background-color: " . $storeClosed->code . " !important;
@@ -59,10 +58,7 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
             background-color: " . $teacherSubstitutedLesson->code . " !important; }
         .lesson-rescheduled, .fc-event .lesson-rescheduled .fc-event-time, .lesson-rescheduled a {
             border: 1px solid " . $rescheduledLesson->code . " !important;
-            background-color: " . $rescheduledLesson->code . " !important; }
-        .lesson-missed, .fc-event .lesson-missed .fc-event-time, .lesson-missed a {
-            border: 1px solid " . $missedLesson->code . " !important;
-            background-color: " . $missedLesson->code . " !important; }"
+            background-color: " . $rescheduledLesson->code . " !important; }"
     );
 ?>
 <style type="text/css">
@@ -91,8 +87,6 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 .box-body .fc{
     margin:0 !important;
 }
-.qtip{
-    }
 .ui-widget-content{
     font-size: 12px;
     line-height: 20px;

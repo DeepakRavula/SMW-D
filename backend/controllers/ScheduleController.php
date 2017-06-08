@@ -380,8 +380,6 @@ class ScheduleController extends Controller
                     if (!empty($lesson->colorCode)) {
                         $class = null;
                         $backgroundColor = $lesson->colorCode;
-                    } else if ($lesson->status === Lesson::STATUS_MISSED) {
-                        $class = 'lesson-missed';
                     } else if($lesson->isEnrolmentFirstlesson()) {
                         $class = 'first-lesson';
                     } else if ($lesson->getRootLesson()) {
