@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
+use common\models\User;
 ?>
 <div class="student-profile user-details-wrapper">
 	<div class="row">
@@ -22,7 +23,7 @@ use yii\helpers\Url;
 		</div>
 		<?php endif;?>
 		<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
-			<a href="/user/view?UserSearch%5Brole_name%5D=customer&id=<?php echo $model->customer->id ?>">
+			<a href="<?= Url::to(['/user/view','UserSearch[role_name]' => User::ROLE_CUSTOMER,'id' => $model->customer->id]); ?>">
 			<i class="fa fa-user detail-icon"></i> <?php echo !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null ?>
 		</a>
 		</div>

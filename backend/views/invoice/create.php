@@ -1,23 +1,85 @@
 <?php
 
-use backend\models\search\InvoiceSearch;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\grid\GridView;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Invoice */
-/* @var $invoice common\models\Invoice */
-
-$this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Add Pro-forma Invoice' : 'Add Invoice';
-$this->params['breadcrumbs'][] = ['label' => (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice', 'url' => ['index', 'InvoiceSearch[type]' => $model->type]];
-$this->params['breadcrumbs'][] = 'create';
+$this->title =  'Pro-forma Invoice';
 ?>
+<?php
 
-<div class="invoice-create p-10">
+echo GridView::widget([
+	'dataProvider' => $paymentCycleDataProvider,
+	'tableOptions' => ['class' => 'table table-bordered'],
+	'headerRowOptions' => ['class' => 'bg-light-gray'],
+	'summary' => '',
+	'columns' => [
+		[
+			'label' => 'Student',
+			'value' => function($data) {
+				return $data->enrolment->student->fullName;
+			}
+		],	
+		'startDate:date',
+		'endDate:date',
+			[
+			'label' => 'Due Date',
+			'value' => function($data) {
+				return !empty($data->proFormaInvoice->dueDate) ?
+					(new \DateTime($data->proFormaInvoice->dueDate))->format('d-m-Y') : '-';
+			}
+		],
+			[
+			'label' => 'Pro-Forma Invoice',
+			'value' => function($data) {
+				$invoiceNumber = '-';
+				if ($data->hasProformaInvoice()) {
+					$invoiceNumber = $data->proFormaInvoice->getInvoiceNumber();
+				}
+				return $invoiceNumber;
+			}
+		],
+			[
+			'label' => 'Status',
+			'value' => function($data) {
+				$result = 'Owing';
+				if (empty($data->proFormaInvoice)) {
+					$result = '-';
+				}
+				if (!empty($data->proFormaInvoice) && $data->proFormaInvoice->isPaid()) {
+					$result = 'Paid';
+				}
+				return $result;
+			}
+		],
+			['class' => 'yii\grid\ActionColumn',
+			'template' => '{view} {create}',
+			'buttons' => [
+				'create' => function ($url, $model) {
+					$url = Url::to(['invoice/invoice-payment-cycle', 'id' => $model->id]);
+					if ($model->canRaiseProformaInvoice() && !$model->hasProFormaInvoice()) {
+						return Html::a('Create PFI', $url, [
+								'title' => Yii::t('yii', 'Create PFI'),
+								'class' => ['btn-success btn-sm']
+						]);
+					} else {
+						return null;
+					}
+				},
+				'view' => function ($url, $model) {
+					if (!$model->hasProFormaInvoice()) {
+						return null;
+					}
+					$url = Url::to(['invoice/view', 'id' => $model->proFormaInvoice->id]);
+					return Html::a('View PFI', $url, [
+							'title' => Yii::t('yii', 'View PFI'),
+							'class' => ['btn-info btn-sm']
+					]);
+				}
+			]
+		],
+	],
+]);
+?>
+    
 
-    <?php echo $this->render('_form', [
-        'model' => $model,
-        'dataProvider' => $dataProvider,
-        'customer' => $customer,
-        'searchModel' => $searchModel,
-    ]) ?>
-
-</div>
