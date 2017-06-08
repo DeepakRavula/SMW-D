@@ -6,10 +6,13 @@ $config = [
     'extensions' => require(__DIR__.'/../../vendor/yiisoft/extensions.php'),
     'sourceLanguage' => 'en-US',
     'language' => 'en-US',
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'rollbar'],
     'timeZone' => 'US/Eastern',
     'components' => [
-
+		 'rollbar' => [
+			'class' => 'baibaratsky\yii\rollbar\Rollbar',
+			'accessToken' => 'ROLLBAR_POST_SERVER_ITEM',
+		],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
             'itemTable' => '{{%rbac_auth_item}}',
@@ -89,8 +92,13 @@ $config = [
                     },
                     'logVars' => [],
                     'logTable' => '{{%system_log}}',
-                ],
-            ],
+				],
+				'rollbar' => [
+					'class' => 'baibaratsky\yii\rollbar\log\Target',
+					'levels' => ['error', 'warning', 'info'],
+					//'categories' => ['api', 'firebase', 'rich', 'tookan'],
+				],
+			],
         ],
 
         'i18n' => [
