@@ -20,7 +20,7 @@ use common\models\User;
                 'label' => 'Student Name',
 				'format' => 'raw',
                 'value' => function ($data) {
-					$url = Yii::$app->homeUrl . Url::to(['student/view', 'id' => $data->id]); 
+					$url = Url::to(['/student/view', 'id' => $data->id]); 
                     return Html::a($data->fullName, $url);
                 },
             ],
@@ -28,7 +28,7 @@ use common\models\User;
                 'label' => 'Customer Name',
 				'format' => 'raw',
                 'value' => function ($data) {
-					$url = Yii::$app->homeUrl . Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $data->customer->id]); 
+					$url = Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $data->customer->id]); 
                     return Html::a($data->customer->publicIdentity, $url);
                 },
             ],
