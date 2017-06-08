@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "389d8e905358f52837a80ba30b1d08a0",
+    "content-hash": "24e32782ccfd2860763211b990b6ec89",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -221,6 +221,56 @@
                 "yii"
             ],
             "time": "2017-02-28 16:15:10"
+        },
+        {
+            "name": "baibaratsky/yii2-rollbar",
+            "version": "v1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/baibaratsky/yii2-rollbar.git",
+                "reference": "c5672105f757403ed5d61f0d5a649363045c1188"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/baibaratsky/yii2-rollbar/zipball/c5672105f757403ed5d61f0d5a649363045c1188",
+                "reference": "c5672105f757403ed5d61f0d5a649363045c1188",
+                "shasum": ""
+            },
+            "require": {
+                "rollbar/rollbar": "~0.18.0",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "baibaratsky\\yii\\rollbar\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Andrei Baibaratsky",
+                    "email": "andrei@baibaratsky.com"
+                }
+            ],
+            "description": "Rollbar for Yii2",
+            "homepage": "http://github.com/baibaratsky/yii2-rollbar",
+            "keywords": [
+                "debug",
+                "error",
+                "exception",
+                "log",
+                "monitoring",
+                "ratchet.io",
+                "ratchetio",
+                "rollbar",
+                "yii",
+                "yii2"
+            ],
+            "time": "2016-12-28T10:52:17+00:00"
         },
         {
             "name": "bower-asset/ace-builds",
@@ -3347,6 +3397,56 @@
             "time": "2016-08-06T14:39:51+00:00"
         },
         {
+            "name": "rollbar/rollbar",
+            "version": "v0.18.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rollbar/rollbar-php.git",
+                "reference": "fafe13f8beb669d6bba0137f3703fa808d50cbb7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rollbar/rollbar-php/zipball/fafe13f8beb669d6bba0137f3703fa808d50cbb7",
+                "reference": "fafe13f8beb669d6bba0137f3703fa808d50cbb7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "4.5.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/Level.php",
+                    "src/rollbar.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rollbar, Inc.",
+                    "email": "support@rollbar.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Monitors errors and exceptions and reports them to Rollbar",
+            "homepage": "http://github.com/rollbar/rollbar-php",
+            "keywords": [
+                "debugging",
+                "errors",
+                "exceptions",
+                "logging",
+                "monitoring"
+            ],
+            "time": "2016-07-05T15:50:29+00:00"
+        },
+        {
             "name": "sendgrid/sendgrid",
             "version": "4.0.4",
             "source": {
@@ -4244,7 +4344,7 @@
                     ""
                 ]
             },
-            "time": "2017-05-11 04:55:15"
+            "time": "2017-06-05 13:38:06"
         },
         {
             "name": "wbraganca/yii2-selectivity",
