@@ -7,6 +7,9 @@ $config = [
             'linkAssets' => false,
             'appendTimestamp' => YII_ENV_DEV,
         ],
+		'request' => [
+			'enableCsrfValidation' => false,
+        ],
     ],
     'as locale' => [
         'class' => 'common\behaviors\LocaleBehavior',

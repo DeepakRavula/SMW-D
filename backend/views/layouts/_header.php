@@ -45,19 +45,7 @@ $bundle = BackendAsset::register($this);
                         <div class="pull-left">
                             <?php $form = Html::beginForm(); ?>                        
                                  <?= Html::dropDownList('location_id', null,
-                                  ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'location_id', 'options' => [Yii::$app->session->get('location_id') => ['Selected' => 'selected']], 'onChange' => new JsExpression(
-                                "$.ajax({
-                                    type     :'POST',
-                                    cache    : false,
-                                    url  : '/admin/location/change-location',
-                                    data: {
-                                        location_id: $('#location_id').val()
-                                    },
-                                    success  : function(response) {
-                                        location.reload();
-                                    }
-                                });")]
-                            ) ?>
+                                  ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'location_id', 'options' => [Yii::$app->session->get('location_id') => ['Selected' => 'selected']]]); ?>
                             <?php Html::endForm() ?>
                             </div>
                         <?php else:?>
