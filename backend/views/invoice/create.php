@@ -20,6 +20,12 @@ echo GridView::widget([
 				return $data->enrolment->student->fullName;
 			}
 		],	
+		[
+			'label' => 'Program',
+			'value' => function($data) {
+				return $data->enrolment->course->program->name;
+			}
+		],	
 		'startDate:date',
 		'endDate:date',
 			[
