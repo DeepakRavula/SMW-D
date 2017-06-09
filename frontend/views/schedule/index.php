@@ -21,6 +21,31 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 <link type="text/css" href="/plugins/poshytip/tip-violet/tip-violet.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/poshytip/tip-yellow/tip-yellow.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/poshytip/tip-yellowsimple/tip-yellowsimple.css" rel='stylesheet' />
+
+<style>
+@media (max-width: 768px){
+ #calendar .fc-view .fc-time-grid-container,#calendar .fc-day-grid-container{
+	 overflow-x:auto !important;
+	 overflow-y: hidden !important;
+	 min-height:220px !important;
+	 height: auto !important;
+ }
+ #calendar .fc-center h2{
+	     font-size: 16px;
+    margin-top: 10px;
+ }
+ .wrap > .container {
+    padding: 47px 7px 20px;
+}
+ #calendar .fc-header-toolbar .fc-left button{
+	 padding:0 .4em;
+ }
+ #calendar .fc-toolbar{
+	     padding: 10px 0;
+ }
+}
+
+</style>
 <?php $this->render('_color-code'); ?>
 <div class="clearfix"></div>
 <div id='calendar'></div>
