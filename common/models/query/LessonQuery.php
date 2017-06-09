@@ -46,26 +46,26 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-	public function notDraft()
+    public function notDraft()
     {
         $this->andWhere(['NOT', ['lesson.status' => Lesson::STATUS_DRAFTED]]);
 
         return $this;
     }
 
-	public function studentEnrolment($locationId, $studentId)
-	{
-		$this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {
-			$query->joinWith(['enrolment' => function ($query) use ($studentId) {
-				$query->where(['enrolment.studentId' => $studentId])
-					->isConfirmed();
-			}])
-		->where(['course.locationId' => $locationId]);
-		}]);
-		return $this;
-	}
+    public function studentEnrolment($locationId, $studentId)
+    {
+        $this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {
+                $query->joinWith(['enrolment' => function ($query) use ($studentId) {
+                        $query->where(['enrolment.studentId' => $studentId])
+                                ->isConfirmed();
+                }])
+        ->where(['course.locationId' => $locationId]);
+        }]);
+        return $this;
+    }
 
-	public function location($locationId)
+    public function location($locationId)
     {
         $this->joinWith(['course' => function ($query) use ($locationId) {
             $query->andFilterWhere(['locationId' => $locationId]);
@@ -80,11 +80,11 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-	public function notRescheduled()
+    public function notRescheduled()
     {
-		$this->joinWith(['lessonReschedule' => function($query) {
-			$query->andWhere(['lesson_reschedule.id' => null]);
-		}]);
+        $this->joinWith(['lessonReschedule' => function($query) {
+                $query->andWhere(['lesson_reschedule.id' => null]);
+        }]);
         return $this;
     }
 
@@ -202,7 +202,7 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
- 	public function canceled()
+    public function canceled()
     {
         $this->andFilterWhere(['lesson.status' => Lesson::STATUS_CANCELED]);
 
@@ -233,36 +233,36 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-	public function enrolled() {
-		$this->joinWith(['course' => function($query){
-			$query->joinWith(['enrolment' => function($query){
-				$query->isConfirmed();
-			}]);
-		}]);
-		return $this;
-	}
+    public function enrolled() {
+            $this->joinWith(['course' => function($query){
+                    $query->joinWith(['enrolment' => function($query){
+                            $query->isConfirmed();
+                    }]);
+            }]);
+            return $this;
+    }
 
-	public function overlap($date, $fromTime, $toTime)
-	{
-		$this->andWhere(['DATE(date)' => $date])
-            ->andWhere(['OR', 
-			[
-				'between', 'TIME(lesson.date)', $fromTime, $toTime
-			],
-			[
-				'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $fromTime, $toTime
-			],
-			[
-				'AND',
-				[
-					'<', 'TIME(lesson.date)', $fromTime
-				],
-				[
-					'>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $toTime
-				]
+    public function overlap($date, $fromTime, $toTime)
+    {
+            $this->andWhere(['DATE(date)' => $date])
+        ->andWhere(['OR', 
+                    [
+                            'between', 'TIME(lesson.date)', $fromTime, $toTime
+                    ],
+                    [
+                            'between', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $fromTime, $toTime
+                    ],
+                    [
+                            'AND',
+                            [
+                                    '<', 'TIME(lesson.date)', $fromTime
+                            ],
+                            [
+                                    '>', 'DATE_SUB(ADDTIME(TIME(lesson.date),lesson.duration), INTERVAL 1 SECOND)', $toTime
+                            ]
 
-			]
-		]);
-		return $this;
-	}
+                    ]
+            ]);
+            return $this;
+    }
 }

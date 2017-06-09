@@ -87,12 +87,12 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
     {
         if ($insert) {
             if ($this->lesson->hasInvoice()) {
-                $this->lesson->invoice->addLessonCreditUsage($this->lessonSplitId);
+                $this->lesson->invoiceLineItem->addLessonCreditUsage($this->lessonSplitId);
             } else {
-                $this->lesson->proFormaInvoice->addLessonCreditUsage($this->lessonSplitId);
+                $this->lesson->proFormaLineItem->addLessonCreditUsage($this->lessonSplitId);
             }
             if ($this->extendedLesson->hasInvoice()) {
-                $this->extendedLesson->invoice->addLessonCreditApplied($this->lessonSplitId);
+                $this->extendedLesson->invoiceLineItem->addLessonCreditApplied($this->lessonSplitId);
             }
         }
 

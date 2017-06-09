@@ -314,8 +314,15 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getInvoiceLineItem()
     {
-        return $this->hasOne(InvoiceLineItem::className(), ['item_id' => 'id'])
-                ->where(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+        if ($this->hasInvoice()) {
+            return InvoiceLineItem::find()
+                ->where(['invoice_id' => $this->invoice->id])
+                ->andWhere(['invoice_line_item.item_id' => $this->id])
+                ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON])
+                ->one();
+        } else {
+            return null;
+        }
     }
 
     public function getTeacher()
@@ -325,19 +332,22 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaLineItem()
     {
-        if ($this->isExtra()) {
-            return InvoiceLineItem::find()
-                ->joinWith('invoice')
-                ->andWhere(['invoice.isDeleted' => false])
-                ->andWhere(['invoice_line_item.item_id' => $this->id])
-                ->one();
+        if ($this->hasProFormaInvoice()) {
+            if ($this->isExtra()) {
+                return InvoiceLineItem::find()
+                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
+                    ->andWhere(['invoice_line_item.item_id' => $this->id])
+                    ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
+                    ->one();
+            } else {
+                return InvoiceLineItem::find()
+                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
+                    ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
+                    ->andWhere(['invoice_line_item.item_id' => $this->paymentCycleLesson->id])
+                    ->one();
+            }
         } else {
-            return InvoiceLineItem::find()
-                ->joinWith('invoice')
-                ->andWhere(['invoice.isDeleted' => false])
-                ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
-                ->andWhere(['invoice_line_item.item_id' => $this->paymentCycleLesson->id])
-                ->one();
+            return null;
         }
     }
 
