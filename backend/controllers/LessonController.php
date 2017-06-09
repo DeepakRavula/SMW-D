@@ -562,6 +562,10 @@ class LessonController extends Controller
 					$oldLesson->save();
 				}
 				$vacation->delete();
+                $userModel = User::findOne(['id' => Yii::$app->user->id]);
+                $vacation->on(Vacation::EVENT_DELETE, [new VacationLog(), 'deleteVacation']);
+                $vacation->userName = $userModel->publicIdentity;
+                $vacation->trigger(Vacation::EVENT_DELETE); 
 			}
 		}
         if( ! empty($rescheduleBeginDate)) {
