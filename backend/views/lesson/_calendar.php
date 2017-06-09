@@ -3,6 +3,7 @@
 use common\models\LocationAvailability;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>

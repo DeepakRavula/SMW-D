@@ -38,9 +38,8 @@ $(document).on('beforeSubmit', '#apply-discount-form', function () {
 		{
 		   if(response.status)
 		   {
-				$.pjax.reload({container : '#line-item-listing', async:false});
+				$.pjax.reload({container : '#line-item-listing', timeout:6000});
 				$('input[name="Payment[amount]"]').val(response.amount);
-				$.pjax.reload({container : '.payment-method-section', async:false});
                 invoice.updateSummarySectionAndStatus();
 				$('#apply-discount-modal').modal('hide');
 			}else
