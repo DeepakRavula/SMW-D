@@ -9,10 +9,7 @@ $config = [
     'bootstrap' => ['log', 'rollbar'],
     'timeZone' => 'US/Eastern',
     'components' => [
-		 'rollbar' => [
-			'class' => 'baibaratsky\yii\rollbar\Rollbar',
-			'accessToken' => env('ROLLBAR_POST_SERVER_ITEM'),
-		],
+		
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
             'itemTable' => '{{%rbac_auth_item}}',
@@ -93,10 +90,11 @@ $config = [
                     'logVars' => [],
                     'logTable' => '{{%system_log}}',
 				],
-				'rollbar' => [
+				'rollbar' =>  [
 					'class' => 'baibaratsky\yii\rollbar\log\Target',
-					//'levels' => ['error', 'warning', 'info'],
-					//'categories' => ['api', 'firebase', 'rich', 'tookan'],
+					'levels' => ['error', 'warning', 'info'], // Log levels you want to appear in Rollbar
+
+					'categories' => ['application'],
 				],
 			],
         ],
@@ -165,6 +163,10 @@ $config = [
             ],
             require(Yii::getAlias('@storage/config/_urlManager.php'))
         ),
+		 'rollbar' => [
+			'class' => 'baibaratsky\yii\rollbar\Rollbar',
+			'accessToken' => env('ROLLBAR_POST_SERVER_ITEM'),
+		],
     ],
     'params' => [
         'adminEmail' => env('ADMIN_EMAIL'),
