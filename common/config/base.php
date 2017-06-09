@@ -11,7 +11,7 @@ $config = [
     'components' => [
 		 'rollbar' => [
 			'class' => 'baibaratsky\yii\rollbar\Rollbar',
-			'accessToken' => 'ROLLBAR_POST_SERVER_ITEM',
+			'accessToken' => env('ROLLBAR_POST_SERVER_ITEM'),
 		],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
@@ -95,7 +95,7 @@ $config = [
 				],
 				'rollbar' => [
 					'class' => 'baibaratsky\yii\rollbar\log\Target',
-					'levels' => ['error', 'warning', 'info'],
+					//'levels' => ['error', 'warning', 'info'],
 					//'categories' => ['api', 'firebase', 'rich', 'tookan'],
 				],
 			],
