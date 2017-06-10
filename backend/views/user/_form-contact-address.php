@@ -92,7 +92,7 @@ $this->registerJs($js);
 							<?=
                             $form->field($addressModel, "[{$index}]city_id")->dropDownList(
                                     ArrayHelper::map(City::find()->all(), 'id', 'name'), ['options' => [
-                                    $locationModel->city_id => ['selected' => true],
+                                    $locationModel->city_id => ['Selected' => true],
                                 ],
                             ])
                             ?>
@@ -104,7 +104,7 @@ $this->registerJs($js);
 							<?=
                             $form->field($addressModel, "[{$index}]country_id")->dropDownList(
                                     ArrayHelper::map(Country::find()->all(), 'id', 'name'), ['options' => [
-                                    $locationModel->country_id => ['selected' => true],
+                                    $locationModel->country_id => ['Selected' => true],
                                 ],
                             ])
                             ?>
@@ -113,7 +113,7 @@ $this->registerJs($js);
 							<?=
                             $form->field($addressModel, "[{$index}]province_id")->dropDownList(
                                     ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['options' => [
-                                    $locationModel->province_id => ['selected' => true],
+                                    $locationModel->province_id => ['Selected' => true],
                                 ],
                             ])
                             ?>
