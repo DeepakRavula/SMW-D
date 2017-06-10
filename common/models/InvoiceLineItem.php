@@ -342,6 +342,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $lesson->enrolment->program->rate * $this->unit;
     }
 
+    public function isExtraLesson()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_EXTRA_LESSON;
+    }
+
     public function getLessonCreditUnit($splitId)
     {
         $split       = LessonSplit::findOne($splitId);
@@ -349,5 +354,22 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $hours       = $getDuration->format('H');
         $minutes     = $getDuration->format('i');
         return (($hours * 60) + $minutes) / 60;
+    }
+
+    public function addLessonCreditApplied($splitId)
+    {
+        $lessonSplit  = LessonSplit::findOne($splitId);
+        $old = clone $this;
+        $this->unit   = $this->unit + $this->getLessonCreditUnit($splitId);
+        $amount = $this->lesson->enrolment->program->rate * $this->unit;
+        $this->amount = $amount;
+        $this->save();
+        $creditUsedInvoice = $lessonSplit->lesson->invoice;
+        if (!$lessonSplit->lesson->hasInvoice()) {
+            $creditUsedInvoice = $lessonSplit->lesson->proFormaInvoice;
+        }
+        if ($this->invoice->addLessonCreditAppliedPayment($this->netPrice - $old->netPrice, $creditUsedInvoice)) {
+            $creditUsedInvoice->save();
+        }
     }
 }
