@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\db\Query;
+use yii\helpers\ArrayHelper;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\ClassroomValidator;
@@ -731,5 +732,17 @@ class Lesson extends \yii\db\ActiveRecord
 			$duration = $difference ->format('%H:%I');;
 		}
 		return $duration;
+	}
+	public function isHoliday()
+    {
+		$startDate = (new \DateTime($this->course->startDate))->format('Y-m-d'); 
+       	$holidays = Holiday::find()
+			->andWhere(['>=', 'DATE(date)', $startDate])
+            ->all();
+		$holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
+    		return (new \DateTime($element->date))->format('Y-m-d');
+		});
+		$lessonDate = (new \DateTime($this->date))->format('Y-m-d');
+		return in_array($lessonDate, $holidayDates);
 	}
 }

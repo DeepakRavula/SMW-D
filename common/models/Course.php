@@ -377,4 +377,23 @@ class Course extends \yii\db\ActiveRecord
 			->confirmed()
 			->count();
 	}
+	public function getHolidayLessons()
+    {
+		$lessons = Lesson::findAll(['courseId' => $this->id, 'status' => Lesson::STATUS_DRAFTED]);
+		$startDate = (new \DateTime($this->startDate))->format('Y-m-d'); 
+       	$holidays = Holiday::find()
+			->andWhere(['>=', 'DATE(date)', $startDate])
+            ->all();
+		$holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
+    		return (new \DateTime($element->date))->format('Y-m-d');
+		});
+		$lessonIds = [];
+		foreach($lessons as $lesson) {
+			$lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
+			if(in_array($lessonDate, $holidayDates)) {
+				$lessonIds[] = $lesson->id; 
+			}	
+		}
+		return $lessonIds;
+	}
 }

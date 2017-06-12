@@ -457,6 +457,8 @@ class LessonController extends Controller
 				}
 				$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
 			}
+			$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
+			$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
 			$query = Lesson::find()
 				->orderBy(['lesson.date' => SORT_ASC]);
 			if(! $showAllReviewLessons) {
@@ -479,7 +481,8 @@ class LessonController extends Controller
 			'vacationType' => $vacationType,
 			'endDate' => $endDate,
 			'model' => $model,
-			'enrolmentEditType' => $enrolmentEditType
+			'enrolmentEditType' => $enrolmentEditType,
+			'holidayConflictedLessonIds' => $holidayConflictedLessonIds
         ]);
     }
 
@@ -499,12 +502,11 @@ class LessonController extends Controller
         foreach ($draftLessons as $draftLesson) {
             $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
         }
+		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
+		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
         $hasConflict = false;
-        foreach ($conflicts as $conflict) {
-			if (!empty($conflict)) {
-				$hasConflict = true;
-				break;
-			}
+		if (!empty($conflictedLessonIds)) {
+			$hasConflict = true;
         }
 
         return [
@@ -518,6 +520,19 @@ class LessonController extends Controller
 		$courseModel->updateAttributes([
 			'isConfirmed' => true
 		]);
+		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
+		$holidayLessons = Lesson::findAll(['id' => $holidayConflictedLessonIds]);
+		foreach($holidayLessons as $holidayLesson) {
+			$holidayLesson->updateAttributes([
+				'status' => Lesson::STATUS_UNSCHEDULED
+			]);
+			$privateLessonModel = new PrivateLesson();
+			$privateLessonModel->lessonId = $holidayLesson->id;
+			$date = new \DateTime($holidayLesson->date);
+			$expiryDate = $date->modify('90 days');
+			$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+			$privateLessonModel->save();
+		}
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');

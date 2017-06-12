@@ -43,9 +43,13 @@ use common\models\PrivateLesson;
             [
                 'label' => 'Status',
                 'value' => function ($data) {
+					$flag = null;
+					if($data->isHoliday()) {
+						$flag = ' (Holiday)';	
+					}
                     $status = null;
                     if (!empty($data->status)) {
-                        return $data->getStatus();
+                        return $data->getStatus() . $flag;
                     }
 
                     return $status;
