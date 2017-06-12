@@ -2,6 +2,9 @@
 
 $config = [
     'components' => [
+		 'errorHandler' => [
+			'class' => 'baibaratsky\yii\rollbar\web\ErrorHandler',
+		],
         'assetManager' => [
             'class' => 'yii\web\AssetManager',
             'linkAssets' => false,

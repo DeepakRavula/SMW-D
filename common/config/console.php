@@ -1,3 +1,9 @@
 <?php
 
-return [];
+return [
+	'components' => [
+		'errorHandler' => [
+			'class' => 'baibaratsky\yii\rollbar\console\ErrorHandler',
+		],
+	],
+];
