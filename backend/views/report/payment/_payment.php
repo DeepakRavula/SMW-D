@@ -14,6 +14,7 @@ use common\models\Payment;
  * and open the template in the editor.
  */
 ?>
+<script type="text/javascript" src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <style>
 .table>thead>tr>th {
     border-right: 2px solid transparent;
