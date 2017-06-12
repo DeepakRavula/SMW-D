@@ -285,7 +285,7 @@ class LessonController extends Controller
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
         $model = Lesson::find()->location($locationId)
-            ->where(['lesson.id' => $id])->one();
+            ->where(['lesson.id' => $id, 'isDeleted' => false])->one();
         if ($model !== null) {
             return $model;
         } else {
