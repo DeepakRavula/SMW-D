@@ -197,9 +197,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isDeletable()
     {
-		$currentDate = new \DateTime();
-		$lessonDate = new \DateTime($this->date);
-        if ($currentDate < $lessonDate && !$this->isDeleted) {
+        if (!$this->isDeleted && $this->course->program->isPrivate()) {
 			return true;
 		}
 
