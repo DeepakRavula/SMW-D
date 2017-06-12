@@ -28,8 +28,7 @@ use common\models\Lesson;
                     ->andWhere(['courseId' => $model->courseId])
                     ->all();
             $emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
-            $customerName = $model->enrolment->student->customer->publicIdentity;
-            $to = !empty($customerName) ? $customerName : null;
+            $to = !empty($model->enrolment->student->customer->publicIdentity) ? $model->enrolment->student->customer->publicIdentity : null;
             $model->toEmailAddress = $emails; 	
             $subject = $model->course->program->name . ' lesson reschedule';
             $body = null;?>

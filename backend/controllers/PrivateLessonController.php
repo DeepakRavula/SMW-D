@@ -8,6 +8,7 @@ use backend\models\search\PrivateLessonSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use common\models\Lesson;
 
 /**
@@ -107,12 +108,23 @@ class PrivateLessonController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+		if (($model->hasProFormaInvoice() && $model->proFormaInvoice->hasPayments()) || ($model->hasInvoice() && $model->invoice->hasPayments())) {
+			$class = 'alert-danger';
+			$link = Url::to(['lesson/view', 'id' => $model->id]);
+			$message = 'Lesson has payments. You can\'t delete this lesson.';
+		} else {
+			$model->delete();
+			$class = 'alert-success';
+			$link = Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
+			$message = 'Lesson has been deleted successfully';
+		}
+
 		Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Lesson has been deleted successfully',
-            ]);
-        return $this->redirect(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
+			'options' => ['class' => $class],
+			'body' => $message,
+		]);
+        return $this->redirect($link);
     }
 
     /**

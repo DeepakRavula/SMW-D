@@ -10,10 +10,6 @@ use kartik\switchinput\SwitchInput;
 		top:0;
 		width:90% !important;
 	}
-	#extra-lesson-delete {
-		left:719px;
-		top:-78px;	
-	}
 	.lesson-buttons a{
 		margin-bottom:20px;
 		width:100%;
@@ -62,7 +58,7 @@ use kartik\switchinput\SwitchInput;
 			'id' => 'lesson-mail-button',
 			'class' => 'btn bg-purple m-r-20 del-ce'])
 		?>	
-
+		
 		<?php
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');
 		$currentDate = (new \DateTime())->format('Y-m-d');
@@ -84,16 +80,16 @@ use kartik\switchinput\SwitchInput;
 			?>
 		<?php ActiveForm::end(); ?>
 		<?php if ($model->isDeletable()) : ?>
-			<?php
-			echo Html::a(' Delete', ['private-lesson/delete', 'id' => $model->id], [
-				'id' => 'extra-lesson-delete',
-				'class' => (['btn btn-danger m-r-20 del-ce']),
+		 <?php
+			echo Html::a('<span class="btn btn-danger"> Delete</span>', ['private-lesson/delete', 'id' => $model->id], [
+				'class' => 'm-r-20 del-ce',
+				'id' => 'lesson-delete',
 				'data' => [
 					'confirm' => 'Are you sure you want to delete this lesson?',
 					'method' => 'post',
 				],
-			]);
-			?>	
+			])
+		?>
 		<?php endif; ?>
 	</div>
 </div>

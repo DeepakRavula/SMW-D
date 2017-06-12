@@ -196,21 +196,13 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isDeletable()
     {
-        if ($this->isExtra() && !$this->isDeleted) {
-            if (!$this->hasProFormaInvoice() && !$this->hasInvoice()) {
-                return true;
-            }
-            if ($this->hasProFormaInvoice()) {
-                if (!$this->proFormaInvoice->hasPayments()) {
-                    return true;
-                }
-            } else if ($this->hasInvoice()) {
-                if (!$this->invoice->hasPayments()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+		$currentDate = new \DateTime();
+		$lessonDate = new \DateTime($this->date);
+        if ($currentDate < $lessonDate && !$this->isDeleted) {
+			return true;
+		}
+
+       return false;
     }
 
     public function canExplode()
