@@ -31,12 +31,11 @@ $this->render('review/_teacher-availability', [
 ]);
 ?>
 <?php
+$conflictedLessonIds = [];
 $hasConflict = false;
-foreach ($conflicts as $conflict) {
-	if (!empty($conflict)) {
-		$hasConflict = true;
-		break;
-	}
+$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+if (!empty($conflictedLessonIds)) {
+	$hasConflict = true;
 }
 ?>
 <?php
@@ -125,7 +124,8 @@ $columns = [
 	'rescheduleBeginDate' => $rescheduleBeginDate,
 	'endDate' => $endDate,
 	'courseId' => $courseId,
-	'courseModel' => $courseModel	
+	'courseModel' => $courseModel,	
+	'holidayConflictedLessonIds' => $holidayConflictedLessonIds
 ]); ?>
 <script>
 	var review = {
