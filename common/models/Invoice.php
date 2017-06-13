@@ -635,14 +635,20 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
             $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
         }
-        $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
+        
         if ($this->isProFormaInvoice()) {
             if ($lesson->isExtra()) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
             } else if ($lesson->isPrivate()) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
             }
+            $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
         } else {
+            if ($lesson->isUnscheduled()) {
+                $invoiceLineItem->cost       = 0;
+            } else {
+                $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
+            }
             $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
         }
         $amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;

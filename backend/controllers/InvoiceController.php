@@ -577,8 +577,7 @@ class InvoiceController extends Controller
                 return $this->redirect(['lesson/view', 'id' => $lessonId, '#' => 'student']);
 
             } else {
-                $enrolments = $lesson->enrolments;
-                foreach ($enrolments as $enrolment) {
+                foreach ($lesson->enrolments as $enrolment) {
                     if (!$enrolment->hasInvoice($lessonId)) {
                         $lesson->createGroupInvoice($enrolment->id);
                     }

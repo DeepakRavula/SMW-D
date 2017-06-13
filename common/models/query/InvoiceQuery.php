@@ -63,6 +63,18 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+    public function enrolmentLesson($lessonId, $enrolmentId)
+    {
+        return $this->joinWith(['lineItems' => function($query) use ($lessonId, $enrolmentId) {
+            $query->joinWith(['lineItemLesson' => function($query) use ($lessonId, $enrolmentId) {
+                $query->joinWith(['lineItemEnrolment' => function($query) use ($enrolmentId) {
+                    $query->andWhere(['invoice_item_enrolment.enrolmentId' => $enrolmentId]);
+                }]);
+                $query->where(['invoice_item_lesson.lessonId' => $lessonId]);
+            }]);
+        }]);
+    }
+
     public function invoiceCredit($userId)
     {
         $this->where([

@@ -179,7 +179,9 @@ class Course extends \yii\db\ActiveRecord
     public function getStudentEnrolment($student)
     {
         return Enrolment::find()
-            ->where(['courseId' => $this->id])
+            ->notDeleted()
+            ->isConfirmed()
+            ->andWhere(['courseId' => $this->id])
             ->andWhere(['studentId' => $student->id])
             ->one();
     }

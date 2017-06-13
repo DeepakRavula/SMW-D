@@ -142,15 +142,9 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $enrolmentId = $this->id;
         return Invoice::find()
-            ->joinWith(['lineItems' => function($query) use ($lessonId, $enrolmentId) {
-                $query->joinWith(['lineItemLesson' => function($query) use ($lessonId, $enrolmentId) {
-                    $query->joinWith(['lineItemEnrolment' => function($query) use ($enrolmentId) {
-                        $query->andWhere(['invoice_item_enrolment.enrolmentId' => $enrolmentId]);
-                    }]);
-                    $query->where(['invoice_item_lesson.lessonId' => $lessonId]);
-                }]);
-            }])
-            ->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+            ->notDeleted()
+            ->invoice()
+            ->enrolmentLesson($lessonId, $enrolmentId)
             ->one();
     }
 
