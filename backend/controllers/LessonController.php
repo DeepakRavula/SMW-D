@@ -675,10 +675,8 @@ class LessonController extends Controller
     public function actionInvoice($id)
     {
         $model = Lesson::findOne(['id' => $id]);
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-        $currentDate = new \DateTime();
 
-        if ($lessonDate <= $currentDate) {
+        if ($model->canInvoice()) {
             if ($model->hasInvoice()) {
                 $invoice = $model->invoice;
             } else {
@@ -689,7 +687,7 @@ class LessonController extends Controller
         } else {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
-                'body' => 'Generate invoice against completed lesson only.',
+                'body' => 'Generate invoice against completed scheduled lesson only.',
             ]);
 
             return $this->redirect(['lesson/view', 'id' => $id]);

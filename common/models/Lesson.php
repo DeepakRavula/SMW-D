@@ -183,7 +183,9 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isCompleted()
     {
-        return (int) $this->status === self::STATUS_COMPLETED;
+        $lessonDate  = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+        $currentDate = new \DateTime();
+        return $lessonDate <= $currentDate;
     }
 
     public function isMissed()
@@ -458,12 +460,10 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getStatus()
     {
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-        $currentDate = new \DateTime();
         $status = null;
         switch ($this->status) {
             case self::STATUS_SCHEDULED:
-                if ($lessonDate >= $currentDate) {
+                if (!$this->isCompleted()) {
                 $status = 'Scheduled';
                 } else {
                     $status = 'Completed';
@@ -471,7 +471,7 @@ class Lesson extends \yii\db\ActiveRecord
             break;
             case self::STATUS_COMPLETED:
                 $status = 'Completed';
-                if ($lessonDate <= $currentDate) {
+                if ($this->isCompleted()) {
                     $status = 'Completed';
                 }
             break;
@@ -482,7 +482,7 @@ class Lesson extends \yii\db\ActiveRecord
                 $status = 'Unscheduled';
             break;
             case self::STATUS_MISSED:
-                if ($lessonDate >= $currentDate) {
+                if (!$this->isCompleted()) {
                         $status = 'Scheduled';
                 } else {
                         $status = 'Completed';
@@ -904,8 +904,8 @@ class Lesson extends \yii\db\ActiveRecord
         return $amount - $discountValue;
     }
 
-    public function getEnrolmentLessonProFormaLineItem($enrolmentId)
+    public function canInvoice()
     {
-        
+        return $this->isCompleted() && $this->isScheduled();
     }
 }

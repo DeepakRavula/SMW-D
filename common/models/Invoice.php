@@ -740,19 +740,18 @@ class Invoice extends \yii\db\ActiveRecord
     public function makeInvoicePayment()
     {
         foreach($this->lineItems as $lineItem) {
-            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lineItem->proFormaLesson->date);
-            $currentDate = new \DateTime();
-            if($lessonDate <= $currentDate && $lineItem->proFormaLesson->isScheduled()) {
-                if (!$lineItem->proFormaLesson->hasInvoice()) {
-                    $invoice = $lineItem->proFormaLesson->createPrivateLessonInvoice();
-                } else if (!$lineItem->proFormaLesson->invoice->isPaid()) {
-                    if ($lineItem->proFormaLesson->hasProFormaInvoice()) {
-                        $netPrice = $lineItem->proFormaLesson->proFormaLineItem->netPrice;
-                        if ($lineItem->proFormaLesson->isSplitRescheduled()) {
-                            $netPrice = $lineItem->proFormaLesson->getSplitRescheduledAmount();
+            $lesson = Lesson::findOne($lineItem->proFormaLesson->id);
+            if($lesson->canInvoice()) {
+                if (!$lesson->hasInvoice()) {
+                    $invoice = $lesson->createPrivateLessonInvoice();
+                } else if (!$lesson->invoice->isPaid()) {
+                    if ($lesson->hasProFormaInvoice()) {
+                        $netPrice = $lesson->proFormaLineItem->netPrice;
+                        if ($lesson->isSplitRescheduled()) {
+                            $netPrice = $lesson->getSplitRescheduledAmount();
                         }
-                        if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $netPrice) {
-                            $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice, $netPrice);
+                        if ($lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
+                            $lesson->invoice->addPayment($lesson->proFormaInvoice, $netPrice);
                         }
                     }
                 }
@@ -770,9 +769,7 @@ class Invoice extends \yii\db\ActiveRecord
             ->all();
         $courseCount = $enrolment->courseCount;
         foreach ($lessons as $lesson) {
-            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
-            $currentDate = new \DateTime();
-            if($lessonDate <= $currentDate && $lesson->isScheduled()) {
+            if($lesson->canInvoice()) {
                 if (!$enrolment->hasInvoice($lesson->id)) {
                     $invoice = $lesson->createGroupInvoice($enrolment->id);
                 } else if (!$enrolment->getInvoice($lesson->id)->isPaid()) {
@@ -789,16 +786,15 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function makeExtraLessonInvoicePayment()
     {
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->lineItem->lesson->date);
-        $currentDate = new \DateTime();
-        if($lessonDate <= $currentDate) {
-            if (!$this->lineItem->lesson->hasInvoice()) {
-                $invoice = $this->lineItem->lesson->createPrivateLessonInvoice();
-            } else if (!$this->lineItem->lesson->invoice->isPaid()) {
-                if ($this->lineItem->lesson->hasProFormaInvoice()) {
-                    $netPrice = $this->lineItem->lesson->proFormaInvoice->lineItem->netPrice;
-                    if ($this->lineItem->lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
-                        $this->lineItem->lesson->invoice->addPayment($this->lineItem->lesson->proFormaInvoice, $netPrice);
+        $lesson = Lesson::findOne($this->lineItem->lesson->id);
+        if($lesson->canInvoice()) {
+            if (!$lesson->hasInvoice()) {
+                $invoice = $lesson->createPrivateLessonInvoice();
+            } else if (!$lesson->invoice->isPaid()) {
+                if ($lesson->hasProFormaInvoice()) {
+                    $netPrice = $lesson->proFormaInvoice->lineItem->netPrice;
+                    if ($lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
+                        $lesson->invoice->addPayment($lesson->proFormaInvoice, $netPrice);
                     }
                 }
             }

@@ -559,18 +559,21 @@ class InvoiceController extends Controller
     public function actionGroupLesson($lessonId, $enrolmentId = null)
     {
         $lesson      = Lesson::findOne($lessonId);
-        $lessonDate  = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
-        $currentDate = new \DateTime();
-        if ($lessonDate <= $currentDate) {
+        if ($lesson->canInvoice()) {
             if (!empty($enrolmentId)) {
                 $enrolment = Enrolment::findOne($enrolmentId);
                 if (!$enrolment->hasInvoice($lessonId)) {
                     $lesson->createGroupInvoice($enrolmentId);
+                    Yii::$app->session->setFlash('alert', [
+                        'options' => ['class' => 'alert-success'],
+                        'body' => 'Invoice has been successfully created',
+                    ]);
+                } else {
+                    Yii::$app->session->setFlash('alert', [
+                        'options' => ['class' => 'alert-success'],
+                        'body' => 'Invoice has been created already!',
+                    ]);
                 }
-                Yii::$app->session->setFlash('alert', [
-                    'options' => ['class' => 'alert-success'],
-                    'body' => 'Invoice has been successfully created',
-                ]);
                 return $this->redirect(['lesson/view', 'id' => $lessonId, '#' => 'student']);
 
             } else {
