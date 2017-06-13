@@ -546,7 +546,10 @@ class InvoiceController extends Controller
 
         if (!$enrolment->hasProFormaInvoice()) {
             $invoice = $enrolment->createProFormaInvoice();
-
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'ProForma Invoice has been successfully created',
+            ]);
             return $this->redirect(['view', 'id' => $invoice->id]);
         } else {
             return $this->redirect(['view', 'id' => $enrolment->proFormaInvoice->id]);
