@@ -219,6 +219,12 @@ echo Menu::widget([
 					'url' => ['calendar-event-color/edit'],
 					'visible' => Yii::$app->user->can('administrator'),
 				],
+                                [
+					'label' => Yii::t('backend', 'Item Category'),
+					'icon' => '<i class="fa fa-newspaper-o"></i>',
+					'url' => ['item-category/index'],
+					'visible' => Yii::$app->user->can('administrator'),
+				],
 				[
 					'label' => Yii::t('backend', 'Reminder Notes'),
 					'icon' => '<i class="fa  fa-bell"></i>',

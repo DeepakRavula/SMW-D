@@ -3,18 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\PrivateLesson;
-use backend\models\search\PrivateLessonSearch;
+use common\models\Item;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\Url;
-use common\models\Lesson;
 
 /**
- * PrivateLessonController implements the CRUD actions for PrivateLesson model.
+ * ItemController implements the CRUD actions for Item model.
  */
-class PrivateLessonController extends Controller
+class ItemController extends Controller
 {
     public function behaviors()
     {
@@ -29,26 +27,23 @@ class PrivateLessonController extends Controller
     }
 
     /**
-     * Lists all PrivateLesson models.
-     *
+     * Lists all Item models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new PrivateLessonSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Item::find(),
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single PrivateLesson model.
-     *
+     * Displays a single Item model.
      * @param string $id
-     *
      * @return mixed
      */
     public function actionView($id)
@@ -59,15 +54,14 @@ class PrivateLessonController extends Controller
     }
 
     /**
-     * Creates a new PrivateLesson model.
+     * Creates a new Item model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     *
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new PrivateLesson();
-
+        $model             = new Item();
+        $model->locationId = Yii::$app->session->get('location_id');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -78,11 +72,9 @@ class PrivateLessonController extends Controller
     }
 
     /**
-     * Updates an existing PrivateLesson model.
+     * Updates an existing Item model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     *
      * @param string $id
-     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -99,47 +91,28 @@ class PrivateLessonController extends Controller
     }
 
     /**
-     * Deletes an existing PrivateLesson model.
+     * Deletes an existing Item model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
      * @param string $id
-     *
      * @return mixed
      */
     public function actionDelete($id)
     {
-        $model = $this->findModel($id);
-		if (($model->hasProFormaInvoice() && $model->proFormaInvoice->hasPayments()) || ($model->hasInvoice() && $model->invoice->hasPayments())) {
-			$class = 'alert-danger';
-			$link = Url::to(['lesson/view', 'id' => $model->id]);
-			$message = 'Lesson has payments. You can\'t delete this lesson.';
-		} else {
-			$model->delete();
-			$class = 'alert-success';
-			$link = Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
-			$message = 'Lesson has been deleted successfully';
-		}
+        $this->findModel($id)->delete();
 
-		Yii::$app->session->setFlash('alert', [
-			'options' => ['class' => $class],
-			'body' => $message,
-                ]);
-        return $this->redirect($link);
+        return $this->redirect(['index']);
     }
 
     /**
-     * Finds the PrivateLesson model based on its primary key value.
+     * Finds the Item model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     *
      * @param string $id
-     *
-     * @return PrivateLesson the loaded model
-     *
+     * @return Item the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Lesson::findOne($id)) !== null) {
+        if (($model = Item::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

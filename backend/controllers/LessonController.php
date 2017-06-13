@@ -506,8 +506,8 @@ class LessonController extends Controller
 		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
         $hasConflict = false;
 		if (!empty($conflictedLessonIds)) {
-			$hasConflict = true;
-        }
+                    $hasConflict = true;
+            }
 
         return [
             'hasConflict' => $hasConflict,

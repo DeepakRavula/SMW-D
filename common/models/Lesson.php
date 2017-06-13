@@ -198,10 +198,10 @@ class Lesson extends \yii\db\ActiveRecord
     public function isDeletable()
     {
         if (!$this->isDeleted && $this->course->program->isPrivate()) {
-			return true;
-		}
+                return true;
+            }
 
-       return false;
+        return false;
     }
 
     public function canExplode()
@@ -268,40 +268,45 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasMany(LessonSplit::className(), ['lessonId' => 'id']);
     }
 
-    public function getRealInvoice()
-    {
-        return Invoice::find()
-                    ->joinWith('lineItems')
-                    ->andWhere(['invoice_line_item.item_id' => $this->id])
-                    ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON])
-                    ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE,
-                        'invoice.isDeleted' => false])
-                    ->one();
-    }
-
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
-            ->viaTable('invoice_line_item', ['item_id' => 'id'])
-            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON])
-            ->onCondition(['invoice.type' => Invoice::TYPE_INVOICE, 'invoice.isDeleted' => false]);
+            ->via('invoiceLineItems')
+                ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE]);
+    }
+
+    public function getInvoiceItemPaymentCycleLessons()
+    {
+        return $this->hasMany(InvoiceItemPaymentCycleLesson::className(), ['paymentCycleLessonId' => 'id'])
+            ->via('paymentCycleLesson');
+
+    }
+
+    public function getInvoiceLineItems()
+    {
+        return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+            ->viaTable('invoice_item_lesson', ['lessonId' => 'id'])
+                ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+    }
+
+    public function getProFormaLineItems()
+    {
+        if (!$this->isExtra()) {
+            return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+                ->via('invoiceItemPaymentCycleLessons')
+                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
+        } else {
+            return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+                ->viaTable('invoice_item_lesson', ['lessonId' => 'id'])
+                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON]);
+        }
     }
 
     public function getProFormaInvoice()
     {
-        if (!$this->isExtra()) {
-            return Invoice::find()
-                    ->joinWith('lineItems')
-                    ->andWhere(['invoice_line_item.item_id' => $this->paymentCycleLesson->id])
-                    ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
-                        'invoice.isDeleted' => false])
-                    ->one();
-        } else {
-            return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
-                ->viaTable('invoice_line_item', ['item_id' => 'id'])
-                ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
-                    'invoice.isDeleted' => false]);
-        }
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+            ->via('proFormaLineItems')
+                ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
     }
 
     public function getLessonReschedule()
@@ -316,12 +321,15 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getInvoiceLineItem()
     {
+        $lessonId = $this->id;
         if ($this->hasInvoice()) {
         return InvoiceLineItem::find()
-                ->where(['invoice_id' => $this->invoice->id])
-                ->andWhere(['invoice_line_item.item_id' => $this->id])
-                ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON])
-                ->one();
+            ->where(['invoice_id' => $this->invoice->id])
+            ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
+                $query->where(['lessonId' => $lessonId]);
+            }])
+            ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON])
+            ->one();
         } else {
             return null;
         }
@@ -334,18 +342,24 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaLineItem()
     {
+        $lessonId = $this->id;
+        $paymentCycleLessonId = $this->paymentCycleLesson->id;
         if ($this->hasProFormaInvoice()) {
             if ($this->isExtra()) {
                 return InvoiceLineItem::find()
                     ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
-                    ->andWhere(['invoice_line_item.item_id' => $this->id])
+                    ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
+                        $query->where(['lessonId' => $lessonId]);
+                    }])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
                     ->one();
             } else {
                 return InvoiceLineItem::find()
                     ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
-                    ->andWhere(['invoice_line_item.item_id' => $this->paymentCycleLesson->id])
+                    ->joinWith(['lineItemPaymentCycleLesson' => function ($query) use ($paymentCycleLessonId) {
+                        $query->where(['paymentCycleLessonId' => $paymentCycleLessonId]);
+                    }])
                     ->one();
             }
         } else {
@@ -689,7 +703,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function hasInvoice()
     {
-        return !empty($this->realInvoice);
+        return !empty($this->invoice);
     }
 
 	public function getPresent()
@@ -725,7 +739,7 @@ class Lesson extends \yii\db\ActiveRecord
 	}
 	public function isHoliday()
     {
-		$startDate = (new \DateTime($this->course->startDate))->format('Y-m-d'); 
+		$startDate = (new \DateTime($this->course->startDate))->format('Y-m-d');
        	$holidays = Holiday::find()
 			->andWhere(['>=', 'DATE(date)', $startDate])
             ->all();
@@ -734,5 +748,5 @@ class Lesson extends \yii\db\ActiveRecord
 		});
 		$lessonDate = (new \DateTime($this->date))->format('Y-m-d');
 		return in_array($lessonDate, $holidayDates);
-	}
+}
 }

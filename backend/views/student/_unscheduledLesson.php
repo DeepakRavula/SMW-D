@@ -45,7 +45,7 @@ use common\models\PrivateLesson;
                 'value' => function ($data) {
 					$flag = null;
 					if($data->isHoliday()) {
-						$flag = ' (Holiday)';	
+						$flag = ' (Holiday)';
 					}
                     $status = null;
                     if (!empty($data->status)) {

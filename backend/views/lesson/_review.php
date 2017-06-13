@@ -35,8 +35,8 @@ $conflictedLessonIds = [];
 $hasConflict = false;
 $conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
 if (!empty($conflictedLessonIds)) {
-	$hasConflict = true;
-}
+		$hasConflict = true;
+	}
 ?>
 <?php
 $columns = [
@@ -124,8 +124,7 @@ $columns = [
 	'rescheduleBeginDate' => $rescheduleBeginDate,
 	'endDate' => $endDate,
 	'courseId' => $courseId,
-	'courseModel' => $courseModel,	
-	'holidayConflictedLessonIds' => $holidayConflictedLessonIds
+	'courseModel' => $courseModel	
 ]); ?>
 <script>
 	var review = {

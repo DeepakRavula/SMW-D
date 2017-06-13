@@ -229,7 +229,6 @@ class InvoiceController extends Controller
         $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
         $invoiceLineItemModel->userName = $userModel->publicIdentity;
         if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
-            $invoiceLineItemModel->item_id = Invoice::ITEM_TYPE_MISC;
             $invoiceLineItemModel->invoice_id = $model->id;
             $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
             $invoiceLineItemModel->code        = $invoiceLineItemModel->getItemCode();

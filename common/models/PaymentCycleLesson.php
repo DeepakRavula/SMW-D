@@ -55,16 +55,25 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
 
     public function getProFormaInvoice()
     {
-        return Invoice::find()
-            ->joinWith('lineItems')
-            ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON,
-                'invoice_line_item.item_id' => $this->id])
-            ->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE])
-            ->one();
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+            ->via('invoiceLineItems')
+                ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+    }
+
+    public function getInvoiceLineItems()
+    {
+        return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+            ->viaTable('invoice_item_Payment_cycle_lesson', ['paymentCycleLessonId' => 'id'])
+                ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
     }
 
     public function getLesson()
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
+    }
+
+    public function getPaymentCycle()
+    {
+        return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId']);
     }
 }

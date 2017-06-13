@@ -152,19 +152,25 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasOne(ProformaPaymentFrequency::className(), ['invoiceId' => 'id']);
     }
-    
+
     public function getProformaPaymentCycleLesson()
     {
-        return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'item_id'])
-                ->via('lineItem');
+        return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
+            ->via('invoiceItemPaymentCycleLesson');
     }
     
+    public function getInvoiceItemPaymentCycleLesson()
+    {
+        return $this->hasOne(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id'])
+                ->via('lineItem');
+    }
+                
     public function getProformaPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
                 ->via('proformaPaymentCycleLesson');
     }
-    
+
     public function getProformaEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId'])
@@ -186,7 +192,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
 			->via('invoicePayments')
-            ->andWhere(['payment.isDeleted' => false]);
+            ->onCondition(['payment.isDeleted' => false]);
     }
 
 	public function getLocation()
@@ -590,11 +596,8 @@ class Invoice extends \yii\db\ActiveRecord
                 $lesson->date);
         $invoiceLineItem             = new InvoiceLineItem();
         $invoiceLineItem->invoice_id = $this->id;
-        if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE && !$lesson->isExtra()) {
-            $invoiceLineItem->item_id    = $lesson->paymentCycleLesson->id;
-        } else {
-            $invoiceLineItem->item_id    = $lesson->id;
-        }
+        $item = Item::findOne(['code' => Item::LESSON_ITEM]);
+        $invoiceLineItem->item_id    = $item->id;
         $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $invoiceLineItem->cost = $rate;
@@ -650,7 +653,19 @@ class Invoice extends \yii\db\ActiveRecord
         $invoiceLineItem->code        = $invoiceLineItem->getItemCode();
         $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
-        return $invoiceLineItem->save();
+        if ($invoiceLineItem->save()) {
+            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE && !$lesson->isExtra()) {
+                $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLesson();
+                $invoiceItemPaymentCycleLesson->paymentCycleLessonId    = $lesson->paymentCycleLesson->id;
+                $invoiceItemPaymentCycleLesson->invoiceLineItemId    = $invoiceLineItem->id;
+                return $invoiceItemPaymentCycleLesson->save();
+            } else {
+                $invoiceItemLesson = new InvoiceItemLesson();
+                $invoiceItemLesson->lessonId    = $lesson->id;
+                $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
+                return $invoiceItemLesson->save();
+            }
+        }
     }
 
     public function addPayment($proFormaInvoice)

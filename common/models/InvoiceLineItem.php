@@ -37,6 +37,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public $userName;
     public $price;
     public $tax;
+    public $itemCategoryId;
+    public $itemId;
 
     /**
      * {@inheritdoc}
@@ -54,7 +56,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return [
             ['taxStatus', 'required', 'on' => self::SCENARIO_EDIT],
             ['code', 'required'],
-            [['unit', 'amount', 'description', 'tax_status'], 'required', 'when' => function ($model, $attribute) {
+            [['unit', 'amount', 'item_id', 'itemCategoryId',  'description',
+                'tax_status'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
             ],
@@ -71,7 +74,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 return (int) $model->item_type_id !== ItemType::TYPE_MISC;
             },
             ],
-            [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 
+            [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code',
                 'tax_status', 'tax_type', 'tax_rate', 'userName', 'discount', 
                 'discountType', 'cost', 'code'], 'safe'],
         ];
@@ -84,12 +87,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'item_id']);
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                ->viaTable('invoice_item_lesson', ['invoiceLineItemId' => 'id']);
     }
 	
     public function getPaymentCycleLesson()
     {
-        return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'item_id']);
+        return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
+                ->viaTable('invoice_item_payment_cycle_lesson', ['invoiceLineItemId' => 'id']);
     }
 
     public function getItemType()
@@ -120,6 +125,16 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->itemType->getItemCode();
     }
 
+    public function getLineItemLesson()
+    {
+        return $this->hasOne(InvoiceItemLesson::className(), ['invoiceLineItemId' => 'id']);
+    }
+
+    public function getLineItemPaymentCycleLesson()
+    {
+        return $this->hasOne(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id']);
+    }
+
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
@@ -128,7 +143,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getProFormaLesson()
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                    ->viaTable('payment_cycle_lesson', ['id' => 'item_id']);
+                    ->via('paymentCycleLesson');
     }
 
     public function getOriginalInvoice()
@@ -171,7 +186,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'tax_status' => 'Tax Status',
             'isRoyaltyExempted' => 'Exempt from Royalty',
             'isRoyalty' => 'Royalty Free?',
-			'tax' => 'Tax (%)'
+            'tax' => 'Tax (%)',
+            'itemCategoryId' => 'Item Category',
+            'item_id' => 'Item',
         ];
     }
 
@@ -254,7 +271,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             (int) $this->item_type_id === (int) ItemType::TYPE_GROUP_LESSON;
         return $isOtherLineItems;
     }
-	
+
     public function isLessonCredit()
     {
         return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;

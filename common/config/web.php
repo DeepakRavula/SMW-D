@@ -31,6 +31,8 @@ $config = [
             'administrator/*',
             'qualification/*',
             'lesson/*',
+            'item/*',
+            'item-category/*',
             'invoice/*',
             'invoice-line-item/*',
             'release-notes/*',

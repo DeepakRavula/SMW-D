@@ -380,7 +380,7 @@ class Course extends \yii\db\ActiveRecord
 	public function getHolidayLessons()
     {
 		$lessons = Lesson::findAll(['courseId' => $this->id, 'status' => Lesson::STATUS_DRAFTED]);
-		$startDate = (new \DateTime($this->startDate))->format('Y-m-d'); 
+		$startDate = (new \DateTime($this->startDate))->format('Y-m-d');
        	$holidays = Holiday::find()
 			->andWhere(['>=', 'DATE(date)', $startDate])
             ->all();
@@ -391,8 +391,8 @@ class Course extends \yii\db\ActiveRecord
 		foreach($lessons as $lesson) {
 			$lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
 			if(in_array($lessonDate, $holidayDates)) {
-				$lessonIds[] = $lesson->id; 
-			}	
+				$lessonIds[] = $lesson->id;
+}
 		}
 		return $lessonIds;
 	}

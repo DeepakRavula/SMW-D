@@ -58,7 +58,7 @@ use kartik\switchinput\SwitchInput;
 			'id' => 'lesson-mail-button',
 			'class' => 'btn bg-purple m-r-20 del-ce'])
 		?>	
-		
+
 		<?php
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');
 		$currentDate = (new \DateTime())->format('Y-m-d');
@@ -80,7 +80,7 @@ use kartik\switchinput\SwitchInput;
 			?>
 		<?php ActiveForm::end(); ?>
 		<?php if ($model->isDeletable()) : ?>
-		 <?php
+			<?php
 			echo Html::a('<span class="btn btn-danger"> Delete</span>', ['private-lesson/delete', 'id' => $model->id], [
 				'class' => 'm-r-20 del-ce',
 				'id' => 'lesson-delete',
@@ -89,7 +89,7 @@ use kartik\switchinput\SwitchInput;
 					'method' => 'post',
 				],
 			])
-		?>
+			?>	
 		<?php endif; ?>
 	</div>
 </div>

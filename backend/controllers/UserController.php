@@ -412,6 +412,7 @@ class UserController extends Controller
             $invoiceLineItem->description = 'Opening Balance';
             $invoiceLineItem->unit = 1;
             $invoiceLineItem->amount = $paymentModel->amount;
+            $invoiceLineItem->code = $invoiceLineItem->getItemCode();
             $invoiceLineItem->save();
 
             if ($paymentModel->amount > 0) {
