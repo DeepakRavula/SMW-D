@@ -405,8 +405,7 @@ class LessonController extends Controller
         $user = User::findOne(['id' => Yii::$app->user->id]);
         $enrolment->on(Enrolment::EVENT_GROUP, [new TimelineEventEnrolment(), 'groupCourseEnrolment'], ['userName' => $user->publicIdentity]);
         $enrolment->trigger(Enrolment::EVENT_GROUP);
-        $enrolment->setPaymentCycle();
-		$invoice = $enrolment->firstPaymentCycle->createProFormaInvoice();
+        $invoice = $enrolment->createProFormaInvoice();
 			return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
 	}
 

@@ -281,11 +281,6 @@ class Invoice extends \yii\db\ActiveRecord
         return $creditUsageTotal;
     }
 
-    public function isExtraLesson()
-    {
-        return $this->lineItem->item_type_id === ItemType::TYPE_EXTRA_LESSON;
-    }
-
     public function isExtraLessonProformaInvoice()
     {
         return $this->lineItem->isExtraLesson();
@@ -635,10 +630,14 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->amount       = $lessonAmount;
             $studentFullName               = $lesson->studentFullName;
         } else {
-            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE && !$lesson->isExtra()) {
-                $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
+            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
+                if (!$lesson->isExtra()) {
+                    $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
+                } else {
+                    $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
+                }
             } else {
-                $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
+                $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
             }
             $amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
             if ($this->isReversedInvoice()) {
@@ -648,7 +647,7 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->amount       = $amount;
             $studentFullName               = $lesson->enrolment->student->fullName;
         }
-        $invoiceLineItem->code        = $invoiceLineItem->getItemCode();
+        $invoiceLineItem->code        = 'hjhj';
         $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
         return $invoiceLineItem->save();
@@ -695,7 +694,7 @@ class Invoice extends \yii\db\ActiveRecord
         foreach($this->lineItems as $lineItem) {
             $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lineItem->proFormaLesson->date);
             $currentDate = new \DateTime();
-            if($lessonDate <= $currentDate) {
+            if($lessonDate <= $currentDate && $lineItem->proFormaLesson->isScheduled()) {
                 if (!$lineItem->proFormaLesson->hasInvoice()) {
                     $invoice = $lineItem->proFormaLesson->createInvoice();
                 } else if (!$lineItem->proFormaLesson->invoice->isPaid()) {
@@ -755,6 +754,30 @@ class Invoice extends \yii\db\ActiveRecord
         $model->balance = $this->accountBalance();
         $model->date = (new \DateTime())->format('Y-m-d H:i:s');
         $model->save();
+    }
+
+    public function addLessonCreditAppliedPayment($amount, $invoice)
+    {
+        $paymentModel = new Payment();
+        $paymentModel->amount = $amount;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+        $paymentModel->reference = $invoice->id;
+        $paymentModel->invoiceId = $this->id;
+        $paymentModel->save();
+
+        $creditPaymentId = $paymentModel->id;
+        $paymentModel->id = null;
+        $paymentModel->isNewRecord = true;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+        $paymentModel->invoiceId = $invoice->id;
+        $paymentModel->reference = $this->id;
+        $paymentModel->save();
+
+        $debitPaymentId = $paymentModel->id;
+        $creditUsageModel = new CreditUsage();
+        $creditUsageModel->credit_payment_id = $creditPaymentId;
+        $creditUsageModel->debit_payment_id = $debitPaymentId;
+        return $creditUsageModel->save();
     }
 
     public function actionType()

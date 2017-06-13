@@ -118,8 +118,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->location($locationId)
             ->andWhere(['courseId' => $this->enrolment->course->id])
             ->notRescheduled()
-            ->unScheduled()
-            ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
+            ->andWhere(['OR', ['status' => Lesson::STATUS_SCHEDULED], ['status' => Lesson::STATUS_UNSCHEDULED]])
             ->between($startDate, $endDate)
             ->all();
         foreach ($lessons as $lesson) {
