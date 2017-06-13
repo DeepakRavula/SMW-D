@@ -436,6 +436,7 @@ class LessonController extends Controller
 			foreach ($lessons as $lesson) {
 				$conflicts[$lesson->id] = [];
 			}
+			$lessonCount = count($lessons);
 			$query = Lesson::find()
 				->where(['courseId' => $courseModel->id, 'lesson.status' => Lesson::STATUS_SCHEDULED])
 				->andWhere(['>=', 'lesson.date', (new \DateTime($endDate))->format('Y-m-d')])
@@ -459,6 +460,7 @@ class LessonController extends Controller
 			}
 			$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
 			$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+			$lessonCount = count($draftLessons);
 			$query = Lesson::find()
 				->orderBy(['lesson.date' => SORT_ASC]);
 			if(! $showAllReviewLessons) {
@@ -482,7 +484,8 @@ class LessonController extends Controller
 			'endDate' => $endDate,
 			'model' => $model,
 			'enrolmentEditType' => $enrolmentEditType,
-			'holidayConflictedLessonIds' => $holidayConflictedLessonIds
+			'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
+			'lessonCount' => $lessonCount
         ]);
     }
 
