@@ -555,21 +555,44 @@ class InvoiceController extends Controller
 
     public function actionGroupLesson($lessonId, $enrolmentId = null)
     {
-        $lesson     = Lesson::findOne($lessonId);
-        if (!empty($enrolmentId)) {
-            $enrolment = Enrolment::findOne($enrolmentId);
-            $lesson->createGroupInvoice($enrolmentId);
-            return $this->redirect(['lesson/view', 'id' => $lessonId]);
-        } else {
-            $enrolments = Enrolment::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->andWhere(['courseId' => $lesson->courseId])
-                ->all();
-            foreach ($enrolments as $enrolment) {
-                $lesson->createGroupInvoice($enrolment->id);
+        $lesson      = Lesson::findOne($lessonId);
+        $lessonDate  = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
+        $currentDate = new \DateTime();
+        if ($lessonDate <= $currentDate) {
+            if (!empty($enrolmentId)) {
+                $enrolment = Enrolment::findOne($enrolmentId);
+                if (!$enrolment->hasInvoice($lessonId)) {
+                    $lesson->createGroupInvoice($enrolmentId);
+                }
+                Yii::$app->session->setFlash('alert', [
+                    'options' => ['class' => 'alert-success'],
+                    'body' => 'Invoice has been successfully created',
+                ]);
+                return $this->redirect(['lesson/view', 'id' => $lessonId, '#' => 'student']);
+
+            } else {
+                $enrolments = $lesson->enrolments;
+                foreach ($enrolments as $enrolment) {
+                    if (!$enrolment->hasInvoice($lessonId)) {
+                        $lesson->createGroupInvoice($enrolment->id);
+                    }
+                }
+                Yii::$app->session->setFlash('alert', [
+                    'options' => ['class' => 'alert-success'],
+                    'body' => 'Invoice has been successfully created',
+                ]);
+                return $this->redirect(['course/view', 'id' => $lesson->courseId]);
             }
-            return $this->redirect(['course/view', 'id' => $lesson->courseId]);
+        } else {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => 'Generate invoice against completed lesson only.',
+            ]);
+            if (!empty($enrolmentId)) {
+                return $this->redirect(['lesson/view', 'id' => $lessonId, '#' => 'student']);
+            } else {
+                return $this->redirect(['course/view', 'id' => $lesson->courseId]);
+            }
         }
     }
 }

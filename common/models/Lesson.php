@@ -365,6 +365,23 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(LessonReschedule::className(), ['lessonId' => 'id']);
     }
+    
+    public function getEnrolments()
+    {
+        return $this->hasMany(Enrolment::className(), ['courseId' => 'courseId'])
+            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);;
+    }
+
+    public function hasGroupInvoice()
+    {
+        $enrolments = $this->enrolments;
+        foreach ($enrolments as $enrolment) {
+            if (!$enrolment->hasInvoice($this->id)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public function isSplitRescheduled()
     {

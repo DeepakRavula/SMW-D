@@ -33,14 +33,25 @@ use yii\helpers\Html;
 			},
 		],
                 ['class' => 'yii\grid\ActionColumn',
-                    'template' => '{create}',
+                    'template' => '{create} {view}',
                     'buttons' => [
-                        'create' => function ($url, $model) use ($courseModel){
+                        'create' => function ($url, $model) {
                             $url = Url::to(['invoice/group-lesson', 'lessonId' => $model->id, 'enrolmentId' => null]);
-                            if (!$model->hasProFormaInvoice()) {
+                            if (!$model->hasGroupInvoice() && $model->isScheduled()) {
                                 return Html::a('Create Invoice', $url, [
                                     'title' => Yii::t('yii', 'Create Invoice'),
                                                                 'class' => ['btn-success btn-sm']
+                                ]);
+                            } else {
+                                return null;
+                            }
+                        },
+                        'view' => function ($url, $model) {
+                            $url = Url::to(['lesson/view', 'id' => $model->id, '#' => 'student']);
+                            if ($model->hasGroupInvoice() && $model->isScheduled()) {
+                                return Html::a('View Invoice', $url, [
+                                    'title' => Yii::t('yii', 'View Invoice'),
+                                                                'class' => ['btn-info btn-sm']
                                 ]);
                             } else {
                                 return null;
