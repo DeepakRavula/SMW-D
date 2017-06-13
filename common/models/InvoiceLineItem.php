@@ -130,6 +130,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceItemLesson::className(), ['invoiceLineItemId' => 'id']);
     }
 
+    public function getLineItemEnrolment()
+    {
+        return $this->hasOne(InvoiceItemEnrolment::className(), ['invoiceLineItemId' => 'id']);
+    }
+
     public function getLineItemPaymentCycleLesson()
     {
         return $this->hasOne(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id']);
@@ -425,5 +430,28 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
 
         return parent::beforeDelete();
+    }
+
+    public function addLineItemDetails($lesson)
+    {
+        if ($this->isPaymentCycleLesson()) {
+            $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLesson();
+            $invoiceItemPaymentCycleLesson->paymentCycleLessonId    = $lesson->paymentCycleLesson->id;
+            $invoiceItemPaymentCycleLesson->invoiceLineItemId    = $this->id;
+            $invoiceItemPaymentCycleLesson->save();
+        }
+        if ($this->isPaymentCycleLessonSplit()) {
+            $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLessonSplit();
+            $invoiceItemPaymentCycleLesson->lessonSplitId     = $lesson->id;
+            $invoiceItemPaymentCycleLesson->invoiceLineItemId = $this->id;
+            return $invoiceItemPaymentCycleLesson->save();
+        }
+        if ($this->isPrivateLesson() || $this->isExtraLesson() ||
+            ($this->isGroupLesson() && $this->invoice->isInvoice())) {
+            $invoiceItemLesson = new InvoiceItemLesson();
+            $invoiceItemLesson->lessonId    = $lesson->id;
+            $invoiceItemLesson->invoiceLineItemId    = $this->id;
+            $invoiceItemLesson->save();
+        }
     }
 }

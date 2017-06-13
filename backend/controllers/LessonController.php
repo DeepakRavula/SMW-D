@@ -675,21 +675,19 @@ class LessonController extends Controller
     public function actionInvoice($id)
     {
         $model = Lesson::findOne(['id' => $id]);
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-        $currentDate = new \DateTime();
 
-        if ($lessonDate <= $currentDate) {
+        if ($model->canInvoice()) {
             if ($model->hasInvoice()) {
                 $invoice = $model->invoice;
             } else {
-                $invoice = $model->createInvoice();
+                $invoice = $model->createPrivateLessonInvoice();
             }
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
-                'body' => 'Generate invoice against completed lesson only.',
+                'body' => 'Generate invoice against completed scheduled lesson only.',
             ]);
 
             return $this->redirect(['lesson/view', 'id' => $id]);
@@ -753,7 +751,7 @@ class LessonController extends Controller
 
                     return $this->redirect(['invoice/view', 'id' => $invoice->id]);
                 } else {
-                    $model->paymentCycle->proFormaInvoice->addLineItem($model);
+                    $model->paymentCycle->proFormaInvoice->addPrivateLessonLineItem($model);
                     $model->paymentCycle->proFormaInvoice->save();
                 }
             } else {
@@ -773,7 +771,7 @@ class LessonController extends Controller
                 $invoice->createdUserId = Yii::$app->user->id;
                 $invoice->updatedUserId = Yii::$app->user->id;
                 $invoice->save();
-                $invoice->addLineItem($model);
+                $invoiceLineItem = $invoice->addPrivateLessonLineItem($model);
                 $invoice->save();
             } else {
                 $invoice = $model->proFormaInvoice;
@@ -810,7 +808,10 @@ class LessonController extends Controller
     {
         $model = $this->findModel($id);
         $lessonDurationSec = $model->durationSec;
-        $model->proFormaInvoice->removeLessonItem($id);
+        if ($model->hasProFormaInvoice()) {
+            $model->proFormaInvoice->removeLessonItem($id);
+        }
+        
         for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
             $lesssonSplit = new LessonSplit();
             $lesssonSplit->lessonId = $id;

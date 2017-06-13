@@ -165,7 +165,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
                 }
             } else {
                 $lesson->studentFullName = $this->enrolment->student->fullName;
-                $invoice->addLineItem($lesson);
+                $invoice->addPrivateLessonLineItem($lesson);
             }
         }
         $invoice->save();

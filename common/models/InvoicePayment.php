@@ -63,6 +63,8 @@ class InvoicePayment extends \yii\db\ActiveRecord
         if($this->invoice->isProFormaInvoice() && !$this->payment->isCreditUsed()) {
             if ($this->invoice->isExtraLessonProformaInvoice()) {
                 $this->invoice->makeExtraLessonInvoicePayment();
+            } else if ($this->invoice->lineItem->isGroupLesson()) {
+                $this->invoice->makeGroupInvoicePayment();
             } else {
                 $this->invoice->makeInvoicePayment();
             }

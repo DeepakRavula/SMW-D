@@ -78,4 +78,12 @@ class LessonSplit extends \yii\db\ActiveRecord
 
         return parent::afterSave($insert, $changedAttributes);
     }
+
+    public function getUnits()
+    {
+        $getDuration = \DateTime::createFromFormat('H:i:s', $this->unit);
+        $hours       = $getDuration->format('H');
+        $minutes     = $getDuration->format('i');
+        return (($hours * 60) + $minutes) / 60;
+    }
 }

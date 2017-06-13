@@ -607,83 +607,103 @@ class Invoice extends \yii\db\ActiveRecord
 		}
     }
 
-    public function addLineItem($lesson)
+    public function addLessonLineItem()
     {
-        $actualLessonDate            = \DateTime::createFromFormat('Y-m-d H:i:s',
-                $lesson->date);
         $invoiceLineItem             = new InvoiceLineItem();
         $invoiceLineItem->invoice_id = $this->id;
         $item = Item::findOne(['code' => Item::LESSON_ITEM]);
         $invoiceLineItem->item_id    = $item->id;
-        $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
+
+        return $invoiceLineItem;
+    }
+
+    public function addPrivateLessonLineItem($lesson)
+    {
+        $invoiceLineItem = $this->addLessonLineItem();
+        $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId,
+            'program_id' => $lesson->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
+        $actualLessonDate            = \DateTime::createFromFormat('Y-m-d H:i:s',
+                $lesson->date);
+        $invoiceLineItem->unit       = $lesson->unit;
         if (!empty($lesson->proFormaLineItem)) {
             $invoiceLineItem->discount     = $lesson->proFormaLineItem->discount;
             $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
-            if ($lesson->isPrivate()) {
-                $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
-                $enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0;
-                $invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
-                $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
-            } else {
-                $invoiceLineItem->discount     = 0;
-                $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
-            }
+            $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
+            $enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0;
+            $invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
+            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
         }
-        $getDuration                 = \DateTime::createFromFormat('H:i:s',
-                $lesson->duration);
-        $hours                       = $getDuration->format('H');
-        $minutes                     = $getDuration->format('i');
-        $invoiceLineItem->unit       = (($hours * 60) + $minutes) / 60;
-        $invoiceLineItem->cost = $rate * $invoiceLineItem->unit;
-        if ($lesson->isGroup()) {
-            $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-            $courseCount                   = Lesson::find()
-                ->notDeleted()
-                ->where(['courseId' => $lesson->courseId])
-                ->count('id');
-            $lessonAmount                  = $lesson->course->program->rate / $courseCount;
-            if ($this->isReversedInvoice()) {
-                $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
-                $lessonAmount = -($lessonAmount);
+        
+        if ($this->isProFormaInvoice()) {
+            if ($lesson->isExtra()) {
+                $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
+            } else if ($lesson->isPrivate()) {
+                $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
             }
-            $invoiceLineItem->amount       = $lessonAmount;
-            $studentFullName               = $lesson->studentFullName;
-            $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
+            $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
         } else {
-            if ($this->isProFormaInvoice()) {
-                if ($lesson->isPrivate()) {
-                    $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
-                } else if ($lesson->isExtra()) {
-                    $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
-                }
+            if ($lesson->isUnscheduled()) {
+                $invoiceLineItem->cost       = 0;
             } else {
-                $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+                $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
             }
-            $amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
-            if ($this->isReversedInvoice()) {
-                $amount = -($amount);
-                $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
-            }
-            $invoiceLineItem->amount       = $amount;
-            $studentFullName               = $lesson->enrolment->student->fullName;
+            $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
         }
-        $invoiceLineItem->code        = $invoiceLineItem->getItemCode();
-        $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
+        $amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
+        if ($this->isReversedInvoice()) {
+            $amount = -($amount);
+            $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+        }
+        $invoiceLineItem->amount       = $amount;
+        $studentFullName               = $lesson->enrolment->student->fullName;
+        $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '
+            .$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
+        $invoiceLineItem->code       = $invoiceLineItem->getItemCode();
         if ($invoiceLineItem->save()) {
-            if ($this->isProFormaInvoice() && $invoiceLineItem->isPaymentCycleLesson()) {
-                $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLesson();
-                $invoiceItemPaymentCycleLesson->paymentCycleLessonId    = $lesson->paymentCycleLesson->id;
-                $invoiceItemPaymentCycleLesson->invoiceLineItemId    = $invoiceLineItem->id;
-                return $invoiceItemPaymentCycleLesson->save();
-            } else if ($this->isInvoice() || $invoiceLineItem->isExtraLesson() || $invoiceLineItem->isGroupLesson()) {
-                $invoiceItemLesson = new InvoiceItemLesson();
-                $invoiceItemLesson->lessonId    = $lesson->id;
-                $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
-                return $invoiceItemLesson->save();
-            }
+            $invoiceLineItem->addLineItemDetails($lesson);
+            return $invoiceLineItem;
+        } else {
+            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+        }
+    }
+
+    public function addGroupLessonLineItem($lesson)
+    {
+        $invoiceLineItem               = $this->addLessonLineItem();
+        $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
+        $invoiceLineItem->unit         = $lesson->unit;
+        $actualLessonDate              = \DateTime::createFromFormat('Y-m-d H:i:s',
+                $lesson->date);
+        $enrolment                     = Enrolment::findOne($lesson->enrolmentId);
+        $courseCount                   = $enrolment->courseCount;
+        $lessonAmount                  = $lesson->course->program->rate / $courseCount;
+        if ($this->isReversedInvoice()) {
+            $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+            $lessonAmount = -($lessonAmount);
+        }
+        $invoiceLineItem->amount       = $lessonAmount;
+        if (!empty($enrolment->proFormaInvoice->lineItem)) {
+            $invoiceLineItem->discount     = $enrolment->proFormaInvoice->lineItem->discount;
+            $invoiceLineItem->discountType = $enrolment->proFormaInvoice->lineItem->discountType;
+        }
+        $studentFullName               = $enrolment->student->fullName;
+        $description                   = $enrolment->program->name . ' for '. $studentFullName . ' with '
+            . $lesson->teacher->publicIdentity . ' on ' . $actualLessonDate->format('M. jS, Y');
+        $invoiceLineItem->description  = $description;
+        $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
+        $invoiceLineItem->code         = $invoiceLineItem->getItemCode();
+        if (!$invoiceLineItem->save()) {
+            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+        } else {
+            $invoiceLineItem->addLineItemDetails($lesson);
+            $invoiceItemLesson                    = new InvoiceItemEnrolment();
+            $invoiceItemLesson->enrolmentId       = $enrolment->id;
+            $invoiceItemLesson->invoiceLineItemId = $invoiceLineItem->id;
+            $invoiceItemLesson->save();
+            return $invoiceLineItem;
         }
     }
 
@@ -726,19 +746,43 @@ class Invoice extends \yii\db\ActiveRecord
     public function makeInvoicePayment()
     {
         foreach($this->lineItems as $lineItem) {
-            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lineItem->proFormaLesson->date);
-            $currentDate = new \DateTime();
-            if($lessonDate <= $currentDate && $lineItem->proFormaLesson->isScheduled()) {
-                if (!$lineItem->proFormaLesson->hasInvoice()) {
-                    $invoice = $lineItem->proFormaLesson->createInvoice();
-                } else if (!$lineItem->proFormaLesson->invoice->isPaid()) {
-                    if ($lineItem->proFormaLesson->hasProFormaInvoice()) {
-                        $netPrice = $lineItem->proFormaLesson->proFormaLineItem->netPrice;
-                        if ($lineItem->proFormaLesson->isSplitRescheduled()) {
-                            $netPrice = $lineItem->proFormaLesson->getSplitRescheduledAmount();
+            $lesson = Lesson::findOne($lineItem->proFormaLesson->id);
+            if($lesson->canInvoice()) {
+                if (!$lesson->hasInvoice()) {
+                    $invoice = $lesson->createPrivateLessonInvoice();
+                } else if (!$lesson->invoice->isPaid()) {
+                    if ($lesson->hasProFormaInvoice()) {
+                        $netPrice = $lesson->proFormaLineItem->netPrice;
+                        if ($lesson->isSplitRescheduled()) {
+                            $netPrice = $lesson->getSplitRescheduledAmount();
                         }
-                        if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $netPrice) {
-                            $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice, $netPrice);
+                        if ($lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
+                            $lesson->invoice->addPayment($lesson->proFormaInvoice, $netPrice);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function makeGroupInvoicePayment()
+    {
+        $enrolment = Enrolment::findOne($this->lineItem->lineItemEnrolment->enrolmentId);
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->joinWith('enrolment')
+            ->andWhere(['enrolment.id' => $enrolment->id])
+            ->all();
+        $courseCount = $enrolment->courseCount;
+        foreach ($lessons as $lesson) {
+            if($lesson->canInvoice()) {
+                if (!$enrolment->hasInvoice($lesson->id)) {
+                    $invoice = $lesson->createGroupInvoice($enrolment->id);
+                } else if (!$enrolment->getInvoice($lesson->id)->isPaid()) {
+                    if ($enrolment->hasProFormaInvoice()) {
+                        $netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
+                        if ($enrolment->proFormaInvoice->proFormaCredit >= $netPrice) {
+                            $enrolment->getInvoice($lesson->id)->addPayment($enrolment->proFormaInvoice, $netPrice);
                         }
                     }
                 }
@@ -748,16 +792,15 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function makeExtraLessonInvoicePayment()
     {
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->lineItem->lesson->date);
-        $currentDate = new \DateTime();
-        if($lessonDate <= $currentDate) {
-            if (!$this->lineItem->lesson->hasInvoice()) {
-                $invoice = $this->lineItem->lesson->createInvoice();
-            } else if (!$this->lineItem->lesson->invoice->isPaid()) {
-                if ($this->lineItem->lesson->hasProFormaInvoice()) {
-                    $netPrice = $this->lineItem->lesson->proFormaInvoice->lineItem->netPrice;
-                    if ($this->lineItem->lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
-                        $this->lineItem->lesson->invoice->addPayment($this->lineItem->lesson->proFormaInvoice, $netPrice);
+        $lesson = Lesson::findOne($this->lineItem->lesson->id);
+        if($lesson->canInvoice()) {
+            if (!$lesson->hasInvoice()) {
+                $invoice = $lesson->createPrivateLessonInvoice();
+            } else if (!$lesson->invoice->isPaid()) {
+                if ($lesson->hasProFormaInvoice()) {
+                    $netPrice = $lesson->proFormaInvoice->lineItem->netPrice;
+                    if ($lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
+                        $lesson->invoice->addPayment($lesson->proFormaInvoice, $netPrice);
                     }
                 }
             }
@@ -839,17 +882,11 @@ class Invoice extends \yii\db\ActiveRecord
     public function addLessonSplitItem($splitId)
     {
         $split = LessonSplit::findOne($splitId);
-        $invoiceLineItem               = new InvoiceLineItem();
-        $invoiceLineItem->invoice_id   = $this->id;
-        $item = Item::findOne(['code' => Item::LESSON_ITEM]);
-        $invoiceLineItem->item_id      = $item->id;
+        $invoiceLineItem = $this->addLessonLineItem();
         $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_SPLIT;
-        $getDuration                 = \DateTime::createFromFormat('H:i:s',
-                $split->unit);
-        $hours                       = $getDuration->format('H');
-        $minutes                     = $getDuration->format('i');
-        $invoiceLineItem->unit       = (($hours * 60) + $minutes) / 60;
-        $qualification = Qualification::findOne(['teacher_id' => $split->lesson->teacherId, 'program_id' => $split->lesson->course->program->id]);
+        $invoiceLineItem->unit       = $split->units;
+        $qualification = Qualification::findOne(['teacher_id' => $split->lesson->teacherId,
+            'program_id' => $split->lesson->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
         $invoiceLineItem->amount = $split->lesson->enrolment->program->rate * $invoiceLineItem->unit;
@@ -865,26 +902,21 @@ class Invoice extends \yii\db\ActiveRecord
         $invoiceLineItem->description  = 'Lesson Split';
         $invoiceLineItem->code = $invoiceLineItem->getItemCode();
         if ($invoiceLineItem->save()) {
-            $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLessonSplit();
-            $invoiceItemPaymentCycleLesson->lessonSplitId     = $splitId;
-            $invoiceItemPaymentCycleLesson->invoiceLineItemId = $invoiceLineItem->id;
-            return $invoiceItemPaymentCycleLesson->save();
+            $invoiceLineItem->addLineItemDetails($split);
+            return $invoiceLineItem;
+        } else {
+            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         }
     }
 
     public function addGroupProFormaLineItem($enrolment)
     {
-        $invoiceLineItem               = new InvoiceLineItem();
-        $invoiceLineItem->invoice_id   = $this->id;
-        $item = Item::findOne(['code' => Item::LESSON_ITEM]);
-        $invoiceLineItem->item_id      = $item->id;
+        $invoiceLineItem = $this->addLessonLineItem();
         $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-        $courseCount = Lesson::find()
-                ->notDeleted()
-                ->where(['courseId' => $enrolment->courseId])
-                ->count('id');
-        $invoiceLineItem->unit       = $courseCount;
-        $qualification = Qualification::findOne(['teacher_id' => $enrolment->firstLesson->teacherId, 'program_id' => $enrolment->course->program->id]);
+        $courseCount = $enrolment->courseCount;
+        $invoiceLineItem->unit       = $enrolment->firstLesson->unit * $courseCount;
+        $qualification = Qualification::findOne(['teacher_id' => $enrolment->firstLesson->teacherId,
+            'program_id' => $enrolment->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $invoiceLineItem->cost       = $rate;
         $invoiceLineItem->amount = $enrolment->program->rate;
@@ -894,6 +926,7 @@ class Invoice extends \yii\db\ActiveRecord
         $invoiceLineItem->description  = 'Group Lesson';
         $invoiceLineItem->code = $invoiceLineItem->getItemCode();
         if ($invoiceLineItem->save()) {
+            $invoiceLineItem->addLineItemDetails($enrolment);
             return $invoiceLineItem;
         } else {
             Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
