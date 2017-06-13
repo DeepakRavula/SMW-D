@@ -231,7 +231,6 @@ class InvoiceController extends Controller
         if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
             $invoiceLineItemModel->invoice_id = $model->id;
             $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
-            $invoiceLineItemModel->code        = $invoiceLineItemModel->getItemCode();
             $invoiceLineItemModel->cost        = 0.0;
             $invoiceLineItemModel->discount = 0.0;
 			if($invoiceLineItemModel->tax_rate == '') {
@@ -303,7 +302,7 @@ class InvoiceController extends Controller
             'code' => $taxCode->code,
             'rate' => $rate,
             'tax_status' => $data['taxStatusName'],
-			'tax' => $taxCode->rate,
+                    'tax' => $taxCode->rate,
         ];
     }
 

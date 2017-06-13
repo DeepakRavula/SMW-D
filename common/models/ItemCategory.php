@@ -12,6 +12,8 @@ use Yii;
  */
 class ItemCategory extends \yii\db\ActiveRecord
 {
+    const LESSON_ITEM = 'Lesson';
+
     /**
      * @inheritdoc
      */

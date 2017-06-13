@@ -2,6 +2,8 @@
 
 namespace common\models\query;
 
+use common\models\ItemCategory;
+
 /**
  * This is the ActiveQuery class for [[\common\models\ItemCategory]].
  *
@@ -30,5 +32,10 @@ class ItemCategoryQuery extends \yii\db\ActiveQuery
     public function one($db = null)
     {
         return parent::one($db);
+    }
+
+    public function active()
+    {
+        return $this->andFilterWhere(['NOT', ['name' => ItemCategory::LESSON_ITEM]]);
     }
 }

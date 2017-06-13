@@ -21,7 +21,7 @@ use yii\helpers\Url;
     <div class="row">
         <div class="col-xs-6">
             <?php echo $form->field($model, 'itemCategoryId')->dropDownList(
-                    ArrayHelper::map(ItemCategory::find()
+                    ArrayHelper::map(ItemCategory::find()->active()
                        ->all(), 'id', 'name'), ['prompt' => 'Select Category']) ?>
         </div>
         <div class="col-xs-6">
@@ -72,6 +72,9 @@ use yii\helpers\Url;
                         TaxStatus::find()->all(), 'id', 'name'), ['prompt' => 'Select'])
             ?>
         </div>
+        <div class="col-xs-4">
+            <?php echo $form->field($model, 'code')->textInput() ?>
+        </div>
     </div>
     <div class="form-group">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
@@ -113,6 +116,7 @@ $(document).ready(function() {
             success: function(response) {
                 $('#invoicelineitem-description').val(response.description);
                 $('#invoicelineitem-amount').val(response.price);
+                $('#invoicelineitem-code').val(response.code);
                 $('#invoicelineitem-unit').val(1);
                 $('#invoicelineitem-tax_status').val(response.tax);
                 if (response.royaltyFree) {
