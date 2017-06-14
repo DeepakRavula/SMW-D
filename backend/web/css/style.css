@@ -58,9 +58,6 @@ hr.default-hr {
 Skin-black // Theme Modification
 ******************************/
 
-a {
-    color: #ea212d;
-}
 
 a:hover,
 a:focus {
@@ -577,10 +574,6 @@ table tr {
     cursor: pointer;
 }
 
-.box-body {
-    padding: 0;
-}
-
 .user-details-wrapper {
     /* margin: -10px -10px 0 -10px;*/
     padding: 10px;
@@ -756,11 +749,6 @@ Licensed under MIT
     color: #a6a6a6;
 }
 
-.tabbable-line > .nav-tabs > li.open,
-.tabbable-line > .nav-tabs > li:hover {
-    border-bottom: 4px solid #fbcdcf;
-}
-
 .tabbable-line > .nav-tabs > li.open > a,
 .tabbable-line > .nav-tabs > li:hover > a {
     border: 0;
@@ -779,7 +767,7 @@ Licensed under MIT
 }
 
 .tabbable-line > .nav-tabs > li.active {
-    border-bottom: 4px solid #f3565d;
+    border-top: 4px solid #a4c0f3;
     position: relative;
 }
 

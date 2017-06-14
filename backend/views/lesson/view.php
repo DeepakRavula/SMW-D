@@ -13,39 +13,61 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 ?>
 <div class="row">
 	<div class="col-md-6">
-	<div class="box box-default">
-          <div class="box-header with-border">
-              <h3 class="box-title">Details</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool"><i class="fa fa-pencil"></i></button>
-              </div>
-            </div>
-        </div>
-	<div class="box box-default">
-		 <div class="box-header with-border">
-              <h3 class="box-title">Schedule</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" ><i class="fa fa-pencil"></i></button>
-              </div>
-            </div>
-        </div>
+		<?=
+		$this->render('_details', [
+			'model' => $model,
+		]);
+		?>
+		<?=
+		$this->render('_schedule', [
+			'model' => $model,
+		]);
+		?>
 	</div>
 	<div class="col-md-6">
-		<div class="box box-default">
-          <div class="box-header with-border">
-              <h3 class="box-title">Student</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" ><i class="fa fa-pencil"></i></button>
-              </div>
-            </div>
-        </div>
-		<div class="box box-default">
-          <div class="box-header with-border">
-              <h3 class="box-title">Attendance</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool"><i class="fa fa-pencil"></i></button>
-              </div>
-            </div>
-        </div>
+		<?=
+		$this->render('_student', [
+			'model' => $model,
+		]);
+		?>	
+		<?=
+		$this->render('_attendance', [
+			'model' => $model,
+		]);
+		?>
 	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<div class="tabbable-panel">
+			<div class="tabbable-line">
+				<?php
+				$noteContent = $this->render('note/view', [
+					'model' => new Note(),
+					'noteDataProvider' => $noteDataProvider
+				]);
+
+				$logContent = $this->render('log', [
+					'model' => $model,
+				]);
+
+				$items = [
+						[
+						'label' => 'Comments',
+						'content' => $noteContent,
+					],
+						[
+						'label' => 'History',
+						'content' => $logContent,
+					],
+				];
+				?>
+				<?php
+				echo Tabs::widget([
+					'items' => $items,
+				]);
+				?>
+			</div>
+		</div>	
 	</div>
+</div>

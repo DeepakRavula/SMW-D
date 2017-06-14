@@ -710,9 +710,7 @@ class Lesson extends \yii\db\ActiveRecord
 	{
 		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
 		$currentDate = new \DateTime();
-		if($lessonDate > $currentDate) {
-			$result = '-';
-		}
+		$result = 'No';
 		if($lessonDate < $currentDate) {
 			$result = 'Yes';
 		}
