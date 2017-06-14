@@ -146,6 +146,7 @@ class ItemCategoryController extends Controller
         $items          = Item::find()
                             ->where(['itemCategoryId' => $itemCategoryId])
                             ->location($locationId)
+                            ->active()
                             ->all();
         $result = [];
         $output = [];
@@ -170,6 +171,7 @@ class ItemCategoryController extends Controller
         return [
             'description' => $item->description,
             'price' => $item->price,
+            'code' => $item->code,
             'royaltyFree' => $item->royaltyFree,
             'tax' => $item->taxStatusId
         ];

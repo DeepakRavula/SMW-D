@@ -117,6 +117,13 @@ $columns = [
 	'emptyText' => 'No conflicts here! You are ready to confirm!',
 ]);
 ?>
+<div style="text-align: center">
+	<strong>Unscheduled Lesson(s) due to holiday conflict:</strong> <?= count($holidayConflictedLessonIds);?><br>
+	<strong>Scheduled Lessons:</strong> <?= $lessonCount - (count($holidayConflictedLessonIds) + count($conflictedLessonIds));?><br>
+	<strong>Conflicted Lesson(s):</strong> <?= count($conflictedLessonIds);?><br>
+	<strong>Total Lessons:</strong> <?= $lessonCount;?><br>
+</div>
+
 <?= $this->render('review/_button', [
 	'vacationId' => $vacationId,
 	'hasConflict' => $hasConflict,

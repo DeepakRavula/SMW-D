@@ -51,12 +51,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {update} {delete}',
+                'template' => '{update} {delete}',
                 'buttons' => [
-                    'view' => function ($url, $model) {
-                        $url = Url::to(['item/view', 'id' => $model->id]);
-                        return Html::a('<i class="glyphicon glyphicon-eye-open"></i>', $url);
-                    },
                     'update' => function ($url, $model) {
                         $url = Url::to(['item/update', 'id' => $model->id]);
                         return Html::a('<i class="glyphicon glyphicon-pencil"></i>', $url);
