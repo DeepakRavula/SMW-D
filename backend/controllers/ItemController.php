@@ -8,6 +8,8 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
+use yii\filters\ContentNegotiator;
 
 /**
  * ItemController implements the CRUD actions for Item model.
@@ -23,6 +25,14 @@ class ItemController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['update', 'create'],
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -32,8 +42,12 @@ class ItemController extends Controller
      */
     public function actionIndex()
     {
+        $locationId = Yii::$app->session->get('location_id');
         $dataProvider = new ActiveDataProvider([
-            'query' => Item::find(),
+            'query' => Item::find()
+                            ->location($locationId)
+                            ->active()
+                            ->notLesson(),
         ]);
 
         return $this->render('index', [
@@ -62,12 +76,18 @@ class ItemController extends Controller
     {
         $model             = new Item();
         $model->locationId = Yii::$app->session->get('location_id');
+        $data              = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return [
+                'status' => true
+            ];
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
     }
 
@@ -80,13 +100,22 @@ class ItemController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        if (empty($model)) {
+            $model = new Item();
+            $model->locationId = Yii::$app->session->get('location_id');
+        }
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return [
+                'status' => true
+            ];
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
     }
 
