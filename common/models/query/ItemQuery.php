@@ -2,6 +2,8 @@
 
 namespace common\models\query;
 
+use common\models\Item;
+
 /**
  * This is the ActiveQuery class for [[\common\models\Item]].
  *
@@ -40,5 +42,10 @@ class ItemQuery extends \yii\db\ActiveQuery
     public function active()
     {
         return $this->andFilterWhere(['item.status' => true]);
+    }
+
+    public function notLesson()
+    {
+        return $this->andFilterWhere(['NOT', ['item.code' => Item::LESSON_ITEM]]);
     }
 }
