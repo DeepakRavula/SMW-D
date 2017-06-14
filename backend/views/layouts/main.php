@@ -10,12 +10,8 @@ use yii\helpers\Url;
 
 ?>
 <?php $this->beginContent('@backend/views/layouts/common.php'); ?> 
-<div class="box">  
     <div id="notification" style="display: none;" class="alert-danger alert fade in"></div>
-    <div class="box-body">
 <?php echo $content ?>
-    </div>
-</div> 
 <?php $this->endContent(); ?>
 <body>
     <script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
