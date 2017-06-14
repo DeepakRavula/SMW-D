@@ -697,12 +697,12 @@ class Lesson extends \yii\db\ActiveRecord
         if ($this->hasProFormaInvoice()) {
             $netPrice = $this->proFormaLineItem->netPrice;
             if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
-                $invoice->addPayment($this->proFormaInvoice);
+                $invoice->addPayment($this->proFormaInvoice, $netPrice);
             }
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
-                $this->invoiceLineItem->addLessonCreditApplied($extendedLesson->lessonSplitId);
+                $invoice->lineItem->addLessonCreditApplied($extendedLesson->lessonSplitId);
             }
         }
 
