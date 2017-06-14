@@ -220,6 +220,12 @@ echo Menu::widget([
 					'visible' => Yii::$app->user->can('administrator'),
 				],
                                 [
+					'label' => Yii::t('backend', 'Item Category'),
+					'icon' => '<i class="fa fa-newspaper-o"></i>',
+					'url' => ['item-category/index'],
+					'visible' => Yii::$app->user->can('administrator'),
+				],
+                                [
 					'label' => Yii::t('backend', 'Items'),
 					'icon' => '<i class="fa fa-newspaper-o"></i>',
 					'url' => ['item/index'],

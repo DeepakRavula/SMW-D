@@ -28,7 +28,7 @@ class ItemCategoryController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['items', 'get-item-values'],
+                'only' => ['items', 'get-item-values', 'create', 'update'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -80,13 +80,21 @@ class ItemCategoryController extends Controller
     public function actionCreate()
     {
         $model = new ItemCategory();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $data  = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                $model->save(false);
+                return [
+                    'status' => true
+                ];
+            }
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
     }
 
@@ -99,13 +107,21 @@ class ItemCategoryController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                $model->save(false);
+                return [
+                    'status' => true
+                ];
+            }
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
     }
 

@@ -15,20 +15,21 @@ use kartik\select2\Select2;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="item-form">
+<div class="item-form row">
 
-    <?php $form = ActiveForm::begin([
+    <?php   $url = Url::to(['item/update', 'id' => $model->id]);
+            if ($model->isNewRecord) {
+               $url = Url::to(['item/create']);
+            }
+        $form = ActiveForm::begin([
         'id' => 'update-item-form',
-        'action' => Url::to(['item/update', 'id' => $model->id]),
+        'action' => $url,
     ]); ?>
 
     <div class="col-xs-6">
         <?php echo $form->field($model, 'itemCategoryId')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(ItemCategory::find()->all(), 'id', 'name'),
-                'pluginOptions' => [
-                    'tags' => true,
-                    'allowClear' => true,
-                ],
+                'options' => ['placeholder' => 'Select Category'],
             ]);
         ?>
     </div>
@@ -60,7 +61,7 @@ use kartik\select2\Select2;
         <?php echo $form->field($model, 'status')->dropDownList
             (Item::itemStatuses()) ?>
     </div>
-    <div class="form-group">
+    <div class="form-group col-xs-12">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default item-cancel']);?>
         <?php if (!$model->isNewRecord) {

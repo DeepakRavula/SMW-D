@@ -5,6 +5,8 @@ use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
+use kartik\select2\Select2Asset;
+Select2Asset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\ItemCategory */
@@ -23,7 +25,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'timeout' => 6000,
     ]) ?>
     <?php echo GridView::widget([
-        'id' => 'item-grid',
         'dataProvider' => $dataProvider,
         'columns' => [
             'code',
@@ -67,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <script>
     $(document).ready(function() {
-        $('#create-item, #item-listing  tbody > tr').on('click', function() {
+        $(document).on('click', '#create-item, #item-listing  tbody > tr', function () {
             var itemId = $(this).data('key');
             if (itemId === undefined) {
                 var customUrl = '<?= Url::to(['item/create']); ?>';
@@ -101,8 +102,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     if(response.status) {
                         $.pjax.reload({container: '#item-listing', timeout: 6000});
                         $('#item-edit-modal').modal('hide');
-                    } else {
-                        $('#update-item-form').yiiActiveForm('updateMessages', response.errors, true);
                     }
                 }
             });
@@ -113,5 +112,4 @@ $this->params['breadcrumbs'][] = $this->title;
             return false;
         });
     });
-
 </script>

@@ -79,10 +79,13 @@ class ItemController extends Controller
         $data              = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return [
-                'status' => true
-            ];
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                $model->save(false);
+                return [
+                    'status' => true
+                ];
+            }
         } else {
             return [
                 'status' => true,
@@ -100,17 +103,16 @@ class ItemController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if (empty($model)) {
-            $model = new Item();
-            $model->locationId = Yii::$app->session->get('location_id');
-        }
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return [
-                'status' => true
-            ];
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                $model->save(false);
+                return [
+                    'status' => true
+                ];
+            }
         } else {
             return [
                 'status' => true,
