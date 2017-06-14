@@ -52,7 +52,7 @@ use common\models\Invoice;
    $events = [];
     foreach ($lessons as &$lesson) {
         $toTime = new \DateTime($lesson->date);
-        $length = explode(':', $lesson->duration);
+        $length = explode(':', $lesson->fullDuration);
         $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
         if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
             $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';

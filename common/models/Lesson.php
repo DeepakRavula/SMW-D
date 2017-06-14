@@ -195,6 +195,19 @@ class Lesson extends \yii\db\ActiveRecord
         return (int) $this->status === self::STATUS_CANCELED;
     }
 
+    public function getFullDuration()
+    {
+        $duration = $this->duration;
+        foreach ($this->extendedLessons as $extendedLesson) {
+            $additionalDuration = new \DateTime($extendedLesson->lessonSplit->unit);
+            $lessonDuration = new \DateTime($duration);
+            $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
+                . 'H' . $additionalDuration->format('i') . 'M'));
+            $duration = $lessonDuration->format('H:i:s');
+        }
+        return $duration;
+    }
+
     public function isDeletable()
     {
         if (!$this->isDeleted && $this->course->program->isPrivate()) {

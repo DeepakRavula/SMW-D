@@ -87,15 +87,7 @@ class LessonController extends Controller
     {
         $locationId = Yii::$app->session->get('location_id');
         $model = $this->findModel($id);
-        $duration = $model->duration;
-        foreach ($model->extendedLessons as $extendedLesson) {
-            $additionalDuration = new \DateTime($extendedLesson->lessonSplit->unit);
-            $lessonDuration = new \DateTime($duration);
-            $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
-                . 'H' . $additionalDuration->format('i') . 'M'));
-            $duration = $lessonDuration->format('H:i:s');
-        }
-        $model->duration = $duration;
+        $model->duration = $model->fullDuration;
         $notes = Note::find()
                 ->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
                 ->orderBy(['createdOn' => SORT_DESC]);
