@@ -71,7 +71,7 @@ $config = [
 			[
                 'controllers' => ['user/sign-in'],
                 'allow' => true,
-                'roles' => ['?'],
+                'roles' => ['?', '@'],
                 'actions' => ['login', 'request-password-reset', 'reset-password'],
             ],
 			[

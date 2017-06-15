@@ -1,4 +1,5 @@
 <?php
+
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
@@ -8,8 +9,16 @@ use yii\helpers\Html;
 $resetLink = Yii::$app->urlManager->createAbsoluteUrl(['/user/sign-in/reset-password', 'token' => $token]);
 ?>
 
-Hello <?php echo Html::encode($user->username) ?>,
-
-Follow the link below to reset your password:
-
-<?php echo Html::a(Html::encode($resetLink), $resetLink) ?>
+Dear <?php echo Html::encode($user->publicIdentity) ?>,<br>
+<br>
+You have requested to reset your password for your Arcadia Music Academy account.<br>
+<br>
+If you follow the link below you will be able to reset your password:
+<?php echo Html::a(Html::encode($resetLink), $resetLink) ?><br>
+<br>
+(NOTE:This link can be used just once and is scheduled to expire after 24 hours.)<br>
+<br>
+If you didn't make this request then you can safely ignore this email.<br>
+<br>
+Thank you<br>
+Arcadia Music Academy Team.<br>
