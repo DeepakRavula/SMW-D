@@ -261,6 +261,11 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->invoicePaymentTotal != 0;
     }
 
+    public function isDeleted()
+    {
+        return (bool) $this->isDeleted === true;
+    }
+
     public function hasCredit()
     {
         return (int) $this->status === (int) self::STATUS_CREDIT;

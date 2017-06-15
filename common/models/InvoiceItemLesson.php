@@ -52,4 +52,10 @@ class InvoiceItemLesson extends \yii\db\ActiveRecord
     {
         return new \common\models\query\InvoiceItemLessonQuery(get_called_class());
     }
+
+    public function getInvoiceLineItem()
+    {
+        return $this->hasOne(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+                ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+    }
 }

@@ -63,6 +63,7 @@ Modal::end();
                 'id' => 'mail-flag',
             ]);?>
 		<?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
+                    <?php if ((bool) !$model->isDeleted()): ?>
 			<?=
 			Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id],
 				[
@@ -74,6 +75,7 @@ Modal::end();
 				'id' => 'delete-button',
 			])
 			?>
+                    <?php endif; ?>
 			<div class='mail-flag'>
 			<?=
             $form->field($model, 'isSent')->widget(SwitchInput::classname(),
