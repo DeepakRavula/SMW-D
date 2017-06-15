@@ -819,7 +819,7 @@ class LessonController extends Controller
             'options' => ['class' => 'alert-success'],
             'body' => 'The Lesson has been exploded successfully.',
         ]);
-        return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
+        return $this->redirect(['student/view', 'id' => $model->enrolment->student->id, '#'=> 'lesson']);
     }
 
     public function actionMerge($id)
