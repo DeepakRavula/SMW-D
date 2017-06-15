@@ -4,8 +4,9 @@ namespace common\models\query;
 
 use common\models\Lesson;
 use common\models\Program;
-use common\models\LessonSplitUsage;
+use common\models\Invoice;
 use common\models\InvoiceLineItem;
+use common\models\InvoiceItemPaymentCycleLesson;
 
 /**
  * This is the ActiveQuery class for [[\common\models\Lesson]].
@@ -102,10 +103,13 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function unInvoiced()
     {
-        $this->joinWith('invoice')
-            ->where(['invoice.id' => null]);
-
-        return $this;
+        return $this->joinWith(['invoiceItemLessons' => function($query) {
+            $query->joinWith(['invoiceLineItem' => function($query) {
+                $query->joinWith(['invoice' => function($query) {
+                    $query->where(['invoice.id' => null]);
+                }]);
+            }]);
+        }]);
     }
 
     public function completedUnInvoiced()
@@ -124,10 +128,15 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function invoiced()
     {
-        $this->joinWith('invoice')
-            ->where(['not', ['invoice.id' => null]]);
-
-        return $this;
+        return $this->joinWith(['invoiceItemLessons' => function($query) {
+            $query->joinWith(['invoiceLineItem' => function($query) {
+                $query->joinWith(['invoice' => function($query) {
+                    $query->where(['not', ['invoice.id' => null]])
+                        ->andWhere(['invoice.isDeleted' => false,
+                            'invoice.type' => Invoice::TYPE_INVOICE]);
+                }]);
+            }]);
+        }]);
     }
 
     public function unInvoicedProForma()

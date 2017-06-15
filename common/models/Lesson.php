@@ -298,8 +298,13 @@ class Lesson extends \yii\db\ActiveRecord
     public function getInvoiceLineItems()
     {
         return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
-            ->viaTable('invoice_item_lesson', ['lessonId' => 'id'])
+            ->via('invoiceItemLessons')
                 ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+    }
+
+    public function getInvoiceItemLessons()
+    {
+        return $this->hasMany(InvoiceItemLesson::className(), ['lessonId' => 'id']);
     }
 
     public function getProFormaLineItems()
@@ -310,7 +315,7 @@ class Lesson extends \yii\db\ActiveRecord
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
         } else {
             return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
-                ->viaTable('invoice_item_lesson', ['lessonId' => 'id'])
+                ->via('invoiceItemLessons')
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON]);
         }
     }

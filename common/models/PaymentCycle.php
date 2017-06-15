@@ -79,7 +79,8 @@ class PaymentCycle extends \yii\db\ActiveRecord
     public function getInvoiceLineItems()
     {
         return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
-            ->via('invoiceItemPaymentCycleLessons');
+            ->via('invoiceItemPaymentCycleLessons')
+                ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
     }
 
     public function getFirstLesson()
@@ -97,7 +98,8 @@ class PaymentCycle extends \yii\db\ActiveRecord
     public function getProFormaInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
-            ->via('invoiceLineItems');
+            ->via('invoiceLineItems')
+                ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
     }
 
     public function hasProFormaInvoice()
