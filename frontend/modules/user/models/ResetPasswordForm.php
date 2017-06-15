@@ -17,6 +17,7 @@ class ResetPasswordForm extends Model
      * @var
      */
     public $password;
+    public $confirmPassword;
 
     /**
      * @var \common\models\UserToken
@@ -55,8 +56,9 @@ class ResetPasswordForm extends Model
     public function rules()
     {
         return [
-            ['password', 'required'],
-            ['password', 'string', 'min' => 6],
+            [['confirmPassword','password'], 'required'],
+            [['confirmPassword','password'], 'string', 'min' => 6],
+            ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'message' => "Confirm Password doesn't match with the password"],
         ];
     }
 
