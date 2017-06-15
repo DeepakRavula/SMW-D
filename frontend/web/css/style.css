@@ -34,12 +34,6 @@ body {
 .wrap > .container {
   padding: 70px 15px 20px;
 }
-.footer {
-  height: 60px;
-  background-color: #f5f5f5;
-  border-top: 1px solid #ddd;
-  padding-top: 20px;
-}
 .jumbotron {
   text-align: center;
   background-color: transparent;
@@ -98,3 +92,12 @@ a.desc:after {
   margin: 0 0 15px 0;
 }
 /*# sourceMappingURL=style.map */
+.login-box > .login-logo > .logo > img {
+    width: 200px;
+}
+.login-box-body,
+.register-box-body {
+    box-shadow: 0 0 27px rgba(6, 6, 6, 0.06);
+    border: 1px solid #EAE9E9;
+    border-radius: 3px;
+}
