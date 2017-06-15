@@ -67,46 +67,6 @@ class SignInController extends \yii\web\Controller {
         ];
     }
 
-	/**
-	 * @return array
-	 */
-	public function behaviors() {
-		return [
-			'access' => [
-				'class' => AccessControl::className(),
-				'rules' => [
-						[
-						'actions' => [
-							'signup', 'login', 'request-password-reset', 'reset-password', 'oauth', 'activation',
-						],
-						'allow' => true,
-						'roles' => ['?'],
-					],
-						[
-						'actions' => [
-							'signup', 'login', 'request-password-reset', 'reset-password', 'oauth', 'activation',
-						],
-						'allow' => false,
-						'roles' => ['@'],
-						'denyCallback' => function () {
-							return Yii::$app->controller->redirect(['/user/default/index']);
-						},
-					],
-						[
-						'actions' => ['logout'],
-						'allow' => true,
-						'roles' => ['@'],
-					],
-				],
-			],
-			'verbs' => [
-				'class' => VerbFilter::className(),
-				'actions' => [
-					'logout' => ['post'],
-				],
-			],
-		];
-	}
 
 	/**
 	 * @return array|string|Response
