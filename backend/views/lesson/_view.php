@@ -47,12 +47,10 @@ use yii\bootstrap\Modal;
     </div>
    
     <div class="row-fluid">
-			<?php if (! $model->isUnscheduled()) : ?>
 			<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Lesson date">
 			<i class="fa fa-calendar"></i>
 				<?php echo !empty(Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>
 			</div>
-		<?php endif; ?>
         <?php if($model->isRescheduled()) : ?>
         <?php $rootLesson = $model->getRootLesson(); ?>
         <div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Original Lesson Date">
