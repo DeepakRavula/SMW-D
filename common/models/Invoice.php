@@ -818,4 +818,15 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->getCustomerAccountBalance($this->user_id);
     }
+
+    public function addLessonSplitInvoiceItem($splitId)
+    {
+        //$invoiceLineItem =
+    }
+
+    public function removeLessonItem($lessonId)
+    {
+        $lesson = Lesson::findOne($lessonId);
+        return $lesson->proFormaLineItem->delete();
+    }
 }

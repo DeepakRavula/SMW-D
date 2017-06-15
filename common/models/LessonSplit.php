@@ -67,4 +67,16 @@ class LessonSplit extends \yii\db\ActiveRecord
         return $this->hasOne(PrivateLesson::className(), ['lessonId' => 'id'])
             ->via('lesson');
     }
+
+    public function afterSave($insert,$changedAttributes)
+    {
+        if ($insert) {
+            if ($this->lesson->hasProFormaInvoice()) {
+                $this->proFormaInvoice->removeLessonItem($this->lessonId);
+                $this->proFormaInvoice->addLessonSplitInvoiceItem($this->id);
+            }
+        }
+
+        return parent::afterSave($insert, $changedAttributes);
+    }
 }

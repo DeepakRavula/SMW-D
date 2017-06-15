@@ -364,6 +364,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return (int) $this->item_type_id === (int) ItemType::TYPE_EXTRA_LESSON;
     }
 
+    public function isPaymentCycleLesson()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
+    }
+
     public function getLessonCreditUnit($splitId)
     {
         $split       = LessonSplit::findOne($splitId);
@@ -388,5 +393,16 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ($this->invoice->addLessonCreditAppliedPayment($this->netPrice - $old->netPrice, $creditUsedInvoice)) {
             $creditUsedInvoice->save();
         }
+    }
+
+    public function beforeDelete()
+    {
+        if ($this->isPaymentCycleLesson()) {
+            $this->lineItemPaymentCycleLesson->delete();
+        } else if ($this->isPrivateLesson() || $this->isExtraLesson()) {
+            $this->lineItemLesson->delete();
+        }
+
+        return parent::beforeDelete();
     }
 }
