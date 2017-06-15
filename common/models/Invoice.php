@@ -263,7 +263,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function isDeleted()
     {
-        return (bool) $this->isDeleted === true;
+        return (bool) $this->isDeleted;
     }
 
     public function hasCredit()
