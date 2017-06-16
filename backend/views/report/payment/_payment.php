@@ -7,7 +7,10 @@ use common\models\InvoicePayment;
 use common\models\Invoice;
 use common\models\PaymentMethod;
 use common\models\Payment;
-
+use backend\assets\CustomgridAsset;
+CustomgridAsset::register($this);
+Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
+ /*
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -119,7 +122,7 @@ tr.success>td{
 				'groupedRow' => true,
 				'groupFooter' => function ($model, $key, $index, $widget) {
 					return [
-						'mergeColumns' => [[1, 3]],
+						'mergeColumns' => [[2, 3]],
 						'content' => [
 							5 => GridView::F_SUM,
 						],
@@ -140,10 +143,11 @@ tr.success>td{
 				},
 				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px'],
 				'group' => true,
-				'subGroupOf' => 0,
+				'groupedRow' => true,
+				'subGroupOf' => 1,
 				'groupFooter' => function ($model, $key, $index, $widget) {
 					return [
-						'mergeColumns' => [[1, 4]],
+						'mergeColumns' => [[2, 4]],
 						'content' => [
 							5 => GridView::F_SUM,
 						],
