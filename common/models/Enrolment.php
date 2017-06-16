@@ -45,6 +45,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
+				'replaceRegularDelete' => true
             ],
         ];
     }
