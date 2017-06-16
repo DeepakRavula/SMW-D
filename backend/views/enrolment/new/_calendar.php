@@ -39,10 +39,7 @@ use yii\helpers\Html;
             background-color: " . $teacherSubstitutedLesson->code . " !important; }
         .lesson-rescheduled, .fc-event .lesson-rescheduled .fc-event-time, .lesson-rescheduled a {
             border: 1px solid " . $rescheduledLesson->code . " !important;
-            background-color: " . $rescheduledLesson->code . " !important; }
-        .lesson-missed, .fc-event .lesson-missed .fc-event-time, .lesson-missed a {
-            border: 1px solid " . $missedLesson->code . " !important;
-            background-color: " . $missedLesson->code . " !important; }"
+            background-color: " . $rescheduledLesson->code . " !important; }"
     );
 ?>
 <style type="text/css">
