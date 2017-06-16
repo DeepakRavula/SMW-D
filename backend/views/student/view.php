@@ -229,8 +229,8 @@ echo $this->render('_profile', [
                     if (response.status)
                     {
             			$('#enrolment-preview-modal').modal('hide');
-                        $.pjax.reload({container: '#enrolment-grid', timeout: 6000});
-                        $.pjax.reload({container: '#student-lesson-listing', timeout: 6000});
+                        $.pjax.reload({container: '#enrolment-grid', skipOuterContainers:true, timeout:6000});
+                        $.pjax.reload({container: '#student-lesson-listing', skipOuterContainers:true, timeout: 6000});
                     	$('#enrolment-delete-success').text("Enrolment has been deleted successfully").fadeIn().delay(3000).fadeOut();
                     }
                 }

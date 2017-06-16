@@ -38,7 +38,19 @@ use common\models\Invoice;
         [
             'label' => 'Student Name',
             'value' => function ($data) {
-                return !empty($data->lineItems[0]->paymentCycleLesson->lesson->enrolment->student->fullName) ? $data->lineItems[0]->paymentCycleLesson->lesson->enrolment->student->fullName.' ('.$data->lineItems[0]->paymentCycleLesson->lesson->enrolment->program->name.')' : null;
+                if ($data->lineItem->isExtraLesson()) {
+                    return !empty($data->lineItem->lesson->enrolment->student
+                        ->fullName) ? $data->lineItem->lesson->enrolment
+                        ->student->fullName.' ('.$data->lineItem->lesson
+                        ->enrolment->program->name.')' : null;
+                } else {
+                    return !empty($data->lineItem->paymentCycleLesson->lesson
+                    ->enrolment->student->fullName) ?
+                    $data->lineItem->paymentCycleLesson->lesson->enrolment
+                    ->student->fullName.' ('.$data->lineItem
+                    ->paymentCycleLesson->lesson->enrolment->program
+                    ->name.')' : null;
+                }
             },
         ],
         [
@@ -56,7 +68,7 @@ use common\models\Invoice;
         [
             'label' => 'Payment Frequency',
             'value' => function ($data) {
-                return !empty($data->proformaEnrolment->getPaymentFrequency()) ?
+                return !empty($data->proformaEnrolment) ?
                     $data->proformaEnrolment->getPaymentFrequency() : null;
             },
         ],

@@ -450,9 +450,12 @@ class LessonController extends Controller
 				}
 				$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
 			}
+			
 			$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
 			$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
 			$lessonCount = count($draftLessons);
+			$conflictedLessonIdsCount = count($conflictedLessonIds);
+
 			$query = Lesson::find()
 				->orderBy(['lesson.date' => SORT_ASC]);
 			if(! $showAllReviewLessons) {
@@ -477,7 +480,8 @@ class LessonController extends Controller
 			'model' => $model,
 			'enrolmentEditType' => $enrolmentEditType,
 			'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
-			'lessonCount' => $lessonCount
+			'lessonCount' => $lessonCount,
+			'conflictedLessonIdsCount' => $conflictedLessonIdsCount
         ]);
     }
 
@@ -499,8 +503,9 @@ class LessonController extends Controller
         }
 		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
 		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+		$conflictedLessonIdsCount = count($conflictedLessonIds);
         $hasConflict = false;
-		if (!empty($conflictedLessonIds)) {
+		if ($conflictedLessonIdsCount > 0) {
                     $hasConflict = true;
             }
 

@@ -577,18 +577,16 @@ class EnrolmentController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        
 		if ($model->course->program->isPrivate()) {
             $lessons = Lesson::find()
                     ->where(['courseId' => $model->courseId])
                     ->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
                     ->all();
             foreach ($lessons as $lesson) {
-                $lesson->softDelete();
+                $lesson->delete();
             }
-			$model->softDelete();
+			$model->delete();
         }
-       
         return [
 			'status' => true,
 		];
