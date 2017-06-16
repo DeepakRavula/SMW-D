@@ -605,7 +605,6 @@ class Invoice extends \yii\db\ActiveRecord
         $invoiceLineItem->item_id    = $item->id;
         $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
-        $invoiceLineItem->cost = $rate;
         if (!empty($lesson->proFormaLineItem)) {
             $invoiceLineItem->discount     = $lesson->proFormaLineItem->discount;
             $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
@@ -625,6 +624,7 @@ class Invoice extends \yii\db\ActiveRecord
         $hours                       = $getDuration->format('H');
         $minutes                     = $getDuration->format('i');
         $invoiceLineItem->unit       = (($hours * 60) + $minutes) / 60;
+        $invoiceLineItem->cost = $rate * $invoiceLineItem->unit;
         if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
             $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
             $courseCount                   = Lesson::find()
@@ -659,7 +659,7 @@ class Invoice extends \yii\db\ActiveRecord
         $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
         if ($invoiceLineItem->save()) {
-            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE && !$lesson->isExtra()) {
+            if ($this->isProFormaInvoice() && !$lesson->isExtra()) {
                 $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLesson();
                 $invoiceItemPaymentCycleLesson->paymentCycleLessonId    = $lesson->paymentCycleLesson->id;
                 $invoiceItemPaymentCycleLesson->invoiceLineItemId    = $invoiceLineItem->id;
@@ -819,9 +819,42 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->getCustomerAccountBalance($this->user_id);
     }
 
-    public function addLessonSplitInvoiceItem($splitId)
+    public function addLessonSplitItem($splitId)
     {
-        //$invoiceLineItem =
+        $split = LessonSplit::findOne($splitId);
+        $invoiceLineItem               = new InvoiceLineItem();
+        $invoiceLineItem->invoice_id   = $this->id;
+        $item = Item::findOne(['code' => Item::LESSON_ITEM]);
+        $invoiceLineItem->item_id      = $item->id;
+        $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_SPLIT;
+        $getDuration                 = \DateTime::createFromFormat('H:i:s',
+                $split->unit);
+        $hours                       = $getDuration->format('H');
+        $minutes                     = $getDuration->format('i');
+        $invoiceLineItem->unit       = (($hours * 60) + $minutes) / 60;
+        $qualification = Qualification::findOne(['teacher_id' => $split->lesson->teacherId, 'program_id' => $split->lesson->course->program->id]);
+        $rate = !empty($qualification->rate) ? $qualification->rate : 0;
+        $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
+        $invoiceLineItem->amount = $split->lesson->enrolment->program->rate * $invoiceLineItem->unit;
+        if (!empty($split->lesson->proFormaLineItem)) {
+            $invoiceLineItem->discount     = $split->lesson->proFormaLineItem->discount;
+            $invoiceLineItem->discountType = $split->lesson->proFormaLineItem->discountType;
+        } else {
+            $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
+            $enrolmentDiscount = !empty($split->lesson->enrolmentDiscount) ? $split->lesson->enrolmentDiscount->discount : 0;
+            $invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
+            $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
+        }
+        $invoiceLineItem->description  = 'Lesson Split';
+        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
+        if ($invoiceLineItem->save()) {
+            $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLessonSplit();
+            $invoiceItemPaymentCycleLesson->lessonSplitId     = $splitId;
+            $invoiceItemPaymentCycleLesson->invoiceLineItemId = $invoiceLineItem->id;
+            return $invoiceItemPaymentCycleLesson->save();
+        } else {
+            print_r($invoiceLineItem->getErrors());die;
+        }
     }
 
     public function removeLessonItem($lessonId)

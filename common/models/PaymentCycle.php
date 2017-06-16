@@ -158,8 +158,14 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->andWhere(['payment_cycle_lesson.paymentCycleId' => $this->id])
             ->all();
         foreach ($lessons as $lesson) {
-            $lesson->studentFullName = $this->enrolment->student->fullName;
-            $invoice->addLineItem($lesson);
+            if ($lesson->isExploded()) {
+                foreach ($lesson->lessonSplits as $split) {
+                    $invoice->addLessonSplitItem($split->id);
+                }
+            } else {
+                $lesson->studentFullName = $this->enrolment->student->fullName;
+                $invoice->addLineItem($lesson);
+            }
         }
         $invoice->save();
         return $invoice;
