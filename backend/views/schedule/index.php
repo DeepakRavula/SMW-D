@@ -12,8 +12,12 @@ use common\models\Program;
 /* @var $this yii\web\View */
 $holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
 $holidayResource = null;
-if(!empty($holiday->description)) {
-	$holidayResource = ' (' . $holiday->description. ')';
+if(!empty($holiday)) {
+	if(!empty($holiday->description)) {
+		$holidayResource = ' (' . $holiday->description. ')';
+	} else {
+		$holidayResource = ' (Holiday)';	
+	}
 }
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
 ?>
@@ -333,8 +337,7 @@ $(document).ready(function () {
 
     $('#datepicker').on('change', function(){
         var date = $('#datepicker').datepicker("getDate");
-        var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-        $(".content-header h1").text("Schedule for " + formattedDate);
+		fetchHolidayName(moment(date));
 		if ($('.nav-tabs .active').text() === 'Classroom View') {
             showclassroomCalendar(moment(date));
         } else {
@@ -343,6 +346,21 @@ $(document).ready(function () {
 	});
 });
 
+function fetchHolidayName(date)
+{
+    var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
+$.ajax({
+	url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
+	type: 'get',
+	dataType: "json",
+	success: function (response)
+	{
+		console.log(response);
+        var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
+        $(".content-header h1").text("Schedule for " + formattedDate + response);
+	}
+});	
+}
 function showclassroomCalendar(date) {
     var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
     var fromTime = "09:00:00";

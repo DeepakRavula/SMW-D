@@ -45,7 +45,7 @@ class ScheduleController extends Controller
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['render-day-events', 'render-classroom-events',
-                   'render-resources', 'render-classroom-resources'],
+                   'render-resources', 'render-classroom-resources', 'fetch-holiday-name'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -111,6 +111,19 @@ class ScheduleController extends Controller
 		]);
     }
 
+	public function actionFetchHolidayName($date)
+    {
+		$holiday = Holiday::findOne(['DATE(date)' => $date]);
+		$holidayResource = '';
+		if(!empty($holiday)) {
+			if(!empty($holiday->description)) {
+				$holidayResource = ' (' . $holiday->description. ')';
+			} else {
+				$holidayResource = ' (Holiday)';	
+			}
+		}
+		return $holidayResource;
+	}
     public function getHolidayEvent($date)
     {
         $locationId = Yii::$app->session->get('location_id');
