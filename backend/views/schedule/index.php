@@ -4,14 +4,18 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
 use common\models\CalendarEventColor;
-
+use common\models\Holiday;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 
 /* @var $this yii\web\View */
-
-$this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
+$holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
+$holidayResource = null;
+if(!empty($holiday->description)) {
+	$holidayResource = ' (' . $holiday->description. ')';
+}
+$this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
