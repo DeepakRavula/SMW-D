@@ -16,17 +16,18 @@ use yii\helpers\Url;
     <?php $form = ActiveForm::begin([
         'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id]),
     ]); ?>
+ 	<div class="col-md-10">
  	<div class="row">
-		<div class="col-xs-3">
+		<div class="col-md-3">
    			<?php echo $form->field($model, 'amount')->textInput([
                 'value' => $amount,
                 'placeholder' => 'Amount',
             ])->label(false); ?>
         </div>
-		<div class="col-xs-3">
+		<div class="col-md-4">
    			<?php echo $form->field($model, 'reference')->textInput(['placeholder' => 'Cheque Number'])->label(false); ?>
         </div>
-		<div class="col-xs-3">
+		<div class="col-md-5">
    			<?php
             $currentDate = (new \DateTime())->format('d-m-Y');
             echo $form->field($model, 'date')->widget(DatePicker::classname(), [
@@ -41,6 +42,7 @@ use yii\helpers\Url;
                 ],
             ])->label(false); ?>
         </div>
+	</div>
 	</div>
 	<div class="row">
 		<?php echo $form->field($model, 'payment_method_id')->hiddenInput(['class' => 'payment-method-id'])->label(false); ?>
