@@ -2,7 +2,7 @@
 namespace backend\assets;
 use yii\web\AssetBundle;
 
-class CustomgridAsset extends AssetBundle
+class CustomGridAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';

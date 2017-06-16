@@ -7,8 +7,8 @@ use common\models\InvoicePayment;
 use common\models\Invoice;
 use common\models\PaymentMethod;
 use common\models\Payment;
-use backend\assets\CustomgridAsset;
-CustomgridAsset::register($this);
+use backend\assets\CustomGridAsset;
+CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  /*
 /*
