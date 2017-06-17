@@ -21,38 +21,35 @@ use yii\bootstrap\ActiveForm;
 	'id' => 'new-enrolment-form',
 	'action' => Url::to(['enrolment/add'])
 ]); ?>
-<div class="container">
+<div class="container-fluid">
 	<div class="row">
-		<div class="col-md-12">
+		<div class="p-15">
 			<div id="accordion" class="enrolment">
 				<div class="panel enrolment-step">
-					<div> <span class="enrolment-step-number">1</span>
+					<div class="panel-heading"> <span class="enrolment-step-number">1</span>
 						<h4 class="enrolment-step-title"> <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" > Program</a></h4>
 					</div>
 					<div id="collapseOne" class="collapse in">
 						<div class="enrolment-step-body">
+							<?=
+							$this->render('new/_form-course', [
+								'model' => new Course(),
+								'form' => $form,
+							]);
+							?>
 							<div class="row">
-								<div class="col-lg-8">
-									<div>
-										<?=
-										$this->render('new/_form-course', [
-											'model' => new Course(),
-											'form' => $form,
-										]);
-										?>
-									</div>
-									<!-- /input-group -->
-								</div>
-
-								<!-- /.col-lg-6 -->
+							<div class="col-md-12">
+								<a class="collapsed btn btn-default pull-left m-r-10" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
+								<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Next </a>
+								<div class="clearfix"></div>
 							</div>
-							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
-							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Next </a>
+							<div class="clearfix"></div>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class="panel enrolment-step">
-					<div role="tab" id="headingTwo"> <span class="enrolment-step-number">2</span>
+					<div class="panel-heading" role="tab" id="headingTwo"> <span class="enrolment-step-number">2</span>
 						<h4 class="enrolment-step-title"> <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" > Customer </a> </h4>
 					</div>
 					<div id="collapseTwo" class="panel-collapse collapse">
@@ -69,13 +66,13 @@ use yii\bootstrap\ActiveForm;
 								?> 
 							</div>
 							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
-							<a class="collapsed btn btn-default" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"> Back </a>
+							<a class="collapsed btn btn-default m-l-10 m-r-10" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"> Back </a>
 							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree"> Next </a>
 						</div>
 					</div>
 				</div>
 				<div class="panel enrolment-step">
-					<div role="tab" id="headingThree"> <span class="enrolment-step-number">3</span>
+					<div class="panel-heading" role="tab" id="headingThree"> <span class="enrolment-step-number">3</span>
 						<h4 class="enrolment-step-title"> <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree"  > Student </a> </h4>
 					</div>
 					<div id="collapseThree" class="panel-collapse collapse">
@@ -91,13 +88,13 @@ use yii\bootstrap\ActiveForm;
 								</div>
 							</div>
 							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
-							<a class="collapsed btn btn-default" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Back </a>
+							<a class="collapsed btn btn-default m-l-10 m-r-10" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Back </a>
 							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" id="step3-btn" data-parent="#accordion" href="#collapseFour"> Next </a>
 						</div>
 					</div>
 				</div>
 				<div class="panel enrolment-step">
-					<div role="tab" id="headingFour"> <span class="enrolment-step-number">4</span>
+					<div class="panel-heading" role="tab" id="headingFour"> <span class="enrolment-step-number">4</span>
 						<h4 class="enrolment-step-title"> <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"  > Preview </a> </h4>
 					</div>
 					<div id="collapseFour" class="panel-collapse collapse">

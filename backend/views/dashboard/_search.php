@@ -10,48 +10,46 @@ use kartik\daterange\DateRangePicker;
 ?>
 <style>
   .e1Div{
-    right: 150px;
+    right: 0;
     top: -49px;
   }
-  .apply-button {
-    left: 920px;
-    top: -49px;
+  .e1Div > .form-group > input {
+    width: 180px;
   }
 </style>
-<div class="user-search">
-
     <?php $form = ActiveForm::begin([
 		'id' => 'dashboard-search-form',
         'action' => ['index'],
-        'method' => 'get',
+        'method' => 'get'
     ]); ?>
-    <div class="e1Div col-md-3">
-   <?php 
-   echo DateRangePicker::widget([
-    'model' => $model,
-    'attribute' => 'dateRange',
-    'convertFormat' => true,
-    'initRangeExpr' => true,
-    'pluginOptions' => [
-        'autoApply' => true,
-        'ranges' => [
-            Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", 'moment()'],
-            Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", 'moment()'],
-            Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
-            Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
-        ],
-        'locale' => [
-            'format' => 'd-m-Y',
-        ],
-        'opens' => 'left',
-        ],
+    <div class="e1Div form-inline">
+        <div class="form-group">
+           <?php 
+           echo DateRangePicker::widget([
+            'model' => $model,
+            'attribute' => 'dateRange',
+            'convertFormat' => true,
+            'initRangeExpr' => true,
+            'pluginOptions' => [
+                'autoApply' => true,
+                'ranges' => [
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", 'moment()'],
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", 'moment()'],
+                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
+                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
+                ],
+                'locale' => [
+                    'format' => 'd-m-Y',
+                ],
+                'opens' => 'left',
+                ],
 
-    ]);
-   ?>
-	    <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary ']) ?>
-		</div>
+            ]);
+           ?>
+        </div>
+	   <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
+	</div>
     <?php ActiveForm::end(); ?>
-    </div>
 <script>
     $(document).ready(function () {
 $("#dashboard-search-form").on("submit", function () {

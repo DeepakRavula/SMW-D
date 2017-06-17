@@ -12,7 +12,7 @@ use yii\helpers\Url;
 
 $this->title = 'New Enrolment';
 ?>
-<div class="container">
+<div class="row">
 		 <div class="form-group">
 			<label class="col-sm-2 control-label">Program</label>
 			<div class="col-sm-4">
@@ -73,7 +73,7 @@ $this->title = 'New Enrolment';
 		<div class="col-sm-1">
 		<?= $form->field($model, 'discount')->textInput()->label(false);?>
 		</div>
-		<span class="col-sm-1">%</span>
+		<span class="col-sm-1 p-l-0 p-t-5">%</span>
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
