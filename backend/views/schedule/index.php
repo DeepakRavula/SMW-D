@@ -4,14 +4,22 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
 use common\models\CalendarEventColor;
-
+use common\models\Holiday;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 
 /* @var $this yii\web\View */
-
-$this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
+$holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
+$holidayResource = null;
+if(!empty($holiday)) {
+	if(!empty($holiday->description)) {
+		$holidayResource = ' (' . $holiday->description. ')';
+	} else {
+		$holidayResource = ' (Holiday)';	
+	}
+}
+$this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -329,8 +337,7 @@ $(document).ready(function () {
 
     $('#datepicker').on('change', function(){
         var date = $('#datepicker').datepicker("getDate");
-        var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-        $(".content-header h1").text("Schedule for " + formattedDate);
+		fetchHolidayName(moment(date));
 		if ($('.nav-tabs .active').text() === 'Classroom View') {
             showclassroomCalendar(moment(date));
         } else {
@@ -339,6 +346,21 @@ $(document).ready(function () {
 	});
 });
 
+function fetchHolidayName(date)
+{
+    var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
+$.ajax({
+	url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
+	type: 'get',
+	dataType: "json",
+	success: function (response)
+	{
+		console.log(response);
+        var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
+        $(".content-header h1").text("Schedule for " + formattedDate + response);
+	}
+});	
+}
 function showclassroomCalendar(date) {
     var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
     var fromTime = "09:00:00";
