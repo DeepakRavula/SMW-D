@@ -178,7 +178,7 @@ class UserController extends Controller
         $lessonQuery = Lesson::find()
                 ->location($locationId)
                 ->student($id)
-                ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+                ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
                 ->notDeleted();
 
         $lessonDataProvider = new ActiveDataProvider([
