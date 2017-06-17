@@ -46,7 +46,7 @@ use common\models\Invoice;
             $query->andWhere(['locationId' => $locationId]);
         }])
         ->where(['lesson.teacherId' => $teacherId])
-        ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+        ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
 		->notDeleted()
         ->all();
    $events = [];
