@@ -80,7 +80,13 @@ class LessonQuery extends \yii\db\ActiveQuery
         $this->andWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
         return $this;
     }
-
+	public function expired()
+    {
+         $this->joinWith(['privateLesson' => function($query) {
+            $query->andWhere(['<', 'DATE(expiiryDate)', (new \DateTime())->format('Y-m-d')]);
+        }]);
+        return $this;
+    }
     public function notRescheduled()
     {
         $this->joinWith(['lessonReschedule' => function($query) {

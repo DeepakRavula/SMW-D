@@ -53,4 +53,19 @@ class InvoiceController extends Controller
 		
         return true;
 	}
+
+	public function actionAllExpiredLessons()
+	{
+		$lessons = Lesson::find()
+            ->notDeleted()
+			->unscheduled()
+			->notRescheduled()
+			->expired()
+            ->all();
+		foreach($lessons as $lesson) {
+			$lesson->createInvoice();
+		}
+		
+        return true;
+	}
 }
