@@ -30,7 +30,7 @@ class ProformaPaymentFrequencyLog extends ProformaPaymentFrequency
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
             $timelineEventLink->index = $proformaPaymentFrequencyModel->invoice->user->publicIdentity;
-            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
             $timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'customer', 'id' => $proformaPaymentFrequencyModel->invoice->user->id]);
             $timelineEventLink->save();
 
@@ -56,7 +56,7 @@ class ProformaPaymentFrequencyLog extends ProformaPaymentFrequency
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
             $timelineEventLink->index = $enrolmentModel->student->customer->publicIdentity;
-            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
             $timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'customer', 'id' => $enrolmentModel->student->customer->id]);
             $timelineEventLink->save();
 

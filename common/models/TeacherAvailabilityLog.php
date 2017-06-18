@@ -35,7 +35,7 @@ class TeacherAvailabilityLog extends TeacherAvailability
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
             $timelineEventLink->index = $teacherAvailabilityModel->teacher->publicIdentity;
-            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
             $timelineEventLink->path = Url::to(['/user/view', 'id' => $teacherAvailabilityModel->teacher->id]);
             $timelineEventLink->save();
 
@@ -62,7 +62,7 @@ class TeacherAvailabilityLog extends TeacherAvailability
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
             $timelineEventLink->index = $teacherAvailabilityModel->teacher->publicIdentity;
-            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
             $timelineEventLink->path = Url::to(['/user/view', 'id' => $teacherAvailabilityModel->teacher->id]);
             $timelineEventLink->save();
 
@@ -87,7 +87,7 @@ class TeacherAvailabilityLog extends TeacherAvailability
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
             $timelineEventLink->index = $teacherAvailabilityModel->teacher->publicIdentity;
-            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
             $timelineEventLink->path = Url::to(['/user/view', 'id' => $teacherAvailabilityModel->teacher->id]);
             $timelineEventLink->save();
 

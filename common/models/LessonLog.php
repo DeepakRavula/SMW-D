@@ -32,7 +32,7 @@ class LessonLog extends Lesson {
 				$timelineEventLink = new TimelineEventLink();
 				$timelineEventLink->timelineEventId = $timelineEvent->id;
 				$timelineEventLink->index = $lessonModel->teacher->publicIdentity;
-				$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+				$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 				$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $lessonModel->teacher->id]);
 				$timelineEventLink->save();
 
@@ -69,14 +69,14 @@ class LessonLog extends Lesson {
 				$timelineEventLink = new TimelineEventLink();
 				$timelineEventLink->timelineEventId = $timelineEvent->id;
 				$timelineEventLink->index = $lessonModel->course->enrolment->student->fullName;
-				$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+				$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 				$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
 				$timelineEventLink->save();
 
 				$timelineEventLink->id = null;
 				$timelineEventLink->isNewRecord = true;
 				$timelineEventLink->index = 'lesson';
-				$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+				$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 				$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $lessonModel->id]);
 				$timelineEventLink->save();
 			
@@ -92,14 +92,14 @@ class LessonLog extends Lesson {
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $lessonModel->course->enrolment->student->fullName;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
 			$timelineEventLink->save();
 
 			$timelineEventLink->id = null;
 			$timelineEventLink->isNewRecord = true;
 			$timelineEventLink->index = 'lesson';
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $lessonModel->id]);
 			$timelineEventLink->save();
 			
