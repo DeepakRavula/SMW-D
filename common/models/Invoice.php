@@ -612,13 +612,8 @@ class Invoice extends \yii\db\ActiveRecord
         $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         if (!empty($lesson->proFormaLineItem)) {
-            if ($lesson->isSplitRescheduled()) {
-                $invoiceLineItem->discount     = $lesson->proFormaLineItem[0]->discount;
-                $invoiceLineItem->discountType = $lesson->proFormaLineItem[0]->discountType;
-            } else {
-                $invoiceLineItem->discount     = $lesson->proFormaLineItem->discount;
-                $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
-            }
+            $invoiceLineItem->discount     = $lesson->proFormaLineItem->discount;
+            $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
             if($lesson->course->program->isPrivate()) {
                 $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
@@ -732,7 +727,7 @@ class Invoice extends \yii\db\ActiveRecord
                     if ($lineItem->proFormaLesson->hasProFormaInvoice()) {
                         $netPrice = $lineItem->proFormaLesson->proFormaLineItem->netPrice;
                         if ($lineItem->proFormaLesson->isSplitRescheduled()) {
-                            $netPrice = $lineItem->total;
+                            $netPrice = $lineItem->proFormaLesson->getSplitRescheduledAmount();
                         }
                         if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $netPrice) {
                             $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice, $netPrice);
@@ -851,13 +846,8 @@ class Invoice extends \yii\db\ActiveRecord
         $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
         $invoiceLineItem->amount = $split->lesson->enrolment->program->rate * $invoiceLineItem->unit;
         if (!empty($split->lesson->proFormaLineItem)) {
-            if ($split->lesson->isSplitRescheduled()) {
-                $invoiceLineItem->discount     = $split->lesson->proFormaLineItem[0]->discount;
-                $invoiceLineItem->discountType = $split->lesson->proFormaLineItem[0]->discountType;
-            } else {
-                $invoiceLineItem->discount     = $split->lesson->proFormaLineItem->discount;
-                $invoiceLineItem->discountType = $split->lesson->proFormaLineItem->discountType;
-            }
+            $invoiceLineItem->discount     = $split->lesson->proFormaLineItem->discount;
+            $invoiceLineItem->discountType = $split->lesson->proFormaLineItem->discountType;
         } else {
             $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
             $enrolmentDiscount = !empty($split->lesson->enrolmentDiscount) ? $split->lesson->enrolmentDiscount->discount : 0;

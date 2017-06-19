@@ -34,7 +34,7 @@ class LessonSplitQuery extends \yii\db\ActiveQuery
         return parent::one($db);
     }
 
-    public function unUsedSplits($courseId, $locationId)
+    public function unusedSplits($courseId, $locationId)
     {
         return $this->joinWith(['lesson' => function ($query) use ($locationId, $courseId) {
                         $query->joinWith(['lessonReschedule' => function($query) {

@@ -12,7 +12,7 @@ use yii\helpers\Html;
 $courseId = $model->courseId;
 $locationId = $model->course->locationId;
 $lessons = LessonSplit::find()
-        ->unUsedSplits($courseId, $locationId);
+        ->unusedSplits($courseId, $locationId);
 $splitLessonDataProvider = new ActiveDataProvider([
 	'query' => $lessons,
 	'pagination' => false

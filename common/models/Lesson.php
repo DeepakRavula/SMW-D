@@ -406,17 +406,7 @@ class Lesson extends \yii\db\ActiveRecord
                     }])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
                     ->one();
-            } else if ($this->isSplitRescheduled()) {
-                return InvoiceLineItem::find()
-                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
-                    ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_SPLIT])
-                    ->joinWith(['lineItemPaymentCycleLessonSplit' => function ($query) use ($lessonId) {
-                        $query->joinWith(['lessonSplit' => function ($query) use ($lessonId) {
-                            $query->where(['lessonId' => $lessonId]);
-                        }]);
-                    }])
-                    ->all();
-            } else if ($this->isExploded()) {
+            } else if ($this->isExploded() || $this->isSplitRescheduled()) {
                 return InvoiceLineItem::find()
                     ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
                     ->joinWith(['lineItemPaymentCycleLessonSplit' => function ($query) use ($lessonId) {
@@ -756,7 +746,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
             if ($this->isSplitRescheduled()) {
-                $netPrice = $invoice->total;
+                $netPrice = $this->getSplitRescheduledAmount();
             } else {
                 $netPrice = $this->proFormaLineItem->netPrice;
             }
@@ -826,4 +816,23 @@ class Lesson extends \yii\db\ActiveRecord
 		$lessonDate = (new \DateTime($this->date))->format('Y-m-d');
 		return in_array($lessonDate, $holidayDates);
 }
+
+    public function getSplitRescheduledAmount()
+    {
+        $getDuration = \DateTime::createFromFormat('H:i', $this->reschedule
+            ->lesson->getCreditUsage());
+        $hours         = $getDuration->format('H');
+        $minutes       = $getDuration->format('i');
+        $unit          = (($hours * 60) + $minutes) / 60;
+        $amount        = $this->enrolment->program->rate * $unit;
+        $discount      = $this->proFormaLineItem->discount;
+        $discountType  = $this->proFormaLineItem->discountType;
+        if ((int) $discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
+            $discountValue = $discount;
+        } else {
+            $discountValue = ($discount / 100) * $amount;
+        }
+
+        return $amount - $discountValue;
+    }
 }

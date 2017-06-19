@@ -438,7 +438,7 @@ class Enrolment extends \yii\db\ActiveRecord
         $courseId = $this->courseId;
         $locationId = $this->course->locationId;
         $lessonSplits = LessonSplit::find()
-                    ->unUsedSplits($courseId, $locationId)
+                    ->unusedSplits($courseId, $locationId)
                     ->all();
 
         return !empty($lessonSplits);
