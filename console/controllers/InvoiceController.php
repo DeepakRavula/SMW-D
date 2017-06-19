@@ -53,4 +53,23 @@ class InvoiceController extends Controller
 		
         return true;
 	}
+
+	public function actionAllExpiredLessons()
+	{
+		$lessons = Lesson::find()
+            ->notDeleted()
+			->unscheduled()
+			->notRescheduled()
+			->expired()
+            ->all();
+		try {
+			foreach($lessons as $lesson) {
+				$lesson->createInvoice();
+			}
+		} catch (\Exception $exception) {
+            Yii::$app->errorHandler->logException($exception);
+        }
+		
+        return true;
+	}
 }
