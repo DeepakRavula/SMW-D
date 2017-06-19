@@ -154,6 +154,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
         $lessons = Lesson::find()
+            ->notDeleted()
             ->joinWith('paymentCycleLesson')
             ->andWhere(['payment_cycle_lesson.paymentCycleId' => $this->id])
             ->all();

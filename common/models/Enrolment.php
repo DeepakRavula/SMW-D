@@ -443,4 +443,36 @@ class Enrolment extends \yii\db\ActiveRecord
 
         return !empty($lessonSplits);
     }
+
+    public function createProFormaInvoice()
+    {
+        $locationId = $this->student->customer->userLocation->location_id;
+        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $invoice = new Invoice();
+        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
+        $invoice->userName = $user->publicIdentity;
+        $invoice->user_id = $this->student->customer->id;
+        $invoice->location_id = $locationId;
+        $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
+        $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
+        $invoice->createdUserId = Yii::$app->user->id;
+        $invoice->updatedUserId = Yii::$app->user->id;
+        $invoice->save();
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->scheduled()
+            ->joinWith('enrolment')
+            ->where(['enrolment.id' => $this->id])
+            ->all();
+        foreach ($lessons as $lesson) {
+            $lesson->studentFullName = $this->student->fullName;
+            $invoice->addLineItem($lesson);
+        }
+        $invoiceEnrolment = new InvoiceEnrolment();
+        $invoiceEnrolment->invoiceId = $invoice->id;
+        $invoiceEnrolment->enrolemntId = $this->id;
+        $invoiceEnrolment->save();
+        $invoice->save();
+        return $invoice;
+    }
 }

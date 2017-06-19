@@ -303,10 +303,16 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->lineItem->isExtraLesson();
     }
 
+    public function isGroupLessonProformaInvoice()
+    {
+        return $this->lineItem->isGroupLesson();
+    }
+
     public function isProformaPaymentFrequencyApplicable()
     {
         return $this->isProFormaInvoice() && !$this->isExtraLessonProformaInvoice()
-            && !$this->proformaPaymentFrequency && $this->lineItem;
+            && !$this->proformaPaymentFrequency && $this->lineItem && 
+            !$this->isGroupLessonProformaInvoice();
     }
 
     public function afterSave($insert, $changedAttributes)
@@ -615,7 +621,7 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->discount     = $lesson->proFormaLineItem->discount;
             $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
-            if($lesson->course->program->isPrivate()) {
+            if ($lesson->isPrivate()) {
                 $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
                 $enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0;
                 $invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
@@ -631,7 +637,7 @@ class Invoice extends \yii\db\ActiveRecord
         $minutes                     = $getDuration->format('i');
         $invoiceLineItem->unit       = (($hours * 60) + $minutes) / 60;
         $invoiceLineItem->cost = $rate * $invoiceLineItem->unit;
-        if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+        if ($lesson->isGroup()) {
             $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
             $courseCount                   = Lesson::find()
                 ->where(['courseId' => $lesson->courseId])
@@ -644,14 +650,20 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->amount       = $lessonAmount;
             $studentFullName               = $lesson->studentFullName;
         } else {
-            if ($this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
-                if (!$lesson->isExtra()) {
+            if ($this->isProFormaInvoice()) {
+                if ($lesson->isPrivate()) {
                     $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
-                } else {
+                } else if ($lesson->isExtra()) {
                     $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
+                } else if ($lesson->isGroup()) {
+                    $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
                 }
             } else {
-                $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+                if ($lesson->isGroup()) {
+                    $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
+                } else {
+                    $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+                }
             }
             $amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
             if ($this->isReversedInvoice()) {
@@ -665,7 +677,7 @@ class Invoice extends \yii\db\ActiveRecord
         $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
         if ($invoiceLineItem->save()) {
-            if ($this->isProFormaInvoice() && !$lesson->isExtra()) {
+            if ($this->isProFormaInvoice() && !$lesson->isExtra() && !$lesson->isGroup()) {
                 $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLesson();
                 $invoiceItemPaymentCycleLesson->paymentCycleLessonId    = $lesson->paymentCycleLesson->id;
                 $invoiceItemPaymentCycleLesson->invoiceLineItemId    = $invoiceLineItem->id;

@@ -492,7 +492,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isPrivate()
     {
-        return ((int) $this->course->program->type === (int) Program::TYPE_PRIVATE_PROGRAM);
+        return (int) $this->course->program->type === (int) Program::TYPE_PRIVATE_PROGRAM;
+    }
+
+    public function isGroup()
+    {
+        return (int) $this->course->program->type === (int) Program::TYPE_GROUP_PROGRAM;
     }
 
     public function isExtra()
