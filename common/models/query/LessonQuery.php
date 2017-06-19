@@ -83,7 +83,7 @@ class LessonQuery extends \yii\db\ActiveQuery
 	public function expired()
     {
          $this->joinWith(['privateLesson' => function($query) {
-            $query->andWhere(['<', 'DATE(expiiryDate)', (new \DateTime())->format('Y-m-d')]);
+            $query->andWhere(['<', 'DATE(expiryDate)', (new \DateTime())->format('Y-m-d')]);
         }]);
         return $this;
     }

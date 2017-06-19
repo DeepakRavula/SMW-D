@@ -62,9 +62,13 @@ class InvoiceController extends Controller
 			->notRescheduled()
 			->expired()
             ->all();
-		foreach($lessons as $lesson) {
-			$lesson->createInvoice();
-		}
+		try {
+			foreach($lessons as $lesson) {
+				$lesson->createInvoice();
+			}
+		} catch (\Exception $exception) {
+            Yii::$app->errorHandler->logException($exception);
+        }
 		
         return true;
 	}

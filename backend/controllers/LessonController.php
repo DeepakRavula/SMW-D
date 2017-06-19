@@ -55,7 +55,7 @@ class LessonController extends Controller
             ],
         ];
     }
-
+		
     /**
      * Lists all Lesson models.
      *
