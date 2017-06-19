@@ -75,11 +75,18 @@ class HolidayController extends Controller
     public function actionCreate()
     {
         $model = new Holiday();
-        
+        $data  = $this->renderAjax('_form', [
+            'model' => $model,
+        ]); 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			return [
 				'status' => true
 			];
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         } 
     }
 
