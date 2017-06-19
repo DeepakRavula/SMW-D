@@ -190,10 +190,8 @@ class StudentController extends Controller
         $post = $request->post();
         $courseModel = new Course();
         if ($courseModel->load($post)) {
-            $dayList = TeacherAvailability::getWeekdaysList();
             $courseModel->locationId = $locationId;
             $courseModel->studentId = $model->id;
-            $courseModel->day = array_search($courseModel->day, $dayList);
             $courseModel->save();
 
             return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
@@ -226,7 +224,7 @@ class StudentController extends Controller
             'query' => $groupCourses,
         ]);
 
-        return $this->render('_course', [
+        return $this->render('/student/enrolment/view', [
             'model' => $model,
             'groupCourseDataProvider' => $groupCourseDataProvider,
         ]);

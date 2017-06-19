@@ -21,10 +21,10 @@ use yii\helpers\Url;
     ?>
 </div>
 <div class="col-md-4">
-	<?= $form->field($model, 'day')->hiddenInput()->label(false) ?>
+	<?= $form->field($courseSchedule, 'day')->hiddenInput()->label(false) ?>
 </div>
 <div class="col-md-4">
-<?= $form->field($model, 'fromTime')->hiddenInput()->label(false) ?>
+<?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false) ?>
 </div>
 <div class="clearfix"></div>
 <div class="row-fluid">

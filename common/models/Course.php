@@ -54,7 +54,6 @@ class Course extends \yii\db\ActiveRecord
         return [
             [['programId', 'teacherId'], 'required'],
 			[['discount'], 'safe'],
-            [['day', 'fromTime'], 'safe'],
             [['startDate', 'duration'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
             [['duration', 'startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'paymentFrequency', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
@@ -62,13 +61,13 @@ class Course extends \yii\db\ActiveRecord
                 return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
             },'except' => self::SCENARIO_EDIT_ENROLMENT 
             ],
-            [['startDate', 'duration', 'endDate'], 'string'],
+            [['startDate', 'endDate'], 'string'],
             [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'discount'], 'safe'],
-            ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
-            ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
+           // ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
+           // ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],
-            ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
-            ['fromTime', 'checkTime', 'on' => self::SCENARIO_GROUP_COURSE],
+            //['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
+            //['fromTime', 'checkTime', 'on' => self::SCENARIO_GROUP_COURSE],
         ];
     }
 
@@ -176,11 +175,20 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(Program::className(), ['id' => 'programId']);
     }
 
-    public function getEnrolment()
+    public function getGroupCourseSchedule()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
     }
 
+	public function getPrivateCourseSchedule()
+    {
+        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id']);
+    }
+
+	public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
+    }
 	public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'locationId']);
@@ -238,6 +246,8 @@ class Course extends \yii\db\ActiveRecord
         	return parent::afterSave($insert, $changedAttributes);
 		}
         if ((int) $this->program->isPrivate()) {
+            $dayList = TeacherAvailability::getWeekdaysList();
+            $courseModel->day = array_search($courseModel->day, $dayList);
             $enrolmentModel = new Enrolment();
             $enrolmentModel->courseId = $this->id;
             $enrolmentModel->studentId = $this->studentId;

@@ -3,6 +3,7 @@
 use common\models\Course;
 use drsdre\wizardwidget\WizardWidget;
 use yii\bootstrap\ActiveForm;
+use common\models\CourseSchedule;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
@@ -15,14 +16,16 @@ $form = ActiveForm::begin([
 ?>
 
 <?php
-$programDetailContent = $this->render('_private-course-basic-detail',
+$programDetailContent = $this->render('step-one',
     [
     'model' => new Course(),
+	'courseSchedule' => new CourseSchedule(),
     'form' => $form,
     ]);
 
-$calendarContent = $this->render('_calendar', [
+$calendarContent = $this->render('step-two', [
     'model' => new Course(),
+	'courseSchedule' => new CourseSchedule(),
     'form' => $form,
     ]);
 ?>

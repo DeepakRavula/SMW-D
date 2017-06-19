@@ -65,7 +65,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
         </div>
         <div class="col-md-4">
 			<?php
-            echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+            echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
                 [
                 'options' => ['id' => 'course-duration'],
                 'pluginOptions' => [
@@ -198,8 +198,8 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 			var $active = $('.wizard .nav-tabs li.active');
 			$active.removeClass('active').addClass('disabled');
 			$('#enrolment-form').data('yiiActiveForm').submitting = true;
-			$('#enrolment-form').yiiActiveForm('remove', 'course-day');
-			$('#enrolment-form').yiiActiveForm('remove', 'course-fromtime');
+			$('#enrolment-form').yiiActiveForm('remove', 'courseschedule-day');
+			$('#enrolment-form').yiiActiveForm('remove', 'courseschedule-fromtime');
 			$('#enrolment-form').yiiActiveForm('validate');
 			$('#notification').remove();
 		});
@@ -217,7 +217,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             $('#enrolment-form').submit();
         });
 		$('#enrolment-form').on('beforeSubmit', function (e) {
-            var courseDay = $('#course-day').val();
+            var courseDay = $('#courseschedule-day').val();
             if( ! courseDay) {
             	$('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
 				 $(window).scrollTop(0);
