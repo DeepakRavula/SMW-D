@@ -5,7 +5,6 @@ use common\models\CalendarEventColor;
 ?>
 <?php
 
-$storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
 $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
 $teacherUnavailability = CalendarEventColor::findOne(['cssClass' => 'teacher-unavailability']);
 $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
@@ -16,8 +15,6 @@ $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-reschedu
 $missedLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-missed']);
 $this->registerCss(
 	".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
-        .holiday, .fc-event .holiday .fc-event-time, .holiday a { background-color: " . $storeClosed->code . " !important;
-            border: 1px solid " . $storeClosed->code . " !important; }
         .fc-bg { background-color: " . $teacherUnavailability->code . " !important; }
         .fc-today { background-color: " . $teacherUnavailability->code . " !important; }
         .private-lesson, .fc-event .private-lesson .fc-event-time, .private-lesson a {
