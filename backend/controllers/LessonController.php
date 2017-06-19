@@ -89,7 +89,7 @@ class LessonController extends Controller
         $model = $this->findModel($id);
         $model->duration = $model->fullDuration;
         $notes = Note::find()
-                ->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
+                ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
                 ->orderBy(['createdOn' => SORT_DESC]);
 
         $noteDataProvider = new ActiveDataProvider([

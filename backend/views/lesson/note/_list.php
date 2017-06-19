@@ -1,30 +1,21 @@
-<?php
-use yii\helpers\Html;
-use yii\helpers\Url;
-use kartik\editable\Editable;
-?>
-<div class="col-sm-10">
-<div class="panel panel-default">
-<div class="panel-heading">
-<strong><?= $model->createdUser->publicIdentity; ?></strong> <span class="text-muted">
-<?php if($model->createdOn !== $model->updatedOn): ?>
-<?= 'updated on ' . (new \DateTime($model->updatedOn))->format('M. d, Y @ g:i A'); ?>
-<?php else : ?>
-<?= 'created on ' . (new \DateTime($model->createdOn))->format('M. d, Y @ g:i A'); ?>
-<?php endif; ?></span>
+<div class="box-header ui-sortable-handle" style="cursor: move;">
+	<div class="box-tools pull-right" data-toggle="tooltip" title="" data-original-title="Status">
+	</div>
 </div>
-<div class="panel-body">
-<?= Editable::widget( [
-    'name' => 'content',
-    'asPopover' => true,
-    'value' => $model->content,
-    'inputType' => Editable::INPUT_TEXTAREA,
-    'header' => 'Notes',
-	'submitOnEnter' => false,
-    'size'=>'lg',
-    'options' => ['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Enter notes...'],
-    'formOptions' => ['action' => Url::to(['/note/update', 'id' => $model->id])],
-]);?>
-</div><!-- /panel-body -->
-</div><!-- /panel panel-default -->
-</div><!-- /col-sm-5 -->
+<div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 250px;"><div class="box-body chat" id="chat-box" style="overflow: hidden; width: auto; height: 250px;">
+		<!-- chat item -->
+		<div class="item">
+			<p class="message">
+                    <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> 2:15</small>
+                    <?= $model->createdUser->publicIdentity;?>
+				<?= $model->content; ?>
+			</p>
+		</div>
+		<!-- /.item -->
+	</div>
+	<div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 184.911px;"></div>
+	<div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div>
+
+</div>
+
+
