@@ -45,7 +45,7 @@ class PaymentSearch extends Payment
         $locationId          = Yii::$app->session->get('location_id');
         $query               = Payment::find()
             ->location($locationId)
-			->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
+			->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY,PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
             ->notDeleted();
         $dataProvider        = new ActiveDataProvider([
             'query' => $query,
