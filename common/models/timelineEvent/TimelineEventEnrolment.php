@@ -71,7 +71,7 @@ class TimelineEventEnrolment extends \yii\db\ActiveRecord
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $enrolmentModel->course->teacher->publicIdentity;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $enrolmentModel->course->teacher->id]);
 			$timelineEventLink->save();
 
@@ -103,7 +103,7 @@ class TimelineEventEnrolment extends \yii\db\ActiveRecord
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $enrolmentModel->course->teacher->publicIdentity;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $enrolmentModel->course->teacher->id]);
 			$timelineEventLink->save();
 

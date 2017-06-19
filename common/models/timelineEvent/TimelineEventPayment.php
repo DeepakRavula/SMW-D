@@ -67,8 +67,8 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber();
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
-			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $paymentModel->invoice->id]);
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
+			$timelineEventLink->path = Url::to(['invoice/view', 'id' => $paymentModel->invoice->id]);
 			$timelineEventLink->save();
 
 			$timelineEventPayment = new TimelineEventPayment();
@@ -91,7 +91,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}';
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $paymentModel->invoice->id]);
 			$timelineEventLink->save();
 
@@ -113,7 +113,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber();
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $paymentModel->invoice->id]);
 			$timelineEventLink->save();
 
@@ -137,7 +137,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
             $timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber();
-            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
             $timelineEventLink->path = Url::to(['/invoice/view', 'id' => $paymentModel->invoice->id]);
             $timelineEventLink->save();
 
