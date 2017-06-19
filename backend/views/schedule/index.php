@@ -4,14 +4,18 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
 use common\models\CalendarEventColor;
-
+use common\models\Holiday;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 
 /* @var $this yii\web\View */
-
-$this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
+$holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
+$holidayResource = '';
+if(!empty($holiday)) {
+	$holidayResource = ' (' . $holiday->description. ')';
+}
+$this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -30,7 +34,6 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 <link type="text/css" href="/plugins/poshytip/tip-yellow/tip-yellow.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/poshytip/tip-yellowsimple/tip-yellowsimple.css" rel='stylesheet' />
 <?php
-    $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
     $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
     $teacherUnavailability = CalendarEventColor::findOne(['cssClass' => 'teacher-unavailability']);
     $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
@@ -40,8 +43,6 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
     $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
     $this->registerCss(
         ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
-        .holiday, .fc-event .holiday .fc-event-time, .holiday a { background-color: " . $storeClosed->code . " !important;
-            border: 1px solid " . $storeClosed->code . " !important; }
         .fc-bg { background-color: " . $teacherUnavailability->code . " !important; }
         .fc-today { background-color: " . $teacherUnavailability->code . " !important; }
         .private-lesson, .fc-event .private-lesson .fc-event-time, .private-lesson a {
@@ -329,8 +330,7 @@ $(document).ready(function () {
 
     $('#datepicker').on('change', function(){
         var date = $('#datepicker').datepicker("getDate");
-        var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-        $(".content-header h1").text("Schedule for " + formattedDate);
+		fetchHolidayName(moment(date));
 		if ($('.nav-tabs .active').text() === 'Classroom View') {
             showclassroomCalendar(moment(date));
         } else {
@@ -339,6 +339,20 @@ $(document).ready(function () {
 	});
 });
 
+function fetchHolidayName(date)
+{
+    var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
+$.ajax({
+	url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
+	type: 'get',
+	dataType: "json",
+	success: function (response)
+	{
+        var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
+        $(".content-header h1").text("Schedule for " + formattedDate.concat(response));
+	}
+});	
+}
 function showclassroomCalendar(date) {
     var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
     var fromTime = "09:00:00";

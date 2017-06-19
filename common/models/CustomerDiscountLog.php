@@ -32,7 +32,7 @@ class CustomerDiscountLog extends CustomerDiscount
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $customerDiscountModel->customer->publicIdentity;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['user/view', 'User Search[role_name]' => 'customer','id' => $customerDiscountModel->customerId]);
 			$timelineEventLink->save();
 
@@ -56,7 +56,7 @@ class CustomerDiscountLog extends CustomerDiscount
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
             $timelineEventLink->index = $customerDiscountModel->customer->publicIdentity;
-            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
             $timelineEventLink->path = Url::to(['user/view', 'User Search[role_name]' => 'customer', 'id' => $customerDiscountModel->customerId]);
             $timelineEventLink->save();
 

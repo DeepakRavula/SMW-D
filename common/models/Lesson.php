@@ -195,6 +195,19 @@ class Lesson extends \yii\db\ActiveRecord
         return (int) $this->status === self::STATUS_CANCELED;
     }
 
+    public function getFullDuration()
+    {
+        $duration = $this->duration;
+        foreach ($this->extendedLessons as $extendedLesson) {
+            $additionalDuration = new \DateTime($extendedLesson->lessonSplit->unit);
+            $lessonDuration = new \DateTime($duration);
+            $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
+                . 'H' . $additionalDuration->format('i') . 'M'));
+            $duration = $lessonDuration->format('H:i:s');
+        }
+        return $duration;
+    }
+
     public function isDeletable()
     {
         if (!$this->isDeleted && $this->course->program->isPrivate()) {
@@ -285,8 +298,13 @@ class Lesson extends \yii\db\ActiveRecord
     public function getInvoiceLineItems()
     {
         return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
-            ->viaTable('invoice_item_lesson', ['lessonId' => 'id'])
+            ->via('invoiceItemLessons')
                 ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+    }
+
+    public function getInvoiceItemLessons()
+    {
+        return $this->hasMany(InvoiceItemLesson::className(), ['lessonId' => 'id']);
     }
 
     public function getProFormaLineItems()
@@ -297,7 +315,7 @@ class Lesson extends \yii\db\ActiveRecord
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
         } else {
             return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
-                ->viaTable('invoice_item_lesson', ['lessonId' => 'id'])
+                ->via('invoiceItemLessons')
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON]);
         }
     }
@@ -684,12 +702,12 @@ class Lesson extends \yii\db\ActiveRecord
         if ($this->hasProFormaInvoice()) {
             $netPrice = $this->proFormaLineItem->netPrice;
             if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
-                $invoice->addPayment($this->proFormaInvoice);
+                $invoice->addPayment($this->proFormaInvoice, $netPrice);
             }
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
-                $this->invoiceLineItem->addLessonCreditApplied($extendedLesson->lessonSplitId);
+                $invoice->lineItem->addLessonCreditApplied($extendedLesson->lessonSplitId);
             }
         }
 

@@ -225,6 +225,12 @@ echo Menu::widget([
 					'url' => ['item-category/index'],
 					'visible' => Yii::$app->user->can('administrator'),
 				],
+                                [
+					'label' => Yii::t('backend', 'Items'),
+					'icon' => '<i class="fa fa-newspaper-o"></i>',
+					'url' => ['item/index'],
+					'visible' => Yii::$app->user->can('administrator'),
+				],
 				[
 					'label' => Yii::t('backend', 'Reminder Notes'),
 					'icon' => '<i class="fa  fa-bell"></i>',
@@ -243,6 +249,12 @@ echo Menu::widget([
 					'url' => ['location/index'],
 					'visible' => Yii::$app->user->can('staffmember'),
 				],
+				[
+					'label' => Yii::t('backend', 'Holidays'),
+					'icon' => '<i class="fa fa-car"></i>',
+					'url' => ['holiday/index'],
+					'visible' => Yii::$app->user->can('staffmember'),
+				],
 			],
 		],
 		[
@@ -255,12 +267,6 @@ echo Menu::widget([
 					'label' => Yii::t('backend', 'Classrooms'),
 					'icon' => '<i class="fa fa-home"></i>',
 					'url' => ['classroom/index'],
-					'visible' => Yii::$app->user->can('staffmember'),
-				],
-				[
-					'label' => Yii::t('backend', 'Holidays'),
-					'icon' => '<i class="fa fa-car"></i>',
-					'url' => ['holiday/index'],
 					'visible' => Yii::$app->user->can('staffmember'),
 				],
 					[

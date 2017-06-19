@@ -13,7 +13,7 @@ use common\models\Province;
 
 $this->title = 'New Enrolment';
 ?>
-<div class="container">
+<div class="container p-0">
 		 <div class="form-group">
 			<label class="col-sm-2 control-label">Name</label>
 			<div class="col-sm-3">

@@ -27,12 +27,12 @@ body .table {
 hr {
     border: 0;
     height: 1px;
-    background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), rgba(236, 236, 236, 0.75), rgba(0, 0, 0, 0));
+    background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0)), color-stop(rgba(236, 236, 236, 0.75)), to(rgba(0, 0, 0, 0)));
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(236, 236, 236, 0.75), rgba(0, 0, 0, 0));
 }
 
 hr.right-side-faded {
-    background-image: -webkit-linear-gradient(left, rgba(21, 20, 20, 0.18), rgba(236, 236, 236, 0.75), rgba(0, 0, 0, 0));
+    background-image: -webkit-gradient(linear, left top, right top, from(rgba(21, 20, 20, 0.18)), color-stop(rgba(236, 236, 236, 0.75)), to(rgba(0, 0, 0, 0)));
     background-image: linear-gradient(to right, rgba(21, 20, 20, 0.18), rgba(236, 236, 236, 0.75), rgba(0, 0, 0, 0))
 }
 
@@ -171,7 +171,8 @@ a:focus {
     background: #EB232F !important;
     color: #fff !important;
     text-shadow: 0px 0px 0px !important;
-    box-shadow: 0px 0px 0px !important;
+    -webkit-box-shadow: 0px 0px 0px !important;
+            box-shadow: 0px 0px 0px !important;
     outline: 0 none !important;
 }
 
@@ -497,7 +498,8 @@ table tr {
 
 .login-box-body,
 .register-box-body {
-    box-shadow: 0 0 27px rgba(6, 6, 6, 0.06);
+    -webkit-box-shadow: 0 0 27px rgba(6, 6, 6, 0.06);
+            box-shadow: 0 0 27px rgba(6, 6, 6, 0.06);
     border: 1px solid #EAE9E9;
     border-radius: 3px;
 }
@@ -623,7 +625,8 @@ table tr {
 
 .invoice {
     margin: 0 auto;
-    box-shadow: 0px 0px 42px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow: 0px 0px 42px rgba(0, 0, 0, 0.05);
+            box-shadow: 0px 0px 42px rgba(0, 0, 0, 0.05);
 }
 
 .table > tbody > tr:hover {
@@ -920,7 +923,8 @@ Licensed under MIT
     min-height: 2em;
     padding: 5px;
     position: relative;
-    box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+            box-sizing: content-box;
 }
 
 #teacher {
@@ -1019,7 +1023,8 @@ input[type="search"]:-ms-input-placeholder {
     display: block;
     border-radius: 50px;
     background: white;
-    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .1);
+    -webkit-box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .1);
+            box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .1);
     width: 43px;
     height: 26px;
     outline: 0;
@@ -1027,7 +1032,8 @@ input[type="search"]:-ms-input-placeholder {
     position: relative;
     -moz-user-select: none;
     -webkit-user-select: none;
-    user-select: none;
+    -ms-user-select: none;
+        user-select: none;
     float: left;
     outline: 0 none !important;
 }
@@ -1035,13 +1041,16 @@ input[type="search"]:-ms-input-placeholder {
 .schedule-index input[type="checkbox"]:checked,
 .schedule-index input[type="checkbox"].checked {
     background: #53D669;
-    box-shadow: inset 0 0 0 15px #53D669;
+    -webkit-box-shadow: inset 0 0 0 15px #53D669;
+            box-shadow: inset 0 0 0 15px #53D669;
+    -webkit-transition: 100ms all;
     transition: 100ms all;
     outline: 0 none;
 }
 
 .schedule-index input[type="checkbox"]::before {
     content: '';
+    -webkit-transition: 100ms all;
     transition: 100ms all;
     position: absolute;
     left: 2px;
@@ -1049,19 +1058,23 @@ input[type="search"]:-ms-input-placeholder {
     top: 1px;
     bottom: 2px;
     right: auto;
-    transform: translate(0, 0);
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0);
     display: block;
     width: 24px;
     height: 24px;
     border-radius: 40px;
     background: #FFFFFF;
-    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.06), 0 0 0 0 rgba(0, 0, 0, 0.06), 0 6px 10px 0 rgba(0, 0, 0, 0.15), 0 0 2px 0 rgba(0, 0, 0, 0.07), 0 4px 6px 0 rgba(0, 0, 0, 0.06), 0 1px 1px 0 rgba(0, 0, 0, 0.11);
-    animation: button 3s ease-out;
+    -webkit-box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.06), 0 0 0 0 rgba(0, 0, 0, 0.06), 0 6px 10px 0 rgba(0, 0, 0, 0.15), 0 0 2px 0 rgba(0, 0, 0, 0.07), 0 4px 6px 0 rgba(0, 0, 0, 0.06), 0 1px 1px 0 rgba(0, 0, 0, 0.11);
+            box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.06), 0 0 0 0 rgba(0, 0, 0, 0.06), 0 6px 10px 0 rgba(0, 0, 0, 0.15), 0 0 2px 0 rgba(0, 0, 0, 0.07), 0 4px 6px 0 rgba(0, 0, 0, 0.06), 0 1px 1px 0 rgba(0, 0, 0, 0.11);
+    -webkit-animation: button 3s ease-out;
+            animation: button 3s ease-out;
 }
 
 .schedule-index input[type="checkbox"]:checked::before,
 .schedule-index input[type="checkbox"].checked::before {
-    transform: translate(20px, 0);
+    -webkit-transform: translate(20px, 0);
+            transform: translate(20px, 0);
     outline: 0 none;
 }
 
@@ -1071,7 +1084,8 @@ input[type="search"]:-ms-input-placeholder {
 
 .schedule-index input[type="checkbox"].green:checked {
     background: #50DF3D;
-    box-shadow: inset 0 0 0 15px #50DF3D;
+    -webkit-box-shadow: inset 0 0 0 15px #50DF3D;
+            box-shadow: inset 0 0 0 15px #50DF3D;
     outline: 0 none;
 }
 
@@ -1089,9 +1103,15 @@ input[type="search"]:-ms-input-placeholder {
     background: green;
     border-radius: 30px;
     padding: 1px 6px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     font-size: 11px;
 }
 
@@ -1105,12 +1125,15 @@ input[type="search"]:-ms-input-placeholder {
     background: red;
     border-radius: 30px;
     padding: 1px 6px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     font-size: 13px;
 }
 
 .small-box {
-    box-shadow: 0px 0px 0px;
+    -webkit-box-shadow: 0px 0px 0px;
+            box-shadow: 0px 0px 0px;
     margin-bottom: 0;
 }
 
@@ -1134,7 +1157,8 @@ input[type="search"]:-ms-input-placeholder {
 /*Date range picker*/
 
 .daterangepicker.dropdown-menu {
-    box-shadow: 0px 2px 30px rgba(179, 179, 179, 0.3);
+    -webkit-box-shadow: 0px 2px 30px rgba(179, 179, 179, 0.3);
+            box-shadow: 0px 2px 30px rgba(179, 179, 179, 0.3);
     padding: 7px;
     border: 0;
 }
@@ -1230,7 +1254,7 @@ input[type="search"]:-ms-input-placeholder {
     .inner-payment-table>tbody>tr>td {
         border: none !important;
     }
-	
+    
     .inner-payment-table > tbody * {
         border: none !important;
     }
@@ -1406,9 +1430,15 @@ hr.fc-divider {
     background: #ff1414;
     width: 20px;
     height: 20px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     border-bottom-left-radius: 18%;
     position: relative;
     top: -5px;
@@ -1621,44 +1651,58 @@ hr.fc-divider {
     right:25px;
 }
 .royalty-report-summarize {
-	position: absolute;
+    position: absolute;
     right: -100px;
     line-height: 37px;
 }
 .enrolment{    
-	background-color: #fff;
-   border:1px solid #eaefe9;
-   font-size: 14px;
+    background-color: #fff;
+    font-size: 14px;
 }
-.panel{
-	margin-bottom: 0px;
+.enrolment .panel{
+    margin: 0;
+    -webkit-box-shadow: 0px 0px 0px;
+            box-shadow: 0px 0px 0px;
+    border: 0;
+}
+.enrolment .panel-heading{
+    border-bottom: 1px solid #e6e6e6;
+    background: #f7f7f7;
 }
 .enrolment-step {
-	border-top: 1px solid #f2f2f2;
-	color: #666;
-	font-size: 14px;
-	padding: 10px;
-	position: relative;
+    border-top: 1px solid #f2f2f2;
+    color: #666;
+    font-size: 14px;
+    position: relative;
 }
 .enrolment-step-number {
-	border-radius: 50%;
-	border: 1px solid #666;
-	display: inline-block;
-	font-size: 12px;
-	height: 32px;
-	margin-right: 26px;
-	padding: 6px;
-	text-align: center;
-	width: 32px;
+    border-radius: 50%;
+    border: 1px solid #666;
+    /* display: inline-block; */
+    font-size: 12px;
+    height: 25px;
+    margin-right: 10px;
+    /* padding: 6px; */
+    text-align: center;
+    width: 25px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    float: left;
 }
 .enrolment-step-title{
-	font-size: 18px;
-	font-weight: 500;
-	vertical-align: middle;
-	display: inline-block;
-	margin: 0px;
+    font-size: 18px;
+    font-weight: 500;
+    vertical-align: middle;
+    display: inline-block;
+    margin: 0px;
 }
 .enrolment-step-body{
-	padding-left: 60px;
-	padding-top: 30px;
+    padding: 20px;
 }

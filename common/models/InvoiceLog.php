@@ -29,7 +29,7 @@ class InvoiceLog extends Invoice {
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = 'invoice #' . $invoiceModel->getInvoiceNumber();
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $invoiceModel->id]);
 			$timelineEventLink->save();
 
@@ -58,7 +58,7 @@ class InvoiceLog extends Invoice {
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = 'invoice #' . $invoiceModel->getInvoiceNumber();
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $invoiceModel->id]);
 			$timelineEventLink->save();
 
@@ -91,7 +91,7 @@ class InvoiceLog extends Invoice {
 				$timelineEventLink = new TimelineEventLink();
 				$timelineEventLink->timelineEventId = $timelineEvent->id;
 				$timelineEventLink->index = 'invoice #' . $lineItemModel->invoice->getInvoiceNumber();
-				$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+				$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 				$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $lineItemModel->invoice->id]);
 				$timelineEventLink->save();
 
@@ -110,7 +110,7 @@ class InvoiceLog extends Invoice {
 				$timelineEventLink = new TimelineEventLink();
 				$timelineEventLink->timelineEventId = $timelineEvent->id;
 				$timelineEventLink->index = 'invoice #' . $lineItemModel->invoice->getInvoiceNumber();
-				$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+				$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 				$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $lineItemModel->invoice->id]);
 				$timelineEventLink->save();
 
@@ -134,7 +134,7 @@ class InvoiceLog extends Invoice {
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = 'invoice #' . $lineItemModel->invoice->getInvoiceNumber();
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $lineItemModel->invoice->id]);
 			$timelineEventLink->save();
 
@@ -158,7 +158,7 @@ class InvoiceLog extends Invoice {
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
             $timelineEventLink->index = 'invoice #' . $lineItemModel->invoice->getInvoiceNumber();
-            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
             $timelineEventLink->path = Url::to(['/invoice/view', 'id' => $lineItemModel->invoice->id]);
             $timelineEventLink->save();
 

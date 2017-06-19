@@ -51,7 +51,7 @@ use common\models\Lesson;
 			$model->content = $content; 
 			?>
 			 <?php echo $form->field($model, 'toEmailAddress')->widget(Select2::classname(), [
-				 'data' => $data,
+                                'data' => $data,
 				'pluginOptions' => [
 					'tags' => true,
 					'allowClear' => true,

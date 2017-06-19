@@ -368,7 +368,7 @@ class EnrolmentController extends Controller
 		$lessons = $this->getLessons($date, $programId);
 		foreach ($lessons as &$lesson) {
 			$toTime = new \DateTime($lesson->date);
-			$length = explode(':', $lesson->duration);
+			$length = explode(':', $lesson->fullDuration);
 			$toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
 			if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
 				$description = $this->renderAjax('/schedule/group-lesson-description', [
@@ -394,8 +394,10 @@ class EnrolmentController extends Controller
 				} else if($lesson->isEnrolmentFirstlesson()) {
 					$class = 'first-lesson';
 				} else if ($lesson->getRootLesson()) {
-					$class = 'lesson-rescheduled';
 					$rootLesson = $lesson->getRootLesson();
+					if($rootLesson->id !== $lesson->id) {
+                    	$class = 'lesson-rescheduled';
+					}
 					if ($rootLesson->teacherId !== $lesson->teacherId) {
 						$class = 'teacher-substituted';
 					}
@@ -577,18 +579,16 @@ class EnrolmentController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        
 		if ($model->course->program->isPrivate()) {
             $lessons = Lesson::find()
                     ->where(['courseId' => $model->courseId])
                     ->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
                     ->all();
             foreach ($lessons as $lesson) {
-                $lesson->softDelete();
+                $lesson->delete();
             }
-			$model->softDelete();
         }
-       
+		$model->delete();
         return [
 			'status' => true,
 		];

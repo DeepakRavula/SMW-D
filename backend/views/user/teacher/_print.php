@@ -202,7 +202,7 @@ $columns = [
 					->all();
 				$totalDuration = 0;
 				foreach($lessons as $lesson) {
-					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->duration);
+					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->fullDuration);
 					$hours			 = $duration->format('H');
 					$minutes		 = $duration->format('i');
 					$lessonDuration	 = $hours + ($minutes / 60);
@@ -230,7 +230,7 @@ $columns = [
 				foreach($lessons as $lesson) {
 					$qualification = Qualification::findone(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
 					$rate = !empty($qualification->rate) ? $qualification->rate : 0;
-					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->duration);
+					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->fullDuration);
 					$hours			 = $duration->format('H');
 					$minutes		 = $duration->format('i');
 					$lessonDuration	 = $hours + ($minutes / 60);

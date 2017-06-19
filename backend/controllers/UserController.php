@@ -7,6 +7,7 @@ use common\models\Payment;
 use Yii;
 use common\models\User;
 use common\models\TeacherRoom;
+use yii\helpers\Url;
 use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
@@ -178,7 +179,7 @@ class UserController extends Controller
         $lessonQuery = Lesson::find()
                 ->location($locationId)
                 ->student($id)
-                ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+                ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
                 ->notDeleted();
 
         $lessonDataProvider = new ActiveDataProvider([
@@ -413,6 +414,7 @@ class UserController extends Controller
             $invoiceLineItem->unit = 1;
             $invoiceLineItem->amount = $paymentModel->amount;
             $invoiceLineItem->code = $invoiceLineItem->getItemCode();
+            $invoiceLineItem->cost = 0;
             $invoiceLineItem->save();
 
             if ($paymentModel->amount > 0) {
@@ -640,8 +642,12 @@ class UserController extends Controller
                                 'body' => ucwords($model->roles).' profile has been updated successfully',
                         ]);
                         $section = ltrim($model->section, '#');
-
-                        return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id, '#' => $section]);
+						if((int)$model->status === User::STATUS_NOT_ACTIVE) {
+							$link = Url::to(['index', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]); 
+						} else {
+                        	$link = Url::to(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id, '#' => $section]);
+						}
+						return $this->redirect($link);
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();

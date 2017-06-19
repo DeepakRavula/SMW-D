@@ -31,10 +31,8 @@ $this->render('review/_teacher-availability', [
 ]);
 ?>
 <?php
-$conflictedLessonIds = [];
 $hasConflict = false;
-$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
-if (!empty($conflictedLessonIds)) {
+if ($conflictedLessonIdsCount > 0) {
 		$hasConflict = true;
 	}
 ?>
@@ -119,8 +117,8 @@ $columns = [
 ?>
 <div style="text-align: center">
 	<strong>Unscheduled Lesson(s) due to holiday conflict:</strong> <?= count($holidayConflictedLessonIds);?><br>
-	<strong>Scheduled Lessons:</strong> <?= $lessonCount - (count($holidayConflictedLessonIds) + count($conflictedLessonIds));?><br>
-	<strong>Conflicted Lesson(s):</strong> <?= count($conflictedLessonIds);?><br>
+	<strong>Scheduled Lessons:</strong> <?= $lessonCount - (count($holidayConflictedLessonIds) + $conflictedLessonIdsCount);?><br>
+	<strong>Conflicted Lesson(s):</strong> <?= $conflictedLessonIdsCount;?><br>
 	<strong>Total Lessons:</strong> <?= $lessonCount;?><br>
 </div>
 

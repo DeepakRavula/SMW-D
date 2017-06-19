@@ -14,7 +14,7 @@ class ClassroomValidator extends Validator
         $start = new \DateTime($model->date);
         $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
         $lessonStartTime = $start->format('H:i:s');
-        $duration = (new \DateTime($model->duration));
+        $duration = (new \DateTime($model->fullDuration));
         $start->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
         $start->modify('-1 second');
         $lessonEndTime = $start->format('H:i:s');

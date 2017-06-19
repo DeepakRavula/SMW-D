@@ -177,7 +177,7 @@ $(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
 		{
 		   if(response.status)
 		   {
-				$.pjax.reload({container : '#line-item-listing', tiimeout:6000});
+				$.pjax.reload({container : '#line-item-listing', timeout:6000});
 				$('input[name="Payment[amount]"]').val(response.amount);
                 invoice.updateSummarySectionAndStatus();
 				$('#invoice-line-item-modal').modal('hide');

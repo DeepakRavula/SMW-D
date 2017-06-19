@@ -137,7 +137,7 @@ class ScheduleController extends Controller
 		$lessons = $this->getLessons($userId);
 		foreach ($lessons as &$lesson) {
 			$toTime = new \DateTime($lesson->date);
-			$length = explode(':', $lesson->duration);
+			$length = explode(':', $lesson->fullDuration);
 			$toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
 			if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
 				$description = $this->renderAjax('group-lesson-description', [
@@ -161,8 +161,10 @@ class ScheduleController extends Controller
 				} else if($lesson->isEnrolmentFirstlesson()) {
 					$class = 'first-lesson';
 				} else if ($lesson->getRootLesson()) {
-					$class = 'lesson-rescheduled';
 					$rootLesson = $lesson->getRootLesson();
+					if($rootLesson->id !== $lesson->id) {
+                    	$class = 'lesson-rescheduled';
+					}
 					if ($rootLesson->teacherId !== $lesson->teacherId) {
 						$class = 'teacher-substituted';
 					}

@@ -158,11 +158,17 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
             ->via('invoiceItemPaymentCycleLesson');
     }
+
+    public function getProFormaLineItem()
+    {
+        return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id'])
+            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
+    }
     
     public function getInvoiceItemPaymentCycleLesson()
     {
         return $this->hasOne(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id'])
-                ->via('lineItem');
+                ->via('proFormaLineItem');
     }
                 
     public function getProformaPaymentCycle()
@@ -259,6 +265,11 @@ class Invoice extends \yii\db\ActiveRecord
     public function hasPayments()
     {
         return $this->invoicePaymentTotal != 0;
+    }
+
+    public function isDeleted()
+    {
+        return (bool) $this->isDeleted;
     }
 
     public function hasCredit()
@@ -668,10 +679,10 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
-    public function addPayment($proFormaInvoice)
+    public function addPayment($proFormaInvoice, $amount)
     {
         $paymentModel = new Payment();
-        $paymentModel->amount = $this->total;
+        $paymentModel->amount = $amount;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
         $paymentModel->reference = $proFormaInvoice->id;
         $paymentModel->invoiceId = $this->id;
@@ -716,7 +727,7 @@ class Invoice extends \yii\db\ActiveRecord
                     if ($lineItem->proFormaLesson->hasProFormaInvoice()) {
                         $netPrice = $lineItem->proFormaLesson->proFormaLineItem->netPrice;
                         if ($lineItem->proFormaLesson->proFormaInvoice->proFormaCredit >= $netPrice) {
-                            $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice);
+                            $lineItem->proFormaLesson->invoice->addPayment($lineItem->proFormaLesson->proFormaInvoice, $netPrice);
                         }
                     }
                 }
@@ -735,7 +746,7 @@ class Invoice extends \yii\db\ActiveRecord
                 if ($this->lineItem->lesson->hasProFormaInvoice()) {
                     $netPrice = $this->lineItem->lesson->proFormaInvoice->lineItem->netPrice;
                     if ($this->lineItem->lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
-                        $this->lineItem->lesson->invoice->addPayment($this->lineItem->lesson->proFormaInvoice);
+                        $this->lineItem->lesson->invoice->addPayment($this->lineItem->lesson->proFormaInvoice, $netPrice);
                     }
                 }
             }

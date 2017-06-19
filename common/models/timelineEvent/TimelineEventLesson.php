@@ -67,7 +67,7 @@ class TimelineEventLesson extends \yii\db\ActiveRecord
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $lessonModel->course->enrolment->student->fullName;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
 			$timelineEventLink->save();
 

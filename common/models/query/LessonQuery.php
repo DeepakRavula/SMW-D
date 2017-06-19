@@ -4,8 +4,9 @@ namespace common\models\query;
 
 use common\models\Lesson;
 use common\models\Program;
-use common\models\LessonSplitUsage;
+use common\models\Invoice;
 use common\models\InvoiceLineItem;
+use common\models\InvoiceItemPaymentCycleLesson;
 
 /**
  * This is the ActiveQuery class for [[\common\models\Lesson]].
@@ -79,7 +80,13 @@ class LessonQuery extends \yii\db\ActiveQuery
         $this->andWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
         return $this;
     }
-
+	public function expired()
+    {
+         $this->joinWith(['privateLesson' => function($query) {
+            $query->andWhere(['<', 'DATE(expiryDate)', (new \DateTime())->format('Y-m-d')]);
+        }]);
+        return $this;
+    }
     public function notRescheduled()
     {
         $this->joinWith(['lessonReschedule' => function($query) {
@@ -102,10 +109,13 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function unInvoiced()
     {
-        $this->joinWith('invoice')
-            ->where(['invoice.id' => null]);
-
-        return $this;
+        return $this->joinWith(['invoiceItemLessons' => function($query) {
+            $query->joinWith(['invoiceLineItem' => function($query) {
+                $query->joinWith(['invoice' => function($query) {
+                    $query->where(['invoice.id' => null]);
+                }]);
+            }]);
+        }]);
     }
 
     public function completedUnInvoiced()
@@ -124,22 +134,29 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function invoiced()
     {
-        $this->joinWith('invoice')
-            ->where(['not', ['invoice.id' => null]]);
-
-        return $this;
+        return $this->joinWith(['invoiceItemLessons' => function($query) {
+            $query->joinWith(['invoiceLineItem' => function($query) {
+                $query->joinWith(['invoice' => function($query) {
+                    $query->where(['not', ['invoice.id' => null]])
+                        ->andWhere(['invoice.isDeleted' => false,
+                            'invoice.type' => Invoice::TYPE_INVOICE]);
+                }]);
+            }]);
+        }]);
     }
 
     public function unInvoicedProForma()
     {
-        $pfli = InvoiceLineItem::find()
-            ->alias('pfli1')
-            ->join('LEFT JOIN', 'invoice_line_item pfli2', 'pfli1.item_id = pfli2.item_id AND pfli1.id < pfli2.id')
-            ->andWhere(['pfli2.item_id' => NULL]);
-            
+        $iipcl = InvoiceItemPaymentCycleLesson::find()
+            ->alias('iipcl1')
+            ->join('LEFT JOIN', 'invoice_item_payment_cycle_lesson iipcl2',
+                'iipcl1.paymentCycleLessonId = iipcl2.paymentCycleLessonId AND iipcl1.id < iipcl2.id')
+            ->andWhere(['iipcl2.paymentCycleLessonId' => NULL]);
+
         $this->joinWith('paymentCycleLesson')
-            ->leftJoin(['pfli' => $pfli], 'pfli.item_id = payment_cycle_lesson.id')
-            ->join('LEFT JOIN', 'invoice', 'invoice.id = pfli.invoice_id')
+            ->leftJoin(['iipcl' => $iipcl], 'iipcl.paymentCycleLessonId = payment_cycle_lesson.id')
+            ->join('LEFT JOIN', 'invoice_line_item', 'invoice_line_item.id = iipcl.invoiceLineItemId')
+            ->join('LEFT JOIN', 'invoice', 'invoice.id = invoice_line_item.invoice_id')
             ->andWhere(['OR', ['invoice.id' => null], ['invoice.isDeleted' => true]]);
 
         return $this;
@@ -245,7 +262,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function overlap($date, $fromTime, $toTime)
     {
             $this->andWhere(['DATE(date)' => $date])
-        ->andWhere(['OR', 
+        ->andWhere(['OR',
                     [
                             'between', 'TIME(lesson.date)', $fromTime, $toTime
                     ],

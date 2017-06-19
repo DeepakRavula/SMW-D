@@ -75,6 +75,7 @@ class LessonSearch extends Lesson
             return $dataProvider;
         }
 
+		$query->andWhere(['NOT', ['lesson.status' => Lesson::STATUS_CANCELED]]);
         if (!empty($this->type)) {
             if ((int) $this->type === Lesson::TYPE_PRIVATE_LESSON) {
                 $query->activePrivateLessons();
@@ -106,8 +107,8 @@ class LessonSearch extends Lesson
             $query->scheduled();
         } elseif ($this->lessonStatus === self::STATUS_INVOICED) {
             $query->invoiced();
-        } elseif ($this->lessonStatus === 'canceled') {
-            $query->andFilterWhere(['lesson.status' => Lesson::STATUS_CANCELED]);
+        } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
+            $query->andFilterWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
         }
 
         $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
@@ -127,7 +128,7 @@ class LessonSearch extends Lesson
             Lesson::STATUS_COMPLETED => 'Completed',
             'scheduled' => 'Scheduled',
             self::STATUS_INVOICED => 'Invoiced',
-            'canceled' => 'Canceled',
+			Lesson::STATUS_UNSCHEDULED => 'Unscheduled'
         ];
     }
 }

@@ -24,7 +24,7 @@ class Holiday extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['date'], 'safe'],
+            [['date', 'description'], 'safe'],
         ];
     }
 

@@ -55,7 +55,7 @@ class LessonController extends Controller
             ],
         ];
     }
-
+		
     /**
      * Lists all Lesson models.
      *
@@ -87,15 +87,7 @@ class LessonController extends Controller
     {
         $locationId = Yii::$app->session->get('location_id');
         $model = $this->findModel($id);
-        $duration = $model->duration;
-        foreach ($model->extendedLessons as $extendedLesson) {
-            $additionalDuration = new \DateTime($extendedLesson->lessonSplit->unit);
-            $lessonDuration = new \DateTime($duration);
-            $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
-                . 'H' . $additionalDuration->format('i') . 'M'));
-            $duration = $lessonDuration->format('H:i:s');
-        }
-        $model->duration = $duration;
+        $model->duration = $model->fullDuration;
         $notes = Note::find()
                 ->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
                 ->orderBy(['createdOn' => SORT_DESC]);
@@ -458,9 +450,12 @@ class LessonController extends Controller
 				}
 				$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
 			}
+			
 			$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
 			$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
 			$lessonCount = count($draftLessons);
+			$conflictedLessonIdsCount = count($conflictedLessonIds);
+
 			$query = Lesson::find()
 				->orderBy(['lesson.date' => SORT_ASC]);
 			if(! $showAllReviewLessons) {
@@ -485,7 +480,8 @@ class LessonController extends Controller
 			'model' => $model,
 			'enrolmentEditType' => $enrolmentEditType,
 			'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
-			'lessonCount' => $lessonCount
+			'lessonCount' => $lessonCount,
+			'conflictedLessonIdsCount' => $conflictedLessonIdsCount
         ]);
     }
 
@@ -507,8 +503,9 @@ class LessonController extends Controller
         }
 		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
 		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+		$conflictedLessonIdsCount = count($conflictedLessonIds);
         $hasConflict = false;
-		if (!empty($conflictedLessonIds)) {
+		if ($conflictedLessonIdsCount > 0) {
                     $hasConflict = true;
             }
 
@@ -819,7 +816,7 @@ class LessonController extends Controller
             'options' => ['class' => 'alert-success'],
             'body' => 'The Lesson has been exploded successfully.',
         ]);
-        return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
+        return $this->redirect(['student/view', 'id' => $model->enrolment->student->id, '#'=> 'lesson']);
     }
 
     public function actionMerge($id)
