@@ -457,7 +457,9 @@ class Enrolment extends \yii\db\ActiveRecord
         $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
-        $invoice->save();
+        if (!$invoice->save()) {
+            Yii::info('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+        }
         $lessons = Lesson::find()
             ->notDeleted()
             ->scheduled()
@@ -471,8 +473,12 @@ class Enrolment extends \yii\db\ActiveRecord
         $invoiceEnrolment = new InvoiceEnrolment();
         $invoiceEnrolment->invoiceId = $invoice->id;
         $invoiceEnrolment->enrolemntId = $this->id;
-        $invoiceEnrolment->save();
-        $invoice->save();
+        if (!$invoiceEnrolment->save()) {
+            Yii::info('Create Invoice Enrolment: ' . \yii\helpers\VarDumper::dumpAsString($invoiceEnrolment->getErrors()));
+        }
+        if (!$invoice->save()) {
+            Yii::info('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+        }
         return $invoice;
     }
 }
