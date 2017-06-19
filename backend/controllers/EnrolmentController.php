@@ -585,8 +585,8 @@ class EnrolmentController extends Controller
             foreach ($lessons as $lesson) {
                 $lesson->delete();
             }
-			$model->delete();
         }
+		$model->delete();
         return [
 			'status' => true,
 		];
