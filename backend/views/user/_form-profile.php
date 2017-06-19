@@ -30,7 +30,7 @@ foreach ($Roles as $name => $description) {
             <?php endif; ?>
 			<div class="col-xs-6">
 				<?php if (!$model->getModel()->getIsNewRecord()) : ?>
-					<?php echo $form->field($model, 'status')->dropDownList(User::statuses(), ['options' => [2 => ['Selected' => 'selected']]]) ?>
+					<?php echo $form->field($model, 'status')->dropDownList(User::statuses()) ?>
 				<?php endif; ?>
 			</div>
 			<div class="clearfix"></div>
