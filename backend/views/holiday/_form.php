@@ -30,6 +30,9 @@ use yii\helpers\Url;
                 ]); ?>
         </div>
 		 <div class="col-xs-5">
+			 <?php  if ($model->isNewRecord) : ?>
+				<?php $model->description = 'Holiday';?>
+			<?php endif;?>				
             <?php echo $form->field($model, 'description')->textInput(); ?>
         </div>
         <div class="clearfix"></div>

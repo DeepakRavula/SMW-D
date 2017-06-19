@@ -116,11 +116,7 @@ class ScheduleController extends Controller
 		$holiday = Holiday::findOne(['DATE(date)' => $date]);
 		$holidayResource = '';
 		if(!empty($holiday)) {
-			if(!empty($holiday->description)) {
-				$holidayResource = ' (' . $holiday->description . ')';
-			} else {
-				$holidayResource = ' (Holiday)';	
-			}
+			$holidayResource = ' (' . $holiday->description . ')';
 		}
 		return $holidayResource;
 	}
