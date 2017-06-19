@@ -460,18 +460,9 @@ class Enrolment extends \yii\db\ActiveRecord
         if (!$invoice->save()) {
             Yii::info('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
         }
-        $lessons = Lesson::find()
-            ->notDeleted()
-            ->scheduled()
-            ->joinWith('enrolment')
-            ->where(['enrolment.id' => $this->id])
-            ->all();
-        foreach ($lessons as $lesson) {
-            $lesson->studentFullName = $this->student->fullName;
-            $invoice->addLineItem($lesson);
-        }
-        $invoiceEnrolment = new InvoiceEnrolment();
-        $invoiceEnrolment->invoiceId = $invoice->id;
+        $invoiceLineItem = $invoice->addGroupProFormaLineItem($this);
+        $invoiceEnrolment = new InvoiceItemEnrolment();
+        $invoiceEnrolment->invoiceLineItemId = $invoiceLineItem->id;
         $invoiceEnrolment->enrolemntId = $this->id;
         if (!$invoiceEnrolment->save()) {
             Yii::info('Create Invoice Enrolment: ' . \yii\helpers\VarDumper::dumpAsString($invoiceEnrolment->getErrors()));

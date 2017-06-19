@@ -5,20 +5,20 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "invoice_enrolment".
+ * This is the model class for table "invoice_item_enrolment".
  *
  * @property string $id
- * @property string $invoiceId
+ * @property string $invoiceLineItemId
  * @property string $enrolemntId
  */
-class InvoiceEnrolment extends \yii\db\ActiveRecord
+class InvoiceItemEnrolment extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'invoice_enrolment';
+        return 'invoice_item_enrolment';
     }
 
     /**
@@ -27,8 +27,8 @@ class InvoiceEnrolment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoiceId', 'enrolemntId'], 'required'],
-            [['invoiceId', 'enrolemntId'], 'integer'],
+            [['invoiceLineItemId', 'enrolemntId'], 'required'],
+            [['invoiceLineItemId', 'enrolemntId'], 'integer'],
         ];
     }
 
@@ -39,7 +39,7 @@ class InvoiceEnrolment extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'invoiceId' => 'Invoice ID',
+            'invoiceLineItemId' => 'Invoice Line Item ID',
             'enrolemntId' => 'Enrolemnt ID',
         ];
     }

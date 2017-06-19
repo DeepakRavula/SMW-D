@@ -640,6 +640,7 @@ class Invoice extends \yii\db\ActiveRecord
         if ($lesson->isGroup()) {
             $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
             $courseCount                   = Lesson::find()
+                ->notDeleted()
                 ->where(['courseId' => $lesson->courseId])
                 ->count('id');
             $lessonAmount                  = $lesson->course->program->rate / $courseCount;
@@ -649,21 +650,16 @@ class Invoice extends \yii\db\ActiveRecord
             }
             $invoiceLineItem->amount       = $lessonAmount;
             $studentFullName               = $lesson->studentFullName;
+            $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
         } else {
             if ($this->isProFormaInvoice()) {
                 if ($lesson->isPrivate()) {
                     $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
                 } else if ($lesson->isExtra()) {
                     $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
-                } else if ($lesson->isGroup()) {
-                    $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
                 }
             } else {
-                if ($lesson->isGroup()) {
-                    $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-                } else {
-                    $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-                }
+                $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
             }
             $amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
             if ($this->isReversedInvoice()) {
@@ -677,12 +673,12 @@ class Invoice extends \yii\db\ActiveRecord
         $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '.$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
         if ($invoiceLineItem->save()) {
-            if ($this->isProFormaInvoice() && !$lesson->isExtra() && !$lesson->isGroup()) {
+            if ($this->isProFormaInvoice() && $invoiceLineItem->isPaymentCycleLesson()) {
                 $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLesson();
                 $invoiceItemPaymentCycleLesson->paymentCycleLessonId    = $lesson->paymentCycleLesson->id;
                 $invoiceItemPaymentCycleLesson->invoiceLineItemId    = $invoiceLineItem->id;
                 return $invoiceItemPaymentCycleLesson->save();
-            } else {
+            } else if ($this->isInvoice() || $invoiceLineItem->isExtraLesson() || $invoiceLineItem->isGroupLesson()) {
                 $invoiceItemLesson = new InvoiceItemLesson();
                 $invoiceItemLesson->lessonId    = $lesson->id;
                 $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
@@ -873,6 +869,34 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceItemPaymentCycleLesson->lessonSplitId     = $splitId;
             $invoiceItemPaymentCycleLesson->invoiceLineItemId = $invoiceLineItem->id;
             return $invoiceItemPaymentCycleLesson->save();
+        }
+    }
+
+    public function addGroupProFormaLineItem($enrolment)
+    {
+        $invoiceLineItem               = new InvoiceLineItem();
+        $invoiceLineItem->invoice_id   = $this->id;
+        $item = Item::findOne(['code' => Item::LESSON_ITEM]);
+        $invoiceLineItem->item_id      = $item->id;
+        $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
+        $courseCount = Lesson::find()
+                ->notDeleted()
+                ->where(['courseId' => $enrolment->courseId])
+                ->count('id');
+        $invoiceLineItem->unit       = $courseCount;
+        $qualification = Qualification::findOne(['teacher_id' => $enrolment->firstLesson->teacherId, 'program_id' => $enrolment->course->program->id]);
+        $rate = !empty($qualification->rate) ? $qualification->rate : 0;
+        $invoiceLineItem->cost       = $rate;
+        $invoiceLineItem->amount = $enrolment->program->rate;
+        $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
+        $invoiceLineItem->discount     = $customerDiscount;
+        $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
+        $invoiceLineItem->description  = 'Group Lesson';
+        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
+        if ($invoiceLineItem->save()) {
+            return $invoiceLineItem;
+        } else {
+            Yii::info('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         }
     }
 
