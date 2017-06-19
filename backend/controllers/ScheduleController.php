@@ -117,7 +117,7 @@ class ScheduleController extends Controller
 		$holidayResource = '';
 		if(!empty($holiday)) {
 			if(!empty($holiday->description)) {
-				$holidayResource = ' (' . $holiday->description. ')';
+				$holidayResource = ' (' . $holiday->description . ')';
 			} else {
 				$holidayResource = ' (Holiday)';	
 			}

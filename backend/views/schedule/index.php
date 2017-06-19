@@ -11,7 +11,7 @@ use common\models\Program;
 
 /* @var $this yii\web\View */
 $holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
-$holidayResource = null;
+$holidayResource = '';
 if(!empty($holiday)) {
 	if(!empty($holiday->description)) {
 		$holidayResource = ' (' . $holiday->description. ')';
@@ -352,7 +352,6 @@ $.ajax({
 	dataType: "json",
 	success: function (response)
 	{
-		console.log(response);
         var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
         $(".content-header h1").text("Schedule for " + formattedDate + response);
 	}
