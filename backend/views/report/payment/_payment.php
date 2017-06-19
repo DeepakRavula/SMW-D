@@ -55,7 +55,7 @@ tr.success>td{
 
 					return null;
 				},
-                               'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
+				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
 				'group' => true,
 				'groupedRow' => true,
 				'groupFooter' => function ($model, $key, $index, $widget) {
@@ -117,7 +117,7 @@ tr.success>td{
 
 					return null;
 				},
-				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
+				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
 				'group' => true,
 				'groupedRow' => true,
 				'groupFooter' => function ($model, $key, $index, $widget) {
