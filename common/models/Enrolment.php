@@ -100,7 +100,16 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
     }
-
+	public function getCourseSchedule()
+    {
+		if($this->course->program->isPrivate()) {
+        	return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+				->via('course');
+		} else {
+			return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+				->via('course');	
+		}
+    }
     public function getPaymentsFrequency()
     {
         return $this->hasOne(PaymentFrequency::className(), ['id' => 'paymentFrequencyId']);
@@ -269,26 +278,31 @@ class Enrolment extends \yii\db\ActiveRecord
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
         $period = new \DatePeriod($start, $interval, $end);
-        foreach ($period as $day) {
-            if ((int) $day->format('N') === (int) $this->course->day) {
-                $professionalDevelopmentDay = clone $day;
-                $professionalDevelopmentDay->modify('last day of previous month');
-                $professionalDevelopmentDay->modify('fifth '.$day->format('l'));
-                if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-                    continue;
-                }
-                $lesson = new Lesson();
-                $lesson->setAttributes([
-                    'courseId' => $this->course->id,
-                    'teacherId' => $this->course->teacherId,
-                    'status' => Lesson::STATUS_DRAFTED,
-                    'date' => $day->format('Y-m-d H:i:s'),
-                    'duration' => $this->course->duration,
-                    'isDeleted' => false,
-                ]);
-                $lesson->save();
-            }
-        }
+		foreach ($period as $day) {
+			$lessonCount = Lesson::find()
+				->andWhere(['courseId' => $this->courseId, 'status' => Lesson::STATUS_DRAFTED])
+				->count();
+			$checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
+			$checkLessonCount = (int)$lessonCount < Lesson::MAXIMUM_LIMIT; 
+			if ($checkDay && $checkLessonCount) {
+				$professionalDevelopmentDay = clone $day;
+				$professionalDevelopmentDay->modify('last day of previous month');
+				$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
+				if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+					continue;
+				}
+				$lesson = new Lesson();
+				$lesson->setAttributes([
+					'courseId' => $this->course->id,
+					'teacherId' => $this->course->teacherId,
+					'status' => Lesson::STATUS_DRAFTED,
+					'date' => $day->format('Y-m-d H:i:s'),
+					'duration' => $this->courseSchedule->duration,
+					'isDeleted' => false,
+				]);
+				$lesson->save();
+			}
+		}
     }
 
 	public static function getPaymentFrequencies()
