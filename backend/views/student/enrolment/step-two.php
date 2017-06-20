@@ -67,11 +67,11 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             events: events,
             select: function (start, end, allDay) {
                 $('#calendar').fullCalendar('removeEvents', 'newEnrolment');
-                $('#course-day').val(moment(start).format('dddd'));
-                $('#course-fromtime').val(moment(start).format('h:mm A'));
-                $('#course-startdate').val(moment(start).format('DD-MM-YYYY'));
+                $('#courseschedule-day').val(moment(start).format('dddd'));
+                $('#courseschedule-fromtime').val(moment(start).format('h:mm A'));
+                $('#course-startdate').val(moment(start).format('DD-MM-YYYY h:mm A'));
                 var endtime = start.clone();
-                var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
+                var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
                 $('#calendar').fullCalendar('renderEvent',
                     {

@@ -30,10 +30,7 @@ class Course extends \yii\db\ActiveRecord
 	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
     const EVENT_CREATE = 'event-create';
     public $lessonStatus;
-    public $studentId;
-    public $paymentFrequency;
 	public $rescheduleBeginDate;
-	public $discount;
 	public $teacherName;
 	public $weeksCount;
 	public $lessonsPerWeekCount;
@@ -53,16 +50,11 @@ class Course extends \yii\db\ActiveRecord
     {
         return [
             [['programId', 'teacherId'], 'required'],
-			[['discount'], 'safe'],
-            [['startDate', 'duration'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
-            [['duration', 'startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
-            [['programId', 'teacherId', 'paymentFrequency', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
-            [['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
-                return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
-            },'except' => self::SCENARIO_EDIT_ENROLMENT 
-            ],
+            [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
+            [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
+            [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
             [['startDate', 'endDate'], 'string'],
-            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'discount'], 'safe'],
+            [['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
            // ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
            // ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],
@@ -220,21 +212,17 @@ class Course extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::beforeSave($insert);
 		}
-        $fromTime = new \DateTime($this->fromTime);
-        $this->fromTime = $fromTime->format('H:i:s');
-        $timebits = explode(':', $this->fromTime);
 		$this->isConfirmed = false;
         if ((int) $this->program->isGroup()) {
             $startDate = new \DateTime($this->startDate);
             $endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));
             $this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
-            $endDate = \DateTime::createFromFormat('d-m-Y', $this->startDate);
+            $endDate = new \DateTime($this->startDate);
             $startDate = new \DateTime($this->startDate);
-            $startDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
             $this->startDate = $startDate->format('Y-m-d H:i:s');
             $endDate->add(new \DateInterval('P1Y'));
-            $this->endDate = $endDate->format('Y-m-d 00:00:00');
+            $this->endDate = $endDate->format('Y-m-d H:i:s');
         }
 
         return parent::beforeSave($insert);
@@ -245,22 +233,6 @@ class Course extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::afterSave($insert, $changedAttributes);
 		}
-        if ((int) $this->program->isPrivate()) {
-            $dayList = TeacherAvailability::getWeekdaysList();
-            $courseModel->day = array_search($courseModel->day, $dayList);
-            $enrolmentModel = new Enrolment();
-            $enrolmentModel->courseId = $this->id;
-            $enrolmentModel->studentId = $this->studentId;
-            $enrolmentModel->paymentFrequencyId = $this->paymentFrequency;
-            if($enrolmentModel->save()) {
-				if(!empty($this->discount)) {
-					$enrolmentDiscount = new EnrolmentDiscount();
-					$enrolmentDiscount->enrolmentId = $enrolmentModel->id;
-					$enrolmentDiscount->discount = $this->discount;	
-					$enrolmentDiscount->save();
-				}
-			}
-        }
         if ((int) $this->program->isGroup()) {
 			$groupCourse = new CourseGroup();
 			$groupCourse->courseId = $this->id;

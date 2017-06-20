@@ -67,7 +67,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 			<?php
             echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
                 [
-                'options' => ['id' => 'course-duration'],
+                //'options' => ['id' => 'course-duration'],
                 'pluginOptions' => [
                     'showMeridian' => false,
                     'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
@@ -86,10 +86,10 @@ $privatePrograms = ArrayHelper::map(Program::find()
         </div>
         <div class="clear-fix"></div>
         <div class="col-md-4">
-            <?= $form->field($model, 'paymentFrequency')->dropdownList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')) ?>
+            <?= $form->field($courseSchedule, 'paymentFrequency')->dropdownList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')) ?>
 	    </div>
 		<div class="col-md-2">
-            <?= $form->field($model, 'discount')->textInput() ?>
+            <?= $form->field($courseSchedule, 'discount')->textInput() ?>
 	    </div>
 		<div class="col-md-1 p-20">%</div>
 		<div class="clearfix"></div>
@@ -173,23 +173,23 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 		$('.next-step').addClass('btn-success');
 		$('#course-rate-estimation').hide();
 		$(document).on('change', '#course-programid', function(){
-			var duration = $('#course-duration').val();
+			var duration = $('#courseschedule-duration').val();
 			var programId = $('#course-programid').val();
-			var discount = $('#course-discount').val();
+			var discount = $('#courseschedule-discount').val();
 			fetchProgram(duration, programId, discount);
 		});
-		$(document).on('change', '#course-duration', function(){
-			var duration = $('#course-duration').val();
+		$(document).on('change', '#courseschedule-duration', function(){
+			var duration = $('#courseschedule-duration').val();
 			var programId = $('#course-programid').val();
-			var discount = $('#course-discount').val();
+			var discount = $('#courseschedule-discount').val();
 			if (duration && programId || discount) {
 				fetchProgram(duration, programId, discount);
 			}
 		});
-		$(document).on('change', '#course-discount', function(){
-			var duration = $('#course-duration').val();
+		$(document).on('change', '#courseschedule-discount', function(){
+			var duration = $('#courseschedule-duration').val();
 			var programId = $('#course-programid').val();
-			var discount = $('#course-discount').val();
+			var discount = $('#courseschedule-discount').val();
 			if (duration && programId || discount) {
 				fetchProgram(duration, programId, discount);
 			}
@@ -204,7 +204,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 			$('#notification').remove();
 		});
         $('#enrolment-form').on('afterValidate', function (event, messages) {
-			if(messages["course-programid"].length || messages["course-paymentfrequency"].length) {
+			if(messages["course-programid"].length || messages["courseschedule-paymentfrequency"].length) {
 			}  else{
 				var $active = $('.wizard .nav-tabs li:first');
 				$active.removeClass('disabled');

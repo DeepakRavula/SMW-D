@@ -14,13 +14,14 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use common\models\TeacherAvailability;
+use common\models\CourseSchedule;
 use common\models\ExamResult;
 use common\models\Note;
 use common\models\StudentLog;
 use common\models\User;
 use yii\helpers\Url;
 use common\models\PaymentFrequency;
+use common\models\TeacherAvailability;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -189,11 +190,20 @@ class StudentController extends Controller
         $request = Yii::$app->request;
         $post = $request->post();
         $courseModel = new Course();
-        if ($courseModel->load($post)) {
+		$courseSchedule = new CourseSchedule();
+		
+		$courseModel->load($post);
+		$courseSchedule->load($post);
+		
+        if (Yii::$app->request->isPost) {
             $courseModel->locationId = $locationId;
-            $courseModel->studentId = $model->id;
-            $courseModel->save();
-
+			if($courseModel->save()) {
+				$courseSchedule->courseId = $courseModel->id;
+            	$courseSchedule->studentId = $model->id;
+				$dayList = TeacherAvailability::getWeekdaysList();
+		   		$courseSchedule->day = array_search($courseSchedule->day, $dayList); 
+            	$courseSchedule->save();
+			}
             return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
         }
         if (!empty($post['courseId'])) {
