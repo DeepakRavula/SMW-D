@@ -62,7 +62,8 @@ class StudentSearch extends Student
 
         if (!$this->showAllStudents) {
             $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-            $query->enrolled($currentDate);
+            $query->enrolled($currentDate)
+				->active();
         }
 
         return $dataProvider;

@@ -172,12 +172,16 @@ class StudentController extends Controller
 		$model->userName = $userModel->publicIdentity;	
 		
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return  [
-				'status' => true,
-				'data' => $this->renderAjax('_profile', [
-					'model' => $model,
-					])
-			];
+			if((int)$model->status === Student::STATUS_INACTIVE) {
+				return $this->redirect(['/student/index', 'StudentSearch[showAllStudents]' => false]);
+			} else {
+				return  [
+					'status' => true,
+					'data' => $this->renderAjax('_profile', [
+						'model' => $model,
+						])
+				];
+			}
         }
     }
 
