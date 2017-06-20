@@ -89,13 +89,6 @@ class Enrolment extends \yii\db\ActiveRecord
         return new \common\models\query\EnrolmentQuery(get_called_class());
     }
 
-    public function notDeleted()
-    {
-        $this->where(['enrolment.isDeleted' => false]);
-
-        return $this;
-    }
-
     public function getCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
@@ -126,6 +119,51 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Program::className(), ['id' => 'programId'])
             ->viaTable('course', ['id' => 'courseId']);
+    }
+
+    public function hasProFormaInvoice()
+    {
+        return !empty($this->proFormaInvoice);
+    }
+
+    public function getProFormaInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+            ->via('invoiceLineItems')
+            ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+    }
+
+    public function hasInvoice($lessonId)
+    {
+        return !empty($this->getInvoice($lessonId));
+    }
+
+    public function getInvoice($lessonId)
+    {
+        $enrolmentId = $this->id;
+        return Invoice::find()
+            ->joinWith(['lineItems' => function($query) use ($lessonId, $enrolmentId) {
+                $query->joinWith(['lineItemLesson' => function($query) use ($lessonId, $enrolmentId) {
+                    $query->joinWith(['lineItemEnrolment' => function($query) use ($enrolmentId) {
+                        $query->andWhere(['invoice_item_enrolment.enrolmentId' => $enrolmentId]);
+                    }]);
+                    $query->where(['invoice_item_lesson.lessonId' => $lessonId]);
+                }]);
+            }])
+            ->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+            ->one();
+    }
+
+    public function getInvoiceLineItems()
+    {
+        return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+            ->via('invoiceItemsEnrolment')
+            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_GROUP_LESSON]);
+    }
+
+    public function getInvoiceItemsEnrolment()
+    {
+        return $this->hasMany(InvoiceItemEnrolment::className(), ['enrolmentId' => 'id']);
     }
 
     public function getCurrentPaymentCycle()
@@ -462,11 +500,14 @@ class Enrolment extends \yii\db\ActiveRecord
             Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
         }
         $invoiceLineItem = $invoice->addGroupProFormaLineItem($this);
-        $invoiceEnrolment = new InvoiceItemEnrolment();
-        $invoiceEnrolment->invoiceLineItemId = $invoiceLineItem->id;
-        $invoiceEnrolment->enrolemntId = $this->id;
-        if (!$invoiceEnrolment->save()) {
-            Yii::error('Create Invoice Enrolment: ' . \yii\helpers\VarDumper::dumpAsString($invoiceEnrolment->getErrors()));
+        if (!$invoiceLineItem->save()) {
+            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+        } else {
+            $invoiceItemLesson = new InvoiceItemEnrolment();
+            $invoiceItemLesson->enrolmentId    = $this->id;
+            $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
+            $invoiceItemLesson->save();
+            return $invoiceLineItem;
         }
         if (!$invoice->save()) {
             Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));

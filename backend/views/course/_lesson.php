@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -31,6 +32,22 @@ use yii\helpers\Url;
 				return $status;
 			},
 		],
+                ['class' => 'yii\grid\ActionColumn',
+                    'template' => '{create}',
+                    'buttons' => [
+                        'create' => function ($url, $model) use ($courseModel){
+                            $url = Url::to(['invoice/group-lesson', 'lessonId' => $model->id, 'enrolmentId' => null]);
+                            if (!$model->hasProFormaInvoice()) {
+                                return Html::a('Create Invoice', $url, [
+                                    'title' => Yii::t('yii', 'Create Invoice'),
+                                                                'class' => ['btn-success btn-sm']
+                                ]);
+                            } else {
+                                return null;
+                            }
+                        }
+                    ]
+                ],
 	];
      ?>   
     <?php echo GridView::widget([

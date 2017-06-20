@@ -6,7 +6,7 @@ use Yii;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
-use backend\models\search\LessonSearch;
+use common\models\Enrolment;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\UserProfile;
@@ -538,5 +538,40 @@ class InvoiceController extends Controller
             ]);
             return $this->redirect(['enrolment/view', 'id' => $paymentCycle->enrolment->id, '#' => 'payment-cycle']);
         }
+    }
+
+    public function actionEnrolment($id)
+    {
+        $enrolment = Enrolment::findOne($id);
+
+        if (!$enrolment->hasProFormaInvoice()) {
+            $invoice = $enrolment->createProFormaInvoice();
+
+            return $this->redirect(['view', 'id' => $invoice->id]);
+        } else {
+            return $this->redirect(['view', 'id' => $enrolment->proFormaInvoice->id]);
+        }
+    }
+
+    public function actionGroupLesson($lessonId, $enrolmentId = null)
+    {
+        $lesson     = Lesson::findOne($lessonId);
+        if (!empty($enrolmentId)) {
+            $enrolment = Enrolment::findOne($enrolmentId);
+            $lesson->createGroupInvoice($enrolmentId);
+            return $this->redirect(['lesson/view', 'id' => $lessonId]);
+        } else {
+            $enrolments = Enrolment::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->andWhere(['courseId' => $lesson->courseId])
+                ->all();
+            foreach ($enrolments as $enrolment) {
+                $lesson->createGroupInvoice($enrolment->id);
+            }
+            return $this->redirect(['course/view', 'id' => $lesson->courseId]);
+        }
+        
+        
     }
 }

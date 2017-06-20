@@ -682,7 +682,7 @@ class LessonController extends Controller
             if ($model->hasInvoice()) {
                 $invoice = $model->invoice;
             } else {
-                $invoice = $model->createInvoice();
+                $invoice = $model->createPrivateLessonInvoice();
             }
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
@@ -753,7 +753,7 @@ class LessonController extends Controller
 
                     return $this->redirect(['invoice/view', 'id' => $invoice->id]);
                 } else {
-                    $model->paymentCycle->proFormaInvoice->addLineItem($model);
+                    $model->paymentCycle->proFormaInvoice->addPrivateLessonLineItem($model);
                     $model->paymentCycle->proFormaInvoice->save();
                 }
             } else {
@@ -773,7 +773,7 @@ class LessonController extends Controller
                 $invoice->createdUserId = Yii::$app->user->id;
                 $invoice->updatedUserId = Yii::$app->user->id;
                 $invoice->save();
-                $invoice->addLineItem($model);
+                $invoiceLineItem = $invoice->addPrivateLessonLineItem($model);
                 $invoice->save();
             } else {
                 $invoice = $model->proFormaInvoice;
@@ -810,7 +810,10 @@ class LessonController extends Controller
     {
         $model = $this->findModel($id);
         $lessonDurationSec = $model->durationSec;
-        $model->proFormaInvoice->removeLessonItem($id);
+        if ($model->hasProFormaInvoice()) {
+            $model->proFormaInvoice->removeLessonItem($id);
+        }
+        
         for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
             $lesssonSplit = new LessonSplit();
             $lesssonSplit->lessonId = $id;
