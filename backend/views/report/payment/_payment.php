@@ -41,6 +41,10 @@ tr.success>td{
 .kv-page-summary{
 	border-top: 0;
 }
+@page{
+  size: auto;
+  margin: 3mm;
+}
 </style>
 <div class="payments-index">
 	<?php if ($searchModel->groupByMethod) : ?>
