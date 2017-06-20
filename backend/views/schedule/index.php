@@ -11,13 +11,9 @@ use common\models\Program;
 
 /* @var $this yii\web\View */
 $holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
-$holidayResource = null;
+$holidayResource = '';
 if(!empty($holiday)) {
-	if(!empty($holiday->description)) {
-		$holidayResource = ' (' . $holiday->description. ')';
-	} else {
-		$holidayResource = ' (Holiday)';	
-	}
+	$holidayResource = ' (' . $holiday->description. ')';
 }
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
 ?>
@@ -352,9 +348,8 @@ $.ajax({
 	dataType: "json",
 	success: function (response)
 	{
-		console.log(response);
         var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-        $(".content-header h1").text("Schedule for " + formattedDate + response);
+        $(".content-header h1").text("Schedule for " + formattedDate.concat(response));
 	}
 });	
 }
