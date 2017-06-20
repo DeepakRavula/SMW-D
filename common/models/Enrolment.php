@@ -458,17 +458,17 @@ class Enrolment extends \yii\db\ActiveRecord
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
         if (!$invoice->save()) {
-            Yii::info('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+            Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
         }
         $invoiceLineItem = $invoice->addGroupProFormaLineItem($this);
         $invoiceEnrolment = new InvoiceItemEnrolment();
         $invoiceEnrolment->invoiceLineItemId = $invoiceLineItem->id;
         $invoiceEnrolment->enrolemntId = $this->id;
         if (!$invoiceEnrolment->save()) {
-            Yii::info('Create Invoice Enrolment: ' . \yii\helpers\VarDumper::dumpAsString($invoiceEnrolment->getErrors()));
+            Yii::error('Create Invoice Enrolment: ' . \yii\helpers\VarDumper::dumpAsString($invoiceEnrolment->getErrors()));
         }
         if (!$invoice->save()) {
-            Yii::info('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+            Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
         }
         return $invoice;
     }

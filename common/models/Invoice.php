@@ -896,7 +896,7 @@ class Invoice extends \yii\db\ActiveRecord
         if ($invoiceLineItem->save()) {
             return $invoiceLineItem;
         } else {
-            Yii::info('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         }
     }
 
