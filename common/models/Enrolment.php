@@ -100,10 +100,15 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
     }
-	public function getPrivateCourseSchedule()
+	public function getCourseSchedule()
     {
-        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
-			->via('course');
+		if($this->course->program->isPrivate()) {
+        	return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+				->via('course');
+		} else {
+			return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+				->via('course');	
+		}
     }
     public function getPaymentsFrequency()
     {
@@ -277,7 +282,7 @@ class Enrolment extends \yii\db\ActiveRecord
 			$lessonCount = Lesson::find()
 				->andWhere(['courseId' => $this->courseId, 'status' => Lesson::STATUS_DRAFTED])
 				->count();
-			$checkDay = (int) $day->format('N') === (int) $this->privateCourseSchedule->day;
+			$checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
 			$checkLessonCount = (int)$lessonCount < Lesson::MAXIMUM_LIMIT; 
 			if ($checkDay && $checkLessonCount) {
 				$professionalDevelopmentDay = clone $day;
@@ -292,7 +297,7 @@ class Enrolment extends \yii\db\ActiveRecord
 					'teacherId' => $this->course->teacherId,
 					'status' => Lesson::STATUS_DRAFTED,
 					'date' => $day->format('Y-m-d H:i:s'),
-					'duration' => $this->privateCourseSchedule->duration,
+					'duration' => $this->courseSchedule->duration,
 					'isDeleted' => false,
 				]);
 				$lesson->save();

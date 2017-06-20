@@ -61,7 +61,7 @@ class TimelineEventEnrolment extends \yii\db\ActiveRecord
 		$enrolmentModel = $event->sender;
 		$data = $event->data;
 		$dayList = Course::getWeekdaysList();
-		$day = $dayList[$enrolmentModel->privateCourseSchedule->day];
+		$day = $dayList[$enrolmentModel->courseSchedule->day];
 		$enrolment = Enrolment::find(['id' => $enrolmentModel->id])->asArray()->one();
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $enrolment, 
@@ -93,7 +93,7 @@ class TimelineEventEnrolment extends \yii\db\ActiveRecord
 		$enrolmentModel = $event->sender;
 		$data = $event->data;
 		$dayList = Course::getWeekdaysList();
-		$day = $dayList[$enrolmentModel->privateCourseSchedule->day];
+		$day = $dayList[$enrolmentModel->courseSchedule->day];
 		$enrolment = Enrolment::find(['id' => $enrolmentModel->id])->asArray()->one();
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $enrolment, 

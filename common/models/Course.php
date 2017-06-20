@@ -167,14 +167,13 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(Program::className(), ['id' => 'programId']);
     }
 
-    public function getGroupCourseSchedule()
+	public function getCourseSchedule()
     {
-        return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
-    }
-
-	public function getPrivateCourseSchedule()
-    {
-        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id']);
+		if($this->program->isPrivate()) {
+	        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id']);
+		} else {
+	        return $this->hasMany(CourseSchedule::className(), ['courseId' => 'id']);
+		}
     }
 
 	public function getEnrolment()
