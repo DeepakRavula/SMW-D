@@ -4,7 +4,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 
 ?>
-<div class="p-l-20 payments-form">
+<div class="payments-form">
 	<?php $form = ActiveForm::begin([
         //'action' => Url::to(['vacation/create', 'enrolmentId' => $enrod]),
     ]); ?>
