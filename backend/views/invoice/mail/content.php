@@ -55,7 +55,7 @@ Dear Customer,<br>
             <table class="table table-invoice-total">
               <tbody>
                 <tr>
-                  <td colspan="4">
+                  <td colspan="4" style="width: 50%;">
                     <?php if (!empty($model->notes)):?>
                     <div class="row-fluid m-t-20">
                       <em><strong> Printed Notes: </strong><Br>
@@ -63,7 +63,7 @@ Dear Customer,<br>
                       </div>
                       <?php endif; ?>
                   </td>
-                  <td colspan="2">
+                  <td colspan="4">
                     <table class="table-invoice-childtable">
                      <tr>
                       <td>SubTotal</td>

@@ -436,16 +436,41 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function hasExplodedLesson()
     {
-        $lessons = Lesson::find()
-            ->andWhere(['lesson.courseId' => $this->courseId])
-            ->joinWith(['lessonSplit' => function ($query) {
-                $query->joinWith(['lessonSplitUsage' => function ($query) {
-                    $query->where(['lessonSplitId' => null]);
-                }]);
-                $query->andWhere(['NOT', ['lesson_split.lessonId' => null]]);
-            }])
-            ->one();
+        $courseId = $this->courseId;
+        $locationId = $this->course->locationId;
+        $lessonSplits = LessonSplit::find()
+                    ->unusedSplits($courseId, $locationId)
+                    ->all();
 
-        return !empty($lessons);
+        return !empty($lessonSplits);
+    }
+
+    public function createProFormaInvoice()
+    {
+        $locationId = $this->student->customer->userLocation->location_id;
+        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $invoice = new Invoice();
+        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
+        $invoice->userName = $user->publicIdentity;
+        $invoice->user_id = $this->student->customer->id;
+        $invoice->location_id = $locationId;
+        $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
+        $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
+        $invoice->createdUserId = Yii::$app->user->id;
+        $invoice->updatedUserId = Yii::$app->user->id;
+        if (!$invoice->save()) {
+            Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+        }
+        $invoiceLineItem = $invoice->addGroupProFormaLineItem($this);
+        $invoiceEnrolment = new InvoiceItemEnrolment();
+        $invoiceEnrolment->invoiceLineItemId = $invoiceLineItem->id;
+        $invoiceEnrolment->enrolemntId = $this->id;
+        if (!$invoiceEnrolment->save()) {
+            Yii::error('Create Invoice Enrolment: ' . \yii\helpers\VarDumper::dumpAsString($invoiceEnrolment->getErrors()));
+        }
+        if (!$invoice->save()) {
+            Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+        }
+        return $invoice;
     }
 }
