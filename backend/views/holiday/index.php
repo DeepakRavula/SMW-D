@@ -13,23 +13,19 @@ use common\models\Holiday;
 
 $this->title = 'Holidays';
 ?>
-<?php $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), '#', ['class' => 'btn btn-primary btn-sm add-holiday']);?>
+<?php $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), '#', ['class' => 'btn btn-primary btn-sm', 'id' => 'add-holiday']);?>
  <?php Modal::begin([
         'header' => '<h4 class="m-0">Holiday</h4>',
         'id' => 'holiday-modal',
     ]); ?>
-<div id="holiday-content">
-	<?php echo $this->render('_form', [
-        'model' => new Holiday(),
-    ]); ?>
-	</div>
+<div id="holiday-content"></div>
  <?php  Modal::end(); ?>
 <div>
 <?php yii\widgets\Pjax::begin([
-	'id' => 'holiday-grid'
+	'id' => 'holiday-listing'
 ]); ?>
     <?php echo GridView::widget([
-		'id' => 'holiday-listing',
+		'id' => 'holiday-grid',
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
@@ -47,32 +43,16 @@ $this->title = 'Holidays';
 	<?php yii\widgets\Pjax::end(); ?>
 </div>
 <script>
-	 $(document).ready(function() {
-		$('.add-holiday').click(function() {
-			$('#holiday-modal').modal('show');	
-			return false;
-		});	
-		$(document).on('beforeSubmit', '#holiday-form', function () {
-            $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status) {
-                        $.pjax.reload({container: '#holiday-grid', timeout: 6000});
-                        $('#holiday-modal').modal('hide');
-                    }
-                }
-            });
-            return false;
-        });
-		   $(document).on('click', '#holiday-listing  tbody > tr', function () {
+    $(document).ready(function() {
+        $(document).on('click', '#add-holiday, #holiday-listing  tbody > tr', function () {
             var holidayId = $(this).data('key');
-            var url = '<?= Url::to(['holiday/update']); ?>?id=' + holidayId;
+            if (holidayId === undefined) {
+                var customUrl = '<?= Url::to(['holiday/create']); ?>';
+            } else {
+                var customUrl = '<?= Url::to(['holiday/update']); ?>?id=' + holidayId;
+            }
             $.ajax({
-                url    : url,
+                url    : customUrl,
                 type   : 'post',
                 dataType: "json",
                 data   : $(this).serialize(),
@@ -87,9 +67,25 @@ $this->title = 'Holidays';
             });
             return false;
         });
+        $(document).on('beforeSubmit', '#holiday-form', function () {
+            $.ajax({
+                url    : $(this).attr('action'),
+                type   : 'post',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status) {
+                        $.pjax.reload({container: '#holiday-listing', timeout: 6000});
+                        $('#holiday-modal').modal('hide');
+                    }
+                }
+            });
+            return false;
+        });
         $(document).on('click', '.holiday-cancel', function () {
             $('#holiday-modal').modal('hide');
             return false;
         });
-	});
+    });
 </script>

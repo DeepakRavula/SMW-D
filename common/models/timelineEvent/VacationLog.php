@@ -32,7 +32,7 @@ class VacationLog extends Vacation {
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $vacationModel->enrolment->student->fullName;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/student/view', 'id' => $vacationModel->enrolment->student->id]);
 			$timelineEventLink->save();
 
@@ -54,7 +54,7 @@ class VacationLog extends Vacation {
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $vacationModel->enrolment->student->fullName;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/student/view', 'id' => $vacationModel->enrolment->student->id]);
 			$timelineEventLink->save();
 

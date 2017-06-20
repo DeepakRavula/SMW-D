@@ -55,7 +55,7 @@ class LessonController extends Controller
             ],
         ];
     }
-
+		
     /**
      * Lists all Lesson models.
      *
@@ -189,6 +189,7 @@ class LessonController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $oldLesson = clone $model;
         $oldDate = $model->date;
         $oldTeacherId = $model->teacherId;
         $user = User::findOne(['id'=>Yii::$app->user->id]);
@@ -251,8 +252,11 @@ class LessonController extends Controller
 						$model->duration = $duration->format('H:i:s');
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+                                        if ($model->isExploded()) {
+                                            $model->duration = $oldLesson->duration;
+                                        }
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
-					$model->save();
+                                        $model->save();
 
 					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 				}
@@ -806,6 +810,7 @@ class LessonController extends Controller
     {
         $model = $this->findModel($id);
         $lessonDurationSec = $model->durationSec;
+        $model->proFormaInvoice->removeLessonItem($id);
         for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
             $lesssonSplit = new LessonSplit();
             $lesssonSplit->lessonId = $id;

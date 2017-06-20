@@ -11,13 +11,9 @@ use common\models\Program;
 
 /* @var $this yii\web\View */
 $holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
-$holidayResource = null;
+$holidayResource = '';
 if(!empty($holiday)) {
-	if(!empty($holiday->description)) {
-		$holidayResource = ' (' . $holiday->description. ')';
-	} else {
-		$holidayResource = ' (Holiday)';	
-	}
+	$holidayResource = ' (' . $holiday->description. ')';
 }
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
 ?>
@@ -38,7 +34,6 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holid
 <link type="text/css" href="/plugins/poshytip/tip-yellow/tip-yellow.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/poshytip/tip-yellowsimple/tip-yellowsimple.css" rel='stylesheet' />
 <?php
-    $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
     $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
     $teacherUnavailability = CalendarEventColor::findOne(['cssClass' => 'teacher-unavailability']);
     $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
@@ -48,8 +43,6 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holid
     $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
     $this->registerCss(
         ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
-        .holiday, .fc-event .holiday .fc-event-time, .holiday a { background-color: " . $storeClosed->code . " !important;
-            border: 1px solid " . $storeClosed->code . " !important; }
         .fc-bg { background-color: " . $teacherUnavailability->code . " !important; }
         .fc-today { background-color: " . $teacherUnavailability->code . " !important; }
         .private-lesson, .fc-event .private-lesson .fc-event-time, .private-lesson a {
@@ -355,9 +348,8 @@ $.ajax({
 	dataType: "json",
 	success: function (response)
 	{
-		console.log(response);
         var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-        $(".content-header h1").text("Schedule for " + formattedDate + response);
+        $(".content-header h1").text("Schedule for " + formattedDate.concat(response));
 	}
 });	
 }

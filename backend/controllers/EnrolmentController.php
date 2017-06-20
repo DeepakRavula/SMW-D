@@ -394,8 +394,10 @@ class EnrolmentController extends Controller
 				} else if($lesson->isEnrolmentFirstlesson()) {
 					$class = 'first-lesson';
 				} else if ($lesson->getRootLesson()) {
-					$class = 'lesson-rescheduled';
 					$rootLesson = $lesson->getRootLesson();
+					if($rootLesson->id !== $lesson->id) {
+                    	$class = 'lesson-rescheduled';
+					}
 					if ($rootLesson->teacherId !== $lesson->teacherId) {
 						$class = 'teacher-substituted';
 					}
@@ -585,8 +587,8 @@ class EnrolmentController extends Controller
             foreach ($lessons as $lesson) {
                 $lesson->delete();
             }
-			$model->delete();
         }
+		$model->delete();
         return [
 			'status' => true,
 		];

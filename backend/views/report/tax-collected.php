@@ -52,7 +52,7 @@ $this->title = 'Tax Collected';
 	[
 		'label' => 'Customer',
         'value' => function ($data) {
-			return $data->invoice->user->publicIdentity;
+			return !empty($data->invoice->user->publicIdentity) ? $data->invoice->user->publicIdentity : null;
         },
 	],
 	[

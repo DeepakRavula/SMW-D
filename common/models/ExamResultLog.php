@@ -34,7 +34,7 @@ class ExamResultLog extends ExamResult
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $studentModel->fullName;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/student/view', 'id' => $studentModel->id]);
 			$timelineEventLink->save();
 
@@ -58,7 +58,7 @@ class ExamResultLog extends ExamResult
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $studentModel->fullName;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/student/view', 'id' => $studentModel->id]);
 			$timelineEventLink->save();
 
@@ -83,7 +83,7 @@ class ExamResultLog extends ExamResult
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = $studentModel->fullName;
-			$timelineEventLink->baseUrl = Yii::$app->homeUrl;
+			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 			$timelineEventLink->path = Url::to(['/student/view', 'id' => $studentModel->id]);
 			$timelineEventLink->save();
 

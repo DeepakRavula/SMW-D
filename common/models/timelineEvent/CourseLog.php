@@ -35,7 +35,7 @@ class CourseLog extends Course
             $timelineEventLink = new TimelineEventLink();
             $timelineEventLink->timelineEventId = $timelineEvent->id;
             $timelineEventLink->index = $groupCourseModel->program->name;
-            $timelineEventLink->baseUrl = Yii::$app->homeUrl;
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
             $timelineEventLink->path = Url::to(['/course/view', 'id' => $groupCourseModel->id]);
             $timelineEventLink->save();
 

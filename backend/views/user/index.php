@@ -98,10 +98,18 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php yii\widgets\Pjax::begin(['id' => 'user-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
-            'rowOptions' => function ($model, $key, $index, $grid) use ($roleName, $originalInvoice) {
+            'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel, $roleName, $originalInvoice) {
                 $url = Url::to(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);
+            	$data = ['data-url' => $url];
+				if ($searchModel->showAllCustomers || $searchModel->showAllTeachers) {
+					if ((int)$model->status === User::STATUS_NOT_ACTIVE) {
+						$data = array_merge($data, ['class' => 'danger inactive']);
+					} elseif ((int)$model->status === User::STATUS_ACTIVE) {
+						$data = array_merge($data, ['class' => 'info active']);
+					}
+            }
 
-                return ['data-url' => $url];
+            return $data;
             },
             'tableOptions' => ['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],

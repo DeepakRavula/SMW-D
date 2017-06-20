@@ -135,6 +135,17 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id']);
     }
 
+    public function getLineItemPaymentCycleLessonSplit()
+    {
+        return $this->hasOne(InvoiceItemPaymentCycleLessonSplit::className(), ['invoiceLineItemId' => 'id']);
+    }
+
+    public function getLessonSplit()
+    {
+        return $this->hasOne(LessonSplit::className(), ['id' => 'lessonSplitId'])
+            ->via('lineItemPaymentCycleLessonSplit');
+    }
+
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
@@ -142,8 +153,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getProFormaLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+        if ($this->isPaymentCycleLesson()) {
+            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
                     ->via('paymentCycleLesson');
+        } else if($this->isPaymentCycleLessonSplit()) {
+            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                    ->via('lessonSplit');
+        }
     }
 
     public function getOriginalInvoice()
@@ -364,6 +380,16 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return (int) $this->item_type_id === (int) ItemType::TYPE_EXTRA_LESSON;
     }
 
+    public function isPaymentCycleLesson()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
+    }
+
+    public function isPaymentCycleLessonSplit()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_SPLIT;
+    }
+
     public function getLessonCreditUnit($splitId)
     {
         $split       = LessonSplit::findOne($splitId);
@@ -388,5 +414,16 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ($this->invoice->addLessonCreditAppliedPayment($this->netPrice - $old->netPrice, $creditUsedInvoice)) {
             $creditUsedInvoice->save();
         }
+    }
+
+    public function beforeDelete()
+    {
+        if ($this->isPaymentCycleLesson()) {
+            $this->lineItemPaymentCycleLesson->delete();
+        } else if ($this->isPrivateLesson() || $this->isExtraLesson()) {
+            $this->lineItemLesson->delete();
+        }
+
+        return parent::beforeDelete();
     }
 }

@@ -7,6 +7,7 @@ use common\models\Payment;
 use Yii;
 use common\models\User;
 use common\models\TeacherRoom;
+use yii\helpers\Url;
 use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
@@ -641,8 +642,12 @@ class UserController extends Controller
                                 'body' => ucwords($model->roles).' profile has been updated successfully',
                         ]);
                         $section = ltrim($model->section, '#');
-
-                        return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id, '#' => $section]);
+						if((int)$model->status === User::STATUS_NOT_ACTIVE) {
+							$link = Url::to(['index', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]); 
+						} else {
+                        	$link = Url::to(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id, '#' => $section]);
+						}
+						return $this->redirect($link);
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();

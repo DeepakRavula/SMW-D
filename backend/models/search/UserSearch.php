@@ -91,6 +91,7 @@ class UserSearch extends User
                 $query->joinWith(['student' => function ($query) use ($currentDate) {
                     $query->enrolled($currentDate);
                 }]);
+				$query->active();
             }
             $query->groupBy('user.id');
         }
@@ -99,11 +100,10 @@ class UserSearch extends User
                 $query->joinWith(['userLocation' => function ($query) {
                     $query->joinWith('teacherAvailability');
                 }]);
+				$query->active();
             }
             $query->groupBy('user.id');
         }
-
-        $query->active();
 
         return $dataProvider;
     }

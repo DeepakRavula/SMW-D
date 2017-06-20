@@ -17,7 +17,6 @@ $this->title = 'Calendar for ' .(new \DateTime())->format('l, F jS, Y');
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <?php
-    $storeClosed = CalendarEventColor::findOne(['cssClass' => 'store-closed']);
     $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
     $teacherUnavailability = CalendarEventColor::findOne(['cssClass' => 'teacher-unavailability']);
     $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
@@ -27,8 +26,6 @@ $this->title = 'Calendar for ' .(new \DateTime())->format('l, F jS, Y');
     $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
     $this->registerCss(
         ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
-        .holiday, .fc-event .holiday .fc-event-time, .holiday a { background-color: " . $storeClosed->code . " !important;
-            border: 1px solid " . $storeClosed->code . " !important; }
         .fc-bg { background-color: " . $teacherUnavailability->code . " !important; }
         .fc-today { background-color: " . $teacherUnavailability->code . " !important; }
         .private-lesson, .fc-event .private-lesson .fc-event-time, .private-lesson a {
