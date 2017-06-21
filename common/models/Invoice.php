@@ -923,7 +923,9 @@ class Invoice extends \yii\db\ActiveRecord
         $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
         $invoiceLineItem->discount     = $customerDiscount;
         $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
-        $invoiceLineItem->description  = 'Group Lesson';
+        $studentFullName = $enrolment->student->fullName;
+        $invoiceLineItem->description  = $enrolment->program->name . ' for '. $studentFullName . ' with '
+            . $enrolment->firstLesson->teacher->publicIdentity;
         $invoiceLineItem->code = $invoiceLineItem->getItemCode();
         if ($invoiceLineItem->save()) {
             $invoiceLineItem->addLineItemDetails($enrolment);
