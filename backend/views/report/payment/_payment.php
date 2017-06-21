@@ -198,7 +198,7 @@ tr.success>td{
 			],
 				[
 				'label' => 'Reference',
-				'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
+				'contentOptions' => ['style' => 'font-size:14px'],
 				'value' => function ($data) {
 					if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
 						$invoiceNumber = str_pad($data->reference, 5, 0, STR_PAD_LEFT);
