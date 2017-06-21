@@ -5,6 +5,7 @@ use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use common\models\Program;
 use yii\helpers\ArrayHelper;
+use yii\bootstrap\ButtonGroup;
 use yii\helpers\Url;
 use common\models\LocationAvailability;
 use kartik\depdrop\DepDrop;
@@ -46,34 +47,79 @@ use yii\bootstrap\Modal;
 					])->label('Teacher');
 					?>
             </div>
-            <div class="col-md-4">
-                    <?php
-                    echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+		<div class="col-md-4">
+				<?= $form->field($model, 'weeksCount')->textInput()->label('Number Of Weeks');?>
+       		</div>
+			<?php 
+			$buttons = [
+				[
+					'label' => 'One',
+					'options' => [
+						'class' => 'btn btn-outline-info',
+						'id' => 'lessons-per-week-one',
+					],
+				],
+
+				[
+					'label' => 'Two',
+					'options' => [
+						'class' => 'btn btn-outline-info',
+						'id' => 'lessons-per-week-two',
+					],
+				],	
+			]; ?>
+            <div class="col-md-4"></div
+			 <div class="col-md-4">
+				<label>Number of Lessons Per Week</label>
+			<?php // a button group with items configuration
+			echo ButtonGroup::widget([
+				'buttons' => $buttons,
+				'options' => [
+					'id' => 'payment-method-btn-section',
+					'class' => 'btn-group-horizontal p-l-10 m-t-20 m-b-20',
+				],
+			]); ?>
+			</div>
+           <div class="clearfix"></div>
+		   <div id="lessonsPerWeekCountOne">
+		   <div class="col-md-4 course-duration">
+                     <?php
+                     echo $form->field($courseSchedule, 'duration[]')->widget(TimePicker::classname(),
+                 [
+                 'options' => ['id' => 'course-duration'],
+                 'pluginOptions' => [
+                     'showMeridian' => false,
+                     'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+                 ],
+             ]);
+             ?>
+             </div>
+			<div class="col-md-4  hand group-course-calendar-icon" style="margin-top:25px;">
+				<label style="margin-right:15px;      padding: 6px 12px;    width: 100%;    height: 34px;"></label>
+				<span class="fa fa-calendar" style="    font-size: 22px;    position: absolute;    right: 130px;    top: 6px;"></span>
+			</div>
+			</div>
+			<div id="lessonsPerWeekCountTwo" class="col-md-4">
+			<?php
+                    echo $form->field($courseSchedule, 'duration[]')->widget(TimePicker::classname(),
                 [
-                'options' => ['id' => 'course-duration'],
+                'options' => ['id' => 'course-duration2'],
                 'pluginOptions' => [
                     'showMeridian' => false,
                     'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
                 ],
             ]);
             ?>
-            </div>
-        <div class="col-md-4  hand group-course-calendar-icon" style="margin-top:25px;">
-			<label style="margin-right:15px;    border: 1px solid #ccc;       padding: 6px 12px;    width: 100%;    height: 34px;">Check The Schedule</label>
-            <span class="fa fa-calendar" style="    font-size: 22px;    position: absolute;    right: 25px;    top: 6px;"></span>
+			<div class="col-md-4  hand ">
+				<label ></label>
+				<span class="fa fa-calendar group-course-calendar-icon" ></span>
+			</div>
 		</div>
-		<div class="col-md-4">
-				<?= $form->field($model, 'weeksCount')->textInput()->label('Number Of Weeks');?>
-        </div>
-		 <div class="col-md-4">
-				<?= $form->field($model, 'lessonsPerWeekCount')->textInput(['readOnly' => true, 'value' => 1])->label('Number Of Lessons Per Week');
-					?>
+            <div class="col-md-3">
+                 <?php echo $form->field($courseSchedule, 'day')->hiddenInput()->label(false); ?>
             </div>
             <div class="col-md-3">
-                 <?php echo $form->field($model, 'day')->hiddenInput()->label(false); ?>
-            </div>
-            <div class="col-md-3">
-                    <?= $form->field($model, 'fromTime')->hiddenInput()->label(false); ?>
+                    <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false); ?>
             </div>
             <div class="col-md-3">
                     <?= $form->field($model, 'startDate')->hiddenInput()->label(false); ?>
@@ -101,3 +147,21 @@ echo $this->render('_calendar', [
 ]);
 ?>
 <?php Modal::end(); ?>
+<script>
+	$(document).ready(function() {
+		$('#lessonsPerWeekCountOne').hide();
+		$('#lessonsPerWeekCountTwo').hide();
+		$('#lessons-per-week-one').click(function() {
+			$('#course-lessonsperweekcount').val(1);
+			$('#lessonsPerWeekCountOne').show();
+			$('#lessonsPerWeekCountTwo').hide();
+			return false;
+		});
+		$('#lessons-per-week-two').click(function() {
+			$('#course-lessonsperweekcount').val(2);
+			$('#lessonsPerWeekCountOne').show();
+			$('#lessonsPerWeekCountTwo').show();
+			return false;
+		});
+	});
+</script>

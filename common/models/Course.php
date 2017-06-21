@@ -55,8 +55,7 @@ class Course extends \yii\db\ActiveRecord
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
             [['startDate', 'endDate'], 'string'],
             [['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
-            //['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
-            //['fromTime', 'checkTime', 'on' => self::SCENARIO_GROUP_COURSE],
+          
         ];
     }
 

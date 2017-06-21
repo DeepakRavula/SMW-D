@@ -18,6 +18,7 @@ use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use common\models\CourseGroup;
+use common\models\CourseSchedule;
 use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\PaymentFrequency;
@@ -161,6 +162,7 @@ public function getHolidayEvent($date)
     public function actionCreate()
     {
         $model = new Course();
+        $courseSchedule = new CourseSchedule();
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
         $model->locationId = Yii::$app->session->get('location_id');
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
@@ -172,6 +174,7 @@ public function getHolidayEvent($date)
         } else {
             return $this->render('create', [
                 'model' => $model,
+				'courseSchedule' => $courseSchedule
             ]);
         }
     }
