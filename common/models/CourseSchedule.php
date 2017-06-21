@@ -15,6 +15,8 @@ use Yii;
  */
 class CourseSchedule extends \yii\db\ActiveRecord
 {
+	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
+	
     public $studentId;
     public $paymentFrequency;
 	public $discount;
@@ -38,11 +40,52 @@ class CourseSchedule extends \yii\db\ActiveRecord
             [['fromTime', 'duration', 'discount'], 'safe'],
 			[['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
-            },'except' => Course::SCENARIO_EDIT_ENROLMENT 
+            },'except' => self::SCENARIO_EDIT_ENROLMENT 
             ],
+			['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
+            ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
         ];
     }
 
+	public function checkTeacherAvailableDay($attribute, $params)
+    {
+        $teacherAvailabilities = TeacherAvailability::find()
+            ->joinWith(['teacher' => function ($query) {
+                $query->where(['user.id' => $this->course->teacherId]);
+            }])
+                ->where(['teacher_availability_day.day' => $this->day])
+                ->all();
+        if (empty($teacherAvailabilities)) {
+			$dayList = Course::getWeekdaysList();
+			$day = $dayList[$this->day];
+            $this->addError($attribute, 'Teacher is not available on '. $day);
+        }
+    }	
+	public function checkTime($attribute, $params)
+    {
+        $teacherAvailabilities = TeacherAvailability::find()
+            ->joinWith(['teacher' => function ($query) {
+                $query->where(['user.id' => $this->course->teacherId]);
+            }])
+                ->where(['teacher_availability_day.day' => $this->day])
+                ->all();
+        $availableHours = [];
+        if (! empty($teacherAvailabilities)) {
+            foreach ($teacherAvailabilities as $teacherAvailability) {
+                $start = new \DateTime($teacherAvailability->from_time);
+                $end = new \DateTime($teacherAvailability->to_time);
+                $interval = new \DateInterval('PT15M');
+                $hours = new \DatePeriod($start, $interval, $end);
+                foreach ($hours as $hour) {
+                    $availableHours[] = Yii::$app->formatter->asTime($hour);
+                }
+            }
+            $fromTime = (new \DateTime($this->fromTime))->format('h:i A');
+            if (!in_array($fromTime, $availableHours)) {
+                $this->addError($attribute, 'Please choose the lesson time within the teacher\'s availability hours');
+            }
+        }
+    }
     /**
      * @inheritdoc
      */

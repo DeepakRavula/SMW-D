@@ -55,27 +55,10 @@ class Course extends \yii\db\ActiveRecord
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
             [['startDate', 'endDate'], 'string'],
             [['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
-           // ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
-           // ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
-            ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],
+           // ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             //['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
             //['fromTime', 'checkTime', 'on' => self::SCENARIO_GROUP_COURSE],
         ];
-    }
-
-	public function checkTeacherAvailableDay($attribute, $params)
-    {
-        $teacherAvailabilities = TeacherAvailability::find()
-            ->joinWith(['teacher' => function ($query) {
-                $query->where(['user.id' => $this->teacherId]);
-            }])
-                ->where(['teacher_availability_day.day' => $this->day])
-                ->all();
-        if (empty($teacherAvailabilities)) {
-			$dayList = self::getWeekdaysList();
-			$day = $dayList[$this->day];
-            $this->addError($attribute, 'Teacher is not available on '. $day);
-        }
     }
 
 	public function checkDate($attribute, $params)
@@ -87,31 +70,6 @@ class Course extends \yii\db\ActiveRecord
 		}
 	}
 	
-	public function checkTime($attribute, $params)
-    {
-        $teacherAvailabilities = TeacherAvailability::find()
-            ->joinWith(['teacher' => function ($query) {
-                $query->where(['user.id' => $this->teacherId]);
-            }])
-                ->where(['teacher_availability_day.day' => $this->day])
-                ->all();
-        $availableHours = [];
-        if (! empty($teacherAvailabilities)) {
-            foreach ($teacherAvailabilities as $teacherAvailability) {
-                $start = new \DateTime($teacherAvailability->from_time);
-                $end = new \DateTime($teacherAvailability->to_time);
-                $interval = new \DateInterval('PT15M');
-                $hours = new \DatePeriod($start, $interval, $end);
-                foreach ($hours as $hour) {
-                    $availableHours[] = Yii::$app->formatter->asTime($hour);
-                }
-            }
-            $fromTime = (new \DateTime($this->fromTime))->format('h:i A');
-            if (!in_array($fromTime, $availableHours)) {
-                $this->addError($attribute, 'Please choose the lesson time within the teacher\'s availability hours');
-            }
-        }
-    }
 
     /**
      * {@inheritdoc}
@@ -169,11 +127,7 @@ class Course extends \yii\db\ActiveRecord
 
 	public function getCourseSchedule()
     {
-		if($this->program->isPrivate()) {
-	        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id']);
-		} else {
-	        return $this->hasMany(CourseSchedule::className(), ['courseId' => 'id']);
-		}
+	    return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id']);
     }
 
 	public function getEnrolment()

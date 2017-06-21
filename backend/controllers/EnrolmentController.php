@@ -14,6 +14,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\base\Model;
+use common\models\CourseSchedule;
 use yii\helpers\ArrayHelper;
 use common\models\Student;
 use yii\filters\ContentNegotiator;
@@ -461,14 +462,16 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $timebits = explode(':', $model->course->fromTime);
+		$courseSchedule = $model->courseSchedule;
+		$post = Yii::$app->request->post();
+        $timebits = explode(':', $model->courseSchedule->fromTime);
 		$courseEndDate = (new \DateTime($model->course->endDate))->format('Y-m-d');
 		$courseEndDate = new \DateTime($courseEndDate);
         $courseEndDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-		if ($model->course->load(Yii::$app->request->post())) {
-			$model->course->setScenario(Course::SCENARIO_EDIT_ENROLMENT);
-			$validate = $model->course->validate();
-			$errors = $model->course->getErrors();
+		if ($model->course->load($post) && $model->courseSchedule->load($post)) {
+			$model->courseSchedule->setScenario(CourseSchedule::SCENARIO_EDIT_ENROLMENT);
+			$validate = $model->courseSchedule->validate();
+			$errors = $model->courseSchedule->getErrors();
 			if(!empty($errors)) {
 				Yii::$app->session->setFlash('alert',
 					[
@@ -491,7 +494,7 @@ class EnrolmentController extends Controller
 						if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
 							continue;
 						}
-						if ((int) $day->format('N') === (int) $model->course->day) {
+						if ((int) $day->format('N') === (int) $model->courseSchedule->day) {
 							$lesson = new Lesson();
 							$lesson->setAttributes([
 								'courseId' => $model->course->id,
@@ -523,11 +526,11 @@ class EnrolmentController extends Controller
 				->andWhere(['>=', 'date', $rescheduleBeginDate])
 				->all();
 			//lesson start date
-			$changedFromTime = (new \DateTime($model->course->fromTime))->format('H:i:s');
+			$changedFromTime = (new \DateTime($model->courseSchedule->fromTime))->format('H:i:s');
 			$duration		 = explode(':', $changedFromTime);
 			$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
 			$dayList = Course::getWeekdaysList();
-			$courseDay = $dayList[$model->course->day];
+			$courseDay = $dayList[$model->courseSchedule->day];
 			$day = $startDate->format('l');
 			if ($day !== $courseDay) {
 				$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
@@ -554,7 +557,8 @@ class EnrolmentController extends Controller
 			return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Course[rescheduleBeginDate]' => $model->course->rescheduleBeginDate]);
 		} else {
 			return $this->render('update', [
-					'model' => $model->course,
+				'model' => $model->course,
+				'courseSchedule' => $courseSchedule,
 			]);
 		}
     }
