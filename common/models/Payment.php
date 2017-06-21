@@ -188,13 +188,14 @@ class Payment extends ActiveRecord
     public function beforeSave($insert)
     {
         if (!$insert) {
-        	$this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             return parent::beforeSave($insert);
         }
         $model = Invoice::findOne(['id' => $this->invoiceId]);
         $this->user_id = $model->user_id;
         $this->isDeleted = false;
-        $this->date = (new \DateTime())->format('Y-m-d H:i:s');
+        if (empty($this->date)) {
+            $this->date = (new \DateTime())->format('Y-m-d H:i:s');
+        }
         if ($this->isCreditUsed()) {
             $this->amount = -abs($this->amount);
         }
