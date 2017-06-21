@@ -48,11 +48,11 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['
 
 $studentContent = $this->render('_student', [
     'studentDataProvider' => $studentDataProvider,
-    'model' => $model,
+    'courseModel' => $model,
 ]);
 $lessonContent = $this->render('_lesson', [
     'lessonDataProvider' => $lessonDataProvider,
-    'model' => $model,
+    'courseModel' => $model,
 ]);
 $logContent = $this->render('log', [
     'model' => $model,
