@@ -8,11 +8,11 @@ use yii\helpers\Url;
 ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
  <div class="row-fluid">
-	<div id="group-course-calendar1"> </div>
+	<div id="group-course-calendar"> </div>
 </div>
  <div class="form-group">
-	<?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary group-course-apply1', 'name' => 'button']) ?>
-	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default group-course-cancel1']);
+	<?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary group-course-apply', 'name' => 'button']) ?>
+	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default group-course-cancel']);
 	?>
 	<div class="clearfix"></div>
 </div>
@@ -33,22 +33,22 @@ use yii\helpers\Url;
 <script>
 $(document).ready(function(){
 	
-	$(document).on('click', '.group-course-apply1', function (e) {
-		$('#group-course-calendar1-modal').modal('hide');
+	$(document).on('click', '.group-course-apply', function (e) {
+		$('#group-course-calendar-modal').modal('hide');
 		return false;
 	});
-	$(document).on('click', '.group-course-cancel1', function (e) {
-		$('#group-course-calendar1-modal').modal('hide');
+	$(document).on('click', '.group-course-cancel', function (e) {
+		$('#group-course-calendar-modal').modal('hide');
 		return false;
 	});
-	$(document).on('click', '.group-course-calendar1-icon', function() {
-		$('#group-course-calendar1-modal').modal('show');
-        $('#group-course-calendar1-modal .modal-dialog').css({'width': '1000px'});
+	$(document).on('click', '.group-course-calendar-icon', function() {
+		$('#group-course-calendar-modal').modal('show');
+        $('#group-course-calendar-modal .modal-dialog').css({'width': '1000px'});
 		var date = moment(new Date()).format('DD-MM-YYYY');
 	    renderCalendar(date);
 	});
     $(document).on('change', '#course-teacherid', function () {
-        var date = $('#group-course-calendar1').fullCalendar('getDate');
+        var date = $('#group-course-calendar').fullCalendar('getDate');
         renderCalendar(date);
     });
 
@@ -69,8 +69,8 @@ $(document).ready(function(){
     }
 
     function refreshCalendar(availableHours, events, date) {
-        $('#group-course-calendar1').fullCalendar('destroy');
-        $('#group-course-calendar1').fullCalendar({
+        $('#group-course-calendar').fullCalendar('destroy');
+        $('#group-course-calendar').fullCalendar({
             defaultDate: moment(new Date()).format('YYYY-MM-DD'),
             header: {
                 left: 'prev,next today',
@@ -96,9 +96,9 @@ $(document).ready(function(){
                 $('#course-fromtime1').val(moment(start).format('HH:mm:ss'));
                 $('#group-course-calendar').fullCalendar('removeEvents', 'newEnrolment');
 				var endtime = start.clone();
-                var durationMinutes = moment.duration($('#course-duration2').val()).asMinutes();
+                var durationMinutes = moment.duration($('#group-course-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
-                $('#group-course-calendar1').fullCalendar('renderEvent',
+                $('#group-course-calendar').fullCalendar('renderEvent',
                     {
                         id: 'newEnrolment',
                         start: start,
@@ -107,7 +107,7 @@ $(document).ready(function(){
                     },
                 true // make the event "stick"
                 );
-                $('#group-course-calendar1').fullCalendar('unselect');
+                $('#group-course-calendar').fullCalendar('unselect');
             },
             eventAfterAllRender: function (view) {
                 $('.fc-short').removeClass('fc-short');
@@ -117,13 +117,13 @@ $(document).ready(function(){
         });
     }
 
-    $('#group-course-form').on('beforeSubmit', function (e) {
-        var courseDay = $('#course-day1').val();
-        if( ! courseDay) {
-            $('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
-            $(window).scrollTop(0);
-            return false;
-        }
-    });
+//    $('#group-course-form').on('beforeSubmit', function (e) {
+//        var courseDay = $('#courseschedule-day-1').val();
+//        if( ! courseDay) {
+//            $('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
+//            $(window).scrollTop(0);
+//            return false;
+//        }
+//    });
 });
 </script>

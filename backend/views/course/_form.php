@@ -82,11 +82,10 @@ use yii\bootstrap\Modal;
 			</div>
            <div class="clearfix"></div>
 		   <div id="lessonsPerWeekCountOne">
-		   <div class="col-md-4 course-duration">
+		   <div class="col-md-4" >
                      <?php
-                     echo $form->field($courseSchedule, 'duration[]')->widget(TimePicker::classname(),
+                     echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
                  [
-                 'options' => ['id' => 'course-duration'],
                  'pluginOptions' => [
                      'showMeridian' => false,
                      'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
@@ -94,16 +93,16 @@ use yii\bootstrap\Modal;
              ]);
              ?>
              </div>
-			<div class="col-md-4  hand group-course-calendar-icon" style="margin-top:25px;">
-				<label style="margin-right:15px;      padding: 6px 12px;    width: 100%;    height: 34px;"></label>
+			<div class="col-md-4  hand course-calendar-icon" style="margin-top:25px;">
+				<label class="course-summary" style="margin-right:15px;      padding: 6px 12px;    width: 100%;    height: 34px;"></label>
 				<span class="fa fa-calendar" style="    font-size: 22px;    position: absolute;    right: 130px;    top: 6px;"></span>
 			</div>
 			</div>
 			<div id="lessonsPerWeekCountTwo" class="col-md-4">
 			<?php
-                    echo $form->field($courseSchedule, 'duration[]')->widget(TimePicker::classname(),
+                    echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
                 [
-                'options' => ['id' => 'course-duration2'],
+                'options' => ['id' => 'group-course-duration'],
                 'pluginOptions' => [
                     'showMeridian' => false,
                     'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
@@ -115,15 +114,9 @@ use yii\bootstrap\Modal;
 				<span class="fa fa-calendar group-course-calendar-icon" ></span>
 			</div>
 		</div>
-            <div class="col-md-3">
-                 <?php echo $form->field($courseSchedule, 'day')->hiddenInput()->label(false); ?>
-            </div>
-            <div class="col-md-3">
-                    <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false); ?>
-            </div>
-            <div class="col-md-3">
-                    <?= $form->field($model, 'startDate')->hiddenInput()->label(false); ?>
-            </div>
+            <?= $form->field($courseSchedule, 'day[0]')->hiddenInput()->label(false); ?>
+            <?= $form->field($courseSchedule, 'fromTime[0]')->hiddenInput()->label(false); ?>
+            <?= $form->field($model, 'startDate[0]')->hiddenInput()->label(false); ?>
         </div>
     <div class="form-group p-l-10">
 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
@@ -139,11 +132,22 @@ if (!$model->isNewRecord) {
 <?php
 Modal::begin([
 	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-	'id' => 'group-course-calendar-modal',
+	'id' => 'course-calendar-modal',
 ]);
 ?>
 <?php
 echo $this->render('_calendar', [
+]);
+?>
+<?php Modal::end(); ?>
+<?php
+Modal::begin([
+	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+	'id' => 'group-course-calendar-modal',
+]);
+?>
+<?php
+echo $this->render('_group-calendar', [
 ]);
 ?>
 <?php Modal::end(); ?>

@@ -161,14 +161,20 @@ public function getHolidayEvent($date)
      */
     public function actionCreate()
     {
+		//print_r($_POST);die;
+		$post = Yii::$app->request->post();
         $model = new Course();
         $courseSchedule = new CourseSchedule();
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
+		
         $model->locationId = Yii::$app->session->get('location_id');
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
         $model->on(Course::EVENT_CREATE, [new CourseLog(), 'create']);
         $model->userName = $userModel->publicIdentity;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+		$model->load($post);
+		$courseSchedule->load($post);	
+        if (Yii::$app->request->isPost) {
+			 $model->save();
               $model->trigger(Course::EVENT_CREATE);
             return $this->redirect(['lesson/review', 'courseId' => $model->id]);
         } else {
