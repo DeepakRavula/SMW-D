@@ -480,38 +480,6 @@ class EnrolmentController extends Controller
 				]);
 				return $this->redirect(['update', 'id' => $model->id]);
 			}
-			$existingEndDate = (new \DateTime($model->course->getOldAttribute('endDate')))->format('d-m-Y');
-			$endDate = new \DateTime($model->course->endDate);
-			if(new \DateTime($existingEndDate) != $endDate) {
-				if(new \DateTime($existingEndDate) < $endDate) {
-					$interval = new \DateInterval('P1D');
-					$period = new \DatePeriod($courseEndDate, $interval, $endDate);
-
-					foreach ($period as $day) {
-						$professionalDevelopmentDay = clone $day;
-						$professionalDevelopmentDay->modify('last day of previous month');
-						$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
-						if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-							continue;
-						}
-						if ((int) $day->format('N') === (int) $model->courseSchedule->day) {
-							$lesson = new Lesson();
-							$lesson->setAttributes([
-								'courseId' => $model->course->id,
-								'teacherId' => $model->course->teacherId,
-								'status' => Lesson::STATUS_DRAFTED,
-								'date' => $day->format('Y-m-d H:i:s'),
-								'duration' => $model->course->duration,
-								'isDeleted' => false,
-							]);
-							$lesson->save();
-						}
-					}
-					return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Enrolment[endDate]' => $model->course->endDate, 'Enrolment[type]' => Enrolment::EDIT_RENEWAL]);
-				} else {
-					return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Enrolment[endDate]' => $model->course->endDate, 'Enrolment[type]' => Enrolment::EDIT_LEAVE]);
-				}
-			}
 			$rescheduleBeginDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
 			$rescheduleBeginDate = $rescheduleBeginDate->format('Y-m-d 00:00:00');
 			Lesson::deleteAll([

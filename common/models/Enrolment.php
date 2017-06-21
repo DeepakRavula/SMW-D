@@ -24,8 +24,6 @@ class Enrolment extends \yii\db\ActiveRecord
 	public $programName;
 	public $enrolmentCount;
     public $userName;
-    const EDIT_RENEWAL = 'renewal';
-    const EDIT_LEAVE = 'leave';
 
     const EVENT_CREATE = 'create';
     const EVENT_GROUP='group-course-enroll';

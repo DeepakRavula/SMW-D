@@ -55,21 +55,10 @@ class Course extends \yii\db\ActiveRecord
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
             [['startDate', 'endDate'], 'string'],
             [['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
-           // ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             //['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
             //['fromTime', 'checkTime', 'on' => self::SCENARIO_GROUP_COURSE],
         ];
     }
-
-	public function checkDate($attribute, $params)
-	{
-		$oldEndDate = (new \DateTime($this->getOldAttribute('endDate')))->format('d-m-Y');
-		$endDate = (new \DateTime($this->endDate))->format('d-m-Y');
-		if ($endDate > $oldEndDate) {
-			return $this->addError($attribute, 'End date must be less than course end date');
-		}
-	}
-	
 
     /**
      * {@inheritdoc}
@@ -230,7 +219,7 @@ class Course extends \yii\db\ActiveRecord
 		$duration								 = explode(':', $lessonTime);
 		$nextWeekScheduledDate = $startDate;
 		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->day];
+		$day = $dayList[$this->courseSchedule->day];
 		foreach ($lessons as $lesson) {
 			if ($this->isProfessionalDevelopmentDay($startDate)) {
 				$nextWeekScheduledDate = $startDate->modify('next '.$day);
@@ -250,7 +239,7 @@ class Course extends \yii\db\ActiveRecord
 	public function isProfessionalDevelopmentDay($startDate)
 	{
 		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->day];
+		$day = $dayList[$this->courseSchedule->day];
 		$isProfessionalDevelopmentDay = false;
 		$professionalDevelopmentDay = clone $startDate;
 		$professionalDevelopmentDay->modify('last day of previous month');
@@ -272,7 +261,7 @@ class Course extends \yii\db\ActiveRecord
 			->andWhere(['>=', 'date', $fromDate])
 			->all();
 		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->day];
+		$day = $dayList[$this->courseSchedule->day];
 		$startDate	 = new \DateTime($toDate);
 		$startDate->modify('next '.$day);
 		$this->generateLessons($lessons, $startDate);
@@ -289,7 +278,7 @@ class Course extends \yii\db\ActiveRecord
 			->andWhere(['>=', 'date', $toDate])
 			->all();
 		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->day];
+		$day = $dayList[$this->courseSchedule->day];
 		$startDay	 = (new \DateTime($fromDate))->format('l');
 		if ($day !== $startDay) {
 			$startDate = new \DateTime($fromDate);
