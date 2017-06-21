@@ -10,7 +10,7 @@ Dear Customer,<br>
         <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
-            'tableOptions' => ['class' => 'table table-bordered m-0'],
+            'tableOptions' => ['class' => 'table table-bordered m-0', 'style'=>'width:100%; text-align:left'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'summary' => '',
             'columns' => [
@@ -52,10 +52,10 @@ Dear Customer,<br>
     <div class="row">
         <!-- /.col -->
           <div class="table-responsive">
-            <table class="table table-invoice-total">
+            <table class="table table-invoice-total" style="width: 100%;">
               <tbody>
                 <tr>
-                  <td colspan="4" style="width: 50%;">
+                  <td colspan="4" style="width: 75%;">
                     <?php if (!empty($model->notes)):?>
                     <div class="row-fluid m-t-20">
                       <em><strong> Printed Notes: </strong><Br>
@@ -64,9 +64,9 @@ Dear Customer,<br>
                       <?php endif; ?>
                   </td>
                   <td colspan="4">
-                    <table class="table-invoice-childtable">
+                    <table class="table-invoice-childtable" style="width: 100%; float: right; text-align: left;">
                      <tr>
-                      <td>SubTotal</td>
+                      <td style="width: 50%;">SubTotal</td>
 						<td><?= Yii::$app->formatter->format($model->subTotal, ['currency']); ?></td>
                     </tr> 
                      <tr>
