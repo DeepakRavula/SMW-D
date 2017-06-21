@@ -571,7 +571,5 @@ class InvoiceController extends Controller
             }
             return $this->redirect(['course/view', 'id' => $lesson->courseId]);
         }
-        
-        
     }
 }

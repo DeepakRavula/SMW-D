@@ -795,10 +795,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $invoice   = $this->createInvoice();
         $enrolment = Enrolment::findOne($enrolmentId);
-        $courseCount = Lesson::find()
-                ->notDeleted()
-                ->where(['courseId' => $enrolment->courseId])
-                ->count('id');
+        $courseCount = $enrolment->courseCount;
         $location_id = $enrolment->student->customer->userLocation->location_id;
         $user = User::findOne(['id' => $enrolment->student->customer]);
         $invoice->userName = $user->publicIdentity;
@@ -888,5 +885,10 @@ class Lesson extends \yii\db\ActiveRecord
         }
 
         return $amount - $discountValue;
+    }
+
+    public function getEnrolmentLessonProFormaLineItem($enrolmentId)
+    {
+        
     }
 }

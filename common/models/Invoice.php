@@ -659,40 +659,43 @@ class Invoice extends \yii\db\ActiveRecord
         if ($invoiceLineItem->save()) {
             $invoiceLineItem->addLineItemDetails($lesson);
             return $invoiceLineItem;
+        } else {
+            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         }
     }
 
     public function addGroupLessonLineItem($lesson)
     {
-        $invoiceLineItem = $this->addLessonLineItem();
+        $invoiceLineItem               = $this->addLessonLineItem();
         $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-        $invoiceLineItem->unit       = $lesson->unit;
-        $actualLessonDate            = \DateTime::createFromFormat('Y-m-d H:i:s',
+        $invoiceLineItem->unit         = $lesson->unit;
+        $actualLessonDate              = \DateTime::createFromFormat('Y-m-d H:i:s',
                 $lesson->date);
-        $courseCount                   = Lesson::find()
-            ->notDeleted()
-            ->where(['courseId' => $lesson->courseId])
-            ->count('id');
+        $enrolment                     = Enrolment::findOne($lesson->enrolmentId);
+        $courseCount                   = $enrolment->courseCount;
         $lessonAmount                  = $lesson->course->program->rate / $courseCount;
         if ($this->isReversedInvoice()) {
             $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
             $lessonAmount = -($lessonAmount);
         }
         $invoiceLineItem->amount       = $lessonAmount;
-        $enrolment = Enrolment::findOne($lesson->enrolmentId);
+        if (!empty($enrolment->proFormaInvoice->lineItem)) {
+            $invoiceLineItem->discount     = $enrolment->proFormaInvoice->lineItem->discount;
+            $invoiceLineItem->discountType = $enrolment->proFormaInvoice->lineItem->discountType;
+        }
         $studentFullName               = $enrolment->student->fullName;
-        $description                  = $enrolment->program->name.' for '.$studentFullName.' with '
-            .$lesson->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
-        $invoiceLineItem->description = $description;
+        $description                   = $enrolment->program->name . ' for '. $studentFullName . ' with '
+            . $lesson->teacher->publicIdentity . ' on ' . $actualLessonDate->format('M. jS, Y');
+        $invoiceLineItem->description  = $description;
         $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
+        $invoiceLineItem->code         = $invoiceLineItem->getItemCode();
         if (!$invoiceLineItem->save()) {
-            print_r($invoiceLineItem->getErrors());die;
+            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         } else {
             $invoiceLineItem->addLineItemDetails($lesson);
-            $invoiceItemLesson = new InvoiceItemEnrolment();
-            $invoiceItemLesson->enrolmentId    = $enrolment->id;
-            $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
+            $invoiceItemLesson                    = new InvoiceItemEnrolment();
+            $invoiceItemLesson->enrolmentId       = $enrolment->id;
+            $invoiceItemLesson->invoiceLineItemId = $invoiceLineItem->id;
             $invoiceItemLesson->save();
             return $invoiceLineItem;
         }
@@ -765,14 +768,11 @@ class Invoice extends \yii\db\ActiveRecord
             ->joinWith('enrolment')
             ->andWhere(['enrolment.id' => $enrolment->id])
             ->all();
-        $courseCount = Lesson::find()
-                ->notDeleted()
-                ->where(['courseId' => $enrolment->courseId])
-                ->count('id');
+        $courseCount = $enrolment->courseCount;
         foreach ($lessons as $lesson) {
             $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lesson->date);
             $currentDate = new \DateTime();
-            if($lessonDate <= $currentDate) {
+            if($lessonDate <= $currentDate && $lesson->isScheduled()) {
                 if (!$enrolment->hasInvoice($lesson->id)) {
                     $invoice = $lesson->createGroupInvoice($enrolment->id);
                 } else if (!$enrolment->getInvoice($lesson->id)->isPaid()) {
@@ -901,6 +901,9 @@ class Invoice extends \yii\db\ActiveRecord
         $invoiceLineItem->code = $invoiceLineItem->getItemCode();
         if ($invoiceLineItem->save()) {
             $invoiceLineItem->addLineItemDetails($split);
+            return $invoiceLineItem;
+        } else {
+            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         }
     }
 
@@ -908,11 +911,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $invoiceLineItem = $this->addLessonLineItem();
         $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-        $courseCount = Lesson::find()
-                ->notDeleted()
-                ->where(['courseId' => $enrolment->courseId])
-                ->count('id');
-
+        $courseCount = $enrolment->courseCount;
         $invoiceLineItem->unit       = $enrolment->firstLesson->unit * $courseCount;
         $qualification = Qualification::findOne(['teacher_id' => $enrolment->firstLesson->teacherId,
             'program_id' => $enrolment->course->program->id]);

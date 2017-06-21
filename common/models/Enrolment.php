@@ -221,7 +221,15 @@ class Enrolment extends \yii\db\ActiveRecord
 
         return null;
     }
-    
+
+    public function getCourseCount()
+    {
+        return Lesson::find()
+                ->notDeleted()
+                ->where(['courseId' => $this->courseId])
+                ->count('id');
+    }
+
     public function getFirstUnPaidProFormaPaymentCycle()
     {
         foreach ($this->paymentCycles as $paymentCycle) {
@@ -507,11 +515,11 @@ class Enrolment extends \yii\db\ActiveRecord
             $invoiceItemLesson->enrolmentId    = $this->id;
             $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
             $invoiceItemLesson->save();
-            return $invoiceLineItem;
         }
         if (!$invoice->save()) {
             Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+        } else {
+            return $invoice;
         }
-        return $invoice;
     }
 }
