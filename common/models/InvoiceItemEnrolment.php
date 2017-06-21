@@ -9,7 +9,7 @@ use Yii;
  *
  * @property string $id
  * @property string $invoiceLineItemId
- * @property string $enrolemntId
+ * @property string $enrolmentId
  */
 class InvoiceItemEnrolment extends \yii\db\ActiveRecord
 {
@@ -27,8 +27,8 @@ class InvoiceItemEnrolment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoiceLineItemId', 'enrolemntId'], 'required'],
-            [['invoiceLineItemId', 'enrolemntId'], 'integer'],
+            [['invoiceLineItemId', 'enrolmentId'], 'required'],
+            [['invoiceLineItemId', 'enrolmentId'], 'integer'],
         ];
     }
 
@@ -40,7 +40,7 @@ class InvoiceItemEnrolment extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'invoiceLineItemId' => 'Invoice Line Item ID',
-            'enrolemntId' => 'Enrolemnt ID',
+            'enrolmentId' => 'Enrolment ID',
         ];
     }
 }

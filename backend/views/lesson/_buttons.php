@@ -25,7 +25,8 @@ use kartik\switchinput\SwitchInput;
 <div class="row-fluid">
 	<div class="col-md-12 action-btns m-b-20 lesson-buttons">
 		<?php echo Html::a('<span class="btn btn-info">Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
-		<?php if ($model->invoice) : ?>
+		<?php if (!$model->isGroup()) : ?>
+                <?php if ($model->invoice) : ?>
 			<?= Html::a('<span class="btn btn-info">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-20 del-ce']) ?>
 		<?php else : ?>
 			<?php echo Html::a('<span class="btn btn-primary">Invoice This Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
@@ -53,6 +54,7 @@ use kartik\switchinput\SwitchInput;
                     ])
                 ?>
 		<?php endif; ?>
+                <?php endif; ?>
 		<?php
 		echo Html::a('<i class="fa fa-mail"></i> Email', '#', [
 			'id' => 'lesson-mail-button',
@@ -63,6 +65,7 @@ use kartik\switchinput\SwitchInput;
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');
 		$currentDate = (new \DateTime())->format('Y-m-d');
 		?>
+            <?php if (!$model->isGroup()) : ?>
 			<?php $form = ActiveForm::begin(['id' => 'lesson-present-form']); ?>
 			<?php $model->present = $model->isMissed() ? false : true; 
 			$disabled = $model->isMissed() ? true : false;
@@ -79,6 +82,7 @@ use kartik\switchinput\SwitchInput;
 			])->label(false);
 			?>
 		<?php ActiveForm::end(); ?>
+            <?php endif; ?>
 		<?php if ($model->isDeletable()) : ?>
 			<?php
 			echo Html::a('<span class="btn btn-danger"> Delete</span>', ['private-lesson/delete', 'id' => $model->id], [

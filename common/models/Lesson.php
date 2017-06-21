@@ -58,6 +58,7 @@ class Lesson extends \yii\db\ActiveRecord
     const EVENT_UNSCHEDULED			 = 'Unscheduled';
     const EVENT_MISSED = 'missed';
 
+    public $enrolmentId;
     public $studentFullName;
     public $programId;
     public $time;
@@ -182,7 +183,9 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isCompleted()
     {
-        return (int) $this->status === self::STATUS_COMPLETED;
+        $lessonDate  = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+        $currentDate = new \DateTime();
+        return $lessonDate <= $currentDate;
     }
 
     public function isMissed()
@@ -210,11 +213,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isDeletable()
     {
-        if (!$this->isDeleted && $this->course->program->isPrivate()) {
-                return true;
-            }
-
-        return false;
+        return !$this->isDeleted;
     }
 
     public function canExplode()
@@ -318,9 +317,21 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getInvoiceLineItems()
     {
-        return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
-            ->via('invoiceItemLessons')
-                ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+        if (!$this->isGroup()) {
+            return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+                ->via('invoiceItemLessons')
+                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+        } else {
+            return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+                ->via('invoiceItemsEnrolment')
+                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_GROUP_LESSON]);
+        }
+    }
+
+    public function getInvoiceItemsEnrolment()
+    {
+        return $this->hasMany(InvoiceItemEnrolment::className(), ['enrolmentId' => 'enrolmentId'])
+            ->via('course');
     }
 
     public function getInvoiceItemLessons()
@@ -355,6 +366,23 @@ class Lesson extends \yii\db\ActiveRecord
     public function getLessonReschedule()
     {
         return $this->hasOne(LessonReschedule::className(), ['lessonId' => 'id']);
+    }
+    
+    public function getEnrolments()
+    {
+        return $this->hasMany(Enrolment::className(), ['courseId' => 'courseId'])
+            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);;
+    }
+
+    public function hasGroupInvoice()
+    {
+        $enrolments = $this->enrolments;
+        foreach ($enrolments as $enrolment) {
+            if (!$enrolment->hasInvoice($this->id)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function isSplitRescheduled()
@@ -391,7 +419,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getProFormaLineItem()
     {
         $lessonId = $this->id;
-        if (!$this->isSplitRescheduled() && !$this->isExploded()) {
+        if (!$this->isSplitRescheduled() && !$this->isExploded() && !$this->isExtra()) {
             $paymentCycleLessonId = $this->paymentCycleLesson->id;
         }
         if ($this->isSplitRescheduled()) {
@@ -432,12 +460,10 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getStatus()
     {
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-        $currentDate = new \DateTime();
         $status = null;
         switch ($this->status) {
             case self::STATUS_SCHEDULED:
-                if ($lessonDate >= $currentDate) {
+                if (!$this->isCompleted()) {
                 $status = 'Scheduled';
                 } else {
                     $status = 'Completed';
@@ -445,7 +471,7 @@ class Lesson extends \yii\db\ActiveRecord
             break;
             case self::STATUS_COMPLETED:
                 $status = 'Completed';
-                if ($lessonDate <= $currentDate) {
+                if ($this->isCompleted()) {
                     $status = 'Completed';
                 }
             break;
@@ -456,7 +482,7 @@ class Lesson extends \yii\db\ActiveRecord
                 $status = 'Unscheduled';
             break;
             case self::STATUS_MISSED:
-                if ($lessonDate >= $currentDate) {
+                if (!$this->isCompleted()) {
                         $status = 'Scheduled';
                 } else {
                         $status = 'Completed';
@@ -736,18 +762,24 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function createInvoice()
     {
-        $location_id = $this->enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => $this->enrolment->student->customer]);
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
-        $invoice->userName = $user->publicIdentity;
-        $invoice->user_id = $this->enrolment->student->customer->id;
-        $invoice->location_id = $location_id;
         $invoice->type = INVOICE::TYPE_INVOICE;
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
+        return $invoice;
+    }
+
+    public function createPrivateLessonInvoice()
+    {
+        $invoice = $this->createInvoice();
+        $location_id = $this->enrolment->student->customer->userLocation->location_id;
+        $user = User::findOne(['id' => $this->enrolment->student->customer]);
+        $invoice->userName = $user->publicIdentity;
+        $invoice->user_id = $this->enrolment->student->customer->id;
+        $invoice->location_id = $location_id;
         $invoice->save();
-        $invoice->addLineItem($this);
+        $invoice->addPrivateLessonLineItem($this);
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
             if ($this->isSplitRescheduled()) {
@@ -762,6 +794,38 @@ class Lesson extends \yii\db\ActiveRecord
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
                 $invoice->lineItem->addLessonCreditApplied($extendedLesson->lessonSplitId);
+            }
+        }
+
+        return $invoice;
+    }
+
+    public function getUnit()
+    {
+        $getDuration = \DateTime::createFromFormat('H:i:s', $this->duration);
+        $hours       = $getDuration->format('H');
+        $minutes     = $getDuration->format('i');
+        return (($hours * 60) + $minutes) / 60;
+    }
+
+    public function createGroupInvoice($enrolmentId)
+    {
+        $invoice   = $this->createInvoice();
+        $enrolment = Enrolment::findOne($enrolmentId);
+        $courseCount = $enrolment->courseCount;
+        $location_id = $enrolment->student->customer->userLocation->location_id;
+        $user = User::findOne(['id' => $enrolment->student->customer]);
+        $invoice->userName = $user->publicIdentity;
+        $invoice->user_id = $enrolment->student->customer->id;
+        $invoice->location_id = $location_id;
+        $invoice->save();
+        $this->enrolmentId = $enrolmentId;
+        $invoice->addGroupLessonLineItem($this);
+        $invoice->save();
+        if ($enrolment->hasProFormaInvoice()) {
+            $netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
+            if ($enrolment->proFormaInvoice->proFormaCredit >= $netPrice) {
+                $invoice->addPayment($enrolment->proFormaInvoice, $netPrice);
             }
         }
 
@@ -838,5 +902,10 @@ class Lesson extends \yii\db\ActiveRecord
         }
 
         return $amount - $discountValue;
+    }
+
+    public function canInvoice()
+    {
+        return $this->isCompleted() && $this->isScheduled();
     }
 }

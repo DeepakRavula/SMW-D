@@ -41,6 +41,27 @@ tr.success>td{
 .kv-page-summary{
 	border-top: 0;
 }
+@page{
+  size: auto;
+  margin: 3mm;
+}
+@media print{
+	.payments-index #payment-listing table thead{
+		border-bottom: 1px ridge;
+	}
+	.payments-index #payment-listing table tbody tr.kv-grid-group-row{
+		border-bottom: 1px ridge;
+	}
+	.payments-index #payment-listing table tbody tr.kv-group-footer{
+		border-top: 1px ridge;
+	}
+	.payments-index .table-bordered{
+		border: 1px solid transparent;
+	}
+	.payments-index .table-bordered>thead>tr>th, .payments-index .table-bordered>tbody>tr>th,.payments-index  .table-bordered>tfoot>tr>th,.payments-index  .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .payments-index .table-bordered>tfoot>tr>td{
+		border:none !important;
+	}
+}
 </style>
 <div class="payments-index">
 	<?php if ($searchModel->groupByMethod) : ?>
@@ -141,7 +162,7 @@ tr.success>td{
 				'value' => function ($data) {
 					return $data->paymentMethod->name;
 				},
-				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px'],
+				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
 				'group' => true,
 				'groupedRow' => true,
 				'subGroupOf' => 1,
@@ -177,7 +198,7 @@ tr.success>td{
 			],
 				[
 				'label' => 'Reference',
-				'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
+				'contentOptions' => ['style' => 'font-size:14px'],
 				'value' => function ($data) {
 					if ((int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_APPLIED || (int) $data->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED) {
 						$invoiceNumber = str_pad($data->reference, 5, 0, STR_PAD_LEFT);

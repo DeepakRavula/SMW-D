@@ -6,7 +6,7 @@ use Yii;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
-use backend\models\search\LessonSearch;
+use common\models\Enrolment;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\UserProfile;
@@ -537,6 +537,67 @@ class InvoiceController extends Controller
                 'body' => 'ProForma-Invoice can be generated only for current and next payment cycle only.',
             ]);
             return $this->redirect(['enrolment/view', 'id' => $paymentCycle->enrolment->id, '#' => 'payment-cycle']);
+        }
+    }
+
+    public function actionEnrolment($id)
+    {
+        $enrolment = Enrolment::findOne($id);
+
+        if (!$enrolment->hasProFormaInvoice()) {
+            $invoice = $enrolment->createProFormaInvoice();
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'ProForma Invoice has been successfully created',
+            ]);
+            return $this->redirect(['view', 'id' => $invoice->id]);
+        } else {
+            return $this->redirect(['view', 'id' => $enrolment->proFormaInvoice->id]);
+        }
+    }
+
+    public function actionGroupLesson($lessonId, $enrolmentId = null)
+    {
+        $lesson      = Lesson::findOne($lessonId);
+        if ($lesson->canInvoice()) {
+            if (!empty($enrolmentId)) {
+                $enrolment = Enrolment::findOne($enrolmentId);
+                if (!$enrolment->hasInvoice($lessonId)) {
+                    $lesson->createGroupInvoice($enrolmentId);
+                    Yii::$app->session->setFlash('alert', [
+                        'options' => ['class' => 'alert-success'],
+                        'body' => 'Invoice has been successfully created',
+                    ]);
+                } else {
+                    Yii::$app->session->setFlash('alert', [
+                        'options' => ['class' => 'alert-success'],
+                        'body' => 'Invoice has been created already!',
+                    ]);
+                }
+                return $this->redirect(['lesson/view', 'id' => $lessonId, '#' => 'student']);
+
+            } else {
+                foreach ($lesson->enrolments as $enrolment) {
+                    if (!$enrolment->hasInvoice($lessonId)) {
+                        $lesson->createGroupInvoice($enrolment->id);
+                    }
+                }
+                Yii::$app->session->setFlash('alert', [
+                    'options' => ['class' => 'alert-success'],
+                    'body' => 'Invoice has been successfully created',
+                ]);
+                return $this->redirect(['course/view', 'id' => $lesson->courseId]);
+            }
+        } else {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => 'Generate invoice against completed lesson only.',
+            ]);
+            if (!empty($enrolmentId)) {
+                return $this->redirect(['lesson/view', 'id' => $lessonId, '#' => 'student']);
+            } else {
+                return $this->redirect(['course/view', 'id' => $lesson->courseId]);
+            }
         }
     }
 }

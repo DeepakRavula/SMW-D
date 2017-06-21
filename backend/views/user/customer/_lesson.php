@@ -39,10 +39,7 @@ echo GridView::widget([
         [
             'label' => 'Lesson Status',
             'value' => function ($data) {
-                $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-                $currentDate = new \DateTime();
-
-                if ($lessonDate <= $currentDate) {
+                if ($data->isCompleted()) {
                     $status = 'Completed';
                 } else {
                     $status = 'Scheduled';

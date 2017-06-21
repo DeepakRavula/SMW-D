@@ -59,7 +59,7 @@ use yii\bootstrap\Modal;
             ?>
             </div>
         <div class="col-md-4  hand group-course-calendar-icon" style="margin-top:25px;">
-			<label style="margin-right:15px;    border: 1px solid #ccc;       padding: 6px 12px;    width: 100%;    height: 34px;">Check The Schedule</label>
+			<label class="group-course-date" style="margin-right:15px; padding: 6px 12px;    width: 100%;    height: 34px;"></label>
             <span class="fa fa-calendar" style="    font-size: 22px;    position: absolute;    right: 25px;    top: 6px;"></span>
 		</div>
 		<div class="col-md-4">

@@ -25,7 +25,8 @@ $noteContent = $this->render('note/view', [
 ]);
 
 $studentContent = $this->render('student/view', [
-	'studentDataProvider' => $studentDataProvider
+	'studentDataProvider' => $studentDataProvider,
+        'lessonModel' => $model,
 ]);
 
 $logContent = $this->render('log', [
