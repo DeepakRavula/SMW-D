@@ -25,6 +25,9 @@ $this->title = Yii::t('backend', 'Timeline');
 		],
 	];
  ?>   
+	<?php yii\widgets\Pjax::begin([
+    'timeout' => 6000,
+]) ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
@@ -32,5 +35,6 @@ $this->title = Yii::t('backend', 'Timeline');
         'columns' => $columns,
     ]); ?>
 
+<?php \yii\widgets\Pjax::end(); ?>
 </div>
 </div>
