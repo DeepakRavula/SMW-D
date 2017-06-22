@@ -43,7 +43,7 @@ $this->title = 'Review Lessons';
 	</div>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Time">
 		<i class="fa fa-clock-o"></i> <?php
-        $fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->fromTime);
+        $fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->fromTime);
         echo $fromTime->format('h:i A'); ?>
 	</div>
 	</div>
