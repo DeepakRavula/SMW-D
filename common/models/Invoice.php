@@ -763,6 +763,8 @@ class Invoice extends \yii\db\ActiveRecord
                         }
                         if ($lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
                             $lesson->invoice->addPayment($lesson->proFormaInvoice, $netPrice);
+                        } else {
+                            $lesson->invoice->addPayment($lesson->proFormaInvoice, $lesson->proFormaInvoice->proFormaCredit);
                         }
                     }
                 }
@@ -788,6 +790,8 @@ class Invoice extends \yii\db\ActiveRecord
                         $netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
                         if ($enrolment->proFormaInvoice->proFormaCredit >= $netPrice) {
                             $enrolment->getInvoice($lesson->id)->addPayment($enrolment->proFormaInvoice, $netPrice);
+                        } else {
+                            $enrolment->getInvoice($lesson->id)->addPayment($enrolment->proFormaInvoice, $enrolment->proFormaInvoice->proFormaCredit);
                         }
                     }
                 }
@@ -806,6 +810,8 @@ class Invoice extends \yii\db\ActiveRecord
                     $netPrice = $lesson->proFormaInvoice->lineItem->netPrice;
                     if ($lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
                         $lesson->invoice->addPayment($lesson->proFormaInvoice, $netPrice);
+                    } else {
+                        $lesson->invoice->addPayment($lesson->proFormaInvoice, $lesson->proFormaInvoice->proFormaCredit);
                     }
                 }
             }

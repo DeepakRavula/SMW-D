@@ -149,17 +149,28 @@ $columns = [
 
 <script type="text/javascript">
 $(document).ready(function(){
-  $('#payment-method-btn-section').on('click', '.btn', function() {
-	 $('.payment-method-section').hide();
-	 $('#' + $(this).data('payment-type') + '-section').show();
-	 $('.payment-method-id').val($(this).data('payment-type-id'));
-     $('#payment-method-btn-section .btn').removeClass('active');
-     $(this).addClass('active');
-     if($(this).data('payment-type') == 'apply-credit'){
-    	$('input[type="text"]').val('');
-        $('#credit-modal').modal('show');
-     }
-  });
+    $('#payment-method-btn-section').on('click', '.btn', function() {
+        $('.payment-method-section').hide();
+        $('#' + $(this).data('payment-type') + '-section').show();
+        $('.payment-method-id').val($(this).data('payment-type-id'));
+        $('#payment-method-btn-section .btn').removeClass('active');
+        $(this).addClass('active');
+        if($(this).data('payment-type') == 'apply-credit'){
+           $('input[type="text"]').val('');
+           $('#credit-modal').modal('show');
+        }
+        $.ajax({
+            url    : '<?= Url::to(['invoice/get-payment-amount', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('.payment-amount').val(response.amount);
+                }
+            }
+        });
+    });
   $('td').click(function () {
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');

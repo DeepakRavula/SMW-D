@@ -15,8 +15,8 @@ use yii\helpers\Url;
         'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id]),
     ]); ?>
  	<div class="row">
-        <div class="col-xs-3">
-   			<?php echo $form->field($model, 'amount')->textInput(['value' => $amount])->label('Amount Needed') ?>
+            <div class="col-xs-3">
+   			<?php echo $form->field($model, 'amount')->textInput(['class' => 'payment-amount'])->label('Amount Needed') ?>
         </div>
 		<div class="col-xs-3">
    			<?php echo $form->field($model, 'reference')->textInput()->label('Reference Number') ?>
