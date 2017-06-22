@@ -484,6 +484,7 @@ class LessonController extends Controller
         foreach ($draftLessons as $draftLesson) {
             $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
         }
+		$conflictedLessonIds = [];
 		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
 		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
 		$conflictedLessonIdsCount = count($conflictedLessonIds);

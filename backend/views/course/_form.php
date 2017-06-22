@@ -110,13 +110,19 @@ use yii\bootstrap\Modal;
             ]);
             ?>
 			<div class="col-md-4  hand ">
-				<label ></label>
+				<label class="group-course-summary" ></label>
 				<span class="fa fa-calendar group-course-calendar-icon" ></span>
 			</div>
 		</div>
             <?= $form->field($courseSchedule, 'day[0]')->hiddenInput()->label(false); ?>
             <?= $form->field($courseSchedule, 'fromTime[0]')->hiddenInput()->label(false); ?>
             <?= $form->field($model, 'startDate[0]')->hiddenInput()->label(false); ?>
+		    <?= $form->field($courseSchedule, 'duration[0]')->hiddenInput()->label(false); ?>
+		    <?= $form->field($courseSchedule, 'day[1]')->hiddenInput()->label(false); ?>
+            <?= $form->field($courseSchedule, 'fromTime[1]')->hiddenInput()->label(false); ?>
+            <?= $form->field($model, 'startDate[1]')->hiddenInput()->label(false); ?>
+		    <?= $form->field($courseSchedule, 'duration[1]')->hiddenInput()->label(false); ?>
+            <?= $form->field($model, 'lessonsPerWeekCount')->hiddenInput()->label(false); ?>
         </div>
     <div class="form-group p-l-10">
 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),

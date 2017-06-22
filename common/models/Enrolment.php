@@ -100,13 +100,8 @@ class Enrolment extends \yii\db\ActiveRecord
     }
 	public function getCourseSchedule()
     {
-		if($this->course->program->isPrivate()) {
-        	return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
-				->via('course');
-		} else {
-			return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
-				->via('course');	
-		}
+        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+			->via('course');
     }
     public function getPaymentsFrequency()
     {

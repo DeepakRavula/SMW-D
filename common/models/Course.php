@@ -5,7 +5,6 @@ namespace common\models;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\Lesson;
-use common\models\EnrolmentDiscount;
 use Yii;
 use common\models\CourseGroup;
 
@@ -53,7 +52,6 @@ class Course extends \yii\db\ActiveRecord
             [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
-            [['startDate', 'endDate'], 'string'],
             [['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
           
         ];
@@ -118,6 +116,16 @@ class Course extends \yii\db\ActiveRecord
 	    return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id']);
     }
 
+	public function getCourseGroup()
+    {
+	    return $this->hasOne(CourseGroup::className(), ['courseId' => 'id']);
+    }
+	
+	public function getGroupCourseSchedule()
+    {
+	    return $this->hasMany(CourseSchedule::className(), ['courseId' => 'id']);
+    }
+
 	public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
@@ -155,9 +163,22 @@ class Course extends \yii\db\ActiveRecord
 		}
 		$this->isConfirmed = false;
         if ((int) $this->program->isGroup()) {
-            $startDate = new \DateTime($this->startDate);
-            $endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));
-            $this->endDate = $endDate->format('Y-m-d H:i:s');
+			list($firstLessonDate,$secondLessonDate) = $this->startDate;
+			if((int)$this->lessonsPerWeekCount === CourseGroup::LESSONS_PER_WEEK_COUNT_ONE) {
+				$this->startDate = $firstLessonDate; 
+            	$startDate = new \DateTime($firstLessonDate);
+    	        $endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));	
+        		$this->endDate = $endDate->format('Y-m-d H:i:s');
+			} else {
+				if(new \DateTime($firstLessonDate) < new \DateTime($secondLessonDate)) {
+					$this->startDate = $firstLessonDate; 
+				} else {
+					$this->startDate = $secondLessonDate;
+				}
+				$startDate = new \DateTime($secondLessonDate);
+				$endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));
+				$this->endDate = $endDate->format('Y-m-d H:i:s');
+			}
         } else {
             $endDate = new \DateTime($this->startDate);
             $startDate = new \DateTime($this->startDate);
@@ -180,34 +201,6 @@ class Course extends \yii\db\ActiveRecord
 			$groupCourse->weeksCount = $this->weeksCount;
 			$groupCourse->lessonsPerWeekCount = $this->lessonsPerWeekCount;
 			$groupCourse->save();
-            $interval = new \DateInterval('P1D');
-            $startDate = $this->startDate;
-            $endDate = $this->endDate;
-            $start = new \DateTime($startDate);
-            $end = new \DateTime($endDate);
-			$end->modify('+1 day');
-            $period = new \DatePeriod($start, $interval, $end);
-
-            foreach ($period as $day) {
-                $professionalDevelopmentDay = clone $day;
-                $professionalDevelopmentDay->modify('last day of previous month');
-                $professionalDevelopmentDay->modify('fifth '.$day->format('l'));
-                if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-                    continue;
-                }
-                if ((int) $day->format('N') === (int) $this->day) {
-                    $lesson = new Lesson();
-                    $lesson->setAttributes([
-                        'courseId' => $this->id,
-                        'teacherId' => $this->teacherId,
-                        'status' => Lesson::STATUS_DRAFTED,
-                        'date' => $day->format('Y-m-d H:i:s'),
-                        'duration' => $this->duration,
-                        'isDeleted' => false,
-                    ]);
-                    $lesson->save();
-                }
-            }
         }
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -318,5 +311,54 @@ class Course extends \yii\db\ActiveRecord
 }
 		}
 		return $lessonIds;
+	}
+	public function createLessons()
+	{
+		$interval = new \DateInterval('P1D');
+		$end = new \DateTime($this->endDate);
+		$end->modify('+1 day');
+		$lessonsPerWeekCount =  $this->courseGroup->lessonsPerWeekCount; 
+		$lessonLimit = ($this->courseGroup->weeksCount * $lessonsPerWeekCount) / $lessonsPerWeekCount;
+		for($i = 0; $i < $lessonsPerWeekCount; $i++) {
+			$lessonDay = $this->groupCourseSchedule[$i]->day;
+			$duration = $this->groupCourseSchedule[$i]->duration; 
+			list($hour, $minute, $second) = explode(':', $this->groupCourseSchedule[$i]->fromTime);  
+			$start = new \DateTime($this->startDate);
+			$start->setTime($hour, $minute, $second);
+			$period = new \DatePeriod($start, $interval, $end);
+			
+			foreach ($period as $day) {
+				$checkDay = (int) $day->format('N') === $lessonDay;
+				$dayList = self::getWeekdaysList();
+				$dayName = $dayList[$lessonDay];
+				$lessonCount = Lesson::find()
+					->andWhere([
+						'courseId' => $this->id,
+						'status' => Lesson::STATUS_DRAFTED,
+						'DAYNAME(date)' => $dayName,
+					])
+					->count();
+				
+				$checkLimit = $lessonCount < $lessonLimit;
+				if ($checkDay && $checkLimit) {
+					$professionalDevelopmentDay = clone $day;
+					$professionalDevelopmentDay->modify('last day of previous month');
+					$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
+					if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+						continue;
+					}
+					$lesson = new Lesson();
+					$lesson->setAttributes([
+						'courseId' => $this->id,
+						'teacherId' => $this->teacherId,
+						'status' => Lesson::STATUS_DRAFTED,
+						'date' => $day->format('Y-m-d H:i:s'),
+						'duration' => $duration,
+						'isDeleted' => false,
+					]);
+					$lesson->save();
+				}
+			}
+		}
 	}
 }

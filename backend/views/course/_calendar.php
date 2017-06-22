@@ -94,7 +94,8 @@ $(document).ready(function(){
                 $('#courseschedule-day-0').val(moment(start).day());
                 $('#course-startdate-0').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
                 $('#courseschedule-fromtime-0').val(moment(start).format('HH:mm:ss'));
-				 $('.course-summary').text(
+                $('#courseschedule-duration-0').val($('#courseschedule-duration').val());
+				$('.course-summary').text(
 						 moment(start).format('dddd') + ', ' +
 						moment(start).format('HH:mm A'));
                 $('#course-calendar').fullCalendar('removeEvents', 'newEnrolment');

@@ -25,12 +25,12 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['
     </div>
 	<div class="col-md-1 text-center" data-toggle="tooltip" data-placement="bottom" title="Duration">
     	<i class="fa fa-calendar"></i> <br><?php 
-        $length = \DateTime::createFromFormat('H:i:s', $model->duration);
+        $length = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->duration);
         echo $length->format('H:i'); ?>
     </div>
 	<div class="col-md-1 p-0 hand text-center" data-toggle="tooltip" data-placement="bottom" title="Time">
 		<i class="fa fa-clock-o"></i> <br><?php 
-        $fromTime = \DateTime::createFromFormat('H:i:s', $model->fromTime);
+        $fromTime = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->fromTime);
         echo $fromTime->format('h:i A'); ?>	
 	</div>
 	<div class="col-md-2 hand text-center" data-toggle="tooltip" data-placement="bottom" title="Start Date">

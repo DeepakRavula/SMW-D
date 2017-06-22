@@ -91,9 +91,13 @@ $(document).ready(function(){
             overlapEventsSeparate: true,
             events: events,
             select: function (start, end, allDay) {
-                $('#course-day1').val(moment(start).day());
-                $('#course-startdate1').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
-                $('#course-fromtime1').val(moment(start).format('HH:mm:ss'));
+				$('#courseschedule-day-1').val(moment(start).day());
+                $('#course-startdate-1').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
+                $('#courseschedule-fromtime-1').val(moment(start).format('HH:mm:ss'));
+                $('#courseschedule-duration-1').val($('#group-course-duration').val());
+				$('.group-course-summary').text(
+						 moment(start).format('dddd') + ', ' +
+						moment(start).format('HH:mm A'));
                 $('#group-course-calendar').fullCalendar('removeEvents', 'newEnrolment');
 				var endtime = start.clone();
                 var durationMinutes = moment.duration($('#group-course-duration').val()).asMinutes();

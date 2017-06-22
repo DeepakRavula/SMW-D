@@ -35,8 +35,8 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['day', 'fromTime', 'duration'], 'required'],
-            [['courseId', 'day', 'paymentFrequency'], 'integer'],
+            [['day', 'fromTime', 'duration'], 'safe'],
+            [['courseId', 'paymentFrequency'], 'integer'],
             [['fromTime', 'duration', 'discount'], 'safe'],
 			[['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
@@ -125,7 +125,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
         if ($this->program->isPrivate()) {
 		   $fromTime = new \DateTime($this->fromTime);
            $this->fromTime = $fromTime->format('H:i:s');
-        } 
+        }
 
         return parent::beforeSave($insert);
     }
