@@ -402,8 +402,6 @@ class UserController extends Controller
             $invoice->user_id = $model->id;
             $invoice->location_id = $locationId;
             $invoice->type = Invoice::TYPE_INVOICE;
-			$invoice->createdUserId = Yii::$app->user->id;
-			$invoice->updatedUserId = Yii::$app->user->id;
             $invoice->save();
 
             $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
@@ -427,6 +425,7 @@ class UserController extends Controller
             $invoice->save();
 
             if ($paymentModel->amount < 0) {
+                $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
                 $paymentModel->invoiceId = $invoice->id;
                 $paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
                 $paymentModel->amount = abs($paymentModel->amount);

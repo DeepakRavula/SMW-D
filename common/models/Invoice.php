@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-use yii\data\ActiveDataProvider;
+use yii\behaviors\BlameableBehavior;
 use common\models\query\InvoiceQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -64,14 +64,19 @@ class Invoice extends \yii\db\ActiveRecord
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
-				'replaceRegularDelete' => true
+                'replaceRegularDelete' => true
             ],
-			[
-				'class' => TimestampBehavior::className(),
-				'createdAtAttribute' => 'createdOn',
-				'updatedAtAttribute' => 'updatedOn',
-				'value' => (new \DateTime())->format('Y-m-d H:i:s'),
-			]
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdUserId',
+                'updatedByAttribute' => 'updatedUserId',
+            ],
         ];
     }
 	
@@ -923,7 +928,9 @@ class Invoice extends \yii\db\ActiveRecord
         $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
         $invoiceLineItem->discount     = $customerDiscount;
         $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
-        $invoiceLineItem->description  = 'Group Lesson';
+        $studentFullName = $enrolment->student->fullName;
+        $invoiceLineItem->description  = $enrolment->program->name . ' for '. $studentFullName . ' with '
+            . $enrolment->firstLesson->teacher->publicIdentity;
         $invoiceLineItem->code = $invoiceLineItem->getItemCode();
         if ($invoiceLineItem->save()) {
             $invoiceLineItem->addLineItemDetails($enrolment);
