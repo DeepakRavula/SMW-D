@@ -63,11 +63,16 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holid
     );
 ?>
 <style type="text/css">
+.fc-view-container {
+  width: auto;
+}
+
 .fc-view-container .fc-view {
   overflow-x: scroll;
 }
+
 .fc-view-container .fc-view > table {
-  width: 1000px;
+  width: 2500px;
 }
     .schedule-index {
         position: absolute;
