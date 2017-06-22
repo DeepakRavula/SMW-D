@@ -824,8 +824,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getSplitRescheduledAmount()
     {
-        $getDuration = \DateTime::createFromFormat('H:i', $this->reschedule
-            ->lesson->getCreditUsage());
+        $getDuration   = new \DateTime($this->reschedule->lesson->getCreditUsage());
         $hours         = $getDuration->format('H');
         $minutes       = $getDuration->format('i');
         $unit          = (($hours * 60) + $minutes) / 60;
