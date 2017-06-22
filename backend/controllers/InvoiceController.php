@@ -42,13 +42,13 @@ class InvoiceController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['delete'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['delete', 'get-payment-amount'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -599,5 +599,14 @@ class InvoiceController extends Controller
                 return $this->redirect(['course/view', 'id' => $lesson->courseId]);
             }
         }
+    }
+
+    public function actionGetPaymentAmount($id)
+    {
+        $model = Invoice::findOne($id);
+        return [
+            'status' => true,
+            'amount' => $model->balance,
+        ];
     }
 }
