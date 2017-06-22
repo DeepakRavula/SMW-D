@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-use yii\data\ActiveDataProvider;
+use yii\behaviors\BlameableBehavior;
 use common\models\query\InvoiceQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -64,14 +64,19 @@ class Invoice extends \yii\db\ActiveRecord
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
-				'replaceRegularDelete' => true
+                'replaceRegularDelete' => true
             ],
-			[
-				'class' => TimestampBehavior::className(),
-				'createdAtAttribute' => 'createdOn',
-				'updatedAtAttribute' => 'updatedOn',
-				'value' => (new \DateTime())->format('Y-m-d H:i:s'),
-			]
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdUserId',
+                'updatedByAttribute' => 'updatedUserId',
+            ],
         ];
     }
 	
