@@ -48,4 +48,9 @@ class ItemQuery extends \yii\db\ActiveQuery
     {
         return $this->andFilterWhere(['NOT', ['item.code' => Item::LESSON_ITEM]]);
     }
+
+    public function notDeleted()
+    {
+        return $this->andFilterWhere(['isDeleted' => false]);
+    }
 }

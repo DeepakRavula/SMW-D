@@ -44,7 +44,8 @@ class ItemCategoryController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => ItemCategory::find(),
+            'query' => ItemCategory::find()
+                        ->notDeleted(),
         ]);
 
         return $this->render('index', [
@@ -85,6 +86,7 @@ class ItemCategoryController extends Controller
         ]);
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
+                $model->isDeleted = false;
                 $model->save(false);
                 return [
                     'status' => true
@@ -107,9 +109,16 @@ class ItemCategoryController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $data = $this->renderAjax('_form', [
-            'model' => $model,
-        ]);
+        if ($model->canUpdate()) {
+            $data = $this->renderAjax('_form', [
+                'model' => $model,
+            ]);
+        } else {
+            return [
+                'status' => false,
+                'message' => 'You are not allow to modify!'
+            ];
+        }
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
                 $model->save(false);

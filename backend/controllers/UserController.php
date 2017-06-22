@@ -6,7 +6,7 @@ use yii\filters\ContentNegotiator;
 use common\models\Payment;
 use Yii;
 use common\models\User;
-use common\models\TeacherRoom;
+use common\models\Item;
 use yii\helpers\Url;
 use common\models\Address;
 use common\models\PhoneNumber;
@@ -406,9 +406,10 @@ class UserController extends Controller
 
             $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
             $invoiceLineItem->invoice_id = $invoice->id;
-            $invoiceLineItem->item_id = Invoice::ITEM_TYPE_OPENING_BALANCE;
+            $item = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
+            $invoiceLineItem->item_id = $item;
             $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
-            $invoiceLineItem->description = 'Opening Balance';
+            $invoiceLineItem->description = $item->description;
             $invoiceLineItem->unit = 1;
             $invoiceLineItem->amount = $paymentModel->amount;
             $invoiceLineItem->code = $invoiceLineItem->getItemCode();

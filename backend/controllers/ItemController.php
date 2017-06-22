@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Item;
-use yii\data\ActiveDataProvider;
+use backend\models\search\ItemSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -42,16 +42,12 @@ class ItemController extends Controller
      */
     public function actionIndex()
     {
-        $locationId = Yii::$app->session->get('location_id');
-        $dataProvider = new ActiveDataProvider([
-            'query' => Item::find()
-                            ->location($locationId)
-                            ->active()
-                            ->notLesson(),
-        ]);
+        $searchModel = new ItemSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
@@ -81,6 +77,7 @@ class ItemController extends Controller
         ]);
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
+                $model->isDeleted = false;
                 $model->save(false);
                 return [
                     'status' => true
@@ -103,12 +100,19 @@ class ItemController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $data = $this->renderAjax('_form', [
-            'model' => $model,
-        ]);
+        if ($model->canUpdate()) {
+            $data = $this->renderAjax('_form', [
+                'model' => $model,
+            ]);
+        } else {
+            return [
+                'status' => false,
+                'message' => 'You are not allow to modify!'
+            ];
+        }
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                $model->save(false);
+                    $model->save(false);
                 return [
                     'status' => true
                 ];
