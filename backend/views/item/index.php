@@ -138,7 +138,7 @@ $this->params['breadcrumbs'][] = $this->title;
         });
         $("#itemsearch-showallitems").on("change", function() {
             var showAllItems = $(this).is(":checked");
-            var url = "<?php echo Url::to(['item/index']); ?>?ItemSearch[showAllItems]=" + (showAllItems | 0);
+            var url = "<?php echo Url::to(['item/index']); ?>?ItemSearch[showAllItems]=" + (showAllItems | 0);debugger;
             $.pjax.reload({url:url,container:"#item-listing",replace:false,  timeout: 4000});  //Reload GridView
         });
     });

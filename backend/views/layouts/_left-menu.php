@@ -228,7 +228,7 @@ echo Menu::widget([
                                 [
 					'label' => Yii::t('backend', 'Items'),
 					'icon' => '<i class="fa fa-newspaper-o"></i>',
-					'url' => ['item/index'],
+					'url' => ['item/index', 'ItemSearch[showAllItems]' => false],
 					'visible' => Yii::$app->user->can('administrator'),
 				],
 				[

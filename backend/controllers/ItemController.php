@@ -77,7 +77,6 @@ class ItemController extends Controller
         ]);
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                $model->isDeleted = false;
                 $model->save(false);
                 return [
                     'status' => true

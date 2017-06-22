@@ -39,6 +39,12 @@ class ItemQuery extends \yii\db\ActiveQuery
         return $this->andFilterWhere(['item.locationId' => $locationId]);
     }
 
+    public function defaultItems($locationId)
+    {
+        return $this->andFilterWhere(['OR', ['item.locationId' => Item::DEFAULT_ITEMS],
+            ['item.locationId' => $locationId]]);
+    }
+
     public function active()
     {
         return $this->andFilterWhere(['item.status' => true]);

@@ -84,4 +84,13 @@ class ItemCategory extends \yii\db\ActiveRecord
     {
         return !$this->isLesson() && !$this->isOpeningBalance();
     }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+
+     	return parent::beforeSave($insert);
+    }
 }

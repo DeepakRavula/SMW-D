@@ -43,7 +43,7 @@ class ItemSearch extends Item
         $locationId = Yii::$app->session->get('location_id');
         $query = Item::find()
                 ->notDeleted()
-                ->location($locationId);
+                ->defaultItems($locationId);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

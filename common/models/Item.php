@@ -24,6 +24,8 @@ class Item extends \yii\db\ActiveRecord
     const LESSON_ITEM = 'LESSON';
     const OPENING_BALANCE_ITEM = 'OPENING BALANCE';
 
+    const DEFAULT_ITEMS = 10;
+
     const STATUS_ENABLED  = 1;
     const STATUS_DISABLED = 0;
 
@@ -152,5 +154,14 @@ class Item extends \yii\db\ActiveRecord
     public function canUpdate()
     {
         return !$this->isLesson() && !$this->isOpeningBalance();
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+
+     	return parent::beforeSave($insert);
     }
 }

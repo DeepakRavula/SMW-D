@@ -86,7 +86,6 @@ class ItemCategoryController extends Controller
         ]);
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                $model->isDeleted = false;
                 $model->save(false);
                 return [
                     'status' => true
@@ -169,6 +168,7 @@ class ItemCategoryController extends Controller
         $locationId     = $session->get('location_id');
         $itemCategoryId = $_POST['depdrop_parents'][0];
         $items          = Item::find()
+                            ->notDeleted()
                             ->where(['itemCategoryId' => $itemCategoryId])
                             ->location($locationId)
                             ->active()
