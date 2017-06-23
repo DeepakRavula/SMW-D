@@ -39,6 +39,12 @@ class ItemQuery extends \yii\db\ActiveQuery
         return $this->andFilterWhere(['item.locationId' => $locationId]);
     }
 
+    public function defaultItems($locationId)
+    {
+        return $this->andFilterWhere(['OR', ['item.locationId' => Item::DEFAULT_ITEMS],
+            ['item.locationId' => $locationId]]);
+    }
+
     public function active()
     {
         return $this->andFilterWhere(['item.status' => true]);
@@ -47,5 +53,10 @@ class ItemQuery extends \yii\db\ActiveQuery
     public function notLesson()
     {
         return $this->andFilterWhere(['NOT', ['item.code' => Item::LESSON_ITEM]]);
+    }
+
+    public function notDeleted()
+    {
+        return $this->andFilterWhere(['isDeleted' => false]);
     }
 }
