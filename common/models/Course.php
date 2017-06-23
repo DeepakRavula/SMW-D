@@ -121,7 +121,7 @@ class Course extends \yii\db\ActiveRecord
             ->one();
     }
 
-    public function getEnrolment()
+    public function getCourseSchedule()
     {
 	    return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id']);
     }
