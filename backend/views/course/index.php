@@ -82,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Day',
                 'value' => function ($data) {
                     $dayList = Course::getWeekdaysList();
-                    $day = $dayList[$data->day];
+                    $day = $dayList[$data->courseSchedule->day];
 
                     return !empty($day) ? $day : null;
                 },
@@ -97,9 +97,9 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Duration',
                 'value' => function ($data) {
-                    $length = \DateTime::createFromFormat('H:i:s', $data->duration);
+                    $length = \DateTime::createFromFormat('H:i:s', $data->courseSchedule->duration);
 
-                    return !empty($data->duration) ? $length->format('H:i') : null;
+                    return !empty($data->courseSchedule->duration) ? $length->format('H:i') : null;
                 },
             ],
             [

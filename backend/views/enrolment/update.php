@@ -10,6 +10,7 @@ $this->title = 'Enrolment Edit';
 
     <?php echo $this->render('_form', [
         'model' => $model,
+		'courseSchedule' => $courseSchedule,
     ]) ?>
 
 </div>

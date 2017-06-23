@@ -37,6 +37,7 @@ class Lesson extends \yii\db\ActiveRecord
     const DEFAULT_MERGE_DURATION = '00:15:00';
     const DEFAULT_EXPLODE_DURATION_SEC = 900;
 
+	const MAXIMUM_LIMIT = 48;
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA = 2;
 
@@ -101,9 +102,9 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['courseId', 'teacherId', 'status', 'isDeleted', 'duration'], 'required'],
+            [['courseId', 'teacherId', 'status', 'duration'], 'required'],
             [['courseId', 'status', 'type'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId'], 'safe'],
+            [['date', 'programId','colorCode', 'classroomId', 'isDeleted'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 'on' => self::SCENARIO_EDIT_CLASSROOM],
             [['date'], HolidayValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
@@ -554,6 +555,7 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         if ($insert) {
+			$this->isDeleted = false;
             if(empty($this->type)) {
                 $this->type = Lesson::TYPE_REGULAR;
             }

@@ -18,6 +18,7 @@ use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use common\models\CourseGroup;
+use common\models\CourseSchedule;
 use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\PaymentFrequency;
@@ -98,7 +99,8 @@ class CourseController extends Controller
             'query' => Lesson::find()
 				->andWhere(['courseId' => $id])
 				->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]])
-				->notDeleted(),
+				->notDeleted()
+				->orderBy(['lesson.date' => SORT_ASC]),
         ]);
 
         return $this->render('view', [
@@ -160,18 +162,39 @@ public function getHolidayEvent($date)
      */
     public function actionCreate()
     {
+		$post = Yii::$app->request->post();
         $model = new Course();
+        $courseSchedule = new CourseSchedule();
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
+		
         $model->locationId = Yii::$app->session->get('location_id');
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
         $model->on(Course::EVENT_CREATE, [new CourseLog(), 'create']);
         $model->userName = $userModel->publicIdentity;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-              $model->trigger(Course::EVENT_CREATE);
+		$model->load($post);
+		$courseSchedule->load($post);	
+        if (Yii::$app->request->isPost) {
+			if($model->save()) {
+				$limit = CourseGroup::LESSONS_PER_WEEK_COUNT_ONE;
+				if((int)$model->courseGroup->lessonsPerWeekCount === CourseGroup::LESSONS_PER_WEEK_COUNT_TWO) {
+					$limit = CourseGroup::LESSONS_PER_WEEK_COUNT_TWO;
+				}
+				for ($i = 0; $i < $limit; $i++) {
+        			$courseScheduleModel = new CourseSchedule();
+					$courseScheduleModel->courseId = $model->id;
+					$courseScheduleModel->day = $courseSchedule->day[$i];
+					$courseScheduleModel->duration = $courseSchedule->duration[$i];
+					$courseScheduleModel->fromTime = $courseSchedule->fromTime[$i];
+					$courseScheduleModel->save();
+				}
+				$model->createLessons();	
+            	$model->trigger(Course::EVENT_CREATE);
+			}
             return $this->redirect(['lesson/review', 'courseId' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+				'courseSchedule' => $courseSchedule
             ]);
         }
     }
