@@ -407,7 +407,7 @@ class UserController extends Controller
             $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
             $invoiceLineItem->invoice_id = $invoice->id;
             $item = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
-            $invoiceLineItem->item_id = $item;
+            $invoiceLineItem->item_id = $item->id;
             $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
             $invoiceLineItem->description = $item->description;
             $invoiceLineItem->unit = 1;
