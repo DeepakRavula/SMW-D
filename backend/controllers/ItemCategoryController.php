@@ -86,10 +86,14 @@ class ItemCategoryController extends Controller
         ]);
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                $model->save(false);
-                return [
-                    'status' => true
-                ];
+                if (!$model->save(false)) {
+                    Yii::erYiiror('Create Item Category: ' .
+                        \yii\helpers\VarDumper::dumpAsString($model->getErrors()));
+                } else {
+                    return [
+                        'status' => true
+                    ];
+                }
             }
         } else {
             return [
@@ -115,15 +119,19 @@ class ItemCategoryController extends Controller
         } else {
             return [
                 'status' => false,
-                'message' => 'You are not allow to modify!'
+                'message' => 'Lesson and opening balance items cannot be modified from Backend.'
             ];
         }
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                $model->save(false);
-                return [
-                    'status' => true
-                ];
+                if (!$model->save(false)) {
+                    Yii::erYiiror('Create Item Category: ' .
+                        \yii\helpers\VarDumper::dumpAsString($model->getErrors()));
+                } else {
+                    return [
+                        'status' => true
+                    ];
+                }
             }
         } else {
             return [
