@@ -271,20 +271,23 @@ class UserController extends Controller
                 ->joinWith(['lineItems' => function ($query) {
                     $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
                 }])
-                ->joinWith('payments')
-                ->where(['invoice.user_id' => $model->id, 'payment.id' => null])
-				->notDeleted()
+                ->where(['invoice.user_id' => $model->id])
+                ->andWhere(['>', 'invoice.balance', 0])
+                ->notDeleted()
                 ->one();
 
         $openingBalanceQuery = Payment::find()
+                ->notDeleted()
                 ->joinWith(['invoicePayment ip' => function ($query) {
                     $query->joinWith(['invoice' => function ($query) {
                         $query->joinWith(['lineItems' => function ($query) {
                             $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
-                        }]);
+                        }])
+                        ->notDeleted();
                     }]);
                 }])
-                ->where(['payment.user_id' => $model->id, 'payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
+                ->where(['payment.user_id' => $model->id])
+                ->andWhere(['NOT', ['payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY]]);
 
         $openingBalanceDataProvider = new ActiveDataProvider([
             'query' => $openingBalanceQuery,
@@ -407,7 +410,7 @@ class UserController extends Controller
             $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
             $invoiceLineItem->invoice_id = $invoice->id;
             $item = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
-            $invoiceLineItem->item_id = $item;
+            $invoiceLineItem->item_id = $item->id;
             $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
             $invoiceLineItem->description = $item->description;
             $invoiceLineItem->unit = 1;

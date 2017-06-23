@@ -376,14 +376,13 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function hasGroupInvoice()
     {
-        $enrolments = $this->enrolments;
-        foreach ($enrolments as $enrolment) {
+        foreach ($this->enrolments as $enrolment) {
             if (!$enrolment->hasInvoice($this->id)) {
                 return false;
             }
         }
-        return true;
-    }
+        return !empty($this->enrolments);
+        }
 
     public function isSplitRescheduled()
     {
