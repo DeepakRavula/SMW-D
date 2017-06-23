@@ -16,6 +16,7 @@ use Yii;
 class CourseSchedule extends \yii\db\ActiveRecord
 {
 	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
+	const SCENARIO_ONE_OFF_MIGRATION = 'one-off-migration';
 	
     public $studentId;
     public $paymentFrequency;
@@ -40,7 +41,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
             [['fromTime', 'duration', 'discount'], 'safe'],
 			[['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
-            },'except' => self::SCENARIO_EDIT_ENROLMENT 
+            },'except' => [self::SCENARIO_EDIT_ENROLMENT, self::SCENARIO_ONE_OFF_MIGRATION] 
             ],
 			['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
             ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
@@ -134,7 +135,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::afterSave($insert, $changedAttributes);
 		}
-        if ((int) $this->program->isPrivate()) {
+        if ((int) $this->program->isPrivate()  && !empty($this->studentId)) {
             $enrolmentModel = new Enrolment();
             $enrolmentModel->courseId = $this->courseId;
             $enrolmentModel->studentId = $this->studentId;

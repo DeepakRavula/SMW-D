@@ -199,7 +199,6 @@ class StudentController extends Controller
 		$courseSchedule->load($post);
 		
         if (Yii::$app->request->isPost && empty($post['courseId'])) {
-			die('dfgdfg');
             $courseModel->locationId = $locationId;
 			if($courseModel->save()) {
 				$courseSchedule->courseId = $courseModel->id;
