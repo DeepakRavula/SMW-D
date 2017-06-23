@@ -109,9 +109,9 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function beforeDelete()
     {
-        if ($this->proformaInvoice && !$this->proformaInvoice->isPaid()) {
-            $this->proformaInvoice->trigger(Invoice::EVENT_DELETE);
-            $this->proformaInvoice->delete();
+        if ($this->proFormaInvoice && !$this->proFormaInvoice->isPaid()) {
+            $this->proFormaInvoice->trigger(Invoice::EVENT_DELETE);
+            $this->proFormaInvoice->delete();
         }
         PaymentCycleLesson::deleteAll(['paymentCycleId' => $this->id]);
         return parent::beforeDelete();
