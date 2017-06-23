@@ -229,8 +229,8 @@ class Enrolment extends \yii\db\ActiveRecord
         foreach ($this->paymentCycles as $paymentCycle) {
             if (!$paymentCycle->hasProFormaInvoice()) {
                 return $paymentCycle;
-            } else if (!$paymentCycle->proformaInvoice->isPaid() &&
-                !$paymentCycle->proformaInvoice->hasPayments()) {
+            } else if (!$paymentCycle->proFormaInvoice->isPaid() &&
+                !$paymentCycle->proFormaInvoice->hasPayments()) {
                 return $paymentCycle;
             }
         }
@@ -256,8 +256,8 @@ class Enrolment extends \yii\db\ActiveRecord
         foreach ($this->paymentCycles as $paymentCycle) {
             if (!$paymentCycle->hasProFormaInvoice()) {
                 $models[] = $paymentCycle;
-            } else if (!$paymentCycle->proformaInvoice->isPaid() &&
-                !$paymentCycle->proformaInvoice->hasPayments()) {
+            } else if (!$paymentCycle->proFormaInvoice->isPaid() &&
+                !$paymentCycle->proFormaInvoice->hasPayments()) {
                 $models[] = $paymentCycle;
             }
         }
@@ -402,7 +402,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function resetPaymentCycle()
     {
-        if (!empty($this->firstUnPaidProFormaPaymentCycle)) {
+        if (!empty($this->firstUnPaidProFormaPaymentCycle)) {            
             $startDate = \DateTime::createFromFormat('Y-m-d',
                 $this->firstUnPaidProFormaPaymentCycle->startDate);        
             $enrolmentLastPaymentCycleEndDate = \DateTime::createFromFormat('Y-m-d',
