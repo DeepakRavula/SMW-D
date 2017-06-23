@@ -19,12 +19,7 @@ use common\models\Payment;
                     return !empty($data->date) ? $date->format('d M Y') : null;
                 },
             ],
-            [
-                'label' => 'Payment Method',
-                'value' => function ($data) {
-                    return    'Credit Used';
-                },
-            ],
+            'paymentMethod.name',
             [
                 'label' => 'Amount',
                 'value' => function ($data) {

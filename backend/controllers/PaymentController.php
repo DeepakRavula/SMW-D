@@ -195,6 +195,7 @@ class PaymentController extends Controller
         $transaction = $db->beginTransaction();
         $request = Yii::$app->request;
         if ($paymentModel->load($request->post())) {
+            $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
             $paymentModel->invoiceId = $id;
             $paymentModel->save();
             $transaction->commit();

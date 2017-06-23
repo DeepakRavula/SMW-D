@@ -44,7 +44,8 @@ class ItemCategoryController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => ItemCategory::find(),
+            'query' => ItemCategory::find()
+                        ->notDeleted(),
         ]);
 
         return $this->render('index', [
@@ -85,10 +86,14 @@ class ItemCategoryController extends Controller
         ]);
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                $model->save(false);
-                return [
-                    'status' => true
-                ];
+                if (!$model->save(false)) {
+                    Yii::erYiiror('Create Item Category: ' .
+                        \yii\helpers\VarDumper::dumpAsString($model->getErrors()));
+                } else {
+                    return [
+                        'status' => true
+                    ];
+                }
             }
         } else {
             return [
@@ -107,15 +112,26 @@ class ItemCategoryController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $data = $this->renderAjax('_form', [
-            'model' => $model,
-        ]);
+        if ($model->canUpdate()) {
+            $data = $this->renderAjax('_form', [
+                'model' => $model,
+            ]);
+        } else {
+            return [
+                'status' => false,
+                'message' => 'Lesson and opening balance items cannot be modified from Backend.'
+            ];
+        }
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                $model->save(false);
-                return [
-                    'status' => true
-                ];
+                if (!$model->save(false)) {
+                    Yii::erYiiror('Create Item Category: ' .
+                        \yii\helpers\VarDumper::dumpAsString($model->getErrors()));
+                } else {
+                    return [
+                        'status' => true
+                    ];
+                }
             }
         } else {
             return [
@@ -160,6 +176,7 @@ class ItemCategoryController extends Controller
         $locationId     = $session->get('location_id');
         $itemCategoryId = $_POST['depdrop_parents'][0];
         $items          = Item::find()
+                            ->notDeleted()
                             ->where(['itemCategoryId' => $itemCategoryId])
                             ->location($locationId)
                             ->active()

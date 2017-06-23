@@ -36,6 +36,12 @@ class ItemCategoryQuery extends \yii\db\ActiveQuery
 
     public function active()
     {
-        return $this->andFilterWhere(['NOT', ['name' => ItemCategory::LESSON_ITEM]]);
+        return $this->andFilterWhere(['NOT', ['name' => [ItemCategory::LESSON_ITEM,
+             ItemCategory::OPENING_BALANCE_ITEM]]]);
+    }
+
+    public function notDeleted()
+    {
+        return $this->andFilterWhere(['isDeleted' => false]);
     }
 }

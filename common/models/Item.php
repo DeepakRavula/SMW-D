@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "item".
@@ -16,10 +17,14 @@ use Yii;
  * @property integer $royaltyFree
  * @property string $taxStatusId
  * @property integer $status
+ * @property integer $isDeleted
  */
 class Item extends \yii\db\ActiveRecord
 {
     const LESSON_ITEM = 'LESSON';
+    const OPENING_BALANCE_ITEM = 'OPENING BALANCE';
+
+    const DEFAULT_ITEMS = 10;
 
     const STATUS_ENABLED  = 1;
     const STATUS_DISABLED = 0;
@@ -44,8 +49,22 @@ class Item extends \yii\db\ActiveRecord
             [['itemCategoryId', 'locationId', 'code', 'royaltyFree', 'taxStatusId', 'status'], 'required'],
             [['itemCategoryId', 'locationId', 'royaltyFree', 'taxStatusId', 'status'], 'integer'],
             [['price'], 'number'],
+            ['isDeleted', 'safe'],
             [['code'], 'string', 'max' => 150],
             [['description'], 'string', 'max' => 500],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ]
         ];
     }
 
@@ -120,5 +139,29 @@ class Item extends \yii\db\ActiveRecord
         }
 
         return $status;
+    }
+    
+    public function isOpeningBalance()
+    {
+        return $this->code === self::OPENING_BALANCE_ITEM;
+    }
+
+    public function isLesson()
+    {
+        return $this->code === self::LESSON_ITEM;
+    }
+
+    public function canUpdate()
+    {
+        return !$this->isLesson() && !$this->isOpeningBalance();
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+
+     	return parent::beforeSave($insert);
     }
 }

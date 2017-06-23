@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="item-category-index">
 
-
+<div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
     <p>
         <?php echo Html::a('Create Item Category', [''], ['class' => 'btn btn-success', 'id' => 'create-item-category']) ?>
     </p>
@@ -58,6 +58,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     {
                         $('#item-category-edit-content').html(response.data);
                         $('#item-category-edit-modal').modal('show');
+                    } else {
+                        $('#error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }
                 }
             });
