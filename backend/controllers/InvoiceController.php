@@ -72,7 +72,7 @@ class InvoiceController extends Controller
             $searchModel->mailStatus    = InvoiceSearch::STATUS_MAIL_NOT_SENT;
             $searchModel->dueFromDate      = $currentDate->format('1-m-Y');
             $searchModel->dueToDate        = $currentDate->format('t-m-Y');
-            $searchModel->dateRange     = $searchModel->fromDate.' - '.$searchModel->toDate;
+            $searchModel->dateRange     = $searchModel->dueFromDate.' - '.$searchModel->dueToDate;
         } else {
             $searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
             $searchModel->toDate   = (new \DateTime('last day of this month'))->format('d-m-Y');

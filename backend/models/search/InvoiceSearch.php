@@ -20,7 +20,7 @@ class InvoiceSearch extends Invoice
     public $toggleAdditionalColumns;
     public $fromDate;
     public $toDate;
-    public $dateRange;
+    private $dateRange;
     public $dueToDate;
     public $dueFromDate;
     public $type;
@@ -111,8 +111,8 @@ class InvoiceSearch extends Invoice
             } elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
                 $query->paid()->proFormaInvoice();
             }
-            $query->andWhere(['between', 'invoice.dueDate', (new \DateTime($this->dueFromDate))->format('Y-m-d'),
-                    (new \DateTime($this->dueToDate))->format('Y-m-d')]);
+            $query->andWhere(['between', 'invoice.dueDate', $this->dueFromDate->format('Y-m-d'),
+                    $this->dueToDate->format('Y-m-d')]);
         }
         $query->andWhere(['between', 'invoice.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 
