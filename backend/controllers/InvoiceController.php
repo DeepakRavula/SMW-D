@@ -224,7 +224,7 @@ class InvoiceController extends Controller
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
-        $invoiceLineItemModel = new InvoiceLineItem();
+        $invoiceLineItemModel = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_LINE_ITEM_CREATE]);
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
         $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
         $invoiceLineItemModel->userName = $userModel->publicIdentity;

@@ -22,6 +22,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     private $isRoyaltyExempted;
    
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
+    const SCENARIO_LINE_ITEM_CREATE = 'line-item-create';
     const SCENARIO_EDIT = 'edit';
     const DISCOUNT_FLAT            = 0;
     const DISCOUNT_PERCENTAGE      = 1;
@@ -56,11 +57,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return [
             ['taxStatus', 'required', 'on' => self::SCENARIO_EDIT],
             ['code', 'required'],
-            [['unit', 'amount', 'item_id', 'itemCategoryId',  'description',
-                'tax_status'], 'required', 'when' => function ($model, $attribute) {
+            [['unit', 'amount', 'item_id', 'description', 'tax_status'],
+                'required', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
-            },
-            ],
+            }],
+            ['itemCategoryId', 'required', 'when' => function ($model, $attribute) {
+                return (int) $model->item_type_id === ItemType::TYPE_MISC;
+            }, 'on' => self::SCENARIO_LINE_ITEM_CREATE],
             [['amount'], 'number', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
