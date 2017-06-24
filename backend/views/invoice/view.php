@@ -92,7 +92,7 @@ Modal::end();
             ])->label(false);
             ?>
 			</div>
-		<?php elseif(!$model->hasMiscItem() && $model->isPaid() && !$model->isCanceled): ?>
+		<?php elseif($model->canRevert()): ?>
                     <?=
 			Html::a('<i class="fa fa-remove"></i> Revert this invoice', ['revert-invoice', 'id' => $model->id],
 				[

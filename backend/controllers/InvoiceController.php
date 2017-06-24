@@ -490,12 +490,13 @@ class InvoiceController extends Controller
 	{
             $locationId = Yii::$app->session->get('location_id');
             $lessons = Lesson::find()
+                ->privateLessons()
                 ->notDeleted()
                 ->completedUnInvoiced()
                 ->location($locationId)
                 ->all();
             foreach($lessons as $lesson) {
-                $lesson->createInvoice();
+                $lesson->createPrivateLessonInvoice();
             }
 		
             return $this->redirect(['index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE]);
@@ -517,7 +518,7 @@ class InvoiceController extends Controller
         $invoiceReverse->invoiceId        = $invoice->id;
         $invoiceReverse->reversedInvoiceId = $creditInvoice->id;
         $invoiceReverse->save();
-        $creditInvoice->addLineItem($invoice->lineItem->lesson);
+        $creditInvoice->addPrivateLessonLineItem($invoice->lineItem->lesson);
         $creditInvoice->save();
         
         return $this->redirect(['view', 'id' => $creditInvoice->id]);

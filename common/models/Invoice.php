@@ -622,6 +622,12 @@ class Invoice extends \yii\db\ActiveRecord
         return $invoiceLineItem;
     }
 
+    public function canRevert()
+    {
+        return !$this->hasMiscItem() && $this->isPaid() && !$this->isCanceled
+            && !$this->isReversedInvoice();
+    }
+
     public function addPrivateLessonLineItem($lesson)
     {
         $invoiceLineItem = $this->addLessonLineItem();
