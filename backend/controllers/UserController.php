@@ -426,6 +426,7 @@ class UserController extends Controller
             }
             $invoice->tax = $invoiceLineItem->tax_rate;
             $invoice->total = $invoice->subTotal + $invoice->tax;
+            $invoice->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
             $invoice->save();
 
             if ($paymentModel->amount < 0) {
