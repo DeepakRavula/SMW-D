@@ -71,3 +71,23 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		</div>	
 	</div>
 </div>
+<script>
+ $(document).ready(function() {
+	$(document).on('beforeSubmit', '#lesson-note-form', function (e) {
+		$.ajax({
+			url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON]); ?>',
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$('.lesson-note-content').html(response.data);
+				}
+			}
+		});
+		return false;
+	});
+});
+</script>

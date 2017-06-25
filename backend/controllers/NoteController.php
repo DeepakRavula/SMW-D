@@ -76,20 +76,21 @@ class NoteController extends Controller
 			$model->instanceType = $instanceType;
             $model->createdUserId = $userId;
 			if ($model->save()) {
-				$notes = Note::find()
-					->where(['instanceId' => $model->instanceId, 'instanceType' => $model->instanceType])
-					->orderBy(['createdOn' => SORT_DESC]);
-		        $noteDataProvider = new ActiveDataProvider([
-        		    'query' => $notes,
-        		]);
-				$view = '/' . $model->getInstanceTypeName() . '/note/_view';
-				$data = $this->renderAjax($view, [
-					'noteDataProvider' => $noteDataProvider,
-				]);
-				$response = [
-					'status' => true,
-					'data' => $data,
-				];
+					$notes = Note::find()
+						->where(['instanceId' => $model->instanceId, 'instanceType' => $model->instanceType])
+						->orderBy(['createdOn' => SORT_DESC]);
+					$noteDataProvider = new ActiveDataProvider([
+						'query' => $notes,
+					]);
+					$view = '/' . $model->getInstanceTypeName() . '/note/_view';
+					$data = $this->renderAjax($view, [
+						'noteDataProvider' => $noteDataProvider,
+						'model' => new Note()
+					]);
+					$response = [
+						'status' => true,
+						'data' => $data,
+					];
 			} else {
 				$errors = ActiveForm::validate($model);
 				$response = [
