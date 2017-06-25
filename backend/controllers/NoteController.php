@@ -77,8 +77,7 @@ class NoteController extends Controller
             $model->createdUserId = $userId;
 			if ($model->save()) {
 					$notes = Note::find()
-						->where(['instanceId' => $model->instanceId, 'instanceType' => $model->instanceType])
-						->orderBy(['createdOn' => SORT_DESC]);
+						->where(['instanceId' => $model->instanceId, 'instanceType' => $model->instanceType]);
 					$noteDataProvider = new ActiveDataProvider([
 						'query' => $notes,
 					]);

@@ -6,6 +6,7 @@ use yii\helpers\Url;
 <?php
 \insolita\wgadminlte\LteBox::begin([
 	'type' => \insolita\wgadminlte\LteConst::TYPE_DEFAULT,
+	'boxTools' => '<i class="fa fa-pencil"></i>',
 	'title' => 'Details',
 ])
 ?>
