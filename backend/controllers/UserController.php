@@ -364,6 +364,19 @@ class UserController extends Controller
             'query' => $groupPrograms,
         ]);
 		
+		$timeVoucher = Lesson::find()
+			->joinWith('invoice')
+			->innerJoinWith('enrolment')
+			->location($locationId)
+			->andWhere(['lesson.teacherId' => $model->id])
+			->notDraft()
+			->notDeleted()
+			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]]);
+			
+		$timeVoucherDataProvider = new ActiveDataProvider([
+			'query' => $timeVoucher,
+			'pagination' => false,
+		]);
         return $this->render('view', [
             'minTime' => $minTime,
             'maxTime' => $maxTime,
@@ -392,6 +405,7 @@ class UserController extends Controller
             'teachersAvailabilities' => $teachersAvailabilities,
 			'privateQualificationDataProvider' => $privateQualificationDataProvider,
 			'groupQualificationDataProvider' => $groupQualificationDataProvider,
+			'timeVoucherDataProvider' => $timeVoucherDataProvider
         ]);
     }
 
