@@ -95,7 +95,8 @@
     "yii2tech/ar-softdelete": "^1.0",
     "kartik-v/yii2-widget-select2": "@dev",
     "bower-asset/fullcalendar-scheduler": "^1.5",
-    "baibaratsky/yii2-rollbar": "1.5.*"
+    "baibaratsky/yii2-rollbar": "1.5.*",
+    "insolita/yii2-adminlte-widgets": "~2.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",
