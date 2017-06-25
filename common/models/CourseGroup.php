@@ -14,6 +14,9 @@ use Yii;
  */
 class CourseGroup extends \yii\db\ActiveRecord
 {
+	const LESSONS_PER_WEEK_COUNT_ONE = 1;
+	const LESSONS_PER_WEEK_COUNT_TWO = 2;
+	
     /**
      * @inheritdoc
      */

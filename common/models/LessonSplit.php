@@ -67,4 +67,23 @@ class LessonSplit extends \yii\db\ActiveRecord
         return $this->hasOne(PrivateLesson::className(), ['lessonId' => 'id'])
             ->via('lesson');
     }
+
+    public function afterSave($insert,$changedAttributes)
+    {
+        if ($insert) {
+            if ($this->lesson->paymentCycle->hasProFormaInvoice()) {
+                $this->lesson->paymentCycle->proFormaInvoice->addLessonSplitItem($this->id);
+            }
+        }
+
+        return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function getUnits()
+    {
+        $getDuration = \DateTime::createFromFormat('H:i:s', $this->unit);
+        $hours       = $getDuration->format('H');
+        $minutes     = $getDuration->format('i');
+        return (($hours * 60) + $minutes) / 60;
+    }
 }

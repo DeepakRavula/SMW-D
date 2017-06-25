@@ -102,6 +102,7 @@ class PaymentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->date = (new \DateTime($model->date))->format('d-m-Y');
         $data = $this->renderAjax('/invoice/payment/_form', [
             'model' => $model,
         ]);
@@ -194,6 +195,7 @@ class PaymentController extends Controller
         $transaction = $db->beginTransaction();
         $request = Yii::$app->request;
         if ($paymentModel->load($request->post())) {
+            $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
             $paymentModel->invoiceId = $id;
             $paymentModel->save();
             $transaction->commit();
@@ -264,6 +266,7 @@ class PaymentController extends Controller
         $model->userName = $userModel->publicIdentity;
         $request = Yii::$app->request;
         if ($model->load($request->post())) {
+            $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
 			if ($model->isAccountEntry()) {
 				$model->setScenario(Payment::SCENARIO_OPENING_BALANCE);
 				$response = Yii::$app->runAction('payment/edit-account-entry',

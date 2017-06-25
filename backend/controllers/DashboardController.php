@@ -93,11 +93,11 @@ class DashboardController extends \yii\web\Controller
 
         $completedPrograms = [];
         $programs = Lesson::find()
-                    ->select(['sum(course.duration) as hours, program.name as program_name'])
+                    ->select(['sum(course_schedule.duration) as hours, program.name as program_name'])
                     ->joinWith(['course' => function ($query) use ($locationId) {
-                        $query->where(['course.locationId' => $locationId]);
-                        $query->joinWith(['program' => function ($query) {
-                        }]);
+                        $query->joinWith('program')
+							->joinWith('courseSchedule')
+                            ->where(['course.locationId' => $locationId]);
                     }])
                     ->andWhere(['between', 'lesson.date', $searchModel->fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
                     ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])

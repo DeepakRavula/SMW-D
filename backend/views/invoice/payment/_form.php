@@ -21,7 +21,7 @@ use yii\helpers\Html;
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
                     'id' => 'extra-lesson-date',
-                    'value' =>Yii::$app->formatter->asDate((new \DateTime())->format('d-m-Y')),
+                    'value' => Yii::$app->formatter->asDate((new \DateTime($model->date))->format('d-m-Y')),
                 ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [

@@ -48,6 +48,11 @@ class LessonReschedule extends \yii\db\ActiveRecord
         return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'lessonId']);
     }
 
+    public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
+    }
+
     public function afterSave($insert,$changedAttributes)
     {
         if ($insert) {
@@ -72,6 +77,8 @@ class LessonReschedule extends \yii\db\ActiveRecord
 	public function reschedule($event)
 	{
 		$oldLessonModel = current($event->data);
+                $oldLesson = Lesson::findOne($oldLessonModel['id']);
+                $duration = $oldLesson->getCreditUsage();
 		$lessonModel	 = $event->sender;
 		$teacherId = $lessonModel->teacherId;
 		$fromDate	 = \DateTime::createFromFormat('Y-m-d H:i:s', $oldLessonModel['date']);
@@ -95,12 +102,12 @@ class LessonReschedule extends \yii\db\ActiveRecord
 				'teacherId' => $oldLessonModel['teacherId']
 			]);	
 		}
-
-		$originalLessonId	 = $lessonModel->id;
+                
+                $originalLessonId	 = $lessonModel->id;
 		$classroomId = $lessonModel->classroomId;
 		$lessonModel->id			 = null;
 		$lessonModel->isNewRecord	 = true;
-		
+		$lessonModel->duration = $duration;
 		if ($rescheduleDate) {
 			$lessonModel->date = $toDate->format('Y-m-d H:i:s');
 		} elseif($rescheduleTeacher) {
@@ -109,7 +116,7 @@ class LessonReschedule extends \yii\db\ActiveRecord
 			$lessonModel->date = $toDate->format('Y-m-d H:i:s');
 			$lessonModel->teacherId = $teacherId;
 		}
-		
+                
 		$lessonModel->status = Lesson::STATUS_SCHEDULED;
 		if($lessonModel->save()) {
 			$lessonModel->updateAttributes([

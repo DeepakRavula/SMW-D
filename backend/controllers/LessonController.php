@@ -189,6 +189,7 @@ class LessonController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $oldLesson = clone $model;
         $oldDate = $model->date;
         $oldTeacherId = $model->teacherId;
         $user = User::findOne(['id'=>Yii::$app->user->id]);
@@ -251,8 +252,11 @@ class LessonController extends Controller
 						$model->duration = $duration->format('H:i:s');
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+                                        if ($model->isExploded()) {
+                                            $model->duration = $oldLesson->duration;
+                                        }
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
-					$model->save();
+                                        $model->save();
 
 					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 				}
@@ -410,60 +414,41 @@ class LessonController extends Controller
         $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
-        $enrolmentRequest = $request->get('Enrolment');
-        $endDate = $enrolmentRequest['endDate'];
-        $enrolmentEditType = $enrolmentRequest['type'];
         $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
 		$conflicts = [];
 		$conflictedLessonIds = [];
-		if(!empty($enrolmentEditType) && $enrolmentEditType === Enrolment::EDIT_LEAVE) {
-			$lessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'lesson.status' => Lesson::STATUS_SCHEDULED])
-				->andWhere(['>=', 'lesson.date', (new \DateTime($endDate))->format('Y-m-d')])
-				->unInvoicedProForma()
+			$draftLessons = Lesson::find()
+				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
 				->all();
-			foreach ($lessons as $lesson) {
-				$conflicts[$lesson->id] = [];
+		foreach ($draftLessons as $draftLesson) {
+			$draftLesson->setScenario('review');
+			if(!empty($vacationId)) {
+				$draftLesson->vacationId = $vacationId;
 			}
-			$lessonCount = count($lessons);
-			$query = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'lesson.status' => Lesson::STATUS_SCHEDULED])
-				->andWhere(['>=', 'lesson.date', (new \DateTime($endDate))->format('Y-m-d')])
-				->unInvoicedProForma();
-		} else {
-				$draftLessons = Lesson::find()
-					->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
-					->all();
-			foreach ($draftLessons as $draftLesson) {
-				$draftLesson->setScenario('review');
-				if(!empty($vacationId)) {
-					$draftLesson->vacationId = $vacationId;
-				}
+		}
+		Model::validateMultiple($draftLessons);
+		foreach ($draftLessons as $draftLesson) {
+			if(!empty($draftLesson->getErrors('date'))) {
+				$conflictedLessonIds[] = $draftLesson->id;
 			}
-			Model::validateMultiple($draftLessons);
-			foreach ($draftLessons as $draftLesson) {
-				if(!empty($draftLesson->getErrors('date'))) {
-					$conflictedLessonIds[] = $draftLesson->id;
-				}
-				$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
-			}
-			
-			$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
-			$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
-			$lessonCount = count($draftLessons);
-			$conflictedLessonIdsCount = count($conflictedLessonIds);
+			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+		}
 
-			$query = Lesson::find()
-				->orderBy(['lesson.date' => SORT_ASC]);
-			if(! $showAllReviewLessons) {
-				$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
-			}  else {
-					$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
-				}
-			}
+		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
+		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+		$lessonCount = count($draftLessons);
+		$conflictedLessonIdsCount = count($conflictedLessonIds);
+
+		$query = Lesson::find()
+			->orderBy(['lesson.date' => SORT_ASC]);
+		if(! $showAllReviewLessons) {
+			$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
+		}  else {
+			$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+		}
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -476,9 +461,7 @@ class LessonController extends Controller
             'searchModel' => $searchModel,
 			'vacationId' => $vacationId,
 			'vacationType' => $vacationType,
-			'endDate' => $endDate,
 			'model' => $model,
-			'enrolmentEditType' => $enrolmentEditType,
 			'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
 			'lessonCount' => $lessonCount,
 			'conflictedLessonIdsCount' => $conflictedLessonIdsCount
@@ -501,6 +484,7 @@ class LessonController extends Controller
         foreach ($draftLessons as $draftLesson) {
             $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
         }
+		$conflictedLessonIds = [];
 		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
 		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
 		$conflictedLessonIdsCount = count($conflictedLessonIds);
@@ -537,10 +521,7 @@ class LessonController extends Controller
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');
-        $enrolmentRequest = $request->get('Enrolment');
         $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
-		$endDate = $enrolmentRequest['endDate'];
-        $enrolmentEditType = $enrolmentRequest['type'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
 		if(! empty($vacationId)) {
@@ -604,31 +585,13 @@ class LessonController extends Controller
 				$lessonRescheduleModel->save();
 			}
 		}
-		if(! empty($endDate)) {
-			$courseModel->updateAttributes([
-				'endDate' => (new \DateTime($endDate))->format('Y-m-d H:i:s'),
+		foreach ($lessons as $lesson) {
+			$lesson->updateAttributes([
+				'status' => Lesson::STATUS_SCHEDULED,
 			]);
 		}
-		if(!empty($enrolmentEditType) && $enrolmentEditType === Enrolment::EDIT_LEAVE) {
-			$lessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'lesson.status' => Lesson::STATUS_SCHEDULED])
-				->andWhere(['>=', 'lesson.date', (new \DateTime($endDate))->format('Y-m-d')])
-				->unInvoicedProForma()
-				->all();
-			foreach ($lessons as $lesson) {
-				$lesson->updateAttributes([
-					'isDeleted' => true,
-				]);
-			}
-		} else {
-			foreach ($lessons as $lesson) {
-				$lesson->updateAttributes([
-					'status' => Lesson::STATUS_SCHEDULED,
-				]);
-			}
-		}
         if (!empty($courseModel->enrolment) && empty($courseRequest) &&
-            empty($vacationRequest) && empty($enrolmentRequest)) {
+            empty($vacationRequest)) {
             $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
@@ -649,12 +612,8 @@ class LessonController extends Controller
 			} elseif(! empty($rescheduleBeginDate)) {
 				$message = 'Future lessons have been changed successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
-			} elseif(! empty($endDate)) {
-				$message = 'Your enrolment has been updated successfully';
-				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
 				$invoice = $courseModel->enrolment->firstPaymentCycle->createProFormaInvoice();
-
 				return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
 			}
 		} else {
@@ -671,21 +630,19 @@ class LessonController extends Controller
     public function actionInvoice($id)
     {
         $model = Lesson::findOne(['id' => $id]);
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-        $currentDate = new \DateTime();
 
-        if ($lessonDate <= $currentDate) {
+        if ($model->canInvoice()) {
             if ($model->hasInvoice()) {
                 $invoice = $model->invoice;
             } else {
-                $invoice = $model->createInvoice();
+                $invoice = $model->createPrivateLessonInvoice();
             }
 
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         } else {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
-                'body' => 'Generate invoice against completed lesson only.',
+                'body' => 'Generate invoice against completed scheduled lesson only.',
             ]);
 
             return $this->redirect(['lesson/view', 'id' => $id]);
@@ -702,7 +659,7 @@ class LessonController extends Controller
 		$model->save();
 		$model->trigger(Lesson::EVENT_MISSED);
 		if(empty($model->invoice)) {
-			$invoice = $model->createInvoice();
+			$invoice = $model->createPrivateLessonInvoice();
 			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
 		} else {
 		   return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
@@ -749,7 +706,7 @@ class LessonController extends Controller
 
                     return $this->redirect(['invoice/view', 'id' => $invoice->id]);
                 } else {
-                    $model->paymentCycle->proFormaInvoice->addLineItem($model);
+                    $model->paymentCycle->proFormaInvoice->addPrivateLessonLineItem($model);
                     $model->paymentCycle->proFormaInvoice->save();
                 }
             } else {
@@ -769,7 +726,7 @@ class LessonController extends Controller
                 $invoice->createdUserId = Yii::$app->user->id;
                 $invoice->updatedUserId = Yii::$app->user->id;
                 $invoice->save();
-                $invoice->addLineItem($model);
+                $invoiceLineItem = $invoice->addPrivateLessonLineItem($model);
                 $invoice->save();
             } else {
                 $invoice = $model->proFormaInvoice;
@@ -806,6 +763,10 @@ class LessonController extends Controller
     {
         $model = $this->findModel($id);
         $lessonDurationSec = $model->durationSec;
+        if ($model->hasProFormaInvoice()) {
+            $model->proFormaInvoice->removeLessonItem($id);
+        }
+        
         for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
             $lesssonSplit = new LessonSplit();
             $lesssonSplit->lessonId = $id;

@@ -48,13 +48,13 @@ use yii\bootstrap\Modal;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
             [
-                'label' => 'Program Name',
+                'label' => 'Program',
                 'value' => function ($data) {
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
             ],
             [
-                'label' => 'Teacher Name',
+                'label' => 'Teacher',
                 'value' => function ($data) {
                     return !empty($data->course->teacher->publicIdentity) ? $data->course->teacher->publicIdentity : null;
                 },
@@ -63,7 +63,7 @@ use yii\bootstrap\Modal;
                 'label' => 'Day',
                 'value' => function ($data) {
                     $dayList = Course::getWeekdaysList();
-                    $day = $dayList[$data->course->day];
+                    $day = $dayList[$data->courseSchedule->day];
 
                     return !empty($day) ? $day : null;
                 },
@@ -71,13 +71,13 @@ use yii\bootstrap\Modal;
             [
                 'label' => 'From Time',
                 'value' => function ($data) {
-                    return !empty($data->course->fromTime) ? Yii::$app->formatter->asTime($data->course->fromTime) : null;
+                    return !empty($data->courseSchedule->fromTime) ? Yii::$app->formatter->asTime($data->courseSchedule->fromTime) : null;
                 },
             ],
             [
                 'label' => 'Duration',
                 'value' => function ($data) {
-                    $duration = \DateTime::createFromFormat('h:i:s', $data->course->duration);
+                    $duration = \DateTime::createFromFormat('h:i:s', $data->courseSchedule->duration);
 
                     return !empty($duration) ? $duration->format('H:i') : null;
                 },

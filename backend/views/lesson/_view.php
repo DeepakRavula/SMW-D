@@ -96,11 +96,11 @@ use yii\bootstrap\Modal;
 	</div>
 	<div class="col-md-3">
 	<?php if (Yii::$app->controller->action->id === 'view'):?>
-	
+
 	<?= $this->render('_buttons', [
 		'model' => $model,
 	]); ?>
-		<?php endif; ?>
+            <?php endif; ?>
 </div>
 </div>
 <?php

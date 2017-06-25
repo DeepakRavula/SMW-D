@@ -6,7 +6,7 @@ use Yii;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
-use backend\models\search\LessonSearch;
+use common\models\Enrolment;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\UserProfile;
@@ -42,13 +42,13 @@ class InvoiceController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['delete'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['delete', 'get-payment-amount'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -72,7 +72,7 @@ class InvoiceController extends Controller
             $searchModel->mailStatus    = InvoiceSearch::STATUS_MAIL_NOT_SENT;
             $searchModel->dueFromDate      = $currentDate->format('1-m-Y');
             $searchModel->dueToDate        = $currentDate->format('t-m-Y');
-            $searchModel->dateRange     = $searchModel->fromDate.' - '.$searchModel->toDate;
+            $searchModel->dateRange     = $searchModel->dueFromDate.' - '.$searchModel->dueToDate;
         } else {
             $searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
             $searchModel->toDate   = (new \DateTime('last day of this month'))->format('d-m-Y');
@@ -224,7 +224,7 @@ class InvoiceController extends Controller
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
-        $invoiceLineItemModel = new InvoiceLineItem();
+        $invoiceLineItemModel = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_LINE_ITEM_CREATE]);
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
         $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
         $invoiceLineItemModel->userName = $userModel->publicIdentity;
@@ -490,12 +490,13 @@ class InvoiceController extends Controller
 	{
             $locationId = Yii::$app->session->get('location_id');
             $lessons = Lesson::find()
+                ->privateLessons()
                 ->notDeleted()
                 ->completedUnInvoiced()
                 ->location($locationId)
                 ->all();
             foreach($lessons as $lesson) {
-                $lesson->createInvoice();
+                $lesson->createPrivateLessonInvoice();
             }
 		
             return $this->redirect(['index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE]);
@@ -517,7 +518,7 @@ class InvoiceController extends Controller
         $invoiceReverse->invoiceId        = $invoice->id;
         $invoiceReverse->reversedInvoiceId = $creditInvoice->id;
         $invoiceReverse->save();
-        $creditInvoice->addLineItem($invoice->lineItem->lesson);
+        $creditInvoice->addPrivateLessonLineItem($invoice->lineItem->lesson);
         $creditInvoice->save();
         
         return $this->redirect(['view', 'id' => $creditInvoice->id]);
@@ -538,5 +539,75 @@ class InvoiceController extends Controller
             ]);
             return $this->redirect(['enrolment/view', 'id' => $paymentCycle->enrolment->id, '#' => 'payment-cycle']);
         }
+    }
+
+    public function actionEnrolment($id)
+    {
+        $enrolment = Enrolment::findOne($id);
+
+        if (!$enrolment->hasProFormaInvoice()) {
+            $invoice = $enrolment->createProFormaInvoice();
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'ProForma Invoice has been successfully created',
+            ]);
+            return $this->redirect(['view', 'id' => $invoice->id]);
+        } else {
+            return $this->redirect(['view', 'id' => $enrolment->proFormaInvoice->id]);
+        }
+    }
+
+    public function actionGroupLesson($lessonId, $enrolmentId = null)
+    {
+        $lesson      = Lesson::findOne($lessonId);
+        if ($lesson->canInvoice()) {
+            if (!empty($enrolmentId)) {
+                $enrolment = Enrolment::findOne($enrolmentId);
+                if (!$enrolment->hasInvoice($lessonId)) {
+                    $lesson->createGroupInvoice($enrolmentId);
+                    Yii::$app->session->setFlash('alert', [
+                        'options' => ['class' => 'alert-success'],
+                        'body' => 'Invoice has been successfully created',
+                    ]);
+                } else {
+                    Yii::$app->session->setFlash('alert', [
+                        'options' => ['class' => 'alert-success'],
+                        'body' => 'Invoice has been created already!',
+                    ]);
+                }
+                return $this->redirect(['lesson/view', 'id' => $lessonId, '#' => 'student']);
+
+            } else {
+                foreach ($lesson->enrolments as $enrolment) {
+                    if (!$enrolment->hasInvoice($lessonId)) {
+                        $lesson->createGroupInvoice($enrolment->id);
+                    }
+                }
+                Yii::$app->session->setFlash('alert', [
+                    'options' => ['class' => 'alert-success'],
+                    'body' => 'Invoice has been successfully created',
+                ]);
+                return $this->redirect(['course/view', 'id' => $lesson->courseId]);
+            }
+        } else {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => 'Generate invoice against completed lesson only.',
+            ]);
+            if (!empty($enrolmentId)) {
+                return $this->redirect(['lesson/view', 'id' => $lessonId, '#' => 'student']);
+            } else {
+                return $this->redirect(['course/view', 'id' => $lesson->courseId]);
+            }
+        }
+    }
+
+    public function actionGetPaymentAmount($id)
+    {
+        $model = Invoice::findOne($id);
+        return [
+            'status' => true,
+            'amount' => $model->balance,
+        ];
     }
 }

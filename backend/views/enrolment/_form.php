@@ -50,15 +50,15 @@ $this->render('_view-enrolment', [
 		<?php $form			 = ActiveForm::begin(); ?>
     <div class="row">
 		<?php
-		$fromTime		 = Yii::$app->formatter->asTime($model->fromTime);
-		$model->fromTime = !empty($model->fromTime) ? $fromTime : null;
-		$model->paymentFrequency = $model->enrolment->paymentFrequency;
+		$fromTime		 = Yii::$app->formatter->asTime($courseSchedule->fromTime);
+		$courseSchedule->fromTime = !empty($courseSchedule->fromTime) ? $fromTime : null;
+		$courseSchedule->paymentFrequency = $model->enrolment->paymentFrequency;
 		?>
         <div class="col-md-4">
-<?php echo $form->field($model, 'day')->dropdownList(Course::getWeekdaysList(), ['prompt' => 'select day']) ?>
+<?php echo $form->field($courseSchedule, 'day')->dropdownList(Course::getWeekdaysList(), ['prompt' => 'select day']) ?>
         </div>
 		<div class="col-md-4">
-<?= $form->field($model, 'fromTime')->widget(TimePicker::classname(), []); ?>
+<?= $form->field($courseSchedule, 'fromTime')->widget(TimePicker::classname(), []); ?>
 		</div>
 		<div class="col-md-4">
 			<?php
@@ -75,23 +75,8 @@ $this->render('_view-enrolment', [
 			]);
 			?>
 		</div>
-		<div class="col-md-4">
-			<?php
-			echo $form->field($model, 'endDate')->widget(DatePicker::classname(),
-				[
-				'options' => [
-					'value' => (new \DateTime($model->endDate))->format('d-m-Y'),
-				],
-				'type' => DatePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'autoclose' => true,
-					'format' => 'dd-mm-yyyy'
-				]
-			]);
-			?>
-		</div>
 	</div>
-    <div class="form-group col-md-4">
+    <div class="form-group">
 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
 	['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?= Html::a('Cancel', ['view', 'id' => $model->enrolment->id], ['class' => 'btn']);
@@ -99,5 +84,6 @@ $this->render('_view-enrolment', [
     </div>
 
 <?php ActiveForm::end(); ?>
+<div class="clearfix"></div>
 
 </div>

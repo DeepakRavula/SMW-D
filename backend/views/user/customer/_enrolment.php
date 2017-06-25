@@ -43,30 +43,23 @@ use yii\helpers\Url;
             [
                 'label' => 'Day',
                 'value' => function ($data) {
-                    if (!empty($data->course->day)) {
-                        $dayList = Course::getWeekdaysList();
-                        $day = $dayList[$data->course->day];
+					$dayList = Course::getWeekdaysList();
+					$day = $dayList[$data->courseSchedule->day];
 
-                        return !empty($day) ? $day : null;
-                    }
+					return !empty($day) ? $day : null;
                 },
             ],
             [
                 'label' => 'From Time',
                 'value' => function ($data) {
-                    if (!empty($data->course->fromTime)) {
-                        return !empty($data->course->fromTime) ? Yii::$app->formatter->asTime($data->course->fromTime) : null;
-                    }
+                    return !empty($data->courseSchedule->fromTime) ? Yii::$app->formatter->asTime($data->courseSchedule->fromTime) : null;
                 },
             ],
             [
                 'label' => 'Duration',
                 'value' => function ($data) {
-                    if (!empty($data->course->duration)) {
-                        $duration = \DateTime::createFromFormat('h:i:s', $data->course->duration);
-
-                        return !empty($duration) ? $duration->format('H:i') : null;
-                    }
+					$duration = \DateTime::createFromFormat('h:i:s', $data->courseSchedule->duration);
+					return !empty($duration) ? $duration->format('H:i') : null;
                 },
             ],
             [

@@ -5,7 +5,7 @@ use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 ?>
 <div class="clearfix"></div>
-<div class="col-md-10">
+<div class="col-md-10 m-t-20">
 <div class="box box-default collapsed-box">
   <div class="box-header with-border">
     <h3 class="box-title">Teacher Availabilities</h3>
@@ -26,7 +26,7 @@ use yii\grid\GridView;
   <?php
     echo GridView::widget([
       'dataProvider' => $teacherAvailabilityDataProvider,
-      'options' => ['class' => 'col-md-5'],
+      'options' => ['class' => 'col-md-5 m-t-15'],
       'tableOptions' => ['class' => 'table table-bordered table-more-condensed'],
       'headerRowOptions' => ['class' => 'bg-light-gray'],
       'columns' => [

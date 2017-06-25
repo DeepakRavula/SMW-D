@@ -28,6 +28,9 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	.lesson-count {
 		font-weight: bold;
 	}
+    #note{
+        padding-bottom: 15px;
+    }
     #user-note{
         padding-left:10px;
     }

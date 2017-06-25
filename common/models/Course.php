@@ -5,7 +5,6 @@ namespace common\models;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\Lesson;
-use common\models\EnrolmentDiscount;
 use Yii;
 use common\models\CourseGroup;
 
@@ -30,10 +29,7 @@ class Course extends \yii\db\ActiveRecord
 	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
     const EVENT_CREATE = 'event-create';
     public $lessonStatus;
-    public $studentId;
-    public $paymentFrequency;
 	public $rescheduleBeginDate;
-	public $discount;
 	public $teacherName;
 	public $weeksCount;
 	public $lessonsPerWeekCount;
@@ -53,73 +49,12 @@ class Course extends \yii\db\ActiveRecord
     {
         return [
             [['programId', 'teacherId'], 'required'],
-			[['discount'], 'safe'],
-            [['day', 'fromTime'], 'safe'],
-            [['startDate', 'duration'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
-            [['duration', 'startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
-            [['programId', 'teacherId', 'paymentFrequency', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
-            [['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
-                return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
-            },'except' => self::SCENARIO_EDIT_ENROLMENT 
-            ],
-            [['startDate', 'duration', 'endDate'], 'string'],
-            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'discount'], 'safe'],
-            ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_EDIT_ENROLMENT],
-            ['fromTime', 'checkTime', 'on' => self::SCENARIO_EDIT_ENROLMENT],
-            ['endDate', 'checkDate', 'on' => self::SCENARIO_EDIT_ENROLMENT],
-            ['day', 'checkTeacherAvailableDay', 'on' => self::SCENARIO_GROUP_COURSE],
-            ['fromTime', 'checkTime', 'on' => self::SCENARIO_GROUP_COURSE],
+            [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
+            [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
+            [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
+            [['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
+          
         ];
-    }
-
-	public function checkTeacherAvailableDay($attribute, $params)
-    {
-        $teacherAvailabilities = TeacherAvailability::find()
-            ->joinWith(['teacher' => function ($query) {
-                $query->where(['user.id' => $this->teacherId]);
-            }])
-                ->where(['teacher_availability_day.day' => $this->day])
-                ->all();
-        if (empty($teacherAvailabilities)) {
-			$dayList = self::getWeekdaysList();
-			$day = $dayList[$this->day];
-            $this->addError($attribute, 'Teacher is not available on '. $day);
-        }
-    }
-
-	public function checkDate($attribute, $params)
-	{
-		$oldEndDate = (new \DateTime($this->getOldAttribute('endDate')))->format('d-m-Y');
-		$endDate = (new \DateTime($this->endDate))->format('d-m-Y');
-		if ($endDate > $oldEndDate) {
-			return $this->addError($attribute, 'End date must be less than course end date');
-		}
-	}
-	
-	public function checkTime($attribute, $params)
-    {
-        $teacherAvailabilities = TeacherAvailability::find()
-            ->joinWith(['teacher' => function ($query) {
-                $query->where(['user.id' => $this->teacherId]);
-            }])
-                ->where(['teacher_availability_day.day' => $this->day])
-                ->all();
-        $availableHours = [];
-        if (! empty($teacherAvailabilities)) {
-            foreach ($teacherAvailabilities as $teacherAvailability) {
-                $start = new \DateTime($teacherAvailability->from_time);
-                $end = new \DateTime($teacherAvailability->to_time);
-                $interval = new \DateInterval('PT15M');
-                $hours = new \DatePeriod($start, $interval, $end);
-                foreach ($hours as $hour) {
-                    $availableHours[] = Yii::$app->formatter->asTime($hour);
-                }
-            }
-            $fromTime = (new \DateTime($this->fromTime))->format('h:i A');
-            if (!in_array($fromTime, $availableHours)) {
-                $this->addError($attribute, 'Please choose the lesson time within the teacher\'s availability hours');
-            }
-        }
     }
 
     /**
@@ -176,11 +111,35 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(Program::className(), ['id' => 'programId']);
     }
 
-    public function getEnrolment()
+    public function getStudentEnrolment($student)
+    {
+        return Enrolment::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->andWhere(['courseId' => $this->id])
+            ->andWhere(['studentId' => $student->id])
+            ->one();
+    }
+
+    public function getCourseSchedule()
+    {
+	    return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id']);
+    }
+
+	public function getCourseGroup()
+    {
+	    return $this->hasOne(CourseGroup::className(), ['courseId' => 'id']);
+    }
+	
+	public function getGroupCourseSchedule()
+    {
+	    return $this->hasMany(CourseSchedule::className(), ['courseId' => 'id']);
+    }
+
+	public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
     }
-
 	public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'locationId']);
@@ -212,21 +171,30 @@ class Course extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::beforeSave($insert);
 		}
-        $fromTime = new \DateTime($this->fromTime);
-        $this->fromTime = $fromTime->format('H:i:s');
-        $timebits = explode(':', $this->fromTime);
 		$this->isConfirmed = false;
         if ((int) $this->program->isGroup()) {
-            $startDate = new \DateTime($this->startDate);
-            $endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));
-            $this->endDate = $endDate->format('Y-m-d H:i:s');
+			list($firstLessonDate,$secondLessonDate) = $this->startDate;
+			if((int)$this->lessonsPerWeekCount === CourseGroup::LESSONS_PER_WEEK_COUNT_ONE) {
+				$this->startDate = $firstLessonDate; 
+            	$startDate = new \DateTime($firstLessonDate);
+    	        $endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));	
+        		$this->endDate = $endDate->format('Y-m-d H:i:s');
+			} else {
+				if(new \DateTime($firstLessonDate) < new \DateTime($secondLessonDate)) {
+					$this->startDate = $firstLessonDate; 
+				} else {
+					$this->startDate = $secondLessonDate;
+				}
+				$startDate = new \DateTime($secondLessonDate);
+				$endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));
+				$this->endDate = $endDate->format('Y-m-d H:i:s');
+			}
         } else {
-            $endDate = \DateTime::createFromFormat('d-m-Y', $this->startDate);
+            $endDate = new \DateTime($this->startDate);
             $startDate = new \DateTime($this->startDate);
-            $startDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
             $this->startDate = $startDate->format('Y-m-d H:i:s');
             $endDate->add(new \DateInterval('P1Y'));
-            $this->endDate = $endDate->format('Y-m-d 00:00:00');
+            $this->endDate = $endDate->format('Y-m-d H:i:s');
         }
 
         return parent::beforeSave($insert);
@@ -237,54 +205,12 @@ class Course extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::afterSave($insert, $changedAttributes);
 		}
-        if ((int) $this->program->isPrivate()) {
-            $enrolmentModel = new Enrolment();
-            $enrolmentModel->courseId = $this->id;
-            $enrolmentModel->studentId = $this->studentId;
-            $enrolmentModel->paymentFrequencyId = $this->paymentFrequency;
-            if($enrolmentModel->save()) {
-				if(!empty($this->discount)) {
-					$enrolmentDiscount = new EnrolmentDiscount();
-					$enrolmentDiscount->enrolmentId = $enrolmentModel->id;
-					$enrolmentDiscount->discount = $this->discount;	
-					$enrolmentDiscount->save();
-				}
-			}
-        }
         if ((int) $this->program->isGroup()) {
 			$groupCourse = new CourseGroup();
 			$groupCourse->courseId = $this->id;
 			$groupCourse->weeksCount = $this->weeksCount;
 			$groupCourse->lessonsPerWeekCount = $this->lessonsPerWeekCount;
 			$groupCourse->save();
-            $interval = new \DateInterval('P1D');
-            $startDate = $this->startDate;
-            $endDate = $this->endDate;
-            $start = new \DateTime($startDate);
-            $end = new \DateTime($endDate);
-			$end->modify('+1 day');
-            $period = new \DatePeriod($start, $interval, $end);
-
-            foreach ($period as $day) {
-                $professionalDevelopmentDay = clone $day;
-                $professionalDevelopmentDay->modify('last day of previous month');
-                $professionalDevelopmentDay->modify('fifth '.$day->format('l'));
-                if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-                    continue;
-                }
-                if ((int) $day->format('N') === (int) $this->day) {
-                    $lesson = new Lesson();
-                    $lesson->setAttributes([
-                        'courseId' => $this->id,
-                        'teacherId' => $this->teacherId,
-                        'status' => Lesson::STATUS_DRAFTED,
-                        'date' => $day->format('Y-m-d H:i:s'),
-                        'duration' => $this->duration,
-                        'isDeleted' => false,
-                    ]);
-                    $lesson->save();
-                }
-            }
         }
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -295,7 +221,7 @@ class Course extends \yii\db\ActiveRecord
 		$duration								 = explode(':', $lessonTime);
 		$nextWeekScheduledDate = $startDate;
 		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->day];
+		$day = $dayList[$this->courseSchedule->day];
 		foreach ($lessons as $lesson) {
 			if ($this->isProfessionalDevelopmentDay($startDate)) {
 				$nextWeekScheduledDate = $startDate->modify('next '.$day);
@@ -315,7 +241,7 @@ class Course extends \yii\db\ActiveRecord
 	public function isProfessionalDevelopmentDay($startDate)
 	{
 		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->day];
+		$day = $dayList[$this->courseSchedule->day];
 		$isProfessionalDevelopmentDay = false;
 		$professionalDevelopmentDay = clone $startDate;
 		$professionalDevelopmentDay->modify('last day of previous month');
@@ -337,7 +263,7 @@ class Course extends \yii\db\ActiveRecord
 			->andWhere(['>=', 'date', $fromDate])
 			->all();
 		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->day];
+		$day = $dayList[$this->courseSchedule->day];
 		$startDate	 = new \DateTime($toDate);
 		$startDate->modify('next '.$day);
 		$this->generateLessons($lessons, $startDate);
@@ -354,7 +280,7 @@ class Course extends \yii\db\ActiveRecord
 			->andWhere(['>=', 'date', $toDate])
 			->all();
 		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->day];
+		$day = $dayList[$this->courseSchedule->day];
 		$startDay	 = (new \DateTime($fromDate))->format('l');
 		if ($day !== $startDay) {
 			$startDate = new \DateTime($fromDate);
@@ -395,5 +321,54 @@ class Course extends \yii\db\ActiveRecord
 }
 		}
 		return $lessonIds;
+	}
+	public function createLessons()
+	{
+		$interval = new \DateInterval('P1D');
+		$end = new \DateTime($this->endDate);
+		$end->modify('+1 day');
+		$lessonsPerWeekCount =  $this->courseGroup->lessonsPerWeekCount; 
+		$lessonLimit = ($this->courseGroup->weeksCount * $lessonsPerWeekCount) / $lessonsPerWeekCount;
+		for($i = 0; $i < $lessonsPerWeekCount; $i++) {
+			$lessonDay = $this->groupCourseSchedule[$i]->day;
+			$duration = $this->groupCourseSchedule[$i]->duration; 
+			list($hour, $minute, $second) = explode(':', $this->groupCourseSchedule[$i]->fromTime);  
+			$start = new \DateTime($this->startDate);
+			$start->setTime($hour, $minute, $second);
+			$period = new \DatePeriod($start, $interval, $end);
+			
+			foreach ($period as $day) {
+				$checkDay = (int) $day->format('N') === $lessonDay;
+				$dayList = self::getWeekdaysList();
+				$dayName = $dayList[$lessonDay];
+				$lessonCount = Lesson::find()
+					->andWhere([
+						'courseId' => $this->id,
+						'status' => Lesson::STATUS_DRAFTED,
+						'DAYNAME(date)' => $dayName,
+					])
+					->count();
+				
+				$checkLimit = $lessonCount < $lessonLimit;
+				if ($checkDay && $checkLimit) {
+					$professionalDevelopmentDay = clone $day;
+					$professionalDevelopmentDay->modify('last day of previous month');
+					$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
+					if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+						continue;
+					}
+					$lesson = new Lesson();
+					$lesson->setAttributes([
+						'courseId' => $this->id,
+						'teacherId' => $this->teacherId,
+						'status' => Lesson::STATUS_DRAFTED,
+						'date' => $day->format('Y-m-d H:i:s'),
+						'duration' => $duration,
+						'isDeleted' => false,
+					]);
+					$lesson->save();
+				}
+			}
+		}
 	}
 }

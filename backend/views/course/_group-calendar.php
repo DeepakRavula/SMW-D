@@ -8,11 +8,11 @@ use yii\helpers\Url;
 ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
  <div class="row-fluid">
-	<div id="course-calendar"> </div>
+	<div id="group-course-calendar"> </div>
 </div>
  <div class="form-group">
-	<?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary course-apply', 'name' => 'button']) ?>
-	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default course-cancel']);
+	<?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary group-course-apply', 'name' => 'button']) ?>
+	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default group-course-cancel']);
 	?>
 	<div class="clearfix"></div>
 </div>
@@ -33,22 +33,22 @@ use yii\helpers\Url;
 <script>
 $(document).ready(function(){
 	
-	$(document).on('click', '.course-apply', function (e) {
-		$('#course-calendar-modal').modal('hide');
+	$(document).on('click', '.group-course-apply', function (e) {
+		$('#group-course-calendar-modal').modal('hide');
 		return false;
 	});
-	$(document).on('click', '.course-cancel', function (e) {
-		$('#course-calendar-modal').modal('hide');
+	$(document).on('click', '.group-course-cancel', function (e) {
+		$('#group-course-calendar-modal').modal('hide');
 		return false;
 	});
-	$(document).on('click', '.course-calendar-icon', function() {
-		$('#course-calendar-modal').modal('show');
-        $('#course-calendar-modal .modal-dialog').css({'width': '1000px'});
+	$(document).on('click', '.group-course-calendar-icon', function() {
+		$('#group-course-calendar-modal').modal('show');
+        $('#group-course-calendar-modal .modal-dialog').css({'width': '1000px'});
 		var date = moment(new Date()).format('DD-MM-YYYY');
 	    renderCalendar(date);
 	});
     $(document).on('change', '#course-teacherid', function () {
-        var date = $('#course-calendar').fullCalendar('getDate');
+        var date = $('#group-course-calendar').fullCalendar('getDate');
         renderCalendar(date);
     });
 
@@ -69,8 +69,8 @@ $(document).ready(function(){
     }
 
     function refreshCalendar(availableHours, events, date) {
-        $('#course-calendar').fullCalendar('destroy');
-        $('#course-calendar').fullCalendar({
+        $('#group-course-calendar').fullCalendar('destroy');
+        $('#group-course-calendar').fullCalendar({
             defaultDate: moment(new Date()).format('YYYY-MM-DD'),
             header: {
                 left: 'prev,next today',
@@ -91,18 +91,18 @@ $(document).ready(function(){
             overlapEventsSeparate: true,
             events: events,
             select: function (start, end, allDay) {
-                $('#courseschedule-day-0').val(moment(start).day());
-                $('#course-startdate-0').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
-                $('#courseschedule-fromtime-0').val(moment(start).format('HH:mm:ss'));
-                $('#courseschedule-duration-0').val($('#courseschedule-duration').val());
-				$('.course-summary').text(
+				$('#courseschedule-day-1').val(moment(start).day());
+                $('#course-startdate-1').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
+                $('#courseschedule-fromtime-1').val(moment(start).format('HH:mm:ss'));
+                $('#courseschedule-duration-1').val($('#group-course-duration').val());
+				$('.group-course-summary').text(
 						 moment(start).format('dddd') + ', ' +
 						moment(start).format('HH:mm A'));
-                $('#course-calendar').fullCalendar('removeEvents', 'newEnrolment');
+                $('#group-course-calendar').fullCalendar('removeEvents', 'newEnrolment');
 				var endtime = start.clone();
-                var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
+                var durationMinutes = moment.duration($('#group-course-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
-                $('#course-calendar').fullCalendar('renderEvent',
+                $('#group-course-calendar').fullCalendar('renderEvent',
                     {
                         id: 'newEnrolment',
                         start: start,
@@ -111,7 +111,7 @@ $(document).ready(function(){
                     },
                 true // make the event "stick"
                 );
-                $('#course-calendar').fullCalendar('unselect');
+                $('#group-course-calendar').fullCalendar('unselect');
             },
             eventAfterAllRender: function (view) {
                 $('.fc-short').removeClass('fc-short');
@@ -122,7 +122,7 @@ $(document).ready(function(){
     }
 
 //    $('#group-course-form').on('beforeSubmit', function (e) {
-//        var courseDay = $('#courseschedule-day-0').val();
+//        var courseDay = $('#courseschedule-day-1').val();
 //        if( ! courseDay) {
 //            $('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
 //            $(window).scrollTop(0);

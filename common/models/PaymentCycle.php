@@ -109,9 +109,9 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function beforeDelete()
     {
-        if ($this->proformaInvoice && !$this->proformaInvoice->isPaid()) {
-            $this->proformaInvoice->trigger(Invoice::EVENT_DELETE);
-            $this->proformaInvoice->delete();
+        if ($this->proFormaInvoice && !$this->proFormaInvoice->isPaid()) {
+            $this->proFormaInvoice->trigger(Invoice::EVENT_DELETE);
+            $this->proFormaInvoice->delete();
         }
         PaymentCycleLesson::deleteAll(['paymentCycleId' => $this->id]);
         return parent::beforeDelete();
@@ -154,12 +154,19 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
         $lessons = Lesson::find()
+            ->notDeleted()
             ->joinWith('paymentCycleLesson')
             ->andWhere(['payment_cycle_lesson.paymentCycleId' => $this->id])
             ->all();
         foreach ($lessons as $lesson) {
-            $lesson->studentFullName = $this->enrolment->student->fullName;
-            $invoice->addLineItem($lesson);
+            if ($lesson->isExploded()) {
+                foreach ($lesson->lessonSplits as $split) {
+                    $invoice->addLessonSplitItem($split->id);
+                }
+            } else {
+                $lesson->studentFullName = $this->enrolment->student->fullName;
+                $invoice->addPrivateLessonLineItem($lesson);
+            }
         }
         $invoice->save();
         return $invoice;

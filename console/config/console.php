@@ -27,5 +27,10 @@ return [
             'migrationTable' => '{{%system_rbac_migration}}',
             'templateFile' => '@common/rbac/views/migration.php',
         ],
+		'one-off' => [
+			'class' => 'yii\console\controllers\MigrateController',
+			'migrationPath' => '@common/migrations/one-off/',
+			'migrationTable' => '{{%system_one_off_migration}}',
+		]
     ],
 ];

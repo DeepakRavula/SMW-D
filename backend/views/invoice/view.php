@@ -34,6 +34,9 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         padding-right:15px;
         position: relative;
     }
+    #invoice-mail-modal > .modal-dialog {
+    	width: 900px !important;
+    }
 </style>
 <?php
 $lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->id]);
@@ -47,7 +50,7 @@ if (!empty($lineItem)) {
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Email Preview</h4>',
-    'id'=>'invoice-mail-modal',
+    'id'=>'invoice-mail-modal'
 ]);
  echo $this->render('mail/preview', [
 		'model' => $model,
@@ -89,7 +92,7 @@ Modal::end();
             ])->label(false);
             ?>
 			</div>
-		<?php elseif(!$model->hasMiscItem() && $model->isPaid() && !$model->isCanceled): ?>
+		<?php elseif($model->canRevert()): ?>
                     <?=
 			Html::a('<i class="fa fa-remove"></i> Revert this invoice', ['revert-invoice', 'id' => $model->id],
 				[

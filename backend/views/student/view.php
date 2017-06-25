@@ -21,7 +21,7 @@ echo $this->render('_profile', [
 <div class="tabbable-panel">
 	<div class="tabbable-line">
 		<?php
-		$enrolmentContent = $this->render('_enrolment', [
+		$enrolmentContent = $this->render('enrolment/_view', [
 			'model' => $model,
 			'enrolmentDataProvider' => $enrolmentDataProvider,
 		]);

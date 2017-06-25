@@ -27,17 +27,6 @@ use yii\helpers\Html;
 				],
 			])
 			?>
-		<?php elseif (!empty($endDate)): ?>
-			<?=
-			Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Enrolment[endDate]' => $endDate, 'Enrolment[type]' => $enrolmentEditType], [
-				'class' => 'btn btn-danger',
-				'id' => 'confirm-button',
-				'disabled' => $hasConflict,
-				'data' => [
-					'method' => 'post',
-				],
-			])
-			?>
 		<?php else : ?>
 			<?=
 			Html::a('Confirm', ['confirm', 'courseId' => $courseId], [

@@ -24,8 +24,6 @@ class Enrolment extends \yii\db\ActiveRecord
 	public $programName;
 	public $enrolmentCount;
     public $userName;
-    const EDIT_RENEWAL = 'renewal';
-    const EDIT_LEAVE = 'leave';
 
     const EVENT_CREATE = 'create';
     const EVENT_GROUP='group-course-enroll';
@@ -89,18 +87,15 @@ class Enrolment extends \yii\db\ActiveRecord
         return new \common\models\query\EnrolmentQuery(get_called_class());
     }
 
-    public function notDeleted()
-    {
-        $this->where(['enrolment.isDeleted' => false]);
-
-        return $this;
-    }
-
     public function getCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
     }
-
+	public function getCourseSchedule()
+    {
+        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+			->via('course');
+    }
     public function getPaymentsFrequency()
     {
         return $this->hasOne(PaymentFrequency::className(), ['id' => 'paymentFrequencyId']);
@@ -126,6 +121,45 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Program::className(), ['id' => 'programId'])
             ->viaTable('course', ['id' => 'courseId']);
+    }
+
+    public function hasProFormaInvoice()
+    {
+        return !empty($this->proFormaInvoice);
+    }
+
+    public function getProFormaInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+            ->via('invoiceLineItems')
+            ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+    }
+
+    public function hasInvoice($lessonId)
+    {
+        return !empty($this->getInvoice($lessonId));
+    }
+
+    public function getInvoice($lessonId)
+    {
+        $enrolmentId = $this->id;
+        return Invoice::find()
+            ->notDeleted()
+            ->invoice()
+            ->enrolmentLesson($lessonId, $enrolmentId)
+            ->one();
+    }
+
+    public function getInvoiceLineItems()
+    {
+        return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+            ->via('invoiceItemsEnrolment')
+            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_GROUP_LESSON]);
+    }
+
+    public function getInvoiceItemsEnrolment()
+    {
+        return $this->hasMany(InvoiceItemEnrolment::className(), ['enrolmentId' => 'id']);
     }
 
     public function getCurrentPaymentCycle()
@@ -183,14 +217,22 @@ class Enrolment extends \yii\db\ActiveRecord
 
         return null;
     }
-    
+
+    public function getCourseCount()
+    {
+        return Lesson::find()
+                ->notDeleted()
+                ->where(['courseId' => $this->courseId])
+                ->count('id');
+    }
+
     public function getFirstUnPaidProFormaPaymentCycle()
     {
         foreach ($this->paymentCycles as $paymentCycle) {
             if (!$paymentCycle->hasProFormaInvoice()) {
                 return $paymentCycle;
-            } else if (!$paymentCycle->proformaInvoice->isPaid() &&
-                !$paymentCycle->proformaInvoice->hasPayments()) {
+            } else if (!$paymentCycle->proFormaInvoice->isPaid() &&
+                !$paymentCycle->proFormaInvoice->hasPayments()) {
                 return $paymentCycle;
             }
         }
@@ -216,8 +258,8 @@ class Enrolment extends \yii\db\ActiveRecord
         foreach ($this->paymentCycles as $paymentCycle) {
             if (!$paymentCycle->hasProFormaInvoice()) {
                 $models[] = $paymentCycle;
-            } else if (!$paymentCycle->proformaInvoice->isPaid() &&
-                !$paymentCycle->proformaInvoice->hasPayments()) {
+            } else if (!$paymentCycle->proFormaInvoice->isPaid() &&
+                !$paymentCycle->proFormaInvoice->hasPayments()) {
                 $models[] = $paymentCycle;
             }
         }
@@ -269,26 +311,31 @@ class Enrolment extends \yii\db\ActiveRecord
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
         $period = new \DatePeriod($start, $interval, $end);
-        foreach ($period as $day) {
-            if ((int) $day->format('N') === (int) $this->course->day) {
-                $professionalDevelopmentDay = clone $day;
-                $professionalDevelopmentDay->modify('last day of previous month');
-                $professionalDevelopmentDay->modify('fifth '.$day->format('l'));
-                if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-                    continue;
-                }
-                $lesson = new Lesson();
-                $lesson->setAttributes([
-                    'courseId' => $this->course->id,
-                    'teacherId' => $this->course->teacherId,
-                    'status' => Lesson::STATUS_DRAFTED,
-                    'date' => $day->format('Y-m-d H:i:s'),
-                    'duration' => $this->course->duration,
-                    'isDeleted' => false,
-                ]);
-                $lesson->save();
-            }
-        }
+		foreach ($period as $day) {
+			$lessonCount = Lesson::find()
+				->andWhere(['courseId' => $this->courseId, 'status' => Lesson::STATUS_DRAFTED])
+				->count();
+			$checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
+			$checkLessonCount = (int)$lessonCount < Lesson::MAXIMUM_LIMIT; 
+			if ($checkDay && $checkLessonCount) {
+				$professionalDevelopmentDay = clone $day;
+				$professionalDevelopmentDay->modify('last day of previous month');
+				$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
+				if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+					continue;
+				}
+				$lesson = new Lesson();
+				$lesson->setAttributes([
+					'courseId' => $this->course->id,
+					'teacherId' => $this->course->teacherId,
+					'status' => Lesson::STATUS_DRAFTED,
+					'date' => $day->format('Y-m-d H:i:s'),
+					'duration' => $this->courseSchedule->duration,
+					'isDeleted' => false,
+				]);
+				$lesson->save();
+			}
+		}
     }
 
 	public static function getPaymentFrequencies()
@@ -362,7 +409,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function resetPaymentCycle()
     {
-        if (!empty($this->firstUnPaidProFormaPaymentCycle)) {
+        if (!empty($this->firstUnPaidProFormaPaymentCycle)) {            
             $startDate = \DateTime::createFromFormat('Y-m-d',
                 $this->firstUnPaidProFormaPaymentCycle->startDate);        
             $enrolmentLastPaymentCycleEndDate = \DateTime::createFromFormat('Y-m-d',
@@ -436,16 +483,44 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function hasExplodedLesson()
     {
-        $lessons = Lesson::find()
-            ->andWhere(['lesson.courseId' => $this->courseId])
-            ->joinWith(['lessonSplit' => function ($query) {
-                $query->joinWith(['lessonSplitUsage' => function ($query) {
-                    $query->where(['lessonSplitId' => null]);
-                }]);
-                $query->andWhere(['NOT', ['lesson_split.lessonId' => null]]);
-            }])
-            ->one();
+        $courseId = $this->courseId;
+        $locationId = $this->course->locationId;
+        $lessonSplits = LessonSplit::find()
+                    ->unusedSplits($courseId, $locationId)
+                    ->all();
 
-        return !empty($lessons);
+        return !empty($lessonSplits);
+    }
+
+    public function createProFormaInvoice()
+    {
+        $locationId = $this->student->customer->userLocation->location_id;
+        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $invoice = new Invoice();
+        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
+        $invoice->userName = $user->publicIdentity;
+        $invoice->user_id = $this->student->customer->id;
+        $invoice->location_id = $locationId;
+        $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
+        $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
+        $invoice->createdUserId = Yii::$app->user->id;
+        $invoice->updatedUserId = Yii::$app->user->id;
+        if (!$invoice->save()) {
+            Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+        }
+        $invoiceLineItem = $invoice->addGroupProFormaLineItem($this);
+        if (!$invoiceLineItem->save()) {
+            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+        } else {
+            $invoiceItemLesson = new InvoiceItemEnrolment();
+            $invoiceItemLesson->enrolmentId    = $this->id;
+            $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
+            $invoiceItemLesson->save();
+        }
+        if (!$invoice->save()) {
+            Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+        } else {
+            return $invoice;
+        }
     }
 }

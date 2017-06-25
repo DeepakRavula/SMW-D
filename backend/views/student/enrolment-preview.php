@@ -58,47 +58,67 @@ if (!empty($proFormaInvoiceCredits)) {
     }
 }
 ?>
-<div class="smw-box col-md-10 m-l-20 m-b-30">
-<h4>Customer Name : 
-<div class="row-fluid">
-    <div class="col-md-12 p-t-10">
-        <p class="users-name pull-left"><?= $model->student->customer->publicidentity ?>
-             <em>
-                <small><?php echo !empty($model->student->customer->email) ? $model->student->customer->email : null ?></small>
-            </em> 
-        </p>
-    </div>
-	Billing Address :
-    <div class="row-fluid">
-		<div id="w3" class="list-view">
-            <div data-key="351">
-                <div class="address p-t-6 p-b-6 relative  col-md-6">
-                    <div><?= Html::encode(!empty($model->student->customer->billingAddress->address) ? $model->student->customer->billingAddress->address : null) ?> </div>
-                    <div><?= Html::encode(!empty($model->student->customer->billingAddress->city->name) ? $model->student->customer->billingAddress->city->name : null) ?> <?= Html::encode(!empty($model->student->customer->billingAddress->province->name) ? $model->student->customer->billingAddress->province->name : null) ?></div>
-                    <div><?= Html::encode(!empty($model->student->customer->billingAddress->country->name) ? $model->student->customer->billingAddress->country->name : null) ?> <?= Html::encode(!empty($model->student->customer->billingAddress->postal_code) ? $model->student->customer->billingAddress->postal_code : null) ?></div>
-                </div>
-                <div class="address p-t-6 p-b-6 relative  col-md-6">
-                    <div><?= Html::encode(!empty($model->student->customer->primaryPhoneNumber->number) ? (!empty($model->student->customer->primaryPhoneNumber->number) ? $model->student->customer->primaryPhoneNumber->label->name.' : ' : null).''.$model->student->customer->primaryPhoneNumber->number : null) ?> </div>
-                </div>
+<table class="table">
+    <tr>
+        <td>Customer Name : </td>
+        <td><?= $model->student->customer->publicidentity ?></td>
+    </tr>
+    <tr>
+        <td>Email:</td>
+        <td><?php echo !empty($model->student->customer->email) ? $model->student->customer->email : null ?></td>
+    </tr>
+    <tr>
+        <td>Billing Address :</td>
+        <td>
+            <div class="address">
+                <div><?= Html::encode(!empty($model->student->customer->billingAddress->address) ? $model->student->customer->billingAddress->address : null) ?> </div>
+                <div><?= Html::encode(!empty($model->student->customer->billingAddress->city->name) ? $model->student->customer->billingAddress->city->name : null) ?> <?= Html::encode(!empty($model->student->customer->billingAddress->province->name) ? $model->student->customer->billingAddress->province->name : null) ?></div>
+                <div><?= Html::encode(!empty($model->student->customer->billingAddress->country->name) ? $model->student->customer->billingAddress->country->name : null) ?> <?= Html::encode(!empty($model->student->customer->billingAddress->postal_code) ? $model->student->customer->billingAddress->postal_code : null) ?></div>
             </div>
-        </div>		
-    </div>
-</div>
-<div class="clearfix"></div>
-<h4>Student Name : <?= $model->student->fullName; ?></h4>
-<h4>Program Name : <?= $model->program->name; ?></h4>
-<h4>Teacher Name : <?= $model->course->teacher->publicIdentity; ?></h4>
-<h4>Duration: 
-<?= Yii::$app->formatter->asDate($model->course->startDate).' to '.Yii::$app->formatter->asDate($model->course->endDate); ?>
-</h4>
-<h4>Pending Invoice Total : <?= !empty($pendingInvoiceTotal) ? $pendingInvoiceTotal : 0; ?></h4>
-<h4>Number Of Invoice Partial Payment : <?= !empty($count) ? $count : 0; ?></h4>
-<h4>Unused Invoice Credit : <?= !empty($originalInvoiceCredit) ? abs($originalInvoiceCredit) : 0; ?></h4>
-<?php if ($model->course->program->isPrivate()):?>
-<h4>Unused Pro Forma Invoice Credit : <?= !empty($proFormaCredit) ? $proFormaCredit : 0; ?></h4>
-<?php endif; ?>
-</div>
-<div class="clearfix"></div>
+            <div class="address">
+                <div><?= Html::encode(!empty($model->student->customer->primaryPhoneNumber->number) ? (!empty($model->student->customer->primaryPhoneNumber->number) ? $model->student->customer->primaryPhoneNumber->label->name.' : ' : null).''.$model->student->customer->primaryPhoneNumber->number : null) ?> </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>Student Name :</td>
+        <td><?= $model->student->fullName; ?></td>
+    </tr>
+    <tr>
+        <td>Program Name :</td>
+        <td><?= $model->program->name; ?></td>
+    </tr>
+    <tr>
+        <td>Teacher Name :</td>
+        <td><?= $model->course->teacher->publicIdentity; ?></td>
+    </tr>
+    <tr>
+        <td>Duration: </td>
+        <td><?= Yii::$app->formatter->asDate($model->course->startDate).' to '.Yii::$app->formatter->asDate($model->course->endDate); ?></td>
+    </tr>
+    <tr>
+        <td>Pending Invoice Total : </td>
+        <td><?= !empty($pendingInvoiceTotal) ? $pendingInvoiceTotal : 0; ?></td>
+    </tr>
+    <tr>
+        <td>Number Of Invoice Partial Payment :</td>
+        <td><?= !empty($count) ? $count : 0; ?></td>
+    </tr>
+    <tr>
+        <td>Unused Invoice Credit :</td>
+        <td> <?= !empty($originalInvoiceCredit) ? abs($originalInvoiceCredit) : 0; ?></td>
+    </tr>
+    <?php if ($model->course->program->isPrivate()):?>
+    <tr>
+        <td>
+             Unused Pro Forma Invoice Credit : 
+        </td>
+        <td>
+            <?= !empty($proFormaCredit) ? $proFormaCredit : 0; ?>
+        </td>
+    </tr>
+    <?php endif; ?>
+</table>
 <?php $form = ActiveForm::begin([
 	'id' => 'enrolment-delete-form',
 	'action' => Url::to(['enrolment/delete', 'id' => $model->id])

@@ -28,7 +28,10 @@ use kartik\select2\Select2;
 
     <div class="col-xs-6">
         <?php echo $form->field($model, 'itemCategoryId')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map(ItemCategory::find()->all(), 'id', 'name'),
+                'data' => ArrayHelper::map(ItemCategory::find()
+                    ->notDeleted()
+                    ->active()
+                    ->all(), 'id', 'name'),
                 'options' => ['placeholder' => 'Select Category'],
             ]);
         ?>

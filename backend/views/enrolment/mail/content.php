@@ -13,7 +13,7 @@ Dear <?= $toName; ?>,<br>
 			<td><strong><?= 'Program Name: ' ?></strong> <?= $model->course->program->name; ?></td>
 			<td><strong><?= 'Time: ' ?></strong> 
 				<?php
-				$fromTime = \DateTime::createFromFormat('H:i:s', $model->course->fromTime);
+				$fromTime = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->fromTime);
 				echo $fromTime->format('h:i A');
 				?>
 			</td>
@@ -22,7 +22,7 @@ Dear <?= $toName; ?>,<br>
 			<td>
 				<strong><?= 'Durartion: ' ?></strong>
 				<?php
-				$length = \DateTime::createFromFormat('H:i:s', $model->course->duration);
+				$length = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->duration);
 				echo $length->format('H:i');
 				?>
 			</td>

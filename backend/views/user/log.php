@@ -72,7 +72,10 @@ $paymentLogs = TimelineEvent::find()
 <?php $dataProvider = new ActiveDataProvider([
 	'query' => $logs,
 ]);?>
-<div class="student-index">  
+<div class="student-index p-15">  
+	<?php yii\widgets\Pjax::begin([
+    'timeout' => 6000,
+]) ?>
 <?php echo GridView::widget([
 	'dataProvider' => $dataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
@@ -88,4 +91,5 @@ $paymentLogs = TimelineEvent::find()
 		],
 	],
 ]); ?>
+<?php \yii\widgets\Pjax::end(); ?>
 </div>

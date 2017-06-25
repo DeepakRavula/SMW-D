@@ -7,7 +7,7 @@ use common\models\Lesson;
 use common\models\PrivateLesson;
 
 ?>
-<div class="grid-row-open p-10">
+<div class="grid-row-open p-15">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php $columns = [
             [

@@ -22,6 +22,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     private $isRoyaltyExempted;
    
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
+    const SCENARIO_LINE_ITEM_CREATE = 'line-item-create';
     const SCENARIO_EDIT = 'edit';
     const DISCOUNT_FLAT            = 0;
     const DISCOUNT_PERCENTAGE      = 1;
@@ -56,11 +57,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return [
             ['taxStatus', 'required', 'on' => self::SCENARIO_EDIT],
             ['code', 'required'],
-            [['unit', 'amount', 'item_id', 'itemCategoryId',  'description',
-                'tax_status'], 'required', 'when' => function ($model, $attribute) {
+            [['unit', 'amount', 'item_id', 'description', 'tax_status'],
+                'required', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
-            },
-            ],
+            }],
+            ['itemCategoryId', 'required', 'when' => function ($model, $attribute) {
+                return (int) $model->item_type_id === ItemType::TYPE_MISC;
+            }, 'on' => self::SCENARIO_LINE_ITEM_CREATE],
             [['amount'], 'number', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
@@ -130,9 +133,25 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceItemLesson::className(), ['invoiceLineItemId' => 'id']);
     }
 
+    public function getLineItemEnrolment()
+    {
+        return $this->hasOne(InvoiceItemEnrolment::className(), ['invoiceLineItemId' => 'id']);
+    }
+
     public function getLineItemPaymentCycleLesson()
     {
         return $this->hasOne(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id']);
+    }
+
+    public function getLineItemPaymentCycleLessonSplit()
+    {
+        return $this->hasOne(InvoiceItemPaymentCycleLessonSplit::className(), ['invoiceLineItemId' => 'id']);
+    }
+
+    public function getLessonSplit()
+    {
+        return $this->hasOne(LessonSplit::className(), ['id' => 'lessonSplitId'])
+            ->via('lineItemPaymentCycleLessonSplit');
     }
 
     public function getInvoice()
@@ -142,8 +161,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getProFormaLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+        if ($this->isPaymentCycleLesson()) {
+            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
                     ->via('paymentCycleLesson');
+        } else if($this->isPaymentCycleLessonSplit()) {
+            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                    ->via('lessonSplit');
+        }
     }
 
     public function getOriginalInvoice()
@@ -364,6 +388,16 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return (int) $this->item_type_id === (int) ItemType::TYPE_EXTRA_LESSON;
     }
 
+    public function isPaymentCycleLesson()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
+    }
+
+    public function isPaymentCycleLessonSplit()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_SPLIT;
+    }
+
     public function getLessonCreditUnit($splitId)
     {
         $split       = LessonSplit::findOne($splitId);
@@ -387,6 +421,40 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
         if ($this->invoice->addLessonCreditAppliedPayment($this->netPrice - $old->netPrice, $creditUsedInvoice)) {
             $creditUsedInvoice->save();
+        }
+    }
+
+    public function beforeDelete()
+    {
+        if ($this->isPaymentCycleLesson()) {
+            $this->lineItemPaymentCycleLesson->delete();
+        } else if ($this->isPrivateLesson() || $this->isExtraLesson()) {
+            $this->lineItemLesson->delete();
+        }
+
+        return parent::beforeDelete();
+    }
+
+    public function addLineItemDetails($lesson)
+    {
+        if ($this->isPaymentCycleLesson()) {
+            $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLesson();
+            $invoiceItemPaymentCycleLesson->paymentCycleLessonId    = $lesson->paymentCycleLesson->id;
+            $invoiceItemPaymentCycleLesson->invoiceLineItemId    = $this->id;
+            $invoiceItemPaymentCycleLesson->save();
+        }
+        if ($this->isPaymentCycleLessonSplit()) {
+            $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLessonSplit();
+            $invoiceItemPaymentCycleLesson->lessonSplitId     = $lesson->id;
+            $invoiceItemPaymentCycleLesson->invoiceLineItemId = $this->id;
+            return $invoiceItemPaymentCycleLesson->save();
+        }
+        if ($this->isPrivateLesson() || $this->isExtraLesson() ||
+            ($this->isGroupLesson() && $this->invoice->isInvoice())) {
+            $invoiceItemLesson = new InvoiceItemLesson();
+            $invoiceItemLesson->lessonId    = $lesson->id;
+            $invoiceItemLesson->invoiceLineItemId    = $this->id;
+            $invoiceItemLesson->save();
         }
     }
 }

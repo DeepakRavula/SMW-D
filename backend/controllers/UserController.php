@@ -6,7 +6,7 @@ use yii\filters\ContentNegotiator;
 use common\models\Payment;
 use Yii;
 use common\models\User;
-use common\models\TeacherRoom;
+use common\models\Item;
 use yii\helpers\Url;
 use common\models\Address;
 use common\models\PhoneNumber;
@@ -271,20 +271,23 @@ class UserController extends Controller
                 ->joinWith(['lineItems' => function ($query) {
                     $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
                 }])
-                ->joinWith('payments')
-                ->where(['invoice.user_id' => $model->id, 'payment.id' => null])
-				->notDeleted()
+                ->where(['invoice.user_id' => $model->id])
+                ->andWhere(['>', 'invoice.balance', 0])
+                ->notDeleted()
                 ->one();
 
         $openingBalanceQuery = Payment::find()
+                ->notDeleted()
                 ->joinWith(['invoicePayment ip' => function ($query) {
                     $query->joinWith(['invoice' => function ($query) {
                         $query->joinWith(['lineItems' => function ($query) {
                             $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
-                        }]);
+                        }])
+                        ->notDeleted();
                     }]);
                 }])
-                ->where(['payment.user_id' => $model->id, 'payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
+                ->where(['payment.user_id' => $model->id])
+                ->andWhere(['NOT', ['payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY]]);
 
         $openingBalanceDataProvider = new ActiveDataProvider([
             'query' => $openingBalanceQuery,
@@ -402,15 +405,14 @@ class UserController extends Controller
             $invoice->user_id = $model->id;
             $invoice->location_id = $locationId;
             $invoice->type = Invoice::TYPE_INVOICE;
-			$invoice->createdUserId = Yii::$app->user->id;
-			$invoice->updatedUserId = Yii::$app->user->id;
             $invoice->save();
 
             $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
             $invoiceLineItem->invoice_id = $invoice->id;
-            $invoiceLineItem->item_id = Invoice::ITEM_TYPE_OPENING_BALANCE;
+            $item = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
+            $invoiceLineItem->item_id = $item->id;
             $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
-            $invoiceLineItem->description = 'Opening Balance';
+            $invoiceLineItem->description = $item->description;
             $invoiceLineItem->unit = 1;
             $invoiceLineItem->amount = $paymentModel->amount;
             $invoiceLineItem->code = $invoiceLineItem->getItemCode();
@@ -424,9 +426,11 @@ class UserController extends Controller
             }
             $invoice->tax = $invoiceLineItem->tax_rate;
             $invoice->total = $invoice->subTotal + $invoice->tax;
+            $invoice->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
             $invoice->save();
 
             if ($paymentModel->amount < 0) {
+                $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
                 $paymentModel->invoiceId = $invoice->id;
                 $paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
                 $paymentModel->amount = abs($paymentModel->amount);

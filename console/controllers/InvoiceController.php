@@ -30,7 +30,7 @@ class InvoiceController extends Controller
             ->unInvoicedProForma()
             ->scheduled()
             ->between($priorDate, $priorDate)
-			->notDeleted()
+            ->notDeleted()
             ->all();
         if (!empty($matchedLessons)) {
             foreach ($matchedLessons as $matchedLesson) {
@@ -41,35 +41,45 @@ class InvoiceController extends Controller
         return true;
     }
 	
-	public function actionAllCompletedLessons()
-	{
-		$lessons = Lesson::find()
+    public function actionAllCompletedLessons()
+    {
+        $lessons = Lesson::find()
+            ->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
             ->notDeleted()
             ->completedUnInvoiced()
             ->all();
-		foreach($lessons as $lesson) {
-			$lesson->createInvoice();
-		}
-		
-        return true;
-	}
+        foreach($lessons as $lesson) {
+            if ($lesson->isPrivate()) {
+                $lesson->createPrivateLessonInvoice();
+            } else if ($lesson->isGroup()) {
+                foreach ($lesson->enrolments as $enrolment) {
+                    if (!$enrolment->hasInvoice($lessonId)) {
+                        $lesson->createGroupInvoice($enrolment->id);
+                    }
+                }
+            }
+        }
 
-	public function actionAllExpiredLessons()
-	{
-		$lessons = Lesson::find()
+        return true;
+    }
+
+    public function actionAllExpiredLessons()
+    {
+        $lessons = Lesson::find()
+            ->privateLessons()
             ->notDeleted()
-			->unscheduled()
-			->notRescheduled()
-			->expired()
+            ->unscheduled()
+            ->notRescheduled()
+            ->expired()
             ->all();
-		try {
-			foreach($lessons as $lesson) {
-				$lesson->createInvoice();
-			}
-		} catch (\Exception $exception) {
+        try {
+            foreach($lessons as $lesson) {
+                $lesson->createPrivateLessonInvoice();
+            }
+        } catch (\Exception $exception) {
             Yii::$app->errorHandler->logException($exception);
         }
-		
+
         return true;
-	}
+    }
 }

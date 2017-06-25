@@ -21,8 +21,10 @@ use yii\helpers\Url;
     <div class="row">
         <div class="col-xs-6">
             <?php echo $form->field($model, 'itemCategoryId')->dropDownList(
-                    ArrayHelper::map(ItemCategory::find()->active()
-                       ->all(), 'id', 'name'), ['prompt' => 'Select Category']) ?>
+                    ArrayHelper::map(ItemCategory::find()
+                        ->notDeleted()
+                        ->active()
+                        ->all(), 'id', 'name'), ['prompt' => 'Select Category']) ?>
         </div>
         <div class="col-xs-6">
             <?php echo $form->field($model, 'item_id')->widget(DepDrop::classname(),

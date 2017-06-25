@@ -41,11 +41,11 @@ $this->title = 'Student Enrolment';
      <div class="tabbable-line">
 <?php 
 
-$privateCourseContent = $this->render('_form-private-course', [
+$privateCourseContent = $this->render('_form-private', [
     'model' => new Course(),
 ]);
 
-$groupCourseContent = $this->render('_form-group-course', [
+$groupCourseContent = $this->render('_form-group', [
     'groupCourseDataProvider' => $groupCourseDataProvider,
 ]);
 
