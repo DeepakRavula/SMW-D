@@ -19,8 +19,11 @@ use common\models\Qualification;
 			padding:8px;
 			background:#fff;
 		}
-		.bg-light-gray-1{
-			background: #f5ecec;
+		.kv-page-summary, .table > tbody + tbody{
+			border: 0;
+		}
+		.table-striped > tbody > tr:nth-of-type(odd){
+			background: transparent;
 		}
 	</style>
 	<div class="row">
@@ -225,8 +228,8 @@ $columns = [
 GridView::widget([
 	'dataProvider' => $teacherLessonDataProvider,
 	'options' => ['class' => 'col-md-12'],
-	'tableOptions' => ['class' => 'table table-responsive'],
-	'headerRowOptions' => ['class' => 'bg-light-gray-1'],
+	'tableOptions' => ['class' => 'table table-bordered'],
+	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'pjax' => true,
 	'showPageSummary' => true,
 	'pjaxSettings' => [

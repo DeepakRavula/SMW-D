@@ -72,7 +72,7 @@ $paymentLogs = TimelineEvent::find()
 <?php $dataProvider = new ActiveDataProvider([
 	'query' => $logs,
 ]);?>
-<div class="student-index">  
+<div class="student-index p-15">  
 	<?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
 ]) ?>
