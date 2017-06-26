@@ -302,7 +302,6 @@ class UserController extends Controller
 		if(!empty($lessonSearchModel)) {
 			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
-			$lessonSearch->summariseReport = $lessonSearchModel['summariseReport']; 
 		}
 		$teacherLessons = Lesson::find()
 			->innerJoinWith('enrolment')
@@ -311,12 +310,8 @@ class UserController extends Controller
 			->notDraft()
 			->notDeleted()
 			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
-			->between($lessonSearch->fromDate, $lessonSearch->toDate);
-			if($lessonSearch->summariseReport) {
-				$teacherLessons->groupBy('DATE(date)');	
-			} else {
-				$teacherLessons->orderBy(['date' => SORT_ASC]);
-			}
+			->between($lessonSearch->fromDate, $lessonSearch->toDate)
+			->orderBy(['date' => SORT_ASC]);
 			
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,
@@ -857,7 +852,6 @@ class UserController extends Controller
 		if(!empty($lessonSearchModel)) {
 			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
 			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
-			$lessonSearch->summariseReport = $lessonSearchModel['summariseReport']; 
 		}
 		$teacherLessons = Lesson::find()
 			->innerJoinWith('enrolment')
@@ -866,12 +860,8 @@ class UserController extends Controller
 			->notDraft()
 			->notDeleted()
 			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
-			->between($lessonSearch->fromDate, $lessonSearch->toDate);
-			if($lessonSearch->summariseReport) {
-				$teacherLessons->groupBy('DATE(date)');	
-			} else {
-				$teacherLessons->orderBy(['date' => SORT_ASC]);
-			}
+			->between($lessonSearch->fromDate, $lessonSearch->toDate)
+			->orderBy(['date' => SORT_ASC]);
 			
 		$teacherLessonDataProvider = new ActiveDataProvider([
 			'query' => $teacherLessons,
