@@ -11,13 +11,19 @@ use common\models\PrivateLesson;
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php $columns = [
             [
-                'label' => 'Student Name',
+                'label' => 'Student',
                 'value' => function ($data) {
                     return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
                 },
             ],
+			[
+                'label' => 'Phone',
+                'value' => function ($data) {
+                    return !empty($data->course->enrolment->student->customer->phoneNumber->number) ? $data->course->enrolment->student->customer->phoneNumber->number : null;
+                },
+            ],
             [
-                'label' => 'Program Name',
+                'label' => 'Program',
                 'value' => function ($data) {
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
@@ -34,30 +40,6 @@ use common\models\PrivateLesson;
                 'label' => 'Expiry Date',
                 'value' => function ($data) {
 					return !empty($data->privateLesson->expiryDate) ? Yii::$app->formatter->asDate($data->privateLesson->expiryDate) : null;
-                },
-            ],
-            [
-                'label' => 'Status',
-                'value' => function ($data) {
-                    $status = null;
-                    if (!empty($data->status)) {
-                        return $data->getStatus();
-                    }
-
-                    return $status;
-                },
-            ],
-            [
-                'label' => 'Invoiced ?',
-                'value' => function ($data) {
-                    $status = null;
-                    if (!empty($data->invoice->status)) {
-                        $status = 'Yes';
-                    } else {
-                        $status = 'No';
-                    }
-
-                    return $status;
                 },
             ],
         ];
