@@ -2,6 +2,7 @@
 
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use yii\helpers\Html;
 
 $this->title = 'Review Lessons';
 ?>
@@ -40,55 +41,18 @@ if ($conflictedLessonIdsCount > 0) {
 $columns = [
 		[
 		'label' => 'Date/Time',
-		'class' => 'kartik\grid\EditableColumn',
 		'attribute' => 'date',
 		'format' => 'datetime',
-		'refreshGrid' => true,
 		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
 		'contentOptions' => ['class' => 'kv-sticky-column'],
-		'editableOptions' => function ($model, $key, $index) {
-			return [
-				'header' => 'Lesson Date',
-				'size' => 'md',
-				'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-				'widgetClass' => '\bootui\datetimepicker\DateTimepicker',
-				'options' => [
-					'format' => 'YYYY-MM-DD hh:mm A',
-					'stepping' => 15,
-				],
-				'formOptions' => ['action' => Url::to(['lesson/update-field'])],
-				'pluginEvents' => [
-					'editableError' => 'review.onEditableError',
-					'editableSuccess' => 'review.onEditableGridSuccess',
-				],
-			];
-		},
 	],
 		[
-		'class' => 'kartik\grid\EditableColumn',
 		'attribute' => 'duration',
-		'refreshGrid' => true,
 		'value' => function ($model, $key, $index, $widget) {
 			return (new \DateTime($model->duration))->format('H:i');
 		},
 		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
 		'contentOptions' => ['class' => 'kv-sticky-column'],
-		'editableOptions' => function ($model, $key, $index) {
-			return [
-				'header' => 'Lesson Duration',
-				'size' => 'md',
-				'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-				'widgetClass' => 'bootui\datetimepicker\Timepicker',
-				'options' => [
-					'format' => 'HH:mm',
-					'stepping' => 15,
-				],
-				'formOptions' => ['action' => Url::to(['lesson/update-field'])],
-				'pluginEvents' => [
-					'editableSuccess' => 'review.onEditableGridSuccess',
-				],
-			];
-		},
 	],
 		[
 		'label' => 'Conflict',
@@ -98,6 +62,18 @@ $columns = [
 				return current($conflicts[$data->id]);
 			}
 		},
+	],
+	[
+		'class' => 'yii\grid\ActionColumn',
+		'template' => '{edit}',
+		'buttons' => [
+			'edit' => function  ($url, $model) {
+				return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
+					'id' => 'edit-button-' . $model->id,
+					'class' => 'review-lesson-edit-button m-l-20'
+				]);
+			},
+		],
 	],
 ];
 ?>
@@ -130,6 +106,12 @@ $columns = [
 	'courseId' => $courseId,
 	'courseModel' => $courseModel	
 ]); ?>
+<?php
+	Modal::begin([
+		'header' => '<h4 class="m-0">Edit Lesson</h4>',
+		'id'=>'review-lesson-modal',
+	]); ?>
+	<?php Modal::end();?>		
 <script>
 	var review = {
 		onEditableError: function (event, val, form, data) {
@@ -169,5 +151,24 @@ $columns = [
 			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
 			$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
 		});
+		$(document).on('click', '.review-lesson-edit-button', function () {
+            $.ajax({
+                url: '<?= Url::to(['lesson/update-field']); ?>?id=' + $(this).parent().parent().data('key'),
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#new-exam-result-modal .modal-body').html(response.data);
+                        $('#new-exam-result-modal').modal('show');
+                    } else {
+                        $('#lesson-form').yiiActiveForm('updateMessages',
+                                response.errors
+                                , true);
+                    }
+                }
+            });
+        });
 	});
 </script>
