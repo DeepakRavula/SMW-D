@@ -21,6 +21,7 @@ use common\models\Note;
 use common\models\Location;
 use common\models\Invoice;
 use backend\models\UserImportForm;
+use backend\models\search\InvoiceSearch;
 use backend\models\search\UserSearch;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -364,14 +365,29 @@ class UserController extends Controller
             'query' => $groupPrograms,
         ]);
 		
-		$timeVoucher = Lesson::find()
-			->joinWith('invoice')
-			->innerJoinWith('enrolment')
-			->location($locationId)
-			->andWhere(['lesson.teacherId' => $model->id])
-			->notDraft()
-			->notDeleted()
-			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]]);
+		$invoiceSearch = new InvoiceSearch();
+		$invoiceSearch->fromDate = new \DateTime();
+		$invoiceSearch->toDate = new \DateTime();
+		$invoiceSearchModel = $request->get('InvoiceSearch');
+		
+		if(!empty($invoiceSearchModel)) {
+			$invoiceSearch->fromDate = new \DateTime($invoiceSearchModel['fromDate']);
+			$invoiceSearch->toDate = new \DateTime($invoiceSearchModel['toDate']);
+			$invoiceSearch->summariseReport = $invoiceSearchModel['summariseReport']; 
+		}
+		$timeVoucher = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query) use($invoiceSearch) {
+				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+					->between($invoiceSearch->fromDate->format('Y-m-d'), $invoiceSearch->toDate->format('Y-m-d'));
+			}])
+			->joinWith(['lesson' => function($query) use($model){
+				$query->andWhere(['lesson.teacherId' => $model->id]);
+			}]);
+			if($invoiceSearch->summariseReport) {
+				$timeVoucher->groupBy('DATE(invoice.date)');	
+			} else {
+				$timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
+			}
 			
 		$timeVoucherDataProvider = new ActiveDataProvider([
 			'query' => $timeVoucher,
@@ -386,6 +402,7 @@ class UserController extends Controller
             'model' => $model,
             'searchModel' => $searchModel,
             'lessonSearchModel' => $lessonSearch,
+			'invoiceSearchModel' => $invoiceSearch,
             'addressDataProvider' => $addressDataProvider,
             'phoneDataProvider' => $phoneDataProvider,
             'lessonDataProvider' => $lessonDataProvider,
@@ -869,6 +886,50 @@ class UserController extends Controller
 			'fromDate' => $lessonSearch->fromDate,
 			'toDate' => $lessonSearch->toDate,
 			'searchModel' => $lessonSearch
+        ]);
+    }
+
+	public function actionPrintTimeVoucher($id)
+    {
+        $model = $this->findModel($id);
+		$request = Yii::$app->request;
+		$invoiceSearch = new InvoiceSearch();
+		$invoiceSearch->fromDate = new \DateTime();
+		$invoiceSearch->toDate = new \DateTime();
+		$invoiceSearchModel = $request->get('InvoiceSearch');
+		
+		if(!empty($invoiceSearchModel)) {
+			$invoiceSearch->fromDate = new \DateTime($invoiceSearchModel['fromDate']);
+			$invoiceSearch->toDate = new \DateTime($invoiceSearchModel['toDate']);
+			$invoiceSearch->summariseReport = $invoiceSearchModel['summariseReport']; 
+		}
+		$timeVoucher = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query) use($invoiceSearch) {
+				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+					->between($invoiceSearch->fromDate->format('Y-m-d'), $invoiceSearch->toDate->format('Y-m-d'));
+			}])
+			->joinWith(['lesson' => function($query) use($model){
+				$query->andWhere(['lesson.teacherId' => $model->id]);
+			}]);
+			if($invoiceSearch->summariseReport) {
+				$timeVoucher->groupBy('DATE(invoice.date)');	
+			} else {
+				$timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
+			}
+			
+		$timeVoucherDataProvider = new ActiveDataProvider([
+			'query' => $timeVoucher,
+			'pagination' => false,
+		]);
+		
+        $this->layout = '/print';
+
+        return $this->render('teacher/_print-time-voucher', [
+			'model' => $model,
+			'timeVoucherDataProvider' => $timeVoucherDataProvider,
+			'fromDate' => $invoiceSearch->fromDate,
+			'toDate' => $invoiceSearch->toDate,
+			'searchModel' => $invoiceSearch
         ]);
     }
 

@@ -157,7 +157,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		]);
 		$timeVoucherContent = $this->render('teacher/_time-voucher', [
 			'timeVoucherDataProvider' => $timeVoucherDataProvider,
-			'searchModel' => $lessonSearchModel,
+			'searchModel' => $invoiceSearchModel,
 			'model' => $model,
 		]);
 

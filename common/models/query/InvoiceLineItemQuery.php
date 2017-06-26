@@ -51,4 +51,4 @@ class InvoiceLineItemQuery extends \yii\db\ActiveQuery
 
 		return $this;
 	}
-}
+	}

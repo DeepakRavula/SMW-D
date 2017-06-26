@@ -1,66 +1,92 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use yii\jui\DatePicker;
-use yii\helpers\Url;
 use kartik\grid\GridView;
+use common\models\Lesson;
+use common\models\Qualification;
 ?>
-<div class="col-md-12">
-	<?php
-	$form = ActiveForm::begin([
-		'id' => 'time-voucher-search-form',
-	]);
-	?>
-	<style>
-		#w20-container table > tbody > tr.info > td{
-			padding:8px;
-			background:#fff;
-		}
-		.kv-page-summary, .table > tbody + tbody{
-			border: 0;
-		}
-		.table-striped > tbody > tr:nth-of-type(odd){
-			background: transparent;
-		}
-	</style>
-	<div class="row">
-		<div class="col-md-2">
-			<?php
-			echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(), [
-				'options' => [
-					'class' => 'form-control',
-				],
-			])
-			?>
-		</div>
-		<div class="col-md-2">
-			<?php
-			echo $form->field($searchModel, 'toDate')->widget(DatePicker::classname(), [
-				'options' => [
-					'class' => 'form-control',
-				],
-			])
-			?>
-		</div>
-		<div class="col-md-2 form-group p-t-5">
-			<Br>
-			<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
-		</div>
-		<div class="col-md-4 m-t-20">
-			<div class="schedule-index">
-			 <?= $form->field($searchModel, 'summariseReport')->checkbox(['data-pjax' => true]); ?>
-        	</div>
-		</div>
-		<div class="col-md-2 m-t-25">
-			<?= Html::a('<i class="fa fa-print"></i> Print', ['print-time-voucher', 'id' => $model->id], ['id' => 'time-voucher-print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
-
-		</div>
-		<div class="clearfix"></div>
+<style>
+@media print{
+	.print-container{
+		margin-top:5px;
+	}
+	.text-left{
+        text-align: left !important;
+    }
+	.location-address {
+	  text-align : right;
+	  font-size : 18px;
+	}
+	.location-address p{
+		margin:0;
+		padding:0;
+		font-weight:normal;
+	}
+	.boxed {
+	  border: 4px solid #949599;
+	  height: 200px;
+	  margin: 20px;
+	  padding: 20px;
+	  width: 580px;
+	}
+	.sign {
+	  font-weight: bold;
+	  text-align : right;
+	  font-size : 28px;
+	}
+	.sign span {
+	  width: 250px;
+	  display: inline-block;
+	  border-bottom: 1px solid #999999;
+	  font-weight: normal;
+	}
+	.login-logo-img {
+		width:300px !important;
+		height:auto;
+	}
+	.report-grid #teacher-lesson-grid table thead{
+		border-bottom: 1px ridge;
+	}
+	.report-grid #teacher-lesson-grid table tbody tr.kv-grid-group-row{
+		border-bottom: 1px ridge;
+	}
+	.report-grid #teacher-lesson-grid table tbody tr.kv-group-footer{
+		border-top: 1px ridge;
+	}
+	.report-grid .table-bordered{
+		border: 1px solid transparent;
+	}
+	.report-grid .table-bordered>thead>tr>th, .report-grid .table-bordered>tbody>tr>th,.report-grid  .table-bordered>tfoot>tr>th,.report-grid  .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .report-grid .table-bordered>tfoot>tr>td{
+		border:none !important;
+	}
+	.report-grid .table-bordered > tbody > tr:nth-child(even){
+		
+	}
+}
+@page{
+  size: auto;
+  margin: 3mm;
+}
+</style>
+<div class="row-fluid print-container">
+	<div class="logo invoice-col">              
+		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
 	</div>
+	<div class="location-address">
+			<p>Arcadia Music Academy ( <?= $model->userLocation->location->name;?> )</p>
+			<p><?php if (!empty($model->userLocation->location->address)): ?>
+				<?= $model->userLocation->location->address ?><br>
+			<?php endif; ?></p>
+			<p><?php if (!empty($model->userLocation->location->city_id)): ?>
+				<?= $model->userLocation->location->city->name ?>
+			<?php endif; ?>
+			<?php if (!empty($model->userLocation->location->province_id)): ?>
+				<?= ', ' . $model->userLocation->location->province->name ?>
+			<?php endif; ?> </p>
+	</div>
+	<div class="clearfix"></div>
 </div>
-<?php ActiveForm::end(); ?>
-
+<h2 class="col-md-12"><b><?= $model->publicIdentity . '\'s Time Voucher for ' . $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h2>
+<div class="report-grid">
 <?php
 if(!$searchModel->summariseReport) {
 $columns = [
@@ -73,6 +99,7 @@ $columns = [
 
 			return null;
 		},
+		'contentOptions' => ['class' => 'text-left'],
 		'group' => true,
 		'groupedRow' => true,
 		'groupFooter' => function ($model, $key, $index, $widget) {
@@ -194,29 +221,20 @@ GridView::widget([
 	'columns' => $columns,
 ]);
 ?>
+</div>
+<div class="boxed col-md-12 pull-right">
+<div class="sign">
+ Teacher Signature <span></span>
+</div>
+<div class="sign">
+Authorizing Signature <span></span>
+</div>
+<div class="sign">
+ Date <span></span>
+</div>
+</div>
 <script>
     $(document).ready(function () {
-		$("#invoicesearch-summarisereport").on("change", function() {
-        var summariesOnly = $(this).is(":checked");
-        var fromDate = $('#invoicesearch-fromdate').val();
-        var toDate = $('#invoicesearch-todate').val();
-        var params = $.param({ 'InvoiceSearch[fromDate]': fromDate,
-            'InvoiceSearch[toDate]': toDate, 'InvoiceSearch[summariseReport]': (summariesOnly | 0) });
-        var url = '<?php echo Url::to(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]); ?>&' + params;
-        $.pjax.reload({url:url,container:"#time-voucher-grid",replace:false,  timeout: 4000});  //Reload GridView
-		var printUrl = '<?= Url::to(['user/print-time-voucher', 'id' => $model->id]); ?>&' + params;
-		 $('#time-voucher-print-btn').attr('href', printUrl);
-    });
-        $("#time-voucher-search-form").on("submit", function () {
-        	var summariesOnly = $("#invoicesearch-summarisereport").is(":checked");
-            var fromDate = $('#invoicesearch-fromdate').val();
-            var toDate = $('#invoicesearch-todate').val();
-            $.pjax.reload({container: "#time-voucher-grid", replace: false, timeout: 6000, data: $(this).serialize()});
-			var params = $.param({ 'InvoiceSearch[fromDate]': fromDate,
-            'InvoiceSearch[toDate]': toDate, 'InvoiceSearch[summariseReport]': (summariesOnly | 0) });
-            var url = '<?= Url::to(['user/print-time-voucher', 'id' => $model->id]); ?>&' + params;
-            $('#time-voucher-print-btn').attr('href', url);
-            return false;
-        });
+        window.print();
     });
 </script>
