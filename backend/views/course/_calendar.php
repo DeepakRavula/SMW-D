@@ -96,8 +96,9 @@ $(document).ready(function(){
                 $('#courseschedule-fromtime-0').val(moment(start).format('HH:mm:ss'));
                 $('#courseschedule-duration-0').val($('#courseschedule-duration').val());
 				$('.course-summary').text(
-						 moment(start).format('dddd') + ', ' +
-						moment(start).format('HH:mm A'));
+					moment(start).format('DD-MM-YYYY') + ', ' +
+					moment(start).format('dddd') + ', ' +
+					moment(start).format('hh:mm A'));
                 $('#course-calendar').fullCalendar('removeEvents', 'newEnrolment');
 				var endtime = start.clone();
                 var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
