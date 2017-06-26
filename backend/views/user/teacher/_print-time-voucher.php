@@ -1,72 +1,8 @@
 <?php
 
 use kartik\grid\GridView;
-use common\models\Lesson;
-use common\models\Qualification;
 ?>
-<style>
-@media print{
-	.print-container{
-		margin-top:5px;
-	}
-	.text-left{
-        text-align: left !important;
-    }
-	.location-address {
-	  text-align : right;
-	  font-size : 18px;
-	}
-	.location-address p{
-		margin:0;
-		padding:0;
-		font-weight:normal;
-	}
-	.boxed {
-	  border: 4px solid #949599;
-	  height: 200px;
-	  margin: 20px;
-	  padding: 20px;
-	  width: 580px;
-	}
-	.sign {
-	  font-weight: bold;
-	  text-align : right;
-	  font-size : 28px;
-	}
-	.sign span {
-	  width: 250px;
-	  display: inline-block;
-	  border-bottom: 1px solid #999999;
-	  font-weight: normal;
-	}
-	.login-logo-img {
-		width:300px !important;
-		height:auto;
-	}
-	.report-grid #teacher-lesson-grid table thead{
-		border-bottom: 1px ridge;
-	}
-	.report-grid #teacher-lesson-grid table tbody tr.kv-grid-group-row{
-		border-bottom: 1px ridge;
-	}
-	.report-grid #teacher-lesson-grid table tbody tr.kv-group-footer{
-		border-top: 1px ridge;
-	}
-	.report-grid .table-bordered{
-		border: 1px solid transparent;
-	}
-	.report-grid .table-bordered>thead>tr>th, .report-grid .table-bordered>tbody>tr>th,.report-grid  .table-bordered>tfoot>tr>th,.report-grid  .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .report-grid .table-bordered>tfoot>tr>td{
-		border:none !important;
-	}
-	.report-grid .table-bordered > tbody > tr:nth-child(even){
-		
-	}
-}
-@page{
-  size: auto;
-  margin: 3mm;
-}
-</style>
+<?php $this->registerCssFile("@web/css/teacher/style.css");?>
 <div class="row-fluid print-container">
 	<div class="logo invoice-col">              
 		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
