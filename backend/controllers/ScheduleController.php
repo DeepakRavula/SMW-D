@@ -312,6 +312,9 @@ class ScheduleController extends Controller
 				]);
 				$title = $lesson->course->program->name;
 				$class = 'group-lesson';
+				if($lesson->isEnrolmentFirstlesson()) {
+					$class = 'first-lesson';
+				}
 				$backgroundColor = null;
 				if (!empty($lesson->colorCode)) {
 					$class = null;
