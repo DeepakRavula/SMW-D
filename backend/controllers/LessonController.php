@@ -297,7 +297,11 @@ class LessonController extends Controller
         $data = $this->renderAjax('/lesson/review/_form', [
             'model' => $model,
         ]);
-      if ($model->load(Yii::$app->request->post())) {
+		$response = [
+			'status' => true,
+			'data' => $data
+		];
+        if ($model->load(Yii::$app->request->post())) {
 			if(! empty($model->date)) {
            		$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
 				$model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
@@ -321,13 +325,8 @@ class LessonController extends Controller
 					'errors' => ActiveForm::validate($model),
 				];
 			}
-			return $response;
-        } else {
-            return [
-                'status' => true,
-                'data' => $data
-            ];
         }	
+		 return $response;
     }
 
 	public function actionGroupEnrolmentReview($courseId, $enrolmentId)

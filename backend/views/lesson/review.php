@@ -174,18 +174,25 @@ Modal::begin([
             });
 			return false;
         });
-		$('#lesson-review-apply').click(function(){
+		$(document).on('beforeSubmit', '#lesson-review-form', function (e) {
 			var lessonId = $('#lesson-id').val();
+			var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
+			var vacationId = '<?= $vacationId; ?>';
+			var vacationType = '<?= $vacationType; ?>';
+			var params = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
+				'Vacation[id]': vacationId, 'Vacation[type]': vacationType
+			});
+			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
 			$.ajax({
                 url: '<?= Url::to(['lesson/update-field']); ?>?id=' + lessonId,
                 type: 'post',
                 dataType: "json",
-                data: $('#new-enrolment-form').serialize(),
+                data: $(this).serialize(),
                 success: function (response)
                 {
                     if (response.status)
                     {
-						$.pjax.reload({container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
+						$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});
                         $('#review-lesson-modal').modal('hide');
                     } else {
 				 		$('#lesson-review-form').yiiActiveForm('updateMessages',

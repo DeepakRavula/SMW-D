@@ -12,6 +12,8 @@ use kartik\time\TimePicker;
 ?>
 <?php $form = ActiveForm::begin([
 	'id' => 'lesson-review-form',
+	'enableAjaxValidation' => true,
+	'enableClientValidation' => false
 ]);
 ?>
 <div class="row">
