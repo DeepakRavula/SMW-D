@@ -8,6 +8,7 @@ use common\models\User;
 use common\models\Student;
 use yii\bootstrap\Modal;
 use yii\bootstrap\ActiveForm;
+use common\models\CourseSchedule;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -34,6 +35,7 @@ use yii\bootstrap\ActiveForm;
 							<?=
 							$this->render('new/_form-course', [
 								'model' => new Course(),
+								'courseSchedule' => new CourseSchedule(),
 								'form' => $form,
 							]);
 							?>
@@ -116,6 +118,7 @@ Modal::begin([
 <?php
 echo $this->render('new/_calendar', [
 	'model' => new course(),
+	'courseSchedule' => new CourseSchedule()
 ]);
 ?>
 <?php Modal::end(); ?>

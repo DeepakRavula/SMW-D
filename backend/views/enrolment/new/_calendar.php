@@ -106,7 +106,7 @@ bottom:-10px;
 		<?= $form->field($model, 'startDate')->textInput(['readOnly' => true])->label('Date & Time'); ?>
 	</div>
 	<div class="col-sm-2">
-		<?= $form->field($model, 'day')->textInput(['readOnly' => true])->label('Duration'); ?>
+		<?= $form->field($courseSchedule, 'day')->textInput(['readOnly' => true])->label('Duration'); ?>
 	</div>
 	<div class="col-sm-2 apply-button">
 		<?= Html::a('Apply', '#', ['class' => 'btn btn-info enrolment-apply-button']) ?>
@@ -144,10 +144,10 @@ var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities);
 $(document).ready(function() {
     $(document).on('click', '.enrolment-apply-button', function(){
 		var teacherName = $('#course-teachername').val(); 
-		var day = $('#course-day').val(); 
+		var day = $('#courseschedule-day').val(); 
 		var date = $('#course-startdate').val(); 
 		var time = moment(date,'DD-MM-YYYY h:mm A').format('h:mm A');
-		var duration = $('#course-duration').val();
+		var duration = $('#courseschedule-duration').val();
         $('#new-enrolment-modal').modal('hide');
 		$('.new-enrolment-teacher').text(teacherName);
 		$('.new-enrolment-time').text(day + ', ' + time + ' & ' + duration);
@@ -222,11 +222,11 @@ $(document).ready(function() {
             },
             select: function(start, end, jsEvent, view, resource) {
 				$('input[name="Course[startDate]"]').val(moment(start).format('DD-MM-YYYY h:mm A'));
-				$('input[name="Course[day]"]').val(moment(start).format('dddd'));
+				$('input[name="CourseSchedule[day]"]').val(moment(start).format('dddd'));
                 $('#course-teacherid').val(resource.id);
                 $('#course-teachername').val(resource.title);
                 var endtime = start.clone();
-                var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
+                var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
                 eventData = {
                     start: start,

@@ -147,6 +147,7 @@ class EnrolmentController extends Controller
 		$locationId = Yii::$app->session->get('location_id');
 		$request = Yii::$app->request;
 		$course = new Course();
+		$courseSchedule = new CourseSchedule();
 		$user = new User();
 		$userProfile = new UserProfile();
 		$phoneNumber = new PhoneNumber();
