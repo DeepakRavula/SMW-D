@@ -255,32 +255,12 @@ class CalendarController extends Controller
                 $toTime = new \DateTime($lesson->date);
                 $length = explode(':', $lesson->fullDuration);
                 $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+                $class = $lesson->class;
+                $backgroundColor = $lesson->colorCode;
                 if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
                     $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
-                    $class = 'group-lesson';
-                    $backgroundColor = null;
-                    if (!empty($lesson->colorCode)) {
-                        $class = null;
-                        $backgroundColor = $lesson->colorCode;
-                    }
                 } else {
                     $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
-                    $class = 'private-lesson';
-                    $backgroundColor = null;
-                    if (!empty($lesson->colorCode)) {
-                        $class = null;
-                        $backgroundColor = $lesson->colorCode;
-                    } else if($lesson->isEnrolmentFirstlesson()) {
-                        $class = 'first-lesson';
-                    } else if ($lesson->getRootLesson()) {
-                        $rootLesson = $lesson->getRootLesson();
-						if($rootLesson->id !== $lesson->id) {
-                        	$class = 'lesson-rescheduled';
-						}
-                        if ($rootLesson->teacherId !== $lesson->teacherId) {
-                            $class = 'teacher-substituted';
-                        }
-                    }
                 }
                 if(! empty($lesson->classroomId)) {
                     $classroom = $lesson->classroom->name;
@@ -314,32 +294,12 @@ class CalendarController extends Controller
                     $toTime = new \DateTime($lesson->date);
                     $length = explode(':', $lesson->fullDuration);
                     $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+                    $class = $lesson->class;
+                    $backgroundColor = $lesson->colorCode;
                     if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
                         $title = $lesson->teacher->publicIdentity . ' [' . $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ' . ']';
-                        $class = 'group-lesson';
-                        $backgroundColor = null;
-                        if (!empty($lesson->colorCode)) {
-                            $class = null;
-                            $backgroundColor = $lesson->colorCode;
-                        }
                     } else {
                         $title = $lesson->teacher->publicIdentity . ' [' . $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ' . ']';
-                        $class = 'private-lesson';
-                        $backgroundColor = null;
-                        if (!empty($lesson->colorCode)) {
-                            $class = null;
-                            $backgroundColor = $lesson->colorCode;
-                        } else if ($lesson->status === Lesson::STATUS_MISSED) {
-                            $class = 'lesson-missed';
-                        } else if($lesson->isEnrolmentFirstlesson()) {
-                            $class = 'first-lesson';
-                        } else if ($lesson->getRootLesson()) {
-                            $class = 'lesson-rescheduld';
-                            $rootLesson = $lesson->getRootLesson();
-                            if ($rootLesson->teacherId !== $lesson->teacherId) {
-                                $class = 'teacher-substituted';
-                            }
-                        }
                     }
                     $classroomId = $lesson->classroomId;
                     $events[] = [

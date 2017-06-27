@@ -91,13 +91,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getLesson()
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                ->viaTable('invoice_item_lesson', ['invoiceLineItemId' => 'id']);
+                ->via('lineItemLesson');
     }
 	
     public function getPaymentCycleLesson()
     {
         return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
-                ->viaTable('invoice_item_payment_cycle_lesson', ['invoiceLineItemId' => 'id']);
+                ->via('lineItemPaymentCycleLesson');
     }
 
     public function getItemType()
@@ -314,6 +314,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function isPrivateLesson()
     {
         return (int) $this->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON;
+    }
+
+    public function isLessonSplit()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_SPLIT;
     }
 
     public function isGroupLesson()

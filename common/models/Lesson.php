@@ -416,6 +416,45 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
+    public function getScheduleTitle()
+    {
+        if ($this->isGroup()) {
+            return $this->course->program->name;
+        } else {
+            return $this->enrolment->student->fullName;
+        }
+    }
+
+    public function getClassroomTitle()
+    {
+        return $this->enrolment->student->fullName;
+    }
+
+    public function getClass()
+    {
+        if (!empty($this->colorCode)) {
+            $class = null;
+        } else if ($this->isMissed()) {
+            $class = 'lesson-missed';
+        } else if($this->isEnrolmentFirstlesson()) {
+            $class = 'first-lesson';
+        } else if ($this->getRootLesson()) {
+            $rootLesson = $this->getRootLesson();
+            if($rootLesson->id !== $this->id) {
+                $class = 'lesson-rescheduled';
+            }
+            if ($rootLesson->teacherId !== $this->teacherId) {
+                $class = 'teacher-substituted';
+            }
+        } else if ($this->isPrivate()) {
+            $class = 'private-lesson';
+        } else if ($this->isPrivate()) {
+            $class = 'group-lesson';
+        }
+
+        return $class;
+    }
+
     public function getProFormaLineItem()
     {
         $lessonId = $this->id;
@@ -704,6 +743,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $courseId             = $this->courseId;
         $enrolmentFirstLesson = self::find()
+                        ->notDeleted()
 			->where(['courseId' => $courseId])
 			->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED]])
 			->orderBy(['date' => SORT_ASC])
