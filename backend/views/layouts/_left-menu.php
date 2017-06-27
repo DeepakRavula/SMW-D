@@ -50,6 +50,12 @@ echo Menu::widget([
 			'badge' => Student::count(),
 			'badgeBgClass' => 'label-default',
 		],
+        [
+			'label' => Yii::t('backend', 'Students Birthday'),
+			'icon' => '<i class="fa fa-lg fa-fw fa-child"></i>',
+			'url' => ['student-birthday/index'],
+			'visible' => Yii::$app->user->can('administrator'),
+		],
 			[
 			'label' => Yii::t('backend', 'Customers'),
 			'icon' => '<i class="fa fa-lg fa-fw fa-male"></i>',
