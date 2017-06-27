@@ -3,6 +3,10 @@
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use yii\bootstrap\Modal;
+
+use kartik\datetime\DateTimePickerAsset;
+DateTimePickerAsset::register($this);
 
 $this->title = 'Review Lessons';
 ?>
@@ -77,20 +81,17 @@ $columns = [
 	],
 ];
 ?>
+	<?php yii\widgets\Pjax::begin([
+		'id' => 'review-lesson-listing'
+	]) ?>
 <?=
-\kartik\grid\GridView::widget([
+\yii\grid\GridView::widget([
 	'dataProvider' => $lessonDataProvider,
-	'pjax' => true,
-	'pjaxSettings' => [
-		'neverTimeout' => true,
-		'options' => [
-			'id' => 'review-lesson-listing',
-		],
-	],
 	'columns' => $columns,
 	'emptyText' => 'No conflicts here! You are ready to confirm!',
 ]);
 ?>
+<?php \yii\widgets\Pjax::end(); ?>
 <div style="text-align: center">
 	<strong>Unscheduled Lesson(s) due to holiday conflict:</strong> <?= count($holidayConflictedLessonIds);?><br>
 	<strong>Scheduled Lessons:</strong> <?= $lessonCount - (count($holidayConflictedLessonIds) + $conflictedLessonIdsCount);?><br>
@@ -107,11 +108,12 @@ $columns = [
 	'courseModel' => $courseModel	
 ]); ?>
 <?php
-	Modal::begin([
-		'header' => '<h4 class="m-0">Edit Lesson</h4>',
-		'id'=>'review-lesson-modal',
-	]); ?>
-	<?php Modal::end();?>		
+Modal::begin([
+	'header' => '<h4 class="m-0">Edit Lesson</h4>',
+	'id'=>'review-lesson-modal',
+]); ?>
+<div id="review-lesson-content"></div>
+<?php Modal::end();?>		
 <script>
 	var review = {
 		onEditableError: function (event, val, form, data) {
@@ -151,6 +153,11 @@ $columns = [
 			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
 			$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
 		});
+		
+		$(document).on('click', '#lesson-review-cancel', function () {
+            $('#review-lesson-modal').modal('hide');
+			return false;
+		});
 		$(document).on('click', '.review-lesson-edit-button', function () {
             $.ajax({
                 url: '<?= Url::to(['lesson/update-field']); ?>?id=' + $(this).parent().parent().data('key'),
@@ -160,15 +167,33 @@ $columns = [
                 {
                     if (response.status)
                     {
-                        $('#new-exam-result-modal .modal-body').html(response.data);
-                        $('#new-exam-result-modal').modal('show');
-                    } else {
-                        $('#lesson-form').yiiActiveForm('updateMessages',
-                                response.errors
-                                , true);
+                        $('#review-lesson-content').html(response.data);
+                        $('#review-lesson-modal').modal('show');
                     }
                 }
             });
+			return false;
         });
+		$('#lesson-review-apply').click(function(){
+			var lessonId = $('#lesson-id').val();
+			$.ajax({
+                url: '<?= Url::to(['lesson/update-field']); ?>?id=' + lessonId,
+                type: 'post',
+                dataType: "json",
+                data: $('#new-enrolment-form').serialize(),
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+						$.pjax.reload({container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
+                        $('#review-lesson-modal').modal('hide');
+                    } else {
+				 		$('#lesson-review-form').yiiActiveForm('updateMessages',
+					   		response.errors	, true);
+					}
+                }
+            });
+			return false;
+		});	
 	});
 </script>
