@@ -7,6 +7,7 @@ use common\models\ItemType;
 ?>
 
 Dear Customer,<br>
+Please find the invoice below: <Br>
         <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
@@ -41,10 +42,10 @@ Dear Customer,<br>
                     },
                 ],
                 [
-                    'attribute' => 'amount',
-        			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-                    'label' => 'Total',
-                    'enableSorting' => false,
+                  'attribute' => 'amount',
+        			   'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+                  'label' => 'Total',
+                  'enableSorting' => false,
                 ],
             ],
         ]); ?>

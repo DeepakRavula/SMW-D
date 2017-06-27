@@ -336,6 +336,10 @@ Resets
     padding: 10px !important;
 }
 
+.p-15{
+    padding: 15px !important;
+}
+
 .p-20 {
     padding: 20px !important;
 }
@@ -1718,4 +1722,7 @@ hr.fc-divider {
 }
 .enrolment-step-body{
     padding: 20px;
+}
+.field-lessonsearch-summarisereport{
+    line-height: 40px;
 }

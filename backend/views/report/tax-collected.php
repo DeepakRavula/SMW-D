@@ -8,6 +8,11 @@ use yii\helpers\Url;
 
 $this->title = 'Tax Collected';
 ?>
+<style>
+	.kv-page-summary, .table > tbody + tbody{
+		border: 0;
+	}
+</style>
 <div class="col-xs-12 col-md-6 p-10 p-r-0">
 	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
@@ -123,6 +128,7 @@ $this->title = 'Tax Collected';
 	],	
 ]; ?>
 <?php endif; ?>
+<div class="col-md-12">
 <?php echo GridView::widget([
 	'dataProvider' => $taxDataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
@@ -137,6 +143,7 @@ $this->title = 'Tax Collected';
 	],
 	'columns' => $columns,
 ]); ?>
+</div>
 <script>
 $(document).ready(function () {
 	$("#reportsearch-summarizeresults").on("change", function() {

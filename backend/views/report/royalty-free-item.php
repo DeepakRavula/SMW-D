@@ -8,6 +8,11 @@ use yii\helpers\Url;
 
 $this->title = 'Royalty Free Items';
 ?>
+<style>
+	.kv-page-summary, .table > tbody + tbody{
+		border: 0;
+	}
+</style>
 <div class="col-xs-12 col-md-6 p-10 p-r-0">
 	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
@@ -32,6 +37,7 @@ $this->title = 'Royalty Free Items';
 		'pageSummaryFunc'=>GridView::F_SUM
 	],	
 ]; ?>
+<div class="col-md-12">
 <?php echo GridView::widget([
 	'dataProvider' => $royaltyFreeDataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
@@ -46,6 +52,7 @@ $this->title = 'Royalty Free Items';
 	],
 	'columns' => $columns,
 ]); ?>
+</div>
 <script>
 $(document).ready(function () {
 	$("#reportsearch-summarizeresults").on("change", function() {

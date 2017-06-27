@@ -28,6 +28,9 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	.lesson-count {
 		font-weight: bold;
 	}
+    #note{
+        padding-bottom: 15px;
+    }
     #user-note{
         padding-left:10px;
     }
@@ -152,6 +155,11 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$logContent = $this->render('log', [
 			'model' => $model,
 		]);
+		$timeVoucherContent = $this->render('teacher/_time-voucher', [
+			'timeVoucherDataProvider' => $timeVoucherDataProvider,
+			'searchModel' => $invoiceSearchModel,
+			'model' => $model,
+		]);
 
         ?>
 		<?php
@@ -213,6 +221,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                 'content' => $unscheduledLessonContent,
                 'options' => [
                     'id' => 'unscheduled',
+                ],
+            ],
+			[
+                'label' => 'Time Voucher',
+                'content' => $timeVoucherContent,
+                'options' => [
+                    'id' => 'time-voucher',
                 ],
             ],
 			[

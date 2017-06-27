@@ -19,8 +19,11 @@ use common\models\Qualification;
 			padding:8px;
 			background:#fff;
 		}
-		.bg-light-gray-1{
-			background: #f5ecec;
+		.kv-page-summary, .table > tbody + tbody{
+			border: 0;
+		}
+		.table-striped > tbody > tr:nth-of-type(odd){
+			background: transparent;
 		}
 	</style>
 	<div class="row">
@@ -46,11 +49,6 @@ use common\models\Qualification;
 			<Br>
 			<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
 		</div>
-		<div class="col-md-4 m-t-20">
-			<div class="schedule-index">
-			 <?= $form->field($searchModel, 'summariseReport')->checkbox(['data-pjax' => true]); ?>
-        	</div>
-		</div>
 		<div class="col-md-2 m-t-25">
 			<?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 
@@ -61,7 +59,6 @@ use common\models\Qualification;
 <?php ActiveForm::end(); ?>
 
 <?php
-if(!$searchModel->summariseReport) {
 $columns = [
 		[
 		'value' => function ($data) {
@@ -79,15 +76,12 @@ $columns = [
 				'mergeColumns' => [[1, 3]],
 				'content' => [
 					4 => GridView::F_SUM,
-					6 => GridView::F_SUM,
 				],
 				'contentFormats' => [
 					4 => ['format' => 'number', 'decimals' => 2],
-					6 => ['format' => 'number', 'decimals' => 2],
 				],
 				'contentOptions' => [
 					4 => ['style' => 'text-align:right'],
-					6 => ['style' => 'text-align:right'],
 				],
 			'options'=>['style'=>'font-weight:bold;']
 			];
@@ -127,106 +121,14 @@ $columns = [
 			'pageSummary'=>true,
             'pageSummaryFunc'=>GridView::F_SUM
 	],
-		[
-		'label' => 'Rate/hour',
-		'format'=>['decimal',2],
-		'value' => function ($data) {
-			$qualification = Qualification::findone(['teacher_id' => $data->teacherId, 'program_id' => $data->course->program->id]); 
-			$rate = !empty($qualification->rate) ? $qualification->rate : 0;
-			return $rate;
-		},
-		'hAlign'=>'right',
-		'contentOptions' => ['class' => 'text-right'],
-	],
-		[
-		'label' => 'Cost',
-		'format'=>['decimal',2],
-		'value' => function ($data) {
-			$qualification = Qualification::findone(['teacher_id' => $data->teacherId, 'program_id' => $data->course->program->id]);
-			$rate = !empty($qualification->rate) ? $qualification->rate : 0;
-			return $data->getDuration() * $rate;
-		},
-		'contentOptions' => ['class' => 'text-right'],
-			'hAlign'=>'right',
-			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
-	],
 ];
-} else {
-	$columns = [
-		[
-			'label' => 'Date',
-			'value' => function ($data) {
-				if( ! empty($data->date)) {
-					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-					return $lessonDate->format('l, F jS, Y');
-				}
-
-				return null;
-			},
-		],	
-		[
-			'label' => 'Duration(hrs)',
-			'value' => function ($data){
-				$locationId = Yii::$app->session->get('location_id');
-				$lessons = Lesson::find()
-					->location($locationId)
-					->notDeleted()
-					->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
-					->andWhere(['DATE(date)' => (new \DateTime($data->date))->format('Y-m-d'), 'lesson.teacherId' => $data->teacherId])
-					->all();
-				$totalDuration = 0;
-				foreach($lessons as $lesson) {
-					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->fullDuration);
-					$hours			 = $duration->format('H');
-					$minutes		 = $duration->format('i');
-					$lessonDuration	 = $hours + ($minutes / 60);
-					$totalDuration += $lessonDuration;	
-				}
-				return $totalDuration;
-			},
-			'contentOptions' => ['class' => 'text-right'],
-			'hAlign'=>'right',
-			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
-		],
-		[
-			'label' => 'Cost',
-		'format'=>['decimal',2],
-		'value' => function ($data) {
-				$locationId = Yii::$app->session->get('location_id');
-				$lessons = Lesson::find()
-					->location($locationId)
-					->notDeleted()
-					->andWhere(['DATE(date)' => (new \DateTime($data->date))->format('Y-m-d'), 'lesson.teacherId' => $data->teacherId])
-					->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
-					->all();
-				$cost = 0;
-				foreach($lessons as $lesson) {
-					$qualification = Qualification::findone(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
-					$rate = !empty($qualification->rate) ? $qualification->rate : 0;
-					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->fullDuration);
-					$hours			 = $duration->format('H');
-					$minutes		 = $duration->format('i');
-					$lessonDuration	 = $hours + ($minutes / 60);
-					$cost += $lessonDuration * $rate;	
-				}
-				return $cost;
-		},
-		'contentOptions' => ['class' => 'text-right'],
-			'hAlign'=>'right',
-			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
-	],
-	];
-}
 ?>
 <?=
 GridView::widget([
 	'dataProvider' => $teacherLessonDataProvider,
 	'options' => ['class' => 'col-md-12'],
-	'tableOptions' => ['class' => 'table table-responsive'],
-	'headerRowOptions' => ['class' => 'bg-light-gray-1'],
+	'tableOptions' => ['class' => 'table table-bordered'],
+	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'pjax' => true,
 	'showPageSummary' => true,
 	'pjaxSettings' => [
@@ -240,24 +142,12 @@ GridView::widget([
 ?>
 <script>
     $(document).ready(function () {
-		$("#lessonsearch-summarisereport").on("change", function() {
-        var summariesOnly = $(this).is(":checked");
-        var fromDate = $('#lessonsearch-fromdate').val();
-        var toDate = $('#lessonsearch-todate').val();
-        var params = $.param({ 'LessonSearch[fromDate]': fromDate,
-            'LessonSearch[toDate]': toDate, 'LessonSearch[summariseReport]': (summariesOnly | 0) });
-        var url = '<?php echo Url::to(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]); ?>&' + params;
-        $.pjax.reload({url:url,container:"#teacher-lesson-grid",replace:false,  timeout: 4000});  //Reload GridView
-		var printUrl = '<?= Url::to(['user/print', 'id' => $model->id]); ?>&' + params;
-		 $('#print-btn').attr('href', printUrl);
-    });
         $("#teacher-lesson-search-form").on("submit", function () {
-        	var summariesOnly = $("#lessonsearch-summarisereport").is(":checked");
             var fromDate = $('#lessonsearch-fromdate').val();
             var toDate = $('#lessonsearch-todate').val();
             $.pjax.reload({container: "#teacher-lesson-grid", replace: false, timeout: 6000, data: $(this).serialize()});
 			var params = $.param({ 'LessonSearch[fromDate]': fromDate,
-            'LessonSearch[toDate]': toDate, 'LessonSearch[summariseReport]': (summariesOnly | 0) });
+            'LessonSearch[toDate]': toDate});
             var url = '<?= Url::to(['user/print', 'id' => $model->id]); ?>&' + params;
             $('#print-btn').attr('href', url);
             return false;

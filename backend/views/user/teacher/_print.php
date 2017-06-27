@@ -85,10 +85,9 @@ use common\models\Qualification;
 	</div>
 	<div class="clearfix"></div>
 </div>
-<h2 class="col-md-12"><b><?= $model->publicIdentity . '\'s Time Voucher for ' . $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h2>
+<h2 class="col-md-12"><b><?= $model->publicIdentity . '\'s Lessons for ' . $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h2>
 <div class="report-grid">
 <?php
-if(!$searchModel->summariseReport) {
 $columns = [
 		[
 		'value' => function ($data) {
@@ -104,15 +103,12 @@ $columns = [
 				'mergeColumns' => [[1, 3]],
 				'content' => [
 					4 => GridView::F_SUM,
-					6 => GridView::F_SUM,
 				],
 				'contentFormats' => [
 					4 => ['format' => 'number', 'decimals' => 2],
-					6 => ['format' => 'number', 'decimals' => 2],
 				],
 				'contentOptions' => [
 					4 => ['style' => 'text-align:right'],
-					6 => ['style' => 'text-align:right'],
 				],
 				'options' => ['style' => 'font-weight:bold;']
 			];
@@ -152,99 +148,7 @@ $columns = [
 		'pageSummary' => true,
 		'pageSummaryFunc' => GridView::F_SUM
 	],
-	[
-		'label' => 'Rate/hour',
-		'format'=>['decimal',2],
-		'value' => function ($data) {
-			$qualification = Qualification::findone(['teacher_id' => $data->teacherId, 'program_id' => $data->course->program->id]);
-			$rate = !empty($qualification->rate) ? $qualification->rate : 0;
-			return $data->getDuration() * $rate;
-		},
-		'hAlign' => 'right',
-		'contentOptions' => ['class' => 'text-right'],
-	],
-	[
-		'label' => 'Cost',
-		'format' => ['decimal', 2],
-		'value' => function ($data) {
-			$qualification = Qualification::findone(['teacher_id' => $data->teacherId, 'program_id' => $data->course->program->id]);
-			$rate = !empty($qualification->rate) ? $qualification->rate : 0;
-			return $data->getDuration() * $rate;
-		},
-		'contentOptions' => ['class' => 'text-right'],
-		'hAlign' => 'right',
-		'pageSummary' => true,
-		'pageSummaryFunc' => GridView::F_SUM
-	],
 ];
-} else {
-	$columns = [
-		[
-			'label' => 'Date',
-			'value' => function ($data) {
-				if( ! empty($data->date)) {
-					$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-					return $lessonDate->format('l, F jS, Y');
-				}
-
-				return null;
-			},
-		],	
-		[
-			'label' => 'Duration(hrs)',
-			'value' => function ($data){
-				$locationId = Yii::$app->session->get('location_id');
-				$lessons = Lesson::find()
-					->location($locationId)
-					->notDeleted()
-					->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
-					->andWhere(['DATE(date)' => (new \DateTime($data->date))->format('Y-m-d'), 'lesson.teacherId' => $data->teacherId])
-					->all();
-				$totalDuration = 0;
-				foreach($lessons as $lesson) {
-					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->fullDuration);
-					$hours			 = $duration->format('H');
-					$minutes		 = $duration->format('i');
-					$lessonDuration	 = $hours + ($minutes / 60);
-					$totalDuration += $lessonDuration;	
-				}
-				return $totalDuration;
-			},
-			'contentOptions' => ['class' => 'text-right'],
-			'hAlign'=>'right',
-			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
-		],
-		[
-			'label' => 'Cost',
-		'format'=>['decimal',2],
-		'value' => function ($data) {
-				$locationId = Yii::$app->session->get('location_id');
-				$lessons = Lesson::find()
-					->location($locationId)
-					->notDeleted()
-					->andWhere(['DATE(date)' => (new \DateTime($data->date))->format('Y-m-d'), 'lesson.teacherId' => $data->teacherId])
-					->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
-					->all();
-				$cost = 0;
-				foreach($lessons as $lesson) {
-					$qualification = Qualification::findone(['teacher_id' => $lesson->teacherId, 'program_id' => $lesson->course->program->id]);
-					$rate = !empty($qualification->rate) ? $qualification->rate : 0;
-					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->fullDuration);
-					$hours			 = $duration->format('H');
-					$minutes		 = $duration->format('i');
-					$lessonDuration	 = $hours + ($minutes / 60);
-					$cost += $lessonDuration * $rate;	
-				}
-				return $cost;
-		},
-		'contentOptions' => ['class' => 'text-right'],
-			'hAlign'=>'right',
-			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
-	],
-	];
-}
 ?>
 <?=
 GridView::widget([

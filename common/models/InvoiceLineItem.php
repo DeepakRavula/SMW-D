@@ -411,7 +411,32 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $minutes     = $getDuration->format('i');
         return (($hours * 60) + $minutes) / 60;
     }
-
+	public function getLessonDuration($date, $teacherId)
+	{
+		$totalDuration = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query) use($date, $teacherId) {
+				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+					->between($date, $date);
+			}])
+			->joinWith(['lesson' => function($query) use($teacherId){
+				$query->andWhere(['lesson.teacherId' => $teacherId]);
+			}])
+			->sum('unit');
+			return $totalDuration;
+	}
+	public function getLessonCost($date, $teacherId)
+	{
+		$totalCost = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query) use($date, $teacherId) {
+				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+					->between($date, $date);
+			}])
+			->joinWith(['lesson' => function($query) use($teacherId){
+				$query->andWhere(['lesson.teacherId' => $teacherId]);
+			}])
+			->sum('cost');
+			return $totalCost;
+	}
     public function addLessonCreditApplied($splitId)
     {
         $lessonSplit  = LessonSplit::findOne($splitId);

@@ -18,7 +18,6 @@ use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
  * This is the model class for table "lesson".
  *
  * @property string $id
- * @property string $enrolmentId
  * @property string $teacherId
  * @property string $date
  * @property int $status
@@ -562,7 +561,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isGroup()
     {
-        return (int) $this->course->program->type === (int) Program::TYPE_GROUP_PROGRAM;
+        return (int) $this->course->program->type === Program::TYPE_GROUP_PROGRAM;
     }
 
     public function isExtra()

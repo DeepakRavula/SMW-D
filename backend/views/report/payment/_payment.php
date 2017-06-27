@@ -17,7 +17,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  * and open the template in the editor.
  */
 ?>
-<script type="text/javascript" src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
+<script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <style>
 .table>thead>tr>th {
     border-right: 2px solid transparent;
@@ -165,7 +165,7 @@ tr.success>td{
 				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
 				'group' => true,
 				'groupedRow' => true,
-				'subGroupOf' => 1,
+				'subGroupOf' => 0,
 				'groupFooter' => function ($model, $key, $index, $widget) {
 					return [
 						'mergeColumns' => [[2, 4]],
