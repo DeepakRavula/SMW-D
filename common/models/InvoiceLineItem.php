@@ -90,15 +90,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getLesson()
     {
+        $query = $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
         if($this->isLessonSplit()) {
-            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                    ->via('lineItemPaymentCycleLessonSplit');
+            return $query->via('lineItemPaymentCycleLessonSplit');
         } else if($this->isPaymentCycleLesson()) {
-            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                    ->via('paymentCycleLesson');
+            return $query->via('paymentCycleLesson');
         } else {
-            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                    ->via('lineItemLesson');
+            return $query->via('lineItemLesson');
         }
     }
 	
