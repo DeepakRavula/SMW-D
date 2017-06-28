@@ -437,7 +437,12 @@ class Lesson extends \yii\db\ActiveRecord
             $class = 'lesson-missed';
         } else if($this->isEnrolmentFirstlesson()) {
             $class = 'first-lesson';
-        } else if ($this->getRootLesson()) {
+        } else if ($this->isPrivate()) {
+            $class = 'private-lesson';
+        } else if ($this->isGroup()) {
+            $class = 'group-lesson';
+        }
+        if ($this->getRootLesson()) {
             $rootLesson = $this->getRootLesson();
             if($rootLesson->id !== $this->id) {
                 $class = 'lesson-rescheduled';
@@ -445,10 +450,6 @@ class Lesson extends \yii\db\ActiveRecord
             if ($rootLesson->teacherId !== $this->teacherId) {
                 $class = 'teacher-substituted';
             }
-        } else if ($this->isPrivate()) {
-            $class = 'private-lesson';
-        } else if ($this->isGroup()) {
-            $class = 'group-lesson';
         }
 
         return $class;
@@ -543,12 +544,9 @@ class Lesson extends \yii\db\ActiveRecord
     {
         if (!empty($this->colorCode)) {
             $colorCode = $this->colorCode;
-        } else if ($this->isRescheduled()) {
-            $defaultRescheduledLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
-            $colorCode = $defaultRescheduledLessonEventColor->code;
         } else {
-            $defaultLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
-            $colorCode = $defaultLessonEventColor->code;
+            $defaultColor = CalendarEventColor::findOne(['cssClass' => $this->getClass()]);
+            $colorCode = $defaultColor->code;
         }
 
         return $colorCode;
