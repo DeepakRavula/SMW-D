@@ -73,7 +73,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $vacationId;
     public $studentId;
     public $userName;
-	
+
     /**
      * {@inheritdoc}
      */
