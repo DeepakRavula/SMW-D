@@ -447,7 +447,7 @@ class Lesson extends \yii\db\ActiveRecord
             }
         } else if ($this->isPrivate()) {
             $class = 'private-lesson';
-        } else if ($this->isPrivate()) {
+        } else if ($this->isGroup()) {
             $class = 'group-lesson';
         }
 
