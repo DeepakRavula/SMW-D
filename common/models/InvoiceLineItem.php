@@ -90,8 +90,16 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                ->via('lineItemLesson');
+        if($this->isLessonSplit()) {
+            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                    ->via('lineItemPaymentCycleLessonSplit');
+        } else if($this->isPaymentCycleLesson()) {
+            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                    ->via('paymentCycleLesson');
+        } else {
+            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                    ->via('lineItemLesson');
+        }
     }
 	
     public function getPaymentCycleLesson()
@@ -131,6 +139,17 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getLineItemLesson()
     {
         return $this->hasOne(InvoiceItemLesson::className(), ['invoiceLineItemId' => 'id']);
+    }
+
+    public function getEnrolment()
+    {
+        if($this->isGroupLesson()) {
+            return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId'])
+                ->via('lineItemEnrolment');
+        } else {
+            return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
+                ->via('lesson');
+        }
     }
 
     public function getLineItemEnrolment()

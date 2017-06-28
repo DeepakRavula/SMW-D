@@ -960,27 +960,18 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getStudentProgramName()
     {
-        if (empty($this->lineItem)) {
+        if (empty($this->lineItem) || !$this->hasStudent()) {
             return null;
-        } else if ($this->lineItem->isExtraLesson() || $this->lineItem->isGroupLesson()) {
-            return !empty($this->lineItem->lesson->enrolment->student
-                ->fullName) ? $this->lineItem->lesson->enrolment
-                ->student->fullName.' ('.$this->lineItem->lesson
-                ->enrolment->program->name.')' : null;
-        } else if ($this->lineItem->isLessonSplit()) {
-            return !empty($this->lineItem->lineItemPaymentCycleLessonSplit->lesson
-                ->enrolment->student->fullName) ?
-                $this->lineItem->lineItemPaymentCycleLessonSplit->lesson->enrolment
-                ->student->fullName.' ('.$this->lineItem
-                ->lineItemPaymentCycleLessonSplit->lesson->enrolment->program
-                ->name.')' : null;
         } else {
-            return !empty($this->lineItem->paymentCycleLesson->lesson
-                ->enrolment->student->fullName) ?
-                $this->lineItem->paymentCycleLesson->lesson->enrolment
-                ->student->fullName.' ('.$this->lineItem
-                ->paymentCycleLesson->lesson->enrolment->program
-                ->name.')' : null;
+            return !empty($this->lineItem->enrolment->student->fullName) ?
+                $this->lineItem->enrolment->student->fullName. ' (' .
+                $this->lineItem->enrolment->program->name.')' : null;
         }
+    }
+
+    public function hasStudent()
+    {
+        return !$this->lineItem->isLessonCredit() && !$this->lineItem->isOpeningBalance()
+            && !$this->lineItem->isMisc();
     }
 }
