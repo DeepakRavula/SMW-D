@@ -39,7 +39,7 @@ class StudentController extends Controller
             ],
 			[
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['create', 'update'],
+				'only' => ['create', 'update', 'merge'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -273,5 +273,53 @@ class StudentController extends Controller
         $program = Program::findOne(['id' => $id]);
 
         return $program->rate;
+    }
+
+    public function actionMerge($id)
+    {
+        $model         = Student::findOne($id);
+        $studentModelDataProvider = new ActiveDataProvider([
+            'query' => Student::find()
+                        ->active()
+                        ->andWhere(['NOT', ['id' => $id]])
+                        ->andWhere(['customer_id' => $model->customer_id]),
+        ]);
+
+        $data          = $this->renderAjax('_merge', [
+            'studentModelDataProvider' => $studentModelDataProvider,
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {
+            $student = Student::findOne($post['radioButtonSelection']);
+            if ($student) {
+                foreach ($student->enrolment as $enrolment) {
+                    $enrolment->studentId = $model->id;
+                    $enrolment->save(false);
+                }
+                foreach ($student->logs as $log) {
+                    $log->studentId = $model->id;
+                    $log->save(false);
+                }
+                foreach ($student->examResults as $examResult) {
+                    $examResult->studentId = $model->id;
+                    $examResult->save(false);
+                }
+                $student->status = Student::STATUS_INACTIVE;
+
+                return [
+                    'status' => $student->save(false),
+                    'message' => 'Student successfully merged!'
+                ];
+            } else {
+                return [
+                    'status' => false
+                ];
+            }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
     }
 }
