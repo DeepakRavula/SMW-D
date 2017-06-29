@@ -118,13 +118,17 @@ class LessonQuery extends \yii\db\ActiveQuery
         }]);
     }
 
-    public function completedUnInvoiced()
+    public function completedUnInvoicedPrivate()
     {
         $completedLessons = Lesson::find()
+            ->notDeleted()
+            ->privateLessons()
             ->completed();
-		$invoicedLessons = Lesson::find()
+        $invoicedLessons = Lesson::find()
+            ->notDeleted()
+            ->privateLessons()
             ->invoiced();
-		$query = Lesson::find()
+        $query = Lesson::find()
             ->from(['completed_lesson' => $completedLessons])
             ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'completed_lesson.id = invoiced_lesson.id')
             ->where(['invoiced_lesson.id' => null]);
