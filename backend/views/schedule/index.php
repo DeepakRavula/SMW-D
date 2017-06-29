@@ -229,7 +229,6 @@ $(document).ready(function() {
         minTime: "<?php echo $from_time; ?>",
         maxTime: "<?php echo $to_time; ?>",
         slotDuration: "00:15:00",
-        editable: false,
         droppable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
@@ -245,24 +244,47 @@ $(document).ready(function() {
                 $("#calendar").fullCalendar("refetchEvents");
             }
         },
-		allDaySlot:false,
+        allDaySlot:false,
+        editable: true,
+        eventDurationEditable: false,
         eventClick: function(event) {
             $(location).attr('href', event.url);
         },
-		eventRender: function(event, element) {
-			element.poshytip({
-				className: 'tip-yellowsimple',
-				alignTo: 'cursor',
-				alignX: 'center',
-				alignY : 'top',
-				offsetY: 5,
-				followCursor: false,
-				slide: false,
-				content : function(updateCallback) {
-					return event.description;
-				}
-			});
-		}
+        eventDrop: function(event) {
+            var params = $.param({
+                id: event.lessonId,
+                teacherId: event.resourceId
+            });
+            $.ajax({
+                url: '<?= Url::to(['lesson/modify-teacher']); ?>?' + params,
+                type: 'post',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status) {
+                        $("#calendar").fullCalendar("refetchEvents");
+                    } else {
+                        $('#notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
+                        $("#calendar").fullCalendar("refetchEvents");
+                        $(window).scrollTop(0);
+                    }
+                }
+            });
+        },
+        eventRender: function(event, element) {
+            element.poshytip({
+                className: 'tip-yellowsimple',
+                alignTo: 'cursor',
+                alignX: 'center',
+                alignY : 'top',
+                offsetY: 5,
+                followCursor: false,
+                slide: false,
+                content : function(updateCallback) {
+                    return event.description;
+                }
+            });
+        }
     });
 });
 
@@ -462,7 +484,8 @@ function refreshCalendar(date) {
         maxTime: maxTime,
         slotDuration: "00:15:00",
         allDaySlot:false,
-        editable: false,
+        editable: true,
+        eventDurationEditable: false,
         droppable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
@@ -491,7 +514,28 @@ function refreshCalendar(date) {
 					return event.description;
 				}
 			});
-		}
+		},
+                        eventDrop: function(event) {
+            var params = $.param({
+                id: event.lessonId,
+                teacherId: event.resourceId
+            });
+            $.ajax({
+                url: '<?= Url::to(['lesson/modify-teacher']); ?>?' + params,
+                type: 'post',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status) {
+                        $("#calendar").fullCalendar("refetchEvents");
+                    } else {
+                        $('#notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
+                        $("#calendar").fullCalendar("refetchEvents");
+                        $(window).scrollTop(0);
+                    }
+                }
+            });
+        },
     });
 }
 </script>

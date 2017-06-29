@@ -48,6 +48,7 @@ class LessonController extends Controller
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field'],
+                'only' => ['modify-classroom', 'merge', 'modify-teacher'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -811,6 +812,27 @@ class LessonController extends Controller
             $response = [
                 'status' => false,
                 'errors' => current($model),
+            ];
+        }
+
+        return $response;
+    }
+
+    public function actionModifyTeacher($id, $teacherId)
+    {
+        $model = Lesson::findOne($id);
+        $model->setScenario(Lesson::SCENARIO_EDIT);
+        $model->teacherId = $teacherId;
+        if ($model->validate()) {
+            $model->save(false);
+            $response = [
+                'status' => true,
+            ];
+        } else {
+            $errors = ActiveForm::validate($model);
+            $response = [
+                'status' => false,
+                'errors' => current($errors),
             ];
         }
 

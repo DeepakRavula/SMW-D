@@ -90,14 +90,20 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                ->viaTable('invoice_item_lesson', ['invoiceLineItemId' => 'id']);
+        $query = $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
+        if($this->isLessonSplit()) {
+            return $query->via('lineItemPaymentCycleLessonSplit');
+        } else if($this->isPaymentCycleLesson()) {
+            return $query->via('paymentCycleLesson');
+        } else {
+            return $query->via('lineItemLesson');
+        }
     }
 	
     public function getPaymentCycleLesson()
     {
         return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
-                ->viaTable('invoice_item_payment_cycle_lesson', ['invoiceLineItemId' => 'id']);
+                ->via('lineItemPaymentCycleLesson');
     }
 
     public function getItemType()
@@ -131,6 +137,17 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getLineItemLesson()
     {
         return $this->hasOne(InvoiceItemLesson::className(), ['invoiceLineItemId' => 'id']);
+    }
+
+    public function getEnrolment()
+    {
+        if($this->isGroupLesson()) {
+            return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId'])
+                ->via('lineItemEnrolment');
+        } else {
+            return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
+                ->via('lesson');
+        }
     }
 
     public function getLineItemEnrolment()
@@ -247,7 +264,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->amount = -($this->amount);
                 $this->setScenario(self::SCENARIO_OPENING_BALANCE);
             }
-            $this->tax_rate = $this->amount * $this->taxType->taxCode->rate / 100;
+            $taxType = TaxType::findOne(['name' => $this->tax_type]);
+            $this->tax_rate = $this->amount * $taxType->taxCode->rate / 100.0;
         }
         return parent::beforeSave($insert);
     }
@@ -314,6 +332,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function isPrivateLesson()
     {
         return (int) $this->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON;
+    }
+
+    public function isLessonSplit()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_SPLIT;
     }
 
     public function isGroupLesson()

@@ -17,7 +17,7 @@ class UserQuery extends ActiveQuery
      */
     public function notDeleted()
     {
-        $this->andWhere(['!=', 'user.status', User::STATUS_DELETED]);
+        $this->andWhere(['!=', 'user.status', User::STATUS_NOT_ACTIVE]);
 
         return $this;
     }
@@ -34,13 +34,10 @@ class UserQuery extends ActiveQuery
 
     public function teachers($programId, $locationId)
     {
-        $this->joinWith(['userLocation ul' => function ($query) use ($programId) {
-            $query->joinWith('teacherAvailability');
-        }])
-            ->joinWith(['qualification' => function ($query) use ($programId) {
-                $query->joinWith(['program' => function ($query) use ($programId) {
-                    $query->where(['program.id' => $programId]);
-                }]);
+        $this->joinWith('userLocation ul')
+            ->joinWith(['qualifications' => function ($query) use ($programId) {
+                $query->andWhere(['qualification.program_id' => $programId])
+                    ->notDeleted();
             }])
             ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
             ->where(['raa.item_name' => 'teacher'])
