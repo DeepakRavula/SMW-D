@@ -277,19 +277,20 @@ class StudentController extends Controller
 
     public function actionMerge($id)
     {
-        $model         = Student::findOne($id);
-        $studentModelDataProvider = new ActiveDataProvider([
-            'query' => Student::find()
+        $locationId = Yii::$app->session->get('location_id');
+        $model      = Student::findOne($id);
+        $students   = Student::find()
                         ->active()
-                        ->andWhere(['NOT', ['id' => $id]])
-                        ->andWhere(['customer_id' => $model->customer_id]),
-        ]);
+                        ->location($locationId)
+                        ->andWhere(['NOT', ['student.id' => $id]])
+                        ->all();
 
-        $data          = $this->renderAjax('_merge', [
-            'studentModelDataProvider' => $studentModelDataProvider,
+        $data       = $this->renderAjax('_merge', [
+            'students' => $students,
+            'model' => $model
         ]);
         $post = Yii::$app->request->post();
-        if ($post) {
+        if ($model->load($post)) {
             $student = Student::findOne($post['radioButtonSelection']);
             if ($student) {
                 foreach ($student->enrolment as $enrolment) {

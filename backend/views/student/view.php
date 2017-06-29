@@ -7,6 +7,8 @@ use common\models\ExamResult;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use common\models\Note;
+use kartik\select2\Select2Asset;
+Select2Asset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -157,6 +159,11 @@ echo $this->render('_profile', [
 
 <script>
     $(document).ready(function () {
+        $(document).on('click', '.merge-cancel', function () {
+            $('#student-merge-modal').modal('hide');
+            return false;
+        });
+        $.fn.modal.Constructor.prototype.enforceFocus = function() {};
         $(document).on('click', '#student-merge', function () {
             $.ajax({
                 url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',

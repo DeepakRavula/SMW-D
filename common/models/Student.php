@@ -54,7 +54,7 @@ class Student extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => 'Student',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'birth_date' => 'Birth Date',
