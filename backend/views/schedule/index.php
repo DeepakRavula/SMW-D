@@ -246,17 +246,41 @@ $(document).ready(function() {
         },
         allDaySlot:false,
         editable: true,
-        eventDurationEditable: false,
         eventClick: function(event) {
             $(location).attr('href', event.url);
         },
         eventDrop: function(event) {
             var params = $.param({
                 id: event.lessonId,
+                start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+                end: moment(event.end).format('YYYY-MM-DD HH:mm:ss'),
                 teacherId: event.resourceId
             });
             $.ajax({
-                url: '<?= Url::to(['lesson/modify-teacher']); ?>?' + params,
+                url: '<?= Url::to(['lesson/modify-lesson']); ?>?' + params,
+                type: 'post',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status) {
+                        $("#calendar").fullCalendar("refetchEvents");
+                    } else {
+                        $('#notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
+                        $("#calendar").fullCalendar("refetchEvents");
+                        $(window).scrollTop(0);
+                    }
+                }
+            });
+        },
+        eventResize: function(event) {
+            var params = $.param({
+                id: event.lessonId,
+                start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+                end: moment(event.end).format('YYYY-MM-DD HH:mm:ss'),
+                teacherId: event.resourceId
+            });
+            $.ajax({
+                url: '<?= Url::to(['lesson/modify-lesson']); ?>?' + params,
                 type: 'post',
                 dataType: "json",
                 success: function (response)
@@ -485,7 +509,6 @@ function refreshCalendar(date) {
         slotDuration: "00:15:00",
         allDaySlot:false,
         editable: true,
-        eventDurationEditable: false,
         droppable: false,
         resources: {
             url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
@@ -501,27 +524,29 @@ function refreshCalendar(date) {
                 $("#calendar").fullCalendar("refetchEvents");
             }
         },
-		eventRender: function(event, element) {
-			element.poshytip({
-				className: 'tip-yellowsimple',
-				alignTo: 'cursor',
-				alignX: 'center',
-				alignY : 'top',
-				offsetY: 5,
-				followCursor: false,
-				slide: false,
-				content : function(updateCallback) {
-					return event.description;
-				}
-			});
-		},
-                        eventDrop: function(event) {
+        eventRender: function(event, element) {
+            element.poshytip({
+                className: 'tip-yellowsimple',
+                alignTo: 'cursor',
+                alignX: 'center',
+                alignY : 'top',
+                offsetY: 5,
+                followCursor: false,
+                slide: false,
+                content : function(updateCallback) {
+                    return event.description;
+                }
+            });
+        },
+        eventDrop: function(event) {
             var params = $.param({
                 id: event.lessonId,
+                start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+                end: moment(event.end).format('YYYY-MM-DD HH:mm:ss'),
                 teacherId: event.resourceId
             });
             $.ajax({
-                url: '<?= Url::to(['lesson/modify-teacher']); ?>?' + params,
+                url: '<?= Url::to(['lesson/modify-lesson']); ?>?' + params,
                 type: 'post',
                 dataType: "json",
                 success: function (response)
@@ -536,6 +561,29 @@ function refreshCalendar(date) {
                 }
             });
         },
+        eventResize: function(event) {
+            var params = $.param({
+                id: event.lessonId,
+                start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+                end: moment(event.end).format('YYYY-MM-DD HH:mm:ss'),
+                teacherId: event.resourceId
+            });
+            $.ajax({
+                url: '<?= Url::to(['lesson/modify-lesson']); ?>?' + params,
+                type: 'post',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status) {
+                        $("#calendar").fullCalendar("refetchEvents");
+                    } else {
+                        $('#notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
+                        $("#calendar").fullCalendar("refetchEvents");
+                        $(window).scrollTop(0);
+                    }
+                }
+            });
+        }
     });
 }
 </script>
