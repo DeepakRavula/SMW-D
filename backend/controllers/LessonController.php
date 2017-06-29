@@ -47,7 +47,7 @@ class LessonController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['modify-classroom', 'merge'],
+                'only' => ['modify-classroom', 'merge', 'update-field'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -289,60 +289,44 @@ class LessonController extends Controller
         }
     }
 
-    public function actionUpdateField()
+    public function actionUpdateField($id)
     {
-		$request = Yii::$app->request;
-		$response = Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
-        if ($request->post('hasEditable')) {
-			$lessonId = $request->post('editableKey');
-            $lessonIndex = $request->post('editableIndex');
-            $model = Lesson::findOne(['id' => $lessonId]);
-			$existingDate = $model->date;
-            $result = [
-                'output' => '',
-                'message' => '',
-            ];
-			$posted = current($_POST['Lesson']);
-        	$post = ['Lesson' => $posted];
-            if ($model->load($post)) {
-				if( ! empty($model->date)){
-            		$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
-				}
-				if (isset($posted['date'])) {
-					if(! empty($posted['date'])) {
-						$model->date = (new \DateTime($posted['date']))->format('Y-m-d H:i:s');
-						$output = Yii::$app->formatter->asDateTime($model->date);
-					} else {
-						$model->date = $existingDate;
-						$model->status = Lesson::STATUS_UNSCHEDULED;
-						$privateLessonModel = new PrivateLesson();
-						$privateLessonModel->lessonId = $model->id;
-						$date = new \DateTime($model->date);
-						$expiryDate = $date->modify('90 days');
-						$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-						$privateLessonModel->save();
-						$output = '  ';
-					}
-				}
-				if (!empty($posted['duration'])) {
-					$model->duration = $posted['duration'];
-					$output = $model->duration;
-				}
-
-             $success = $model->save();
-			 $message = null;
-			if (!$success) {
-				$errors = ActiveForm::validate($model);
-				$message = current($errors['lesson-date']);
-            }
-            $result = [
-                'output' => $output,
-                'message' => $message,
-            ];
-		}
-            return $result;
-        }
+		$model = $this->findModel($id);
+        $model->date = Yii::$app->formatter->asDateTime($model->date);
+		$existingDate = $model->date;
+        $data = $this->renderAjax('/lesson/review/_form', [
+            'model' => $model,
+        ]);
+		$response = [
+			'status' => true,
+			'data' => $data
+		];
+        if ($model->load(Yii::$app->request->post())) {
+			if(! empty($model->date)) {
+           		$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
+				$model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+			} else {
+				$model->date = $existingDate;
+				$model->status = Lesson::STATUS_UNSCHEDULED;
+				$privateLessonModel = new PrivateLesson();
+				$privateLessonModel->lessonId = $model->id;
+				$date = new \DateTime($model->date);
+				$expiryDate = $date->modify('90 days');
+				$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+				$privateLessonModel->save();
+			}
+ 			if($model->save()) {
+				$response = [
+					'status' => true
+				];
+			} else {
+				$response = [
+					'status' => false,
+					'errors' => ActiveForm::validate($model),
+				];
+			}
+        }	
+		 return $response;
     }
 
 	public function actionGroupEnrolmentReview($courseId, $enrolmentId)
@@ -452,7 +436,7 @@ class LessonController extends Controller
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        return $this->render('_review', [
+        return $this->render('review', [
             'courseModel' => $courseModel,
             'courseId' => $courseId,
             'lessonDataProvider' => $lessonDataProvider,
