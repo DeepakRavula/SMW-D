@@ -265,7 +265,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->setScenario(self::SCENARIO_OPENING_BALANCE);
             }
             $taxType = TaxType::findOne(['name' => $this->tax_type]);
-            $this->tax_rate = $this->amount * $taxType->taxCode->rate / 100;
+            $this->tax_rate = $this->amount * $taxType->taxCode->rate / 100.0;
         }
         return parent::beforeSave($insert);
     }
