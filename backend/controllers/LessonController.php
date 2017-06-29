@@ -47,8 +47,7 @@ class LessonController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['modify-classroom', 'merge', 'update-field'],
-                'only' => ['modify-classroom', 'merge', 'modify-teacher'],
+                'only' => ['modify-classroom', 'merge', 'update-field', 'modify-teacher'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
