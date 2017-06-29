@@ -47,7 +47,7 @@ class LessonController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['modify-classroom', 'merge', 'update-field', 'modify-teacher'],
+                'only' => ['modify-classroom', 'merge', 'update-field', 'modify-lesson'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -817,11 +817,17 @@ class LessonController extends Controller
         return $response;
     }
 
-    public function actionModifyTeacher($id, $teacherId)
+    public function actionModifyLesson($id, $start, $end, $teacherId)
     {
         $model = Lesson::findOne($id);
         $model->setScenario(Lesson::SCENARIO_EDIT);
         $model->teacherId = $teacherId;
+        $startDate = new \DateTime($start);
+        $endDate = new \DateTime($end);
+        $diff = date_diff($startDate, $endDate);
+        $model->duration = $diff->format("%H:%I:%S");
+        $model->date = $startDate->format('Y-m-d H:i:s');
+
         if ($model->validate()) {
             $model->save(false);
             $response = [
