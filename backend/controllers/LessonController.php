@@ -836,7 +836,6 @@ class LessonController extends Controller
     public function actionModifyTeacher($id, $teacherId)
     {
         $model = Lesson::findOne($id);
-        $model->programId = $model->course->programId;
         $model->setScenario(Lesson::SCENARIO_EDIT);
         $model->teacherId = $teacherId;
         if ($model->validate()) {

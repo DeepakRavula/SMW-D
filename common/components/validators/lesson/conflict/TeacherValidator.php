@@ -14,8 +14,9 @@ class TeacherValidator extends Validator
     {
         $locationId = Yii::$app->session->get('location_id');
         if (!in_array($model->teacherId, ArrayHelper::getColumn(User::find()
-            ->teachers($model->programId, $locationId)->all(), 'id'))) {
-            $this->addError($model, $attribute, 'Please choose vaid teacher!');
+            ->teachers($model->course->programId, $locationId)->all(), 'id'))) {
+            $this->addError($model, $attribute, 'Please choose an eligible
+                teacher who is qualified to teach ' . $model->course->program->name .'!');
         }
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');
 		$lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
