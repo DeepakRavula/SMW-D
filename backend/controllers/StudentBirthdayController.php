@@ -38,9 +38,23 @@ class StudentBirthdayController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex($message = 'Hello')
+    public function actionIndex()
     {
         $searchModel = new StudentBirthdaySearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('d-m-Y');
+		$nextSevenDate = $currentDate->modify('+7days');
+        $searchModel->toDate = $nextSevenDate->format('d-m-Y');
+        $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $studentBirthdayRequest = $request->get('StudentBirthdaySearch');
+            $searchModel->dateRange = $studentBirthdayRequest['dateRange'];
+        }
+        $toDate = $searchModel->toDate;
+        if ($toDate > $currentDate) {
+            $toDate = $currentDate;
+        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

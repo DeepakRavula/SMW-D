@@ -12,11 +12,9 @@ use Yii;
 class StudentBirthdaySearch extends Student
 {
 
+    private $dateRange;
     public $fromDate;
     public $toDate;
-    public $groupByMethod = false;
-    public $query;
-    public $month;
 
     /**
      * {@inheritdoc}
@@ -24,7 +22,7 @@ class StudentBirthdaySearch extends Student
     public function rules()
     {
         return [
-                [['fromDate', 'toDate', 'query', 'month'], 'safe'],
+                [['fromDate', 'toDate', 'dateRange'], 'safe'],
         ];
     }
 
@@ -37,6 +35,21 @@ class StudentBirthdaySearch extends Student
         return Model::scenarios();
     }
 
+	public function setDateRange($dateRange)
+    {
+        list($fromDate, $toDate) = explode(' - ', $dateRange);
+        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $fromDate);
+        $this->toDate = \DateTime::createFromFormat('d-m-Y', $toDate);
+    }
+
+    public function getDateRange()
+    {
+        $fromDate = $this->fromDate->format('d-m-Y');
+        $toDate = $this->toDate->format('d-m-Y');
+        $this->dateRange = $fromDate.' - '.$toDate;
+
+        return $this->dateRange;
+    }
     /**
      * Creates data provider instance with search query applied.
      *
@@ -46,27 +59,17 @@ class StudentBirthdaySearch extends Student
     {
         $locationId = Yii::$app->session->get('location_id');
         $query = Student::find()
-            ->location($locationId);
+            ->location($locationId)
+			->orderBy(['DATE_FORMAT(birth_date,"%m-%d")' => SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => false,
         ]);
 
-        $query->orderBy([
-            'DATE(student.birth_date)' => SORT_DESC,
-        ]);
-        if (!($this->load($params) && $this->validate())) {
-            $this->fromDate = new \DateTime();
-            $this->toDate = new \DateTime();
-            $query->andWhere(['=', 'MONTH(student.birth_date)', $this->month,
-            ]);
+        if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
-        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
-        $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
-        $query->andWhere(['=', 'MONTH(student.birth_date)', $this->month,
-        ]);
+		
+		$query->andWhere(['between', 'DATE_FORMAT(birth_date,"%m-%d")', $this->fromDate->format('m-d'), $this->toDate->format('m-d')]);
 
         return $dataProvider;
     }

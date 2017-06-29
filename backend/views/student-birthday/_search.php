@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
+use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\UserSearch */
@@ -10,30 +11,53 @@ use yii\jui\DatePicker;
 
 ?>
 <style>
-    .e1Div{
-        right: 0 !important;
-        top: -59px;
-    }
+  .e1Div{
+    right: 0;
+    top: -49px;
+  }
+  .e1Div > .form-group > input {
+    width: 180px;
+  }
 </style>
-<div class="user-search">
+    <?php $form = ActiveForm::begin([
+		'id' => 'birthday-search-form',
+        'action' => ['index'],
+        'method' => 'get'
+    ]); ?>
+    <div class="e1Div form-inline">
+        <div class="form-group">
+           <?php 
+           echo DateRangePicker::widget([
+            'model' => $model,
+            'attribute' => 'dateRange',
+            'convertFormat' => true,
+            'initRangeExpr' => true,
+            'pluginOptions' => [
+                'autoApply' => true,
+                'ranges' => [
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", 'moment()'],
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", 'moment()'],
+                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
+                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
+                ],
+                'locale' => [
+                    'format' => 'd-m-Y',
+                ],
+                'opens' => 'left',
+                ],
 
-    <?php
-    $form = ActiveForm::begin([
-            'action' => [''],
-            'method' => 'get',
-    ]);
-
-    ?>
-    <div class="row">
-        <div class="col-md-3">
-            <?php echo $form->field($model, 'month')->dropDownList(['1' => 'January', '2' => 'February', '3' => 'March', '4' => 'April', '5' => 'May', '6' => 'June', '7' => 'July', '8' => 'August', '9' => 'September', '10' => 'October', '11' => 'November', '12' => 'December']); ?>
+            ]);
+           ?>
         </div>
-        <div class="col-md-3 form-group m-t-20">
-<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
-               <div class="clearfix"></div>
-        </div>
-    </div>
-
-<?php ActiveForm::end(); ?>
-
-</div>
+	   <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
+	</div>
+    <?php ActiveForm::end(); ?>
+<script>
+    $(document).ready(function () {
+$("#birthday-search-form").on("submit", function () {
+		var dateRange = $('#birthday-daterange').val();
+		$.pjax.reload({container: "#birthday-listing", replace: false, timeout: 6000, data: $(this).serialize()});
+		return false;
+	});
+});
+</script>
