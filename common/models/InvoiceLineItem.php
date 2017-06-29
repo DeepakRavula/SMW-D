@@ -236,26 +236,17 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($insert) {
-            if ($this->isMisc()) {
-                $taxStatus         = TaxStatus::findOne(['id' => $this->tax_status]);
-                $this->tax_status  = $taxStatus->name;
+            if ($this->isOpeningBalance()) {
                 $this->discount     = 0.0;
                 $this->discountType = 0;
-            } else  {
+                $this->isRoyalty  = false;
+            } else if (!$this->isMisc() && !$this->isLessonCredit()) {
                 $taxStatus          = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
                 $this->tax_type     = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
                 $this->tax_rate     = 0.0;
                 $this->tax_code     = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
                 $this->tax_status   = $taxStatus->name;
                 $this->isRoyalty    = true;
-            }
-            if ($this->isOpeningBalance()) {
-                $this->discount     = 0.0;
-                $this->discountType = 0;
-                $this->isRoyalty  = false;
-            }
-            if($this->isLessonCredit()) {
-                return parent::beforeSave($insert);
             }
         }
         
