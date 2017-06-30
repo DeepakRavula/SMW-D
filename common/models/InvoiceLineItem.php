@@ -90,14 +90,20 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                ->viaTable('invoice_item_lesson', ['invoiceLineItemId' => 'id']);
+        $query = $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
+        if($this->isLessonSplit()) {
+            return $query->via('lineItemPaymentCycleLessonSplit');
+        } else if($this->isPaymentCycleLesson()) {
+            return $query->via('paymentCycleLesson');
+        } else {
+            return $query->via('lineItemLesson');
+        }
     }
 	
     public function getPaymentCycleLesson()
     {
         return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
-                ->viaTable('invoice_item_payment_cycle_lesson', ['invoiceLineItemId' => 'id']);
+                ->via('lineItemPaymentCycleLesson');
     }
 
     public function getItemType()
@@ -131,6 +137,17 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getLineItemLesson()
     {
         return $this->hasOne(InvoiceItemLesson::className(), ['invoiceLineItemId' => 'id']);
+    }
+
+    public function getEnrolment()
+    {
+        if($this->isGroupLesson()) {
+            return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId'])
+                ->via('lineItemEnrolment');
+        } else {
+            return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
+                ->via('lesson');
+        }
     }
 
     public function getLineItemEnrolment()
@@ -219,26 +236,20 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($insert) {
-            if ($this->isMisc()) {
-                $taxStatus         = TaxStatus::findOne(['id' => $this->tax_status]);
-                $this->tax_status  = $taxStatus->name;
+            if ($this->isOpeningBalance()) {
                 $this->discount     = 0.0;
                 $this->discountType = 0;
-            } else  {
+                $this->isRoyalty  = false;
+            } else if (!$this->isMisc() && !$this->isLessonCredit()) {
                 $taxStatus          = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
                 $this->tax_type     = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
                 $this->tax_rate     = 0.0;
                 $this->tax_code     = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
                 $this->tax_status   = $taxStatus->name;
                 $this->isRoyalty    = true;
-            }
-            if ($this->isOpeningBalance()) {
+            } else if ($this->isMisc()) {
                 $this->discount     = 0.0;
                 $this->discountType = 0;
-                $this->isRoyalty  = false;
-            }
-            if($this->isLessonCredit()) {
-                return parent::beforeSave($insert);
             }
         }
         
@@ -247,7 +258,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->amount = -($this->amount);
                 $this->setScenario(self::SCENARIO_OPENING_BALANCE);
             }
-            $this->tax_rate = $this->amount * $this->taxType->taxCode->rate / 100;
+            $taxType = TaxType::findOne(['name' => $this->tax_type]);
+            $this->tax_rate = $this->amount * $taxType->taxCode->rate / 100.0;
         }
         return parent::beforeSave($insert);
     }
@@ -314,6 +326,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function isPrivateLesson()
     {
         return (int) $this->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON;
+    }
+
+    public function isLessonSplit()
+    {
+        return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_SPLIT;
     }
 
     public function isGroupLesson()
@@ -406,7 +423,32 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $minutes     = $getDuration->format('i');
         return (($hours * 60) + $minutes) / 60;
     }
-
+	public function getLessonDuration($date, $teacherId)
+	{
+		$totalDuration = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query) use($date, $teacherId) {
+				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+					->between($date, $date);
+			}])
+			->joinWith(['lesson' => function($query) use($teacherId){
+				$query->andWhere(['lesson.teacherId' => $teacherId]);
+			}])
+			->sum('unit');
+			return $totalDuration;
+	}
+	public function getLessonCost($date, $teacherId)
+	{
+		$totalCost = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query) use($date, $teacherId) {
+				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+					->between($date, $date);
+			}])
+			->joinWith(['lesson' => function($query) use($teacherId){
+				$query->andWhere(['lesson.teacherId' => $teacherId]);
+			}])
+			->sum('cost');
+			return $totalCost;
+	}
     public function addLessonCreditApplied($splitId)
     {
         $lessonSplit  = LessonSplit::findOne($splitId);

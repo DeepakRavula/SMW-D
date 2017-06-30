@@ -18,7 +18,6 @@ use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
  * This is the model class for table "lesson".
  *
  * @property string $id
- * @property string $enrolmentId
  * @property string $teacherId
  * @property string $date
  * @property int $status
@@ -74,7 +73,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $vacationId;
     public $studentId;
     public $userName;
-	
+
     /**
      * {@inheritdoc}
      */
@@ -416,6 +415,46 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
+    public function getScheduleTitle()
+    {
+        if ($this->isGroup()) {
+            return $this->course->program->name;
+        } else {
+            return $this->enrolment->student->fullName;
+        }
+    }
+
+    public function getClassroomTitle()
+    {
+        return $this->enrolment->student->fullName;
+    }
+
+    public function getClass()
+    {
+        if (!empty($this->colorCode)) {
+            $class = null;
+        } else if ($this->isMissed()) {
+            $class = 'lesson-missed';
+        } else if($this->isEnrolmentFirstlesson()) {
+            $class = 'first-lesson';
+        } else if ($this->isPrivate()) {
+            $class = 'private-lesson';
+        } else if ($this->isGroup()) {
+            $class = 'group-lesson';
+        }
+        if ($this->getRootLesson()) {
+            $rootLesson = $this->getRootLesson();
+            if($rootLesson->id !== $this->id) {
+                $class = 'lesson-rescheduled';
+            }
+            if ($rootLesson->teacherId !== $this->teacherId) {
+                $class = 'teacher-substituted';
+            }
+        }
+
+        return $class;
+    }
+
     public function getProFormaLineItem()
     {
         $lessonId = $this->id;
@@ -505,12 +544,9 @@ class Lesson extends \yii\db\ActiveRecord
     {
         if (!empty($this->colorCode)) {
             $colorCode = $this->colorCode;
-        } else if ($this->isRescheduled()) {
-            $defaultRescheduledLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
-            $colorCode = $defaultRescheduledLessonEventColor->code;
         } else {
-            $defaultLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
-            $colorCode = $defaultLessonEventColor->code;
+            $defaultColor = CalendarEventColor::findOne(['cssClass' => $this->getClass()]);
+            $colorCode = $defaultColor->code;
         }
 
         return $colorCode;
@@ -523,7 +559,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isGroup()
     {
-        return (int) $this->course->program->type === (int) Program::TYPE_GROUP_PROGRAM;
+        return (int) $this->course->program->type === Program::TYPE_GROUP_PROGRAM;
     }
 
     public function isExtra()
@@ -704,6 +740,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $courseId             = $this->courseId;
         $enrolmentFirstLesson = self::find()
+                        ->notDeleted()
 			->where(['courseId' => $courseId])
 			->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED]])
 			->orderBy(['date' => SORT_ASC])

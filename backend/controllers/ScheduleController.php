@@ -305,37 +305,15 @@ class ScheduleController extends Controller
 			$toTime = new \DateTime($lesson->date);
 			$length = explode(':', $lesson->fullDuration);
 			$toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+                        $title = $lesson->scheduleTitle;
+                        $class = $lesson->class;
+                        $backgroundColor = $lesson->colorCode;
 			if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
 				$description = $this->renderAjax('group-lesson-description', [
 					'lesson' => $lesson,
 					'view' => Lesson::TEACHER_VIEW
 				]);
-				$title = $lesson->course->program->name;
-				$class = 'group-lesson';
-				$backgroundColor = null;
-				if (!empty($lesson->colorCode)) {
-					$class = null;
-					$backgroundColor = $lesson->colorCode;
-				}
 			} else {
-				$title = $lesson->enrolment->student->fullName;
-				$class = 'private-lesson';
-				$backgroundColor = null;
-				if (!empty($lesson->colorCode)) {
-					$class = null;
-					$backgroundColor = $lesson->colorCode;
-				} else if($lesson->isEnrolmentFirstlesson()) {
-					$class = 'first-lesson';
-				} else if ($lesson->getRootLesson()) {
-					$rootLesson = $lesson->getRootLesson();
-					if($rootLesson->id !== $lesson->id) {
-						$class = 'lesson-rescheduled';
-					}
-					if ($rootLesson->teacherId !== $lesson->teacherId) {
-						$class = 'teacher-substituted';
-					}
-				}
-
 				$description = $this->renderAjax('private-lesson-description', [
 					'title' => $title,
 					'lesson' => $lesson,
@@ -396,49 +374,25 @@ class ScheduleController extends Controller
 				$toTime = new \DateTime($lesson->date);
 				$length = explode(':', $lesson->fullDuration);
 				$toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+                                $title = $lesson->classroomTitle;
+                                $class = $lesson->class;
+                                $backgroundColor = $lesson->colorCode;
 				if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-					$title = $lesson->teacher->publicIdentity;
-					$class = 'group-lesson';
-					$backgroundColor = null;
-					if (!empty($lesson->colorCode)) {
-						$class = null;
-						$backgroundColor = $lesson->colorCode;
-					}
 					$description = $this->renderAjax('group-lesson-description', [
 						'title' => $title,
 						'lesson' => $lesson,
 						'view' => Lesson::CLASS_ROOM_VIEW
 					]);
 				} else {
-					$title = $lesson->teacher->publicIdentity;
-					$class = 'private-lesson';
-					$backgroundColor = null;
-					if (!empty($lesson->colorCode)) {
-						$class = null;
-						$backgroundColor = $lesson->colorCode;
-					} else if ($lesson->status === Lesson::STATUS_MISSED) {
-						$class = 'lesson-missed';
-					} else if($lesson->isEnrolmentFirstlesson()) {
-						$class = 'first-lesson';
-					} else if ($lesson->getRootLesson()) {
-						$rootLesson = $lesson->getRootLesson();
-						if($rootLesson->id !== $lesson->id) {
-							$class = 'lesson-rescheduled';
-						}
-						if ($rootLesson->teacherId !== $lesson->teacherId) {
-							$class = 'teacher-substituted';
-						}
-					}
-				}
-				$classroomId = $lesson->classroomId;
-				$description = $this->renderAjax('private-lesson-description', [
+                                    $description = $this->renderAjax('private-lesson-description', [
 					'title' => $title,
 					'lesson' => $lesson,
 					'view' => Lesson::CLASS_ROOM_VIEW
-				]);
+                                    ]);
+				}
+				$classroomId = $lesson->classroomId;
 
-
-				$events[] = [
+                                $events[] = [
 					'id' => $lesson->id,
 					'resourceId' => $classroomId,
 					'title' => $title,

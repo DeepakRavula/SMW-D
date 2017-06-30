@@ -2,6 +2,11 @@
 
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use yii\helpers\Html;
+use yii\bootstrap\Modal;
+
+use kartik\datetime\DateTimePickerAsset;
+DateTimePickerAsset::register($this);
 
 $this->title = 'Review Lessons';
 ?>
@@ -40,55 +45,18 @@ if ($conflictedLessonIdsCount > 0) {
 $columns = [
 		[
 		'label' => 'Date/Time',
-		'class' => 'kartik\grid\EditableColumn',
 		'attribute' => 'date',
 		'format' => 'datetime',
-		'refreshGrid' => true,
 		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
 		'contentOptions' => ['class' => 'kv-sticky-column'],
-		'editableOptions' => function ($model, $key, $index) {
-			return [
-				'header' => 'Lesson Date',
-				'size' => 'md',
-				'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-				'widgetClass' => '\bootui\datetimepicker\DateTimepicker',
-				'options' => [
-					'format' => 'YYYY-MM-DD hh:mm A',
-					'stepping' => 15,
-				],
-				'formOptions' => ['action' => Url::to(['lesson/update-field'])],
-				'pluginEvents' => [
-					'editableError' => 'review.onEditableError',
-					'editableSuccess' => 'review.onEditableGridSuccess',
-				],
-			];
-		},
 	],
 		[
-		'class' => 'kartik\grid\EditableColumn',
 		'attribute' => 'duration',
-		'refreshGrid' => true,
 		'value' => function ($model, $key, $index, $widget) {
 			return (new \DateTime($model->duration))->format('H:i');
 		},
 		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
 		'contentOptions' => ['class' => 'kv-sticky-column'],
-		'editableOptions' => function ($model, $key, $index) {
-			return [
-				'header' => 'Lesson Duration',
-				'size' => 'md',
-				'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-				'widgetClass' => 'bootui\datetimepicker\Timepicker',
-				'options' => [
-					'format' => 'HH:mm',
-					'stepping' => 15,
-				],
-				'formOptions' => ['action' => Url::to(['lesson/update-field'])],
-				'pluginEvents' => [
-					'editableSuccess' => 'review.onEditableGridSuccess',
-				],
-			];
-		},
 	],
 		[
 		'label' => 'Conflict',
@@ -99,22 +67,31 @@ $columns = [
 			}
 		},
 	],
-];
-?>
-<?=
-\kartik\grid\GridView::widget([
-	'dataProvider' => $lessonDataProvider,
-	'pjax' => true,
-	'pjaxSettings' => [
-		'neverTimeout' => true,
-		'options' => [
-			'id' => 'review-lesson-listing',
+	[
+		'class' => 'yii\grid\ActionColumn',
+		'template' => '{edit}',
+		'buttons' => [
+			'edit' => function  ($url, $model) {
+				return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
+					'id' => 'edit-button-' . $model->id,
+					'class' => 'review-lesson-edit-button m-l-20'
+				]);
+			},
 		],
 	],
+];
+?>
+	<?php yii\widgets\Pjax::begin([
+		'id' => 'review-lesson-listing'
+	]) ?>
+<?=
+\yii\grid\GridView::widget([
+	'dataProvider' => $lessonDataProvider,
 	'columns' => $columns,
 	'emptyText' => 'No conflicts here! You are ready to confirm!',
 ]);
 ?>
+<?php \yii\widgets\Pjax::end(); ?>
 <div style="text-align: center">
 	<strong>Unscheduled Lesson(s) due to holiday conflict:</strong> <?= count($holidayConflictedLessonIds);?><br>
 	<strong>Scheduled Lessons:</strong> <?= $lessonCount - (count($holidayConflictedLessonIds) + $conflictedLessonIdsCount);?><br>
@@ -130,6 +107,13 @@ $columns = [
 	'courseId' => $courseId,
 	'courseModel' => $courseModel	
 ]); ?>
+<?php
+Modal::begin([
+	'header' => '<h4 class="m-0">Edit Lesson</h4>',
+	'id'=>'review-lesson-modal',
+]); ?>
+<div id="review-lesson-content"></div>
+<?php Modal::end();?>		
 <script>
 	var review = {
 		onEditableError: function (event, val, form, data) {
@@ -169,5 +153,54 @@ $columns = [
 			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
 			$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
 		});
+		
+		$(document).on('click', '#lesson-review-cancel', function () {
+            $('#review-lesson-modal').modal('hide');
+			return false;
+		});
+		$(document).on('click', '.review-lesson-edit-button', function () {
+            $.ajax({
+                url: '<?= Url::to(['lesson/update-field']); ?>?id=' + $(this).parent().parent().data('key'),
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#review-lesson-content').html(response.data);
+                        $('#review-lesson-modal').modal('show');
+                    }
+                }
+            });
+			return false;
+        });
+		$(document).on('beforeSubmit', '#lesson-review-form', function (e) {
+			var lessonId = $('#lesson-id').val();
+			var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
+			var vacationId = '<?= $vacationId; ?>';
+			var vacationType = '<?= $vacationType; ?>';
+			var params = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
+				'Vacation[id]': vacationId, 'Vacation[type]': vacationType
+			});
+			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
+			$.ajax({
+                url: '<?= Url::to(['lesson/update-field']); ?>?id=' + lessonId,
+                type: 'post',
+                dataType: "json",
+                data: $(this).serialize(),
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+						$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});
+                        $('#review-lesson-modal').modal('hide');
+                    } else {
+				 		$('#lesson-review-form').yiiActiveForm('updateMessages',
+					   		response.errors	, true);
+					}
+                }
+            });
+			return false;
+		});	
 	});
 </script>

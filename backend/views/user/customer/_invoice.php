@@ -106,7 +106,7 @@ use common\models\Student;
         [
             'label' => 'Student Name',
             'value' => function ($data) {
-                return !empty($data->lineItems[0]->lesson->enrolment->student->fullName) ? $data->lineItems[0]->lesson->enrolment->student->fullName.' ('.$data->lineItems[0]->lesson->enrolment->program->name.')' : null;
+                return $data->getStudentProgramName();
             },
         ],
         [

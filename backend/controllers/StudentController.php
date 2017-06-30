@@ -19,7 +19,7 @@ use common\models\ExamResult;
 use common\models\Note;
 use common\models\StudentLog;
 use common\models\User;
-use yii\helpers\Url;
+use yii\bootstrap\ActiveForm;
 use common\models\PaymentFrequency;
 use common\models\TeacherAvailability;
 
@@ -39,7 +39,7 @@ class StudentController extends Controller
             ],
 			[
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['create', 'update'],
+				'only' => ['create', 'update', 'merge'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -273,5 +273,61 @@ class StudentController extends Controller
         $program = Program::findOne(['id' => $id]);
 
         return $program->rate;
+    }
+
+    public function actionMerge($id)
+    {
+        $locationId = Yii::$app->session->get('location_id');
+        $model      = Student::findOne($id);
+        $model->setScenario(Student::SCENARIO_MERGE);
+        $students   = Student::find()
+                        ->active()
+                        ->location($locationId)
+                        ->andWhere(['NOT', ['student.id' => $id]])
+                        ->all();
+
+        $data       = $this->renderAjax('_merge', [
+            'students' => $students,
+            'model' => $model
+        ]);
+        $post = Yii::$app->request->post();
+        if ($model->load($post)) {
+            if ($model->validate()) {
+                $student = Student::findOne($model->studentId);
+                foreach ($student->enrolment as $enrolment) {
+                    $enrolment->studentId = $model->id;
+                    $enrolment->save(false);
+                }
+                foreach ($student->notes as $note) {
+                    $note->instanceId = $model->id;
+                    $note->save(false);
+                }
+                foreach ($student->logs as $log) {
+                    $log->studentId = $model->id;
+                    $log->save(false);
+                }
+                foreach ($student->examResults as $examResult) {
+                    $examResult->studentId = $model->id;
+                    $examResult->save(false);
+                }
+                $student->status = Student::STATUS_INACTIVE;
+
+                return [
+                    'status' => $student->save(false),
+                    'message' => 'Student successfully merged!'
+                ];
+            } else {
+                $errors = ActiveForm::validate($model);
+                return [
+                    'status' => false,
+                    'errors' => $errors
+                ];
+            }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
     }
 }

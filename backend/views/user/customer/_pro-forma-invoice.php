@@ -38,19 +38,7 @@ use common\models\Invoice;
         [
             'label' => 'Student Name',
             'value' => function ($data) {
-                if ($data->lineItem->isExtraLesson()) {
-                    return !empty($data->lineItem->lesson->enrolment->student
-                        ->fullName) ? $data->lineItem->lesson->enrolment
-                        ->student->fullName.' ('.$data->lineItem->lesson
-                        ->enrolment->program->name.')' : null;
-                } else {
-                    return !empty($data->lineItem->paymentCycleLesson->lesson
-                    ->enrolment->student->fullName) ?
-                    $data->lineItem->paymentCycleLesson->lesson->enrolment
-                    ->student->fullName.' ('.$data->lineItem
-                    ->paymentCycleLesson->lesson->enrolment->program
-                    ->name.')' : null;
-                }
+                return $data->getStudentProgramName();
             },
         ],
         [

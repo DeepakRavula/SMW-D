@@ -27,6 +27,7 @@ class InvoiceSearch extends Invoice
     public $query;
     public $mailStatus;
     public $invoiceStatus;
+	public $summariseReport = false;
     /**
      * {@inheritdoc}
      */
@@ -36,7 +37,7 @@ class InvoiceSearch extends Invoice
             [['fromDate', 'toDate'], 'date', 'format' => 'php:d-m-Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange',
-                'dueFromDate', 'dueToDate'], 'safe'],
+                'dueFromDate', 'dueToDate', 'summariseReport'], 'safe'],
         ];
     }
 

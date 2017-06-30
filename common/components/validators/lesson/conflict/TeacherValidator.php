@@ -4,6 +4,8 @@ namespace common\components\validators\lesson\conflict;
 use yii\validators\Validator;
 use Yii;
 use common\models\Lesson;
+use common\models\User;
+use yii\helpers\ArrayHelper;
 use common\models\TeacherAvailability;
 
 class TeacherValidator extends Validator
@@ -11,6 +13,11 @@ class TeacherValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
         $locationId = Yii::$app->session->get('location_id');
+        if (!in_array($model->teacherId, ArrayHelper::getColumn(User::find()
+            ->teachers($model->course->programId, $locationId)->all(), 'id'))) {
+            $this->addError($model, $attribute, 'Please choose an eligible
+                teacher who is qualified to teach ' . $model->course->program->name .'!');
+        }
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');
 		$lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
 		$lessonDuration = explode(':', $model->fullDuration);

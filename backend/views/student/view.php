@@ -5,7 +5,10 @@ use yii\bootstrap\Tabs;
 use common\models\Vacation;
 use common\models\ExamResult;
 use yii\helpers\Url;
+use yii\bootstrap\Modal;
 use common\models\Note;
+use kartik\select2\Select2Asset;
+Select2Asset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -17,6 +20,21 @@ echo $this->render('_profile', [
 	'model' => $model,
 ]);
 ?>
+<style>
+  .e1Div{
+    right: 0 !important;
+    top: -52px;
+  }
+</style>
+<div class="student-index">
+    <div class="pull-right  m-r-10">
+        <div class="schedule-index">
+            <div class="e1Div">
+                <?= Html::a('Merge', ['#'], ['class' => 'btn btn-success', 'id' => 'student-merge']); ?>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div class="tabbable-panel">
 	<div class="tabbable-line">
@@ -131,8 +149,54 @@ echo $this->render('_profile', [
 		<div class="clearfix"></div>
 	</div>
 </div>
+
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Student Merge</h4>',
+    'id' => 'student-merge-modal',
+]); ?>
+<div id="student-merge-content"></div>
+<?php Modal::end(); ?>
+
 <script>
     $(document).ready(function () {
+        $(document).on('click', '.merge-cancel', function () {
+            $('#student-merge-modal').modal('hide');
+            return false;
+        });
+        $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+        $(document).on('click', '#student-merge', function () {
+            $.ajax({
+                url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
+                type   : 'get',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $('#student-merge-content').html(response.data);
+                        $('#student-merge-modal').modal('show');
+                    }
+                }
+            });
+            return false;
+        });
+        $(document).on('beforeSubmit', '#student-merge-form', function () {
+            $.ajax({
+                url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
+                type   : 'post',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status) {
+                        $('#student-merge-modal').modal('hide');
+                        $('#enrolment-delete-success').html(response.message).fadeIn().delay(5000).fadeOut();
+                    }
+                }
+            });
+            return false;
+        });
         $(document).on('click', '.add-new-vacation', function (e) {
             var enrolmentId = $(this).parent().parent().data('key');	
 			$.ajax({
