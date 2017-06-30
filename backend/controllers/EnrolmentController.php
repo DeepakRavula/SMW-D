@@ -154,7 +154,6 @@ class EnrolmentController extends Controller
 		$address = new Address();
 		$userLocation = new UserLocation();
 		$student = new Student();
-		
 		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
 		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
 		$userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
@@ -180,9 +179,11 @@ class EnrolmentController extends Controller
 			//save course
 			$dayList = Course::getWeekdaysList();
 			$course->locationId = $locationId;
-			$course->day = array_search($course->day, $dayList);
+			$courseSchedule->day = array_search($courseSchedule->day, $dayList);
 			$course->studentId = $student->id;
-				if($course->save()) {
+			if($course->save()) {
+				$courseSchedule->courseId = $course->id;
+				$courseSchedule->save();
 				$lesson = new Lesson();
 				$conflicts = [];
 				$conflictedLessonIds = [];
