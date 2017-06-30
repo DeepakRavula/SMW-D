@@ -115,7 +115,7 @@ use yii\bootstrap\Modal;
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#extra-lesson-date').on('change', function () {
+        $(document).on('change', '#extra-lesson-date', function () {
             refresh();
         });
 
@@ -182,7 +182,7 @@ use yii\bootstrap\Modal;
             if (! moment(date).isValid()) {
                 var date = moment($('#extra-lesson-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
             }
-            if (date === '') {
+            if (date === 'Invalid date') {
                 $('#lesson-calendar').fullCalendar('destroy');
                 $('#new-lesson-modal .modal-dialog').css({'width': '600px'});
                 $('.lesson-program').removeClass('col-md-4');
