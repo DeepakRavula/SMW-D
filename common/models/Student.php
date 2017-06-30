@@ -48,7 +48,7 @@ class Student extends \yii\db\ActiveRecord
             [['first_name', 'last_name'], 'string', 'min' => 2, 'max' => 30],
             [[ 'status'], 'integer'],
             [['birth_date'], 'date', 'format' => 'php:d-m-Y', 'except' => self::SCENARIO_MERGE],
-            [['customer_id'], 'safe'],
+            [['customer_id', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -143,11 +143,12 @@ class Student extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
 		if (!empty($this->birth_date)) {
-			$birthDate = \DateTime::createFromFormat('d-m-Y', $this->birth_date);
+			$birthDate = new \DateTime($this->birth_date);
 			$this->birth_date = $birthDate->format('Y-m-d');
 		}
 		if($insert) {
-        	$this->status = self::STATUS_ACTIVE;
+                    $this->isDeleted = false;
+                    $this->status = self::STATUS_ACTIVE;
 		}
 
         return parent::beforeSave($insert);

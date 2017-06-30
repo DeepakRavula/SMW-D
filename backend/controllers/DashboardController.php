@@ -80,6 +80,7 @@ class DashboardController extends \yii\web\Controller
                     ->sum('invoice_line_item.amount');
 
         $students = Student::find()
+            ->notDeleted()
             ->joinWith(['enrolment' => function ($query) use ($locationId, $searchModel) {
                 $query->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
                 $query->confirmed()

@@ -67,6 +67,7 @@ class ProgramController extends Controller
     {
         $locationId = Yii::$app->session->get('location_id');
         $query = Student::find()
+                ->notDeleted()
                 ->joinWith(['enrolment' => function ($query) use ($locationId, $id) {
                     $query->location($locationId)
                         ->where(['course.programId' => $id])

@@ -34,6 +34,11 @@ class StudentQuery extends ActiveQuery
         return $this;
     }
 
+    public function notDeleted()
+    {
+        return $this->andWhere(['student.isDeleted' => false]);
+    }
+
     public function location($locationId)
     {
         $this->joinWith(['customer' => function ($query) use ($locationId) {
@@ -73,6 +78,7 @@ class StudentQuery extends ActiveQuery
     public function unenrolled($courseId, $locationId)
     {
         $studentLocation = Student::find()
+            ->notDeleted()
             ->select(['student.id', 'student.first_name', 'student.last_name'])
             ->innerjoinWith(['customer' => function ($query) use ($locationId) {
                 $query->innerjoinWith('userLocation')
@@ -80,6 +86,7 @@ class StudentQuery extends ActiveQuery
             }]);
 
         $enrolledStudents = Student::find()
+            ->notDeleted()
             ->select(['student.id', 'student.first_name', 'student.last_name'])
             ->joinWith(['enrolment' => function ($query) use ($courseId) {
                 $query->joinWith(['course' => function ($query) use ($courseId) {
@@ -88,6 +95,7 @@ class StudentQuery extends ActiveQuery
             }]);
 
         $query = Student::find()
+            ->notDeleted()
             ->select(['loc_student.id', 'loc_student.first_name', 'loc_student.last_name'])->from(['loc_student' => $studentLocation])
             ->leftJoin(['enrolled_student' => $enrolledStudents], 'loc_student.id = enrolled_student.id')
             ->where(['enrolled_student.id' => null]);
