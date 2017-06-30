@@ -213,6 +213,34 @@ $logContent = $this->render('log', [
 <div id="payment-edit-content"></div>
 <?php Modal::end();?>
 <script>
+var invoice = {
+    onEditableGridSuccess : function(event, val, form, data) {
+        invoice.updateSummarySectionAndStatus();
+    },
+    updateInvoiceStatus : function(status){
+        $('#invoice-status').text(status);
+
+    },
+    updateSummarySectionAndStatus : function() {
+        $.ajax({
+            url    : '<?= Url::to(['invoice/fetch-summary-and-status', 'id' => $model->id]) ?>',
+            type   : 'GET',
+            dataType: "json",
+            success: function(response)
+            {
+                $('#invoice-summary-section').html(response.summary);
+                invoice.updateInvoiceStatus(response.status);
+                $('#invoice-payment-detail').html(response.details);
+            }
+        });
+        return false;
+    }
+}
+var payment = {
+	onEditableGridSuccess :function(event, val, form, data) {
+            invoice.updateSummarySectionAndStatus();
+        }
+}
  $(document).ready(function() {
 	 $(document).on('click', '#invoice-note', function (e) {
 		$('#note-content').val('');
@@ -290,13 +318,14 @@ $logContent = $this->render('log', [
 			success: function(response)
 			{
 			   if(response.status)
-			   {
-                    $.pjax.reload({container: '#line-item-grid', timeout: 6000});
-					$('#line-item-edit-modal').modal('hide');
-				}else
-				{
-				 $('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
-				}
+                            {
+                                $.pjax.reload({container: '#line-item-grid', timeout: 6000});
+                                payment.onEditableGridSuccess();
+                                invoice.onEditableGridSuccess();
+                                $('#line-item-edit-modal').modal('hide');
+                            } else {
+                                $('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
+                            }
 			}
 		});
 		return false;
