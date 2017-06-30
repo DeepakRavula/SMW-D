@@ -115,7 +115,7 @@ use yii\bootstrap\Modal;
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#extra-lesson-date').on('change', function () {debugger;
+        $('#extra-lesson-date').on('change', function () {
             refresh();
         });
 
@@ -126,7 +126,7 @@ use yii\bootstrap\Modal;
         function refreshCalendar(availableHours, events, date) {
             $('#lesson-calendar').fullCalendar('destroy');
             $('#lesson-calendar').fullCalendar({
-                defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
+                defaultDate: date,
                 header: {
                     left: 'prev,next today',
                     center: 'title',
@@ -178,7 +178,10 @@ use yii\bootstrap\Modal;
         function refresh() {
             var events, availableHours;
             var teacherId = $('#lesson-teacher').val();
-            var date = $('#extra-lesson-date').val();debugger;
+            var date = moment($('#extra-lesson-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+            if (! moment(date).isValid()) {
+                var date = moment($('#extra-lesson-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+            }
             if (date === '') {
                 $('#lesson-calendar').fullCalendar('destroy');
                 $('#new-lesson-modal .modal-dialog').css({'width': '600px'});

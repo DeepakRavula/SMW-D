@@ -59,7 +59,7 @@ use yii\helpers\Url;
             ]);
         ?>
         </div>
-        <div id="lesson-date" class="col-md-6">
+        <div class="col-md-6 lesson-date">
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
                     'id' => 'extra-lesson-date',
