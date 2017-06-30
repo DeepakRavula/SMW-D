@@ -292,7 +292,6 @@ class LessonController extends Controller
     public function actionUpdateField($id)
     {
 		$model = $this->findModel($id);
-        $model->date = Yii::$app->formatter->asDateTime($model->date);
 		$existingDate = $model->date;
         $data = $this->renderAjax('/lesson/review/_form', [
             'model' => $model,
