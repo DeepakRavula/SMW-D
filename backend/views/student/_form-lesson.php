@@ -1,6 +1,7 @@
 <?php
 
-use common\models\Lesson;
+use kartik\select2\Select2;
+use common\models\User;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
@@ -18,34 +19,44 @@ use yii\helpers\Url;
 	'id' => 'lesson-form',
 	'enableClientValidation' => false,
 	'enableAjaxValidation' => true,
-	'validationUrl' => Url::to(['lesson/validate', 'studentId' => $studentModel->id]), 
+	'validationUrl' => Url::to(['lesson/validate', 'studentId' => $studentModel->id]),
 	'action' => Url::to(['lesson/create', 'studentId' => $studentModel->id]),
 ]); ?>
 <div class="row">
-        <div id="lesson-program" class="col-md-6">
-            <?php echo $form->field($model, 'programId')->dropDownList(
-                    ArrayHelper::map(
+        <div class="col-md-6 lesson-program">
+            <?php $programs = ArrayHelper::map(
                         Program::find()
-                            ->joinWith(['course' => function ($query) use ($studentModel) {
-                                $query->joinWith(['enrolment' => function ($query) use ($studentModel) {
-                                    $query->where(['studentId' => $studentModel->id]);
-                                }]);
-                            }])
-                        ->all(),
-                     'id', 'name'), ['prompt' => 'Select Program'])->label()
-            ?>  
+                            ->active()
+                            ->privateProgram()
+                            ->all(), 'id', 'name');
+            ?>
+            <?php echo $form->field($model, 'programId')->widget(Select2::classname(), [
+                'data' => $programs,
+                'options' => ['placeholder' => 'Select program', 'id' => 'lesson-program']
+            ]); ?>
         </div>
-    	<div id="lesson-teacher" class="col-md-6">
+    	<div class="col-md-6 lesson-teacher">
+        <?php $locationId = Yii::$app->session->get('location_id');
+        $teachers = ArrayHelper::map(
+                    User::find()
+                        ->notDeleted()
+                        ->teachers($model->programId, $locationId)
+                        ->all(), 'id', 'publicIdentity');
+        ?>
         <?php
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
-            'options' => ['id' => 'lesson-teacherid'],
-            'pluginOptions' => [
-                'depends' => ['lesson-programid'],
-                'placeholder' => 'Select...',
-                'url' => Url::to(['/course/teachers']),
-            ],
-        ]);
+                'data' => $teachers,
+                'type' => DepDrop::TYPE_SELECT2,
+                'options' => [
+                    'id' => 'lesson-teacher',
+                    'placeholder' => 'Select teacher',
+                ],
+                'pluginOptions' => [
+                    'depends' => ['lesson-program'],
+                    'url' => Url::to(['/course/teachers'])
+                ]
+            ]);
         ?>
         </div>
         <div id="lesson-date" class="col-md-6">

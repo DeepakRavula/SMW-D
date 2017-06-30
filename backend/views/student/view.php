@@ -216,10 +216,24 @@ echo $this->render('_profile', [
 			return false;
         });
         $(document).on('click', '#new-lesson', function (e) {
-            $('#new-lesson-modal').modal('show');
+            $.ajax({
+                url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
+                type   : 'get',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                   if(response.status)
+                   {
+                        $('#new-lesson-modal-content').html(response.data);
+                        $('#new-lesson-modal').modal('show');
+                    }
+                }
+            });
             return false;
         });
-		 $(document).on('click', '.note-cancel-button', function (e) {
+        
+        $(document).on('click', '.note-cancel-button', function (e) {
             $('#student-note-modal').modal('hide');
             return false;
         });

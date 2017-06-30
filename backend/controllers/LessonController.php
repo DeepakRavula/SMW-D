@@ -135,6 +135,12 @@ class LessonController extends Controller
         $model = new Lesson();
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
+        $studentModel = Student::findOne($studentId);
+        $model->programId = $studentModel->getFirstPrivateProgram();
+        $data = $this->renderAjax('/student/_form-lesson', [
+            'model' => $model,
+            'studentModel' => $studentModel
+        ]);
         if ($model->load($request->post())) {
             $studentEnrolment = Enrolment::find()
                 ->joinWith(['course' => function($query) use($model){
@@ -155,8 +161,13 @@ class LessonController extends Controller
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
                 ];
             }
-            return $response;
+        } else {
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
         }
+        return $response;
     }
 
     public function actionValidate($studentId)

@@ -97,6 +97,20 @@ class Student extends \yii\db\ActiveRecord
         return $this->hasMany(Enrolment::className(), ['studentId' => 'id']);
     }
 
+    public function getFirstPrivateProgram()
+    {
+        $studentId = $this->id;
+        $program   = Program::find()
+                        ->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM])
+                        ->joinWith(['course' => function ($query) use ($studentId) {
+                            $query->joinWith(['enrolment' => function ($query) use ($studentId) {
+                                $query->andWhere(['studentId' => $studentId]);
+                            }]);
+                        }])
+                        ->one();
+        return !empty($program) ? $program->id : null;
+    }
+
     public function getExamResults()
     {
         return $this->hasMany(ExamResult::className(), ['studentId' => 'id']);
