@@ -43,21 +43,19 @@ class InvoiceController extends Controller
 	
     public function actionAllCompletedLessons()
     {
-        $lessons = Lesson::find()
-            ->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
-            ->notDeleted()
-            ->completedUnInvoiced()
-            ->all();
-        foreach($lessons as $lesson) {
-            if ($lesson->isPrivate()) {
-                $lesson->createPrivateLessonInvoice();
-            } else if ($lesson->isGroup()) {
-                foreach ($lesson->enrolments as $enrolment) {
-                    if (!$enrolment->hasInvoice($lessonId)) {
-                        $lesson->createGroupInvoice($enrolment->id);
-                    }
+        $query = Lesson::find()
+                ->notDeleted();
+        $privateLessons = $query->completedUnInvoicedPrivate()->all();
+        $groupLessons = $query->groupLessons()->completed()->all();
+        foreach ($groupLessons as $lesson) {
+            foreach ($lesson->enrolments as $enrolment) {
+                if (!$enrolment->hasInvoice($lesson->id)) {
+                    $lesson->createGroupInvoice($enrolment->id);
                 }
             }
+        }
+        foreach($privateLessons as $lesson) {
+            $lesson->createPrivateLessonInvoice();
         }
 
         return true;

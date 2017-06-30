@@ -47,7 +47,7 @@ use kartik\daterange\DateRangePicker;
             ]);
            ?>
         </div>
-	   <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
+	   <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['name' => 'dashboard-apply-button', 'class' => 'btn btn-primary']) ?>
 	</div>
     <?php ActiveForm::end(); ?>
 <script>

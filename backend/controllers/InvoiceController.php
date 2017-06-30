@@ -489,13 +489,20 @@ class InvoiceController extends Controller
 	public function actionAllCompletedLessons()
 	{
             $locationId = Yii::$app->session->get('location_id');
-            $lessons = Lesson::find()
-                ->privateLessons()
+            $query = Lesson::find()
                 ->notDeleted()
-                ->completedUnInvoiced()
-                ->location($locationId)
-                ->all();
-            foreach($lessons as $lesson) {
+                ->location($locationId);
+            $privateLessons = $query->completedUnInvoicedPrivate()->all();
+            $groupLessons = $query->groupLessons()->completed()->all();
+            foreach ($groupLessons as $lesson) {
+                foreach ($lesson->enrolments as $enrolment) {
+                    if (!$enrolment->hasInvoice($lesson->id)) {
+                        $lesson->createGroupInvoice($enrolment->id);
+                    }
+                }
+            }
+            
+            foreach($privateLessons as $lesson) {
                 $lesson->createPrivateLessonInvoice();
             }
 		
