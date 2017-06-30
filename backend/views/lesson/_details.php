@@ -6,7 +6,7 @@ use yii\helpers\Url;
 <?php
 \insolita\wgadminlte\LteBox::begin([
 	'type' => \insolita\wgadminlte\LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i class="fa fa-pencil"></i>',
+	'boxTools' => '<i class="fa fa-pencil edit-lesson-detail"></i>',
 	'title' => 'Details',
 ])
 ?>
@@ -18,3 +18,14 @@ use yii\helpers\Url;
 </a>
 <?php
 \insolita\wgadminlte\LteBox::end()?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Student Merge</h4>',
+    'id' => 'edit-lesson-detail-modal',
+]); ?>
+<div id="student-merge-content"></div>
+<?php Modal::end(); ?>
+<script>
+$(document).ready(function () {
+		
+});
+</script>
