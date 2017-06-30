@@ -19,7 +19,7 @@ use common\models\ExamResult;
 use common\models\Note;
 use common\models\StudentLog;
 use common\models\User;
-use yii\helpers\Url;
+use yii\bootstrap\ActiveForm;
 use common\models\PaymentFrequency;
 use common\models\TeacherAvailability;
 
@@ -279,6 +279,7 @@ class StudentController extends Controller
     {
         $locationId = Yii::$app->session->get('location_id');
         $model      = Student::findOne($id);
+        $model->setScenario(Student::SCENARIO_MERGE);
         $students   = Student::find()
                         ->active()
                         ->location($locationId)
@@ -291,11 +292,15 @@ class StudentController extends Controller
         ]);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
-            $student = Student::findOne($post['radioButtonSelection']);
-            if ($student) {
+            if ($model->validate()) {
+                $student = Student::findOne($model->studentId);
                 foreach ($student->enrolment as $enrolment) {
                     $enrolment->studentId = $model->id;
                     $enrolment->save(false);
+                }
+                foreach ($student->notes as $note) {
+                    $note->instanceId = $model->id;
+                    $note->save(false);
                 }
                 foreach ($student->logs as $log) {
                     $log->studentId = $model->id;
@@ -312,8 +317,10 @@ class StudentController extends Controller
                     'message' => 'Student successfully merged!'
                 ];
             } else {
+                $errors = ActiveForm::validate($model);
                 return [
-                    'status' => false
+                    'status' => false,
+                    'errors' => $errors
                 ];
             }
         } else {

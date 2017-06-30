@@ -17,15 +17,18 @@ use common\models\query\StudentQuery;
  */
 class Student extends \yii\db\ActiveRecord
 {
-	const STATUS_ACTIVE = 1;
+    const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
+
+    const SCENARIO_MERGE = 'merge';
 
     const EVENT_CREATE = 'event-create';
     const EVENT_UPDATE = 'event-update';
 	
-	public $vacationId;
-	public $userName;
-	
+    public $vacationId;
+    public $userName;
+    public $studentId;
+
     /**
      * {@inheritdoc}
      */
@@ -40,10 +43,11 @@ class Student extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['first_name', 'last_name'], 'required'],
+            [['first_name', 'last_name'], 'required', 'except' => self::SCENARIO_MERGE],
+            ['studentId', 'required', 'on' => self::SCENARIO_MERGE],
             [['first_name', 'last_name'], 'string', 'min' => 2, 'max' => 30],
             [[ 'status'], 'integer'],
-            [['birth_date'], 'date', 'format' => 'php:d-m-Y'],
+            [['birth_date'], 'date', 'format' => 'php:d-m-Y', 'except' => self::SCENARIO_MERGE],
             [['customer_id'], 'safe'],
         ];
     }
@@ -55,6 +59,7 @@ class Student extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'Student',
+            'studentId' => 'Student',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'birth_date' => 'Birth Date',
@@ -100,6 +105,12 @@ class Student extends \yii\db\ActiveRecord
     public function getLogs()
     {
         return $this->hasMany(TimelineEventStudent::className(), ['studentId' => 'id']);
+    }
+
+    public function getNotes()
+    {
+        return $this->hasMany(Note::className(), ['instanceId' => 'id'])
+            ->onCondition(['instanceType' => Note::INSTANCE_TYPE_STUDENT]);
     }
 
     public function getCourse()
