@@ -2,11 +2,11 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
-use common\models\Invoice;
-use common\models\Lesson;
-use common\models\PrivateLesson;
+use yii\bootstrap\Modal;
 
 ?>
+<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <div class="grid-row-open p-15">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php $columns = [
@@ -28,12 +28,19 @@ use common\models\PrivateLesson;
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
             ],
+			[
+                'label' => 'Duration',
+                'value' => function ($data) {
+                    return !empty($data->duration) ? (new \DateTime($data->duration))->format('H:i') : null;
+                },
+            ],
             [
                 'label' => 'Date',
+				'format' => 'raw',
                 'value' => function ($data) {
-                    $date = Yii::$app->formatter->asDate($data->date);
-
-                    return !empty($date) ? $date : null;
+					return $this->render('_unschedule-lesson-date', [
+						'model' => $data,
+					]);
                 },
             ],
             [
@@ -58,10 +65,17 @@ use common\models\PrivateLesson;
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>
 
-</div><?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+</div>
+<?php
+Modal::begin([
+	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+	'id' => 'unschedule-lesson-modal',
+]);
+?>
+<?php
+echo $this->render('_calendar', [
+    'model' => $model,
+	'lesson' => $model->lessons
+]);
+?>
+<?php Modal::end(); ?>
