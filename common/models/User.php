@@ -183,11 +183,6 @@ class User extends ActiveRecord implements IdentityInterface
 	{
 		return $this->hasMany(Qualification::className(), ['teacher_id' => 'id']);
 	}
-	public function getLessons()
-	{
-		return $this->hasMany(Lesson::className(), ['teacherId' => 'id']);
-	}
-
     /**
      * @return \yii\db\ActiveQuery
      */

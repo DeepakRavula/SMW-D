@@ -13,8 +13,9 @@ use yii\bootstrap\ActiveForm;
 </div>
  <div class="form-group">
 	 <?php $form = ActiveForm::begin([
-        
+       'id' => 'unschedule-lesson-form', 
         ]); ?>
+	<?= $form->field($model, 'fromDate')->hiddenInput()->label(false);?>
 	<?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary unschedule-lesson-save', 'name' => 'button']) ?>
 	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default unschedule-lesson-cancel']);
 	?>
@@ -59,7 +60,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             events: events,
             select: function (start, end, allDay) {
                 $('#unschedule-lesson-calendar').fullCalendar('removeEvents', 'reschedule');
-               // $('#lesson-date').val(moment(start).format('DD-MM-YYYY h:mm A'));
+              	$('#user-fromdate').val(moment(start).format('DD-MM-YYYY h:mm A'));
                 var endtime = start.clone();
 				var lessonDuration = $('#unschedule-calendar').parent().prev('td').text();
                 var durationMinutes = moment.duration(lessonDuration).asMinutes();

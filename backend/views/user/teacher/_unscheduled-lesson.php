@@ -75,7 +75,24 @@ Modal::begin([
 <?php
 echo $this->render('_calendar', [
     'model' => $model,
-	'lesson' => $model->lessons
 ]);
 ?>
 <?php Modal::end(); ?>
+<script>
+$(document).ready(function () {
+	$(document).on('beforeSubmit', '#unschedule-lesson-form', function () {
+		var lessonId = $('#unschedule-calendar').parent().parent().data('key');
+        var param = $.param({ id: lessonId });
+		$.ajax({
+			url    : '<?= Url::to(['lesson/update']);?>?' + param,
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			}
+		});
+		return false;
+   });
+});
+</script>

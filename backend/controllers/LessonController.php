@@ -226,13 +226,20 @@ class LessonController extends Controller
             }
             $data = ['model' => $model, 'privateLessonModel' => $privateLessonModel];
         }
-        if ($model->load(Yii::$app->request->post())) {
+		$request = Yii::$app->request;
+		$userModel = $request->post('User');
+		
+        if ($model->load($request->post()) || !empty($userModel)) {
 			if(empty($model->date)) {
 				$model->date =  $oldDate;
 				$model->status = Lesson::STATUS_UNSCHEDULED;
 				$model->save();
 				$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 			} else {
+				if(!empty($userModel)) {
+					$model->date = $userModel['fromDate'];
+					$model->duration = (new \DateTime($model->duration))->format('H:i');
+				}
 				if (new \DateTime($oldDate) != new \DateTime($model->date) || $oldTeacherId != $model->teacherId) {
 					$model->setScenario(Lesson::SCENARIO_EDIT);
 					$validate = $model->validate();
@@ -252,11 +259,11 @@ class LessonController extends Controller
 						$model->duration = $duration->format('H:i:s');
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-                                        if ($model->isExploded()) {
-                                            $model->duration = $oldLesson->duration;
-                                        }
+                    if ($model->isExploded()) {
+                        $model->duration = $oldLesson->duration;
+                    }
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
-                                        $model->save();
+                    $model->save();
 
 					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 				}
