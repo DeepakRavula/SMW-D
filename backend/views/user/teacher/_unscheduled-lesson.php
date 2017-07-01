@@ -35,7 +35,7 @@ use yii\bootstrap\Modal;
                 },
             ],
             [
-                'label' => 'Date',
+                'label' => 'Original Date',
 				'format' => 'raw',
                 'value' => function ($data) {
 					return $this->render('_unschedule-lesson-date', [

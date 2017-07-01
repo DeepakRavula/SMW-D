@@ -263,7 +263,9 @@ class LessonController extends Controller
                         $model->duration = $oldLesson->duration;
                     }
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
-                    $model->save();
+                    if(! $model->save()) {
+					   Yii::error('Update Lesson: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+					}
 
 					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
 				}
