@@ -97,6 +97,7 @@ class LessonController extends Controller
         ]);
 
 		$groupLessonStudents = Student::find()
+                        ->notDeleted()
 			->joinWith(['enrolment' => function($query) use($id) {
 				$query->joinWith(['course' => function($query) use($id) {
 					$query->joinWith(['program' => function($query) use($id) {

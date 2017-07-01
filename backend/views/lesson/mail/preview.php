@@ -24,6 +24,7 @@ use common\models\Lesson;
            <?php 
             $data = ArrayHelper::map(User::find()->all(), 'email', 'email');
             $students = Student::find()
+                    ->notDeleted()
                     ->joinWith('enrolment')
                     ->andWhere(['courseId' => $model->courseId])
                     ->all();

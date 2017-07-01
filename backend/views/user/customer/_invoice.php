@@ -67,6 +67,7 @@ use common\models\Student;
 		<?php
 		$locationId = Yii::$app->session->get('location_id');
 		$students = ArrayHelper::map(Student::find()
+                        ->notDeleted()
 			->joinWith(['customer' => function($query) use($userModel) {
 				$query->andWhere(['user.id' => $userModel->id]);
 			}])

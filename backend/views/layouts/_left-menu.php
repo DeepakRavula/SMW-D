@@ -47,7 +47,7 @@ echo Menu::widget([
 			'url' => ['student/index', 'StudentSearch[showAllStudents]' => false],
 			'visible' => Yii::$app->user->can('staffmember'),
 			'active' => (Yii::$app->controller->id === 'student') ? true : false,
-			'badge' => Student::count(),
+			'badge' => Student::find()->notDeleted()->count(),
 			'badgeBgClass' => 'label-default',
 		],
 			[

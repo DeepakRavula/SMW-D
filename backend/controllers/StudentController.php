@@ -257,7 +257,9 @@ class StudentController extends Controller
     {
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
-        $model = Student::find()->location($locationId)
+        $model = Student::find()
+                ->notDeleted()
+                ->location($locationId)
                 ->where(['student.id' => $id])->one();
         if ($model !== null) {
             return $model;
@@ -282,6 +284,7 @@ class StudentController extends Controller
         $model->setScenario(Student::SCENARIO_MERGE);
         $students   = Student::find()
                         ->active()
+                        ->notDeleted()
                         ->location($locationId)
                         ->andWhere(['NOT', ['student.id' => $id]])
                         ->all();
@@ -310,7 +313,7 @@ class StudentController extends Controller
                     $examResult->studentId = $model->id;
                     $examResult->save(false);
                 }
-                $student->status = Student::STATUS_INACTIVE;
+                $student->isDeleted = true;
 
                 return [
                     'status' => $student->save(false),

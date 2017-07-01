@@ -50,6 +50,7 @@ use common\models\Student;
         <?php $locationId = Yii::$app->session->get('location_id');
 		echo $form->field($model, 'student')->widget(Select2::classname(), [
 	    'data' => ArrayHelper::map(Student::find()
+                        ->notDeleted()
 			->location($locationId)
 			->active()
             ->all(), 'id', 'fullName'),

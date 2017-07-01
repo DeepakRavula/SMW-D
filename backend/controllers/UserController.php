@@ -131,13 +131,14 @@ class UserController extends Controller
         $db = $searchModel->search(Yii::$app->request->queryParams);
 
         $query = Student::find()
+            ->notDeleted()
             ->andWhere(['customer_id' => $id])
 			->active();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        $query = Student::find()
+        $query = Student::find()->notDeleted()
                 ->teacherStudents($locationId, $model->id)
 				->active();
 

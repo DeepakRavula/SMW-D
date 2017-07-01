@@ -695,6 +695,10 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
             $lessonAmount = -($lessonAmount);
         }
+        $qualification = Qualification::findOne(['teacher_id' => $enrolment->firstLesson->teacherId,
+            'program_id' => $enrolment->course->program->id]);
+        $rate = !empty($qualification->rate) ? $qualification->rate : 0;
+        $invoiceLineItem->cost       = $rate;
         $invoiceLineItem->amount       = $lessonAmount;
         if (!empty($enrolment->proFormaInvoice->lineItem)) {
             $invoiceLineItem->discount     = $enrolment->proFormaInvoice->lineItem->discount;
