@@ -10,34 +10,36 @@ use yii\data\ActiveDataProvider;
 
 ?> 
 <?php
-$studentLog = TimelineEvent::find()
-	->joinWith(['timelineEventStudent' => function($query) use($model){
-		$query->andWhere(['studentId' => $model->id]);
-	}]);
+$logs = TimelineEvent::find()
+	->joinWith(['timelineEventStudent tes' => function($query) use($model){
+	}])
 	
-$enrolmentLog = TimelineEvent::find()
 	->joinWith(['timelineEventEnrolment' => function($query) use($model) {
-		$query->joinWith(['enrolment' => function($query) use($model) {
-			$query->andWhere(['studentId' => $model->id]);
+		$query->joinWith(['enrolment e1' => function($query) use($model) {
+			
 		}]);
-	}]);
+	}])
 
-$lessonLog = TimelineEvent::find()
+
 	->joinWith(['timelineEventLesson' => function($query) use($model) {
 		$query->joinWith(['lesson' => function($query) use($model) {
 			$query->joinWith(['course' => function($query) use($model) {
-				$query->joinWith(['enrolment' => function($query) use($model) {
-					$query->andWhere(['studentId' => $model->id]);
+				$query->joinWith(['enrolment e2' => function($query) use($model) {
+					
 				}]);
 			}]);
 		}]);
-	}]);
-$logs = $enrolmentLog->union($lessonLog);	
-$logs->union($studentLog);	
+	}])
+    ->andWhere(['tes.studentId' => $model->id])
+    ->orFilterWhere(['e1.studentId' => $model->id])
+    ->orFilterWhere(['e2.studentId' => $model->id]);
 $dataProvider = new ActiveDataProvider([
 	'query' => $logs,
 ]);?>
-<div class="student-index">  
+<div class="student-index"> 
+    <?php yii\widgets\Pjax::begin([
+    'timeout' => 6000,
+]) ?>
 <?php echo GridView::widget([
 	'dataProvider' => $dataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
@@ -53,4 +55,5 @@ $dataProvider = new ActiveDataProvider([
 		],
 	],
 ]); ?>
+    <?php \yii\widgets\Pjax::end(); ?>
 </div>
