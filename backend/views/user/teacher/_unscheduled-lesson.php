@@ -19,7 +19,12 @@ use yii\bootstrap\Modal;
 			[
                 'label' => 'Phone',
                 'value' => function ($data) {
-                    return !empty($data->course->enrolment->student->customer->phoneNumber->number) ? $data->course->enrolment->student->customer->phoneNumber->number : null;
+					if(!empty($data->course->enrolment->student->customer->primaryPhoneNumber->number)) {
+						$number = $data->course->enrolment->student->customer->primaryPhoneNumber->number; 
+					} else {
+						$number = !empty($data->course->enrolment->student->customer->phoneNumber->number) ? $data->course->enrolment->student->customer->phoneNumber->number : null;
+					}
+					return $number;
                 },
             ],
             [
