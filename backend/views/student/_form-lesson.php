@@ -24,16 +24,29 @@ use yii\helpers\Url;
 ]); ?>
 <div class="row">
         <div class="col-md-6 lesson-program">
-            <?php $programs = ArrayHelper::map(
-                        Program::find()
+            <?php $query = Program::find()
                             ->active()
-                            ->privateProgram()
+                            ->privateProgram();
+
+            $allPrograms = $query->all();
+            $enrolledPrograms = ArrayHelper::map(
+                            $query->studentEnrolled($studentModel->id)
                             ->all(), 'id', 'name');
+            
+
+            $programs = [];
+            foreach ($allPrograms as $program) {
+                $programs[] = [
+                    'id' => $program->id,
+                    'text' => $program->name
+                ];
+            }
+            $allProgram = yii\helpers\Json::encode($programs);
             ?>
             <?php echo $form->field($model, 'programId')->widget(Select2::classname(), [
-                'data' => $programs,
+                'data' => $enrolledPrograms,
                 'options' => ['placeholder' => 'Select program', 'id' => 'lesson-program']
-            ]); ?>
+            ])->label('Program - <a id="show-all">Click to show all</a>'); ?>
         </div>
     	<div class="col-md-6 lesson-teacher">
         <?php $locationId = Yii::$app->session->get('location_id');
@@ -86,3 +99,12 @@ use yii\helpers\Url;
 <?php ActiveForm::end(); ?>
 
 </div>
+
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '#show-all', function () {debugger;
+            $("#lesson-program").select2('data', '<?php echo $allProgram; ?>');debugger;
+            return false;
+        });
+    });
+</script>

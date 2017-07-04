@@ -3,6 +3,7 @@
 namespace common\models\query;
 
 use common\models\Program;
+use common\models\Enrolment;
 
 /**
  * This is the ActiveQuery class for [[\common\models\Enrolment]].
@@ -46,7 +47,12 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['enrolment.isConfirmed' => true]);
     }
 
-	public function programs()
+    public function isRegular()
+    {
+        return $this->andWhere(['enrolment.type' => Enrolment::TYPE_REGULAR]);
+    }
+
+    public function programs()
 	{
 		$this->joinWith(['course' => function ($query){
         	$query->joinWith(['program' => function ($query){
