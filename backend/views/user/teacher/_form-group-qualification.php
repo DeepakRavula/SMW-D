@@ -64,7 +64,7 @@ DynamicFormWidget::begin([
 				if (!$qualificationModel->isNewRecord) {
 					echo Html::activeHiddenInput($qualificationModel, "[{$index}][group]id");
 				}
-				$groupPrograms = ArrayHelper::map(Program::find()->group()->all(), 'id', 'name'); 
+				$groupPrograms = ArrayHelper::map(Program::find()->group()->active()->all(), 'id', 'name'); 
 				?>
 				<div class="row">
 					<div class="col-sm-4">
