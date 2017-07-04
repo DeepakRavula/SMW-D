@@ -58,6 +58,8 @@ class Lesson extends \yii\db\ActiveRecord
     const EVENT_UNSCHEDULED			 = 'Unscheduled';
     const EVENT_MISSED = 'missed';
 
+	const APPLY_SINGLE_LESSON = 1;
+	const APPLY_ALL_FUTURE_LESSONS = 2;
     public $enrolmentId;
     public $studentFullName;
     public $programId;
@@ -73,6 +75,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $vacationId;
     public $studentId;
     public $userName;
+	public $applyContext;
 
     /**
      * {@inheritdoc}
