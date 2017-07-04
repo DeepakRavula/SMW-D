@@ -337,6 +337,7 @@ class LessonController extends Controller
 			'data' => $data
 		];
         if ($model->load(Yii::$app->request->post())) {
+			if(!empty($model->applyContext)) {
 			if((int)$model->applyContext === Lesson::APPLY_SINGLE_LESSON) {
 				if(! empty($model->date)) {
 					$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
@@ -344,12 +345,6 @@ class LessonController extends Controller
 				} else {
 					$model->date = $existingDate;
 					$model->status = Lesson::STATUS_UNSCHEDULED;
-					$privateLessonModel = new PrivateLesson();
-					$privateLessonModel->lessonId = $model->id;
-					$date = new \DateTime($model->date);
-					$expiryDate = $date->modify('90 days');
-					$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-					$privateLessonModel->save();
 				}
 				if($model->save()) {
 					$response = [
@@ -368,34 +363,35 @@ class LessonController extends Controller
 					if(! empty($model->date)) {
 						$day = (new \DateTime($model->date))->format('N');
 						$lessonDay = (new \DateTime($lesson->date))->format('N');
+						$time = (new \DateTime($model->date))->format('H:i:s'); 
+						list($hour, $minute, $second) = explode(':', $time);
+						$dayList = Course::getWeekdaysList();
+						$dayName = $dayList[$day];
 						if($day === $lessonDay) {
-							$lesson->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
-							
+							$lessonDate = new \DateTime($lesson->date); 
+							$lessonDate->setTime($hour, $minute, $second);
+							$lesson->date = $lessonDate->format('Y-m-d H:i:s');
+						} else {
+							$lessonDate = new \DateTime($lesson->date); 
+							$lessonDate->modify('next ' . $dayName);
+							$lessonDate->setTime($hour, $minute, $second);
+							$lesson->date = $lessonDate->format('Y-m-d H:i:s');	
 						}
-//						$lesson->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
-//						$lesson->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
-//					} else {
-//						$lesson->date = $existingDate;
-//						$lesson->status = Lesson::STATUS_UNSCHEDULED;
-//						$privateLessonModel = new PrivateLesson();
-//						$privateLessonModel->lessonId = $lesson->id;
-//						$date = new \DateTime($lesson->date);
-//						$expiryDate = $date->modify('90 days');
-//						$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-//						$privateLessonModel->save();
-//					}
-					if(! $lesson->save()) {
-						print_r($lesson->getErrors());die;
+					} else {
+						$lesson->status = Lesson::STATUS_UNSCHEDULED;
 					}
-//					
-					$response = [
+					$lesson->save();
+					
+				}
+				$response = [
 						'status' => true
 					];
-				}
-				}
 			}
+			}
+			 return $response;
+		} else {
+			 return $response;
 		}
-		 return $response;
     }
 
 	public function actionGroupEnrolmentReview($courseId, $enrolmentId)
@@ -543,8 +539,8 @@ class LessonController extends Controller
 		$conflictedLessonIdsCount = count($conflictedLessonIds);
         $hasConflict = false;
 		if ($conflictedLessonIdsCount > 0) {
-                    $hasConflict = true;
-            }
+            $hasConflict = true;
+        }
 
         return [
             'hasConflict' => $hasConflict,

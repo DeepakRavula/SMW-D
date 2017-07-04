@@ -92,12 +92,16 @@ $columns = [
 ]);
 ?>
 <?php \yii\widgets\Pjax::end(); ?>
+	<?php yii\widgets\Pjax::begin([
+		'id' => 'review-lesson-summary'
+	]) ?>
 <div style="text-align: center">
 	<strong>Unscheduled Lesson(s) due to holiday conflict:</strong> <?= count($holidayConflictedLessonIds);?><br>
 	<strong>Scheduled Lessons:</strong> <?= $lessonCount - (count($holidayConflictedLessonIds) + $conflictedLessonIdsCount);?><br>
 	<strong>Conflicted Lesson(s):</strong> <?= $conflictedLessonIdsCount;?><br>
 	<strong>Total Lessons:</strong> <?= $lessonCount;?><br>
 </div>
+<?php \yii\widgets\Pjax::end(); ?>
 
 <?= $this->render('review/_button', [
 	'vacationId' => $vacationId,
@@ -120,7 +124,7 @@ Modal::begin([
 			$(form).find('.form-group').addClass('has-error');
 			$(form).find('.help-block').text(data.message);
 		},
-		onEditableGridSuccess: function (event, val, form, data) {
+		onEditableGridSuccess: function () {
 			$.ajax({
 				url: "<?php echo Url::to(['lesson/fetch-conflict', 'courseId' => $courseId]); ?>",
 				type: "GET",
@@ -175,6 +179,7 @@ Modal::begin([
 			return false;
         });
 		$(document).on('click','#lesson-review-apply, #lesson-review-apply-all',function() {
+		console.log($(this).val());
 			$('#lesson-applycontext').val($(this).val());
 		});
 		$(document).on('beforeSubmit', '#lesson-review-form', function (e) {
@@ -195,7 +200,9 @@ Modal::begin([
                 {
                     if (response.status)
                     {
-						$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});
+						$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000, async:false});
+						$.pjax.reload({url: url, container: "#review-lesson-summary", replace: false, timeout: 6000, async:false});
+                		review.onEditableGridSuccess();
                         $('#review-lesson-modal').modal('hide');
                     } else {
 				 		$('#lesson-review-form').yiiActiveForm('updateMessages',

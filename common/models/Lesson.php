@@ -613,8 +613,18 @@ class Lesson extends \yii\db\ActiveRecord
                 if($this->isRescheduledByClassroom($changedAttributes)) {
                     $this->trigger(self::EVENT_RESCHEDULED);
                 }
+				if($this->isUnscheduled()) {
+					$privateLessonModel = new PrivateLesson();
+					$privateLessonModel->lessonId = $this->id;
+					$date = new \DateTime($this->date);
+					$expiryDate = $date->modify('90 days');
+					$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+					$privateLessonModel->save();
+				}
             }
+			
         }
+		
         return parent::afterSave($insert, $changedAttributes);
     }
 
