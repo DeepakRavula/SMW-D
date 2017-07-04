@@ -28,7 +28,7 @@ use common\models\Qualification;
 		->andWhere(['teacher_id' => $userModel->id])
 		->all();
 		$privateQualificationIds = ArrayHelper::getColumn($privateQualifications, 'program_id'); 
-		$privatePrograms = Program::find()->privateProgram()
+		$privatePrograms = Program::find()->privateProgram()->active()
 			->andWhere(['NOT IN', 'program.id', $privateQualificationIds])->all();
 ?>
    <div class="row">
