@@ -1,111 +1,109 @@
 <?php
+
 use common\models\LocationAvailability;
-use common\models\TeacherAvailability;
-use common\models\Lesson;
-use common\models\Program;
-use yii\helpers\Json;
+use kartik\depdrop\DepDrop;
+use yii\helpers\Html;
 use yii\helpers\Url;
-use common\models\Invoice;
+use yii\bootstrap\ActiveForm;
 
 ?>
-<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
+<div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
+<div class="row-fluid">
+	<div id="unschedule-lesson-calendar" ></div>
+</div>
+ <div class="form-group">
+	 <?php $form = ActiveForm::begin([
+       'id' => 'unschedule-lesson-form', 
+        ]); ?>
+	<?= $form->field($model, 'fromDate')->hiddenInput()->label(false);?>
+	<?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary unschedule-lesson-save', 'name' => 'button']) ?>
+	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default unschedule-lesson-cancel']);
+	?>
+	<?php ActiveForm::end(); ?>
+	<div class="clearfix"></div>
+</div>
 <?php
-    $locationId = Yii::$app->session->get('location_id');
-    $minLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-
-    $teacherAvailabilityDays = TeacherAvailability::find()
-        ->joinWith(['userLocation' => function ($query) use ($teacherId) {
-            $query->joinWith(['userProfile' => function ($query) use ($teacherId) {
-                $query->where(['user_profile.user_id' => $teacherId]);
-            }]);
-        }])
-        ->all();
-        $availableHours = [];
-    foreach ($teacherAvailabilityDays as $teacherAvailabilityDay) {
-        $availableHours[] = [
-            'start' => $teacherAvailabilityDay->from_time,
-            'end' => $teacherAvailabilityDay->to_time,
-            'dow' => [$teacherAvailabilityDay->day],
-            'className' => 'teacher-available',
-        ];
-    }
-
-    $lessons = [];
-    $lessons = Lesson::find()
-        ->joinWith(['course' => function ($query) use ($locationId) {
-            $query->andWhere(['locationId' => $locationId]);
-        }])
-        ->where(['lesson.teacherId' => $teacherId])
-        ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
-		->notDeleted()
-        ->all();
-   $events = [];
-    foreach ($lessons as &$lesson) {
-        $toTime = new \DateTime($lesson->date);
-        $length = explode(':', $lesson->fullDuration);
-        $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-        if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-            $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
-        } else {
-            $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
-        }
-        $class = null;
-        if (!empty($lesson->proFormaInvoice)) {
-            if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
-                $class = 'proforma-paid';
-            } else {
-                $class = 'proforma-unpaid';
-            }
-        }
-        $events[] = [
-            'title' => $title,
-            'start' => $lesson->date,
-            'end' => $toTime->format('Y-m-d H:i:s'),
-            'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
-            'className' => $class,
-        ];
-    }
-    unset($lesson);
-
+$locationId = Yii::$app->session->get('location_id');
+$minLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['fromTime' => SORT_ASC])
+    ->one();
+$maxLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['toTime' => SORT_DESC])
+    ->one();
+$from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+$to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
-<style>
-    .tab-content{
-    padding:0 !important;
-}
-.box-body .fc{
-    margin:0 !important;
-}
-
-</style>
-<div id="calendar" class="p-10"></div>
 <script type="text/javascript">
-  $('#calendar').fullCalendar({
-    header: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'agendaWeek'
-    },
-	allDaySlot : false,
-	slotDuration: '00:15:00',
-	titleFormat: 'DD-MMM-YYYY, dddd',
-    defaultView: 'agendaWeek',
-    minTime: "<?php echo $from_time; ?>",
-    maxTime: "<?php echo $to_time; ?>",
-	selectConstraint: 'businessHours',
-    eventConstraint: 'businessHours',
-	businessHours: <?php echo Json::encode($availableHours); ?>,
-	allowCalEventOverlap: true,
-    overlapEventsSeparate: true,
-    events: <?php echo Json::encode($events); ?>,
-  });
+    function refreshCalendar(availableHours, events) {
+        $('#unschedule-lesson-calendar').fullCalendar('destroy');
+        $('#unschedule-lesson-calendar').fullCalendar({
+    		defaultDate: moment(new Date()).format('YYYY-MM-DD'),
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'agendaWeek'
+            },
+            allDaySlot: false,
+			height:'auto',
+            slotDuration: '00:15:00',
+            titleFormat: 'DD-MMM-YYYY, dddd',
+            defaultView: 'agendaWeek',
+            minTime: "<?php echo $from_time; ?>",
+            maxTime: "<?php echo $to_time; ?>",
+            selectConstraint: 'businessHours',
+            eventConstraint: 'businessHours',
+            businessHours: availableHours,
+            allowCalEventOverlap: true,
+            overlapEventsSeparate: true,
+            events: events,
+            select: function (start, end, allDay) {
+                $('#unschedule-lesson-calendar').fullCalendar('removeEvents', 'reschedule');
+              	$('#user-fromdate').val(moment(start).format('DD-MM-YYYY h:mm A'));
+                var endtime = start.clone();
+				var lessonDuration = $('#unschedule-calendar').parent().prev('td').text();
+                var durationMinutes = moment.duration(lessonDuration).asMinutes();
+                moment(endtime.add(durationMinutes, 'minutes'));
+                $('#unschedule-lesson-calendar').fullCalendar('renderEvent',
+                    {
+                        id: 'reschedule',
+                        start: start,
+                        end: endtime,
+                        allDay: false
+                    },
+                true // make the event "stick"
+                );
+                $('#unschedule-lesson-calendar').fullCalendar('unselect');
+            },
+            eventAfterAllRender: function (view) {
+                $('.fc-short').removeClass('fc-short');
+            },
+            selectable: true,
+            selectHelper: true,
+        });
+    }
+    $(document).ready(function () {
+		$(document).on('click', '.unschedule-lesson-cancel, unschedule-lesson-save', function (e) {
+			$('#unschedule-lesson-modal').modal('hide');
+			return false;
+		});
+		$(document).on('click', '#unschedule-calendar', function (e) {
+			$('#unschedule-lesson-modal').modal('show');
+            $('#unschedule-lesson-modal .modal-dialog').css({'width': '1000px'});
+			var events, availableHours;
+			var teacherId = '<?= $model->id; ?>';
+			$.ajax({
+				url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
+				type: 'get',
+				dataType: "json",
+				success: function (response)
+				{
+					events = response.events;
+					availableHours = response.availableHours;
+					refreshCalendar(availableHours, events);
+				}
+			});
+		});
+    });
 </script>

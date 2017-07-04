@@ -133,9 +133,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 
         $unscheduledLessonContent = $this->render('teacher/_unscheduled-lesson', [
             'dataProvider' => $unscheduledLessonDataProvider,
+            'model' => $model,
         ]);
 
-        $teacherScheduleContent = $this->render('teacher/_calendar', [
+        $teacherScheduleContent = $this->render('teacher/_schedule', [
             'teacherId' => $model->id,
         ]);
 		$teacherLessonContent = $this->render('teacher/_view-lesson', [

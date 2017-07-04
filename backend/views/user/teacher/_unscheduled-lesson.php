@@ -2,11 +2,11 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
-use common\models\Invoice;
-use common\models\Lesson;
-use common\models\PrivateLesson;
+use yii\bootstrap\Modal;
 
 ?>
+<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <div class="grid-row-open p-15">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php $columns = [
@@ -19,7 +19,12 @@ use common\models\PrivateLesson;
 			[
                 'label' => 'Phone',
                 'value' => function ($data) {
-                    return !empty($data->course->enrolment->student->customer->phoneNumber->number) ? $data->course->enrolment->student->customer->phoneNumber->number : null;
+					if(!empty($data->course->enrolment->student->customer->primaryPhoneNumber->number)) {
+						$number = $data->course->enrolment->student->customer->primaryPhoneNumber->number; 
+					} else {
+						$number = !empty($data->course->enrolment->student->customer->phoneNumber->number) ? $data->course->enrolment->student->customer->phoneNumber->number : null;
+					}
+					return $number;
                 },
             ],
             [
@@ -28,12 +33,19 @@ use common\models\PrivateLesson;
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
             ],
-            [
-                'label' => 'Date',
+			[
+                'label' => 'Duration',
                 'value' => function ($data) {
-                    $date = Yii::$app->formatter->asDate($data->date);
-
-                    return !empty($date) ? $date : null;
+                    return !empty($data->duration) ? (new \DateTime($data->duration))->format('H:i') : null;
+                },
+            ],
+            [
+                'label' => 'Original Date',
+				'format' => 'raw',
+                'value' => function ($data) {
+					return $this->render('_unschedule-lesson-date', [
+						'model' => $data,
+					]);
                 },
             ],
             [
@@ -58,10 +70,34 @@ use common\models\PrivateLesson;
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>
 
-</div><?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+</div>
+<?php
+Modal::begin([
+	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+	'id' => 'unschedule-lesson-modal',
+]);
+?>
+<?php
+echo $this->render('_calendar', [
+    'model' => $model,
+]);
+?>
+<?php Modal::end(); ?>
+<script>
+$(document).ready(function () {
+	$(document).on('beforeSubmit', '#unschedule-lesson-form', function () {
+		var lessonId = $('#unschedule-calendar').parent().parent().data('key');
+        var param = $.param({ id: lessonId });
+		$.ajax({
+			url    : '<?= Url::to(['lesson/update']);?>?' + param,
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			}
+		});
+		return false;
+   });
+});
+</script>
