@@ -106,7 +106,7 @@ class Lesson extends \yii\db\ActiveRecord
         return [
             [['courseId', 'teacherId', 'status', 'duration'], 'required'],
             [['courseId', 'status', 'type'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId', 'isDeleted'], 'safe'],
+            [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyContext'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 'on' => self::SCENARIO_EDIT_CLASSROOM],
             [['date'], HolidayValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],

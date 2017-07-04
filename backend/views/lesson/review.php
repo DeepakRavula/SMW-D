@@ -174,9 +174,10 @@ Modal::begin([
             });
 			return false;
         });
+		$(document).on('click','#lesson-review-apply, #lesson-review-apply-all',function() {
+			$('#lesson-applycontext').val($(this).val());
+		});
 		$(document).on('beforeSubmit', '#lesson-review-form', function (e) {
-		 	var btnValue = $("input[type=submit][clicked=true]").val();
-			$('#lesson-applycontext').val(btnValue);
 			var lessonId = $('#lesson-id').val();
 			var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
 			var vacationId = '<?= $vacationId; ?>';

@@ -299,6 +299,32 @@ class LessonController extends Controller
         }
     }
 
+	public function fetchConflictedLesson($course)
+	{
+		$conflicts = [];
+		$conflictedLessonIds = [];
+		$draftLessons = Lesson::find()
+			->where(['courseId' => $course->id, 'status' => Lesson::STATUS_DRAFTED])
+			->all();
+		foreach ($draftLessons as $draftLesson) {
+			$draftLesson->setScenario('review');
+		}
+		Model::validateMultiple($draftLessons);
+		foreach ($draftLessons as $draftLesson) {
+			if(!empty($draftLesson->getErrors('date'))) {
+				$conflictedLessonIds[] = $draftLesson->id;
+			}
+			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+		}
+
+		$holidayConflictedLessonIds = $course->getHolidayLessons();
+		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+		$lessons = Lesson::find()
+			->orderBy(['lesson.date' => SORT_ASC])
+			->andWhere(['IN', 'lesson.id', $conflictedLessonIds])
+			->all();	
+		return $lessons;
+	}
     public function actionUpdateField($id)
     {
 		$model = $this->findModel($id);
@@ -311,30 +337,64 @@ class LessonController extends Controller
 			'data' => $data
 		];
         if ($model->load(Yii::$app->request->post())) {
-			if(! empty($model->date)) {
-           		$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
-				$model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+			if((int)$model->applyContext === Lesson::APPLY_SINGLE_LESSON) {
+				if(! empty($model->date)) {
+					$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
+					$model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+				} else {
+					$model->date = $existingDate;
+					$model->status = Lesson::STATUS_UNSCHEDULED;
+					$privateLessonModel = new PrivateLesson();
+					$privateLessonModel->lessonId = $model->id;
+					$date = new \DateTime($model->date);
+					$expiryDate = $date->modify('90 days');
+					$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+					$privateLessonModel->save();
+				}
+				if($model->save()) {
+					$response = [
+						'status' => true
+					];
+				} else {
+					$response = [
+						'status' => false,
+						'errors' => ActiveForm::validate($model),
+					];
+				}
 			} else {
-				$model->date = $existingDate;
-				$model->status = Lesson::STATUS_UNSCHEDULED;
-				$privateLessonModel = new PrivateLesson();
-				$privateLessonModel->lessonId = $model->id;
-				$date = new \DateTime($model->date);
-				$expiryDate = $date->modify('90 days');
-				$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-				$privateLessonModel->save();
+				$lessons = $this->fetchConflictedLesson($model->course);
+				foreach($lessons as $lesson) {
+					$lesson->duration = $model->duration;
+					if(! empty($model->date)) {
+						$day = (new \DateTime($model->date))->format('N');
+						$lessonDay = (new \DateTime($lesson->date))->format('N');
+						if($day === $lessonDay) {
+							$lesson->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+							
+						}
+//						$lesson->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
+//						$lesson->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+//					} else {
+//						$lesson->date = $existingDate;
+//						$lesson->status = Lesson::STATUS_UNSCHEDULED;
+//						$privateLessonModel = new PrivateLesson();
+//						$privateLessonModel->lessonId = $lesson->id;
+//						$date = new \DateTime($lesson->date);
+//						$expiryDate = $date->modify('90 days');
+//						$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+//						$privateLessonModel->save();
+//					}
+					if(! $lesson->save()) {
+						print_r($lesson->getErrors());die;
+					}
+//					
+					$response = [
+						'status' => true
+					];
+				}
+				}
 			}
- 			if($model->save()) {
-				$response = [
-					'status' => true
-				];
-			} else {
-				$response = [
-					'status' => false,
-					'errors' => ActiveForm::validate($model),
-				];
-			}
-        }	
+		}
 		 return $response;
     }
 
