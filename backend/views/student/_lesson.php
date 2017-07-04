@@ -17,13 +17,9 @@ use yii\bootstrap\Modal;
 	Modal::begin([
 		'header' => '<h4 class="m-0">Add Lesson</h4>',
 		'id'=>'new-lesson-modal',
-	]);
-	 echo $this->render('_form-lesson', [
-			'model' => new Lesson(),
-			'studentModel' => $model,
-	]);
-	Modal::end();
-	?>
+	]); ?>
+        <div id="new-lesson-modal-content"></div>
+	<?php Modal::end(); ?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin([
     	'id' => 'student-lesson-listing',
@@ -119,18 +115,18 @@ use yii\bootstrap\Modal;
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#extra-lesson-date').on('change', function () {
+        $(document).on('change', '#extra-lesson-date', function () {
             refresh();
         });
 
-        $(document).on('change', '#lesson-teacherid', function () {
+        $(document).on('change', '#lesson-teacher', function () {
             refresh();
         });
 
         function refreshCalendar(availableHours, events, date) {
             $('#lesson-calendar').fullCalendar('destroy');
             $('#lesson-calendar').fullCalendar({
-                defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
+                defaultDate: date,
                 header: {
                     left: 'prev,next today',
                     center: 'title',
@@ -181,18 +177,21 @@ use yii\bootstrap\Modal;
 
         function refresh() {
             var events, availableHours;
-            var teacherId = $('#lesson-teacherid').val();
-            var date = $('#extra-lesson-date').val();
-            if (date === '') {
+            var teacherId = $('#lesson-teacher').val();
+            var date = moment($('#extra-lesson-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+            if (! moment(date).isValid()) {
+                var date = moment($('#extra-lesson-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+            }
+            if (date === 'Invalid date') {
                 $('#lesson-calendar').fullCalendar('destroy');
                 $('#new-lesson-modal .modal-dialog').css({'width': '600px'});
-                $('#lesson-program').removeClass('col-md-4');
-                $('#lesson-teacher').removeClass('col-md-4');
-                $('#lesson-date').removeClass('col-md-4');
+                $('.lesson-program').removeClass('col-md-4');
+                $('.lesson-teacher').removeClass('col-md-4');
+                $('.lesson-date').removeClass('col-md-4');
             } else {
-                $('#lesson-program').addClass('col-md-4');
-                $('#lesson-teacher').addClass('col-md-4');
-                $('#lesson-date').addClass('col-md-4');
+                $('.lesson-program').addClass('col-md-4');
+                $('.lesson-teacher').addClass('col-md-4');
+                $('.lesson-date').addClass('col-md-4');
                 $('#new-lesson-modal .modal-dialog').css({'width': '1000px'});
                 $.ajax({
                     url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
