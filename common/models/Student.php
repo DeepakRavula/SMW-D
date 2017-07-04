@@ -27,7 +27,7 @@ class Student extends \yii\db\ActiveRecord
 	
     public $vacationId;
     public $userName;
-    public $studentId;
+    public $studentIds;
 
     /**
      * {@inheritdoc}
@@ -44,7 +44,7 @@ class Student extends \yii\db\ActiveRecord
     {
         return [
             [['first_name', 'last_name'], 'required', 'except' => self::SCENARIO_MERGE],
-            ['studentId', 'required', 'on' => self::SCENARIO_MERGE],
+            ['studentIds', 'required', 'on' => self::SCENARIO_MERGE],
             [['first_name', 'last_name'], 'string', 'min' => 2, 'max' => 30],
             [[ 'status'], 'integer'],
             [['birth_date'], 'date', 'format' => 'php:d-m-Y', 'except' => self::SCENARIO_MERGE],
@@ -59,7 +59,7 @@ class Student extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'Student',
-            'studentId' => 'Student',
+            'studentIds' => 'Students',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'birth_date' => 'Birth Date',

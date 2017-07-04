@@ -14,15 +14,14 @@ use yii\helpers\Html;
     ]); ?>
     <div class="row">
         <div class="col-md-6">
-            <?= $form->field($model, 'studentId')->widget(Select2::classname(), [
+            <?= $form->field($model, 'studentIds')->widget(Select2::classname(), [
 	    		'data' => ArrayHelper::map($students, 'id', 'first_name'),
 				'options' => [
                                     'id' => 'student'
 				],
 				'pluginOptions' => [
                                     'allowClear' => true,
-                                    'multiple' => false,
-                                    'placeholder' => 'select student'
+                                    'multiple' => true
 				],
 			]); ?>
         </div>

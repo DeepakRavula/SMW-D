@@ -296,27 +296,29 @@ class StudentController extends Controller
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
             if ($model->validate()) {
-                $student = Student::findOne($model->studentId);
-                foreach ($student->enrolment as $enrolment) {
-                    $enrolment->studentId = $model->id;
-                    $enrolment->save(false);
+                foreach ($model->studentIds as $student) {
+                    $studentModel = Student::findOne($student);
+                    foreach ($studentModel->enrolment as $enrolment) {
+                        $enrolment->studentId = $model->id;
+                        $enrolment->save(false);
+                    }
+                    foreach ($studentModel->notes as $note) {
+                        $note->instanceId = $model->id;
+                        $note->save(false);
+                    }
+                    foreach ($studentModel->logs as $log) {
+                        $log->studentId = $model->id;
+                        $log->save(false);
+                    }
+                    foreach ($studentModel->examResults as $examResult) {
+                        $examResult->studentId = $model->id;
+                        $examResult->save(false);
+                    }
+                    $studentModel->isDeleted = true;
+                    $studentModel->save(false);
                 }
-                foreach ($student->notes as $note) {
-                    $note->instanceId = $model->id;
-                    $note->save(false);
-                }
-                foreach ($student->logs as $log) {
-                    $log->studentId = $model->id;
-                    $log->save(false);
-                }
-                foreach ($student->examResults as $examResult) {
-                    $examResult->studentId = $model->id;
-                    $examResult->save(false);
-                }
-                $student->isDeleted = true;
-
                 return [
-                    'status' => $student->save(false),
+                    'status' => true,
                     'message' => 'Student successfully merged!'
                 ];
             } else {
