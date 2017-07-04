@@ -6,11 +6,42 @@ use common\models\Program;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use common\models\Invoice;
+use common\models\CalendarEventColor;
 
 ?>
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <?php
+$teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
+$teacherUnavailability = CalendarEventColor::findOne(['cssClass' => 'teacher-unavailability']);
+$privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
+$groupLesson = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
+$firstLesson = CalendarEventColor::findOne(['cssClass' => 'first-lesson']);
+$teacherSubstitutedLesson = CalendarEventColor::findOne(['cssClass' => 'teacher-substituted']);
+$rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
+$this->registerCss(
+    ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
+        .fc-bg { background-color: " . $teacherUnavailability->code . " !important; }
+        .fc-today { background-color: " . $teacherUnavailability->code . " !important; }
+        .private-lesson, .fc-event .private-lesson .fc-event-time, .private-lesson a {
+            border: 1px solid " . $privateLesson->code . " !important;
+            background-color: " . $privateLesson->code . " !important; }
+        .first-lesson, .fc-event .first-lesson .fc-event-time, .first-lesson a {
+            border: 1px solid " . $firstLesson->code . " !important;
+            background-color: " . $firstLesson->code . " !important; }
+        .group-lesson, .fc-event .group-lesson .fc-event-time, .group-lesson a {
+            border: 1px solid " . $groupLesson->code . " !important;
+            background-color: " . $groupLesson->code . " !important; }
+        .teacher-substituted, .fc-event .teacher-substituted .fc-event-time, .teacher-substituted a {
+            border: 1px solid " . $teacherSubstitutedLesson->code . " !important;
+            background-color: " . $teacherSubstitutedLesson->code . " !important; }
+        .lesson-rescheduled, .fc-event .lesson-rescheduled .fc-event-time, .lesson-rescheduled a {
+            border: 1px solid " . $rescheduledLesson->code . " !important;
+            background-color: " . $rescheduledLesson->code . " !important; }"
+);
+
+?>
+    <?php
     $locationId = Yii::$app->session->get('location_id');
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
@@ -59,14 +90,7 @@ use common\models\Invoice;
         } else {
             $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
         }
-        $class = null;
-        if (!empty($lesson->proFormaInvoice)) {
-            if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
-                $class = 'proforma-paid';
-            } else {
-                $class = 'proforma-unpaid';
-            }
-        }
+        $class=$lesson->class;
         $events[] = [
             'title' => $title,
             'start' => $lesson->date,

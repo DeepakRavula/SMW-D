@@ -204,14 +204,7 @@ class TeacherAvailabilityController extends Controller
             } else {
                 $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
             }
-            $class = null;
-            if (!empty($lesson->proFormaInvoice)) {
-                if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
-                    $class = 'proforma-paid';
-                } else {
-                    $class = 'proforma-unpaid';
-                }
-            }
+            $class = $lesson->class;
             $events[] = [
                 'start' => $lesson->date,
                 'end' => $toTime->format('Y-m-d H:i:s'),
