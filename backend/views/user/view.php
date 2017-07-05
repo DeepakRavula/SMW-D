@@ -24,6 +24,7 @@ $this->title = $model->publicIdentity.' - '.ucwords($searchModel->role_name);
 $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
+<div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <style>
 	.lesson-count {
 		font-weight: bold;
@@ -404,6 +405,23 @@ $(document).ready(function(){
 			success: function (response)
 			{
 				
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#customer-discount', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+				    $('#discount-warning').html(response.data).fadeIn().delay(8000).fadeOut();
+        			$.pjax.reload({container:"#customer-log-listing",replace:false,  timeout: 4000});
+				}
 			}
 		});
 		return false;

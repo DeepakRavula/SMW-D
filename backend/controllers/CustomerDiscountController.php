@@ -10,6 +10,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\User;
 use common\models\CustomerDiscountLog;
+use yii\web\Response;
+
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
  */
@@ -24,6 +26,13 @@ class CustomerDiscountController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+			[
+				'class' => 'yii\filters\ContentNegotiator',
+				'only' => ['create'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,
+				],
+        	],
         ];
     }
 
@@ -62,18 +71,21 @@ class CustomerDiscountController extends Controller
     public function actionCreate($id)
     {
 		$customerDiscountModel = CustomerDiscount::findOne(['customerId' => $id]);
+        $userModel = User::findOne(['id' => Yii::$app->user->id]);
 		if(empty($customerDiscountModel)) {
         	$customerDiscountModel = new CustomerDiscount();
 			$customerDiscountModel->customerId = $id;
-            $userModel = User::findOne(['id' => Yii::$app->user->id]);
-                $customerDiscountModel->on(CustomerDiscount::EVENT_CREATE, [new CustomerDiscountLog(), 'create']);      
-        $customerDiscountModel->userName = $userModel->publicIdentity;
-		}	
-        $userModel = User::findOne(['id' => Yii::$app->user->id]);
-                $customerDiscountModel->on(CustomerDiscount::EVENT_EDIT, [new CustomerDiscountLog(), 'edit'], ['oldAttributes' => $customerDiscountModel->getOldAttributes()]);
-                $customerDiscountModel->userName = $userModel->publicIdentity;
+            $customerDiscountModel->on(CustomerDiscount::EVENT_CREATE, [new CustomerDiscountLog(), 'create']);      
+        	$customerDiscountModel->userName = $userModel->publicIdentity;
+		} else {	
+        	$customerDiscountModel->on(CustomerDiscount::EVENT_EDIT, [new CustomerDiscountLog(), 'edit'], ['oldAttributes' => $customerDiscountModel->getOldAttributes()]);
+        	$customerDiscountModel->userName = $userModel->publicIdentity;
+		}
         if ($customerDiscountModel->load(Yii::$app->request->post()) && $customerDiscountModel->save()) {
-            	return $this->redirect(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $id, '#' => 'discount']);
+			return [
+				'status' => true,
+				'data' => 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.' 
+			];
         }
     }
 

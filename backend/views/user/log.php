@@ -74,6 +74,7 @@ $paymentLogs = TimelineEvent::find()
 ]);?>
 <div class="student-index p-15">  
 	<?php yii\widgets\Pjax::begin([
+	'id' => 'customer-log-listing',
     'timeout' => 6000,
 ]) ?>
 <?php echo GridView::widget([
