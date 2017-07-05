@@ -10,34 +10,28 @@ use yii\data\ActiveDataProvider;
 
 ?> 
 <?php
-$studentLog = TimelineEvent::find()
-	->joinWith(['timelineEventStudent' => function($query) use($model){
-		$query->andWhere(['studentId' => $model->id]);
-	}]);
-	
-$enrolmentLog = TimelineEvent::find()
+$logs = TimelineEvent::find()
+	->joinWith(['timelineEventStudent tes'])	
 	->joinWith(['timelineEventEnrolment' => function($query) use($model) {
-		$query->joinWith(['enrolment' => function($query) use($model) {
-			$query->andWhere(['studentId' => $model->id]);
-		}]);
-	}]);
-
-$lessonLog = TimelineEvent::find()
+		$query->joinWith(['enrolment e1']);
+	}])
 	->joinWith(['timelineEventLesson' => function($query) use($model) {
 		$query->joinWith(['lesson' => function($query) use($model) {
 			$query->joinWith(['course' => function($query) use($model) {
-				$query->joinWith(['enrolment' => function($query) use($model) {
-					$query->andWhere(['studentId' => $model->id]);
-				}]);
+				$query->joinWith(['enrolment e2']);
 			}]);
 		}]);
-	}]);
-$logs = $enrolmentLog->union($lessonLog);	
-$logs->union($studentLog);	
+	}])
+    ->andWhere(['tes.studentId' => $model->id])
+    ->orFilterWhere(['e1.studentId' => $model->id])
+    ->orFilterWhere(['e2.studentId' => $model->id]);
 $dataProvider = new ActiveDataProvider([
 	'query' => $logs,
 ]);?>
-<div class="student-index">  
+<div class="student-index"> 
+    <?php yii\widgets\Pjax::begin([
+    'timeout' => 6000,
+]) ?>
 <?php echo GridView::widget([
 	'dataProvider' => $dataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
@@ -53,4 +47,5 @@ $dataProvider = new ActiveDataProvider([
 		],
 	],
 ]); ?>
+    <?php \yii\widgets\Pjax::end(); ?>
 </div>

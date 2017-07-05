@@ -54,7 +54,7 @@ use yii\helpers\Url;
     </div>
 	<div class="col-md-6">
 		<?= $form->field($model, 'programId')->dropDownList(
-			ArrayHelper::map(Program::find()->all(), 'id', 'name'), ['prompt' => 'Select Program']);?>
+			ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'), ['prompt' => 'Select Program']);?>
     </div>
 	<div class="col-md-6">
 		<?php $teacher = !empty($model->teacherId) ? $model->teacher->publicIdentity : null; ?>

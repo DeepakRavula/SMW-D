@@ -202,6 +202,13 @@ class UserImport extends Model
 
                     $phone->save();
                 }
+				if(!empty($row['Opening Balance'])) {
+					if (preg_match('/^-?\d{1,10}(?:\.\d{1,4})?$/', $row['Opening Balance'])) {
+						$this->createOpeningBalanceInvoice($row['Opening Balance'], $user);
+					} else {
+                		$errors[] = 'Error on Line '.($i + 2).': Invalid Opening Balance for"'.$row['Billing First Name'].'"';
+					}
+				}
 
                 $transaction->commit();
                 ++$successCount;
@@ -219,7 +226,51 @@ class UserImport extends Model
             'totalRows' => count($rows),
         ];
     }
+	public function createOpeningBalanceInvoice($amount, $user)
+	{
+		$invoice = new Invoice();
+		$invoice->user_id = $user->id;
+		$invoice->location_id = $user->userLocation->location_id;
+		$invoice->type = Invoice::TYPE_INVOICE;
+		if(! $invoice->save()) {
+			Yii::error('Opening Balance Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+		}
+		$invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
+		$invoiceLineItem->invoice_id = $invoice->id;
+		$item = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
+		$invoiceLineItem->item_id = $item->id;
+		$invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
+		$invoiceLineItem->description = $item->description;
+		$invoiceLineItem->unit = 1;
+		$invoiceLineItem->amount = $amount;
+		$invoiceLineItem->code = $invoiceLineItem->getItemCode();
+		$invoiceLineItem->cost = 0;
+		if(! $invoiceLineItem->save()) {
+			Yii::error('Opening Balance Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+		}
+		if ($amount > 0) {
+            $invoice->subTotal = $invoiceLineItem->amount;
+        } else {
+            $invoice->subTotal = 0.00;
+		}
+		$invoice->tax = $invoiceLineItem->tax_rate;
+		$invoice->total = $invoice->subTotal + $invoice->tax;
+		$invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
+		if(! $invoice->save()) {
+			Yii::error('Opening Balance Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+		}
 
+		if ($amount < 0) {
+			$paymentModel = new Payment();
+			$paymentModel->date = (new \DateTime())->format('Y-m-d H:i:s');
+			$paymentModel->invoiceId = $invoice->id;
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
+			$paymentModel->amount = abs($amount);
+			if(! $paymentModel->save()) {
+				Yii::error('Opening Balance negative Invoice Payment: ' . \yii\helpers\VarDumper::dumpAsString($paymentModel->getErrors()));	
+			}
+		}
+	}
 	public function StudentCsv($row, $student) 
 	{
 		$studentCsv = new StudentCsv();
@@ -250,6 +301,8 @@ class UserImport extends Model
 		$studentCsv->billingOtherTel = $row['Billing Other Tel'];
 		$studentCsv->billingWorkTel = $row['Billing Work Tel'];
 		$studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
+		$studentCsv->openingBalance = $row['Opening Balance'];
+		$studentCsv->notes = $row['Notes'];
 		$studentCsv->save();
 	}
 }

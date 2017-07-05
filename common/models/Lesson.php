@@ -58,6 +58,8 @@ class Lesson extends \yii\db\ActiveRecord
     const EVENT_UNSCHEDULED			 = 'Unscheduled';
     const EVENT_MISSED = 'missed';
 
+	const APPLY_SINGLE_LESSON = 1;
+	const APPLY_ALL_FUTURE_LESSONS = 2;
     public $enrolmentId;
     public $studentFullName;
     public $programId;
@@ -73,6 +75,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $vacationId;
     public $studentId;
     public $userName;
+    public $applyContext;
     public $locationId;
 
     /**
@@ -107,7 +110,7 @@ class Lesson extends \yii\db\ActiveRecord
                     return $model->type !== self::TYPE_EXTRA;
             }],
             [['courseId', 'status', 'type'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId', 'isDeleted'], 'safe'],
+            [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyContext'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 'on' => self::SCENARIO_EDIT_CLASSROOM],
             [['date'], HolidayValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
@@ -614,8 +617,18 @@ class Lesson extends \yii\db\ActiveRecord
                 if($this->isRescheduledByClassroom($changedAttributes)) {
                     $this->trigger(self::EVENT_RESCHEDULED);
                 }
+				if($this->isUnscheduled()) {
+					$privateLessonModel = new PrivateLesson();
+					$privateLessonModel->lessonId = $this->id;
+					$date = new \DateTime($this->date);
+					$expiryDate = $date->modify('90 days');
+					$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+					$privateLessonModel->save();
+				}
             }
+			
         }
+		
         return parent::afterSave($insert, $changedAttributes);
     }
 
