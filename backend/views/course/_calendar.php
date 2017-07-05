@@ -32,7 +32,10 @@ use yii\helpers\Url;
 
 <script>
 $(document).ready(function(){
-	
+	var groupCourse = {
+		'lessonCountOne' : 1,
+		'lessonCountTwo' : 2,
+	}		
 	$(document).on('click', '.course-apply', function (e) {
 		$('#course-calendar-modal').modal('hide');
 		return false;
@@ -122,13 +125,14 @@ $(document).ready(function(){
         });
     }
 
-//    $('#group-course-form').on('beforeSubmit', function (e) {
-//        var courseDay = $('#courseschedule-day-0').val();
-//        if( ! courseDay) {
-//            $('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
-//            $(window).scrollTop(0);
-//            return false;
-//        }
-//    });
+    $('#group-course-form').on('beforeSubmit', function (e) {
+        var courseDay = $('#courseschedule-day-0').val();
+		var lessonCount = $('#course-lessonsperweekcount').val();
+        if( ! courseDay && (lessonCount == groupCourse.lessonCountOne || lessonCount == groupCourse.lessonCountTwo)) {
+            $('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
+            $(window).scrollTop(0);
+            return false;
+        }
+    });
 });
 </script>
