@@ -34,6 +34,7 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_UNSCHEDULED = 5;
     const STATUS_MISSED = 6;
     const DEFAULT_MERGE_DURATION = '00:15:00';
+    const DEFAULT_LESSON_DURATION = '00:15:00';
     const DEFAULT_EXPLODE_DURATION_SEC = 900;
 
 	const MAXIMUM_LIMIT = 48;
@@ -75,7 +76,8 @@ class Lesson extends \yii\db\ActiveRecord
     public $vacationId;
     public $studentId;
     public $userName;
-	public $applyContext;
+    public $applyContext;
+    public $locationId;
 
     /**
      * {@inheritdoc}
@@ -104,7 +106,10 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['courseId', 'teacherId', 'status', 'duration'], 'required'],
+            [['teacherId', 'status', 'duration'], 'required'],
+            ['courseId', 'required', 'when' => function($model, $attribute) {
+                    return $model->type !== self::TYPE_EXTRA;
+            }],
             [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyContext'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 'on' => self::SCENARIO_EDIT_CLASSROOM],
@@ -962,5 +967,17 @@ class Lesson extends \yii\db\ActiveRecord
     public function canInvoice()
     {
         return $this->isCompleted() && $this->isScheduled();
+    }
+
+    public function createExtraLessonCourse()
+    {
+        $course = new Course();
+        $course->programId   = $this->programId;
+        $course->teacherId   = $this->teacherId;
+        $course->startDate   = $this->date;
+        $course->isConfirmed = true;
+        $course->locationId  = $this->locationId;
+        $course->save();
+        return $course;
     }
 }

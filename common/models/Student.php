@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\timelineEvent\TimelineEventStudent;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\query\StudentQuery;
 
 /**
@@ -52,6 +53,19 @@ class Student extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -59,7 +73,7 @@ class Student extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'Student',
-            'studentId' => 'Student',
+            'studentIds' => 'Students',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'birth_date' => 'Birth Date',

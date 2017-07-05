@@ -16,6 +16,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
 use common\models\Student;
+use common\models\CourseSchedule;
 use yii\web\Response;
 use common\models\Vacation;
 use yii\helpers\Url;
@@ -134,28 +135,47 @@ class LessonController extends Controller
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
+        $model->locationId = Yii::$app->session->get('location_id');
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
         $studentModel = Student::findOne($studentId);
         $model->programId = $studentModel->getFirstPrivateProgram();
+        $model->duration  = Lesson::DEFAULT_LESSON_DURATION;
         $data = $this->renderAjax('/student/_form-lesson', [
             'model' => $model,
             'studentModel' => $studentModel
         ]);
         if ($model->load($request->post())) {
             $studentEnrolment = Enrolment::find()
+                ->notDeleted()
+                ->isConfirmed()
                 ->joinWith(['course' => function($query) use($model){
                     $query->where(['course.programId' => $model->programId]);
                 }])
                 ->where(['studentId' => $studentId])
                 ->one();
-            $model->courseId = $studentEnrolment->courseId;
+            if ($studentEnrolment) {
+                $model->courseId = $studentEnrolment->courseId;
+            } else {
+                $course                   = $model->createExtraLessonCourse();
+                $course->studentId        = $studentId;
+                $course->createExtraLessonEnrolment();
+                $courseSchedule           = new CourseSchedule();
+                $courseSchedule->setScenario(CourseSchedule::SCENARIO_EDIT_ENROLMENT);
+                $courseSchedule->courseId = $course->id;
+                $courseSchedule->day      = (new \DateTime($model->date))->format('N');
+                $courseSchedule->duration = (new \DateTime($model->duration))->format('H:i:s');
+                $courseSchedule->fromTime = (new \DateTime($model->date))->format('H:i:s');
+                if (!$courseSchedule->save()){
+                    Yii::error('Course Schedule: ' . \yii\helpers\VarDumper::dumpAsString($courseSchedule->getErrors()));
+                }
+                $model->courseId          = $course->id;
+            }
             $model->status = Lesson::STATUS_SCHEDULED;
             $model->isDeleted = false;
             $model->type = Lesson::TYPE_EXTRA;
             $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
-
             if ($model->save()) {
                 $response = [
                     'status' => true,
@@ -176,6 +196,7 @@ class LessonController extends Controller
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
         $model = new Lesson();
+        $model->type = Lesson::TYPE_EXTRA;
 		$model->setScenario(Lesson::SCENARIO_CREATE);
 		$request = Yii::$app->request;
         if ($model->load($request->post())) {
@@ -185,7 +206,8 @@ class LessonController extends Controller
 			   }])
 				->where(['studentId' => $studentId])
 				->one();
-            $model->courseId = $studentEnrolment->courseId;
+            $model->courseId = !empty($studentEnrolment) ? $studentEnrolment->courseId : null;
+            $model->studentId = $studentId;
 			return  ActiveForm::validate($model);
 		}
     }

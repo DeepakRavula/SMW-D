@@ -22,17 +22,29 @@ class ProgramQuery extends ActiveQuery
         return $this;
     }
 
-	public function privateProgram()
+    public function privateProgram()
     {
         $this->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
 
         return $this;
     }
 
-	public function group()
+    public function group()
     {
         $this->andWhere(['program.type' => Program::TYPE_GROUP_PROGRAM]);
 
         return $this;
+    }
+
+    public function studentEnrolled($studentId)
+    {
+        return $this->joinWith(['course' => function ($query) use ($studentId) {
+                $query->joinWith(['enrolment' => function ($query) use ($studentId) {
+                        $query->andWhere(['enrolment.studentId' => $studentId])
+                        ->notDeleted()
+                        ->isConfirmed();
+                }])
+                ->isConfirmed();
+        }]);
     }
 }
