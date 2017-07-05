@@ -55,12 +55,12 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Payment::className(), ['id' => 'paymentId'])->orWhere(['payment.isDeleted' => true]);
     }
-    public function getActivityPayment()
+    public function getInvoicePayment()
     {
-        return $this->hasOne(Payment::className(), ['id' => 'paymentId']);
+        return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'paymentId']);
     }
-	
-	public function create($event) {
+
+    public function create($event) {
 		$paymentModel = $event->sender;
 		$payment = Payment::find(['id' => $paymentModel->id])->asArray()->one();
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
