@@ -240,6 +240,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->discount     = 0.0;
                 $this->discountType = 0;
                 $this->isRoyalty  = false;
+				$this->rate = 0;
             } else if (!$this->isMisc() && !$this->isLessonCredit()) {
                 $taxStatus          = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
                 $this->tax_type     = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
@@ -250,6 +251,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             } else if ($this->isMisc()) {
                 $this->discount     = 0.0;
                 $this->discountType = 0;
+				$this->rate = 0;
             }
         }
         
