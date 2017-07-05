@@ -26,7 +26,7 @@ use yii\helpers\Html;
         </div>
         <div class="col-xs-8">
 			<?php echo $form->field($model, 'paymentMethodId')->dropdownList
-                (ArrayHelper::map(PaymentMethod::find()->where(['name' => 'Credit Card'])->all(), 'id', 'name'), ['prompt' => 'Select payment method'])->label('Payment Method'); ?>
+                (ArrayHelper::map(PaymentMethod::find()->active()->paymentPreference()->all(), 'id', 'name'), ['prompt' => 'Select payment method'])->label('Payment Method'); ?>
         </div>
 	</div>
 	<div class="form-group">
