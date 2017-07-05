@@ -705,6 +705,69 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
+    public function addLessonCreditUsage($splitId)
+    {
+        $invoiceLineItem               = new InvoiceLineItem(['scenario' =>
+            InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
+        $invoiceLineItem->item_id      = $splitId;
+        $invoiceLineItem->invoice_id   = $this->id;
+        $invoiceLineItem->item_type_id = ItemType::TYPE_SPLIT_LESSON_CREDIT_USAGE;
+        $invoiceLineItem->unit         = $invoiceLineItem->getLessonCreditUnit($splitId);
+        $invoiceLineItem->amount       = - ($invoiceLineItem->getLessonCreditAmount($splitId));
+        $invoiceLineItem->code         = 'SPLIT LESSON CREDIT USAGE';
+        $invoiceLineItem->discount     = 0;
+        $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+        $invoiceLineItem->description  = 'SPLIT LESSON CREDIT USAGE';
+        if ($invoiceLineItem->save()) {
+            return $this->save();
+        }
+    }
+
+    public function addLessonCreditApplied($splitId)
+    {
+        $lessonSplit                   = LessonSplit::findOne($splitId);
+        $invoiceLineItem               = new InvoiceLineItem();
+        $invoiceLineItem->item_id      = $splitId;
+        $invoiceLineItem->invoice_id   = $this->id;
+        $invoiceLineItem->item_type_id = ItemType::TYPE_SPLIT_LESSON_CREDIT_APPLIED;
+        $invoiceLineItem->unit         = $invoiceLineItem->getLessonCreditUnit($splitId);
+        $invoiceLineItem->amount       = $invoiceLineItem->getLessonCreditAmount($splitId);
+        $invoiceLineItem->code         = 'SPLIT LESSON CREDIT APPLIED';
+        $invoiceLineItem->discount     = 0;
+        $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_FLAT;
+        $invoiceLineItem->description  = 'SPLIT LESSON CREDIT APPLIED';
+        if ($invoiceLineItem->save()) {
+            $this->save();
+        }
+        if ($this->addLessonCreditAppliedPayment($invoiceLineItem->amount, $lessonSplit->lesson->invoice)) {
+            $lessonSplit->lesson->invoice->save();
+        }
+    }
+
+    public function addLessonCreditAppliedPayment($amount, $invoice)
+    {
+        $paymentModel = new Payment();
+        $paymentModel->amount = $amount;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+        $paymentModel->reference = $invoice->id;
+        $paymentModel->invoiceId = $this->id;
+        $paymentModel->save();
+
+        $creditPaymentId = $paymentModel->id;
+        $paymentModel->id = null;
+        $paymentModel->isNewRecord = true;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+        $paymentModel->invoiceId = $invoice->id;
+        $paymentModel->reference = $this->id;
+        $paymentModel->save();
+
+        $debitPaymentId = $paymentModel->id;
+        $creditUsageModel = new CreditUsage();
+        $creditUsageModel->credit_payment_id = $creditPaymentId;
+        $creditUsageModel->debit_payment_id = $debitPaymentId;
+        return $creditUsageModel->save();
+    }
+
     public function makeExtraLessonInvoicePayment()
     {
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->lineItem->lesson->date);

@@ -133,7 +133,8 @@ echo $this->render('_merge-lesson', [
             $('#merge-lesson-modal').modal('show');
             return false;
   	});
-        $('#merge-lesson-form').on('beforeSubmit', function() {
+        $('#merge-lesson-form').on('beforeSubmit', function(e) {
+            e.preventDefault();
             $.ajax({
                 url    : '<?= Url::to(['lesson/merge', 'id' => $model->id]) ?>',
                 type   : 'POST',

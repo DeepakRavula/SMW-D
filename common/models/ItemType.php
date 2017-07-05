@@ -16,6 +16,9 @@ class ItemType extends \yii\db\ActiveRecord
     const TYPE_OPENING_BALANCE = 4;
     const TYPE_LESSON_CREDIT = 5;
     const TYPE_PAYMENT_CYCLE_PRIVATE_LESSON = 6;
+    const TYPE_SPLIT_LESSON_CREDIT_USAGE = 7;
+    const TYPE_SPLIT_LESSON_CREDIT_APPLIED = 8;
+
     /**
      * {@inheritdoc}
      */
@@ -67,6 +70,12 @@ class ItemType extends \yii\db\ActiveRecord
             break;
             case self::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON:
                 $code = 'PRIVATE LESSON';
+            break;
+            case self::TYPE_SPLIT_LESSON_CREDIT_USAGE:
+                $code = 'SPLIT LESSON CREDIT USAGE';
+            break;
+            case self::TYPE_SPLIT_LESSON_CREDIT_APPLIED:
+                $code = 'SPLIT LESSON CREDIT APPLIED';
             break;
         }
 

@@ -783,6 +783,10 @@ class LessonController extends Controller
             $lesssonSplit->unit = Lesson::DEFAULT_MERGE_DURATION;
             $lesssonSplit->save();
         }
+        Yii::$app->session->setFlash('alert', [
+            'options' => ['class' => 'alert-success'],
+            'body' => 'Lesson duration has been exploded successfully.',
+        ]);
         return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
     }
 
@@ -799,7 +803,7 @@ class LessonController extends Controller
         if ($model->save()) {
             $lessonSplitUsage = new LessonSplitUsage();
             $lessonSplitUsage->lessonSplitId = $post['radioButtonSelection'];
-            $lessonSplitUsage->lessonSplitId = $lessonSplitUsage->getLessonSplit();
+            $lessonSplitUsage->lessonSplitId = $lessonSplitUsage->getLessonSplitId();
             $lessonSplitUsage->extendedLessonId = $id;
             $lessonSplitUsage->mergedOn = (new \DateTime())->format('Y-m-d H:i:s');
             $lessonSplitUsage->save();
