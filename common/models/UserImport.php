@@ -203,10 +203,10 @@ class UserImport extends Model
                     $phone->save();
                 }
 				if(!empty($row['Opening Balance'])) {
-					if (preg_match('/^-?\d{1,10}(?:\.\d{1,4})?$/', $row['Opening Balance'])) {
+					if (preg_match('/^-?[0-9]+(?:\.[0-9]{1,2})?$/', $row['Opening Balance'])) {
 						$this->createOpeningBalanceInvoice($row['Opening Balance'], $user);
 					} else {
-                		$errors[] = 'Error on Line '.($i + 2).': Invalid Opening Balance for"'.$row['Billing First Name'].'"';
+                		$errors[] = 'Error on Line '.($i + 2).': Invalid Opening Balance for "'.$row['Billing First Name'].'"';
 					}
 				}
 
