@@ -654,6 +654,11 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
         $invoice->addLineItem($this);
+        if (!empty($this->extendedLessons)) {
+            foreach ($this->extendedLessons as $extendedLesson) {
+                $this->invoice->addLessonCreditApplied($extendedLesson->lessonSplitId);
+            }
+        }
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
             $netPrice = $this->proFormaLineItem->netPrice;
