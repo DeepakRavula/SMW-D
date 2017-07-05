@@ -24,7 +24,7 @@ use yii\helpers\Url;
             [
                 'label' => 'Payment Method',
                 'value' => function ($data) {
-                    return $data->getPaymentMethod();
+                    return $data->getPaymentMethodName();
                 }
             ],
             'dayOfMonth'

@@ -113,6 +113,22 @@ class UserController extends Controller
      */
     public function actionView($id)
     {
+        $customers = User::find()
+                ->joinWith(['customerPaymentPreference' => function ($query) {
+                    $query->onToday();
+                }])
+                ->all();
+        foreach ($customers as $customer) {
+            $invoices = Invoice::find()
+                ->notDeleted()
+                ->proFormaInvoice()
+                ->customer($customer->id)
+                ->unpaid()
+                ->all();
+            foreach ($invoices as $invoice) {
+                $invoice->addPreferencePayment($customer->customerPaymentPreference->paymentMethodId);
+            }
+        }
         $model = $this->findModel($id);
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');

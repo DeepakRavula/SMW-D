@@ -978,4 +978,14 @@ class Invoice extends \yii\db\ActiveRecord
         return !$this->lineItem->isLessonCredit() && !$this->lineItem->isOpeningBalance()
             && !$this->lineItem->isMisc();
     }
+
+    public function addPreferencePayment($paymentMethodId)
+    {
+        $payment = new Payment();
+        $payment->user_id = $this->user_id;
+        $payment->invoiceId = $this->id;
+        $payment->payment_method_id = $paymentMethodId;
+        $payment->amount = $this->balance;
+        return $payment->save();
+    }
 }

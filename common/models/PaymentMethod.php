@@ -64,4 +64,9 @@ class PaymentMethod extends \yii\db\ActiveRecord
                 ->andWhere(['payment.isDeleted' => false])
                 ->sum('payment.amount');
     }
+
+    public static function find()
+    {
+        return new query\PaymentMethodQuery(get_called_class());
+    }
 }

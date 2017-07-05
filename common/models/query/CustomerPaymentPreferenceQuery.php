@@ -31,4 +31,10 @@ class CustomerPaymentPreferenceQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function onToday()
+    {
+        $currentdate = new \DateTime();
+        return $this->andWhere(['dayOfMonth' => $currentdate->format('d')]);
+    }
 }
