@@ -27,36 +27,37 @@ use common\models\User;
    ->orFilterWhere(['up.user_id' => $model->id]);
 ?>
 <?php elseif(Yii::$app->authManager->checkAccess($model->id, User::ROLE_CUSTOMER)) : ?>
-<?php $invoiceLogs = TimelineEvent::find()
+<?php $logs = TimelineEvent::find()
 	->location($locationId)
 	->joinWith(['timelineEventInvoice' => function($query) use($model) {
-		$query->joinWith(['invoice' => function($query) use($model) {
-			$query->joinWith(['user' => function($query) use($model) {
-				$query->andWhere(['user.id' => $model->id]);
+		$query->joinWith(['invoice i1' => function($query) use($model) {
+            $query->joinWith(['invoicePayments' => function($query) use($model) {
+                $query->joinwith(['timelineEventPayment' => function($query) use($model) {
+                  $query->joinWith(['user u1' => function($query) use($model) {  
+                }]);
+          	
+            }]);	
 			}]);
 		}]);
-	}]);
-$paymentLogs = TimelineEvent::find()
-	->location($locationId)
-	->joinWith(['timelineEventPayment' => function($query) use($model) {
-		$query->joinWith(['payment' => function($query) use($model) {
-			$query->joinWith(['invoice i' => function($query) use($model) {
-				$query->joinWith(['user' => function($query) use($model) {
-					$query->orFilterWhere(['user.id' => $model->id]);
+	}])
+    ->joinWith(['timelineEventPayment' => function($query) use($model) {
+		$query->joinWith(['activityPayment' => function($query) use($model) {
+			$query->joinWith(['invoice i2' => function($query) use($model) {
+				$query->joinWith(['user u2' => function($query) use($model) {
+					
 				}]);
 			}]);
 		}]);
-	}]);
-    $userLogs = TimelineEvent::find()
-        ->location($locationId)
+	}])    
         ->joinWith(['timelineEventUser' => function($query) use($model) {
+            $query->joinWith(['user u3' => function($query) use($model) {
+                             }]);
+        }])
+->andWhere(['u1.id' => $model->id])
+->orFilterWhere(['u2.id' => $model->id])
+->orFilterWhere(['u3.id' => $model->id]);
 
-            $query->joinWith(['user' => function($query) use($model) {
-                    $query->orFilterWhere(['user.id' => $model->id]);
-                }]);
-        }]);
-
-    $logs = $invoiceLogs->union($paymentLogs)->union($userLogs); ?>
+     ?>
 <?php else : ?>
 <?php $logs = TimelineEvent::find()
 	->location($locationId)
