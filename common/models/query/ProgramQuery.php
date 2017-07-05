@@ -41,9 +41,10 @@ class ProgramQuery extends ActiveQuery
         return $this->joinWith(['course' => function ($query) use ($studentId) {
                 $query->joinWith(['enrolment' => function ($query) use ($studentId) {
                         $query->andWhere(['enrolment.studentId' => $studentId])
-                        ->isConfirmed()
-                        ->isRegular();
-                }]);
+                        ->notDeleted()
+                        ->isConfirmed();
+                }])
+                ->isConfirmed();
         }]);
     }
 }

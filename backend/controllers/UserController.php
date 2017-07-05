@@ -194,7 +194,9 @@ class UserController extends Controller
                 $query->where(['customer_id' => $model->id])
                 ->active();
             }])
-            ->notDeleted();
+            ->notDeleted()
+            ->isConfirmed()
+            ->isRegular();
 
         $enrolmentDataProvider = new ActiveDataProvider([
             'query' => $enrolmentQuery,

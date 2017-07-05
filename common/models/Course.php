@@ -34,6 +34,8 @@ class Course extends \yii\db\ActiveRecord
 	public $weeksCount;
 	public $lessonsPerWeekCount;
     public $userName;
+    public $studentId;
+
     /**
      * {@inheritdoc}
      */
@@ -52,7 +54,7 @@ class Course extends \yii\db\ActiveRecord
             [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
-            [['locationId', 'rescheduleBeginDate', 'isConfirmed'], 'safe'],
+            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId'], 'safe'],
           
         ];
     }
@@ -171,7 +173,9 @@ class Course extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::beforeSave($insert);
 		}
-		$this->isConfirmed = false;
+                if (empty($this->isConfirmed)) {
+                    $this->isConfirmed = false;
+                }
         if ((int) $this->program->isGroup()) {
 			list($firstLessonDate,$secondLessonDate) = $this->startDate;
 			if((int)$this->lessonsPerWeekCount === CourseGroup::LESSONS_PER_WEEK_COUNT_ONE) {
@@ -371,4 +375,15 @@ class Course extends \yii\db\ActiveRecord
 			}
 		}
 	}
+
+    public function createExtraLessonEnrolment()
+    {
+        $enrolment                     = new Enrolment();
+        $enrolment->courseId           = $this->id;
+        $enrolment->studentId          = $this->studentId;
+        $enrolment->type               = Enrolment::TYPE_EXTRA;
+        $enrolment->isConfirmed        = true;
+        $enrolment->paymentFrequencyId = false;
+        $enrolment->save();
+    }
 }

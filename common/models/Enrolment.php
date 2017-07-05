@@ -300,7 +300,9 @@ class Enrolment extends \yii\db\ActiveRecord
     public function beforeSave($insert) {
         if($insert) {
             $this->isDeleted = false;
-            $this->isConfirmed = false;
+            if (empty($this->isConfirmed)) {
+                $this->isConfirmed = false;
+            }
             if (empty($this->type)) {
                 $this->type = self::TYPE_REGULAR;
             }
@@ -309,7 +311,8 @@ class Enrolment extends \yii\db\ActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
-        if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
+        if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate)) || 
+            (!$insert) || $this->isExtra()) {
             return true;
         }
         $interval = new \DateInterval('P1D');
@@ -529,5 +532,10 @@ class Enrolment extends \yii\db\ActiveRecord
         } else {
             return $invoice;
         }
+    }
+
+    public function isExtra()
+    {
+        return $this->type === self::TYPE_EXTRA;
     }
 }

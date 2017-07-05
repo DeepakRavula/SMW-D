@@ -9,7 +9,9 @@ class StudentValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
-		if($model->course->program->isPrivate()) {
+                if ($model->isExtra()) {
+                    $studentId = $model->studentId; 
+                } else if($model->course->program->isPrivate()) {
 			$studentId = $model->course->enrolment->student->id; 
 		} else {
 			$studentId = !empty($model->studentId) ? $model->studentId : null;

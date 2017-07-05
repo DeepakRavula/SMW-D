@@ -80,6 +80,8 @@ class StudentController extends Controller
 			}])
 			->location($locationId)
 			->notDeleted()
+                        ->isConfirmed()
+                        ->isRegular()
 			->andWhere(['studentId' => $model->id]);
 
         $enrolmentDataProvider = new ActiveDataProvider([

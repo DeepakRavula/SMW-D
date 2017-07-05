@@ -102,8 +102,13 @@ use yii\helpers\Url;
 
 <script>
     $(document).ready(function () {
-        $(document).on('click', '#show-all', function () {debugger;
-            $("#lesson-program").select2('data', '<?php echo $allProgram; ?>');debugger;
+        $(document).on('click', '#show-all', function () {
+            var data = <?php echo $allProgram; ?>;
+            $("#lesson-program").select2({
+                data: data,
+                width: '100%',
+                theme: 'krajee'
+            });
             return false;
         });
     });

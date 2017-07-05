@@ -73,6 +73,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $vacationId;
     public $studentId;
     public $userName;
+    public $locationId;
 
     /**
      * {@inheritdoc}
@@ -101,7 +102,10 @@ class Lesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['courseId', 'teacherId', 'status', 'duration'], 'required'],
+            [['teacherId', 'status', 'duration'], 'required'],
+            ['courseId', 'required', 'when' => function($model, $attribute) {
+                    return $model->type !== self::TYPE_EXTRA;
+            }],
             [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 'on' => self::SCENARIO_EDIT_CLASSROOM],
@@ -949,5 +953,17 @@ class Lesson extends \yii\db\ActiveRecord
     public function canInvoice()
     {
         return $this->isCompleted() && $this->isScheduled();
+    }
+
+    public function createExtraLessonCourse()
+    {
+        $course = new Course();
+        $course->programId   = $this->programId;
+        $course->teacherId   = $this->teacherId;
+        $course->startDate   = $this->date;
+        $course->isConfirmed = true;
+        $course->locationId  = $this->locationId;
+        $course->save();
+        return $course;
     }
 }
