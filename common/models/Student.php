@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\timelineEvent\TimelineEventStudent;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\query\StudentQuery;
 
 /**
@@ -27,7 +28,7 @@ class Student extends \yii\db\ActiveRecord
 	
     public $vacationId;
     public $userName;
-    public $studentIds;
+    public $studentId;
 
     /**
      * {@inheritdoc}
@@ -44,11 +45,24 @@ class Student extends \yii\db\ActiveRecord
     {
         return [
             [['first_name', 'last_name'], 'required', 'except' => self::SCENARIO_MERGE],
-            ['studentIds', 'required', 'on' => self::SCENARIO_MERGE],
+            ['studentId', 'required', 'on' => self::SCENARIO_MERGE],
             [['first_name', 'last_name'], 'string', 'min' => 2, 'max' => 30],
             [[ 'status'], 'integer'],
             [['birth_date'], 'date', 'format' => 'php:d-m-Y', 'except' => self::SCENARIO_MERGE],
             [['customer_id', 'isDeleted'], 'safe'],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ]
         ];
     }
 
