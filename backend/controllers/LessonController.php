@@ -310,6 +310,32 @@ class LessonController extends Controller
         }
     }
 
+	public function fetchConflictedLesson($course)
+	{
+		$conflicts = [];
+		$conflictedLessonIds = [];
+		$draftLessons = Lesson::find()
+			->where(['courseId' => $course->id, 'status' => Lesson::STATUS_DRAFTED])
+			->all();
+		foreach ($draftLessons as $draftLesson) {
+			$draftLesson->setScenario('review');
+		}
+		Model::validateMultiple($draftLessons);
+		foreach ($draftLessons as $draftLesson) {
+			if(!empty($draftLesson->getErrors('date'))) {
+				$conflictedLessonIds[] = $draftLesson->id;
+			}
+			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+		}
+
+		$holidayConflictedLessonIds = $course->getHolidayLessons();
+		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+		$lessons = Lesson::find()
+			->orderBy(['lesson.date' => SORT_ASC])
+			->andWhere(['IN', 'lesson.id', $conflictedLessonIds])
+			->all();	
+		return $lessons;
+	}
     public function actionUpdateField($id)
     {
 		$model = $this->findModel($id);
@@ -322,31 +348,61 @@ class LessonController extends Controller
 			'data' => $data
 		];
         if ($model->load(Yii::$app->request->post())) {
-			if(! empty($model->date)) {
-           		$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
-				$model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+			if(!empty($model->applyContext)) {
+			if((int)$model->applyContext === Lesson::APPLY_SINGLE_LESSON) {
+				if(! empty($model->date)) {
+					$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
+					$model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+				} else {
+					$model->date = $existingDate;
+					$model->status = Lesson::STATUS_UNSCHEDULED;
+				}
+				if($model->save()) {
+					$response = [
+						'status' => true
+					];
+				} else {
+					$response = [
+						'status' => false,
+						'errors' => ActiveForm::validate($model),
+					];
+				}
 			} else {
-				$model->date = $existingDate;
-				$model->status = Lesson::STATUS_UNSCHEDULED;
-				$privateLessonModel = new PrivateLesson();
-				$privateLessonModel->lessonId = $model->id;
-				$date = new \DateTime($model->date);
-				$expiryDate = $date->modify('90 days');
-				$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-				$privateLessonModel->save();
-			}
- 			if($model->save()) {
+				$lessons = $this->fetchConflictedLesson($model->course);
+				foreach($lessons as $lesson) {
+					$lesson->duration = $model->duration;
+					if(! empty($model->date)) {
+						$day = (new \DateTime($model->date))->format('N');
+						$lessonDay = (new \DateTime($lesson->date))->format('N');
+						$time = (new \DateTime($model->date))->format('H:i:s'); 
+						list($hour, $minute, $second) = explode(':', $time);
+						$dayList = Course::getWeekdaysList();
+						$dayName = $dayList[$day];
+						if($day === $lessonDay) {
+							$lessonDate = new \DateTime($lesson->date); 
+							$lessonDate->setTime($hour, $minute, $second);
+							$lesson->date = $lessonDate->format('Y-m-d H:i:s');
+						} else {
+							$lessonDate = new \DateTime($lesson->date); 
+							$lessonDate->modify('next ' . $dayName);
+							$lessonDate->setTime($hour, $minute, $second);
+							$lesson->date = $lessonDate->format('Y-m-d H:i:s');	
+						}
+					} else {
+						$lesson->status = Lesson::STATUS_UNSCHEDULED;
+					}
+					$lesson->save();
+					
+				}
 				$response = [
-					'status' => true
-				];
-			} else {
-				$response = [
-					'status' => false,
-					'errors' => ActiveForm::validate($model),
-				];
+						'status' => true
+					];
 			}
-        }	
-		 return $response;
+			}
+			 return $response;
+		} else {
+			 return $response;
+		}
     }
 
 	public function actionGroupEnrolmentReview($courseId, $enrolmentId)
@@ -494,8 +550,8 @@ class LessonController extends Controller
 		$conflictedLessonIdsCount = count($conflictedLessonIds);
         $hasConflict = false;
 		if ($conflictedLessonIdsCount > 0) {
-                    $hasConflict = true;
-            }
+            $hasConflict = true;
+        }
 
         return [
             'hasConflict' => $hasConflict,
