@@ -4,6 +4,7 @@ use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use yii\helpers\Url;
 use yii\helpers\Html;
+use common\models\PaymentMethod;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -17,7 +18,7 @@ use yii\helpers\Html;
 	'enableClientValidation' => false
 ]); ?>
    <div class="row">
-	   <div class="col-md-6">
+	   <div class="col-md-4">
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
                     'id' => 'extra-lesson-date',
@@ -31,9 +32,18 @@ use yii\helpers\Html;
             ]);
             ?>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <?= $form->field($model, 'amount')->textInput();?>
         </div>
+       <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
+           <div class="col-md-4">
+               <?= $form->field($model, 'reference')->textInput()->label('Cheque Number'); ?>
+           </div>
+       <?php elseif ($model->payment_method_id !== PaymentMethod::TYPE_CASH) : ?>
+           <div class="col-md-4">
+               <?= $form->field($model, 'reference')->textInput(); ?>
+           </div>
+       <?php endif; ?>
         <div class="clearfix"></div>
 	   <div class="col-md-6 form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
