@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+use common\models\timelineEvent\TimelineEventPayment;
 
 /**
  * This is the model class for table "payments".
@@ -52,7 +53,10 @@ class InvoicePayment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Payment::className(), ['id' => 'payment_id']);
     }
-
+    public function getTimelineEventPayment()
+    {
+        return $this->hasOne(TimelineEventPayment::className(), ['paymentId' => 'payment_id']);
+    }
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
