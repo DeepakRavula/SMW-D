@@ -15,14 +15,10 @@ use common\models\User;
     $logs = TimelineEvent::find()
         ->location($locationId)
         ->joinWith(['timelineEventLesson tel' => function($query) use($model) {
-                $query->joinWith(['lesson l' => function($query) use($model) {
-                        
-                    }]);
+                $query->joinWith(['lesson l']);
             }])
         ->joinWith(['timelineEventUser' => function($query) use($model) {
-                $query->joinWith(['userProfile up' => function($query) use($model) {
-                        
-                    }]);
+                $query->joinWith(['userProfile up']);
             }])
         ->andWhere(['l.teacherId' => $model->id])
         ->orFilterWhere(['up.user_id' => $model->id]);
@@ -34,25 +30,18 @@ use common\models\User;
         ->location($locationId)
         ->joinWith(['timelineEventInvoice' => function($query) use($model) {
                 $query->joinWith(['invoice i1' => function($query) use($model) {
-                        $query->joinWith(['user u1' => function($query) use($model) {
-                                
-                            }]);
+                        $query->joinWith(['user u1']);
                     }]);
             }])
         ->joinWith(['timelineEventPayment' => function($query) use($model) {
                 $query->joinWith(['invoicePayment' => function($query) use($model) {
                         $query->joinWith(['invoice i2' => function($query) use($model) {
-                                $query->joinWith(['user u2' => function($query) use($model) {
-                                        
-                                    }]);
+                                $query->joinWith(['user u2']);
                             }]);
                     }]);
             }])
         ->joinWith(['timelineEventUser' => function($query) use($model) {
-
-                $query->joinWith(['user u3' => function($query) use($model) {
-                        
-                    }]);
+                $query->joinWith(['user u3']);
             }])
         ->andWhere(['u1.id' => $model->id])
         ->orFilterWhere(['u2.id' => $model->id])

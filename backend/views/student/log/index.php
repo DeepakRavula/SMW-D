@@ -11,22 +11,14 @@ use yii\data\ActiveDataProvider;
 ?> 
 <?php
 $logs = TimelineEvent::find()
-	->joinWith(['timelineEventStudent tes' => function($query) use($model){
-	}])
-	
+	->joinWith(['timelineEventStudent tes'])	
 	->joinWith(['timelineEventEnrolment' => function($query) use($model) {
-		$query->joinWith(['enrolment e1' => function($query) use($model) {
-			
-		}]);
+		$query->joinWith(['enrolment e1']);
 	}])
-
-
 	->joinWith(['timelineEventLesson' => function($query) use($model) {
 		$query->joinWith(['lesson' => function($query) use($model) {
 			$query->joinWith(['course' => function($query) use($model) {
-				$query->joinWith(['enrolment e2' => function($query) use($model) {
-					
-				}]);
+				$query->joinWith(['enrolment e2']);
 			}]);
 		}]);
 	}])
