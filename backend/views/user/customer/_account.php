@@ -58,6 +58,7 @@ use yii\helpers\Url;
 ?>
 
 <?php yii\widgets\Pjax::begin([
+    'id' => 'payment-preference-listing',
     'timeout' => 6000,
 ]) ?>
 <div class="col-md-12 p-b-20">
@@ -130,10 +131,28 @@ $(document).on("click", "#payment-preference-grid tbody > tr", function() {
     modifyPaymentPreference();
 });
 
+$(document).on("beforeSubmit", "#payment-preference-form", function() {
+    $.ajax({
+        url    : $(this).attr('action'),
+        type   : 'post',
+        dataType: "json",
+        data   : $(this).serialize(),
+        success: function(response)
+        {
+            if(response.status)
+            {
+                $('#payment-preference-modal').modal('hide');
+                $.pjax.reload({container : '#payment-preference-listing', replace:false, timeout : 4000});
+            }
+        }
+    });
+    return false;
+});
+
 function modifyPaymentPreference() {
     $.ajax({
         url    : '<?= Url::to(['customer-payment-preference/modify', 'id' => $model->id]); ?>',
-        type   : 'post',
+        type   : 'get',
         dataType: "json",
         success: function(response)
         {

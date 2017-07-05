@@ -83,9 +83,10 @@ class InvoiceController extends Controller
 
     public function actionPaymentPreferenceInvoice()
     {
+        $currentDate = new \DateTime();
         $customers = User::find()
-                ->joinWith(['customerPaymentPreference' => function ($query) {
-                    $query->onToday();
+                ->joinWith(['customerPaymentPreference' => function ($query) use ($currentDate) {
+                    $query->date($currentDate);
                 }])
                 ->all();
         foreach ($customers as $customer) {
@@ -96,7 +97,7 @@ class InvoiceController extends Controller
                 ->unpaid()
                 ->all();
             foreach ($invoices as $invoice) {
-                $invoice->addPreferencePayment($customer->customerPaymentPreference->paymentMethodId);
+                $invoice->addPreferredPayment($customer->customerPaymentPreference->paymentMethodId);
             }
         }
 

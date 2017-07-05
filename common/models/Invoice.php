@@ -979,7 +979,7 @@ class Invoice extends \yii\db\ActiveRecord
             && !$this->lineItem->isMisc();
     }
 
-    public function addPreferencePayment($paymentMethodId)
+    public function addPreferredPayment($paymentMethodId)
     {
         $payment = new Payment();
         $payment->user_id = $this->user_id;
