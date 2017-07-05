@@ -287,45 +287,38 @@ class StudentController extends Controller
         $students   = Student::find()
                         ->active()
                         ->notDeleted()
+                        ->customer($model->customer_id)
                         ->location($locationId)
                         ->andWhere(['NOT', ['student.id' => $id]])
                         ->all();
-
         $data       = $this->renderAjax('_merge', [
             'students' => $students,
-            'model' => $model
+            'model' => $model,
         ]);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
             if ($model->validate()) {
-                $student = Student::findOne($model->studentId);
-                foreach ($student->enrolment as $enrolment) {
+                $studentModel = Student::findOne($model->studentId);
+                foreach ($studentModel->enrolment as $enrolment) {
                     $enrolment->studentId = $model->id;
                     $enrolment->save(false);
                 }
-                foreach ($student->notes as $note) {
+                foreach ($studentModel->notes as $note) {
                     $note->instanceId = $model->id;
                     $note->save(false);
                 }
-                foreach ($student->logs as $log) {
+                foreach ($studentModel->logs as $log) {
                     $log->studentId = $model->id;
                     $log->save(false);
                 }
-                foreach ($student->examResults as $examResult) {
+                foreach ($studentModel->examResults as $examResult) {
                     $examResult->studentId = $model->id;
                     $examResult->save(false);
                 }
-                $student->isDeleted = true;
-
+                $studentModel->delete();
                 return [
-                    'status' => $student->save(false),
+                    'status' => true,
                     'message' => 'Student successfully merged!'
-                ];
-            } else {
-                $errors = ActiveForm::validate($model);
-                return [
-                    'status' => false,
-                    'errors' => $errors
                 ];
             }
         } else {
