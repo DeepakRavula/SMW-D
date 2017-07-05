@@ -77,7 +77,7 @@ class CourseSearch extends Course
 
         if (!$this->showAllCourses) {
             $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-            $query->andWhere(['>=', 'startDate', $currentDate]);
+            $query->andWhere(['>=', 'endDate', $currentDate]);
         }
 
         return $dataProvider;
