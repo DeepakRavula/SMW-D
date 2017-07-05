@@ -25,6 +25,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
 <div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
+<div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
 <style>
 	.lesson-count {
 		font-weight: bold;

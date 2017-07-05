@@ -95,6 +95,12 @@ $(document).ready(function () {
 			data   : $(this).serialize(),
 			success: function(response)
 			{
+				if(response.status) {
+				} else {
+					console.log(response.message);
+					$('#unschedule-lesson-modal').modal('hide');
+				    $('#lesson-conflict').html(response.message).fadeIn().delay(8000).fadeOut();
+				}
 			}
 		});
 		return false;
