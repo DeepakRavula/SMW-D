@@ -16,6 +16,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
 use common\models\Student;
+use common\models\CourseSchedule;
 use yii\web\Response;
 use common\models\Vacation;
 use yii\helpers\Url;
@@ -134,28 +135,47 @@ class LessonController extends Controller
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
+        $model->locationId = Yii::$app->session->get('location_id');
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
         $studentModel = Student::findOne($studentId);
         $model->programId = $studentModel->getFirstPrivateProgram();
+        $model->duration  = Lesson::DEFAULT_LESSON_DURATION;
         $data = $this->renderAjax('/student/_form-lesson', [
             'model' => $model,
             'studentModel' => $studentModel
         ]);
         if ($model->load($request->post())) {
             $studentEnrolment = Enrolment::find()
+                ->notDeleted()
+                ->isConfirmed()
                 ->joinWith(['course' => function($query) use($model){
                     $query->where(['course.programId' => $model->programId]);
                 }])
                 ->where(['studentId' => $studentId])
                 ->one();
-            $model->courseId = $studentEnrolment->courseId;
+            if ($studentEnrolment) {
+                $model->courseId = $studentEnrolment->courseId;
+            } else {
+                $course                   = $model->createExtraLessonCourse();
+                $course->studentId        = $studentId;
+                $course->createExtraLessonEnrolment();
+                $courseSchedule           = new CourseSchedule();
+                $courseSchedule->setScenario(CourseSchedule::SCENARIO_EDIT_ENROLMENT);
+                $courseSchedule->courseId = $course->id;
+                $courseSchedule->day      = (new \DateTime($model->date))->format('N');
+                $courseSchedule->duration = (new \DateTime($model->duration))->format('H:i:s');
+                $courseSchedule->fromTime = (new \DateTime($model->date))->format('H:i:s');
+                if (!$courseSchedule->save()){
+                    Yii::error('Course Schedule: ' . \yii\helpers\VarDumper::dumpAsString($courseSchedule->getErrors()));
+                }
+                $model->courseId          = $course->id;
+            }
             $model->status = Lesson::STATUS_SCHEDULED;
             $model->isDeleted = false;
             $model->type = Lesson::TYPE_EXTRA;
             $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
-
             if ($model->save()) {
                 $response = [
                     'status' => true,
@@ -176,6 +196,7 @@ class LessonController extends Controller
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
         $model = new Lesson();
+        $model->type = Lesson::TYPE_EXTRA;
 		$model->setScenario(Lesson::SCENARIO_CREATE);
 		$request = Yii::$app->request;
         if ($model->load($request->post())) {
@@ -185,7 +206,8 @@ class LessonController extends Controller
 			   }])
 				->where(['studentId' => $studentId])
 				->one();
-            $model->courseId = $studentEnrolment->courseId;
+            $model->courseId = !empty($studentEnrolment) ? $studentEnrolment->courseId : null;
+            $model->studentId = $studentId;
 			return  ActiveForm::validate($model);
 		}
     }
@@ -310,6 +332,32 @@ class LessonController extends Controller
         }
     }
 
+	public function fetchConflictedLesson($course)
+	{
+		$conflicts = [];
+		$conflictedLessonIds = [];
+		$draftLessons = Lesson::find()
+			->where(['courseId' => $course->id, 'status' => Lesson::STATUS_DRAFTED])
+			->all();
+		foreach ($draftLessons as $draftLesson) {
+			$draftLesson->setScenario('review');
+		}
+		Model::validateMultiple($draftLessons);
+		foreach ($draftLessons as $draftLesson) {
+			if(!empty($draftLesson->getErrors('date'))) {
+				$conflictedLessonIds[] = $draftLesson->id;
+			}
+			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+		}
+
+		$holidayConflictedLessonIds = $course->getHolidayLessons();
+		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+		$lessons = Lesson::find()
+			->orderBy(['lesson.date' => SORT_ASC])
+			->andWhere(['IN', 'lesson.id', $conflictedLessonIds])
+			->all();	
+		return $lessons;
+	}
     public function actionUpdateField($id)
     {
 		$model = $this->findModel($id);
@@ -322,31 +370,61 @@ class LessonController extends Controller
 			'data' => $data
 		];
         if ($model->load(Yii::$app->request->post())) {
-			if(! empty($model->date)) {
-           		$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
-				$model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+			if(!empty($model->applyContext)) {
+			if((int)$model->applyContext === Lesson::APPLY_SINGLE_LESSON) {
+				if(! empty($model->date)) {
+					$model->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
+					$model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+				} else {
+					$model->date = $existingDate;
+					$model->status = Lesson::STATUS_UNSCHEDULED;
+				}
+				if($model->save()) {
+					$response = [
+						'status' => true
+					];
+				} else {
+					$response = [
+						'status' => false,
+						'errors' => ActiveForm::validate($model),
+					];
+				}
 			} else {
-				$model->date = $existingDate;
-				$model->status = Lesson::STATUS_UNSCHEDULED;
-				$privateLessonModel = new PrivateLesson();
-				$privateLessonModel->lessonId = $model->id;
-				$date = new \DateTime($model->date);
-				$expiryDate = $date->modify('90 days');
-				$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-				$privateLessonModel->save();
-			}
- 			if($model->save()) {
+				$lessons = $this->fetchConflictedLesson($model->course);
+				foreach($lessons as $lesson) {
+					$lesson->duration = $model->duration;
+					if(! empty($model->date)) {
+						$day = (new \DateTime($model->date))->format('N');
+						$lessonDay = (new \DateTime($lesson->date))->format('N');
+						$time = (new \DateTime($model->date))->format('H:i:s'); 
+						list($hour, $minute, $second) = explode(':', $time);
+						$dayList = Course::getWeekdaysList();
+						$dayName = $dayList[$day];
+						if($day === $lessonDay) {
+							$lessonDate = new \DateTime($lesson->date); 
+							$lessonDate->setTime($hour, $minute, $second);
+							$lesson->date = $lessonDate->format('Y-m-d H:i:s');
+						} else {
+							$lessonDate = new \DateTime($lesson->date); 
+							$lessonDate->modify('next ' . $dayName);
+							$lessonDate->setTime($hour, $minute, $second);
+							$lesson->date = $lessonDate->format('Y-m-d H:i:s');	
+						}
+					} else {
+						$lesson->status = Lesson::STATUS_UNSCHEDULED;
+					}
+					$lesson->save();
+					
+				}
 				$response = [
-					'status' => true
-				];
-			} else {
-				$response = [
-					'status' => false,
-					'errors' => ActiveForm::validate($model),
-				];
+						'status' => true
+					];
 			}
-        }	
-		 return $response;
+			}
+			 return $response;
+		} else {
+			 return $response;
+		}
     }
 
 	public function actionGroupEnrolmentReview($courseId, $enrolmentId)
@@ -494,8 +572,8 @@ class LessonController extends Controller
 		$conflictedLessonIdsCount = count($conflictedLessonIds);
         $hasConflict = false;
 		if ($conflictedLessonIdsCount > 0) {
-                    $hasConflict = true;
-            }
+            $hasConflict = true;
+        }
 
         return [
             'hasConflict' => $hasConflict,

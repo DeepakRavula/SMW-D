@@ -7,6 +7,7 @@ use common\commands\AddToTimelineCommand;
 use common\models\timelineEvent\TimelineEventPayment;
 use common\models\timelineEvent\TimelineEventLink;
 use common\models\Payment;
+use common\models\InvoicePayment;
 use yii\helpers\Url;
 /**
  * This is the model class for table "timeline_event_payment".
@@ -55,8 +56,12 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Payment::className(), ['id' => 'paymentId'])->orWhere(['payment.isDeleted' => true]);
     }
-	
-	public function create($event) {
+    public function getInvoicePayment()
+    {
+        return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'paymentId']);
+    }
+
+    public function create($event) {
 		$paymentModel = $event->sender;
 		$payment = Payment::find(['id' => $paymentModel->id])->asArray()->one();
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([

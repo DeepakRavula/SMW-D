@@ -10,54 +10,44 @@ use common\models\User;
 
 ?> 
 <?php $locationId = Yii::$app->session->get('location_id'); ?>
-<?php if(Yii::$app->authManager->checkAccess($model->id, User::ROLE_TEACHER)) : ?>
-<?php $lessonLogs = TimelineEvent::find()
-	->joinWith(['timelineEventLesson' => function($query) use($model) {
-		$query->joinWith(['lesson' => function($query) use($model) {
-			$query->andWhere(['teacherId' => $model->id]);
-		}]);
-	}]);
-    
-    $availabilityLogs = TimelineEvent::find()
-        ->joinWith(['timelineEventUser' => function($query) use($model) {
-            $query->joinWith(['userProfile' => function($query) use($model) {
-                    $query->andWhere(['user_id' => $model->id]);
-                }]);
-        }]);
-    $logs=$lessonLogs->union($availabilityLogs);
-    
-?>
-<?php elseif(Yii::$app->authManager->checkAccess($model->id, User::ROLE_CUSTOMER)) : ?>
-<?php $invoiceLogs = TimelineEvent::find()
-	->location($locationId)
-	->joinWith(['timelineEventInvoice' => function($query) use($model) {
-		$query->joinWith(['invoice' => function($query) use($model) {
-			$query->joinWith(['user' => function($query) use($model) {
-				$query->andWhere(['user.id' => $model->id]);
-			}]);
-		}]);
-	}]);
-$paymentLogs = TimelineEvent::find()
-	->location($locationId)
-	->joinWith(['timelineEventPayment' => function($query) use($model) {
-		$query->joinWith(['payment' => function($query) use($model) {
-			$query->joinWith(['invoice' => function($query) use($model) {
-				$query->joinWith(['user' => function($query) use($model) {
-					$query->andWhere(['user.id' => $model->id]);
-				}]);
-			}]);
-		}]);
-	}]);
-    $userLogs = TimelineEvent::find()
+<?php if (Yii::$app->authManager->checkAccess($model->id, User::ROLE_TEACHER)) : ?>
+    <?php
+    $logs = TimelineEvent::find()
         ->location($locationId)
+        ->joinWith(['timelineEventLesson tel' => function($query) use($model) {
+                $query->joinWith(['lesson l']);
+            }])
         ->joinWith(['timelineEventUser' => function($query) use($model) {
+                $query->joinWith(['userProfile up']);
+            }])
+        ->andWhere(['l.teacherId' => $model->id])
+        ->orFilterWhere(['up.user_id' => $model->id]);
 
-            $query->joinWith(['user' => function($query) use($model) {
-                    $query->andWhere(['user.id' => $model->id]);
-                }]);
-        }]);
+    ?>
+<?php elseif (Yii::$app->authManager->checkAccess($model->id, User::ROLE_CUSTOMER)) : ?>
+    <?php
+    $logs = TimelineEvent::find()
+        ->location($locationId)
+        ->joinWith(['timelineEventInvoice' => function($query) use($model) {
+                $query->joinWith(['invoice i1' => function($query) use($model) {
+                        $query->joinWith(['user u1']);
+                    }]);
+            }])
+        ->joinWith(['timelineEventPayment' => function($query) use($model) {
+                $query->joinWith(['invoicePayment' => function($query) use($model) {
+                        $query->joinWith(['invoice i2' => function($query) use($model) {
+                                $query->joinWith(['user u2']);
+                            }]);
+                    }]);
+            }])
+        ->joinWith(['timelineEventUser' => function($query) use($model) {
+                $query->joinWith(['user u3']);
+            }])
+        ->andWhere(['u1.id' => $model->id])
+        ->orFilterWhere(['u2.id' => $model->id])
+        ->orFilterWhere(['u3.id' => $model->id]);
 
-    $logs = $invoiceLogs->union($paymentLogs)->union($userLogs); ?>
+    ?>
 <?php else : ?>
 <?php $logs = TimelineEvent::find()
 	->location($locationId)
