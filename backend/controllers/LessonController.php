@@ -140,6 +140,7 @@ class LessonController extends Controller
         $request = Yii::$app->request;
         $studentModel = Student::findOne($studentId);
         $model->programId = $studentModel->getFirstPrivateProgram();
+        $model->duration  = Lesson::DEFAULT_LESSON_DURATION;
         $data = $this->renderAjax('/student/_form-lesson', [
             'model' => $model,
             'studentModel' => $studentModel

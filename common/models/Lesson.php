@@ -34,6 +34,7 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_UNSCHEDULED = 5;
     const STATUS_MISSED = 6;
     const DEFAULT_MERGE_DURATION = '00:15:00';
+    const DEFAULT_LESSON_DURATION = '00:15:00';
     const DEFAULT_EXPLODE_DURATION_SEC = 900;
 
 	const MAXIMUM_LIMIT = 48;
