@@ -80,15 +80,15 @@ $columns = [
 				'mergeColumns' => [[1, 3]],
 				'content' => [
 					4 => GridView::F_SUM,
-					5 => GridView::F_SUM,
+					6 => GridView::F_SUM,
 				],
 				'contentFormats' => [
 					4 => ['format' => 'number', 'decimals' => 2],
-					5 => ['format' => 'number', 'decimals' => 2],
+					6 => ['format' => 'number', 'decimals' => 2],
 				],
 				'contentOptions' => [
 					4 => ['style' => 'text-align:right'],
-					5 => ['style' => 'text-align:right'],
+					6 => ['style' => 'text-align:right'],
 				],
 			'options'=>['style'=>'font-weight:bold;']
 			];
@@ -129,6 +129,15 @@ $columns = [
             'pageSummaryFunc'=>GridView::F_SUM
 	],
 		[
+			'label' => 'Rate/hr',
+			'value' => function ($data) {
+				return !empty($data->rate) ? $data->rate : 0;
+			},
+			'contentOptions' => ['class' => 'text-right'],
+			'hAlign' => 'right',
+			'format'=>['decimal',2],
+		],
+			[
 		'label' => 'Cost',
 		'format'=>['decimal',2],
 		'value' => function ($data) {

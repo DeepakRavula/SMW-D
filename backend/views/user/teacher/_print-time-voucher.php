@@ -92,6 +92,15 @@ $columns = [
             'pageSummaryFunc'=>GridView::F_SUM
 	],
 		[
+			'label' => 'Rate/hr',
+			'value' => function ($data) {
+				return !empty($data->rate) ? $data->rate : 0;
+			},
+			'contentOptions' => ['class' => 'text-right'],
+			'hAlign' => 'right',
+			'format'=>['decimal',2],
+		],
+		[
 		'label' => 'Cost',
 		'format'=>['decimal',2],
 		'value' => function ($data) {
