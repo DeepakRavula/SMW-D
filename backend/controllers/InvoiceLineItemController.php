@@ -56,6 +56,7 @@ class InvoiceLineItemController extends Controller
     public function actionUpdate($id) 
     {
         $model = $this->findModel($id);
+		$oldDiscount = $model->discount;
         $model->setScenario(InvoiceLineItem::SCENARIO_EDIT);
         $model->tax_status = $model->taxStatus;
         $data = $this->renderAjax('/invoice/line-item/_form', [
@@ -67,9 +68,14 @@ class InvoiceLineItemController extends Controller
             $taxCode           = $model->computeTaxCode($taxStatus);
             $model->tax_status = $taxCode->taxStatus->name;
             $model->tax_type   = $taxCode->taxType->name;
+			$message = null;
+			if((float)$model->discount !== (float)$oldDiscount) {
+				$message = 'Warning: You have entered a non-approved Arcadia discount.All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.';
+			}
             if($model->save()) {
                 $response = [
                     'status' => true,
+					'message' => $message
                 ];	
             } else {
                 $response = [
