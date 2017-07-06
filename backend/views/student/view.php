@@ -182,6 +182,7 @@ echo $this->render('_profile', [
             return false;
         });
         $(document).on('beforeSubmit', '#student-merge-form', function () {
+            var url = '<?= Url::to(['student/view', 'id' => $model->id]); ?>';
             $.ajax({
                 url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
                 type   : 'post',
@@ -192,6 +193,9 @@ echo $this->render('_profile', [
                     if(response.status) {
                         $('#student-merge-modal').modal('hide');
                         $('#enrolment-delete-success').html(response.message).fadeIn().delay(5000).fadeOut();
+                        $.pjax.reload({url:url, container : '#student-lesson-listing', replace:false, async:false, timeout : 6000});
+                        $.pjax.reload({url:url, container : '#enrolment-grid', replace:false, async:false, timeout : 6000});
+                        $.pjax.reload({url:url, container : '#lesson-index', replace:false, async:false, timeout : 6000});
                     }
                 }
             });

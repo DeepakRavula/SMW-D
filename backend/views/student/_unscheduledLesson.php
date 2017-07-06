@@ -8,7 +8,8 @@ use common\models\PrivateLesson;
 
 ?>
 <div class="private-lesson-index">
-<?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+<?php yii\widgets\Pjax::begin(['id' => 'lesson-index',
+    'timeout' => 6000,]); ?>
     <?php $columns = [
            
             [
