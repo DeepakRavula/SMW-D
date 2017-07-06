@@ -43,15 +43,13 @@ Please find the invoice below: <Br>
                     },
                 ],
                 [
-                  'headerOptions' => ['class' => 'text-right'],
-        		  'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-                   'format' =>'currency',
+                  'attribute' => 'amount',
+                    'headerOptions' => ['class' => 'text-right'],
+                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+                    'format'=>'currency',
                   'label' => 'Total',
-                    'value' => function ($data) {
-                           return ($data->amount);
-                        }
-                    
-                   ],
+                  'enableSorting' => false,
+                ],
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
