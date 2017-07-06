@@ -411,9 +411,9 @@ $(document).ready(function(){
                 if(response.status) {
                     $('#customer-merge-modal').modal('hide');
                     $('#flash-success').html(response.message).fadeIn().delay(5000).fadeOut();
-                    $.pjax.reload({url:url, container : '#customer-lesson-listing', replace:false, timeout : 4000});
-                    $.pjax.reload({url:url, container : '#customer-student-listing', replace:false, timeout : 4000});
-                    $.pjax.reload({url:url, container : '#customer-enrolment-listing', replace:false, timeout : 4000});
+                    $.pjax.reload({url:url, container : '#customer-lesson-listing', replace:false, async:false, timeout : 4000});
+                    $.pjax.reload({url:url, container : '#customer-student-listing', replace:false, async:false, timeout : 4000});
+                    $.pjax.reload({url:url, container : '#customer-enrolment-listing', replace:false, async:false, timeout : 4000});
                 } else {
                     $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                 }

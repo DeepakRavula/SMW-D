@@ -185,7 +185,7 @@ class User extends ActiveRecord implements IdentityInterface
             $customer = self::findOne($customerId);
             if ($customer->hasInvoice()) {
                 $this->addError($attribute, 'Sorry! You can not merge '
-                    . $customer->publicIdentity . ' has history.');
+                    . $customer->publicIdentity . ' has payments/invoice history.');
             }
         }
     }
