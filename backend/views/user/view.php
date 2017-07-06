@@ -378,7 +378,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$('#invoice-line-item-modal').modal('show');
   	});
 $(document).ready(function(){
-    $('#user-customerid').multiselect();
     $(document).on('click', '.customer-merge-cancel', function () {
         $('#customer-merge-modal').modal('hide');
         return false;
@@ -401,6 +400,7 @@ $(document).ready(function(){
         return false;
     });
     $(document).on('beforeSubmit', '#customer-merge-form', function () {
+        var url = "<?php echo Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $model->id]); ?>";
         $.ajax({
             url    : '<?= Url::to(['user/merge', 'id' => $model->id]); ?>',
             type   : 'post',
@@ -409,8 +409,13 @@ $(document).ready(function(){
             success: function(response)
             {
                 if(response.status) {
-                    $('#student-merge-modal').modal('hide');
-                    $('#enrolment-delete-success').html(response.message).fadeIn().delay(5000).fadeOut();
+                    $('#customer-merge-modal').modal('hide');
+                    $('#flash-success').html(response.message).fadeIn().delay(5000).fadeOut();
+                    $.pjax.reload({url:url, container : '#customer-lesson-listing', replace:false, timeout : 4000});
+                    $.pjax.reload({url:url, container : '#customer-student-listing', replace:false, timeout : 4000});
+                    $.pjax.reload({url:url, container : '#customer-enrolment-listing', replace:false, timeout : 4000});
+                } else {
+                    $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                 }
             }
         });

@@ -17,7 +17,7 @@ class UserQuery extends ActiveQuery
      */
     public function notDeleted()
     {
-        $this->andWhere(['!=', 'user.status', User::STATUS_NOT_ACTIVE]);
+        $this->andWhere(['user.isDeleted' => false]);
 
         return $this;
     }

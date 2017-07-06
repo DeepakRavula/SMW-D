@@ -989,27 +989,24 @@ class UserController extends Controller
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
             if ($model->validate()) {
-                $studentModel = Student::findOne($model->studentId);
-                foreach ($studentModel->enrolment as $enrolment) {
-                    $enrolment->studentId = $model->id;
-                    $enrolment->save(false);
+                foreach ($model->customerIds as $customerId) {
+                    $customer = User::findOne($customerId);
+                    foreach ($customer->students as $student) {
+                        $student->setScenario(Student::SCENARIO_CUSTOMER_MERGE);
+                        $student->customer_id = $id;
+                        $student->save();
+                    }
+                    $customer->delete();
                 }
-                foreach ($studentModel->notes as $note) {
-                    $note->instanceId = $model->id;
-                    $note->save(false);
-                }
-                foreach ($studentModel->logs as $log) {
-                    $log->studentId = $model->id;
-                    $log->save(false);
-                }
-                foreach ($studentModel->examResults as $examResult) {
-                    $examResult->studentId = $model->id;
-                    $examResult->save(false);
-                }
-                $studentModel->delete();
                 return [
                     'status' => true,
-                    'message' => 'Student successfully merged!'
+                    'message' => 'Customer successfully merged!'
+                ];
+            } else {
+                $errors = ActiveForm::validate($model);
+                return [
+                    'status' => false,
+                    'errors' => current($errors)
                 ];
             }
         } else {

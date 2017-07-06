@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\models\query\UserQuery;
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -109,6 +110,13 @@ class User extends ActiveRecord implements IdentityInterface
                     return Yii::$app->getSecurity()->generateRandomString(40);
                 },
             ],
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ]
         ];
     }
 
@@ -138,8 +146,10 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
             [['email'], 'email'],
-            [['customerIds', 'customerId'], 'required', 'on' => self::SCENARIO_MERGE],
-            [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate'], 'safe']
+            [['customerIds'], 'required', 'on' => self::SCENARIO_MERGE],
+            ['customerIds', 'canMerge', 'on' => self::SCENARIO_MERGE],
+            [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate',
+                'customerId', 'isDeleted'], 'safe']
         ];
     }
 
@@ -156,7 +166,8 @@ class User extends ActiveRecord implements IdentityInterface
             'created_at' => Yii::t('common', 'Created at'),
             'updated_at' => Yii::t('common', 'Updated at'),
             'logged_at' => Yii::t('common', 'Last login'),
-            'customerIds' => Yii::t('common', 'Customers'),
+            'customerId' => Yii::t('common', 'Customers'),
+            'customerIds' => Yii::t('common', 'Selected Customers'),
         ];
     }
 
@@ -166,6 +177,17 @@ class User extends ActiveRecord implements IdentityInterface
     public function getUserProfile()
     {
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
+    }
+
+    public function canMerge($attribute)
+    {
+        foreach ($this->customerIds as $customerId) {
+            $customer = self::findOne($customerId);
+            if ($customer->hasInvoice()) {
+                $this->addError($attribute, 'Sorry! You can not merge '
+                    . $customer->publicIdentity . ' has history.');
+            }
+        }
     }
 
     /**
@@ -551,5 +573,22 @@ class User extends ActiveRecord implements IdentityInterface
 			->where(['raa.item_name' => 'administrator'])
 			->active()
 			->count();
+    }
+
+    public function getInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['user_id' => 'id'])
+            ->notDeleted();
+    }
+
+    public function getStudents()
+    {
+        return $this->hasMany(Student::className(), ['customer_id' => 'id'])
+            ->active()->notDeleted();
+    }
+
+    public function hasInvoice()
+    {
+        return !empty($this->invoice);
     }
 }

@@ -16,7 +16,7 @@ use yii\helpers\Html;
     <div class="row">
         <div class="col-md-5">
             <?= $form->field($model, 'customerId')->dropDownList(
-                    ArrayHelper::map(User::find()->notDeleted()->customers($locationId)->active()
+                    ArrayHelper::map(User::find()->customers($locationId)->notDeleted()->active()
                         ->all(), 'id', 'publicIdentity'), ['multiple' => 'multiple', 'size' => '10']); ?>
         </div>
         <div class="col-xs-2">
@@ -28,8 +28,7 @@ use yii\helpers\Html;
             <button type="button" id="user-customerid_redo" class="btn btn-warning btn-block">redo</button>
         </div>
         <div class="col-md-5">
-            <?= $form->field($model, "customerIds")->dropDownList(ArrayHelper::map(User::find()->notDeleted()->customers($locationId)->active()
-                        ->all(), 'id', 'publicIdentity'), ['multiple' => 'multiple',
+            <?= $form->field($model, "customerIds")->dropDownList([], ['multiple' => 'multiple',
                     'id' => 'user-customerid_to', 'size' => '10']); ?>
         </div>
         <div class="col-md-12 p-l-20 form-group">
@@ -40,3 +39,14 @@ use yii\helpers\Html;
     </div>
 	<?php ActiveForm::end(); ?>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('#user-customerid').multiselect({
+            search: {
+                left: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+                right: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+            }
+        });
+    });
+</script>
