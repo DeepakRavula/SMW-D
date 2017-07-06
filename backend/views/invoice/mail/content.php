@@ -35,18 +35,21 @@ Please find the invoice below: <Br>
         			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
                     'value' => function ($data) {
                         if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
-                            return $data->lesson->enrolment->program->rate;
+                            return Yii::$app->formatter->format($data->lesson->enrolment->program->rate, ['currency']);
                         } else {
-                            return $data->amount;
+                            return Yii::$app->formatter->format($data->amount, ['currency']);
                         }
                     },
                 ],
                 [
-                  'attribute' => 'amount',
-        			   'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+                  'headerOptions' => ['class' => 'text-center'],
+        		  'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
                   'label' => 'Total',
-                  'enableSorting' => false,
-                ],
+                    'value' => function ($data) {
+                           return Yii::$app->formatter->format($data->amount, ['currency']);
+                        }
+                    
+                   ],
             ],
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
