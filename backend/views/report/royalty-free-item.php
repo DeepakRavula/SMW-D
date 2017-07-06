@@ -37,11 +37,16 @@ $this->title = 'Royalty Free Items';
 		'pageSummaryFunc'=>GridView::F_SUM
 	],	
 ]; ?>
-<div class="col-md-12">
+<div class="grid-row-open col-md-12">
 <?php echo GridView::widget([
 	'dataProvider' => $royaltyFreeDataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
+	'rowOptions' => function ($model, $key, $index, $grid) {
+        $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
+
+        return ['data-url' => $url];
+    },
 	'pjax' => true,
 	'showPageSummary' => true,
 	'pjaxSettings' => [

@@ -108,16 +108,24 @@ class CourseSchedule extends \yii\db\ActiveRecord
     {
         return new \common\models\query\CourseScheduleQuery(get_called_class());
     }
-	public function getCourse()
+
+    public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'id'])
+            ->via('course');
+    }
+
+    public function getCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
     }
-	public function getProgram()
+
+    public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId'])
 			->via('course');
     }
-	public function beforeSave($insert)
+    public function beforeSave($insert)
     {
 		if(!$insert) {
         	return parent::beforeSave($insert);
@@ -134,7 +142,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::afterSave($insert, $changedAttributes);
 		}
-        if ((int) $this->program->isPrivate()) {
+        if ((int) $this->program->isPrivate() && empty($this->enrolment)) {
             $enrolmentModel = new Enrolment();
             $enrolmentModel->courseId = $this->courseId;
             $enrolmentModel->studentId = $this->studentId;

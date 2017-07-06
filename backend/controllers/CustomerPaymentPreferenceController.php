@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 use common\models\User;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
-use yii\helpers\Url;
+use yii\bootstrap\ActiveForm;
 
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
@@ -83,9 +83,17 @@ class CustomerPaymentPreferenceController extends Controller
             'model' => $model,
             'userModel' => $userModel,
         ]);
-        if ($model->load(Yii::$app->request->post())) {
-			if ($model->save()) {
-                return $this->redirect(['user/view', 'id' => $userModel->id, '#' => 'account']);
+        if (Yii::$app->request->post()) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return [
+                    'status' => true
+                ];
+            } else {
+                $errors = ActiveForm::validate($model);
+                return [
+                    'status' => false,
+                    'errors' => $errors
+                ];
             }
         } else {
             return [

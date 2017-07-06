@@ -56,15 +56,13 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
         return new \common\models\query\CustomerPaymentPreferenceQuery(get_called_class());
     }
     
+    public function getPaymentMethodName()
+    {
+        return $this->paymentMethod->name;
+    }
+
     public function getPaymentMethod()
     {
-        $paymentMethod = null;
-		switch($this->paymentMethodId) {
-            case PaymentMethod::TYPE_CREDIT_CARD :
-				$paymentMethod = 'Credit Card';
-			break;
-        }
-        
-        return $paymentMethod;
+        return $this->hasOne(PaymentMethod::className(), ['id' => 'paymentMethodId']);
     }
 }

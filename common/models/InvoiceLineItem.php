@@ -226,7 +226,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'tax_rate' => 'Tax',
             'tax_status' => 'Tax Status',
             'isRoyaltyExempted' => 'Exempt from Royalty',
-            'isRoyalty' => 'Royalty Free?',
+            'isRoyalty' => 'Is Royalty',
             'tax' => 'Tax (%)',
             'itemCategoryId' => 'Item Category',
             'item_id' => 'Item',
@@ -240,6 +240,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->discount     = 0.0;
                 $this->discountType = 0;
                 $this->isRoyalty  = false;
+				$this->rate = 0;
             } else if (!$this->isMisc() && !$this->isLessonCredit()) {
                 $taxStatus          = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
                 $this->tax_type     = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
@@ -248,8 +249,16 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->tax_status   = $taxStatus->name;
                 $this->isRoyalty    = true;
             } else if ($this->isMisc()) {
+                $taxStatus          = TaxStatus::findOne(['id' => $this->tax_status]);
+                $this->tax_status   = $taxStatus->name;
                 $this->discount     = 0.0;
                 $this->discountType = 0;
+				$this->rate = 0;
+            }
+            if ($this->isOpeningBalance()) {
+                $this->discount     = 0.0;
+                $this->discountType = 0;
+                $this->isRoyalty  = false;
             }
         }
         

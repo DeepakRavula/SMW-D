@@ -645,6 +645,7 @@ class Invoice extends \yii\db\ActiveRecord
             $enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0;
             $invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
             $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
+			$invoiceLineItem->rate = $rate;
         }
         
         if ($this->isProFormaInvoice()) {
@@ -661,6 +662,7 @@ class Invoice extends \yii\db\ActiveRecord
                 $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
             }
             $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+			$invoiceLineItem->rate = $rate;
         }
         $amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
         if ($this->isReversedInvoice()) {
@@ -699,6 +701,7 @@ class Invoice extends \yii\db\ActiveRecord
             'program_id' => $enrolment->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $invoiceLineItem->cost       = $rate;
+		$invoiceLineItem->rate = $rate;
         $invoiceLineItem->amount       = $lessonAmount;
         if (!empty($enrolment->proFormaInvoice->lineItem)) {
             $invoiceLineItem->discount     = $enrolment->proFormaInvoice->lineItem->discount;
@@ -910,6 +913,7 @@ class Invoice extends \yii\db\ActiveRecord
             'program_id' => $split->lesson->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
+		$invoiceLineItem->rate = $rate;
         $invoiceLineItem->amount = $split->lesson->enrolment->program->rate * $invoiceLineItem->unit;
         if (!empty($split->lesson->proFormaLineItem)) {
             $invoiceLineItem->discount     = $split->lesson->proFormaLineItem->discount;
@@ -940,6 +944,7 @@ class Invoice extends \yii\db\ActiveRecord
             'program_id' => $enrolment->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $invoiceLineItem->cost       = $rate;
+		$invoiceLineItem->rate = $rate;
         $invoiceLineItem->amount = $enrolment->program->rate;
         $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
         $invoiceLineItem->discount     = $customerDiscount;
@@ -977,5 +982,15 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return !$this->lineItem->isLessonCredit() && !$this->lineItem->isOpeningBalance()
             && !$this->lineItem->isMisc();
+    }
+
+    public function addPreferredPayment($paymentMethodId)
+    {
+        $payment = new Payment();
+        $payment->user_id = $this->user_id;
+        $payment->invoiceId = $this->id;
+        $payment->payment_method_id = $paymentMethodId;
+        $payment->amount = $this->balance;
+        return $payment->save();
     }
 }
