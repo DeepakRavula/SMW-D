@@ -10,6 +10,7 @@ use yii\grid\GridView;
 </div>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
+    'id' => 'customer-lesson-listing',
     'timeout' => 6000,
 ]) ?>
 <?php
