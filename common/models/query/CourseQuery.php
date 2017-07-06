@@ -46,6 +46,13 @@ class CourseQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+    public function privateProgram()
+    {
+        return $this->joinWith(['program' => function ($query) {
+            $query->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+        }]);
+    }
+
 	public function isConfirmed()
     {
         return $this->andWhere(['course.isConfirmed' => true]);
