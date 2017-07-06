@@ -96,19 +96,26 @@ use yii\bootstrap\Modal;
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{add-vacation}{delete}',
+                'template' => '{add-vacation}{edit}{delete}',
                 'buttons' => [
 					'add-vacation' => function ($url, $model) { 
-                        //$url = Url::to(['vacation/create', 'enrolmentId' => $model->id]);
-						return Html::a('Add Vacation', '#', [
+						return Html::a('<i class="fa fa-plane"></i>', '#', [
 							'title' => Yii::t('yii', 'Add Vacation'),
-							'class' => ['btn-success btn-sm add-new-vacation']
+							'class' => ['btn-success btn-xs add-new-vacation']
+						]);
+                    },
+					'edit' => function ($url, $model, $key) {
+						return Html::a('<i class="fa fa-pencil"></i>','#', [
+							'id' => 'enrolment-delete-' . $model->id,
+							'title' => Yii::t('yii', 'Edit'),
+							'class' => ' m-l-10 btn-info btn-xs'
 						]);
                     },
                     'delete' => function ($url, $model, $key) {
-						return Html::a('Delete','#', [
+						return Html::a('<i class="fa fa-trash-o"></i>','#', [
 							'id' => 'enrolment-delete-' . $model->id,
-							'class' => 'enrolment-delete m-l-10 btn-danger btn-sm'
+							'title' => Yii::t('yii', 'Delete'),
+							'class' => 'enrolment-delete m-l-10 btn-danger btn-xs'
 						]);
                     },
                 ],
@@ -123,5 +130,17 @@ use yii\bootstrap\Modal;
     ?>
     <?php \yii\widgets\Pjax::end(); ?>
     </div>
-    
 </div>
+<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
+<?php
+Modal::begin([
+	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+	'id' => 'enrolment-edit-modal',
+]);
+?>
+<?php
+echo $this->render('_edit-calendar', [
+]);
+?>
+<?php Modal::end(); ?>
