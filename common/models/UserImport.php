@@ -63,6 +63,7 @@ class UserImport extends Model
                 ->joinWith(['phoneNumber' => function ($query) use ($row) {
                     $query->where(['number' => $row['Billing Home Tel']]);
                 }])
+                ->notDeleted()
                 ->one();
 
             if (!empty($user)) {

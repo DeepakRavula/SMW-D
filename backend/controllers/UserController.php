@@ -838,6 +838,7 @@ class UserController extends Controller
         $adminModel = User::findOne(['id' => $id]);
         $model = User::find()->location($locationId)
                 ->where(['user.id' => $id])
+                ->notDeleted()
                 ->one();
         if ($model !== null) {
             return $model;

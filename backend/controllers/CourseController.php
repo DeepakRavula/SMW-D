@@ -215,6 +215,7 @@ public function getHolidayEvent($date)
                     ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
                     ->where(['raa.item_name' => 'teacher'])
                     ->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                    ->notDeleted()
                     ->all(),
                 'id', 'userProfile.fullName'
             );

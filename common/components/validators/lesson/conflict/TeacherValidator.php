@@ -14,7 +14,7 @@ class TeacherValidator extends Validator
     {
         $locationId = Yii::$app->session->get('location_id');
         if (!in_array($model->teacherId, ArrayHelper::getColumn(User::find()
-            ->teachers($model->course->programId, $locationId)->all(), 'id'))) {
+            ->teachers($model->course->programId, $locationId)->notDeleted()->all(), 'id'))) {
             $this->addError($model, $attribute, 'Please choose an eligible
                 teacher who is qualified to teach ' . $model->course->program->name .'!');
         }

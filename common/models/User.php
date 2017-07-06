@@ -211,6 +211,14 @@ class User extends ActiveRecord implements IdentityInterface
 	{
 		return $this->hasMany(Qualification::className(), ['teacher_id' => 'id']);
 	}
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -532,6 +540,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'customer'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                        ->notDeleted()
 			->active()
 			->count();
     }
@@ -544,6 +553,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->where(['raa.item_name' => 'teacher'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
 			->active()
+                        ->notDeleted()
 			->count();
     }
 	public static function staffCount()
@@ -553,6 +563,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'staffmember'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                        ->notDeleted()
 			->active()
 			->count();
     }
@@ -563,6 +574,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'owner'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                        ->notDeleted()
 			->active()
 			->count();
     }
@@ -571,6 +583,7 @@ class User extends ActiveRecord implements IdentityInterface
 		return self::find()
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'administrator'])
+                        ->notDeleted()
 			->active()
 			->count();
     }
