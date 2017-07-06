@@ -409,6 +409,7 @@ public function getLessons($date)
 				}]);
 			}])
 			->where(['program_id' => $programId])
+                        ->notDeleted()
 			->all();
         $result = [];
         $output = [];
