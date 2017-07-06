@@ -222,6 +222,7 @@ class LessonController extends Controller
      */
     public function actionUpdate($id)
     {
+		
         $model = $this->findModel($id);
         $oldLesson = clone $model;
         $oldDate = $model->date;
@@ -281,12 +282,21 @@ class LessonController extends Controller
 				$lessonConflict = $model->getErrors('date');
 				$message = current($lessonConflict);
 				if(! empty($lessonConflict)){
-					Yii::$app->session->setFlash('alert',
+					if(!empty($userModel)) {
+						$response = \Yii::$app->response;
+				        $response->format = Response::FORMAT_JSON;	
+						$redirectionLink = [
+							'status' => false,
+							'message' => $message,
+						];
+					} else {
+						Yii::$app->session->setFlash('alert',
 						[
 						'options' => ['class' => 'alert-danger'],
 						'body' => $message,
 					]);
-					$redirectionLink = $this->redirect(['update', 'id' => $model->id, '#' => 'details']);
+						$redirectionLink = $this->redirect(['update', 'id' => $model->id, '#' => 'details']);
+					}
 				} else {
 					if($model->course->program->isPrivate()) {
 						$duration = \DateTime::createFromFormat('H:i', $model->duration);
