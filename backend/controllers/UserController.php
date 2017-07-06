@@ -55,6 +55,13 @@ class UserController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['merge'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -970,5 +977,46 @@ class UserController extends Controller
 			'invoiceDataProvider' => $invoiceDataProvider,
 			'dateRange' => $model->dateRange,
         ]);
+    }
+
+    public function actionMerge($id)
+    {
+        $model = User::findOne($id);
+        $model->setScenario(User::SCENARIO_MERGE);
+        $data       = $this->renderAjax('customer/_merge', [
+            'model' => $model,
+        ]);
+        $post = Yii::$app->request->post();
+        if ($model->load($post)) {
+            if ($model->validate()) {
+                $studentModel = Student::findOne($model->studentId);
+                foreach ($studentModel->enrolment as $enrolment) {
+                    $enrolment->studentId = $model->id;
+                    $enrolment->save(false);
+                }
+                foreach ($studentModel->notes as $note) {
+                    $note->instanceId = $model->id;
+                    $note->save(false);
+                }
+                foreach ($studentModel->logs as $log) {
+                    $log->studentId = $model->id;
+                    $log->save(false);
+                }
+                foreach ($studentModel->examResults as $examResult) {
+                    $examResult->studentId = $model->id;
+                    $examResult->save(false);
+                }
+                $studentModel->delete();
+                return [
+                    'status' => true,
+                    'message' => 'Student successfully merged!'
+                ];
+            }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
     }
 }

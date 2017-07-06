@@ -45,7 +45,10 @@ class User extends ActiveRecord implements IdentityInterface
     const EVENT_AFTER_SIGNUP = 'afterSignup';
     const EVENT_AFTER_LOGIN = 'afterLogin';
 
-	public $fromDate;
+    const SCENARIO_MERGE = 'merge';
+
+    public $customerIds;
+    public $fromDate;
 	public $toDate;
 	public $dateRange;	
 	public $invoiceStatus;
@@ -134,7 +137,8 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
             [['email'], 'email'],
-			[['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate'], 'safe']
+            ['customerIds', 'required', 'on' => self::SCENARIO_MERGE],
+            [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate'], 'safe']
         ];
     }
 
@@ -151,6 +155,7 @@ class User extends ActiveRecord implements IdentityInterface
             'created_at' => Yii::t('common', 'Created at'),
             'updated_at' => Yii::t('common', 'Updated at'),
             'logged_at' => Yii::t('common', 'Last login'),
+            'customerIds' => Yii::t('common', 'Customers'),
         ];
     }
 
@@ -478,7 +483,14 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
-	public function getRoleName()
+    public function isCustomer()
+    {
+        $roles = Yii::$app->authManager->getRolesByUser($this->id);
+        $role  = end($roles);
+        return $role->name === self::ROLE_CUSTOMER;
+    }
+
+    public function getRoleName()
     {
 		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 		$role = end($roles);
