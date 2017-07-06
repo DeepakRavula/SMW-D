@@ -31,22 +31,24 @@ Please find the invoice below: <Br>
                 ],
                 [
                     'label' => 'Price',
-                    'headerOptions' => ['class' => 'text-center'],
+                    'headerOptions' => ['class' => 'text-right'],
         			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+                    'format' =>'currency',
                     'value' => function ($data) {
                         if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
-                            return Yii::$app->formatter->format($data->lesson->enrolment->program->rate, ['currency']);
+                            return $data->lesson->enrolment->program->rate;
                         } else {
-                            return Yii::$app->formatter->format($data->amount, ['currency']);
+                            return $data->amount;
                         }
                     },
                 ],
                 [
-                  'headerOptions' => ['class' => 'text-center'],
+                  'headerOptions' => ['class' => 'text-right'],
         		  'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+                   'format' =>'currency',
                   'label' => 'Total',
                     'value' => function ($data) {
-                           return Yii::$app->formatter->format($data->amount, ['currency']);
+                           return ($data->amount);
                         }
                     
                    ],
