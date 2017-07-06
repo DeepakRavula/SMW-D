@@ -48,6 +48,7 @@ class User extends ActiveRecord implements IdentityInterface
     const SCENARIO_MERGE = 'merge';
 
     public $customerIds;
+    public $customerId;
     public $fromDate;
 	public $toDate;
 	public $dateRange;	
@@ -137,7 +138,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
             [['email'], 'email'],
-            ['customerIds', 'required', 'on' => self::SCENARIO_MERGE],
+            [['customerIds', 'customerId'], 'required', 'on' => self::SCENARIO_MERGE],
             [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate'], 'safe']
         ];
     }

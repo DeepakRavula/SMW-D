@@ -378,7 +378,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$('#invoice-line-item-modal').modal('show');
   	});
 $(document).ready(function(){
-    $('#groupcourse-title_to').multiselect();
+    $('#user-customerid').multiselect();
     $(document).on('click', '.customer-merge-cancel', function () {
         $('#customer-merge-modal').modal('hide');
         return false;
