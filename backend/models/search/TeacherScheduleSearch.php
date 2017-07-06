@@ -3,14 +3,14 @@
 namespace backend\models\search;
 
 use yii\base\Model;
-use yii\data\ArrayDataProvider;
-use common\models\Enrolment;
+use yii\data\ActiveDataProvider;
+use common\models\Lesson;
 use Yii;
 use common\models\PaymentMethod;
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
  */
-class TeacherScheduleSearch extends Enrolment
+class TeacherScheduleSearch extends Lesson
 {
     public $fromDate;
     public $toDate;
@@ -42,9 +42,10 @@ class TeacherScheduleSearch extends Enrolment
      */
     public function search($params)
     {
-        $course_data = Enrolment::find()->all();
-        $dataProvider= new ArrayDataProvider([
-            'allModels' => $course_data,
+        $locationId = Yii::$app->session->get('location_id');
+        $lessons = Lesson::find()->location($locationId)->notDeleted();
+        $dataProvider= new ActiveDataProvider([
+            'query' => $lessons,
             'pagination' => false,
         ]);
         return $dataProvider;

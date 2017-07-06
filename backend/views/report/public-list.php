@@ -6,19 +6,19 @@ echo GridView::widget([
 			[
 				'label' => 'Start time',
 				'value' => function ($data) {
-					return $data->course->fromTime;
+					return Yii::$app->formatter->asTime($data->date);
 				},
 			],
 			[
 				'label' => 'Student',
 				'value' => function ($data) {
-					return $data->student->first_name." ".$data->student->last_name;
+					return $data->enrolment->student->FullName;
 				},
 			],
 			[
 				'label' => 'Teacher',
 				'value' => function ($data) {
-					return $data->course->teacher->userProfile->firstname." ".$data->course->teacher->userProfile->lastname;
+					return $data->course->teacher->userProfile->FullName;
 				},
 			],
 			[
@@ -28,9 +28,9 @@ echo GridView::widget([
 				},
 			],
 			[
-				'label' => 'Status',
+				'label' => 'Classroom',
 				'value' => function ($data) {
-					return $data->course->isConfirmed;
+					return $data->classroom->name;
 				},
 			],
 			 
