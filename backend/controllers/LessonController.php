@@ -85,11 +85,20 @@ class LessonController extends Controller
      */
     public function actionView($id)
     {
-		$locationId = Yii::$app->session->get('location_id');
+        $locationId = Yii::$app->session->get('location_id');
         $model = $this->findModel($id);
-		$notes = Note::find()
-			->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
-			->orderBy(['createdOn' => SORT_DESC]);
+        $duration = $model->duration;
+        foreach ($model->extendedLessons as $extendedLesson) {
+            $additionalDuration = new \DateTime($extendedLesson->lessonSplit->unit);
+            $lessonDuration = new \DateTime($duration);
+            $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
+                . 'H' . $additionalDuration->format('i') . 'M'));
+            $duration = $lessonDuration->format('H:i:s');
+        }
+        $model->duration = $duration;
+        $notes = Note::find()
+                ->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
+                ->orderBy(['createdOn' => SORT_DESC]);
 
         $noteDataProvider = new ActiveDataProvider([
             'query' => $notes,
@@ -785,7 +794,7 @@ class LessonController extends Controller
         }
         Yii::$app->session->setFlash('alert', [
             'options' => ['class' => 'alert-success'],
-            'body' => 'Lesson duration has been exploded successfully.',
+            'body' => 'The Lesson has been exploded successfully.',
         ]);
         return $this->redirect(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
     }
@@ -800,7 +809,7 @@ class LessonController extends Controller
         $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
             . 'H' . $additionalDuration->format('i') . 'M'));
         $model->duration = $lessonDuration->format('H:i:s');
-        if ($model->save()) {
+        if ($model->validate()) {
             $lessonSplitUsage = new LessonSplitUsage();
             $lessonSplitUsage->lessonSplitId = $post['radioButtonSelection'];
             $lessonSplitUsage->lessonSplitId = $lessonSplitUsage->getLessonSplitId();
@@ -809,7 +818,7 @@ class LessonController extends Controller
             $lessonSplitUsage->save();
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
-                'body' => 'Lesson duration has been extended successfully.',
+                'body' => 'The Lesson has been extended successfully.',
             ]);
 
             return $this->redirect(['lesson/view', 'id' => $id]);
