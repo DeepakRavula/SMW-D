@@ -208,6 +208,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         return $this->isRoyalty;
     }
+	public function isDiscountChanged()
+    {
+		return (float)$this->getOldAttribute('discount') !== (float)$this->discount ||
+			(int)$this->getOldAttribute('discountType') !== (int)$this->discountType;
+    }
     /**
      * {@inheritdoc}
      */

@@ -70,8 +70,7 @@ class InvoiceLineItemController extends Controller
             $model->tax_status = $taxCode->taxStatus->name;
             $model->tax_type   = $taxCode->taxType->name;
 			$message = null;
-			if((float)$model->discount !== (float)$oldDiscount || 
-				(int)$oldDiscountType !== (int)$model->discountType) {
+			if($model->isDiscountChanged()) {
 				$message = 'Warning: You have entered a non-approved Arcadia discount.All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.';
 			}
             if($model->save()) {
