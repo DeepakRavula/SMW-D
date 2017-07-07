@@ -30,7 +30,7 @@ echo GridView::widget([
 			[
 				'label' => 'Classroom',
 				'value' => function ($data) {
-					return $data->classroom->name;
+					return !empty($data->classroomId) ? $data->classroom->name : null;
 				},
 			],
 			 

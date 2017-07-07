@@ -170,12 +170,12 @@ class ReportController extends Controller {
 		]);
 	}
 	public function actionTlist() {
-	$searchModel = new TeacherScheduleSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		$searchModel = new TeacherScheduleSearch();
+                $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('public-list', [
+        	return $this->render('schedule/index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
-        ]);
+        	]);
 	}
 }

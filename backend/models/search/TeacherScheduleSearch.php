@@ -12,17 +12,15 @@ use common\models\PaymentMethod;
  */
 class TeacherScheduleSearch extends Lesson
 {
-    public $fromDate;
-    public $toDate;
-    public $groupByMethod = false;
-    public $query;
+
+    public $findTeacher;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['fromDate', 'toDate', 'groupByMethod', 'query'], 'safe'],
+            [['findTeacher'], 'safe'],
         ];
     }
 
@@ -48,6 +46,20 @@ class TeacherScheduleSearch extends Lesson
             'query' => $lessons,
             'pagination' => false,
         ]);
+        $currentDate = (new \DateTime())->format('Y-m-d');
+        $lessons->andWhere(['=', 'DATE(date)', $currentDate]);
+        if (!($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+        
+
+        $lessons->joinWith(['teacher' => function ($query) use ($locationId) {
+            $query->joinWith('userProfile up');
+        }]);
+        
+        $lessons->andFilterWhere(['like', 'up.firstname', $this->findTeacher]);
+        $lessons->orFilterWhere(['like', 'up.lastname', $this->findTeacher]);
+
         return $dataProvider;
     }
 }
