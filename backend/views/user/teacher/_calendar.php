@@ -37,18 +37,19 @@ $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s'
 $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <script type="text/javascript">
-	function fetchDuration(lessonId)
-	{
-        var param = $.param({ id: lessonId });
-		return $.ajax({
-			url: '<?= Url::to(['lesson/fetch-duration']); ?>?' + param,
-			type: 'get',
-			dataType: "json",
-			async:false,
-			success: function (response)
-			{
-			}
-		}).responseText;
+	var lesson = {
+		fetchDuration : function(lessonId) {
+			 var param = $.param({ id: lessonId });
+			return $.ajax({
+				url: '<?= Url::to(['lesson/fetch-duration']); ?>?' + param,
+				type: 'get',
+				dataType: "json",
+				async:false,
+				success: function (response)
+				{
+				}
+			}).responseText;	
+		}
 	}
     function refreshCalendar(availableHours, events) {
         $('#unschedule-lesson-calendar').fullCalendar('destroy');
@@ -77,7 +78,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
               	$('#user-fromdate').val(moment(start).format('DD-MM-YYYY h:mm A'));
                 var endtime = start.clone();
 				var lessonId = $('#user-lessonid').val();
-				var lessonDuration = fetchDuration(lessonId);
+				var lessonDuration = lesson.fetchDuration(lessonId);
                 var durationMinutes = moment.duration(lessonDuration).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
                 $('#unschedule-lesson-calendar').fullCalendar('renderEvent',
