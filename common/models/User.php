@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\models\query\UserQuery;
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -45,7 +46,11 @@ class User extends ActiveRecord implements IdentityInterface
     const EVENT_AFTER_SIGNUP = 'afterSignup';
     const EVENT_AFTER_LOGIN = 'afterLogin';
 
-	public $fromDate;
+    const SCENARIO_MERGE = 'merge';
+
+    public $customerIds;
+    public $customerId;
+    public $fromDate;
 	public $toDate;
 	public $dateRange;	
 	public $invoiceStatus;
@@ -105,6 +110,13 @@ class User extends ActiveRecord implements IdentityInterface
                     return Yii::$app->getSecurity()->generateRandomString(40);
                 },
             ],
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ]
         ];
     }
 
@@ -134,7 +146,10 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
             [['email'], 'email'],
-			[['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate'], 'safe']
+            [['customerIds'], 'required', 'on' => self::SCENARIO_MERGE],
+            ['customerIds', 'canMerge', 'on' => self::SCENARIO_MERGE],
+            [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate',
+                'customerId', 'isDeleted'], 'safe']
         ];
     }
 
@@ -151,6 +166,8 @@ class User extends ActiveRecord implements IdentityInterface
             'created_at' => Yii::t('common', 'Created at'),
             'updated_at' => Yii::t('common', 'Updated at'),
             'logged_at' => Yii::t('common', 'Last login'),
+            'customerId' => Yii::t('common', 'Customers'),
+            'customerIds' => Yii::t('common', 'Selected Customers'),
         ];
     }
 
@@ -160,6 +177,17 @@ class User extends ActiveRecord implements IdentityInterface
     public function getUserProfile()
     {
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
+    }
+
+    public function canMerge($attribute)
+    {
+        foreach ($this->customerIds as $customerId) {
+            $customer = self::findOne($customerId);
+            if ($customer->hasInvoice()) {
+                $this->addError($attribute, 'Sorry! You can not merge '
+                    . $customer->publicIdentity . ' has payments/invoice history.');
+            }
+        }
     }
 
     /**
@@ -183,6 +211,14 @@ class User extends ActiveRecord implements IdentityInterface
 	{
 		return $this->hasMany(Qualification::className(), ['teacher_id' => 'id']);
 	}
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -478,7 +514,14 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
-	public function getRoleName()
+    public function isCustomer()
+    {
+        $roles = Yii::$app->authManager->getRolesByUser($this->id);
+        $role  = end($roles);
+        return $role->name === self::ROLE_CUSTOMER;
+    }
+
+    public function getRoleName()
     {
 		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 		$role = end($roles);
@@ -497,6 +540,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'customer'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                        ->notDeleted()
 			->active()
 			->count();
     }
@@ -509,6 +553,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->where(['raa.item_name' => 'teacher'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
 			->active()
+                        ->notDeleted()
 			->count();
     }
 	public static function staffCount()
@@ -518,6 +563,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'staffmember'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                        ->notDeleted()
 			->active()
 			->count();
     }
@@ -528,6 +574,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'owner'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                        ->notDeleted()
 			->active()
 			->count();
     }
@@ -536,7 +583,25 @@ class User extends ActiveRecord implements IdentityInterface
 		return self::find()
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'administrator'])
+                        ->notDeleted()
 			->active()
 			->count();
+    }
+
+    public function getInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['user_id' => 'id'])
+            ->notDeleted();
+    }
+
+    public function getStudents()
+    {
+        return $this->hasMany(Student::className(), ['customer_id' => 'id'])
+            ->active()->notDeleted();
+    }
+
+    public function hasInvoice()
+    {
+        return !empty($this->invoice);
     }
 }

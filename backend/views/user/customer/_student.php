@@ -22,7 +22,7 @@ use yii\bootstrap\Modal;
 	Modal::end();
 	?>
 <div class="grid-row-open">
-<?php yii\widgets\Pjax::begin() ?>
+<?php yii\widgets\Pjax::begin(['id' => 'customer-student-listing']) ?>
 <?php
 echo GridView::widget([
 'dataProvider' => $dataProvider,

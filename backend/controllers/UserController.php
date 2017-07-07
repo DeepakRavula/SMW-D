@@ -55,6 +55,13 @@ class UserController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['merge'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -831,6 +838,7 @@ class UserController extends Controller
         $adminModel = User::findOne(['id' => $id]);
         $model = User::find()->location($locationId)
                 ->where(['user.id' => $id])
+                ->notDeleted()
                 ->one();
         if ($model !== null) {
             return $model;
@@ -970,5 +978,43 @@ class UserController extends Controller
 			'invoiceDataProvider' => $invoiceDataProvider,
 			'dateRange' => $model->dateRange,
         ]);
+    }
+
+    public function actionMerge($id)
+    {
+        $model = User::findOne($id);
+        $model->setScenario(User::SCENARIO_MERGE);
+        $data       = $this->renderAjax('customer/_merge', [
+            'model' => $model,
+        ]);
+        $post = Yii::$app->request->post();
+        if ($model->load($post)) {
+            if ($model->validate()) {
+                foreach ($model->customerIds as $customerId) {
+                    $customer = User::findOne($customerId);
+                    foreach ($customer->students as $student) {
+                        $student->setScenario(Student::SCENARIO_CUSTOMER_MERGE);
+                        $student->customer_id = $id;
+                        $student->save();
+                    }
+                    $customer->delete();
+                }
+                return [
+                    'status' => true,
+                    'message' => 'Customer successfully merged!'
+                ];
+            } else {
+                $errors = ActiveForm::validate($model);
+                return [
+                    'status' => false,
+                    'errors' => current($errors)
+                ];
+            }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
     }
 }
