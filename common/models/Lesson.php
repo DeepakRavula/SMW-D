@@ -173,7 +173,10 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_SCHEDULED;
     }
-
+	public function isResolveSingleLesson()
+    {
+        return (int) $this->applyContext === self::APPLY_SINGLE_LESSON;
+    }
     public function isUnscheduled()
     {
         return (int) $this->status === self::STATUS_UNSCHEDULED;

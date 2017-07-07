@@ -97,7 +97,8 @@ $columns = [
 	]) ?>
 <div style="text-align: center">
 	<strong>Unscheduled Lesson(s) due to holiday conflict:</strong> <?= count($holidayConflictedLessonIds);?><br>
-	<strong>Scheduled Lessons:</strong> <?= $lessonCount - (count($holidayConflictedLessonIds) + $conflictedLessonIdsCount);?><br>
+	<strong>Unscheduled Lessons:</strong> <?= $unscheduledLessonCount;?><br>
+	<strong>Scheduled Lessons:</strong> <?= $lessonCount - (count($holidayConflictedLessonIds) + $conflictedLessonIdsCount + $unscheduledLessonCount);?><br>
 	<strong>Conflicted Lesson(s):</strong> <?= $conflictedLessonIdsCount;?><br>
 	<strong>Total Lessons:</strong> <?= $lessonCount;?><br>
 </div>
