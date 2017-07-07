@@ -9,6 +9,7 @@ use yii\helpers\Url;
     <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
+    'id' => 'customer-enrolment-listing'
 ]) ?>
 <?php
     echo GridView::widget([

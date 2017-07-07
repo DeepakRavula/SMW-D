@@ -84,7 +84,8 @@ class ProgramController extends Controller
                     $query->where(['ul.location_id' => $locationId]);
                 }])
                 ->joinWith('qualification')
-                ->where(['program_id' => $id]);
+                ->where(['program_id' => $id])
+                ->notDeleted();
         $teacherDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

@@ -24,6 +24,7 @@ $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
             ->join('INNER JOIN', 'user_location', 'user_location.user_id = user.id')
             ->join('INNER JOIN', 'rbac_auth_assignment', 'rbac_auth_assignment.user_id = user.id')
             ->where(['user_location.location_id' => Yii::$app->session->get('location_id'), 'rbac_auth_assignment.item_name' => 'customer'])
+            ->notDeleted()
             ->all(), 'id', 'userProfile.fullName');
         ?>
         <div class="col-md-4">

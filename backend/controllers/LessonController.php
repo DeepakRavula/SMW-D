@@ -213,6 +213,11 @@ class LessonController extends Controller
 		}
     }
 
+	public function actionFetchDuration($id)
+	{
+        $model = $this->findModel($id);
+		return $model->duration;	
+	}
     /**
      * Updates an existing Lesson model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -223,7 +228,6 @@ class LessonController extends Controller
      */
     public function actionUpdate($id)
     {
-		
         $model = $this->findModel($id);
         $oldLesson = clone $model;
         $oldDate = $model->date;

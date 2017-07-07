@@ -88,6 +88,7 @@ class InvoiceController extends Controller
                 ->joinWith(['customerPaymentPreference' => function ($query) use ($currentDate) {
                     $query->date($currentDate);
                 }])
+                ->notDeleted()
                 ->all();
         foreach ($customers as $customer) {
             $invoices = Invoice::find()

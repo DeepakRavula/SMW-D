@@ -16,6 +16,7 @@ use yii\bootstrap\Modal;
 $this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice';
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'InvoiceSearch[type]' => $model->type], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
+<div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <style>
   .invoice-view .logo>img{
     width: 216px;
@@ -318,14 +319,17 @@ var payment = {
 			success: function(response)
 			{
 			   if(response.status)
-                            {
-                                $.pjax.reload({container: '#line-item-grid', timeout: 6000});
-                                payment.onEditableGridSuccess();
-                                invoice.onEditableGridSuccess();
-                                $('#line-item-edit-modal').modal('hide');
-                            } else {
-                                $('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
-                            }
+				{
+					$.pjax.reload({container: '#line-item-listing', replace:false, timeout: 6000});
+					payment.onEditableGridSuccess();
+					invoice.onEditableGridSuccess();
+					if(response.message) {
+						$('#invoice-discount-warning').html(response.message).fadeIn().delay(8000).fadeOut();
+					}
+					$('#line-item-edit-modal').modal('hide');
+				} else {
+					$('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
+				}
 			}
 		});
 		return false;
