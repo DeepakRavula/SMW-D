@@ -42,6 +42,7 @@ class User extends ActiveRecord implements IdentityInterface
     const ROLE_STAFFMEMBER = 'staffmember';
     const ROLE_OWNER = 'owner';
     const ROLE_GUEST = 'guest';
+    const ROLE_BOT = 'bot';
 
     const EVENT_AFTER_SIGNUP = 'afterSignup';
     const EVENT_AFTER_LOGIN = 'afterLogin';
