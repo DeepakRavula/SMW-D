@@ -16,6 +16,7 @@ use yii\bootstrap\ActiveForm;
        'id' => 'unschedule-lesson-form', 
         ]); ?>
 	<?= $form->field($model, 'fromDate')->hiddenInput()->label(false);?>
+	<?= $form->field($model, 'lessonId')->hiddenInput()->label(false);?>
 	<?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary unschedule-lesson-save', 'name' => 'button']) ?>
 	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default unschedule-lesson-cancel']);
 	?>
@@ -36,6 +37,19 @@ $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s'
 $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <script type="text/javascript">
+	function fetchDuration(lessonId)
+	{
+        var param = $.param({ id: lessonId });
+		return $.ajax({
+			url: '<?= Url::to(['lesson/fetch-duration']); ?>?' + param,
+			type: 'get',
+			dataType: "json",
+			async:false,
+			success: function (response)
+			{
+			}
+		}).responseText;
+	}
     function refreshCalendar(availableHours, events) {
         $('#unschedule-lesson-calendar').fullCalendar('destroy');
         $('#unschedule-lesson-calendar').fullCalendar({
@@ -62,7 +76,8 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 $('#unschedule-lesson-calendar').fullCalendar('removeEvents', 'reschedule');
               	$('#user-fromdate').val(moment(start).format('DD-MM-YYYY h:mm A'));
                 var endtime = start.clone();
-				var lessonDuration = $('#unschedule-calendar').parent().prev('td').text();
+				var lessonId = $('#user-lessonid').val();
+				var lessonDuration = fetchDuration(lessonId);
                 var durationMinutes = moment.duration(lessonDuration).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
                 $('#unschedule-lesson-calendar').fullCalendar('renderEvent',
@@ -88,7 +103,9 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 			$('#unschedule-lesson-modal').modal('hide');
 			return false;
 		});
-		$(document).on('click', '#unschedule-calendar', function (e) {
+		$(document).on('click', '.unschedule-calendar', function (e) {
+			var lessonId = $(this).parent().parent().data('key');
+			$('#user-lessonid').val(lessonId);
 			$('#unschedule-lesson-modal').modal('show');
             $('#unschedule-lesson-modal .modal-dialog').css({'width': '1000px'});
 			var events, availableHours;

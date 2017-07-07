@@ -3,11 +3,12 @@
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
+use yii\helpers\Html;
 
 ?>
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
-<div class="grid-row-open p-15">
+<div class=" p-15">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php $columns = [
             [
@@ -43,9 +44,7 @@ use yii\bootstrap\Modal;
                 'label' => 'Original Date',
 				'format' => 'raw',
                 'value' => function ($data) {
-					return $this->render('_unschedule-lesson-date', [
-						'model' => $data,
-					]);
+					return Yii::$app->formatter->asDate($data->date);
                 },
             ],
             [
@@ -54,16 +53,24 @@ use yii\bootstrap\Modal;
 					return !empty($data->privateLesson->expiryDate) ? Yii::$app->formatter->asDate($data->privateLesson->expiryDate) : null;
                 },
             ],
+			[
+				'class' => 'yii\grid\ActionColumn',
+				'template' => '{edit}',
+				'buttons' => [
+					'edit' => function  ($url, $model) {
+	                    return  Html::a('<i class="fa fa-calendar"></i>','#', [
+							'id' => 'unschedule-calendar-' . $model->id,
+							'title' => 'Reschedule',
+							'class' => 'unschedule-calendar m-l-20'
+						]);
+					},
+				],
+			],
         ];
 
     ?>   
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-    'rowOptions' => function ($model, $key, $index, $grid) {
-        $url = Url::to(['lesson/view', 'id' => $model->id]);
-
-        return ['data-url' => $url];
-    },
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,
@@ -86,7 +93,7 @@ echo $this->render('_calendar', [
 <script>
 $(document).ready(function () {
 	$(document).on('beforeSubmit', '#unschedule-lesson-form', function () {
-		var lessonId = $('#unschedule-calendar').parent().parent().data('key');
+		var lessonId = $('#user-lessonid').val();
         var param = $.param({ id: lessonId });
 		$.ajax({
 			url    : '<?= Url::to(['lesson/update']);?>?' + param,
@@ -97,7 +104,6 @@ $(document).ready(function () {
 			{
 				if(response.status) {
 				} else {
-					console.log(response.message);
 					$('#unschedule-lesson-modal').modal('hide');
 				    $('#lesson-conflict').html(response.message).fadeIn().delay(8000).fadeOut();
 				}
