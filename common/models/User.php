@@ -58,7 +58,7 @@ class User extends ActiveRecord implements IdentityInterface
 	public $privateLessonHourlyRate;
 	public $groupLessonHourlyRate;
 	public $hasEditable;
-	
+	public $lessonId;	
 	public static $roleNames = [
         self::ROLE_ADMINISTRATOR => 'Admin',
         self::ROLE_OWNER => 'Owner',
