@@ -346,7 +346,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 </div>
 
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Customer Merge</h4>',
+    'header' => '<h4 class="m-0">Merge '. $model->publicIdentity . '</h4>',
     'id' => 'customer-merge-modal',
 ]); ?>
 <div id="customer-merge-content"></div>
