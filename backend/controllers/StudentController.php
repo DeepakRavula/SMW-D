@@ -74,18 +74,24 @@ class StudentController extends Controller
     {
         $model = $this->findModel($id);
         $locationId = Yii::$app->session->get('location_id');
-        $enrolments = Enrolment::find()
+        $query = Enrolment::find()
 			->joinWith(['course' => function($query) {
 				$query->isConfirmed();
 			}])
 			->location($locationId)
 			->notDeleted()
                         ->isConfirmed()
-                        ->isRegular()
-			->andWhere(['studentId' => $model->id]);
-
+                        ->andWhere(['studentId' => $model->id]);
+        $enrolments = $query->all();
+        $allEnrolments = [];
+        foreach ($enrolments as $enrolment) {
+            $allEnrolments[] = [
+                'teacherId' => $enrolment->course->teacherId,
+                'programId' => $enrolment->course->programId
+            ];
+        }
         $enrolmentDataProvider = new ActiveDataProvider([
-            'query' => $enrolments,
+            'query' => $query->isRegular(),
         ]);
 
         $currentDate = new \DateTime();
@@ -129,6 +135,7 @@ class StudentController extends Controller
 
 		return $this->render('view', [
 			'model' => $model,
+                        'allEnrolments' => $allEnrolments,
 			'lessonDataProvider' => $lessonDataProvider,
 			'enrolmentDataProvider' => $enrolmentDataProvider,
 			'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
