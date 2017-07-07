@@ -821,15 +821,8 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
         $invoice->type = INVOICE::TYPE_INVOICE;
-		if (Yii::$app instanceof Yii\console\Application) {
-			$user = User::findByRole(User::ROLE_BOT);
-			$botUser = current($user);
-			$invoice->createdUserId = $botUser->id;
-			$invoice->updatedUserId = $botUser->id;
-		} else {
-			$invoice->createdUserId = Yii::$app->user->id;
-			$invoice->updatedUserId = Yii::$app->user->id;	
-		}
+		$invoice->createdUserId = Yii::$app->user->id;
+		$invoice->updatedUserId = Yii::$app->user->id;	
         return $invoice;
     }
 
@@ -839,13 +832,7 @@ class Lesson extends \yii\db\ActiveRecord
         $location_id = $this->enrolment->student->customer->userLocation->location_id;
         $user = User::findOne(['id' => $this->enrolment->student->customer]);
         $invoice->userName = $user->publicIdentity;
-		if (Yii::$app instanceof Yii\console\Application) {
-			$user = User::findByRole(User::ROLE_BOT);
-			$botUser = current($user);
-        	$invoice->user_id = $botUser->id;
-		} else {
-        	$invoice->user_id = $this->enrolment->student->customer->id;
-		}
+        $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
         $invoice->save();
         $invoice->addPrivateLessonLineItem($this);
