@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Url;
-use common\models\Lesson;
+use yii\helpers\Json;
 use common\models\LocationAvailability;
 use yii\grid\GridView;
 use yii\bootstrap\Modal;
@@ -116,14 +116,11 @@ use yii\bootstrap\Modal;
 <script>
     $(document).ready(function () {
         $(document).on('change', '#extra-lesson-date', function () {
-            refresh();
+            calendar.refresh();
         });
 
-        $(document).on('change', '#lesson-teacher', function () {
-            refresh();
-        });
-
-        function refreshCalendar(availableHours, events, date) {
+    var extraLesson = {
+        refreshCalendar : function(availableHours, events, date){
             $('#lesson-calendar').fullCalendar('destroy');
             $('#lesson-calendar').fullCalendar({
                 defaultDate: date,
@@ -174,8 +171,10 @@ use yii\bootstrap\Modal;
                 selectHelper: true,
             });
         }
+    };
 
-        function refresh() {
+    var calendar = {
+        refresh : function(){
             var events, availableHours;
             var teacherId = $('#lesson-teacher').val();
             var date = moment($('#extra-lesson-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
@@ -201,11 +200,48 @@ use yii\bootstrap\Modal;
                     {
                         events = response.events;
                         availableHours = response.availableHours;
-                        refreshCalendar(availableHours, events, date);
+                        extraLesson.refreshCalendar(availableHours, events, date);
                     }
                 });
             }
         }
+    };
+        $(document).on('depdrop.afterChange', '#lesson-teacher', function() {
+            var programs = <?php echo Json::encode($allEnrolments); ?>;
+            var selectedProgram = $('#lesson-program').val();
+            $.each(programs, function( index, value ) {
+                if (value.programId === selectedProgram) {
+                    $('#lesson-teacher').val(value.teacherId).trigger('change.select2');
+                }
+            });
+            calendar.refresh();
+            return false;
+        });
+        $(document).on('change', '#lesson-teacher', function () {
+            calendar.refresh();
+            return false;
+        });
+        $(document).on('click', '#new-lesson', function (e) {
+            $.ajax({
+                url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
+                type   : 'get',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                   if(response.status)
+                   {
+                        $('#new-lesson-modal-content').html(response.data);
+                        $('#new-lesson-modal').modal('show');
+                        var teacher = $('#lesson-teacher').val();
+                        if (!$.isEmptyObject(teacher)) {
+                            calendar.refresh();
+                        }
+                    }
+                }
+            });
+            return false;
+        });
     });
 </script>
 
