@@ -206,12 +206,12 @@ use yii\bootstrap\Modal;
             }
         }
     };
-        $(document).on('change', '#lesson-program', function () {
+        $(document).on('depdrop.afterChange', '#lesson-teacher', function() {
             var programs = <?php echo Json::encode($allEnrolments); ?>;
             var selectedProgram = $('#lesson-program').val();
             $.each(programs, function( index, value ) {
                 if (value.programId === selectedProgram) {
-                    $('#lesson-teacher').val(value.teacherId);
+                    $('#lesson-teacher').val(value.teacherId).trigger('change.select2');
                 }
             });
             calendar.refresh();
