@@ -9,35 +9,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 
 ?>
-<?php
-    $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
-    $teacherUnavailability = CalendarEventColor::findOne(['cssClass' => 'teacher-unavailability']);
-    $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
-    $groupLesson = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
-    $firstLesson = CalendarEventColor::findOne(['cssClass' => 'first-lesson']);
-    $teacherSubstitutedLesson = CalendarEventColor::findOne(['cssClass' => 'teacher-substituted']);
-    $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
-    $missedLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-missed']);
-    $this->registerCss(
-        ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
-        .fc-bg { background-color: " . $teacherUnavailability->code . " !important; }
-        .fc-today { background-color: " . $teacherUnavailability->code . " !important; }
-        .private-lesson, .fc-event .private-lesson .fc-event-time, .private-lesson a {
-            border: 1px solid " . $privateLesson->code . " !important;
-            background-color: " . $privateLesson->code . " !important; }
-        .first-lesson, .fc-event .first-lesson .fc-event-time, .first-lesson a {
-            border: 1px solid " . $firstLesson->code . " !important;
-            background-color: " . $firstLesson->code . " !important; }
-        .group-lesson, .fc-event .group-lesson .fc-event-time, .group-lesson a {
-            border: 1px solid " . $groupLesson->code . " !important;
-            background-color: " . $groupLesson->code . " !important; }
-        .teacher-substituted, .fc-event .teacher-substituted .fc-event-time, .teacher-substituted a {
-            border: 1px solid " . $teacherSubstitutedLesson->code . " !important;
-            background-color: " . $teacherSubstitutedLesson->code . " !important; }
-        .lesson-rescheduled, .fc-event .lesson-rescheduled .fc-event-time, .lesson-rescheduled a {
-            border: 1px solid " . $rescheduledLesson->code . " !important;
-            background-color: " . $rescheduledLesson->code . " !important; }"
-    );
+<?= $this->render('/lesson/_color-code');
 ?>
 <style type="text/css">
 .box-body .fc{
@@ -118,7 +90,7 @@ bottom:-10px;
 	</div>
 </div>
 <div class="clearfix"></div>
-<div id="calendar"></div>
+<div id="enrolment-calendar"></div>
 
 <?php
 	$locationId = Yii::$app->session->get('location_id');
@@ -138,18 +110,6 @@ bottom:-10px;
 <script type="text/javascript">
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
 $(document).ready(function() {
-    $(document).on('click', '.enrolment-apply-button', function(){
-		var teacherName = $('#course-teachername').val(); 
-		var day = $('#courseschedule-day').val(); 
-		var date = $('#course-startdate').val(); 
-		var time = moment(date,'DD-MM-YYYY h:mm A').format('h:mm A');
-		var duration = $('#courseschedule-duration').val();
-        $('#new-enrolment-modal').modal('hide');
-		$('.new-enrolment-teacher').text(teacherName);
-		$('.new-enrolment-time').text(day + ', ' + time + ' & ' + duration);
-		$('#course-fromtime').val(time);
-		$('#course-startdate').val(moment(date,'DD-MM-YYYY h:mm A').format('DD-MM-YYYY'));
-	});
     $(document).on('click', '.enrolment-edit', function(){
 		var programId = $(this).parent().parent().data('programid');
 		var duration = $(this).parent().parent().data('duration');
@@ -175,7 +135,7 @@ $(document).ready(function() {
     });
 
     function refreshCalendar(date) {
-		var programId = $('#course-programid').val();
+      var programId = $('#course-programid').val();
 		var duration = $('#courseschedule-duration').val();
         var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
             programId: programId });
@@ -191,8 +151,8 @@ $(document).ready(function() {
                 maxTime = value.toTime;
             }
         });
-    $('#calendar').html('');
-    $('#calendar').unbind().removeData().fullCalendar({
+    $('#enrolment-calendar').html('');
+    $('#enrolment-calendar').unbind().removeData().fullCalendar({
             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
             header: false,
             defaultDate: date,
@@ -211,22 +171,22 @@ $(document).ready(function() {
                 url: '<?= Url::to(['enrolment/render-resources']) ?>?' + params,
                 type: 'POST',
                 error: function() {
-                    $("#calendar").fullCalendar("refetchResources");
+                    $("#enrolment-calendar").fullCalendar("refetchResources");
                 }
             },
             events: {
                 url: '<?= Url::to(['enrolment/render-day-events']) ?>?' + params,
                 type: 'POST',
                 error: function() {
-                    $("#calendar").fullCalendar("refetchEvents");
+                    $("#enrolment-calendar").fullCalendar("refetchEvents");
                 }
             },
             select: function(start, end, jsEvent, view, resource) {
-				$('#calendar').fullCalendar('removeEvents', 'newEnrolment');
+                $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
                 var endtime = start.clone();
                 var durationMinutes = moment.duration(duration).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
-                $('#calendar').fullCalendar('renderEvent',
+                $('#enrolment-calendar').fullCalendar('renderEvent',
                     {
                         id: 'newEnrolment',
                         start: start,
@@ -236,7 +196,7 @@ $(document).ready(function() {
                     },
                 true // make the event "stick"
                 );
-                $('#calendar').fullCalendar('unselect');
+                $('#enrolment-calendar').fullCalendar('unselect');
             }
         });
     }
