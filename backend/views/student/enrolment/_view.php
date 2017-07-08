@@ -9,6 +9,8 @@ use common\models\Course;
 use yii\bootstrap\Modal;
 
 ?>
+<?php 
+$enrolment = current($model->enrolment);?>
 <div class="row p-10">
     <div class="col-md-12">
     <h4 class="pull-left m-r-20">Enrolments</h4>
@@ -41,7 +43,11 @@ use yii\bootstrap\Modal;
             'rowOptions' => function ($model, $key, $index, $grid) {
                 $url = Url::to(['enrolment/view', 'id' => $model->id]);
 
-                return ['data-url' => $url];
+                return [
+					'data-url' => $url,
+					'data-programid' => $model->course->program->id,
+					'data-duration' => $model->courseSchedule->duration
+				];
             },
         'options' => ['class' => 'col-md-12'],
         'tableOptions' => ['class' => 'table table-bordered'],
@@ -106,9 +112,9 @@ use yii\bootstrap\Modal;
                     },
 					'edit' => function ($url, $model, $key) {
 						return Html::a('<i class="fa fa-pencil"></i>','#', [
-							'id' => 'enrolment-delete-' . $model->id,
+							'id' => 'enrolment-edit-' . $model->id,
 							'title' => Yii::t('yii', 'Edit'),
-							'class' => ' m-l-10 btn-info btn-xs'
+							'class' => 'enrolment-edit m-l-10 btn-info btn-xs'
 						]);
                     },
                     'delete' => function ($url, $model, $key) {
@@ -131,8 +137,13 @@ use yii\bootstrap\Modal;
     <?php \yii\widgets\Pjax::end(); ?>
     </div>
 </div>
-<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <?php
 Modal::begin([
 	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
@@ -141,6 +152,8 @@ Modal::begin([
 ?>
 <?php
 echo $this->render('_edit-calendar', [
+	'course' => $enrolment->course,
+	'courseSchedule' => $enrolment->courseSchedule
 ]);
 ?>
 <?php Modal::end(); ?>

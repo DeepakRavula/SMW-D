@@ -61,4 +61,14 @@ class TeacherAvailabilityQuery extends ActiveQuery
         ]);
         return $this;
     }
+	public function qualification($locationId, $programId)
+	{
+		$this->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
+			$query->where(['user_location.location_id' => $locationId]);
+			$query->joinWith(['qualifications'  => function ($query) use ($programId) {
+				$query->andWhere(['qualification.program_id' => $programId]);
+			}]);
+		}]);
+		return $this;
+	}
 }
