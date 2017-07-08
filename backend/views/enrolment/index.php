@@ -40,6 +40,19 @@ $form = ActiveForm::begin([
 		'dataProvider' => $dataProvider,
 		'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+            $url = Url::to(['enrolment/view', 'id' => $model->id]);
+            $data = ['data-url' => $url];
+            $enddate=(new \DateTime($model->course->endDate))->format('Y-m-d');
+           $currentDate = new \DateTime();
+           $currentDate=$currentDate->modify('+90 days');
+           $expirydate=$currentDate->format('Y-m-d');
+           if($enddate<=$expirydate)
+           {
+            $data = array_merge($data, ['class' => 'danger inactive']);   
+           }
+            return $data;
+        },
 		'columns' => [
 			[
 				'label' => 'Program',
