@@ -6,11 +6,11 @@ use common\models\Program;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use common\models\Invoice;
-
 ?>
+<?php $this->render('/lesson/_color-code'); ?>
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
-<?php
+    <?php
     $locationId = Yii::$app->session->get('location_id');
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
@@ -59,14 +59,7 @@ use common\models\Invoice;
         } else {
             $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
         }
-        $class = null;
-        if (!empty($lesson->proFormaInvoice)) {
-            if (in_array($lesson->proFormaInvoice->status, [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT])) {
-                $class = 'proforma-paid';
-            } else {
-                $class = 'proforma-unpaid';
-            }
-        }
+        $class=$lesson->class;
         $events[] = [
             'title' => $title,
             'start' => $lesson->date,
