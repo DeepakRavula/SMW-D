@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use common\models\Enrolment;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
@@ -43,11 +44,7 @@ $form = ActiveForm::begin([
         'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
             $url = Url::to(['enrolment/view', 'id' => $model->id]);
             $data = ['data-url' => $url];
-            $enddate=(new \DateTime($model->course->endDate))->format('Y-m-d');
-           $currentDate = new \DateTime();
-           $currentDate=$currentDate->modify('+90 days');
-           $expirydate=$currentDate->format('Y-m-d');
-           if($enddate<=$expirydate)
+            if($model->isExpiring(Enrolment::ENROLMENT_EXPIRY))
            {
             $data = array_merge($data, ['class' => 'danger inactive']);   
            }

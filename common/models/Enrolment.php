@@ -27,6 +27,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA   = 2;
+    const ENROLMENT_EXPIRY=90;
 
     const EVENT_CREATE = 'create';
     const EVENT_GROUP='group-course-enroll';
@@ -296,7 +297,19 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return (int) $this->paymentFrequency === (int) self::LENGTH_FULL;
     }
-
+    public function isExpiring($dayscount)
+    {
+           $isExpiring=false;
+           $enddate=(new \DateTime($this->course->endDate))->format('Y-m-d');
+           $currentDate = new \DateTime();
+           $currentDate=$currentDate->modify('+'.$dayscount.' days');
+           $expirydate=$currentDate->format('Y-m-d');
+          if($enddate<=$expirydate)
+          {
+              $isExpiring=true;
+          }
+        return $isExpiring;   
+    }
     public function beforeSave($insert) {
         if($insert) {
             $this->isDeleted = false;
