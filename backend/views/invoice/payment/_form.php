@@ -18,7 +18,7 @@ use common\models\PaymentMethod;
 	'enableClientValidation' => false
 ]); ?>
    <div class="row">
-	   <div class="col-md-4">
+	   <div class="col-md-5">
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
                     'id' => 'extra-lesson-date',
@@ -36,11 +36,11 @@ use common\models\PaymentMethod;
             <?= $form->field($model, 'amount')->textInput();?>
         </div>
        <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
-           <div class="col-md-4">
+           <div class="col-md-3">
                <?= $form->field($model, 'reference')->textInput()->label('Cheque Number'); ?>
            </div>
        <?php elseif ($model->payment_method_id !== PaymentMethod::TYPE_CASH) : ?>
-           <div class="col-md-4">
+           <div class="col-md-3">
                <?= $form->field($model, 'reference')->textInput(); ?>
            </div>
        <?php endif; ?>
@@ -53,7 +53,7 @@ use common\models\PaymentMethod;
         ],
         [
 			'id' => 'payment-delete-button',
-            'class' => 'btn btn-primary',
+            'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this payment?',
                 'method' => 'post',

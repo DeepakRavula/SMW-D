@@ -178,7 +178,10 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_SCHEDULED;
     }
-
+	public function isResolveSingleLesson()
+    {
+        return (int) $this->applyContext === self::APPLY_SINGLE_LESSON;
+    }
     public function isUnscheduled()
     {
         return (int) $this->status === self::STATUS_UNSCHEDULED;
@@ -821,8 +824,8 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
         $invoice->type = INVOICE::TYPE_INVOICE;
-        $invoice->createdUserId = Yii::$app->user->id;
-        $invoice->updatedUserId = Yii::$app->user->id;
+		$invoice->createdUserId = Yii::$app->user->id;
+		$invoice->updatedUserId = Yii::$app->user->id;	
         return $invoice;
     }
 

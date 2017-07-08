@@ -107,6 +107,7 @@ class LoginForm extends Model
         if ($this->user === false) {
             $this->user = User::find()
                 ->where(['email' => $this->username])
+                ->notDeleted()
                 ->one();
         }
 

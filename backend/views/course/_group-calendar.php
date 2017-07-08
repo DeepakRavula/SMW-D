@@ -4,8 +4,9 @@ use common\models\LocationAvailability;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Html;
 use yii\helpers\Url;
-
 ?>
+
+<?php $this->render('/lesson/_color-code'); ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
  <div class="row-fluid">
 	<div id="group-course-calendar"> </div>

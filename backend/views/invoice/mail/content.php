@@ -31,8 +31,9 @@ Please find the invoice below: <Br>
                 ],
                 [
                     'label' => 'Price',
-                    'headerOptions' => ['class' => 'text-center'],
+                    'headerOptions' => ['class' => 'text-right'],
         			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+                    'format' =>'currency',
                     'value' => function ($data) {
                         if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
                             return $data->lesson->enrolment->program->rate;
@@ -43,7 +44,9 @@ Please find the invoice below: <Br>
                 ],
                 [
                   'attribute' => 'amount',
-        			   'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+                    'headerOptions' => ['class' => 'text-right'],
+                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+                    'format'=>'currency',
                   'label' => 'Total',
                   'enableSorting' => false,
                 ],

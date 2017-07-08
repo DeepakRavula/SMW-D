@@ -193,6 +193,8 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 			if (duration && programId || discount) {
 				fetchProgram(duration, programId, discount);
 			}
+			$('#enrolment-discount-warning').html('Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.').fadeIn().delay(8000).fadeOut();
+			
 		});
 		$('#stepwizard_step1_next').click(function() {
 			var $active = $('.wizard .nav-tabs li.active');

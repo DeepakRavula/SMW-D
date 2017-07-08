@@ -215,6 +215,7 @@ class SignInController extends \yii\web\Controller {
 				'oauth_client' => $client->getName(),
 				'oauth_client_user_id' => ArrayHelper::getValue($attributes, 'id'),
 			])
+                        ->notDeleted()
 			->one();
 		if (!$user) {
 			$user = new User();
@@ -250,7 +251,7 @@ class SignInController extends \yii\web\Controller {
 				}
 			} else {
 				// We already have a user with this email. Do what you want in such case
-				if ($user->email && User::find()->where(['email' => $user->email])->count()) {
+				if ($user->email && User::find()->where(['email' => $user->email])->notDeleted()->count()) {
 					Yii::$app->session->setFlash(
 						'alert', [
 						'options' => ['class' => 'alert-danger'],
