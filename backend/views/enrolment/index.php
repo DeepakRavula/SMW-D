@@ -42,15 +42,14 @@ $form = ActiveForm::begin([
 		'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
-            $url = Url::to(['enrolment/view', 'id' => $model->id]);
-            $data = ['data-url' => $url];
-            if($model->isExpiring(Enrolment::ENROLMENT_EXPIRY))
-           {
-            $data = array_merge($data, ['class' => 'danger inactive']);   
-           }
-            return $data;
-        },
-		'columns' => [
+        $url = Url::to(['enrolment/view', 'id' => $model->id]);
+        $data = ['data-url' => $url];
+        if ($model->isExpiring(Enrolment::ENROLMENT_EXPIRY)) {
+            $data = array_merge($data, ['class' => 'danger inactive']);
+        }
+        return $data;
+    },
+    'columns' => [
 			[
 				'label' => 'Program',
 				'value' => function($data) {

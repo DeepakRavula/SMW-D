@@ -299,17 +299,17 @@ class Enrolment extends \yii\db\ActiveRecord
     }
     public function isExpiring($dayscount)
     {
-           $isExpiring=false;
-           $enddate=(new \DateTime($this->course->endDate))->format('Y-m-d');
-           $currentDate = new \DateTime();
-           $currentDate=$currentDate->modify('+'.$dayscount.' days');
-           $expirydate=$currentDate->format('Y-m-d');
-          if($enddate<=$expirydate)
-          {
-              $isExpiring=true;
-          }
-        return $isExpiring;   
+        $isExpiring = false;
+        $enddate = (new \DateTime($this->course->endDate))->format('Y-m-d');
+        $currentDate = new \DateTime();
+        $currentDate = $currentDate->modify('+' . $dayscount . ' days');
+        $expirydate = $currentDate->format('Y-m-d');
+        if ($enddate <= $expirydate) {
+            $isExpiring = true;
+        }
+        return $isExpiring;
     }
+
     public function beforeSave($insert) {
         if($insert) {
             $this->isDeleted = false;
