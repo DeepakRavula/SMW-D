@@ -285,24 +285,24 @@ class EnrolmentController extends Controller
     {
         $locationId = Yii::$app->session->get('location_id');
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
-        			$teachersAvailabilities = TeacherAvailability::find()
-				->qualification($locationId, $programId)
-				->andWhere(['day' => $date->format('N')])
-				->all();
-
-			foreach ($teachersAvailabilities as $teachersAvailability) {
-				$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-					' ' . $teachersAvailability->from_time);
-				$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-					' ' . $teachersAvailability->to_time);
-				$events[] = [
-					'resourceId' => $teachersAvailability->teacher->id,
-					'title'      => '',
-					'start'      => $start->format('Y-m-d H:i:s'),
-					'end'        => $end->format('Y-m-d H:i:s'),
-					'rendering'  => 'background',
-				];
-			}
+       	$teachersAvailabilities = TeacherAvailability::find()
+			->qualification($locationId, $programId)
+			->andWhere(['day' => $date->format('N')])
+			->all();
+		$events = [];
+		foreach ($teachersAvailabilities as $teachersAvailability) {
+			$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
+				' ' . $teachersAvailability->from_time);
+			$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
+				' ' . $teachersAvailability->to_time);
+			$events[] = [
+				'resourceId' => $teachersAvailability->teacher->id,
+				'title'      => '',
+				'start'      => $start->format('Y-m-d H:i:s'),
+				'end'        => $end->format('Y-m-d H:i:s'),
+				'rendering'  => 'background',
+			];
+		}
 		$lessons = $this->getLessons($date, $programId);
 		foreach ($lessons as &$lesson) {
 			$toTime = new \DateTime($lesson->date);
