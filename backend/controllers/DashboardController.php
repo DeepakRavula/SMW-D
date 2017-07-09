@@ -76,7 +76,7 @@ class DashboardController extends \yii\web\Controller
                     }])
 					->andWhere(['status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT]])
                     ->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-                    ->andWhere(['invoice_line_item.isRoyalty' => false])
+					->royaltyFree()
                     ->sum('invoice_line_item.amount');
 
         $students = Student::find()
