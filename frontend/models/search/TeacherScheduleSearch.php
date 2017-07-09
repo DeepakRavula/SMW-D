@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\models\search;
+namespace frontend\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -41,7 +41,7 @@ class TeacherScheduleSearch extends Lesson
     public function search($params)
     {
         $locationId = Yii::$app->session->get('location_id');
-        $lessons = Lesson::find()->location($locationId)->notDeleted();
+        $lessons = Lesson::find()->location($locationId)->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])->notDeleted();
         $dataProvider= new ActiveDataProvider([
             'query' => $lessons,
             'pagination' => false,
