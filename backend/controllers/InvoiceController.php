@@ -64,12 +64,7 @@ class InvoiceController extends Controller
         $invoiceSearchRequest = $request->get('InvoiceSearch');
         if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
             $currentDate                = new \DateTime();
-            $searchModel->toDate        = $currentDate->format('d-m-Y');
-            $fromDate                   = clone $currentDate;
-            $fromDate                   = $fromDate->modify('-90 days');
-            $searchModel->fromDate      = $fromDate->format('d-m-Y');
             $searchModel->invoiceStatus = Invoice::STATUS_OWING;
-            $searchModel->mailStatus    = InvoiceSearch::STATUS_MAIL_NOT_SENT;
             $searchModel->dueFromDate      = $currentDate->format('1-m-Y');
             $searchModel->dueToDate        = $currentDate->format('t-m-Y');
             $searchModel->dateRange     = $searchModel->dueFromDate.' - '.$searchModel->dueToDate;
