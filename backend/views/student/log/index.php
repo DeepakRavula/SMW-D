@@ -30,8 +30,9 @@ $dataProvider = new ActiveDataProvider([
 ]);?>
 <div class="student-index"> 
     <?php yii\widgets\Pjax::begin([
-    'timeout' => 6000,
-]) ?>
+        'id' => 'student-log',
+        'timeout' => 6000,
+    ]) ?>
 <?php echo GridView::widget([
 	'dataProvider' => $dataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],

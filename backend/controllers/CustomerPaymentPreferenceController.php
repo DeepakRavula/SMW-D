@@ -29,7 +29,7 @@ class CustomerPaymentPreferenceController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['modify'],
+                'only' => ['modify', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -131,10 +131,10 @@ class CustomerPaymentPreferenceController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $userId = $model->userId;
-        $model->delete();
         
-        return $this->redirect(['user/view', 'id' => $userId, '#' => 'account']);
+        return [
+            'status' => $model->delete()
+        ];
     }
 
     /**

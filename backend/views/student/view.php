@@ -197,6 +197,10 @@ echo $this->render('_profile', [
                         $.pjax.reload({url:url, container : '#student-lesson-listing', replace:false, async:false, timeout : 6000});
                         $.pjax.reload({url:url, container : '#enrolment-grid', replace:false, async:false, timeout : 6000});
                         $.pjax.reload({url:url, container : '#lesson-index', replace:false, async:false, timeout : 6000});
+                        $.pjax.reload({url:url, container : '#student-vacation', replace:false, async:false, timeout : 6000});
+                        $.pjax.reload({url:url, container : '#student-exam-result-listing', replace:false, async:false, timeout : 6000});
+                        $.pjax.reload({url:url, container : '#student-log', replace:false, async:false, timeout : 6000});
+                        $.pjax.reload({url:url, container : '#student-note', replace:false, async:false, timeout : 6000});
                     }
                 }
             });
