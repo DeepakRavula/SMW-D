@@ -210,7 +210,7 @@ use yii\bootstrap\Modal;
             var programs = <?php echo Json::encode($allEnrolments); ?>;
             var selectedProgram = $('#lesson-program').val();
             $.each(programs, function( index, value ) {
-                if (value.programId === selectedProgram) {
+                if (value.programId == selectedProgram) {
                     $('#lesson-teacher').val(value.teacherId).trigger('change.select2');
                 }
             });
