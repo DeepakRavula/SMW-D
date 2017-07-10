@@ -60,22 +60,26 @@ class EnrolmentSearch extends Enrolment
         $query->joinWith('student');
         $query->leftJoin(['program p'], 'course.programId = p.id');
         $query->leftJoin(['user_profile up'], 'course.teacherId=up.user_id');
-        $dataProvider->sort->attributes['expirydate'] = [
-            'asc' => ['course.endDate' => SORT_ASC],
-            'desc' => ['course.endDate' => SORT_DESC],
-        ];
-        $dataProvider->sort->attributes['program'] = [
-            'asc' => ['p.name' => SORT_ASC],
-            'desc' => ['p.name' => SORT_DESC],
-        ];
-        $dataProvider->sort->attributes['student'] = [
-            'asc' => ['student.first_name' => SORT_ASC],
-            'desc' => ['student.first_name' => SORT_DESC],
-        ];
-        $dataProvider->sort->attributes['teacher'] = [
-            'asc' => ['up.firstname' => SORT_ASC],
-            'desc' => ['up.firstname' => SORT_DESC],
-        ];
+         $dataProvider->setSort([
+            'attributes' => [
+                'expirydate' => [
+                    'asc' => ['course.endDate' => SORT_ASC],
+                    'desc' => ['course.endDate' => SORT_DESC],
+                ],
+                'program' => [
+                    'asc' => ['p.name' => SORT_ASC],
+                    'desc' => ['p.name' => SORT_DESC],
+                ],
+                'student' => [
+                    'asc' => ['student.first_name' => SORT_ASC],
+                    'desc' => ['student.first_name' => SORT_DESC],
+                ],
+                'teacher' => [
+                    'asc' => ['up.firstname' => SORT_ASC],
+                    'desc' => ['up.firstname' => SORT_DESC],
+                ]
+            ]
+        ]);
 
         if (! $this->showAllEnrolments) {
 				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
