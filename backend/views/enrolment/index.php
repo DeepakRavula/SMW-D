@@ -11,75 +11,78 @@ use yii\helpers\Url;
 
 $this->title = 'Enrolments';
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['create'], ['class' => 'btn btn-success btn-sm']);
+
 ?>
 <style>
-	.e1Div{
-		top: -51px;
-		right: 76px;
-	}
+    .e1Div{
+        top: -51px;
+        right: 76px;
+    }
 </style>
 <?php
 $form = ActiveForm::begin([
-		'action' => ['index'],
-		'method' => 'get',
-		'options' => ['class' => 'pull-left'],
-	]);
+        'action' => ['index'],
+        'method' => 'get',
+        'options' => ['class' => 'pull-left'],
+    ]);
+
 ?>
 <div class="pull-right  m-r-20">
-	<div class="schedule-index">
-		<div class="e1Div">
-			<?= $form->field($searchModel, 'showAllEnrolments')->checkbox(['data-pjax' => true]); ?>
-		</div>
-	</div>
+    <div class="schedule-index">
+        <div class="e1Div">
+<?= $form->field($searchModel, 'showAllEnrolments')->checkbox(['data-pjax' => true]); ?>
+        </div>
+    </div>
 </div>
-<?php ActiveForm::end(); ?>
+    <?php ActiveForm::end(); ?>
 <div class="enrolment-index">
     <?php yii\widgets\Pjax::begin(['id' => 'enrolment-index']); ?>
-	<?php
-	echo GridView::widget([
-		'dataProvider' => $dataProvider,
-		'tableOptions' => ['class' => 'table table-bordered'],
+    <?php
+    echo GridView::widget([
+        'dataProvider' => $dataProvider,
+        'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'columns' => [
-			[
-				'attribute'=>'program',
+        'columns' => [
+                [
+                'attribute' => 'program',
                 'label' => 'Program',
-				'value' => function($data) {
-					return $data->course->program->name;
-				}
-			],
-			[
-				'attribute'=>'student',
+                'value' => function($data) {
+                    return $data->course->program->name;
+                }
+            ],
+                [
+                'attribute' => 'student',
                 'label' => 'Student',
-				'value' => function($data) {
-					return $data->student->fullName;
-				}
-			],
-			[
-				'attribute'=>'teacher',
+                'value' => function($data) {
+                    return $data->student->fullName;
+                }
+            ],
+                [
+                'attribute' => 'teacher',
                 'label' => 'Teacher',
-				'value' => function($data) {
-					return $data->course->teacher->publicIdentity;
-				}
-			],
-			[
-				'attribute'=>'expirydate',
+                'value' => function($data) {
+                    return $data->course->teacher->publicIdentity;
+                }
+            ],
+                [
+                'attribute' => 'expirydate',
                 'label' => 'Expiry Date',
-				'value' => function($data) {
-					return Yii::$app->formatter->asDate($data->course->endDate);
-				}
-			],
-		],
-	]);
-	?>
+                'value' => function($data) {
+                    return Yii::$app->formatter->asDate($data->course->endDate);
+                }
+            ],
+        ],
+    ]);
+
+    ?>
 <?php yii\widgets\Pjax::end(); ?>
 </div>
 <script>
-$(document).ready(function(){
-  $("#enrolmentsearch-showallenrolments").on("change", function() {
-      var showAllEnrolments = $(this).is(":checked");
-      var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);
-      $.pjax.reload({url:url,container:"#enrolment-index",replace:false,  timeout: 4000});  //Reload GridView
+    $(document).ready(function () {
+        $("#enrolmentsearch-showallenrolments").on("change", function () {
+            var showAllEnrolments = $(this).is(":checked");
+            var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);
+            $.pjax.reload({url: url, container: "#enrolment-index", replace: false, timeout: 4000});  //Reload GridView
+        });
     });
-});
 </script>
