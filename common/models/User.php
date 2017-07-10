@@ -330,6 +330,11 @@ class User extends ActiveRecord implements IdentityInterface
             ->one();
     }
 
+    public function hasDiscount()
+    {
+        return !empty($this->customerDiscount);
+    }
+
     /**
      * Finds user by username.
      *

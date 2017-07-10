@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Invoice;
+use common\models\InvoiceDiscount;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use common\models\Enrolment;
@@ -44,7 +45,7 @@ class InvoiceController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'get-payment-amount'],
+                'only' => ['delete', 'get-payment-amount', 'discount'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -64,12 +65,7 @@ class InvoiceController extends Controller
         $invoiceSearchRequest = $request->get('InvoiceSearch');
         if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
             $currentDate                = new \DateTime();
-            $searchModel->toDate        = $currentDate->format('d-m-Y');
-            $fromDate                   = clone $currentDate;
-            $fromDate                   = $fromDate->modify('-90 days');
-            $searchModel->fromDate      = $fromDate->format('d-m-Y');
             $searchModel->invoiceStatus = Invoice::STATUS_OWING;
-            $searchModel->mailStatus    = InvoiceSearch::STATUS_MAIL_NOT_SENT;
             $searchModel->dueFromDate      = $currentDate->format('1-m-Y');
             $searchModel->dueToDate        = $currentDate->format('t-m-Y');
             $searchModel->dateRange     = $searchModel->dueFromDate.' - '.$searchModel->dueToDate;
@@ -616,5 +612,30 @@ class InvoiceController extends Controller
             'status' => true,
             'amount' => $model->balance,
         ];
+    }
+
+    public function actionDiscount($id)
+    {
+        $model = $this->findModel($id);
+        $customerDiscount = $model->customerDiscount;
+        $customerDiscount->setScenario(InvoiceDiscount::SCENARIO_EDIT);
+	$data = $this->renderAjax('discount/_form-discount', [
+            'model' => $model,
+            'customerDiscount' => $customerDiscount
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {
+            $customerDiscount->load($post);
+            $response = [
+                'status' => $customerDiscount->save(),
+            ];
+            return $response;
+        } else {
+
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
     }
 }

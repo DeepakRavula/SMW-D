@@ -33,14 +33,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
-                    'label' => 'Date',
-                    'value' => function ($data) {
-                        $date = Yii::$app->formatter->asDate($data->date);
-
-                        return !empty($date) ? $date : null;
-                    },
-                ],
-                [
                     'label' => 'Due Date',
                     'value' => function ($data) {
                         $date = Yii::$app->formatter->asDate($data->dueDate);
@@ -61,34 +53,36 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
+                    'label' => 'Sent?',
+                   	'value' => function ($data) {
+                        return $data->isSent ? 'Yes' : 'No';
+                    }, 
+                ],
+				   [
                     'label' => 'Status',
                     'value' => function ($data) {
                         return $data->getStatus();
                     },
                     'contentOptions' => function ($data) {
                         $options = [];
-                        $type = (int) $data->type === Invoice::TYPE_INVOICE ? 'invoice' : 'pro-forma-invoice';
-                        Html::addCssClass($options, $type.'-'.strtolower($data->getStatus()));
+                        Html::addCssClass($options, 'invoice-'.strtolower($data->getStatus()));
 
                         return $options;
                     },
                 ],
                 [
                     'value' => function ($data) {
-                        if ((int) $data->type === Invoice::TYPE_INVOICE) {
-                            if ($data->status === 'Paid') {
-                                return $data->total;
-                            } else {
-                                return $data->invoiceBalance;
-                            }
-                        }
+						if ($data->isPaid()) {
+							return $data->total;
+						} else {
+							return $data->invoiceBalance;
+						}
                     },
                     'headerOptions' => ['class' => 'text-right'],
                     'contentOptions' => function ($data) {
                         $options = [];
-                        $type = (int) $data->type === Invoice::TYPE_INVOICE ? 'invoice' : 'pro-forma-invoice';
                         Html::addCssClass($options, 'text-right');
-                        Html::addCssClass($options, $type.'-'.strtolower($data->getStatus()));
+                        Html::addCssClass($options, 'invoice-'.strtolower($data->getStatus()));
 
                         return $options;
                     },
@@ -148,7 +142,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'value' => function ($data) {
                         if ((int) $data->type === Invoice::TYPE_INVOICE) {
-                            if ($data->status === 'Paid') {
+                            if ($data->isPaid()) {
                                 return $data->total;
                             } else {
                                 return $data->invoiceBalance;
