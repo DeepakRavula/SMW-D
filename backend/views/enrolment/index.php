@@ -42,33 +42,33 @@ $form = ActiveForm::begin([
         'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'columns' => [
 			[
-				'attribute'=>'program',
+            'attribute' => 'program',
                 'label' => 'Program',
-				'value' => function($data) {
-					return $data->course->program->name;
-				}
-			],
+                'value' => function($data) {
+                    return $data->course->program->name;
+                }
+            ],
 			[
-				'attribute'=>'student',
+            'attribute' => 'student',
                 'label' => 'Student',
-				'value' => function($data) {
-					return $data->student->fullName;
-				}
-			],
+                'value' => function($data) {
+                    return $data->student->fullName;
+                }
+            ],
 			[
-				'attribute'=>'teacher',
+            'attribute' => 'teacher',
                 'label' => 'Teacher',
-				'value' => function($data) {
-					return $data->course->teacher->publicIdentity;
-				}
-			],
+                'value' => function($data) {
+                    return $data->course->teacher->publicIdentity;
+                }
+            ],
 			[
-				'attribute'=>'expirydate',
+            'attribute' => 'expirydate',
                 'label' => 'Expiry Date',
-				'value' => function($data) {
-					return Yii::$app->formatter->asDate($data->course->endDate);
-				}
-			],
+                'value' => function($data) {
+                    return Yii::$app->formatter->asDate($data->course->endDate);
+                }
+            ],
 		],
 	]);
 	?>
