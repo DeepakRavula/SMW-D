@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use common\models\Enrolment;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
@@ -40,7 +41,15 @@ $form = ActiveForm::begin([
 		'dataProvider' => $dataProvider,
 		'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'columns' => [
+        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+        $url = Url::to(['enrolment/view', 'id' => $model->id]);
+        $data = ['data-url' => $url];
+        if ($model->isExpiring(Enrolment::ENROLMENT_EXPIRY)) {
+            $data = array_merge($data, ['class' => 'danger inactive']);
+        }
+        return $data;
+    },
+    'columns' => [
 			[
 				'label' => 'Program',
 				'value' => function($data) {
