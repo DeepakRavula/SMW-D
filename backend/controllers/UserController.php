@@ -997,6 +997,14 @@ class UserController extends Controller
                         $student->customer_id = $id;
                         $student->save();
                     }
+                    foreach ($customer->notes as $note) {
+                        $note->instanceId = $id;
+                        $note->save();
+                    }
+                    foreach ($customer->logs as $log) {
+                        $log->userId = $id;
+                        $log->save();
+                    }
                     $customer->delete();
                 }
                 return [
