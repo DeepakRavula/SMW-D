@@ -147,19 +147,20 @@ class EnrolmentController extends Controller
 		$locationId = Yii::$app->session->get('location_id');
 		$request = Yii::$app->request;
 		$course = new Course();
+		$courseSchedule = new CourseSchedule();
 		$user = new User();
 		$userProfile = new UserProfile();
 		$phoneNumber = new PhoneNumber();
 		$address = new Address();
 		$userLocation = new UserLocation();
 		$student = new Student();
-		
 		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
 		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
 		$userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
 		$phoneNumber->load(Yii::$app->getRequest()->getBodyParams(), 'PhoneNumber');
 		$address->load(Yii::$app->getRequest()->getBodyParams(), 'Address');
 		$student->load(Yii::$app->getRequest()->getBodyParams(), 'Student');
+		$courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
 		
 		$user->status = User::STATUS_ACTIVE;
         if($user->save()){
@@ -179,9 +180,11 @@ class EnrolmentController extends Controller
 			//save course
 			$dayList = Course::getWeekdaysList();
 			$course->locationId = $locationId;
-			$course->day = array_search($course->day, $dayList);
-			$course->studentId = $student->id;
-				if($course->save()) {
+			$courseSchedule->day = array_search($courseSchedule->day, $dayList);
+			$courseSchedule->studentId = $student->id;
+			if($course->save()) {
+				$courseSchedule->courseId = $course->id;
+				$courseSchedule->save();
 				$lesson = new Lesson();
 				$conflicts = [];
 				$conflictedLessonIds = [];
@@ -199,20 +202,28 @@ class EnrolmentController extends Controller
 						}
 						$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
 					}
-					$query = Lesson::find()
-						->orderBy(['lesson.date' => SORT_ASC])
-						->andWhere(['courseId' => $course->id, 'status' => Lesson::STATUS_DRAFTED]);
-				$lessonDataProvider = new ActiveDataProvider([
-					'query' => $query,
-					'pagination' => false,
-				]);
-				$data = $this->renderAjax('new/_preview', [
-					'courseModel' => $course,
-					'lessonDataProvider' => $lessonDataProvider,
-					'conflicts' => $conflicts,
-					'model' => $lesson,
-				]);
-			}
+					$holidayConflictedLessonIds = $course->getHolidayLessons();
+		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+		$lessonCount = count($draftLessons);
+		$conflictedLessonIdsCount = count($conflictedLessonIds);
+
+		$query = Lesson::find()
+			->orderBy(['lesson.date' => SORT_ASC])
+			->andWhere(['courseId' => $course->id, 'status' => Lesson::STATUS_DRAFTED]);
+        $lessonDataProvider = new ActiveDataProvider([
+            'query' => $query,
+			'pagination' => false,
+        ]);
+		$data = $this->renderAjax('new/_preview', [
+			'courseModel' => $course,
+            'lessonDataProvider' => $lessonDataProvider,
+            'conflicts' => $conflicts,
+			'model' => $lesson,
+			'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
+			'lessonCount' => $lessonCount,
+			'conflictedLessonIdsCount' => $conflictedLessonIdsCount
+			]);
+		}
 			return [
 				'status' => true,
 				'data' => $data,

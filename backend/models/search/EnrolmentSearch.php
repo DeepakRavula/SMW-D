@@ -47,7 +47,8 @@ class EnrolmentSearch extends Enrolment
 				$query->location($locationId);
 			}])
 			->notDeleted()
-			->isConfirmed();
+			->isConfirmed()
+                        ->isRegular();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -59,7 +60,8 @@ class EnrolmentSearch extends Enrolment
 
 		 if (! $this->showAllEnrolments) {
 				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
-				->isConfirmed();
+				->isConfirmed()
+                                ->isRegular();
         }
 
         return $dataProvider;

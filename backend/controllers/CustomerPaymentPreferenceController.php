@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 use common\models\User;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
-use yii\helpers\Url;
+use yii\bootstrap\ActiveForm;
 
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
@@ -29,7 +29,7 @@ class CustomerPaymentPreferenceController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['modify'],
+                'only' => ['modify', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -83,9 +83,17 @@ class CustomerPaymentPreferenceController extends Controller
             'model' => $model,
             'userModel' => $userModel,
         ]);
-        if ($model->load(Yii::$app->request->post())) {
-			if ($model->save()) {
-                return $this->redirect(['user/view', 'id' => $userModel->id, '#' => 'account']);
+        if (Yii::$app->request->post()) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return [
+                    'status' => true
+                ];
+            } else {
+                $errors = ActiveForm::validate($model);
+                return [
+                    'status' => false,
+                    'errors' => $errors
+                ];
             }
         } else {
             return [
@@ -123,10 +131,10 @@ class CustomerPaymentPreferenceController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $userId = $model->userId;
-        $model->delete();
         
-        return $this->redirect(['user/view', 'id' => $userId, '#' => 'account']);
+        return [
+            'status' => $model->delete()
+        ];
     }
 
     /**

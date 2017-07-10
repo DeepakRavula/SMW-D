@@ -50,6 +50,12 @@ echo Menu::widget([
 			'badge' => Student::find()->notDeleted()->count(),
 			'badgeBgClass' => 'label-default',
 		],
+        [
+			'label' => Yii::t('backend', 'Students Birthday'),
+			'icon' => '<i class="fa fa-birthday-cake" aria-hidden="true"></i>',
+			'url' => ['student-birthday/index'],
+			'visible' => Yii::$app->user->can('staffmember'),
+		],
 			[
 			'label' => Yii::t('backend', 'Customers'),
 			'icon' => '<i class="fa fa-lg fa-fw fa-male"></i>',

@@ -35,7 +35,7 @@ use common\models\Lesson;
 						'pageSize' => 60,
 					 ],
 			]);
-			$data = ArrayHelper::map(User::find()->all(), 'email', 'email');
+			$data = ArrayHelper::map(User::find()->notDeleted()->all(), 'email', 'email');
 			$model->toEmailAddress = !empty($model->student->customer->email) ? $model->student->customer->email : null; 	
 			$subject = 'Schedule for ' . $model->student->fullName;
 			$body = null;

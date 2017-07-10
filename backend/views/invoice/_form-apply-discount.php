@@ -27,8 +27,10 @@ use common\models\Invoice;
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+<?php $message = 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.'; ?>
 <script>
 $(document).on('beforeSubmit', '#apply-discount-form', function () {
+	var message = '<?= $message;?>';
 	$.ajax({
 		url    : $(this).attr('action'),
 		type   : 'post',
@@ -41,6 +43,7 @@ $(document).on('beforeSubmit', '#apply-discount-form', function () {
 				$.pjax.reload({container : '#line-item-listing', timeout:6000});
 				$('input[name="Payment[amount]"]').val(response.amount);
                 invoice.updateSummarySectionAndStatus();
+				$('#invoice-discount-warning').html(message).fadeIn().delay(8000).fadeOut();
 				$('#apply-discount-modal').modal('hide');
 			}else
 			{

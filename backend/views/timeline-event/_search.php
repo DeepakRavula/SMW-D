@@ -37,6 +37,7 @@ use common\models\Student;
                     ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
                     ->where(['raa.item_name' => [User::ROLE_OWNER, User::ROLE_STAFFMEMBER]])
                     ->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                    ->notDeleted()
                     ->all(),
                 'id', 'userProfile.fullName'),
             'pluginOptions' => [

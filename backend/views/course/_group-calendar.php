@@ -4,8 +4,9 @@ use common\models\LocationAvailability;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Html;
 use yii\helpers\Url;
-
 ?>
+
+<?php $this->render('/lesson/_color-code'); ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
  <div class="row-fluid">
 	<div id="group-course-calendar"> </div>
@@ -32,7 +33,10 @@ use yii\helpers\Url;
 
 <script>
 $(document).ready(function(){
-	
+var groupCourse = {
+	'lessonCountOne' : 1,
+	'lessonCountTwo' : 2,
+}	
 	$(document).on('click', '.group-course-apply', function (e) {
 		$('#group-course-calendar-modal').modal('hide');
 		return false;
@@ -122,13 +126,14 @@ $(document).ready(function(){
         });
     }
 
-//    $('#group-course-form').on('beforeSubmit', function (e) {
-//        var courseDay = $('#courseschedule-day-1').val();
-//        if( ! courseDay) {
-//            $('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
-//            $(window).scrollTop(0);
-//            return false;
-//        }
-//    });
+    $('#group-course-form').on('beforeSubmit', function (e) {
+        var courseDay = $('#courseschedule-day-1').val();
+		var lessonCount = $('#course-lessonsperweekcount').val();
+        if( ! courseDay && lessonCount == groupCourse.lessonCountTwo) {
+            $('#error-notification').html("Please choose second lesson day and time in the calendar").fadeIn().delay(3000).fadeOut();
+            $(window).scrollTop(0);
+            return false;
+        }
+    });
 });
 </script>

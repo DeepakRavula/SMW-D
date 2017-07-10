@@ -114,4 +114,9 @@ class StudentQuery extends ActiveQuery
 
         return $this;
     }
+
+    public function customer($customerId)
+    {
+        return $this->andWhere(['student.customer_id' => $customerId]);
+    }
 }
