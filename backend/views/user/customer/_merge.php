@@ -20,8 +20,8 @@ use yii\helpers\Html;
         </div>
         <div class="col-xs-2">
             <button type="button" id="user-customerid_undo" class="btn btn-primary btn-block">undo</button>
-            <button type="button" id="user-customerid_rightSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
-            <button type="button" id="user-customerid_leftSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+            <button type="button" id="user-customerid_leftSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+            <button type="button" id="user-customerid_rightSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
             <button type="button" id="user-customerid_redo" class="btn btn-warning btn-block">redo</button>
         </div>
         <div class="col-md-5">
