@@ -297,14 +297,14 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return (int) $this->paymentFrequency === (int) self::LENGTH_FULL;
     }
-    public function isExpiring($dayscount)
+    public function isExpiring($daysCount)
     {
         $isExpiring = false;
-        $enddate = (new \DateTime($this->course->endDate))->format('Y-m-d');
+        $endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
         $currentDate = new \DateTime();
-        $currentDate = $currentDate->modify('+' . $dayscount . ' days');
-        $expirydate = $currentDate->format('Y-m-d');
-        if ($enddate <= $expirydate) {
+        $currentDate = $currentDate->modify('+' . $daysCount . ' days');
+        $expiryDate = $currentDate->format('Y-m-d');
+        if ($endDate <= $expiryDate) {
             $isExpiring = true;
         }
         return $isExpiring;
