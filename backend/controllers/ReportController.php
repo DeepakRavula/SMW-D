@@ -6,6 +6,7 @@ use Yii;
 use common\models\Payment;
 use backend\models\search\PaymentSearch;
 use backend\models\search\ReportSearch;
+use backend\models\search\InvoiceLineItemSearch;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use common\models\Invoice;
@@ -168,4 +169,17 @@ class ReportController extends Controller {
 			'royaltyFreeDataProvider' => $royaltyFreeDataProvider,
 		]);
 	}
+
+    public function actionItems()
+    {
+        $searchModel  = new InvoiceLineItemSearch();
+        $searchModel->fromDate = (new \DateTime())->format('d-m-Y');
+        $searchModel->toDate = (new \DateTime())->format('d-m-Y');
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('item/index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
 }
