@@ -79,7 +79,7 @@ class ReportController extends Controller {
 					$query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
 				}])
 			->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-			->andWhere(['invoice_line_item.isRoyalty' => false])
+			->royaltyFree()
 			->sum('invoice_line_item.amount');
 				
 		return $this->render('royalty', [
@@ -158,7 +158,7 @@ class ReportController extends Controller {
 				->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 				->notDeleted();
 			}])
-			->andWhere(['isRoyalty' => false]);
+			->royaltyFree();
 
 		$royaltyFreeDataProvider = new ActiveDataProvider([
 			'query' => $royaltyFreeItems, 
