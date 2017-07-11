@@ -26,7 +26,7 @@ Please find the invoice below: <Br>
                     'attribute' => 'unit',
                     'label' => 'Qty',
                     'headerOptions' => ['class' => 'text-center'],
-        			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        			'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px;'],
                     'enableSorting' => false,
                 ],
                 [

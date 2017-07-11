@@ -213,6 +213,7 @@ class Student extends \yii\db\ActiveRecord
 		$locationId = Yii::$app->session->get('location_id');
         return self::find()
 			->location($locationId)
+			->notDeleted()
 			->count();
     }
 }

@@ -3,6 +3,10 @@
 	<td><?= Yii::$app->formatter->asCurrency($model->subTotal); ?></td>
 </tr>
 <tr>
+    <td id="invoice-discount"><a>Discounts</a></td>
+	<td><?= Yii::$app->formatter->format($model->totalDiscount, ['currency']); ?></td>
+</tr>
+<tr>
 	<td>Tax</td>
 	<td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
 </tr>
