@@ -618,7 +618,11 @@ class InvoiceController extends Controller
     {
         $model = $this->findModel($id);
         $customerDiscount = $model->customerDiscount;
-        $customerDiscount->setScenario(InvoiceDiscount::SCENARIO_EDIT);
+        if (!$customerDiscount) {
+            $customerDiscount = new InvoiceDiscount();
+        } else {
+            $customerDiscount->setScenario(InvoiceDiscount::SCENARIO_EDIT);
+        }
 	$data = $this->renderAjax('discount/_form-discount', [
             'model' => $model,
             'customerDiscount' => $customerDiscount
@@ -626,6 +630,10 @@ class InvoiceController extends Controller
         $post = Yii::$app->request->post();
         if ($post) {
             $customerDiscount->load($post);
+            if ($customerDiscount->isNewRecord) {
+                $customerDiscount->invoiceId = $id;
+                $customerDiscount->type = InvoiceDiscount::TYPE_CUSTOMER;
+            }
             $response = [
                 'status' => $customerDiscount->save(),
             ];
