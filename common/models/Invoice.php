@@ -72,11 +72,6 @@ class Invoice extends \yii\db\ActiveRecord
                 'updatedAtAttribute' => 'updatedOn',
                 'value' => (new \DateTime())->format('Y-m-d H:i:s'),
             ],
-            [
-                'class' => BlameableBehavior::className(),
-                'createdByAttribute' => 'createdUserId',
-                'updatedByAttribute' => 'updatedUserId',
-            ],
         ];
     }
 	
@@ -92,7 +87,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
-            [['hasEditable', 'dueDate'], 'safe']
+            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId'], 'safe']
         ];
     }
 
@@ -592,7 +587,6 @@ class Invoice extends \yii\db\ActiveRecord
                 $this->reminderNotes = $reminderNotes->notes;
             }
             $this->isDeleted = false;
-echo	$this->createdUserId;die;
         }
 		
      	return parent::beforeSave($insert);

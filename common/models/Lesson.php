@@ -889,9 +889,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->userName = $user->publicIdentity;
         $invoice->user_id = $enrolment->student->customer->id;
         $invoice->location_id = $location_id;
-        if(!$invoice->save()) {
-			print_r($invoice->getErrors());die;
-		}
+        $invoice->save();
         if ($user->hasDiscount()) {
             $invoice->addCustomerDiscount($user);
         }

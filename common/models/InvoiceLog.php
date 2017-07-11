@@ -24,6 +24,7 @@ class InvoiceLog extends Invoice {
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $invoice,
 			'message' => $invoiceModel->userName . ' created an {{invoice #' . $invoiceModel->getInvoiceNumber() . '}} for {{' . $invoiceModel->user->publicIdentity . '}}',
+			'locationId' => $invoiceModel->location_id,
 		]));
 		if ($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
