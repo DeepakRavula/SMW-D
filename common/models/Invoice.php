@@ -592,6 +592,7 @@ class Invoice extends \yii\db\ActiveRecord
                 $this->reminderNotes = $reminderNotes->notes;
             }
             $this->isDeleted = false;
+echo	$this->createdUserId;die;
         }
 		
      	return parent::beforeSave($insert);

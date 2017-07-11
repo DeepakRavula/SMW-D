@@ -824,8 +824,15 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
         $invoice->type = INVOICE::TYPE_INVOICE;
-		$invoice->createdUserId = Yii::$app->user->id;
-		$invoice->updatedUserId = Yii::$app->user->id;	
+		if(is_a(Yii::$app,'yii\console\Application')) {
+			$user = User::findByRole(User::ROLE_BOT);
+			$botUser = current($user);
+			$invoice->createdUserId = $botUser->id;
+			$invoice->updatedUserId = $botUser->id;	
+		} else {
+			$invoice->createdUserId = Yii::$app->user->id;
+			$invoice->updatedUserId = Yii::$app->user->id;	
+		}
         return $invoice;
     }
 
@@ -882,7 +889,9 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->userName = $user->publicIdentity;
         $invoice->user_id = $enrolment->student->customer->id;
         $invoice->location_id = $location_id;
-        $invoice->save();
+        if(!$invoice->save()) {
+			print_r($invoice->getErrors());die;
+		}
         if ($user->hasDiscount()) {
             $invoice->addCustomerDiscount($user);
         }
