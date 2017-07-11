@@ -19,8 +19,6 @@ use common\models\query\InvoiceLineItemQuery;
  */
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
-    private $isRoyaltyExempted;
-   
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
     const SCENARIO_LINE_ITEM_CREATE = 'line-item-create';
     const SCENARIO_EDIT = 'edit';
@@ -69,15 +67,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             },
             ],
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => self::SCENARIO_OPENING_BALANCE],
-            [['isRoyaltyExempted'], 'boolean', 'when' => function ($model, $attribute) {
-                return (int) $model->item_type_id === ItemType::TYPE_MISC;
-            },
-            ],
             [['unit'], 'number', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id !== ItemType::TYPE_MISC;
             },
             ],
-            [['isRoyalty', 'invoice_id', 'item_id', 'item_type_id', 'tax_code',
+            [['royaltyFree', 'invoice_id', 'item_id', 'item_type_id', 'tax_code',
                 'tax_status', 'tax_type', 'tax_rate', 'userName', 'discount', 
                 'discountType', 'cost', 'code'], 'safe'],
         ];
@@ -193,21 +187,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 ->where(['invoice.type' => Invoice::TYPE_INVOICE]);
     }
 
-
-    public function getIsRoyaltyExempted()
-    {
-        return $this->isRoyaltyExempted;
-    }
-
-    public function setIsRoyaltyExempted($isRoyaltyExempted)
-    {
-        $this->isRoyalty = !$isRoyaltyExempted;
-    }
-
-    public function getIsRoyalty()
-    {
-        return $this->isRoyalty;
-    }
 	public function isDiscountChanged()
     {
 		return (float)$this->getOldAttribute('discount') !== (float)$this->discount ||
@@ -230,8 +209,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'description' => 'Description',
             'tax_rate' => 'Tax',
             'tax_status' => 'Tax Status',
-            'isRoyaltyExempted' => 'Exempt from Royalty',
-            'isRoyalty' => 'Is Royalty',
+            'royaltyFree' => 'Royalty Free',
             'tax' => 'Tax (%)',
             'itemCategoryId' => 'Item Category',
             'item_id' => 'Item',
@@ -247,7 +225,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->tax_rate     = 0.0;
                 $this->tax_code     = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
                 $this->tax_status   = $taxStatus->name;
-                $this->isRoyalty    = true;
+                $this->royaltyFree    = false;
             } else if ($this->isMisc()) {
                 $taxStatus          = TaxStatus::findOne(['id' => $this->tax_status]);
                 $this->tax_status   = $taxStatus->name;
@@ -258,7 +236,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             if ($this->isOpeningBalance()) {
                 $this->discount     = 0.0;
                 $this->discountType = 0;
-                $this->isRoyalty  = false;
+                $this->royaltyFree    = true;
                 $this->rate = 0;
             }
         }
@@ -391,16 +369,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
 		return $total;
     }
-	public function getRoyalty()
-    {
-		$royalty = 'No';
-		if($this->isRoyalty) {
-			$royalty = 'Yes';
-		}
-
-		return $royalty;
-    }
-
+	
     public function getLessonCreditAmount($splitId)
     {
         $lesson = Lesson::find()
