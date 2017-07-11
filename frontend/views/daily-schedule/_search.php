@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
-use kartik\depdrop\DepDrop;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\Location;
@@ -20,9 +20,8 @@ use yii\helpers\Url;
   }
 </style>
 <div class="user-search">
-
     <?php $form = ActiveForm::begin([
-        'action' => ['daily-schedule/'.$searchModel->slug],
+        'action' => Url::to(['daily-schedule/index', 'slug' => $searchModel->slug]),
         'method' => 'get',
     ]); ?>
     <div class="row">
@@ -36,17 +35,15 @@ use yii\helpers\Url;
                         ->allteachers($locationId)
                         ->all(), 'id', 'publicIdentity');
 
-        echo $form->field($searchModel, 'findTeacher')->widget(DepDrop::classname(), [
+        echo $form->field($searchModel, 'findTeacher')->widget(Select2::classname(), [
                 'data' => $teachers,
-                'type' => DepDrop::TYPE_SELECT2,
                 'options' => [
-                    'id' => 'lesson-teacher',
+                    'id' => 'schedule-teacher',
                     'placeholder' => 'Select teacher',
                 ],
                 'pluginOptions' => [
-                    'depends' => ['lesson-program'],
-                    'url' => Url::to(['/course/teachers'])
-                ]
+                    'allowClear' => true
+                ],
             ]);
         ?>
 
