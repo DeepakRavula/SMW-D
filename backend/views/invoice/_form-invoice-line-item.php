@@ -50,7 +50,7 @@ use kartik\switchinput\SwitchInput;
         <div class="col-xs-8">
             <?php echo $form->field($model, 'royaltyFree')->widget(SwitchInput::classname(),
                 [
-                'name' => 'royaltyExempted',
+                'name' => 'royaltyFree',
 				'options' => [
 					'id' => 'line-item-royalty-free',
 				],
@@ -134,9 +134,9 @@ $(document).ready(function() {
                 $('#invoicelineitem-unit').val(1);
                 $('#invoicelineitem-tax_status').val(response.tax);
                 if (response.royaltyFree) {
-                    $('#line-item-royalty-free').prop('checked', true);
+                    $('#line-item-royalty-free').bootstrapSwitch('state', true);
                 } else {
-                    $('#line-item-royalty-free').prop('checked', false);
+                    $('#line-item-royalty-free').bootstrapSwitch('state', false);
                 }
                 changeTax();
             }
