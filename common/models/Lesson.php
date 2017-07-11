@@ -530,6 +530,11 @@ class Lesson extends \yii\db\ActiveRecord
             break;
             case self::STATUS_UNSCHEDULED:
                 $status = 'Unscheduled';
+                if ($this->isExploded()) {
+                    $status .= ' (Exploded)';
+                } else if ($this->isExpired()) {
+                    $status .= ' (Expired)';
+                }
             break;
             case self::STATUS_MISSED:
                 if (!$this->isCompleted()) {
