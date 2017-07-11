@@ -302,7 +302,13 @@ class Payment extends ActiveRecord
         } else {
             $model->credit = null;
         }
-        $model->actionUserId = Yii::$app->user->id;
+		if(is_a(Yii::$app,'yii\console\Application')) {
+			$user = User::findByRole(User::ROLE_BOT);
+			$botUser = current($user);
+       		$model->actionUserId = $botUser->id;
+		} else {
+       		$model->actionUserId = Yii::$app->user->id;
+		}
         $model->date = (new \DateTime())->format('Y-m-d H:i:s');
         $model->save();
         $this->trigger(self::EVENT_EDIT);

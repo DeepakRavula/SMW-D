@@ -18,7 +18,12 @@ use common\models\timelineEvent\TimelineEventInvoice;
 class InvoiceLog extends Invoice {
 
 	public function create($event) {
-		$invoiceModel = $event->sender;
+		if(is_a(Yii::$app,'yii\console\Application')) {
+			$baseUrl = Yii::$app->getUrlManager()->baseUrl;
+		} else {
+			$baseUrl = Yii::$app->request->hostInfo; 
+		}
+		$invoiceModel = $event->sender;	
 		$invoice = Invoice::find()->andWhere(['id' => $invoiceModel->id])->asArray()->one();
 		
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
@@ -30,14 +35,22 @@ class InvoiceLog extends Invoice {
 			$timelineEventLink = new TimelineEventLink();
 			$timelineEventLink->timelineEventId = $timelineEvent->id;
 			$timelineEventLink->index = 'invoice #' . $invoiceModel->getInvoiceNumber();
-			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
-			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $invoiceModel->id]);
+			$timelineEventLink->baseUrl = $baseUrl;
+			if(is_a(Yii::$app,'yii\console\Application')) {
+				$timelineEventLink->path = '/admin/invoice/view?id=' . $invoiceModel->id;
+			} else {
+				$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $invoiceModel->id]);
+			}
 			$timelineEventLink->save();
 
 			$timelineEventLink->id = null;
 			$timelineEventLink->isNewRecord = true;
 			$timelineEventLink->index = $invoiceModel->user->publicIdentity;
-			$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'customer', 'id' => $invoiceModel->user->id]);
+			if(is_a(Yii::$app,'yii\console\Application')) {
+				$timelineEventLink->path = '/admin/user/view?UserSearch[role_name]=customer&id='. $invoiceModel->user->id;
+			} else {
+				$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'customer', 'id' => $invoiceModel->user->id]);
+			}
 			$timelineEventLink->save();
 
 			$timelineEventInvoice = new TimelineEventInvoice();
