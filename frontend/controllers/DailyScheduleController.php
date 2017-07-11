@@ -12,9 +12,9 @@ use yii\web\NotFoundHttpException;
 class DailyScheduleController extends Controller
 {
  
-    public function actionIndex()
+    public function actionIndex($slug)
     {
-		$searchModel = new TeacherScheduleSearch();
+	$searchModel = new TeacherScheduleSearch($slug);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         	return $this->render('index', [

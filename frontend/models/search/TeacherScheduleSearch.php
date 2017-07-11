@@ -5,6 +5,7 @@ namespace frontend\models\search;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
+use common\models\Location;
 use Yii;
 use common\models\PaymentMethod;
 /**
@@ -13,7 +14,7 @@ use common\models\PaymentMethod;
 class TeacherScheduleSearch extends Lesson
 {
 
-    public $findTeacher;
+    public $findTeacher,$slug;
     /**
      * {@inheritdoc}
      */
@@ -22,6 +23,12 @@ class TeacherScheduleSearch extends Lesson
         return [
             [['findTeacher'], 'safe'],
         ];
+    }
+
+    public function __construct($slug, $config = [])
+    {
+        $this->slug=$slug;
+        parent::__construct($config);   
     }
 
     /**
@@ -40,7 +47,8 @@ class TeacherScheduleSearch extends Lesson
      */
     public function search($params)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $location = Location::find()->where(['like', 'slug', $this->slug])->one();
+        $locationId = $location->id;
         $lessons = Lesson::find()->location($locationId)->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])->notDeleted();
         $dataProvider= new ActiveDataProvider([
             'query' => $lessons,
@@ -51,14 +59,7 @@ class TeacherScheduleSearch extends Lesson
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-        
-
-        $lessons->joinWith(['teacher' => function ($query) use ($locationId) {
-            $query->joinWith('userProfile up');
-        }]);
-        
-        $lessons->andFilterWhere(['like', 'up.firstname', $this->findTeacher]);
-        $lessons->orFilterWhere(['like', 'up.lastname', $this->findTeacher]);
+        $lessons->andFilterWhere(['lesson.teacherId'=>$this->findTeacher]);
 
         return $dataProvider;
     }

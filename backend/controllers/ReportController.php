@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Payment;
-use backend\models\search\TeacherScheduleSearch;
 use backend\models\search\PaymentSearch;
 use backend\models\search\ReportSearch;
 use yii\web\Controller;
@@ -168,14 +167,5 @@ class ReportController extends Controller {
 			'searchModel' => $searchModel, 
 			'royaltyFreeDataProvider' => $royaltyFreeDataProvider,
 		]);
-	}
-	public function actionTlist() {
-		$searchModel = new TeacherScheduleSearch();
-                $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        	return $this->render('schedule/index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
-        	]);
 	}
 }
