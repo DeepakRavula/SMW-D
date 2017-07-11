@@ -172,14 +172,31 @@ class ReportController extends Controller {
 
     public function actionItems()
     {
-        $searchModel  = new InvoiceLineItemSearch();
-        $searchModel->fromDate = (new \DateTime())->format('d-m-Y');
-        $searchModel->toDate = (new \DateTime())->format('d-m-Y');
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel              = new InvoiceLineItemSearch();
+        $searchModel->groupByItem = true;
+        $searchModel->fromDate    = (new \DateTime())->format('d-m-Y');
+        $searchModel->toDate      = (new \DateTime())->format('d-m-Y');
+        $dataProvider             = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('item/index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+        return $this->render('item/index',
+                [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionItemCategory()
+    {
+        $searchModel                      = new InvoiceLineItemSearch();
+        $searchModel->groupByItemCategory = true;
+        $searchModel->fromDate            = (new \DateTime())->format('d-m-Y');
+        $searchModel->toDate              = (new \DateTime())->format('d-m-Y');
+        $dataProvider                     = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('item-category/index',
+                [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
         ]);
     }
 }

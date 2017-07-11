@@ -109,6 +109,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Item::className(), ['id' => 'item_id']);
     }
+
+    public function getItemCategory()
+    {
+        return $this->hasOne(ItemCategory::className(), ['id' => 'itemCategoryId'])
+            ->via('item');
+    }
     
     public function getTaxStatus()
     {

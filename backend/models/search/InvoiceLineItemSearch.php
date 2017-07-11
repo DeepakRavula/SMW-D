@@ -15,11 +15,12 @@ class InvoiceLineItemSearch extends InvoiceLineItem
     public $fromDate;
     public $toDate;
     public $groupByItem;
+    public $groupByItemCategory;
 
     public function rules()
     {
         return [
-            [['groupByItem', 'fromDate', 'toDate'], 'safe'],
+            [['groupByItem', 'groupByItemCategory', 'fromDate', 'toDate'], 'safe'],
         ];
     }
 
@@ -41,18 +42,22 @@ class InvoiceLineItemSearch extends InvoiceLineItem
     {
         $locationId = Yii::$app->session->get('location_id');
         $query = InvoiceLineItem::find()
-                    ->joinWith(['invoice' => function($query) use ($locationId) {
-                        $query->notDeleted()
-                            ->location($locationId)
-                            ->between((new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d'))
-                            ->orderBy([
-                                'DATE(invoice.date)' => SORT_DESC,
-                            ])
-                            ->groupBy('DATE(invoice.date)');
-                    }])
-                    ->groupBy('item_id');
-                    
-
+            ->joinWith(['invoice' => function($query) use ($locationId) {
+                $query->notDeleted()
+                    ->location($locationId)
+                    ->between((new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d'))
+                    ->orderBy([
+                        'DATE(invoice.date)' => SORT_DESC,
+                    ])
+                    ->groupBy('DATE(invoice.date)');
+            }]);
+        if ($this->groupByItem) {
+            $query->groupBy('item_id');
+        }
+        if ($this->groupByItemCategory) {
+            $query->joinWith('itemCategory')
+                ->groupBy('item_category.id');
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

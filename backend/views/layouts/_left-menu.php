@@ -186,6 +186,13 @@ echo Menu::widget([
 					'visible' => Yii::$app->user->can('owner'),
 					'active' => (Yii::$app->controller->action->id === 'items') ? true : false,
 				],
+                                [
+					'label' => Yii::t('backend', 'Item Category'),
+					'icon' => '<i class="fa fa-cny"></i>',
+					'url' => ['report/item-category'],
+					'visible' => Yii::$app->user->can('owner'),
+					'active' => (Yii::$app->controller->action->id === 'items') ? true : false,
+				],
 			]
 		],
                 [
