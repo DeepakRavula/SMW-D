@@ -43,9 +43,9 @@ use common\models\TaxStatus;
             <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true, 'id' => 'lineitem-tax_rate'])?>
         </div>
 	   <div class="col-md-3">
-            <?= $form->field($model, 'isRoyalty')->widget(SwitchInput::classname(),
+            <?= $form->field($model, 'royaltyFree')->widget(SwitchInput::classname(),
                 [
-                'name' => 'isRoyalty',
+                'name' => 'royaltyFree',
                 'pluginOptions' => [
                     'handleWidth' => 30,
                     'onText' => 'Yes',

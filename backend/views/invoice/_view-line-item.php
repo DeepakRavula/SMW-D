@@ -15,11 +15,11 @@ use yii\grid\GridView;
         ],
         [
             'headerOptions' => ['class' => 'text-left'],
-            'contentOptions' => ['class' => 'text-left', 'style' => 'width:50px;'],
-            'attribute' => 'isRoyalty',
-            'label' => 'R',
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:70px;'],
+            'attribute' => 'royaltyFree',
+            'label' => 'Royalty Free',
             'value' => function ($model) {
-                return $model->isRoyalty ? 'Yes' : 'No';
+                return $model->royaltyFree ? 'Yes' : 'No';
             },
         ],
         [
