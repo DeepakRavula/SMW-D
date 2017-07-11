@@ -68,9 +68,7 @@ class InvoiceDiscount extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if (!$insert) {
-            $this->invoice->save();
-        }
+        $this->invoice->save();
         return parent::afterSave($insert, $changedAttributes);
     }
 
