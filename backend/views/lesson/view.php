@@ -17,6 +17,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 
 $lessonContent = $this->render('_view', [
     'model' => $model,
+    'splitDataProvider' => $splitDataProvider
 ]);
 
 $noteContent = $this->render('note/view', [
@@ -26,11 +27,6 @@ $noteContent = $this->render('note/view', [
 
 $studentContent = $this->render('student/view', [
 	'studentDataProvider' => $studentDataProvider,
-        'lessonModel' => $model,
-]);
-
-$splitContent = $this->render('split/view', [
-	'splitDataProvider' => $splitDataProvider,
         'lessonModel' => $model,
 ]);
 
@@ -71,20 +67,8 @@ $groupLesson = [
 	],
 ];
 
-$splitLesson = [
-	[
-		'label' => 'Splits',
-		'content' => $splitContent,
-		'options' => [
-			'id' => 'split',
-		],
-	],
-];
 if ($model->course->program->isGroup()) {
 	$items = array_merge($items, $groupLesson);
-}
-if ($model->isExploded()) {
-	$items = array_merge($items, $splitLesson);
 }
 ?>
 <?php

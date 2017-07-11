@@ -2,6 +2,9 @@
 
 namespace common\models;
 
+use yii\helpers\Html;
+use yii\helpers\Url;
+
 /**
  * This is the model class for table "private_lesson".
  *
@@ -90,9 +93,23 @@ class LessonSplit extends \yii\db\ActiveRecord
     public function getStatus()
     {
         if ($this->lesson->isRescheduled() || !empty($this->lessonSplitUsage)) {
-            $status = 'Used';
+            if ($this->lesson->isRescheduled()) {
+                $lesson = $this->lesson->lessonReschedule->rescheduledLessonId;
+                $url = Url::to(['lesson/view', 'id' => $this->lessonSplitUsage->extendedLessonId]);
+            } else if (!empty ($this->lessonSplitUsage)) {
+                $lesson = $this->lessonSplitUsage->extendedLessonId;
+                $url = Url::to(['lesson/view', 'id' => $lesson]);
+            }
+            $regex = '/{{([^}]*)}}/';
+            $replace = preg_replace_callback($regex, function($match) use ($url)
+            {
+                $index = $match[1];
+                $data[$index] = Html::a($index, $url);
+                return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
+            }, $lesson);
+            $status = $replace;
         } else {
-            $status = 'Un-used';
+            $status = 'Unused';
         }
 
         return $status;
