@@ -86,4 +86,15 @@ class LessonSplit extends \yii\db\ActiveRecord
         $minutes     = $getDuration->format('i');
         return (($hours * 60) + $minutes) / 60;
     }
+
+    public function getStatus()
+    {
+        if ($this->lesson->isRescheduled() || !empty($this->lessonSplitUsage)) {
+            $status = 'Used';
+        } else {
+            $status = 'Un-used';
+        }
+
+        return $status;
+    }
 }

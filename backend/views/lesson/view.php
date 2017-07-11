@@ -29,6 +29,11 @@ $studentContent = $this->render('student/view', [
         'lessonModel' => $model,
 ]);
 
+$splitContent = $this->render('split/view', [
+	'splitDataProvider' => $splitDataProvider,
+        'lessonModel' => $model,
+]);
+
 $logContent = $this->render('log', [
 	'model' => $model,
 ]);
@@ -65,8 +70,21 @@ $groupLesson = [
 		],
 	],
 ];
+
+$splitLesson = [
+	[
+		'label' => 'Splits',
+		'content' => $splitContent,
+		'options' => [
+			'id' => 'split',
+		],
+	],
+];
 if ($model->course->program->isGroup()) {
 	$items = array_merge($items, $groupLesson);
+}
+if ($model->isExploded()) {
+	$items = array_merge($items, $splitLesson);
 }
 ?>
 <?php
