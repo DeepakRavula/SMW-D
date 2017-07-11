@@ -277,7 +277,7 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasMany(LessonSplit::className(), ['lessonId' => 'id']);
     }
 
-    public function getInvoice()
+    public function getRealInvoice()
     {
         return Invoice::find()
                     ->joinWith('lineItems')
@@ -286,6 +286,14 @@ class Lesson extends \yii\db\ActiveRecord
                     ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE,
                         'invoice.isDeleted' => false])
                     ->one();
+    }
+
+    public function getInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+            ->viaTable('invoice_line_item', ['item_id' => 'id'])
+            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON])
+            ->onCondition(['invoice.type' => Invoice::TYPE_INVOICE, 'invoice.isDeleted' => false]);
     }
 
     public function getProFormaInvoice()
@@ -318,7 +326,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getInvoiceLineItem()
     {
         if ($this->hasInvoice()) {
-            return InvoiceLineItem::find()
+        return InvoiceLineItem::find()
                 ->where(['invoice_id' => $this->invoice->id])
                 ->andWhere(['invoice_line_item.item_id' => $this->id])
                 ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON])
@@ -667,16 +675,16 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
         $invoice->addLineItem($this);
-        if ($invoice->save() && !empty($this->extendedLessons)) {
-            foreach ($this->extendedLessons as $extendedLesson) {
-                $this->invoiceLineItem->addLessonCreditApplied($extendedLesson->lessonSplitId);
-            }
-        }
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
             $netPrice = $this->proFormaLineItem->netPrice;
             if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
                 $invoice->addPayment($this->proFormaInvoice);
+            }
+        }
+        if (!empty($this->extendedLessons)) {
+            foreach ($this->extendedLessons as $extendedLesson) {
+                $this->invoiceLineItem->addLessonCreditApplied($extendedLesson->lessonSplitId);
             }
         }
 
@@ -690,7 +698,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function hasInvoice()
     {
-        return !empty($this->invoice);
+        return !empty($this->realInvoice);
     }
 
 	public function getPresent()

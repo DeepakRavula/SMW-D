@@ -86,11 +86,6 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
     public function afterSave($insert,$changedAttributes)
     {
         if ($insert) {
-            if ($this->lesson->hasInvoice()) {
-                $this->lesson->invoiceLineItem->addLessonCreditUsage($this->lessonSplitId);
-            } else {
-                $this->lesson->proFormaLineItem->addLessonCreditUsage($this->lessonSplitId);
-            }
             if ($this->extendedLesson->hasInvoice()) {
                 $this->extendedLesson->invoiceLineItem->addLessonCreditApplied($this->lessonSplitId);
             }

@@ -356,14 +356,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return (($hours * 60) + $minutes) / 60;
     }
 
-    public function addLessonCreditUsage($splitId)
-    {
-        $this->setScenario(self::SCENARIO_OPENING_BALANCE);
-        $this->unit         = $this->unit - $this->getLessonCreditUnit($splitId);
-        $this->amount       = $this->amount - ($this->getLessonCreditAmount($splitId));
-        return $this->save();
-    }
-
     public function addLessonCreditApplied($splitId)
     {
         $lessonSplit  = LessonSplit::findOne($splitId);
