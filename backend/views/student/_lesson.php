@@ -7,6 +7,7 @@ use yii\grid\GridView;
 use yii\bootstrap\Modal;
 
 ?>
+<?php $this->render('/lesson/_color-code'); ?>
 <div class="">
     <div id="new-lesson" class="col-md-12">
     	<h4 class="pull-left m-r-20">Lessons</h4>
@@ -210,7 +211,7 @@ use yii\bootstrap\Modal;
             var programs = <?php echo Json::encode($allEnrolments); ?>;
             var selectedProgram = $('#lesson-program').val();
             $.each(programs, function( index, value ) {
-                if (value.programId === selectedProgram) {
+                if (value.programId == selectedProgram) {
                     $('#lesson-teacher').val(value.teacherId).trigger('change.select2');
                 }
             });

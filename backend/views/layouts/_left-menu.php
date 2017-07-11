@@ -47,7 +47,7 @@ echo Menu::widget([
 			'url' => ['student/index', 'StudentSearch[showAllStudents]' => false],
 			'visible' => Yii::$app->user->can('staffmember'),
 			'active' => (Yii::$app->controller->id === 'student') ? true : false,
-			'badge' => Student::find()->notDeleted()->count(),
+			'badge' => Student::count(),
 			'badgeBgClass' => 'label-default',
 		],
         [
@@ -131,7 +131,7 @@ echo Menu::widget([
 			'icon' => '<i class="fa  fa-dollar"></i>',
 			'url' => ['invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_PRO_FORMA_INVOICE],
 			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (Yii::$app->controller->id === 'invoice') ? true : false,
+			'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_PRO_FORMA_INVOICE) ? true : false,
 			'badge' => Invoice::pfiCount(),
 			'badgeBgClass' => 'label-default'
 		],
@@ -140,7 +140,7 @@ echo Menu::widget([
 			'icon' => '<i class="fa  fa-dollar"></i>',
 			'url' => ['invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE],
 			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (Yii::$app->controller->id === 'invoice') ? true : false,
+			'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_INVOICE ) ? true : false,
 			'badge' => Invoice::invoiceCount(),
 			'badgeBgClass' => 'label-default'
 		],

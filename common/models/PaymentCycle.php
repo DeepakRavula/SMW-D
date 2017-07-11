@@ -142,17 +142,20 @@ class PaymentCycle extends \yii\db\ActiveRecord
     public function createProFormaInvoice()
     {
         $locationId = $this->enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $user = User::findOne(['id' => $this->enrolment->student->customer->id]);
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
         $invoice->userName = $user->publicIdentity;
-        $invoice->user_id = $this->enrolment->student->customer->id;
+        $invoice->user_id = $user->id;
         $invoice->location_id = $locationId;
         $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
         $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
+        if ($user->hasDiscount()) {
+            $invoice->addCustomerDiscount($user);
+        }
         $lessons = Lesson::find()
             ->notDeleted()
             ->joinWith('paymentCycleLesson')

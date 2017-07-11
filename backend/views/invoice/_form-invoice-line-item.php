@@ -7,6 +7,7 @@ use common\models\TaxStatus;
 use common\models\ItemCategory;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
+use kartik\switchinput\SwitchInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -47,7 +48,18 @@ use yii\helpers\Url;
             <?php echo $form->field($model, 'amount')->textInput()?>
         </div>
         <div class="col-xs-8">
-            <?php echo $form->field($model, 'isRoyaltyExempted')->checkbox()?>
+            <?php echo $form->field($model, 'royaltyFree')->widget(SwitchInput::classname(),
+                [
+                'name' => 'royaltyFree',
+				'options' => [
+					'id' => 'line-item-royalty-free',
+				],
+                'pluginOptions' => [
+                    'handleWidth' => 30,
+                    'onText' => 'Yes',
+                    'offText' => 'No',
+                ],
+            ]);?>
         </div>
     </div>
     <div class="row tax-compute">
@@ -122,9 +134,9 @@ $(document).ready(function() {
                 $('#invoicelineitem-unit').val(1);
                 $('#invoicelineitem-tax_status').val(response.tax);
                 if (response.royaltyFree) {
-                    $('#invoicelineitem-isroyaltyexempted').prop('checked', true);
+                    $('#line-item-royalty-free').bootstrapSwitch('state', true);
                 } else {
-                    $('#invoicelineitem-isroyaltyexempted').prop('checked', false);
+                    $('#line-item-royalty-free').bootstrapSwitch('state', false);
                 }
                 changeTax();
             }

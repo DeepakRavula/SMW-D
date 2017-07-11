@@ -8,6 +8,10 @@ use yii\bootstrap\Modal;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<?php yii\widgets\Pjax::begin([
+    'id' => 'student-note',
+    'timeout' => 6000,
+]) ?>
 <div class="row p-10">
 <div id="student-note" class="col-md-12">
 	<h4 class="pull-left m-r-20">Notes</h4>
@@ -36,3 +40,4 @@ Modal::end();
 	
 	
 </div>
+<?php \yii\widgets\Pjax::end(); ?>
