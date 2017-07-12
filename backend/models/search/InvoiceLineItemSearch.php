@@ -48,15 +48,14 @@ class InvoiceLineItemSearch extends InvoiceLineItem
                     ->between((new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d'))
                     ->orderBy([
                         'DATE(invoice.date)' => SORT_DESC,
-                    ])
-                    ->groupBy('DATE(invoice.date)');
+                    ]);
             }]);
         if ($this->groupByItem) {
-            $query->groupBy('item_id');
+            $query->groupBy('item_id, DATE(invoice.date)');
         }
         if ($this->groupByItemCategory) {
             $query->joinWith('itemCategory')
-                ->groupBy('item_category.id');
+                ->groupBy('item_category.id, DATE(invoice.date)');
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

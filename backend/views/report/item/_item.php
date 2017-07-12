@@ -97,24 +97,9 @@ tr.success>td{
 			],
 				[
 				'label' => 'Amount',
-				'value' => function ($data) use($searchModel) {
-					$locationId = Yii::$app->session->get('location_id');
-					$amount = 0;
-					$items = InvoiceLineItem::find()
-						->joinWith(['invoice' => function($query) use ($locationId) {
-                                                    $query->notDeleted()
-                                                        ->location($locationId);
-                                                }])
-						->andWhere([
-                                                    'invoice_line_item.item_id' => $data->item->id,
-                                                    'DATE(invoice.date)' => (new \DateTime($data->invoice->date))->format('Y-m-d')
-						])
-						->all();
-					foreach ($items as $item) {
-						$amount += $item->netPrice;
-					}
-
-					return $amount;
+				'value' => function ($data) {
+                                    $locationId = Yii::$app->session->get('location_id');
+                                    return $data->item->getNetPrice($locationId, $data->invoice->date);
 				},
 				'contentOptions' => ['class' => 'text-right'],
 				'hAlign' => 'right',
