@@ -301,10 +301,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function isOtherLineItems()
     {
-        $isOtherLineItems = (int) $this->item_type_id === (int) ItemType::TYPE_MISC ||
-            (int) $this->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON ||
-            (int) $this->item_type_id === (int) ItemType::TYPE_GROUP_LESSON;
-        return $isOtherLineItems;
+        return ! $this->isOpeningBalance();
     }
 
     public function isLessonCredit()
@@ -451,8 +448,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if (!$lessonSplit->lesson->hasInvoice()) {
             $creditUsedInvoice = $lessonSplit->lesson->proFormaInvoice;
         }
-        if ($this->invoice->addLessonCreditAppliedPayment($this->netPrice - $old->netPrice, $creditUsedInvoice)) {
-            $creditUsedInvoice->save();
+        if ($creditUsedInvoice) {
+            if ($this->invoice->addLessonCreditAppliedPayment($this->netPrice - $old->netPrice, $creditUsedInvoice)) {
+                $creditUsedInvoice->save();
+            }
         }
     }
 

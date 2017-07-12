@@ -153,9 +153,6 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
-        if ($user->hasDiscount()) {
-            $invoice->addCustomerDiscount($user);
-        }
         $lessons = Lesson::find()
             ->notDeleted()
             ->joinWith('paymentCycleLesson')
@@ -172,6 +169,9 @@ class PaymentCycle extends \yii\db\ActiveRecord
             }
         }
         $invoice->save();
+        if ($user->hasDiscount()) {
+            $invoice->addCustomerDiscount($user);
+        }
         return $invoice;
     }
 

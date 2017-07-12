@@ -843,11 +843,11 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
         $invoice->save();
+        $invoice->addPrivateLessonLineItem($this);
+        $invoice->save();
         if ($user->hasDiscount()) {
             $invoice->addCustomerDiscount($user);
         }
-        $invoice->addPrivateLessonLineItem($this);
-        $invoice->save();
         if ($this->hasProFormaInvoice()) {
             if ($this->isSplitRescheduled()) {
                 $netPrice = $this->getSplitRescheduledAmount();
@@ -888,12 +888,12 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->user_id = $enrolment->student->customer->id;
         $invoice->location_id = $location_id;
         $invoice->save();
-        if ($user->hasDiscount()) {
-            $invoice->addCustomerDiscount($user);
-        }
         $this->enrolmentId = $enrolmentId;
         $invoice->addGroupLessonLineItem($this);
         $invoice->save();
+        if ($user->hasDiscount()) {
+            $invoice->addCustomerDiscount($user);
+        }
         if ($enrolment->hasProFormaInvoice()) {
             $netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
             if ($enrolment->proFormaInvoice->proFormaCredit >= $netPrice) {

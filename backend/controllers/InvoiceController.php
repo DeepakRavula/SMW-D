@@ -221,7 +221,7 @@ class InvoiceController extends Controller
         $response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
         $invoiceLineItemModel = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_LINE_ITEM_CREATE]);
-        $userModel = User::findOne(['id' => Yii::$app->user->id]);
+        $userModel = User::findOne(['id' => $model->user->id]);
         $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
         $invoiceLineItemModel->userName = $userModel->publicIdentity;
         if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
@@ -235,6 +235,9 @@ class InvoiceController extends Controller
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
                 $model->save();
+                if ($model->user->hasDiscount()) {
+                    $model->addCustomerDiscount($model->user);
+                }
                 $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
 
                 $response = [

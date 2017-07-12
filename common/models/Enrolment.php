@@ -531,9 +531,6 @@ class Enrolment extends \yii\db\ActiveRecord
         if (!$invoice->save()) {
             Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
         }
-        if ($user->hasDiscount()) {
-            $invoice->addCustomerDiscount($user);
-        }
         $invoiceLineItem = $invoice->addGroupProFormaLineItem($this);
         if (!$invoiceLineItem->save()) {
             Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
@@ -546,6 +543,9 @@ class Enrolment extends \yii\db\ActiveRecord
         if (!$invoice->save()) {
             Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
         } else {
+            if ($user->hasDiscount()) {
+                $invoice->addCustomerDiscount($user);
+            }
             return $invoice;
         }
     }
