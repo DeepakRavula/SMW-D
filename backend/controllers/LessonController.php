@@ -116,11 +116,17 @@ class LessonController extends Controller
         $studentDataProvider = new ActiveDataProvider([
             'query' => $groupLessonStudents,
         ]);
+        $splits = LessonSplit::find()
+            ->where(['lessonId' => $id]);
+        $splitDataProvider = new ActiveDataProvider([
+            'query' => $splits,
+        ]);
 
         return $this->render('view', [
             'model' => $model,
-			'noteDataProvider' => $noteDataProvider,
-			'studentDataProvider' => $studentDataProvider
+            'noteDataProvider' => $noteDataProvider,
+            'studentDataProvider' => $studentDataProvider,
+            'splitDataProvider' => $splitDataProvider
         ]);
     }
 

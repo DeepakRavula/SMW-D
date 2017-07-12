@@ -2,6 +2,9 @@
 
 namespace common\models;
 
+use yii\helpers\Html;
+use yii\helpers\Url;
+
 /**
  * This is the model class for table "private_lesson".
  *
@@ -85,5 +88,24 @@ class LessonSplit extends \yii\db\ActiveRecord
         $hours       = $getDuration->format('H');
         $minutes     = $getDuration->format('i');
         return (($hours * 60) + $minutes) / 60;
+    }
+
+    public function getStatus()
+    {
+        if ($this->lesson->isRescheduled() || !empty($this->lessonSplitUsage)) {
+            if ($this->lesson->isRescheduled()) {
+                $lesson = Lesson::findOne($this->lesson->lessonReschedule->rescheduledLessonId);
+                $url = ['lesson/view', 'id' => $this->lessonSplitUsage->extendedLessonId];
+            } else if (!empty ($this->lessonSplitUsage)) {
+                $lesson = Lesson::findOne($this->lessonSplitUsage->extendedLessonId);
+                $url = ['lesson/view', 'id' => $this->lessonSplitUsage->extendedLessonId];
+            }
+            $message = (new \DateTime($lesson->date))->format('l, F jS, Y @ g:i a');
+            $status = Html::a($message, $url);
+        } else {
+            $status = 'Unused';
+        }
+
+        return $status;
     }
 }
