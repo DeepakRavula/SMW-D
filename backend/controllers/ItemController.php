@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
+use backend\models\search\InvoiceLineItemSearch;
 
 /**
  * ItemController implements the CRUD actions for Item model.
@@ -159,5 +160,19 @@ class ItemController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionPrint()
+    {
+        $searchModel              = new InvoiceLineItemSearch();
+        $searchModel->groupByItem = true;
+        $dataProvider             = $searchModel->search(Yii::$app->request->queryParams);
+
+        $this->layout             = '/print';
+
+        return $this->render('/report/item/_print', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ]);
     }
 }

@@ -11,6 +11,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
+use backend\models\search\InvoiceLineItemSearch;
 
 /**
  * ItemCategoryController implements the CRUD actions for ItemCategory model.
@@ -208,5 +209,20 @@ class ItemCategoryController extends Controller
             'royaltyFree' => $item->royaltyFree,
             'tax' => $item->taxStatusId
         ];
+    }
+
+    public function actionPrint()
+    {
+        $searchModel                      = new InvoiceLineItemSearch();
+        $searchModel->groupByItemCategory = true;
+        $dataProvider                     = $searchModel->search(Yii::$app->request->queryParams);
+
+        $this->layout = '/print';
+
+        return $this->render('/report/item-category/_print',
+                [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+        ]);
     }
 }
