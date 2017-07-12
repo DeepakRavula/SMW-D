@@ -62,7 +62,18 @@ class StudentBirthdayController extends Controller
             'searchModel' => $searchModel,
         ]);
     }
+    public function actionPrint()
+    {
+        $searchModel = new StudentBirthdaySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        $this->layout = '/print';
+
+        return $this->render('/report/student-birthday/_print', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+        ]);
+    }
     /**
      * Displays a single Student model.
      *
