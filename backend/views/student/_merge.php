@@ -22,7 +22,7 @@ use yii\helpers\Html;
 				'pluginOptions' => [
                                     'allowClear' => true,
                                     'multiple' => false,
-                                    'placeholder' => 'select student'
+                                    'placeholder' => 'select student',
 				],
 			]); ?>
         </div>

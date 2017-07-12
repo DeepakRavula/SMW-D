@@ -31,7 +31,7 @@ use common\models\Qualification;
 		->andWhere(['NOT', ['qualification.id' => $model->id]])
 		->all();
 		$privateQualificationIds = ArrayHelper::getColumn($privateQualifications, 'program_id'); 
-		$privatePrograms = Program::find()->privateProgram()
+		$privatePrograms = Program::find()->privateProgram()->active()
 			->andWhere(['NOT IN', 'program.id', $privateQualificationIds])->all();
 		$groupQualifications = Qualification::find()
 		->joinWith(['program' => function($query) {
@@ -41,7 +41,7 @@ use common\models\Qualification;
 		->andWhere(['NOT', ['qualification.id' => $model->id]])
 		->all();
 		$groupQualificationIds = ArrayHelper::getColumn($groupQualifications, 'program_id'); 
-		$groupPrograms = Program::find()->group()
+		$groupPrograms = Program::find()->group()->active()
 			->andWhere(['NOT IN', 'program.id', $groupQualifications])->all();
 ?>
    <div class="row">

@@ -47,7 +47,8 @@ class EnrolmentSearch extends Enrolment
 				$query->location($locationId);
 			}])
 			->notDeleted()
-			->isConfirmed();
+			->isConfirmed()
+                        ->isRegular();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -56,10 +57,34 @@ class EnrolmentSearch extends Enrolment
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
+        $query->joinWith('student');
+        $query->leftJoin(['program p'], 'course.programId = p.id');
+        $query->leftJoin(['user_profile up'], 'course.teacherId=up.user_id');
+         $dataProvider->setSort([
+            'attributes' => [
+                'expirydate' => [
+                    'asc' => ['course.endDate' => SORT_ASC],
+                    'desc' => ['course.endDate' => SORT_DESC],
+                ],
+                'program' => [
+                    'asc' => ['p.name' => SORT_ASC],
+                    'desc' => ['p.name' => SORT_DESC],
+                ],
+                'student' => [
+                    'asc' => ['student.first_name' => SORT_ASC],
+                    'desc' => ['student.first_name' => SORT_DESC],
+                ],
+                'teacher' => [
+                    'asc' => ['up.firstname' => SORT_ASC],
+                    'desc' => ['up.firstname' => SORT_DESC],
+                ]
+            ]
+        ]);
 
-		 if (! $this->showAllEnrolments) {
+        if (! $this->showAllEnrolments) {
 				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
-				->isConfirmed();
+				->isConfirmed()
+                                ->isRegular();
         }
 
         return $dataProvider;

@@ -25,6 +25,10 @@ class Enrolment extends \yii\db\ActiveRecord
 	public $enrolmentCount;
     public $userName;
 
+    const TYPE_REGULAR = 1;
+    const TYPE_EXTRA   = 2;
+    const ENROLMENT_EXPIRY=90;
+
     const EVENT_CREATE = 'create';
     const EVENT_GROUP='group-course-enroll';
     /**
@@ -56,7 +60,8 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
-            [['paymentFrequencyId', 'isDeleted', 'isConfirmed', 'hasEditable'], 'safe'],
+            [['paymentFrequencyId', 'type',  'isDeleted', 'isConfirmed',
+                'hasEditable'], 'safe'],
         ];
     }
 
@@ -292,17 +297,35 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return (int) $this->paymentFrequency === (int) self::LENGTH_FULL;
     }
+    public function isExpiring($daysCount)
+    {
+        $isExpiring = false;
+        $endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
+        $currentDate = new \DateTime();
+        $currentDate = $currentDate->modify('+' . $daysCount . ' days');
+        $expiryDate = $currentDate->format('Y-m-d');
+        if ($endDate <= $expiryDate) {
+            $isExpiring = true;
+        }
+        return $isExpiring;
+    }
 
-	public function beforeSave($insert) {
-		if($insert) {
-			$this->isDeleted = false;
-			$this->isConfirmed = false;
-		}
-		return parent::beforeSave($insert);
-	}
+    public function beforeSave($insert) {
+        if($insert) {
+            $this->isDeleted = false;
+            if (empty($this->isConfirmed)) {
+                $this->isConfirmed = false;
+            }
+            if (empty($this->type)) {
+                $this->type = self::TYPE_REGULAR;
+            }
+        }
+        return parent::beforeSave($insert);
+    }
     public function afterSave($insert, $changedAttributes)
     {
-        if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate)) || (!$insert)) {
+        if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate)) || 
+            (!$insert) || $this->isExtra()) {
             return true;
         }
         $interval = new \DateInterval('P1D');
@@ -495,11 +518,11 @@ class Enrolment extends \yii\db\ActiveRecord
     public function createProFormaInvoice()
     {
         $locationId = $this->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $user = User::findOne(['id' => $this->student->customer->id]);
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
         $invoice->userName = $user->publicIdentity;
-        $invoice->user_id = $this->student->customer->id;
+        $invoice->user_id = $user->id;
         $invoice->location_id = $locationId;
         $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
         $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
@@ -507,6 +530,9 @@ class Enrolment extends \yii\db\ActiveRecord
         $invoice->updatedUserId = Yii::$app->user->id;
         if (!$invoice->save()) {
             Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+        }
+        if ($user->hasDiscount()) {
+            $invoice->addCustomerDiscount($user);
         }
         $invoiceLineItem = $invoice->addGroupProFormaLineItem($this);
         if (!$invoiceLineItem->save()) {
@@ -522,5 +548,10 @@ class Enrolment extends \yii\db\ActiveRecord
         } else {
             return $invoice;
         }
+    }
+
+    public function isExtra()
+    {
+        return $this->type === self::TYPE_EXTRA;
     }
 }

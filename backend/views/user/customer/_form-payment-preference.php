@@ -26,22 +26,17 @@ use yii\helpers\Html;
         </div>
         <div class="col-xs-8">
 			<?php echo $form->field($model, 'paymentMethodId')->dropdownList
-                (ArrayHelper::map(PaymentMethod::find()->where(['name' => 'Credit Card'])->all(), 'id', 'name'), ['prompt' => 'Select payment method'])->label('Payment Method'); ?>
+                (ArrayHelper::map(PaymentMethod::find()->active()->paymentPreference()->all(), 'id', 'name'), ['prompt' => 'Select payment method'])->label('Payment Method'); ?>
         </div>
 	</div>
 	<div class="form-group">
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
         <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-primary']); ?>
         <?php if (!empty($model->id)) : ?>
-            <?= Html::a('Delete', [
-                    'customer-payment-preference/delete', 'id' => $model->id
-                ],
+            <?= Html::a('Delete', null,
                 [
-                    'class' => 'btn btn-primary',
-                    'data' => [
-                        'confirm' => 'Are you sure you want to delete this?',
-                        'method' => 'post',
-                    ]
+                    'class' => 'btn btn-primary payment-preference-delete',
+                    'preferenceId' => $model->id,
                 ]); ?>
         <?php endif; ?>
 	</div>

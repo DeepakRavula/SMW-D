@@ -37,6 +37,7 @@ use common\models\Student;
                     ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
                     ->where(['raa.item_name' => [User::ROLE_OWNER, User::ROLE_STAFFMEMBER]])
                     ->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                    ->notDeleted()
                     ->all(),
                 'id', 'userProfile.fullName'),
             'pluginOptions' => [
@@ -50,6 +51,7 @@ use common\models\Student;
         <?php $locationId = Yii::$app->session->get('location_id');
 		echo $form->field($model, 'student')->widget(Select2::classname(), [
 	    'data' => ArrayHelper::map(Student::find()
+                        ->notDeleted()
 			->location($locationId)
 			->active()
             ->all(), 'id', 'fullName'),

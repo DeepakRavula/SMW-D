@@ -16,6 +16,7 @@ use yii\bootstrap\Modal;
 $this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice';
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'InvoiceSearch[type]' => $model->type], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
+<div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <style>
   .invoice-view .logo>img{
     width: 216px;
@@ -207,12 +208,47 @@ $logContent = $this->render('log', [
 <div id="line-item-edit-content"></div>
 <?php Modal::end();?>
 <?php Modal::begin([
+    'header' => '<h4 class="m-0">Edit Discounts</h4>',
+    'id' => 'invoice-discount-modal',
+]); ?>
+
+<div id="invoice-discount-content"></div>
+<?php Modal::end();?>
+<?php Modal::begin([
     'header' => '<h4 class="m-0">Edit Payment</h4>',
     'id' => 'payment-edit-modal',
 ]); ?>
 <div id="payment-edit-content"></div>
 <?php Modal::end();?>
 <script>
+var invoice = {
+    onEditableGridSuccess : function(event, val, form, data) {
+        invoice.updateSummarySectionAndStatus();
+    },
+    updateInvoiceStatus : function(status){
+        $('#invoice-status').text(status);
+
+    },
+    updateSummarySectionAndStatus : function() {
+        $.ajax({
+            url    : '<?= Url::to(['invoice/fetch-summary-and-status', 'id' => $model->id]) ?>',
+            type   : 'GET',
+            dataType: "json",
+            success: function(response)
+            {
+                $('#invoice-summary-section').html(response.summary);
+                invoice.updateInvoiceStatus(response.status);
+                $('#invoice-payment-detail').html(response.details);
+            }
+        });
+        return false;
+    }
+}
+var payment = {
+	onEditableGridSuccess :function(event, val, form, data) {
+            invoice.updateSummarySectionAndStatus();
+        }
+}
  $(document).ready(function() {
 	 $(document).on('click', '#invoice-note', function (e) {
 		$('#note-content').val('');
@@ -290,12 +326,16 @@ $logContent = $this->render('log', [
 			success: function(response)
 			{
 			   if(response.status)
-			   {
-                    $.pjax.reload({container: '#line-item-grid', timeout: 6000});
-					$('#line-item-edit-modal').modal('hide');
-				}else
 				{
-				 $('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
+					$.pjax.reload({container: '#line-item-listing', replace:false, timeout: 6000});
+					payment.onEditableGridSuccess();
+					invoice.onEditableGridSuccess();
+					if(response.message) {
+						$('#invoice-discount-warning').html(response.message).fadeIn().delay(8000).fadeOut();
+					}
+					$('#line-item-edit-modal').modal('hide');
+				} else {
+					$('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
 				}
 			}
 		});
@@ -348,5 +388,43 @@ $logContent = $this->render('log', [
 		$('#payment-edit-modal').modal('hide');
 		return false;
 	});
+        $(document).on("click", '.discount-cancel', function() {
+		$('#invoice-discount-modal').modal('hide');
+		return false;
+	});
+        $(document).on("click", '#invoice-discount', function() {
+            $.ajax({
+                url    : '<?= Url::to(['invoice/discount', 'id' => $model->id]); ?>',
+                type   : 'get',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $('#invoice-discount-content').html(response.data);
+                        $('#invoice-discount-modal').modal('show');
+                    }
+                }
+            });
+            return false;
+        });
+        $(document).on("beforeSubmit", '#invoice-discount-form', function() {
+            $.ajax({
+                url    : $(this).attr('action'),
+                type   : 'post',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $('#invoice-discount-modal').modal('hide');
+                        payment.onEditableGridSuccess();
+                    }
+                }
+            });
+            return false;
+        });
 });
 </script>

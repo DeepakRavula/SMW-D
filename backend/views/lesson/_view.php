@@ -74,15 +74,16 @@ use yii\bootstrap\Modal;
         <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Duration">
 			<i class="fa fa-clock-o"></i> <?= (new \DateTime($duration))->format('H:i') ?>
 		</div>
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
+		<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
 			<i class="fa fa-info-circle detail-icon"></i> <?php echo !empty($model->status) ? $model->getStatus() : null; ?>
 		</div>
-		<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
-			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null; ?>
-		</div>
+		
 		</div>
 		<div class="clearfix"></div>
 		<div class="row-fluid p-10">
+                    <div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Teacher name">
+			<i class="fa fa-graduation-cap"></i> <?php echo !empty($model->teacher->publicIdentity) ? $model->teacher->publicIdentity : null; ?>
+		</div>
 		<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Expiry Date">
 			<?php if (!empty($model->privateLesson->expiryDate)) :?>
 				<i class="fa fa-calendar-plus-o"></i> <?php echo !empty($model->privateLesson->expiryDate) ? (Yii::$app->formatter->asDate($model->privateLesson->expiryDate)) : null; ?>

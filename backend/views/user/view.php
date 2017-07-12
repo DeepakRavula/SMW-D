@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use common\models\Note;
 use yii\helpers\Url;
 use common\models\TeacherRoom;
-use common\models\TeacherRate;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -24,6 +24,25 @@ $this->title = $model->publicIdentity.' - '.ucwords($searchModel->role_name);
 $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
+<style>
+  .e1Div{
+    right: 75px !important;
+    top: -52px;
+  }
+</style>
+<div class="student-index">
+    <div class="pull-right  m-r-10">
+        <div class="schedule-index">
+            <div class="e1Div">
+                <?php if ($model->isCustomer()) : ?>
+                    <?= Html::a('Merge', ['#'], ['class' => 'btn btn-success', 'id' => 'customer-merge']); ?>
+                <?php endif; ?> 
+            </div>
+        </div>
+    </div>
+</div>
+<div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
+<div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
 <style>
 	.lesson-count {
 		font-weight: bold;
@@ -133,9 +152,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 
         $unscheduledLessonContent = $this->render('teacher/_unscheduled-lesson', [
             'dataProvider' => $unscheduledLessonDataProvider,
+            'model' => $model,
         ]);
 
-        $teacherScheduleContent = $this->render('teacher/_calendar', [
+        $teacherScheduleContent = $this->render('teacher/_schedule', [
             'teacherId' => $model->id,
         ]);
 		$teacherLessonContent = $this->render('teacher/_view-lesson', [
@@ -324,6 +344,14 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		<div class="clearfix"></div>
 	</div>
 </div>
+
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Merge '. $model->publicIdentity . '</h4>',
+    'id' => 'customer-merge-modal',
+]); ?>
+<div id="customer-merge-content"></div>
+<?php Modal::end(); ?>
+
 <script>
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
@@ -350,6 +378,44 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$('#invoice-line-item-modal').modal('show');
   	});
 $(document).ready(function(){
+    $(document).on('click', '.customer-merge-cancel', function () {
+        $('#customer-merge-modal').modal('hide');
+        return false;
+    });
+    $(document).on('click', '#customer-merge', function () {
+        $.ajax({
+            url    : '<?= Url::to(['user/merge', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#customer-merge-content').html(response.data);
+                    $('#customer-merge-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
+    $(document).on('beforeSubmit', '#customer-merge-form', function () {
+        $.ajax({
+            url    : '<?= Url::to(['user/merge', 'id' => $model->id]); ?>',
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+                    location.reload();
+                } else {
+                    $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
+        return false;
+    });
 	$(document).on('click', '.add-group-qualification', function () {
 		$('.group-qualification-fields').show();
 		$('.hr-quali').hide();
@@ -403,6 +469,23 @@ $(document).ready(function(){
 			success: function (response)
 			{
 				
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#customer-discount', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+				    $('#discount-warning').html(response.data).fadeIn().delay(8000).fadeOut();
+        			$.pjax.reload({container:"#customer-log-listing",replace:false,  timeout: 4000});
+				}
 			}
 		});
 		return false;

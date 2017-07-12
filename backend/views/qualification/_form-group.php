@@ -28,7 +28,7 @@ use common\models\Qualification;
 			->andWhere(['teacher_id' => $userModel->id])
 			->all();
 		$groupQualificationIds = ArrayHelper::getColumn($groupQualifications, 'program_id'); 
-		$groupPrograms = Program::find()->group()
+		$groupPrograms = Program::find()->group()->active()
 			->andWhere(['NOT IN', 'program.id', $groupQualificationIds])->all();
 ?>
    <div class="row">

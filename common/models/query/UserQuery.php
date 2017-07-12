@@ -17,7 +17,7 @@ class UserQuery extends ActiveQuery
      */
     public function notDeleted()
     {
-        $this->andWhere(['!=', 'user.status', User::STATUS_NOT_ACTIVE]);
+        $this->andWhere(['user.isDeleted' => false]);
 
         return $this;
     }
@@ -41,6 +41,16 @@ class UserQuery extends ActiveQuery
             }])
             ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
             ->where(['raa.item_name' => 'teacher'])
+            ->andWhere(['ul.location_id' => $locationId]);
+
+        return $this;
+    }
+
+    public function customers($locationId)
+    {
+        $this->joinWith('userLocation ul')
+            ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->where(['raa.item_name' => 'customer'])
             ->andWhere(['ul.location_id' => $locationId]);
 
         return $this;

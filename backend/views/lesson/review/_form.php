@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
-
+use common\models\Lesson;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -44,8 +44,20 @@ use kartik\time\TimePicker;
 		?>
 	</div>
 	<?= $form->field($model, 'id')->hiddenInput()->label(false);?>
+	<?= $form->field($model, 'applyContext')->hiddenInput()->label(false);?>
 	<div class="col-md-12 p-l-20 form-group">
-		<?= Html::submitButton(Yii::t('backend', 'Apply'), ['id' => 'lesson-review-apply', 'class' => 'btn btn-primary', 'name' => 'button']) ?>
+		<?= Html::submitButton(Yii::t('backend', 'Apply'), [
+			'id' => 'lesson-review-apply',
+			'class' => 'btn btn-primary',
+			'name' => 'button',
+			'value' => Lesson::APPLY_SINGLE_LESSON
+		]) ?>
+		<?= Html::submitButton(Yii::t('backend', 'Apply All'), [
+			'id' => 'lesson-review-apply-all',
+			'class' => 'btn btn-primary',
+			'name' => 'button',
+			'value' => Lesson::APPLY_ALL_FUTURE_LESSONS
+		]) ?>
 		<?= Html::a('Cancel','#', ['id' => 'lesson-review-cancel','class' => 'btn btn-default']);
 		?>
 		<div class="clearfix"></div>

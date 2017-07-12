@@ -22,8 +22,9 @@ use common\models\Lesson;
 		<div class="row">
         <div class="col-lg-12">
            <?php 
-            $data = ArrayHelper::map(User::find()->all(), 'email', 'email');
+            $data = ArrayHelper::map(User::find()->notDeleted()->all(), 'email', 'email');
             $students = Student::find()
+                    ->notDeleted()
                     ->joinWith('enrolment')
                     ->andWhere(['courseId' => $model->courseId])
                     ->all();

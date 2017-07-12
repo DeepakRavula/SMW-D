@@ -6,7 +6,7 @@ use Yii;
 use yii\console\Controller;
 use yii\helpers\Console;
 use common\models\Invoice;
-use common\models\Enrolment;
+use common\models\User;
 use common\models\Lesson;
 use common\models\Payment;
 use common\models\CreditUsage;
@@ -76,6 +76,30 @@ class InvoiceController extends Controller
             }
         } catch (\Exception $exception) {
             Yii::$app->errorHandler->logException($exception);
+        }
+
+        return true;
+    }
+
+    public function actionPaymentPreferenceInvoice()
+    {
+        $currentDate = new \DateTime();
+        $customers = User::find()
+                ->joinWith(['customerPaymentPreference' => function ($query) use ($currentDate) {
+                    $query->date($currentDate);
+                }])
+                ->notDeleted()
+                ->all();
+        foreach ($customers as $customer) {
+            $invoices = Invoice::find()
+                ->notDeleted()
+                ->proFormaInvoice()
+                ->customer($customer->id)
+                ->unpaid()
+                ->all();
+            foreach ($invoices as $invoice) {
+                $invoice->addPreferredPayment($customer->customerPaymentPreference->paymentMethodId);
+            }
         }
 
         return true;

@@ -12,6 +12,7 @@ use common\models\CustomerDiscount;
 <div class="p-10">
 	<h4><strong>Set Discount (%)</strong></h4>
 	<?php $form = ActiveForm::begin([
+		'id' => 'customer-discount',
         'action' => Url::to(['customer-discount/create', 'id' => $userModel->id]),
     ]); ?>
 	<?php

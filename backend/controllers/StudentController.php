@@ -74,16 +74,24 @@ class StudentController extends Controller
     {
         $model = $this->findModel($id);
         $locationId = Yii::$app->session->get('location_id');
-        $enrolments = Enrolment::find()
+        $query = Enrolment::find()
 			->joinWith(['course' => function($query) {
 				$query->isConfirmed();
 			}])
 			->location($locationId)
 			->notDeleted()
-			->andWhere(['studentId' => $model->id]);
-
+                        ->isConfirmed()
+                        ->andWhere(['studentId' => $model->id]);
+        $enrolments = $query->all();
+        $allEnrolments = [];
+        foreach ($enrolments as $enrolment) {
+            $allEnrolments[] = [
+                'teacherId' => $enrolment->course->teacherId,
+                'programId' => $enrolment->course->programId
+            ];
+        }
         $enrolmentDataProvider = new ActiveDataProvider([
-            'query' => $enrolments,
+            'query' => $query->isRegular(),
         ]);
 
         $currentDate = new \DateTime();
@@ -127,6 +135,7 @@ class StudentController extends Controller
 
 		return $this->render('view', [
 			'model' => $model,
+                        'allEnrolments' => $allEnrolments,
 			'lessonDataProvider' => $lessonDataProvider,
 			'enrolmentDataProvider' => $enrolmentDataProvider,
 			'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
@@ -257,7 +266,9 @@ class StudentController extends Controller
     {
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
-        $model = Student::find()->location($locationId)
+        $model = Student::find()
+                ->notDeleted()
+                ->location($locationId)
                 ->where(['student.id' => $id])->one();
         if ($model !== null) {
             return $model;
@@ -282,45 +293,39 @@ class StudentController extends Controller
         $model->setScenario(Student::SCENARIO_MERGE);
         $students   = Student::find()
                         ->active()
+                        ->notDeleted()
+                        ->customer($model->customer_id)
                         ->location($locationId)
                         ->andWhere(['NOT', ['student.id' => $id]])
                         ->all();
-
         $data       = $this->renderAjax('_merge', [
             'students' => $students,
-            'model' => $model
+            'model' => $model,
         ]);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
             if ($model->validate()) {
-                $student = Student::findOne($model->studentId);
-                foreach ($student->enrolment as $enrolment) {
+                $studentModel = Student::findOne($model->studentId);
+                foreach ($studentModel->enrolment as $enrolment) {
                     $enrolment->studentId = $model->id;
                     $enrolment->save(false);
                 }
-                foreach ($student->notes as $note) {
+                foreach ($studentModel->notes as $note) {
                     $note->instanceId = $model->id;
                     $note->save(false);
                 }
-                foreach ($student->logs as $log) {
+                foreach ($studentModel->logs as $log) {
                     $log->studentId = $model->id;
                     $log->save(false);
                 }
-                foreach ($student->examResults as $examResult) {
+                foreach ($studentModel->examResults as $examResult) {
                     $examResult->studentId = $model->id;
                     $examResult->save(false);
                 }
-                $student->status = Student::STATUS_INACTIVE;
-
+                $studentModel->delete();
                 return [
-                    'status' => $student->save(false),
+                    'status' => true,
                     'message' => 'Student successfully merged!'
-                ];
-            } else {
-                $errors = ActiveForm::validate($model);
-                return [
-                    'status' => false,
-                    'errors' => $errors
                 ];
             }
         } else {

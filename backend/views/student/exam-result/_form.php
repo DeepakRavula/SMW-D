@@ -22,6 +22,7 @@ use yii\helpers\Url;
 		->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 		->where(['raa.item_name' => 'teacher'])
 		->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                ->notDeleted()
 		->all(),
 	'id', 'userProfile.fullName'
 );?>
@@ -54,7 +55,7 @@ use yii\helpers\Url;
     </div>
 	<div class="col-md-6">
 		<?= $form->field($model, 'programId')->dropDownList(
-			ArrayHelper::map(Program::find()->all(), 'id', 'name'), ['prompt' => 'Select Program']);?>
+			ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'), ['prompt' => 'Select Program']);?>
     </div>
 	<div class="col-md-6">
 		<?php $teacher = !empty($model->teacherId) ? $model->teacher->publicIdentity : null; ?>

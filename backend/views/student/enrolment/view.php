@@ -8,6 +8,7 @@ use common\models\Course;
 $this->title = 'Student Enrolment';
 
 ?>
+<div id="enrolment-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <style>
     .wizard li.active span.round-tab{
         border: 2px solid #ea212d;

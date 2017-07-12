@@ -447,13 +447,7 @@ Resets
     margin: 9px 10px 0 0;
     border: 0;
     position: relative;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
     background: url(/img/select-arrow.png) no-repeat 97% center;
-    color: #fff;
-    filter: invert(100%);
-    -webkit-filter: invert(100%);
     cursor: pointer;
 }
 
@@ -1309,7 +1303,10 @@ input[type="search"]:-ms-input-placeholder {
     background-color: #4083ff;
     color: #fff;
 }
-
+.invoice-unpaid {
+    background-color: #4083ff;
+    color: #fff;
+}
 .invoice-credit {
     background-color: #ffd475;
 }

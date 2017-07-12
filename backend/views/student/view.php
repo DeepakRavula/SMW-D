@@ -47,6 +47,7 @@ echo $this->render('_profile', [
 		$lessonContent = $this->render('_lesson', [
 			'lessonDataProvider' => $lessonDataProvider,
 			'model' => $model,
+                        'allEnrolments' => $allEnrolments
 		]);
 
 		$unscheduledLessonContent = $this->render('_unscheduledLesson', [
@@ -190,8 +191,7 @@ echo $this->render('_profile', [
                 success: function(response)
                 {
                     if(response.status) {
-                        $('#student-merge-modal').modal('hide');
-                        $('#enrolment-delete-success').html(response.message).fadeIn().delay(5000).fadeOut();
+                        location.reload();
                     }
                 }
             });
@@ -215,11 +215,7 @@ echo $this->render('_profile', [
 			});
 			return false;
         });
-        $(document).on('click', '#new-lesson', function (e) {
-            $('#new-lesson-modal').modal('show');
-            return false;
-        });
-		 $(document).on('click', '.note-cancel-button', function (e) {
+        $(document).on('click', '.note-cancel-button', function (e) {
             $('#student-note-modal').modal('hide');
             return false;
         });

@@ -176,34 +176,6 @@ use kartik\editable\Editable;
 </div>
 </div>
 <script>
-var invoice = {
-    onEditableGridSuccess : function(event, val, form, data) {
-        invoice.updateSummarySectionAndStatus();
-    },
-    updateInvoiceStatus : function(status){
-        $('#invoice-status').text(status);
-
-    },
-    updateSummarySectionAndStatus : function() {
-        $.ajax({
-            url    : '<?= Url::to(['invoice/fetch-summary-and-status', 'id' => $model->id]) ?>',
-            type   : 'GET',
-            dataType: "json",
-            success: function(response)
-            {
-                $('#invoice-summary-section').html(response.summary);
-                invoice.updateInvoiceStatus(response.status);
-                $('#invoice-payment-detail').html(response.details);
-            }
-        });
-        return false;
-    }
-}
-var payment = {
-	onEditableGridSuccess :function(event, val, form, data) {
-        invoice.updateSummarySectionAndStatus();
-    },
-}
 $(document).ready(function() {
     $('#add-misc-item').click(function(){
         $('input[type="text"]').val('');

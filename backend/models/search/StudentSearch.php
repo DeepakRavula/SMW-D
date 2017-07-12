@@ -42,7 +42,7 @@ class StudentSearch extends Student
     public function search($params)
     {
         $locationId = Yii::$app->session->get('location_id');
-        $query = Student::find()
+        $query = Student::find()->notDeleted()
                 ->location($locationId);
 
         $dataProvider = new ActiveDataProvider([

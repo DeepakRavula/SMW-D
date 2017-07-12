@@ -2,12 +2,13 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
-use common\models\Invoice;
-use common\models\Lesson;
-use common\models\PrivateLesson;
+use yii\bootstrap\Modal;
+use yii\helpers\Html;
 
 ?>
-<div class="grid-row-open p-15">
+<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
+<div class=" p-15">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php $columns = [
             [
@@ -19,7 +20,12 @@ use common\models\PrivateLesson;
 			[
                 'label' => 'Phone',
                 'value' => function ($data) {
-                    return !empty($data->course->enrolment->student->customer->phoneNumber->number) ? $data->course->enrolment->student->customer->phoneNumber->number : null;
+					if(!empty($data->course->enrolment->student->customer->primaryPhoneNumber->number)) {
+						$number = $data->course->enrolment->student->customer->primaryPhoneNumber->number; 
+					} else {
+						$number = !empty($data->course->enrolment->student->customer->phoneNumber->number) ? $data->course->enrolment->student->customer->phoneNumber->number : null;
+					}
+					return $number;
                 },
             ],
             [
@@ -28,12 +34,17 @@ use common\models\PrivateLesson;
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
             ],
-            [
-                'label' => 'Date',
+			[
+                'label' => 'Duration',
                 'value' => function ($data) {
-                    $date = Yii::$app->formatter->asDate($data->date);
-
-                    return !empty($date) ? $date : null;
+                    return !empty($data->duration) ? (new \DateTime($data->duration))->format('H:i') : null;
+                },
+            ],
+            [
+                'label' => 'Original Date',
+				'format' => 'raw',
+                'value' => function ($data) {
+					return Yii::$app->formatter->asDate($data->date);
                 },
             ],
             [
@@ -42,26 +53,63 @@ use common\models\PrivateLesson;
 					return !empty($data->privateLesson->expiryDate) ? Yii::$app->formatter->asDate($data->privateLesson->expiryDate) : null;
                 },
             ],
+			[
+				'class' => 'yii\grid\ActionColumn',
+				'template' => '{edit}',
+				'buttons' => [
+					'edit' => function  ($url, $model) {
+	                    return  Html::a('<i class="fa fa-calendar"></i>','#', [
+							'id' => 'unschedule-calendar-' . $model->id,
+							'title' => 'Reschedule',
+							'class' => 'unschedule-calendar m-l-20'
+						]);
+					},
+				],
+			],
         ];
 
     ?>   
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
-    'rowOptions' => function ($model, $key, $index, $grid) {
-        $url = Url::to(['lesson/view', 'id' => $model->id]);
-
-        return ['data-url' => $url];
-    },
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>
 
-</div><?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+</div>
+<?php
+Modal::begin([
+	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+	'id' => 'unschedule-lesson-modal',
+]);
+?>
+<?php
+echo $this->render('_calendar', [
+    'model' => $model,
+]);
+?>
+<?php Modal::end(); ?>
+<script>
+$(document).ready(function () {
+	$(document).on('beforeSubmit', '#unschedule-lesson-form', function () {
+		var lessonId = $('#user-lessonid').val();
+        var param = $.param({ id: lessonId });
+		$.ajax({
+			url    : '<?= Url::to(['lesson/update']);?>?' + param,
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+				if(response.status) {
+				} else {
+					$('#unschedule-lesson-modal').modal('hide');
+				    $('#lesson-conflict').html(response.message).fadeIn().delay(8000).fadeOut();
+				}
+			}
+		});
+		return false;
+   });
+});
+</script>

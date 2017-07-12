@@ -17,7 +17,8 @@ use common\models\User;
 
 <div class="student-form">
 	<?php 
-		$data = ArrayHelper::map(User::find()->all(), 'email', 'email');
+		$data = ArrayHelper::map(User::find()
+                    ->notDeleted()->all(), 'email', 'email');
 		$email = !empty($model->user->email) ?$model->user->email : null;
 		$model->toEmailAddress = $email; 	
 		$invoiceLineItems             = InvoiceLineItem::find()->where(['invoice_id' => $model->id]);
