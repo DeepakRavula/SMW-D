@@ -71,7 +71,10 @@ class ExamResult extends \yii\db\ActiveRecord
         return $this->hasOne(Program::className(), ['id' => 'programId']);
     }
 	
-
+	public function getStudent()
+    {
+        return $this->hasOne(Student::className(), ['id' => 'studentId']);
+    }
 	public function beforeSave($insert)
 	{
 		$this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');

@@ -27,6 +27,7 @@ class StudentLog extends Student {
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $student,
 			'message' => $studentModel->userName . ' created a new student {{' . $studentModel->fullName . '}}',
+			'locationId' => $studentModel->customer->userLocation->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -50,6 +51,7 @@ class StudentLog extends Student {
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $student,
 			'message' => $studentModel->userName . ' changed {{' . $studentModel->fullName . '}}\'s date of birth to ' . Yii::$app->formatter->asDate($studentModel->birth_date),
+			'locationId' => $studentModel->customer->userLocation->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();

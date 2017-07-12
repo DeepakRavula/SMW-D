@@ -66,6 +66,7 @@ class TimelineEventEnrolment extends \yii\db\ActiveRecord
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $enrolment, 
 			'message' => $data['userName'] . ' enrolled {{' . $enrolmentModel->student->fullName . '}} in ' .  $enrolmentModel->course->program->name . ' lessons with {{' . $enrolmentModel->course->teacher->publicIdentity . '}} on ' . $day . 's at ' . Yii::$app->formatter->asTime($enrolmentModel->course->startDate),
+			'locationId' => $enrolmentModel->course->teacher->userLocation->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -98,6 +99,7 @@ class TimelineEventEnrolment extends \yii\db\ActiveRecord
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $enrolment, 
 			'message' => $data['userName'] . ' enrolled {{' . $enrolmentModel->student->fullName . '}} in ' .  $enrolmentModel->course->program->name . ' lessons with {{' . $enrolmentModel->course->teacher->publicIdentity . '}} on ' . $day . 's at ' . Yii::$app->formatter->asTime($enrolmentModel->course->startDate),
+			'locationId' => $enrolmentModel->course->teacher->userLocation->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();

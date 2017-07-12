@@ -30,6 +30,7 @@ class TeacherAvailabilityLog extends TeacherAvailability
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $teacheravailability,
             'message' => $teacherAvailabilityModel->userName . '   made  {{' . $teacherAvailabilityModel->teacher->publicIdentity . '}} available  on  '.$day.'  from  '.Yii::$app->formatter->asTime($teacherAvailabilityModel->from_time).'  to  '.Yii::$app->formatter->asTime($teacherAvailabilityModel->to_time),
+			'locationId' => $teacherAvailabilityModel->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
@@ -57,6 +58,7 @@ class TeacherAvailabilityLog extends TeacherAvailability
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $teacheravailability,
             'message' => $teacherAvailabilityModel->userName . '   adjusted  {{' . $teacherAvailabilityModel->teacher->publicIdentity . '}} availability  on  ' . $day . '  from    ' . Yii::$app->formatter->asTime($data['from_time']) . ' - ' . Yii::$app->formatter->asTime($data['to_time']) . '  to  ' . Yii::$app->formatter->asTime($teacherAvailabilityModel->from_time) . '  -  ' . Yii::$app->formatter->asTime($teacherAvailabilityModel->to_time),
+			'locationId' => $teacherAvailabilityModel->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
@@ -82,6 +84,7 @@ class TeacherAvailabilityLog extends TeacherAvailability
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $teacheravailability,
             'message' => $teacherAvailabilityModel->userName . '   deleted  {{' . $teacherAvailabilityModel->teacher->publicIdentity . '}} availability  on  ' . $day . '  from  ' . Yii::$app->formatter->asTime($teacherAvailabilityModel->from_time) . '  to  ' . Yii::$app->formatter->asTime($teacherAvailabilityModel->to_time),
+			'locationId' => $teacherAvailabilityModel->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
