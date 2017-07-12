@@ -129,7 +129,7 @@ class Item extends \yii\db\ActiveRecord
 
     public function getRoyaltyFreeStatus()
     {
-        switch ($this->status) {
+        switch ($this->royaltyFree) {
             case self::ROYALTY_FREE:
                 $status = 'Yes';
             break;
@@ -140,7 +140,7 @@ class Item extends \yii\db\ActiveRecord
 
         return $status;
     }
-    
+
     public function isOpeningBalance()
     {
         return $this->code === self::OPENING_BALANCE_ITEM;
