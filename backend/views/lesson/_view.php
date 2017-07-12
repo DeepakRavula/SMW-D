@@ -124,7 +124,7 @@ use kartik\grid\GridView;
             ],
             [
                 'format' => 'raw',
-                'label' => 'Status',
+                'label' => 'Used in Lesson',
                 'value' => function ($data) {
                     return $data->getStatus();
                 }
