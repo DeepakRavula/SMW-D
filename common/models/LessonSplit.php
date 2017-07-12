@@ -94,13 +94,14 @@ class LessonSplit extends \yii\db\ActiveRecord
     {
         if ($this->lesson->isRescheduled() || !empty($this->lessonSplitUsage)) {
             if ($this->lesson->isRescheduled()) {
-                $lesson = 'Lesson ' . $this->lesson->lessonReschedule->rescheduledLessonId;
+                $lesson = Lesson::findOne($this->lesson->lessonReschedule->rescheduledLessonId);
                 $url = ['lesson/view', 'id' => $this->lessonSplitUsage->extendedLessonId];
             } else if (!empty ($this->lessonSplitUsage)) {
-                $lesson = 'Lesson ' . $this->lessonSplitUsage->extendedLessonId;
+                $lesson = Lesson::findOne($this->lessonSplitUsage->extendedLessonId);
                 $url = ['lesson/view', 'id' => $this->lessonSplitUsage->extendedLessonId];
             }
-            $status = Html::a($lesson, $url);
+            $message = (new \DateTime($lesson->date))->format('l, F jS, Y @ g:i a');
+            $status = Html::a($message, $url);
         } else {
             $status = 'Unused';
         }
