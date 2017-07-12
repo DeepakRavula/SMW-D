@@ -29,6 +29,7 @@ class ExamResultLog extends ExamResult
                 $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $examresult,
 			'message' => $examResultModel->userName.' created new Exam Result for {{' .$studentModel->fullName . '}}',
+			'locationId' => $examResultModel->student->customer->userLocation->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -53,6 +54,7 @@ class ExamResultLog extends ExamResult
                 $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $examresult,
 			'message' => $examResultModel->userName.' Edited {{' .$studentModel->fullName . '}}\'s Exam Result',
+			'locationId' => $examResultModel->student->customer->userLocation->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -78,6 +80,7 @@ class ExamResultLog extends ExamResult
                 $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $examresult,
 			'message' => $examResultModel->userName.' deleted {{' .$studentModel->fullName . '}}\'s Exam Result',
+			'locationId' => $examResultModel->student->customer->userLocation->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();

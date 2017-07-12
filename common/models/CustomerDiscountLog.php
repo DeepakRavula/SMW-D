@@ -21,12 +21,13 @@ use common\models\timelineEvent\TimelineEventUser;
 class CustomerDiscountLog extends CustomerDiscount
 {	
 	public function create($event) {
-            
+         
 		$customerDiscountModel = $event->sender;
 		$customerdiscount = CustomerDiscount::find(['id' => $customerDiscountModel->id])->asArray()->one();
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $customerdiscount,
 			'message' => $customerDiscountModel->userName.' set  '.$customerDiscountModel->value.'  % as Discount for {{' .$customerDiscountModel->customer->publicIdentity . '}}',
+			'locationId' => $customerDiscountModel->customer->userLocation->location_id, 
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -51,6 +52,7 @@ class CustomerDiscountLog extends CustomerDiscount
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $customerdiscount,
             'message' => $customerDiscountModel->userName . ' updated   {{' . $customerDiscountModel->customer->publicIdentity . '}}\'s   discount from     ' . $data['value'] . ' %   to    ' . $customerDiscountModel->value . '   %',
+			'locationId' => $customerDiscountModel->customer->userLocation->location_id, 
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();

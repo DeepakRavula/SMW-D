@@ -829,8 +829,6 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
         $invoice->type = INVOICE::TYPE_INVOICE;
-		$invoice->createdUserId = Yii::$app->user->id;
-		$invoice->updatedUserId = Yii::$app->user->id;	
         return $invoice;
     }
 

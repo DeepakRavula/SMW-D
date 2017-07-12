@@ -25,6 +25,7 @@ class ProformaPaymentFrequencyLog extends ProformaPaymentFrequency
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $proformaPaymentFrequency,
             'message' => $proformaPaymentFrequencyModel->userName . ' updated  {{' . $proformaPaymentFrequencyModel->invoice->user->publicIdentity . '}}' . '  Payment Frequency to ' . $proformaPaymentFrequencyModel->paymentFrequency->name,
+			'locationId' => $proformaPaymentFrequencyModel->invoice->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
@@ -51,6 +52,7 @@ class ProformaPaymentFrequencyLog extends ProformaPaymentFrequency
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $paymentFrequency,
             'message' => $enrolmentModel->userName . ' updated  {{' . $enrolmentModel->student->customer->publicIdentity . '}}' . ' Payment Frequency  from  '.$data.' to ' . $enrolmentModel->paymentFrequency,
+			'locationId' => $enrolmentModel->student->customer->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();

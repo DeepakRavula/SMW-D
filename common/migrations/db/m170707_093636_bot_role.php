@@ -17,7 +17,6 @@ class m170707_093636_bot_role extends Migration
         $user->email = 'bot@example.com';
         $user->status = User::STATUS_ACTIVE;
 		if (!$user->save()) {
-			print_r($user->getErrors());die;
 			throw new Exception('Model not saved');
 		}
 		$userProfile = new UserProfile();
@@ -25,7 +24,6 @@ class m170707_093636_bot_role extends Migration
 		$userProfile->firstname = 'Smw';
 		$userProfile->lastname = 'Bot';
 		if(! $userProfile->save()) {
-			print_r($userProfile->getErrors());die;
 			 Yii::error('Bot user profile: ' . \yii\helpers\VarDumper::dumpAsString($userProfile->getErrors()));
 		}
 		$authManager = Yii::$app->authManager;
