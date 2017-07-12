@@ -31,7 +31,10 @@ use yii\helpers\Html;
 
         </div>
         <div class="col-md-12 p-l-20 form-group">
-            <?= Html::submitButton(Yii::t('backend', 'Merge'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+            <?= Html::submitButton(Yii::t('backend', 'Merge'), [
+                'data' => [
+                        'confirm' => 'Merging another customer will delete all of their contact data. This can not be undone.',
+                    ], 'class' => 'btn btn-info', 'name' => 'button']) ?>
 
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default customer-merge-cancel']);?>
         </div>
