@@ -94,20 +94,13 @@ class LessonSplit extends \yii\db\ActiveRecord
     {
         if ($this->lesson->isRescheduled() || !empty($this->lessonSplitUsage)) {
             if ($this->lesson->isRescheduled()) {
-                $lesson = $this->lesson->lessonReschedule->rescheduledLessonId;
-                $url = Url::to(['lesson/view', 'id' => $this->lessonSplitUsage->extendedLessonId]);
+                $lesson = 'Lesson ' . $this->lesson->lessonReschedule->rescheduledLessonId;
+                $url = ['lesson/view', 'id' => $this->lessonSplitUsage->extendedLessonId];
             } else if (!empty ($this->lessonSplitUsage)) {
-                $lesson = $this->lessonSplitUsage->extendedLessonId;
-                $url = Url::to(['lesson/view', 'id' => $lesson]);
+                $lesson = 'Lesson ' . $this->lessonSplitUsage->extendedLessonId;
+                $url = ['lesson/view', 'id' => $this->lessonSplitUsage->extendedLessonId];
             }
-            $regex = '/{{([^}]*)}}/';
-            $replace = preg_replace_callback($regex, function($match) use ($url)
-            {
-                $index = $match[1];
-                $data[$index] = Html::a($index, $url);
-                return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
-            }, $lesson);
-            $status = $replace;
+            $status = Html::a($lesson, $url);
         } else {
             $status = 'Unused';
         }

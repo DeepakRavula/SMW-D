@@ -107,7 +107,6 @@ use kartik\grid\GridView;
 </div>
 <?php if ($model->isExploded()):?>
 <h4>Splits</h4>
-<div class="grid-row-open p-10">
 <?php yii\widgets\Pjax::begin(['id' => 'split-lesson-index']); ?>
     <?php echo GridView::widget([
         'dataProvider' => $splitDataProvider,
@@ -124,6 +123,7 @@ use kartik\grid\GridView;
                 }
             ],
             [
+                'format' => 'raw',
                 'label' => 'Status',
                 'value' => function ($data) {
                     return $data->getStatus();
@@ -132,7 +132,7 @@ use kartik\grid\GridView;
         ]
     ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
-</div>
+
 <?php endif; ?>
 <?php
 
