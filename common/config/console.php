@@ -11,5 +11,9 @@ return [
 			 'enablePrettyUrl' => true,
 			 'showScriptName' => false,
 		  ],
+		'user' => [
+            'class' => 'yii\web\User',
+            'identityClass' => 'common\models\User',
+        ],
 	],
 ];

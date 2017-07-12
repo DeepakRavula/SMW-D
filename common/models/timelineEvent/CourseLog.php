@@ -28,6 +28,7 @@ class CourseLog extends Course
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $groupCourse,
             'message' => $groupCourseModel->userName . ' created new    {{' .$groupCourseModel->program->name. '}}   classes   with  '.$groupCourseModel->teacher->publicIdentity. ' at ' . Yii::$app->formatter->asTime($groupCourseModel->startDate),
+			'locationId' => $groupCourseModel->teacher->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();

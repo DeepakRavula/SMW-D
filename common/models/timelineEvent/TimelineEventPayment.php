@@ -67,6 +67,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $payment,
 			'message' => $paymentModel->userName . ' recorded a ' . $paymentModel->paymentMethod->name . ' payment of ' . Yii::$app->formatter->asCurrency($paymentModel->amount) . ' on {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}',
+			'locationId' => $paymentModel->invoice->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -91,6 +92,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $payment,
 			'message' => $paymentModel->userName . ' changed an {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}' . ' payment from ' . Yii::$app->formatter->asCurrency($data['amount']) . ' to ' . Yii::$app->formatter->asCurrency($paymentModel->amount),
+			'locationId' => $paymentModel->invoice->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -113,6 +115,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $payment,
 			'message' => $paymentModel->userName . ' deleted a ' . $paymentModel->paymentMethod->name . ' payment of ' . Yii::$app->formatter->asCurrency($paymentModel->amount) . ' on {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}',
+			'locationId' => $paymentModel->invoice->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -137,6 +140,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $payment,
            'message' => $paymentModel->userName . ' changed  '.$paymentModel->paymentMethod->name.'  payment  amount  from  '.Yii::$app->formatter->asCurrency($data['amount']) . ' to ' . Yii::$app->formatter->asCurrency($paymentModel->amount).'  for an  {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}',
+			'locationId' => $enrolmentModel->course->teacher->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();

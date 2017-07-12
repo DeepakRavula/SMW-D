@@ -67,6 +67,7 @@ class InvoiceLog extends Invoice {
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $invoice,
 			'message' => $invoiceModel->userName . ' deleted an {{invoice #' . $invoiceModel->getInvoiceNumber() . '}} for {{' . $invoiceModel->user->publicIdentity . '}}',
+			'locationId' => $invoiceModel->location_id,
 		]));
 		if ($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -100,6 +101,7 @@ class InvoiceLog extends Invoice {
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 				'data' => $lineItem,
 				'message' => $lineItemModel->userName . ' changed an {{invoice #' . $lineItemModel->invoice->getInvoiceNumber() . '}} line item discount to ' . $lineItemModel->description,
+			'locationId' => $lineItemModel->invoice->location_id,
 			]));
 			if ($timelineEvent) {
 				$timelineEventLink = new TimelineEventLink();
@@ -119,6 +121,7 @@ class InvoiceLog extends Invoice {
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 				'data' => $lineItem,
 				'message' => $lineItemModel->userName . ' changed an {{invoice #' . $lineItemModel->invoice->getInvoiceNumber() . '}} line item price from ' . Yii::$app->formatter->asCurrency($oldAmount) . ' to ' . Yii::$app->formatter->asCurrency($lineItemModel->amount),
+				'locationId' => $lineItemModel->invoice->location_id,	
 			]));
 			if ($timelineEvent) {
 				$timelineEventLink = new TimelineEventLink();
@@ -143,6 +146,7 @@ class InvoiceLog extends Invoice {
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $lineItem,
 			'message' => $lineItemModel->userName . ' deleted a line item for an {{invoice #' . $lineItemModel->invoice->getInvoiceNumber() . '}}',
+			'locationId' => $lineItemModel->invoice->location_id,
 		]));
 		if ($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -167,6 +171,7 @@ class InvoiceLog extends Invoice {
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $lineItem,
             'message' => $lineItemModel->userName . ' added a line item for an {{invoice #' . $lineItemModel->invoice->getInvoiceNumber() . '}}',
+			'locationId' => $lineItemModel->invoice->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();

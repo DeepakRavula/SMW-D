@@ -8,13 +8,16 @@ use yii\helpers\Console;
 use common\models\Invoice;
 use common\models\User;
 use common\models\Lesson;
-use common\models\Payment;
-use common\models\CreditUsage;
-use common\models\PaymentMethod;
 
 class InvoiceController extends Controller
 {
 
+	public function init() {
+        parent::init();
+		$user = User::findByRole(User::ROLE_BOT);
+		$botUser = current($user);
+        Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
+    }
     public function actionGenerateInvoice()
     {
         /**
