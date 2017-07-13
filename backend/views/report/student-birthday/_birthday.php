@@ -27,24 +27,6 @@ $this->title = 'Student Birthdays';
 		padding:0;
 		font-weight:normal;
 	}
-	.boxed {
-	  border: 4px solid #949599;
-	  height: 200px;
-	  margin: 20px;
-	  padding: 20px;
-	  width: 580px;
-	}
-	.sign {
-	  font-weight: bold;
-	  text-align : right;
-	  font-size : 28px;
-	}
-	.sign span {
-	  width: 250px;
-	  display: inline-block;
-	  border-bottom: 1px solid #999999;
-	  font-weight: normal;
-	}
 	.login-logo-img {
 		width:300px !important;
 		height:auto;

@@ -15,21 +15,9 @@ use kartik\grid\GridView;
 <div class="user-search">
     <?php $form = ActiveForm::begin([
 		'id' => 'birthday-search-form',
-        //'action' => ['report/student-birthday/'],
         'method' => 'get'
     ]); ?>
-   	<style>
-		#w20-container table > tbody > tr.info > td{
-			padding:8px;
-			background:#fff;
-		}
-		.kv-page-summary, .table > tbody + tbody{
-			border: 0;
-		}
-		.table-striped > tbody > tr:nth-of-type(odd){
-			background: transparent;
-		}
-	</style>
+   	
 	<div class="row">
 		<div class="col-md-3">
            <?php 
