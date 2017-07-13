@@ -22,6 +22,7 @@ use common\models\Location;
 use common\models\Invoice;
 use backend\models\UserImportForm;
 use backend\models\search\InvoiceSearch;
+use common\models\TeacherUnavailability;
 use backend\models\search\UserSearch;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -398,6 +399,13 @@ class UserController extends Controller
 			'query' => $timeVoucher,
 			'pagination' => false,
 		]);
+		$unavailabilities = TeacherUnavailability::find()
+			->andWhere(['teacherId' => $id]);
+
+		$unavailabilityDataProvider = new ActiveDataProvider([
+            'query' => $unavailabilities,
+        ]);
+		
         return $this->render('view', [
             'minTime' => $minTime,
             'maxTime' => $maxTime,
@@ -427,7 +435,8 @@ class UserController extends Controller
             'teachersAvailabilities' => $teachersAvailabilities,
 			'privateQualificationDataProvider' => $privateQualificationDataProvider,
 			'groupQualificationDataProvider' => $groupQualificationDataProvider,
-			'timeVoucherDataProvider' => $timeVoucherDataProvider
+			'timeVoucherDataProvider' => $timeVoucherDataProvider,
+			'unavailability' => $unavailabilityDataProvider
         ]);
     }
 

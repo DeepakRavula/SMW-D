@@ -142,7 +142,9 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         $teacherStudentContent = $this->render('teacher/_student', [
             'studentDataProvider' => $studentDataProvider,
         ]);
-
+		$unavailabilityContent = $this->render('teacher/_unavailability', [
+            'unavailabilityDataProvider' => $unavailability,
+        ]);
         $openingBalanceContent = $this->render('customer/_opening-balance', [
             'openingBalanceDataProvider' => $openingBalanceDataProvider,
             'openingBalanceCredit' => $openingBalanceCredit,
@@ -213,6 +215,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                 'content' => $teacherAvailabilityContent,
                 'options' => [
                     'id' => 'availability',
+                ],
+            ],
+			[
+                'label' => 'Unavailability',
+                'content' => $unavailabilityContent,
+                'options' => [
+                    'id' => 'unavailability',
                 ],
             ],
             [
