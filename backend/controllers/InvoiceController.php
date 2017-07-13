@@ -129,6 +129,9 @@ class InvoiceController extends Controller
         }
         if (isset($customerId)) {
             $customer = User::findOne(['id' => $customerId]);
+            if ($customer->hasDiscount() && $model->lineItem) {
+                $model->addCustomerDiscount($customer);
+            }
         }
         if (empty($customer)) {
             $customer = new User();
@@ -235,8 +238,10 @@ class InvoiceController extends Controller
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
                 $model->save();
-                if ($model->user->hasDiscount()) {
-                    $model->addCustomerDiscount($model->user);
+                if ($model->user) {
+                    if ($model->user->hasDiscount()) {
+                        $model->addCustomerDiscount($model->user);
+                    }
                 }
                 $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
 

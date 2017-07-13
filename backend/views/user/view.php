@@ -394,6 +394,8 @@ $(document).ready(function(){
                 {
                     $('#customer-merge-content').html(response.data);
                     $('#customer-merge-modal').modal('show');
+                    $('#warning-notification').html('Merging another customer will \n\
+                    delete all of their contact data. This can not be undone.').fadeIn();
                 }
             }
         });
