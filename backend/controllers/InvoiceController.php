@@ -66,9 +66,9 @@ class InvoiceController extends Controller
         if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
             $currentDate                = new \DateTime();
             $searchModel->invoiceStatus = Invoice::STATUS_OWING;
-            $searchModel->dueFromDate      = $currentDate->format('1-m-Y');
-            $searchModel->dueToDate        = $currentDate->format('t-m-Y');
-            $searchModel->dateRange     = $searchModel->dueFromDate.' - '.$searchModel->dueToDate;
+            if (!empty($invoiceSearchRequest['dateRange'])) {
+				$searchModel->dateRange = $invoiceSearchRequest['dateRange'];
+			}
         } else {
             $searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
             $searchModel->toDate   = (new \DateTime('last day of this month'))->format('d-m-Y');
