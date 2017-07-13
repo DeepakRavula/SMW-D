@@ -310,6 +310,56 @@ class Enrolment extends \yii\db\ActiveRecord
         return $isExpiring;
     }
 
+    public function invoiceAllCompletedlessons()
+    {
+        $query = Lesson::find()
+            ->notDeleted();
+        if (!$this->course->program->isGroup()) {
+            $privateLessons = $query->completedUnInvoicedPrivate()
+                ->enrolment($this->id)->all();
+        print_r($privateLessons);die;
+            foreach($privateLessons as $lesson) {
+                $lesson->createPrivateLessonInvoice();
+            }
+        } else {
+            $groupLessons = $query->groupLessons()->completed()
+                ->enrolment($this->id)->all();
+            foreach ($groupLessons as $lesson) {
+                if (!$this->hasInvoice($lesson->id)) {
+                    $lesson->createGroupInvoice($this->id);
+                }
+            }
+        }
+        return true;
+    }
+
+    public function getOwingInvoice()
+    {
+        $invoice = Invoice::find()
+            ->notDeleted()
+            ->notCanceled()
+            ->invoice()
+            ->enrolment($this->id)
+            ->unpaid()
+            ->all();
+
+        return $invoice;
+    }
+
+    public function addCreditInvoice()
+    {
+        $owingInvoice = $this->getOwingInvoice();
+        $creditInvoice = $this->getCreditInvoice();
+    }
+
+    public function beforeDelete()
+    {
+        $this->invoiceAllCompletedlessons();
+        $this->addCreditInvoice();
+
+        return parent::beforeDelete();
+    }
+
     public function beforeSave($insert) {
         if($insert) {
             $this->isDeleted = false;
