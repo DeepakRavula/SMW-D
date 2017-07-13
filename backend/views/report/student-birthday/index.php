@@ -9,18 +9,13 @@ use yii\helpers\Url;
 
 $this->title = 'Student Birthdays';
 
-?><style>
-	.kv-page-summary, .table > tbody + tbody{
-		border: 0;
-	}
-</style>
-<div class="col-xs-12 col-md-6 p-10 p-r-0">
-	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
+?>
+<div class="payments-index p-10">
     
+	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
+  
 </div>
-<div id="print" class="btn btn-default m-t-20">
-        <?= Html::a('<i class="fa fa-print"></i> Print') ?>
-    </div>
+
 <div class="clearfix"></div>
 <div class="grid-row-open"> 
     <?php yii\widgets\Pjax::begin(['id' => 'birthday-listing']); ?>

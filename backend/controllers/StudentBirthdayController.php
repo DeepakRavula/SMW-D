@@ -9,6 +9,7 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Url;
 use backend\models\search\StudentBirthdaySearch;
+use common\models\Location;
 /**
  * StudentController implements the CRUD actions for Student model.
  */
@@ -66,12 +67,15 @@ class StudentBirthdayController extends Controller
     {
         $searchModel = new StudentBirthdaySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $session = Yii::$app->session; 
+        $locationId = $session->get('location_id');
+        $model = Location::findOne(['id' => $locationId]);
         $this->layout = '/print';
 
         return $this->render('/report/student-birthday/_print', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
+                'model'=>$model,
         ]);
     }
     /**
