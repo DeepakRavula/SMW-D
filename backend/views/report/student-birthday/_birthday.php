@@ -92,9 +92,7 @@ $this->title = 'Student Birthdays';
 	<div class="clearfix"></div>
 </div>
 <div>
-<?php $reportText = 'Student Birthdays'; ?>
-<h3><strong><?= $reportText; ?> Report </strong></h3></div>
-<div><h3><?= $searchModel->fromDate->format('F jS') . ' to ' . $searchModel->toDate->format('F jS');?></h3></div>
+    <h3><strong>Student Birthday Report For  <?= $searchModel->fromDate->format('F jS') . ' to ' . $searchModel->toDate->format('F jS');?></strong></h3></div>
 <div class="report-grid">
 <?php yii\widgets\Pjax::begin(['id' => 'birthday-listing']); ?>
     <?php
