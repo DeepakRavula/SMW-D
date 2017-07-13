@@ -46,7 +46,7 @@ class EnrolmentController extends Controller
             ],
 			'contentNegotiator' => [
 				'class' => ContentNegotiator::className(),
-				'only' => ['add', 'preview', 'delete', 'edit', 'render-day-events','render-resources','schedule'],
+				'only' => ['add', 'preview', 'delete', 'edit', 'render-day-events','render-resources','schedule', 'update'],
 				'formatParam' => '_format',
 				'formats' => [
 				   'application/json' => Response::FORMAT_JSON,
@@ -360,73 +360,83 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$courseSchedule = $model->courseSchedule;
-		$post = Yii::$app->request->post();
-        $timebits = explode(':', $model->courseSchedule->fromTime);
-		$courseEndDate = (new \DateTime($model->course->endDate))->format('Y-m-d');
-		$courseEndDate = new \DateTime($courseEndDate);
-        $courseEndDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-		if ($model->course->load($post) && $model->courseSchedule->load($post)) {
-			$model->courseSchedule->setScenario(CourseSchedule::SCENARIO_EDIT_ENROLMENT);
-			$validate = $model->courseSchedule->validate();
-			$errors = $model->courseSchedule->getErrors();
-			if(!empty($errors)) {
-				Yii::$app->session->setFlash('alert',
-					[
-					'options' => ['class' => 'alert-danger'],
-					'body' => current(reset($errors)),
-				]);
-				return $this->redirect(['update', 'id' => $model->id]);
-			}
-			$rescheduleBeginDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
-			$rescheduleBeginDate = $rescheduleBeginDate->format('Y-m-d 00:00:00');
-			Lesson::deleteAll([
-				'courseId' => $model->course->id,
-				'status' => Lesson::STATUS_DRAFTED,
-			]);
-			$lessons		 = Lesson::find()
-				->where([
-					'courseId' => $model->course->id,
-					'status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED],
-				])
-				->andWhere(['>=', 'date', $rescheduleBeginDate])
-				->all();
-			//lesson start date
-			$changedFromTime = (new \DateTime($model->courseSchedule->fromTime))->format('H:i:s');
-			$duration		 = explode(':', $changedFromTime);
-			$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
-			$dayList = Course::getWeekdaysList();
-			$courseDay = $dayList[$model->courseSchedule->day];
-			$day = $startDate->format('l');
-			if ($day !== $courseDay) {
-				$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
-				$startDate->modify('next '.$courseDay);
-			}
-			foreach ($lessons as $lesson) {
-				$professionalDevelopmentDay = clone $startDate;
-				$professionalDevelopmentDay->modify('last day of previous month');
-				$professionalDevelopmentDay->modify('fifth '.$day);
-				if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-					$startDate->modify('next '.$day);
-				}
-				$originalLessonId	 = $lesson->id;
-				$lesson->id			 = null;
-				$lesson->isNewRecord = true;
-				$lesson->status		 = Lesson::STATUS_DRAFTED;
-				$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
-				$lesson->date		 = $startDate->format('Y-m-d H:i:s');
-				$lesson->save();
-				$startDate		 = new \DateTime($lesson->date);
-				$day = $startDate->format('l');
-				$startDate->modify('next '.$day);
-			}
-			return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Course[rescheduleBeginDate]' => $model->course->rescheduleBeginDate]);
-		} else {
-			return $this->render('update', [
-				'model' => $model->course,
-				'courseSchedule' => $courseSchedule,
-			]);
-		}
+		$data = $this->renderAjax('/student/enrolment/_form-update', [
+			'course' => $model->course,	
+			'courseSchedule' => $model->course->courseSchedule,
+		]);
+		$response = [
+			'status' => true,
+			'data' => $data,
+		];
+		//print_r($_POST);die;
+		return $response;
+//		$courseSchedule = $model->courseSchedule;
+//		$post = Yii::$app->request->post();
+//        $timebits = explode(':', $model->courseSchedule->fromTime);
+//		$courseEndDate = (new \DateTime($model->course->endDate))->format('Y-m-d');
+//		$courseEndDate = new \DateTime($courseEndDate);
+//        $courseEndDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
+//		if ($model->course->load($post) && $model->courseSchedule->load($post)) {
+//			$model->courseSchedule->setScenario(CourseSchedule::SCENARIO_EDIT_ENROLMENT);
+//			$validate = $model->courseSchedule->validate();
+//			$errors = $model->courseSchedule->getErrors();
+//			if(!empty($errors)) {
+//				Yii::$app->session->setFlash('alert',
+//					[
+//					'options' => ['class' => 'alert-danger'],
+//					'body' => current(reset($errors)),
+//				]);
+//				return $this->redirect(['update', 'id' => $model->id]);
+//			}
+//			$rescheduleBeginDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
+//			$rescheduleBeginDate = $rescheduleBeginDate->format('Y-m-d 00:00:00');
+//			Lesson::deleteAll([
+//				'courseId' => $model->course->id,
+//				'status' => Lesson::STATUS_DRAFTED,
+//			]);
+//			$lessons		 = Lesson::find()
+//				->where([
+//					'courseId' => $model->course->id,
+//					'status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED],
+//				])
+//				->andWhere(['>=', 'date', $rescheduleBeginDate])
+//				->all();
+//			//lesson start date
+//			$changedFromTime = (new \DateTime($model->courseSchedule->fromTime))->format('H:i:s');
+//			$duration		 = explode(':', $changedFromTime);
+//			$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
+//			$dayList = Course::getWeekdaysList();
+//			$courseDay = $dayList[$model->courseSchedule->day];
+//			$day = $startDate->format('l');
+//			if ($day !== $courseDay) {
+//				$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
+//				$startDate->modify('next '.$courseDay);
+//			}
+//			foreach ($lessons as $lesson) {
+//				$professionalDevelopmentDay = clone $startDate;
+//				$professionalDevelopmentDay->modify('last day of previous month');
+//				$professionalDevelopmentDay->modify('fifth '.$day);
+//				if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+//					$startDate->modify('next '.$day);
+//				}
+//				$originalLessonId	 = $lesson->id;
+//				$lesson->id			 = null;
+//				$lesson->isNewRecord = true;
+//				$lesson->status		 = Lesson::STATUS_DRAFTED;
+//				$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+//				$lesson->date		 = $startDate->format('Y-m-d H:i:s');
+//				$lesson->save();
+//				$startDate		 = new \DateTime($lesson->date);
+//				$day = $startDate->format('l');
+//				$startDate->modify('next '.$day);
+//			}
+//			return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Course[rescheduleBeginDate]' => $model->course->rescheduleBeginDate]);
+//		} else {
+//			return $this->render('update', [
+//				'model' => $model->course,
+//				'courseSchedule' => $courseSchedule,
+//			]);
+//		}
     }
 
     /**

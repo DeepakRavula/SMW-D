@@ -112,8 +112,6 @@ use yii\bootstrap\Modal;
     $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 
-<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <script>
     $(document).ready(function () {
         $(document).on('change', '#extra-lesson-date', function () {
@@ -124,16 +122,13 @@ use yii\bootstrap\Modal;
         refreshCalendar : function(availableHours, events, date){
             $('#lesson-calendar').fullCalendar('destroy');
             $('#lesson-calendar').fullCalendar({
+            	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 defaultDate: date,
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'agendaWeek'
-                },
+                header: false,
                 allDaySlot: false,
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',
-                defaultView: 'agendaWeek',
+                defaultView: 'agendaDay',
                 minTime: "<?php echo $from_time; ?>",
                 maxTime: "<?php echo $to_time; ?>",
                 selectConstraint: 'businessHours',

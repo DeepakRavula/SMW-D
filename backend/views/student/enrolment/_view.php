@@ -1,12 +1,9 @@
 <?php
 
-use yii\grid\GridView;
 use yii\helpers\Url;
-use common\models\vacation;
-use common\models\Program;
 use yii\helpers\Html;
-use common\models\Course;
 use yii\bootstrap\Modal;
+use common\models\LocationAvailability;
 
 ?>
 <?php 
@@ -36,124 +33,133 @@ $enrolment = current($model->enrolment);?>
 		'id' => 'enrolment-grid',
         'timeout' => 6000,
     ]) ?>
-    <?php
-    echo GridView::widget([
-		'id' => 'enrolment-grid',
-        'dataProvider' => $enrolmentDataProvider,
-            'rowOptions' => function ($model, $key, $index, $grid) {
-                $url = Url::to(['enrolment/view', 'id' => $model->id]);
-
-                return [
-					'data-url' => $url,
-					'data-programid' => $model->course->program->id,
-					'data-duration' => $model->courseSchedule->duration
-				];
-            },
-        'options' => ['class' => 'col-md-12'],
-        'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'columns' => [
-            [
-                'label' => 'Program',
-                'value' => function ($data) {
-                    return !empty($data->course->program->name) ? $data->course->program->name : null;
-                },
-            ],
-            [
-                'label' => 'Teacher',
-                'value' => function ($data) {
-                    return !empty($data->course->teacher->publicIdentity) ? $data->course->teacher->publicIdentity : null;
-                },
-            ],
-            [
-                'label' => 'Day',
-                'value' => function ($data) {
-                    $dayList = Course::getWeekdaysList();
-                    $day = $dayList[$data->courseSchedule->day];
-
-                    return !empty($day) ? $day : null;
-                },
-            ],
-            [
-                'label' => 'From Time',
-                'value' => function ($data) {
-                    return !empty($data->courseSchedule->fromTime) ? Yii::$app->formatter->asTime($data->courseSchedule->fromTime) : null;
-                },
-            ],
-            [
-                'label' => 'Duration',
-                'value' => function ($data) {
-                    $duration = \DateTime::createFromFormat('h:i:s', $data->courseSchedule->duration);
-
-                    return !empty($duration) ? $duration->format('H:i') : null;
-                },
-            ],
-            [
-                'label' => 'Start Date',
-                'value' => function ($data) {
-                    return !empty($data->course->startDate) ? Yii::$app->formatter->asDate($data->course->startDate) : null;
-                },
-            ],
-            [
-                'label' => 'End Date',
-                'value' => function ($data) {
-                    return !empty($data->course->endDate) ? Yii::$app->formatter->asDate($data->course->endDate) : null;
-                },
-            ],
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{add-vacation}{edit}{delete}',
-                'buttons' => [
-					'add-vacation' => function ($url, $model) { 
-						return Html::a('<i class="fa fa-plane"></i>', '#', [
-							'title' => Yii::t('yii', 'Add Vacation'),
-							'class' => ['btn-success btn-xs add-new-vacation']
-						]);
-                    },
-					'edit' => function ($url, $model, $key) {
-						return Html::a('<i class="fa fa-pencil"></i>','#', [
-							'id' => 'enrolment-edit-' . $model->id,
-							'title' => Yii::t('yii', 'Edit'),
-							'class' => 'enrolment-edit m-l-10 btn-info btn-xs'
-						]);
-                    },
-                    'delete' => function ($url, $model, $key) {
-						return Html::a('<i class="fa fa-trash-o"></i>','#', [
-							'id' => 'enrolment-delete-' . $model->id,
-							'title' => Yii::t('yii', 'Delete'),
-							'class' => 'enrolment-delete m-l-10 btn-danger btn-xs'
-						]);
-                    },
-                ],
-				'visibleButtons' => [
-                    'add-vacation' => function  ($model, $key, $index) {
-                        return $model->course->program->isPrivate();
-                    },
-                ]	
-            ],
-        ],
-    ]);
-    ?>
+	<?= $this->render('_list', [
+		'enrolmentDataProvider' => $enrolmentDataProvider, 
+	]); ?>
+    
     <?php \yii\widgets\Pjax::end(); ?>
     </div>
 </div>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+
 <?php
 Modal::begin([
 	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
 	'id' => 'enrolment-edit-modal',
 ]);
 ?>
-<?php
-echo $this->render('_edit-calendar', [
-	'course' => $enrolment->course,
-	'courseSchedule' => $enrolment->courseSchedule
-]);
-?>
+<div id="enrolment-edit-content"></div>
 <?php Modal::end(); ?>
+<?php
+    $locationId = Yii::$app->session->get('location_id');
+    $minLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['fromTime' => SORT_ASC])
+        ->one();
+    $maxLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['toTime' => SORT_DESC])
+        ->one();
+    $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+    $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
+<script type="text/javascript">
+$(document).ready(function() {
+    var calendar = {
+        refresh : function(){
+            var events, availableHours;
+            var teacherId = $('#course-teacher').val();
+            var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+			$('#enrolment-edit-modal .modal-dialog').css({'width': '1000px'});
+			$.ajax({
+				url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
+				type: 'get',
+				dataType: "json",
+				success: function (response)
+				{
+					events = response.events;
+					availableHours = response.availableHours;
+					enrolment.refreshCalendar(availableHours, events, date);
+				}
+			});
+        }
+    };
+	var enrolment = {
+        refreshCalendar : function(availableHours, events, date){
+            $('#enrolment-calendar').fullCalendar('destroy');
+            $('#enrolment-calendar').fullCalendar({
+            	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                defaultDate: date,
+                header: false,
+                allDaySlot: false,
+                slotDuration: '00:15:00',
+                titleFormat: 'DD-MMM-YYYY, dddd',
+                defaultView: 'agendaDay',
+                minTime: "<?php echo $from_time; ?>",
+                maxTime: "<?php echo $to_time; ?>",
+                selectConstraint: 'businessHours',
+                eventConstraint: 'businessHours',
+                businessHours: availableHours,
+                overlapEvent: false,
+                overlapEventsSeparate: true,
+                events: events,
+                select: function (start, end, allDay) {
+                    $('#course-startdate').val(moment(start).format('YYYY-MM-DD hh:mm A'));
+                    $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
+					var endtime = start.clone();
+                	var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
+                	moment(endtime.add(durationMinutes, 'minutes'));
+                    $('#enrolment-calendar').fullCalendar('renderEvent',
+                        {
+                            id: 'newEnrolment',
+                            start: start,
+                            end: endtime,
+                            allDay: false
+                        },
+                    true // make the event "stick"
+                    );
+                    $('#enrolment-calendar').fullCalendar('unselect');
+                },
+                eventAfterAllRender: function (view) {
+                    $('.fc-short').removeClass('fc-short');
+                },
+                selectable: true,
+                selectHelper: true,
+            });
+        }
+    };
+	$(document).on('change', '#course-startdate', function () {
+		calendar.refresh();
+	});
+	$(document).on('click', '.enrolment-edit-cancel', function() {
+		$('#enrolment-edit-modal').modal('hide');
+		return false;
+	});
+	$(document).on('change', '#course-teacher', function() {
+		calendar.refresh();
+		return false;
+	});
+	$(document).on('click', '.enrolment-edit', function (e) {
+		var enrolmentId = $(this).parent().parent().data('key');
+		var param = $.param({id: enrolmentId });
+		$.ajax({
+			url    : '<?= Url::to(['enrolment/update']); ?>?' + param,
+			type   : 'get',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$('#enrolment-edit-content').html(response.data);
+					$('#enrolment-edit-modal').modal('show');
+                    var teacher = $('#course-teacher').val();
+					if (!$.isEmptyObject(teacher)) {
+						calendar.refresh();
+					}
+				}
+			}
+		});
+		return false;
+	});
+});
+</script>
