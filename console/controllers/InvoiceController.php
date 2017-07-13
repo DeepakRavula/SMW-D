@@ -15,7 +15,7 @@ class InvoiceController extends Controller
 	public function init() {
         parent::init();
 		$user = User::findByRole(User::ROLE_BOT);
-		$botUser = current($user);
+		$botUser = end($user);
         Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
     }
     public function actionGenerateInvoice()
