@@ -12,14 +12,19 @@ use Yii;
 class EnrolmentSearch extends Enrolment
 {
     public $showAllEnrolments = false;
-    /**
+    public $program; 
+    public $course;
+    public $student;
+    public $user_profile;
+    public $teacher;
+    public $expirydate;/**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
-			[['showAllEnrolments'], 'safe']
+			[['showAllEnrolments','program','course','student','expirydate','teacher'], 'safe']
         ];
     }
 
@@ -80,7 +85,13 @@ class EnrolmentSearch extends Enrolment
                 ]
             ]
         ]);
+$query->andFilterWHERE(['like','p.name',$this->program]);
 
+ $query->andFilterWHERE(['like','student.first_name',$this->student]);
+ $query->orFilterWHERE(['like','student.last_name',$this->student]);
+ $query->andFilterWHERE(['like','up.firstname',$this->teacher]);
+ $query->orFilterWHERE(['like','up.lastname',$this->teacher]);
+ $query->andFilterWHERE(['=','course.endDate',$this->expirydate]);
         if (! $this->showAllEnrolments) {
 				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
 				->isConfirmed()

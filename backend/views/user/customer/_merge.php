@@ -6,6 +6,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 ?>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+<div id="warning-notification" style="display:none;" class="alert-warning alert fade in"></div>
 
 <?php $locationId = \Yii::$app->session->get('location_id'); ?>
 <div>
@@ -31,10 +32,7 @@ use yii\helpers\Html;
 
         </div>
         <div class="col-md-12 p-l-20 form-group">
-            <?= Html::submitButton(Yii::t('backend', 'Merge'), [
-                'data' => [
-                        'confirm' => 'Merging another customer will delete all of their contact data. This can not be undone.',
-                    ], 'class' => 'btn btn-info', 'name' => 'button']) ?>
+            <?= Html::submitButton(Yii::t('backend', 'Merge'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
 
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default customer-merge-cancel']);?>
         </div>

@@ -404,6 +404,11 @@ var payment = {
                     {
                         $('#invoice-discount-content').html(response.data);
                         $('#invoice-discount-modal').modal('show');
+                        $('#warning-notification').html('You have entered a \n\
+                        non-approved Arcadia discount. All non-approved discounts \n\
+                        must be submitted in writing and approved by Head Office \n\
+                        prior to entering a discount, otherwise you are in breach \n\
+                        of your agreement.').fadeIn();
                     }
                 }
             });

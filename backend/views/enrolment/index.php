@@ -19,6 +19,7 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
 		right: 76px;
 	}
 </style>
+<div class="enrolment-index">
 <?php
 $form = ActiveForm::begin([
 		'action' => ['index'],
@@ -34,11 +35,12 @@ $form = ActiveForm::begin([
 	</div>
 </div>
 <?php ActiveForm::end(); ?>
-<div class="enrolment-index">
+<div class="grid-row-open">
     <?php yii\widgets\Pjax::begin(['id' => 'enrolment-index']); ?>
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
+        'filterModel'=>$searchModel,
 		'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
