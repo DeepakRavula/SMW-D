@@ -33,15 +33,10 @@ use yii\helpers\Html;
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
         <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-primary']); ?>
         <?php if (!empty($model->id)) : ?>
-            <?= Html::a('Delete', [
-                    'customer-payment-preference/delete', 'id' => $model->id
-                ],
+            <?= Html::a('Delete', null,
                 [
-                    'class' => 'btn btn-primary',
-                    'data' => [
-                        'confirm' => 'Are you sure you want to delete this?',
-                        'method' => 'post',
-                    ]
+                    'class' => 'btn btn-primary payment-preference-delete',
+                    'preferenceId' => $model->id,
                 ]); ?>
         <?php endif; ?>
 	</div>

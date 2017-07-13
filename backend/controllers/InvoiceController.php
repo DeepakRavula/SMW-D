@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Invoice;
+use common\models\InvoiceDiscount;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use common\models\Enrolment;
@@ -44,7 +45,7 @@ class InvoiceController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'get-payment-amount'],
+                'only' => ['delete', 'get-payment-amount', 'discount'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -64,12 +65,7 @@ class InvoiceController extends Controller
         $invoiceSearchRequest = $request->get('InvoiceSearch');
         if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
             $currentDate                = new \DateTime();
-            $searchModel->toDate        = $currentDate->format('d-m-Y');
-            $fromDate                   = clone $currentDate;
-            $fromDate                   = $fromDate->modify('-90 days');
-            $searchModel->fromDate      = $fromDate->format('d-m-Y');
             $searchModel->invoiceStatus = Invoice::STATUS_OWING;
-            $searchModel->mailStatus    = InvoiceSearch::STATUS_MAIL_NOT_SENT;
             $searchModel->dueFromDate      = $currentDate->format('1-m-Y');
             $searchModel->dueToDate        = $currentDate->format('t-m-Y');
             $searchModel->dateRange     = $searchModel->dueFromDate.' - '.$searchModel->dueToDate;
@@ -225,7 +221,7 @@ class InvoiceController extends Controller
         $response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
         $invoiceLineItemModel = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_LINE_ITEM_CREATE]);
-        $userModel = User::findOne(['id' => Yii::$app->user->id]);
+        $userModel = User::findOne(['id' => $model->user->id]);
         $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
         $invoiceLineItemModel->userName = $userModel->publicIdentity;
         if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
@@ -239,6 +235,9 @@ class InvoiceController extends Controller
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
                 $model->save();
+                if ($model->user->hasDiscount()) {
+                    $model->addCustomerDiscount($model->user);
+                }
                 $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
 
                 $response = [
@@ -616,5 +615,38 @@ class InvoiceController extends Controller
             'status' => true,
             'amount' => $model->balance,
         ];
+    }
+
+    public function actionDiscount($id)
+    {
+        $model = $this->findModel($id);
+        $customerDiscount = $model->customerDiscount;
+        if (!$customerDiscount) {
+            $customerDiscount = new InvoiceDiscount();
+        } else {
+            $customerDiscount->setScenario(InvoiceDiscount::SCENARIO_EDIT);
+        }
+	$data = $this->renderAjax('discount/_form-discount', [
+            'model' => $model,
+            'customerDiscount' => $customerDiscount
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {
+            $customerDiscount->load($post);
+            if ($customerDiscount->isNewRecord) {
+                $customerDiscount->invoiceId = $id;
+                $customerDiscount->type = InvoiceDiscount::TYPE_CUSTOMER;
+            }
+            $response = [
+                'status' => $customerDiscount->save(),
+            ];
+            return $response;
+        } else {
+
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
     }
 }

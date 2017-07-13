@@ -27,6 +27,7 @@ class VacationLog extends Vacation {
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $vacation, 
 			'message' => $vacationModel->userName . ' created    vacation  for   {{' . $vacationModel->enrolment->student->fullName . '}}  from  '.Yii::$app->formatter->asDate($vacationModel->fromDate).'  to   '.Yii::$app->formatter->asDate($vacationModel->toDate),
+			'locationId' => $vacationModel->enrolment->student->customer->userLocation->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
@@ -49,6 +50,7 @@ class VacationLog extends Vacation {
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $vacation, 
 			'message' => $vacationModel->userName . ' deleted    vacation  for   {{' . $vacationModel->enrolment->student->fullName . '}}  from  '.Yii::$app->formatter->asDate($vacationModel->fromDate).'  to   '.Yii::$app->formatter->asDate($vacationModel->toDate),
+			'locationId' => $vacationModel->enrolment->student->customer->userLocation->location_id,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();

@@ -27,6 +27,7 @@ class LessonLog extends Lesson {
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 				'data' => $lesson,
 				'message' => $lessonModel->userName . ' assigned {{' . $lessonModel->teacher->publicIdentity . '}} to teach {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}}',
+				'locationId' => $lessonModel->teacher->userLocation->location_id,
 			]));
 			if ($timelineEvent) {
 				$timelineEventLink = new TimelineEventLink();
@@ -58,6 +59,7 @@ class LessonLog extends Lesson {
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 				'data' => $lesson,
 				'message' => $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}} to ' . Yii::$app->formatter->asTime($lessonModel->date),
+				'locationId' => $lessonModel->teacher->userLocation->location_id,
 			]));
 			if ($timelineEvent) {
 				$timelineEventLesson = new TimelineEventLesson();
@@ -86,6 +88,7 @@ class LessonLog extends Lesson {
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 				'data' => $lesson,
 				'message' => $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}} to ' . $lessonModel->classroom->name,
+				'locationId' => $lessonModel->teacher->userLocation->location_id,
 			]));
 		
 		if ($timelineEvent) {

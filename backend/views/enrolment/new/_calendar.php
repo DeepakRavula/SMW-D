@@ -178,6 +178,7 @@ $(document).ready(function() {
             droppable: false,
             selectable:true,
 			selectHelper:true,
+			unselectAuto: false,
             resources: {
                 url: '<?= Url::to(['enrolment/render-resources']) ?>?' + params,
                 type: 'POST',
@@ -193,6 +194,7 @@ $(document).ready(function() {
                 }
             },
             select: function(start, end, jsEvent, view, resource) {
+                $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
 				$('input[name="Course[startDate]"]').val(moment(start).format('DD-MM-YYYY h:mm A'));
 				$('input[name="CourseSchedule[day]"]').val(moment(start).format('dddd'));
                 $('#course-teacherid').val(resource.id);
@@ -200,10 +202,17 @@ $(document).ready(function() {
                 var endtime = start.clone();
                 var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
-                eventData = {
-                    start: start,
-                    end: endtime
-                };
+     			$('#enrolment-calendar').fullCalendar('renderEvent',
+                    {
+                        id: 'newEnrolment',
+                        start: start,
+                        end: endtime,
+                        allDay: false,
+						resourceId:resource.id	
+                    },
+                true // make the event "stick"
+                );
+                $('#enrolment-calendar').fullCalendar('unselect');
             }
         });
     }

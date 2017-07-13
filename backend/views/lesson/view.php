@@ -17,6 +17,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 
 $lessonContent = $this->render('_view', [
     'model' => $model,
+    'splitDataProvider' => $splitDataProvider
 ]);
 
 $noteContent = $this->render('note/view', [
@@ -65,6 +66,7 @@ $groupLesson = [
 		],
 	],
 ];
+
 if ($model->course->program->isGroup()) {
 	$items = array_merge($items, $groupLesson);
 }

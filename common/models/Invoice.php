@@ -92,7 +92,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
-            [['hasEditable', 'dueDate'], 'safe']
+            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId'], 'safe']
         ];
     }
 
@@ -219,6 +219,12 @@ class Invoice extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    public function getCustomerDiscount()
+    {
+        return $this->hasOne(InvoiceDiscount::className(), ['invoiceId' => 'id'])
+            ->onCondition(['invoice_discount.type' => InvoiceDiscount::TYPE_CUSTOMER]);
     }
 
     public function getLineItemTotal()
@@ -360,7 +366,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function updateInvoiceAttributes()
     {
         if(!$this->isOpeningBalance() && !$this->isLessonCredit()) {
-            $subTotal    = $this->netSubtotal;
+            $subTotal    = $this->netSubtotal - $this->totalDiscount;
             $tax         = $this->lineItemTax;
             $totalAmount = $subTotal + $tax;
             $this->updateAttributes([
@@ -436,7 +442,7 @@ class Invoice extends \yii\db\ActiveRecord
         return $balance;
     }
 
-    public function getDiscount()
+    public function getLineItemsDiscount()
     {
         $discount = 0.0;
         if (!empty($this->lineItems)) {
@@ -641,11 +647,9 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->discount     = $lesson->proFormaLineItem->discount;
             $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
-            $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
-            $enrolmentDiscount = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0;
-            $invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
+            $invoiceLineItem->discount     = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0;
             $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
-			$invoiceLineItem->rate = $rate;
+            $invoiceLineItem->rate = $rate;
         }
         
         if ($this->isProFormaInvoice()) {
@@ -759,6 +763,25 @@ class Invoice extends \yii\db\ActiveRecord
         }
 
         return $subtotal;
+    }
+
+    public function getCustomerDiscountAmount()
+    {
+        $discount = 0.0;
+        if (!empty($this->customerDiscount)) {
+            if ($this->customerDiscount->valueType) {
+                $discount = $this->customerDiscount->value;
+            } else {
+                $discount = ($this->customerDiscount->value / 100) * $this->netSubtotal;
+            }
+        }
+
+        return $discount;
+    }
+
+    public function getTotalDiscount()
+    {
+        return $this->customerDiscountAmount;
     }
 
     public function makeInvoicePayment()
@@ -992,5 +1015,15 @@ class Invoice extends \yii\db\ActiveRecord
         $payment->payment_method_id = $paymentMethodId;
         $payment->amount = $this->balance;
         return $payment->save();
+    }
+
+    public function addCustomerDiscount($user)
+    {
+        $invoiceDiscount            = new InvoiceDiscount();
+        $invoiceDiscount->invoiceId = $this->id;
+        $invoiceDiscount->value     = $user->customerDiscount->value;
+        $invoiceDiscount->valueType = InvoiceDiscount::VALUE_TYPE_PERCENTAGE;
+        $invoiceDiscount->type      = InvoiceDiscount::TYPE_CUSTOMER;
+        return $invoiceDiscount->save();
     }
 }

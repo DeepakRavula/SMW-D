@@ -17,7 +17,7 @@ use yii\jui\DatePicker;
 <div class="user-search">
 
     <?php $form = ActiveForm::begin([
-        'action' => ['report/payment'],
+        'action' => ['report/item'],
         'method' => 'get',
     ]); ?>
     <div class="row">

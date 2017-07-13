@@ -48,7 +48,7 @@ use kartik\select2\Select2;
     <div class="col-xs-6">
         <?= $form->field($model, 'royaltyFree')->widget(SwitchInput::classname(),
                     [
-                    'name' => 'isRoyalty',
+                    'name' => 'royaltyFree',
                     'pluginOptions' => [
                         'handleWidth' => 30,
                         'onText' => 'Yes',

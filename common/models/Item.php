@@ -129,7 +129,7 @@ class Item extends \yii\db\ActiveRecord
 
     public function getRoyaltyFreeStatus()
     {
-        switch ($this->status) {
+        switch ($this->royaltyFree) {
             case self::ROYALTY_FREE:
                 $status = 'Yes';
             break;
@@ -140,7 +140,7 @@ class Item extends \yii\db\ActiveRecord
 
         return $status;
     }
-    
+
     public function isOpeningBalance()
     {
         return $this->code === self::OPENING_BALANCE_ITEM;
@@ -163,5 +163,25 @@ class Item extends \yii\db\ActiveRecord
         }
 
      	return parent::beforeSave($insert);
+    }
+
+    public function getNetPrice($locationId, $date)
+    {
+        $amount = 0;
+        $items = InvoiceLineItem::find()
+                ->joinWith(['invoice' => function($query) use ($locationId) {
+                    $query->notDeleted()
+                        ->location($locationId);
+                }])
+                ->andWhere([
+                    'invoice_line_item.item_id' => $this->id,
+                    'DATE(invoice.date)' => (new \DateTime($date))->format('Y-m-d')
+                ])
+                ->all();
+        foreach ($items as $item) {
+            $amount += $item->netPrice;
+        }
+
+        return $amount;
     }
 }

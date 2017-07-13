@@ -93,4 +93,30 @@ class ItemCategory extends \yii\db\ActiveRecord
 
      	return parent::beforeSave($insert);
     }
+
+    public function getNetPrice($locationId, $date)
+    {
+        $amount = 0;
+        $items = InvoiceLineItem::find()
+                ->joinWith(['invoice' => function($query) use ($locationId, $date) {
+                    $query->notDeleted()
+                        ->location($locationId)
+                        ->andWhere([
+                            'DATE(invoice.date)' => (new \DateTime($date))->format('Y-m-d')
+                        ]);
+                }])
+                ->joinWith(['item' => function($query) {
+                    $query->joinWith(['itemCategory' => function($query) {
+                        $query->andWhere([
+                            'item_category.id' => $this->id,
+                        ]);
+                    }]);
+                }])
+                ->all();
+        foreach ($items as $item) {
+            $amount += $item->netPrice;
+        }
+
+        return $amount;
+    }
 }

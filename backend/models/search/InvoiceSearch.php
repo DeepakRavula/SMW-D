@@ -114,9 +114,9 @@ class InvoiceSearch extends Invoice
             }
             $query->andWhere(['between', 'invoice.dueDate', $this->dueFromDate->format('Y-m-d'),
                     $this->dueToDate->format('Y-m-d')]);
-        }
-        $query->andWhere(['between', 'invoice.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
-
+        } else {
+        	$query->andWhere(['between', 'invoice.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+		}
         $query->andFilterWhere(['type' => $this->type]);
 		
 		return $dataProvider;

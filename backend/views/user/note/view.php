@@ -8,6 +8,10 @@ use yii\bootstrap\Modal;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<?php yii\widgets\Pjax::begin([
+    'id' => 'customer-notes-listing',
+    'timeout' => 6000,
+]) ?>
 <div id="user-note" class="col-md-12">
 	<h4 class="pull-left m-r-20">Notes</h4>
 	<a href="#" class="text-add-new"><i class="fa fa-plus"></i></a>
@@ -31,3 +35,4 @@ Modal::end();
 ]);
 ?>
 </div>
+<?php \yii\widgets\Pjax::end(); ?>

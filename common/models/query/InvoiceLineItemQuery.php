@@ -51,4 +51,14 @@ class InvoiceLineItemQuery extends \yii\db\ActiveQuery
 
 		return $this;
 	}
+	public function royaltyFree()
+	{
+        $this->andWhere(['invoice_line_item.royaltyFree' => true]);
+		return $this;
+	}
+	public function royalty()
+	{
+        $this->andWhere(['invoice_line_item.royaltyFree' => false]);
+		return $this;
+	}
 	}

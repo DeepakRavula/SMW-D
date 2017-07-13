@@ -530,6 +530,11 @@ class Lesson extends \yii\db\ActiveRecord
             break;
             case self::STATUS_UNSCHEDULED:
                 $status = 'Unscheduled';
+                if ($this->isExploded()) {
+                    $status .= ' (Exploded)';
+                } else if ($this->isExpired()) {
+                    $status .= ' (Expired)';
+                }
             break;
             case self::STATUS_MISSED:
                 if (!$this->isCompleted()) {
@@ -824,8 +829,6 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
         $invoice->type = INVOICE::TYPE_INVOICE;
-		$invoice->createdUserId = Yii::$app->user->id;
-		$invoice->updatedUserId = Yii::$app->user->id;	
         return $invoice;
     }
 
@@ -833,13 +836,16 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $invoice = $this->createInvoice();
         $location_id = $this->enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => $this->enrolment->student->customer]);
+        $user = User::findOne(['id' => $this->enrolment->student->customer->id]);
         $invoice->userName = $user->publicIdentity;
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
         $invoice->save();
         $invoice->addPrivateLessonLineItem($this);
         $invoice->save();
+        if ($user->hasDiscount()) {
+            $invoice->addCustomerDiscount($user);
+        }
         if ($this->hasProFormaInvoice()) {
             if ($this->isSplitRescheduled()) {
                 $netPrice = $this->getSplitRescheduledAmount();
@@ -875,7 +881,7 @@ class Lesson extends \yii\db\ActiveRecord
         $enrolment = Enrolment::findOne($enrolmentId);
         $courseCount = $enrolment->courseCount;
         $location_id = $enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => $enrolment->student->customer]);
+        $user = User::findOne(['id' => $enrolment->student->customer->id]);
         $invoice->userName = $user->publicIdentity;
         $invoice->user_id = $enrolment->student->customer->id;
         $invoice->location_id = $location_id;
@@ -883,6 +889,9 @@ class Lesson extends \yii\db\ActiveRecord
         $this->enrolmentId = $enrolmentId;
         $invoice->addGroupLessonLineItem($this);
         $invoice->save();
+        if ($user->hasDiscount()) {
+            $invoice->addCustomerDiscount($user);
+        }
         if ($enrolment->hasProFormaInvoice()) {
             $netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
             if ($enrolment->proFormaInvoice->proFormaCredit >= $netPrice) {

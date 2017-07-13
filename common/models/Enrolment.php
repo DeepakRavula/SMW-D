@@ -27,6 +27,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA   = 2;
+    const ENROLMENT_EXPIRY=90;
 
     const EVENT_CREATE = 'create';
     const EVENT_GROUP='group-course-enroll';
@@ -296,6 +297,18 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return (int) $this->paymentFrequency === (int) self::LENGTH_FULL;
     }
+    public function isExpiring($daysCount)
+    {
+        $isExpiring = false;
+        $endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
+        $currentDate = new \DateTime();
+        $currentDate = $currentDate->modify('+' . $daysCount . ' days');
+        $expiryDate = $currentDate->format('Y-m-d');
+        if ($endDate <= $expiryDate) {
+            $isExpiring = true;
+        }
+        return $isExpiring;
+    }
 
     public function beforeSave($insert) {
         if($insert) {
@@ -505,11 +518,11 @@ class Enrolment extends \yii\db\ActiveRecord
     public function createProFormaInvoice()
     {
         $locationId = $this->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $user = User::findOne(['id' => $this->student->customer->id]);
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
         $invoice->userName = $user->publicIdentity;
-        $invoice->user_id = $this->student->customer->id;
+        $invoice->user_id = $user->id;
         $invoice->location_id = $locationId;
         $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
         $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
@@ -530,6 +543,9 @@ class Enrolment extends \yii\db\ActiveRecord
         if (!$invoice->save()) {
             Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
         } else {
+            if ($user->hasDiscount()) {
+                $invoice->addCustomerDiscount($user);
+            }
             return $invoice;
         }
     }

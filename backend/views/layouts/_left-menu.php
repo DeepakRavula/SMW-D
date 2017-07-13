@@ -47,7 +47,7 @@ echo Menu::widget([
 			'url' => ['student/index', 'StudentSearch[showAllStudents]' => false],
 			'visible' => Yii::$app->user->can('staffmember'),
 			'active' => (Yii::$app->controller->id === 'student') ? true : false,
-			'badge' => Student::find()->notDeleted()->count(),
+			'badge' => Student::count(),
 			'badgeBgClass' => 'label-default',
 		],
         [
@@ -131,7 +131,7 @@ echo Menu::widget([
 			'icon' => '<i class="fa  fa-dollar"></i>',
 			'url' => ['invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_PRO_FORMA_INVOICE],
 			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (Yii::$app->controller->id === 'invoice') ? true : false,
+			'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_PRO_FORMA_INVOICE) ? true : false,
 			'badge' => Invoice::pfiCount(),
 			'badgeBgClass' => 'label-default'
 		],
@@ -140,7 +140,7 @@ echo Menu::widget([
 			'icon' => '<i class="fa  fa-dollar"></i>',
 			'url' => ['invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE],
 			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (Yii::$app->controller->id === 'invoice') ? true : false,
+			'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_INVOICE ) ? true : false,
 			'badge' => Invoice::invoiceCount(),
 			'badgeBgClass' => 'label-default'
 		],
@@ -172,22 +172,42 @@ echo Menu::widget([
 					'visible' => Yii::$app->user->can('owner'),
 					'active' => (Yii::$app->controller->action->id === 'tax-collected') ? true : false,
 				],
-					[
+                                [
 					'label' => Yii::t('backend', 'Royalty Free Items'),
 					'icon' => '<i class="fa fa-cny"></i>',
 					'url' => ['report/royalty-free'],
 					'visible' => Yii::$app->user->can('owner'),
 					'active' => (Yii::$app->controller->action->id === 'royalty-free') ? true : false,
 				],
+                                [
+					'label' => Yii::t('backend', 'Items'),
+					'icon' => '<i class="fa fa-cny"></i>',
+					'url' => ['report/items'],
+					'visible' => Yii::$app->user->can('owner'),
+					'active' => Yii::$app->controller->action->id === 'items'
+				],
+                                [
+					'label' => Yii::t('backend', 'Item Category'),
+					'icon' => '<i class="fa fa-cny"></i>',
+					'url' => ['report/item-category'],
+					'visible' => Yii::$app->user->can('owner'),
+					'active' => Yii::$app->controller->action->id === 'item-category',
+				],
 			]
 		],
-			[
+                [
 			'label' => Yii::t('backend', 'Release Notes'),
 			'icon' => '<i class="fa fa-sticky-note"></i>',
 			'url' => ['release-notes/index'],
 			'visible' => Yii::$app->user->can('administrator'),
 			'active' => (Yii::$app->controller->id === 'release-notes') ? true : false,
 		],
+                [
+                        'label' => Yii::t('backend', 'Items'),
+                        'icon' => '<i class="fa fa-newspaper-o"></i>',
+                        'url' => ['item/index', 'ItemSearch[showAllItems]' => false],
+                        'visible' => Yii::$app->user->can('staffmember'),
+                ],
 		[
 			'label' => Yii::t('backend', 'Admin'),
 			'url' => '#',
@@ -232,12 +252,6 @@ echo Menu::widget([
 					'visible' => Yii::$app->user->can('administrator'),
 				],
                                 [
-					'label' => Yii::t('backend', 'Items'),
-					'icon' => '<i class="fa fa-newspaper-o"></i>',
-					'url' => ['item/index', 'ItemSearch[showAllItems]' => false],
-					'visible' => Yii::$app->user->can('administrator'),
-				],
-				[
 					'label' => Yii::t('backend', 'Reminder Notes'),
 					'icon' => '<i class="fa  fa-bell"></i>',
 					'url' => ['/reminder-note/index'],

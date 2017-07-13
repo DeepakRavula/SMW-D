@@ -6,6 +6,7 @@ use Yii;
 use common\models\Payment;
 use backend\models\search\PaymentSearch;
 use backend\models\search\ReportSearch;
+use backend\models\search\InvoiceLineItemSearch;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use common\models\Invoice;
@@ -78,7 +79,7 @@ class ReportController extends Controller {
 					$query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
 				}])
 			->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-			->andWhere(['invoice_line_item.isRoyalty' => false])
+			->royaltyFree()
 			->sum('invoice_line_item.amount');
 				
 		return $this->render('royalty', [
@@ -157,7 +158,7 @@ class ReportController extends Controller {
 				->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
 				->notDeleted();
 			}])
-			->andWhere(['isRoyalty' => false]);
+			->royaltyFree();
 
 		$royaltyFreeDataProvider = new ActiveDataProvider([
 			'query' => $royaltyFreeItems, 
@@ -168,4 +169,34 @@ class ReportController extends Controller {
 			'royaltyFreeDataProvider' => $royaltyFreeDataProvider,
 		]);
 	}
+
+    public function actionItems()
+    {
+        $searchModel              = new InvoiceLineItemSearch();
+        $searchModel->groupByItem = true;
+        $searchModel->fromDate    = (new \DateTime())->format('d-m-Y');
+        $searchModel->toDate      = (new \DateTime())->format('d-m-Y');
+        $dataProvider             = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('item/index',
+                [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionItemCategory()
+    {
+        $searchModel                      = new InvoiceLineItemSearch();
+        $searchModel->groupByItemCategory = true;
+        $searchModel->fromDate            = (new \DateTime())->format('d-m-Y');
+        $searchModel->toDate              = (new \DateTime())->format('d-m-Y');
+        $dataProvider                     = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('item-category/index',
+                [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+    }
 }

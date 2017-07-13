@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use common\models\Enrolment;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
@@ -40,27 +41,39 @@ $form = ActiveForm::begin([
 		'dataProvider' => $dataProvider,
 		'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'columns' => [
+        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+        $url = Url::to(['enrolment/view', 'id' => $model->id]);
+        $data = ['data-url' => $url];
+        if ($model->isExpiring(Enrolment::ENROLMENT_EXPIRY)) {
+            $data = array_merge($data, ['class' => 'danger inactive']);
+        }
+        return $data;
+    },
+    'columns' => [
 			[
-				'label' => 'Program',
+            'attribute' => 'program',
+                'label' => 'Program',
 				'value' => function($data) {
 					return $data->course->program->name;
 				}
 			],
 			[
-				'label' => 'Student',
+            'attribute' => 'student',
+                'label' => 'Student',
 				'value' => function($data) {
 					return $data->student->fullName;
 				}
 			],
 			[
-				'label' => 'Teacher',
+            'attribute' => 'teacher',
+                'label' => 'Teacher',
 				'value' => function($data) {
 					return $data->course->teacher->publicIdentity;
 				}
 			],
 			[
-				'label' => 'Expiry Date',
+            'attribute' => 'expirydate',
+                'label' => 'Expiry Date',
 				'value' => function($data) {
 					return Yii::$app->formatter->asDate($data->course->endDate);
 				}

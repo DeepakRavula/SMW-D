@@ -62,6 +62,7 @@ class TimelineEventLesson extends \yii\db\ActiveRecord
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $lesson,
 			'message' => $lessonModel->userName . ' recorded {{' . $lessonModel->course->enrolment->student->fullName . '}} as absent from his/her ' . $lessonModel->course->program->name . ' {{lesson}}',
+			'locationId' => $lessonModel->course->teacher->userLocation->location_id,
 		]));
 		if ($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();
