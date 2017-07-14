@@ -91,6 +91,7 @@ $(document).ready(function() {
                 defaultDate: date,
                 header: false,
                 allDaySlot: false,
+				height:false,
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',
                 defaultView: 'agendaDay',
@@ -104,6 +105,7 @@ $(document).ready(function() {
                 events: events,
                 select: function (start, end, allDay) {
                     $('#course-startdate').val(moment(start).format('YYYY-MM-DD hh:mm A'));
+                    $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
                     $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
 					var endtime = start.clone();
                 	var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();

@@ -526,7 +526,7 @@ class LessonController extends Controller
         $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
-        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
+        $rescheduleBeginDate = $courseRequest['startDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
@@ -642,7 +642,7 @@ class LessonController extends Controller
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');
-        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
+        $rescheduleBeginDate = $courseRequest['startDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
 		if(! empty($vacationId)) {

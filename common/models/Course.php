@@ -221,8 +221,9 @@ class Course extends \yii\db\ActiveRecord
 
 	public function generateLessons($lessons, $startDate)
 	{
-		$lessonTime								 = (new \DateTime($this->startDate))->format('H:i:s');
-		$duration								 = explode(':', $lessonTime);
+		$lessonTime	= (new \DateTime($this->startDate))->format('H:i:s');
+		list($hour, $minute, $second) = explode(':', $lessonTime); 
+		//$duration								 = explode(':', $lessonTime);
 		$nextWeekScheduledDate = $startDate;
 		$dayList = self::getWeekdaysList();
 		$day = $dayList[$this->courseSchedule->day];
@@ -234,7 +235,8 @@ class Course extends \yii\db\ActiveRecord
 			$lesson->id			 = null;
 			$lesson->isNewRecord = true;
 			$lesson->status		 = Lesson::STATUS_DRAFTED;
-			$nextWeekScheduledDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
+			$nextWeekScheduledDate->setTime($hour, $minute, $second);
+			//$nextWeekScheduledDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 			$lesson->date		 = $nextWeekScheduledDate->format('Y-m-d H:i:s');
 			$lesson->save();
 

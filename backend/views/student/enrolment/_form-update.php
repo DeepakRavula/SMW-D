@@ -7,6 +7,7 @@ use kartik\depdrop\DepDrop;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use yii\helpers\Url;
+use common\models\Course;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
@@ -15,7 +16,7 @@ use yii\helpers\Url;
 <div class="enrolment-form">
 	<?php $form			 = ActiveForm::begin(); ?>
     <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-4">
 			<?php $locationId = Yii::$app->session->get('location_id');
 			$teachers = ArrayHelper::map(
 				User::find()
@@ -39,7 +40,10 @@ use yii\helpers\Url;
             ]);
         ?>
 		</div>
-		<div class="col-md-5">
+		<div class="col-md-3">
+			<?php echo $form->field($courseSchedule, 'day')->dropdownList(Course::getWeekdaysList(), ['prompt' => 'select day']) ?>
+		</div>
+		<div class="col-md-4">
 			<?php
 			echo $form->field($course, 'startDate')->widget(DatePicker::classname(),
 				[
@@ -54,6 +58,7 @@ use yii\helpers\Url;
 			]);
 			?>
 		</div>
+        <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
         <?= $form->field($courseSchedule, 'duration')->hiddenInput()->label(false);?>
 		<div class="col-md-12">
             <div id="enrolment-calendar"></div>
