@@ -111,6 +111,12 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
     }
 
+    public function getCustomer()
+    {
+        return $this->hasOne(User::className(), ['id' => 'customer_id'])
+            ->via('student');
+    }
+
     public function getPaymentCycles()
     {
         return $this->hasMany(PaymentCycle::className(), ['enrolmentId' => 'id'])
@@ -136,6 +142,13 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getProFormaInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+            ->via('invoiceLineItems')
+            ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+    }
+
+    public function getProFormaInvoices()
+    {
+        return $this->hasMany(Invoice::className(), ['id' => 'invoice_id'])
             ->via('invoiceLineItems')
             ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
     }
@@ -317,7 +330,6 @@ class Enrolment extends \yii\db\ActiveRecord
         if (!$this->course->program->isGroup()) {
             $privateLessons = $query->completedUnInvoicedPrivate()
                 ->enrolment($this->id)->all();
-        print_r($privateLessons);die;
             foreach($privateLessons as $lesson) {
                 $lesson->createPrivateLessonInvoice();
             }
@@ -346,10 +358,56 @@ class Enrolment extends \yii\db\ActiveRecord
         return $invoice;
     }
 
+    public function getProFormaCreditInvoice()
+    {
+        if ($this->course->program->isGroup()) {
+            return $this->proFormaInvoices;
+        } else {
+            $invoices = [];
+            foreach ($this->paymentCycles as $paymentCycle) {
+                if ($paymentCycle->hasProFormaInvoice()) {
+                    if ($paymentCycle->proFormaInvoice->hasProFormaCredit()) {
+                        $invoices[] = $paymentCycle->proFormaInvoice;
+                    }
+                }
+            }
+            return $invoices;
+        }
+    }
+
     public function addCreditInvoice()
     {
-        $owingInvoice = $this->getOwingInvoice();
-        $creditInvoice = $this->getCreditInvoice();
+        $creditInvoices = $this->getProFormaCreditInvoice();
+        if ($creditInvoices) {
+            $invoice = new Invoice();
+            $invoice->user_id = $this->customer->id;
+            $invoice->location_id = end($creditInvoices)->location_id;
+            $invoice->type = Invoice::TYPE_INVOICE;
+            $invoice->save();
+            $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
+            $invoiceLineItem->invoice_id = $invoice->id;
+            $item = Item::findOne(['code' => Item::LESSON_CREDIT]);
+            $invoiceLineItem->item_id = $item->id;
+            $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
+            $invoiceLineItem->description = $this->student->studentIdentity .'\'s '
+                . $this->course->program->name . ' Lesson credit';
+            $invoiceLineItem->unit = 1;
+            $invoiceLineItem->amount = 0.0;
+            $invoiceLineItem->code = $invoiceLineItem->getItemCode();
+            $invoiceLineItem->cost = 0;
+            $invoiceLineItem->save();
+            $invoice->tax = $invoiceLineItem->tax_rate;
+            $invoice->total = $invoice->subTotal + $invoice->tax;
+            $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
+            $invoice->save();
+            foreach ($creditInvoices as $creditInvoice) {
+                $amount = $creditInvoice->proformaCredit;
+                if ($invoice->addLessonCreditAppliedPayment($amount, $creditInvoice)) {
+                    $creditInvoice->save();
+                }
+            }
+        }
+        
     }
 
     public function beforeDelete()

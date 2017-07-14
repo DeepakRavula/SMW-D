@@ -48,25 +48,6 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['invoice.isCanceled' => false]);
     }
 
-    public function hasCredit()
-    {
-        return $this->andWhere(['<', 'invoice.balance', 0]);
-    }
-
-    public function hasPayments()
-    {
-        return $this->joinWith(['invoicePayments ip' => function ($query) {
-            $query->where(['NOT', ['ip.id' => null]]);
-        }]);
-    }
-
-    public function hasNoPayments()
-    {
-        return $this->joinWith(['invoicePayments ip' => function ($query) {
-            $query->where(['ip.id' => null]);
-        }]);
-    }
-
     public function location($locationId)
     {
         $this->andWhere(['invoice.location_id' => $locationId]);
@@ -85,19 +66,6 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         }]);
 
         return $this;
-    }
-
-    public function enrolment($enrolmentId)
-    {
-        return $this->joinWith(['lineItems' => function ($query) use ($enrolmentId) {
-            $query->joinWith(['lesson' => function ($query) use ($enrolmentId) {
-                $query->joinWith(['course' => function ($query) use ($enrolmentId) {
-                    $query->joinWith(['enrolments' => function ($query) use ($enrolmentId) {
-                        $query->andWhere(['enrolment.id' => $enrolmentId]);
-                    }]);
-                }]);
-            }]);
-        }]);
     }
 
     public function enrolmentLesson($lessonId, $enrolmentId)
@@ -174,14 +142,14 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 	public function proFormaInvoice()
 	{
 		return $this->andFilterWhere([
-			'type' => Invoice::TYPE_PRO_FORMA_INVOICE
+			'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE
 		]);
 	}
 
 	public function invoice()
 	{
 		return $this->andFilterWhere([
-			'type' => Invoice::TYPE_INVOICE
+			'invoice.type' => Invoice::TYPE_INVOICE
 		]);
 	}
 	
