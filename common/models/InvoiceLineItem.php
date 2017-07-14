@@ -294,7 +294,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function isOtherLineItems()
     {
-        return ! $this->isOpeningBalance();
+        return !$this->isOpeningBalance() && !$this->isLessonCredit();
     }
 
     public function isLessonCredit()
