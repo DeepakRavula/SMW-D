@@ -219,7 +219,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                 ],
             ],
 			[
-                'label' => 'Unavailability',
+                'label' => 'Unavailabilities',
                 'content' => $unavailabilityContent,
                 'options' => [
                     'id' => 'unavailability',
