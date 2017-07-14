@@ -345,19 +345,6 @@ class Enrolment extends \yii\db\ActiveRecord
         return true;
     }
 
-    public function getOwingInvoice()
-    {
-        $invoice = Invoice::find()
-            ->notDeleted()
-            ->notCanceled()
-            ->invoice()
-            ->enrolment($this->id)
-            ->unpaid()
-            ->all();
-
-        return $invoice;
-    }
-
     public function getProFormaCreditInvoice()
     {
         if ($this->course->program->isGroup()) {
