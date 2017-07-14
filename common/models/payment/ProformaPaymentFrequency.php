@@ -60,13 +60,6 @@ class ProformaPaymentFrequency extends \yii\db\ActiveRecord
     {
         return new \common\models\query\ProformaPaymentFrequencyQuery(get_called_class());
     }
-    public function afterSave($insert, $changedAttributes)
-    {
-        if ($insert) {
-            $this->trigger(self::EVENT_CREATE);
-        }
-    }
-
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoiceId']);
