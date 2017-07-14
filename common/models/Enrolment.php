@@ -341,10 +341,7 @@ class Enrolment extends \yii\db\ActiveRecord
 			$checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
 			$checkLessonCount = (int)$lessonCount < Lesson::MAXIMUM_LIMIT; 
 			if ($checkDay && $checkLessonCount) {
-				$professionalDevelopmentDay = clone $day;
-				$professionalDevelopmentDay->modify('last day of previous month');
-				$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
-				if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+				if ($this->course->isProfessionalDevelopmentDay($day)) {
 					continue;
 				}
 				$lesson = new Lesson();
