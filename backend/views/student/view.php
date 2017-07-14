@@ -219,7 +219,7 @@ echo $this->render('_profile', [
             $('#student-note-modal').modal('hide');
             return false;
         });
-        $(document).on('click', '#student-note', function (e) {
+        $(document).on('click', '.student-note', function (e) {
             $('#note-content').val('');
             $('#student-note-modal').modal('show');
             return false;
