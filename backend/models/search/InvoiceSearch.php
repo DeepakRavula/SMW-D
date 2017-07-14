@@ -20,7 +20,7 @@ class InvoiceSearch extends Invoice
     public $toggleAdditionalColumns;
     public $fromDate;
     public $toDate;
-    private $dateRange;
+    public $dateRange;
     public $dueToDate;
     public $dueFromDate;
     public $type;
@@ -48,22 +48,6 @@ class InvoiceSearch extends Invoice
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
-    }
-
-    public function setDateRange($dateRange)
-    {
-        list($fromDate, $toDate) = explode(' - ', $dateRange);
-        $this->dueFromDate = \DateTime::createFromFormat('d-m-Y', $fromDate);
-        $this->dueToDate = \DateTime::createFromFormat('d-m-Y', $toDate);
-    }
-
-    public function getDateRange()
-    {
-        $fromDate = $this->dueFromDate->format('d-m-Y');
-        $toDate = $this->dueToDate->format('d-m-Y');
-        $this->dateRange = $fromDate.' - '.$toDate;
-
-        return $this->dateRange;
     }
 
     /**
@@ -100,7 +84,6 @@ class InvoiceSearch extends Invoice
 
         $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
         $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
-
         if ((int) $this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
             if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
                 $query->mailSent();
@@ -112,8 +95,12 @@ class InvoiceSearch extends Invoice
             } elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
                 $query->paid()->proFormaInvoice();
             }
-            $query->andWhere(['between', 'invoice.dueDate', $this->dueFromDate->format('Y-m-d'),
-                    $this->dueToDate->format('Y-m-d')]);
+			if(!empty($this->dateRange)) {
+				list($this->dueFromDate, $this->dueToDate) = explode(' - ', $this->dateRange);
+            	$query->andWhere(['between', 'DATE(invoice.dueDate)', 
+					(new \DateTime($this->dueFromDate))->format('Y-m-d'),
+					(new \DateTime($this->dueToDate))->format('Y-m-d')]);
+			}
         } else {
         	$query->andWhere(['between', 'invoice.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
 		}
