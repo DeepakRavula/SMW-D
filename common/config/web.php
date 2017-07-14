@@ -52,6 +52,7 @@ $config = [
             'schedule2/*',
             'enrolment/*',
             'teacher-availability/*',
+            'teacher-unavailability/*',
             'cron/*',
             'group-course/*',
             'group-lesson/*',

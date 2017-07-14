@@ -144,6 +144,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         ]);
 		$unavailabilityContent = $this->render('teacher/_unavailability', [
             'unavailabilityDataProvider' => $unavailability,
+			'model' => $model,
         ]);
         $openingBalanceContent = $this->render('customer/_opening-balance', [
             'openingBalanceDataProvider' => $openingBalanceDataProvider,
