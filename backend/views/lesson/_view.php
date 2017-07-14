@@ -24,9 +24,11 @@ use kartik\grid\GridView;
 		top:-30px;
 	}
 	.student_customer {
-		
-    margin-bottom: 10px;
-}
+		margin-bottom: 10px;
+    }
+    .user-details-wrapper{
+        background: transparent;
+    }
 </style>
 <div class="lesson-view user-details-wrapper">
     <div class="row">
