@@ -102,7 +102,7 @@ use kartik\editable\Editable;
     <?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
     <div id="apply-discount" class="col-sm-2">
     <div class="m-b-20">
-	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Apply Discount</a>
+	<a href="#" class="apply-discount text-add-new"><i class="fa fa-plus-circle"></i> Apply Discount</a>
 	<div class="clearfix"></div>
     </div>
     </div>
@@ -177,7 +177,7 @@ use kartik\editable\Editable;
 </div>
 <script>
 $(document).ready(function() {
-    $('#add-misc-item').click(function(){
+    $('.add-new-misc').click(function(){
         $('input[type="text"]').val('');
         $('.tax-compute').hide();
         $('#invoicelineitem-tax_status').val('');
@@ -190,7 +190,7 @@ $(document).ready(function() {
    		return false;
     });
 
-    $('#apply-discount').click(function(){
+    $('.apply-discount').click(function(){
         $('#apply-discount-modal').modal('show');
   		return false;
     });
