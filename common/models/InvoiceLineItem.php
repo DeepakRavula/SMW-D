@@ -227,10 +227,21 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         ];
     }
 
+    public function isLessonItem()
+    {
+        $lessonItemCategory = ItemCategory::findOne(['name' => 'Lesson']);
+        return (int) $this->item->itemCategoryId === (int) $lessonItemCategory->id;
+    }
+
+    public function isDefaultDiscountedItems()
+    {
+        return $this->isLessonItem() || $this->isMisc() || $this->isOpeningBalance();
+    }
+
     public function beforeSave($insert)
     {
         if ($insert) {
-            if ($this->isOpeningBalance() || $this->isMisc()) {
+            if ($this->isDefaultDiscountedItems()) {
                 $this->discount     = 0.0;
                 $this->discountType = 0;
                 $this->rate         = 0;
