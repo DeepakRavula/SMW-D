@@ -23,6 +23,7 @@ class Item extends \yii\db\ActiveRecord
 {
     const LESSON_ITEM = 'LESSON';
     const OPENING_BALANCE_ITEM = 'OPENING BALANCE';
+    const LESSON_CREDIT = 'LESSON CREDIT';
 
     const DEFAULT_ITEMS = 10;
 

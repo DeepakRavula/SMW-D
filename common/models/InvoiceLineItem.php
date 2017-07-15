@@ -230,28 +230,21 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($insert) {
-            if (!$this->isMisc() && !$this->isLessonCredit()) {
-                $taxStatus          = TaxStatus::findOne(['id' => TaxStatus::STATUS_NO_TAX]);
-                $this->tax_type     = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-                $this->tax_rate     = 0.0;
-                $this->tax_code     = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
-                $this->tax_status   = $taxStatus->name;
-                $this->royaltyFree    = false;
-            } else if ($this->isMisc()) {
-                $taxStatus          = TaxStatus::findOne(['id' => $this->tax_status]);
-                $this->tax_status   = $taxStatus->name;
+            if ($this->isOpeningBalance() || $this->isMisc()) {
                 $this->discount     = 0.0;
                 $this->discountType = 0;
-                $this->rate = 0;
+                $this->rate         = 0;
             }
-            if ($this->isOpeningBalance()) {
-                $this->discount     = 0.0;
-                $this->discountType = 0;
-                $this->royaltyFree    = true;
-                $this->rate = 0;
+            $taxStatus         = TaxStatus::findOne(['id' => $this->item->taxStatusId]);
+            $this->tax_type    = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
+            $this->tax_rate    = $this->amount * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
+            $this->tax_code    = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
+            $this->tax_status  = $taxStatus->name;
+            if (!isset($this->royaltyFree)) {
+                $this->royaltyFree = $this->item->royaltyFree;
             }
         }
-        
+
         if (!$insert) {
             if ($this->invoice->isReversedInvoice()) {
                 $this->amount = -($this->amount);
@@ -301,7 +294,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function isOtherLineItems()
     {
-        return ! $this->isOpeningBalance();
+        return !$this->isOpeningBalance() && !$this->isLessonCredit();
     }
 
     public function isLessonCredit()
@@ -343,9 +336,32 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
     }
 
-	public function getNetPrice()
+    public function getNetPrice()
     {
         return $this->amount - $this->discountValue;
+    }
+
+    public function getFinalNetPrice()
+    {
+        return $this->amount - $this->finalDiscountValue;
+    }
+
+    public function getFinalDiscountValue()
+    {
+        $discount = 0.0;
+        if ((int) $this->discountType === (int) self::DISCOUNT_FLAT) {
+            $discount += $this->discount;
+        } else {
+            $discount += ($this->discount / 100) * $this->amount;
+        }
+        if ($this->invoice->customerDiscount) {
+            if ($this->invoice->customerDiscount->valueType) {
+                $discount += $this->invoice->customerDiscount->value;
+            } else {
+                $discount += ($this->invoice->customerDiscount->value / 100) * $this->amount;
+            }
+        }
+        return $discount;
     }
 	
 	public function getTaxLineItemTotal($date)
