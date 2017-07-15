@@ -382,7 +382,11 @@ class EnrolmentController extends Controller
 				->where([
 					'courseId' => $model->course->id,
 					'status' => Lesson::STATUS_SCHEDULED,
+					'type' => Lesson::TYPE_REGULAR
 				])
+				->joinWith(['reschedule' => function($query) {
+                	$query->andWhere(['lesson_reschedule.id' => null]);
+				}])
 				->andWhere(['>=', 'DATE(date)', $startDate])
 				->all();
 			$startDate		 = new \DateTime($course->startDate);

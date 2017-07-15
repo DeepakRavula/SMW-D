@@ -225,7 +225,7 @@ class Course extends \yii\db\ActiveRecord
 		list($hour, $minute, $second) = explode(':', $lessonTime); 
 		$nextWeekScheduledDate = $startDate;
 		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->courseSchedule->day];
+		$day = $dayList[$startDate->format('N')];
 		foreach ($lessons as $lesson) {
 			if ($this->isProfessionalDevelopmentDay($startDate)) {
 				$nextWeekScheduledDate = $startDate->modify('next '.$day);

@@ -94,7 +94,7 @@ class LessonQuery extends \yii\db\ActiveQuery
         }]);
         return $this;
     }
-
+	
     public function student($id)
     {
         $this->joinWith(['enrolment' => function ($query) use ($id) {
