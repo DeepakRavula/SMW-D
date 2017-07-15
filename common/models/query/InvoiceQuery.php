@@ -36,14 +36,19 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return parent::one($db);
     }
 
-	public function notDeleted()
+    public function notDeleted()
     {
         $this->andWhere(['invoice.isDeleted' => false]);
 
         return $this;
     }
-	
-	public function location($locationId)
+
+    public function notCanceled()
+    {
+        return $this->andWhere(['invoice.isCanceled' => false]);
+    }
+
+    public function location($locationId)
     {
         $this->andWhere(['invoice.location_id' => $locationId]);
         return $this;
@@ -137,14 +142,14 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 	public function proFormaInvoice()
 	{
 		return $this->andFilterWhere([
-			'type' => Invoice::TYPE_PRO_FORMA_INVOICE
+			'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE
 		]);
 	}
 
 	public function invoice()
 	{
 		return $this->andFilterWhere([
-			'type' => Invoice::TYPE_INVOICE
+			'invoice.type' => Invoice::TYPE_INVOICE
 		]);
 	}
 	

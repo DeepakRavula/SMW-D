@@ -99,7 +99,7 @@ use kartik\editable\Editable;
     </div>
 	</div>
 <?php endif; ?>
-    <?php if(!empty($model->lineItem) && (!$model->lineItem->isOpeningBalance())) :?>
+    <?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
     <div id="apply-discount" class="col-sm-2">
     <div class="m-b-20">
 	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Apply Discount</a>
