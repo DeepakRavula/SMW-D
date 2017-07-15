@@ -401,8 +401,8 @@ echo $this->render('_profile', [
                 {
                     if (response.status)
                     {
+                        $.pjax.reload({container: '#student-profile', timeout: 6000});
                         $('#student-profile-modal').modal('hide');
-						$('.student-profile').html(response.data);
                     }
                 }
     	});
