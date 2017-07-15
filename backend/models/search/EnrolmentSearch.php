@@ -85,14 +85,16 @@ class EnrolmentSearch extends Enrolment
                 ]
             ]
         ]);
+         
 $query->andFilterWHERE(['like','p.name',$this->program]);
-
  $query->andFilterWHERE(['like','student.first_name',$this->student]);
  $query->orFilterWHERE(['like','student.last_name',$this->student]);
  $query->andFilterWHERE(['like','up.firstname',$this->teacher]);
  $query->orFilterWHERE(['like','up.lastname',$this->teacher]);
- $query->andFilterWHERE(['=','course.endDate',$this->expirydate]);
-        if (! $this->showAllEnrolments) {
+ if($this->expirydate)
+ {
+ $query->andFilterWHERE(['=','DATE(course.endDate)',(new \DateTime($this->expirydate))->format('Y-m-d')]);
+ }      if (! $this->showAllEnrolments) {
 				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
 				->isConfirmed()
                                 ->isRegular();
