@@ -230,7 +230,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function canExplode()
     {
         return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded()
-            && !$this->privateLesson->isExpired();
+            && !$this->isExpired();
     }
 
     public function getEnrolment()
@@ -586,8 +586,10 @@ class Lesson extends \yii\db\ActiveRecord
     public function isExpired()
     {
         $currentDate = new \DateTime();
-        $expiryDate  = new \DateTime($this->privateLesson->expiryDate);
-        return $currentDate > $expiryDate;
+        if ($this->privateLesson) {
+            $expiryDate  = new \DateTime($this->privateLesson->expiryDate);
+        }
+        return !empty($this->privateLesson) ? $currentDate > $expiryDate : false;
     }
 
     public function beforeSave($insert)
