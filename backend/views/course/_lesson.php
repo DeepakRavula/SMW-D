@@ -39,8 +39,7 @@ use yii\helpers\Html;
                             $url = Url::to(['invoice/group-lesson', 'lessonId' => $model->id, 'enrolmentId' => null]);
                             if (!$model->hasGroupInvoice() && $model->isScheduled()) {
                                 return Html::a('Create Invoice', $url, [
-                                    'title' => Yii::t('yii', 'Create Invoice'),
-                                                                'class' => ['btn-success btn-sm']
+                                    'class' => ['btn-success btn-sm']
                                 ]);
                             } else {
                                 return null;
@@ -50,8 +49,7 @@ use yii\helpers\Html;
                             $url = Url::to(['lesson/view', 'id' => $model->id, '#' => 'student']);
                             if ($model->hasGroupInvoice() && $model->isScheduled()) {
                                 return Html::a('View Invoice', $url, [
-                                    'title' => Yii::t('yii', 'View Invoice'),
-                                                                'class' => ['btn-info btn-sm']
+                                    'class' => ['btn-info btn-sm']
                                 ]);
                             } else {
                                 return null;
