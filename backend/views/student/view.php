@@ -224,7 +224,7 @@ echo $this->render('_profile', [
             $('#student-note-modal').modal('show');
             return false;
         });
-        $(document).on('click', '#new-exam-result', function (e) {
+        $(document).on('click', '.add-new-exam-result', function (e) {
     		$('input[type="text"]').val('');
 			$('#examresult-date').val(moment(new Date()).format('DD-MM-YYYY'));
 			$('#examresult-programid').val('');
