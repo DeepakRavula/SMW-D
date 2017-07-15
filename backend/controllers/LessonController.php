@@ -48,7 +48,8 @@ class LessonController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['modify-classroom', 'merge', 'update-field', 'modify-lesson'],
+                'only' => ['modify-classroom', 'merge', 'update-field',
+                    'validate-on-update', 'modify-lesson'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -196,6 +197,15 @@ class LessonController extends Controller
             ];
         }
         return $response;
+    }
+
+    public function actionValidateOnUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $model->setScenario(Lesson::SCENARIO_EDIT);
+        if (!($model->load(Yii::$app->request->post()) && $model->validate())) {
+            return  ActiveForm::validate($model);
+        }
     }
 
     public function actionValidate($studentId)

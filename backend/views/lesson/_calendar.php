@@ -42,7 +42,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 right: 'agendaWeek'
             },
             allDaySlot: false,
-			height:'auto',
+            height: 450,
             slotDuration: '00:15:00',
             titleFormat: 'DD-MMM-YYYY, dddd',
             defaultView: 'agendaWeek',
@@ -56,7 +56,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             events: events,
             select: function (start, end, allDay) {
                 $('#calendar').fullCalendar('removeEvents', 'newEnrolment');
-                $('#lesson-date').val(moment(start).format('DD-MM-YYYY h:mm A'));
+                $('#lesson-date').val(moment(start).format('DD-MM-YYYY h:mm A')).trigger('change');
                 var endtime = start.clone();
                 var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
