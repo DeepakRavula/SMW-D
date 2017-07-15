@@ -36,7 +36,8 @@ Please find the invoice below: <Br>
                     'format' =>'currency',
                     'value' => function ($data) {
                         if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
-                            return $data->lesson->enrolment->program->rate;
+                            return !empty($data->lesson->enrolment->program->rate) ? 
+							$data->lesson->enrolment->program->rate : null;
                         } else {
                             return $data->amount;
                         }
