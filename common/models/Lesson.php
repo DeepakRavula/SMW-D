@@ -113,29 +113,21 @@ class Lesson extends \yii\db\ActiveRecord
             [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyContext'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 'on' => self::SCENARIO_EDIT_CLASSROOM],
-            [['date'], HolidayValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
-            [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE]],
+            [['date'], HolidayValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
+                self::SCENARIO_REVIEW, self::SCENARIO_EDIT, self::SCENARIO_EDIT_REVIEW_LESSON]],
+            [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
+                self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
             [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
-			
-            ['date', TeacherValidator::className(), 'on' => [self::SCENARIO_EDIT_REVIEW_LESSON, 
-                self::SCENARIO_MERGE]],
-            ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
-            ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT_REVIEW_LESSON],
-			
-            [['date'], TeacherValidator::className(), 'on' => self::SCENARIO_REVIEW],
+            ['date', TeacherValidator::className(), 'on' => [self::SCENARIO_EDIT_REVIEW_LESSON,
+                self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_EDIT]],
             [['date'], StudentValidator::className(), 'on' => self::SCENARIO_REVIEW, 'when' => function($model, $attribute) {
-				return $model->course->program->isPrivate();
-			}],
-            [['date'], HolidayValidator::className(), 'on' => self::SCENARIO_REVIEW],
+                return $model->course->program->isPrivate();
+            }],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
-            ['date', HolidayValidator::className(), 'on' => self::SCENARIO_EDIT],
-            ['date', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
-			['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT, 'when' => function($model, $attribute) {
-				return $model->course->program->isPrivate();
-			}],
+            ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT, 'when' => function($model, $attribute) {
+                return $model->course->program->isPrivate();
+            }],
             ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
-            ['date', StudentValidator::className(), 'on' => self::SCENARIO_GROUP_ENROLMENT_REVIEW],
-			
             ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
             ['duration', StudentAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
 
