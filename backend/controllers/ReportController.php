@@ -6,6 +6,7 @@ use Yii;
 use common\models\Payment;
 use backend\models\search\PaymentSearch;
 use backend\models\search\ReportSearch;
+use backend\models\search\StudentBirthdaySearch;
 use backend\models\search\InvoiceLineItemSearch;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -30,7 +31,29 @@ class ReportController extends Controller {
 			],
 		];
 	}
+    public function actionStudentBirthday() {
+         $searchModel = new StudentBirthdaySearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('d-m-Y');
+		$nextSevenDate = $currentDate->modify('+7days');
+        $searchModel->toDate = $nextSevenDate->format('d-m-Y');
+        $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $studentBirthdayRequest = $request->get('StudentBirthdaySearch');
+            $searchModel->dateRange = $studentBirthdayRequest['dateRange'];
+        }
+        $toDate = $searchModel->toDate;
+        if ($toDate > $currentDate) {
+            $toDate = $currentDate;
+        }
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        return $this->render('student-birthday/index', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ]);
+    }
 	public function actionPayment()
     {
         $searchModel = new PaymentSearch();

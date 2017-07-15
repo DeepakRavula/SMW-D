@@ -10,7 +10,13 @@ use yii\helpers\Url;
 $this->title = 'Student Birthdays';
 
 ?>
-<?php echo $this->render('_search', ['model' => $searchModel]); ?>
+<div class="payments-index p-10">
+    
+	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
+  
+</div>
+
+<div class="clearfix"></div>
 <div class="grid-row-open"> 
     <?php yii\widgets\Pjax::begin(['id' => 'birthday-listing']); ?>
     <?php
@@ -43,4 +49,13 @@ $this->title = 'Student Birthdays';
 
 <?php yii\widgets\Pjax::end(); ?>
 </div>
-
+<script>
+$(document).ready(function(){
+        $("#print").on("click", function() {           
+        var dateRange = document.getElementById('studentbirthdaysearch-daterange').value;
+        var params = $.param({ 'StudentBirthdaySearch[dateRange]': dateRange});
+        var url = '<?php echo Url::to(['student-birthday/print']); ?>?' + params;
+        window.open(url,'_blank');
+    });
+});
+</script>
