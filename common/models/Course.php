@@ -219,11 +219,10 @@ class Course extends \yii\db\ActiveRecord
         return parent::afterSave($insert, $changedAttributes);
     }
 
-	public function generateLessons($lessons, $startDate)
+	public function generateLessons($lessons, $startDate, $teacherId)
 	{
 		$lessonTime	= (new \DateTime($this->startDate))->format('H:i:s');
 		list($hour, $minute, $second) = explode(':', $lessonTime); 
-		//$duration								 = explode(':', $lessonTime);
 		$nextWeekScheduledDate = $startDate;
 		$dayList = self::getWeekdaysList();
 		$day = $dayList[$this->courseSchedule->day];
@@ -234,9 +233,9 @@ class Course extends \yii\db\ActiveRecord
 			$originalLessonId	 = $lesson->id;
 			$lesson->id			 = null;
 			$lesson->isNewRecord = true;
+			$lesson->teacherId = $teacherId;
 			$lesson->status		 = Lesson::STATUS_DRAFTED;
 			$nextWeekScheduledDate->setTime($hour, $minute, $second);
-			//$nextWeekScheduledDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
 			$lesson->date		 = $nextWeekScheduledDate->format('Y-m-d H:i:s');
 			$lesson->save();
 
@@ -272,7 +271,7 @@ class Course extends \yii\db\ActiveRecord
 		$day = $dayList[$this->courseSchedule->day];
 		$startDate	 = new \DateTime($toDate);
 		$startDate->modify('next '.$day);
-		$this->generateLessons($lessons, $startDate);
+		$this->generateLessons($lessons, $startDate, $this->teacherId);
 	}
 
 	public function restoreLessons($fromDate, $toDate)
@@ -295,7 +294,7 @@ class Course extends \yii\db\ActiveRecord
 			$startDate	 = (new \DateTime($fromDate))->format('Y-m-d');
 			$startDate = new \DateTime($startDate);
 		}
-		$this->generateLessons($lessons, $startDate);
+		$this->generateLessons($lessons, $startDate, $this->teacherId);
 	}
 	public static function groupCourseCount()
 	{

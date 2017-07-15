@@ -69,6 +69,9 @@ $(document).ready(function() {
             var events, availableHours;
             var teacherId = $('#course-teacher').val();
             var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+			if (! moment(date).isValid()) {
+                var date = moment($('#course-startdate').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+            }
 			$('#enrolment-edit-modal .modal-dialog').css({'width': '1000px'});
 			$.ajax({
 				url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
@@ -89,12 +92,16 @@ $(document).ready(function() {
             $('#enrolment-calendar').fullCalendar({
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 defaultDate: date,
-                header: false,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'agendaWeek'
+                },
                 allDaySlot: false,
 				height:false,
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',
-                defaultView: 'agendaDay',
+                defaultView: 'agendaWeek',
                 minTime: "<?php echo $from_time; ?>",
                 maxTime: "<?php echo $to_time; ?>",
                 selectConstraint: 'businessHours',

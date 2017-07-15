@@ -124,11 +124,15 @@ use yii\bootstrap\Modal;
             $('#lesson-calendar').fullCalendar({
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 defaultDate: date,
-                header: false,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'agendaWeek'
+                },
                 allDaySlot: false,
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',
-                defaultView: 'agendaDay',
+                defaultView: 'agendaWeek',
                 minTime: "<?php echo $from_time; ?>",
                 maxTime: "<?php echo $to_time; ?>",
                 selectConstraint: 'businessHours',

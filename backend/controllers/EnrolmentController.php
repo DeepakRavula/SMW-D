@@ -393,7 +393,8 @@ class EnrolmentController extends Controller
 				$startDate		 = new \DateTime($course->startDate);
 				$startDate->modify('next '.$courseDay);
 			}
-			$course->generateLessons($lessons, $startDate);
+			$teacherId = $course->teacherId;
+			$course->generateLessons($lessons, $startDate, $teacherId);
 			$rescheduleDate = (new \DateTime($course->startDate))->format('d-m-Y');
 			return $this->redirect(['/lesson/review', 'courseId' => $course->id, 'Course[startDate]' => $rescheduleDate]);
 		} else {
