@@ -233,15 +233,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return (int) $this->item->itemCategoryId === (int) $lessonItemCategory->id;
     }
 
-    public function isDefaultDiscountAvailableItems()
+    public function isDefaultDiscountedItems()
     {
-        return !$this->isLessonItem() && !$this->isMisc() && !$this->isOpeningBalance();
+        return $this->isLessonItem() || $this->isMisc() || $this->isOpeningBalance();
     }
 
     public function beforeSave($insert)
     {
         if ($insert) {
-            if (!$this->isDefaultDiscountAvailableItems()) {
+            if ($this->isDefaultDiscountedItems()) {
                 $this->discount     = 0.0;
                 $this->discountType = 0;
                 $this->rate         = 0;
