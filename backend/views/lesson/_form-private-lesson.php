@@ -32,7 +32,7 @@ use yii\bootstrap\Modal;
                 'class' => 'p-10'
              ]
         ]); ?>
-   <div class="row">
+   <div class="row-fluid">
 	   <div class="col-md-4">
 		    <?php if($model->isUnscheduled()) : ?>
 				<?php $model->duration = $model->getCreditUsage(); ?> 
@@ -95,7 +95,7 @@ use yii\bootstrap\Modal;
 		   </div>
         </div>
 	</div>
-	<div class="row">
+	<div class="row-fluid">
 		<div class="col-md-4">
 			<?php
                 if ($privateLessonModel->isNewRecord) {

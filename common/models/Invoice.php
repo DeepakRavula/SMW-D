@@ -357,9 +357,6 @@ class Invoice extends \yii\db\ActiveRecord
         $model = new ProformaPaymentFrequency();
         $model->invoiceId = $this->id;
         $model->paymentFrequencyId = $this->proformaEnrolment->paymentFrequencyId;
-        $model->on(ProformaPaymentFrequency::EVENT_CREATE, [new ProformaPaymentFrequencyLog(), 'create']);
-        $user = User::findOne(['id' => Yii::$app->user->id]);
-        $model->userName = $user->publicIdentity;
         $model->save();
     }
 
