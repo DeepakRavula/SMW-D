@@ -114,6 +114,7 @@ $(document).ready(function() {
                     $('#course-startdate').val(moment(start).format('YYYY-MM-DD hh:mm A'));
                     $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
                     $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
+					$('#courseschedule-day').val(moment(start).day());
 					var endtime = start.clone();
                 	var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
                 	moment(endtime.add(durationMinutes, 'minutes'));

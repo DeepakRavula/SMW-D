@@ -71,7 +71,7 @@ echo GridView::widget([
 		],
 			[
 			'class' => 'yii\grid\ActionColumn',
-			'template' => '{view}{add-vacation}{reschedule}{delete}',
+			'template' => '{view}{reschedule}{add-vacation}{delete}',
 			'buttons' => [
 				'view' => function ($url, $model) {
 					$url = Url::to(['enrolment/view', 'id' => $model->id]);
@@ -80,17 +80,17 @@ echo GridView::widget([
 							'class' => ['btn-primary btn-xs m-l-10']
 					]);
 				},
+				'reschedule' => function ($url, $model, $key) {
+					return Html::a('<i class="fa fa-book"></i>', '#', [
+							'id' => 'enrolment-edit-' . $model->id,
+							'title' => Yii::t('yii', 'Reschedule Lessons'),
+							'class' => 'enrolment-edit m-l-10 btn-info btn-xs'
+					]);
+				},
 				'add-vacation' => function ($url, $model) {
 					return Html::a('<i class="fa fa-plane"></i>', '#', [
 							'title' => Yii::t('yii', 'Add Vacation'),
 							'class' => ['btn-success btn-xs m-l-10 add-new-vacation']
-					]);
-				},
-				'reschedule' => function ($url, $model, $key) {
-					return Html::a('<i class="fa fa-book"></i>', '#', [
-							'id' => 'enrolment-edit-' . $model->id,
-							'title' => Yii::t('yii', 'Reschedule All Future Lessons'),
-							'class' => 'enrolment-edit m-l-10 btn-info btn-xs'
 					]);
 				},
 				'delete' => function ($url, $model, $key) {

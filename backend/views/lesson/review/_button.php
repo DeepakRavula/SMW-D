@@ -16,9 +16,9 @@ use yii\helpers\Html;
 				],
 			])
 			?>
-		<?php elseif (!empty($rescheduleBeginDate)): ?>
+		<?php elseif (!empty($rescheduleBeginDate) && !empty($rescheduleEndDate)): ?>
 			<?=
-			Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[startDate]' => $rescheduleBeginDate], [
+			Html::a('Confirm', ['confirm', 'courseId' => $courseId, 'Course[startDate]' => $rescheduleBeginDate, 'Course[endDate]' => $rescheduleEndDate], [
 				'class' => 'btn btn-danger',
 				'id' => 'confirm-button',
 				'disabled' => $hasConflict,

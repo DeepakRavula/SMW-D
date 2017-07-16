@@ -109,6 +109,7 @@ $columns = [
 	'hasConflict' => $hasConflict,
 	'vacationType' => $vacationType,
 	'rescheduleBeginDate' => $rescheduleBeginDate,
+    'rescheduleEndDate' => $rescheduleEndDate,
 	'courseId' => $courseId,
 	'courseModel' => $courseModel	
 ]); ?>

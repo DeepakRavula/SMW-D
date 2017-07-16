@@ -363,6 +363,7 @@ class EnrolmentController extends Controller
 		$data = $this->renderAjax('/student/enrolment/_form-update', [
 			'course' => $model->course,	
 			'courseSchedule' => $model->course->courseSchedule,
+			'model' => $model,
 		]);
 		$response = [
 			'status' => true,
@@ -373,7 +374,8 @@ class EnrolmentController extends Controller
 		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');        
 		$courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');        
 		if (Yii::$app->request->isPost) {
-			$startDate = (new \DateTime($course->startDate))->format('Y-m-d');
+			$endDate = new \DateTime($course->endDate);
+			$startDate		 = new \DateTime($course->startDate);
 			Lesson::deleteAll([
 				'courseId' => $model->course->id,
 				'status' => Lesson::STATUS_DRAFTED,
@@ -387,9 +389,8 @@ class EnrolmentController extends Controller
 				->joinWith(['reschedule' => function($query) {
                 	$query->andWhere(['lesson_reschedule.id' => null]);
 				}])
-				->andWhere(['>=', 'DATE(date)', $startDate])
+				->between($startDate, $endDate)
 				->all();
-			$startDate		 = new \DateTime($course->startDate);
 			$dayList = Course::getWeekdaysList();
 			$courseDay = $dayList[$courseSchedule->day];
 			$day = $startDate->format('l');
@@ -399,8 +400,9 @@ class EnrolmentController extends Controller
 			}
 			$teacherId = $course->teacherId;
 			$course->generateLessons($lessons, $startDate, $teacherId);
-			$rescheduleDate = (new \DateTime($course->startDate))->format('d-m-Y');
-			return $this->redirect(['/lesson/review', 'courseId' => $course->id, 'Course[startDate]' => $rescheduleDate]);
+			$rescheduleBeginDate = (new \DateTime($course->startDate))->format('d-m-Y');
+			$rescheduleEndDate = (new \DateTime($course->endDate))->format('d-m-Y');
+			return $this->redirect(['/lesson/review', 'courseId' => $course->id, 'Course[startDate]' => $rescheduleBeginDate, 'Course[endDate]' => $rescheduleEndDate]);
 		} else {
 			return $response;
 		}

@@ -16,7 +16,7 @@ use common\models\Course;
 <div class="enrolment-form">
 	<?php $form			 = ActiveForm::begin(); ?>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
 			<?php $locationId = Yii::$app->session->get('location_id');
 			$teachers = ArrayHelper::map(
 				User::find()
@@ -43,12 +43,27 @@ use common\models\Course;
 		<div class="col-md-3">
 			<?php echo $form->field($courseSchedule, 'day')->dropdownList(Course::getWeekdaysList(), ['prompt' => 'select day']) ?>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<?php
 			echo $form->field($course, 'startDate')->widget(DatePicker::classname(),
 				[
 				'options' => [
 					'value' => (new \DateTime())->format('d-m-Y'),
+				],
+				'type' => DatePicker::TYPE_COMPONENT_APPEND,
+				'pluginOptions' => [
+					'autoclose' => true,
+					'format' => 'dd-mm-yyyy'
+				]
+			]);
+			?>
+		</div>
+		<div class="col-md-3">
+			<?php
+			echo $form->field($course, 'endDate')->widget(DatePicker::classname(),
+				[
+				'options' => [
+					'value' => (new \DateTime($course->endDate))->format('d-m-Y'),
 				],
 				'type' => DatePicker::TYPE_COMPONENT_APPEND,
 				'pluginOptions' => [
