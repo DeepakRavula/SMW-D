@@ -71,18 +71,25 @@ echo GridView::widget([
 		],
 			[
 			'class' => 'yii\grid\ActionColumn',
-			'template' => '{add-vacation}{edit}{delete}',
+			'template' => '{view}{add-vacation}{reschedule}{delete}',
 			'buttons' => [
+				'view' => function ($url, $model) {
+					$url = Url::to(['enrolment/view', 'id' => $model->id]);
+					return Html::a('<i class="fa fa-eye"></i>', $url, [
+							'title' => Yii::t('yii', 'View'),
+							'class' => ['btn-primary btn-xs m-l-10']
+					]);
+				},
 				'add-vacation' => function ($url, $model) {
 					return Html::a('<i class="fa fa-plane"></i>', '#', [
 							'title' => Yii::t('yii', 'Add Vacation'),
-							'class' => ['btn-success btn-xs add-new-vacation']
+							'class' => ['btn-success btn-xs m-l-10 add-new-vacation']
 					]);
 				},
-				'edit' => function ($url, $model, $key) {
-					return Html::a('<i class="fa fa-pencil"></i>', '#', [
+				'reschedule' => function ($url, $model, $key) {
+					return Html::a('<i class="fa fa-book"></i>', '#', [
 							'id' => 'enrolment-edit-' . $model->id,
-							'title' => Yii::t('yii', 'Edit'),
+							'title' => Yii::t('yii', 'Reschedule All Future Lessons'),
 							'class' => 'enrolment-edit m-l-10 btn-info btn-xs'
 					]);
 				},

@@ -24,7 +24,7 @@ $this->title = $model->id;
                     <td><strong><?= 'Program Name: ' ?></strong> <?= $model->program->name; ?></td>
                     <td><strong><?= 'Time: ' ?></strong> 
                         <?php 
-                            $fromTime = \DateTime::createFromFormat('H:i:s', $model->fromTime);
+                            $fromTime = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->fromTime);
                             echo $fromTime->format('h:i A');
                         ?>
                     </td>
@@ -34,7 +34,7 @@ $this->title = $model->id;
                     <td>
                         <strong><?= 'Durartion: ' ?></strong>
                         <?php 
-                            $length = \DateTime::createFromFormat('H:i:s', $model->duration);
+                            $length = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->duration);
                             echo $length->format('H:i');
                         ?>
                     </td>

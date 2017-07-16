@@ -28,7 +28,7 @@ $enrolment = current($model->enrolment);?>
     ]);?>
 	<div class="vacation-content"></div>
    <?php Modal::end();?>
-    <div class="grid-row-open">
+    <div>
     <?php yii\widgets\Pjax::begin([
 		'id' => 'enrolment-grid',
         'timeout' => 6000,
