@@ -414,6 +414,8 @@ $(document).ready(function(){
                     $.pjax.reload({url:url, container : '#customer-lesson-listing', replace:false, async:false, timeout : 4000});
                     $.pjax.reload({url:url, container : '#customer-student-listing', replace:false, async:false, timeout : 4000});
                     $.pjax.reload({url:url, container : '#customer-enrolment-listing', replace:false, async:false, timeout : 4000});
+                    $.pjax.reload({url:url, container : '#customer-notes-listing', replace:false, async:false, timeout : 4000});
+                    $.pjax.reload({url:url, container : '#customer-log-listing', replace:false, async:false, timeout : 4000});
                 } else {
                     $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                 }

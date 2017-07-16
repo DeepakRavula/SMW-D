@@ -26,6 +26,7 @@ $vacationDataProvider = new ActiveDataProvider([
 <div>
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
+    'id' => 'student-vacation'
 ]) ?>
 <?php
 echo GridView::widget([

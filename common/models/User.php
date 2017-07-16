@@ -199,6 +199,17 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);
     }
 
+    public function getNotes()
+    {
+        return $this->hasMany(Note::className(), ['instanceId' => 'id'])
+            ->onCondition(['instanceType' => Note::INSTANCE_TYPE_USER]);
+    }
+
+    public function getLogs()
+    {
+        return $this->hasMany(timelineEvent\TimelineEventUser::className(), ['userId' => 'id']);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -317,6 +328,11 @@ class User extends ActiveRecord implements IdentityInterface
             ->active()
             ->andWhere(['access_token' => $token, 'status' => self::STATUS_ACTIVE])
             ->one();
+    }
+
+    public function hasDiscount()
+    {
+        return !empty($this->customerDiscount);
     }
 
     /**
