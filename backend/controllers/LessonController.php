@@ -552,21 +552,14 @@ class LessonController extends Controller
 
 		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
 		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
-		$totalLessons = Lesson::find()
-			->andWhere(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]); 
-			if(!empty($rescheduleBeginDate) && !empty($rescheduleEndDate)) {
-				$totalLessons->between(new \DateTime($rescheduleBeginDate), new \DateTime($rescheduleEndDate) );
-			} else {
-				$totalLessons->orWhere(['status' => Lesson::STATUS_UNSCHEDULED]);
-			}
-		$lessonCount = $totalLessons->count();
+		$lessonCount = Lesson::find()
+			->andWhere(['courseId' => $courseModel->id, 
+				'status' => [Lesson::STATUS_DRAFTED, Lesson::STATUS_UNSCHEDULED]])
+			->count();
 		$conflictedLessonIdsCount = count($conflictedLessonIds);
 		$unscheduledLessonCount = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED])
 			->count();	
-		if(!empty($rescheduleBeginDate)) {
-			$unscheduledLessonCount = 0;	
-		}
 		$query = Lesson::find()
 			->orderBy(['lesson.date' => SORT_ASC]);
 		if(! $showAllReviewLessons) {

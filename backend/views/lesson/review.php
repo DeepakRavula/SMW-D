@@ -91,6 +91,8 @@ $columns = [
 	'emptyText' => 'No conflicts here! You are ready to confirm!',
 ]);
 ?>
+
+<?php if(empty($rescheduleBeginDate) && empty($vacationId)) : ?>
 <?php \yii\widgets\Pjax::end(); ?>
 	<?php yii\widgets\Pjax::begin([
 		'id' => 'review-lesson-summary'
@@ -103,7 +105,7 @@ $columns = [
 	<strong>Total Lessons:</strong> <?= $lessonCount;?><br>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
-
+<?php endif; ?>
 <?= $this->render('review/_button', [
 	'vacationId' => $vacationId,
 	'hasConflict' => $hasConflict,
