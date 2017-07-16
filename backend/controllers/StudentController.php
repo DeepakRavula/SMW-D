@@ -187,9 +187,6 @@ class StudentController extends Controller
 			} else {
 				return  [
 					'status' => true,
-					'data' => $this->renderAjax('_profile', [
-						'model' => $model,
-						])
 				];
 			}
         }

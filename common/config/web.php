@@ -52,6 +52,7 @@ $config = [
             'schedule2/*',
             'enrolment/*',
             'teacher-availability/*',
+            'teacher-unavailability/*',
             'cron/*',
             'group-course/*',
             'group-lesson/*',
@@ -75,7 +76,8 @@ $config = [
 			'report/*',
 			'teacher-rate/*',
             'customer-payment-preference/*',
-			'private-lesson/*'
+			'private-lesson/*',
+            'daily-schedule/*'
 
             // The actions listed here will be allowed to everyone including guests.
             // So, 'admin/*' should not appear here in the production, of course.

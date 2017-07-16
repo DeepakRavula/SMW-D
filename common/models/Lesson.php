@@ -230,7 +230,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function canExplode()
     {
         return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded()
-            && !$this->privateLesson->isExpired();
+            && !$this->isExpired();
     }
 
     public function getEnrolment()
@@ -586,8 +586,10 @@ class Lesson extends \yii\db\ActiveRecord
     public function isExpired()
     {
         $currentDate = new \DateTime();
-        $expiryDate  = new \DateTime($this->privateLesson->expiryDate);
-        return $currentDate > $expiryDate;
+        if ($this->privateLesson) {
+            $expiryDate  = new \DateTime($this->privateLesson->expiryDate);
+        }
+        return !empty($this->privateLesson) ? $currentDate > $expiryDate : false;
     }
 
     public function beforeSave($insert)
@@ -850,7 +852,7 @@ class Lesson extends \yii\db\ActiveRecord
             if ($this->isSplitRescheduled()) {
                 $netPrice = $this->getSplitRescheduledAmount();
             } else {
-                $netPrice = $this->proFormaLineItem->netPrice;
+                $netPrice = $this->proFormaLineItem->finalNetPrice;
             }
             if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
                 $invoice->addPayment($this->proFormaInvoice, $netPrice);
@@ -978,7 +980,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canInvoice()
     {
-        return $this->isCompleted() && $this->isScheduled();
+        return ($this->isCompleted() && $this->isScheduled()) || $this->isExpired();
     }
 
     public function createExtraLessonCourse()

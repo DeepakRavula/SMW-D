@@ -357,9 +357,6 @@ class Invoice extends \yii\db\ActiveRecord
         $model = new ProformaPaymentFrequency();
         $model->invoiceId = $this->id;
         $model->paymentFrequencyId = $this->proformaEnrolment->paymentFrequencyId;
-        $model->on(ProformaPaymentFrequency::EVENT_CREATE, [new ProformaPaymentFrequencyLog(), 'create']);
-        $user = User::findOne(['id' => Yii::$app->user->id]);
-        $model->userName = $user->publicIdentity;
         $model->save();
     }
 
@@ -420,6 +417,11 @@ class Invoice extends \yii\db\ActiveRecord
             ->sum('payment.amount');
 
         return $invoicePaymentTotal;
+    }
+
+    public function hasProFormaCredit()
+    {
+        return $this->proFormaCredit > 0;
     }
 
     public function getProFormaCredit()
@@ -793,7 +795,7 @@ class Invoice extends \yii\db\ActiveRecord
                     $invoice = $lesson->createPrivateLessonInvoice();
                 } else if (!$lesson->invoice->isPaid()) {
                     if ($lesson->hasProFormaInvoice()) {
-                        $netPrice = $lesson->proFormaLineItem->netPrice;
+                        $netPrice = $lesson->proFormaLineItem->finalNetPrice;
                         if ($lesson->isSplitRescheduled()) {
                             $netPrice = $lesson->getSplitRescheduledAmount();
                         }
@@ -843,7 +845,7 @@ class Invoice extends \yii\db\ActiveRecord
                 $invoice = $lesson->createPrivateLessonInvoice();
             } else if (!$lesson->invoice->isPaid()) {
                 if ($lesson->hasProFormaInvoice()) {
-                    $netPrice = $lesson->proFormaInvoice->lineItem->netPrice;
+                    $netPrice = $lesson->proFormaInvoice->lineItem->finalNetPrice;
                     if ($lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
                         $lesson->invoice->addPayment($lesson->proFormaInvoice, $netPrice);
                     } else {
@@ -886,7 +888,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function addLessonCreditAppliedPayment($amount, $invoice)
     {
         $paymentModel = new Payment();
-        $paymentModel->amount = $amount;
+        $paymentModel->amount = abs ($amount);
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
         $paymentModel->reference = $invoice->id;
         $paymentModel->invoiceId = $this->id;

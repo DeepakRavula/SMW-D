@@ -26,7 +26,7 @@ use yii\bootstrap\Modal;
                         'id' => 'group-course-form',
 	]);
 	?>
-	<div class="row p-10">
+		<div class="row p-10">
             <div class="col-md-4">
                     <?php
                     echo $form->field($model, 'programId')->dropDownList(
@@ -47,71 +47,93 @@ use yii\bootstrap\Modal;
 					])->label('Teacher');
 					?>
             </div>
-		<div class="col-md-4">
+			<div class="col-md-4">
 				<?= $form->field($model, 'weeksCount')->textInput()->label('Number Of Weeks');?>
        		</div>
 			<?php 
-			$buttons = [
-				[
-					'label' => 'One',
-					'options' => [
-						'class' => 'btn btn-outline-info',
-						'id' => 'lessons-per-week-one',
+				$buttons = [
+					[
+						'label' => 'One',
+						'options' => [
+							'class' => 'btn btn-outline-info',
+							'id' => 'lessons-per-week-one',
+						],
 					],
-				],
 
-				[
-					'label' => 'Two',
-					'options' => [
-						'class' => 'btn btn-outline-info',
-						'id' => 'lessons-per-week-two',
-					],
-				],	
-			]; ?>
-            <div class="col-md-4"></div
+					[
+						'label' => 'Two',
+						'options' => [
+							'class' => 'btn btn-outline-info',
+							'id' => 'lessons-per-week-two',
+						],
+					],	
+				]; 
+			?>
 			 <div class="col-md-4">
 				<label>Number of Lessons Per Week</label>
-			<?php // a button group with items configuration
-			echo ButtonGroup::widget([
-				'buttons' => $buttons,
-				'options' => [
-					'id' => 'payment-method-btn-section',
-					'class' => 'btn-group-horizontal p-l-10 m-t-20 m-b-20',
-				],
-			]); ?>
+				<br />
+				<?php // a button group with items configuration
+				echo ButtonGroup::widget([
+					'buttons' => $buttons,
+					'options' => [
+						'id' => 'payment-method-btn-section',
+						'class' => 'btn-group-horizontal m-0',
+					],
+				]); ?>
 			</div>
            <div class="clearfix"></div>
-		   <div id="lessonsPerWeekCountOne">
-		   <div class="col-md-4" >
-                     <?php
-                     echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
-                 [
-                 'pluginOptions' => [
-                     'showMeridian' => false,
-                     'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
-                 ],
-             ]);
-             ?>
-             </div>
-			<div class="col-md-4  hand course-calendar-icon" style="margin-top:25px;">
-				<label class="course-summary" style="margin-right:15px;      padding: 6px 12px;    width: 100%;    height: 34px;"></label>
-				<span class="fa fa-calendar" style="    font-size: 22px;    position: absolute;    right: 130px;    top: 6px;"></span>
+       </div>
+       	<div class="row">
+		   <div class="col-md-12" id="lessonsPerWeekCountOne">
+			   <div class="col-md-4">
+	                     <?php
+	                     echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
+	                 [
+	                 'pluginOptions' => [
+	                     'showMeridian' => false,
+	                     'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+	                 ],
+	             ]);
+	             ?>
+	            </div>
+	            <div class="form-group">
+	                <label>Choose date</label>
+
+	                <div class="input-group">
+	                  <button type="button" class="btn btn-default hand course-calendar-icon">
+	                    <span>
+	                      <i class="fa fa-calendar"></i> Date range picker
+	                    </span>
+	                    <i class="fa fa-caret-down"></i>
+	                  </button>
+	                </div>
+	            </div>
 			</div>
-			</div>
-			<div id="lessonsPerWeekCountTwo" class="col-md-4">
-			<?php
-                    echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
-                [
-                'options' => ['id' => 'group-course-duration'],
-                'pluginOptions' => [
-                    'showMeridian' => false,
-                    'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
-                ],
-            ]);
-            ?>
-			<div class="col-md-4  hand ">
-				<label class="group-course-summary" ></label>
-				<span class="fa fa-calendar group-course-calendar-icon" ></span>
+			<div class="col-md-12" id="lessonsPerWeekCountTwo">
+				<div class="col-md-4">
+					<?php
+		                    echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
+		                [
+		                'options' => ['id' => 'group-course-duration'],
+		                'pluginOptions' => [
+		                    'showMeridian' => false,
+		                    'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+		                ],
+		            ]);
+		            ?>
+		        </div>
+		        <div class="form-group">
+	                <label>Choose date</label>
+
+	                <div class="input-group">
+	                  <button type="button" class="btn btn-default hand group-course-calendar-icon">
+	                    <span>
+	                      <i class="fa fa-calendar"></i> Date range picker
+	                    </span>
+	                    <i class="fa fa-caret-down"></i>
+	                  </button>
+	                </div>
+	            </div>
 			</div>
 		</div>
             <?= $form->field($courseSchedule, 'day[0]')->hiddenInput()->label(false); ?>
@@ -123,17 +145,18 @@ use yii\bootstrap\Modal;
             <?= $form->field($model, 'startDate[1]')->hiddenInput()->label(false); ?>
 		    <?= $form->field($courseSchedule, 'duration[1]')->hiddenInput()->label(false); ?>
             <?= $form->field($model, 'lessonsPerWeekCount')->hiddenInput()->label(false); ?>
-        </div>
-    <div class="form-group p-l-10">
-<?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
-	['id' => 'group-course-save', 'class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-<?php
-if (!$model->isNewRecord) {
-	echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
-}
-?>
-    </div>
-<?php ActiveForm::end(); ?>
+        <div class="col-md-12">
+		    <div class="form-group">
+				<?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
+					['id' => 'group-course-save', 'class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+				<?php
+				if (!$model->isNewRecord) {
+					echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+				}
+				?>
+		    </div>
+    	</div>
+	<?php ActiveForm::end(); ?>
 </div>
 <?php
 Modal::begin([

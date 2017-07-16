@@ -58,6 +58,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $data->isSent ? 'Yes' : 'No';
                     }, 
                 ],
+				[
+                    'label' => 'Paid?',
+                   	'value' => function ($data) {
+                        return $data->isPaid() ? 'Yes' : 'No';
+                    }, 
+                ],
 				   [
                     'label' => 'Status',
                     'value' => function ($data) {

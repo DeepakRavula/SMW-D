@@ -356,10 +356,7 @@ class Course extends \yii\db\ActiveRecord
 				
 				$checkLimit = $lessonCount < $lessonLimit;
 				if ($checkDay && $checkLimit) {
-					$professionalDevelopmentDay = clone $day;
-					$professionalDevelopmentDay->modify('last day of previous month');
-					$professionalDevelopmentDay->modify('fifth '.$day->format('l'));
-					if ($day->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
+					if ($this->isProfessionalDevelopmentDay($day)) {
 						continue;
 					}
 					$lesson = new Lesson();

@@ -226,12 +226,12 @@ echo $this->render('_profile', [
             $('#student-note-modal').modal('hide');
             return false;
         });
-        $(document).on('click', '#student-note', function (e) {
+        $(document).on('click', '.student-note', function (e) {
             $('#note-content').val('');
             $('#student-note-modal').modal('show');
             return false;
         });
-        $(document).on('click', '#new-exam-result', function (e) {
+        $(document).on('click', '.add-new-exam-result', function (e) {
     		$('input[type="text"]').val('');
 			$('#examresult-date').val(moment(new Date()).format('DD-MM-YYYY'));
 			$('#examresult-programid').val('');
@@ -408,8 +408,8 @@ echo $this->render('_profile', [
                 {
                     if (response.status)
                     {
+                        $.pjax.reload({container: '#student-profile', timeout: 6000});
                         $('#student-profile-modal').modal('hide');
-						$('.student-profile').html(response.data);
                     }
                 }
     	});

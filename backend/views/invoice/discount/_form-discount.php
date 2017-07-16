@@ -9,6 +9,7 @@ use yii\helpers\Url;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<div id="warning-notification" style="display:none;" class="alert-warning alert fade in"></div>
 
 
     <?php $form = ActiveForm::begin([

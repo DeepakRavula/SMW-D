@@ -263,6 +263,15 @@ class LessonQuery extends \yii\db\ActiveQuery
             return $this;
     }
 
+    public function enrolment($enrolmentId)
+    {
+        return $this->joinWith(['course' => function($query) use ($enrolmentId) {
+            $query->joinWith(['enrolments' => function($query) use ($enrolmentId) {
+                $query->andWhere(['enrolment.id' => $enrolmentId]);
+            }]);
+        }]);
+    }
+
     public function overlap($date, $fromTime, $toTime)
     {
             $this->andWhere(['DATE(date)' => $date])

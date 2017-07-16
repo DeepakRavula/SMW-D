@@ -66,9 +66,9 @@ class InvoiceController extends Controller
         if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
             $currentDate                = new \DateTime();
             $searchModel->invoiceStatus = Invoice::STATUS_OWING;
-            $searchModel->dueFromDate      = $currentDate->format('1-m-Y');
-            $searchModel->dueToDate        = $currentDate->format('t-m-Y');
-            $searchModel->dateRange     = $searchModel->dueFromDate.' - '.$searchModel->dueToDate;
+            if (!empty($invoiceSearchRequest['dateRange'])) {
+				$searchModel->dateRange = $invoiceSearchRequest['dateRange'];
+			}
         } else {
             $searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
             $searchModel->toDate   = (new \DateTime('last day of this month'))->format('d-m-Y');
@@ -129,6 +129,9 @@ class InvoiceController extends Controller
         }
         if (isset($customerId)) {
             $customer = User::findOne(['id' => $customerId]);
+            if ($customer->hasDiscount() && $model->lineItem) {
+                $model->addCustomerDiscount($customer);
+            }
         }
         if (empty($customer)) {
             $customer = new User();
@@ -221,7 +224,7 @@ class InvoiceController extends Controller
         $response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
         $invoiceLineItemModel = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_LINE_ITEM_CREATE]);
-        $userModel = User::findOne(['id' => $model->user->id]);
+        $userModel = User::findOne(['id' => Yii::$app->user->id]);
         $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
         $invoiceLineItemModel->userName = $userModel->publicIdentity;
         if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
@@ -235,8 +238,10 @@ class InvoiceController extends Controller
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
                 $model->save();
-                if ($model->user->hasDiscount()) {
-                    $model->addCustomerDiscount($model->user);
+                if ($model->user) {
+                    if ($model->user->hasDiscount()) {
+                        $model->addCustomerDiscount($model->user);
+                    }
                 }
                 $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
 

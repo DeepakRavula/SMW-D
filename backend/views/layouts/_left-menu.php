@@ -50,12 +50,6 @@ echo Menu::widget([
 			'badge' => Student::count(),
 			'badgeBgClass' => 'label-default',
 		],
-        [
-			'label' => Yii::t('backend', 'Students Birthday'),
-			'icon' => '<i class="fa fa-birthday-cake" aria-hidden="true"></i>',
-			'url' => ['student-birthday/index'],
-			'visible' => Yii::$app->user->can('staffmember'),
-		],
 			[
 			'label' => Yii::t('backend', 'Customers'),
 			'icon' => '<i class="fa fa-lg fa-fw fa-male"></i>',
@@ -151,7 +145,14 @@ echo Menu::widget([
 			'options' => ['class' => 'treeview'],
 			'visible' => Yii::$app->user->can('owner'),
 			'items' => [
-					[
+                    [
+                    'label' => Yii::t('backend', 'Students Birthday'),
+                    'icon' => '<i class="fa fa-birthday-cake" aria-hidden="true"></i>',
+                    'url' => ['report/student-birthday'],
+                    'visible' => Yii::$app->user->can('staffmember'),
+                    'active' => (Yii::$app->controller->action->id === 'student-birthday') ? true : false,
+                ],
+                    [
 					'label' => Yii::t('backend', 'Payments'),
 					'icon' => '<i class="fa fa-dollar"></i>',
 					'url' => ['report/payment'],

@@ -142,7 +142,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         $teacherStudentContent = $this->render('teacher/_student', [
             'studentDataProvider' => $studentDataProvider,
         ]);
-
+		$unavailabilityContent = $this->render('teacher/_unavailability', [
+            'unavailabilityDataProvider' => $unavailability,
+			'model' => $model,
+        ]);
         $openingBalanceContent = $this->render('customer/_opening-balance', [
             'openingBalanceDataProvider' => $openingBalanceDataProvider,
             'openingBalanceCredit' => $openingBalanceCredit,
@@ -213,6 +216,13 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                 'content' => $teacherAvailabilityContent,
                 'options' => [
                     'id' => 'availability',
+                ],
+            ],
+			[
+                'label' => 'Unavailabilities',
+                'content' => $unavailabilityContent,
+                'options' => [
+                    'id' => 'unavailability',
                 ],
             ],
             [
@@ -394,6 +404,8 @@ $(document).ready(function(){
                 {
                     $('#customer-merge-content').html(response.data);
                     $('#customer-merge-modal').modal('show');
+                    $('#warning-notification').html('Merging another customer will \n\
+                    delete all of their contact data. This can not be undone.').fadeIn();
                 }
             }
         });

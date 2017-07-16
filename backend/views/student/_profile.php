@@ -5,6 +5,9 @@ use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use common\models\User;
 ?>
+	<?php yii\widgets\Pjax::begin([
+		'id' => 'student-profile',
+	]) ?>
 <div class="student-profile user-details-wrapper">
 	<div class="row">
 		<div class="col-md-12">
@@ -36,6 +39,7 @@ use common\models\User;
 		</div>		
 	</div>
 </div>
+    <?php \yii\widgets\Pjax::end(); ?>
 <?php
 	Modal::begin([
 		'header' => '<h4 class="m-0">Edit Student Profile</h4>',
