@@ -581,6 +581,7 @@ class LessonController extends Controller
 		}  else {
 			$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
 		}
+		$lessons = $query->all();
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

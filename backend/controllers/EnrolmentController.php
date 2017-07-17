@@ -402,7 +402,7 @@ class EnrolmentController extends Controller
 			$course->generateLessons($lessons, $startDate, $teacherId);
 			$rescheduleBeginDate = (new \DateTime($course->startDate))->format('d-m-Y');
 			$rescheduleEndDate = (new \DateTime($course->endDate))->format('d-m-Y');
-			return $this->redirect(['/lesson/review', 'courseId' => $course->id, 'Course[startDate]' => $rescheduleBeginDate, 'Course[endDate]' => $rescheduleEndDate]);
+			return $this->redirect(['/lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Course[startDate]' => $rescheduleBeginDate, 'Course[endDate]' => $rescheduleEndDate]);
 		} else {
 			return $response;
 		}
