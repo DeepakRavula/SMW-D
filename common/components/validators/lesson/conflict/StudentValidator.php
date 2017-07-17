@@ -21,14 +21,15 @@ class StudentValidator extends Validator
 		$lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
 		$lessonDuration = explode(':', $model->fullDuration);
 		$date = new \DateTime($model->date);
-		$date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));	
+		$date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));
+                $lessonFullEndTime = $date->format('H:i:s');
 		$date->modify('-1 second');
 		$lessonEndTime = $date->format('H:i:s');
 		$query = Lesson::find()
 			->studentLessons($locationId, $studentId)
                         ->andWhere(['NOT', ['lesson.id' => $model->id]]);
 		$studentBackToBackLessons = $query->enrolment($model->enrolment->id)
-                    ->backToBackOverlap($lessonDate, $lessonStartTime, $lessonEndTime)
+                    ->backToBackOverlap($lessonDate, $lessonStartTime, $lessonFullEndTime)
 			->all();
                 if (!empty($studentBackToBackLessons)) {
                     $this->addError($model,$attribute, 'Lesson cannot be scheduled '
