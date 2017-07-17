@@ -10,14 +10,13 @@ use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
 use common\models\User;
-use yii\bootstrap\Modal;
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
+
 <div class="lesson-qualify">
 
 	<?=
@@ -75,7 +74,8 @@ use yii\bootstrap\Modal;
 				<?php
 				echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
 					'options' => [
-						'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
+                                            'id' => 'calendar-date-time-picker',
+                                            'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
 					],
 					'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
 					'pluginOptions' => [
@@ -150,15 +150,66 @@ use yii\bootstrap\Modal;
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>
+
 <?php
-Modal::begin([
-	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-	'id' => 'lesson-edit-modal',
-]);
+$locationId = Yii::$app->session->get('location_id');
+$minLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['fromTime' => SORT_ASC])
+    ->one();
+$maxLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['toTime' => SORT_DESC])
+    ->one();
+$minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+$maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
-<?php
-echo $this->render('_calendar', [
-    'model' => $model
-]);
-?>
-<?php Modal::end(); ?>
+
+
+<script type="text/javascript">
+$(document).ready(function () {
+    $(document).on('click', '.lesson-edit-calendar', function () {
+        var teacherId = $('#lesson-teacherid').val();
+        var duration = $('#course-duration').val();
+        var params = $.param({ id: teacherId });
+        $.ajax({
+            url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                var options = {
+                    duration: duration,
+                    teacherId: teacherId,
+                    businessHours: response.availableHours,
+                    minTime: '<?= $minTime; ?>',
+                    maxTime: '<?= $maxTime; ?>',
+                    eventUrl: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>',
+                };
+                $('#calendar-date-time-picker').calendarPicker(options);
+            }
+        });
+        return false;
+        
+    });
+    
+    $(document).on('change', '#calendar-date-time-picker-date', function () {
+        $.ajax({
+            url: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>',
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (!response.status) {
+                    $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
+                    $('#calendar-date-time-picker-date').val('');
+                    $('#calendar-date-time-picker-error-notification').html(response.error).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
