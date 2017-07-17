@@ -46,7 +46,7 @@ class EnrolmentController extends Controller
             ],
 			'contentNegotiator' => [
 				'class' => ContentNegotiator::className(),
-				'only' => ['add', 'preview', 'delete', 'edit', 'render-day-events','render-resources','schedule'],
+				'only' => ['add', 'preview', 'delete', 'edit', 'render-day-events','render-resources','schedule', 'update'],
 				'formatParam' => '_format',
 				'formats' => [
 				   'application/json' => Response::FORMAT_JSON,
@@ -256,172 +256,61 @@ class EnrolmentController extends Controller
 		return $this->redirect(['student/view', 'id' => $enrolmentModel->student->id]);
 	}
 
-	public function getHolidayResources($date)
-    {
-        $locationId = Yii::$app->session->get('location_id');
-        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
-            'day' => $date->format('N')]);
-        $resources  = [];
-        if (empty($locationAvailability)) {
-            $resources[] = [
-                'id'    => '0',
-                'title' => 'Holiday',
-            ];
-        } else {
-            $holiday    = Holiday::find()
-                ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
-                ->one();
-            if (!empty($holiday)) {
-                $resources[] = [
-                    'id'    => '0',
-                    'title' => 'Holiday',
-                ];
-            }
-        }
-        return $resources;
-    }
-	
 	public function actionRenderResources($date, $programId)
     {
         $locationId = Yii::$app->session->get('location_id');
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
-        $resources  = $this->getHolidayResources($date);
-        if (empty($resources) && !empty($programId)) {
-			$teachersAvailabilities = TeacherAvailability::find()
-				->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
-					$query->where(['user_location.location_id' => $locationId]);
-					$query->joinWith(['qualifications'  => function ($query) use ($programId) {
-						$query->andWhere(['qualification.program_id' => $programId]);
-					}]);
-				}])
+		$teachersAvailabilities = TeacherAvailability::find()
+				->qualification($locationId, $programId)
 				->andWhere(['day' => $date->format('N')])
 				->groupBy(['teacher_location_id'])
 				->all();
-			if (!empty($teachersAvailabilities)) {
-				foreach ($teachersAvailabilities as $teachersAvailability) {
-					$resources[] = [
-						'id'    => $teachersAvailability->teacher->id,
-						'title' => $teachersAvailability->teacher->getPublicIdentity(),
-					];
-				}
-			} else {
+		if (!empty($teachersAvailabilities)) {
+			foreach ($teachersAvailabilities as $teachersAvailability) {
 				$resources[] = [
-					'id'    => '0',
-					'title' => 'No Teacher Available Today for the Selected Program'
+					'id'    => $teachersAvailability->teacher->id,
+					'title' => $teachersAvailability->teacher->getPublicIdentity(),
 				];
 			}
-        }
+		} else {
+			$resources[] = [
+				'id'    => '0',
+				'title' => 'No Teacher Available Today for the Selected Program'
+			];
+		}
         return $resources;
-    }
-
-	public function getHolidayEvent($date)
-    {
-        $locationId = Yii::$app->session->get('location_id');
-        $events     = [];
-        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
-            'day' => $date->format('N')]);
-        if (empty($locationAvailability)) {
-            $events[] = [
-                'resourceId' => '0',
-                'title'      => '',
-                'start'      => $date->format('Y-m-d 00:00:00'),
-                'end'        => $date->format('Y-m-d 23:59:59'),
-                'className'  => 'holiday',
-                'rendering'  => 'background'
-            ];
-        } else {
-            $holiday    = Holiday::find()
-                ->andWhere(['holiday.date' => $date->format('Y-m-d 00:00:00')])
-                ->one();
-            if (!empty($holiday)) {
-                $events[] = [
-                    'resourceId' => '0',
-                    'title'      => '',
-                    'start'      => $holiday->date,
-                    'end'        => $date->format('Y-m-d 23:59:59'),
-                    'className'  => 'holiday',
-                    'rendering'  => 'background'
-                ];
-            }
-        }
-        return $events;
     }
 
 	public function actionRenderDayEvents($date, $programId)
     {
         $locationId = Yii::$app->session->get('location_id');
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
-        $events     = $this->getHolidayEvent($date);
-        if (empty($events) && !empty($programId)) {
-			$teachersAvailabilities = TeacherAvailability::find()
-				->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
-					$query->where(['user_location.location_id' => $locationId]);
-					$query->joinWith(['qualifications'  => function ($query) use ($programId) {
-						$query->andWhere(['qualification.program_id' => $programId]);
-					}]);
-				}])
-				->andWhere(['day' => $date->format('N')])
-				->all();
-
-			foreach ($teachersAvailabilities as $teachersAvailability) {
-				$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-					' ' . $teachersAvailability->from_time);
-				$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-					' ' . $teachersAvailability->to_time);
-				$events[] = [
-					'resourceId' => $teachersAvailability->teacher->id,
-					'title'      => '',
-					'start'      => $start->format('Y-m-d H:i:s'),
-					'end'        => $end->format('Y-m-d H:i:s'),
-					'rendering'  => 'background',
-				];
-			}
+       	$teachersAvailabilities = TeacherAvailability::find()
+			->qualification($locationId, $programId)
+			->andWhere(['day' => $date->format('N')])
+			->all();
+		$events = [];
+		foreach ($teachersAvailabilities as $teachersAvailability) {
+			$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
+				' ' . $teachersAvailability->from_time);
+			$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
+				' ' . $teachersAvailability->to_time);
+			$events[] = [
+				'resourceId' => $teachersAvailability->teacher->id,
+				'title'      => '',
+				'start'      => $start->format('Y-m-d H:i:s'),
+				'end'        => $end->format('Y-m-d H:i:s'),
+				'rendering'  => 'background',
+			];
 		}
 		$lessons = $this->getLessons($date, $programId);
 		foreach ($lessons as &$lesson) {
 			$toTime = new \DateTime($lesson->date);
 			$length = explode(':', $lesson->fullDuration);
 			$toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-			if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-				$description = $this->renderAjax('/schedule/group-lesson-description', [
-					'lesson' => $lesson,
-					'view' => Lesson::TEACHER_VIEW
-				]);
-				$title = $lesson->course->program->name;
-				$class = 'group-lesson';
-				$backgroundColor = null;
-				if (!empty($lesson->colorCode)) {
-					$class = null;
-					$backgroundColor = $lesson->colorCode;
-				}
-			} else {
-				$title = $lesson->enrolment->student->fullName;
-				$class = 'private-lesson';
-				$backgroundColor = null;
-				if (!empty($lesson->colorCode)) {
-					$class = null;
-					$backgroundColor = $lesson->colorCode;
-				} else if ($lesson->status === Lesson::STATUS_MISSED) {
-					$class = 'lesson-missed';
-				} else if($lesson->isEnrolmentFirstlesson()) {
-					$class = 'first-lesson';
-				} else if ($lesson->getRootLesson()) {
-					$rootLesson = $lesson->getRootLesson();
-					if($rootLesson->id !== $lesson->id) {
-                    	$class = 'lesson-rescheduled';
-					}
-					if ($rootLesson->teacherId !== $lesson->teacherId) {
-						$class = 'teacher-substituted';
-					}
-				}
-
-				$description = $this->renderAjax('/schedule/private-lesson-description', [
-					'title' => $title,
-					'lesson' => $lesson,
-					'view' => Lesson::TEACHER_VIEW
-				]);
-			}
-
+			$title = $lesson->scheduleTitle;
+			$class = $lesson->class;
+			$backgroundColor = $lesson->colorCode;
 			$events[] = [
 				'lessonId' => $lesson->id,
 				'resourceId' => $lesson->teacherId,
@@ -431,7 +320,6 @@ class EnrolmentController extends Controller
 				'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
 				'className' => $class,
 				'backgroundColor' => $backgroundColor,
-				'description' => $description, 
 			];
 		}
 		unset($lesson);
@@ -439,11 +327,10 @@ class EnrolmentController extends Controller
     }
 	public function getLessons($date, $programId)
     {
+		$locationId = Yii::$app->session->get('location_id');
         $lessons = Lesson::find()
-			->joinWith(['course' => function ($query) use($programId) {
-				$query->andWhere(['course.locationId' => Yii::$app->session->get('location_id')]);
-					$query->andWhere(['course.programId' => $programId]);
-			}])
+			->location($locationId)
+		    ->andWhere(['course.programId' => $programId])
 			->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
 			->between($date, $date)
 			->notDeleted()
@@ -473,26 +360,22 @@ class EnrolmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+		$data = $this->renderAjax('/student/enrolment/_form-update', [
+			'course' => $model->course,	
+			'courseSchedule' => $model->course->courseSchedule,
+			'model' => $model,
+		]);
+		$response = [
+			'status' => true,
+			'data' => $data,
+		];
+		$course = $model->course;
 		$courseSchedule = $model->courseSchedule;
-		$post = Yii::$app->request->post();
-        $timebits = explode(':', $model->courseSchedule->fromTime);
-		$courseEndDate = (new \DateTime($model->course->endDate))->format('Y-m-d');
-		$courseEndDate = new \DateTime($courseEndDate);
-        $courseEndDate->add(new \DateInterval('PT'.$timebits[0].'H'.$timebits[1].'M'));
-		if ($model->course->load($post) && $model->courseSchedule->load($post)) {
-			$model->courseSchedule->setScenario(CourseSchedule::SCENARIO_EDIT_ENROLMENT);
-			$validate = $model->courseSchedule->validate();
-			$errors = $model->courseSchedule->getErrors();
-			if(!empty($errors)) {
-				Yii::$app->session->setFlash('alert',
-					[
-					'options' => ['class' => 'alert-danger'],
-					'body' => current(reset($errors)),
-				]);
-				return $this->redirect(['update', 'id' => $model->id]);
-			}
-			$rescheduleBeginDate = \DateTime::createFromFormat('d-m-Y', $model->course->rescheduleBeginDate);
-			$rescheduleBeginDate = $rescheduleBeginDate->format('Y-m-d 00:00:00');
+		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');        
+		$courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');        
+		if (Yii::$app->request->isPost) {
+			$endDate = new \DateTime($course->endDate);
+			$startDate		 = new \DateTime($course->startDate);
 			Lesson::deleteAll([
 				'courseId' => $model->course->id,
 				'status' => Lesson::STATUS_DRAFTED,
@@ -500,46 +383,31 @@ class EnrolmentController extends Controller
 			$lessons		 = Lesson::find()
 				->where([
 					'courseId' => $model->course->id,
-					'status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED],
+					'status' => Lesson::STATUS_SCHEDULED,
+					'type' => Lesson::TYPE_REGULAR
 				])
-				->andWhere(['>=', 'date', $rescheduleBeginDate])
+				->joinWith(['reschedule' => function($query) {
+                	$query->andWhere(['lesson_reschedule.id' => null]);
+				}])
+				->between($startDate, $endDate)
 				->all();
-			//lesson start date
-			$changedFromTime = (new \DateTime($model->courseSchedule->fromTime))->format('H:i:s');
-			$duration		 = explode(':', $changedFromTime);
-			$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
 			$dayList = Course::getWeekdaysList();
-			$courseDay = $dayList[$model->courseSchedule->day];
+			$courseDay = $dayList[$courseSchedule->day];
 			$day = $startDate->format('l');
 			if ($day !== $courseDay) {
-				$startDate		 = new \DateTime($model->course->rescheduleBeginDate);
+				$startDate		 = new \DateTime($course->startDate);
 				$startDate->modify('next '.$courseDay);
 			}
-			foreach ($lessons as $lesson) {
-				$professionalDevelopmentDay = clone $startDate;
-				$professionalDevelopmentDay->modify('last day of previous month');
-				$professionalDevelopmentDay->modify('fifth '.$day);
-				if ($startDate->format('Y-m-d') === $professionalDevelopmentDay->format('Y-m-d')) {
-					$startDate->modify('next '.$day);
-				}
-				$originalLessonId	 = $lesson->id;
-				$lesson->id			 = null;
-				$lesson->isNewRecord = true;
-				$lesson->status		 = Lesson::STATUS_DRAFTED;
-				$startDate->add(new \DateInterval('PT'.$duration[0].'H'.$duration[1].'M'));
-				$lesson->date		 = $startDate->format('Y-m-d H:i:s');
-				$lesson->save();
-				$startDate		 = new \DateTime($lesson->date);
-				$day = $startDate->format('l');
-				$startDate->modify('next '.$day);
-			}
-			return $this->redirect(['/lesson/review', 'courseId' => $model->course->id, 'Course[rescheduleBeginDate]' => $model->course->rescheduleBeginDate]);
+			$teacherId = $course->teacherId;
+			$course->generateLessons($lessons, $startDate, $teacherId);
+			$rescheduleBeginDate = (new \DateTime($course->startDate))->format('d-m-Y');
+			$rescheduleEndDate = (new \DateTime($course->endDate))->format('d-m-Y');
+			return $this->redirect(['/lesson/review', 'courseId' => $course->id, 'Course[startDate]' => $rescheduleBeginDate, 'Course[endDate]' => $rescheduleEndDate]);
 		} else {
-			return $this->render('update', [
-				'model' => $model->course,
-				'courseSchedule' => $courseSchedule,
-			]);
+			return $response;
 		}
+
+
     }
 
     /**

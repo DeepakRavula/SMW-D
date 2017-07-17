@@ -15,6 +15,13 @@ Select2Asset::register($this);
 $this->title = 'Student Details';
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'StudentSearch[showAllStudents]' => false], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <?php
 echo $this->render('_profile', [
 	'model' => $model,
@@ -401,8 +408,8 @@ echo $this->render('_profile', [
                 {
                     if (response.status)
                     {
+                        $.pjax.reload({container: '#student-profile', timeout: 6000});
                         $('#student-profile-modal').modal('hide');
-						$('.student-profile').html(response.data);
                     }
                 }
     	});

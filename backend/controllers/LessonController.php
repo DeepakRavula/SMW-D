@@ -526,7 +526,8 @@ class LessonController extends Controller
         $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
-        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
+        $rescheduleBeginDate = $courseRequest['startDate'];
+        $rescheduleEndDate = $courseRequest['endDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
@@ -552,13 +553,13 @@ class LessonController extends Controller
 		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
 		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
 		$lessonCount = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'status' => [
-				Lesson::STATUS_UNSCHEDULED, Lesson::STATUS_DRAFTED]])
+			->andWhere(['courseId' => $courseModel->id, 
+				'status' => [Lesson::STATUS_DRAFTED, Lesson::STATUS_UNSCHEDULED]])
 			->count();
 		$conflictedLessonIdsCount = count($conflictedLessonIds);
 		$unscheduledLessonCount = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED])
-			->count();
+			->count();	
 		$query = Lesson::find()
 			->orderBy(['lesson.date' => SORT_ASC]);
 		if(! $showAllReviewLessons) {
@@ -575,6 +576,7 @@ class LessonController extends Controller
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflicts,
             'rescheduleBeginDate' => $rescheduleBeginDate,
+            'rescheduleEndDate' => $rescheduleEndDate,
             'searchModel' => $searchModel,
 			'vacationId' => $vacationId,
 			'vacationType' => $vacationType,
@@ -642,7 +644,8 @@ class LessonController extends Controller
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
         $vacationRequest = $request->get('Vacation');
-        $rescheduleBeginDate = $courseRequest['rescheduleBeginDate'];
+        $rescheduleEndDate = $courseRequest['endDate'];
+        $rescheduleBeginDate = $courseRequest['startDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
 		if(! empty($vacationId)) {
@@ -684,12 +687,12 @@ class LessonController extends Controller
                 $vacation->trigger(Vacation::EVENT_DELETE); 
 			}
 		}
-        if( ! empty($rescheduleBeginDate)) {
-			$courseDate = \DateTime::createFromFormat('d-m-Y',$rescheduleBeginDate);
-			$courseDate = $courseDate->format('Y-m-d 00:00:00');
+        if( ! empty($rescheduleBeginDate) && ! empty($rescheduleEndDate)) {
+			$startDate = new \DateTime($rescheduleBeginDate);
+			$endDate = new \DateTime($rescheduleEndDate);
 			$oldLessons = Lesson::find()
 				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
-				->andWhere(['>=', 'date', $courseDate])
+				->between($startDate, $endDate)
 				->all();
 			$oldLessonIds = [];
 			foreach($oldLessons as $oldLesson){

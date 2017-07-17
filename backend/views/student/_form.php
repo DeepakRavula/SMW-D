@@ -59,6 +59,7 @@ use yii\helpers\Url;
 </div>
 
 <script>
+$.fn.datepicker.noConflict();
 $('#student-birth_date').datepicker({
    altField: '#student-birth_date',
    altFormat: 'dd-mm-yy',
