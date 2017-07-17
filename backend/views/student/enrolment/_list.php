@@ -105,6 +105,9 @@ echo GridView::widget([
 				'add-vacation' => function ($model, $key, $index) {
 					return $model->course->program->isPrivate();
 				},
+				'reschedule' => function ($model, $key, $index) {
+					return $model->course->program->isPrivate();
+				},
 			]
 		],
 	],
