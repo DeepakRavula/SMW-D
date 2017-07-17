@@ -9,8 +9,9 @@ use yii\helpers\Url;
 <?php $this->render('/lesson/_color-code'); ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="row-fluid">
+    <div id="calendar-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 	<div id="calendar" ></div>
-</div>
+    </div>
  <div class="form-group">
 	<?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary lesson-edit-save', 'name' => 'button']) ?>
 	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-edit-cancel']);
@@ -42,7 +43,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 right: 'agendaWeek'
             },
             allDaySlot: false,
-			height:'auto',
+            height: 450,
             slotDuration: '00:15:00',
             titleFormat: 'DD-MMM-YYYY, dddd',
             defaultView: 'agendaWeek',
@@ -56,7 +57,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             events: events,
             select: function (start, end, allDay) {
                 $('#calendar').fullCalendar('removeEvents', 'newEnrolment');
-                $('#lesson-date').val(moment(start).format('DD-MM-YYYY h:mm A'));
+                $('#lesson-date').val(moment(start).format('DD-MM-YYYY h:mm A')).trigger('change');
                 var endtime = start.clone();
                 var durationMinutes = moment.duration($('#course-duration').val()).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
@@ -78,6 +79,21 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             selectHelper: true,
         });
     }
+    $(document).on('change', '#lesson-date', function () {
+        $.ajax({
+            url: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>',
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (!response.status) {
+                    $('#calendar-error-notification').html(response.error).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
+        return false;
+    });
     $(document).ready(function () {
 		$(document).on('click', '.lesson-edit-save', function (e) {
 			$('#lesson-edit-modal').modal('hide');

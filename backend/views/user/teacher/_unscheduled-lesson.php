@@ -9,8 +9,16 @@ use yii\helpers\Html;
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <div class=" p-15">
-<?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
-    <?php $columns = [
+    <?php yii\widgets\Pjax::begin([
+	'id' => 'lesson-index',
+    'timeout' => 6000,
+]) ?>
+<?php echo GridView::widget([
+	'dataProvider' => $dataProvider,
+	'tableOptions' => ['class' => 'table table-bordered'],
+	'headerRowOptions' => ['class' => 'bg-light-gray'],
+	'columns' => [
+    
             [
                 'label' => 'Student',
                 'value' => function ($data) {
@@ -66,15 +74,10 @@ use yii\helpers\Html;
 					},
 				],
 			],
-        ];
+        ],
 
-    ?>   
-    <?php echo GridView::widget([
-        'dataProvider' => $dataProvider,
-        'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'columns' => $columns,
-    ]); ?>
+   ]); ?>
+
 	<?php yii\widgets\Pjax::end(); ?>
 
 </div>
