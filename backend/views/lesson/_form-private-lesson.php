@@ -158,6 +158,7 @@ Modal::begin([
 ?>
 <?php
 echo $this->render('_calendar', [
+    'model' => $model
 ]);
 ?>
 <?php Modal::end(); ?>

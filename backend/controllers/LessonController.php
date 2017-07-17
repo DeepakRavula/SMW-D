@@ -204,7 +204,11 @@ class LessonController extends Controller
         $model = $this->findModel($id);
         $model->setScenario(Lesson::SCENARIO_EDIT);
         if (!($model->load(Yii::$app->request->post()) && $model->validate())) {
-            return  ActiveForm::validate($model);
+            $errors = ActiveForm::validate($model);
+            return  [
+                'status' => false,
+                'error' => end($errors)
+            ];
         }
     }
 
