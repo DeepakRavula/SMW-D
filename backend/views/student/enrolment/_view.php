@@ -6,8 +6,6 @@ use yii\bootstrap\Modal;
 use common\models\LocationAvailability;
 
 ?>
-<?php 
-$enrolment = current($model->enrolment);?>
 <div class="row p-10">
     <div class="col-md-12">
     <h4 class="pull-left m-r-20">Enrolments</h4>
