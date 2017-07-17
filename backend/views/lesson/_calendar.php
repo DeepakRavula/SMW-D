@@ -88,6 +88,8 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             success: function (response)
             {
                 if (!response.status) {
+                    $('#calendar').fullCalendar('removeEvents', 'newEnrolment');
+                    $('#lesson-date').val('');
                     $('#calendar-error-notification').html(response.error).fadeIn().delay(5000).fadeOut();
                 }
             }
