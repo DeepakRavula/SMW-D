@@ -27,6 +27,7 @@ use yii\bootstrap\Modal;
     ?>
 
 <?php $form = ActiveForm::begin([
+            'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
             'action' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
             'options' => [
@@ -142,7 +143,7 @@ use yii\bootstrap\Modal;
         </div>
 	</div>
    <div class="col-md-12 p-l-20 form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-primary', 'name' => 'button']) ?>
 		<?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
         ?>
 		<div class="clearfix"></div>
@@ -162,3 +163,15 @@ echo $this->render('_calendar', [
 ]);
 ?>
 <?php Modal::end(); ?>
+
+<script type="text/javascript">
+$(document).on('click', '#lesson-edit-save', function () {
+    var url = '<?= Url::to(['lesson/update', 'id' => $model->id]); ?>';
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: $('#lesson-edit-form').serialize()
+    });
+    return false;
+});
+</script>
