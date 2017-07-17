@@ -60,20 +60,23 @@ DynamicFormWidget::begin([
 					}
 					?>
 					<div class="row">
-						<div class="col-sm-3">
-							<?= $form->field($schedule, "[{$index}]day")->textInput(['maxlength' => true]) ?>
+						<div class="col-sm-3 lesson-day">
+							<?= $form->field($schedule, "[{$index}]day")->textInput(['maxlength' => true, 'options' => ['class' => 'day']]) ?>
 
 						</div>
-						<div class="col-sm-3">
-							<?= $form->field($schedule, "[{$index}]fromTime")->textInput(['maxlength' => true]) ?>
+						<div class="col-sm-3 lesson-time">
+							<?= $form->field($schedule, "[{$index}]fromTime")->textInput(['maxlength' => true, 'options' => ['class' => 'time']]) ?>
 						</div>
-						<div class="col-sm-3">
+						<div class="col-sm-3 lesson-duration">
 							<?=
 							$form->field($schedule, "[{$index}]duration")->widget(TimePicker::classname(), [
 								'pluginOptions' => [
 									'showMeridian' => false,
 									'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
 								],
+								'options' => [
+									'class' => 'duration'
+								]
 							]);
 							?>
 						</div>

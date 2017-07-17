@@ -85,32 +85,3 @@ use yii\bootstrap\ActiveForm;
 	]);
 	?>
 	<?php Modal::end(); ?>
-	<?php
-	Modal::begin([
-		'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-		'id' => 'group-course-calendar-modal',
-	]);
-	?>
-	<?php
-	echo $this->render('_group-calendar', [
-	]);
-	?>
-	<?php Modal::end(); ?>
-	<script>
-		$(document).ready(function () {
-			$('#lessonsPerWeekCountOne').hide();
-			$('#lessonsPerWeekCountTwo').hide();
-			$('#lessons-per-week-one').click(function () {
-				$('#course-lessonsperweekcount').val(1);
-				$('#lessonsPerWeekCountOne').show();
-				$('#lessonsPerWeekCountTwo').hide();
-				return false;
-			});
-			$('#lessons-per-week-two').click(function () {
-				$('#course-lessonsperweekcount').val(2);
-				$('#lessonsPerWeekCountOne').show();
-				$('#lessonsPerWeekCountTwo').show();
-				return false;
-			});
-		});
-	</script>

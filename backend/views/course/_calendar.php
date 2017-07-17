@@ -32,30 +32,19 @@ use yii\helpers\Url;
 
 <script>
 $(document).ready(function(){
-	var groupCourse = {
-		'lessonCountOne' : 1,
-		'lessonCountTwo' : 2,
-	}		
-	$(document).on('click', '.course-apply', function (e) {
-		$('#course-calendar-modal').modal('hide');
-		return false;
-	});
-	$(document).on('click', '.course-cancel', function (e) {
+	$(document).on('click', '.course-apply, .course-cancel', function (e) {
 		$('#course-calendar-modal').modal('hide');
 		return false;
 	});
 	$(document).on('click', '.course-calendar-icon', function() {
+		var duration = $(this).parent().find('.lesson-duration').find('.duration').val();
 		$('#course-calendar-modal').modal('show');
         $('#course-calendar-modal .modal-dialog').css({'width': '1000px'});
 		var date = moment(new Date()).format('DD-MM-YYYY');
-	    renderCalendar(date);
+	    renderCalendar(date, duration);
 	});
-    $(document).on('change', '#course-teacherid', function () {
-        var date = $('#course-calendar').fullCalendar('getDate');
-        renderCalendar(date);
-    });
-
-    function renderCalendar(date) {
+    
+    function renderCalendar(date, duration) {
         var events, availableHours;
         var teacherId = $('#course-teacherid').val();
         $.ajax({
@@ -66,14 +55,15 @@ $(document).ready(function(){
             {
                 events = response.events;
                 availableHours = response.availableHours;
-                refreshCalendar(availableHours, events, date);
+                refreshCalendar(availableHours, events, date, duration);
             }
         });
     }
 
-    function refreshCalendar(availableHours, events, date) {
+    function refreshCalendar(availableHours, events, date, duration) {
         $('#course-calendar').fullCalendar('destroy');
         $('#course-calendar').fullCalendar({
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
             defaultDate: moment(new Date()).format('YYYY-MM-DD'),
             header: {
                 left: 'prev,next today',
@@ -94,17 +84,13 @@ $(document).ready(function(){
             overlapEventsSeparate: true,
             events: events,
             select: function (start, end, allDay) {
-                $('#courseschedule-day-0').val(moment(start).day());
-                $('#course-startdate-0').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
-                $('#courseschedule-fromtime-0').val(moment(start).format('HH:mm:ss'));
-                $('#courseschedule-duration-0').val($('#courseschedule-duration').val());
-				$('.course-summary').text(
-					moment(start).format('DD-MM-YYYY') + ', ' +
-					moment(start).format('dddd') + ', ' +
-					moment(start).format('hh:mm A'));
+//                $('#courseschedule-day-0').val(moment(start).day());
+//                $('#course-startdate-0').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
+//                $('#courseschedule-fromtime-0').val(moment(start).format('HH:mm:ss'));
+//                $('#courseschedule-duration-0').val($('#courseschedule-duration').val());
                 $('#course-calendar').fullCalendar('removeEvents', 'newEnrolment');
 				var endtime = start.clone();
-                var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
+                var durationMinutes = moment.duration(duration).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
                 $('#course-calendar').fullCalendar('renderEvent',
                     {
