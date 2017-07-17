@@ -93,7 +93,7 @@ $query->andFilterWHERE(['like','p.name',$this->program]);
  $query->orFilterWHERE(['like','up.lastname',$this->teacher]);
  if($this->expirydate)
  {
- $query->andFilterWHERE(['DATE(course.endDate)' =>(new \DateTime($this->expirydate))->format('Y-m-d')]);
+ $query->andFilterWhere(['DATE(course.endDate)' =>(new \DateTime($this->expirydate))->format('Y-m-d')]);
  }      if (! $this->showAllEnrolments) {
 				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
 				->isConfirmed()
