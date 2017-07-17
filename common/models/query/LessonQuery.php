@@ -295,4 +295,27 @@ class LessonQuery extends \yii\db\ActiveQuery
             ]);
             return $this;
     }
+
+    public function backToBackOverlap($date, $fromTime, $toTime)
+    {
+        return $this->andWhere(['DATE(date)' => $date])
+        ->andWhere(['OR',
+                    [
+                        'between', 'TIME(lesson.date)', $fromTime, $toTime
+                    ],
+                    [
+                        'between', 'ADDTIME(TIME(lesson.date),lesson.duration)', $fromTime, $toTime
+                    ],
+                    [
+                        'AND',
+                            [
+                                '<', 'TIME(lesson.date)', $fromTime
+                            ],
+                            [
+                                '>', 'ADDTIME(TIME(lesson.date),lesson.duration)', $toTime
+                            ]
+
+                    ]
+            ]);
+    }
 }

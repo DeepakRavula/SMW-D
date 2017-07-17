@@ -5,7 +5,7 @@ use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
 use kartik\color\ColorInput;
-use common\models\LessonSplit;
+use yii\helpers\Url;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
@@ -27,13 +27,14 @@ use yii\bootstrap\Modal;
     ?>
 
 <?php $form = ActiveForm::begin([
-            
+            'enableAjaxValidation' => true,
+            'action' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
             'options' => [
-                'class' => 'p-10'
-             ]
+                'class' => 'p-10',
+            ]
         ]); ?>
    <div class="row-fluid">
-	   <div class="col-md-4">
+	   <div class="col-md-3">
 		    <?php if($model->isUnscheduled()) : ?>
 				<?php $model->duration = $model->getCreditUsage(); ?> 
 		    <?php endif; ?>
@@ -68,7 +69,7 @@ use yii\bootstrap\Modal;
             ?>  
         </div>
 	   
-	   <div class="col-md-4">
+	   <div class="col-md-5">
 		   <div class="row">
 			<div class="col-md-9" style="width:72%;">
 				<?php
@@ -157,6 +158,7 @@ Modal::begin([
 ?>
 <?php
 echo $this->render('_calendar', [
+    'model' => $model
 ]);
 ?>
 <?php Modal::end(); ?>

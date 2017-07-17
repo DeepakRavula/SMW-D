@@ -24,12 +24,18 @@ class StudentValidator extends Validator
 		$date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));	
 		$date->modify('-1 second');
 		$lessonEndTime = $date->format('H:i:s');
-		$studentLessons = Lesson::find()
+		$query = Lesson::find()
 			->studentLessons($locationId, $studentId)
-			->andWhere(['NOT', ['lesson.id' => $model->id]])
-			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
-			->all();		
-       
+                        ->andWhere(['NOT', ['lesson.id' => $model->id]]);
+		$studentBackToBackLessons = $query->enrolment($model->enrolment->id)
+                    ->backToBackOverlap($lessonDate, $lessonStartTime, $lessonEndTime)
+			->all();
+                if (!empty($studentBackToBackLessons)) {
+                    $this->addError($model,$attribute, 'Lesson cannot be scheduled '
+                        . 'back to back with same enrolment\'s another lesson');
+                }
+                $studentLessons = $query->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
+			->all();
 		 if ((!empty($studentLessons)) && empty($model->vacationId)) {
             $this->addError($model,$attribute, 'Lesson time conflicts with student\'s another lesson');
 		}
