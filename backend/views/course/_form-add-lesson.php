@@ -26,7 +26,7 @@ DynamicFormWidget::begin([
 	'widgetBody' => '.container-items',
 	'widgetItem' => '.item',
 	'limit' => 7,
-	'min' => 0,
+	'min' => 1,
 	'insertButton' => '.add-item',
 	'deleteButton' => '.remove-item',
 	'model' => $courseSchedule[0],
@@ -61,11 +61,11 @@ DynamicFormWidget::begin([
 					?>
 					<div class="row">
 						<div class="col-sm-3 lesson-day">
-							<?= $form->field($schedule, "[{$index}]day")->textInput(['maxlength' => true, 'options' => ['class' => 'day']]) ?>
+							<?= $form->field($schedule, "[{$index}]day")->textInput(['maxlength' => true, 'class' => 'day form-control']) ?>
 
 						</div>
 						<div class="col-sm-3 lesson-time">
-							<?= $form->field($schedule, "[{$index}]fromTime")->textInput(['maxlength' => true, 'options' => ['class' => 'time']]) ?>
+							<?= $form->field($schedule, "[{$index}]fromTime")->textInput(['maxlength' => true, 'class' => 'time form-control'])->label('Date&Time') ?>
 						</div>
 						<div class="col-sm-3 lesson-duration">
 							<?=

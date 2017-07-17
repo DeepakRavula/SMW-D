@@ -37,14 +37,13 @@ $(document).ready(function(){
 		return false;
 	});
 	$(document).on('click', '.course-calendar-icon', function() {
-		var duration = $(this).parent().find('.lesson-duration').find('.duration').val();
 		$('#course-calendar-modal').modal('show');
         $('#course-calendar-modal .modal-dialog').css({'width': '1000px'});
 		var date = moment(new Date()).format('DD-MM-YYYY');
-	    renderCalendar(date, duration);
+	    renderCalendar(date, this);
 	});
     
-    function renderCalendar(date, duration) {
+    function renderCalendar(date, lessonFreeSlotPicker) {
         var events, availableHours;
         var teacherId = $('#course-teacherid').val();
         $.ajax({
@@ -55,12 +54,12 @@ $(document).ready(function(){
             {
                 events = response.events;
                 availableHours = response.availableHours;
-                refreshCalendar(availableHours, events, date, duration);
+                refreshCalendar(availableHours, events, date, lessonFreeSlotPicker);
             }
         });
     }
 
-    function refreshCalendar(availableHours, events, date, duration) {
+    function refreshCalendar(availableHours, events, date, lessonFreeSlotPicker) {
         $('#course-calendar').fullCalendar('destroy');
         $('#course-calendar').fullCalendar({
             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -84,10 +83,9 @@ $(document).ready(function(){
             overlapEventsSeparate: true,
             events: events,
             select: function (start, end, allDay) {
-//                $('#courseschedule-day-0').val(moment(start).day());
-//                $('#course-startdate-0').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
-//                $('#courseschedule-fromtime-0').val(moment(start).format('HH:mm:ss'));
-//                $('#courseschedule-duration-0').val($('#courseschedule-duration').val());
+				$(lessonFreeSlotPicker).parent().find('.lesson-time').find('.time').val(moment(start).format('DD-MM-YYYY h:mm A'));
+				$(lessonFreeSlotPicker).parent().find('.lesson-day').find('.day').val(moment(start).format('dddd'));
+				var duration = $(lessonFreeSlotPicker).parent().find('.lesson-duration').find('.duration').val();
                 $('#course-calendar').fullCalendar('removeEvents', 'newEnrolment');
 				var endtime = start.clone();
                 var durationMinutes = moment.duration(duration).asMinutes();
@@ -110,15 +108,5 @@ $(document).ready(function(){
             selectHelper: true,
         });
     }
-
-    $('#group-course-form').on('beforeSubmit', function (e) {
-        var courseDay = $('#courseschedule-day-0').val();
-		var lessonCount = $('#course-lessonsperweekcount').val();
-        if( ! courseDay && (lessonCount == groupCourse.lessonCountOne || lessonCount == groupCourse.lessonCountTwo)) {
-            $('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
-            $(window).scrollTop(0);
-            return false;
-        }
-    });
 });
 </script>

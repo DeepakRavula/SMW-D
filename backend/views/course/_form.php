@@ -24,7 +24,8 @@ use yii\bootstrap\ActiveForm;
 <div class="group-course-form p-10">
 	<?php
 	$form = ActiveForm::begin([
-			'id' => 'group-course-form',
+		'id' => 'group-course-form',
+		'enableAjaxValidation' => true,
 	]);
 	?>
 	<div class="row p-10">
