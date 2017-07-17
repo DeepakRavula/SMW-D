@@ -165,7 +165,7 @@ public function getHolidayEvent($date)
     {
 		$post = Yii::$app->request->post();
         $model = new Course();
-        $courseSchedule = new CourseSchedule();
+        $courseSchedule = [new CourseSchedule()];
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
 		
         $model->locationId = Yii::$app->session->get('location_id');
@@ -173,7 +173,7 @@ public function getHolidayEvent($date)
         $model->on(Course::EVENT_CREATE, [new CourseLog(), 'create']);
         $model->userName = $userModel->publicIdentity;
 		$model->load($post);
-		$courseSchedule->load($post);	
+		//$courseSchedule->load($post);	
         if (Yii::$app->request->isPost) {
 			if($model->save()) {
 				$limit = CourseGroup::LESSONS_PER_WEEK_COUNT_ONE;
@@ -195,7 +195,7 @@ public function getHolidayEvent($date)
         } else {
             return $this->render('create', [
                 'model' => $model,
-				'courseSchedule' => $courseSchedule
+				'courseSchedule' => (empty($courseSchedule)) ? [new CourseSchedule] : $courseSchedule
             ]);
         }
     }
