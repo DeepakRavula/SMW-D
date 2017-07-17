@@ -97,6 +97,7 @@ class VacationController extends Controller
 				return $this->redirect([
 					'lesson/review',
 					'courseId' => $enrolment->course->id,
+					'LessonSearch[showAllReviewLessons]' => false,
 					'Vacation[id]' => $model->id,
 					'Vacation[type]' => Vacation::TYPE_CREATE
 				]);
@@ -147,6 +148,7 @@ class VacationController extends Controller
         return $this->redirect([
 			'lesson/review',
 			'courseId' => $model->enrolment->courseId,
+			'LessonSearch[showAllReviewLessons]' => false,
 			'Vacation[id]' => $model->id,
 			'Vacation[type]' => Vacation::TYPE_DELETE
 		]);

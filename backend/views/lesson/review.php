@@ -82,7 +82,8 @@ $columns = [
 ];
 ?>
 	<?php yii\widgets\Pjax::begin([
-		'id' => 'review-lesson-listing'
+		'id' => 'review-lesson-listing',
+		'timeout' => 6000,
 	]) ?>
 <?=
 \yii\grid\GridView::widget([
@@ -91,9 +92,8 @@ $columns = [
 	'emptyText' => 'No conflicts here! You are ready to confirm!',
 ]);
 ?>
-
-<?php if(empty($rescheduleBeginDate) && empty($vacationId)) : ?>
 <?php \yii\widgets\Pjax::end(); ?>
+<?php if(empty($rescheduleBeginDate) && empty($vacationId)) : ?>
 	<?php yii\widgets\Pjax::begin([
 		'id' => 'review-lesson-summary'
 	]) ?>
@@ -155,9 +155,23 @@ Modal::begin([
 			var showAllReviewLessons = $(this).is(":checked");
 			var vacationId = '<?= $vacationId; ?>';
 			var vacationType = '<?= $vacationType; ?>';
-			var params = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-				'Vacation[id]': vacationId, 'Vacation[type]': vacationType
-			});
+			var startDate = '<?= $rescheduleBeginDate; ?>';
+			var endDate = '<?= $rescheduleEndDate; ?>';
+			if(vacationId) {
+				var params = $.param({
+					'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
+					'Vacation[id]': vacationId, 'Vacation[type]': vacationType,
+				});	
+			} else if(startDate && endDate) {
+				var params = $.param({
+					'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
+					'Course[startDate]' : startDate, 'Course[endDate]' : endDate
+				});
+			} else {
+				var params = $.param({
+					'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
+				});
+			}
 			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
 			$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
 		});
