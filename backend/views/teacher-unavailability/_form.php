@@ -53,6 +53,10 @@ use yii\jui\DatePicker;
 			]);
             ?>
         </div>
+		<div class="col-xs-9">
+		<?php
+            echo $form->field($model, 'reason')->textarea(['rows' => 4]);?>
+        </div>
         <div class="clearfix"></div>
     </div>
     <div class="row-fluid">

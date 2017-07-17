@@ -25,6 +25,7 @@ echo GridView::widget([
 'columns' => [
     'fromDate:date',
 	'toDate:date',
+	'reason:raw',
 	'fromTime:time',
 	'toTime:time'	
 ],
