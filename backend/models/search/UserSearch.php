@@ -75,7 +75,7 @@ class UserSearch extends User
         $query->leftJoin(['phone_number pn'], 'pn.user_id = user.id');
 
         $query->andFilterWhere(['like', 'username', $this->username])
-            ->orFilterWhere(['like', 'email', $this->query])
+            ->andFilterWhere(['like', 'email', $this->query])
             ->orFilterWhere(['like', 'uf.lastname', $this->query])
             ->orFilterWhere(['like', 'uf.firstname', $this->query])
             ->orFilterWhere(['like', 'pn.number', $this->query]);
