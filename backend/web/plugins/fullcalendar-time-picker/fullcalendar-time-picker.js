@@ -1,8 +1,29 @@
 $(document).on('click', '.calendar-date-time-picker-save', function () {
-    if (pickerSelect){
+    if (!$.isEmptyObject($('#calendar-date-time-picker').fullCalendar('clientEvents', 'newEnrolment'))){
         $('#calendar-date-time-picker-modal').modal('hide');
     } else {
         $('#calendar-date-time-picker-error-notification').html('Please select a date time!').fadeIn().delay(5000).fadeOut();
+    }
+    return false;
+});
+
+$(document).on('change', '#calendar-date-time-picker-date', function () {
+    var validationUrl = $(this).attr('validation-url');
+    if (!$.isEmptyObject(validationUrl)) {
+        $.ajax({
+            url: validationUrl,
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (!response.status) {
+                    $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
+                    $('#calendar-date-time-picker-date').val('');
+                    $('#calendar-date-time-picker-error-notification').html(response.error).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
     }
     return false;
 });
@@ -15,14 +36,13 @@ $(document).on('click', '.calendar-date-time-picker-cancel', function () {
 $.fn.calendarPicker = function(options) {
     $('#calendar-date-time-picker-modal').modal('show');
     $('#calendar-date-time-picker-modal .modal-dialog').css({'width': '1000px'});
-    pickerSelect = false;
     $(document).on('shown.bs.modal', '#calendar-date-time-picker-modal', function () {
         calendar.showCalendar(options);
     });
 };
 
 var calendar = {
-    showCalendar: function (calendarOptions) {debugger;
+    showCalendar: function (calendarOptions) {
         $('#calendar-date-time-picker').fullCalendar('destroy');
         $('#calendar-date-time-picker').fullCalendar({
             defaultDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -47,12 +67,11 @@ var calendar = {
                 url: calendarOptions.eventUrl,
                 type: 'GET',
                 error: function() {
-                    //$("#calendar-date-time-picker").fullCalendar("refetchEvents");
+                    $("#calendar-date-time-picker").fullCalendar("refetchEvents");
                 }
             },
             select: function (start) {
                 $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
-                pickerSelect = true;
                 $('#calendar-date-time-picker-date').val(moment(start).format('DD-MM-YYYY h:mm A')).trigger('change');
                 var endtime = start.clone();
                 var durationMinutes = moment.duration(calendarOptions.duration).asMinutes();

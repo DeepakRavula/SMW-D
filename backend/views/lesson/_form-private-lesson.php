@@ -77,6 +77,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 				echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
 					'options' => [
                                             'id' => 'calendar-date-time-picker-date',
+                                            'validation-url' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
                                             'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
 					],
 					'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
@@ -196,26 +197,6 @@ $(document).on('click', '.lesson-edit-calendar', function () {
                     'lessonId' => $model->id]); ?>&teacherId=' + teacherId,
             };
             $('#calendar-date-time-picker').calendarPicker(options);
-        }
-    });
-    return false;
-
-});
-
-$(document).on('change', '#calendar-date-time-picker-date', function () {
-    $.ajax({
-        url: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>',
-        type: 'post',
-        dataType: "json",
-        data: $(this).serialize(),
-        success: function (response)
-        {
-            if (!response.status) {
-                $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
-                $('#calendar-date-time-picker-date').val('');
-                pickerSelect = false;
-                $('#calendar-date-time-picker-error-notification').html(response.error).fadeIn().delay(5000).fadeOut();
-            }
         }
     });
     return false;
