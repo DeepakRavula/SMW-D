@@ -448,10 +448,10 @@ class Lesson extends \yii\db\ActiveRecord
         }
         if ($this->getRootLesson()) {
             $rootLesson = $this->getRootLesson();
-            if($rootLesson->id !== $this->id) {
+            if($rootLesson->id !== $this->id && empty($this->colorCode)) {
                 $class = 'lesson-rescheduled';
             }
-            if ($rootLesson->teacherId !== $this->teacherId) {
+            if ($rootLesson->teacherId !== $this->teacherId && empty($this->colorCode)) {
                 $class = 'teacher-substituted';
             }
         }
