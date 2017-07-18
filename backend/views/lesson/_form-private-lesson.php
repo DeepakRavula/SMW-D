@@ -95,7 +95,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 		<div class="col-md-4">
 			<?php
                 if ($privateLessonModel->isNewRecord) {
-                    $date = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+                    $date = new \DateTime($model->date);
                     $date->modify('90 days');
                     $privateLessonModel->expiryDate = $date->format('d-m-Y H:i:s');
                 }
