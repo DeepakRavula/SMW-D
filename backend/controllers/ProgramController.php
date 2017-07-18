@@ -147,11 +147,24 @@ class ProgramController extends Controller
         $data = $this->renderAjax('//program/_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post())) {
-            $model->save();
-            return [
-                'status' => true,
-            ];
+         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            if ($model->status == Program::STATUS_INACTIVE) {
+                Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Program has been updated successfully',
+               ]);
+
+                return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
+            } else {
+                Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Program has been updated successfully',
+            ]);
+                return  [
+				'status' => true,
+			];
+                
+            }
         }
         return [
             'status' => true,
