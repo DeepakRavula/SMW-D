@@ -10,6 +10,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 use backend\models\search\ProgramSearch;
 
 /**
@@ -26,6 +27,13 @@ class ProgramController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            [
+				'class' => 'yii\filters\ContentNegotiator',
+				'only' => ['update'],
+				'formats' => [
+					'application/json' => Response::FORMAT_JSON,
+				],
+        	],
         ];
     }
 
@@ -136,27 +144,19 @@ class ProgramController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if ($model->status == Program::STATUS_INACTIVE) {
-                Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Program has been updated successfully',
-               ]);
-
-                return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
-            } else {
-                Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Program has been updated successfully',
-            ]);
-
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        $data = $this->renderAjax('//program/_form', [
+            'model' => $model,
+        ]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save();
+            return [
+                'status' => true,
+            ];
         }
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 
     /**
