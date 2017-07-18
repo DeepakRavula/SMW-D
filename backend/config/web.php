@@ -66,6 +66,7 @@ $config = [
     ],
     'on beforeAction' => function ($event) {
         $location_id = Yii::$app->session->get('location_id');
+        if (empty($location_id)) {
 		$roles = yii\helpers\ArrayHelper::getColumn(
 			Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
 			'name'
@@ -77,6 +78,7 @@ $config = [
 		} else {
 			Yii::$app->session->set('location_id', '1');
 		}
+        }
         $unReadNotes = [];
         $latestNotes = common\models\ReleaseNotes::latestNotes();
         if (!empty($latestNotes)) {
