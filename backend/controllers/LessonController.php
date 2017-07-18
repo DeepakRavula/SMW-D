@@ -203,12 +203,8 @@ class LessonController extends Controller
     {
         $model = $this->findModel($id);
         $model->setScenario(Lesson::SCENARIO_EDIT);
-        if (!($model->load(Yii::$app->request->post()) && $model->validate())) {
-            $errors = ActiveForm::validate($model);
-            return  [
-                'status' => false,
-                'error' => end($errors)
-            ];
+        if ($model->load(Yii::$app->request->post())) {
+            return  ActiveForm::validate($model);
         }
     }
 
@@ -249,6 +245,7 @@ class LessonController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->date = $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date);
         $oldLesson = clone $model;
         $oldDate = $model->date;
         $oldTeacherId = $model->teacherId;
@@ -333,7 +330,7 @@ class LessonController extends Controller
                     }
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
                     if(! $model->save()) {
-					   Yii::error('Update Lesson: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+					   Yii::error('Update Lesson: ' . \yii\helpers\VarDumper::dumpAsString($model->getErrors()));
 					}
 
 					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
