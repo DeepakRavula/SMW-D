@@ -13,30 +13,15 @@ $(document).on('click', '.calendar-date-time-picker-cancel', function () {
 });
 
 $.fn.calendarPicker = function(options) {
+    $('#calendar-date-time-picker-modal').modal('show');
+    $('#calendar-date-time-picker-modal .modal-dialog').css({'width': '1000px'});
     pickerSelect = false;
-    calendar.refreshCalendar(options);
+    $(document).on('shown.bs.modal', '#calendar-date-time-picker-modal', function () {
+        calendar.showCalendar(options);
+    });
 };
 
 var calendar = {
-    refreshCalendar: function (options) {
-        var params = $.param({ id: options.teacherId });
-        $.ajax({
-            url: '/admin/teacher-availability/availability-with-events?' + params,
-            type: 'get',
-            dataType: "json",
-            success: function (response)
-            {
-                var calendarOptions = { 
-                    availableHours: response.availableHours,
-                    events: response.events,
-                    minTime: response.minTime,
-                    maxTime: response.maxTime,
-                    duration: options.duration
-                };
-                calendar.showCalendar(calendarOptions);
-            }
-        });
-    },
     showCalendar: function (calendarOptions) {
         $('#calendar-date-time-picker').fullCalendar('destroy');
         $('#calendar-date-time-picker').fullCalendar({
@@ -58,7 +43,13 @@ var calendar = {
             businessHours: calendarOptions.businessHours,
             allowCalEventOverlap: true,
             overlapEventsSeparate: true,
-            events: calendarOptions.events,
+            events: {
+                url: calendarOptions.eventUrl,
+                type: 'GET',
+                error: function() {
+                    $("#calendar-date-time-picker").fullCalendar("refetchEvents");
+                }
+            },
             select: function (start) {
                 $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
                 pickerSelect = true;

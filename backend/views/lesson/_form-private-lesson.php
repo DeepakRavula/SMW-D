@@ -10,6 +10,7 @@ use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
 use common\models\User;
+use common\models\LocationAvailability;
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
@@ -152,7 +153,6 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 </div>
 
 <?php
-$locationId = Yii::$app->session->get('location_id');
 $minLocationAvailability = LocationAvailability::find()
     ->where(['locationId' => $locationId])
     ->orderBy(['fromTime' => SORT_ASC])
@@ -174,18 +174,16 @@ $(document).ready(function () {
         var params = $.param({ id: teacherId });
         $.ajax({
             url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
-            type: 'post',
+            type: 'get',
             dataType: "json",
-            data: $(this).serialize(),
             success: function (response)
             {
                 var options = {
                     duration: duration,
-                    teacherId: teacherId,
                     businessHours: response.availableHours,
                     minTime: '<?= $minTime; ?>',
                     maxTime: '<?= $maxTime; ?>',
-                    eventUrl: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>',
+                    eventUrl: '<?= Url::to(['calendar/show-events', 'lessonId' => $model->id]); ?>&teacherId=' + teacherId,
                 };
                 $('#calendar-date-time-picker').calendarPicker(options);
             }
