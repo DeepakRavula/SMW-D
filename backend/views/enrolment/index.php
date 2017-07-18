@@ -1,10 +1,13 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use common\models\Enrolment;
+use kartik\grid\GridView;
+use yii\helpers\ArrayHelper;
+use common\models\Program;
+use common\models\Student;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
@@ -35,8 +38,46 @@ $form = ActiveForm::begin([
 	</div>
 </div>
 <?php ActiveForm::end(); ?>
+	<?php $columns = [
+		[
+            'attribute' => 'program',
+                'label' => 'Program',
+				'value' => function($data) {
+					return $data->course->program->name;
+				},
+				'filterType'=>GridView::FILTER_SELECT2,
+				'filter'=>ArrayHelper::map(Program::find()->active()->asArray()->all(), 'id', 'name'), 
+				'filterWidgetOptions'=>[
+					'pluginOptions'=>['allowClear'=>true],
+				],
+				'filterInputOptions'=>['placeholder'=>'Any Program'],
+				'format'=>'raw'
+			],
+			[
+            'attribute' => 'student',
+                'label' => 'Student',
+				'value' => function($data) {
+					return $data->student->fullName;
+				},
+			],
+			[
+            'attribute' => 'teacher',
+                'label' => 'Teacher',
+				'value' => function($data) {
+					return $data->course->teacher->publicIdentity;
+				}
+			],
+			[
+            'attribute' => 'expirydate',
+                'label' => 'Expiry Date',
+				'format' => 'date',
+				'value' => function($data) {
+					return Yii::$app->formatter->asDate($data->course->endDate);
+				},
+				'filterType'=>GridView::FILTER_DATE,
+			],	
+	]; ?>
 <div class="grid-row-open">
-    <?php yii\widgets\Pjax::begin(['id' => 'enrolment-index']); ?>
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
@@ -51,39 +92,13 @@ $form = ActiveForm::begin([
         }
         return $data;
     },
-    'columns' => [
-			[
-            'attribute' => 'program',
-                'label' => 'Program',
-				'value' => function($data) {
-					return $data->course->program->name;
-				}
-			],
-			[
-            'attribute' => 'student',
-                'label' => 'Student',
-				'value' => function($data) {
-					return $data->student->fullName;
-				}
-			],
-			[
-            'attribute' => 'teacher',
-                'label' => 'Teacher',
-				'value' => function($data) {
-					return $data->course->teacher->publicIdentity;
-				}
-			],
-			[
-            'attribute' => 'expirydate',
-                'label' => 'Expiry Date',
-				'value' => function($data) {
-					return Yii::$app->formatter->asDate($data->course->endDate);
-				}
-			],
-		],
+    'columns' => $columns,
+	'pjax'=>true,
+	'pjaxSettings'=>[
+        'id' => 'enrolment-index',
+    ]
 	]);
 	?>
-<?php yii\widgets\Pjax::end(); ?>
 </div>
 <script>
 $(document).ready(function(){

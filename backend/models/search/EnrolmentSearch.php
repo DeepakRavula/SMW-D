@@ -86,7 +86,7 @@ class EnrolmentSearch extends Enrolment
             ]
         ]);
          
-$query->andFilterWhere(['like','p.name',$this->program]);
+$query->andFilterWhere(['p.id' => $this->program]);
  $query->andFilterWhere(['like','student.first_name',$this->student]);
  $query->orFilterWhere(['like','student.last_name',$this->student]);
  $query->andFilterWhere(['like','up.firstname',$this->teacher]);
