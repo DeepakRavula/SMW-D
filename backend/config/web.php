@@ -66,19 +66,17 @@ $config = [
     ],
     'on beforeAction' => function ($event) {
         $location_id = Yii::$app->session->get('location_id');
-        if (empty($location_id)) {
-            $roles = yii\helpers\ArrayHelper::getColumn(
-                Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
-                'name'
-            );
-            $role = end($roles);
-            if ($role && $role !== common\models\User::ROLE_ADMINISTRATOR) {
-                $userLocation = common\models\UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-                Yii::$app->session->set('location_id', $userLocation->location_id);
-            } else {
-                Yii::$app->session->set('location_id', '1');
-            }
-        }
+		$roles = yii\helpers\ArrayHelper::getColumn(
+			Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
+			'name'
+		);
+		$role = end($roles);
+		if ($role && $role !== common\models\User::ROLE_ADMINISTRATOR) {
+			$userLocation = common\models\UserLocation::findOne(['user_id' => Yii::$app->user->id]);
+			Yii::$app->session->set('location_id', $userLocation->location_id);
+		} else {
+			Yii::$app->session->set('location_id', '1');
+		}
         $unReadNotes = [];
         $latestNotes = common\models\ReleaseNotes::latestNotes();
         if (!empty($latestNotes)) {
