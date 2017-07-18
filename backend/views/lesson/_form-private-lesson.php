@@ -6,18 +6,18 @@ use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
 use kartik\color\ColorInput;
 use yii\helpers\Url;
-use wbraganca\selectivity\SelectivityWidget;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
 use common\models\User;
-use yii\bootstrap\Modal;
+use common\models\LocationAvailability;
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
+
 <div class="lesson-qualify">
 
 	<?=
@@ -29,7 +29,8 @@ use yii\bootstrap\Modal;
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
-            'action' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
+            'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
+            'action' => Url::to(['lesson/update', 'id' => $model->id]),
             'options' => [
                 'class' => 'p-10',
             ]
@@ -72,20 +73,13 @@ use yii\bootstrap\Modal;
 	   
 	   <div class="col-md-5">
 		   <div class="row">
-			<div class="col-md-9" style="width:72%;">
+			<div class="col-md-6" style="width:60%;">
 				<?php
-				echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-					'options' => [
-						'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
-					],
-					'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
-					'pluginOptions' => [
-						'autoclose' => true,
-						'format' => 'dd-mm-yyyy HH:ii P',
-						'showMeridian' => true,
-						'minuteStep' => 15,
-					],
-				])->label('Reschedule Date');
+				echo $form->field($model, 'date')->textInput([
+                                    'readonly' => true,
+                                    'id' => 'calendar-date-time-picker-date',
+                                    'validation-url' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
+                                    ])->label('Reschedule Date');
 				?>
 			</div>
 			<div class="col-md-3" style="padding:0;">
@@ -123,12 +117,13 @@ use yii\bootstrap\Modal;
 	   <div class=" col-md-4">
 		   <?php $locationId = Yii::$app->session->get('location_id'); ?>
 		   <?=
-                $form->field($model, 'classroomId')->widget(SelectivityWidget::classname(), [
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                        'items' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
-                        'placeholder' => 'Select Classroom',
-                    ],
+                $form->field($model, 'classroomId')->widget(Select2::classname(), [
+                                'data' => ArrayHelper::map(Classroom::find()
+                                    ->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
+				'pluginOptions' => [
+                                    'placeholder' => 'Select Classroom',
+                                    'allowClear' => true
+				]
                 ]);
                 ?>
 		</div>
@@ -151,26 +146,41 @@ use yii\bootstrap\Modal;
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>
+
 <?php
-Modal::begin([
-	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-	'id' => 'lesson-edit-modal',
-]);
+$minLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['fromTime' => SORT_ASC])
+    ->one();
+$maxLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['toTime' => SORT_DESC])
+    ->one();
+$minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+$maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
-<?php
-echo $this->render('_calendar', [
-    'model' => $model
-]);
-?>
-<?php Modal::end(); ?>
 
 <script type="text/javascript">
-$(document).on('click', '#lesson-edit-save', function () {
-    var url = '<?= Url::to(['lesson/update', 'id' => $model->id]); ?>';
+$(document).on('click', '.lesson-edit-calendar', function () {
+    var teacherId = $('#lesson-teacherid').val();
+    var duration = $('#course-duration').val();
+    var params = $.param({ id: teacherId });
     $.ajax({
-        url: url,
-        type: 'post',
-        data: $('#lesson-edit-form').serialize()
+        url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
+        type: 'get',
+        dataType: "json",
+        success: function (response)
+        {
+            var options = {
+                duration: duration,
+                businessHours: response.availableHours,
+                minTime: '<?= $minTime; ?>',
+                maxTime: '<?= $maxTime; ?>',
+                eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event',
+                    'lessonId' => $model->id]); ?>&teacherId=' + teacherId,
+            };
+            $('#calendar-date-time-picker').calendarPicker(options);
+        }
     });
     return false;
 });
