@@ -35,13 +35,9 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['day', 'fromTime', 'duration'], 'safe'],
+            [['day', 'fromTime', 'duration'], 'required'],
             [['courseId', 'paymentFrequency'], 'integer'],
-            [['fromTime', 'duration', 'discount'], 'safe'],
-			[['paymentFrequency'], 'required', 'when' => function ($model, $attribute) {
-                return (int) $model->program->type === Program::TYPE_PRIVATE_PROGRAM;
-            },'except' => self::SCENARIO_EDIT_ENROLMENT
-            ],
+            [['fromTime', 'duration', 'discount', 'paymentFrequency'], 'safe'],
         ];
     }
 
@@ -90,7 +86,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::beforeSave($insert);
 		}
-        if ($this->program->isPrivate()) {
+        if ($insert) {
 		   $fromTime = new \DateTime($this->fromTime);
            $this->fromTime = $fromTime->format('H:i:s');
         }

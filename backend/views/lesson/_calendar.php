@@ -36,6 +36,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
     function refreshCalendar(availableHours, events) {
         $('#calendar').fullCalendar('destroy');
         $('#calendar').fullCalendar({
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
     		defaultDate: moment(new Date()).format('YYYY-MM-DD'),
             header: {
                 left: 'prev,next today',
