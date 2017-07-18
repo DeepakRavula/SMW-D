@@ -45,7 +45,7 @@ class CalendarController extends Controller
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['render-day-events', 'render-classroom-events',
-                   'render-resources', 'render-classroom-resources', 'show-event'],
+                   'render-resources', 'render-classroom-resources'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -315,39 +315,6 @@ class CalendarController extends Controller
             }
             unset($lesson);
         }
-        return $events;
-    }
-
-    public function actionShowEvent($lessonId, $teacherId)
-    {
-        $lessons = Lesson::find()
-            ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
-            }])
-            ->where(['lesson.teacherId' => $teacherId])
-            ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
-            ->notDeleted()
-            ->andWhere(['NOT', ['lesson.id' => $lessonId]])
-            ->all();
-        $events = [];
-        foreach ($lessons as &$lesson) {
-            $toTime = new \DateTime($lesson->date);
-            $length = explode(':', $lesson->fullDuration);
-            $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-            if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
-            } else {
-                $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
-            }
-            $class = $lesson->class;
-            $events[] = [
-                'start' => $lesson->date,
-                'end' => $toTime->format('Y-m-d H:i:s'),
-                'className' => $class,
-                'title' => $title,
-            ];
-        }
-        unset($lesson);
         return $events;
     }
 }

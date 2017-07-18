@@ -22,7 +22,7 @@ $.fn.calendarPicker = function(options) {
 };
 
 var calendar = {
-    showCalendar: function (calendarOptions) {
+    showCalendar: function (calendarOptions) {debugger;
         $('#calendar-date-time-picker').fullCalendar('destroy');
         $('#calendar-date-time-picker').fullCalendar({
             defaultDate: moment(new Date()).format('YYYY-MM-DD'),
@@ -47,7 +47,7 @@ var calendar = {
                 url: calendarOptions.eventUrl,
                 type: 'GET',
                 error: function() {
-                    $("#calendar-date-time-picker").fullCalendar("refetchEvents");
+                    //$("#calendar-date-time-picker").fullCalendar("refetchEvents");
                 }
             },
             select: function (start) {
