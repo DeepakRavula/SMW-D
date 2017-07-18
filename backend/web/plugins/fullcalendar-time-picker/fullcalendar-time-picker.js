@@ -17,10 +17,9 @@ $(document).on('change', '#calendar-date-time-picker-date', function () {
             data: $(this).serialize(),
             success: function (response)
             {
-                if (!response.status) {
+                if (!$.isEmptyObject(response)) {
                     $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
-                    $('#calendar-date-time-picker-date').val('');
-                    $('#calendar-date-time-picker-error-notification').html(response.error).fadeIn().delay(5000).fadeOut();
+                    $('#calendar-date-time-picker-error-notification').html(response['lesson-date']).fadeIn().delay(5000).fadeOut();
                 }
             }
         });
