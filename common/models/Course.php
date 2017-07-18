@@ -50,7 +50,7 @@ class Course extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['programId', 'teacherId'], 'required'],
+            [['programId', 'weeksCount'], 'required'],
             [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
             [['startDate', 'endDate'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
@@ -174,26 +174,14 @@ class Course extends \yii\db\ActiveRecord
 		if(!$insert) {
         	return parent::beforeSave($insert);
 		}
-                if (empty($this->isConfirmed)) {
-                    $this->isConfirmed = false;
-                }
+		if (empty($this->isConfirmed)) {
+			$this->isConfirmed = false;
+		}
         if ((int) $this->program->isGroup()) {
-			list($firstLessonDate,$secondLessonDate) = $this->startDate;
-			if((int)$this->lessonsPerWeekCount === CourseGroup::LESSONS_PER_WEEK_COUNT_ONE) {
-				$this->startDate = $firstLessonDate; 
-            	$startDate = new \DateTime($firstLessonDate);
-    	        $endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));	
-        		$this->endDate = $endDate->format('Y-m-d H:i:s');
-			} else {
-				if(new \DateTime($firstLessonDate) < new \DateTime($secondLessonDate)) {
-					$this->startDate = $firstLessonDate; 
-				} else {
-					$this->startDate = $secondLessonDate;
-				}
-				$startDate = new \DateTime($secondLessonDate);
-				$endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));
-				$this->endDate = $endDate->format('Y-m-d H:i:s');
-			}
+			$startDate = new \DateTime($this->startDate);
+			$this->startDate = (new \DateTime($this->startDate))->format('Y-m-d H:i:s');
+			$endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));	
+			$this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
             $endDate = new \DateTime($this->startDate);
             $startDate = new \DateTime($this->startDate);
