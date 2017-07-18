@@ -6,7 +6,7 @@ use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
 use kartik\color\ColorInput;
 use yii\helpers\Url;
-use wbraganca\selectivity\SelectivityWidget;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
 use common\models\User;
@@ -29,7 +29,8 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
-            'action' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
+            'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
+            'action' => Url::to(['lesson/update', 'id' => $model->id]),
             'options' => [
                 'class' => 'p-10',
             ]
@@ -72,22 +73,13 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 	   
 	   <div class="col-md-5">
 		   <div class="row">
-			<div class="col-md-9" style="width:72%;">
+			<div class="col-md-6" style="width:60%;">
 				<?php
-				echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-					'options' => [
-                                            'id' => 'calendar-date-time-picker-date',
-                                            'validation-url' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
-                                            'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
-					],
-					'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
-					'pluginOptions' => [
-						'autoclose' => true,
-						'format' => 'dd-mm-yyyy HH:ii P',
-						'showMeridian' => true,
-						'minuteStep' => 15,
-					],
-				])->label('Reschedule Date');
+				echo $form->field($model, 'date')->textInput([
+                                    'readonly' => true,
+                                    'id' => 'calendar-date-time-picker-date',
+                                    'validation-url' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
+                                    ])->label('Reschedule Date');
 				?>
 			</div>
 			<div class="col-md-3" style="padding:0;">
@@ -125,12 +117,13 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 	   <div class=" col-md-4">
 		   <?php $locationId = Yii::$app->session->get('location_id'); ?>
 		   <?=
-                $form->field($model, 'classroomId')->widget(SelectivityWidget::classname(), [
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                        'items' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
-                        'placeholder' => 'Select Classroom',
-                    ],
+                $form->field($model, 'classroomId')->widget(Select2::classname(), [
+                                'data' => ArrayHelper::map(Classroom::find()
+                                    ->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
+				'pluginOptions' => [
+                                    'placeholder' => 'Select Classroom',
+                                    'allowClear' => true
+				]
                 ]);
                 ?>
 		</div>
@@ -168,16 +161,6 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 
 <script type="text/javascript">
-$(document).on('click', '#lesson-edit-save', function () {
-    var url = '<?= Url::to(['lesson/update', 'id' => $model->id]); ?>';
-    $.ajax({
-        url: url,
-        type: 'post',
-        data: $('#lesson-edit-form').serialize()
-    });
-    return false;
-});
-
 $(document).on('click', '.lesson-edit-calendar', function () {
     var teacherId = $('#lesson-teacherid').val();
     var duration = $('#course-duration').val();
