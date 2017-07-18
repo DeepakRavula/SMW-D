@@ -18,6 +18,8 @@ use common\models\Enrolment;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use common\models\CourseGroup;
+use backend\models\UserForm;
+use yii\base\Model;
 use common\models\CourseSchedule;
 use yii\web\Response;
 use common\models\TeacherAvailability;
@@ -161,41 +163,75 @@ public function getHolidayEvent($date)
      *
      * @return mixed
      */
+	public function getCourseDate($courseScheduleModels)
+	{
+		$courseDates = ArrayHelper::getColumn($courseScheduleModels, function ($courseSchedule) {
+    		return $courseSchedule['fromTime'];
+		});
+		usort($courseDates, function($a, $b) {
+			$date1 = new \DateTime($a);
+			$date2 = new \DateTime($b);
+
+			return $date1 < $date2 ? -1: 1;
+		});
+		return $courseDates[0];
+	}
     public function actionCreate()
     {
-		$post = Yii::$app->request->post();
+		$request = Yii::$app->request;
+        $response = Yii::$app->response;
         $model = new Course();
-        $courseSchedule = new CourseSchedule();
+        $courseSchedule = [new CourseSchedule()];
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
 		
         $model->locationId = Yii::$app->session->get('location_id');
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
         $model->on(Course::EVENT_CREATE, [new CourseLog(), 'create']);
         $model->userName = $userModel->publicIdentity;
-		$model->load($post);
-		$courseSchedule->load($post);	
-        if (Yii::$app->request->isPost) {
-			if($model->save()) {
-				$limit = CourseGroup::LESSONS_PER_WEEK_COUNT_ONE;
-				if((int)$model->courseGroup->lessonsPerWeekCount === CourseGroup::LESSONS_PER_WEEK_COUNT_TWO) {
-					$limit = CourseGroup::LESSONS_PER_WEEK_COUNT_TWO;
-				}
-				for ($i = 0; $i < $limit; $i++) {
-        			$courseScheduleModel = new CourseSchedule();
-					$courseScheduleModel->courseId = $model->id;
-					$courseScheduleModel->day = $courseSchedule->day[$i];
-					$courseScheduleModel->duration = $courseSchedule->duration[$i];
-					$courseScheduleModel->fromTime = $courseSchedule->fromTime[$i];
-					$courseScheduleModel->save();
-				}
-				$model->createLessons();	
-            	$model->trigger(Course::EVENT_CREATE);
-			}
-            return $this->redirect(['lesson/review', 'courseId' => $model->id]);
+
+        if ($model->load($request->post())) {
+			$courseScheduleModels = UserForm::createMultiple(CourseSchedule::classname());
+			Model::loadMultiple($courseScheduleModels, $request->post());
+
+			if ($request->isAjax) {
+                $response->format = Response::FORMAT_JSON;
+                return ArrayHelper::merge(
+                    ActiveForm::validate($model),
+					ActiveForm::validateMultiple($courseScheduleModels)
+				);
+            }
+			$valid = $model->validate();
+            $valid = (Model::validateMultiple($courseScheduleModels)) && $valid;
+			if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+					$model->startDate = $this->getCourseDate($courseScheduleModels);
+					$model->lessonsPerWeekCount = count($courseScheduleModels);	
+                    if ($flag = $model->save(false)) {
+                        foreach ($courseScheduleModels as $courseScheduleModel) {
+                            $courseScheduleModel->courseId = $model->id;
+							$dayList = Course::getWeekdaysList();
+							$courseScheduleModel->day = array_search($courseScheduleModel->day, $dayList);
+                            if (! ($flag = $courseScheduleModel->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
+                    }
+                    if ($flag) {
+                        $transaction->commit();
+						$model->createLessons();	
+            			$model->trigger(Course::EVENT_CREATE);
+            			return $this->redirect(['lesson/review', 'courseId' => $model->id]);
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            }
         } else {
             return $this->render('create', [
                 'model' => $model,
-				'courseSchedule' => $courseSchedule
+				'courseSchedule' => (empty($courseSchedule)) ? [new CourseSchedule] : $courseSchedule
             ]);
         }
     }

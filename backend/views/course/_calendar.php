@@ -32,15 +32,7 @@ use yii\helpers\Url;
 
 <script>
 $(document).ready(function(){
-	var groupCourse = {
-		'lessonCountOne' : 1,
-		'lessonCountTwo' : 2,
-	}		
-	$(document).on('click', '.course-apply', function (e) {
-		$('#course-calendar-modal').modal('hide');
-		return false;
-	});
-	$(document).on('click', '.course-cancel', function (e) {
+	$(document).on('click', '.course-apply, .course-cancel', function (e) {
 		$('#course-calendar-modal').modal('hide');
 		return false;
 	});
@@ -48,14 +40,10 @@ $(document).ready(function(){
 		$('#course-calendar-modal').modal('show');
         $('#course-calendar-modal .modal-dialog').css({'width': '1000px'});
 		var date = moment(new Date()).format('DD-MM-YYYY');
-	    renderCalendar(date);
+	    renderCalendar(date, this);
 	});
-    $(document).on('change', '#course-teacherid', function () {
-        var date = $('#course-calendar').fullCalendar('getDate');
-        renderCalendar(date);
-    });
-
-    function renderCalendar(date) {
+    
+    function renderCalendar(date, lessonFreeSlotPicker) {
         var events, availableHours;
         var teacherId = $('#course-teacherid').val();
         $.ajax({
@@ -66,14 +54,15 @@ $(document).ready(function(){
             {
                 events = response.events;
                 availableHours = response.availableHours;
-                refreshCalendar(availableHours, events, date);
+                refreshCalendar(availableHours, events, date, lessonFreeSlotPicker);
             }
         });
     }
 
-    function refreshCalendar(availableHours, events, date) {
+    function refreshCalendar(availableHours, events, date, lessonFreeSlotPicker) {
         $('#course-calendar').fullCalendar('destroy');
         $('#course-calendar').fullCalendar({
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
             defaultDate: moment(new Date()).format('YYYY-MM-DD'),
             header: {
                 left: 'prev,next today',
@@ -94,17 +83,12 @@ $(document).ready(function(){
             overlapEventsSeparate: true,
             events: events,
             select: function (start, end, allDay) {
-                $('#courseschedule-day-0').val(moment(start).day());
-                $('#course-startdate-0').val(moment(start).format('YYYY-MM-DD HH:mm:ss'));
-                $('#courseschedule-fromtime-0').val(moment(start).format('HH:mm:ss'));
-                $('#courseschedule-duration-0').val($('#courseschedule-duration').val());
-				$('.course-summary').text(
-					moment(start).format('DD-MM-YYYY') + ', ' +
-					moment(start).format('dddd') + ', ' +
-					moment(start).format('hh:mm A'));
+				$(lessonFreeSlotPicker).parent().find('.lesson-time').find('.time').val(moment(start).format('DD-MM-YYYY h:mm A'));
+				$(lessonFreeSlotPicker).parent().find('.lesson-day').find('.day').val(moment(start).format('dddd'));
+				var duration = $(lessonFreeSlotPicker).parent().find('.lesson-duration').find('.duration').val();
                 $('#course-calendar').fullCalendar('removeEvents', 'newEnrolment');
 				var endtime = start.clone();
-                var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
+                var durationMinutes = moment.duration(duration).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
                 $('#course-calendar').fullCalendar('renderEvent',
                     {
@@ -124,15 +108,5 @@ $(document).ready(function(){
             selectHelper: true,
         });
     }
-
-    $('#group-course-form').on('beforeSubmit', function (e) {
-        var courseDay = $('#courseschedule-day-0').val();
-		var lessonCount = $('#course-lessonsperweekcount').val();
-        if( ! courseDay && (lessonCount == groupCourse.lessonCountOne || lessonCount == groupCourse.lessonCountTwo)) {
-            $('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
-            $(window).scrollTop(0);
-            return false;
-        }
-    });
 });
 </script>

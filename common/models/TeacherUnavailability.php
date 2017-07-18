@@ -33,7 +33,7 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
         return [
             [['teacherId'], 'integer'],
             [['fromDate', 'toDate'], 'required'],
-            [['fromTime', 'toTime'], 'safe'],
+            [['fromTime', 'toTime', 'reason'], 'safe'],
         ];
     }
 
@@ -49,6 +49,7 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
             'toDate' => 'To Date',
             'fromTime' => 'From Time',
             'toTime' => 'To Time',
+			'reason' => 'Reason'
         ];
     }
 

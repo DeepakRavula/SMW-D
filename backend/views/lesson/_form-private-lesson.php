@@ -27,6 +27,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
     ?>
 
 <?php $form = ActiveForm::begin([
+            'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
             'action' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
             'options' => [
@@ -143,7 +144,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         </div>
 	</div>
    <div class="col-md-12 p-l-20 form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-primary', 'name' => 'button']) ?>
 		<?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
         ?>
 		<div class="clearfix"></div>
@@ -165,49 +166,56 @@ $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
 $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 
-
 <script type="text/javascript">
-$(document).ready(function () {
-    $(document).on('click', '.lesson-edit-calendar', function () {
-        var teacherId = $('#lesson-teacherid').val();
-        var duration = $('#course-duration').val();
-        var params = $.param({ id: teacherId });
-        $.ajax({
-            url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
-            type: 'get',
-            dataType: "json",
-            success: function (response)
-            {
-                var options = {
-                    duration: duration,
-                    businessHours: response.availableHours,
-                    minTime: '<?= $minTime; ?>',
-                    maxTime: '<?= $maxTime; ?>',
-                    eventUrl: '<?= Url::to(['calendar/show-events', 'lessonId' => $model->id]); ?>&teacherId=' + teacherId,
-                };
-                $('#calendar-date-time-picker').calendarPicker(options);
-            }
-        });
-        return false;
-        
+$(document).on('click', '#lesson-edit-save', function () {
+    var url = '<?= Url::to(['lesson/update', 'id' => $model->id]); ?>';
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: $('#lesson-edit-form').serialize()
     });
-    
-    $(document).on('change', '#calendar-date-time-picker-date', function () {
-        $.ajax({
-            url: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>',
-            type: 'post',
-            dataType: "json",
-            data: $(this).serialize(),
-            success: function (response)
-            {
-                if (!response.status) {
-                    $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
-                    $('#calendar-date-time-picker-date').val('');
-                    $('#calendar-date-time-picker-error-notification').html(response.error).fadeIn().delay(5000).fadeOut();
-                }
-            }
-        });
-        return false;
+    return false;
+});
+
+$(document).on('click', '.lesson-edit-calendar', function () {
+    var teacherId = $('#lesson-teacherid').val();
+    var duration = $('#course-duration').val();
+    var params = $.param({ id: teacherId });
+    $.ajax({
+        url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
+        type: 'get',
+        dataType: "json",
+        success: function (response)
+        {
+            var options = {
+                duration: duration,
+                businessHours: response.availableHours,
+                minTime: '<?= $minTime; ?>',
+                maxTime: '<?= $maxTime; ?>',
+                eventUrl: '<?= Url::to(['calendar/show-events', 'lessonId' => $model->id]); ?>&teacherId=' + teacherId,
+            };
+            $('#calendar-date-time-picker').calendarPicker(options);
+        }
     });
+    return false;
+
+});
+
+$(document).on('change', '#calendar-date-time-picker-date', function () {
+    $.ajax({
+        url: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>',
+        type: 'post',
+        dataType: "json",
+        data: $(this).serialize(),
+        success: function (response)
+        {
+            if (!response.status) {
+                $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
+                $('#calendar-date-time-picker-date').val('');
+                $('#calendar-date-time-picker-error-notification').html(response.error).fadeIn().delay(5000).fadeOut();
+            }
+        }
+    });
+    return false;
 });
 </script>
