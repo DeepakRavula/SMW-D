@@ -13,9 +13,9 @@ use yii\bootstrap\Modal;
 		padding:0;
 	}
 </style>
-<div id="lesson-note" class="col-md-12 p-l-10">
+<div class="col-md-12 p-l-10">
 	<h4 class="pull-left m-r-20">Notes</h4>
-	<a href="#" class="text-add-new"><i class="fa fa-plus"></i></a>
+	<a href="#" id="lesson-note" class="text-add-new"><i class="fa fa-plus"></i></a>
 	<div class="clearfix"></div>
 </div>
 <?php
