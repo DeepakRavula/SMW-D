@@ -157,7 +157,18 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return !empty($this->getInvoice($lessonId));
     }
-
+	public function canDeleted()
+	{
+		$completedLessons = Lesson::find()
+			->joinWith(['course' => function($query) {
+				$query->joinWith(['enrolment' =>function($query) {
+					$query->andWhere(['enrolment.id' => $this->id]);
+				}]);
+			}])
+			->andWhere(['<=', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
+			->all();
+		return !empty($completedLessons) ? true : false;
+	}
     public function getInvoice($lessonId)
     {
         $enrolmentId = $this->id;
