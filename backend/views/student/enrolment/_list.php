@@ -94,10 +94,16 @@ echo GridView::widget([
 					]);
 				},
 				'delete' => function ($url, $model, $key) {
-					return Html::a('<i class="fa fa-trash-o"></i>', '#', [
+					return Html::a('<i class="fa fa-trash-o"></i>', [
+            'enrolment/delete', 'id' => $model->id
+        ], [
 							'id' => 'enrolment-delete-' . $model->id,
 							'title' => Yii::t('yii', 'Delete'),
-							'class' => 'enrolment-delete m-l-10 btn-danger btn-xs'
+							'class' => 'enrolment-delete m-l-10 btn-danger btn-xs',
+//						'data' => [
+//							'confirm' => 'Are you sure you want to delete this item?',
+//                        	'method' => 'post',
+//						]
 					]);
 				},
 			],
@@ -106,6 +112,9 @@ echo GridView::widget([
 					return $model->course->program->isPrivate();
 				},
 				'reschedule' => function ($model, $key, $index) {
+					return $model->course->program->isPrivate();
+				},
+				'delete' => function ($model, $key, $index) {
 					return $model->course->program->isPrivate();
 				},
 			]
