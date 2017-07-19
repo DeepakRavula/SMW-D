@@ -20,7 +20,7 @@ use yii\helpers\Url;
  	<div class="row">
 		<div class="col-md-3">
    			<?php echo $form->field($model, 'amount')->textInput([
-                'class' => 'payment-amount',
+                'class' => 'payment-amount form-control',
                 'placeholder' => 'Amount',
             ])->label(false); ?>
         </div>
