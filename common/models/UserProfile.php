@@ -102,6 +102,11 @@ class UserProfile extends ActiveRecord
         return $this->hasOne(Lesson::className(), ['teacherId' => 'user_id']);
     }
 
+	public function getCourses()
+    {
+        return $this->hasMany(Course::className(), ['teacherId' => 'user_id']);
+    }
+
     /**
      * @return null|string
      */
