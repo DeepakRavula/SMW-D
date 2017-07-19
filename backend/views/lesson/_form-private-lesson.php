@@ -36,7 +36,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             ]
         ]); ?>
    <div class="row-fluid">
-	   <div class="col-md-3">
+	   <div class="col-md-2">
 		    <?php if($model->isUnscheduled()) : ?>
 				<?php $model->duration = $model->getCreditUsage(); ?> 
 		    <?php endif; ?>
@@ -75,14 +75,26 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 		   <div class="row">
 			<div class="col-md-6" style="width:60%;">
 				<?php
-				echo $form->field($model, 'date')->textInput([
-                                    'readonly' => true,
-                                    'id' => 'calendar-date-time-picker-date',
-                                    'validation-url' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
-                                    ])->label('Reschedule Date');
+				echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
+					'options' => [
+                                            'id' => 'calendar-date-time-picker-date',
+                                            'validation-url' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
+                                            'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
+					],
+                                        'disabled' => true,
+                                        'pickerButton' => false,
+                                        'readonly' => true,
+					'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+					'pluginOptions' => [
+						'autoclose' => true,
+						'format' => 'dd-mm-yyyy HH:ii P',
+						'showMeridian' => true,
+						'minuteStep' => 15,
+					]
+				])->label('Reschedule Date');
 				?>
 			</div>
-			<div class="col-md-3" style="padding:0;">
+                       <div class="col-md-3" style="padding:0;">
 					<div class="hand lesson-edit-calendar">
 					<p> <label> Calendar View </label></p>
 					<span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
@@ -183,5 +195,9 @@ $(document).on('click', '.lesson-edit-calendar', function () {
         }
     });
     return false;
+});
+
+$(document).on('click', '.glyphicon-remove', function () {
+    $('#calendar-date-time-picker-date').val('');
 });
 </script>
