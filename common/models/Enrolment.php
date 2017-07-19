@@ -166,7 +166,7 @@ class Enrolment extends \yii\db\ActiveRecord
 				}]);
 			}])
 			->andWhere(['<=', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
-			->all();
+			->exists();
 		return !empty($completedLessons) ? true : false;
 	}
     public function getInvoice($lessonId)
