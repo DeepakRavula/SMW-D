@@ -112,7 +112,8 @@ class Lesson extends \yii\db\ActiveRecord
             }],
             [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyContext'], 'safe'],
-            [['classroomId'], ClassroomValidator::className(), 'on' => self::SCENARIO_EDIT_CLASSROOM],
+            [['classroomId'], ClassroomValidator::className(), 'on' => [self::SCENARIO_EDIT, 
+                self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT, self::SCENARIO_EDIT_REVIEW_LESSON]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
@@ -447,10 +448,10 @@ class Lesson extends \yii\db\ActiveRecord
         }
         if ($this->getRootLesson()) {
             $rootLesson = $this->getRootLesson();
-            if($rootLesson->id !== $this->id) {
+            if($rootLesson->id !== $this->id && empty($this->colorCode)) {
                 $class = 'lesson-rescheduled';
             }
-            if ($rootLesson->teacherId !== $this->teacherId) {
+            if ($rootLesson->teacherId !== $this->teacherId && empty($this->colorCode)) {
                 $class = 'teacher-substituted';
             }
         }
