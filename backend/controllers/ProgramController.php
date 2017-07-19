@@ -149,18 +149,9 @@ class ProgramController extends Controller
         ]);
          if ($model->load(Yii::$app->request->post()) && $model->save()) {
             if ($model->status == Program::STATUS_INACTIVE) {
-                Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Program has been updated successfully',
-               ]);
-
-                return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
+           return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
             } else {
-                Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Program has been updated successfully',
-            ]);
-                return  [
+                 return  [
 				'status' => true,
 			];
                 
