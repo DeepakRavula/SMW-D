@@ -201,10 +201,16 @@ class LessonController extends Controller
 
     public function actionValidateOnUpdate($id)
     {
+        $errors = [];
         $model = $this->findModel($id);
         $model->setScenario(Lesson::SCENARIO_EDIT);
         if ($model->load(Yii::$app->request->post())) {
-            return  ActiveForm::validate($model);
+            if (!empty($model->date)) {
+                $errors = ActiveForm::validate($model);
+                return $errors;
+            } else {
+                return $errors;
+            }
         }
     }
 
