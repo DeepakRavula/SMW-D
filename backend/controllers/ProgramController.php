@@ -147,14 +147,13 @@ class ProgramController extends Controller
         $data = $this->renderAjax('//program/_form', [
             'model' => $model,
         ]);
-         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             if ($model->status == Program::STATUS_INACTIVE) {
-           return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
+                return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
             } else {
-                 return  [
-				'status' => true,
-			];
-                
+                return [
+                    'status' => true,
+                ];
             }
         }
         return [
