@@ -42,6 +42,7 @@ echo $this->render('_profile', [
         </div>
     </div>
 </div>
+<div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div class="tabbable-panel">
 	<div class="tabbable-line">
@@ -269,41 +270,20 @@ echo $this->render('_profile', [
 		
 		 $(document).on('click', '.enrolment-delete', function () {
             $.ajax({
-                url: '<?= Url::to(['enrolment/preview']); ?>?id=' + $(this).parent().parent().data('key'),
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $('#enrolment-preview-modal .modal-body').html(response.data);
-                        $('#enrolment-preview-modal').modal('show');
-                    }
-                }
-            });
-        });
-		$(document).on('click', '.enrolment-delete-cancel-button', function () {
-            $('#enrolment-preview-modal').modal('hide');
-		});
-		$(document).on('beforeSubmit', '#enrolment-delete-form', function (e) {
-            $.ajax({
-                url: $(this).attr('action'),
+                url: '<?= Url::to(['enrolment/delete']); ?>?id=' + $(this).parent().parent().data('key'),
                 type: 'post',
-                dataType: "json",
-                data: $(this).serialize(),
                 success: function (response)
                 {
                     if (response.status)
                     {
-            			$('#enrolment-preview-modal').modal('hide');
                         $.pjax.reload({container: '#enrolment-grid', skipOuterContainers:true, timeout:6000});
-                        $.pjax.reload({container: '#student-lesson-listing', skipOuterContainers:true, timeout: 6000});
-                    	$('#enrolment-delete-success').text("Enrolment has been deleted successfully").fadeIn().delay(3000).fadeOut();
-                    }
+                    } else {
+						$('#enrolment-delete').html('You are not allowed to delete this enrolment.').fadeIn().delay(3000).fadeOut();
+					}
                 }
             });
-            return false;
-		});
+			return false;
+        });
         $(document).on('beforeSubmit', '#lesson-form', function (e) {
             $.ajax({
                 url: $(this).attr('action'),
