@@ -17,7 +17,7 @@ $(document).on('change', '#calendar-date-time-picker-date', function () {
             data: $(this).serialize(),
             success: function (response)
             {
-                if (!$.isEmptyObject(response)) {
+                if (!$.isEmptyObject(response['lesson-date'])) {
                     $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
                     $('#calendar-date-time-picker-error-notification').html(response['lesson-date']).fadeIn().delay(5000).fadeOut();
                 }

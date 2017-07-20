@@ -70,37 +70,28 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 		))->label();
             ?>  
         </div>
-	   
-	   <div class="col-md-5">
-		   <div class="row">
-			<div class="col-md-6" style="width:60%;">
-				<?php
-				echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-					'options' => [
-                                            'id' => 'calendar-date-time-picker-date',
-                                            'validation-url' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
-                                            'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
-					],
-                                        'disabled' => true,
-                                        'pickerButton' => false,
-                                        'readonly' => true,
-					'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
-					'pluginOptions' => [
-						'autoclose' => true,
-						'format' => 'dd-mm-yyyy HH:ii P',
-						'showMeridian' => true,
-						'minuteStep' => 15,
-					]
-				])->label('Reschedule Date');
-				?>
-			</div>
-                       <div class="col-md-3" style="padding:0;">
-					<div class="hand lesson-edit-calendar">
-					<p> <label> Calendar View </label></p>
-					<span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
-				</div>
-			</div>
-		   </div>
+
+        <div class="col-md-5">
+            <div class="row">
+            <div class="col-md-6" style="width:60%;">
+            <div class="form-group field-calendar-date-time-picker-date">
+                <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
+                <div id="calendar-date-time-picker-date-datetime" class="input-group date">
+                    <input type="text" id="calendar-date-time-picker-date" class="form-control" name="Lesson[date]"
+                        value='<?php echo $model->date; ?>' readonly validation-url='<?php echo Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>'>
+                    <span class="input-group-addon" title="Clear field">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </span>
+                </div>
+            </div>       
+            </div>
+            <div class="col-md-3" style="padding:0;">
+                <div class="hand lesson-edit-calendar">
+                <p> <label> Calendar View </label></p>
+                <span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
+                </div>
+            </div>
+            </div>
         </div>
 	</div>
 	<div class="row-fluid">
@@ -198,6 +189,6 @@ $(document).on('click', '.lesson-edit-calendar', function () {
 });
 
 $(document).on('click', '.glyphicon-remove', function () {
-    $('#calendar-date-time-picker-date').val('');
+    $('#calendar-date-time-picker-date').val('').trigger('change');
 });
 </script>

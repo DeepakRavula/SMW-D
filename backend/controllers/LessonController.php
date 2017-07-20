@@ -251,9 +251,9 @@ class LessonController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->date = $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date);
         $oldLesson = clone $model;
         $oldDate = $model->date;
+        $model->date = $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date);
         $oldTeacherId = $model->teacherId;
         $user = User::findOne(['id'=>Yii::$app->user->id]);
         $model->userName = $user->publicIdentity;
