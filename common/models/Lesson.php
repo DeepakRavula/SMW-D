@@ -701,7 +701,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return isset($changedAttributes['date']) &&
             !empty($this->date) && new \DateTime($changedAttributes['date'])
-                !== new \DateTime($this->date);
+                != new \DateTime($this->date);
     }
 
     public function isRescheduledByClassroom($changedAttributes)
