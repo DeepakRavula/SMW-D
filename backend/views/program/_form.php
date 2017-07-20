@@ -80,7 +80,7 @@ if (!$model->isNewRecord) {
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php 
             if (!$model->isNewRecord) {
-                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+                echo Html::a('Cancel','#', ['class' => 'btn btn-default program-edit-cancel-button']);
             }
         ?>
     </div>

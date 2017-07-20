@@ -38,7 +38,7 @@ foreach ($roles as $name => $description) {
     <div class="clearfix"></div>
     <?php if ($role === User::ROLE_ADMINISTRATOR):?>
         <div class="col-xs-2 m-t-15 p-l-0">
-            <?php echo Html::a('<i class="fa fa-pencil" aria-hidden="true">Edit</i>','#', [
+            <?php echo Html::a('<i class="fa fa-pencil" aria-hidden="true"></i> Edit','#', [
 							'id' => 'edit-program-button',
 							'class' => 'edit-program-button m-l-20'
 						]); ?>
@@ -113,6 +113,9 @@ foreach ($roles as $name => $description) {
        $(document).on('click', '.edit-program-button', function () {
 			$('#program-modal').modal('show');
 			return false;
+		});
+        $(document).on('click', '.program-edit-cancel-button', function () {
+			$('#program-modal').modal('hide');
 		});
     $(document).on('beforeSubmit', '#program-form', function (e) {
             var programId = <?= $model->id; ?>;
