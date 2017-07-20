@@ -95,7 +95,8 @@ $query->andFilterWhere(['p.id' => $this->program]);
  }      if (! $this->showAllEnrolments) {
 				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
 				->isConfirmed()
-                                ->isRegular();
+                ->isRegular()
+                ->orderBy(['course.endDate' => SORT_ASC]);
         }
 
         return $dataProvider;
