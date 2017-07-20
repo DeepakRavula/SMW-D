@@ -16,7 +16,7 @@ use yii\helpers\Url;
     ]); ?>
  	<div class="row">
             <div class="col-xs-3">
-   			<?php echo $form->field($model, 'amount')->textInput(['class' => 'payment-amount'])->label('Amount Needed') ?>
+   			<?php echo $form->field($model, 'amount')->textInput(['class' => 'payment-amount form-control'])->label('Amount Needed') ?>
         </div>
 		<div class="col-xs-3">
    			<?php echo $form->field($model, 'reference')->textInput()->label('Reference Number') ?>

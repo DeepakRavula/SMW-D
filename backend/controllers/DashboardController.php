@@ -10,11 +10,23 @@ use common\models\Enrolment;
 use common\models\Payment;
 use common\models\Student;
 use backend\models\search\DashboardSearch;
+use yii\helpers\ArrayHelper;
+use common\models\User;
+use common\models\UserLocation;
 
 class DashboardController extends \yii\web\Controller
 {
     public function actionIndex()
     {
+		$roles = ArrayHelper::getColumn(
+			Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
+				'name'
+			);
+		$role = end($roles);
+		if ($role !== User::ROLE_ADMINISTRATOR) {
+			$userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
+			Yii::$app->session->set('location_id', $userLocation->location_id);
+		}
         $searchModel = new DashboardSearch();
         $currentDate = new \DateTime();
         $searchModel->fromDate = $currentDate->format('1-m-Y');

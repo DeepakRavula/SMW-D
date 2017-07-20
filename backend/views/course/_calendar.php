@@ -37,6 +37,7 @@ $(document).ready(function(){
 		return false;
 	});
 	$(document).on('click', '.course-calendar-icon', function() {
+        $('#course-calendar').fullCalendar('destroy');
 		$('#course-calendar-modal').modal('show');
         $('#course-calendar-modal .modal-dialog').css({'width': '1000px'});
 		var date = moment(new Date()).format('DD-MM-YYYY');

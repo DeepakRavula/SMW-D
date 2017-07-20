@@ -338,17 +338,6 @@ class EnrolmentController extends Controller
         return $lessons;
     }
 
-	public function actionPreview($id)
-	{
-		$model = $this->findModel($id);
-		$data =  $this->renderAjax('/student/enrolment-preview', [
-            'model' => $model,
-        ]);	
-		return [
-			'status' => true,
-			'data' => $data
-		];
-	}
     /**
      * Updates an existing Enrolment model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -430,19 +419,22 @@ class EnrolmentController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-		if ($model->course->program->isPrivate()) {
+		if ($model->course->program->isPrivate() && $model->canDeleted()) {
             $lessons = Lesson::find()
-                    ->where(['courseId' => $model->courseId])
-                    ->andWhere(['>', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
-                    ->all();
+				->where(['courseId' => $model->courseId])
+				->all();
             foreach ($lessons as $lesson) {
                 $lesson->delete();
             }
-        }
-		$model->delete();
-        return [
-			'status' => true,
-		];
+			$model->delete();
+			return [
+				'status' => true,
+			];
+        } else {
+			return [
+				'status' => false,
+			];
+		}
     }
 
     /**

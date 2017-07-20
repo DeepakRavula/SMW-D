@@ -33,10 +33,12 @@ if (!$model->isNewRecord) {
 }
 
 </style>
-<div class="program-form">
-    <?php $form = ActiveForm::begin(); ?>
+<div class="lesson-form">
+<?php $form = ActiveForm::begin([
+	'id' => 'program-form',
+]); ?>
    	<div class="row">
-   		<div class="col-md-6">
+   		<div class="col-md-4">
    			<div class="row">
 				<div class="col-md-12">
 					<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
@@ -54,7 +56,7 @@ if (!$model->isNewRecord) {
    				
    			</div>
    		</div>
-   		<div class="col-md-6">
+   		<div class="col-md-8">
    			<?php if ((int) $model->type === Program::TYPE_PRIVATE_PROGRAM) : ?>
 				<div class="smw-box col-md-11 m-l-20 m-b-30 monthly-estimate">
 					<div id="program-rate-per-month" >
