@@ -58,7 +58,7 @@ class InvoiceLineItemQuery extends \yii\db\ActiveQuery
 				'location_id' => $locationId,
 				'type' => Invoice::TYPE_INVOICE,
 				])	
-			->andWhere(['between', 'date', (new \DateTime($date))->format('Y-m-d'), (new \DateTime($date))->format('Y-m-d')])
+			->andWhere(['between', 'invoice.date', (new \DateTime($date))->format('Y-m-d'), (new \DateTime($date))->format('Y-m-d')])
 			->notDeleted();
 		}])
 		->andWhere(['>', 'tax_rate', 0]);
