@@ -172,6 +172,9 @@ class PaymentCycle extends \yii\db\ActiveRecord
         if ($user->hasDiscount()) {
             $invoice->addCustomerDiscount($user);
         }
+        if ($this->enrolment->hasDiscount()) {
+            $invoice->addEnrolmentDiscount($this->enrolment);
+        }
         return $invoice;
     }
 

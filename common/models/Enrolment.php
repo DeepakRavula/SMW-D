@@ -106,6 +106,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(PaymentFrequency::className(), ['id' => 'paymentFrequencyId']);
     }
 
+    public function getPaymentFrequencyDiscount()
+    {
+        return $this->hasOne(EnrolmentDiscount::className(), ['enrolmentId' => 'id']);
+    }
+
     public function getStudent()
     {
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
@@ -649,6 +654,9 @@ class Enrolment extends \yii\db\ActiveRecord
             if ($user->hasDiscount()) {
                 $invoice->addCustomerDiscount($user);
             }
+            if ($this->hasDiscount()) {
+                $invoice->addEnrolmentDiscount($this);
+            }
             return $invoice;
         }
     }
@@ -656,5 +664,10 @@ class Enrolment extends \yii\db\ActiveRecord
     public function isExtra()
     {
         return $this->type === self::TYPE_EXTRA;
+    }
+
+    public function hasDiscount()
+    {
+        return !empty($this->paymentFrequencyDiscount);
     }
 }
