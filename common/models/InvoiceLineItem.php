@@ -379,15 +379,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
 		$locationId = $this->invoice->location_id;
 		$taxTotal = self::find()
-        	->joinWith(['invoice' => function($query) use($date, $locationId) {
-			$query->andWhere([
-				'location_id' => $locationId,
-				'type' => Invoice::TYPE_INVOICE,
-			])	
-			->andWhere(['between', 'date', (new \DateTime($date))->format('Y-m-d'), (new \DateTime($date))->format('Y-m-d')])
-			->notDeleted();
-		}])
-		->andWhere(['>', 'tax_rate', 0])
+        	->taxRateSummary($date, $locationId)
             ->sum('tax_rate');
 
 		return $taxTotal;
@@ -397,15 +389,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
 		$locationId = $this->invoice->location_id;
 		$amount = self::find()
-        	->joinWith(['invoice' => function($query) use($date, $locationId) {
-			$query->andWhere([
-				'location_id' => $locationId,
-				'type' => Invoice::TYPE_INVOICE,
-			])	
-			->andWhere(['between', 'date', (new \DateTime($date))->format('Y-m-d'), (new \DateTime($date))->format('Y-m-d')])
-			->notDeleted();
-		}])
-		->andWhere(['>', 'tax_rate', 0])
+        	->taxRateSummary($date, $locationId)
             ->sum('amount');
 
 		return $amount;
@@ -415,15 +399,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
 		$locationId = $this->invoice->location_id;
 		$total = self::find()
-        	->joinWith(['invoice' => function($query) use($date, $locationId) {
-			$query->andWhere([
-				'location_id' => $locationId,
-				'type' => Invoice::TYPE_INVOICE,
-			])	
-			->andWhere(['between', 'date', (new \DateTime($date))->format('Y-m-d'), (new \DateTime($date))->format('Y-m-d')])
-			->notDeleted();
-		}])
-		->andWhere(['>', 'tax_rate', 0])
+        	->taxRateSummary($date, $locationId)
             ->sum('amount+tax_rate');
 
 		return $total;
