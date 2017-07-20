@@ -114,6 +114,9 @@ foreach ($roles as $name => $description) {
 			$('#program-modal').modal('show');
 			return false;
 		});
+        $(document).on('click', '.program-edit-cancel-button', function () {
+			$('#program-modal').modal('hide');
+		});
     $(document).on('beforeSubmit', '#program-form', function (e) {
             var programId = <?= $model->id; ?>;
             var url = '<?= Url::to(['program/update']);?>?id=' + programId;
