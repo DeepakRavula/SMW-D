@@ -73,4 +73,9 @@ class UserQuery extends ActiveQuery
 
         return $this;
     }
+    public function sortuser()
+    {
+        $this->joinWith('userProfile')
+            ->orderBy('userProfile.firtname');
+    }
 }

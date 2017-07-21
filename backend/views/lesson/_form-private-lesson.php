@@ -121,7 +121,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 		   <?php $locationId = Yii::$app->session->get('location_id'); ?>
 		   <?=
                 $form->field($model, 'classroomId')->widget(Select2::classname(), [
-                                'data' => ArrayHelper::map(Classroom::find()
+                                'data' => ArrayHelper::map(Classroom::find()->orderBy(['name' => SORT_ASC])
                                     ->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
 				'pluginOptions' => [
                                     'placeholder' => 'Select Classroom',

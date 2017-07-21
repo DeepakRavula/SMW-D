@@ -38,7 +38,7 @@ use common\models\Student;
                     ->where(['raa.item_name' => [User::ROLE_OWNER, User::ROLE_STAFFMEMBER]])
                     ->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
                     ->notDeleted()
-                    ->all(),
+                     ->all(),
                 'id', 'userProfile.fullName'),
             'pluginOptions' => [
 				'allowClear' => true,
@@ -54,6 +54,7 @@ use common\models\Student;
                         ->notDeleted()
 			->location($locationId)
 			->active()
+            ->orderBy(['first_name' => SORT_ASC])
             ->all(), 'id', 'fullName'),
             'pluginOptions' => [
 				'allowClear' => true,

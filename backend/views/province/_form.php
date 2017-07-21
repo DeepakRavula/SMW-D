@@ -24,7 +24,7 @@ use common\models\Country;
 		<div class="col-md-4 ">
 			<?php
             echo $form->field($model, 'country_id')->dropDownList(ArrayHelper::map(
-                            Country::find()->all(), 'id', 'name'
+                            Country::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
             ))
             ?>
 		</div>

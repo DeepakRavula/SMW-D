@@ -68,6 +68,7 @@ class ScheduleController extends Controller
                 ->where(['user_location.location_id' => $locationId]);
             }])
             ->orderBy(['teacher_availability_day.id' => SORT_DESC])
+           ->orderBy (['user_profile.firstname' => SORT_ASC])
             ->groupBy('teacher_location_id')
             ->all();
         $availableTeachersDetails = ArrayHelper::toArray($teachersAvailabilities, [
