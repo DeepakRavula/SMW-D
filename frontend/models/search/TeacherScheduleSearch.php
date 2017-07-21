@@ -25,12 +25,6 @@ class TeacherScheduleSearch extends Lesson
         ];
     }
 
-    public function __construct($slug, $config = [])
-    {
-        $this->slug=$slug;
-        parent::__construct($config);   
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -47,9 +41,9 @@ class TeacherScheduleSearch extends Lesson
      */
     public function search($params)
     {
-        $location = Location::find()->where(['like', 'slug', $this->slug])->one();
-        $locationId = $location->id;
-        $lessons = Lesson::find()->location($locationId)->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])->notDeleted();
+        $lessons = Lesson::find()
+			->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
+			->notDeleted();
         $dataProvider= new ActiveDataProvider([
             'query' => $lessons,
             'pagination' => false,

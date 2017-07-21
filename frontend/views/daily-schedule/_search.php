@@ -21,40 +21,31 @@ use yii\helpers\Url;
 </style>
 <div class="user-search">
     <?php $form = ActiveForm::begin([
-        'action' => Url::to(['daily-schedule/index', 'slug' => $searchModel->slug]),
+        'action' => Url::to(['daily-schedule/index']),
         'method' => 'get',
     ]); ?>
     <div class="row">
     <div class="col-md-3">
          <?php
-         $location = Location::find()->where(['like', 'slug', $searchModel->slug])->one();
-         $locationId = $location->id;
          $teachers = ArrayHelper::map(
                     User::find()
                         ->notDeleted()
-                        ->allteachers($locationId)
+                        ->allteachers()
                         ->all(), 'id', 'publicIdentity');
 
         echo $form->field($searchModel, 'findTeacher')->widget(Select2::classname(), [
                 'data' => $teachers,
                 'options' => [
                     'id' => 'schedule-teacher',
-                    'placeholder' => 'Select teacher',
+                    'placeholder' => 'Location ',
                 ],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
             ]);
         ?>
-
-         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>  
-   
-    <div class="col-md-3 form-group m-t-20">
-        <div class="clearfix"></div>
     </div>
-    </div>
-
     <?php ActiveForm::end(); ?>
 
 </div>
