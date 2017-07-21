@@ -274,19 +274,6 @@ class LessonController extends Controller
                 $privateLessonModel = new PrivateLesson();
             }
 
-            if ($privateLessonModel->load(Yii::$app->request->post())) {
-                $privateLessonModel->lessonId = $model->id;
-                if (!empty($privateLessonModel->expiryDate)) {
-                    $expiryDate = \DateTime::createFromFormat('d-m-Y g:i A', $privateLessonModel->expiryDate);
-                    $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-                } else {
-                    $privateLessonModel->expiryDate = $model->date;
-                    $privateLessonModel->save();
-
-                    return $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
-                }
-                $privateLessonModel->save();
-            }
             $data = ['model' => $model, 'privateLessonModel' => $privateLessonModel];
         }
 		$request = Yii::$app->request;
