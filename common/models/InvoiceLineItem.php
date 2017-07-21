@@ -379,7 +379,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
 		$locationId = $this->invoice->location_id;
 		$taxTotal = self::find()
-        	->taxRate($date, $locationId)
+        	->taxRateSummary($date, $locationId)
             ->sum('tax_rate');
 
 		return $taxTotal;
@@ -389,7 +389,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
 		$locationId = $this->invoice->location_id;
 		$amount = self::find()
-        	->taxRate($date, $locationId)
+        	->taxRateSummary($date, $locationId)
             ->sum('amount');
 
 		return $amount;
@@ -399,7 +399,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
 		$locationId = $this->invoice->location_id;
 		$total = self::find()
-        	->taxRate($date, $locationId)
+        	->taxRateSummary($date, $locationId)
             ->sum('amount+tax_rate');
 
 		return $total;
