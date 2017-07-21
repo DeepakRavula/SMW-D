@@ -166,7 +166,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'enableSorting' => false,
                 ],
-                [
+				[
                     'label' => 'Total',
                     'value' => function ($data) {
                         return $data->total;

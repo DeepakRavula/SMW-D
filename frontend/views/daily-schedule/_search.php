@@ -21,40 +21,27 @@ use yii\helpers\Url;
 </style>
 <div class="user-search">
     <?php $form = ActiveForm::begin([
-        'action' => Url::to(['daily-schedule/index', 'slug' => $searchModel->slug]),
+		'id' => 'schedule-search',
+        'action' => Url::to(['daily-schedule/index']),
         'method' => 'get',
     ]); ?>
     <div class="row">
     <div class="col-md-3">
          <?php
-         $location = Location::find()->where(['like', 'slug', $searchModel->slug])->one();
-         $locationId = $location->id;
-         $teachers = ArrayHelper::map(
-                    User::find()
-                        ->notDeleted()
-                        ->allteachers($locationId)
-                        ->all(), 'id', 'publicIdentity');
+         $locations = ArrayHelper::map(
+            Location::find()
+            ->all(), 'id', 'name');
 
-        echo $form->field($searchModel, 'findTeacher')->widget(Select2::classname(), [
-                'data' => $teachers,
+        echo $form->field($searchModel, 'locationId')->widget(Select2::classname(), [
+                'data' => $locations,
                 'options' => [
-                    'id' => 'schedule-teacher',
-                    'placeholder' => 'Select teacher',
+                    'id' => 'lesson-schedule',
+                    'placeholder' => 'Location ',
                 ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
+            ])->label(false);
         ?>
-
-         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>  
-   
-    <div class="col-md-3 form-group m-t-20">
-        <div class="clearfix"></div>
     </div>
-    </div>
-
     <?php ActiveForm::end(); ?>
 
 </div>
