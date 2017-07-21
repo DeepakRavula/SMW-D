@@ -841,6 +841,9 @@ class Lesson extends \yii\db\ActiveRecord
         if ($user->hasDiscount()) {
             $invoice->addCustomerDiscount($user);
         }
+        if ($this->enrolment->hasDiscount()) {
+            $invoice->addEnrolmentDiscount($this->enrolment);
+        }
         if ($this->hasProFormaInvoice()) {
             if ($this->isSplitRescheduled()) {
                 $netPrice = $this->getSplitRescheduledAmount();
@@ -886,6 +889,9 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->save();
         if ($user->hasDiscount()) {
             $invoice->addCustomerDiscount($user);
+        }
+        if ($enrolment->hasDiscount()) {
+            $invoice->addEnrolmentDiscount($enrolment);
         }
         if ($enrolment->hasProFormaInvoice()) {
             $netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
