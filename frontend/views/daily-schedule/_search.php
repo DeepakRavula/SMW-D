@@ -21,6 +21,7 @@ use yii\helpers\Url;
 </style>
 <div class="user-search">
     <?php $form = ActiveForm::begin([
+		'id' => 'schedule-search',
         'action' => Url::to(['daily-schedule/index']),
         'method' => 'get',
     ]); ?>
@@ -34,7 +35,7 @@ use yii\helpers\Url;
         echo $form->field($searchModel, 'locationId')->widget(Select2::classname(), [
                 'data' => $locations,
                 'options' => [
-                    'id' => 'schedule-teacher',
+                    'id' => 'lesson-schedule',
                     'placeholder' => 'Location ',
                 ],
                 'pluginOptions' => [

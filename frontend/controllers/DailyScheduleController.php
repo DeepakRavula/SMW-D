@@ -9,7 +9,6 @@ use yii\web\Controller;
 
 class DailyScheduleController extends Controller
 {
- 
     public function actionIndex()
     {
 	$searchModel = new LocationScheduleSearch();
