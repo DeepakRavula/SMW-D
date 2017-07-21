@@ -440,13 +440,15 @@ public function getLessons($date)
         $qualifications = Qualification::find()
 			->joinWith(['teacher' => function ($query) use ($location_id) {
 				$query->joinWith(['userLocation' => function ($query) use ($location_id) {
-					$query->joinWith('teacherAvailability')
+                     $query->join('LEFT JOIN', 'user_profile','user_profile.user_id = user_location.user_id')
+					->joinWith('teacherAvailability')
 				->where(['location_id' => $location_id]);
 				}]);
 			}])
 			->where(['program_id' => $programId])
                         ->notDeleted()
-			->all();
+			->orderBy(['user_profile.firstname' => SORT_ASC])
+                ->all();
         $result = [];
         $output = [];
         foreach ($qualifications as  $qualification) {

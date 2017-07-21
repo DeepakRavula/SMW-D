@@ -34,9 +34,11 @@ use common\models\Student;
         <?php echo $form->field($model, 'createdUserId')->widget(Select2::classname(), [
 	    'data' => ArrayHelper::map(User::find()
                     ->joinWith('userLocation ul')
+                    ->join('LEFT JOIN', 'user_profile up','up.user_id = ul.user_id')
                     ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
                     ->where(['raa.item_name' => [User::ROLE_OWNER, User::ROLE_STAFFMEMBER]])
                     ->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                    ->orderBy('up.firstname')
                     ->notDeleted()
                      ->all(),
                 'id', 'userProfile.fullName'),

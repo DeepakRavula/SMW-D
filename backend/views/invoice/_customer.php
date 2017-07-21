@@ -23,9 +23,11 @@ $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
 <div class="col-md-4">
     <?php $customers = ArrayHelper::map(User::find()
         ->join('INNER JOIN', 'user_location', 'user_location.user_id = user.id')
+         ->join('LEFT JOIN', 'user_profile','user_profile.user_id = user_location.user_id')
         ->join('INNER JOIN', 'rbac_auth_assignment', 'rbac_auth_assignment.user_id = user.id')
         ->where(['user_location.location_id' => Yii::$app->session->get('location_id'), 'rbac_auth_assignment.item_name' => 'customer'])
         ->notDeleted()
+        ->orderBy('user_profile.firstname')
         ->all(), 'id', 'userProfile.fullName');
     ?>
     <?=
