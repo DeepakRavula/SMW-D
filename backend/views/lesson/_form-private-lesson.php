@@ -55,16 +55,8 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->dropDownList(
             ArrayHelper::map(User::find()
-				->joinWith(['userLocation ul' => function ($query) {
-					$query->joinWith('teacherAvailability');
-				}])
-				->joinWith(['qualification' => function($query) use($model){
-					$query->andWhere(['program_id' => $model->course->program->id]);
-				}])
-				->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-				->where(['raa.item_name' => 'teacher'])
-				->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
-                                ->notDeleted()
+				->teachers($model->course->program->id, Yii::$app->session->get('location_id'))
+                ->notDeleted()
 				->all(),
 			'id', 'userProfile.fullName'
 		))->label();
