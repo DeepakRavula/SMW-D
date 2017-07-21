@@ -21,7 +21,7 @@ class InvoiceDiscount extends \yii\db\ActiveRecord
     const TYPE_CUSTOMER = 1;
     const TYPE_ENROLMENT_PAYMENT_FREQUENCY = 2;
 
-    const SCENARIO_EDIT = 'edit';
+    const SCENARIO_ON_INVOICE = 'invoice';
 
     /**
      * @inheritdoc
@@ -38,7 +38,7 @@ class InvoiceDiscount extends \yii\db\ActiveRecord
     {
         return [
             [['invoiceId', 'valueType', 'type'], 'required'],
-            ['value', 'required', 'except' => self::SCENARIO_EDIT],
+            ['value', 'safe', 'on' => self::SCENARIO_ON_INVOICE],
             [['invoiceId', 'valueType', 'type'], 'integer'],
             [['value'], 'number'],
         ];
@@ -76,5 +76,10 @@ class InvoiceDiscount extends \yii\db\ActiveRecord
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoiceId']);
+    }
+
+    public function canSave()
+    {
+        return ($this->isNewRecord && !empty($this->value)) || !$this->isNewRecord;
     }
 }

@@ -629,14 +629,12 @@ class InvoiceController extends Controller
         $enrolmentDiscount = $model->enrolmentDiscount;
         if (!$customerDiscount) {
             $customerDiscount = new InvoiceDiscount();
-        } else {
-            $customerDiscount->setScenario(InvoiceDiscount::SCENARIO_EDIT);
         }
         if (!$enrolmentDiscount) {
             $enrolmentDiscount = new InvoiceDiscount();
-        } else {
-            $enrolmentDiscount->setScenario(InvoiceDiscount::SCENARIO_EDIT);
         }
+        $customerDiscount->setScenario(InvoiceDiscount::SCENARIO_ON_INVOICE);
+        $enrolmentDiscount->setScenario(InvoiceDiscount::SCENARIO_ON_INVOICE);
 	$data = $this->renderAjax('discount/_form-discount', [
             'model' => $model,
             'customerDiscount' => $customerDiscount,
@@ -654,9 +652,20 @@ class InvoiceController extends Controller
                 $enrolmentDiscount->invoiceId = $id;
                 $enrolmentDiscount->type = InvoiceDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
             }
-            $enrolmentDiscount->save();
+            if ($customerDiscount->canSave()) {
+                if (empty($customerDiscount->value)) {
+                    $customerDiscount->value = 0.0;
+                }
+                $customerDiscount->save();
+            }
+            if ($enrolmentDiscount->canSave()) {
+                if (empty($enrolmentDiscount->value)) {
+                    $enrolmentDiscount->value = 0.0;
+                }
+                $enrolmentDiscount->save();
+            }
             $response = [
-                'status' => $customerDiscount->save(),
+                'status' => true,
             ];
             return $response;
         } else {
