@@ -4,17 +4,15 @@
 namespace frontend\controllers;
 
 use Yii;
-use frontend\models\search\TeacherScheduleSearch;
+use frontend\models\search\LocationScheduleSearch;
 use yii\web\Controller;
-use yii\filters\AccessControl;
-use yii\web\NotFoundHttpException;
 
 class DailyScheduleController extends Controller
 {
  
     public function actionIndex()
     {
-	$searchModel = new TeacherScheduleSearch();
+	$searchModel = new LocationScheduleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         	return $this->render('index', [

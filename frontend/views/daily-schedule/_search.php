@@ -27,14 +27,12 @@ use yii\helpers\Url;
     <div class="row">
     <div class="col-md-3">
          <?php
-         $teachers = ArrayHelper::map(
-                    User::find()
-                        ->notDeleted()
-                        ->allteachers()
-                        ->all(), 'id', 'publicIdentity');
+         $locations = ArrayHelper::map(
+            Location::find()
+            ->all(), 'id', 'name');
 
-        echo $form->field($searchModel, 'findTeacher')->widget(Select2::classname(), [
-                'data' => $teachers,
+        echo $form->field($searchModel, 'locationId')->widget(Select2::classname(), [
+                'data' => $locations,
                 'options' => [
                     'id' => 'schedule-teacher',
                     'placeholder' => 'Location ',
@@ -42,7 +40,7 @@ use yii\helpers\Url;
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ]);
+            ])->label(false);
         ?>
     </div>  
     </div>
