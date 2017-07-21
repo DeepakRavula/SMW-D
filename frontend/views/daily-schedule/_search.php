@@ -38,9 +38,6 @@ use yii\helpers\Url;
                     'id' => 'lesson-schedule',
                     'placeholder' => 'Location ',
                 ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
             ])->label(false);
         ?>
     </div>  
