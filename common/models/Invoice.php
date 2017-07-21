@@ -227,6 +227,12 @@ class Invoice extends \yii\db\ActiveRecord
             ->onCondition(['invoice_discount.type' => InvoiceDiscount::TYPE_CUSTOMER]);
     }
 
+    public function getEnrolmentDiscount()
+    {
+        return $this->hasOne(InvoiceDiscount::className(), ['invoiceId' => 'id'])
+            ->onCondition(['invoice_discount.type' => InvoiceDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY]);
+    }
+
     public function getLineItemTotal()
     {
         return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id'])
@@ -649,7 +655,7 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->discount     = $lesson->proFormaLineItem->discount;
             $invoiceLineItem->discountType = $lesson->proFormaLineItem->discountType;
         } else {
-            $invoiceLineItem->discount     = !empty($lesson->enrolmentDiscount) ? $lesson->enrolmentDiscount->discount : 0;
+            $invoiceLineItem->discount     = 0;
             $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
             $invoiceLineItem->rate = $rate;
         }
@@ -770,11 +776,26 @@ class Invoice extends \yii\db\ActiveRecord
     public function getCustomerDiscountAmount()
     {
         $discount = 0.0;
-        if (!empty($this->customerDiscount)) {
-            if ($this->customerDiscount->valueType) {
-                $discount = $this->customerDiscount->value;
-            } else {
-                $discount = ($this->customerDiscount->value / 100) * $this->netSubtotal;
+        $netSubtotal = 0.0;
+        if (!empty($this->customerDiscount) || $this->enrolmentDiscount) {
+            foreach ($this->lineItems as $lineItem) {
+                if ($lineItem->item->isLesson()) {
+                    $netSubtotal += $lineItem->netPrice;
+                }
+            }
+            if (!empty($this->customerDiscount)) {
+                if ($this->customerDiscount->valueType) {
+                    $discount += $this->customerDiscount->value;
+                } else {
+                    $discount += ($this->customerDiscount->value / 100) * $netSubtotal;
+                }
+            }
+            if ($this->enrolmentDiscount) {
+                if ($this->enrolmentDiscount->valueType) {
+                    $discount += $this->enrolmentDiscount->value;
+                } else {
+                    $discount += ($this->enrolmentDiscount->value / 100) * $netSubtotal;
+                }
             }
         }
 
@@ -944,9 +965,7 @@ class Invoice extends \yii\db\ActiveRecord
             $invoiceLineItem->discount     = $split->lesson->proFormaLineItem->discount;
             $invoiceLineItem->discountType = $split->lesson->proFormaLineItem->discountType;
         } else {
-            $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
-            $enrolmentDiscount = !empty($split->lesson->enrolmentDiscount) ? $split->lesson->enrolmentDiscount->discount : 0;
-            $invoiceLineItem->discount     = $customerDiscount + $enrolmentDiscount;
+            $invoiceLineItem->discount     = 0;
             $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
         }
         $invoiceLineItem->description  = 'Lesson Split';
@@ -969,10 +988,9 @@ class Invoice extends \yii\db\ActiveRecord
             'program_id' => $enrolment->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $invoiceLineItem->cost       = $rate;
-		$invoiceLineItem->rate = $rate;
+        $invoiceLineItem->rate = $rate;
         $invoiceLineItem->amount = $enrolment->program->rate;
-        $customerDiscount = !empty($this->user->customerDiscount) ? $this->user->customerDiscount->value : 0;
-        $invoiceLineItem->discount     = $customerDiscount;
+        $invoiceLineItem->discount     = 0;
         $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
         $studentFullName = $enrolment->student->fullName;
         $invoiceLineItem->description  = $enrolment->program->name . ' for '. $studentFullName . ' with '
@@ -1026,6 +1044,16 @@ class Invoice extends \yii\db\ActiveRecord
         $invoiceDiscount->value     = $user->customerDiscount->value;
         $invoiceDiscount->valueType = InvoiceDiscount::VALUE_TYPE_PERCENTAGE;
         $invoiceDiscount->type      = InvoiceDiscount::TYPE_CUSTOMER;
+        return $invoiceDiscount->save();
+    }
+
+    public function addEnrolmentDiscount($enrolment)
+    {
+        $invoiceDiscount            = new InvoiceDiscount();
+        $invoiceDiscount->invoiceId = $this->id;
+        $invoiceDiscount->value     = $enrolment->paymentFrequencyDiscount->discount;
+        $invoiceDiscount->valueType = InvoiceDiscount::VALUE_TYPE_PERCENTAGE;
+        $invoiceDiscount->type      = InvoiceDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
         return $invoiceDiscount->save();
     }
 }

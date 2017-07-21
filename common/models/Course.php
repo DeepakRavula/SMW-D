@@ -329,6 +329,7 @@ class Course extends \yii\db\ActiveRecord
 		for($i = 0; $i < $lessonsPerWeekCount; $i++) {
 			$lessonDay = $this->groupCourseSchedule[$i]->day;
 			$duration = $this->groupCourseSchedule[$i]->duration; 
+			$time = $this->groupCourseSchedule[$i]->fromTime; 
 			list($hour, $minute, $second) = explode(':', $this->groupCourseSchedule[$i]->fromTime);  
 			$start = new \DateTime($this->startDate);
 			$start->setTime($hour, $minute, $second);
@@ -343,6 +344,7 @@ class Course extends \yii\db\ActiveRecord
 						'courseId' => $this->id,
 						'status' => Lesson::STATUS_DRAFTED,
 						'DAYNAME(date)' => $dayName,
+						'TIME(date)' => $time
 					])
 					->count();
 				

@@ -211,7 +211,7 @@ Modal::begin([
 			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
 			$.ajax({
                 url: '<?= Url::to(['lesson/update-field']); ?>?id=' + lessonId,
-                type: 'post',
+                type: 'get',
                 dataType: "json",
                 data: $(this).serialize(),
                 success: function (response)

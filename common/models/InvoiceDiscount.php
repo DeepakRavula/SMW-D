@@ -19,6 +19,7 @@ class InvoiceDiscount extends \yii\db\ActiveRecord
     const VALUE_TYPE_DOLOR      = 1;
 
     const TYPE_CUSTOMER = 1;
+    const TYPE_ENROLMENT_PAYMENT_FREQUENCY = 2;
 
     const SCENARIO_EDIT = 'edit';
 

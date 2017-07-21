@@ -626,22 +626,35 @@ class InvoiceController extends Controller
     {
         $model = $this->findModel($id);
         $customerDiscount = $model->customerDiscount;
+        $enrolmentDiscount = $model->enrolmentDiscount;
         if (!$customerDiscount) {
             $customerDiscount = new InvoiceDiscount();
         } else {
             $customerDiscount->setScenario(InvoiceDiscount::SCENARIO_EDIT);
         }
+        if (!$enrolmentDiscount) {
+            $enrolmentDiscount = new InvoiceDiscount();
+        } else {
+            $enrolmentDiscount->setScenario(InvoiceDiscount::SCENARIO_EDIT);
+        }
 	$data = $this->renderAjax('discount/_form-discount', [
             'model' => $model,
-            'customerDiscount' => $customerDiscount
+            'customerDiscount' => $customerDiscount,
+            'enrolmentDiscount' => $enrolmentDiscount
         ]);
         $post = Yii::$app->request->post();
         if ($post) {
-            $customerDiscount->load($post);
+            $customerDiscount->load($post['CustomerDiscount'], '');
             if ($customerDiscount->isNewRecord) {
                 $customerDiscount->invoiceId = $id;
                 $customerDiscount->type = InvoiceDiscount::TYPE_CUSTOMER;
             }
+            $enrolmentDiscount->load($post['EnrolmentDiscount'], '');
+            if ($enrolmentDiscount->isNewRecord) {
+                $enrolmentDiscount->invoiceId = $id;
+                $enrolmentDiscount->type = InvoiceDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+            }
+            $enrolmentDiscount->save();
             $response = [
                 'status' => $customerDiscount->save(),
             ];

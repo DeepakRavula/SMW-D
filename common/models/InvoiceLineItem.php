@@ -372,6 +372,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $discount += ($this->invoice->customerDiscount->value / 100) * $this->amount;
             }
         }
+        if ($this->invoice->enrolmentDiscount) {
+            if ($this->invoice->enrolmentDiscount->valueType) {
+                $discount += $this->invoice->enrolmentDiscount->value;
+            } else {
+                $discount += ($this->invoice->enrolmentDiscount->value / 100) * $this->amount;
+            }
+        }
         return $discount;
     }
 	
