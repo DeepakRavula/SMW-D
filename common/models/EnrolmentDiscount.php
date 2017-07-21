@@ -55,6 +55,6 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
 
     public function canSave()
     {
-        return ($this->isNewRecord && !empty($this->value)) || !$this->isNewRecord;
+        return ($this->isNewRecord && !empty($this->discount)) || !$this->isNewRecord;
     }
 }
