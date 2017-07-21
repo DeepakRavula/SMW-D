@@ -108,7 +108,14 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function getPaymentFrequencyDiscount()
     {
-        return $this->hasOne(EnrolmentDiscount::className(), ['enrolmentId' => 'id']);
+        return $this->hasOne(EnrolmentDiscount::className(), ['enrolmentId' => 'id'])
+            ->onCondition(['type' => EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY]);
+    }
+
+    public function getMultipleEnrolmentDiscount()
+    {
+        return $this->hasOne(EnrolmentDiscount::className(), ['enrolmentId' => 'id'])
+            ->onCondition(['type' => EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT]);
     }
 
     public function getStudent()
@@ -669,5 +676,23 @@ class Enrolment extends \yii\db\ActiveRecord
     public function hasDiscount()
     {
         return !empty($this->paymentFrequencyDiscount);
+    }
+
+    public function getPaymentFrequencyDiscountValue()
+    {
+        if ($this->paymentFrequencyDiscount->discountType) {
+            return '$' . $this->paymentFrequencyDiscount->discount;
+        } else {
+            return $this->paymentFrequencyDiscount->discount . '%';
+        }
+    }
+
+    public function getMultipleEnrolmentDiscountValue()
+    {
+        if ($this->multipleEnrolmentDiscount->discountType) {
+            return '$' . $this->multipleEnrolmentDiscount->discount;
+        } else {
+            return $this->multipleEnrolmentDiscount->discount . '%';
+        }
     }
 }

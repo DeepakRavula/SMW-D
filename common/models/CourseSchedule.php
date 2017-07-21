@@ -15,11 +15,11 @@ use Yii;
  */
 class CourseSchedule extends \yii\db\ActiveRecord
 {
-	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
+    const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
 	
     public $studentId;
     public $paymentFrequency;
-	public $discount;
+    public $discount;
 
     /**
      * @inheritdoc
@@ -103,14 +103,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
             $enrolmentModel->courseId = $this->courseId;
             $enrolmentModel->studentId = $this->studentId;
             $enrolmentModel->paymentFrequencyId = $this->paymentFrequency;
-            if($enrolmentModel->save()) {
-				if(!empty($this->discount)) {
-					$enrolmentDiscount = new EnrolmentDiscount();
-					$enrolmentDiscount->enrolmentId = $enrolmentModel->id;
-					$enrolmentDiscount->discount = $this->discount;	
-					$enrolmentDiscount->save();
-				}
-			}
+            $enrolmentModel->save();
         }
 		 return parent::afterSave($insert, $changedAttributes);
     }

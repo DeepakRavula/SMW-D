@@ -4,6 +4,7 @@ use common\models\Course;
 use drsdre\wizardwidget\WizardWidget;
 use yii\bootstrap\ActiveForm;
 use common\models\CourseSchedule;
+use common\models\EnrolmentDiscount;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
@@ -19,7 +20,9 @@ $form = ActiveForm::begin([
 $programDetailContent = $this->render('step-one',
     [
     'model' => new Course(),
-	'courseSchedule' => new CourseSchedule(),
+    'courseSchedule' => new CourseSchedule(),
+    'paymentFrequencyDiscount' => new EnrolmentDiscount(),
+    'multipleEnrolmentDiscount' => new EnrolmentDiscount(),
     'form' => $form,
     ]);
 
