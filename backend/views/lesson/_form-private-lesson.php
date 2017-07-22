@@ -56,7 +56,9 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         echo $form->field($model, 'teacherId')->dropDownList(
             ArrayHelper::map(User::find()
 				->teachers($model->course->program->id, Yii::$app->session->get('location_id'))
+                ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
                 ->notDeleted()
+                ->orderBy(['user_profile.firstname' => SORT_ASC])
 				->all(),
 			'id', 'userProfile.fullName'
 		))->label();
