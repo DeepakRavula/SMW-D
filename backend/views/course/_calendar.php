@@ -86,7 +86,7 @@ $(document).ready(function(){
             select: function (start, end, allDay) {
 				$(lessonFreeSlotPicker).parent().find('.lesson-time').find('.time').val(moment(start).format('DD-MM-YYYY h:mm A'));
 				$(lessonFreeSlotPicker).parent().find('.lesson-day').find('.day').val(moment(start).format('dddd'));
-				var duration = $(lessonFreeSlotPicker).parent().find('.lesson-duration').find('.duration').val();
+				var duration = $('#course-duration').val();
                 $('#course-calendar').fullCalendar('removeEvents', 'newEnrolment');
 				var endtime = start.clone();
                 var durationMinutes = moment.duration(duration).asMinutes();

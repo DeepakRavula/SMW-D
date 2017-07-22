@@ -35,7 +35,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['day', 'fromTime', 'duration'], 'required'],
+            [['day', 'fromTime'], 'required'],
             [['courseId', 'paymentFrequency'], 'integer'],
             [['fromTime', 'duration', 'discount', 'paymentFrequency'], 'safe'],
         ];
