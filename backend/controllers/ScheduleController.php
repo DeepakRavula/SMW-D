@@ -353,6 +353,7 @@ class ScheduleController extends Controller
 				'day' => $date->format('N')
 			])
 			->one();
+		$events = [];
 		foreach ($classroomUnavailabilities as $classroomUnavailability) {
 			list($fromTime['hours'], $fromTime['minutes'], $fromTime['seconds']) = explode(':', $locationAvailability->fromTime);	 
 			$start = $date->setTime($fromTime['hours'], $fromTime['minutes'], $fromTime['seconds']);
