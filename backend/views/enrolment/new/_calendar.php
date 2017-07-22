@@ -198,6 +198,7 @@ $(document).ready(function() {
 				$('input[name="Course[startDate]"]').val(moment(start).format('DD-MM-YYYY h:mm A'));
 				$('input[name="CourseSchedule[day]"]').val(moment(start).format('dddd'));
                 $('#course-teacherid').val(resource.id);
+				$('#courseschedule-fromtime').val(moment(start).format('h:mm A'));
                 $('#course-teachername').val(resource.title);
                 var endtime = start.clone();
                 var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();

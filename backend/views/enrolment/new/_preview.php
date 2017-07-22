@@ -11,11 +11,9 @@ use yii\bootstrap\Modal;
 $this->title = 'New Enrolment';
 ?>
 <div class="clearfix"></div>
-<?=
-$this->render('/lesson/review/_details', [
-	'courseModel' => $courseModel,
-]);
-?>
+<?php $form = ActiveForm::begin(); ?>
+<?= $form->field($searchModel, 'showAllReviewLessons')->checkbox(['data-pjax' => true]); ?>
+<?php ActiveForm::end(); ?>
 <?php
 $hasConflict = false;
 if ($conflictedLessonIdsCount > 0) {
@@ -137,6 +135,7 @@ Modal::begin([
                 url: '<?= Url::to(['lesson/update-field']); ?>?id=' + $(this).parent().parent().data('key'),
                 type: 'get',
                 dataType: "json",
+				async:false,
                 success: function (response)
                 {
                     if (response.status)
@@ -169,5 +168,13 @@ Modal::begin([
             });
 			return false;
 		});	
+		$("#lessonsearch-showallreviewlessons").on("change", function () {
+			var showAllReviewLessons = $(this).is(":checked");
+			var params = $.param({
+				'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
+			});
+			var url = "<?php echo Url::to(['enrolment/create', 'courseId' => $courseModel->id]); ?>?" + params;
+			$.pjax.reload({url: url, container: "#new-enrolment-review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
+		});
 	});
 </script>
