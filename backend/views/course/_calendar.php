@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 ?>
+<?php $this->render('/lesson/_color-code'); ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
  <div class="row-fluid">
 	<div id="course-calendar"> </div>
