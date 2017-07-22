@@ -1,12 +1,44 @@
 <?php
 
 use yii\grid\GridView;
+use common\models\CalendarEventColor;
+
+?>
+<?php
+$privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
+    $groupLesson = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
+    $firstLesson = CalendarEventColor::findOne(['cssClass' => 'first-lesson']);
+    $teacherSubstitutedLesson = CalendarEventColor::findOne(['cssClass' => 'teacher-substituted']);
+    $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
+    $this->registerCss(
+        " 
+        .private-lesson {
+            background-color: " . $privateLesson->code . " !important;
+		}
+        .first-lesson {
+            background-color: " . $firstLesson->code . " !important;
+		}
+        .group-lesson {
+            background-color: " . $groupLesson->code . " !important; 
+		}
+        .teacher-substituted {
+            background-color: " . $teacherSubstitutedLesson->code . " !important;
+		}
+        .lesson-rescheduled {
+            background-color: " . $rescheduledLesson->code . " !important; }"
+    );
 ?>
  <?php yii\widgets\Pjax::begin(['id' => 'schedule-listing']); ?>
 <?=
 GridView::widget([
 	'dataProvider' => $dataProvider,
 	'summary' => '',
+	'rowOptions' => function ($model, $key, $index, $grid) {
+		return ['class' => $model->getClass()];
+	},
+	'options' => [
+        'class' => 'daily-schedule',
+    ],
 	'columns' => [
 			[
 			'label' => 'Start time',
@@ -36,6 +68,12 @@ GridView::widget([
 			'label' => 'Classroom',
 			'value' => function ($data) {
 				return !empty($data->classroomId) ? $data->classroom->name : null;
+			},
+		],
+		[
+			'label' => 'Status',
+			'value' => function ($data) {
+				return $data->getStatus();
 			},
 		],
 	]

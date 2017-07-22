@@ -45,7 +45,8 @@ class LocationScheduleSearch extends Lesson
 				'DATE(date)' => (new \DateTime())->format('Y-m-d')	
 			])
 			->notDraft()
-			->notDeleted();
+			->notDeleted()
+			->orderBy(['TIME(date)' => SORT_ASC]);
         $dataProvider= new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
