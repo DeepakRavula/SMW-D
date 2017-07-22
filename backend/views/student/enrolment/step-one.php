@@ -7,6 +7,7 @@ use kartik\time\TimePicker;
 use kartik\date\DatePicker;
 use common\models\LocationAvailability;
 use yii\helpers\Url;
+use kartik\switchinput\SwitchInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
@@ -87,11 +88,47 @@ $privatePrograms = ArrayHelper::map(Program::find()
         <div class="clear-fix"></div>
         <div class="col-md-4">
             <?= $form->field($courseSchedule, 'paymentFrequency')->dropdownList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')) ?>
-	    </div>
-		<div class="col-md-2">
-            <?= $form->field($courseSchedule, 'discount')->textInput() ?>
-	    </div>
-		<div class="col-md-1 p-20">%</div>
+        </div>
+        <div class="col-md-4">
+            <?= $form->field($paymentFrequencyDiscount, 'discount')->textInput([
+                'id' => 'payment-frequency-discount',
+                'name' => 'PaymentFrequencyDiscount[discount]'
+            ])->label('Payment Frequency Discount'); ?>
+        </div>
+        <div class="col-md-4">
+            <?= $form->field($paymentFrequencyDiscount, 'discountType')->widget(SwitchInput::classname(),
+                [
+                'options' => [
+                    'name' => 'PaymentFrequencyDiscount[discountType]',
+                    'id' => 'payment-frequency-discount-type',
+                ],
+                'pluginOptions' => [
+                    'handleWidth' => 50,
+                    'onText' => '$',
+                    'offText' => '%',
+                ],
+            ])->label('Discount Type');?>
+        </div>
+        <div class="col-md-4">
+            <?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
+                'id' => 'enrolment-discount',
+                'name' => 'MultipleEnrolmentDiscount[discount]'
+            ])->label('Multiple Enrolment Discount'); ?>
+        </div>
+	<div class="col-md-4">
+            <?= $form->field($multipleEnrolmentDiscount, 'discountType')->widget(SwitchInput::classname(),
+                [
+                'options' => [
+                    'name' => 'MultipleEnrolmentDiscount[discountType]',
+                    'id' => 'enrolment-discount-type',
+                ],
+                'pluginOptions' => [
+                    'handleWidth' => 50,
+                    'onText' => '$',
+                    'offText' => '%',
+                ],
+            ])->label('Discount Type');?>
+        </div>
 		<div class="clearfix"></div>
         <div id="course-rate-estimation">
         	<hr class="default-hr">

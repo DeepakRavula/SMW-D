@@ -7,28 +7,21 @@ use yii\data\ActiveDataProvider;
 use common\models\Lesson;
 use common\models\Location;
 use Yii;
-use common\models\PaymentMethod;
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
  */
-class TeacherScheduleSearch extends Lesson
+class LocationScheduleSearch extends Lesson
 {
 
-    public $findTeacher,$slug;
+    public $locationId;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['findTeacher'], 'safe'],
+            [['locationId'], 'safe'],
         ];
-    }
-
-    public function __construct($slug, $config = [])
-    {
-        $this->slug=$slug;
-        parent::__construct($config);   
     }
 
     /**
@@ -47,19 +40,22 @@ class TeacherScheduleSearch extends Lesson
      */
     public function search($params)
     {
-        $location = Location::find()->where(['like', 'slug', $this->slug])->one();
-        $locationId = $location->id;
-        $lessons = Lesson::find()->location($locationId)->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])->notDeleted();
+        $query = Lesson::find()
+			->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED,
+				'DATE(date)' => (new \DateTime())->format('Y-m-d')	
+			])
+			->notDraft()
+			->notDeleted();
         $dataProvider= new ActiveDataProvider([
-            'query' => $lessons,
+            'query' => $query,
             'pagination' => false,
         ]);
-        $currentDate = (new \DateTime())->format('Y-m-d');
-        $lessons->andWhere(['=', 'DATE(date)', $currentDate]);
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-        $lessons->andFilterWhere(['lesson.teacherId'=>$this->findTeacher]);
+		$query->joinWith(['course' => function($query) {
+			$query->andWhere(['locationId' => $this->locationId]);
+		}]);
 
         return $dataProvider;
     }

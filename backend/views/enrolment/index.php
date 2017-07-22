@@ -115,6 +115,7 @@ $form = ActiveForm::begin([
 				'value' => function($data) {
 					return Yii::$app->formatter->asDate($data->course->endDate);
 				},
+				'contentOptions' => ['style' => 'width:200px'],
 				'filterType'=>GridView::FILTER_DATE,
 				'filterWidgetOptions'=>[
 					'pluginOptions'=>[
@@ -124,27 +125,33 @@ $form = ActiveForm::begin([
 					],
 				],
 			],	
+			[
+			'class' => 'yii\grid\ActionColumn',
+			'contentOptions' => ['style' => 'width:50px'],
+			'template' => '{view}',
+			'buttons' => [
+				'view' => function ($url, $model) {
+					$url = Url::to(['enrolment/view', 'id' => $model->id]);
+					return Html::a('<i class="fa fa-eye"></i>', $url, [
+						'title' => Yii::t('yii', 'View'),
+						'class' => ['btn-primary btn-xs m-l-10']
+					]);
+				},
+			]
+        ], 
 	]; ?>
-<div class="grid-row-open">
+<div>
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,
         'filterModel'=>$searchModel,
 		'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
-        $url = Url::to(['enrolment/view', 'id' => $model->id]);
-        $data = ['data-url' => $url];
-        if ($model->isExpiring(Enrolment::ENROLMENT_EXPIRY)) {
-            $data = array_merge($data, ['class' => 'danger inactive']);
-        }
-        return $data;
-    },
-    'columns' => $columns,
-	'pjax'=>true,
-	'pjaxSettings'=>[
-        'id' => 'enrolment-index',
-    ]
+		'columns' => $columns,
+		'pjax'=>true,
+		'pjaxSettings'=>[
+			'id' => 'enrolment-index',
+		]
 	]);
 	?>
 </div>

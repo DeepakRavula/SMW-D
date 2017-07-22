@@ -53,7 +53,7 @@ class PaymentSearch extends Payment
         ]);
 		
 		$query->orderBy([
-			'DATE(payment.date)' => SORT_DESC,
+			'DATE(payment.date)' => SORT_ASC,
 			'payment_method_id' => SORT_ASC
 			]);
         if (!($this->load($params) && $this->validate())) {

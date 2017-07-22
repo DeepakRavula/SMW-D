@@ -34,7 +34,9 @@ use yii\widgets\DetailView;
 			'billingHomeTel',
 			'billingOtherTel',
 			'billingWorkTel',
-			'billingWorkTelExt'
+			'billingWorkTelExt',
+			'openingBalance',
+			'notes'
 		],
     ])
     ?>

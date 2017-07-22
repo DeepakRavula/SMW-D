@@ -34,7 +34,9 @@ class UserQuery extends ActiveQuery
 
     public function teachers($programId, $locationId)
     {
-        $this->joinWith('userLocation ul')
+        $this->joinWith(['userLocation ul' => function($query) {
+			$query->joinWith('teacherAvailability');
+			}])
             ->joinWith(['qualifications' => function ($query) use ($programId) {
                 $query->andWhere(['qualification.program_id' => $programId])
                     ->notDeleted();
@@ -51,16 +53,6 @@ class UserQuery extends ActiveQuery
         $this->joinWith('userLocation ul')
             ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
             ->where(['raa.item_name' => 'customer'])
-            ->andWhere(['ul.location_id' => $locationId]);
-
-        return $this;
-    }
-
-    public function allteachers($locationId)
-    {
-        $this->joinWith('userLocation ul')
-            ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-            ->where(['raa.item_name' => 'teacher'])
             ->andWhere(['ul.location_id' => $locationId]);
 
         return $this;

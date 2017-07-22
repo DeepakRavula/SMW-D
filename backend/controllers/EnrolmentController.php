@@ -28,7 +28,7 @@ use common\models\User;
 use common\models\UserProfile;
 use common\models\PhoneNumber;
 use common\models\Address;
-use common\models\payment\ProformaPaymentFrequency;
+use common\models\EnrolmentDiscount;
 use common\models\payment\ProformaPaymentFrequencyLog;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -110,17 +110,56 @@ class EnrolmentController extends Controller
     public function actionEdit($id)
     {
         $model = $this->findModel($id);
+        $multipleEnrolmentDiscount = $model->multipleEnrolmentDiscount;
+        $paymentFrequencyDiscount = $model->paymentFrequencyDiscount;
+        if (!$multipleEnrolmentDiscount) {
+            $multipleEnrolmentDiscount = new EnrolmentDiscount();
+        }
+        if (!$paymentFrequencyDiscount) {
+            $paymentFrequencyDiscount = new EnrolmentDiscount();
+        }
+        $data = $this->renderAjax('update/_form', [
+            'model' => $model,
+            'multipleEnrolmentDiscount' => $multipleEnrolmentDiscount,
+            'paymentFrequencyDiscount' => $paymentFrequencyDiscount
+        ]);
         $oldPaymentFrequency = $model->paymentFrequencyId;
-        $lastPaymentFrequency = $model->getPaymentFrequency();
-        $model->on(ProformaPaymentFrequency::EVENT_EDIT, [new ProformaPaymentFrequencyLog(), 'edit'], ['lastPaymentFrequency' => $lastPaymentFrequency]);
-        $user = User::findOne(['id' => Yii::$app->user->id]);
-        $model->userName = $user->publicIdentity;
-        if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
-            $model->trigger(ProformaPaymentFrequency::EVENT_EDIT);
-            if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
-                $model->resetPaymentCycle();
+        $post = Yii::$app->request->post();
+        if ($post) {
+            $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
+            if ($paymentFrequencyDiscount->isNewRecord) {
+                $paymentFrequencyDiscount->enrolmentId = $id;
+                $paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
             }
-            return ['output' => $model->getPaymentFrequency(), 'message' => ''];
+            $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
+            if ($multipleEnrolmentDiscount->isNewRecord) {
+                $multipleEnrolmentDiscount->enrolmentId = $id;
+                $multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
+            }
+            if ($multipleEnrolmentDiscount->canSave()) {
+                if (empty($multipleEnrolmentDiscount->discount)) {
+                    $multipleEnrolmentDiscount->discount = 0.0;
+                }
+                $multipleEnrolmentDiscount->save();
+            }
+            if ($paymentFrequencyDiscount->canSave()) {
+                if (empty($paymentFrequencyDiscount->discount)) {
+                    $paymentFrequencyDiscount->discount = 0.0;
+                }
+                $paymentFrequencyDiscount->save();
+            }
+            if ($model->load($post) && $model->save()) {
+                if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
+                    $model->resetPaymentCycle();
+                }
+            }
+            return ['status' => true];
+        } else {
+
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
         }
     }
     /**

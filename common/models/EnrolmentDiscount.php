@@ -10,9 +10,17 @@ use Yii;
  * @property integer $id
  * @property integer $enrolmentId
  * @property double $discount
+ * @property double $discountType
+ * @property double $type
  */
 class EnrolmentDiscount extends \yii\db\ActiveRecord
 {
+    const TYPE_PAYMENT_FREQUENCY  = 1;
+    const TYPE_MULTIPLE_ENROLMENT = 2;
+
+    const VALUE_TYPE_PERCENTAGE = 0;
+    const VALUE_TYPE_DOLOR      = 1;
+
     /**
      * @inheritdoc
      */
@@ -28,8 +36,8 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
     {
         return [
             [['enrolmentId'], 'required'],
-            [['enrolmentId'], 'integer'],
-            [['discount'], 'number'],
+            [['enrolmentId', 'type'], 'integer'],
+            [['discount', 'discountType'], 'number'],
         ];
     }
 
@@ -43,5 +51,10 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
             'enrolmentId' => 'Enrolment ID',
             'discount' => 'Discount',
         ];
+    }
+
+    public function canSave()
+    {
+        return ($this->isNewRecord && !empty($this->discount)) || !$this->isNewRecord;
     }
 }
