@@ -1,11 +1,8 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\jui\DatePicker;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
-use common\models\User;
 use common\models\Location;
 use yii\helpers\Url;
 
@@ -26,7 +23,7 @@ use yii\helpers\Url;
         'method' => 'get',
     ]); ?>
     <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-3 location-filter pull-right">
          <?php
          $locations = ArrayHelper::map(
             Location::find()
@@ -34,6 +31,7 @@ use yii\helpers\Url;
 
         echo $form->field($searchModel, 'locationId')->widget(Select2::classname(), [
                 'data' => $locations,
+				 'theme' => Select2::THEME_BOOTSTRAP,
                 'options' => [
                     'id' => 'lesson-schedule',
                     'placeholder' => 'Location ',
