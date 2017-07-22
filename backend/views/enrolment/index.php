@@ -48,7 +48,7 @@ $form = ActiveForm::begin([
 				},
 				'filterType'=>GridView::FILTER_SELECT2,
 				'filter'=>ArrayHelper::map(
-					Program::find()
+					Program::find()->orderBy(['name' => SORT_ASC])
 					->joinWith(['course' => function($query) {
 						$query->joinWith(['enrolment'])
 						->confirmed()
@@ -68,7 +68,7 @@ $form = ActiveForm::begin([
 					return $data->student->fullName;
 				},
 				'filterType'=>GridView::FILTER_SELECT2,
-				'filter'=>ArrayHelper::map(Student::find()
+				'filter'=>ArrayHelper::map(Student::find()->orderBy(['first_name' => SORT_ASC])
 					->joinWith(['enrolment' => function($query) {
 						$query->joinWith(['course' => function($query) {
 							$query->confirmed()
@@ -92,7 +92,7 @@ $form = ActiveForm::begin([
 					return $data->course->teacher->publicIdentity;
 				},
 				'filterType'=>GridView::FILTER_SELECT2,
-				'filter'=>ArrayHelper::map(UserProfile::find()
+				'filter'=>ArrayHelper::map(UserProfile::find()->orderBy(['firstname' => SORT_ASC])
 					->joinWith(['courses' => function($query) {
 						$query->joinWith('enrolment')
 							->confirmed()

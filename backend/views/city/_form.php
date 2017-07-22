@@ -20,7 +20,7 @@ use common\models\Province;
 		</div>
 		<div class="col-md-4 ">
     <?php echo $form->field($model, 'province_id')->dropDownList(ArrayHelper::map(
-                            Province::find()->all(), 'id', 'name'
+                            Province::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
             )) ?>
 		</div>
 </div>

@@ -31,6 +31,7 @@ use kartik\select2\Select2;
                 'data' => ArrayHelper::map(ItemCategory::find()
                     ->notDeleted()
                     ->active()
+                   ->orderBy(['name' => SORT_ASC])
                     ->all(), 'id', 'name'),
                 'options' => ['placeholder' => 'Select Category'],
             ]);

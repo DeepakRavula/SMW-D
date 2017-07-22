@@ -22,6 +22,8 @@ use common\models\Course;
 				User::find()
 					->notDeleted()
 					->teachers($course->programId, $locationId)
+                    ->join('LEFT JOIN', 'user_profile','user_profile.user_id=ul.user_id')
+                    ->orderBy(['user_profile.firstname'=> SORT_ASC])
 					->all(), 'id', 'publicIdentity');
 			?>
 			<?php

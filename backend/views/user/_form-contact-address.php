@@ -91,7 +91,7 @@ $this->registerJs($js);
 						<div class="col-sm-4">
 							<?=
                             $form->field($addressModel, "[{$index}]city_id")->dropDownList(
-                                    ArrayHelper::map(City::find()->all(), 'id', 'name'), ['options' => [
+                                    ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'), ['options' => [
                                     $locationModel->city_id => ['Selected' => true],
                                 ],
                             ])

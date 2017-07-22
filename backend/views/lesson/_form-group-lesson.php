@@ -60,7 +60,7 @@ use kartik\color\ColorInput;
                 $form->field($model, 'classroomId')->widget(SelectivityWidget::classname(), [
                     'pluginOptions' => [
                         'allowClear' => true,
-                        'items' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
+                        'items' => ArrayHelper::map(Classroom::find()->orderBy(['name' => SORT_ASC])->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
                         'placeholder' => 'Select Classroom',
                     ],
                 ]);

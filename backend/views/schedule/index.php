@@ -145,7 +145,7 @@ bottom:-10px;
                 'id' => 'program-selector',
                 'pluginOptions' => [
                     'allowClear' => true,
-                    'items' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+                    'items' => ArrayHelper::map(Program::find()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
                     'value' => null,
                     'placeholder' => 'Program',
                 ],
