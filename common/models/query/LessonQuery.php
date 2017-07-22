@@ -217,7 +217,7 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function scheduled()
     {
-        $this->andFilterWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d')])
+        $this->andFilterWhere(['>', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')])
              ->andFilterWhere(['lesson.status' => Lesson::STATUS_SCHEDULED]);
 
         return $this;
