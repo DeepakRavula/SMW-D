@@ -262,20 +262,11 @@ class LessonController extends Controller
         $model->on(Lesson::EVENT_RESCHEDULED,
                 [new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-        $currentDate = new \DateTime();
-
-        $data = ['model' => $model];
-        $view = '_form-group-lesson';
-        if ($model->course->program->isPrivate()) {
-            $view = '_form-private-lesson';
-            if (!empty($model->privateLesson->id)) {
-                $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
-            } else {
-                $privateLessonModel = new PrivateLesson();
-            }
-
-            $data = ['model' => $model, 'privateLessonModel' => $privateLessonModel];
-        }
+		if (!empty($model->privateLesson->id)) {
+			$privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
+		} else {
+			$privateLessonModel = new PrivateLesson();
+		}
 		$request = Yii::$app->request;
 		$userModel = $request->post('User');
 		
@@ -331,7 +322,10 @@ class LessonController extends Controller
 			}
             return $redirectionLink;
         }
-        return $this->render($view, $data);
+        return $this->render('_form-private-lesson', [
+			'model' => $model,
+			'privateLessonModel' => $privateLessonModel
+		]);
     }
 
     /**
