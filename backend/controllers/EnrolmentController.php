@@ -202,8 +202,11 @@ class EnrolmentController extends Controller
 		$student->load(Yii::$app->getRequest()->getBodyParams(), 'Student');
 		$courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
 		
-		$user->status = User::STATUS_ACTIVE;
+		$user->status = User::STATUS_NOT_ACTIVE;
         if($user->save()){
+			$auth = Yii::$app->authManager;
+			$authManager = Yii::$app->authManager;
+			$authManager->assign($auth->getRole(User::ROLE_CUSTOMER), $user->id);
 			$userProfile->user_id = $user->id;
 			if(!$userProfile->save()) {
 				Yii::error('New enrolment User profile: ' . \yii\helpers\VarDumper::dumpAsString($userProfile->getErrors()));
@@ -227,6 +230,7 @@ class EnrolmentController extends Controller
 			if(!$student->save()) {
 				Yii::error('New enrolment Student: ' . \yii\helpers\VarDumper::dumpAsString($student->getErrors()));	
 			}
+			$student->updateAttributes(['status' => Student::STATUS_INACTIVE]);
 			//save course
 			$dayList = Course::getWeekdaysList();
 			$course->locationId = $locationId;
@@ -237,65 +241,8 @@ class EnrolmentController extends Controller
 				if(!$courseSchedule->save()) {
 					Yii::error('New enrolment Course schedule: ' . \yii\helpers\VarDumper::dumpAsString($courseSchedule->getErrors()));
 				}
-				$conflicts = [];
-				$conflictedLessonIds = [];
-				
-				$searchModel = new LessonSearch();
-				$request = Yii::$app->request;
-				$lessonSearchRequest = $request->get('LessonSearch');
-				$showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
-
-				$draftLessons = Lesson::find()
-				->where(['courseId' => $course->id, 'status' => Lesson::STATUS_DRAFTED])
-				->all();
-		foreach ($draftLessons as $draftLesson) {
-			$draftLesson->setScenario('review');
-		}
-		Model::validateMultiple($draftLessons);
-		foreach ($draftLessons as $draftLesson) {
-			if(!empty($draftLesson->getErrors('date'))) {
-				$conflictedLessonIds[] = $draftLesson->id;
 			}
-			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
-		}
-
-		$holidayConflictedLessonIds = $course->getHolidayLessons();
-		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
-		$lessonCount = Lesson::find()
-			->andWhere(['courseId' => $course->id, 
-				'status' => [Lesson::STATUS_DRAFTED, Lesson::STATUS_UNSCHEDULED]])
-			->count();
-		$conflictedLessonIdsCount = count($conflictedLessonIds);
-		$unscheduledLessonCount = Lesson::find()
-			->where(['courseId' => $course->id, 'status' => Lesson::STATUS_UNSCHEDULED])
-			->count();	
-		$query = Lesson::find()
-			->orderBy(['lesson.date' => SORT_ASC]);
-		if(! $showAllReviewLessons) {
-			$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
-		}  else {
-			$query->where(['courseId' => $course->id, 'status' => Lesson::STATUS_DRAFTED]);
-		}
-        $lessonDataProvider = new ActiveDataProvider([
-            'query' => $query,
-			'pagination' => false
-        ]);
-		
-		$data = $this->renderAjax('new/_preview', [
-			'courseModel' => $course,
-            'lessonDataProvider' => $lessonDataProvider,
-            'conflicts' => $conflicts,
-			'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
-			'lessonCount' => $lessonCount,
-			'searchModel' => $searchModel,
-			'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
-			'unscheduledLessonCount' => $unscheduledLessonCount,
-			]);
-		}
-			return [
-				'status' => true,
-				'data' => $data,
-			];	
+			return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Enrolment[type]' => Enrolment::TYPE_REVERSE]);
 		}
     }
 

@@ -5,6 +5,9 @@ use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
 use common\models\PaymentFrequency;
 use yii\helpers\Url;
+use kartik\select2\Select2;
+use common\models\User;
+use kartik\depdrop\DepDrop;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
@@ -17,13 +20,42 @@ $this->title = 'New Enrolment';
 			<label class="col-sm-2 control-label">Program</label>
 			<div class="col-sm-4">
 				<?php
-            echo $form->field($model, 'programId')->dropDownList(
-                ArrayHelper::map(Program::find()
+            echo $form->field($model, 'programId')->widget(Select2::classname(), [
+                'data' => ArrayHelper::map(Program::find()
 					->active()
-					->all(), 'id', 'name'))->label(false);
+					->all(), 'id', 'name'),
+                'options' => ['placeholder' => 'Program']
+            ])->label(false);
             ?>
 			</div>
 		</div>
+	<div class="clearfix"></div>
+	<div class="form-group">
+		<label  class="col-sm-2 control-label p-10">Teacher</label>
+		<?php $locationId = Yii::$app->session->get('location_id');
+        $teachers = ArrayHelper::map(
+			User::find()
+				->notDeleted()
+				->teachers($model->programId, $locationId)
+				->all(), 'id', 'publicIdentity');
+        ?>
+		<div class="col-sm-4">
+        <?php
+        // Dependent Dropdown
+        echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
+                'data' => $teachers,
+                'type' => DepDrop::TYPE_SELECT2,
+                'options' => [
+                    'placeholder' => 'Teacher',
+                ],
+                'pluginOptions' => [
+                    'depends' => ['course-programid'],
+                    'url' => Url::to(['/course/teachers'])
+                ]
+            ])->label(false);
+        ?>
+		</div>
+	</div>
 	<div class="clearfix"></div>
 	 <div class="form-group">
 		<label  class="col-sm-2 control-label">Length of Lessons</label>
@@ -40,17 +72,11 @@ $this->title = 'New Enrolment';
 		</div>
 		<label  class="col-sm-2 control-label">Check The Schedule</label>
 		<div class="col-sm-1  hand enrolment-calendar-icon">
-            <span class="fa fa-calendar"></span>
+            <span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
 		</div>
 	</div>
 	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Teacher</label>
-    	<?php echo $form->field($model, 'teacherId')->hiddenInput()->label(false) ?>
-		<div class="col-sm-5 new-enrolment-teacher">
-		</div>
-	</div>
-	<div class="clearfix"></div>
+	
 	<div class="form-group">
 		<label  class="col-sm-2 control-label p-10">Day, Time & Duration</label>
     	<?php echo $form->field($model, 'startDate')->hiddenInput()->label(false) ?>
