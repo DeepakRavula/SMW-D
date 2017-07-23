@@ -94,7 +94,7 @@ DateTimePickerAsset::register($this);
 							</div>
 							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
 							<a class="collapsed btn btn-default m-l-10 m-r-10" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Back </a>
-							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" id="step3-btn" data-parent="#accordion" href=""> Next </a>
+							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" id="step3-btn" data-parent="#accordion" href=""> Preview Lessons </a>
 						</div>
 					</div>
 				</div>

@@ -144,7 +144,6 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             [['username', 'email'], 'unique'],
-            ['status', 'default', 'value' => self::STATUS_NOT_ACTIVE],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
             [['email'], 'email'],
@@ -434,6 +433,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             self::STATUS_NOT_ACTIVE => Yii::t('common', 'Inactive'),
             self::STATUS_ACTIVE => Yii::t('common', 'Active'),
+			self::STATUS_DRAFT => Yii::t('common', 'Draft'),
         ];
     }
 

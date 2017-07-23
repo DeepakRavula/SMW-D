@@ -231,7 +231,6 @@ class EnrolmentController extends Controller
 			if(!$student->save()) {
 				Yii::error('New enrolment Student: ' . \yii\helpers\VarDumper::dumpAsString($student->getErrors()));	
 			}
-			$student->updateAttributes(['status' => Student::STATUS_INACTIVE]);
 			//save course
 			$dayList = Course::getWeekdaysList();
 			$course->locationId = $locationId;
@@ -244,6 +243,8 @@ class EnrolmentController extends Controller
 				}
 			}
 			return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Enrolment[type]' => Enrolment::TYPE_REVERSE]);
+		} else {
+			Yii::error('New enrolment user: ' . \yii\helpers\VarDumper::dumpAsString($user->getErrors()));	
 		}
     }
 
