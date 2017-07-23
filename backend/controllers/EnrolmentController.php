@@ -202,7 +202,7 @@ class EnrolmentController extends Controller
 		$student->load(Yii::$app->getRequest()->getBodyParams(), 'Student');
 		$courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
 		
-		$user->status = User::STATUS_ACTIVE;
+		$user->status = User::STATUS_DRAFT;
         if($user->save()){
 			$userProfile->user_id = $user->id;
 			if(!$userProfile->save()) {
@@ -224,6 +224,7 @@ class EnrolmentController extends Controller
 			}
 			//save student
 			$student->customer_id = $user->id;
+			$student->status = Student::STATUS_DRAFT;
 			if(!$student->save()) {
 				Yii::error('New enrolment Student: ' . \yii\helpers\VarDumper::dumpAsString($student->getErrors()));	
 			}

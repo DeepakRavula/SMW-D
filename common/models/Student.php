@@ -20,6 +20,7 @@ class Student extends \yii\db\ActiveRecord
 {
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
+	const STATUS_DRAFT = 3;
 
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_CUSTOMER_MERGE = 'customer-merge';
@@ -171,8 +172,7 @@ class Student extends \yii\db\ActiveRecord
 			$this->birth_date = $birthDate->format('Y-m-d');
 		}
 		if($insert) {
-                    $this->isDeleted = false;
-                    $this->status = self::STATUS_ACTIVE;
+            $this->isDeleted = false;
 		}
 
         return parent::beforeSave($insert);
