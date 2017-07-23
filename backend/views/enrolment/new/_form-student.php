@@ -36,16 +36,3 @@ $this->title = 'New Enrolment';
 	</div>
 	<div class="clearfix"></div>
 </div> <!-- ./container -->
-<script>
-$('#student-birth_date').datepicker({
-   altField: '#student-birth_date',
-   altFormat: 'dd-mm-yy',
-   changeMonth: true,
-   changeYear: true,
-   yearRange : '-70:today',
-   onChangeMonthYear:function(y, m, i){
-       var d = i.selectedDay;
-       $(this).datepicker('setDate', new Date(y, m-1, d));
-   }
-});
-</script>

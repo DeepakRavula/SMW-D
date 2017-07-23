@@ -29,7 +29,6 @@ class Course extends \yii\db\ActiveRecord
     const EVENT_CREATE = 'event-create';
     public $lessonStatus;
 	public $rescheduleBeginDate;
-	public $teacherName;
 	public $weeksCount;
 	public $lessonsPerWeekCount;
     public $userName;

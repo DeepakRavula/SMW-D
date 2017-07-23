@@ -94,16 +94,7 @@ DateTimePickerAsset::register($this);
 							</div>
 							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
 							<a class="collapsed btn btn-default m-l-10 m-r-10" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Back </a>
-							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" id="step3-btn" data-parent="#accordion" href="#collapseFour"> Next </a>
-						</div>
-					</div>
-				</div>
-				<div class="panel enrolment-step">
-					<div class="panel-heading" role="tab" id="headingFour"> <span class="enrolment-step-number">4</span>
-						<h4 class="enrolment-step-title"> <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"  > Preview </a> </h4>
-					</div>
-					<div id="collapseFour" class="panel-collapse collapse">
-						<div class="checkout-step-body step-preview">
+							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" id="step3-btn" data-parent="#accordion" href=""> Next </a>
 						</div>
 					</div>
 				</div>
@@ -124,6 +115,7 @@ echo $this->render('new/_calendar', [
 	'courseSchedule' => new CourseSchedule()
 ]);
 ?>
+<div id="enrolment-calendar"></div>
 <?php Modal::end(); ?>
 <script type="text/javascript">
 	$(document).ready(function(){

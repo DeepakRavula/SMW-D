@@ -103,6 +103,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
             $enrolmentModel->courseId = $this->courseId;
             $enrolmentModel->studentId = $this->studentId;
             $enrolmentModel->paymentFrequencyId = $this->paymentFrequency;
+			//$enrolmentModel->type = Enrolment::TYPE_REGULAR;
             $enrolmentModel->save();
         }
 		 return parent::afterSave($insert, $changedAttributes);

@@ -524,10 +524,12 @@ class LessonController extends Controller
         $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
+        $enrolmentRequest = $request->get('Enrolment');
         $rescheduleBeginDate = $courseRequest['startDate'];
         $rescheduleEndDate = $courseRequest['endDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
+		$enrolmentType = $enrolmentRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
 		$conflicts = [];
 		$conflictedLessonIds = [];
@@ -584,6 +586,7 @@ class LessonController extends Controller
 			'lessonCount' => $lessonCount,
 			'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
 			'unscheduledLessonCount' => $unscheduledLessonCount,
+			'enrolmentType' => $enrolmentType,
         ]);
     }
 
@@ -642,11 +645,21 @@ class LessonController extends Controller
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
+        $enrolmentRequest = $request->get('Enrolment');
         $vacationRequest = $request->get('Vacation');
         $rescheduleEndDate = $courseRequest['endDate'];
         $rescheduleBeginDate = $courseRequest['startDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
+        $enrolmentType = $enrolmentRequest['type'];
+		if(!empty($enrolmentType)) {
+			$courseModel->enrolment->student->updateAttributes([
+				'status' => Student::STATUS_ACTIVE
+			]);
+			$courseModel->enrolment->student->customer->updateAttributes([
+				'status' => User::STATUS_ACTIVE
+			]);
+		}
 		if(! empty($vacationId)) {
 			$vacation = Vacation::findOne(['id' => $vacationId]);
 			$fromDate = (new \DateTime($vacation->fromDate))->format('Y-m-d');
