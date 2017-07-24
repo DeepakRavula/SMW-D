@@ -854,8 +854,15 @@ class LessonController extends Controller
                 $locationId = $model->enrolment->student->customer->userLocation->location_id;
                 $user = User::findOne(['id' => $model->enrolment->student->customer->id]);
                 $invoice = new Invoice();
+                if (is_a(Yii::$app, 'yii\console\Application')) {
+                    $roleUser = User::findByRole(User::ROLE_BOT);
+                    $botUser = end($roleUser);
+                    $loggedUser = User::findOne(['id' => $botUser->id]);
+                } else {
+                    $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                }
+                $invoice->userName = $loggedUser->userProfile->fullName;
                 $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
-                $invoice->userName = $user->publicIdentity;
                 $invoice->user_id = $model->enrolment->student->customer->id;
                 $invoice->location_id = $locationId;
                 $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;

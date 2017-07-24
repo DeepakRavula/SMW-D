@@ -14,6 +14,7 @@ use common\models\Invoice;
 use common\models\InvoiceLineItem;
 use yii\data\ActiveDataProvider;
 use common\models\PaymentMethod;
+use backend\models\search\DiscountSearch;
 
 
 /**
@@ -217,6 +218,30 @@ class ReportController extends Controller {
         $dataProvider                     = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('item-category/index',
+                [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+    }
+	public function actionDiscount()
+    {
+        $searchModel              = new DiscountSearch();
+		$currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('M 1,Y');
+        $searchModel->toDate = $currentDate->format('M t,Y');
+        $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $discountRequest = $request->get('DiscountSearch');
+            $searchModel->dateRange = $discountRequest['dateRange'];
+        }
+        $toDate = $searchModel->toDate;
+        if ($toDate > $currentDate) {
+            $toDate = $currentDate;
+        }
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('discount/index',
                 [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,

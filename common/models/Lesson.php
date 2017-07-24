@@ -832,7 +832,14 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice = $this->createInvoice();
         $location_id = $this->enrolment->student->customer->userLocation->location_id;
         $user = User::findOne(['id' => $this->enrolment->student->customer->id]);
-        $invoice->userName = $user->publicIdentity;
+        if (is_a(Yii::$app, 'yii\console\Application')) {
+            $roleUser = User::findByRole(User::ROLE_BOT);
+            $botUser = end($roleUser);
+            $loggedUser = User::findOne(['id' => $botUser->id]);
+        } else {
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        }
+        $invoice->userName = $loggedUser->userProfile->fullName;
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
         $invoice->save();

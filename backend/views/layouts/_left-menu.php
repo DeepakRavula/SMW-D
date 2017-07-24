@@ -194,6 +194,13 @@ echo Menu::widget([
 					'visible' => Yii::$app->user->can('owner'),
 					'active' => Yii::$app->controller->action->id === 'item-category',
 				],
+				[
+					'label' => Yii::t('backend', 'Discount'),
+					'icon' => '<i class="fa fa-cny"></i>',
+					'url' => ['report/discount'],
+					'visible' => Yii::$app->user->can('owner'),
+					'active' => Yii::$app->controller->action->id === 'discount',
+				],
 			]
 		],
                 [
