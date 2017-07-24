@@ -253,7 +253,7 @@ class LessonController extends Controller
         $model = $this->findModel($id);
         $oldLesson = clone $model;
         $oldDate = $model->date;
-        $model->date = $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date);
+        $model->date =Yii::$app->formatter->asDateTime($model->date);
         $oldTeacherId = $model->teacherId;
         $user = User::findOne(['id'=>Yii::$app->user->id]);
         $model->userName = $user->publicIdentity;
@@ -271,7 +271,7 @@ class LessonController extends Controller
 		$userModel = $request->post('User');
 		
         if ($model->load($request->post()) || !empty($userModel)) {
-			if(empty($model->date)) {
+			if(empty($model->isUnscheduled)) {
 				$model->date =  $oldDate;
 				$model->status = Lesson::STATUS_UNSCHEDULED;
 				$model->save();
