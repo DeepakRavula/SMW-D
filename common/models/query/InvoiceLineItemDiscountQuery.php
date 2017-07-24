@@ -7,7 +7,7 @@ namespace common\models\query;
  *
  * @see \common\models\InvoiceDiscount
  */
-class InvoiceDiscountQuery extends \yii\db\ActiveQuery
+class InvoiceLineItemDiscountQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {

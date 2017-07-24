@@ -207,13 +207,7 @@ $logContent = $this->render('log', [
 
 <div id="line-item-edit-content"></div>
 <?php Modal::end();?>
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">Edit Discounts</h4>',
-    'id' => 'invoice-discount-modal',
-]); ?>
 
-<div id="invoice-discount-content"></div>
-<?php Modal::end();?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Edit Payment</h4>',
     'id' => 'payment-edit-modal',
@@ -388,48 +382,5 @@ var payment = {
 		$('#payment-edit-modal').modal('hide');
 		return false;
 	});
-        $(document).on("click", '.discount-cancel', function() {
-		$('#invoice-discount-modal').modal('hide');
-		return false;
-	});
-        $(document).on("click", '#invoice-discount', function() {
-            $.ajax({
-                url    : '<?= Url::to(['invoice/discount', 'id' => $model->id]); ?>',
-                type   : 'get',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status)
-                    {
-                        $('#invoice-discount-content').html(response.data);
-                        $('#invoice-discount-modal').modal('show');
-                        $('#warning-notification').html('You have entered a \n\
-                        non-approved Arcadia discount. All non-approved discounts \n\
-                        must be submitted in writing and approved by Head Office \n\
-                        prior to entering a discount, otherwise you are in breach \n\
-                        of your agreement.').fadeIn();
-                    }
-                }
-            });
-            return false;
-        });
-        $(document).on("beforeSubmit", '#invoice-discount-form', function() {
-            $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status)
-                    {
-                        $('#invoice-discount-modal').modal('hide');
-                        payment.onEditableGridSuccess();
-                    }
-                }
-            });
-            return false;
-        });
 });
 </script>

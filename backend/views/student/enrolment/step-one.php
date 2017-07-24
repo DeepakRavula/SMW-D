@@ -7,6 +7,7 @@ use kartik\time\TimePicker;
 use kartik\date\DatePicker;
 use common\models\LocationAvailability;
 use yii\helpers\Url;
+use kartik\select2\Select2;
 use kartik\switchinput\SwitchInput;
 
 /* @var $this yii\web\View */
@@ -78,58 +79,33 @@ $privatePrograms = ArrayHelper::map(Program::find()
         </div>
         <div class="col-md-4">
 			<?php
-            echo $form->field($model, 'programId')->dropDownList(
-                ArrayHelper::map(Program::find()
-                        ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
-                        ->active()
-                        ->all(), 'id', 'name'), ['prompt' => 'Select..']);
-            ?>
+            echo $form->field($model, 'programId')->widget(Select2::classname(), [
+                'data' => ArrayHelper::map(Program::find()
+                            ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
+                            ->active()
+                            ->all(), 'id', 'name'),
+                'options' => ['placeholder' => 'Program']
+            ]) ?>
         </div>
         <div class="clear-fix"></div>
-        <div class="col-md-4">
-            <?= $form->field($courseSchedule, 'paymentFrequency')->dropdownList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')) ?>
+        <div class="col-md-3">
+            <?= $form->field($courseSchedule, 'paymentFrequency')->widget(Select2::classname(), [
+                'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')
+                ]) ?>
         </div>
         <div class="col-md-4">
             <?= $form->field($paymentFrequencyDiscount, 'discount')->textInput([
                 'id' => 'payment-frequency-discount',
                 'name' => 'PaymentFrequencyDiscount[discount]'
-            ])->label('Payment Frequency Discount'); ?>
+            ])->label('Payment Frequency Discount - "%"'); ?>
         </div>
-        <div class="col-md-4">
-            <?= $form->field($paymentFrequencyDiscount, 'discountType')->widget(SwitchInput::classname(),
-                [
-                'options' => [
-                    'name' => 'PaymentFrequencyDiscount[discountType]',
-                    'id' => 'payment-frequency-discount-type',
-                ],
-                'pluginOptions' => [
-                    'handleWidth' => 50,
-                    'onText' => '$',
-                    'offText' => '%',
-                ],
-            ])->label('Discount Type');?>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
                 'id' => 'enrolment-discount',
                 'name' => 'MultipleEnrolmentDiscount[discount]'
-            ])->label('Multiple Enrolment Discount'); ?>
+            ])->label('Multiple Enrolment Discount - "$"'); ?>
         </div>
-	<div class="col-md-4">
-            <?= $form->field($multipleEnrolmentDiscount, 'discountType')->widget(SwitchInput::classname(),
-                [
-                'options' => [
-                    'name' => 'MultipleEnrolmentDiscount[discountType]',
-                    'id' => 'enrolment-discount-type',
-                ],
-                'pluginOptions' => [
-                    'handleWidth' => 50,
-                    'onText' => '$',
-                    'offText' => '%',
-                ],
-            ])->label('Discount Type');?>
-        </div>
-		<div class="clearfix"></div>
+        <div class="col-md-2 p-20">per month</div>
         <div id="course-rate-estimation">
         	<hr class="default-hr">
 				<div class="col-md-6">

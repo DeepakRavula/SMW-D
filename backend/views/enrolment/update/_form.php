@@ -35,40 +35,12 @@ use yii\helpers\Url;
             ])->label('Payment Frequency Discount'); ?>
         </div>
         <div class="col-md-6">
-            <?= $form->field($paymentFrequencyDiscount, 'discountType')->widget(SwitchInput::classname(),
-                [
-                'options' => [
-                    'name' => 'PaymentFrequencyDiscount[discountType]',
-                    'id' => 'payment-frequency-discount-type',
-                ],
-                'pluginOptions' => [
-                    'handleWidth' => 50,
-                    'onText' => '$',
-                    'offText' => '%',
-                ],
-            ])->label('Discount Type');?>
-        </div>
-        <div class="col-md-6">
             <?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
                 'id' => 'enrolment-discount',
                 'name' => 'MultipleEnrolmentDiscount[discount]'
             ])->label('Multiple Enrolment Discount'); ?>
         </div>
-	<div class="col-md-6">
-            <?= $form->field($multipleEnrolmentDiscount, 'discountType')->widget(SwitchInput::classname(),
-                [
-                'options' => [
-                    'name' => 'MultipleEnrolmentDiscount[discountType]',
-                    'id' => 'enrolment-discount-type',
-                ],
-                'pluginOptions' => [
-                    'handleWidth' => 50,
-                    'onText' => '$',
-                    'offText' => '%',
-                ],
-            ])->label('Discount Type');?>
-        </div>
-        <div class="form-group col-xs-12">
+	<div class="form-group col-xs-12">
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']);?>
         </div>

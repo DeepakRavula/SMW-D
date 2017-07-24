@@ -1,5 +1,5 @@
 <tr>
-    <td id="invoice-discount"><a>Discounts</a></td>
+    <td id="invoice-discount">Discounts</td>
 	<td><?= Yii::$app->formatter->format($model->totalDiscount, ['currency']); ?></td>
 </tr>
 <tr>

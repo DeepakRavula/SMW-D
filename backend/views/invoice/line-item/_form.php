@@ -31,7 +31,7 @@ use common\models\TaxStatus;
         <div class="col-md-3">
             <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
                             TaxStatus::find()->all(), 'id', 'name'
             ), ['prompt' => 'Select', 'id' => 'lineitem-tax_status']);?>
@@ -55,25 +55,45 @@ use common\models\TaxStatus;
         </div>
 	   <div class="clearfix"></div>
 	   
-        <div class="col-md-3">
-            <?= $form->field($model, 'discount')->textInput()->label('Discount');?>
+        
+        <div class="col-md-12">
+            <?= $form->field($model, 'description')->textarea();?>
+        </div>
+        <div class="col-md-6">
+            <?= $form->field($paymentFrequencyDiscount, 'value')->textInput([
+                'id' => 'payment-frequency-value',
+                'name' => 'PaymentFrequencyDiscount[value]'
+            ])->label('Payment Frequency Discount - "%"'); ?>
+        </div>
+        <div class="col-md-5">
+            <?= $form->field($customerDiscount, 'value')->textInput([
+                'id' => 'customer-value',
+                'name' => 'CustomerDiscount[value]'
+            ])->label('Customer Discount - "%"'); ?>
         </div>
         <div class="col-md-3">
-            <?= $form->field($model, 'discountType')->widget(SwitchInput::classname(),
+            <?= $form->field($lineItemDiscount, 'value')->textInput([
+                'id' => 'line-item-value',
+                'name' => 'LineItemDiscount[value]'
+            ])->label('Line Item Discount'); ?>
+        </div>
+        <div class="col-md-3">
+            <?= $form->field($lineItemDiscount, 'valueType')->widget(SwitchInput::classname(),
                 [
-                'name' => 'discountType',
+                'options' => [
+                    'id' => 'line-item-discount-valueType',
+                    'name' => 'LineItemDiscount[valueType]'
+                ],
+                'name' => 'valueType',
                 'pluginOptions' => [
                     'handleWidth' => 30,
-                    'onText' => '%',
-                    'offText' => '$',
+                    'onText' => '$',
+                    'offText' => '%',
                 ],
             ])->label('Discount Type');?>
         </div>
-       <div class="col-md-3">
+        <div class="col-md-3">
             <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true])->label('Net Price');?>
-        </div> 
-        <div class="col-md-12">
-            <?= $form->field($model, 'description')->textarea();?>
         </div>
     <div class="col-md-12 p-l-20 form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>

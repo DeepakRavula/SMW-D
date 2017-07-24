@@ -45,7 +45,7 @@ class InvoiceController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'get-payment-amount', 'discount'],
+                'only' => ['delete', 'get-payment-amount'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -129,8 +129,12 @@ class InvoiceController extends Controller
         }
         if (isset($customerId)) {
             $customer = User::findOne(['id' => $customerId]);
-            if ($customer->hasDiscount() && $model->lineItem) {
-                $model->addCustomerDiscount($customer);
+            if ($customer->hasDiscount()) {
+                foreach ($model->lineItems as $lineItem) {
+                    if (!$lineItem->hasCustomerDiscount()) {
+                        $model->addCustomerDiscount($customer);
+                    }
+                }
             }
         }
         if (empty($customer)) {
@@ -231,7 +235,6 @@ class InvoiceController extends Controller
             $invoiceLineItemModel->invoice_id = $model->id;
             $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
             $invoiceLineItemModel->cost        = 0.0;
-            $invoiceLineItemModel->discount = 0.0;
 			if($invoiceLineItemModel->tax_rate == '') {
 				$invoiceLineItemModel->tax_rate = $invoiceLineItemModel->amount * ( 5 / 100);	
 			}
@@ -240,7 +243,7 @@ class InvoiceController extends Controller
                 $model->save();
                 if ($model->user) {
                     if ($model->user->hasDiscount()) {
-                        $model->addCustomerDiscount($model->user);
+                        $invoiceLineItemModel->addCustomerDiscount($model->user);
                     }
                 }
                 $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
@@ -620,60 +623,5 @@ class InvoiceController extends Controller
             'status' => true,
             'amount' => $model->balance,
         ];
-    }
-
-    public function actionDiscount($id)
-    {
-        $model = $this->findModel($id);
-        $customerDiscount = $model->customerDiscount;
-        $enrolmentDiscount = $model->enrolmentDiscount;
-        if (!$customerDiscount) {
-            $customerDiscount = new InvoiceDiscount();
-        }
-        if (!$enrolmentDiscount) {
-            $enrolmentDiscount = new InvoiceDiscount();
-        }
-        $customerDiscount->setScenario(InvoiceDiscount::SCENARIO_ON_INVOICE);
-        $enrolmentDiscount->setScenario(InvoiceDiscount::SCENARIO_ON_INVOICE);
-	$data = $this->renderAjax('discount/_form-discount', [
-            'model' => $model,
-            'customerDiscount' => $customerDiscount,
-            'enrolmentDiscount' => $enrolmentDiscount
-        ]);
-        $post = Yii::$app->request->post();
-        if ($post) {
-            $customerDiscount->load($post['CustomerDiscount'], '');
-            if ($customerDiscount->isNewRecord) {
-                $customerDiscount->invoiceId = $id;
-                $customerDiscount->type = InvoiceDiscount::TYPE_CUSTOMER;
-            }
-            $enrolmentDiscount->load($post['EnrolmentDiscount'], '');
-            if ($enrolmentDiscount->isNewRecord) {
-                $enrolmentDiscount->invoiceId = $id;
-                $enrolmentDiscount->type = InvoiceDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
-            }
-            if ($customerDiscount->canSave()) {
-                if (empty($customerDiscount->value)) {
-                    $customerDiscount->value = 0.0;
-                }
-                $customerDiscount->save();
-            }
-            if ($enrolmentDiscount->canSave()) {
-                if (empty($enrolmentDiscount->value)) {
-                    $enrolmentDiscount->value = 0.0;
-                }
-                $enrolmentDiscount->save();
-            }
-            $response = [
-                'status' => true,
-            ];
-            return $response;
-        } else {
-
-            return [
-                'status' => true,
-                'data' => $data,
-            ];
-        }
     }
 }
