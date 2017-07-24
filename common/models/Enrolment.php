@@ -636,7 +636,14 @@ class Enrolment extends \yii\db\ActiveRecord
         $user = User::findOne(['id' => $this->student->customer->id]);
         $invoice = new Invoice();
         $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
-        $invoice->userName = $user->publicIdentity;
+        if (is_a(Yii::$app, 'yii\console\Application')) {
+            $roleUser = User::findByRole(User::ROLE_BOT);
+            $botUser = end($roleUser);
+            $loggedUser = User::findOne(['id' => $botUser->id]);
+        } else {
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        }
+        $invoice->userName = $loggedUser->userProfile->fullName;
         $invoice->user_id = $user->id;
         $invoice->location_id = $locationId;
         $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
