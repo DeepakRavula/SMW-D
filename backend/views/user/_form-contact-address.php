@@ -81,7 +81,7 @@ $this->registerJs($js);
                     $locationModel = Location::findOne(['id' => Yii::$app->session->get('location_id')]);
                     ?>
 
-					<div class="row">
+					<div class="row address-city">
 						<div class="col-sm-4">
 							<?= $form->field($addressModel, "[{$index}]label")->dropDownList(Address::labels(), ['prompt' => 'Select Label']) ?>
 						</div>
@@ -91,31 +91,22 @@ $this->registerJs($js);
 						<div class="col-sm-4">
 							<?=
                             $form->field($addressModel, "[{$index}]city_id")->dropDownList(
-                                    ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'), ['options' => [
-                                    $locationModel->city_id => ['Selected' => true],
-                                ],
-                            ])
+                                    ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),['class' => 'city form-control'])
                             ?>
 						</div>
 						<div class="clearfix"></div>
 					</div>
-					<div class="row">
+					<div class="row address">
 						<div class="col-sm-4">
 							<?=
                             $form->field($addressModel, "[{$index}]country_id")->dropDownList(
-                                    ArrayHelper::map(Country::find()->all(), 'id', 'name'), ['options' => [
-                                    $locationModel->country_id => ['Selected' => true],
-                                ],
-                            ])
+                                    ArrayHelper::map(Country::find()->all(), 'id', 'name'), ['class' => 'country form-control'])
                             ?>
 						</div>
 						<div class="col-sm-4">
 							<?=
                             $form->field($addressModel, "[{$index}]province_id")->dropDownList(
-                                    ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['options' => [
-                                    $locationModel->province_id => ['Selected' => true],
-                                ],
-                            ])
+                                    ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['class' => 'province form-control'])
                             ?>
 						</div>
 						<div class="col-sm-4">
@@ -133,6 +124,14 @@ $this->registerJs($js);
 <hr class="hr-ad right-side-faded">
 <script type="text/javascript">
 $(document).ready(function(){
+	$(document).on('click', '.address-add-item', function(){
+		var cityId = '<?= $locationModel->city_id; ?>';
+		var countryId = '<?= $locationModel->country_id; ?>';
+		var ProvinceId = '<?= $locationModel->province_id; ?>';
+		$('.address-city').find('.city').val(cityId);
+		$('.address').find('.country').val(countryId);
+		$('.address').find('.province').val(ProvinceId);
+	});
 	$('.address-container-items').on('change', 'input[type="checkbox"]', function(){
 		var checked = $(this).prop('checked');
 		$('.address-container-items input[type="checkbox"]').prop('checked', false);
