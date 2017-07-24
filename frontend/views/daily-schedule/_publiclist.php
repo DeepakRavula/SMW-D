@@ -70,24 +70,20 @@ GridView::widget([
 				return !empty($data->classroomId) ? $data->classroom->name : null;
 			},
 		],
-		[
-			'label' => 'Status',
-			'value' => function ($data) {
-				return $data->getStatus();
-			},
-		],
 	]
 ]);
 ?>
 <?php yii\widgets\Pjax::end(); ?>
-
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script>
 $(document).ready(function () {
+	var locationId = $.cookie('locationId');
+	$('#lesson-schedule').val(locationId);
 	$(document).on('change', '#lesson-schedule', function(){
+		$.cookie('locationId', $(this).val());
 		$("#lesson-schedule").submit();
 	});
 	$(document).on('submit', '#schedule-search', function () {
-		var locationId = $('#lesson-schedule').val();
 		$.pjax.reload({container: "#schedule-listing", replace: false, timeout: 6000, data: $(this).serialize()});
 		return false;
 	});

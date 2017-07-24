@@ -54,9 +54,7 @@ class LocationScheduleSearch extends Lesson
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-		$query->joinWith(['course' => function($query) {
-			$query->andWhere(['locationId' => $this->locationId]);
-		}]);
+		$query->location($this->locationId);
 
         return $dataProvider;
     }
