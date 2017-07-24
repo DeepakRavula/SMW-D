@@ -7,6 +7,8 @@ use kartik\depdrop\DepDrop;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use kartik\time\TimePicker;
+
 
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
@@ -29,14 +31,14 @@ use yii\bootstrap\ActiveForm;
 	]);
 	?>
 	<div class="row p-10">
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<?php
 			echo $form->field($model, 'programId')->dropDownList(
 				ArrayHelper::map(Program::find()->group()->active()
 						->all(), 'id', 'name'), ['prompt' => 'Select Program'])->label('Program');
 			?>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<?php
 			// Dependent Dropdown
 			echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
@@ -49,7 +51,20 @@ use yii\bootstrap\ActiveForm;
 			])->label('Teacher');
 			?>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-3">
+			<?=
+			$form->field($model, 'duration')->widget(TimePicker::classname(), [
+				'pluginOptions' => [
+					'showMeridian' => false,
+					'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+				],
+				'options' => [
+					'class' => 'duration'
+				]
+			]);
+			?>
+		</div>
+		<div class="col-md-3">
 			<?= $form->field($model, 'weeksCount')->textInput()->label('Number Of Weeks'); ?>
 		</div>
 		<div class="clearfix"></div>

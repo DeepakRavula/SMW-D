@@ -143,6 +143,7 @@ $(document).ready(function() {
 		return false;
 	});
 	$(document).on('change', '#course-teacher', function() {
+		$('#courseschedule-day').val('');
 		calendar.refresh();
 		return false;
 	});

@@ -17,7 +17,6 @@ use common\models\CourseGroup;
  * @property string $locationId
  * @property string $day
  * @property string $fromTime
- * @property string $duration
  * @property string $startDate
  * @property string $endDate
  */
@@ -30,11 +29,11 @@ class Course extends \yii\db\ActiveRecord
     const EVENT_CREATE = 'event-create';
     public $lessonStatus;
 	public $rescheduleBeginDate;
-	public $teacherName;
 	public $weeksCount;
 	public $lessonsPerWeekCount;
     public $userName;
     public $studentId;
+	public $duration;
 
     /**
      * {@inheritdoc}
@@ -58,7 +57,7 @@ class Course extends \yii\db\ActiveRecord
             [['startDate', 'endDate'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
-            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId'], 'safe'],
+            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration'], 'safe'],
           
         ];
     }

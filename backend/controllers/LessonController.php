@@ -262,20 +262,11 @@ class LessonController extends Controller
         $model->on(Lesson::EVENT_RESCHEDULED,
                 [new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-        $currentDate = new \DateTime();
-
-        $data = ['model' => $model];
-        $view = '_form-group-lesson';
-        if ($model->course->program->isPrivate()) {
-            $view = '_form-private-lesson';
-            if (!empty($model->privateLesson->id)) {
-                $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
-            } else {
-                $privateLessonModel = new PrivateLesson();
-            }
-
-            $data = ['model' => $model, 'privateLessonModel' => $privateLessonModel];
-        }
+		if (!empty($model->privateLesson->id)) {
+			$privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
+		} else {
+			$privateLessonModel = new PrivateLesson();
+		}
 		$request = Yii::$app->request;
 		$userModel = $request->post('User');
 		
@@ -331,7 +322,10 @@ class LessonController extends Controller
 			}
             return $redirectionLink;
         }
-        return $this->render($view, $data);
+        return $this->render('_form-private-lesson', [
+			'model' => $model,
+			'privateLessonModel' => $privateLessonModel
+		]);
     }
 
     /**
@@ -530,10 +524,12 @@ class LessonController extends Controller
         $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
         $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
+        $enrolmentRequest = $request->get('Enrolment');
         $rescheduleBeginDate = $courseRequest['startDate'];
         $rescheduleEndDate = $courseRequest['endDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
+		$enrolmentType = $enrolmentRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
 		$conflicts = [];
 		$conflictedLessonIds = [];
@@ -590,6 +586,7 @@ class LessonController extends Controller
 			'lessonCount' => $lessonCount,
 			'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
 			'unscheduledLessonCount' => $unscheduledLessonCount,
+			'enrolmentType' => $enrolmentType,
         ]);
     }
 
@@ -648,11 +645,21 @@ class LessonController extends Controller
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
+        $enrolmentRequest = $request->get('Enrolment');
         $vacationRequest = $request->get('Vacation');
         $rescheduleEndDate = $courseRequest['endDate'];
         $rescheduleBeginDate = $courseRequest['startDate'];
         $vacationId = $vacationRequest['id'];
         $vacationType = $vacationRequest['type'];
+        $enrolmentType = $enrolmentRequest['type'];
+		if(!empty($enrolmentType)) {
+			$courseModel->enrolment->student->updateAttributes([
+				'status' => Student::STATUS_ACTIVE
+			]);
+			$courseModel->enrolment->student->customer->updateAttributes([
+				'status' => User::STATUS_ACTIVE
+			]);
+		}
 		if(! empty($vacationId)) {
 			$vacation = Vacation::findOne(['id' => $vacationId]);
 			$fromDate = (new \DateTime($vacation->fromDate))->format('Y-m-d');

@@ -113,7 +113,9 @@ $columns = [
 	'rescheduleBeginDate' => $rescheduleBeginDate,
     'rescheduleEndDate' => $rescheduleEndDate,
 	'courseId' => $courseId,
-	'courseModel' => $courseModel	
+	'courseModel' => $courseModel,
+	'enrolmentType' => $enrolmentType,
+	
 ]); ?>
 <?php
 Modal::begin([

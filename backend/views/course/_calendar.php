@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 ?>
+<?php $this->render('/lesson/_color-code'); ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
  <div class="row-fluid">
 	<div id="course-calendar"> </div>
@@ -86,7 +87,7 @@ $(document).ready(function(){
             select: function (start, end, allDay) {
 				$(lessonFreeSlotPicker).parent().find('.lesson-time').find('.time').val(moment(start).format('DD-MM-YYYY h:mm A'));
 				$(lessonFreeSlotPicker).parent().find('.lesson-day').find('.day').val(moment(start).format('dddd'));
-				var duration = $(lessonFreeSlotPicker).parent().find('.lesson-duration').find('.duration').val();
+				var duration = $('#course-duration').val();
                 $('#course-calendar').fullCalendar('removeEvents', 'newEnrolment');
 				var endtime = start.clone();
                 var durationMinutes = moment.duration(duration).asMinutes();

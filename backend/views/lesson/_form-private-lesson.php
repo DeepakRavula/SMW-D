@@ -36,7 +36,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             ]
         ]); ?>
    <div class="row-fluid">
-	   <div class="col-md-2">
+	   <div class="col-md-3">
 		    <?php if($model->isUnscheduled()) : ?>
 				<?php $model->duration = $model->getCreditUsage(); ?> 
 		    <?php endif; ?>
@@ -64,7 +64,6 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 		))->label();
             ?>  
         </div>
-
         <div class="col-md-5">
             <div class="row">
             <div class="col-md-6" style="width:60%;">
@@ -87,8 +86,30 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             </div>
             </div>
         </div>
-	</div>
-	<div class="row-fluid">
+	   <div class="clearfix"></div>
+	   <div class=" col-md-4">
+		   <?php $locationId = Yii::$app->session->get('location_id'); ?>
+		   <?=
+		   $form->field($model, 'classroomId')->widget(Select2::classname(), [
+			   'data' => ArrayHelper::map(Classroom::find()->orderBy(['name' => SORT_ASC])
+					   ->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
+			   'pluginOptions' => [
+				   'placeholder' => 'Select Classroom',
+				   'allowClear' => true
+			   ]
+		   ]);
+		   ?>
+		</div>
+        <div class="col-md-4">
+        <?php echo $form->field($model, 'colorCode')->widget(ColorInput::classname(), [
+                'options' => [
+                    'placeholder' => 'Select color ...',
+                    'value' => $model->getColorCode(),
+                ],
+        ]);
+        ?>
+        </div>
+		<?php if($model->course->program->isPrivate()) : ?>
 		<div class="col-md-4">
 			<?php
                 if ($privateLessonModel->isNewRecord) {
@@ -111,35 +132,13 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             ]);
             ?>
 		</div>
-	   <div class=" col-md-4">
-		   <?php $locationId = Yii::$app->session->get('location_id'); ?>
-		   <?=
-                $form->field($model, 'classroomId')->widget(Select2::classname(), [
-                                'data' => ArrayHelper::map(Classroom::find()->orderBy(['name' => SORT_ASC])
-                                    ->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
-				'pluginOptions' => [
-                                    'placeholder' => 'Select Classroom',
-                                    'allowClear' => true
-				]
-                ]);
-                ?>
-		</div>
-        <div class="form-group col-md-4">
-        <?php echo $form->field($model, 'colorCode')->widget(ColorInput::classname(), [
-                'options' => [
-                    'placeholder' => 'Select color ...',
-                    'value' => $model->getColorCode(),
-                ],
-        ]);
-        ?>
-        </div>
+		<?php endif; ?>
 	</div>
    <div class="col-md-12 p-l-20 form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-primary', 'name' => 'button']) ?>
 		<?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
         ?>
 		<div class="clearfix"></div>
-	</div>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>

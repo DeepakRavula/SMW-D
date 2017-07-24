@@ -24,11 +24,12 @@ class Enrolment extends \yii\db\ActiveRecord
 	public $programName;
 	public $enrolmentCount;
     public $userName;
-
+	
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA   = 2;
+	const TYPE_REVERSE = 'reverse';
     const ENROLMENT_EXPIRY=90;
-
+	
     const EVENT_CREATE = 'create';
     const EVENT_GROUP='group-course-enroll';
     /**

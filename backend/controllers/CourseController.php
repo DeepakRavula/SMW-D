@@ -210,6 +210,7 @@ public function getHolidayEvent($date)
                     if ($flag = $model->save(false)) {
                         foreach ($courseScheduleModels as $courseScheduleModel) {
                             $courseScheduleModel->courseId = $model->id;
+                            $courseScheduleModel->duration = $model->duration;
 							$dayList = Course::getWeekdaysList();
 							$courseScheduleModel->day = array_search($courseScheduleModel->day, $dayList);
                             if (! ($flag = $courseScheduleModel->save(false))) {
