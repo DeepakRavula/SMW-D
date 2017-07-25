@@ -59,6 +59,7 @@ class InvoiceLineItemController extends Controller
         $lineItemDiscount = $model->lineItemDiscount;
         $customerDiscount = $model->customerDiscount;
         $paymentFrequencyDiscount = $model->enrolmentPaymentFrequencyDiscount;
+        $multiEnrolmentDiscount = $model->multiEnrolmentDiscount;
         if (!$customerDiscount) {
             $customerDiscount = new InvoiceLineItemDiscount();
         }
@@ -68,17 +69,21 @@ class InvoiceLineItemController extends Controller
         if (!$lineItemDiscount) {
             $lineItemDiscount = new InvoiceLineItemDiscount();
         }
+        if (!$multiEnrolmentDiscount) {
+            $multiEnrolmentDiscount = new InvoiceLineItemDiscount();
+        }
         $customerDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
         $paymentFrequencyDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
         $lineItemDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
-        
+        $multiEnrolmentDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
         $model->setScenario(InvoiceLineItem::SCENARIO_EDIT);
         $model->tax_status = $model->taxStatus;
         $data = $this->renderAjax('/invoice/line-item/_form', [
             'model' => $model,
             'customerDiscount' => $customerDiscount,
             'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
-            'lineItemDiscount' => $lineItemDiscount
+            'lineItemDiscount' => $lineItemDiscount,
+            'multiEnrolmentDiscount' => $multiEnrolmentDiscount
         ]);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
@@ -99,6 +104,12 @@ class InvoiceLineItemController extends Controller
                 $paymentFrequencyDiscount->invoiceLineItemId = $id;
                 $paymentFrequencyDiscount->type = InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
             }
+            $multiEnrolmentDiscount->load($post['MultiEnrolmentDiscount'], '');
+            if ($multiEnrolmentDiscount->isNewRecord) {
+                $multiEnrolmentDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
+                $multiEnrolmentDiscount->invoiceLineItemId = $id;
+                $multiEnrolmentDiscount->type = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;
+            }
             if ($customerDiscount->canSave()) {
                 if (empty($customerDiscount->value)) {
                     $customerDiscount->value = 0.0;
@@ -116,6 +127,12 @@ class InvoiceLineItemController extends Controller
                     $lineItemDiscount->value = 0.0;
                 }
                 $lineItemDiscount->save();
+            }
+            if ($multiEnrolmentDiscount->canSave()) {
+                if (empty($multiEnrolmentDiscount->value)) {
+                    $multiEnrolmentDiscount->value = 0.0;
+                }
+                $multiEnrolmentDiscount->save();
             }
             $taxStatus         = $post['InvoiceLineItem']['tax_status'];
             $taxCode           = $model->computeTaxCode($taxStatus);
