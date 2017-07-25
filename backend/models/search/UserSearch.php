@@ -59,7 +59,7 @@ class UserSearch extends User
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
+		
         $query->andFilterWhere([
             'id' => $this->id,
             'status' => $this->status,
@@ -73,7 +73,18 @@ class UserSearch extends User
         $query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
         $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
         $query->leftJoin(['phone_number pn'], 'pn.user_id = user.id');
-
+		$dataProvider->setSort([
+            'attributes' => [
+                'firstname' => [
+                    'asc' => ['uf.firstname' => SORT_ASC],
+                    'desc' => ['uf.firstname' => SORT_DESC],
+                ],
+                'lastname' => [
+                    'asc' => ['uf.lastname' => SORT_ASC],
+                    'desc' => ['uf.lastname' => SORT_DESC],
+                ],
+            ]
+        ]);
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'email', $this->query])
             ->orFilterWhere(['like', 'uf.lastname', $this->query])
