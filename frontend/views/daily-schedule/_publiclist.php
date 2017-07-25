@@ -13,19 +13,24 @@ $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
     $this->registerCss(
         " 
         .private-lesson {
-            background-color: " . $privateLesson->code . " !important;
+			font-weight:bold;
+            color: " . $privateLesson->code . " !important;
 		}
         .first-lesson {
-            background-color: " . $firstLesson->code . " !important;
+			font-weight:bold;
+            color: " . $firstLesson->code . " !important;
 		}
         .group-lesson {
-            background-color: " . $groupLesson->code . " !important; 
+			font-weight:bold;
+           	color: " . $groupLesson->code . " !important; 
 		}
         .teacher-substituted {
-            background-color: " . $teacherSubstitutedLesson->code . " !important;
+			font-weight:bold;
+            color: " . $teacherSubstitutedLesson->code . " !important;
 		}
         .lesson-rescheduled {
-            background-color: " . $rescheduledLesson->code . " !important; }"
+			font-weight:bold;
+            color: " . $rescheduledLesson->code . " !important; }"
     );
 ?>
  <?php yii\widgets\Pjax::begin(['id' => 'schedule-listing']); ?>
@@ -70,24 +75,16 @@ GridView::widget([
 				return !empty($data->classroomId) ? $data->classroom->name : null;
 			},
 		],
-		[
-			'label' => 'Status',
-			'value' => function ($data) {
-				return $data->getStatus();
-			},
-		],
 	]
 ]);
 ?>
 <?php yii\widgets\Pjax::end(); ?>
-
 <script>
 $(document).ready(function () {
 	$(document).on('change', '#lesson-schedule', function(){
 		$("#lesson-schedule").submit();
 	});
 	$(document).on('submit', '#schedule-search', function () {
-		var locationId = $('#lesson-schedule').val();
 		$.pjax.reload({container: "#schedule-listing", replace: false, timeout: 6000, data: $(this).serialize()});
 		return false;
 	});
