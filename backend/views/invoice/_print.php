@@ -313,24 +313,8 @@
          'columns' => [
              [
                  'label' => 'Description',
-                 'format' => 'raw',
                  'value' => function ($data) {
-                     if (!empty($data->discount)) {
-                         if ((int) $data->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
-                             $discount = Yii::$app->formatter->format($data->discount, ['currency']);
-                             $discountDiscription = ' (Discount - ' . $discount . ')' ;
-                             $discription = $data->description . "<i>" .
-                                 $discountDiscription . "</i>";
-                         } else {
-                             $discount = $data->discount . '%';
-                             $discountDiscription = ' (Discount - ' . $discount . ')' ;
-                             $discription = $data->description . "<i>" .
-                                 $discountDiscription . "</i>";
-                         }
-                     } else {
-                         $discription = $data->description;
-                     }
-                     return $discription;
+                    return $data->discount;
                  },
                  'headerOptions' => ['class' => 'text-left'],
                  'contentOptions' => ['class' => 'text-left'],

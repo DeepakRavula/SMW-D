@@ -43,4 +43,24 @@ class InvoiceItemEnrolment extends \yii\db\ActiveRecord
             'enrolmentId' => 'Enrolment ID',
         ];
     }
+
+    public function getLineItem()
+    {
+        return $this->hasOne(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId']);
+    }
+
+    public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+            if (!$this->lineItem->isGroupLesson()) {
+                $this->lineItem->addEnrolmentPaymentFrequencyDiscount($this->enrolment);
+            }
+        }
+        return parent::afterSave($insert, $changedAttributes);
+    }
 }

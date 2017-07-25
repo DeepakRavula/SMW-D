@@ -5,21 +5,23 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "invoice_discount".
+ * This is the model class for table "invoice_line_item_discount".
  *
  * @property string $id
- * @property string $invoiceId
+ * @property string $invoiceLineItemId
  * @property string $value
  * @property integer $valueType
  * @property integer $type
  */
-class InvoiceDiscount extends \yii\db\ActiveRecord
+class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
 {
     const VALUE_TYPE_PERCENTAGE = 0;
     const VALUE_TYPE_DOLOR      = 1;
 
     const TYPE_CUSTOMER = 1;
     const TYPE_ENROLMENT_PAYMENT_FREQUENCY = 2;
+    const TYPE_MULTIPLE_ENROLMENT = 3;
+    const TYPE_LINE_ITEM = 4;
 
     const SCENARIO_ON_INVOICE = 'invoice';
 
@@ -28,7 +30,7 @@ class InvoiceDiscount extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'invoice_discount';
+        return 'invoice_line_item_discount';
     }
 
     /**
@@ -37,9 +39,9 @@ class InvoiceDiscount extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoiceId', 'valueType', 'type'], 'required'],
+            [['invoiceLineItemId', 'valueType', 'type'], 'required'],
             ['value', 'safe', 'on' => self::SCENARIO_ON_INVOICE],
-            [['invoiceId', 'valueType', 'type'], 'integer'],
+            [['invoiceLineItemId', 'valueType', 'type'], 'integer'],
             [['value'], 'number'],
         ];
     }
@@ -60,22 +62,22 @@ class InvoiceDiscount extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return \common\models\query\InvoiceDiscountQuery the active query used by this AR class.
+     * @return \common\models\query\InvoiceLineItemDiscountQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new \common\models\query\InvoiceDiscountQuery(get_called_class());
-    }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-        $this->invoice->save();
-        return parent::afterSave($insert, $changedAttributes);
+        return new \common\models\query\InvoiceLineItemDiscountQuery(get_called_class());
     }
 
     public function getInvoice()
     {
-        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId']);
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+            ->via('invoiceLineItem');
+    }
+
+    public function getInvoiceLineItem()
+    {
+        return $this->hasOne(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId']);
     }
 
     public function canSave()

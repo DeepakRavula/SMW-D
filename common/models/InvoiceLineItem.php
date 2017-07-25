@@ -155,6 +155,24 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
     }
 
+    public function getLineItemDiscount()
+    {
+        return $this->hasOne(InvoiceLineItemDiscount::className(), ['invoiceLineItemId' => 'id'])
+            ->onCondition(['invoice_line_item_discount.type' => InvoiceLineItemDiscount::TYPE_LINE_ITEM]);
+    }
+
+    public function getCustomerDiscount()
+    {
+        return $this->hasOne(InvoiceLineItemDiscount::className(), ['invoiceLineItemId' => 'id'])
+            ->onCondition(['invoice_line_item_discount.type' => InvoiceLineItemDiscount::TYPE_CUSTOMER]);
+    }
+
+    public function getEnrolmentPaymentFrequencyDiscount()
+    {
+        return $this->hasOne(InvoiceLineItemDiscount::className(), ['invoiceLineItemId' => 'id'])
+            ->onCondition(['invoice_line_item_discount.type' => InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY]);
+    }
+
     public function getLineItemEnrolment()
     {
         return $this->hasOne(InvoiceItemEnrolment::className(), ['invoiceLineItemId' => 'id']);
@@ -242,13 +260,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         if ($insert) {
             if ($this->isDefaultDiscountedItems()) {
-                $this->discount     = 0.0;
-                $this->discountType = 0;
                 $this->rate         = 0;
             }
             $taxStatus         = TaxStatus::findOne(['id' => $this->item->taxStatusId]);
             $this->tax_type    = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-            $this->tax_rate    = $this->amount * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
+            $this->tax_rate    = $this->netPrice * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
             $this->tax_code    = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
             $this->tax_status  = $taxStatus->name;
             if (!isset($this->royaltyFree)) {
@@ -293,6 +309,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         if (!$insert) {
             $this->invoice->save();
+        } else {
+            if ($this->invoice->user) {
+                if ($this->invoice->user->hasDiscount()) {
+                    $this->addCustomerDiscount($this->invoice->user);
+                }
+            }
         }
         
         return parent::afterSave($insert, $changedAttributes);
@@ -338,46 +360,35 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return (int) $this->item_type_id === (int) ItemType::TYPE_GROUP_LESSON;
     }
 
-    public function getDiscountValue()
+    public function getLineItemDiscountValue()
     {
-        if ((int) $this->discountType === (int) self::DISCOUNT_FLAT) {
-            return $this->discount;
+        if ((int) $this->lineItemDiscount->valueType) {
+            return $this->lineItemDiscount->value;
         } else {
-            return ($this->discount / 100) * $this->amount;
+            return ($this->lineItemDiscount->value / 100) * $this->amount;
         }
     }
 
     public function getNetPrice()
     {
-        return $this->amount - $this->discountValue;
+        return $this->amount - $this->discount;
     }
 
-    public function getFinalNetPrice()
-    {
-        return $this->amount - $this->finalDiscountValue;
-    }
-
-    public function getFinalDiscountValue()
+    public function getDiscount()
     {
         $discount = 0.0;
-        if ((int) $this->discountType === (int) self::DISCOUNT_FLAT) {
-            $discount += $this->discount;
-        } else {
-            $discount += ($this->discount / 100) * $this->amount;
-        }
-        if ($this->invoice->customerDiscount) {
-            if ($this->invoice->customerDiscount->valueType) {
-                $discount += $this->invoice->customerDiscount->value;
+        if ($this->hasLineItemDiscount()) {
+            if ((int) $this->lineItemDiscount->valueType) {
+                $discount += $this->lineItemDiscount->value;
             } else {
-                $discount += ($this->invoice->customerDiscount->value / 100) * $this->amount;
+                $discount += ($this->lineItemDiscount->value / 100) * $this->amount;
             }
         }
-        if ($this->invoice->enrolmentDiscount) {
-            if ($this->invoice->enrolmentDiscount->valueType) {
-                $discount += $this->invoice->enrolmentDiscount->value;
-            } else {
-                $discount += ($this->invoice->enrolmentDiscount->value / 100) * $this->amount;
-            }
+        if ($this->hasCustomerDiscount()) {
+            $discount += ($this->customerDiscount->value / 100) * $this->amount;
+        }
+        if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
+            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $this->amount;
         }
         return $discount;
     }
@@ -521,5 +532,66 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $invoiceItemLesson->invoiceLineItemId    = $this->id;
             $invoiceItemLesson->save();
         }
+        if (!$this->isGroupLesson()) {
+            if ($this->lesson->proFormaLineItem) {
+                if ($this->lesson->proFormaLineItem->hasLineItemDiscount()) {
+                    $this->addLineItemDiscount($this->lesson->proFormaLineItem->lineItemDiscount);
+                }
+            }
+            if ($this->canAddEnrolmentPaymentFrequencyDiscount()) {
+                $this->addEnrolmentPaymentFrequencyDiscount($this->enrolment);
+            }
+        }
+    }
+
+    public function canAddEnrolmentPaymentFrequencyDiscount()
+    {
+        return $this->isLessonItem() && $this->enrolment->hasDiscount() &&
+            !$this->hasEnrolmentPaymentFrequencyDiscount();
+    }
+
+    public function hasLineItemDiscount()
+    {
+        return !empty($this->lineItemDiscount);
+    }
+
+    public function hasCustomerDiscount()
+    {
+        return !empty($this->customerDiscount);
+    }
+
+    public function hasEnrolmentPaymentFrequencyDiscount()
+    {
+        return !empty($this->enrolmentPaymentFrequencyDiscount);
+    }
+
+    public function addLineItemDiscount($lineItemDiscount)
+    {
+        $invoiceLineItemDiscount            = new InvoiceLineItemDiscount();
+        $invoiceLineItemDiscount->invoiceLineItemId = $this->id;
+        $invoiceLineItemDiscount->value     = $lineItemDiscount->value;
+        $invoiceLineItemDiscount->valueType = $lineItemDiscount->valueType;
+        $invoiceLineItemDiscount->type      = $lineItemDiscount->type;
+        return $invoiceLineItemDiscount->save();
+    }
+
+    public function addCustomerDiscount($user)
+    {
+        $invoiceLineItemDiscount            = new InvoiceLineItemDiscount();
+        $invoiceLineItemDiscount->invoiceLineItemId = $this->id;
+        $invoiceLineItemDiscount->value     = $user->customerDiscount->value;
+        $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+        $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_CUSTOMER;
+        return $invoiceLineItemDiscount->save();
+    }
+
+    public function addEnrolmentPaymentFrequencyDiscount($enrolment)
+    {
+        $invoiceLineItemDiscount            = new InvoiceLineItemDiscount();
+        $invoiceLineItemDiscount->invoiceLineItemId = $this->id;
+        $invoiceLineItemDiscount->value     = $enrolment->paymentFrequencyDiscount->discount;
+        $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+        $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+        return $invoiceLineItemDiscount->save();
     }
 }

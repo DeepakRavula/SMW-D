@@ -665,15 +665,8 @@ class Enrolment extends \yii\db\ActiveRecord
         }
         if (!$invoice->save()) {
             Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
-        } else {
-            if ($user->hasDiscount()) {
-                $invoice->addCustomerDiscount($user);
-            }
-            if ($this->hasDiscount()) {
-                $invoice->addEnrolmentDiscount($this);
-            }
-            return $invoice;
         }
+        return $invoice;
     }
 
     public function isExtra()

@@ -3,7 +3,7 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Location;
+use common\models\InvoiceLineItemDiscount;
 use common\models\TaxCode;
 use common\models\Payment;
 use common\models\PaymentMethod;
@@ -56,28 +56,75 @@ class InvoiceLineItemController extends Controller
     public function actionUpdate($id) 
     {
         $model = $this->findModel($id);
-		$oldDiscount = $model->discount;
-		$oldDiscountType = $model->discountType;
+        $lineItemDiscount = $model->lineItemDiscount;
+        $customerDiscount = $model->customerDiscount;
+        $paymentFrequencyDiscount = $model->enrolmentPaymentFrequencyDiscount;
+        if (!$customerDiscount) {
+            $customerDiscount = new InvoiceLineItemDiscount();
+        }
+        if (!$paymentFrequencyDiscount) {
+            $paymentFrequencyDiscount = new InvoiceLineItemDiscount();
+        }
+        if (!$lineItemDiscount) {
+            $lineItemDiscount = new InvoiceLineItemDiscount();
+        }
+        $customerDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
+        $paymentFrequencyDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
+        $lineItemDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
+        
         $model->setScenario(InvoiceLineItem::SCENARIO_EDIT);
         $model->tax_status = $model->taxStatus;
         $data = $this->renderAjax('/invoice/line-item/_form', [
             'model' => $model,
+            'customerDiscount' => $customerDiscount,
+            'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
+            'lineItemDiscount' => $lineItemDiscount
         ]);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
+            $customerDiscount->load($post['CustomerDiscount'], '');
+            if ($customerDiscount->isNewRecord) {
+                $customerDiscount->invoiceLineItemId = $id;
+                $customerDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+                $customerDiscount->type = InvoiceLineItemDiscount::TYPE_CUSTOMER;
+            }
+            $lineItemDiscount->load($post['LineItemDiscount'], '');
+            if ($lineItemDiscount->isNewRecord) {
+                $lineItemDiscount->invoiceLineItemId = $id;
+                $lineItemDiscount->type = InvoiceLineItemDiscount::TYPE_CUSTOMER;
+            }
+            $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
+            if ($paymentFrequencyDiscount->isNewRecord) {
+                $paymentFrequencyDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+                $paymentFrequencyDiscount->invoiceLineItemId = $id;
+                $paymentFrequencyDiscount->type = InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+            }
+            if ($customerDiscount->canSave()) {
+                if (empty($customerDiscount->value)) {
+                    $customerDiscount->value = 0.0;
+                }
+                $customerDiscount->save();
+            }
+            if ($paymentFrequencyDiscount->canSave()) {
+                if (empty($paymentFrequencyDiscount->value)) {
+                    $paymentFrequencyDiscount->value = 0.0;
+                }
+                $paymentFrequencyDiscount->save();
+            }
+            if ($lineItemDiscount->canSave()) {
+                if (empty($lineItemDiscount->value)) {
+                    $lineItemDiscount->value = 0.0;
+                }
+                $lineItemDiscount->save();
+            }
             $taxStatus         = $post['InvoiceLineItem']['tax_status'];
             $taxCode           = $model->computeTaxCode($taxStatus);
             $model->tax_status = $taxCode->taxStatus->name;
             $model->tax_type   = $taxCode->taxType->name;
-			$message = null;
-			if($model->isDiscountChanged()) {
-				$message = 'Warning: You have entered a non-approved Arcadia discount.All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.';
-			}
             if($model->save()) {
                 $response = [
                     'status' => true,
-					'message' => $message
-                ];	
+		];	
             } else {
                 $response = [
                     'status' => false,
@@ -89,6 +136,10 @@ class InvoiceLineItemController extends Controller
 
             return [
                 'status' => true,
+                'message' => 'Warning: You have entered a non-approved Arcadia '
+                    . 'discount.All non-approved discounts must be submitted in '
+                    . 'writing and approved by Head Office prior to entering a discount, '
+                    . 'otherwise you are in breach of your agreement.',
                 'data' => $data,
             ];
         }
@@ -163,9 +214,18 @@ class InvoiceLineItemController extends Controller
             if ($invoiceModel->validate()) {
                 $invoiceLineItems = $invoiceModel->lineItems;
                 foreach ($invoiceLineItems as $invoiceLineItem) {
-                    $invoiceLineItem->discount = $invoiceModel->discountApplied;
-                    $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
-                    $invoiceLineItem->save();
+                    if ($invoiceLineItem->hasLineItemDiscount()) {
+                        $invoiceLineItem->lineItemDiscount->value = $invoiceModel->discountApplied;
+                        $invoiceLineItem->lineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+                        $invoiceLineItem->lineItemDiscount->save();
+                    } else {
+                        $invoiceLineItemDiscount = new InvoiceLineItemDiscount();
+                        $invoiceLineItemDiscount->invoiceLineItemId = $invoiceLineItem->id;
+                        $invoiceLineItemDiscount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
+                        $invoiceLineItemDiscount->value = $invoiceModel->discountApplied;
+                        $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+                        $invoiceLineItemDiscount->save();
+                    }
                 }
                 $invoiceModel->save();
                 $response = [

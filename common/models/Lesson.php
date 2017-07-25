@@ -845,17 +845,11 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->save();
         $invoice->addPrivateLessonLineItem($this);
         $invoice->save();
-        if ($user->hasDiscount()) {
-            $invoice->addCustomerDiscount($user);
-        }
-        if ($this->enrolment->hasDiscount()) {
-            $invoice->addEnrolmentDiscount($this->enrolment);
-        }
         if ($this->hasProFormaInvoice()) {
             if ($this->isSplitRescheduled()) {
                 $netPrice = $this->getSplitRescheduledAmount();
             } else {
-                $netPrice = $this->proFormaLineItem->finalNetPrice;
+                $netPrice = $this->proFormaLineItem->netPrice;
             }
             if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
                 $invoice->addPayment($this->proFormaInvoice, $netPrice);
@@ -894,12 +888,6 @@ class Lesson extends \yii\db\ActiveRecord
         $this->enrolmentId = $enrolmentId;
         $invoice->addGroupLessonLineItem($this);
         $invoice->save();
-        if ($user->hasDiscount()) {
-            $invoice->addCustomerDiscount($user);
-        }
-        if ($enrolment->hasDiscount()) {
-            $invoice->addEnrolmentDiscount($enrolment);
-        }
         if ($enrolment->hasProFormaInvoice()) {
             $netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
             if ($enrolment->proFormaInvoice->proFormaCredit >= $netPrice) {
@@ -974,14 +962,8 @@ class Lesson extends \yii\db\ActiveRecord
         $unit          = (($hours * 60) + $minutes) / 60;
         $amount        = $this->enrolment->program->rate * $unit;
         $discount      = $this->proFormaLineItem->discount;
-        $discountType  = $this->proFormaLineItem->discountType;
-        if ((int) $discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
-            $discountValue = $discount;
-        } else {
-            $discountValue = ($discount / 100) * $amount;
-        }
 
-        return $amount - $discountValue;
+        return $amount - $discount;
     }
 
     public function canInvoice()

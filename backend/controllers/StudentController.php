@@ -220,11 +220,13 @@ class StudentController extends Controller
                 if ($courseSchedule->save()) {
                     if (!empty($multipleEnrolmentDiscount->discount)) {
                         $multipleEnrolmentDiscount->enrolmentId = $courseModel->enrolment->id;
+                        $multipleEnrolmentDiscount->discountType = 0;
                         $multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
                         $multipleEnrolmentDiscount->save();
                     }
                     if (!empty($paymentFrequencyDiscount->discount)) {
                         $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
+                        $paymentFrequencyDiscount->discountType = true;
                         $paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
                         $paymentFrequencyDiscount->save();
                     }

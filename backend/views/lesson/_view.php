@@ -107,7 +107,7 @@ use kartik\grid\GridView;
         <div class="clearfix"></div>
     </div>
 </div>
-<?php if ($model->isExploded()):?>
+<?php if ($model->isExploded() && Yii::$app->controller->action->id === 'view'):?>
 <h4>Splits</h4>
 <?php yii\widgets\Pjax::begin(['id' => 'split-lesson-index']); ?>
     <?php echo GridView::widget([
