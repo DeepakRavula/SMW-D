@@ -13,19 +13,24 @@ $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
     $this->registerCss(
         " 
         .private-lesson {
-            background-color: " . $privateLesson->code . " !important;
+			font-weight:bold;
+            color: " . $privateLesson->code . " !important;
 		}
         .first-lesson {
-            background-color: " . $firstLesson->code . " !important;
+			font-weight:bold;
+            color: " . $firstLesson->code . " !important;
 		}
         .group-lesson {
-            background-color: " . $groupLesson->code . " !important; 
+			font-weight:bold;
+           	color: " . $groupLesson->code . " !important; 
 		}
         .teacher-substituted {
-            background-color: " . $teacherSubstitutedLesson->code . " !important;
+			font-weight:bold;
+            color: " . $teacherSubstitutedLesson->code . " !important;
 		}
         .lesson-rescheduled {
-            background-color: " . $rescheduledLesson->code . " !important; }"
+			font-weight:bold;
+            color: " . $rescheduledLesson->code . " !important; }"
     );
 ?>
  <?php yii\widgets\Pjax::begin(['id' => 'schedule-listing']); ?>
@@ -74,13 +79,9 @@ GridView::widget([
 ]);
 ?>
 <?php yii\widgets\Pjax::end(); ?>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script>
 $(document).ready(function () {
-	var locationId = $.cookie('locationId');
-	$('#lesson-schedule').val(locationId);
 	$(document).on('change', '#lesson-schedule', function(){
-		$.cookie('locationId', $(this).val());
 		$("#lesson-schedule").submit();
 	});
 	$(document).on('submit', '#schedule-search', function () {
