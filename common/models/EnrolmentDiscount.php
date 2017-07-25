@@ -57,4 +57,19 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
     {
         return ($this->isNewRecord && !empty($this->discount)) || !$this->isNewRecord;
     }
+
+    public function getDiscountPerLesson($lesson)
+    {
+        $lessonDate = new \DateTime($lesson->date);
+        $fromDate = $lessonDate->modify('first day of this month');
+        $toDate = $lessonDate->modify('last day of this month');
+        $lessonsCount = Lesson::find()
+            ->notDeleted()
+            ->privateLessons()
+            ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
+            ->enrolment($this->enrolmentId)
+            ->between($fromDate, $toDate)
+            ->count();
+        return $this->discount / $lessonsCount;
+    }
 }

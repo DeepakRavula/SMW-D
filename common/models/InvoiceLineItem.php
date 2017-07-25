@@ -173,6 +173,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             ->onCondition(['invoice_line_item_discount.type' => InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY]);
     }
 
+    public function getMultiEnrolmentDiscount()
+    {
+        return $this->hasOne(InvoiceLineItemDiscount::className(), ['invoiceLineItemId' => 'id'])
+            ->onCondition(['invoice_line_item_discount.type' => InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT]);
+    }
+
     public function getLineItemEnrolment()
     {
         return $this->hasOne(InvoiceItemEnrolment::className(), ['invoiceLineItemId' => 'id']);
@@ -265,6 +271,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $taxStatus         = TaxStatus::findOne(['id' => $this->item->taxStatusId]);
             $this->tax_type    = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
             $this->tax_rate    = $this->netPrice * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
+            echo $this->tax_rate;die;
             $this->tax_code    = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
             $this->tax_status  = $taxStatus->name;
             if (!isset($this->royaltyFree)) {
@@ -534,20 +541,41 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
         if (!$this->isGroupLesson()) {
             if ($this->lesson->proFormaLineItem) {
+                if ($this->lesson->proFormaLineItem->hasCustomerDiscount()) {
+                    $this->addCustomerDiscount(null, $this->lesson->proFormaLineItem->customerDiscount);
+                }
+            }
+            if ($this->lesson->proFormaLineItem) {
                 if ($this->lesson->proFormaLineItem->hasLineItemDiscount()) {
                     $this->addLineItemDiscount($this->lesson->proFormaLineItem->lineItemDiscount);
                 }
-            }
-            if ($this->canAddEnrolmentPaymentFrequencyDiscount()) {
-                $this->addEnrolmentPaymentFrequencyDiscount($this->enrolment);
+                if ($this->lesson->proFormaLineItem->hasEnrolmentPaymentFrequencyDiscount()) {
+                    $this->addEnrolmentPaymentFrequencyDiscount(null, $this->lesson->proFormaLineItem->enrolmentPaymentFrequencyDiscount);
+                }
+                if ($this->lesson->proFormaLineItem->hasMultiEnrolmentDiscount()) {
+                    $this->addMultiEnrolmentDiscount(null, $this->lesson->proFormaLineItem->multiEnrolmentDiscount);
+                }
+            } else {
+                if ($this->canAddEnrolmentPaymentFrequencyDiscount()) {
+                    $this->addEnrolmentPaymentFrequencyDiscount($this->enrolment);
+                }
+                if ($this->canAddMultiEnrolmentDiscount()) {
+                    $this->addMultiEnrolmentDiscount($this->enrolment);
+                }
             }
         }
     }
 
     public function canAddEnrolmentPaymentFrequencyDiscount()
     {
-        return $this->isLessonItem() && $this->enrolment->hasDiscount() &&
+        return $this->isLessonItem() && $this->enrolment->hasPaymentFrequencyDiscount() &&
             !$this->hasEnrolmentPaymentFrequencyDiscount();
+    }
+
+    public function canAddMultiEnrolmentDiscount()
+    {
+        return $this->isLessonItem() && $this->enrolment->hasMultiEnrolmentDiscount() &&
+            !$this->hasMultiEnrolmentDiscount();
     }
 
     public function hasLineItemDiscount()
@@ -565,6 +593,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return !empty($this->enrolmentPaymentFrequencyDiscount);
     }
 
+    public function hasMultiEnrolmentDiscount()
+    {
+        return !empty($this->multiEnrolmentDiscount);
+    }
+
     public function addLineItemDiscount($lineItemDiscount)
     {
         $invoiceLineItemDiscount            = new InvoiceLineItemDiscount();
@@ -575,23 +608,46 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $invoiceLineItemDiscount->save();
     }
 
-    public function addCustomerDiscount($user)
+    public function addCustomerDiscount($user = null, $discount = null)
     {
-        $invoiceLineItemDiscount            = new InvoiceLineItemDiscount();
-        $invoiceLineItemDiscount->invoiceLineItemId = $this->id;
-        $invoiceLineItemDiscount->value     = $user->customerDiscount->value;
-        $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
-        $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_CUSTOMER;
+        if ($user) {
+            $invoiceLineItemDiscount            = new InvoiceLineItemDiscount();
+            $invoiceLineItemDiscount->invoiceLineItemId = $this->id;
+            $invoiceLineItemDiscount->value     = $user->customerDiscount->value;
+            $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+            $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_CUSTOMER;
+        } else {
+            $invoiceLineItemDiscount        = $this->customerDiscount;
+            $invoiceLineItemDiscount->value = $discount->value;
+        }
         return $invoiceLineItemDiscount->save();
     }
 
-    public function addEnrolmentPaymentFrequencyDiscount($enrolment)
+    public function addEnrolmentPaymentFrequencyDiscount($enrolment = null, $discount = null)
     {
         $invoiceLineItemDiscount            = new InvoiceLineItemDiscount();
         $invoiceLineItemDiscount->invoiceLineItemId = $this->id;
-        $invoiceLineItemDiscount->value     = $enrolment->paymentFrequencyDiscount->discount;
+        if ($enrolment) {
+            $invoiceLineItemDiscount->value     = $discount->value;
+        } else {
+            $invoiceLineItemDiscount->value     = $enrolment->paymentFrequencyDiscount->discount;
+        }
         $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
         $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+        return $invoiceLineItemDiscount->save();
+    }
+
+    public function addMultiEnrolmentDiscount($enrolment = null, $discount = null)
+    {
+        $invoiceLineItemDiscount            = new InvoiceLineItemDiscount();
+        $invoiceLineItemDiscount->invoiceLineItemId = $this->id;
+        if ($enrolment) {
+            $invoiceLineItemDiscount->value     = $discount->value;
+        } else {
+            $invoiceLineItemDiscount->value     = $enrolment->multipleEnrolmentDiscount->getDiscountPerLesson($this->lesson);
+        }
+        $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
+        $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;
         return $invoiceLineItemDiscount->save();
     }
 }

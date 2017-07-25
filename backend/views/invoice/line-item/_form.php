@@ -93,6 +93,12 @@ use common\models\TaxStatus;
             ])->label('Discount Type');?>
         </div>
         <div class="col-md-3">
+            <?= $form->field($multiEnrolmentDiscount, 'value')->textInput([
+                'id' => 'multi-enrolment-discount-value',
+                'name' => 'MultiEnrolmentDiscount[value]'
+            ])->label('Multi Enrolment Discount - "$"'); ?>
+        </div>
+        <div class="col-md-3">
             <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true])->label('Net Price');?>
         </div>
     <div class="col-md-12 p-l-20 form-group">

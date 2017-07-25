@@ -59,6 +59,7 @@ class InvoiceItemEnrolment extends \yii\db\ActiveRecord
         if ($insert) {
             if (!$this->lineItem->isGroupLesson()) {
                 $this->lineItem->addEnrolmentPaymentFrequencyDiscount($this->enrolment);
+                $this->lineItem->addMultiEnrolmentDiscount($this->enrolment);
             }
         }
         return parent::afterSave($insert, $changedAttributes);

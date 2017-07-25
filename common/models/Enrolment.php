@@ -674,9 +674,14 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->type === self::TYPE_EXTRA;
     }
 
-    public function hasDiscount()
+    public function hasPaymentFrequencyDiscount()
     {
         return !empty($this->paymentFrequencyDiscount);
+    }
+
+    public function hasMultiEnrolmentDiscount()
+    {
+        return !empty($this->multipleEnrolmentDiscount);
     }
 
     public function getPaymentFrequencyDiscountValue()
