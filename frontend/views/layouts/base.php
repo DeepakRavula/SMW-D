@@ -1,52 +1,42 @@
 <?php
-
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
+use backend\assets\BackendAsset;
+use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-$this->beginContent('@frontend/views/layouts/_clear.php')
+$bundle = BackendAsset::register($this);
+
+$this->params['body-class'] = array_key_exists('body-class', $this->params) ?
+    $this->params['body-class']
+    : null;
 ?>
-<div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]); ?>
-    <?php echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            [
-				'label' => Yii::t('frontend', 'Schedule'),
-				'url' => ['/schedule/index'],
-                'visible' => !Yii::$app->user->isGuest,
-			],
-            ['label' => Yii::t('frontend', 'Login'), 'url' => ['/user/sign-in/login'], 'visible' => Yii::$app->user->isGuest],
-            [
-                'label' => Yii::$app->user->isGuest ? '' : Yii::$app->user->identity->getPublicIdentity(),
-                'visible' => !Yii::$app->user->isGuest,
-                'items' => [
-                    [
-                        'label' => Yii::t('frontend', 'Backend'),
-                        'url' => Yii::getAlias('@backendUrl'),
-                        'visible' => Yii::$app->user->can('manager'),
-                    ],
-                    [
-                        'label' => Yii::t('frontend', 'Logout'),
-                        'url' => ['/user/sign-in/logout'],
-                        'linkOptions' => ['data-method' => 'post'],
-                    ],
-                ],
-            ],
-        ],
-    ]); ?>
-    <?php NavBar::end(); ?>
 
-    <?php echo $content ?>
+<?php $this->beginPage() ?>
+<!DOCTYPE html>
+<html lang="<?php echo Yii::$app->language ?>">
+<head>
+    <meta charset="<?php echo Yii::$app->charset ?>">
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
-</div>
-<?php $this->endContent() ?>
+    <?php echo Html::csrfMetaTags() ?>
+    <title><?php echo Html::encode($this->title) ?></title>
+    <?php $this->head() ?>
+
+</head>
+<?php echo Html::beginTag('body', [
+    'class' => implode(' ', [
+        ArrayHelper::getValue($this->params, 'body-class'),
+        Yii::$app->keyStorage->get('backend.theme-skin', 'skin-blue'),
+        Yii::$app->keyStorage->get('backend.layout-fixed') ? 'fixed' : null,
+        Yii::$app->keyStorage->get('backend.layout-boxed') ? 'layout-boxed' : null,
+        Yii::$app->keyStorage->get('backend.layout-collapsed-sidebar') ? 'sidebar-collapse' : null,
+    ])
+])?>
+    <?php $this->beginBody() ?>
+        <?php echo $content ?>
+    <?php $this->endBody() ?>
+<?php echo Html::endTag('body') ?>
+</html>
+<?php $this->endPage() ?>

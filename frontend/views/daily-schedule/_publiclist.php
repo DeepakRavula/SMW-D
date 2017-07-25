@@ -81,8 +81,8 @@ GridView::widget([
 <?php yii\widgets\Pjax::end(); ?>
 <script>
 $(document).ready(function () {
-	$(document).on('change', '#lesson-schedule', function(){
-		$("#lesson-schedule").submit();
+	$(document).on('change', '#locationId', function(){
+		$("#schedule-search").submit();
 	});
 	$(document).on('submit', '#schedule-search', function () {
 		$.pjax.reload({container: "#schedule-listing", replace: false, timeout: 6000, data: $(this).serialize()});

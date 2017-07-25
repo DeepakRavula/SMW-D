@@ -102,7 +102,7 @@ a.desc:after {
     border-radius: 3px;
 }
 .logo > img {
-    width: 122px;
+    width: 132px;
     padding-left: 2px;
 }
 .navbar-inverse {
@@ -112,8 +112,8 @@ a.desc:after {
 .navbar-inverse .navbar-brand {
 	color:black;
 }
-.location-filter {
-    margin: 9px 10px 0 0;
+#locationId {
+   	margin: 9px 10px 0 0;
     border: 0;
     position: relative;
     background: url(/img/select-arrow.png) no-repeat 97% center;
