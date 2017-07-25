@@ -72,8 +72,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             },
             ],
             [['royaltyFree', 'invoice_id', 'item_id', 'item_type_id', 'tax_code',
-                'tax_status', 'tax_type', 'tax_rate', 'userName', 'discount', 
-                'discountType', 'cost', 'code'], 'safe'],
+                'tax_status', 'tax_type', 'tax_rate', 'userName', 'cost', 'code'], 'safe'],
         ];
     }
 
@@ -222,11 +221,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 ->where(['invoice.type' => Invoice::TYPE_INVOICE]);
     }
 
-	public function isDiscountChanged()
-    {
-		return (float)$this->getOldAttribute('discount') !== (float)$this->discount ||
-			(int)$this->getOldAttribute('discountType') !== (int)$this->discountType;
-    }
     /**
      * {@inheritdoc}
      */

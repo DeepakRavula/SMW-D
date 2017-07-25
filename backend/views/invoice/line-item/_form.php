@@ -151,9 +151,7 @@ use common\models\TaxStatus;
             dataType: "json",
             data: JSON.stringify({
                 'amount' : $('#amount-line').val(),
-		'discount' : $('#invoicelineitem-discount').val(),
-                'discountType' : $('input[name="InvoiceLineItem[discountType]"]').is(":checked"),
-                'taxStatus' : $('#lineitem-tax_status').val()
+		'taxStatus' : $('#lineitem-tax_status').val()
             }),
             success: function(response) {
                 $('#invoicelineitem-netprice').val(response.netPrice);
