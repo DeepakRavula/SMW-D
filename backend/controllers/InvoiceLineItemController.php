@@ -214,9 +214,18 @@ class InvoiceLineItemController extends Controller
             if ($invoiceModel->validate()) {
                 $invoiceLineItems = $invoiceModel->lineItems;
                 foreach ($invoiceLineItems as $invoiceLineItem) {
-                    $invoiceLineItem->discount = $invoiceModel->discountApplied;
-                    $invoiceLineItem->discountType = InvoiceLineItem::DISCOUNT_PERCENTAGE;
-                    $invoiceLineItem->save();
+                    if ($invoiceLineItem->hasLineItemDiscount()) {
+                        $invoiceLineItem->lineItemDiscount->value = $invoiceModel->discountApplied;
+                        $invoiceLineItem->lineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+                        $invoiceLineItem->lineItemDiscount->save();
+                    } else {
+                        $invoiceLineItemDiscount = new InvoiceLineItemDiscount();
+                        $invoiceLineItemDiscount->invoiceLineItemId = $invoiceLineItem->id;
+                        $invoiceLineItemDiscount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
+                        $invoiceLineItemDiscount->value = $invoiceModel->discountApplied;
+                        $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+                        $invoiceLineItemDiscount->save();
+                    }
                 }
                 $invoiceModel->save();
                 $response = [
