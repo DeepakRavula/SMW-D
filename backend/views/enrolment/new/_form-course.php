@@ -23,6 +23,7 @@ $this->title = 'New Enrolment';
             echo $form->field($model, 'programId')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(Program::find()
 					->active()
+					->privateProgram()
 					->all(), 'id', 'name'),
                 'options' => ['placeholder' => 'Program']
             ])->label(false);

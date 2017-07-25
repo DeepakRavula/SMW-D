@@ -217,13 +217,17 @@ class EnrolmentController extends Controller
 				Yii::error('New enrolment User location: ' . \yii\helpers\VarDumper::dumpAsString($userLocation->getErrors()));	
 			}
 			//save address and phone number
-			if(!$address->save()) {
-				Yii::error('New enrolment Address: ' . \yii\helpers\VarDumper::dumpAsString($address->getErrors()));	
+			if(!empty($address->address)) {
+				if(!$address->save()) {
+					Yii::error('New enrolment Address: ' . \yii\helpers\VarDumper::dumpAsString($address->getErrors()));	
+				}
+				$user->link('addresses', $address);
 			}
-			$user->link('addresses', $address);
-			$phoneNumber->user_id = $user->id;
-			if(!$phoneNumber->save()) {
-				Yii::error('New enrolment Phone number: ' . \yii\helpers\VarDumper::dumpAsString($phoneNumber->getErrors()));	
+			if(!empty($phoneNumber->number)) {
+				$phoneNumber->user_id = $user->id;
+				if(!$phoneNumber->save()) {
+					Yii::error('New enrolment Phone number: ' . \yii\helpers\VarDumper::dumpAsString($phoneNumber->getErrors()));	
+				}
 			}
 			//save student
 			$student->customer_id = $user->id;

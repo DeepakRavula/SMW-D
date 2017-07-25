@@ -96,7 +96,7 @@ class InvoiceLineItemController extends Controller
             $lineItemDiscount->load($post['LineItemDiscount'], '');
             if ($lineItemDiscount->isNewRecord) {
                 $lineItemDiscount->invoiceLineItemId = $id;
-                $lineItemDiscount->type = InvoiceLineItemDiscount::TYPE_CUSTOMER;
+                $lineItemDiscount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
             }
             $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
             if ($paymentFrequencyDiscount->isNewRecord) {
