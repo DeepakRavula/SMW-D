@@ -357,7 +357,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function updateInvoiceAttributes()
     {
         if(!$this->isOpeningBalance() && !$this->isLessonCredit()) {
-            $subTotal    = $this->netSubtotal - $this->totalDiscount;
+            $subTotal    = $this->netSubtotal;
             $tax         = $this->lineItemTax;
             $totalAmount = $subTotal + $tax;
             $this->updateAttributes([

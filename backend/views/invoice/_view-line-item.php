@@ -39,11 +39,7 @@ use yii\grid\GridView;
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
             'attribute' => 'discount',
             'value' => function ($model) {
-                if ((int) $model->discountType === (int) InvoiceLineItem::DISCOUNT_FLAT) {
-                    return Yii::$app->formatter->format($model->discount, ['currency']);
-                } else {
-                    return $model->discount . '%';
-                }
+                return $model->discount;
             },
         ],
         [
