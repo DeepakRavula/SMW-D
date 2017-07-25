@@ -86,6 +86,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $fullName;
                 },
             ],
+			[
+                'label' => 'Phone',
+                'value' => function ($data) {
+                    return !empty($data->customer->phoneNumber->number) ? $data->customer->phoneNumber->number : null;
+                },
+            ],
         ],
     ]); ?>
 
