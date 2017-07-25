@@ -146,7 +146,7 @@ echo Menu::widget([
 			'visible' => Yii::$app->user->can('owner'),
 			'items' => [
                     [
-                    'label' => Yii::t('backend', 'Students Birthday'),
+                    'label' => Yii::t('backend', 'Birthdays'),
                     'icon' => '<i class="fa fa-birthday-cake" aria-hidden="true"></i>',
                     'url' => ['report/student-birthday'],
                     'visible' => Yii::$app->user->can('staffmember'),
