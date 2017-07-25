@@ -20,9 +20,13 @@ $this->title = (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ? 'P
 $this->params['action-button'] = $actionButton;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="invoice-index p-10">
+<div class="grid-row-open p-10">
+<?php yii\widgets\Pjax::begin([
+        'id' => 'invoice-listing',
+        'timeout' => 6000,
+    ]) ?>
+    
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-</div>
 	<?php 
         if ((int) $searchModel->type === (int) Invoice::TYPE_PRO_FORMA_INVOICE) {
             $columns = [
@@ -179,10 +183,7 @@ $this->params['breadcrumbs'][] = $this->title;
         }
 
         ?>
-	<?php yii\widgets\Pjax::begin([
-        'id' => 'invoice-listing',
-    ]) ?>
-    <div class="grid-row-open p-10">
+	
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
