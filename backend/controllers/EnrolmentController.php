@@ -194,6 +194,9 @@ class EnrolmentController extends Controller
 		$address = new Address();
 		$userLocation = new UserLocation();
 		$student = new Student();
+		$multipleEnrolmentDiscount = new EnrolmentDiscount();
+        $paymentFrequencyDiscount = new EnrolmentDiscount();
+			
 		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
 		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
 		$userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');

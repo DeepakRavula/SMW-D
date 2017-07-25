@@ -88,19 +88,31 @@ $this->title = 'New Enrolment';
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
-		<label  class="col-sm-2 control-label">Payment Frequency</label>
-		<div class="col-sm-3">
+		<label  class="col-sm-3 control-label">Payment Frequency</label>
+		<div class="col-sm-2">
 			<?= $form->field($courseSchedule, 'paymentFrequency')->dropDownList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'))->label(false) ?>	
+		</div>
+	</div>
+	<div class="form-group">
+		<label  class="col-sm-4 control-label">Payment Frequency Discount (%)</label>
+		<div class="col-sm-2">
+			<?= $form->field($paymentFrequencyDiscount, 'discount')->textInput([
+                'id' => 'payment-frequency-discount',
+                'name' => 'PaymentFrequencyDiscount[discount]'
+            ])->label(false); ?>
 		</div>
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
-		<label  class="col-sm-2 control-label">Discount</label>
-		<div class="col-sm-1">
-		<?= $form->field($courseSchedule, 'discount')->textInput()->label(false);?>
+		<label  class="col-sm-2 control-label">Multiple Enrolment Discount (%)</label>
+		<div class="col-sm-3">
+			<?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
+                'id' => 'enrolment-discount',
+                'name' => 'MultipleEnrolmentDiscount[discount]'
+            ])->label(false); ?>	
 		</div>
-		<span class="col-sm-1 p-l-0 p-t-5">%</span>
 	</div>
+	<div class="clearfix"></div>
 	<div class="clearfix"></div>
 	<div class="form-group">
 		<label  class="col-sm-2 control-label p-10">Rate Per Lesson</label>
