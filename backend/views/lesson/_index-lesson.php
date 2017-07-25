@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="grid-row-open p-10">
-<?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+<?php yii\widgets\Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php $columns = [
             [
