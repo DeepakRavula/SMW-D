@@ -27,20 +27,26 @@ class StudentValidator extends Validator
 		$lessonEndTime = $date->format('H:i:s');
 		$query = Lesson::find()
 			->studentLessons($locationId, $studentId)
-                        ->andWhere(['NOT', ['lesson.id' => $model->id]]);
+            ->andWhere(['NOT', ['lesson.id' => $model->id]]);
 		$studentBackToBackLessons = $query->enrolment($model->enrolment->id)
                     ->backToBackOverlap($lessonDate, $lessonStartTime, $lessonFullEndTime)
 			->all();
-                if (!empty($studentBackToBackLessons)) {
-                    $this->addError($model,$attribute, 'Lesson cannot be scheduled '
+		if(!empty($studentBackToBackLessons)) {
+			foreach($studentBackToBackLessons as $studentBackToBackLesson) {
+				if(new \DateTime($model->date) == new \DateTime($studentBackToBackLesson->date) && (int) $studentBackToBackLesson->status === Lesson::STATUS_SCHEDULED) {
+					continue;
+				}
+				$conflictedLessons[] = $model->id; 
+			}	
+			if(!empty($conflictedLessons)) {
+            	 $this->addError($model,$attribute, 'Lesson cannot be scheduled '
                         . 'back to back with same enrolment\'s another lesson');
-                }
-                $studentLessons = $query->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
-			->all();
-		 if ((!empty($studentLessons)) && empty($model->vacationId)) {
-            $this->addError($model,$attribute, 'Lesson time conflicts with student\'s another lesson');
+			}
 		}
-		if(!empty($model->vacationId) && !empty($studentLessons)) {
+        $studentLessons = $query->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
+			->all();
+
+		if((!empty($model->vacationId) || empty($model->vacationId)) && !empty($studentLessons)) {
 			foreach($studentLessons as $studentLesson) {
 				if(new \DateTime($model->date) == new \DateTime($studentLesson->date) && (int) $studentLesson->status === Lesson::STATUS_SCHEDULED) {
 					continue;
