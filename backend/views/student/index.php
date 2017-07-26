@@ -67,7 +67,9 @@ $(document).ready(function(){
       $.pjax.reload({url:url,container:"#student-listing",replace:false,  timeout: 4000});  //Reload GridView
   });  
   $("#print").on("click", function() {
-        var url = '<?php echo Url::to(['student/print']); ?>';
+	  	var showAll = $("#studentsearch-showallstudents").is(":checked");
+        var params = $.param({ 'StudentSearch[showAllStudents]': (showAll | 0) });
+        var url = '<?php echo Url::to(['student/print']); ?>?' + params;
         window.open(url,'_blank');
     });
 });
