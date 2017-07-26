@@ -97,13 +97,13 @@ $privatePrograms = ArrayHelper::map(Program::find()
             <?= $form->field($paymentFrequencyDiscount, 'discount')->textInput([
                 'id' => 'payment-frequency-discount',
                 'name' => 'PaymentFrequencyDiscount[discount]'
-            ])->label('Payment Frequency Discount - "%"'); ?>
+            ])->label('Payment Frequency Discount(%)'); ?>
         </div>
         <div class="col-md-3">
             <?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
                 'id' => 'enrolment-discount',
                 'name' => 'MultipleEnrolmentDiscount[discount]'
-            ])->label('Multiple Enrolment Discount - "$"'); ?>
+            ])->label('Multiple Enrolment Discount($)'); ?>
         </div>
         <div class="col-md-2 p-20">per month</div>
         <div id="course-rate-estimation">
