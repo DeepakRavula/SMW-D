@@ -3,7 +3,7 @@
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
-
+use common\models\Student;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
