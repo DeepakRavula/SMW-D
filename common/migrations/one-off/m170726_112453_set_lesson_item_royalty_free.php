@@ -2,6 +2,7 @@
 
 use yii\db\Migration;
 use common\models\Item;
+use common\models\InvoiceLineItem;
 
 class m170726_112453_set_lesson_item_royalty_free extends Migration
 {
@@ -10,18 +11,22 @@ class m170726_112453_set_lesson_item_royalty_free extends Migration
         $lessonItem = Item::findOne(['code' => Item::LESSON_ITEM]);
         $lessonCreditItem = Item::findOne(['code' => Item::LESSON_CREDIT]);
         $openingBalanceItem = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
-        $lessonItem->royaltyFree = false;
-        $lessonItem->save();
-        $lessonCreditItem->royaltyFree = false;
-        $lessonCreditItem->save();
-        $openingBalanceItem->royaltyFree = false;
-        $openingBalanceItem->save();
+        $lessonItem->updateAttributes([
+            'royaltyFree' => false
+        ]);
+        $lessonCreditItem->updateAttributes([
+            'royaltyFree' => false
+        ]);
+        $openingBalanceItem->updateAttributes([
+            'royaltyFree' => false
+        ]);
         $lineItems = InvoiceLineItem::find()
             ->where(['item_id' => $lessonItem->id])
             ->all();
         foreach ($lineItems as $lineItem) {
-            $lineItem->royaltyFree = false;
-            $lineItem->save();
+            $lineItem->updateAttributes([
+                'royaltyFree' => false
+            ]);
         }
     }
 
