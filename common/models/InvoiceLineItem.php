@@ -638,7 +638,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if (!$enrolment) {
             $invoiceLineItemDiscount->value     = $discount->value;
         } else {
-            $invoiceLineItemDiscount->value     = $enrolment->multipleEnrolmentDiscount->getDiscountPerLesson($this->lesson);
+            $invoiceLineItemDiscount->value     = $enrolment->multipleEnrolmentDiscount->discountPerLesson;
         }
         $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
         $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;

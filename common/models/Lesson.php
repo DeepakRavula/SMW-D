@@ -598,6 +598,11 @@ class Lesson extends \yii\db\ActiveRecord
                 if ($this->colorCode === $defaultPrivateLessonEventColor->code) {
                     $this->colorCode = null;
                 }
+            } else if ($this->isGroup()) {
+                $defaultGroupLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
+                if ($this->colorCode === $defaultGroupLessonEventColor->code) {
+                    $this->colorCode = null;
+                }
             }
         }
         if ($insert) {
