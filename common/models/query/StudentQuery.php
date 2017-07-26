@@ -69,7 +69,8 @@ class StudentQuery extends ActiveQuery
             $query->joinWith(['course' => function ($query) use ($courseId) {
                 $query->where(['course.id' => $courseId]);
             }])
-            ->where(['not', ['studentId' => null]]);
+            ->andWhere(['NOT', ['studentId' => null]])
+			->isConfirmed();
         }]);
 
         return $this;
