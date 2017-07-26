@@ -3,7 +3,7 @@
 use common\models\Lesson;
 ?>
 
-<?php if(!empty($model->reschedule)) : ?>
+<?php if(!empty($model->reschedule) && !empty($model->enrolment)) : ?>
 <?php 
 $lesson = Lesson::findOne(['lesson.id' => $model->reschedule->lessonId]); 
 $duration = \DateTime::createFromFormat('H:i:s', $model->duration);
