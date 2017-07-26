@@ -169,7 +169,6 @@ class LessonController extends Controller
                 $course->studentId        = $studentId;
                 $course->createExtraLessonEnrolment();
                 $courseSchedule           = new CourseSchedule();
-                $courseSchedule->setScenario(CourseSchedule::SCENARIO_EDIT_ENROLMENT);
                 $courseSchedule->courseId = $course->id;
                 $courseSchedule->day      = (new \DateTime($model->date))->format('N');
                 $courseSchedule->duration = (new \DateTime($model->duration))->format('H:i:s');
