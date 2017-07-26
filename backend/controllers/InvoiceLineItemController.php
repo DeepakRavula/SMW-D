@@ -310,7 +310,7 @@ class InvoiceLineItemController extends Controller
         $taxCode           = $invoiceLineItem->computeTaxCode($data['taxStatus']);
         $invoiceLineItem->tax_status = $taxCode->taxStatus->name;
         $invoiceLineItem->tax_type   = $taxCode->taxType->name;
-        $discounts = 0.0;
+        $discount = 0.0;
         if (!empty($data['customerDiscount'])) {
             $discounts += $invoiceLineItem->amount * $data['customerDiscount'] / 100;
         }
