@@ -351,4 +351,17 @@ class StudentController extends Controller
             ];
         }
     }
+	public function actionPrint()
+    {
+        $searchModel = new StudentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		$dataProvider->pagination = false;
+        
+        $this->layout = '/print';
+
+        return $this->render('_print', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ]);
+    }
 }

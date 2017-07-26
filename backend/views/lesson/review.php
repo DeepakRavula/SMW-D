@@ -126,10 +126,6 @@ Modal::begin([
 <?php Modal::end();?>		
 <script>
 	var review = {
-		onEditableError: function (event, val, form, data) {
-			$(form).find('.form-group').addClass('has-error');
-			$(form).find('.help-block').text(data.message);
-		},
 		onEditableGridSuccess: function () {
 			$.ajax({
 				url: "<?php echo Url::to(['lesson/fetch-conflict', 'courseId' => $courseId]); ?>",
@@ -199,7 +195,6 @@ Modal::begin([
 			return false;
         });
 		$(document).on('click','#lesson-review-apply, #lesson-review-apply-all',function() {
-		console.log($(this).val());
 			$('#lesson-applycontext').val($(this).val());
 		});
 		$(document).on('beforeSubmit', '#lesson-review-form', function (e) {
@@ -213,7 +208,7 @@ Modal::begin([
 			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
 			$.ajax({
                 url: '<?= Url::to(['lesson/update-field']); ?>?id=' + lessonId,
-                type: 'get',
+                type: 'post',
                 dataType: "json",
                 data: $(this).serialize(),
                 success: function (response)
