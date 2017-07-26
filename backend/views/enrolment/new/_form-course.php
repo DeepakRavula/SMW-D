@@ -17,6 +17,7 @@ $this->title = 'New Enrolment';
 ?>
 <div class="row">
 		 <div class="form-group">
+			<label class="col-sm-2 control-label">Program</label>
 			<div class="col-sm-4">
 				<?php
             echo $form->field($model, 'programId')->widget(Select2::classname(), [
@@ -25,9 +26,13 @@ $this->title = 'New Enrolment';
 					->privateProgram()
 					->all(), 'id', 'name'),
                 'options' => ['placeholder' => 'Program']
-            ])->label('Program');
+            ])->label(false);
             ?>
 			</div>
+		</div>
+	<div class="clearfix"></div>
+	<div class="form-group">
+		<label  class="col-sm-2 control-label p-10">Teacher</label>
 		<?php $locationId = Yii::$app->session->get('location_id');
         $teachers = ArrayHelper::map(
 			User::find()
@@ -48,9 +53,13 @@ $this->title = 'New Enrolment';
                     'depends' => ['course-programid'],
                     'url' => Url::to(['/course/teachers'])
                 ]
-            ])->label('Teacher');
+            ])->label(false);
         ?>
 		</div>
+	</div>
+	<div class="clearfix"></div>
+	 <div class="form-group">
+		<label  class="col-sm-2 control-label">Length of Lessons</label>
 		<div class="col-sm-3">
 			<?php
             echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
@@ -59,30 +68,23 @@ $this->title = 'New Enrolment';
                     'showMeridian' => false,
                     'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
                 ],
-            ])->label('Duration');
+            ])->label(false);
             ?>
+		</div>
+		<label  class="col-sm-2 control-label">Check The Schedule</label>
+		<div class="col-sm-1  hand enrolment-calendar-icon">
+            <span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
 		</div>
 	</div>
 	<div class="clearfix"></div>
-	 <div class="form-group">
-		<div class="col-md-3" style="padding:0;">
-			<div class="hand enrolment-calendar-icon">
-			<p> <label> Check The Schedule </label></p>
-			<span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
-			</div>
-        </div>
-	<div class="row">
-		<div class="col-md-5">
-		<p> <label style="font-size:30px; margin:-12px 32px;"> Day, Time & Duration </label></p>
-		</div>
-		<div class="col-md-4">
-		<span class="new-enrolment-time" ></span>
-		</div>
-		</div>
-		<?php echo $form->field($model, 'startDate')->hiddenInput()->label(false) ?>
+	
+	<div class="form-group">
+		<label  class="col-sm-2 control-label p-10">Day, Time & Duration</label>
+    	<?php echo $form->field($model, 'startDate')->hiddenInput()->label(false) ?>
     	<?php echo $form->field($courseSchedule, 'day')->hiddenInput()->label(false) ?>
-    	<?php echo $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false) ?>	
-	</div>
+    	<?php echo $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false) ?>
+		<div class="col-sm-5 new-enrolment-time">
+		</div>
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
@@ -102,7 +104,7 @@ $this->title = 'New Enrolment';
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
-		<label  class="col-sm-5 control-label">Multiple Enrolment Discount - per month (%)</label>
+		<label  class="col-sm-2 control-label">Multiple Enrolment Discount - Per Month(%)</label>
 		<div class="col-sm-3">
 			<?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
                 'id' => 'enrolment-discount',
@@ -124,21 +126,21 @@ $this->title = 'New Enrolment';
 	<div class="clearfix"></div>
 </div> <!-- ./container -->
 <script>
-	function rateEstimation(duration, programRate, discount) {
+	function rateEstimation(duration, programRate, pfDiscount) {
 		var timeArray = duration.split(':');
     	var hours = parseInt(timeArray[0]);
     	var minutes = parseInt(timeArray[1]);
 		var unit = ((hours * 60) + (minutes)) / 60;
 		var amount = (programRate * unit).toFixed(2);
-		if(discount === '') {
-			var discount = 0;
+		if(pfDiscount === '') {
+			var pfDiscount = 0;
 		} 
-		var discountedRate = (amount - ((amount * (discount / 100)))).toFixed(2);
+		var discountedRate = (amount - ((amount * (pfDiscount / 100)))).toFixed(2);
 		var discountedMonthlyRate = (discountedRate * 4).toFixed(2); 
 		$('#rate').text('$' + discountedRate);
 		$('#monthly-rate').text('$' + discountedMonthlyRate);
 	}
-	function fetchProgram(duration, programId, discount) {
+	function fetchProgram(duration, programId, pfDiscount) {
 		$.ajax({
 			url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?id=' + programId,
 			type: 'get',
@@ -146,7 +148,7 @@ $this->title = 'New Enrolment';
 			success: function (response)
 			{
 				programRate = response;
-				rateEstimation(duration,programRate, discount);
+				rateEstimation(duration,programRate, pfDiscount);
 			}
 		});
 	}
@@ -156,23 +158,23 @@ $this->title = 'New Enrolment';
 		$(document).on('change', '#course-programid', function(){
 			var duration = $('#courseschedule-duration').val();
 			var programId = $('#course-programid').val();
-			var discount = $('#courseschedule-discount').val();
-			fetchProgram(duration, programId, discount);
+			var pfDiscount = $('#payment-frequency-discount').val();
+			fetchProgram(duration, programId, pfDiscount);
 		});
 		$(document).on('change', '#courseschedule-duration', function(){
 			var duration = $('#courseschedule-duration').val();
 			var programId = $('#course-programid').val();
-			var discount = $('#courseschedule-discount').val();
-			if (duration && programId || discount) {
-				fetchProgram(duration, programId, discount);
+			var pfDiscount = $('#payment-frequency-discount').val();
+			if (duration && programId || pfDiscount) {
+				fetchProgram(duration, programId, pfDiscount);
 			}
 		});
-		$(document).on('change', '#courseschedule-discount', function(){
+		$(document).on('change', '#payment-frequency-discount', function(){
 			var duration = $('#courseschedule-duration').val();
 			var programId = $('#course-programid').val();
-			var discount = $('#courseschedule-discount').val();
-			if (duration && programId || discount) {
-				fetchProgram(duration, programId, discount);
+			var pfDiscount = $('#payment-frequency-discount').val();
+			if (duration && programId || pfDiscount) {
+				fetchProgram(duration, programId, pfDiscount);
 			}
 		});
 });

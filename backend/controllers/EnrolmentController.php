@@ -197,6 +197,8 @@ class EnrolmentController extends Controller
 		$multipleEnrolmentDiscount = new EnrolmentDiscount();
         $paymentFrequencyDiscount = new EnrolmentDiscount();
 			
+		$request = Yii::$app->request;
+        $post = $request->post();
 		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
 		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
 		$userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
@@ -204,6 +206,8 @@ class EnrolmentController extends Controller
 		$address->load(Yii::$app->getRequest()->getBodyParams(), 'Address');
 		$student->load(Yii::$app->getRequest()->getBodyParams(), 'Student');
 		$courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
+		$paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
+        $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
 		
 		$user->status = User::STATUS_DRAFT;
         if($user->save()){
@@ -247,6 +251,22 @@ class EnrolmentController extends Controller
 				$courseSchedule->courseId = $course->id;
 				if(!$courseSchedule->save()) {
 					Yii::error('New enrolment Course schedule: ' . \yii\helpers\VarDumper::dumpAsString($courseSchedule->getErrors()));
+				}
+				 if (!empty($multipleEnrolmentDiscount->discount)) {
+					$multipleEnrolmentDiscount->enrolmentId = $course->enrolment->id;
+					$multipleEnrolmentDiscount->discountType = 0;
+					$multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
+					if(! $multipleEnrolmentDiscount->save()) {
+						Yii::error('New enrolment multiple enrolment discount: ' . \yii\helpers\VarDumper::dumpAsString($multipleEnrolmentDiscount->getErrors()));
+					}
+				}
+				if (!empty($paymentFrequencyDiscount->discount)) {
+					$paymentFrequencyDiscount->enrolmentId = $course->enrolment->id;
+					$paymentFrequencyDiscount->discountType = true;
+					$paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
+					if(!$paymentFrequencyDiscount->save()) {
+						Yii::error('New enrolment payment frequency discount: ' . \yii\helpers\VarDumper::dumpAsString($paymentFrequencyDiscount->getErrors()));	
+					}
 				}
 			}
 			return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Enrolment[type]' => Enrolment::TYPE_REVERSE]);
