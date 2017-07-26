@@ -132,12 +132,32 @@ use common\models\TaxStatus;
         return false;
     });
 
-    $('input[name="InvoiceLineItem[discountType]"]').on('switchChange.bootstrapSwitch', function() {
+    $('input[name="LineItemDiscount[valueType]"]').on('switchChange.bootstrapSwitch', function() {
         computeNetPrice();
         return false;
     });
     
     $(document).on("change", '#lineitem-tax_status', function() {
+        computeNetPrice();
+        return false;
+    });
+
+    $(document).on("change", '#customer-value', function() {
+        computeNetPrice();
+        return false;
+    });
+
+    $(document).on("change", '#payment-frequency-value', function() {
+        computeNetPrice();
+        return false;
+    });
+
+    $(document).on("change", '#multi-enrolment-discount-value', function() {
+        computeNetPrice();
+        return false;
+    });
+
+    $(document).on("change", '#line-item-value', function() {debugger;
         computeNetPrice();
         return false;
     });
@@ -151,7 +171,12 @@ use common\models\TaxStatus;
             dataType: "json",
             data: JSON.stringify({
                 'amount' : $('#amount-line').val(),
-		'taxStatus' : $('#lineitem-tax_status').val()
+		'taxStatus' : $('#lineitem-tax_status').val(),
+                'customerDiscount' : $('#customer-value').val(),
+                'paymentFrequencyDiscount' : $('#payment-frequency-value').val(),
+                'multiEnrolmentDiscount' : $('#multi-enrolment-discount-value').val(),
+                'lineItemDiscount' : $('#line-item-value').val(),
+                'lineItemDiscountType' : $('#line-item-discount-valueType').val()
             }),
             success: function(response) {
                 $('#invoicelineitem-netprice').val(response.netPrice);
