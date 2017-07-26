@@ -17,7 +17,6 @@ $this->title = 'New Enrolment';
 ?>
 <div class="row">
 		 <div class="form-group">
-			<label class="col-sm-2 control-label">Program</label>
 			<div class="col-sm-4">
 				<?php
             echo $form->field($model, 'programId')->widget(Select2::classname(), [
@@ -26,13 +25,9 @@ $this->title = 'New Enrolment';
 					->privateProgram()
 					->all(), 'id', 'name'),
                 'options' => ['placeholder' => 'Program']
-            ])->label(false);
+            ])->label('Program');
             ?>
 			</div>
-		</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Teacher</label>
 		<?php $locationId = Yii::$app->session->get('location_id');
         $teachers = ArrayHelper::map(
 			User::find()
@@ -53,13 +48,9 @@ $this->title = 'New Enrolment';
                     'depends' => ['course-programid'],
                     'url' => Url::to(['/course/teachers'])
                 ]
-            ])->label(false);
+            ])->label('Teacher');
         ?>
 		</div>
-	</div>
-	<div class="clearfix"></div>
-	 <div class="form-group">
-		<label  class="col-sm-2 control-label">Length of Lessons</label>
 		<div class="col-sm-3">
 			<?php
             echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
@@ -68,23 +59,30 @@ $this->title = 'New Enrolment';
                     'showMeridian' => false,
                     'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
                 ],
-            ])->label(false);
+            ])->label('Duration');
             ?>
-		</div>
-		<label  class="col-sm-2 control-label">Check The Schedule</label>
-		<div class="col-sm-1  hand enrolment-calendar-icon">
-            <span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
 		</div>
 	</div>
 	<div class="clearfix"></div>
-	
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Day, Time & Duration</label>
-    	<?php echo $form->field($model, 'startDate')->hiddenInput()->label(false) ?>
-    	<?php echo $form->field($courseSchedule, 'day')->hiddenInput()->label(false) ?>
-    	<?php echo $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false) ?>
-		<div class="col-sm-5 new-enrolment-time">
+	 <div class="form-group">
+		<div class="col-md-3" style="padding:0;">
+			<div class="hand enrolment-calendar-icon">
+			<p> <label> Check The Schedule </label></p>
+			<span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
+			</div>
+        </div>
+	<div class="row">
+		<div class="col-md-5">
+		<p> <label style="font-size:30px; margin:-12px 32px;"> Day, Time & Duration </label></p>
 		</div>
+		<div class="col-md-4">
+		<span class="new-enrolment-time" ></span>
+		</div>
+		</div>
+		<?php echo $form->field($model, 'startDate')->hiddenInput()->label(false) ?>
+    	<?php echo $form->field($courseSchedule, 'day')->hiddenInput()->label(false) ?>
+    	<?php echo $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false) ?>	
+	</div>
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
@@ -104,7 +102,7 @@ $this->title = 'New Enrolment';
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
-		<label  class="col-sm-2 control-label">Multiple Enrolment Discount (%)</label>
+		<label  class="col-sm-5 control-label">Multiple Enrolment Discount - per month (%)</label>
 		<div class="col-sm-3">
 			<?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
                 'id' => 'enrolment-discount',
