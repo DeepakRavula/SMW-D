@@ -1,10 +1,9 @@
 <?php
 
-use yii\grid\GridView;
-use yii\widgets\Pjax;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use common\models\Student;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -12,6 +11,7 @@ use common\models\Student;
 $this->title = 'Students';
 $this->params['breadcrumbs'][] = $this->title;
 ?> 
+<?php $this->registerCssFile("@web/css/student/style.css");?>
 <style>
   .e1Div{
     right: 0 !important;
@@ -19,6 +19,9 @@ $this->params['breadcrumbs'][] = $this->title;
   }
 </style>
 <div class="student-index">  
+	<div id="print" class="btn btn-default">
+        <?= Html::a('<i class="fa fa-print"></i> Print') ?>
+    </div>
     <div class="smw-search"> 
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
     <?php
@@ -50,52 +53,10 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php ActiveForm::end(); ?>
 </div>
 <div class="grid-row-open"> 
-<?php yii\widgets\Pjax::begin(['id' => 'student-listing']); ?>
-    <?php echo GridView::widget([
-        'dataProvider' => $dataProvider,
-        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
-            $url = Url::to(['student/view', 'id' => $model->id]);
-            $data = ['data-url' => $url];
-            if ($searchModel->showAllStudents) {
-                if ($model->status === Student::STATUS_INACTIVE) {
-                    $data = array_merge($data, ['class' => 'danger inactive']);
-                } elseif ($model->status === Student::STATUS_ACTIVE) {
-                    $data = array_merge($data, ['class' => 'info active']);
-                }
-            }
-
-            return $data;
-        },
-        'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'columns' => [
-            [
-                'attribute' => 'first_name',
-                'label' => 'First Name',
-                'value' => function ($data) {
-                    return !(empty($data->first_name)) ? $data->first_name : null;
-                },
-            ],
-            'last_name',
-            [
-                'attribute' => 'customer_id',
-                'label' => 'Customer Name',
-                'value' => function ($data) {
-                    $fullName = !(empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;
-
-                    return $fullName;
-                },
-            ],
-			[
-                'label' => 'Phone',
-                'value' => function ($data) {
-                    return !empty($data->customer->phoneNumber->number) ? $data->customer->phoneNumber->number : null;
-                },
-            ],
-        ],
-    ]); ?>
-
-	<?php yii\widgets\Pjax::end(); ?>
+<?= $this->render('_index', [
+	'dataProvider' => $dataProvider,
+	'searchModel' => $searchModel
+]);?>
     </div>
 </div>
 <script>
@@ -105,5 +66,9 @@ $(document).ready(function(){
       var url = "<?php echo Url::to(['student/index']); ?>?StudentSearch[query]=" + "<?php echo $searchModel->query; ?>&StudentSearch[showAllStudents]=" + (showAllStudents | 0);
       $.pjax.reload({url:url,container:"#student-listing",replace:false,  timeout: 4000});  //Reload GridView
   });  
+  $("#print").on("click", function() {
+        var url = '<?php echo Url::to(['student/print']); ?>';
+        window.open(url,'_blank');
+    });
 });
   </script>
