@@ -26,7 +26,6 @@ class StudentValidator extends Validator
 		$date->modify('-1 second');
 		$lessonEndTime = $date->format('H:i:s');
 		$query = Lesson::find()
-			->studentLessons($locationId, $studentId)
             ->andWhere(['NOT', ['lesson.id' => $model->id]]);
 		if(!empty($model->enrolment->id)) {
 			$studentBackToBackLessons = $query->enrolment($model->enrolment->id)
@@ -45,7 +44,8 @@ class StudentValidator extends Validator
 				}
 			}
 		}
-        $studentLessons = $query->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
+        $studentLessons = $query->studentLessons($locationId, $studentId)
+			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
 			->all();
 
 		if((!empty($model->vacationId) || empty($model->vacationId)) && !empty($studentLessons)) {
