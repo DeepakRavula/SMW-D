@@ -122,44 +122,40 @@ use common\models\TaxStatus;
 </div>
 
 <script>
-    $(document).on("change", '#amount-line', function() {
-        computeNetPrice();
-        return false;
-    });
+    var lineItem = {
+        computeNetPrice : function() {
+            $.ajax({
+                url: "<?php echo Url::to(['invoice-line-item/compute-net-price', 'id' => $model->id]); ?>",
+                type: "POST",
+                contentType: 'application/json',
+                dataType: "json",
+                data: JSON.stringify({
+                    'amount' : $('#amount-line').val(),
+                    'taxStatus' : $('#lineitem-tax_status').val(),
+                    'customerDiscount' : $('#customer-value').val(),
+                    'paymentFrequencyDiscount' : $('#payment-frequency-value').val(),
+                    'multiEnrolmentDiscount' : $('#multi-enrolment-discount-value').val(),
+                    'lineItemDiscount' : $('#line-item-value').val(),
+                    'lineItemDiscountType' : $('input[name="LineItemDiscount[valueType]"]').is(":checked")
+                }),
+                success: function(response) {
+                    $('#invoicelineitem-netprice').val(response.netPrice);
+                    $('#invoicelineitem-taxpercentage').val(response.taxPercentage);
+                    $('#lineitem-tax_rate').val(response.taxRate);
+                }
+            });	
+        }
+    };
     
-    $(document).on("change", '#invoicelineitem-discount', function() {
-        computeNetPrice();
+    $(document).on("change", '#amount-line, #invoicelineitem-discount, \n\
+        #lineitem-tax_status, #customer-value, #payment-frequency-value, \n\
+        #multi-enrolment-discount-value, #line-item-value', function() {
+        lineItem.computeNetPrice();
         return false;
     });
 
-    $('input[name="InvoiceLineItem[discountType]"]').on('switchChange.bootstrapSwitch', function() {
-        computeNetPrice();
+    $('input[name="LineItemDiscount[valueType]"]').on('switchChange.bootstrapSwitch', function() {
+        lineItem.computeNetPrice();
         return false;
     });
-    
-    $(document).on("change", '#lineitem-tax_status', function() {
-        computeNetPrice();
-        return false;
-    });
-    
-    function computeNetPrice()
-    {
-        $.ajax({
-            url: "<?php echo Url::to(['invoice-line-item/compute-net-price', 'id' => $model->id]); ?>",
-            type: "POST",
-            contentType: 'application/json',
-            dataType: "json",
-            data: JSON.stringify({
-                'amount' : $('#amount-line').val(),
-		'taxStatus' : $('#lineitem-tax_status').val()
-            }),
-            success: function(response) {
-                $('#invoicelineitem-netprice').val(response.netPrice);
-                $('#invoicelineitem-taxpercentage').val(response.taxPercentage);          
-                $('#lineitem-tax_rate').val(response.taxRate);          
-            },
-            error: function() {
-            }
-        });	
-    }
 </script>
