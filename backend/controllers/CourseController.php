@@ -73,24 +73,6 @@ class CourseController extends Controller
      */
     public function actionView($id)
     {
-        $request = Yii::$app->request;
-        $enrolment = $request->post('Enrolment');
-        $studentIds = $enrolment['studentIds'];
-        if (!empty($studentIds)) {
-            Enrolment::deleteAll(['courseId' => $id]);
-            foreach ($studentIds as $studentId) {
-                $enrolment = new Enrolment();
-                $enrolment->setAttributes([
-                    'courseId' => $id,
-                    'studentId' => $studentId,
-                    'isDeleted' => false,
-                    'isConfirmed' => true,
-                    'paymentFrequencyId' => PaymentFrequency::LENGTH_FULL,
-                ]);
-                $enrolment->save();
-            }
-        }
-
         $studentDataProvider = new ActiveDataProvider([
             'query' => Student::find()
                 ->notDeleted()
