@@ -10,10 +10,11 @@ use yii\helpers\Url;
  * and open the template in the editor.
  */
 ?>
+<?php $this->registerCssFile("@web/css/student/style.css");?>
 <?php yii\widgets\Pjax::begin(['id' => 'student-listing']); ?>
 <?php
-
 echo GridView::widget([
+	'id' => 'student-grid',
 	'dataProvider' => $dataProvider,
 	'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
 		$url = Url::to(['student/view', 'id' => $model->id]);
@@ -31,17 +32,20 @@ echo GridView::widget([
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [
-			[
-			'attribute' => 'first_name',
+		[
 			'label' => 'First Name',
 			'value' => function ($data) {
 				return !(empty($data->first_name)) ? $data->first_name : null;
 			},
 		],
-		'last_name',
+		[
+			'label' => 'Last Name',
+			'value' => function ($data) {
+				return !(empty($data->last_name)) ? $data->last_name : null;
+			},
+		],
 			[
-			'attribute' => 'customer_id',
-			'label' => 'Customer Name',
+			'label' => 'Customer',
 			'value' => function ($data) {
 				$fullName = !(empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;
 
@@ -50,6 +54,8 @@ echo GridView::widget([
 		],
 			[
 			'label' => 'Phone',
+			'headerOptions' => ['class' => 'text-left'],
+			'contentOptions' => ['class' => 'text-left'],
 			'value' => function ($data) {
 				return !empty($data->customer->phoneNumber->number) ? $data->customer->phoneNumber->number : null;
 			},

@@ -355,6 +355,7 @@ class StudentController extends Controller
     {
         $searchModel = new StudentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		$dataProvider->pagination = false;
         
         $this->layout = '/print';
 

@@ -1,0 +1,19 @@
+@media print{
+	.text-left{
+        text-align: left !important;
+    }
+	#student-listing #student-grid table thead{
+		border-bottom: 1px ridge;
+	}
+	#student-listing .table-bordered>thead>tr>th, #student-listing .table-bordered>tbody>tr>th,#student-listing  .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td{
+		border:none !important;
+	}
+}	
+@page{
+  size: auto;
+  margin: 3mm;
+}
+#print {
+	margin-top: -75px;
+    margin-left: 750px;
+}

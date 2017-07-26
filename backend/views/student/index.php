@@ -11,6 +11,7 @@ use yii\helpers\Html;
 $this->title = 'Students';
 $this->params['breadcrumbs'][] = $this->title;
 ?> 
+<?php $this->registerCssFile("@web/css/student/style.css");?>
 <style>
   .e1Div{
     right: 0 !important;
@@ -18,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
   }
 </style>
 <div class="student-index">  
-	<div id="print" class="btn btn-default pull-right m-t-20">
+	<div id="print" class="btn btn-default">
         <?= Html::a('<i class="fa fa-print"></i> Print') ?>
     </div>
     <div class="smw-search"> 
