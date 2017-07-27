@@ -65,13 +65,13 @@ use common\models\TaxStatus;
             <?= $form->field($paymentFrequencyDiscount, 'value')->textInput([
                 'id' => 'payment-frequency-value',
                 'name' => 'PaymentFrequencyDiscount[value]'
-            ])->label('Payment Frequency Discount - "%"'); ?>
+            ])->label('Payment Frequency Discount(%)'); ?>
         </div>
         <div class="col-md-5">
             <?= $form->field($customerDiscount, 'value')->textInput([
                 'id' => 'customer-value',
                 'name' => 'CustomerDiscount[value]'
-            ])->label('Customer Discount - "%"'); ?>
+            ])->label('Customer Discount(%)'); ?>
         </div>
         <div class="col-md-3">
             <?= $form->field($lineItemDiscount, 'value')->textInput([
@@ -98,7 +98,7 @@ use common\models\TaxStatus;
             <?= $form->field($multiEnrolmentDiscount, 'value')->textInput([
                 'id' => 'multi-enrolment-discount-value',
                 'name' => 'MultiEnrolmentDiscount[value]'
-            ])->label('Multi Enrolment Discount - "$"'); ?>
+            ])->label('Multi Enrolment Discount($)'); ?>
         </div>
         
     <div class="col-md-12 p-l-20 form-group">

@@ -37,7 +37,8 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
         return [
             [['enrolmentId'], 'required'],
             [['enrolmentId', 'type'], 'integer'],
-            [['discount', 'discountType'], 'number'],
+            [['discountType'], 'number'],
+            [['discount'], 'number', 'min' => 0],
         ];
     }
 

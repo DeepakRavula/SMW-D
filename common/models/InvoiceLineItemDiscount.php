@@ -42,7 +42,7 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
             [['invoiceLineItemId', 'valueType', 'type'], 'required'],
             ['value', 'safe', 'on' => self::SCENARIO_ON_INVOICE],
             [['invoiceLineItemId', 'valueType', 'type'], 'integer'],
-            [['value'], 'number'],
+            [['value'], 'number', 'min' => 0],
         ];
     }
 

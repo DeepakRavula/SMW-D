@@ -330,8 +330,8 @@ class InvoiceLineItemController extends Controller
         $netPrice = $invoiceLineItem->amount - $discount;
         $invoiceLineItem->tax_rate   = $netPrice * $invoiceLineItem->taxType->taxCode->rate / 100;
         return [
-            'netPrice' => $netPrice,
-            'taxRate' => $invoiceLineItem->tax_rate,
+            'netPrice' => round($netPrice, 2),
+            'taxRate' => round($invoiceLineItem->tax_rate, 2),
             'taxPercentage' => $invoiceLineItem->taxType->taxCode->rate
         ];
     }

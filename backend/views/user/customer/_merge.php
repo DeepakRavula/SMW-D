@@ -45,7 +45,7 @@ use yii\helpers\Html;
     $(document).ready(function(){
         $('#user-customerid').multiselect({
             search: {
-                right: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+                left: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
             }
         });
     });

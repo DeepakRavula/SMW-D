@@ -130,11 +130,13 @@ class EnrolmentController extends Controller
             $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
             if ($paymentFrequencyDiscount->isNewRecord) {
                 $paymentFrequencyDiscount->enrolmentId = $id;
+                $paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
                 $paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
             }
             $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
             if ($multipleEnrolmentDiscount->isNewRecord) {
                 $multipleEnrolmentDiscount->enrolmentId = $id;
+                $multipleEnrolmentDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLOR;
                 $multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
             }
             if ($multipleEnrolmentDiscount->canSave()) {
@@ -268,6 +270,8 @@ class EnrolmentController extends Controller
 						Yii::error('New enrolment payment frequency discount: ' . \yii\helpers\VarDumper::dumpAsString($paymentFrequencyDiscount->getErrors()));	
 					}
 				}
+			} else {
+				Yii::error('New enrolment Course: ' . \yii\helpers\VarDumper::dumpAsString($course->getErrors()));
 			}
 			return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Enrolment[type]' => Enrolment::TYPE_REVERSE]);
 		} else {

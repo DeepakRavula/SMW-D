@@ -10,6 +10,7 @@ use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\ClassroomValidator;
 use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
+use common\components\validators\lesson\conflict\StudentBackToBackLessonValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
 use common\components\validators\lesson\conflict\TeacherAvailabilityValidator;
 use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
@@ -121,13 +122,15 @@ class Lesson extends \yii\db\ActiveRecord
             [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
             ['date', TeacherValidator::className(), 'on' => [self::SCENARIO_EDIT_REVIEW_LESSON,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_EDIT]],
-            [['date'], StudentValidator::className(), 'on' => self::SCENARIO_REVIEW, 'when' => function($model, $attribute) {
+            [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
                 return $model->course->program->isPrivate();
             }],
+            [['date'], StudentBackToBackLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
+                return $model->course->program->isPrivate();
+            }],
+            [['date'], StudentBackToBackLessonValidator::className(), 'on' => [self::SCENARIO_CREATE,
+                self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
-            ['date', StudentValidator::className(), 'on' => self::SCENARIO_EDIT, 'when' => function($model, $attribute) {
-                return $model->course->program->isPrivate();
-            }],
             ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
             ['duration', StudentAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
