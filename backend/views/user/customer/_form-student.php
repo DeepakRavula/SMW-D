@@ -16,7 +16,7 @@ use yii\helpers\Url;
     $locationId = $session->get('location_id');
     ?>
     <?php $form = ActiveForm::begin([
-		'action' => Url::to(['/student/update', 'id' => $model->id]),
+		'action' => Url::to(['/student/create']),
 		'id' => 'student-form',
 		'enableAjaxValidation' => true,
 		'enableClientValidation' => false
@@ -62,17 +62,16 @@ use yii\helpers\Url;
 
 <script>
 $(document).ready(function() {
-$.fn.datepicker.noConflict();
-$('#student-birth_date').datepicker({
-   altField: '#student-birth_date',
-   altFormat: 'dd-mm-yy',
-   changeMonth: true,
-   changeYear: true,
-   yearRange : '-70:today',
-   onChangeMonthYear:function(y, m, i){
-       var d = i.selectedDay;
-       $(this).datepicker('setDate', new Date(y, m-1, d));
-   }
-});
+	$('#student-birth_date').datepicker({
+	   altField: '#student-birth_date',
+	   altFormat: 'dd-mm-yy',
+	   changeMonth: true,
+	   changeYear: true,
+	   yearRange : '-70:today',
+	   onChangeMonthYear:function(y, m, i){
+		   var d = i.selectedDay;
+		   $(this).datepicker('setDate', new Date(y, m-1, d));
+	   }
+	});
 });
 </script>
