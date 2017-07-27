@@ -130,11 +130,13 @@ class EnrolmentController extends Controller
             $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
             if ($paymentFrequencyDiscount->isNewRecord) {
                 $paymentFrequencyDiscount->enrolmentId = $id;
+                $paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
                 $paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
             }
             $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
             if ($multipleEnrolmentDiscount->isNewRecord) {
                 $multipleEnrolmentDiscount->enrolmentId = $id;
+                $multipleEnrolmentDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLOR;
                 $multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
             }
             if ($multipleEnrolmentDiscount->canSave()) {

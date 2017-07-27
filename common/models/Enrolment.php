@@ -689,11 +689,7 @@ class Enrolment extends \yii\db\ActiveRecord
         if (!$this->paymentFrequencyDiscount) {
             return 'Not set';
         }
-        if ($this->paymentFrequencyDiscount->discountType) {
-            return '$' . $this->paymentFrequencyDiscount->discount;
-        } else {
-            return $this->paymentFrequencyDiscount->discount . '%';
-        }
+        return $this->paymentFrequencyDiscount->discount . '%';
     }
 
     public function getMultipleEnrolmentDiscountValue()
@@ -701,10 +697,6 @@ class Enrolment extends \yii\db\ActiveRecord
         if (!$this->multipleEnrolmentDiscount) {
             return 'Not set';
         }
-        if ($this->multipleEnrolmentDiscount->discountType) {
-            return '$' . $this->multipleEnrolmentDiscount->discount;
-        } else {
-            return $this->multipleEnrolmentDiscount->discount . '%';
-        }
+        return '$' . $this->multipleEnrolmentDiscount->discount;
     }
 }
