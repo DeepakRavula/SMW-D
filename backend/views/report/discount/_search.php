@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\daterange\DateRangePicker;
 
@@ -24,11 +23,7 @@ use kartik\daterange\DateRangePicker;
     ]); ?>
     <div class="e1Div form-inline">
         <div class="form-group">
-        <div id="print" class="btn btn-default pull-right m-t-20">
-            <?= Html::a('<i class="fa fa-print"></i> Print') ?>
-        </div>
-           <?php
-           echo DateRangePicker::widget([
+            <?php echo DateRangePicker::widget([
             'model' => $model,
             'attribute' => 'dateRange',
             'convertFormat' => true,

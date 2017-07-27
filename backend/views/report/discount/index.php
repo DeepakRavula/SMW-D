@@ -1,5 +1,4 @@
 <?php
-use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use backend\assets\CustomGridAsset;
