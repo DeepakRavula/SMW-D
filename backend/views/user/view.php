@@ -43,6 +43,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 </div>
 <div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
+<div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
 <style>
 	.lesson-count {
 		font-weight: bold;
@@ -495,6 +496,7 @@ $(document).ready(function(){
 			{
 			   if(response.status)
 			   {
+				    $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
 				    $('#discount-warning').html(response.data).fadeIn().delay(8000).fadeOut();
         			$.pjax.reload({container:"#customer-log-listing",replace:false,  timeout: 4000});
 				}

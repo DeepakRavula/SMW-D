@@ -34,6 +34,7 @@ class CustomerDiscount extends \yii\db\ActiveRecord
         return [
             [['customerId', 'value'], 'required'],
             [['customerId'], 'integer'],
+            [['value'], 'match', 'pattern'=>'/^[0-9]+(?:\.[0-9]{1,2})?$/', 'message' => 'Invalid discount'],
             [['value'], 'number'],
         ];
     }
@@ -49,6 +50,7 @@ class CustomerDiscount extends \yii\db\ActiveRecord
             'value' => 'Value',
         ];
     }
+	
     public function afterSave($insert, $changedAttributes)
     {
          if (!$insert) {

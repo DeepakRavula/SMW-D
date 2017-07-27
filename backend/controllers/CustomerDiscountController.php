@@ -77,13 +77,16 @@ class CustomerDiscountController extends Controller
 			$customerDiscountModel->customerId = $id;
             $customerDiscountModel->on(CustomerDiscount::EVENT_CREATE, [new CustomerDiscountLog(), 'create']);      
         	$customerDiscountModel->userName = $userModel->publicIdentity;
+			$message = 'Discount has been added successfully.';
 		} else {	
+			$message = 'Discount has been updated successfully.';
         	$customerDiscountModel->on(CustomerDiscount::EVENT_EDIT, [new CustomerDiscountLog(), 'edit'], ['oldAttributes' => $customerDiscountModel->getOldAttributes()]);
         	$customerDiscountModel->userName = $userModel->publicIdentity;
 		}
         if ($customerDiscountModel->load(Yii::$app->request->post()) && $customerDiscountModel->save()) {
 			return [
 				'status' => true,
+				'message' => $message,
 				'data' => 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.' 
 			];
         }

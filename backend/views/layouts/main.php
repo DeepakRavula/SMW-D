@@ -31,7 +31,7 @@ use yii\helpers\Url;
 $(document).ready(function(){
     $("form").on("afterValidate", function (event, messages, errorAttributes) {        
         if (errorAttributes.length > 0) {
-            $('#notification').html("Form has some errors. Please fix and try again.").fadeIn();
+            $('#notification').html("Form has some errors. Please fix and try again.").fadeIn().delay(8000).fadeOut();
         }
     });
     $(".release-notes .close").click(function(){
