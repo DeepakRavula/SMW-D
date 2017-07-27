@@ -254,7 +254,7 @@ class EnrolmentController extends Controller
 				}
 				 if (!empty($multipleEnrolmentDiscount->discount)) {
 					$multipleEnrolmentDiscount->enrolmentId = $course->enrolment->id;
-					$multipleEnrolmentDiscount->discountType = 0;
+					$multipleEnrolmentDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
 					$multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
 					if(! $multipleEnrolmentDiscount->save()) {
 						Yii::error('New enrolment multiple enrolment discount: ' . \yii\helpers\VarDumper::dumpAsString($multipleEnrolmentDiscount->getErrors()));
@@ -262,7 +262,7 @@ class EnrolmentController extends Controller
 				}
 				if (!empty($paymentFrequencyDiscount->discount)) {
 					$paymentFrequencyDiscount->enrolmentId = $course->enrolment->id;
-					$paymentFrequencyDiscount->discountType = true;
+					$paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLOR;
 					$paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
 					if(!$paymentFrequencyDiscount->save()) {
 						Yii::error('New enrolment payment frequency discount: ' . \yii\helpers\VarDumper::dumpAsString($paymentFrequencyDiscount->getErrors()));	
