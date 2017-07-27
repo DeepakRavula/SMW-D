@@ -113,9 +113,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 					<strong>What's that per month?</strong></p>
 					<div class="col-md-4"></div>
 				<div class="smw-box col-md-offset-4 col-md-8 m-l-0 m-b-30 course-monthly-estimate text-center">
-					<div>
-				Four <span class="duration"></span>min Lessons @ $<span id="rate-30-min"></span> each = $<span id="rate-month-30-min"></span>/mn
-						</div>
+                                    <div id="before-discount"></div>
 					</div>
 				</div>
 				<div class="col-md-6">
@@ -123,9 +121,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 					<strong>After Discount</strong></p>
 					<div class="col-md-6"></div>
 				<div class="smw-box col-md-offset-4 col-md-8 m-l-0 m-b-30 course-monthly-estimate text-center">
-					<div>
-				Four <span class="duration"></span>min Lessons @ $<span id="discount-rate"></span> each = $<span id="discount-rate-month"></span>/mn
-						</div>
+					<div id="after-discount"></div>
 					</div>
 				</div>
 			</div>
@@ -147,77 +143,43 @@ $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s'
 $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <script>
-	function rateEstimation(duration, programRate, discount) {
-		var timeArray = duration.split(':');
-    	var hours = parseInt(timeArray[0]);
-    	var minutes = parseInt(timeArray[1]);
-		var unit = ((hours * 60) + (minutes)) / 60;
-		var duration = (hours * 60) + minutes;
-		$('.duration').text(duration);
-		var amount = (programRate * unit).toFixed(2);
-		$('#rate-30-min').text(amount);
-		var ratePerMonth30 = ((amount) * 4).toFixed(2);
-		$('#rate-month-30-min').text(ratePerMonth30);
-		if(discount === '') {
-			var discountedRate = amount; 
-			var discountedMonthlyRate = ratePerMonth30; 
-		} else {
-			var discountedRate = (amount - ((amount * (discount / 100)))).toFixed(2);
-			var discountedMonthlyRate = (discountedRate * 4).toFixed(2); 
-		}
-		$('#discount-rate').text(discountedRate);
-		$('#discount-rate-month').text(discountedMonthlyRate);
-		$('#course-rate-estimation').show();
+    var enrolment = {
+	fetchProgram: function(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount) {
+            var params = $.param({duration: duration, id: programId, paymentFrequencyDiscount: paymentFrequencyDiscount,
+                multiEnrolmentDiscount: multiEnrolmentDiscount });
+            $.ajax({
+                url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    $('#course-rate-estimation').show();
+                    $('#before-discount').text(response.beforeDiscount);
+                    $('#after-discount').text(response.afterDiscount);
+                }
+            });
 	}
-	function fetchProgram(duration, programId, discount) {
-		$.ajax({
-			url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?id=' + programId,
-			type: 'get',
-			dataType: "json",
-			success: function (response)
-			{
-				programRate = response;
-				rateEstimation(duration,programRate, discount);
-			}
-		});
-	}
+    };
     $(document).ready(function () {
-		$('.next-step').removeClass('btn-default');
-		$('.next-step').addClass('btn-success');
-		$('#course-rate-estimation').hide();
-		$(document).on('change', '#course-programid', function(){
-			var duration = $('#courseschedule-duration').val();
-			var programId = $('#course-programid').val();
-			var discount = $('#courseschedule-discount').val();
-			fetchProgram(duration, programId, discount);
-		});
-		$(document).on('change', '#courseschedule-duration', function(){
-			var duration = $('#courseschedule-duration').val();
-			var programId = $('#course-programid').val();
-			var discount = $('#courseschedule-discount').val();
-			if (duration && programId || discount) {
-				fetchProgram(duration, programId, discount);
-			}
-		});
-		$(document).on('change', '#courseschedule-discount', function(){
-			var duration = $('#courseschedule-duration').val();
-			var programId = $('#course-programid').val();
-			var discount = $('#courseschedule-discount').val();
-			if (duration && programId || discount) {
-				fetchProgram(duration, programId, discount);
-			}
-			$('#enrolment-discount-warning').html('Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.').fadeIn().delay(8000).fadeOut();
-			
-		});
-		$('#stepwizard_step1_next').click(function() {
-			var $active = $('.wizard .nav-tabs li.active');
-			$active.removeClass('active').addClass('disabled');
-			$('#enrolment-form').data('yiiActiveForm').submitting = true;
-			$('#enrolment-form').yiiActiveForm('remove', 'courseschedule-day');
-			$('#enrolment-form').yiiActiveForm('remove', 'courseschedule-fromtime');
-			$('#enrolment-form').yiiActiveForm('validate');
-			$('#notification').remove();
-		});
+        $('.next-step').removeClass('btn-default');
+        $('.next-step').addClass('btn-success');
+        $('#course-rate-estimation').hide();
+        $(document).on('change', '#course-programid, #courseschedule-duration, #payment-frequency-discount, #enrolment-discount', function(){
+            var duration = $('#courseschedule-duration').val();
+            var programId = $('#course-programid').val();
+            var paymentFrequencyDiscount = $('#payment-frequency-discount').val();
+            var multiEnrolmentDiscount = $('#enrolment-discount').val();
+            enrolment.fetchProgram(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount);
+        });
+        $('#stepwizard_step1_next').click(function() {
+                var $active = $('.wizard .nav-tabs li.active');
+                $active.removeClass('active').addClass('disabled');
+                $('#enrolment-form').data('yiiActiveForm').submitting = true;
+                $('#enrolment-form').yiiActiveForm('remove', 'courseschedule-day');
+                $('#enrolment-form').yiiActiveForm('remove', 'courseschedule-fromtime');
+                $('#enrolment-form').yiiActiveForm('validate');
+                $('#notification').remove();
+        });
         $('#enrolment-form').on('afterValidate', function (event, messages) {
 			if(messages["course-programid"].length || messages["courseschedule-paymentfrequency"].length) {
 			}  else{
