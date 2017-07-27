@@ -40,6 +40,7 @@ class ExamResult extends \yii\db\ActiveRecord
             [['mark', 'level', 'programId', 'teacherId'], 'required'],
             [['studentId', 'teacherId', 'programId'], 'integer'],
 			[['mark'], 'number'],
+			[['level'], 'string', 'max' => 10],
             [['date'], 'safe'],
             [['type'], 'string', 'max' => 30],
         ];
