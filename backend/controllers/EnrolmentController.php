@@ -268,6 +268,8 @@ class EnrolmentController extends Controller
 						Yii::error('New enrolment payment frequency discount: ' . \yii\helpers\VarDumper::dumpAsString($paymentFrequencyDiscount->getErrors()));	
 					}
 				}
+			} else {
+				Yii::error('New enrolment Course: ' . \yii\helpers\VarDumper::dumpAsString($course->getErrors()));
 			}
 			return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Enrolment[type]' => Enrolment::TYPE_REVERSE]);
 		} else {
