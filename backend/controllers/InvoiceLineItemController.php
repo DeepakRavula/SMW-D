@@ -312,22 +312,22 @@ class InvoiceLineItemController extends Controller
         $invoiceLineItem->tax_type   = $taxCode->taxType->name;
         $discount = 0.0;
         if (!empty($data['customerDiscount'])) {
-            $discounts += $invoiceLineItem->amount * $data['customerDiscount'] / 100;
+            $discount += $invoiceLineItem->amount * $data['customerDiscount'] / 100;
         }
         if (!empty($data['paymentFrequencyDiscount'])) {
-            $discounts += $invoiceLineItem->amount * $data['paymentFrequencyDiscount'] / 100;
+            $discount += $invoiceLineItem->amount * $data['paymentFrequencyDiscount'] / 100;
         }
         if (!empty($data['multiEnrolmentDiscount'])) {
-            $discounts += $data['multiEnrolmentDiscount'];
+            $discount += $data['multiEnrolmentDiscount'];
         }
         if (!empty($data['lineItemDiscount'])) {
             if ($data['lineItemDiscountType']) {
-                $discounts += $data['lineItemDiscount'];
+                $discount += $data['lineItemDiscount'];
             } else {
-                $discounts += $invoiceLineItem->amount * $data['lineItemDiscount'] / 100;
+                $discount += $invoiceLineItem->amount * $data['lineItemDiscount'] / 100;
             }
         }
-        $netPrice = $invoiceLineItem->amount - $discounts;
+        $netPrice = $invoiceLineItem->amount - $discount;
         $invoiceLineItem->tax_rate   = $netPrice * $invoiceLineItem->taxType->taxCode->rate / 100;
         return [
             'netPrice' => $netPrice,
