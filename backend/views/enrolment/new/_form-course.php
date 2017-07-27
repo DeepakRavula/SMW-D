@@ -88,19 +88,31 @@ $this->title = 'New Enrolment';
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
-		<label  class="col-sm-2 control-label">Payment Frequency</label>
-		<div class="col-sm-3">
+		<label  class="col-sm-3 control-label">Payment Frequency</label>
+		<div class="col-sm-2">
 			<?= $form->field($courseSchedule, 'paymentFrequency')->dropDownList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'))->label(false) ?>	
+		</div>
+	</div>
+	<div class="form-group">
+		<label  class="col-sm-4 control-label">Payment Frequency Discount (%)</label>
+		<div class="col-sm-2">
+			<?= $form->field($paymentFrequencyDiscount, 'discount')->textInput([
+                'id' => 'payment-frequency-discount',
+                'name' => 'PaymentFrequencyDiscount[discount]'
+            ])->label(false); ?>
 		</div>
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
-		<label  class="col-sm-2 control-label">Discount</label>
-		<div class="col-sm-1">
-		<?= $form->field($courseSchedule, 'discount')->textInput()->label(false);?>
+		<label  class="col-sm-2 control-label">Multiple Enrolment Discount - Per Month($)</label>
+		<div class="col-sm-3">
+			<?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
+                'id' => 'enrolment-discount',
+                'name' => 'MultipleEnrolmentDiscount[discount]'
+            ])->label(false); ?>	
 		</div>
-		<span class="col-sm-1 p-l-0 p-t-5">%</span>
 	</div>
+	<div class="clearfix"></div>
 	<div class="clearfix"></div>
 	<div class="form-group">
 		<label  class="col-sm-2 control-label p-10">Rate Per Lesson</label>
@@ -114,21 +126,24 @@ $this->title = 'New Enrolment';
 	<div class="clearfix"></div>
 </div> <!-- ./container -->
 <script>
-	function rateEstimation(duration, programRate, discount) {
+	function rateEstimation(duration, programRate, pfDiscount, enrolmentDiscount) {
 		var timeArray = duration.split(':');
     	var hours = parseInt(timeArray[0]);
     	var minutes = parseInt(timeArray[1]);
 		var unit = ((hours * 60) + (minutes)) / 60;
 		var amount = (programRate * unit).toFixed(2);
-		if(discount === '') {
-			var discount = 0;
+		if(pfDiscount === '') {
+			var pfDiscount = 0;
 		} 
-		var discountedRate = (amount - ((amount * (discount / 100)))).toFixed(2);
+		var pfDiscountedAmount = amount * (pfDiscount / 100); 
+		var enrolmentDiscountPerLesson = enrolmentDiscount / 4;
+		var totalDiscountPerLesson = pfDiscountedAmount + enrolmentDiscountPerLesson; 
+		var discountedRate = (amount - totalDiscountPerLesson).toFixed(2);
 		var discountedMonthlyRate = (discountedRate * 4).toFixed(2); 
 		$('#rate').text('$' + discountedRate);
 		$('#monthly-rate').text('$' + discountedMonthlyRate);
 	}
-	function fetchProgram(duration, programId, discount) {
+	function fetchProgram(duration, programId, pfDiscount, enrolmentDiscount) {
 		$.ajax({
 			url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?id=' + programId,
 			type: 'get',
@@ -136,7 +151,7 @@ $this->title = 'New Enrolment';
 			success: function (response)
 			{
 				programRate = response;
-				rateEstimation(duration,programRate, discount);
+				rateEstimation(duration,programRate, pfDiscount, enrolmentDiscount);
 			}
 		});
 	}
@@ -146,24 +161,18 @@ $this->title = 'New Enrolment';
 		$(document).on('change', '#course-programid', function(){
 			var duration = $('#courseschedule-duration').val();
 			var programId = $('#course-programid').val();
-			var discount = $('#courseschedule-discount').val();
-			fetchProgram(duration, programId, discount);
+			var pfDiscount = $('#payment-frequency-discount').val();
+			var enrolmentDiscount = $('#enrolment-discount').val();
+			fetchProgram(duration, programId, pfDiscount, enrolmentDiscount);
 		});
-		$(document).on('change', '#courseschedule-duration', function(){
+		$(document).on('change', '#courseschedule-duration, #enrolment-discount, #payment-frequency-discount', function(){
 			var duration = $('#courseschedule-duration').val();
 			var programId = $('#course-programid').val();
-			var discount = $('#courseschedule-discount').val();
-			if (duration && programId || discount) {
-				fetchProgram(duration, programId, discount);
+			var pfDiscount = $('#payment-frequency-discount').val();
+			var enrolmentDiscount = $('#enrolment-discount').val();
+			if (duration && programId || pfDiscount || enrolmentDiscount) {
+				fetchProgram(duration, programId, pfDiscount, enrolmentDiscount);
 			}
 		});
-		$(document).on('change', '#courseschedule-discount', function(){
-			var duration = $('#courseschedule-duration').val();
-			var programId = $('#course-programid').val();
-			var discount = $('#courseschedule-discount').val();
-			if (duration && programId || discount) {
-				fetchProgram(duration, programId, discount);
-			}
-		});
-});
+	});
 </script>

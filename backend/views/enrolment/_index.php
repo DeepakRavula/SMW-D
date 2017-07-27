@@ -9,7 +9,7 @@ use common\models\Student;
 use yii\bootstrap\Modal;
 use yii\bootstrap\ActiveForm;
 use common\models\CourseSchedule;
-
+use common\models\EnrolmentDiscount;
 use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);
 ?>
@@ -39,6 +39,8 @@ DateTimePickerAsset::register($this);
 							$this->render('new/_form-course', [
 								'model' => new Course(),
 								'courseSchedule' => new CourseSchedule(),
+								'paymentFrequencyDiscount' => new EnrolmentDiscount(),
+								'multipleEnrolmentDiscount' => new EnrolmentDiscount(),
 								'form' => $form,
 							]);
 							?>
