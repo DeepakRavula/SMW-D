@@ -310,9 +310,27 @@ class InvoiceLineItemController extends Controller
         $taxCode           = $invoiceLineItem->computeTaxCode($data['taxStatus']);
         $invoiceLineItem->tax_status = $taxCode->taxStatus->name;
         $invoiceLineItem->tax_type   = $taxCode->taxType->name;
-        $invoiceLineItem->tax_rate   = $invoiceLineItem->amount * $invoiceLineItem->taxType->taxCode->rate / 100;
+        $discount = 0.0;
+        if (!empty($data['customerDiscount'])) {
+            $discount += $invoiceLineItem->amount * $data['customerDiscount'] / 100;
+        }
+        if (!empty($data['paymentFrequencyDiscount'])) {
+            $discount += $invoiceLineItem->amount * $data['paymentFrequencyDiscount'] / 100;
+        }
+        if (!empty($data['multiEnrolmentDiscount'])) {
+            $discount += $data['multiEnrolmentDiscount'];
+        }
+        if (!empty($data['lineItemDiscount'])) {
+            if ($data['lineItemDiscountType']) {
+                $discount += $data['lineItemDiscount'];
+            } else {
+                $discount += $invoiceLineItem->amount * $data['lineItemDiscount'] / 100;
+            }
+        }
+        $netPrice = $invoiceLineItem->amount - $discount;
+        $invoiceLineItem->tax_rate   = $netPrice * $invoiceLineItem->taxType->taxCode->rate / 100;
         return [
-            'netPrice' => $invoiceLineItem->netPrice,
+            'netPrice' => $netPrice,
             'taxRate' => $invoiceLineItem->tax_rate,
             'taxPercentage' => $invoiceLineItem->taxType->taxCode->rate
         ];
