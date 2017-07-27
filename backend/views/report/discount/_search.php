@@ -24,7 +24,10 @@ use kartik\daterange\DateRangePicker;
     ]); ?>
     <div class="e1Div form-inline">
         <div class="form-group">
-           <?php 
+        <div id="print" class="btn btn-default pull-right m-t-20">
+            <?= Html::a('<i class="fa fa-print"></i> Print') ?>
+        </div>
+           <?php
            echo DateRangePicker::widget([
             'model' => $model,
             'attribute' => 'dateRange',
@@ -52,7 +55,7 @@ use kartik\daterange\DateRangePicker;
 <script>
 $(document).ready(function () {
 	$(document).on('change', '#discountsearch-daterange', function() {
-		$("#discount-search-form").submit();	
+		$("#discount-search-form").submit();
 	});
 $("#discount-search-form").on("submit", function (e) {
 		e.preventDefault();

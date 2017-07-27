@@ -223,10 +223,10 @@ class ReportController extends Controller {
                 'dataProvider' => $dataProvider,
         ]);
     }
-	public function actionDiscount()
+    public function actionDiscount()
     {
         $searchModel              = new DiscountSearch();
-		$currentDate = new \DateTime();
+        $currentDate = new \DateTime();
         $searchModel->fromDate = $currentDate->format('M 1,Y');
         $searchModel->toDate = $currentDate->format('M t,Y');
         $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
