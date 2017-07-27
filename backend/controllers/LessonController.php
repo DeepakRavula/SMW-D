@@ -919,7 +919,7 @@ class LessonController extends Controller
             'options' => ['class' => 'alert-success'],
             'body' => 'The Lesson has been exploded successfully.',
         ]);
-        return $this->redirect(['student/view', 'id' => $model->enrolment->student->id, '#'=> 'lesson']);
+        return $this->redirect(['student/view', 'id' => $model->enrolment->student->id, '#'=> 'unscheduledLesson']);
     }
 
     public function actionMerge($id)
