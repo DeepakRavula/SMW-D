@@ -268,8 +268,14 @@ class LessonController extends Controller
 		}
 		$request = Yii::$app->request;
 		$userModel = $request->post('User');
+		
+		$privateLessonModel->load(Yii::$app->getRequest()->getBodyParams(), 'PrivateLesson');
         if ($model->load($request->post()) || !empty($userModel)) {
-			if(empty($model->date)) {
+			if(!empty($privateLessonModel->expiryDate)) {
+				$privateLessonModel->expiryDate = (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s');
+				$privateLessonModel->save();
+			}
+			if(empty($model->isUnscheduled)) {
 				$model->date =  $oldDate;
 				$model->status = Lesson::STATUS_UNSCHEDULED;
 				$model->save();
