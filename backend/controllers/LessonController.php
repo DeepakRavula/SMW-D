@@ -268,9 +268,8 @@ class LessonController extends Controller
 		}
 		$request = Yii::$app->request;
 		$userModel = $request->post('User');
-		
         if ($model->load($request->post()) || !empty($userModel)) {
-			if(empty($model->isUnscheduled)) {
+			if(empty($model->date)) {
 				$model->date =  $oldDate;
 				$model->status = Lesson::STATUS_UNSCHEDULED;
 				$model->save();
