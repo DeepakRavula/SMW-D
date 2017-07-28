@@ -54,13 +54,17 @@ GridView::widget([
 			[
 			'label' => 'Student',
 			'value' => function ($data) {
-				return $data->enrolment->student->FullName;
+				$student = '-';
+				if($data->course->program->isPrivate()) {
+					$student = $data->enrolment->student->fullName;
+				}
+				return $student;
 			},
 		],
 			[
 			'label' => 'Teacher',
 			'value' => function ($data) {
-				return $data->course->teacher->userProfile->FullName;
+				return $data->course->teacher->publicIdentity;
 			},
 		],
 			[
@@ -79,9 +83,15 @@ GridView::widget([
 ]);
 ?>
 <?php yii\widgets\Pjax::end(); ?>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script>
 $(document).ready(function () {
+	var locationId = $.cookie('locationId');
+	if(locationId) {
+		$('#locationId').val(locationId);
+	}
 	$(document).on('change', '#locationId', function(){
+		$.cookie('locationId', $(this).val());
 		$("#schedule-search").submit();
 	});
 	$(document).on('submit', '#schedule-search', function () {

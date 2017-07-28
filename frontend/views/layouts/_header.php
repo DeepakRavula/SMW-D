@@ -59,7 +59,8 @@ $bundle = BackendAsset::register($this);
 						]); ?>                      
 						<?= $form->field($searchModel, 'locationId')->dropDownList(
 							ArrayHelper::map(Location::find()->all(), 'id', 'name'),
-							['class' => 'form-control', 'id' => 'locationId'])->label(false);
+							['class' => 'form-control', 'id' => 'locationId',
+								'prompt' => 'Location'])->label(false);
 						?>
     					<?php ActiveForm::end(); ?>
 					</div>  

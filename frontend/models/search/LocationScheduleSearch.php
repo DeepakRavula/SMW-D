@@ -40,12 +40,16 @@ class LocationScheduleSearch extends Lesson
      */
     public function search($params)
     {
+		if(!empty($_COOKIE['locationId'])) {
+			$this->locationId = $_COOKIE['locationId'];
+		}
         $query = Lesson::find()
 			->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED,
 				'DATE(date)' => (new \DateTime())->format('Y-m-d')	
 			])
 			->notDraft()
 			->notDeleted()
+			->location($this->locationId)
 			->orderBy(['TIME(date)' => SORT_ASC]);
         $dataProvider= new ActiveDataProvider([
             'query' => $query,
