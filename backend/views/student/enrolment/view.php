@@ -2,6 +2,8 @@
 
 use yii\bootstrap\Tabs;
 use common\models\Course;
+use yii\helpers\Url;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -32,7 +34,7 @@ $this->title = 'Student Enrolment';
 		<i class="fa fa-birthday-cake detail-icon"></i> <?php echo !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?>
 	</div>
 	<div class="col-md-3 hand p-l-0" data-toggle="tooltip" data-placement="bottom" title="Customer">
-		<a href="/user/view?UserSearch%5Brole_name%5D=customer&id=<?php echo $model->customer->id ?>">
+		<a href="<?= Url::to(['/user/view','UserSearch[role_name]' => User::ROLE_CUSTOMER,'id' => $model->customer->id]); ?>">
 		<i class="fa fa-user detail-icon"></i> <?php echo !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null ?>
 	</a>
 	</div>
