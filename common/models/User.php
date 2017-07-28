@@ -474,7 +474,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getPublicIdentityWithEnrolment()
     {
-        return !empty($this->enrolment) ? $this->publicIdentity . '(' . 
+        return !empty($this->enrolment) ? $this->publicIdentity . ' (' .
             $this->enrolment->getCustomerModeOfPay() . ', ' . $this->EnroledStudents . ')' : null;
     }
     

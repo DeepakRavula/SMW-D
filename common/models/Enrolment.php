@@ -702,8 +702,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function getCustomerModeOfPay()
     {
-        return $this->paymentsFrequency->frequencyLength == 1 ? 'pays every ' . $this->paymentsFrequency->frequencyLength .
-            'month' : 'pays every ' . $this->paymentsFrequency->frequencyLength .
-            'month';
+        return $this->paymentsFrequency->frequencyLength == 1 ? 'pays every month' 
+            : 'pays every ' . $this->paymentsFrequency->frequencyLength . 'month';
     }
 }

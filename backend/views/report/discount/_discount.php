@@ -7,13 +7,9 @@ use kartik\grid\GridView;
     <?php
         $columns = [
             [
+                'label' => 'Customer',
                 'value' => function ($data) {
-                    if (!empty($data->invoice->date)) {
-                        $invoiceDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->invoice->date);
-                        return $invoiceDate->format('Y-m-d');
-                    }
-
-                    return null;
+                    return !empty($data->invoice->user->publicIdentity) ? $data->invoice->user->publicIdentityWithEnrolment : null;
                 },
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
@@ -22,42 +18,17 @@ use kartik\grid\GridView;
                     return [
                         'mergeColumns' => [[2, 3]],
                         'content' => [
-                            5 => GridView::F_SUM,
+                            4 => GridView::F_SUM,
                         ],
                         'contentFormats' => [
-                            5 => ['format' => 'number', 'decimals' => 2],
+                            4 => ['format' => 'number', 'decimals' => 2],
                         ],
                         'contentOptions' => [
-                            5 => ['style' => 'text-align:right'],
+                            4 => ['style' => 'text-align:right'],
                         ],
                         'options' => ['style' => 'font-weight:bold;font-size:14px;']
                     ];
                 }
-            ],
-            [
-                'label' => 'Customer',
-                'value' => function ($data) {
-                    return !empty($data->invoice->user->publicIdentity) ? $data->invoice->user->publicIdentityWithEnrolment : null;
-                },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
-                'group' => true,
-                'groupedRow' => true,
-                'subGroupOf' => 0,
-                'groupFooter' => function ($model, $key, $index, $widget) {
-                    return [
-                        'mergeColumns' => [[2, 4]],
-                        'content' => [
-                            5 => GridView::F_SUM,
-                        ],
-                        'contentFormats' => [
-                            5 => ['format' => 'number', 'decimals' => 2],
-                        ],
-                        'contentOptions' => [
-                            5 => ['style' => 'text-align:right'],
-                        ],
-                        'options' => ['class' => 'success', 'style' => 'font-weight:bold;font-size:14px']
-                    ];
-                },
             ],
             [
                 'label' => 'Code',
@@ -93,7 +64,7 @@ use kartik\grid\GridView;
             [
                 'label' => 'Price',
                 'value' => function ($data) {
-                    return $data->amount;
+                    return $data->netPrice;
                 },
             ],
         ];
