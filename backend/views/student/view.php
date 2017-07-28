@@ -8,12 +8,17 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use common\models\Note;
 use kartik\select2\Select2Asset;
+use kartik\daterange\DateRangePickerAsset;
+
 Select2Asset::register($this);
+DateRangePickerAsset::register($this);              
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 $this->title = 'Student Details';
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'StudentSearch[showAllStudents]' => false], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
+
+$this->params['action-button'] = Html::a(Yii::t('backend', 'Merge'), '#', ['class' => 'btn btn-success', 'id' => 'student-merge']);
 ?>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
@@ -33,15 +38,7 @@ echo $this->render('_profile', [
     top: -52px;
   }
 </style>
-<div class="student-index">
-    <div class="pull-right  m-r-10">
-        <div class="schedule-index">
-            <div class="e1Div">
-                <?= Html::a('Merge', ['#'], ['class' => 'btn btn-success', 'id' => 'student-merge']); ?>
-            </div>
-        </div>
-    </div>
-</div>
+
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div class="tabbable-panel">

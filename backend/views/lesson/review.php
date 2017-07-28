@@ -216,7 +216,9 @@ Modal::begin([
                     if (response.status)
                     {
 						$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000, async:false});
-						$.pjax.reload({url: url, container: "#review-lesson-summary", replace: false, timeout: 6000, async:false});
+						if($('#review-lesson-summary').length !== 0) {
+							$.pjax.reload({url: url, container: "#review-lesson-summary", replace: false, timeout: 6000, async:false});
+						}
                 		review.onEditableGridSuccess();
                         $('#review-lesson-modal').modal('hide');
                     } else {
