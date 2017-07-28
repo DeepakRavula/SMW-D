@@ -17,51 +17,7 @@ $this->title = 'Discount Report';
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
-<style>
-.table>thead>tr>th {
-    border-right: 2px solid transparent;
-}
-.table>tbody>tr>td {
-    border-right: 2px solid transparent;
-	border-bottom: 1px solid transparent;
-	background-color: white;
-}
-.table-striped > tbody > tr:nth-of-type(odd),
-td.kv-group-even,
-td.kv-group-odd{
-	background-color: rgba(0, 0, 0, 0.02) !important
-}
-tr.success>td, tr:hover, tr>td:hover{
-    background: transparent !important;
-}
-tr.success>td{
-    border-bottom: 1px solid #efefef !important;
-}
-.kv-page-summary{
-	border-top: 0;
-}
-@page{
-  size: auto;
-  margin: 3mm;
-}
-@media print{
-	.payments-index #payment-listing table thead{
-		border-bottom: 1px ridge;
-	}
-	.payments-index #payment-listing table tbody tr.kv-grid-group-row{
-		border-bottom: 1px ridge;
-	}
-	.payments-index #payment-listing table tbody tr.kv-group-footer{
-		border-top: 1px ridge;
-	}
-	.payments-index .table-bordered{
-		border: 1px solid transparent;
-	}
-	.payments-index .table-bordered>thead>tr>th, .payments-index .table-bordered>tbody>tr>th,.payments-index  .table-bordered>tfoot>tr>th,.payments-index  .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .payments-index .table-bordered>tfoot>tr>td{
-		border:none !important;
-	}
-}
-</style>
+<style type="text/css" src="/admin/css/group-grid.css"></style>
 <div class="payments-index">
     <?php
         $columns = [
