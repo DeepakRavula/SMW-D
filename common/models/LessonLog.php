@@ -24,9 +24,14 @@ class LessonLog extends Lesson {
 		$rescheduledByDate = new \DateTime($oldLessonModel['date']) != new \DateTime($lessonModel->date);
 		$rescheduledByTeacher = (int) $lessonModel->teacherId !== (int) $oldLessonModel['teacherId'];
 		if ($rescheduledByTeacher) {
+			if ($lessonModel->course->program->isPrivate()) {
+				$message = $lessonModel->userName . ' assigned {{' . $lessonModel->teacher->publicIdentity . '}} to teach {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}}';	
+			} else {
+				$message = $lessonModel->userName . ' assigned {{' . $lessonModel->teacher->publicIdentity . '}} to ' . $lessonModel->course->program->name . ' {{lesson}}';
+			}
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 				'data' => $lesson,
-				'message' => $lessonModel->userName . ' assigned {{' . $lessonModel->teacher->publicIdentity . '}} to teach {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}}',
+				'message' => $message,
 				'locationId' => $lessonModel->teacher->userLocation->location_id,
 			]));
 			if ($timelineEvent) {
@@ -37,12 +42,13 @@ class LessonLog extends Lesson {
 				$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $lessonModel->teacher->id]);
 				$timelineEventLink->save();
 
-				$timelineEventLink->id = null;
-				$timelineEventLink->isNewRecord = true;
-				$timelineEventLink->index = $lessonModel->course->enrolment->student->fullName;
-				$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
-				$timelineEventLink->save();
-
+				if ($lessonModel->course->program->isPrivate()) {
+					$timelineEventLink->id = null;
+					$timelineEventLink->isNewRecord = true;
+					$timelineEventLink->index = $lessonModel->course->enrolment->student->fullName;
+					$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
+					$timelineEventLink->save();
+				}
 				$timelineEventLink->id = null;
 				$timelineEventLink->isNewRecord = true;
 				$timelineEventLink->index = 'lesson';
@@ -50,69 +56,78 @@ class LessonLog extends Lesson {
 				$timelineEventLink->save();
 
 				$timelineEventLesson = new TimelineEventLesson();
-				$timelineEventLesson->lessonId = $lessonModel->id; 
+				$timelineEventLesson->lessonId = $lessonModel->id;
 				$timelineEventLesson->timelineEventId = $timelineEvent->id;
 				$timelineEventLesson->action = 'edit';
 				$timelineEventLesson->save();
 			}
 		} elseif ($rescheduledByDate) {
+			if ($lessonModel->course->program->isPrivate()) {
+				$message = $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}} to ' . Yii::$app->formatter->asTime($lessonModel->date);
+			} else {
+				$message = $lessonModel->userName . ' moved ' . $lessonModel->course->program->name . ' {{lesson}} to ' . Yii::$app->formatter->asTime($lessonModel->date);
+			}
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 				'data' => $lesson,
-				'message' => $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}} to ' . Yii::$app->formatter->asTime($lessonModel->date),
+				'message' => $message,
 				'locationId' => $lessonModel->teacher->userLocation->location_id,
 			]));
 			if ($timelineEvent) {
 				$timelineEventLesson = new TimelineEventLesson();
-				$timelineEventLesson->lessonId = $lessonModel->id; 
+				$timelineEventLesson->lessonId = $lessonModel->id;
 				$timelineEventLesson->timelineEventId = $timelineEvent->id;
 				$timelineEventLesson->action = 'edit';
 				$timelineEventLesson->save();
-				
+
 				$timelineEventLink = new TimelineEventLink();
 				$timelineEventLink->timelineEventId = $timelineEvent->id;
-				$timelineEventLink->index = $lessonModel->course->enrolment->student->fullName;
-				$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
-				$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
-				$timelineEventLink->save();
-
-				$timelineEventLink->id = null;
-				$timelineEventLink->isNewRecord = true;
 				$timelineEventLink->index = 'lesson';
 				$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
 				$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $lessonModel->id]);
 				$timelineEventLink->save();
-			
-				
+				if ($lessonModel->course->program->isPrivate()) {
+					$timelineEventLink->id = null;
+					$timelineEventLink->isNewRecord = true;
+					$timelineEventLink->index = $lessonModel->course->enrolment->student->fullName;
+					$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
+					$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
+					$timelineEventLink->save();
+				}
 			}
 		} elseif ((int) $oldLessonModel['classroomId'] !== (int) $lessonModel->classroomId) {
+			if ($lessonModel->course->program->isPrivate()) {
+				$message = $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}} to ' . $lessonModel->classroom->name;
+			} else {
+				$message = $lessonModel->userName . ' moved ' . $lessonModel->course->program->name . ' {{lesson}} to ' . $lessonModel->classroom->name;
+			}
 			$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 				'data' => $lesson,
-				'message' => $lessonModel->userName . ' moved {{' . $lessonModel->course->enrolment->student->fullName . '}}\'s ' . $lessonModel->course->program->name . ' {{lesson}} to ' . $lessonModel->classroom->name,
+				'message' => $message,
 				'locationId' => $lessonModel->teacher->userLocation->location_id,
 			]));
-		
-		if ($timelineEvent) {
-			$timelineEventLink = new TimelineEventLink();
-			$timelineEventLink->timelineEventId = $timelineEvent->id;
-			$timelineEventLink->index = $lessonModel->course->enrolment->student->fullName;
-			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
-			$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
-			$timelineEventLink->save();
 
-			$timelineEventLink->id = null;
-			$timelineEventLink->isNewRecord = true;
-			$timelineEventLink->index = 'lesson';
-			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
-			$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $lessonModel->id]);
-			$timelineEventLink->save();
-			
-			$timelineEventLesson = new TimelineEventLesson();
-			$timelineEventLesson->lessonId = $lessonModel->id; 
-			$timelineEventLesson->timelineEventId = $timelineEvent->id;
-			$timelineEventLesson->action = 'edit';
-			$timelineEventLesson->save();
+			if ($timelineEvent) {
+				$timelineEventLink = new TimelineEventLink();
+				$timelineEventLink->timelineEventId = $timelineEvent->id;
+				$timelineEventLink->index = 'lesson';
+				$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
+				$timelineEventLink->path = Url::to(['/lesson/view', 'id' => $lessonModel->id]);
+				$timelineEventLink->save();
+
+				if ($lessonModel->course->program->isPrivate()) {
+					$timelineEventLink->id = null;
+					$timelineEventLink->isNewRecord = true;
+					$timelineEventLink->index = $lessonModel->course->enrolment->student->fullName;
+					$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
+					$timelineEventLink->path = Url::to(['/student/view', 'id' => $lessonModel->course->enrolment->student->id]);
+					$timelineEventLink->save();
+				}
+				$timelineEventLesson = new TimelineEventLesson();
+				$timelineEventLesson->lessonId = $lessonModel->id;
+				$timelineEventLesson->timelineEventId = $timelineEvent->id;
+				$timelineEventLesson->action = 'edit';
+				$timelineEventLesson->save();
+			}
 		}
-    }
 	}
-
 }
