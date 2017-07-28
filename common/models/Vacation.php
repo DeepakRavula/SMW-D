@@ -21,6 +21,7 @@ class Vacation extends \yii\db\ActiveRecord
     const EVENT_DELETE='delete';
 	public $type;
     public $userName;
+	public $dateRange;
     /**
      * @inheritdoc
      */
@@ -36,7 +37,7 @@ class Vacation extends \yii\db\ActiveRecord
     {
         return [
             [['enrolmentId', 'isConfirmed'], 'integer'],
-            [['fromDate', 'toDate'], 'required'],
+            [['fromDate', 'toDate', 'dateRange'], 'safe'],
         ];
     }
 
@@ -64,10 +65,9 @@ class Vacation extends \yii\db\ActiveRecord
 		if(! $insert) {
         	return parent::beforeSave($insert);
 		}
-        $fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
-        $this->fromDate = $fromDate->format('Y-m-d H:i:s');
-		$toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
-        $this->toDate = $toDate->format('Y-m-d H:i:s');
+		list($fromDate, $toDate) = explode(' - ', $this->dateRange);
+        $this->fromDate = (new \DateTime($fromDate))->format('Y-m-d H:i:s');
+        $this->toDate = (new \DateTime($toDate))->format('Y-m-d H:i:s');
         $this->isConfirmed = false;
 		
         return parent::beforeSave($insert);

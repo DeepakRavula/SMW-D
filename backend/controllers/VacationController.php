@@ -101,6 +101,8 @@ class VacationController extends Controller
 					'Vacation[id]' => $model->id,
 					'Vacation[type]' => Vacation::TYPE_CREATE
 				]);
+			} else {
+				Yii::error('Vacation Create: ' . \yii\helpers\VarDumper::dumpAsString($model->getErrors()));
 			}
         } else {
             return [
