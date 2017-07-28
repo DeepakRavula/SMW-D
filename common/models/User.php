@@ -475,7 +475,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getPublicIdentityWithEnrolment()
     {
         return !empty($this->enrolment) ? $this->publicIdentity . ' (' .
-            $this->enrolment->getCustomerModeOfPay() . ', ' . $this->EnroledStudents . ')' : null;
+            $this->enroledStudents . ')' : null;
     }
     
     public function teacherAvailabilityWithLessons($id)
@@ -626,8 +626,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getEnroledStudents()
     {
-        return $this->studentsCount == 1 ? 'has ' . $this->studentsCount . 'student enrolled' :
-            'has ' . $this->studentsCount . 'students enrolled';
+        return $this->studentsCount == 1 ? 'has ' . $this->studentsCount . ' student enrolled' :
+            'has ' . $this->studentsCount . ' students enrolled';
     }
 
     public function getStudentsCount()

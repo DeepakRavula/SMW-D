@@ -46,7 +46,8 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => 'Qty',
-                'contentOptions' => ['style' => 'font-size:14px'],
+                'hAlign' => 'right',
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
                 'value' => function ($data) {
                     return $data->unit;
                 },
@@ -63,6 +64,8 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => 'Price',
+                'hAlign' => 'right',
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
                 'value' => function ($data) {
                     return $data->netPrice;
                 },
