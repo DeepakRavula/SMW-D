@@ -205,6 +205,11 @@ class Lesson extends \yii\db\ActiveRecord
         return (int) $this->status === self::STATUS_CANCELED;
     }
 
+	public function hasExpiryDate()
+    {
+        return !empty($this->privateLesson->id);
+    }
+	
     public function getFullDuration()
     {
         $duration = $this->duration;

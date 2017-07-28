@@ -261,16 +261,17 @@ class LessonController extends Controller
         $model->on(Lesson::EVENT_RESCHEDULED,
                 [new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-		if (!empty($model->privateLesson->id)) {
-			$privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
-		} else {
-			$privateLessonModel = new PrivateLesson();
-		}
+		
 		$request = Yii::$app->request;
 		$userModel = $request->post('User');
-		
+		if ($model->hasExpiryDate()) {
+			$privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
+			$privateLessonModel->load(Yii::$app->getRequest()->getBodyParams(), 'PrivateLesson');
+			$privateLessonModel->expiryDate = (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s');
+			$privateLessonModel->save();
+		} 	
         if ($model->load($request->post()) || !empty($userModel)) {
-			if(empty($model->isUnscheduled)) {
+			if(empty($model->date)) {
 				$model->date =  $oldDate;
 				$model->status = Lesson::STATUS_UNSCHEDULED;
 				$model->save();
@@ -323,7 +324,7 @@ class LessonController extends Controller
         }
         return $this->render('_form-private-lesson', [
 			'model' => $model,
-			'privateLessonModel' => $privateLessonModel
+			'privateLessonModel' => !empty($privateLessonModel) ? $privateLessonModel : null
 		]);
     }
 

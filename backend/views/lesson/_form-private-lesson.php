@@ -109,7 +109,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         ]);
         ?>
         </div>
-		<?php if($model->course->program->isPrivate()) : ?>
+		<?php if($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
 		<div class="col-md-4">
 			<?php
                 if ($privateLessonModel->isNewRecord) {
