@@ -62,7 +62,7 @@ $bundle = BackendAsset::register($this);
                                 <i class="fa fa-newspaper-o" aria-hidden="true"></i>
                             </a>
                         </li>
-                        <li class="notifications-menu" data-toggle="tooltip" data-original-title="Give a feedback" data-placement="bottom">
+                        <li class="notifications-menu" data-toggle="tooltip" data-original-title="Help" data-placement="bottom">
                             <a href="" onclick="FreshWidget.show(); return false;">
                                 <i class="fa fa-comment"></i>
                             </a>

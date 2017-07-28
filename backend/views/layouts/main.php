@@ -18,14 +18,21 @@ use yii\helpers\Url;
 </div> 
 <?php $this->endContent(); ?>
 <body>
-    <script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
-    <script type="text/javascript">
-        FreshWidget.init("", {"queryString": "&widgetType=popup&searchArea=no&helpdesk_ticket[requester]=<?= Html::encode(Yii::$app->user->identity->email); ?>&helpdesk_ticket[subject]=<?= Html::encode($this->title); ?>",
-            "widgetType": "popup", "buttonType": "text", "buttonText": "Feedback",
-            "buttonColor": "white", "buttonBg": "#E30018", "alignment": "1",
-            "offset": "-1500px", "formHeight": "500px", "screenshot": "no",
-            "url": "http://smw.freshdesk.com"});
-    </script>
+    <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+<script type="text/javascript">
+	FreshWidget.init("", {
+		"queryString": "&widgetType=popup&helpdesk_ticket[requester]=<?= Html::encode(Yii::$app->user->identity->email); ?>&helpdesk_ticket[subject]=<?= Html::encode($this->title); ?>",
+		"utf8": "✓", 
+		"widgetType": "popup",
+		"buttonType": "text",
+		"buttonText": "Support",
+		"buttonColor": "white",
+		"buttonBg": "#006063",
+		"alignment": "4",
+		"offset": "-1500px", 
+		"formHeight": "500px", 
+		"url": "https://smw.freshdesk.com"} );
+</script>
 </body>
 <script type="text/javascript">
 $(document).ready(function(){
