@@ -33,9 +33,7 @@ use yii\helpers\Url;
             <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
         </div>
         <div class="col-xs-6">
-            <?php echo $form->field($model, 'birth_date')->widget(\yii\jui\DatePicker::classname(), [
-                    'options' => ['class' => 'form-control'],
-                ]); ?>
+            <?php echo $form->field($model, 'birth_date')->textInput()?>
         </div>
 			<div class="col-xs-6">
 				<?php if (!$model->isNewRecord) : ?>
