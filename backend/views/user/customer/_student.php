@@ -15,7 +15,7 @@ use yii\bootstrap\Modal;
 		'header' => '<h4 class="m-0">Add Student</h4>',
 		'id'=>'student-create-modal',
 	]);
-	echo $this->render('//student/_form', [
+	echo $this->render('_form-student', [
         'model' => $student,
         'customer' => $model,
     ]);

@@ -481,7 +481,13 @@ $(document).ready(function(){
 			data: $(this).serialize(),
 			success: function (response)
 			{
-				
+				if(response.status) {
+                	window.location.href = response.url;
+				}
+				else {
+					$('#student-form').yiiActiveForm('updateMessages',
+						response.errors, true);	
+				}
 			}
 		});
 		return false;

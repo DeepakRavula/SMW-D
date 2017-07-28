@@ -390,7 +390,10 @@ echo $this->render('_profile', [
                     {
                         $.pjax.reload({container: '#student-profile', timeout: 6000});
                         $('#student-profile-modal').modal('hide');
-                    }
+                    } else {
+						$('#student-form').yiiActiveForm('updateMessages',
+                            response.errors, true);	
+					}
                 }
     	});
 		return false;

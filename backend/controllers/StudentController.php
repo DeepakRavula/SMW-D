@@ -22,6 +22,8 @@ use common\models\User;
 use common\models\EnrolmentDiscount;
 use common\models\PaymentFrequency;
 use common\models\TeacherAvailability;
+use yii\widgets\ActiveForm;
+use yii\helpers\Url;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -162,9 +164,18 @@ class StudentController extends Controller
             $model->customer_id = $user['id'];
 			$model->status = Student::STATUS_ACTIVE;
             if($model->save()) {
-				return $this->redirect(['/student/view', 'id' => $model->id]);
+				$response = [
+					'status' => true,
+					'url' => Url::to(['/student/view', 'id' => $model->id])	
+				];
+			} else {
+				$response =  [
+					'status' => false,
+					'errors' => ActiveForm::validate($model),
+				];		
 			}
-        }
+		}
+		return $response;
     }
 
     /**
@@ -190,7 +201,12 @@ class StudentController extends Controller
 					'status' => true,
 				];
 			}
-        }
+        } else {
+			return  [
+				'status' => false,
+				'errors' => ActiveForm::validate($model),
+			];	
+		}
     }
 
     public function actionEnrolment($id)
