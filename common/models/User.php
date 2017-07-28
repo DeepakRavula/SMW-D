@@ -471,6 +471,12 @@ class User extends ActiveRecord implements IdentityInterface
 
         return $this->email;
     }
+
+    public function getPublicIdentityWithEnrolment()
+    {
+        return !empty($this->enrolment) ? $this->publicIdentity . '(' . 
+            $this->enrolment->getCustomerModeOfPay() . ', ' . $this->EnroledStudents . ')' : null;
+    }
     
     public function teacherAvailabilityWithLessons($id)
     {
@@ -616,6 +622,23 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Student::className(), ['customer_id' => 'id'])
             ->active()->notDeleted();
+    }
+
+    public function getEnroledStudents()
+    {
+        return $this->studentsCount == 1 ? 'has ' . $this->studentsCount . 'student enrolled' :
+            'has ' . $this->studentsCount . 'students enrolled';
+    }
+
+    public function getStudentsCount()
+    {
+        return count($this->students);
+    }
+
+    public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['studentId' => 'id'])
+            ->via('students');
     }
 
     public function hasInvoice()

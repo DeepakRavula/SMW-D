@@ -223,6 +223,7 @@ class ReportController extends Controller {
                 'dataProvider' => $dataProvider,
         ]);
     }
+    
     public function actionDiscount()
     {
         $searchModel              = new DiscountSearch();
@@ -245,6 +246,23 @@ class ReportController extends Controller {
                 [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionDiscountPrint()
+    {
+        $searchModel              = new DiscountSearch();
+        if ($searchModel->load(Yii::$app->request->get())) {
+            $discountRequest = Yii::$app->request->get('DiscountSearch');
+            $searchModel->dateRange = $discountRequest['dateRange'];
+        }
+        $dataProvider             = $searchModel->search(Yii::$app->request->queryParams);
+
+        $this->layout             = '/print';
+
+        return $this->render('/report/discount/_print', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 }

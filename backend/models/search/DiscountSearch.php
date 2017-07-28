@@ -63,10 +63,14 @@ class DiscountSearch extends Invoice
 			->joinWith(['invoice' => function($query) use($locationId) {
 				$query->andWhere([
                                     'location_id' => $locationId,
-                                    'type' => Invoice::TYPE_INVOICE,
+                                    'invoice.type' => Invoice::TYPE_INVOICE,
 				])	
 				->notDeleted();
-			}]);
+			}])
+                        ->joinWith(['itemDiscounts' => function($query) {
+                            $query->andWhere(['NOT', ['invoice_line_item_discount.id' => null]])
+                                ->andWhere(['NOT', ['invoice_line_item_discount.value' => 0.00]]);
+                        }]);
 		
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
