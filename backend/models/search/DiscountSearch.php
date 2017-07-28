@@ -77,7 +77,6 @@ class DiscountSearch extends Invoice
             'pagination' => false,
         ]);
         $query->orderBy([
-            'DATE(invoice.date)' => SORT_ASC,
             'invoice.user_id' => SORT_ASC,
         ]);
         $query->andWhere(['between', 'invoice.date', $fromDate, $toDate]);
