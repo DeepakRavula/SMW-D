@@ -154,6 +154,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
     }
 
+    public function getItemDiscounts()
+    {
+        return $this->hasMany(InvoiceLineItemDiscount::className(), ['invoiceLineItemId' => 'id']);
+    }
+
     public function getLineItemDiscount()
     {
         return $this->hasOne(InvoiceLineItemDiscount::className(), ['invoiceLineItemId' => 'id'])

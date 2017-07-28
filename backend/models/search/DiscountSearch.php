@@ -13,7 +13,7 @@ use common\models\InvoiceLineItem;
  */
 class DiscountSearch extends Invoice
 {
-	private $dateRange;
+    private $dateRange;
     public $fromDate;
     public $toDate;
     /**
@@ -22,7 +22,7 @@ class DiscountSearch extends Invoice
     public function rules()
     {
         return [
-			[['dateRange', 'fromDate', 'toDate'], 'safe'],
+            [['dateRange', 'fromDate', 'toDate'], 'safe'],
         ];	
     }
 
@@ -56,27 +56,31 @@ class DiscountSearch extends Invoice
      */
     public function search($params)
     {
-		$fromDate = $this->fromDate->format('Y-m-d');
-		$toDate = $this->toDate->format('Y-m-d');
+        $fromDate = $this->fromDate->format('Y-m-d');
+        $toDate = $this->toDate->format('Y-m-d');
         $locationId = Yii::$app->session->get('location_id');
         $query = InvoiceLineItem::find()
-			->joinWith(['invoice' => function($query) use($locationId, $fromDate, $toDate) {
+			->joinWith(['invoice' => function($query) use($locationId) {
 				$query->andWhere([
-					'location_id' => $locationId,
-					'type' => Invoice::TYPE_INVOICE,
+                                    'location_id' => $locationId,
+                                    'invoice.type' => Invoice::TYPE_INVOICE,
 				])	
 				->notDeleted();
 			}])
-			->andWhere(['!=', 'discount', 0]);
+                        ->joinWith(['itemDiscounts' => function($query) {
+                            $query->andWhere(['NOT', ['invoice_line_item_discount.id' => null]])
+                                ->andWhere(['NOT', ['invoice_line_item_discount.value' => 0.00]]);
+                        }]);
 		
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
         ]);
-		$query->orderBy([
-			'invoice.user_id' => SORT_ASC,
-		]);	
-		$query->andWhere(['between', 'invoice.date', $fromDate, $toDate]);	
+        $query->orderBy([
+            'DATE(invoice.date)' => SORT_ASC,
+            'invoice.user_id' => SORT_ASC,
+        ]);
+        $query->andWhere(['between', 'invoice.date', $fromDate, $toDate]);
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
