@@ -123,7 +123,7 @@ $(document).ready(function() {
 			   {
                     $.pjax.reload({container: '#qualification-grid', timeout: 6000});
 					$('#qualification-edit-modal').modal('hide');
-				}else
+				} else
 				{
 				 $('#qualification-form').yiiActiveForm('updateMessages', response.errors, true);
 				}

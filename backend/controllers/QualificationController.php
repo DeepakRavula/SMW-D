@@ -131,20 +131,24 @@ class QualificationController extends Controller
 		$data = $this->renderAjax('update', [
 			'model' => $model,
 		]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $response = [
+        if ($model->load(Yii::$app->request->post())) {
+			if($model->save()) {
+				$response = [
+					'status' => true,
+				];
+			} else {
+				$response = [
+					'status' => false,
+					'errors' => ActiveForm::validate($model)
+				];	
+			} 
+			return $response;
+        } else { 
+			return [
 				'status' => true,
+				'data' => $data
 			];
-        } else {
-			$response = [
-				'status' => true,
-				'errors' => ActiveForm::validate($model)
-			];	
-		} 
-		return [
-			'status' => true,
-			'data' => $data
-		];
+		}
     }
 
     /**
