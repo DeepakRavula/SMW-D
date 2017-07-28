@@ -699,4 +699,10 @@ class Enrolment extends \yii\db\ActiveRecord
         }
         return '$' . $this->multipleEnrolmentDiscount->discount;
     }
+
+    public function getCustomerModeOfPay()
+    {
+        return $this->paymentsFrequency->frequencyLength == 1 ? 'pays every month' 
+            : 'pays every ' . $this->paymentsFrequency->frequencyLength . 'month';
+    }
 }

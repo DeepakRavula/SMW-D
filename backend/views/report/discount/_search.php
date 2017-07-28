@@ -12,20 +12,20 @@ use kartik\daterange\DateRangePicker;
   .e1Div{
     right: 0;
     top: -49px;
+    width: 280px;
   }
   .e1Div > .form-group > input {
     width: 180px;
   }
 </style>
     <?php $form = ActiveForm::begin([
-		'id' => 'discount-search-form',
+        'id' => 'discount-search-form',
         'action' => ['report/discount'],
         'method' => 'get'
     ]); ?>
     <div class="e1Div form-inline">
         <div class="form-group">
-           <?php 
-           echo DateRangePicker::widget([
+            <?php echo DateRangePicker::widget([
             'model' => $model,
             'attribute' => 'dateRange',
             'convertFormat' => true,
@@ -47,17 +47,20 @@ use kartik\daterange\DateRangePicker;
             ]);
            ?>
         </div>
-	</div>
+        <div id="print" class="btn btn-default pull-right m-t-6">
+            <?= Html::a('<i class="fa fa-print"></i> Print') ?>
+        </div>
+    </div>
     <?php ActiveForm::end(); ?>
+    
 <script>
-$(document).ready(function () {
-	$(document).on('change', '#discountsearch-daterange', function() {
-		$("#discount-search-form").submit();	
-	});
-$("#discount-search-form").on("submit", function (e) {
-		e.preventDefault();
-		$.pjax.reload({container: "#discount-report", replace: false, timeout: 6000, data: $(this).serialize()});
-		return false;
-	});
+$(document).on('change', '#discountsearch-daterange', function() {
+    $("#discount-search-form").submit();
+});
+
+$(document).on("submit", '#discount-search-form', function (e) {
+    e.preventDefault();
+    $.pjax.reload({container: "#discount-report", replace: false, timeout: 6000, data: $(this).serialize()});
+    return false;
 });
 </script>

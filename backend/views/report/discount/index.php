@@ -1,72 +1,30 @@
 <?php
 
-use common\models\InvoiceLineItem;
-use kartik\grid\GridView;
+use yii\helpers\Url;
+use backend\assets\CustomGridAsset;
+CustomGridAsset::register($this);
+Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
 $this->title = 'Discount Report';
-?>
-<?php
 
-$columns = [
-		[
-		'value' => function ($data) {
-			return $data->invoice->user->publicIdentity;
-		},
-		'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left', 'class' => 'main-group'],
-		'group' => true,
-		'groupedRow' => true,
-	],
-		[
-		'headerOptions' => ['class' => 'text-left'],
-		'contentOptions' => ['class' => 'text-left', 'style' => 'width:120px;'],
-		'label' => 'Code',
-		'value' => function ($data) {
-			return $data->code;
-		},
-	],
-		[
-		'headerOptions' => ['class' => 'text-left'],
-		'attribute' => 'description',
-	],
-		[
-		'label' => 'Qty',
-		'value' => function ($data) {
-			return $data->unit;
-		},
-		'headerOptions' => ['class' => 'text-right'],
-		'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-	],
-		[
-		'headerOptions' => ['class' => 'text-right'],
-		'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
-		'attribute' => 'discount',
-		'value' => function ($model) {
-                    return $model->discount;
-		},
-	],
-		[
-		'label' => 'Price',
-		'format' => 'currency',
-		'headerOptions' => ['class' => 'text-right'],
-		'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
-		'value' => function($data) {
-			return $data->netPrice;
-		},
-	],
-];
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 ?>
-<?php
+<div class="payments-index p-10">
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+</div>
+<?php echo $this->render('_discount', ['dataProvider' => $dataProvider]); ?>
+<script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
+<style type="text/css" src="/admin/css/group-grid.css"></style>
 
-yii\widgets\Pjax::begin([
-	'id' => 'discount-report',
-	'timeout' => 6000,
-])
-?>
-<?php echo $this->render('_search', ['model' => $searchModel]); ?>
-<?=
-GridView::widget([
-	'dataProvider' => $dataProvider,
-	'columns' => $columns,
-]);
-?>
-<?php \yii\widgets\Pjax::end(); ?>	
+<script>
+    $(document).on("click", "#print", function() {
+        var dateRange = $('#discountsearch-daterange').val();
+        var params = $.param({ 'DiscountSearch[dateRange]': dateRange });
+        var url = '<?php echo Url::to(['report/discount-print']); ?>?' + params;
+        window.open(url,'_blank');
+    });
+</script>

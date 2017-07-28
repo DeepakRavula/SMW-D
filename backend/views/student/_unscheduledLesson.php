@@ -2,16 +2,21 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
-use common\models\Invoice;
-use common\models\Lesson;
-use common\models\PrivateLesson;
+use yii\helpers\Html;
 
 ?>
 <div class="private-lesson-index">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index',
     'timeout' => 6000,]); ?>
     <?php $columns = [
-           
+            [
+                'label' => 'Status',
+                'format' => 'raw',
+                'contentOptions' => ['style' => 'width: 80px;'],
+                'value' => function ($data) {
+                    return $data->isExploded() ? Html::a('<i class="fa fa-code-fork fa-lg"></i>', null) : null;
+                }
+            ],
             [
                 'label' => 'Program',
                 'value' => function ($data) {
