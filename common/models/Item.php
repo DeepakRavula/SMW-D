@@ -81,7 +81,7 @@ class Item extends \yii\db\ActiveRecord
             'code' => 'Code',
             'description' => 'Description',
             'price' => 'Price',
-            'royaltyFree' => 'Is Royalty Free',
+            'royaltyFree' => 'Royalty Free',
             'taxStatusId' => 'Tax Status',
             'status' => 'status',
         ];
