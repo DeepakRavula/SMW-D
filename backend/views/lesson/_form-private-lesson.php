@@ -29,6 +29,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
+			'enableClientValidation' => false,
             'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
             'action' => Url::to(['lesson/update', 'id' => $model->id]),
             'options' => [
