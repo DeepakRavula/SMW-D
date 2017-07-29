@@ -44,7 +44,12 @@ $(document).ready(function(){
 		var date = moment(new Date()).format('DD-MM-YYYY');
 	    renderCalendar(date, this);
 	});
-    
+   	$(document).on('change', '#course-teacherid', function() {
+		$('.remove-item').click();
+		$('.day').val('');
+	    $('.time').val('');
+		return false;
+	}); 
     function renderCalendar(date, lessonFreeSlotPicker) {
         var events, availableHours;
         var teacherId = $('#course-teacherid').val();
