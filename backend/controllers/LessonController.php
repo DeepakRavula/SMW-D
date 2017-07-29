@@ -643,6 +643,7 @@ class LessonController extends Controller
 			$privateLessonModel->save();
 		}
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+		$lesson = current($lessons);
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
         $enrolmentRequest = $request->get('Enrolment');
@@ -712,6 +713,16 @@ class LessonController extends Controller
 				$oldLesson->status = Lesson::STATUS_CANCELED;
 				$oldLesson->save();
 			}
+			$courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');	
+			if($endDate->format('d-m-Y') == $courseDate) {
+				$courseModel->updateAttributes([
+					'teacherId' => $lesson->teacherId,
+				]);
+				$courseModel->courseSchedule->updateAttributes([
+					'day' => (new \DateTime($lesson->date))->format('N'),
+					'fromTime' => (new \DateTime($lesson->date))->format('H:i:s'),
+				]);
+			}
 		}
 		if(! empty($vacationId) || ! empty($rescheduleBeginDate)) {
 			foreach ($lessons as $i => $lesson) {
@@ -725,6 +736,7 @@ class LessonController extends Controller
 			$lesson->updateAttributes([
 				'status' => Lesson::STATUS_SCHEDULED,
 			]);
+			
 		}
         if (!empty($courseModel->enrolment) && empty($courseRequest) &&
             empty($vacationRequest)) {
