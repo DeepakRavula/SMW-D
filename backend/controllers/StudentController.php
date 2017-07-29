@@ -74,7 +74,8 @@ class StudentController extends Controller
      */
     public function actionView($id)
     {
-        $model = $this->findModel($id);
+		if(!empty($this->findModel($id))) {
+        	$model = $this->findModel($id);
         $locationId = Yii::$app->session->get('location_id');
         $query = Enrolment::find()
 			->joinWith(['course' => function($query) {
@@ -137,13 +138,16 @@ class StudentController extends Controller
 
 		return $this->render('view', [
 			'model' => $model,
-                        'allEnrolments' => $allEnrolments,
+            'allEnrolments' => $allEnrolments,
 			'lessonDataProvider' => $lessonDataProvider,
 			'enrolmentDataProvider' => $enrolmentDataProvider,
 			'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
 			'examResultDataProvider' => $examResultDataProvider,
 			'noteDataProvider' => $noteDataProvider
-		]);
+			]);
+		} else {
+			$this->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
+		} 
     }
 
     /**
@@ -299,14 +303,10 @@ class StudentController extends Controller
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
         $model = Student::find()
-                ->notDeleted()
-                ->location($locationId)
-                ->where(['student.id' => $id])->one();
-        if ($model !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+			->notDeleted()
+			->location($locationId)
+			->where(['student.id' => $id])->one();
+        return $model;
     }
 
     public function actionFetchProgramRate($duration, $id, $paymentFrequencyDiscount = null, $multiEnrolmentDiscount = null)
