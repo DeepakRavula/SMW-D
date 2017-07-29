@@ -643,7 +643,7 @@ class LessonController extends Controller
 			$privateLessonModel->save();
 		}
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
-		$lesson = current($lessons);
+		$lesson = end($lessons);
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
         $enrolmentRequest = $request->get('Enrolment');
