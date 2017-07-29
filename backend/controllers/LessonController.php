@@ -714,7 +714,7 @@ class LessonController extends Controller
 				$oldLesson->save();
 			}
 			$courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');	
-			if($endDate->format('d-m-Y') == $courseDate) {
+			if($endDate->format('d-m-Y') == $courseDate && !empty($lesson)) {
 				$courseModel->updateAttributes([
 					'teacherId' => $lesson->teacherId,
 				]);
