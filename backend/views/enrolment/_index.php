@@ -47,7 +47,7 @@ DateTimePickerAsset::register($this);
 							<div class="row">
 							<div class="col-md-12">
 								<a class="collapsed btn btn-default pull-left m-r-10" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
-								<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Next </a>
+								<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" id="step1-btn"> Next </a>
 								<div class="clearfix"></div>
 							</div>
 							<div class="clearfix"></div>
@@ -74,7 +74,7 @@ DateTimePickerAsset::register($this);
 							</div>
 							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
 							<a class="collapsed btn btn-default m-l-10 m-r-10" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"> Back </a>
-							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree"> Next </a>
+							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" id="step2-btn"> Next </a>
 						</div>
 					</div>
 				</div>
@@ -121,20 +121,33 @@ echo $this->render('new/_calendar', [
 <?php Modal::end(); ?>
 <script type="text/javascript">
 	$(document).ready(function(){
-		$('#step3-btn').click(function(){
-			$.ajax({
+		$('#step1-btn').click(function() {
+			var day = $('#courseschedule-day').val();
+			if(! day) {
+				$('#notification').html('Please check the schedule in step one').fadeIn().delay(4000).fadeOut();
+			}
+        });
+		$('#step3-btn').click(function() {
+			$('#new-enrolment-form').data('yiiActiveForm').submitting = true;
+			$('#new-enrolment-form').yiiActiveForm('validate');
+        });
+		$('#new-enrolment-form').on('afterValidate', function (event, messages) {
+			if(messages["course-programid"].length || 
+				messages["course-teacherid"].length ||
+				messages["userprofile-firstname"].length ||
+				messages["userprofile-lastname"].length || messages["address-address"].length || messages["phonenumber-number"].length){ 
+			} else {
+				$.ajax({
                 url: $('#new-enrolment-form').attr('action'),
                 type: 'post',
                 dataType: "json",
                 data: $('#new-enrolment-form').serialize(),
                 success: function (response)
                 {
-                    if (response.status)
-                    {
-            		$('.step-preview').html(response.data);	
-                    }
                 }
-            });
-		});	
+            });	
+			return false;
+			}
+        });
 	});
 </script>

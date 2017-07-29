@@ -35,7 +35,7 @@ use yii\helpers\Url;
 			],
 		])
 		?>
-		<?php if ((int) $courseModel->program->isPrivate()) : ?>
+		<?php if ((int) $courseModel->program->isPrivate() && empty($enrolmentType)) : ?>
 			<?= Html::a('Cancel', ['student/view', 'id' => $courseModel->enrolment->studentId], ['class' => 'btn']);
 			?>
 		<?php elseif(!empty($enrolmentType)) : ?>
