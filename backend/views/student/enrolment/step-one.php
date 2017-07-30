@@ -84,7 +84,6 @@ $privatePrograms = ArrayHelper::map(Program::find()
                             ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
                             ->active()
                             ->all(), 'id', 'name'),
-                'options' => ['placeholder' => 'Program']
             ]) ?>
         </div>
         <div class="clear-fix"></div>
@@ -148,7 +147,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             var params = $.param({duration: duration, id: programId, paymentFrequencyDiscount: paymentFrequencyDiscount,
                 multiEnrolmentDiscount: multiEnrolmentDiscount });
             $.ajax({
-                url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?' + params,
+                url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
                 type: 'get',
                 dataType: "json",
                 success: function (response)

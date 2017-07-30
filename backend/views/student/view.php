@@ -408,5 +408,3 @@ echo $this->render('_profile', [
     });
 });
 </script>
-
-
