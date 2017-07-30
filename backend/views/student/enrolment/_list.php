@@ -100,6 +100,10 @@ echo GridView::widget([
 							'id' => 'enrolment-delete-' . $model->id,
 							'title' => Yii::t('yii', 'Delete'),
 							'class' => 'enrolment-delete m-l-10 btn-danger btn-xs',
+						'data' => [
+							'confirm' => 'Are you sure you want to delete this item?',
+                        	'method' => 'post',
+						]
 					]);
 				},
 			],
