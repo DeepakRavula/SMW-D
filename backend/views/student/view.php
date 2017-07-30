@@ -268,11 +268,11 @@ echo $this->render('_profile', [
 		
 		$(document).on('click', '.enrolment-delete', function () {
 		var enrolmentId = $(this).parent().parent().data('key');
-		// bootbox.confirm({ 
-  		//	message: "Are you sure you want to delete this enrolment?", 
-  		//	callback: function(result){
-		//		if(result) {
-		//			$('.bootbox').modal('hide');
+		 bootbox.confirm({ 
+  			message: "Are you sure you want to delete this enrolment?", 
+  			callback: function(result){
+				if(result) {
+					$('.bootbox').modal('hide');
 				$.ajax({
 					url: '<?= Url::to(['enrolment/delete']); ?>?id=' + enrolmentId,
 					type: 'post',
@@ -287,11 +287,11 @@ echo $this->render('_profile', [
 					}
 				});
 				return false;	
-		//	}
-		//	}
+			}
+			}
 		});	
-		//return false;
-        //});
+		return false;
+        });
         $(document).on('beforeSubmit', '#lesson-form', function (e) {
             $.ajax({
                 url: $(this).attr('action'),
