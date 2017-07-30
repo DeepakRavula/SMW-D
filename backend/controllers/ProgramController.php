@@ -63,7 +63,14 @@ class ProgramController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+	public function actionFetchRate($id)
+    {
+        $response = Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        $program = Program::findOne(['id' => $id]);
 
+        return $program->rate;
+    }
     /**
      * Displays a single Program model.
      *

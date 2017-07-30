@@ -145,7 +145,7 @@ $this->title = 'New Enrolment';
 	}
 	function fetchProgram(duration, programId, pfDiscount, enrolmentDiscount) {
 		$.ajax({
-			url: '<?= Url::to(['student/fetch-program-rate']); ?>' + '?id=' + programId,
+			url: '<?= Url::to(['program/fetch-rate']); ?>' + '?id=' + programId,
 			type: 'get',
 			dataType: "json",
 			success: function (response)
