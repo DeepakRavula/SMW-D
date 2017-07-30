@@ -20,6 +20,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 
 $this->params['action-button'] = Html::a(Yii::t('backend', 'Merge'), '#', ['class' => 'btn btn-success', 'id' => 'student-merge']);
 ?>
+<script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
@@ -265,21 +266,31 @@ echo $this->render('_profile', [
             });
         });
 		
-		 $(document).on('click', '.enrolment-delete', function () {
-            $.ajax({
-                url: '<?= Url::to(['enrolment/delete']); ?>?id=' + $(this).parent().parent().data('key'),
-                type: 'post',
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $.pjax.reload({container: '#enrolment-grid', skipOuterContainers:true, timeout:6000});
-                    } else {
-						$('#enrolment-delete').html('You are not allowed to delete this enrolment.').fadeIn().delay(3000).fadeOut();
+		$(document).on('click', '.enrolment-delete', function () {
+		var enrolmentId = $(this).parent().parent().data('key');
+		 bootbox.confirm({ 
+  			message: "Are you sure you want to delete this enrolment?", 
+  			callback: function(result){
+				if(result) {
+					$('.bootbox').modal('hide');
+				$.ajax({
+					url: '<?= Url::to(['enrolment/delete']); ?>?id=' + enrolmentId,
+					type: 'post',
+					success: function (response)
+					{
+						if (response.status)
+						{
+							$.pjax.reload({container: '#enrolment-grid', skipOuterContainers:true, timeout:6000});
+						} else {
+							$('#enrolment-delete').html('You are not allowed to delete this enrolment.').fadeIn().delay(3000).fadeOut();
+						}
 					}
-                }
-            });
-			return false;
+				});
+				return false;	
+			}
+			}
+		});	
+		return false;
         });
         $(document).on('beforeSubmit', '#lesson-form', function (e) {
             $.ajax({
