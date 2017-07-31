@@ -18,13 +18,13 @@ use kartik\grid\GridView;
                     return [
                         'mergeColumns' => [[2, 3]],
                         'content' => [
-                            4 => GridView::F_SUM,
+                            8 => GridView::F_SUM,
                         ],
                         'contentFormats' => [
-                            4 => ['format' => 'number', 'decimals' => 2],
+                            8 => ['format' => 'number', 'decimals' => 2],
                         ],
                         'contentOptions' => [
-                            4 => ['style' => 'text-align:right'],
+                            8 => ['style' => 'text-align:right'],
                         ],
                         'options' => ['style' => 'font-weight:bold;font-size:14px;']
                     ];
@@ -53,16 +53,60 @@ use kartik\grid\GridView;
                 },
             ],
             [
-                'label' => 'Discount',
+                'label' => 'PF',
+                'hAlign' => 'center',
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
+                'value' => function ($data) {
+                    return $data->enrolment ? $data->enrolment->getPaymentFrequency() : null;
+                },
+            ],
+            [
+                'label' => 'PF Discount(%)',
+                'hAlign' => 'right',
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:107px;'],
+                'value' => function ($data) {
+                    if ($data->enrolmentPaymentFrequencyDiscount) {
+                        return $data->enrolmentPaymentFrequencyDiscount->value != 0.00 ?
+                            $data->enrolmentPaymentFrequencyDiscount->value : null;
+                    }
+                }
+            ],
+            [
+                'label' => 'Enrolment Discount($)',
+                'hAlign' => 'right',
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:85px;'],
+                'value' => function ($data) {
+                    if ($data->multiEnrolmentDiscount) {
+                        return $data->multiEnrolmentDiscount->value != 0.00 ?
+                            $data->multiEnrolmentDiscount->value : null;
+                    }
+                }
+            ],
+            [
+                'format' => ['decimal', 2],
+                'label' => 'Other Discount($)',
+                'hAlign' => 'right',
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:122px;'],
+                'value' => function ($data) {
+                    if ($data->lineItemDiscount || $data->customerDiscount) {
+                        return $data->getOtherDiscountValue() != 0.00 ?
+                            $data->getOtherDiscountValue() : null;
+                    }
+                }
+            ],
+            [
+                'format' => ['decimal', 2],
+                'label' => 'Net Discount($)',
                 'value' => function ($data) {
                     return $data->discount;
                 },
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:108px;'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
             ],
             [
+                'format' => ['decimal', 2],
                 'label' => 'Price',
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
@@ -76,6 +120,7 @@ use kartik\grid\GridView;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'options' => ['class' => ''],
+        'formatter' => ['class' => 'yii\i18n\Formatter', 'nullDisplay' => '-'],
         'showPageSummary' => true,
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
