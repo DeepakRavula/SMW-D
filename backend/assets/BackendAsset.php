@@ -26,8 +26,6 @@ class BackendAsset extends AssetBundle
         'plugins/jquery-timepicker/jquery.timepicker.js',
         'plugins/jquery-multiselect/multiselect.js',
         'plugins/jquery-multiselect/multiselect.min.js',
-		'plugins/bootbox/bootbox.min.js',
-		'js/main.js'
     ];
 
     public $depends = [
