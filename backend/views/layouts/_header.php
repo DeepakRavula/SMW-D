@@ -64,7 +64,7 @@ $bundle = BackendAsset::register($this);
                         </li>
                         <li class="notifications-menu" data-toggle="tooltip" data-original-title="Help" data-placement="bottom">
                             <a href="" onclick="FreshWidget.show(); return false;">
-                                <i class="fa fa-comment"></i>
+                                <i class="fa fa-support"></i>
                             </a>
                         </li>
                         <li id="timeline-notifications" class="notifications-menu"  data-toggle="tooltip" data-original-title="Notifications" data-placement="bottom">
