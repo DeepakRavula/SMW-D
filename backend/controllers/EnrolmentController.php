@@ -13,24 +13,17 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use yii\base\Model;
 use common\models\CourseSchedule;
-use yii\helpers\ArrayHelper;
 use common\models\Student;
 use yii\filters\ContentNegotiator;
 use common\models\TeacherAvailability;
-use common\models\Program;
-use common\models\LocationAvailability;
-use backend\models\search\LessonSearch;
 use yii\helpers\Url;
 use common\models\UserLocation;
-use common\models\Holiday;
 use common\models\User;
 use common\models\UserProfile;
 use common\models\PhoneNumber;
 use common\models\Address;
 use common\models\EnrolmentDiscount;
-use common\models\payment\ProformaPaymentFrequencyLog;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -424,7 +417,7 @@ class EnrolmentController extends Controller
 					'type' => Lesson::TYPE_REGULAR
 				])
 				->joinWith(['reschedule' => function($query) {
-                	$query->andWhere(['lesson_reschedule.id' => null]);
+					$query->joinWith('bulkRescheduleLesson');
 				}])
 				->between($startDate, $endDate)
 				->all();

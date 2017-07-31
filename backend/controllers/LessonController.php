@@ -570,7 +570,6 @@ class LessonController extends Controller
 		}  else {
 			$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
 		}
-		$lessons = $query->all();
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -794,14 +793,16 @@ class LessonController extends Controller
 	public function getRescheduleLessonType($courseModel, $endDate, $vacationType) {
 		$type = null;
 		$courseEndDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
-		if((int)$vacationType === Vacation::TYPE_CREATE) {
-			$type = BulkReschedule::TYPE_VACATION_CREATE;	
-		} else if((int)$vacationType === Vacation::TYPE_DELETE) {
+		if(!empty($vacationType)) {
 			$type = BulkReschedule::TYPE_VACATION_DELETE;	
-		} else if($courseEndDate !== $endDate) {
-			$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;	
+			if($vacationType === Vacation::TYPE_CREATE) {
+				$type = BulkReschedule::TYPE_VACATION_CREATE;	
+			} 	
 		} else {
 			$type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;	
+			if($courseEndDate !== $endDate) {
+				$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;	
+			} 
 		}
 		return $type;
 	} 
