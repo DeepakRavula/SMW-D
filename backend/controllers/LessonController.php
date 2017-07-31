@@ -32,6 +32,9 @@ use common\models\InvoiceLog;
 use common\models\LessonSplitUsage;
 use common\models\LessonSplit;
 use common\models\timelineEvent\VacationLog;
+use common\models\BulkReschedule;
+use common\models\BulkRescheduleLesson;
+
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -729,7 +732,21 @@ class LessonController extends Controller
 				$lessonRescheduleModel = new LessonReschedule();
 				$lessonRescheduleModel->lessonId = $oldLessonIds[$i];
 				$lessonRescheduleModel->rescheduledLessonId = $lesson->id;
-				$lessonRescheduleModel->save();
+				if(!$lessonRescheduleModel->save()) {
+					Yii::error('Bulk reschedule: ' . \yii\helpers\VarDumper::dumpAsString($lessonRescheduleModel->getErrors()));
+				}
+
+				$bulkReschedule = new BulkReschedule();
+				$bulkReschedule->type = $this->getRescheduleLessonType($courseModel, $rescheduleEndDate, $vacationType);
+				if(!$bulkReschedule->save()) {
+					Yii::error('Bulk reschedule: ' . \yii\helpers\VarDumper::dumpAsString($bulkReschedule->getErrors()));
+				}
+				$bulkRescheduleLesson = new BulkRescheduleLesson();
+				$bulkRescheduleLesson->bulkRescheduleId = $bulkReschedule->id;
+				$bulkRescheduleLesson->lessonId = $lesson->id;
+				if(!$bulkRescheduleLesson->save()) {
+					Yii::error('Bulk reschedule lesson: ' . \yii\helpers\VarDumper::dumpAsString($bulkRescheduleLesson->getErrors()));	
+				}
 			}
 		}
 		foreach ($lessons as $lesson) {
@@ -774,7 +791,20 @@ class LessonController extends Controller
 		]);
 		return $link;
 	}
-
+	public function getRescheduleLessonType($courseModel, $endDate, $vacationType) {
+		$type = null;
+		$courseEndDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
+		if((int)$vacationType === Vacation::TYPE_CREATE) {
+			$type = BulkReschedule::TYPE_VACATION_CREATE;	
+		} else if((int)$vacationType === Vacation::TYPE_DELETE) {
+			$type = BulkReschedule::TYPE_VACATION_DELETE;	
+		} else if($courseEndDate !== $endDate) {
+			$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;	
+		} else {
+			$type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;	
+		}
+		return $type;
+	} 
     public function actionInvoice($id)
     {
         $model = Lesson::findOne(['id' => $id]);
