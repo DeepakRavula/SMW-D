@@ -309,31 +309,33 @@ class StudentController extends Controller
         return $model;
     }
 
-    public function actionFetchProgramRate($duration, $id, $paymentFrequencyDiscount = null, $multiEnrolmentDiscount = null)
+    public function actionFetchProgramRate($duration, $id = null, $paymentFrequencyDiscount = null, $multiEnrolmentDiscount = null)
     {
-        $program     = Program::findOne(['id' => $id]);
-        $getDuration = \DateTime::createFromFormat('H:i', $duration);
-        $hours       = $getDuration->format('H');
-        $minutes     = $getDuration->format('i');
-        $unit        = (($hours * 60) + $minutes) / 60;
-        $lessonDuration = $hours != 00 ? $hours . 'hr' . $minutes . 'mins' : $minutes . 'mins';
-        $ratePerLesson = $unit * $program->rate;
-        $ratePerMonth = $ratePerLesson * 4;
-        $discount = 0.0;
-        if ($multiEnrolmentDiscount) {
-            $discount += $multiEnrolmentDiscount / 4;
-        }
-        if ($paymentFrequencyDiscount) {
-            $discount += $ratePerLesson * $paymentFrequencyDiscount / 100;
-        }
-        $ratePerLessonWithDiscount = $ratePerLesson - $discount;
-        $ratePerMonthWithDiscount = $ratePerMonth - $multiEnrolmentDiscount - ($ratePerMonth * $paymentFrequencyDiscount / 100);
-        $beforeDiscount = 'Four ' . $lessonDuration . ' Lessons @ $'. $ratePerLesson . ' each = $' . $ratePerMonth . '/mn';
-        $afterDiscount = 'Four ' . $lessonDuration . ' Lessons @ $'. $ratePerLessonWithDiscount . ' each = $' . $ratePerMonthWithDiscount . '/mn';
-        return [
-            'beforeDiscount' => $beforeDiscount,
-            'afterDiscount' => $afterDiscount
-        ];
+		if($id) {
+			$program     = Program::findOne(['id' => $id]);
+			$getDuration = \DateTime::createFromFormat('H:i', $duration);
+			$hours       = $getDuration->format('H');
+			$minutes     = $getDuration->format('i');
+			$unit        = (($hours * 60) + $minutes) / 60;
+			$lessonDuration = $hours != 00 ? $hours . 'hr' . $minutes . 'mins' : $minutes . 'mins';
+			$ratePerLesson = $unit * $program->rate;
+			$ratePerMonth = $ratePerLesson * 4;
+			$discount = 0.0;
+			if ($multiEnrolmentDiscount) {
+				$discount += $multiEnrolmentDiscount / 4;
+			}
+			if ($paymentFrequencyDiscount) {
+				$discount += $ratePerLesson * $paymentFrequencyDiscount / 100;
+			}
+			$ratePerLessonWithDiscount = $ratePerLesson - $discount;
+			$ratePerMonthWithDiscount = $ratePerMonth - $multiEnrolmentDiscount - ($ratePerMonth * $paymentFrequencyDiscount / 100);
+			$beforeDiscount = 'Four ' . $lessonDuration . ' Lessons @ $'. $ratePerLesson . ' each = $' . $ratePerMonth . '/mn';
+			$afterDiscount = 'Four ' . $lessonDuration . ' Lessons @ $'. $ratePerLessonWithDiscount . ' each = $' . $ratePerMonthWithDiscount . '/mn';
+			return [
+				'beforeDiscount' => $beforeDiscount,
+				'afterDiscount' => $afterDiscount
+			];
+		}
     }
 
     public function actionMerge($id)

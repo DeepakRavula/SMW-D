@@ -84,6 +84,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
                             ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
                             ->active()
                             ->all(), 'id', 'name'),
+                'options' => ['placeholder' => 'Program']
             ]) ?>
         </div>
         <div class="clear-fix"></div>
