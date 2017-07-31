@@ -18,13 +18,13 @@ use kartik\grid\GridView;
                     return [
                         'mergeColumns' => [[2, 3]],
                         'content' => [
-                            7 => GridView::F_SUM,
+                            8 => GridView::F_SUM,
                         ],
                         'contentFormats' => [
-                            7 => ['format' => 'number', 'decimals' => 2],
+                            8 => ['format' => 'number', 'decimals' => 2],
                         ],
                         'contentOptions' => [
-                            7 => ['style' => 'text-align:right'],
+                            8 => ['style' => 'text-align:right'],
                         ],
                         'options' => ['style' => 'font-weight:bold;font-size:14px;']
                     ];
@@ -68,8 +68,6 @@ use kartik\grid\GridView;
                     if ($data->enrolmentPaymentFrequencyDiscount) {
                         return $data->enrolmentPaymentFrequencyDiscount->value != 0.00 ?
                             $data->enrolmentPaymentFrequencyDiscount->value : null;
-                    } else {
-                        return null;
                     }
                 }
             ],
@@ -81,8 +79,6 @@ use kartik\grid\GridView;
                     if ($data->multiEnrolmentDiscount) {
                         return $data->multiEnrolmentDiscount->value != 0.00 ?
                             $data->multiEnrolmentDiscount->value : null;
-                    } else {
-                        return null;
                     }
                 }
             ],
@@ -94,8 +90,6 @@ use kartik\grid\GridView;
                     if ($data->lineItemDiscount || $data->customerDiscount) {
                         return $data->getOtherDiscountValue() != 0.00 ?
                             $data->getOtherDiscountValue() : null;
-                    } else {
-                        return null;
                     }
                 }
             ],
