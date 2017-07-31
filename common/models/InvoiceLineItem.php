@@ -383,7 +383,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ($this->customerDiscount) {
             $discount = $this->customerDiscount->value / 100 * $this->amount;
         }
-        return round($discount, 2);
+        return $discount;
     }
 
     public function getNetPrice()
@@ -410,7 +410,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ($this->hasMultiEnrolmentDiscount()) {
             $discount += $this->multiEnrolmentDiscount->value;
         }
-        return round($discount, 2);
+        return $discount;
     }
 	
 	public function getTaxLineItemTotal($date)

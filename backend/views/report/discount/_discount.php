@@ -83,6 +83,7 @@ use kartik\grid\GridView;
                 }
             ],
             [
+                'format' => ['decimal', 2],
                 'label' => 'Discount ($) Others',
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:85px;'],
@@ -94,6 +95,7 @@ use kartik\grid\GridView;
                 }
             ],
             [
+                'format' => ['decimal', 2],
                 'label' => 'Discount ($) Total',
                 'value' => function ($data) {
                     return $data->discount;
@@ -104,6 +106,7 @@ use kartik\grid\GridView;
                 'pageSummaryFunc' => GridView::F_SUM
             ],
             [
+                'format' => ['decimal', 2],
                 'label' => 'Price',
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
