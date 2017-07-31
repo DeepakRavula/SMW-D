@@ -113,9 +113,10 @@ class Lesson extends \yii\db\ActiveRecord
             }],
             [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyContext'], 'safe'],
-            [['classroomId'], ClassroomValidator::className(), 'on' => [self::SCENARIO_EDIT, 
-                self::SCENARIO_EDIT_CLASSROOM]],
-            [['date'], HolidayValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
+            [['classroomId'], ClassroomValidator::className(), 
+				'on' => [self::SCENARIO_EDIT, self::SCENARIO_EDIT_CLASSROOM]],
+            [['date'], HolidayValidator::className(), 
+				'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT, self::SCENARIO_EDIT_REVIEW_LESSON]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
@@ -125,7 +126,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
                 return $model->course->program->isPrivate();
             }],
-            [['date'], StudentBackToBackLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
+            [['date'], StudentBackToBackLessonValidator::className(), 'on' => [self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
                 return $model->course->program->isPrivate();
             }],
             [['date'], StudentBackToBackLessonValidator::className(), 'on' => [self::SCENARIO_CREATE,
