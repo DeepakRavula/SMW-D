@@ -140,7 +140,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $payment,
            'message' => $paymentModel->userName . ' changed  '.$paymentModel->paymentMethod->name.'  payment  amount  from  '.Yii::$app->formatter->asCurrency($data['amount']) . ' to ' . Yii::$app->formatter->asCurrency($paymentModel->amount).'  for an  {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}',
-			'locationId' => $enrolmentModel->course->teacher->userLocation->location_id,
+			'locationId' =>$paymentModel->user->userLocation->location_id
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
