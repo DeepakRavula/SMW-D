@@ -371,10 +371,13 @@ class LessonController extends Controller
 
 		$holidayConflictedLessonIds = $course->getHolidayLessons();
 		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
-		$lessons = Lesson::find()
-			->orderBy(['lesson.date' => SORT_ASC])
-			->andWhere(['IN', 'lesson.id', $conflictedLessonIds])
-			->all();	
+		$lessons = $draftLessons;
+		if(!empty($conflictedLessonIds)) {
+			$lessons = Lesson::find()
+				->orderBy(['lesson.date' => SORT_ASC])
+				->andWhere(['IN', 'lesson.id', $conflictedLessonIds])
+				->all();	
+		}
 		return $lessons;
 	}
 	public function resolveSingleLesson($lesson, $oldDate)
@@ -570,6 +573,7 @@ class LessonController extends Controller
 		$lessons = $query->all();
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
+			'pagination' => false,
         ]);
         return $this->render('review', [
             'courseModel' => $courseModel,
