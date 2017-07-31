@@ -81,6 +81,7 @@ class LessonSearch extends Lesson
                 $query->activePrivateLessons();
             } else {
                 $query->groupLessons();
+                $query->groupBy('id');
             }
         }
 
