@@ -15,15 +15,15 @@ $bundle = BackendAsset::register($this);
 ?>
 <!-- header logo: style can be found in header.less -->
 <header class="main-header">
-	<a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
-		<img src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"/>        
-	</a>
-	<!-- Header Navbar: style can be found in header.less -->
-	<nav class="navbar navbar-static-top" role="navigation">
-		<div class="navbar-custom-menu">
-			<ul class="nav navbar-nav">
-				<!-- User Account: style can be found in dropdown.less -->
-				<?php if (!Yii::$app->user->isGuest) : ?>
+	<?php if (!Yii::$app->user->isGuest) : ?>
+		<a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
+			<img src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"/>        
+		</a>
+		<!-- Header Navbar: style can be found in header.less -->
+		<nav class="navbar navbar-static-top" role="navigation">
+			<div class="navbar-custom-menu">
+				<ul class="nav navbar-nav">
+					<!-- User Account: style can be found in dropdown.less -->
 					<li class="notifications-menu" data-toggle="tooltip" data-original-title="Schedule" data-placement="bottom">
 						<a href="<?php echo Url::to(['/schedule/index']) ?>">Schedule</a>
 					</li>
@@ -48,29 +48,8 @@ $bundle = BackendAsset::register($this);
 							</li>
 						</ul>
 					</li>
-				<?php else: ?>
-					<?php if(Yii::$app->controller->id === 'daily-schedule') : ?>
-					<div class="location-filter pull-left">
-						<?php $searchModel = new LocationScheduleSearch(); ?>
-						<?php $form = ActiveForm::begin([
-							'id' => 'schedule-search',
-							'action' => Url::to(['daily-schedule/index']),
-							'method' => 'get',
-						]); ?>                      
-						<?= $form->field($searchModel, 'locationId')->dropDownList(
-							ArrayHelper::map(Location::find()->all(), 'id', 'name'),
-							['class' => 'form-control', 'id' => 'locationId',
-								'prompt' => 'Location'])->label(false);
-						?>
-    					<?php ActiveForm::end(); ?>
-					</div>  
-					<?php endif; ?>
-					<li class="notifications-menu" data-toggle="tooltip" data-original-title="Login" data-placement="bottom">
-						<a href="<?php echo Url::to(['/user/sign-in/login']) ?>">Login
-						</a>
-					</li>
-				<?php endif; ?>
-			</ul>
-		</div>
-	</nav>
+				</ul>
+			</div>
+		</nav>
+	<?php endif; ?>
 </header>
