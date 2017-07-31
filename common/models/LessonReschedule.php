@@ -3,6 +3,8 @@
 namespace common\models;
 
 use common\models\Lesson;
+use common\models\lesson\BulkRescheduleLesson;
+
 /**
  * This is the model class for table "lesson_reschedule".
  *

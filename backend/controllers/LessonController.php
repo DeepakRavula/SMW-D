@@ -23,6 +23,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\timelineEvent\TimelineEventEnrolment;
 use common\models\LessonLog;
+use yii\base\ErrorException;
 use common\models\User;
 use common\models\timelineEvent\TimelineEventLesson;
 use yii\filters\ContentNegotiator;
@@ -32,8 +33,8 @@ use common\models\InvoiceLog;
 use common\models\LessonSplitUsage;
 use common\models\LessonSplit;
 use common\models\timelineEvent\VacationLog;
-use common\models\BulkReschedule;
-use common\models\BulkRescheduleLesson;
+use common\models\lesson\BulkReschedule;
+use common\models\lesson\BulkRescheduleLesson;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -737,14 +738,19 @@ class LessonController extends Controller
 
 				$bulkReschedule = new BulkReschedule();
 				$bulkReschedule->type = $this->getRescheduleLessonType($courseModel, $rescheduleEndDate, $vacationType);
-				if(!$bulkReschedule->save()) {
-					Yii::error('Bulk reschedule: ' . \yii\helpers\VarDumper::dumpAsString($bulkReschedule->getErrors()));
+				try {
+					$bulkReschedule->save();
+				} catch(ErrorException $exception) {
+					Yii::$app->errorHandler->logException($exception);
 				}
+				
 				$bulkRescheduleLesson = new BulkRescheduleLesson();
 				$bulkRescheduleLesson->bulkRescheduleId = $bulkReschedule->id;
 				$bulkRescheduleLesson->lessonId = $lesson->id;
-				if(!$bulkRescheduleLesson->save()) {
-					Yii::error('Bulk reschedule lesson: ' . \yii\helpers\VarDumper::dumpAsString($bulkRescheduleLesson->getErrors()));	
+				try {
+					$bulkRescheduleLesson->save();
+				} catch(ErrorException $exception) {
+					Yii::$app->errorHandler->logException($exception);
 				}
 			}
 		}

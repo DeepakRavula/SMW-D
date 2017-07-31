@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models;
+namespace common\models\lesson;
 
 use Yii;
 
@@ -15,14 +15,18 @@ use Yii;
  * @property string $createdOn
  * @property string $updatedOn
  */
-class BulkRescheduleLesson extends \yii\db\ActiveRecord
+class BulkReschedule extends \yii\db\ActiveRecord
 {
-	/**
+	const TYPE_VACATION_CREATE = 1;
+	const TYPE_VACATION_DELETE = 2;
+	const TYPE_RESCHEDULE_BULK_LESSONS = 3;
+	const TYPE_RESCHEDULE_FUTURE_LESSONS = 4;
+    /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'bulk_reschedule_lesson';
+        return 'bulk_reschedule';
     }
 
     /**
@@ -31,7 +35,7 @@ class BulkRescheduleLesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['bulkRescheduleId', 'lessonId'], 'integer'],
+            [['type'], 'integer'],
         ];
     }
 
@@ -42,7 +46,7 @@ class BulkRescheduleLesson extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'bulkRescheduleId' => 'Bulk Reschedule Id'
+            'type' => 'Type'
         ];
     }
 }
