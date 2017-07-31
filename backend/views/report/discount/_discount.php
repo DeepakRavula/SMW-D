@@ -61,9 +61,9 @@ use kartik\grid\GridView;
                 },
             ],
             [
-                'label' => 'Discount (%) PF',
+                'label' => 'PF Discount(%)',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:95px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:107px;'],
                 'value' => function ($data) {
                     if ($data->enrolmentPaymentFrequencyDiscount) {
                         return $data->enrolmentPaymentFrequencyDiscount->value != 0.00 ?
@@ -72,7 +72,7 @@ use kartik\grid\GridView;
                 }
             ],
             [
-                'label' => 'Discount ($) Enrolment ',
+                'label' => 'Enrolment Discount($)',
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:85px;'],
                 'value' => function ($data) {
@@ -84,9 +84,9 @@ use kartik\grid\GridView;
             ],
             [
                 'format' => ['decimal', 2],
-                'label' => 'Discount ($) Others',
+                'label' => 'Other Discount($)',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:85px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:122px;'],
                 'value' => function ($data) {
                     if ($data->lineItemDiscount || $data->customerDiscount) {
                         return $data->getOtherDiscountValue() != 0.00 ?
@@ -96,11 +96,11 @@ use kartik\grid\GridView;
             ],
             [
                 'format' => ['decimal', 2],
-                'label' => 'Discount ($) Total',
+                'label' => 'Net Discount($)',
                 'value' => function ($data) {
                     return $data->discount;
                 },
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:85px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:108px;'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
