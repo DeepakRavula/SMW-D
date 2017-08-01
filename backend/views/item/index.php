@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php ActiveForm::end(); ?>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
     <p>
-        <?php echo Html::a('Create Item', ['#'], ['class' => 'btn btn-success', 'id' => 'create-item']) ?>
+        <?php echo Html::a('Add', ['#'], ['class' => 'btn btn-primary', 'id' => 'create-item']) ?>
     </p>
     <?php Pjax::begin([
         'id' => 'item-listing',
