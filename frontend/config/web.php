@@ -3,7 +3,7 @@
 $config = [
     'homeUrl' => Yii::getAlias('@frontendUrl'),
     'controllerNamespace' => 'frontend\controllers',
-    'defaultRoute' => 'daily-schedule/index',
+    'defaultRoute' => 'schedule/index',
     'bootstrap' => ['maintenance'],
     'modules' => [
         'user' => [

@@ -23,6 +23,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\timelineEvent\TimelineEventEnrolment;
 use common\models\LessonLog;
+use yii\base\ErrorException;
 use common\models\User;
 use common\models\timelineEvent\TimelineEventLesson;
 use yii\filters\ContentNegotiator;
@@ -32,6 +33,9 @@ use common\models\InvoiceLog;
 use common\models\LessonSplitUsage;
 use common\models\LessonSplit;
 use common\models\timelineEvent\VacationLog;
+use common\models\lesson\BulkReschedule;
+use common\models\lesson\BulkRescheduleLesson;
+
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
@@ -371,10 +375,13 @@ class LessonController extends Controller
 
 		$holidayConflictedLessonIds = $course->getHolidayLessons();
 		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
-		$lessons = Lesson::find()
-			->orderBy(['lesson.date' => SORT_ASC])
-			->andWhere(['IN', 'lesson.id', $conflictedLessonIds])
-			->all();	
+		$lessons = $draftLessons;
+		if(!empty($conflictedLessonIds)) {
+			$lessons = Lesson::find()
+				->orderBy(['lesson.date' => SORT_ASC])
+				->andWhere(['IN', 'lesson.id', $conflictedLessonIds])
+				->all();	
+		}
 		return $lessons;
 	}
 	public function resolveSingleLesson($lesson, $oldDate)
@@ -567,9 +574,9 @@ class LessonController extends Controller
 		}  else {
 			$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
 		}
-		$lessons = $query->all();
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
+			'pagination' => false,
         ]);
         return $this->render('review', [
             'courseModel' => $courseModel,
@@ -729,7 +736,26 @@ class LessonController extends Controller
 				$lessonRescheduleModel = new LessonReschedule();
 				$lessonRescheduleModel->lessonId = $oldLessonIds[$i];
 				$lessonRescheduleModel->rescheduledLessonId = $lesson->id;
-				$lessonRescheduleModel->save();
+				if(!$lessonRescheduleModel->save()) {
+					Yii::error('Bulk reschedule: ' . \yii\helpers\VarDumper::dumpAsString($lessonRescheduleModel->getErrors()));
+				}
+
+				$bulkReschedule = new BulkReschedule();
+				$bulkReschedule->type = $this->getRescheduleLessonType($courseModel, $rescheduleEndDate, $vacationType);
+				try {
+					$bulkReschedule->save();
+				} catch(ErrorException $exception) {
+					Yii::$app->errorHandler->logException($exception);
+				}
+				
+				$bulkRescheduleLesson = new BulkRescheduleLesson();
+				$bulkRescheduleLesson->bulkRescheduleId = $bulkReschedule->id;
+				$bulkRescheduleLesson->lessonId = $lesson->id;
+				try {
+					$bulkRescheduleLesson->save();
+				} catch(ErrorException $exception) {
+					Yii::$app->errorHandler->logException($exception);
+				}
 			}
 		}
 		foreach ($lessons as $lesson) {
@@ -774,7 +800,22 @@ class LessonController extends Controller
 		]);
 		return $link;
 	}
-
+	public function getRescheduleLessonType($courseModel, $endDate, $vacationType) {
+		$type = null;
+		$courseEndDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
+		if(!empty($vacationType)) {
+			$type = BulkReschedule::TYPE_VACATION_DELETE;	
+			if($vacationType === Vacation::TYPE_CREATE) {
+				$type = BulkReschedule::TYPE_VACATION_CREATE;	
+			} 	
+		} else {
+			$type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;	
+			if($courseEndDate !== $endDate) {
+				$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;	
+			} 
+		}
+		return $type;
+	} 
     public function actionInvoice($id)
     {
         $model = Lesson::findOne(['id' => $id]);

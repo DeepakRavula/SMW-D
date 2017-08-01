@@ -3,6 +3,8 @@
 namespace common\models;
 
 use common\models\Lesson;
+use common\models\lesson\BulkRescheduleLesson;
+
 /**
  * This is the model class for table "lesson_reschedule".
  *
@@ -51,6 +53,10 @@ class LessonReschedule extends \yii\db\ActiveRecord
     public function getLesson()
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
+    }
+	public function getBulkRescheduleLesson()
+    {
+        return $this->hasOne(BulkRescheduleLesson::className(), ['lessonId' => 'rescheduledLessonId']);
     }
 
     public function afterSave($insert,$changedAttributes)
