@@ -63,7 +63,8 @@ class InvoiceSearch extends Invoice
                 ->where([
                     'location_id' => $locationId,
                 ])
-				->notDeleted();
+                ->notDeleted()
+                ->notCanceled();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
