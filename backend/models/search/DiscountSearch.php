@@ -66,7 +66,7 @@ class DiscountSearch extends Invoice
                                     'invoice.type' => Invoice::TYPE_INVOICE,
 				])	
 				->notDeleted()
-                                ->notCancelled();
+                                ->notCanceled();
 			}])
                         ->joinWith(['itemDiscounts' => function($query) {
                             $query->andWhere(['NOT', ['invoice_line_item_discount.id' => null]])
