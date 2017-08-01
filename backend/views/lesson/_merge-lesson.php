@@ -41,7 +41,7 @@ $splitLessonDataProvider = new ActiveDataProvider([
                 'radioOptions' => function ($model) {
                     return [
                         'value' => $model['id'],
-                        'checked' => $model['id'] == 2
+                        'checked' => $model['id'] == 1
                     ];
                 }
             ],

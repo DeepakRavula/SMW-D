@@ -179,6 +179,7 @@ echo $this->render('_merge-lesson', [
                     }
                 }
             });
+            return false;
 	});
         $('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
             $.ajax({
