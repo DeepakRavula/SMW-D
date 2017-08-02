@@ -17,7 +17,7 @@ class StudentBackToBackLessonValidator extends Validator
         $lessonFullEndTime = $date->format('H:i:s');
         $date->modify('-1 second');
         $query = Lesson::find()
-			->scheduled()
+			->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
             ->andWhere(['NOT', ['lesson.id' => $model->id]]);
         if(!empty($model->enrolment->id)) {
             $studentBackToBackLessons = $query->enrolment($model->enrolment->id)
