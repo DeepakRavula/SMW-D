@@ -50,7 +50,8 @@ class UserSearch extends User
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
         $query = User::find()
-            ->notDeleted();
+            ->notDeleted()
+			->notDraft();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

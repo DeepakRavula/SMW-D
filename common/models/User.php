@@ -437,6 +437,14 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
+	public static function status()
+    {
+        return [
+            self::STATUS_NOT_ACTIVE => Yii::t('common', 'Inactive'),
+            self::STATUS_ACTIVE => Yii::t('common', 'Active'),
+        ];
+    }
+
     /**
      * Creates user profile and application event.
      *

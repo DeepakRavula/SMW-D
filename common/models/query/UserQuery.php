@@ -21,6 +21,12 @@ class UserQuery extends ActiveQuery
 
         return $this;
     }
+	 public function notDraft()
+    {
+        $this->andWhere(['NOT IN', 'status', User::STATUS_DRAFT]);
+
+        return $this;
+    }
 
     /**
      * @return $this
