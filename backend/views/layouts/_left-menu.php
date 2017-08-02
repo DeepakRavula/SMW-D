@@ -286,7 +286,7 @@ echo Menu::widget([
 				[
 					'label' => Yii::t('backend', 'Text Template'),
 					'icon' => '<i class="fa fa-envelope"></i>',
-					'url' => ['text-template/edit'],
+					'url' => ['text-template/index'],
 				],
 			],
 		],
