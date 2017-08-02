@@ -10,51 +10,6 @@ use yii\helpers\Url;
 $this->title = 'Student Birthdays';
 
 ?>
-<style>
-@media print{
-	.print-container{
-		margin-top:5px;
-	}
-	.text-left{
-        text-align: left !important;
-    }
-	.location-address {
-	  text-align : right;
-	  font-size : 18px;
-	}
-	.location-address p{
-		margin:0;
-		padding:0;
-		font-weight:normal;
-	}
-	.login-logo-img {
-		width:300px !important;
-		height:auto;
-	}
-	.report-grid #student-birthday-grid table thead{
-		border-bottom: 1px ridge;
-	}
-	.report-grid #student-birthday-grid table tbody tr.kv-grid-group-row{
-		border-bottom: 1px ridge;
-	}
-	.report-grid #student-birthday-grid table tbody tr.kv-group-footer{
-		border-top: 1px ridge;
-	}
-	.report-grid .table-bordered{
-		border: 1px solid transparent;
-	}
-	.report-grid .table-bordered>thead>tr>th, .report-grid .table-bordered>tbody>tr>th,.report-grid  .table-bordered>tfoot>tr>th,.report-grid  .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .report-grid .table-bordered>tfoot>tr>td{
-		border:none !important;
-	}
-	.report-grid .table-bordered > tbody > tr:nth-child(even){
-		
-	}
-}
-@page{
-  size: auto;
-  margin: 3mm;
-}
-</style>
 <div class="row-fluid print-container">
 	<div class="logo invoice-col">              
 		<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        

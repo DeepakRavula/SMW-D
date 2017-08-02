@@ -8,30 +8,6 @@ use yii\helpers\Url;
 use yii\grid\GridView;
 
 ?>
-<style>
-    #apply-credit-btn{
-        border-bottom-left-radius: 3px;
-        border-top-left-radius: 3px;
-    }
-    #cheque-btn{
-        border-left:0px;
-    }
-    #amex-btn{
-        border-bottom-right-radius:3px;
-        border-top-right-radius:3px;
-    }
-    .kv-table-wrap{
-        margin-bottom:0;
-    }
-    #payment-method-btn-section{
-        margin-top:     10px;
-    }
-    #invoice-payment-listing{
-        padding-left:15px;
-        padding-right: 15px;
-    }
-</style>
-
 <?php
 $columns = [
     'date:date',

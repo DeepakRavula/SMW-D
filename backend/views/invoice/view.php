@@ -17,28 +17,6 @@ $this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'P
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'InvoiceSearch[type]' => $model->type], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
 <div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
-<style>
-  .invoice-view .logo>img{
-    width: 216px;
-  }
-    .badge{
-      border-radius: 50px;
-      font-size: 18px;
-      font-weight: 400;
-      padding: 5px 15px;
-    }
-    .smw-search{
-      left: 170px;
-    }
-    .invoice-index{
-        padding-top:5px;
-        padding-right:15px;
-        position: relative;
-    }
-    #invoice-mail-modal > .modal-dialog {
-    	width: 900px !important;
-    }
-</style>
 <?php
 $lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->id]);
 if (!empty($lineItem)) {

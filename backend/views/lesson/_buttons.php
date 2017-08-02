@@ -4,24 +4,6 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\switchinput\SwitchInput;
 ?>
-<style>
-	.bootstrap-switch-id-lesson-present {
-		left:0;
-		top:0;
-		width:90% !important;
-	}
-	.lesson-buttons a{
-		margin-bottom:20px;
-		width:100%;
-		display:block;
-	}
-	.lesson-buttons a span{
-		display:block;
-		widrg:100%;
-	}
-	
-	
-</style>
 <div class="row-fluid">
 	<div class="col-md-12 action-btns m-b-20 lesson-buttons">
 		<?php echo Html::a('<span class="btn btn-info">Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>

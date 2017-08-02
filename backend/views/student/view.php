@@ -33,13 +33,6 @@ echo $this->render('_profile', [
 	'model' => $model,
 ]);
 ?>
-<style>
-  .e1Div{
-    right: 0 !important;
-    top: -52px;
-  }
-</style>
-
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div class="tabbable-panel">

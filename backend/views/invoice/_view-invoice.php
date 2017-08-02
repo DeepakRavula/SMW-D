@@ -7,11 +7,6 @@ use yii\widgets\ActiveForm;
 use kartik\editable\Editable;
 
 ?>
-<style>
-.table-invoice-childtable>tbody>tr>td:last-of-type {
-    text-align: right;
-}
-</style>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="invoice-view p-10">
 		    <div class="row">

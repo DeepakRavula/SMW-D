@@ -10,24 +10,6 @@ use yii\bootstrap\Tabs;
 /* @var $roles yii\rbac\Role[] */
 /* @var $permissions yii\rbac\Permission[] */
 ?>
-<style>
-    .box-body{
-        padding-left: 0;
-        padding-right: 0;
-    }
-	.address-fields, .phone-fields, .quali-fields, .quali-fields label{
-        display: none;
-    }
-    hr{
-        margin:10px 0;
-    }
-    .form-well{
-        margin-bottom: 10px;
-        padding-top: 15px;
-    }
-
-</style>
-
 <div class="user-form">   
 
 	<?php

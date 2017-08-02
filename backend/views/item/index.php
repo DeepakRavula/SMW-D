@@ -16,12 +16,6 @@ $this->title = 'Items';
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['#'], ['class' => 'btn btn-success btn-sm', 'id' => 'create-item']);
 ?>
 <div class="item-category-index">
-<style>
-	.e1Div{
-		top: -61px;
-		right: 76px;
-	}
-</style>
 <div class="student-index">
     <div class="pull-right  m-r-20">
     <?php $form = ActiveForm::begin([

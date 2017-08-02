@@ -14,16 +14,6 @@ $this->title = 'Group Courses';
 $this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-success btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<style>
-	.smw-search{
-		left: 135px;
-	}
-	.e1Div {
-	    right: 85px;
-	    top: -60px;
-	}
-</style>
-
 <div class="group-course-index "> 
     <div class="smw-search">
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>

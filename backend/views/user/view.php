@@ -24,12 +24,6 @@ $this->title = $model->publicIdentity.' - '.ucwords($searchModel->role_name);
 $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
-<style>
-  .e1Div{
-    right: 75px !important;
-    top: -52px;
-  }
-</style>
 <div class="student-index">
     <div class="pull-right  m-r-10">
         <div class="schedule-index">
@@ -44,25 +38,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 <div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
-<style>
-	.lesson-count {
-		font-weight: bold;
-	}
-    #note{
-        padding-bottom: 15px;
-    }
-    #user-note{
-        padding-left:10px;
-    }
-    .user-note-content .empty{
-        padding-left:10px;
-    }
-    .pagination{
-        padding-left:0;
-        margin-left:0;
-    }
-
-</style>
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
         <div class="pull-left m-T-10">

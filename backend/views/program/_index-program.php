@@ -16,17 +16,6 @@ $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
 ?>
-<style>
-  .e1Div{
-		top: -61px;
-        right: 0;
-  }
-</style>
-<style>
-    #w3 .tab-content{
-        padding: 0;
-    }
-</style>
 <div class="program-index">
 <div class="smw-search">
     <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>

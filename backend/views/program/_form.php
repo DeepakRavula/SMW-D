@@ -12,27 +12,6 @@ if (!$model->isNewRecord) {
     $this->title = $title;
 }
 ?>
-<style>
-	#w3 .tab-content{
-		padding: 0;
-	}
-	.smw-box {
-    background: #f5ecec;
-    border: 1px solid #f5ecec;
-    padding: 10px;
-    color: white;
-    border-radius: 5px;
-    color:#333;
-}
-.monthly-estimate {
-	margin-top:20px;
-	margin-bottom: 0px;
-}
-.text-inform {
-	color:#483535;
-}
-
-</style>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
 	'id' => 'program-form',

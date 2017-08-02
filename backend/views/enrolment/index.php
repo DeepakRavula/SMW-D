@@ -17,12 +17,6 @@ use common\models\UserProfile;
 $this->title = 'Enrolments';
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['create'], ['class' => 'btn btn-success btn-sm']);
 ?>
-<style>
-	.e1Div{
-		top: -51px;
-		right: 76px;
-	}
-</style>
 <div class="enrolment-index">
 <?php
 $form = ActiveForm::begin([

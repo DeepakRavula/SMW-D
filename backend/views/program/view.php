@@ -18,11 +18,6 @@ foreach ($roles as $name => $description) {
     $role = $name;
 }
 ?>
-<style>
-    #w3 .tab-content{
-        padding: 0;
-    }
-</style>
 <div class="program-view">
     <?php yii\widgets\Pjax::begin([
 		'id' => 'program-details',

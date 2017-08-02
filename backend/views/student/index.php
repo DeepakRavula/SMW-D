@@ -12,12 +12,6 @@ $this->title = 'Students';
 $this->params['breadcrumbs'][] = $this->title;
 ?> 
 <?php $this->registerCssFile("@web/css/student/style.css");?>
-<style>
-  .e1Div{
-    right: 0 !important;
-    top: -59px;
-  }
-</style>
 <div class="student-index">  
 	<div id="print" class="btn btn-default">
         <?= Html::a('<i class="fa fa-print"></i> Print') ?>

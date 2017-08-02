@@ -11,21 +11,6 @@ $this->title = 'Student Enrolment';
 
 ?>
 <div id="enrolment-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
-<style>
-    .wizard li.active span.round-tab{
-        border: 2px solid #ea212d;
-    }
-    .wizard li.active span.round-tab i{
-        color:#ea212d;
-    }
-    .wizard li.active:after{
-        left:50%;
-        border-bottom-color:#ea212d;
-    }
-    .wizard li span.round-tab{
-        font-size: 16px;
-    }
-</style>
 <div class="user-details-wrapper">
 	<div class="col-md-12  p-l-0">
 		<p class="users-name"><?php echo $model->fullName; ?> </p>

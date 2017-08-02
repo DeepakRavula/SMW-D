@@ -14,18 +14,6 @@ use common\models\Qualification;
 			'id' => 'teacher-lesson-search-form',
 	]);
 	?>
-	<style>
-		#w20-container table > tbody > tr.info > td{
-			padding:8px;
-			background:#fff;
-		}
-		.kv-page-summary, .table > tbody + tbody{
-			border: 0;
-		}
-		.table-striped > tbody > tr:nth-of-type(odd){
-			background: transparent;
-		}
-	</style>
 	<div class="row">
 		<div class="col-md-2">
 			<?php

@@ -10,18 +10,6 @@ use backend\models\search\UserSearch;
 use yii\helpers\ArrayHelper;
 use common\models\Student;
 ?>
-<style>
-    hr{
-        margin: 10px 0;
-    }
-    .field-user-fromdate label{
-        display: none;
-
-    }
-    #user-fromdate-kvdate{
-        left:20px;
-    }
-</style>
 <div class="col-md-12">
     <h4 class="pull-left m-r-20">Invoices</h4>
 	<?php

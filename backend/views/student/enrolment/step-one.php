@@ -14,33 +14,6 @@ use kartik\switchinput\SwitchInput;
 /* @var $model common\models\Enrolment */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<style>
-    #course-paymentfrequency .radio{
-        display: inline;
-        padding-right: 45px;
-    }
-    #stepwizard_step1_next{
-        /*margin-right:15px;*/
-    }  
-    .field-course-teacherid{
-        margin-top:15px;
-        margin-left: -5px;
-    }
-    #stepwizard_step2_prev{
-        margin-top:15px;
-    }
-    #stepwizard_step2_save{
-        margin-right: 15px;
-        margin-top:15px;
-    }
-#stepwizard .tab-content .tab-pane ul.list-inline{
-        float: none !important;
-}
-#stepwizard .tab-content .tab-pane ul.list-inline{
-        width: 100%;
-        text-align: center;
-}
-</style>
 <?php
 $privatePrograms = ArrayHelper::map(Program::find()
             ->active()

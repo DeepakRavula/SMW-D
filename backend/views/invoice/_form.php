@@ -15,21 +15,6 @@ use wbraganca\selectivity\SelectivityWidget;
 $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
 ?>
 
-<style> 
-.selectivity-input{
-    width: 100%;
-}
-.field-invoice-customer_id label{
-    display: block;
-}
-.field-invoice-type{
-    display: none;
-}
-.selectivity-single-select{
-    padding:2px 0;
-}
-</style>
-
 <div class="invoice-form">
 
     <?php $form = ActiveForm::begin([

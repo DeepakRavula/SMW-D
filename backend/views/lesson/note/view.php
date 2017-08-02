@@ -8,11 +8,6 @@ use yii\bootstrap\Modal;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<style>
-	.lesson-note-content .empty{
-		padding:0;
-	}
-</style>
 <div class="col-md-12 p-l-10">
 	<h4 class="pull-left m-r-20">Notes</h4>
 	<a href="#" id="lesson-note" class="text-add-new"><i class="fa fa-plus"></i></a>

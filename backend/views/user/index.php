@@ -29,31 +29,14 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php if ($searchModel->role_name == 'staffmember') {
     ?>
-<style>
-	.smw-search{
-		left: 135px;
-	}
-</style>
 <?php 
 }
 ?>
 <?php if ($searchModel->role_name == 'administrator') {
     ?>
-<style>
-	.smw-search{
-		left: 138px;
-	}
-
-</style>
 <?php 
 }
 ?>
-<style>
-	.e1Div{
-		top: -61px;
-		right: 76px;
-	}
-</style>
 
 <div class="user-index"> 
 	<div class="smw-search">
