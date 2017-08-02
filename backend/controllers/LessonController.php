@@ -270,9 +270,8 @@ class LessonController extends Controller
 		$userModel = $request->post('User');
 		if ($model->hasExpiryDate()) {
 			$privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
-			$expiryDate = $privateLessonModel->expiryDate;
 			$privateLessonModel->load(Yii::$app->getRequest()->getBodyParams(), 'PrivateLesson');
-			$privateLessonModel->expiryDate = !empty($privateLessonModel->expiryDate) ? (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s') : $expiryDate;
+			$privateLessonModel->expiryDate = (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s');
 			$privateLessonModel->save();
 		} 	
         if ($model->load($request->post()) || !empty($userModel)) {

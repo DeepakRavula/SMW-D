@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use kartik\datetime\DateTimePicker;
+use kartik\date\DatePicker;
 use kartik\time\TimePicker;
 use kartik\color\ColorInput;
 use yii\helpers\Url;
@@ -111,24 +111,23 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         ?>
         </div>
 		<?php if($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<?php
                 if ($privateLessonModel->isNewRecord) {
                     $date = new \DateTime($model->date);
                     $date->modify('90 days');
-                    $privateLessonModel->expiryDate = $date->format('d-m-Y H:i:s');
+                    $privateLessonModel->expiryDate = $date->format('d-m-Y');
                 }
             ?>
-			<?= $form->field($privateLessonModel, 'expiryDate')->widget(DateTimePicker::classname(), [
+			<?= $form->field($privateLessonModel, 'expiryDate')->widget(DatePicker::classname(), [
                 'options' => [
-                    'value' => Yii::$app->formatter->asDateTime($privateLessonModel->expiryDate),
+                    'value' => Yii::$app->formatter->asDate($privateLessonModel->expiryDate),
                 ],
-                'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+				'layout' => '{input}{picker}',
+                'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy HH:ii P',
-                    'showMeridian' => true,
-                    'minuteStep' => 15,
+                    'format' => 'dd-mm-yyyy',
                 ],
             ]);
             ?>
