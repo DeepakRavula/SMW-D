@@ -44,7 +44,7 @@ var calendar = {
     showCalendar: function (calendarOptions) {
         $('#calendar-date-time-picker').fullCalendar('destroy');
         $('#calendar-date-time-picker').fullCalendar({
-            defaultDate: moment(new Date()).format('YYYY-MM-DD'),
+            defaultDate: moment(calendarOptions.date).format('YYYY-MM-DD'),
             header: {
                 left: 'prev,next today',
                 center: 'title',

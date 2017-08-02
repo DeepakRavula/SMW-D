@@ -169,6 +169,7 @@ $(document).on('click', '.lesson-edit-calendar', function () {
         success: function (response)
         {
             var options = {
+                date: moment(new Date()),
                 duration: duration,
                 businessHours: response.availableHours,
                 minTime: '<?= $minTime; ?>',
