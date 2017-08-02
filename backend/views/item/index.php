@@ -13,14 +13,14 @@ Select2Asset::register($this);
 /* @var $model common\models\ItemCategory */
 
 $this->title = 'Items';
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['#'], ['class' => 'btn btn-success btn-sm', 'id' => 'create-item']);
 ?>
 <div class="item-category-index">
-    <style>
-  .e1Div{
-    right: 0 !important;
-    top: -59px;
-  }
+<style>
+	.e1Div{
+		top: -61px;
+		right: 76px;
+	}
 </style>
 <div class="student-index">
     <div class="pull-right  m-r-20">
@@ -40,9 +40,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php \yii\widgets\Pjax::end(); ?>
     <?php ActiveForm::end(); ?>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
-    <p>
-        <?php echo Html::a('Add', ['#'], ['class' => 'btn btn-primary', 'id' => 'create-item']) ?>
-    </p>
     <?php Pjax::begin([
         'id' => 'item-listing',
         'timeout' => 6000,
