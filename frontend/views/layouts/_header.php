@@ -6,10 +6,7 @@
 use backend\assets\BackendAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
-use common\models\Location;
-use yii\widgets\ActiveForm;
-use frontend\models\search\LocationScheduleSearch;
+use common\models\User;
 
 $bundle = BackendAsset::register($this);
 ?>
@@ -19,7 +16,13 @@ $bundle = BackendAsset::register($this);
 		<a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
 			<img src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"/>        
 		</a>
+		<?php 
+			$userId = Yii::$app->user->id;
+			$roles = Yii::$app->authManager->getRolesByUser($userId);
+			$role = end($roles);
+		?>
 		<!-- Header Navbar: style can be found in header.less -->
+	<?php if (in_array($role->name, [User::ROLE_TEACHER, User::ROLE_CUSTOMER])) : ?>
 		<nav class="navbar navbar-static-top" role="navigation">
 			<div class="navbar-custom-menu">
 				<ul class="nav navbar-nav">
@@ -51,5 +54,6 @@ $bundle = BackendAsset::register($this);
 				</ul>
 			</div>
 		</nav>
+	<?php endif; ?>
 	<?php endif; ?>
 </header>

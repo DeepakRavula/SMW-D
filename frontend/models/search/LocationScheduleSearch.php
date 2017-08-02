@@ -5,7 +5,7 @@ namespace frontend\models\search;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
-use common\models\Location;
+use common\models\User;
 use Yii;
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
@@ -40,17 +40,23 @@ class LocationScheduleSearch extends Lesson
      */
     public function search($params)
     {
-		if(!empty($_COOKIE['locationId'])) {
-			$this->locationId = $_COOKIE['locationId'];
+		$userId = Yii::$app->user->id;
+		$roles = Yii::$app->authManager->getRolesByUser($userId);
+		$role = end($roles);
+		$user = User::findOne(['id' => $userId]);
+		if($role->name !== User::ROLE_ADMINISTRATOR) {
+			$this->locationId = $user->userLocation->location_id; 
 		}
         $query = Lesson::find()
 			->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED,
 				'DATE(date)' => (new \DateTime())->format('Y-m-d')	
 			])
 			->notDraft()
-			->notDeleted()
-			->location($this->locationId)
-			->orderBy(['TIME(date)' => SORT_ASC]);
+			->notDeleted();
+			if(!empty($this->locationId)) {
+				$query->location($this->locationId);
+			}
+			$query->orderBy(['TIME(date)' => SORT_ASC]);
         $dataProvider= new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
@@ -58,7 +64,6 @@ class LocationScheduleSearch extends Lesson
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-		$query->location($this->locationId);
 
         return $dataProvider;
     }

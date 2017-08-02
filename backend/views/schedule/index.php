@@ -211,8 +211,11 @@ bottom:-10px;
             </div>
         </div>
     </div>
+	<div class="schedule-index tv-icon">
+		<i class="fa fa-tv fa-2x"></i>	
+	</div>
 </div>
-
+<?php $url = env('FRONTEND_SCHEDULE_URL'); ?>
 <script type="text/javascript">
 var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
@@ -313,6 +316,11 @@ $(document).ready(function() {
 });
 
 $(document).ready(function () {
+	$(document).on('click', '.tv-icon', function(e){ 
+    e.preventDefault(); 
+    var url = '<?= $url; ?>'; 
+    window.open(url, '_blank');
+});
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         var tab  = e.target.text;
         var date = $('#datepicker').datepicker("getDate");
