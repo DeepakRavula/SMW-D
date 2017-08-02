@@ -104,7 +104,7 @@ $config = [
             [
                 'controllers' => ['daily-schedule'],
                 'allow' => true,
-                'roles' => ['?'],
+                'roles' => ['teacher', 'customer','staffmember'],
             ],
         ],
     ],
