@@ -3,11 +3,14 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use common\models\Invoice;
 use common\models\ItemType;
-
+use common\models\TextTemplate;
 ?>
 
 Dear Customer,<br>
-Please find the invoice below: <Br>
+<?php $textTemplate = TextTemplate::findOne(['type' => $model->type]);
+$message = !empty($textTemplate->message) ? $textTemplate->message : 'Please find the invoice below:'; 
+?>
+	<?= $message; ?><Br>
         <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
