@@ -61,7 +61,7 @@ class InvoiceSearch extends Invoice
         $locationId = $session->get('location_id');
         $query = Invoice::find()
                 ->where([
-                    'location_id' => $locationId,
+                    'invoice.location_id' => $locationId,
                 ])
                 ->notDeleted()
                 ->notCanceled();
@@ -73,12 +73,14 @@ class InvoiceSearch extends Invoice
             return $dataProvider;
         }
 
-        $query->joinWith(['user' => function ($query) {
+        $query->joinWith(['user' => function ($query) use($locationId){
             $query->joinWith('userProfile up')
-                  ->joinWith('phoneNumber pn');
+                  ->joinWith('phoneNumber pn')
+				  ->joinWith(['userLocation' => function($query) use($locationId){
+					  $query->andWhere(['user_location.location_id' => $locationId]);
+				  }]);
         }]);
         $query->groupBy('invoice.invoice_number');
-
         $query->andFilterWhere(['like', 'up.firstname', $this->query])
               ->orFilterWhere(['like', 'up.lastname', $this->query])
               ->orFilterWhere(['like', 'pn.number', $this->query]);
