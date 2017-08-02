@@ -283,6 +283,11 @@ echo Menu::widget([
 					'url' => ['holiday/index'],
 					'visible' => Yii::$app->user->can('staffmember'),
 				],
+				[
+					'label' => Yii::t('backend', 'Text Template'),
+					'icon' => '<i class="fa fa-envelope"></i>',
+					'url' => ['text-template/index'],
+				],
 			],
 		],
 		[
