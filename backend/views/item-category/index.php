@@ -10,14 +10,13 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Item Categories';
-$this->params['breadcrumbs'][] = $this->title;
+
+$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), [''], ['class' => 'btn btn-primary btn-sm', 'id' => 'create-item-category']);
+$this->params['action-button'] = $addButton;
 ?>
 <div class="item-category-index">
 
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
-    <p>
-        <?php echo Html::a('Create Item Category', [''], ['class' => 'btn btn-success', 'id' => 'create-item-category']) ?>
-    </p>
 <?php Pjax::begin([
     'id' => 'item-category-listing',
     'timeout' => 6000,
