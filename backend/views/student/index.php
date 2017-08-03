@@ -19,28 +19,37 @@ $this->params['breadcrumbs'][] = $this->title;
   }
 </style>
 <div class="student-index">  
-	<div id="print" class="btn btn-default">
-        <?= Html::a('<i class="fa fa-print"></i> Print') ?>
-    </div>
+	
     <div class="smw-search"> 
-    <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
-    <?php
-    $form = ActiveForm::begin([
-                'action' => ['index'],
-                'method' => 'get',
-                'options' => ['class' => 'pull-left'],
-    ]);
-    ?>
-    <?=
-    $form->field($searchModel, 'query', [
-        'inputOptions' => [
-            'placeholder' => 'Search ...',
-            'class' => 'search-field',
-        ],
-    ])->input('search')->label(false);
-    ?>
+      <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
+      <?php
+      $form = ActiveForm::begin([
+                  'action' => ['index'],
+                  'method' => 'get',
+                  'options' => ['class' => 'pull-left'],
+      ]);
+      ?>
+      <?=
+      $form->field($searchModel, 'query', [
+          'inputOptions' => [
+              'placeholder' => 'Search ...',
+              'class' => 'search-field',
+          ],
+      ])->input('search')->label(false);
+      ?>
+      <?php ActiveForm::end(); ?>
+      <a id="print" class="btn btn-default m-l-20">
+        <i class="fa fa-print"></i> Print all
+    </a>
     </div>  
     
+    <?php
+      $form = ActiveForm::begin([
+                  'action' => ['index'],
+                  'method' => 'get',
+                  'options' => ['class' => 'pull-left'],
+      ]);
+      ?>
 <div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>
     <div class="schedule-index">
@@ -50,8 +59,9 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     
     <?php \yii\widgets\Pjax::end(); ?>
-	<?php ActiveForm::end(); ?>
+	
 </div>
+<?php ActiveForm::end(); ?>
 <div class="grid-row-open"> 
 <?= $this->render('_index', [
 	'dataProvider' => $dataProvider,

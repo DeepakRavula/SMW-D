@@ -8,12 +8,17 @@ use yii\helpers\Html;
 
 <div class="row-fluid p-10">
     
-    <?= Html::a('<i class="fa fa-print"></i> Print', ['course/print', 'id' => $model->course->id], ['class' => 'btn btn-default pull-left', 'target' => '_blank']) ?>  
-    <?= Html::a('<i class="fa fa-envelope-o"></i> Email Lessons', '#' , [
-		'id' => 'schedule-mail-button',	
-		'class' => 'btn btn-default pull-left  m-l-20']) ?>
-    <div class="clearfix"></div>
+    <div class="pull-left">
     <h4><strong><?= 'Schedule of Lessons' ?> </strong></h4> 
+    </div>
+    <div class="pull-right">
+        <?= Html::a('<i class="fa fa-print"></i> Print', ['course/print', 'id' => $model->course->id], ['class' => 'btn btn-default pull-left', 'target' => '_blank']) ?>  
+        <?= Html::a('<i class="fa fa-envelope-o"></i> Email Lessons', '#' , [
+        'id' => 'schedule-mail-button', 
+        'class' => 'btn btn-default pull-left  m-l-20']) ?>
+    </div>
+    <div class="clearfix"></div>
+    
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
                 'dataProvider' => $lessonDataProvider,
