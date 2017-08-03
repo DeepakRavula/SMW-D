@@ -20,6 +20,7 @@ class InvoiceSearch extends Invoice
     public $toggleAdditionalColumns;
     public $fromDate;
     public $toDate;
+    public $invoiceDateRange;
     public $dateRange;
     public $dueToDate;
     public $dueFromDate;
@@ -36,7 +37,7 @@ class InvoiceSearch extends Invoice
         return [
             [['fromDate', 'toDate'], 'date', 'format' => 'php:d-m-Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
-            [['type', 'query', 'toggleAdditionalColumns', 'dateRange',
+            [['type', 'query', 'toggleAdditionalColumns', 'dateRange','invoiceDateRange',
                 'dueFromDate', 'dueToDate', 'summariseReport'], 'safe'],
         ];
     }
@@ -105,7 +106,14 @@ class InvoiceSearch extends Invoice
 					(new \DateTime($this->dueToDate))->format('Y-m-d')]);
 			}
         } else {
-        	$query->andWhere(['between', 'invoice.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+            if(!empty($this->invoiceDateRange)) {
+                
+				list($this->fromDate, $this->toDate) = explode(' - ', $this->invoiceDateRange);
+            
+                $query->andWhere(['between', 'invoice.date', (new \DateTime($this->fromDate))->format('Y-m-d'),
+                    (new \DateTime($this->toDate))->format('Y-m-d')]);	
+			}
+        	
 		}
         $query->andFilterWhere(['type' => $this->type]);
 		
