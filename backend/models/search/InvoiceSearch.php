@@ -86,8 +86,8 @@ class InvoiceSearch extends Invoice
               ->orFilterWhere(['like', 'up.lastname', $this->query])
               ->orFilterWhere(['like', 'pn.number', $this->query]);
 
-        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
-        $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
+        $this->fromDate = \DateTime::createFromFormat('M d,Y', $this->fromDate);
+        $this->toDate = \DateTime::createFromFormat('M d,Y', $this->toDate);
         if ((int) $this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
             if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
                 $query->mailSent();
