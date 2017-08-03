@@ -440,22 +440,17 @@ class EnrolmentController extends Controller
 
     }
 
-    /**
-     * Deletes an existing Enrolment model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param string $id
-     *
-     * @return mixed
-     */
-	    /**
-     * Deletes an existing Student model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
+	public function actionPreview($id)
+	{
+		$model = $this->findModel($id);
+		$data =  $this->renderAjax('preview', [
+            'model' => $model,
+        ]);	
+		return [
+			'status' => true,
+			'data' => $data
+		];
+	}
   
     public function actionDelete($id)
     {
