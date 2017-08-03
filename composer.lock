@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "24e32782ccfd2860763211b990b6ec89",
+    "content-hash": "4bdd2209e0c4ad8803f0b8ad7a2b7627",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -1036,6 +1036,41 @@
             }
         },
         {
+            "name": "bower-asset/js-cookie",
+            "version": "v2.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/js-cookie/js-cookie.git",
+                "reference": "8b70250875f7e07445b6a457f9c2474ead4cba44"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/js-cookie/js-cookie/zipball/8b70250875f7e07445b6a457f9c2474ead4cba44",
+                "reference": "8b70250875f7e07445b6a457f9c2474ead4cba44",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "src/js.cookie.js"
+                ],
+                "bower-asset-ignore": [
+                    "travis.sh",
+                    "test",
+                    "Gruntfile.js",
+                    "package.json",
+                    ".gitignore",
+                    ".jshintignore",
+                    ".jshintrc",
+                    ".tm_properties",
+                    ".travis.yml"
+                ]
+            },
+            "license": [
+                "MIT"
+            ]
+        },
+        {
             "name": "bower-asset/marionette",
             "version": "v3.3.1",
             "source": {
@@ -1703,6 +1738,48 @@
                 "url"
             ],
             "time": "2017-03-20T17:10:46+00:00"
+        },
+        {
+            "name": "insolita/yii2-adminlte-widgets",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Insolita/yii2-adminlte-widgets.git",
+                "reference": "f5a5d03d57086f5a13ac2d79a5bcb95431fa5c5b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Insolita/yii2-adminlte-widgets/zipball/f5a5d03d57086f5a13ac2d79a5bcb95431fa5c5b",
+                "reference": "f5a5d03d57086f5a13ac2d79a5bcb95431fa5c5b",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/js-cookie": "~2.1.0",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "insolita\\wgadminlte\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "insolita",
+                    "email": "donnainsolita@gmail.com"
+                }
+            ],
+            "description": "Widgets for AdminLTE theme (Box with remember collapse state, Timeline, Tile, Callout, SmallBox etc)",
+            "keywords": [
+                "AdminLTE",
+                "widget",
+                "yii2"
+            ],
+            "time": "2017-03-25T18:16:22+00:00"
         },
         {
             "name": "intervention/image",
