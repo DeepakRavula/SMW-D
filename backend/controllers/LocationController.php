@@ -229,9 +229,15 @@ class LocationController extends Controller
 
     public function actionChangeLocation()
     {
+        $oldLocationId=Yii::$app->session->get('location_id');
         if (Yii::$app->request->isAjax) {
             $location_id = Yii::$app->request->post('location_id');
             Yii::$app->session->set('location_id', $location_id);
+            $newLocationId=Yii::$app->session->get('location_id');
+            if($oldLocationId!==$newLocationId)
+            {
+                return $this->redirect('/admin/dashboard/index');
+            }
         }
     }
 }
