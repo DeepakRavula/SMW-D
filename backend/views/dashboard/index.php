@@ -6,13 +6,21 @@ use common\models\Dashboard;
 
 $this->title = 'Dashboard';
 ?>
+<style>
+	.info-box-content {
+		margin-left: 60px;
+	}
+	.info-box-icon {
+		width: 60px;
+	}
+	</style>
 		<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <div class="clearfix"></div>
 <?php yii\widgets\Pjax::begin(['id' => 'dashboard']); ?>
 <div class="row">
 	<div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
+          <div class="info-box bg-aqua">
+            <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
 
             <div class="info-box-content">
               <span class="info-box-text">Invoice Total</span>
@@ -23,8 +31,8 @@ $this->title = 'Dashboard';
           <!-- /.info-box -->
         </div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
+          <div class="info-box bg-aqua">
+            <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
 
             <div class="info-box-content">
               <span class="info-box-text">Invoice Tax Total</span>
@@ -34,9 +42,9 @@ $this->title = 'Dashboard';
           </div>
           <!-- /.info-box -->
         </div>
-	<div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
+		<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-aqua">
+            <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
 
             <div class="info-box-content">
               <span class="info-box-text">Enrolment Gains</span>
@@ -47,8 +55,8 @@ $this->title = 'Dashboard';
           <!-- /.info-box -->
         </div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
+          <div class="info-box bg-aqua">
+            <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
 
             <div class="info-box-content">
               <span class="info-box-text">Enrolment Losses</span>
@@ -57,37 +65,82 @@ $this->title = 'Dashboard';
             <!-- /.info-box-content -->
           </div>
           <!-- /.info-box -->
-        </div>
+        </div>	
 	</div>
+<div class="row">
+	<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-yellow">
+            <span class="info-box-icon"><i class="fa fa-graduation-cap"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Private Enrolments</span>
+              <span class="info-box-number"><?= $enrolments ?></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+	<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-red">
+            <span class="info-box-icon"><i class="fa fa-graduation-cap"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Group Enrolments</span>
+              <span class="info-box-number"><?= $groupEnrolments ?></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+	<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-green">
+            <span class="info-box-icon"><i class="fa fa-lg fa-fw fa-child"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Active Students</span>
+              <span class="info-box-number"><?= $students ?></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        </div>
+<div class="row">
+	<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-yellow">
+            <span class="info-box-icon"><i class="ion ion-ios-cart-outline"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Payment Received</span>
+              <span class="info-box-number"><?= !empty($payments) ? $payments : 0 ?></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+	<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-red">
+            <span class="info-box-icon"><i class="fa fa-graduation-cap"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">Tax Collected</span>
+              <span class="info-box-number"><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+	<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-green">
+            <span class="info-box-icon"><i class="fa fa-lg fa-fw fa-child"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Royalty Free Items</span>
+              <span class="info-box-number"><?= !empty($royaltyPayment) ? $royaltyPayment : 0 ?></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        </div>
 <div class="col-md-12">
     <div class="col-md-10 p-0">
-		<div class="row text-center bg-gray disabled color-palette">
-			<div class="col-md-2 p-0">
-				<div class="small-box">
-					<div class="inner">
-						<h3><?= $enrolments ?></h3>
-						<p>Private Enrolments</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-1 p-0">
-				<div class="small-box">
-					<div class="inner">
-						<h3><?= $groupEnrolments ?></h3>
-						<p>Group Enrolments</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-2 p-0">
-				<div class="small-box">
-					<div class="inner">
-						<h3><?= $students ?></h3>
-						<p>Active Students</p>
-					</div>
-				</div>
-			</div>
-		</div>
-
 		<div>
 			<?=
 			Highcharts::widget([
@@ -197,21 +250,6 @@ $this->title = 'Dashboard';
 	</div>
 	<div class="col-md-2 col-sm-4 p-r-0">
 		<div class="pad box-pane-right bg-green" style="min-height: 280px">
-			<div class="description-block margin-bottom">
-				<h5 class="description-header"><?= !empty($payments) ? $payments : 0 ?></h5>
-				<span class="description-text">Payment Received</span>
-			</div>
-			<!-- /.description-block -->
-			<div class="description-block margin-bottom">
-				<h5 class="description-header"><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h5>
-				<span class="description-text">Tax Collected</span>
-			</div>
-			<!-- /.description-block -->
-			<div class="description-block">
-				<h5 class="description-header"><?= !empty($royaltyPayment) ? $royaltyPayment : 0 ?></h5>
-				<span class="description-text">Royalty Free Items</span>
-			</div>
-			<!-- /.description-block -->
 			<div class="description-block">
 				<h5 class="description-header"><?php $total = $payments - ($invoiceTaxTotal + $royaltyPayment); ?>  <?= !empty($total) ? $total : 0 ?></h5>
 				<span class="description-text">Total</span>
