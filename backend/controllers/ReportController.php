@@ -197,9 +197,16 @@ class ReportController extends Controller {
     public function actionItems()
     {
         $searchModel              = new InvoiceLineItemSearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('M d,Y');
+        $searchModel->toDate = $currentDate->format('M d,Y');
+        $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $invoiceLineItemRequest = $request->get('InvoiceLineItemSearch');
+            $searchModel->dateRange = $invoiceLineItemRequest['dateRange'];
+        }
         $searchModel->groupByItem = true;
-        $searchModel->fromDate    = (new \DateTime())->format('d-m-Y');
-        $searchModel->toDate      = (new \DateTime())->format('d-m-Y');
         $dataProvider             = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('item/index',
