@@ -232,10 +232,8 @@ class UserForm extends Model
 			$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $userProfileModel->loggedUser = $loggedUser->publicIdentity;
             $roles = Yii::$app->authManager->getRolesByUser($userProfileModel->user_id);
-            foreach ($roles as $name => $description) {
-                $role = $name;
-            }
-            $userProfileModel->on(UserProfile::EVENT_USER_CREATE, [new UserLog(), 'userCreate'], ['role' => $role]);
+            $role=end($roles);
+            $userProfileModel->on(UserProfile::EVENT_USER_CREATE, [new UserLog(), 'userCreate'], ['role' => $role->name]);
             $userProfileModel->trigger(UserProfile::EVENT_USER_CREATE);
             return !$model->hasErrors();
         }
