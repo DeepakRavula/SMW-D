@@ -29,8 +29,8 @@ class DashboardController extends \yii\web\Controller
 		}
         $searchModel = new DashboardSearch();
         $currentDate = new \DateTime();
-        $searchModel->fromDate = $currentDate->format('1-m-Y');
-        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->fromDate = $currentDate->format('M d,Y');
+        $searchModel->toDate = $currentDate->format('M d,Y');
         $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
