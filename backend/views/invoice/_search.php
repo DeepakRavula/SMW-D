@@ -22,7 +22,7 @@ use kartik\daterange\DateRangePicker;
     <div class="row">
     <div class="col-md-3">
     <label>Select Date</label>
-    <?php
+        <?php
         echo DateRangePicker::widget([
             'model' => $model,
             'attribute' => 'invoiceDateRange',
@@ -42,7 +42,8 @@ use kartik\daterange\DateRangePicker;
                 'opens' => 'right',
             ],
         ]);
-    ?>
+
+        ?>
     </div>
 	<?php endif; ?>
 	<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE) : ?>

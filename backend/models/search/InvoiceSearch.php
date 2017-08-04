@@ -99,32 +99,27 @@ class InvoiceSearch extends Invoice
             } elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
                 $query->paid()->proFormaInvoice();
             }
-			if(!empty($this->dateRange)) {
-				list($this->dueFromDate, $this->dueToDate) = explode(' - ', $this->dateRange);
-            	$query->andWhere(['between', 'DATE(invoice.dueDate)', 
-					(new \DateTime($this->dueFromDate))->format('Y-m-d'),
-					(new \DateTime($this->dueToDate))->format('Y-m-d')]);
-			}
+			if (!empty($this->dateRange)) {
+                list($this->dueFromDate, $this->dueToDate) = explode(' - ', $this->dateRange);
+                $query->andWhere(['between', 'DATE(invoice.dueDate)',
+                    (new \DateTime($this->dueFromDate))->format('Y-m-d'),
+                    (new \DateTime($this->dueToDate))->format('Y-m-d')]);
+            }
         } else {
-            if(!empty($this->invoiceDateRange)) {
-                
-				list($this->fromDate, $this->toDate) = explode(' - ', $this->invoiceDateRange);
-            
+            if (!empty($this->invoiceDateRange)) {
+                list($this->fromDate, $this->toDate) = explode(' - ', $this->invoiceDateRange);
                 $query->andWhere(['between', 'invoice.date', (new \DateTime($this->fromDate))->format('Y-m-d'),
-                    (new \DateTime($this->toDate))->format('Y-m-d')]);	
-			}
-            else
-            {
-        	$query->andWhere(['between', 'invoice.date', (new \DateTime())->format('Y-m-d') ,  (new \DateTime())->format('Y-m-d')]);
+                    (new \DateTime($this->toDate))->format('Y-m-d')]);
+            } else {
+                $query->andWhere(['between', 'invoice.date', (new \DateTime())->format('Y-m-d'), (new \DateTime())->format('Y-m-d')]);
             }
-            
-            }
+        }
         $query->andFilterWhere(['type' => $this->type]);
-		
-		return $dataProvider;
+
+        return $dataProvider;
     }
 
-	public static function invoiceStatuses()
+    public static function invoiceStatuses()
     {
         return [
             self::STATUS_ALL => 'All',
