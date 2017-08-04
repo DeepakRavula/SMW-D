@@ -9,41 +9,59 @@ $this->title = 'Dashboard';
 		<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <div class="clearfix"></div>
 <?php yii\widgets\Pjax::begin(['id' => 'dashboard']); ?>
+<div class="row">
+	<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Invoice Total</span>
+              <span class="info-box-number"><?= !empty($invoiceTotal) ? $invoiceTotal : 0 ?></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+	<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Invoice Tax Total</span>
+              <span class="info-box-number"><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+	<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Enrolment Gains</span>
+              <span class="info-box-number"><?= !empty($enrolmentGainCount) ? $enrolmentGainCount : 0 ?></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+	<div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-red"><i class="fa fa-google-plus"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Enrolment Losses</span>
+              <span class="info-box-number"><?= !empty($enrolmentLossCount) ? $enrolmentLossCount : 0 ?></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+	</div>
 <div class="col-md-12">
     <div class="col-md-10 p-0">
 		<div class="row text-center bg-gray disabled color-palette">
-			<div class="col-md-2 p-0 ">
-				<div class="small-box">
-					<div class="inner">
-						<h3><?= !empty($invoiceTotal) ? $invoiceTotal : 0 ?></h3>
-						<p>Invoice Total</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-2 p-0">
-				<div class="small-box">
-					<div class="inner">
-						<h3><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></h3>
-						<p>Invoice Tax Total</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-2 p-0">
-				<div class="small-box">
-					<div class="inner">
-						<h3><?= !empty($enrolmentGainCount) ? $enrolmentGainCount : 0 ?></h3>
-						<p>Enrolment Gains</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-1 p-0">
-				<div class="small-box">
-					<div class="inner">
-						<h3><?= !empty($enrolmentLossCount) ? $enrolmentLossCount : 0 ?></h3>
-						<p>Enrolment Losses</p>
-					</div>
-				</div>
-			</div>
 			<div class="col-md-2 p-0">
 				<div class="small-box">
 					<div class="inner">
