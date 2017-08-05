@@ -3,146 +3,142 @@
 
 use miloschuman\highcharts\Highcharts;
 use common\models\Dashboard;
+use yii\helpers\Url;
 
 $this->title = 'Dashboard';
 ?>
-<?php $this->registerCssFile("@web/css/dashboard/style.css");?>
+<?php $this->registerCssFile("@web/css/dashboard/style.css"); ?>
 <div class="dashboard-search pull-right form-inline">
+	<?php $total = $payments - ($invoiceTaxTotal + $royaltyPayment); ?>
 	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 <?php yii\widgets\Pjax::begin(['id' => 'dashboard']); ?>
+
 <div class="row">
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-maroon">
-            <span class="info-box-icon"><i class="fa fa-file-text-o"></i></span>
-
-            <div class="info-box-content">
-				<span class="info-box-text">Invoice Total</span>
-				<span class="info-box-number"><?= !empty($invoiceTotal) ? $invoiceTotal : 0 ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+		<?php
+		echo \insolita\wgadminlte\LteInfoBox::widget([
+			'bgIconColor' => '',
+			'bgColor' => 'maroon',
+			'number' => !empty($invoiceTotal) ? $invoiceTotal : 0,
+			'text' => 'Invoice Total',
+			'icon' => 'fa fa-file-text-o',
+		])
+		?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-aqua">
-            <span class="info-box-icon"><i class="fa fa-bookmark-o"></i></span>
-
-            <div class="info-box-content">
-				<span class="info-box-text">Invoice Tax Total</span>
-				<span class="info-box-number"><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+		<?php
+		echo \insolita\wgadminlte\LteInfoBox::widget([
+			'bgIconColor' => '',
+			'bgColor' => 'aqua',
+			'number' => !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0,
+			'text' => 'Invoice Tax Total',
+			'icon' => 'fa fa-bookmark-o',
+		])
+		?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-green">
-            <span class="info-box-icon"><i class="fa fa-user-plus"></i></span>
-
-            <div class="info-box-content">
-				<span class="info-box-text">Enrolment Gains</span>
-				<span class="info-box-number"><?= !empty($enrolmentGainCount) ? $enrolmentGainCount : 0 ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+		<?php
+		echo \insolita\wgadminlte\LteInfoBox::widget([
+			'bgIconColor' => '',
+			'bgColor' => 'green',
+			'number' => !empty($enrolmentGainCount) ? $enrolmentGainCount : 0,
+			'text' => 'Enrolment Gains',
+			'icon' => 'fa fa-user-plus',
+		])
+		?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-red">
-            <span class="info-box-icon"><i class="fa fa-user-times"></i></span>
-
-            <div class="info-box-content">
-				<span class="info-box-text">Enrolment Losses</span>
-				<span class="info-box-number"><?= !empty($enrolmentLossCount) ? $enrolmentLossCount : 0 ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+		<?php
+		echo \insolita\wgadminlte\LteInfoBox::widget([
+			'bgIconColor' => '',
+			'bgColor' => 'red',
+			'number' => !empty($enrolmentLossCount) ? $enrolmentLossCount : 0,
+			'text' => 'Enrolment Losses',
+			'icon' => 'fa fa-user-times',
+		])
+		?>
 	</div>	
 </div>
 <div class="row">
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-blue">
-            <span class="info-box-icon"><i class="fa fa-graduation-cap"></i></span>
-            <div class="info-box-content">
-				<span class="info-box-text">Private Enrolments</span>
-				<span class="info-box-number"><?= $enrolments ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+		<?php
+		echo \insolita\wgadminlte\LteInfoBox::widget([
+			'bgIconColor' => '',
+			'bgColor' => 'blue',
+			'number' => $enrolments,
+			'text' => 'Private Enrolments',
+			'icon' => 'fa fa-graduation-cap',
+		])
+		?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-gray">
-            <span class="info-box-icon"><i class="fa fa-users"></i></span>
-            <div class="info-box-content">
-				<span class="info-box-text">Group Enrolments</span>
-				<span class="info-box-number"><?= $groupEnrolments ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+		<?php
+		echo \insolita\wgadminlte\LteInfoBox::widget([
+			'bgIconColor' => '',
+			'bgColor' => 'gray',
+			'number' => $groupEnrolments,
+			'text' => 'Group Enrolments',
+			'icon' => 'fa fa-users',
+		])
+		?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-orange">
-            <span class="info-box-icon"><i class="fa fa-child"></i></span>
-
-            <div class="info-box-content">
-				<span class="info-box-text">Active Students</span>
-				<span class="info-box-number"><?= $students ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+		<?php
+		echo \insolita\wgadminlte\LteInfoBox::widget([
+			'bgIconColor' => '',
+			'bgColor' => 'orange',
+			'number' => $students,
+			'text' => 'Active Students',
+			'icon' => 'fa fa-child',
+		])
+		?>
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-teal">
-            <span class="info-box-icon"><i class="fa fa-cart-plus"></i></span>
-            <div class="info-box-content">
-				<span class="info-box-text">Payment Received</span>
-				<span class="info-box-number"><?= !empty($payments) ? $payments : 0 ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+		<?php
+		echo \insolita\wgadminlte\LteInfoBox::widget([
+			'bgIconColor' => '',
+			'bgColor' => 'teal',
+			'number' => !empty($payments) ? $payments : 0,
+			'text' => 'Payment Received',
+			'icon' => 'fa fa-cart-plus',
+		])
+		?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-fuchsia">
-            <span class="info-box-icon"><i class="fa fa-money"></i></span>
-            <div class="info-box-content">
-				<span class="info-box-text">Tax Collected</span>
-				<span class="info-box-number"><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0 ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+<?php
+echo \insolita\wgadminlte\LteInfoBox::widget([
+	'bgIconColor' => '',
+	'bgColor' => 'fuchsia',
+	'number' => !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0,
+	'text' => 'Tax Collected',
+	'icon' => 'fa fa-money',
+])
+?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-purple">
-            <span class="info-box-icon"><i class="fa fa-flag"></i></span>
-
-            <div class="info-box-content">
-				<span class="info-box-text">Royalty Free Items</span>
-				<span class="info-box-number"><?= !empty($royaltyPayment) ? $royaltyPayment : 0 ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+<?php
+echo \insolita\wgadminlte\LteInfoBox::widget([
+	'bgIconColor' => '',
+	'bgColor' => 'purple',
+	'number' => !empty($royaltyPayment) ? $royaltyPayment : 0,
+	'text' => 'Royalty Free Items',
+	'icon' => 'fa fa-flag',
+])
+?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
-		<div class="info-box bg-navy">
-            <span class="info-box-icon"><i class="fa fa-usd"></i></span>
-
-            <div class="info-box-content">
-				<span class="info-box-text">Total</span>
-				<span class="info-box-number"><?php $total = $payments - ($invoiceTaxTotal + $royaltyPayment); ?>  <?= !empty($total) ? $total : 0 ?></span>
-            </div>
-            <!-- /.info-box-content -->
-		</div>
-		<!-- /.info-box -->
+<?php
+echo \insolita\wgadminlte\LteInfoBox::widget([
+	'bgIconColor' => '',
+	'bgColor' => 'navy',
+	'number' => !empty($total) ? $total : 0,
+	'text' => 'Total',
+	'icon' => 'fa fa-usd',
+])
+?>
 	</div>
 </div>
 <div class="row">
@@ -161,26 +157,26 @@ $this->title = 'Dashboard';
 					<div class="col-md-12 col-sm-8">
 						<div class="pad">
 							<!-- Map will be created here -->
-							<?=
-							Highcharts::widget([
-								'options' => [
-									'title' => ['text' => ''],
-									'xAxis' => [
-										'categories' => Dashboard::previousMonths(),
-									],
-									'yAxis' => [
-										'title' => ['text' => 'Income'],
-									],
-									'series' => [
-											[
-											'name' => 'Month',
-											'data' => Dashboard::income(),
-											'color' => '#E12E2B'
-										],
-									],
-								],
-							]);
-							?>	
+<?=
+Highcharts::widget([
+	'options' => [
+		'title' => ['text' => ''],
+		'xAxis' => [
+			'categories' => Dashboard::previousMonths(),
+		],
+		'yAxis' => [
+			'title' => ['text' => 'Income'],
+		],
+		'series' => [
+				[
+				'name' => 'Month',
+				'data' => Dashboard::income(),
+				'color' => '#E12E2B'
+			],
+		],
+	],
+]);
+?>	
 						</div>
 					</div>
 				</div>
@@ -229,7 +225,7 @@ $this->title = 'Dashboard';
 									],
 								]);
 								?>
-							<?php endif; ?>	
+<?php endif; ?>	
 						</div>
 					</div>
 				</div>
@@ -304,7 +300,7 @@ $this->title = 'Dashboard';
 					<div class="col-md-12 col-sm-8">
 						<div class="pad">
 							<!-- Map will be created here -->
-							<?php if (!empty($enrolmentLosses)) : ?>
+								<?php if (!empty($enrolmentLosses)) : ?>
 								<div class="m-t-20">
 									<?=
 									Highcharts::widget([
@@ -332,7 +328,7 @@ $this->title = 'Dashboard';
 									]);
 									?>
 								</div>
-							<?php endif; ?>
+<?php endif; ?>
 						</div>
 					</div>
 				</div>
