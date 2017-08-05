@@ -7,8 +7,7 @@ use yii\helpers\Url;
 
 $this->title = 'Dashboard';
 ?>
-<?php $this->registerCssFile("@web/css/dashboard/style.css"); ?>
-<div class="dashboard-search pull-right form-inline">
+<div class="dashboard-search form-inline">
 	<?php $total = $payments - ($invoiceTaxTotal + $royaltyPayment); ?>
 	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
