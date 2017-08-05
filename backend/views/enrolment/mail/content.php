@@ -9,9 +9,10 @@ Dear <?= $toName; ?>,<br>
 <table border="0" cellpadding="0" cellspacing="0">
 	<tbody>
 		<tr>
-			<td><strong><?= 'Teacher Name: ' ?></strong> <?= $model->course->teacher->publicIdentity; ?></td>
-			<td><strong><?= 'Program Name: ' ?></strong> <?= $model->course->program->name; ?></td>
-			<td><strong><?= 'Time: ' ?></strong> 
+			<td><strong><?= 'Teacher Name: ' ?></strong>
+				<Br /><?= $model->course->teacher->publicIdentity; ?></td>
+			<td><strong><?= 'Program Name: ' ?></strong><Br /><?= $model->course->program->name; ?></td>
+			<td><strong><?= 'Time: ' ?><Br /></strong> 
 				<?php
 				$fromTime = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->fromTime);
 				echo $fromTime->format('h:i A');
@@ -20,14 +21,14 @@ Dear <?= $toName; ?>,<br>
 		</tr>
 		<tr>
 			<td>
-				<strong><?= 'Durartion: ' ?></strong>
+				<strong><?= 'Durartion: ' ?><Br /></strong>
 				<?php
 				$length = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->duration);
 				echo $length->format('H:i');
 				?>
 			</td>
-			<td><strong><?= 'Start Date: ' ?></strong> <?= Yii::$app->formatter->asDate($model->course->startDate); ?></td>
-			<td><strong><?= 'End Date: ' ?></strong> <?= Yii::$app->formatter->asDate($model->course->endDate); ?></td>
+			<td><strong><?= 'Start Date: ' ?></strong><Br /><?= Yii::$app->formatter->asDate($model->course->startDate); ?></td>
+			<td><strong><?= 'End Date: ' ?></strong><Br /><?= Yii::$app->formatter->asDate($model->course->endDate); ?></td>
 		</tr>
 	</tbody>
 </table>

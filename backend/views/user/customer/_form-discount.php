@@ -9,7 +9,7 @@ use common\models\CustomerDiscount;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<div class="p-10">
+<div class="p-l-20">
 	<h4><strong>Set Discount (%)</strong></h4>
 	<?php $form = ActiveForm::begin([
 		'id' => 'customer-discount',

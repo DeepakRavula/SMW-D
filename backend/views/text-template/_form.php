@@ -15,10 +15,7 @@ use yii\helpers\Url;
         'id' => 'template-form',
         'action' => Url::to(['text-template/update', 'id' => $model->id]),
     ]); ?>
-
-	<div class="col-xs-7">
-		<?php echo $form->field($model, 'message')->textarea(['rows' => 6]); ?>
-	</div>
+	<?php echo $form->field($model, 'message')->textarea(['rows' => 6]); ?>
 	<div class="clearfix"></div>
     <div class="row-fluid">
     <div class="form-group">
