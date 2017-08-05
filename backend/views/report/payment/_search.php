@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\jui\DatePicker;
+use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\UserSearch */
@@ -22,20 +22,29 @@ use yii\jui\DatePicker;
     ]); ?>
     <div class="row">
     <div class="col-md-3">
-        <?php echo $form->field($model, 'fromDate')->widget(DatePicker::classname(), [
-            'options' => [
-                'id' => 'from-date',
-                'class' => 'form-control',
-            ],
-        ]) ?>
-    </div>
-    <div class="col-md-3">
-        <?php echo $form->field($model, 'toDate')->widget(DatePicker::classname(), [
-            'options' => [
-                'id' => 'to-date',
-                'class' => 'form-control',
-            ],
-        ]) ?>
+       <div class="form-group m-t-20">
+            <?php echo DateRangePicker::widget([
+            'model' => $model,
+            'attribute' => 'dateRange',
+            'convertFormat' => true,
+            'initRangeExpr' => true,
+            'pluginOptions' => [
+                'autoApply' => true,
+                'ranges' => [
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", 'moment()'],
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", 'moment()'],
+                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
+                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
+                ],
+                'locale' => [
+                    'format' => 'M d,Y',
+                ],
+                'opens' => 'right',
+                ],
+
+            ]);
+           ?>
+        </div>
     </div>
     <div class="pull-right  m-r-20">
         <div class="schedule-index">

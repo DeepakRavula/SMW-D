@@ -21,19 +21,17 @@ $this->title = 'Payments';
 $(document).ready(function(){
     $("#group-by-method").on("change", function() {
         var groupByMethod = $(this).is(":checked");
-        var fromDate = $('#from-date').val();
-        var toDate = $('#to-date').val();
-        var params = $.param({ 'PaymentSearch[fromDate]': fromDate,
-            'PaymentSearch[toDate]': toDate, 'PaymentSearch[groupByMethod]': (groupByMethod | 0) });
+        var dateRange = $('#paymentsearch-daterange').val();
+        var params = $.param({ 'PaymentSearch[dateRange]': dateRange,
+            'PaymentSearch[groupByMethod]': (groupByMethod | 0) });
         var url = '<?php echo Url::to(['report/payment']); ?>?' + params;
         $.pjax.reload({url:url,container:"#payment-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
     $("#print").on("click", function() {
         var groupByMethod = $("#group-by-method").is(":checked");
-        var fromDate = $('#from-date').val();
-        var toDate = $('#to-date').val();
-        var params = $.param({ 'PaymentSearch[fromDate]': fromDate,
-            'PaymentSearch[toDate]': toDate, 'PaymentSearch[groupByMethod]': (groupByMethod | 0) });
+        var dateRange = $('#paymentsearch-daterange').val();
+        var params = $.param({ 'PaymentSearch[dateRange]': dateRange,
+            'PaymentSearch[groupByMethod]': (groupByMethod | 0) });
         var url = '<?php echo Url::to(['payment/print']); ?>?' + params;
         window.open(url,'_blank');
     });
