@@ -549,14 +549,15 @@ class InvoiceController extends Controller
             }
         }
         $creditInvoice->save();
-        if ($creditInvoice->hasProFormaCredit() && !$invoice->isPaid()) {
-            if ($invoice->balance > $creditInvoice->proFormaCredit) {
-                $amount = $creditInvoice->proFormaCredit;
+        if ($creditInvoice->hasCredit() && !$invoice->isPaid()) {
+            if ($invoice->balance > abs ($creditInvoice->balance)) {
+                $amount = abs ($creditInvoice->balance);
             } else {
                 $amount = $invoice->balance;
             }
-            $creditInvoice->addPayment($invoice, $amount);
+            $invoice->addPayment($creditInvoice, $amount);
             $invoice->save();
+            $creditInvoice->save();
         }
         
         return $this->redirect(['view', 'id' => $creditInvoice->id]);
