@@ -26,9 +26,11 @@ class UserProfile extends ActiveRecord
     /**
      * @var
      */
+    const EVENT_USER_CREATE='userCreate';
     public $picture;
     public $email;
-    /**
+    public $loggedUser;
+        /**
      * @return array
      */
     public function behaviors()

@@ -20,6 +20,7 @@ class InvoiceSearch extends Invoice
     public $toggleAdditionalColumns;
     public $fromDate;
     public $toDate;
+    public $invoiceDateRange;
     public $dateRange;
     public $dueToDate;
     public $dueFromDate;
@@ -36,7 +37,7 @@ class InvoiceSearch extends Invoice
         return [
             [['fromDate', 'toDate'], 'date', 'format' => 'php:d-m-Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
-            [['type', 'query', 'toggleAdditionalColumns', 'dateRange',
+            [['type', 'query', 'toggleAdditionalColumns', 'dateRange','invoiceDateRange',
                 'dueFromDate', 'dueToDate', 'summariseReport'], 'safe'],
         ];
     }
@@ -85,8 +86,8 @@ class InvoiceSearch extends Invoice
               ->orFilterWhere(['like', 'up.lastname', $this->query])
               ->orFilterWhere(['like', 'pn.number', $this->query]);
 
-        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
-        $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
+        $this->fromDate = \DateTime::createFromFormat('M d,Y', $this->fromDate);
+        $this->toDate = \DateTime::createFromFormat('M d,Y', $this->toDate);
         if ((int) $this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
             if ((int) $this->mailStatus === self::STATUS_MAIL_SENT) {
                 $query->mailSent();
@@ -98,21 +99,27 @@ class InvoiceSearch extends Invoice
             } elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
                 $query->paid()->proFormaInvoice();
             }
-			if(!empty($this->dateRange)) {
-				list($this->dueFromDate, $this->dueToDate) = explode(' - ', $this->dateRange);
-            	$query->andWhere(['between', 'DATE(invoice.dueDate)', 
-					(new \DateTime($this->dueFromDate))->format('Y-m-d'),
-					(new \DateTime($this->dueToDate))->format('Y-m-d')]);
-			}
+			if (!empty($this->dateRange)) {
+                list($this->dueFromDate, $this->dueToDate) = explode(' - ', $this->dateRange);
+                $query->andWhere(['between', 'DATE(invoice.dueDate)',
+                    (new \DateTime($this->dueFromDate))->format('Y-m-d'),
+                    (new \DateTime($this->dueToDate))->format('Y-m-d')]);
+            }
         } else {
-        	$query->andWhere(['between', 'invoice.date', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
-		}
+            if (!empty($this->invoiceDateRange)) {
+                list($this->fromDate, $this->toDate) = explode(' - ', $this->invoiceDateRange);
+                $query->andWhere(['between', 'invoice.date', (new \DateTime($this->fromDate))->format('Y-m-d'),
+                    (new \DateTime($this->toDate))->format('Y-m-d')]);
+            } else {
+                $query->andWhere(['between', 'invoice.date', (new \DateTime())->format('Y-m-d'), (new \DateTime())->format('Y-m-d')]);
+            }
+        }
         $query->andFilterWhere(['type' => $this->type]);
-		
-		return $dataProvider;
+
+        return $dataProvider;
     }
 
-	public static function invoiceStatuses()
+    public static function invoiceStatuses()
     {
         return [
             self::STATUS_ALL => 'All',

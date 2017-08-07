@@ -16,13 +16,14 @@ class PaymentSearch extends Payment
     public $toDate;
     public $groupByMethod = false;
     public $query;
+    public $dateRange;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['fromDate', 'toDate', 'groupByMethod', 'query'], 'safe'],
+            [['fromDate', 'toDate', 'groupByMethod', 'query','dateRange'], 'safe'],
         ];
     }
 
@@ -66,10 +67,11 @@ class PaymentSearch extends Payment
 		if($this->groupByMethod) {
 			$query->groupBy('DATE(payment.date), payment_method_id');
 		} 
-        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
-        $this->toDate   = \DateTime::createFromFormat('d-m-Y', $this->toDate);
-        $query->andWhere(['between', 'DATE(payment.date)', $this->fromDate->format('Y-m-d'),
-            $this->toDate->format('Y-m-d')]);
+        if(!empty($this->dateRange)) {
+				list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
+        }
+        $query->andWhere(['between', 'DATE(payment.date)', (new \DateTime($this->fromDate))->format('Y-m-d'),
+           (new \DateTime($this->toDate))->format('Y-m-d')]);
 
         return $dataProvider;
     }

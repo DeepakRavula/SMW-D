@@ -42,28 +42,29 @@ use kartik\grid\GridView;
                 'value' => function ($data) {
                     return $data->description;
                 },
-                'contentOptions' => ['style' => 'font-size:14px'],
+                'contentOptions' => ['style' => 'font-size:14px;width:250px'],
             ],
+            
             [
+                'label' => 'PF',
+                'hAlign' => 'left',
+                'contentOptions' => ['class' => 'text-left', 'style' => 'font-size:14px;width:150px'],
+                'value' => function ($data) {
+                    return $data->enrolment ? $data->enrolment->getPaymentFrequency() : null;
+                },
+            ],
+			[
                 'label' => 'Qty',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:50px'],
                 'value' => function ($data) {
                     return $data->unit;
                 },
             ],
             [
-                'label' => 'PF',
-                'hAlign' => 'center',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
-                'value' => function ($data) {
-                    return $data->enrolment ? $data->enrolment->getPaymentFrequency() : null;
-                },
-            ],
-            [
-                'label' => 'PF Discount(%)',
+                'label' => 'PF(%)',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:107px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
                 'value' => function ($data) {
                     if ($data->enrolmentPaymentFrequencyDiscount) {
                         return $data->enrolmentPaymentFrequencyDiscount->value != 0.00 ?
@@ -72,9 +73,9 @@ use kartik\grid\GridView;
                 }
             ],
             [
-                'label' => 'Enrolment Discount($)',
+                'label' => 'Enrolment($)',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:85px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:100px;'],
                 'value' => function ($data) {
                     if ($data->multiEnrolmentDiscount) {
                         return $data->multiEnrolmentDiscount->value != 0.00 ?
@@ -84,9 +85,9 @@ use kartik\grid\GridView;
             ],
             [
                 'format' => ['decimal', 2],
-                'label' => 'Other Discount($)',
+                'label' => 'Other($)',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:122px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
                 'value' => function ($data) {
                     if ($data->lineItemDiscount || $data->customerDiscount) {
                         return $data->getOtherDiscountValue() != 0.00 ?
@@ -96,11 +97,11 @@ use kartik\grid\GridView;
             ],
             [
                 'format' => ['decimal', 2],
-                'label' => 'Net Discount($)',
+                'label' => 'Net($)',
                 'value' => function ($data) {
                     return $data->discount;
                 },
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:108px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
@@ -109,7 +110,7 @@ use kartik\grid\GridView;
                 'format' => ['decimal', 2],
                 'label' => 'Price',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:80px'],
                 'value' => function ($data) {
                     return $data->netPrice;
                 },
