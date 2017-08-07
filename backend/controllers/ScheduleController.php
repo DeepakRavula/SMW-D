@@ -17,6 +17,7 @@ use common\models\TeacherAvailability;
 use common\models\LocationAvailability;
 use common\models\ClassroomUnavailability;
 use common\models\Classroom;
+use common\models\TeacherUnavailability;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -235,6 +236,7 @@ class ScheduleController extends Controller
     {
         $locationId = Yii::$app->session->get('location_id');
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
+		$events = [];
 		if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
 			&& ($programId == 'undefined')) {
 			$teachersAvailabilities = TeacherAvailability::find()
@@ -242,6 +244,25 @@ class ScheduleController extends Controller
 				->all();
 
 			foreach ($teachersAvailabilities as $teachersAvailability) {
+				$unavailability = TeacherUnavailability::find()
+					->select(['fromDate', 'toDate', 'teacherId'])
+					->andWhere(['teacherId' => $teachersAvailability->teacher->id])
+					 ->andWhere([
+                            'AND',
+                            [
+                                '<=', 'DATE(fromDate)', $date->format('Y-m-d')
+                            ],
+                            [
+                                '>=', 'DATE(toDate)', $date->format('Y-m-d')
+                            ]
+
+                    ])
+					->andWhere(['fromTime' => null, 'toTime' => null])
+					->exists();
+				if(!empty($unavailability)) {
+					continue;
+				}
+				//print_r($unavailability);die;
 				$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
 					' ' . $teachersAvailability->from_time);
 				$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
