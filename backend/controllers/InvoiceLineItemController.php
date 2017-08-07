@@ -77,6 +77,9 @@ class InvoiceLineItemController extends Controller
         $lineItemDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
         $multiEnrolmentDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
         $model->setScenario(InvoiceLineItem::SCENARIO_EDIT);
+        if ($model->invoice->isReversedInvoice()) {
+            $model->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
+        }
         $model->tax_status = $model->taxStatus;
         $data = $this->renderAjax('/invoice/line-item/_form', [
             'model' => $model,
