@@ -256,7 +256,8 @@ class UserController extends Controller
             ->orderBy(['private_lesson.expiryDate' => SORT_DESC])
 			->andWhere(['lesson.teacherId' => $id])
 			->unscheduled()
-			->notDeleted();
+			->notDeleted()
+            ->groupBy('id');
 
         $unscheduledLessonDataProvider = new ActiveDataProvider([
             'query' => $unscheduledLessons,
