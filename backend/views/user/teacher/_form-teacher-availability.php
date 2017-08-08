@@ -45,7 +45,7 @@ use yii\helpers\Url;
         <div class="col-md-6 form-group">
             <?=
             $form->field($roomModel, 'classroomId')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->all(),
+                'data' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->orderBy(['name' => SORT_ASC])->all(),
                         'id', 'name'),
                 'options' => ['placeholder' => 'Select Classroom', 'class' => 'form-control'],
                 'pluginOptions' => [

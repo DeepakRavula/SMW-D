@@ -16,8 +16,7 @@ $results = [];
 if (!empty($invoiceCredits)) {
     foreach ($invoiceCredits as $invoiceCredit) {
         if ($invoiceCredit->isReversedInvoice()) {
-            $lastInvoicePayments = $invoiceCredit->invoiceReverse->payments;
-            $lastInvoicePayment = end($lastInvoicePayments);
+            $lastInvoicePayment = $invoiceCredit;
         } else {
             $lastInvoicePayments = $invoiceCredit->payments;
             $lastInvoicePayment = end($lastInvoicePayments);

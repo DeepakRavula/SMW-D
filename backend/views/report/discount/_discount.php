@@ -35,7 +35,7 @@ use kartik\grid\GridView;
                 'value' => function($data) {
                     return $data->code;
                 },
-                'contentOptions' => ['style' => 'font-size:14px'],
+                'contentOptions' => ['style' => 'font-size:14px;width:150px'],
             ],
             [
                 'label' => 'Description',
@@ -46,7 +46,7 @@ use kartik\grid\GridView;
             ],
             
             [
-                'label' => 'PF',
+                'label' => 'Payment Frequency',
                 'hAlign' => 'left',
                 'contentOptions' => ['class' => 'text-left', 'style' => 'font-size:14px;width:150px'],
                 'value' => function ($data) {
@@ -56,7 +56,7 @@ use kartik\grid\GridView;
 			[
                 'label' => 'Qty',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:50px'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:30px'],
                 'value' => function ($data) {
                     return $data->unit;
                 },
@@ -64,7 +64,7 @@ use kartik\grid\GridView;
             [
                 'label' => 'PF(%)',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:40px;'],
                 'value' => function ($data) {
                     if ($data->enrolmentPaymentFrequencyDiscount) {
                         return $data->enrolmentPaymentFrequencyDiscount->value != 0.00 ?
@@ -75,7 +75,7 @@ use kartik\grid\GridView;
             [
                 'label' => 'Enrolment($)',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:100px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
                 'value' => function ($data) {
                     if ($data->multiEnrolmentDiscount) {
                         return $data->multiEnrolmentDiscount->value != 0.00 ?
@@ -85,13 +85,24 @@ use kartik\grid\GridView;
             ],
             [
                 'format' => ['decimal', 2],
-                'label' => 'Other($)',
+                'label' => 'Customer(%)',
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
                 'value' => function ($data) {
-                    if ($data->lineItemDiscount || $data->customerDiscount) {
-                        return $data->getOtherDiscountValue() != 0.00 ?
-                            $data->getOtherDiscountValue() : null;
+                    if ($data->customerDiscount) {
+                        return $data->customerDiscount->value != 0.00 ?
+                            $data->customerDiscount->value : null;
+                    }
+                }
+            ],
+            [
+                'format' => ['decimal', 2],
+                'label' => 'Item($)',
+                'hAlign' => 'right',
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:50px;'],
+                'value' => function ($data) {
+                    if ($data->lineItemDiscount) {
+                        return $data->getLineItemDiscountValue();
                     }
                 }
             ],
@@ -101,7 +112,7 @@ use kartik\grid\GridView;
                 'value' => function ($data) {
                     return $data->discount;
                 },
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:60px;'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
@@ -110,7 +121,7 @@ use kartik\grid\GridView;
                 'format' => ['decimal', 2],
                 'label' => 'Price',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:80px'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:60px'],
                 'value' => function ($data) {
                     return $data->netPrice;
                 },

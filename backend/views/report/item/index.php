@@ -18,10 +18,9 @@ $this->title = 'Items';
 
 <script>
 $("#print").on("click", function() {
-        var fromDate = $('#from-date').val();
-        var toDate = $('#to-date').val();
-        var params = $.param({ 'InvoiceLineItemSearch[fromDate]': fromDate,
-            'InvoiceLineItemSearch[toDate]': toDate });
+        var dateRange=$('#invoicelineitemsearch-daterange').val();
+        var params = $.param({ 'InvoiceLineItemSearch[dateRange]': dateRange,
+             });
         var url = '<?php echo Url::to(['item/print']); ?>?' + params;
         window.open(url,'_blank');
     });

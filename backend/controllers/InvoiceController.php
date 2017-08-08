@@ -518,22 +518,47 @@ class InvoiceController extends Controller
 
     public function actionRevertInvoice($id)
     {
-        $invoice                       = Invoice::findOne($id);
-        $invoice->isCanceled           = true;
-        $invoice->save();
-        $creditInvoice                 = new Invoice();
-        $creditInvoice->user_id        = $invoice->user_id;
-        $creditInvoice->location_id    = $invoice->location_id;
-		$creditInvoice->createdUserId = Yii::$app->user->id;
-		$creditInvoice->updatedUserId = Yii::$app->user->id;
-        $creditInvoice->type           = INVOICE::TYPE_INVOICE;
+        $invoice                      = Invoice::findOne($id);
+        $creditInvoice                = new Invoice();
+        $creditInvoice->user_id       = $invoice->user_id;
+        $creditInvoice->location_id   = $invoice->location_id;
+        $creditInvoice->createdUserId = Yii::$app->user->id;
+        $creditInvoice->updatedUserId = Yii::$app->user->id;
+        $creditInvoice->type          = INVOICE::TYPE_INVOICE;
         $creditInvoice->save();
-        $invoiceReverse                   = new InvoiceReverse();
-        $invoiceReverse->invoiceId        = $invoice->id;
+        $invoiceReverse                    = new InvoiceReverse();
+        $invoiceReverse->invoiceId         = $invoice->id;
         $invoiceReverse->reversedInvoiceId = $creditInvoice->id;
         $invoiceReverse->save();
-        $creditInvoice->addPrivateLessonLineItem($invoice->lineItem->lesson);
+        foreach ($invoice->lineItems as $lineItem) {
+            $newLineItem = clone $lineItem;
+            $newLineItem->isNewRecord = true;
+            $newLineItem->id = null;
+            $newLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+            $newLineItem->invoice_id = $creditInvoice->id;
+            $newLineItem->amount = - ($newLineItem->amount);
+            $newLineItem->unit = - ($newLineItem->unit);
+            $newLineItem->tax_rate = - ($newLineItem->tax_rate);
+            $newLineItem->save();
+            foreach ($lineItem->discounts as $discount) {
+                $newDiscount = clone $discount;
+                $newDiscount->isNewRecord = true;
+                $newDiscount->id = null;
+                $newDiscount->invoiceLineItemId = $newLineItem->id;
+                $newDiscount->save();
+            }
+        }
         $creditInvoice->save();
+        if ($invoice->isOwing()) {
+            if ($invoice->balance > abs ($creditInvoice->balance)) {
+                $amount = abs ($creditInvoice->balance);
+            } else {
+                $amount = $invoice->balance;
+            }
+            $invoice->addPayment($creditInvoice, $amount);
+            $invoice->save();
+            $creditInvoice->save();
+        }
         
         return $this->redirect(['view', 'id' => $creditInvoice->id]);
     }
