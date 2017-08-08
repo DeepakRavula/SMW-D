@@ -56,10 +56,11 @@ class LessonSearch extends Lesson
     {
         $previousMonth = new \DateTime();
         $previousMonth->modify('first day of last month');
-        $this->fromDate = $previousMonth->format('d-m-Y');
+        $this->fromDate = $previousMonth->format('M d,Y');
         $currentMonth = new \DateTime();
         $currentMonth->modify('last day of this month');
-        $this->toDate = $currentMonth->format('d-m-Y');
+        $this->toDate = $currentMonth->format('M d,Y');
+        $this->dateRange = $this->fromDate.' - '.$this->toDate;
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
         $query = Lesson::find()
@@ -126,7 +127,7 @@ class LessonSearch extends Lesson
             $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
 
             if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
-                $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+                $query->andWhere(['between', 'DATE(lesson.date)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
             }
         }
 
