@@ -231,7 +231,25 @@ class ScheduleController extends Controller
         }
         return $resources;
     }
-
+	public function getTeacherAvailability($teacherId, $date)
+	{
+		$availabilities = TeacherAvailability::find()
+			->joinWith(['userLocation' => function ($query) use ($teacherId) {
+				$query->where(['user_location.user_id' => $teacherId]);
+			}])
+			->andWhere(['day' => $date->format('N')])
+			->all();	
+		return $availabilities;
+	}
+	public function getTeacherUnavailability($teacherId, $date)
+	{
+		$unavailability = TeacherUnavailability::find()
+			->andWhere(['teacherId' => $teacherId])
+			->overlap($date)
+			->andWhere(['fromTime' => null, 'toTime' => null])
+			->exists();
+		return $unavailability;
+	}
     public function actionRenderDayEvents($date, $programId, $teacherId)
     {
         $locationId = Yii::$app->session->get('location_id');
@@ -244,25 +262,10 @@ class ScheduleController extends Controller
 				->all();
 
 			foreach ($teachersAvailabilities as $teachersAvailability) {
-				$unavailability = TeacherUnavailability::find()
-					->select(['fromDate', 'toDate', 'teacherId'])
-					->andWhere(['teacherId' => $teachersAvailability->teacher->id])
-					 ->andWhere([
-                            'AND',
-                            [
-                                '<=', 'DATE(fromDate)', $date->format('Y-m-d')
-                            ],
-                            [
-                                '>=', 'DATE(toDate)', $date->format('Y-m-d')
-                            ]
-
-                    ])
-					->andWhere(['fromTime' => null, 'toTime' => null])
-					->exists();
+				$unavailability = $this->getTeacherUnavailability($teachersAvailability->teacher->id, $date); 
 				if(!empty($unavailability)) {
 					continue;
 				}
-				//print_r($unavailability);die;
 				$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
 					' ' . $teachersAvailability->from_time);
 				$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
@@ -277,14 +280,13 @@ class ScheduleController extends Controller
 			}
 		}
 		if (!empty($teacherId) && $teacherId != 'undefined') {
-			$teachersAvailabilities = TeacherAvailability::find()
-				->joinWith(['userLocation' => function ($query) use ($teacherId) {
-					$query->where(['user_location.user_id' => $teacherId]);
-				}])
-				->andWhere(['day' => $date->format('N')])
-				->all();
+			$teachersAvailabilities = $this->getTeacherAvailability($teacherId, $date); 
 
 			foreach ($teachersAvailabilities as $teachersAvailability) {
+				$unavailability = $this->getTeacherUnavailability($teachersAvailability->teacher->id, $date); 
+				if(!empty($unavailability)) {
+					continue;
+				}
 				$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
 					' ' . $teachersAvailability->from_time);
 				$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
@@ -309,6 +311,10 @@ class ScheduleController extends Controller
 				->all();
 
 			foreach ($teachersAvailabilities as $teachersAvailability) {
+				$unavailability = $this->getTeacherUnavailability($teachersAvailability->teacher->id, $date); 
+				if(!empty($unavailability)) {
+					continue;
+				}
 				$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
 					' ' . $teachersAvailability->from_time);
 				$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
