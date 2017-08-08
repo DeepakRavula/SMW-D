@@ -223,6 +223,11 @@ class ReportController extends Controller {
         $searchModel->fromDate            = (new \DateTime())->format('M d,Y');
         $searchModel->toDate              = (new \DateTime())->format('M d,Y');
         $searchModel->dateRange           = $searchModel->fromDate.' - '.$searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $invoiceLineItemRequest = $request->get('InvoiceLineItemSearch');
+            $searchModel->dateRange = $invoiceLineItemRequest['dateRange'];
+        }
         $dataProvider                     = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('item-category/index',
