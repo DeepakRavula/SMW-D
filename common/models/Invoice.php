@@ -190,14 +190,14 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getReversedInvoice()
     {
-        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId'])
-                ->viaTable('invoice_reverse', ['invoiceId' => 'id']);
+        return $this->hasOne(Invoice::className(), ['id' => 'reversedInvoiceId'])
+                ->viaTable('invoice_reverse', ['reversedInvoiceId' => 'id']);
     }
 
     public function getInvoiceReverse()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoiceId'])
-                ->viaTable('invoice_reverse', ['reversedInvoiceId' => 'id']);
+                ->viaTable('invoice_reverse', ['invoiceId' => 'id']);
     }
 
     public function getPayments()
@@ -266,6 +266,11 @@ class Invoice extends \yii\db\ActiveRecord
     public function isPaid()
     {
         return (int) $this->status === (int) self::STATUS_PAID;
+    }
+
+    public function isOwing()
+    {
+        return (int) $this->status === (int) self::STATUS_OWING;
     }
 
     public function hasPayments()
@@ -824,12 +829,12 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function isReversedInvoice()
     {
-        return !empty($this->invoiceReverse);
+        return !empty($this->reversedInvoice);
     }
 
     public function isInvoiceReversed()
     {
-        return !empty($this->reversedInvoice);
+        return !empty($this->invoiceReverse);
     }
 
     public function manageAccount()

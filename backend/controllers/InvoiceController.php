@@ -549,7 +549,7 @@ class InvoiceController extends Controller
             }
         }
         $creditInvoice->save();
-        if ($creditInvoice->hasCredit() && !$invoice->isPaid()) {
+        if ($invoice->isOwing()) {
             if ($invoice->balance > abs ($creditInvoice->balance)) {
                 $amount = abs ($creditInvoice->balance);
             } else {

@@ -319,7 +319,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $this->invoice->save();
         } else {
             if ($this->invoice->user) {
-                if ($this->invoice->user->hasDiscount()) {
+                if ($this->invoice->user->hasDiscount() && !$this->invoice->isReversedInvoice()) {
                     $this->addCustomerDiscount($this->invoice->user);
                 }
             }
