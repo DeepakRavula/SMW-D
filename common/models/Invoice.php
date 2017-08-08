@@ -190,7 +190,8 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getReversedInvoice()
     {
-        return $this->hasOne(InvoiceReverse::className(), ['reversedInvoiceId' => 'id']);
+        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId'])
+                ->viaTable('invoice_reverse', ['invoiceId' => 'id']);
     }
 
     public function getInvoiceReverse()
@@ -589,7 +590,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
             $this->isDeleted = false;
         }
-		
+        
      	return parent::beforeSave($insert);
     }
 
@@ -626,8 +627,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function canRevert()
     {
-        return !$this->hasMiscItem() && $this->isPaid() && !$this->isCanceled
-            && !$this->isReversedInvoice();
+        return $this->lineItem && !$this->isReversedInvoice() && !$this->isInvoiceReversed();
     }
 
     public function addPrivateLessonLineItem($lesson)
@@ -639,7 +639,6 @@ class Invoice extends \yii\db\ActiveRecord
         $actualLessonDate            = \DateTime::createFromFormat('Y-m-d H:i:s',
                 $lesson->date);
         $invoiceLineItem->unit       = $lesson->unit;
-
         if ($this->isProFormaInvoice()) {
             if ($lesson->isExtra()) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
@@ -657,10 +656,6 @@ class Invoice extends \yii\db\ActiveRecord
 			$invoiceLineItem->rate = $rate;
         }
         $amount = $lesson->enrolment->program->rate * $invoiceLineItem->unit;
-        if ($this->isReversedInvoice()) {
-            $amount = -($amount);
-            $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
-        }
         $invoiceLineItem->amount       = $amount;
         $studentFullName               = $lesson->enrolment->student->fullName;
         $description                  = $lesson->enrolment->program->name.' for '.$studentFullName.' with '
@@ -685,10 +680,6 @@ class Invoice extends \yii\db\ActiveRecord
         $enrolment                     = Enrolment::findOne($lesson->enrolmentId);
         $courseCount                   = $enrolment->courseCount;
         $lessonAmount                  = $lesson->course->program->rate / $courseCount;
-        if ($this->isReversedInvoice()) {
-            $invoiceLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
-            $lessonAmount = -($lessonAmount);
-        }
         $qualification = Qualification::findOne(['teacher_id' => $enrolment->firstLesson->teacherId,
             'program_id' => $enrolment->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
@@ -834,6 +825,11 @@ class Invoice extends \yii\db\ActiveRecord
     public function isReversedInvoice()
     {
         return !empty($this->invoiceReverse);
+    }
+
+    public function isInvoiceReversed()
+    {
+        return !empty($this->reversedInvoice);
     }
 
     public function manageAccount()
