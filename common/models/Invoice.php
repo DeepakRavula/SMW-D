@@ -361,11 +361,6 @@ class Invoice extends \yii\db\ActiveRecord
             $subTotal    = $this->netSubtotal;
             $tax         = $this->lineItemTax;
             $totalAmount = $subTotal + $tax;
-            if ($this->isReversedInvoice()) {
-                $subTotal = - ($subTotal);
-                $tax = - ($tax);
-                $totalAmount = - ($totalAmount);
-            }
             $this->updateAttributes([
                     'subTotal' => $subTotal,
                     'tax' => $tax,

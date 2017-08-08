@@ -394,7 +394,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return abs($this->amount) - $this->discount;
+        return $this->invoice->isReversedInvoice() ? -(abs($this->amount) - $this->discount) :
+            abs($this->amount) - $this->discount;
     }
 
     public function getDiscount()
