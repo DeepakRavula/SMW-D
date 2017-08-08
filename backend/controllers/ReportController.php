@@ -220,8 +220,9 @@ class ReportController extends Controller {
     {
         $searchModel                      = new InvoiceLineItemSearch();
         $searchModel->groupByItemCategory = true;
-        $searchModel->fromDate            = (new \DateTime())->format('d-m-Y');
-        $searchModel->toDate              = (new \DateTime())->format('d-m-Y');
+        $searchModel->fromDate            = (new \DateTime())->format('M d,Y');
+        $searchModel->toDate              = (new \DateTime())->format('M d,Y');
+        $searchModel->dateRange           = $searchModel->fromDate.' - '.$searchModel->toDate;
         $dataProvider                     = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('item-category/index',
