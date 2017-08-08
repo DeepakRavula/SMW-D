@@ -75,7 +75,9 @@ class LessonController extends Controller
         $invoiceRequest = $request->get('LessonSearch');
         $searchModel->type = $invoiceRequest['type'];
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        if (!empty($invoiceRequest['dateRange'])) {
+				$searchModel->dateRange = $invoiceRequest['dateRange'];
+			}
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
