@@ -18,6 +18,7 @@ use common\models\LocationAvailability;
 use common\models\ClassroomUnavailability;
 use common\models\Classroom;
 use common\models\TeacherUnavailability;
+use League\Period\Period;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -241,63 +242,109 @@ class ScheduleController extends Controller
 			->all();	
 		return $availabilities;
 	}
-	public function getTeacherUnavailability($teacherId, $date)
+	
+	public function getTeacherUnavailability($teacherAvailability, $date)
 	{
 		$unavailability = TeacherUnavailability::find()
-			->andWhere(['teacherId' => $teacherId])
-			->overlap($date)
-			->andWhere(['fromTime' => null, 'toTime' => null])
-			->exists();
+			->andWhere(['teacherId' => $teacherAvailability->teacher->id])
+			->overlap($teacherAvailability, $date)
+			->one();
 		return $unavailability;
+	}
+	public function getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date)
+	{
+		$events = [];
+		$availabilityStart = new \DateTime($teachersAvailability->from_time);
+		$availabilityEnd = new \DateTime($teachersAvailability->to_time); 
+		$availabilityDiff = $availabilityStart->diff($availabilityEnd);
+
+		$unavailabilityStart = new \DateTime($unavailability->fromTime);
+		$unavailabilityEnd = new \DateTime($unavailability->toTime); 
+		$unavailabilityDiff = $unavailabilityStart->diff($unavailabilityEnd);
+
+		$availabilityPeriods = Period::createFromDuration(
+			$teachersAvailability->from_time, 
+			new \DateInterval('PT' . $availabilityDiff->h . 'H' . $availabilityDiff->i . 'M' . $availabilityDiff->s . 'S'));	
+		$unavailabilityPeriods  = Period::createFromDuration(
+			$unavailability->fromTime,
+			new \DateInterval('PT' . $unavailabilityDiff->h . 'H' . $unavailabilityDiff->i . 'M' . $unavailabilityDiff->s . 'S'));
+		$availabilities = $availabilityPeriods->diff($unavailabilityPeriods);
+		
+		foreach($availabilities as $availability) {
+			list($hours, $minutes, $seconds) = explode(':', $availability->getStartDate()->format('H:i:s'));
+			$start = $date->setTime($hours, $minutes, $seconds);
+			list($hours, $minutes, $seconds) = explode(':', $availability->getEndDate()->format('H:i:s'));
+			$end = clone $date;
+			$end = $end->setTime($hours, $minutes, $seconds);
+			$events[] = [
+				'resourceId' => $teachersAvailability->teacher->id,
+				'title'      => '',
+				'start'      => $start->format('Y-m-d H:i:s'),
+				'end'        => $end->format('Y-m-d H:i:s'),
+				'rendering'  => 'background',
+			];	
+		}	
+		return $events;
 	}
     public function actionRenderDayEvents($date, $programId, $teacherId)
     {
         $locationId = Yii::$app->session->get('location_id');
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
-		$events = [];
 		if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
 			&& ($programId == 'undefined')) {
 			$teachersAvailabilities = TeacherAvailability::find()
 				->where(['day' => $date->format('N')])
 				->all();
-
+			$events = [];
 			foreach ($teachersAvailabilities as $teachersAvailability) {
-				$unavailability = $this->getTeacherUnavailability($teachersAvailability->teacher->id, $date); 
+				$unavailability = $this->getTeacherUnavailability($teachersAvailability, $date); 
 				if(!empty($unavailability)) {
-					continue;
+					if(empty($unavailability->fromTime) && empty($unavailability->toTime)) {
+						continue;
+					} else {
+						$events = $this->getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date);
+					}
+				} else {
+					list($hours, $minutes, $seconds) = explode(':', $teachersAvailability->from_time);
+					$start = $date->setTime($hours, $minutes, $seconds);
+					list($hours, $minutes, $seconds) = explode(':', $teachersAvailability->to_time);
+					$end = clone $date;
+					$end = $end->setTime($hours, $minutes, $seconds);
+					$events[] = [
+						'resourceId' => $teachersAvailability->teacher->id,
+						'title'      => '',
+						'start'      => $start->format('Y-m-d H:i:s'),
+						'end'        => $end->format('Y-m-d H:i:s'),
+						'rendering'  => 'background',
+					];		
 				}
-				$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-					' ' . $teachersAvailability->from_time);
-				$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-					' ' . $teachersAvailability->to_time);
-				$events[] = [
-					'resourceId' => $teachersAvailability->teacher->id,
-					'title'      => '',
-					'start'      => $start->format('Y-m-d H:i:s'),
-					'end'        => $end->format('Y-m-d H:i:s'),
-					'rendering'  => 'background',
-				];
 			}
 		}
 		if (!empty($teacherId) && $teacherId != 'undefined') {
 			$teachersAvailabilities = $this->getTeacherAvailability($teacherId, $date); 
 
 			foreach ($teachersAvailabilities as $teachersAvailability) {
-				$unavailability = $this->getTeacherUnavailability($teachersAvailability->teacher->id, $date); 
+					$unavailability = $this->getTeacherUnavailability($teachersAvailability, $date); 
 				if(!empty($unavailability)) {
-					continue;
+					if(empty($unavailability->fromTime) && empty($unavailability->toTime)) {
+						continue;
+					} else {
+						$events = $this->getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date);
+					}
+				} else {
+					list($hours, $minutes, $seconds) = explode(':', $teachersAvailability->from_time);
+					$start = $date->setTime($hours, $minutes, $seconds);
+					list($hours, $minutes, $seconds) = explode(':', $teachersAvailability->to_time);
+					$end = clone $date;
+					$end = $end->setTime($hours, $minutes, $seconds);
+					$events[] = [
+						'resourceId' => $teachersAvailability->teacher->id,
+						'title'      => '',
+						'start'      => $start->format('Y-m-d H:i:s'),
+						'end'        => $end->format('Y-m-d H:i:s'),
+						'rendering'  => 'background',
+					];		
 				}
-				$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-					' ' . $teachersAvailability->from_time);
-				$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-					' ' . $teachersAvailability->to_time);
-				$events[] = [
-					'resourceId' => $teachersAvailability->teacher->id,
-					'title'      => '',
-					'start'      => $start->format('Y-m-d H:i:s'),
-					'end'        => $end->format('Y-m-d H:i:s'),
-					'rendering'  => 'background',
-				];
 			}
 		} else if (!empty($programId) && $programId != 'undefined') {
 			$teachersAvailabilities = TeacherAvailability::find()
@@ -311,21 +358,27 @@ class ScheduleController extends Controller
 				->all();
 
 			foreach ($teachersAvailabilities as $teachersAvailability) {
-				$unavailability = $this->getTeacherUnavailability($teachersAvailability->teacher->id, $date); 
+					$unavailability = $this->getTeacherUnavailability($teachersAvailability, $date); 
 				if(!empty($unavailability)) {
-					continue;
+					if(empty($unavailability->fromTime) && empty($unavailability->toTime)) {
+						continue;
+					} else {
+						$events = $this->getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date);
+					}
+				} else {
+					list($hours, $minutes, $seconds) = explode(':', $teachersAvailability->from_time);
+					$start = $date->setTime($hours, $minutes, $seconds);
+					list($hours, $minutes, $seconds) = explode(':', $teachersAvailability->to_time);
+					$end = clone $date;
+					$end = $end->setTime($hours, $minutes, $seconds);
+					$events[] = [
+						'resourceId' => $teachersAvailability->teacher->id,
+						'title'      => '',
+						'start'      => $start->format('Y-m-d H:i:s'),
+						'end'        => $end->format('Y-m-d H:i:s'),
+						'rendering'  => 'background',
+					];		
 				}
-				$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-					' ' . $teachersAvailability->from_time);
-				$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-					' ' . $teachersAvailability->to_time);
-				$events[] = [
-					'resourceId' => $teachersAvailability->teacher->id,
-					'title'      => '',
-					'start'      => $start->format('Y-m-d H:i:s'),
-					'end'        => $end->format('Y-m-d H:i:s'),
-					'rendering'  => 'background',
-				];
 			}
 		}
 		$lessons = $this->getLessons($date, $programId, $teacherId);
