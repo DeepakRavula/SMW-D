@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
+use valentinek\behaviors\ClosureTable;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\ClassroomValidator;
@@ -96,7 +97,13 @@ class Lesson extends \yii\db\ActiveRecord
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
-				'replaceRegularDelete' => true
+                'replaceRegularDelete' => true
+            ],
+            [
+                'class' => ClosureTable::className(),
+                'tableName' => 'lesson_hierarchy',
+                'childAttribute' => 'lessonId',
+                'parentAttribute' => 'childLessonId',
             ],
         ];
     }

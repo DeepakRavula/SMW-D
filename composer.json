@@ -96,7 +96,8 @@
     "kartik-v/yii2-widget-select2": "@dev",
     "bower-asset/fullcalendar-scheduler": "^1.5",
     "baibaratsky/yii2-rollbar": "1.5.*",
-    "league/period": "^3.3"
+    "league/period": "^3.3",
+    "valentinek/yii2-closure-table-behavior": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",

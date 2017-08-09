@@ -5,7 +5,7 @@ namespace common\models\query;
 use common\models\Lesson;
 use common\models\Program;
 use common\models\Invoice;
-use common\models\InvoiceLineItem;
+use valentinek\behaviors\ClosureTableQuery;
 use common\models\InvoiceItemPaymentCycleLesson;
 
 /**
@@ -15,6 +15,17 @@ use common\models\InvoiceItemPaymentCycleLesson;
  */
 class LessonQuery extends \yii\db\ActiveQuery
 {
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => ClosureTableQuery::className(),
+                'tableName' => 'lesson_hierarchy',
+                'childAttribute' => 'lessonId',
+                'parentAttribute' => 'childLessonId',
+            ],
+        ];
+    }
     /*public function active()
     {
         return $this->andWhere('[[status]]=1');

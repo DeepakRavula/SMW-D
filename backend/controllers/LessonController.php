@@ -964,13 +964,16 @@ class LessonController extends Controller
         if ($model->hasProFormaInvoice()) {
             $model->proFormaInvoice->removeLessonItem($id);
         }
-        
+        $model->markAsRoot();
         for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
-            $lesssonSplit = new LessonSplit();
-            $lesssonSplit->lessonId = $id;
-            $lesssonSplit->unit = Lesson::DEFAULT_MERGE_DURATION;
-            $lesssonSplit->save();
+            $lesson = clone $model;
+            $lesson->unit = Lesson::DEFAULT_MERGE_DURATION;
+            $lesson->status = Lesson::STATUS_SCHEDULED;
+            $lesson->save();
+            $model->append($lesson->id);
         }
+        $model->status = Lesson::STATUS_CANCELED;
+        $model->save();
         Yii::$app->session->setFlash('alert', [
             'options' => ['class' => 'alert-success'],
             'body' => 'The Lesson has been exploded successfully.',
