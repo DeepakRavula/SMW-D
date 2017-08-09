@@ -40,7 +40,7 @@ use kartik\grid\GridView;
             [
                 'label' => 'Description',
                 'value' => function ($data) {
-                    return $data->description;
+                    return substr($data->description, 0, 45).' ...';
                 },
                 'contentOptions' => ['style' => 'font-size:14px;width:250px'],
             ],
