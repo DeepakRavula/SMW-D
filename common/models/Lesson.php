@@ -28,7 +28,7 @@ class Lesson extends \yii\db\ActiveRecord
 {
     const TYPE_PRIVATE_LESSON = 1;
     const TYPE_GROUP_LESSON = 2;
-    const STATUS_DRAFTED = 1;
+	
     const STATUS_SCHEDULED = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
@@ -112,7 +112,7 @@ class Lesson extends \yii\db\ActiveRecord
                     return $model->type !== self::TYPE_EXTRA;
             }],
             [['courseId', 'status', 'type'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyContext'], 'safe'],
+            [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyContext', 'isConfirmed'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 
 				'on' => [self::SCENARIO_EDIT, self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(), 
@@ -627,7 +627,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if (!$this->isDraftLesson()) {
+        if ($this->isConfirmed) {
             if (!$insert) {
                 if ($this->isRescheduledLesson($changedAttributes)) {
                     $this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
@@ -657,6 +657,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lesson          = Lesson::find()
             ->where(['courseId' => $this->courseId])
             ->unInvoicedProForma()
+			->isConfirmed()
             ->scheduled()
             ->between($paymentCycleStartDate, $paymentCycleEndDate)
             ->orderBy(['lesson.date' => SORT_ASC])
@@ -731,11 +732,6 @@ class Lesson extends \yii\db\ActiveRecord
             (int)$changedAttributes['teacherId'] !== (int)$this->teacherId;
     }
 
-    public function isDraftLesson()
-    {
-        return (int) $this->status === (int) self::STATUS_DRAFTED;
-    }
-
     public function isRescheduledLesson($changedAttributes)
     {
         return $this->isRescheduledByDate($changedAttributes) ||
@@ -766,6 +762,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $courseCount  = Lesson::find()
                 ->andWhere(['courseId' => $this->courseId])
+				->isConfirmed()
                 ->count('id');
 
         return $courseCount;

@@ -193,6 +193,7 @@ class TeacherAvailabilityController extends Controller
             }])
             ->where(['lesson.teacherId' => $id])
         	->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+			->isConfirmed()
 			->notDeleted()
             ->all();
         $events = [];
@@ -340,6 +341,7 @@ class TeacherAvailabilityController extends Controller
             }])
             ->where(['lesson.teacherId' => $teacherId])
             ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+			->isConfirmed()
             ->notDeleted()
             ->andWhere(['NOT', ['lesson.id' => $lessonId]])
             ->all();

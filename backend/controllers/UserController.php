@@ -190,6 +190,7 @@ class UserController extends Controller
                 ->location($locationId)
                 ->student($id)
                 ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
+				->isConfirmed()
                 ->notDeleted();
 
         $lessonDataProvider = new ActiveDataProvider([
@@ -252,6 +253,7 @@ class UserController extends Controller
 
         $unscheduledLessons = Lesson::find()
 			->enrolled()
+			->isConfirmed()
             ->joinWith(['privateLesson'])
             ->orderBy(['private_lesson.expiryDate' => SORT_DESC])
 			->andWhere(['lesson.teacherId' => $id])
@@ -319,9 +321,9 @@ class UserController extends Controller
 			->innerJoinWith('enrolment')
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
-			->notDraft()
 			->notDeleted()
 			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
+			->isConfirmed()
 			->between($lessonSearch->fromDate, $lessonSearch->toDate)
 			->orderBy(['date' => SORT_ASC]);
 			
@@ -878,7 +880,7 @@ class UserController extends Controller
 			->innerJoinWith('enrolment')
 			->location($locationId)
 			->where(['lesson.teacherId' => $model->id])
-			->notDraft()
+			->isConfirmed()
 			->notDeleted()
 			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
 			->between($lessonSearch->fromDate, $lessonSearch->toDate)

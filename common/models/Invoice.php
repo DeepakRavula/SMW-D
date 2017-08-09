@@ -785,6 +785,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $enrolment = Enrolment::findOne($this->lineItem->lineItemEnrolment->enrolmentId);
         $lessons = Lesson::find()
+			->isConfirmed()
             ->notDeleted()
             ->joinWith('enrolment')
             ->andWhere(['enrolment.id' => $enrolment->id])

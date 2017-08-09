@@ -87,7 +87,7 @@ class VacationController extends Controller
 			]);
 			Lesson::deleteAll([
 				'courseId' => $enrolment->course->id,
-				'status' => Lesson::STATUS_DRAFTED
+				'isConfirmed' => false
 			]);
             $transaction->commit();
 			$model->enrolmentId = $enrolmentId;
@@ -142,7 +142,7 @@ class VacationController extends Controller
         $model = $this->findModel($id);
 		Lesson::deleteAll([
 			'courseId' => $model->enrolment->courseId,
-			'status' => Lesson::STATUS_DRAFTED
+			'isConfirmed' => false
 		]);
 	    $model->trigger(Course::EVENT_VACATION_DELETE_PREVIEW);
         $model->on(Course::EVENT_VACATION_DELETE_PREVIEW, $model->enrolment->course->restoreLessons($model->fromDate, $model->toDate));

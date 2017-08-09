@@ -362,7 +362,7 @@ class LessonController extends Controller
 		$conflicts = [];
 		$conflictedLessonIds = [];
 		$draftLessons = Lesson::find()
-			->where(['courseId' => $course->id, 'status' => Lesson::STATUS_DRAFTED])
+			->where(['courseId' => $course->id, 'isConfirmed' => false])
 			->all();
 		foreach ($draftLessons as $draftLesson) {
 			$draftLesson->setScenario('review');
@@ -543,7 +543,7 @@ class LessonController extends Controller
 		$conflicts = [];
 		$conflictedLessonIds = [];
 			$draftLessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+				->where(['courseId' => $courseModel->id, 'isConfirmed' => false])
 				->all();
 		foreach ($draftLessons as $draftLesson) {
 			$draftLesson->setScenario('review');
@@ -562,19 +562,18 @@ class LessonController extends Controller
 		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
 		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
 		$lessonCount = Lesson::find()
-			->andWhere(['courseId' => $courseModel->id, 
-				'status' => [Lesson::STATUS_DRAFTED, Lesson::STATUS_UNSCHEDULED]])
+			->andWhere(['courseId' => $courseModel->id,	'isConfirmed' => false])
 			->count();
 		$conflictedLessonIdsCount = count($conflictedLessonIds);
 		$unscheduledLessonCount = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED])
+			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
 			->count();	
 		$query = Lesson::find()
 			->orderBy(['lesson.date' => SORT_ASC]);
 		if(! $showAllReviewLessons) {
 			$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
 		}  else {
-			$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+			$query->where(['courseId' => $courseModel->id, 'isConfirmed' => false]);
 		}
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -607,7 +606,7 @@ class LessonController extends Controller
 		$conflicts = [];
 		$conflictedLessonIds = [];
 		$draftLessons = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED])
+			->where(['courseId' => $courseModel->id, 'isConfirmed' => false])
 			->all();
 		foreach ($draftLessons as $draftLesson) {
 			$draftLesson->setScenario('review');
@@ -651,7 +650,7 @@ class LessonController extends Controller
 			$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
 			$privateLessonModel->save();
 		}
-        $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+        $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'isConfirmed' => false]);
 		$lesson = end($lessons);
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
@@ -762,7 +761,7 @@ class LessonController extends Controller
 		}
 		foreach ($lessons as $lesson) {
 			$lesson->updateAttributes([
-				'status' => Lesson::STATUS_SCHEDULED,
+				'isConfirmed' => true,
 			]);
 			
 		}

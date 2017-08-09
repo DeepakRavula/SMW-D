@@ -84,6 +84,7 @@ class CourseController extends Controller
             'query' => Lesson::find()
 				->andWhere(['courseId' => $id])
 				->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]])
+				->isConfirmed()
 				->notDeleted()
 				->orderBy(['lesson.date' => SORT_ASC]),
         ]);
@@ -297,7 +298,8 @@ public function getLessons($date)
                 ->joinWith(['course' => function ($query) {
                     $query->andWhere(['course.locationId' => Yii::$app->session->get('location_id')]);
                 }])
-                ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+                ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
+				->isConfirmed()
                 ->between($date, $date)
                 ->notDeleted()
                 ->all();
@@ -457,6 +459,7 @@ public function getLessons($date)
 					'courseId' => $model->id,
 					'status' => Lesson::STATUS_SCHEDULED
 				])
+				->isConfirmed()
 				->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
 				'pagination' => false,

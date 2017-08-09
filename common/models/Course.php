@@ -225,7 +225,7 @@ class Course extends \yii\db\ActiveRecord
 			$lesson->id			 = null;
 			$lesson->isNewRecord = true;
 			$lesson->teacherId = $teacherId;
-			$lesson->status		 = Lesson::STATUS_DRAFTED;
+			$lesson->status		 = Lesson::STATUS_SCHEDULED;
 			$nextWeekScheduledDate->setTime($hour, $minute, $second);
 			$lesson->date		 = $nextWeekScheduledDate->format('Y-m-d H:i:s');
 			$lesson->save();
@@ -256,6 +256,7 @@ class Course extends \yii\db\ActiveRecord
 				'courseId' => $this->id,
 				'lesson.status' => Lesson::STATUS_SCHEDULED
 			])
+			->isConfirmed()
 			->andWhere(['>=', 'date', $fromDate])
 			->all();
 		$dayList = self::getWeekdaysList();
@@ -273,6 +274,7 @@ class Course extends \yii\db\ActiveRecord
 				'courseId' => $this->id,
 				'lesson.status' => Lesson::STATUS_SCHEDULED
 			])
+			->isConfirmed()
 			->andWhere(['>=', 'date', $toDate])
 			->all();
 		$dayList = self::getWeekdaysList();
@@ -301,7 +303,7 @@ class Course extends \yii\db\ActiveRecord
 	}
 	public function getHolidayLessons()
     {
-		$lessons = Lesson::findAll(['courseId' => $this->id, 'status' => Lesson::STATUS_DRAFTED]);
+		$lessons = Lesson::findAll(['courseId' => $this->id, 'isConfirmed' => false]);
 		$startDate = (new \DateTime($this->startDate))->format('Y-m-d');
        	$holidays = Holiday::find()
 			->andWhere(['>=', 'DATE(date)', $startDate])
@@ -341,7 +343,7 @@ class Course extends \yii\db\ActiveRecord
 				$lessonCount = Lesson::find()
 					->andWhere([
 						'courseId' => $this->id,
-						'status' => Lesson::STATUS_DRAFTED,
+						'status' => Lesson::STATUS_SCHEDULED,
 						'DAYNAME(date)' => $dayName,
 						'TIME(date)' => $time
 					])
@@ -356,7 +358,7 @@ class Course extends \yii\db\ActiveRecord
 					$lesson->setAttributes([
 						'courseId' => $this->id,
 						'teacherId' => $this->teacherId,
-						'status' => Lesson::STATUS_DRAFTED,
+						'status' => Lesson::STATUS_SCHEDULED,
 						'date' => $day->format('Y-m-d H:i:s'),
 						'duration' => $duration,
 						'isDeleted' => false,

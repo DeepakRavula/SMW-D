@@ -51,7 +51,7 @@ class LocationScheduleSearch extends Lesson
 			->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED,
 				'DATE(date)' => (new \DateTime())->format('Y-m-d')	
 			])
-			->notDraft()
+			->isConfirmed()
 			->notDeleted();
 			if(!empty($this->locationId)) {
 				$query->location($this->locationId);
