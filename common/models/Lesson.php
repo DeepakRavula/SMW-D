@@ -102,8 +102,8 @@ class Lesson extends \yii\db\ActiveRecord
             [
                 'class' => ClosureTable::className(),
                 'tableName' => 'lesson_hierarchy',
-                'childAttribute' => 'lessonId',
-                'parentAttribute' => 'childLessonId',
+                'childAttribute' => 'childLessonId',
+                'parentAttribute' => 'lessonId',
             ],
         ];
     }

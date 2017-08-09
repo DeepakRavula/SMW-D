@@ -21,8 +21,8 @@ class LessonQuery extends \yii\db\ActiveQuery
             [
                 'class' => ClosureTableQuery::className(),
                 'tableName' => 'lesson_hierarchy',
-                'childAttribute' => 'lessonId',
-                'parentAttribute' => 'childLessonId',
+                'childAttribute' => 'childLessonId',
+                'parentAttribute' => 'lessonId',
             ],
         ];
     }

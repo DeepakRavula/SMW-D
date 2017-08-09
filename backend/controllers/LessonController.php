@@ -967,10 +967,22 @@ class LessonController extends Controller
         $model->markAsRoot();
         for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
             $lesson = clone $model;
-            $lesson->unit = Lesson::DEFAULT_MERGE_DURATION;
-            $lesson->status = Lesson::STATUS_SCHEDULED;
+            $lesson->isNewRecord = true;
+            $lesson->id = null;
+            $lesson->duration = Lesson::DEFAULT_MERGE_DURATION;
+            $lesson->status = Lesson::STATUS_UNSCHEDULED;
+            $duration = gmdate('H:i:s', Lesson::DEFAULT_EXPLODE_DURATION_SEC * ($i +1));
+            $lessonDuration = new \DateTime($duration);
+            $date = new \DateTime($model->date);
+            $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
+            $lesson->date = $date->format('Y-m-d H:i:s');
             $lesson->save();
-            $model->append($lesson->id);
+            $privateLesson = clone $model->privateLesson;
+            $privateLesson->isNewRecord = true;
+            $privateLesson->id = null;
+            $privateLesson->lessonId = $lesson->id;
+            $privateLesson->save();
+            $model->append($lesson);
         }
         $model->status = Lesson::STATUS_CANCELED;
         $model->save();
