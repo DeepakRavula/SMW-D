@@ -20,13 +20,6 @@ class TeacherUnavailabilityQuery extends ActiveQuery
 			[
 				'>=', 'DATE(toDate)', $date->format('Y-m-d')
 			]
-		])
-		->andWhere(['OR',  
-			['AND', ['fromTime' => null],['toTime' => null]],
-			['AND', 
-				['>=', 'fromTime', $teacherAvailability->from_time], 
-				['<=', 'toTime', $teacherAvailability->to_time]
-			]
 		]);
 		return $this;
    }
