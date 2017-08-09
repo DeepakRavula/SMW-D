@@ -537,7 +537,6 @@ class LessonController extends Controller
         $rescheduleBeginDate = $courseRequest['startDate'];
         $rescheduleEndDate = $courseRequest['endDate'];
         $vacationId = $vacationRequest['id'];
-        $vacationType = $vacationRequest['type'];
 		$enrolmentType = $enrolmentRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
 		$conflicts = [];
@@ -588,7 +587,6 @@ class LessonController extends Controller
             'rescheduleEndDate' => $rescheduleEndDate,
             'searchModel' => $searchModel,
 			'vacationId' => $vacationId,
-			'vacationType' => $vacationType,
 			'model' => $model,
 			'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
 			'lessonCount' => $lessonCount,
@@ -659,7 +657,6 @@ class LessonController extends Controller
         $rescheduleEndDate = $courseRequest['endDate'];
         $rescheduleBeginDate = $courseRequest['startDate'];
         $vacationId = $vacationRequest['id'];
-        $vacationType = $vacationRequest['type'];
         $enrolmentType = $enrolmentRequest['type'];
 		if(!empty($enrolmentType)) {
 			$courseModel->enrolment->student->updateAttributes([
@@ -673,40 +670,22 @@ class LessonController extends Controller
 			$vacation = Vacation::findOne(['id' => $vacationId]);
 			$fromDate = (new \DateTime($vacation->fromDate))->format('Y-m-d');
 			$toDate = (new \DateTime($vacation->toDate))->format('Y-m-d');
-			if($vacationType === Vacation::TYPE_CREATE) {
-				$vacation->isConfirmed = true;
-				$vacation->save();
-				$oldLessons = Lesson::find()
-				->where(['courseId' => $courseId])
-				->andWhere(['>=', 'lesson.date', $fromDate])
-				->all();
-				$oldLessonIds = [];
-				foreach ($oldLessons as $oldLesson) {
-					$oldLessonIds[] = $oldLesson->id;
-					$oldLesson->status = Lesson::STATUS_CANCELED;
-					$oldLesson->save();
-				}
-                $userModel = User::findOne(['id' => Yii::$app->user->id]);
-                $vacation->on(Vacation::EVENT_CREATE, [new VacationLog(), 'create']);
-                $vacation->userName = $userModel->publicIdentity;
-                $vacation->trigger(Vacation::EVENT_CREATE); 
-			} else {
-				$oldLessons = Lesson::find()
-				->where(['courseId' => $courseId])
-				->andWhere(['>=', 'lesson.date', $toDate])
-				->all();
-				$oldLessonIds = [];
-				foreach ($oldLessons as $oldLesson) {
-					$oldLessonIds[] = $oldLesson->id;
-					$oldLesson->status = Lesson::STATUS_CANCELED;
-					$oldLesson->save();
-				}
-				$vacation->delete();
-                $userModel = User::findOne(['id' => Yii::$app->user->id]);
-                $vacation->on(Vacation::EVENT_DELETE, [new VacationLog(), 'deleteVacation']);
-                $vacation->userName = $userModel->publicIdentity;
-                $vacation->trigger(Vacation::EVENT_DELETE); 
+			$vacation->isConfirmed = true;
+			$vacation->save();
+			$oldLessons = Lesson::find()
+			->where(['courseId' => $courseId])
+			->andWhere(['>=', 'lesson.date', $fromDate])
+			->all();
+			$oldLessonIds = [];
+			foreach ($oldLessons as $oldLesson) {
+				$oldLessonIds[] = $oldLesson->id;
+				$oldLesson->status = Lesson::STATUS_CANCELED;
+				$oldLesson->save();
 			}
+			$userModel = User::findOne(['id' => Yii::$app->user->id]);
+			$vacation->on(Vacation::EVENT_CREATE, [new VacationLog(), 'create']);
+			$vacation->userName = $userModel->publicIdentity;
+			$vacation->trigger(Vacation::EVENT_CREATE); 
 		}
         if( ! empty($rescheduleBeginDate) && ! empty($rescheduleEndDate)) {
 			$startDate = new \DateTime($rescheduleBeginDate);
@@ -742,7 +721,7 @@ class LessonController extends Controller
 				}
 
 				$bulkReschedule = new BulkReschedule();
-				$bulkReschedule->type = $this->getRescheduleLessonType($courseModel, $rescheduleEndDate, $vacationType);
+				$bulkReschedule->type = $this->getRescheduleLessonType($courseModel, $rescheduleEndDate);
 				try {
 					$bulkReschedule->save();
 				} catch(ErrorException $exception) {
@@ -777,13 +756,8 @@ class LessonController extends Controller
         }
 		if ($courseModel->program->isPrivate()) {
 			if (!empty($vacationId)) {
-				if ($vacationType === Vacation::TYPE_CREATE) {
-					$message = 'Vacation has been created successfully';
-					$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
-				} else {
-					$message = 'Vacation has been deleted successfully';
-					$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
-				}
+				$message = 'Vacation has been created successfully';
+				$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
 			} elseif(! empty($rescheduleBeginDate)) {
 				$message = 'Future lessons have been changed successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
@@ -801,20 +775,12 @@ class LessonController extends Controller
 		]);
 		return $link;
 	}
-	public function getRescheduleLessonType($courseModel, $endDate, $vacationType) {
-		$type = null;
+	public function getRescheduleLessonType($courseModel, $endDate) {
 		$courseEndDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
-		if(!empty($vacationType)) {
-			$type = BulkReschedule::TYPE_VACATION_DELETE;	
-			if($vacationType === Vacation::TYPE_CREATE) {
-				$type = BulkReschedule::TYPE_VACATION_CREATE;	
-			} 	
-		} else {
-			$type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;	
-			if($courseEndDate !== $endDate) {
-				$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;	
-			} 
-		}
+		$type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;	
+		if($courseEndDate !== $endDate) {
+			$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;	
+		} 
 		return $type;
 	} 
     public function actionInvoice($id)

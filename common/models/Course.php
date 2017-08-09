@@ -266,29 +266,6 @@ class Course extends \yii\db\ActiveRecord
 		$this->generateLessons($lessons, $startDate, $this->teacherId);
 	}
 
-	public function restoreLessons($fromDate, $toDate)
-	{
-		$toDate		 = (new \DateTime($toDate))->format('Y-m-d');
-		$lessons	 = Lesson::find()
-			->where([
-				'courseId' => $this->id,
-				'lesson.status' => Lesson::STATUS_SCHEDULED
-			])
-			->isConfirmed()
-			->andWhere(['>=', 'date', $toDate])
-			->all();
-		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->courseSchedule->day];
-		$startDay	 = (new \DateTime($fromDate))->format('l');
-		if ($day !== $startDay) {
-			$startDate = new \DateTime($fromDate);
-			$startDate->modify('next '.$day);
-		} else {
-			$startDate	 = (new \DateTime($fromDate))->format('Y-m-d');
-			$startDate = new \DateTime($startDate);
-		}
-		$this->generateLessons($lessons, $startDate, $this->teacherId);
-	}
 	public static function groupCourseCount()
 	{
 		$locationId = Yii::$app->session->get('location_id');
