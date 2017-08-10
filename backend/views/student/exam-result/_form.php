@@ -8,6 +8,7 @@ use common\models\User;
 use common\models\Program;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -61,8 +62,18 @@ if ($model->isNewRecord) {
 		<?=  $form->field($model, 'type')->textInput();?>
     </div>
 	<div class="col-md-6">
-		<?= $form->field($model, 'programId')->dropDownList(
-			ArrayHelper::map(Program::find()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'), ['prompt' => 'Select Program']);?>
+		<?= $form->field($model, 'programId')->widget(Select2::classname(), [
+	    		'data' => ArrayHelper::map(Program::find()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
+				'options' => [
+                                    'id' => 'examresult-programid'
+				],
+				'pluginOptions' => [
+                                    'allowClear' => true,
+                                    'multiple' => false,
+                                    'placeholder' => 'Select Program',
+				],
+			]);
+			?>
     </div>
 	<div class="col-md-6">
 		<?php $teacher = !empty($model->teacherId) ? $model->teacher->publicIdentity : null; ?>
@@ -71,6 +82,7 @@ if ($model->isNewRecord) {
 		echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
 			[
 			'data' => [$teacherId => $teacher],
+            'type' => DepDrop::TYPE_SELECT2,    
 			'pluginOptions' => [
 				'depends' => ['examresult-programid'],
 				'placeholder' => 'Select...',
