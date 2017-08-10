@@ -9,9 +9,9 @@ class m170810_053943_explode_lesson_refactor extends Migration
         $this->renameColumn('lesson_split_usage', 'lessonSplitId', 'lessonId');
         $this->addColumn('lesson', 'isExploded',
 			$this->integer()->notNull()->after('type'));
-        $tableSchema = Yii::$app->db->schema->getTableSchema('lesson_hiearchy');
+        $tableSchema = Yii::$app->db->schema->getTableSchema('lesson_hierarchy');
         if($tableSchema == null) {	
-            $this->createTable('lesson_hiearchy', [
+            $this->createTable('lesson_hierarchy', [
                     'id' => $this->primaryKey(),
                     'lessonId' => $this->integer()->notNull(),
                     'childLessonId' => $this->integer()->notNull(),

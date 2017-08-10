@@ -84,7 +84,7 @@ class LessonReschedule extends \yii\db\ActiveRecord
 	{
 		$oldLessonModel = current($event->data);
                 $oldLesson = Lesson::findOne($oldLessonModel['id']);
-                $duration = $oldLesson->getCreditUsage();
+                $duration = $oldLesson->duration;
 		$lessonModel	 = $event->sender;
 		$teacherId = $lessonModel->teacherId;
 		$fromDate	 = \DateTime::createFromFormat('Y-m-d H:i:s', $oldLessonModel['date']);

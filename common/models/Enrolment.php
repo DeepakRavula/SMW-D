@@ -623,7 +623,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function hasExplodedLesson()
     {
         $lessonSplits = Lesson::find()
-                    ->splited()
+                    ->split()
                     ->unscheduled()
                     ->enrolment($this->id)
                     ->all();

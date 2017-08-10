@@ -208,6 +208,13 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_CANCELED;
     }
+    
+    public function Cancel()
+    {
+        $this->status = self::STATUS_CANCELED;
+        
+        return $this->save();
+    }
 
 	public function hasExpiryDate()
     {
@@ -976,7 +983,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getSplitRescheduledAmount()
     {
-        $getDuration   = new \DateTime($this->reschedule->lesson->getCreditUsage());
+        $getDuration   = new \DateTime($this->reschedule->lesson->duration);
         $hours         = $getDuration->format('H');
         $minutes       = $getDuration->format('i');
         $unit          = (($hours * 60) + $minutes) / 60;

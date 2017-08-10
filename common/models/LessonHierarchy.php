@@ -11,14 +11,14 @@ use Yii;
  * @property integer $childLessonId
  * @property integer $depth
  */
-class LessonHiearchy extends \yii\db\ActiveRecord
+class LessonHierarchy extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'lessson_hierarchy';
+        return 'lesson_hierarchy';
     }
 
     /**

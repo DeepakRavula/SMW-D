@@ -11,7 +11,7 @@ use yii\helpers\Html;
 $enrolmentId = $model->enrolment->id;
 $locationId = $model->course->locationId;
 $lessons = Lesson::find()
-        ->splited()
+        ->split()
         ->unscheduled()
         ->enrolment($enrolmentId);
 $splitLessonDataProvider = new ActiveDataProvider([

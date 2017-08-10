@@ -985,8 +985,7 @@ class LessonController extends Controller
             $privateLesson->save();
             $model->append($lesson);
         }
-        $model->status = Lesson::STATUS_CANCELED;
-        $model->save();
+        $model->cancel();
         Yii::$app->session->setFlash('alert', [
             'options' => ['class' => 'alert-success'],
             'body' => 'The Lesson has been exploded successfully.',
@@ -1005,14 +1004,13 @@ class LessonController extends Controller
             . 'H' . $additionalDuration->format('i') . 'M'));
         $model->duration = $lessonDuration->format('H:i:s');
         if ($model->validate()) {
-            $lessonSplitUsage = new LessonSplitUsage();
+        $lessonSplitUsage = new LessonSplitUsage();
             $lessonSplitUsage->lessonId = $post['radioButtonSelection'];
             $lessonSplitUsage->extendedLessonId = $id;
             $lessonSplitUsage->mergedOn = (new \DateTime())->format('Y-m-d H:i:s');
             $lessonSplitUsage->save();
             $lesson = $this->findModel($lessonSplitUsage->lessonId);
-            $lesson->status = Lesson::STATUS_CANCELED;
-            $lesson->save();
+            $lesson->cancel();
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'The Lesson has been extended successfully.',
