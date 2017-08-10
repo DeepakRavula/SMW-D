@@ -81,6 +81,7 @@ class EnrolmentController extends Controller
 					'courseId' => $model->course->id,
 					'status' => Lesson::STATUS_SCHEDULED
 				])
+				->isConfirmed()
 				->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
@@ -278,7 +279,7 @@ class EnrolmentController extends Controller
 		$courseModel->updateAttributes([
 			'isConfirmed' => true
 		]);
-        $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+        $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'isConfirmed' => false]);
 		foreach ($lessons as $lesson) {
 			$lesson->updateAttributes([
 				'status' => Lesson::STATUS_SCHEDULED,
@@ -373,6 +374,7 @@ class EnrolmentController extends Controller
 			->location($locationId)
 		    ->andWhere(['course.programId' => $programId])
 			->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+			->isConfirmed()
 			->between($date, $date)
 			->notDeleted()
 			->all();
@@ -408,7 +410,7 @@ class EnrolmentController extends Controller
 			$startDate		 = new \DateTime($course->startDate);
 			Lesson::deleteAll([
 				'courseId' => $model->course->id,
-				'status' => Lesson::STATUS_DRAFTED,
+				'isConfirmed' => false,
 			]);
 			$lessons		 = Lesson::find()
 				->where([
@@ -419,6 +421,7 @@ class EnrolmentController extends Controller
 				->joinWith(['reschedule' => function($query) {
 					$query->joinWith('bulkRescheduleLesson');
 				}])
+				->isConfirmed()
 				->between($startDate, $endDate)
 				->all();
 			$dayList = Course::getWeekdaysList();

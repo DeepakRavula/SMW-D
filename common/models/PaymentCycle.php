@@ -123,6 +123,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $startDate  = new \DateTime($this->startDate);
         $endDate    = new \DateTime($this->endDate);
         $lessons = Lesson::find()
+			->isConfirmed()
             ->notDeleted()
             ->location($locationId)
             ->andWhere(['courseId' => $this->enrolment->course->id])
@@ -161,6 +162,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
         $lessons = Lesson::find()
+			->isConfirmed()
             ->notDeleted()
             ->joinWith('paymentCycleLesson')
             ->andWhere(['payment_cycle_lesson.paymentCycleId' => $this->id])

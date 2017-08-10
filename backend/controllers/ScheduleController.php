@@ -138,6 +138,7 @@ class ScheduleController extends Controller
 				}
 			}])
 			->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+			->isConfirmed()
 			->between($date, $date)
 			->notDeleted()
 			->all();

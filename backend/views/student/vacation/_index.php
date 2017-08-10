@@ -18,7 +18,7 @@ $vacations = Vacation::find()
 	->joinWith(['enrolment' => function($query) use($studentModel){
 		$query->andWhere(['studentId' => $studentModel->id]);	
 	}])
-	->andWhere(['vacation.isConfirmed' => true]);
+	->andWhere(['vacation.isConfirmed' => true, 'vacation.isDeleted' => false]);
 $vacationDataProvider = new ActiveDataProvider([
 	'query' => $vacations,
 ]);
@@ -61,12 +61,10 @@ echo GridView::widget([
 			'template' => '{delete}',
 			'buttons' => [
 				'delete' => function ($url, $model, $key) {
-					return Html::a('<i class="fa fa-times" aria-hidden="true"></i>',
-							['vacation/delete', 'id' => $model->id],
-							[
-							'data' => [
-								'method' => 'post',
-							],
+					return Html::a('<i class="fa fa-trash-o"></i>', ['#'], [
+						'id' => 'vacation-delete-' . $model->id,
+						'title' => Yii::t('yii', 'Delete'),
+						'class' => 'vacation-delete m-l-10 btn-danger btn-xs',
 					]);
 				},
 				],

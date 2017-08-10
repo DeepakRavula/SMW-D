@@ -96,6 +96,7 @@ class ScheduleController extends Controller
 		$userLocation = UserLocation::findOne(['user_id' => $userId]);
         $locationId = $userLocation->location_id;
         $query = Lesson::find()
+			->isConfirmed()
 			->joinWith(['course' => function ($query) use($locationId) {
 				$query->andWhere(['course.locationId' => $locationId]);
 			}]);

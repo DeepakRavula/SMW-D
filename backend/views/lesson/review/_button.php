@@ -7,7 +7,6 @@ use yii\helpers\Url;
 	<?php $url = Url::to(['confirm',
 		'courseId' => $courseId, 
 		'Vacation[id]' => $vacationId,
-		'Vacation[type]' => $vacationType
 	]);?>
 <?php elseif (!empty($rescheduleBeginDate) && !empty($rescheduleEndDate)): ?>
 	<?php $url = Url::to(['confirm', 

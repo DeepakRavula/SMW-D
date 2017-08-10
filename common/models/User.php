@@ -511,7 +511,8 @@ class User extends ActiveRecord implements IdentityInterface
                 $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
             }])
             ->where(['lesson.teacherId' => $id])
-            ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+            ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
+			->isConfirmed()
             ->all();
         $events = [];
         foreach ($lessons as &$lesson) {

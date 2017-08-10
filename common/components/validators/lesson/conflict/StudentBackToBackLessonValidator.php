@@ -18,7 +18,8 @@ class StudentBackToBackLessonValidator extends Validator
         $date->modify('-1 second');
         $query = Lesson::find()
 			->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED])
-            ->andWhere(['NOT', ['lesson.id' => $model->id]]);
+            ->andWhere(['NOT', ['lesson.id' => $model->id]])
+			->isConfirmed();
         if(!empty($model->enrolment->id)) {
             $studentBackToBackLessons = $query->enrolment($model->enrolment->id)
                     ->backToBackOverlap($lessonDate, $lessonStartTime, $lessonFullEndTime)

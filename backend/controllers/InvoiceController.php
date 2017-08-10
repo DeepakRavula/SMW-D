@@ -497,6 +497,7 @@ class InvoiceController extends Controller
 	{
             $locationId = Yii::$app->session->get('location_id');
             $query = Lesson::find()
+				->isConfirmed()
                 ->notDeleted()
                 ->location($locationId);
             $privateLessons = $query->completedUnInvoicedPrivate()->all();

@@ -29,6 +29,7 @@ use common\models\Lesson;
 						'courseId' => $model->course->id,
 						'status' => Lesson::STATUS_SCHEDULED
 					])
+					->isConfirmed()
 					->notDeleted()
 					->orderBy(['lesson.date' => SORT_ASC]),
 					'pagination' => [

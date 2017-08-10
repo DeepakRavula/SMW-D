@@ -453,6 +453,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getLessonCreditAmount($splitId)
     {
         $lesson = Lesson::find()
+				->isConfirmed()
                     ->joinWith('lessonSplits')
                     ->andWhere(['lesson_split.id' => $splitId])
                     ->one();

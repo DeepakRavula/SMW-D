@@ -26,10 +26,11 @@ class StudentValidator extends Validator
         $date->modify('-1 second');
         $lessonEndTime = $date->format('H:i:s');
         $query = Lesson::find()
-                    ->studentLessons($locationId, $studentId)
-                    ->andWhere(['NOT', ['lesson.id' => $model->id]])
-                    ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
-                    ->all();
+			->studentLessons($locationId, $studentId)
+			->andWhere(['NOT', ['lesson.id' => $model->id]])
+			->isConfirmed()
+			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
+			->all();
 
         if((!empty($model->vacationId) || empty($model->vacationId)) && !empty($studentLessons)) {
             foreach($studentLessons as $studentLesson) {

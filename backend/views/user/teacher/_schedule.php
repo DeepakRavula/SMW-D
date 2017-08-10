@@ -47,6 +47,7 @@ use common\models\Invoice;
         }])
         ->where(['lesson.teacherId' => $teacherId])
         ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
+		->isConfirmed()
 		->notDeleted()
         ->all();
    $events = [];

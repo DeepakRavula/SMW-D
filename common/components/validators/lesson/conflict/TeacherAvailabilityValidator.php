@@ -37,6 +37,7 @@ class TeacherAvailabilityValidator extends Validator
 			$teacherLessons = Lesson::find()
 				->teacherLessons($locationId, $model->teacherId)
 				->andWhere(['NOT', ['lesson.id' => $model->id]])
+				->isConfirmed()
 				->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
 				->all();
 			if ((!empty($teacherLessons))) {

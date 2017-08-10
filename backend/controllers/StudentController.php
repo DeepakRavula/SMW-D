@@ -101,6 +101,7 @@ class StudentController extends Controller
         $lessons = Lesson::find()
 			->studentEnrolment($locationId, $model->id)
             ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
+			->isConfirmed()
             ->orderBy(['lesson.date' => SORT_ASC])
             ->notDeleted();
 
@@ -110,6 +111,7 @@ class StudentController extends Controller
 
         $unscheduledLessons = Lesson::find()
 			->studentEnrolment($locationId, $model->id)
+			->isConfirmed()
             ->joinWith(['privateLesson'])
             ->andWhere(['NOT', ['private_lesson.lessonId' => null]])
             ->orderBy(['private_lesson.expiryDate' => SORT_DESC])

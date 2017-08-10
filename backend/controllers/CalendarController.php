@@ -177,7 +177,8 @@ class CalendarController extends Controller
                 ->joinWith(['course' => function ($query) use($locationId) {
                     $query->andWhere(['course.locationId' => $locationId]);
                 }])
-                ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+                ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
+				->isConfirmed()
                 ->between($date, $date)
                 ->notDeleted()
                 ->all();

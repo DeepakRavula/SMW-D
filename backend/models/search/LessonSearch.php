@@ -64,10 +64,10 @@ class LessonSearch extends Lesson
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
         $query = Lesson::find()
-                ->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
-                ->orderBy(['lesson.date' => SORT_ASC])
+				->isConfirmed()
                 ->notDeleted()
-                ->location($locationId);
+                ->location($locationId)
+                ->orderBy(['lesson.date' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

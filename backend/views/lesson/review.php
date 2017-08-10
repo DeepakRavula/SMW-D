@@ -109,7 +109,6 @@ $columns = [
 <?= $this->render('review/_button', [
 	'vacationId' => $vacationId,
 	'hasConflict' => $hasConflict,
-	'vacationType' => $vacationType,
 	'rescheduleBeginDate' => $rescheduleBeginDate,
     'rescheduleEndDate' => $rescheduleEndDate,
 	'courseId' => $courseId,
@@ -152,13 +151,12 @@ Modal::begin([
 		$("#lessonsearch-showallreviewlessons").on("change", function () {
 			var showAllReviewLessons = $(this).is(":checked");
 			var vacationId = '<?= $vacationId; ?>';
-			var vacationType = '<?= $vacationType; ?>';
 			var startDate = '<?= $rescheduleBeginDate; ?>';
 			var endDate = '<?= $rescheduleEndDate; ?>';
 			if(vacationId) {
 				var params = $.param({
 					'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-					'Vacation[id]': vacationId, 'Vacation[type]': vacationType,
+					'Vacation[id]': vacationId,
 				});	
 			} else if(startDate && endDate) {
 				var params = $.param({
@@ -201,9 +199,8 @@ Modal::begin([
 			var lessonId = $('#lesson-id').val();
 			var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
 			var vacationId = '<?= $vacationId; ?>';
-			var vacationType = '<?= $vacationType; ?>';
 			var params = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-				'Vacation[id]': vacationId, 'Vacation[type]': vacationType
+				'Vacation[id]': vacationId
 			});
 			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
 			$.ajax({
