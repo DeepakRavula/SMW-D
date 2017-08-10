@@ -246,9 +246,10 @@ echo $this->render('_profile', [
             $('#new-lesson-modal').modal('hide');
             return false;
         });
-        $(document).on('click', '.edit-button', function () {
-            $.ajax({
-                url: '<?= Url::to(['exam-result/update']); ?>?id=' + $(this).parent().parent().data('key'),
+        $(document).on("click", "#student-exam-result-listing tbody > tr", function() {
+		var examResultId = $(this).data('key');	
+		$.ajax({
+                url: '<?= Url::to(['exam-result/update']); ?>?id='+examResultId,
                 type: 'get',
                 dataType: "json",
                 success: function (response)
@@ -264,7 +265,8 @@ echo $this->render('_profile', [
                     }
                 }
             });
-        });
+		return false;
+	});
 		
 		$(document).on('click', '.enrolment-delete', function () {
 		var enrolmentId = $(this).parent().parent().data('key');
@@ -310,16 +312,8 @@ echo $this->render('_profile', [
             return false;
         });
         $(document).on('beforeSubmit', '#exam-result-form', function (e) {
-            var studentId = <?= $model->id; ?>;
-            var examResultId = $('#examresult-id').val();
-
-            if (examResultId) {
-                var url = '<?= Url::to(['/exam-result/update']);?>?id=' + examResultId;
-            } else {
-                var url = '<?= Url::to(['/exam-result/create']);?>?studentId=' + studentId;
-            }
             $.ajax({
-                url: url,
+                url    : $(this).attr('action'),
                 type: 'post',
                 dataType: "json",
                 data: $(this).serialize(),

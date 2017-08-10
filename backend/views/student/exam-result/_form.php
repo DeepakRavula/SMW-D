@@ -25,10 +25,17 @@ use yii\helpers\Url;
                 ->notDeleted()
 		->all(),
 	'id', 'userProfile.fullName'
-);?>
+);
+if ($model->isNewRecord) {
+    $url = Url::to(['exam-result/create', 'studentId' => $studentModel->id]);
+} else {
+    $url = Url::to(['exam-result/update', 'id' => $model->id]);
+}
+?>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
 	'id' => 'exam-result-form',
+    'action' => $url,
 ]); ?>
 <div class="row">
 	<div class="col-md-6">
@@ -77,6 +84,14 @@ use yii\helpers\Url;
 		<?=  $form->field($model, 'id')->hiddenInput()->label(false);?>
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
         <?php echo Html::submitButton(Yii::t('backend', 'Cancel'), ['class' => 'btn btn-default exam-result-cancel-button', 'name' => 'signup-button']) ?>
+       <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
+			'id' => 'evaluation-delete-button',
+                        'class' => 'btn btn-danger',
+                        'data' => [
+                            'confirm' => 'Are you sure you want to delete this evaluation?',
+                            'method' => 'post',
+                        ]
+                ]);?>
     </div>
     </div>
 <?php ActiveForm::end(); ?>
