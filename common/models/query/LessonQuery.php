@@ -85,6 +85,11 @@ class LessonQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
+    
+    public function splited()
+    {
+        return $this->andWhere(['lesson.isExploded' => true]);
+    }
 
     public function unscheduled()
     {

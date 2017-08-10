@@ -119,7 +119,8 @@ class Lesson extends \yii\db\ActiveRecord
                     return $model->type !== self::TYPE_EXTRA;
             }],
             [['courseId', 'status', 'type'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyContext'], 'safe'],
+            [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 
+                'isExploded', 'applyContext'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 
 				'on' => [self::SCENARIO_EDIT, self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(), 
@@ -191,11 +192,6 @@ class Lesson extends \yii\db\ActiveRecord
         return (int) $this->status === self::STATUS_UNSCHEDULED;
     }
 
-    public function isExploded()
-    {
-        return !empty($this->lessonSplit);
-    }
-
     public function isCompleted()
     {
         $lessonDate  = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
@@ -222,7 +218,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $duration = $this->duration;
             foreach ($this->extendedLessons as $extendedLesson) {
-                $additionalDuration = new \DateTime($extendedLesson->lessonSplit->unit);
+                $additionalDuration = new \DateTime($extendedLesson->lesson->duration);
                 $lessonDuration = new \DateTime($duration);
                 $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
                     . 'H' . $additionalDuration->format('i') . 'M'));
@@ -238,7 +234,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canExplode()
     {
-        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded()
+        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded
             && !$this->isExpired();
     }
 
@@ -361,7 +357,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaLineItems()
     {
-        if ($this->isExploded() || $this->isSplitRescheduled()) {
+        if ($this->isExploded || $this->isSplitRescheduled()) {
             return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
                 ->via('invoiceItemPaymentCycleLessonSplits')
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_SPLIT]);
@@ -406,7 +402,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isSplitRescheduled()
     {
-        return !empty($this->reschedule) ? $this->reschedule->lesson->isExploded() : false;
+        return !empty($this->reschedule) ? $this->reschedule->lesson->isExploded : false;
     }
 
     public function getReschedule()
@@ -478,7 +474,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getProFormaLineItem()
     {
         $lessonId = $this->id;
-        if (!$this->isSplitRescheduled() && !$this->isExploded() && !$this->isExtra()) {
+        if (!$this->isSplitRescheduled() && !$this->isExploded && !$this->isExtra()) {
             $paymentCycleLessonId = $this->paymentCycleLesson->id;
         }
         if ($this->isSplitRescheduled()) {
@@ -493,7 +489,7 @@ class Lesson extends \yii\db\ActiveRecord
                     }])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
                     ->one();
-            } else if ($this->isExploded() || $this->isSplitRescheduled()) {
+            } else if ($this->isExploded || $this->isSplitRescheduled()) {
                 return InvoiceLineItem::find()
                     ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
                     ->joinWith(['lineItemPaymentCycleLessonSplit' => function ($query) use ($lessonId) {
@@ -539,7 +535,7 @@ class Lesson extends \yii\db\ActiveRecord
             break;
             case self::STATUS_UNSCHEDULED:
                 $status = 'Unscheduled';
-                if ($this->isExploded()) {
+                if ($this->isExploded) {
                     $status .= ' (Exploded)';
                 } else if ($this->isExpired()) {
                     $status .= ' (Expired)';
@@ -622,7 +618,10 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         if ($insert) {
-			$this->isDeleted = false;
+            $this->isDeleted = false;
+            if (empty($this->isExploded)) {
+                $this->isExploded = false;
+            }
             if(empty($this->type)) {
                 $this->type = Lesson::TYPE_REGULAR;
             }
@@ -702,7 +701,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lesson->isDeleted = false;
 
         return $lesson->validate() && $this->enrolment->hasExplodedLesson()
-            && !$this->isExploded();
+            && !$this->isExploded;
     }
 
     public function getRootLesson()

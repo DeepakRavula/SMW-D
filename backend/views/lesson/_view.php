@@ -107,35 +107,7 @@ use kartik\grid\GridView;
         <div class="clearfix"></div>
     </div>
 </div>
-<?php if ($model->isExploded() && Yii::$app->controller->action->id === 'view'):?>
-<h4>Splits</h4>
-<?php yii\widgets\Pjax::begin(['id' => 'split-lesson-index']); ?>
-    <?php echo GridView::widget([
-        'dataProvider' => $splitDataProvider,
-        'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'columns' => [
-            [
-                'class' => 'yii\grid\SerialColumn',
-            ],
-            [
-                'label' => 'Duration',
-                'value' => function ($data) {
-                    return !empty($data->unit) ? $data->unit : null;
-                }
-            ],
-            [
-                'format' => 'raw',
-                'label' => 'Used in Lesson',
-                'value' => function ($data) {
-                    return $data->getStatus();
-                }
-            ]
-        ]
-    ]); ?>
-    <?php yii\widgets\Pjax::end(); ?>
 
-<?php endif; ?>
 <?php
 
 Modal::begin([

@@ -315,7 +315,7 @@ class LessonController extends Controller
 						$model->duration = $duration->format('H:i:s');
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-                    if ($model->isExploded()) {
+                    if ($model->isExploded) {
                         $model->duration = $oldLesson->duration;
                     }
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
@@ -976,6 +976,7 @@ class LessonController extends Controller
             $date = new \DateTime($model->date);
             $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
             $lesson->date = $date->format('Y-m-d H:i:s');
+            $lesson->isExploded = true;
             $lesson->save();
             $privateLesson = clone $model->privateLesson;
             $privateLesson->isNewRecord = true;
@@ -1005,11 +1006,13 @@ class LessonController extends Controller
         $model->duration = $lessonDuration->format('H:i:s');
         if ($model->validate()) {
             $lessonSplitUsage = new LessonSplitUsage();
-            $lessonSplitUsage->lessonSplitId = $post['radioButtonSelection'];
-            $lessonSplitUsage->lessonSplitId = $lessonSplitUsage->getLessonSplitId();
+            $lessonSplitUsage->lessonId = $post['radioButtonSelection'];
             $lessonSplitUsage->extendedLessonId = $id;
             $lessonSplitUsage->mergedOn = (new \DateTime())->format('Y-m-d H:i:s');
             $lessonSplitUsage->save();
+            $lesson = $this->findModel($lessonSplitUsage->lessonId);
+            $lesson->status = Lesson::STATUS_CANCELED;
+            $lesson->save();
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'The Lesson has been extended successfully.',
