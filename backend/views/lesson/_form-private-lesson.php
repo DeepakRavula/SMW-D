@@ -38,9 +38,6 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         ]); ?>
    <div class="row-fluid">
 	   <div class="col-md-3">
-		    <?php if($model->isUnscheduled()) : ?>
-				<?php $model->duration = $model->getCreditUsage(); ?> 
-		    <?php endif; ?>
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
                 [

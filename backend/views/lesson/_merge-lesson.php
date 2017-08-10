@@ -1,18 +1,19 @@
 <?php
-use common\models\LessonSplit;
+use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\Url;
 use yii\helpers\Html;
 ?>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php
-$courseId = $model->courseId;
+$enrolmentId = $model->enrolment->id;
 $locationId = $model->course->locationId;
-$lessons = LessonSplit::find()
-        ->unusedSplits($courseId, $locationId);
+$lessons = Lesson::find()
+        ->split()
+        ->unscheduled()
+        ->enrolment($enrolmentId);
 $splitLessonDataProvider = new ActiveDataProvider([
 	'query' => $lessons,
 	'pagination' => false
@@ -67,13 +68,13 @@ $splitLessonDataProvider = new ActiveDataProvider([
             [
                 'label' => 'Date',
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asDate($data->lesson->date).' @ '.Yii::$app->formatter->asTime($data->lesson->date);
+                    return Yii::$app->formatter->asDate($data->date).' @ '.Yii::$app->formatter->asTime($data->date);
                 },
             ],
             [
                 'label' => 'Prepaid?',
                 'value' => function ($data) {
-                    if (!empty($data->lesson->proFormaInvoice) && ($data->lesson->proFormaInvoice->isPaid() || $data->lesson->proFormaInvoice->hasCredit())) {
+                    if (!empty($data->proFormaInvoice) && ($data->proFormaInvoice->isPaid() || $data->proFormaInvoice->hasCredit())) {
                         return 'Yes';
                     }
 

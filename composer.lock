@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "content-hash": "3f5a6a01c06add29bd7c5bb26e159c33",
+    "content-hash": "7bad4314a09edd0fa78d1f6ff4bd5657",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -220,7 +221,7 @@
                 "imperavi redactor",
                 "yii"
             ],
-            "time": "2017-02-28 16:15:10"
+            "time": "2017-02-28T16:15:10+00:00"
         },
         {
             "name": "baibaratsky/yii2-rollbar",
@@ -2170,7 +2171,7 @@
                 "yii",
                 "yii2"
             ],
-            "time": "2017-01-14 11:34:27"
+            "time": "2017-01-14T11:34:27+00:00"
         },
         {
             "name": "kartik-v/yii2-dialog",
@@ -2328,7 +2329,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-29 18:46:37"
+            "time": "2017-04-29T18:46:37+00:00"
         },
         {
             "name": "kartik-v/yii2-krajee-base",
@@ -2587,7 +2588,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-01 16:03:50"
+            "time": "2017-04-01T16:03:50+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-datetimepicker",
@@ -2685,7 +2686,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-01-10 17:30:48"
+            "time": "2016-01-10T17:30:48+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-select2",
@@ -2738,7 +2739,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-12 09:00:24"
+            "time": "2017-04-12T09:00:24+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-switchinput",
@@ -4455,6 +4456,52 @@
             "time": "2016-12-06T08:17:19+00:00"
         },
         {
+            "name": "valentinek/yii2-closure-table-behavior",
+            "version": "0.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BioSin/yii2-closure-table-behavior.git",
+                "reference": "9ba9b812aca90cb0f60c5e7258b1232a8e3cac95"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BioSin/yii2-closure-table-behavior/zipball/9ba9b812aca90cb0f60c5e7258b1232a8e3cac95",
+                "reference": "9ba9b812aca90cb0f60c5e7258b1232a8e3cac95",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "valentinek\\behaviors\\": "./src",
+                    "valentinek\\tests\\": "./tests"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Valentin Konusov",
+                    "email": "mail@valentinek.ru",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This extension allows you to get functional for closure table trees.",
+            "homepage": "https://github.com/BioSin/yii2-closure-table-behavior",
+            "keywords": [
+                "Behavior",
+                "closure table",
+                "extension",
+                "yii2"
+            ],
+            "time": "2015-01-24T08:48:23+00:00"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v2.4.0",
             "source": {
@@ -4518,7 +4565,7 @@
                     ""
                 ]
             },
-            "time": "2017-06-05 13:38:06"
+            "time": "2017-06-05T13:38:06+00:00"
         },
         {
             "name": "wbraganca/yii2-selectivity",

@@ -475,10 +475,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_SPLIT;
     }
 
-    public function getLessonCreditUnit($splitId)
+    public function getLessonCreditUnit($lessonId)
     {
-        $split       = LessonSplit::findOne($splitId);
-        $getDuration = \DateTime::createFromFormat('H:i:s', $split->unit);
+        $split       = Lesson::findOne($lessonId);
+        $getDuration = \DateTime::createFromFormat('H:i:s', $split->duration);
         $hours       = $getDuration->format('H');
         $minutes     = $getDuration->format('i');
         return (($hours * 60) + $minutes) / 60;
@@ -509,17 +509,17 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 			->sum('cost');
 			return $totalCost;
 	}
-    public function addLessonCreditApplied($splitId)
+    public function addLessonCreditApplied($lessonId)
     {
-        $lessonSplit  = LessonSplit::findOne($splitId);
+        $lesson  = Lesson::findOne($lessonId);
         $old = clone $this;
-        $this->unit   = $this->unit + $this->getLessonCreditUnit($splitId);
-        $amount = $this->lesson->enrolment->program->rate * $this->unit;
+        $this->unit   = $this->unit + $this->getLessonCreditUnit($lessonId);
+        $amount = $lesson->enrolment->program->rate * $this->unit;
         $this->amount = $amount;
         $this->save();
-        $creditUsedInvoice = $lessonSplit->lesson->invoice;
-        if (!$lessonSplit->lesson->hasInvoice()) {
-            $creditUsedInvoice = $lessonSplit->lesson->proFormaInvoice;
+        $creditUsedInvoice = $lesson->invoice;
+        if (!$lesson->hasInvoice()) {
+            $creditUsedInvoice = $lesson->proFormaInvoice;
         }
         if ($creditUsedInvoice) {
             if ($this->invoice->addLessonCreditAppliedPayment($this->netPrice - $old->netPrice, $creditUsedInvoice)) {

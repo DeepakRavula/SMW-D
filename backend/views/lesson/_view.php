@@ -69,12 +69,8 @@ use kartik\grid\GridView;
         				<?php echo !empty($model->course->program->name) ? $model->course->program->name : null ?>
         				</a>
         		</div>
-        		<?php if($model->isUnscheduled()) : ?>
-        			<?php $duration = $model->getCreditUsage(); ?> 
-        		<?php else: ?>
         		<?php $duration = $model->duration; ?>
-        		<?php endif; ?>
-                <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Duration">
+        	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Duration">
         			<i class="fa fa-clock-o"></i> <?= (new \DateTime($duration))->format('H:i') ?>
         		</div>
         		<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Status">
@@ -107,35 +103,7 @@ use kartik\grid\GridView;
         <div class="clearfix"></div>
     </div>
 </div>
-<?php if ($model->isExploded() && Yii::$app->controller->action->id === 'view'):?>
-<h4>Splits</h4>
-<?php yii\widgets\Pjax::begin(['id' => 'split-lesson-index']); ?>
-    <?php echo GridView::widget([
-        'dataProvider' => $splitDataProvider,
-        'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'columns' => [
-            [
-                'class' => 'yii\grid\SerialColumn',
-            ],
-            [
-                'label' => 'Duration',
-                'value' => function ($data) {
-                    return !empty($data->unit) ? $data->unit : null;
-                }
-            ],
-            [
-                'format' => 'raw',
-                'label' => 'Used in Lesson',
-                'value' => function ($data) {
-                    return $data->getStatus();
-                }
-            ]
-        ]
-    ]); ?>
-    <?php yii\widgets\Pjax::end(); ?>
 
-<?php endif; ?>
 <?php
 
 Modal::begin([

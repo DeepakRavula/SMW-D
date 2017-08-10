@@ -6,7 +6,7 @@ namespace common\models;
  * This is the model class for table "private_lesson".
  *
  * @property string $id
- * @property string $lessonSplitId
+ * @property string $lessonId
  * @property string $extendedLessonId
  * @property int $mergedOn
  */
@@ -26,8 +26,8 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['lessonSplitId', 'extendedLessonId'], 'required'],
-            [['lessonSplitId', 'extendedLessonId'], 'integer']
+            [['lessonId', 'extendedLessonId'], 'required'],
+            [['lessonId', 'extendedLessonId'], 'integer']
         ];
     }
 
@@ -38,7 +38,7 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'lessonSplitId' => 'Lesson Split ID',
+            'lessonId' => 'Lesson ID',
             'extendedLessonId' => 'Extended Lesson ID',
             'mergedOn' => 'Merged On',
         ];
@@ -56,13 +56,7 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
     
     public function getLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-            ->via('lessonSplit');
-    }
-
-    public function getLessonSplit()
-    {
-        return $this->hasOne(LessonSplit::className(), ['id' => 'lessonSplitId']);
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
 
     public function getExtendedLesson()
@@ -70,24 +64,11 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
         return $this->hasOne(Lesson::className(), ['id' => 'extendedLessonId']);
     }
 
-    public function getLessonSplitId()
-    {
-        $model = self::findOne(['lessonSplitId' => $this->lessonSplitId]);
-        if (!empty($model)) {
-            foreach ($this->lesson->lessonSplits as $split) {
-                if ($split->id !== $this->lessonSplitId) {
-                    return $split->id;
-                }
-            }
-        }
-        return $this->lessonSplitId;
-    }
-
     public function afterSave($insert,$changedAttributes)
     {
         if ($insert) {
             if ($this->extendedLesson->hasInvoice()) {
-                $this->extendedLesson->invoiceLineItem->addLessonCreditApplied($this->lessonSplitId);
+                $this->extendedLesson->invoiceLineItem->addLessonCreditApplied($this->lessonId);
             }
         }
 
