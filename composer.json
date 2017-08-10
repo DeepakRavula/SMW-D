@@ -97,6 +97,7 @@
     "bower-asset/fullcalendar-scheduler": "^1.5",
     "baibaratsky/yii2-rollbar": "1.5.*",
     "league/period": "^3.3",
+    "nesbot/carbon": "^1.22",
     "valentinek/yii2-closure-table-behavior": "*"
   },
   "require-dev": {
