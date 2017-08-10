@@ -8,7 +8,7 @@ class m170809_071045_draft_lesson extends Migration
     public function up()
     {
 		$draftLessons = Lesson::find()
-            ->andWhere(['status' => Lesson::STATUS_DRAFTED])
+            ->andWhere(['status' => 1])
             ->all();
         foreach ($draftLessons as $draftLesson) {
             $draftLesson->updateAttributes([
@@ -16,7 +16,7 @@ class m170809_071045_draft_lesson extends Migration
             ]);
         }
 		$lessons = Lesson::find()
-            ->andWhere(['NOT IN','status', Lesson::STATUS_DRAFTED])
+            ->andWhere(['NOT IN','status', 1])
             ->all();
         foreach ($lessons as $lesson) {
             $lesson->updateAttributes([
