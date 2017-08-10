@@ -92,7 +92,22 @@ class Vacation extends \yii\db\ActiveRecord
 		if (!$insert) {
 			return parent::afterSave($insert, $changedAttributes);
 		}
-	    $this->trigger(Course::EVENT_VACATION_CREATE_PREVIEW);
+		$fromDate = new \DateTime($this->fromDate);
+		$toDate = new \DateTime($this->toDate);
+		$lessons	 = Lesson::find()
+			->andWhere([
+				'courseId' => $this->enrolment->course->id,
+				'lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]
+			])
+			->between($fromDate, $toDate)
+			->all();
+		foreach($lessons as $lesson) {
+			$lesson->id			 = null;
+			$lesson->isNewRecord = true;
+			$lesson->status		 = Lesson::STATUS_SCHEDULED;
+			$lesson->isConfirmed = false;
+			$lesson->save();
+		}
 		
 		return parent::afterSave($insert, $changedAttributes);
 	}
