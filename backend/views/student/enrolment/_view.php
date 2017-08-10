@@ -96,7 +96,7 @@ $(document).ready(function() {
                     right: 'agendaWeek'
                 },
                 allDaySlot: false,
-				height:false,
+				height:450,
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',
                 defaultView: 'agendaWeek',
@@ -109,7 +109,7 @@ $(document).ready(function() {
                 overlapEventsSeparate: true,
                 events: events,
                 select: function (start, end, allDay) {
-                    $('#course-startdate').val(moment(start).format('YYYY-MM-DD hh:mm A'));
+                    $('#course-startdate').val(moment(start).format('DD-MM-YYYY hh:mm A'));
                     $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
                     $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
 					$('#courseschedule-day').val(moment(start).day());
@@ -135,6 +135,15 @@ $(document).ready(function() {
             });
         }
     };
+	$(document).on('click', '#preview-button', function (e) {
+		e.preventDefault();
+		var date = moment($('#course-startdate').val(), 'DD-MM-YYYY hh:mm A', true).isValid(); 
+		if(! date) {
+            $('#bulk-reschedule').html("Please choose the time in calendar").fadeIn().delay(5000).fadeOut();
+		} else {
+			$('#enrolment-update').submit();
+		}
+	});
 	$(document).on('change', '#course-startdate', function () {
 		calendar.refresh();
 	});
