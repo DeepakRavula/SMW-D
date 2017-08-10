@@ -6,6 +6,7 @@ use common\models\PaymentFrequency;
 use yii\helpers\Html;
 use kartik\select2\Select2;
 use yii\helpers\Url;
+use kartik\datetime\DateTimePicker;
 
 /* 
  * To change this license header, choose License Headers in Project Properties.
@@ -39,6 +40,25 @@ use yii\helpers\Url;
                 'id' => 'enrolment-discount',
                 'name' => 'MultipleEnrolmentDiscount[discount]'
             ])->label('Multiple Enrolment Discount'); ?>
+        </div>
+		<div class="clearfix"></div>
+		<div class="col-md-4">
+           <?php
+			echo $form->field($course, 'endDate')->widget(DateTimePicker::classname(),
+				[
+				'options' => [
+					'value' => (new \DateTime($course->endDate))->format('d-m-Y'),
+				],
+				'layout' => '{input}{picker}',
+				'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+				'pluginOptions' => [
+					'autoclose' => true,
+					'format' => 'dd-mm-yyyy',
+					'startView' => 2,
+					'minView' => 2,
+				]
+			]);
+			?>
         </div>
 	<div class="form-group col-xs-12">
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>

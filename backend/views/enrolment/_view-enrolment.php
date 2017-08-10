@@ -5,6 +5,9 @@ use yii\grid\GridView;
 use common\models\Course;
 use common\models\Enrolment;
 use yii\helpers\Url;
+
+use kartik\datetime\DateTimePickerAsset;
+DateTimePickerAsset::register($this);	
 ?>
 <div class="group-course-view">
 	<div class="row-fluid user-details-wrapper">
@@ -37,9 +40,11 @@ use yii\helpers\Url;
 			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->startDate)?>
 	</div>
 		<div class="row-fluid">
+	<?php yii\widgets\Pjax::begin(['id' => 'course-enddate','timeout' => 6000,]); ?>
 	<div class="col-md-1 p-0 hand" data-toggle="tooltip" data-placement="bottom" title="End Date">
 			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->endDate)?>
 	</div>
+	<?php yii\widgets\Pjax::end(); ?>
     <div class="clearfix"></div>
 	<?php if($model->course->program->isPrivate()) :
             $enrolmentDataProvider = new ActiveDataProvider([
@@ -143,6 +148,7 @@ use yii\helpers\Url;
             var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
             $.pjax.reload({url:url,container:"#payment-cycle-listing",replace:false, async:false, timeout: 4000});
             $.pjax.reload({url:url,container:"#enrolment-view",replace:false, async:false, timeout: 4000});
+            $.pjax.reload({url:url,container:"#course-enddate",replace:false, async:false, timeout: 4000});
         }
     }
 </script>
