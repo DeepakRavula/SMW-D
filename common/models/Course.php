@@ -228,6 +228,7 @@ class Course extends \yii\db\ActiveRecord
 			$lesson->status		 = Lesson::STATUS_SCHEDULED;
 			$nextWeekScheduledDate->setTime($hour, $minute, $second);
 			$lesson->date		 = $nextWeekScheduledDate->format('Y-m-d H:i:s');
+			$lesson->isConfirmed = false;
 			$lesson->save();
 
 			$startDate->modify('next '.$day);
@@ -338,6 +339,7 @@ class Course extends \yii\db\ActiveRecord
 						'status' => Lesson::STATUS_SCHEDULED,
 						'date' => $day->format('Y-m-d H:i:s'),
 						'duration' => $duration,
+						'isConfirmed' => false,
 						'isDeleted' => false,
 					]);
 					$lesson->save();

@@ -691,7 +691,9 @@ class LessonController extends Controller
 			$startDate = new \DateTime($rescheduleBeginDate);
 			$endDate = new \DateTime($rescheduleEndDate);
 			$oldLessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
+				->where(['courseId' => $courseModel->id,
+					'status' => Lesson::STATUS_SCHEDULED,
+					'isConfirmed' => true])
 				->between($startDate, $endDate)
 				->all();
 			$oldLessonIds = [];
