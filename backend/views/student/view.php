@@ -230,16 +230,7 @@ echo $this->render('_profile', [
             $('#student-note-modal').modal('show');
             return false;
         });
-        $(document).on('click', '.add-new-exam-result', function (e) {
-    		$('input[type="text"]').val('');
-			$('#examresult-date').val(moment(new Date()).format('DD-MM-YYYY'));
-			$('#examresult-programid').val('');
-			$('#examresult-teacherid').val('');
-            $('#new-exam-result-modal').modal('show');
-            $('#examresult-id').val('');
-            return false;
-        });
-		$(document).on('click', '.exam-result-cancel-button', function () {
+        $(document).on('click', '.exam-result-cancel-button', function () {
             $('#new-exam-result-modal').modal('hide');
             return false;
         });
@@ -247,10 +238,16 @@ echo $this->render('_profile', [
             $('#new-lesson-modal').modal('hide');
             return false;
         });
-        $(document).on("click", "#student-exam-result-listing tbody > tr", function() {
-		var examResultId = $(this).data('key');	
-		$.ajax({
-                url: '<?= Url::to(['exam-result/update']); ?>?id='+examResultId,
+        $(document).on("click", ".add-new-exam-result,#student-exam-result-listing tbody > tr", function() {
+		var examResultId = $(this).data('key');
+        var studentId=<?= $model->id ?>;
+            if (examResultId === undefined) {
+                var customUrl = '<?= Url::to(['exam-result/create']); ?>?studentId='+studentId;
+            } else {
+                var customUrl = '<?= Url::to(['exam-result/update']); ?>?id=' + examResultId;
+            }
+            $.ajax({
+                url    : customUrl,
                 type: 'get',
                 dataType: "json",
                 success: function (response)
@@ -341,14 +338,8 @@ $(document).on('click', '.evaluation-delete', function () {
             return false;
         });
         $(document).on('beforeSubmit', '#exam-result-form', function (e) {
-            var customUrl=$(this).attr('action');
-        var examResultId = $('#examresult-id').val();
-        var studentId = <?= $model->id; ?>;
-      if (examResultId === "") {
-                var customUrl = '<?= Url::to(['exam-result/create']); ?>?studentId='+studentId;
-            } 
         $.ajax({
-                url    : customUrl,
+                url    : $(this).attr('action'),
                 type: 'post',
                 dataType: "json",
                 data: $(this).serialize(),

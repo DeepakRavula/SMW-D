@@ -28,7 +28,7 @@ use kartik\select2\Select2;
 	'id', 'userProfile.fullName'
 );
 if ($model->isNewRecord) {
-    $url = Url::to(['exam-result/create', 'studentId' => $studentModel->id]);
+    $url = Url::to(['exam-result/create', 'studentId' => $model->studentId]);
 } else {
     $url = Url::to(['exam-result/update', 'id' => $model->id]);
 }
