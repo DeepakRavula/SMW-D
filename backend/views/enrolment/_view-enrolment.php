@@ -5,24 +5,27 @@ use yii\grid\GridView;
 use common\models\Course;
 use common\models\Enrolment;
 use yii\helpers\Url;
+
+use kartik\datetime\DateTimePickerAsset;
+DateTimePickerAsset::register($this);	
 ?>
 <div class="group-course-view">
-	<div class="row-fluid user-details-wrapper">
-    <div class="col-md-1 p-0" data-toggle="tooltip" data-placement="bottom" title="Program Name">
+	<div class="row-fluid p-10">
+    <div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Program">
         	<i class="fa fa-music"></i> <?= $model->course->program->name; ?>
     </div>
-	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Teacher Name">
+	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Teacher ">
         	<i class="fa fa-graduation-cap"></i> <?= $model->course->teacher->publicIdentity; ?>
     </div>
-    <div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Rate">
+    <div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Rate">
     	<i class="fa fa-money"></i> <?= $model->course->program->rate; ?>
     </div>
-	<div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Duration">
+	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Duration">
     	<i class="fa fa-calendar"></i> <?php
         $length = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->duration);
         echo $length->format('H:i'); ?>
     </div>
-	<div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Day">
+	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Day">
     	<i class="fa fa-calendar"></i> <?php
         $dayList = Course::getWeekdaysList();
         $day = $dayList[$model->courseSchedule->day];
@@ -33,14 +36,21 @@ use yii\helpers\Url;
         $fromTime = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->fromTime);
         echo $fromTime->format('h:i A'); ?>
 	</div>
+	</div>
+    <div class="clearfix"></div>
+	<div class="row-fluid p-20">
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Start Date">
 			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->startDate)?>
 	</div>
-		<div class="row-fluid">
-	<div class="col-md-1 p-0 hand" data-toggle="tooltip" data-placement="bottom" title="End Date">
-			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->endDate)?>
+	<?php yii\widgets\Pjax::begin(['id' => 'course-endDate','timeout' => 6000,]); ?>
+	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="End Date">
+			<i class="fa fa-calendar"></i> <?php 
+			$endDate = Yii::$app->formatter->asDate($model->course->endDate);
+			echo $endDate;?>
 	</div>
-    <div class="clearfix"></div>
+	</div>
+	<?php yii\widgets\Pjax::end(); ?>
+    <div class="p-10"></div>
 	<?php if($model->course->program->isPrivate()) :
             $enrolmentDataProvider = new ActiveDataProvider([
             'query' => Enrolment::find()
@@ -81,15 +91,12 @@ use yii\helpers\Url;
 	<?php endif; ?>
     <div class="clearfix"></div>
 </div>
-</div>
-</div>
     <?php Modal::begin([
         'header' => '<h4 class="m-0">Enrolment Edit</h4>',
         'id' => 'enrolment-edit-modal',
     ]); ?>
     <div id="enrolment-edit-content"></div>
     <?php Modal::end(); ?>
-
 <script>
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     
@@ -119,7 +126,6 @@ use yii\helpers\Url;
         });
         return false;
     });
-
     $(document).on('beforeSubmit', '#enrolment-update-form', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
@@ -143,6 +149,7 @@ use yii\helpers\Url;
             var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
             $.pjax.reload({url:url,container:"#payment-cycle-listing",replace:false, async:false, timeout: 4000});
             $.pjax.reload({url:url,container:"#enrolment-view",replace:false, async:false, timeout: 4000});
+            $.pjax.reload({url:url,container:"#course-endDate",replace:false, async:false, timeout: 4000});
         }
     }
 </script>

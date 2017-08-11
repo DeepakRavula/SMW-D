@@ -113,7 +113,8 @@ class DashboardController extends \yii\web\Controller
                             ->where(['course.locationId' => $locationId]);
                     }])
                     ->andWhere(['between', 'lesson.date', $searchModel->fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
-                    ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED, Lesson::STATUS_DRAFTED]]])
+                    ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
+					->isConfirmed()
                     ->notDeleted()
                     ->groupBy(['course.programId'])
                     ->all();

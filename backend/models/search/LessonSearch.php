@@ -18,6 +18,7 @@ class LessonSearch extends Lesson
     public $lessonStatus;
     public $fromDate;
     public $toDate;
+    public $dateRange;
     public $type;
     public $customerId;
     public $invoiceType;
@@ -31,7 +32,7 @@ class LessonSearch extends Lesson
         return [
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport'], 'safe'],
-            [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 'invoiceType'], 'safe'],
+            [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 'invoiceType','dateRange'], 'safe'],
         ];
     }
     
@@ -55,17 +56,18 @@ class LessonSearch extends Lesson
     {
         $previousMonth = new \DateTime();
         $previousMonth->modify('first day of last month');
-        $this->fromDate = $previousMonth->format('d-m-Y');
+        $this->fromDate = $previousMonth->format('M d,Y');
         $currentMonth = new \DateTime();
         $currentMonth->modify('last day of this month');
-        $this->toDate = $currentMonth->format('d-m-Y');
+        $this->toDate = $currentMonth->format('M d,Y');
+        $this->dateRange = $this->fromDate.' - '.$this->toDate;
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
         $query = Lesson::find()
-                ->where(['not', ['lesson.status' => Lesson::STATUS_DRAFTED]])
-                ->orderBy(['lesson.date' => SORT_ASC])
+				->isConfirmed()
                 ->notDeleted()
-                ->location($locationId);
+                ->location($locationId)
+                ->orderBy(['lesson.date' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -111,12 +113,22 @@ class LessonSearch extends Lesson
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
             $query->andFilterWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
         }
+        if (!empty($this->dateRange)) {
+            list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
 
-        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
-        $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
+            $this->fromDate = \DateTime::createFromFormat('M d,Y', $this->fromDate);
+            $this->toDate = \DateTime::createFromFormat('M d,Y', $this->toDate);
 
-        if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
-            $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+            if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
+                $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
+            }
+        } else {
+            $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
+            $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
+
+            if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
+                $query->andWhere(['between', 'DATE(lesson.date)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
+            }
         }
 
         return $dataProvider;

@@ -3,6 +3,7 @@
 namespace common\models;
 use yii\helpers\ArrayHelper;
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "vacation".
@@ -37,7 +38,7 @@ class Vacation extends \yii\db\ActiveRecord
     {
         return [
             [['enrolmentId', 'isConfirmed'], 'integer'],
-            [['fromDate', 'toDate', 'dateRange'], 'safe'],
+            [['fromDate', 'toDate', 'dateRange', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -55,6 +56,18 @@ class Vacation extends \yii\db\ActiveRecord
         ];
     }
 
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+				'replaceRegularDelete' => true
+            ],
+        ];
+    }
 	public function getStudent()
     {
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
@@ -69,6 +82,7 @@ class Vacation extends \yii\db\ActiveRecord
         $this->fromDate = (new \DateTime($fromDate))->format('Y-m-d H:i:s');
         $this->toDate = (new \DateTime($toDate))->format('Y-m-d H:i:s');
         $this->isConfirmed = false;
+        $this->isDeleted = false;
 		
         return parent::beforeSave($insert);
     }
@@ -78,7 +92,22 @@ class Vacation extends \yii\db\ActiveRecord
 		if (!$insert) {
 			return parent::afterSave($insert, $changedAttributes);
 		}
-	    $this->trigger(Course::EVENT_VACATION_CREATE_PREVIEW);
+		$fromDate = new \DateTime($this->fromDate);
+		$toDate = new \DateTime($this->toDate);
+		$lessons	 = Lesson::find()
+			->andWhere([
+				'courseId' => $this->enrolment->course->id,
+				'lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]
+			])
+			->between($fromDate, $toDate)
+			->all();
+		foreach($lessons as $lesson) {
+			$lesson->id			 = null;
+			$lesson->isNewRecord = true;
+			$lesson->status		 = Lesson::STATUS_SCHEDULED;
+			$lesson->isConfirmed = false;
+			$lesson->save();
+		}
 		
 		return parent::afterSave($insert, $changedAttributes);
 	}

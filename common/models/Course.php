@@ -22,8 +22,6 @@ use common\models\CourseGroup;
  */
 class Course extends \yii\db\ActiveRecord
 {
-	const EVENT_VACATION_CREATE_PREVIEW = 'vacation-create-preview';
-	const EVENT_VACATION_DELETE_PREVIEW = 'vacation-delete-preview';
 	const SCENARIO_GROUP_COURSE = 'group-course';
 	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
     const EVENT_CREATE = 'event-create';
@@ -225,9 +223,10 @@ class Course extends \yii\db\ActiveRecord
 			$lesson->id			 = null;
 			$lesson->isNewRecord = true;
 			$lesson->teacherId = $teacherId;
-			$lesson->status		 = Lesson::STATUS_DRAFTED;
+			$lesson->status		 = Lesson::STATUS_SCHEDULED;
 			$nextWeekScheduledDate->setTime($hour, $minute, $second);
 			$lesson->date		 = $nextWeekScheduledDate->format('Y-m-d H:i:s');
+			$lesson->isConfirmed = false;
 			$lesson->save();
 
 			$startDate->modify('next '.$day);
@@ -248,45 +247,6 @@ class Course extends \yii\db\ActiveRecord
 		return $isProfessionalDevelopmentDay;
 	}
 
-	public function pushLessons($fromDate, $toDate)
-	{
-		$fromDate	 = (new \DateTime($fromDate))->format('Y-m-d');
-		$lessons	 = Lesson::find()
-			->where([
-				'courseId' => $this->id,
-				'lesson.status' => Lesson::STATUS_SCHEDULED
-			])
-			->andWhere(['>=', 'date', $fromDate])
-			->all();
-		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->courseSchedule->day];
-		$startDate	 = new \DateTime($toDate);
-		$startDate->modify('next '.$day);
-		$this->generateLessons($lessons, $startDate, $this->teacherId);
-	}
-
-	public function restoreLessons($fromDate, $toDate)
-	{
-		$toDate		 = (new \DateTime($toDate))->format('Y-m-d');
-		$lessons	 = Lesson::find()
-			->where([
-				'courseId' => $this->id,
-				'lesson.status' => Lesson::STATUS_SCHEDULED
-			])
-			->andWhere(['>=', 'date', $toDate])
-			->all();
-		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->courseSchedule->day];
-		$startDay	 = (new \DateTime($fromDate))->format('l');
-		if ($day !== $startDay) {
-			$startDate = new \DateTime($fromDate);
-			$startDate->modify('next '.$day);
-		} else {
-			$startDate	 = (new \DateTime($fromDate))->format('Y-m-d');
-			$startDate = new \DateTime($startDate);
-		}
-		$this->generateLessons($lessons, $startDate, $this->teacherId);
-	}
 	public static function groupCourseCount()
 	{
 		$locationId = Yii::$app->session->get('location_id');
@@ -301,7 +261,7 @@ class Course extends \yii\db\ActiveRecord
 	}
 	public function getHolidayLessons()
     {
-		$lessons = Lesson::findAll(['courseId' => $this->id, 'status' => Lesson::STATUS_DRAFTED]);
+		$lessons = Lesson::findAll(['courseId' => $this->id, 'isConfirmed' => false]);
 		$startDate = (new \DateTime($this->startDate))->format('Y-m-d');
        	$holidays = Holiday::find()
 			->andWhere(['>=', 'DATE(date)', $startDate])
@@ -341,7 +301,7 @@ class Course extends \yii\db\ActiveRecord
 				$lessonCount = Lesson::find()
 					->andWhere([
 						'courseId' => $this->id,
-						'status' => Lesson::STATUS_DRAFTED,
+						'status' => Lesson::STATUS_SCHEDULED,
 						'DAYNAME(date)' => $dayName,
 						'TIME(date)' => $time
 					])
@@ -356,9 +316,10 @@ class Course extends \yii\db\ActiveRecord
 					$lesson->setAttributes([
 						'courseId' => $this->id,
 						'teacherId' => $this->teacherId,
-						'status' => Lesson::STATUS_DRAFTED,
+						'status' => Lesson::STATUS_SCHEDULED,
 						'date' => $day->format('Y-m-d H:i:s'),
 						'duration' => $duration,
+						'isConfirmed' => false,
 						'isDeleted' => false,
 					]);
 					$lesson->save();

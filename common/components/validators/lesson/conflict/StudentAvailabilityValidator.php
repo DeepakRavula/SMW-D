@@ -23,6 +23,7 @@ class StudentAvailabilityValidator extends Validator
 		$studentLessons = Lesson::find()
 			->studentLessons($locationId, $studentId)
 			->andWhere(['NOT', ['lesson.id' => $model->id]])
+			->isConfirmed()
 			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
 			->all();		
         if ((!empty($studentLessons))) {

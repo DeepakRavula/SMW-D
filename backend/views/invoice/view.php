@@ -73,11 +73,11 @@ Modal::end();
 			</div>
 		<?php elseif($model->canRevert()): ?>
                     <?=
-			Html::a('<i class="fa fa-remove"></i> Revert this invoice', ['revert-invoice', 'id' => $model->id],
+			Html::a('<i class="fa fa-remove"></i> Return this invoice', ['revert-invoice', 'id' => $model->id],
 				[
 				'class' => 'btn btn-primary pull-right',
                                 'data' => [
-                                    'confirm' => 'Are you sure you want to revert this invoice?',
+                                    'confirm' => 'Are you sure you want to return this invoice?',
                                 ],
 				'id' => 'revert-button',
 			])

@@ -18,13 +18,13 @@ use kartik\grid\GridView;
                     return [
                         'mergeColumns' => [[2, 3]],
                         'content' => [
-                            8 => GridView::F_SUM,
+                            9 => GridView::F_SUM,
                         ],
                         'contentFormats' => [
-                            8 => ['format' => 'number', 'decimals' => 2],
+                            9 => ['format' => 'number', 'decimals' => 2],
                         ],
                         'contentOptions' => [
-                            8 => ['style' => 'text-align:right'],
+                            9 => ['style' => 'text-align:right'],
                         ],
                         'options' => ['style' => 'font-weight:bold;font-size:14px;']
                     ];
@@ -35,12 +35,12 @@ use kartik\grid\GridView;
                 'value' => function($data) {
                     return $data->code;
                 },
-                'contentOptions' => ['style' => 'font-size:14px'],
+                'contentOptions' => ['style' => 'font-size:14px;width:150px'],
             ],
             [
                 'label' => 'Description',
                 'value' => function ($data) {
-                    return $data->description;
+                    return substr($data->description, 0, 35).' ...';
                 },
                 'contentOptions' => ['style' => 'font-size:14px;width:250px'],
             ],
@@ -64,34 +64,45 @@ use kartik\grid\GridView;
             [
                 'label' => 'PF(%)',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:60px;'],
                 'value' => function ($data) {
                     if ($data->enrolmentPaymentFrequencyDiscount) {
                         return $data->enrolmentPaymentFrequencyDiscount->value != 0.00 ?
-                            $data->enrolmentPaymentFrequencyDiscount->value : null;
+                            floatval($data->enrolmentPaymentFrequencyDiscount->value) : null;
                     }
                 }
             ],
             [
-                'label' => 'Enrolment($)',
+                'label' => 'Enrol($)',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:100px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
                 'value' => function ($data) {
                     if ($data->multiEnrolmentDiscount) {
                         return $data->multiEnrolmentDiscount->value != 0.00 ?
-                            $data->multiEnrolmentDiscount->value : null;
+                            floatval($data->multiEnrolmentDiscount->value) : null;
                     }
                 }
             ],
             [
                 'format' => ['decimal', 2],
-                'label' => 'Other($)',
+                'label' => 'Customer(%)',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:100px;'],
                 'value' => function ($data) {
-                    if ($data->lineItemDiscount || $data->customerDiscount) {
-                        return $data->getOtherDiscountValue() != 0.00 ?
-                            $data->getOtherDiscountValue() : null;
+                    if ($data->customerDiscount) {
+                        return $data->customerDiscount->value != 0.00 ?
+                            floatval($data->customerDiscount->value) : null;
+                    }
+                }
+            ],
+            [
+                'format' => ['decimal', 2],
+                'label' => 'Item($)',
+                'hAlign' => 'right',
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:60px;'],
+                'value' => function ($data) {
+                    if ($data->lineItemDiscount) {
+                        return floatval($data->getLineItemDiscountValue());
                     }
                 }
             ],
@@ -99,9 +110,9 @@ use kartik\grid\GridView;
                 'format' => ['decimal', 2],
                 'label' => 'Net($)',
                 'value' => function ($data) {
-                    return $data->discount;
+                    return floatval($data->discount);
                 },
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:60px;'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
@@ -110,7 +121,7 @@ use kartik\grid\GridView;
                 'format' => ['decimal', 2],
                 'label' => 'Price',
                 'hAlign' => 'right',
-                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:80px'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:60px'],
                 'value' => function ($data) {
                     return $data->netPrice;
                 },

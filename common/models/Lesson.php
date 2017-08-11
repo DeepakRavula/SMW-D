@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
+use valentinek\behaviors\ClosureTable;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\ClassroomValidator;
@@ -28,7 +29,7 @@ class Lesson extends \yii\db\ActiveRecord
 {
     const TYPE_PRIVATE_LESSON = 1;
     const TYPE_GROUP_LESSON = 2;
-    const STATUS_DRAFTED = 1;
+	
     const STATUS_SCHEDULED = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
@@ -96,7 +97,13 @@ class Lesson extends \yii\db\ActiveRecord
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
-				'replaceRegularDelete' => true
+                'replaceRegularDelete' => true
+            ],
+            [
+                'class' => ClosureTable::className(),
+                'tableName' => 'lesson_hierarchy',
+                'childAttribute' => 'childLessonId',
+                'parentAttribute' => 'lessonId',
             ],
         ];
     }
@@ -112,7 +119,8 @@ class Lesson extends \yii\db\ActiveRecord
                     return $model->type !== self::TYPE_EXTRA;
             }],
             [['courseId', 'status', 'type'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyContext'], 'safe'],
+            [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 
+                'isExploded', 'applyContext', 'isConfirmed'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 
 				'on' => [self::SCENARIO_EDIT, self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(), 
@@ -184,11 +192,6 @@ class Lesson extends \yii\db\ActiveRecord
         return (int) $this->status === self::STATUS_UNSCHEDULED;
     }
 
-    public function isExploded()
-    {
-        return !empty($this->lessonSplit);
-    }
-
     public function isCompleted()
     {
         $lessonDate  = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
@@ -205,6 +208,13 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_CANCELED;
     }
+    
+    public function Cancel()
+    {
+        $this->status = self::STATUS_CANCELED;
+        
+        return $this->save();
+    }
 
 	public function hasExpiryDate()
     {
@@ -215,7 +225,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $duration = $this->duration;
             foreach ($this->extendedLessons as $extendedLesson) {
-                $additionalDuration = new \DateTime($extendedLesson->lessonSplit->unit);
+                $additionalDuration = new \DateTime($extendedLesson->lesson->duration);
                 $lessonDuration = new \DateTime($duration);
                 $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
                     . 'H' . $additionalDuration->format('i') . 'M'));
@@ -231,7 +241,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canExplode()
     {
-        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded()
+        return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded
             && !$this->isExpired();
     }
 
@@ -354,7 +364,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaLineItems()
     {
-        if ($this->isExploded() || $this->isSplitRescheduled()) {
+        if ($this->isExploded || $this->isSplitRescheduled()) {
             return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
                 ->via('invoiceItemPaymentCycleLessonSplits')
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_SPLIT]);
@@ -399,7 +409,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isSplitRescheduled()
     {
-        return !empty($this->reschedule) ? $this->reschedule->lesson->isExploded() : false;
+        return !empty($this->reschedule) ? $this->reschedule->lesson->isExploded : false;
     }
 
     public function getReschedule()
@@ -471,7 +481,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getProFormaLineItem()
     {
         $lessonId = $this->id;
-        if (!$this->isSplitRescheduled() && !$this->isExploded() && !$this->isExtra()) {
+        if (!$this->isSplitRescheduled() && !$this->isExploded && !$this->isExtra()) {
             $paymentCycleLessonId = $this->paymentCycleLesson->id;
         }
         if ($this->isSplitRescheduled()) {
@@ -486,7 +496,7 @@ class Lesson extends \yii\db\ActiveRecord
                     }])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
                     ->one();
-            } else if ($this->isExploded() || $this->isSplitRescheduled()) {
+            } else if ($this->isExploded || $this->isSplitRescheduled()) {
                 return InvoiceLineItem::find()
                     ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
                     ->joinWith(['lineItemPaymentCycleLessonSplit' => function ($query) use ($lessonId) {
@@ -532,7 +542,7 @@ class Lesson extends \yii\db\ActiveRecord
             break;
             case self::STATUS_UNSCHEDULED:
                 $status = 'Unscheduled';
-                if ($this->isExploded()) {
+                if ($this->isExploded) {
                     $status .= ' (Exploded)';
                 } else if ($this->isExpired()) {
                     $status .= ' (Expired)';
@@ -615,7 +625,10 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         if ($insert) {
-			$this->isDeleted = false;
+            $this->isDeleted = false;
+            if (empty($this->isExploded)) {
+                $this->isExploded = false;
+            }
             if(empty($this->type)) {
                 $this->type = Lesson::TYPE_REGULAR;
             }
@@ -627,7 +640,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if (!$this->isDraftLesson()) {
+        if ($this->isConfirmed) {
             if (!$insert) {
                 if ($this->isRescheduledLesson($changedAttributes)) {
                     $this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
@@ -657,6 +670,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lesson          = Lesson::find()
             ->where(['courseId' => $this->courseId])
             ->unInvoicedProForma()
+			->isConfirmed()
             ->scheduled()
             ->between($paymentCycleStartDate, $paymentCycleEndDate)
             ->orderBy(['lesson.date' => SORT_ASC])
@@ -695,7 +709,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lesson->isDeleted = false;
 
         return $lesson->validate() && $this->enrolment->hasExplodedLesson()
-            && !$this->isExploded();
+            && !$this->isExploded;
     }
 
     public function getRootLesson()
@@ -731,11 +745,6 @@ class Lesson extends \yii\db\ActiveRecord
             (int)$changedAttributes['teacherId'] !== (int)$this->teacherId;
     }
 
-    public function isDraftLesson()
-    {
-        return (int) $this->status === (int) self::STATUS_DRAFTED;
-    }
-
     public function isRescheduledLesson($changedAttributes)
     {
         return $this->isRescheduledByDate($changedAttributes) ||
@@ -766,6 +775,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $courseCount  = Lesson::find()
                 ->andWhere(['courseId' => $this->courseId])
+				->isConfirmed()
                 ->count('id');
 
         return $courseCount;
@@ -968,7 +978,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getSplitRescheduledAmount()
     {
-        $getDuration   = new \DateTime($this->reschedule->lesson->getCreditUsage());
+        $getDuration   = new \DateTime($this->reschedule->lesson->duration);
         $hours         = $getDuration->format('H');
         $minutes       = $getDuration->format('i');
         $unit          = (($hours * 60) + $minutes) / 60;

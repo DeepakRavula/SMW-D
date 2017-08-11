@@ -11,5 +11,16 @@ use yii\db\ActiveQuery;
  */
 class TeacherUnavailabilityQuery extends ActiveQuery
 {
-    
+   public function overlap($teacherAvailability, $date)
+   {
+	   	$this->andWhere(['AND',
+			[
+				'<=', 'DATE(fromDate)', $date->format('Y-m-d')
+			],
+			[
+				'>=', 'DATE(toDate)', $date->format('Y-m-d')
+			]
+		]);
+		return $this;
+   }
 }

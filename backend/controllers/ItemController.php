@@ -165,6 +165,15 @@ class ItemController extends Controller
     public function actionPrint()
     {
         $searchModel              = new InvoiceLineItemSearch();
+         $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('M d,Y');
+        $searchModel->toDate = $currentDate->format('M d,Y');
+        $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $invoiceLineItemRequest = $request->get('InvoiceLineItemSearch');
+            $searchModel->dateRange = $invoiceLineItemRequest['dateRange'];
+        }
         $searchModel->groupByItem = true;
         $dataProvider             = $searchModel->search(Yii::$app->request->queryParams);
 

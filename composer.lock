@@ -5,6 +5,8 @@
         "This file is @generated automatically"
     ],
     "content-hash": "4bdd2209e0c4ad8803f0b8ad7a2b7627",
+    "content-hash": "3f5a6a01c06add29bd7c5bb26e159c33",
+    "content-hash": "7bad4314a09edd0fa78d1f6ff4bd5657",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -220,7 +222,7 @@
                 "imperavi redactor",
                 "yii"
             ],
-            "time": "2017-02-28 16:15:10"
+            "time": "2017-02-28T16:15:10+00:00"
         },
         {
             "name": "baibaratsky/yii2-rollbar",
@@ -2247,7 +2249,7 @@
                 "yii",
                 "yii2"
             ],
-            "time": "2017-01-14 11:34:27"
+            "time": "2017-01-14T11:34:27+00:00"
         },
         {
             "name": "kartik-v/yii2-dialog",
@@ -2405,7 +2407,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-29 18:46:37"
+            "time": "2017-04-29T18:46:37+00:00"
         },
         {
             "name": "kartik-v/yii2-krajee-base",
@@ -2664,7 +2666,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-01 16:03:50"
+            "time": "2017-04-01T16:03:50+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-datetimepicker",
@@ -2762,7 +2764,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-01-10 17:30:48"
+            "time": "2016-01-10T17:30:48+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-select2",
@@ -2815,7 +2817,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-12 09:00:24"
+            "time": "2017-04-12T09:00:24+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-switchinput",
@@ -3064,6 +3066,63 @@
                 "processing"
             ],
             "time": "2017-05-09T17:41:49+00:00"
+        },
+        {
+            "name": "league/period",
+            "version": "3.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/period.git",
+                "reference": "6a291739c326c8cc88b5c97098d182cc0d1b6a1d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/period/zipball/6a291739c326c8cc88b5c97098d182cc0d1b6a1d",
+                "reference": "6a291739c326c8cc88b5c97098d182cc0d1b6a1d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^1.10",
+                "phpunit/phpunit": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\Period\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ignace Nyamagana Butera",
+                    "email": "nyamsprod@gmail.com",
+                    "homepage": "https://github.com/nyamsprod/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A time range immutable value object",
+            "homepage": "http://period.thephpleague.com",
+            "keywords": [
+                "date",
+                "dateinterval",
+                "dateperiod",
+                "datetime",
+                "interval",
+                "range",
+                "time"
+            ],
+            "time": "2016-09-19T10:33:45+00:00"
         },
         {
             "name": "league/uri",
@@ -3422,6 +3481,59 @@
                 "utf-8"
             ],
             "time": "2016-12-12T10:42:18+00:00"
+        },
+        {
+            "name": "nesbot/carbon",
+            "version": "1.22.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/briannesbitt/Carbon.git",
+                "reference": "7cdf42c0b1cc763ab7e4c33c47a24e27c66bfccc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/7cdf42c0b1cc763ab7e4c33c47a24e27c66bfccc",
+                "reference": "7cdf42c0b1cc763ab7e4c33c47a24e27c66bfccc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "symfony/translation": "~2.6 || ~3.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~2",
+                "phpunit/phpunit": "~4.0 || ~5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.23-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Carbon\\": "src/Carbon/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brian Nesbitt",
+                    "email": "brian@nesbot.com",
+                    "homepage": "http://nesbot.com"
+                }
+            ],
+            "description": "A simple API extension for DateTime.",
+            "homepage": "http://carbon.nesbot.com",
+            "keywords": [
+                "date",
+                "datetime",
+                "time"
+            ],
+            "time": "2017-01-16T07:55:07+00:00"
         },
         {
             "name": "psr/http-message",
@@ -4044,6 +4156,70 @@
             "time": "2017-04-12T14:13:17+00:00"
         },
         {
+            "name": "symfony/translation",
+            "version": "v3.2.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/translation.git",
+                "reference": "df36a48672b929bf3995eb62c58d83004b1d0d50"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/df36a48672b929bf3995eb62c58d83004b1d0d50",
+                "reference": "df36a48672b929bf3995eb62c58d83004b1d0d50",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "symfony/polyfill-mbstring": "~1.0"
+            },
+            "conflict": {
+                "symfony/config": "<2.8"
+            },
+            "require-dev": {
+                "psr/log": "~1.0",
+                "symfony/config": "~2.8|~3.0",
+                "symfony/intl": "^2.8.18|^3.2.5",
+                "symfony/yaml": "~2.8|~3.0"
+            },
+            "suggest": {
+                "psr/log": "To use logging capability in translator",
+                "symfony/config": "",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Translation\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Translation Component",
+            "homepage": "https://symfony.com",
+            "time": "2017-06-24T16:45:17+00:00"
+        },
+        {
             "name": "trntv/cheatsheet",
             "version": "0.1",
             "source": {
@@ -4358,6 +4534,52 @@
             "time": "2016-12-06T08:17:19+00:00"
         },
         {
+            "name": "valentinek/yii2-closure-table-behavior",
+            "version": "0.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BioSin/yii2-closure-table-behavior.git",
+                "reference": "9ba9b812aca90cb0f60c5e7258b1232a8e3cac95"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BioSin/yii2-closure-table-behavior/zipball/9ba9b812aca90cb0f60c5e7258b1232a8e3cac95",
+                "reference": "9ba9b812aca90cb0f60c5e7258b1232a8e3cac95",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "valentinek\\behaviors\\": "./src",
+                    "valentinek\\tests\\": "./tests"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Valentin Konusov",
+                    "email": "mail@valentinek.ru",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This extension allows you to get functional for closure table trees.",
+            "homepage": "https://github.com/BioSin/yii2-closure-table-behavior",
+            "keywords": [
+                "Behavior",
+                "closure table",
+                "extension",
+                "yii2"
+            ],
+            "time": "2015-01-24T08:48:23+00:00"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v2.4.0",
             "source": {
@@ -4421,7 +4643,7 @@
                     ""
                 ]
             },
-            "time": "2017-06-05 13:38:06"
+            "time": "2017-06-05T13:38:06+00:00"
         },
         {
             "name": "wbraganca/yii2-selectivity",

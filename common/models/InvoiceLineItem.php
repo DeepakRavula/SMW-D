@@ -22,6 +22,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
     const SCENARIO_LINE_ITEM_CREATE = 'line-item-create';
     const SCENARIO_EDIT = 'edit';
+    const SCENARIO_NEGATIVE_VALUE_EDIT = 'negative-value-edit';
     const DISCOUNT_FLAT            = 0;
     const DISCOUNT_PERCENTAGE      = 1;
 
@@ -53,7 +54,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            ['taxStatus', 'required', 'on' => self::SCENARIO_EDIT],
+            ['taxStatus', 'required', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_NEGATIVE_VALUE_EDIT]],
             ['code', 'required'],
             [['unit', 'amount', 'item_id', 'description', 'tax_status'],
                 'required', 'when' => function ($model, $attribute) {
@@ -66,7 +67,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
             ],
-            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => self::SCENARIO_OPENING_BALANCE],
+            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
+                self::SCENARIO_NEGATIVE_VALUE_EDIT]],
             [['unit'], 'number', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id !== ItemType::TYPE_MISC;
             },
@@ -141,6 +143,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getLineItemLesson()
     {
         return $this->hasOne(InvoiceItemLesson::className(), ['invoiceLineItemId' => 'id']);
+    }
+
+    public function getDiscounts()
+    {
+        return $this->hasMany(InvoiceLineItemDiscount::className(), ['invoiceLineItemId' => 'id']);
     }
 
     public function getEnrolment()
@@ -278,10 +285,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
 
         if (!$insert) {
-            if ($this->invoice->isReversedInvoice()) {
-                $this->amount = -($this->amount);
-                $this->setScenario(self::SCENARIO_OPENING_BALANCE);
-            }
             $taxType = TaxType::findOne(['name' => $this->tax_type]);
             $this->tax_rate = $this->amount * $taxType->taxCode->rate / 100.0;
         }
@@ -316,12 +319,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $this->invoice->save();
         } else {
             if ($this->invoice->user) {
-                if ($this->invoice->user->hasDiscount()) {
+                if ($this->invoice->user->hasDiscount() && !$this->invoice->isReversedInvoice()) {
                     $this->addCustomerDiscount($this->invoice->user);
                 }
             }
         }
-        
+        if ($this->invoice->isReversedInvoice()) {
+            $this->amount = -($this->amount);
+            $this->setScenario(self::SCENARIO_OPENING_BALANCE);
+        }
         return parent::afterSave($insert, $changedAttributes);
     }
 
@@ -388,7 +394,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return $this->amount - $this->discount;
+        return $this->invoice->isReversedInvoice() ? -(abs($this->amount) - $this->discount) :
+            abs($this->amount) - $this->discount;
     }
 
     public function getDiscount()
@@ -398,14 +405,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             if ((int) $this->lineItemDiscount->valueType) {
                 $discount += $this->lineItemDiscount->value;
             } else {
-                $discount += ($this->lineItemDiscount->value / 100) * $this->amount;
+                $discount += ($this->lineItemDiscount->value / 100) * abs($this->amount);
             }
         }
         if ($this->hasCustomerDiscount()) {
-            $discount += ($this->customerDiscount->value / 100) * $this->amount;
+            $discount += ($this->customerDiscount->value / 100) * abs($this->amount);
         }
         if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
-            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $this->amount;
+            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * abs($this->amount);
         }
         if ($this->hasMultiEnrolmentDiscount()) {
             $discount += $this->multiEnrolmentDiscount->value;
@@ -446,6 +453,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getLessonCreditAmount($splitId)
     {
         $lesson = Lesson::find()
+				->isConfirmed()
                     ->joinWith('lessonSplits')
                     ->andWhere(['lesson_split.id' => $splitId])
                     ->one();
@@ -467,10 +475,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_SPLIT;
     }
 
-    public function getLessonCreditUnit($splitId)
+    public function getLessonCreditUnit($lessonId)
     {
-        $split       = LessonSplit::findOne($splitId);
-        $getDuration = \DateTime::createFromFormat('H:i:s', $split->unit);
+        $split       = Lesson::findOne($lessonId);
+        $getDuration = \DateTime::createFromFormat('H:i:s', $split->duration);
         $hours       = $getDuration->format('H');
         $minutes     = $getDuration->format('i');
         return (($hours * 60) + $minutes) / 60;
@@ -501,17 +509,17 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 			->sum('cost');
 			return $totalCost;
 	}
-    public function addLessonCreditApplied($splitId)
+    public function addLessonCreditApplied($lessonId)
     {
-        $lessonSplit  = LessonSplit::findOne($splitId);
+        $lesson  = Lesson::findOne($lessonId);
         $old = clone $this;
-        $this->unit   = $this->unit + $this->getLessonCreditUnit($splitId);
-        $amount = $this->lesson->enrolment->program->rate * $this->unit;
+        $this->unit   = $this->unit + $this->getLessonCreditUnit($lessonId);
+        $amount = $lesson->enrolment->program->rate * $this->unit;
         $this->amount = $amount;
         $this->save();
-        $creditUsedInvoice = $lessonSplit->lesson->invoice;
-        if (!$lessonSplit->lesson->hasInvoice()) {
-            $creditUsedInvoice = $lessonSplit->lesson->proFormaInvoice;
+        $creditUsedInvoice = $lesson->invoice;
+        if (!$lesson->hasInvoice()) {
+            $creditUsedInvoice = $lesson->proFormaInvoice;
         }
         if ($creditUsedInvoice) {
             if ($this->invoice->addLessonCreditAppliedPayment($this->netPrice - $old->netPrice, $creditUsedInvoice)) {
@@ -533,6 +541,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function addLineItemDetails($lesson)
     {
+        if ($this->invoice->isReversedInvoice()) {
+            return true;
+        }
         if ($this->isPaymentCycleLesson()) {
             $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLesson();
             $invoiceItemPaymentCycleLesson->paymentCycleLessonId    = $lesson->paymentCycleLesson->id;

@@ -14,7 +14,7 @@ use yii\helpers\Html;
                 'format' => 'raw',
                 'contentOptions' => ['style' => 'width: 80px;'],
                 'value' => function ($data) {
-                    return $data->isExploded() ? Html::a('<i class="fa fa-code-fork fa-lg"></i>', null) : null;
+                    return $data->isExploded ? Html::a('<i class="fa fa-code-fork fa-lg"></i>', null) : null;
                 }
             ],
             [

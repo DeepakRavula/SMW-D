@@ -21,6 +21,7 @@ class ClassroomValidator extends Validator
         $overLapLessons = Lesson::find()
                 ->andWhere(['NOT', ['lesson.id' => $model->id]])
                 ->andWhere(['classroomId' => $model->classroomId])
+				->isConfirmed()
 				->scheduled()
                 ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
                 ->all();

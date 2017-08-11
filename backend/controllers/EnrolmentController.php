@@ -18,11 +18,13 @@ use common\models\Student;
 use yii\filters\ContentNegotiator;
 use common\models\TeacherAvailability;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 use common\models\UserLocation;
 use common\models\User;
 use common\models\UserProfile;
 use common\models\PhoneNumber;
 use common\models\Address;
+use Carbon\Carbon;
 use common\models\EnrolmentDiscount;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -81,6 +83,7 @@ class EnrolmentController extends Controller
 					'courseId' => $model->course->id,
 					'status' => Lesson::STATUS_SCHEDULED
 				])
+				->isConfirmed()
 				->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
@@ -115,10 +118,14 @@ class EnrolmentController extends Controller
         $data = $this->renderAjax('update/_form', [
             'model' => $model,
             'multipleEnrolmentDiscount' => $multipleEnrolmentDiscount,
-            'paymentFrequencyDiscount' => $paymentFrequencyDiscount
+            'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
+			'course' => $model->course
         ]);
         $oldPaymentFrequency = $model->paymentFrequencyId;
         $post = Yii::$app->request->post();
+		$course = $model->course; 
+		$endDate = Carbon::parse($course->endDate)->format('d-m-Y');
+		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');        
         if ($post) {
             $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
             if ($paymentFrequencyDiscount->isNewRecord) {
@@ -149,6 +156,20 @@ class EnrolmentController extends Controller
                     $model->resetPaymentCycle();
                 }
             }
+			if($endDate !== $course->endDate) {
+				$courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
+				$lessons = Lesson::find()
+					->andWhere(['>=', 'DATE(date)', $courseEndDate])
+					->all();
+				foreach($lessons as $lesson) {
+					$lesson->updateAttributes([
+						'status' => Lesson::STATUS_CANCELED
+					]);
+				}
+				$course->updateAttributes([
+					'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s') 
+				]);
+			}
             return ['status' => true];
         } else {
 
@@ -278,7 +299,7 @@ class EnrolmentController extends Controller
 		$courseModel->updateAttributes([
 			'isConfirmed' => true
 		]);
-        $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_DRAFTED]);
+        $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'isConfirmed' => false]);
 		foreach ($lessons as $lesson) {
 			$lesson->updateAttributes([
 				'status' => Lesson::STATUS_SCHEDULED,
@@ -373,6 +394,7 @@ class EnrolmentController extends Controller
 			->location($locationId)
 		    ->andWhere(['course.programId' => $programId])
 			->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+			->isConfirmed()
 			->between($date, $date)
 			->notDeleted()
 			->all();
@@ -408,7 +430,7 @@ class EnrolmentController extends Controller
 			$startDate		 = new \DateTime($course->startDate);
 			Lesson::deleteAll([
 				'courseId' => $model->course->id,
-				'status' => Lesson::STATUS_DRAFTED,
+				'isConfirmed' => false,
 			]);
 			$lessons		 = Lesson::find()
 				->where([
@@ -419,6 +441,7 @@ class EnrolmentController extends Controller
 				->joinWith(['reschedule' => function($query) {
 					$query->joinWith('bulkRescheduleLesson');
 				}])
+				->isConfirmed()
 				->between($startDate, $endDate)
 				->all();
 			$dayList = Course::getWeekdaysList();
@@ -440,22 +463,17 @@ class EnrolmentController extends Controller
 
     }
 
-    /**
-     * Deletes an existing Enrolment model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param string $id
-     *
-     * @return mixed
-     */
-	    /**
-     * Deletes an existing Student model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
+	public function actionPreview($id)
+	{
+		$model = $this->findModel($id);
+		$data =  $this->renderAjax('preview', [
+            'model' => $model,
+        ]);	
+		return [
+			'status' => true,
+			'data' => $data
+		];
+	}
   
     public function actionDelete($id)
     {

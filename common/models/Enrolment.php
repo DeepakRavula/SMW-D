@@ -178,6 +178,7 @@ class Enrolment extends \yii\db\ActiveRecord
 					$query->andWhere(['enrolment.id' => $this->id]);
 				}]);
 			}])
+			->isConfirmed()
 			->andWhere(['<=', 'date', (new \DateTime())->format('Y-m-d H:i:s')])
 			->exists();
 		return empty($completedLessons) ? true : false;
@@ -263,6 +264,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getCourseCount()
     {
         return Lesson::find()
+				->isConfirmed()
                 ->notDeleted()
                 ->where(['courseId' => $this->courseId])
                 ->count('id');
@@ -350,6 +352,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function invoiceAllCompletedlessons()
     {
         $query = Lesson::find()
+			->isConfirmed()
             ->notDeleted();
         if (!$this->course->program->isGroup()) {
             $privateLessons = $query->completedUnInvoicedPrivate()
@@ -421,14 +424,6 @@ class Enrolment extends \yii\db\ActiveRecord
         
     }
 
-    public function beforeDelete()
-    {
-        $this->invoiceAllCompletedlessons();
-        $this->addCreditInvoice();
-
-        return parent::beforeDelete();
-    }
-
     public function beforeSave($insert) {
         if($insert) {
             $this->isDeleted = false;
@@ -443,8 +438,8 @@ class Enrolment extends \yii\db\ActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
-        if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate)) || 
-            (!$insert) || $this->isExtra()) {
+        if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate))
+			|| (!$insert) || $this->isExtra()) {
             return true;
         }
         $interval = new \DateInterval('P1D');
@@ -455,7 +450,7 @@ class Enrolment extends \yii\db\ActiveRecord
         $period = new \DatePeriod($start, $interval, $end);
 		foreach ($period as $day) {
 			$lessonCount = Lesson::find()
-				->andWhere(['courseId' => $this->courseId, 'status' => Lesson::STATUS_DRAFTED])
+				->andWhere(['courseId' => $this->courseId, 'isConfirmed' => false])
 				->count();
 			$checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
 			$checkLessonCount = (int)$lessonCount < Lesson::MAXIMUM_LIMIT; 
@@ -467,12 +462,13 @@ class Enrolment extends \yii\db\ActiveRecord
 				$lesson->setAttributes([
 					'courseId' => $this->course->id,
 					'teacherId' => $this->course->teacherId,
-					'status' => Lesson::STATUS_DRAFTED,
+					'status' => Lesson::STATUS_SCHEDULED,
 					'date' => $day->format('Y-m-d H:i:s'),
 					'duration' => $this->courseSchedule->duration,
-					'isDeleted' => false,
+					'isConfirmed' => false,
 				]);
 				$lesson->save();
+				//print_r($lesson);die;
 			}
 		}
     }
@@ -622,10 +618,10 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function hasExplodedLesson()
     {
-        $courseId = $this->courseId;
-        $locationId = $this->course->locationId;
-        $lessonSplits = LessonSplit::find()
-                    ->unusedSplits($courseId, $locationId)
+        $lessonSplits = Lesson::find()
+                    ->split()
+                    ->unscheduled()
+                    ->enrolment($this->id)
                     ->all();
 
         return !empty($lessonSplits);
