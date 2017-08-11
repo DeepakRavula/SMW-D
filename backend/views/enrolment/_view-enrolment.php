@@ -126,16 +126,6 @@ DateTimePickerAsset::register($this);
         });
         return false;
     });
-	$(document).on('click', '#enrolment-edit-save-btn', function (e) {
-		e.preventDefault();
-		var date = $('#course-enddate').val();
-		var endDate = '<?= $endDate; ?>'; 
-		if(date > endDate) {
-            $('#enrolment-enddate').html("End date can't be greater than original end date").fadeIn().delay(5000).fadeOut();
-		} else {
-			$('#enrolment-update-form').submit();
-		}
-	});
     $(document).on('beforeSubmit', '#enrolment-update-form', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
