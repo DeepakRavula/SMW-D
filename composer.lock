@@ -4,9 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4bdd2209e0c4ad8803f0b8ad7a2b7627",
-    "content-hash": "3f5a6a01c06add29bd7c5bb26e159c33",
-    "content-hash": "7bad4314a09edd0fa78d1f6ff4bd5657",
+    "content-hash": "9fdb1aab82068c82fb023106e695bc83",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -222,7 +220,7 @@
                 "imperavi redactor",
                 "yii"
             ],
-            "time": "2017-02-28T16:15:10+00:00"
+            "time": "2017-02-28 16:15:10"
         },
         {
             "name": "baibaratsky/yii2-rollbar",
@@ -2249,7 +2247,7 @@
                 "yii",
                 "yii2"
             ],
-            "time": "2017-01-14T11:34:27+00:00"
+            "time": "2017-01-14 11:34:27"
         },
         {
             "name": "kartik-v/yii2-dialog",
@@ -2407,7 +2405,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-29T18:46:37+00:00"
+            "time": "2017-04-29 18:46:37"
         },
         {
             "name": "kartik-v/yii2-krajee-base",
@@ -2666,7 +2664,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-01T16:03:50+00:00"
+            "time": "2017-04-01 16:03:50"
         },
         {
             "name": "kartik-v/yii2-widget-datetimepicker",
@@ -2764,7 +2762,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-01-10T17:30:48+00:00"
+            "time": "2016-01-10 17:30:48"
         },
         {
             "name": "kartik-v/yii2-widget-select2",
@@ -2817,7 +2815,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-12T09:00:24+00:00"
+            "time": "2017-04-12 09:00:24"
         },
         {
             "name": "kartik-v/yii2-widget-switchinput",
@@ -4643,7 +4641,7 @@
                     ""
                 ]
             },
-            "time": "2017-06-05T13:38:06+00:00"
+            "time": "2017-06-05 13:38:06"
         },
         {
             "name": "wbraganca/yii2-selectivity",
