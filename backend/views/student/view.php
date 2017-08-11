@@ -236,6 +236,7 @@ echo $this->render('_profile', [
 			$('#examresult-programid').val('');
 			$('#examresult-teacherid').val('');
             $('#new-exam-result-modal').modal('show');
+            $('#examresult-id').val('');
             return false;
         });
 		$(document).on('click', '.exam-result-cancel-button', function () {
@@ -340,8 +341,14 @@ $(document).on('click', '.evaluation-delete', function () {
             return false;
         });
         $(document).on('beforeSubmit', '#exam-result-form', function (e) {
-            $.ajax({
-                url    : $(this).attr('action'),
+            var customUrl=$(this).attr('action');
+        var examResultId = $('#examresult-id').val();
+        var studentId = <?= $model->id; ?>;
+      if (examResultId === "") {
+                var customUrl = '<?= Url::to(['exam-result/create']); ?>?studentId='+studentId;
+            } 
+        $.ajax({
+                url    : customUrl,
                 type: 'post',
                 dataType: "json",
                 data: $(this).serialize(),
