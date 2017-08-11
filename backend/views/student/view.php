@@ -265,9 +265,37 @@ echo $this->render('_profile', [
                     }
                 }
             });
+            
 		return false;
 	});
 		
+$(document).on('click', '.evaluation-delete', function () {
+		var examResultId = $('#examresult-id').val();
+		 bootbox.confirm({ 
+  			message: "Are you sure you want to delete this evaluation?", 
+  			callback: function(result){
+				if(result) {
+					$('.bootbox').modal('hide');
+				$.ajax({
+					url: '<?= Url::to(['exam-result/delete']); ?>?id=' + examResultId,
+					type: 'post',
+					success: function (response)
+					{
+						if (response.status)
+						{
+                            $('#new-exam-result-modal').modal('hide');
+							$.pjax.reload({container: '#student-exam-result-listing', timeout: 6000});
+						} else {
+							$('#evaluation-delete').html('You are not allowed to delete this evaluation.').fadeIn().delay(3000).fadeOut();
+						}
+					}
+				});
+				return false;	
+			}
+			}
+		});	
+		return false;
+        });
 		$(document).on('click', '.enrolment-delete', function () {
 		var enrolmentId = $(this).parent().parent().data('key');
 		 bootbox.confirm({ 

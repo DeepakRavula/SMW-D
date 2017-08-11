@@ -96,14 +96,13 @@ if ($model->isNewRecord) {
 		<?=  $form->field($model, 'id')->hiddenInput()->label(false);?>
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
         <?php echo Html::submitButton(Yii::t('backend', 'Cancel'), ['class' => 'btn btn-default exam-result-cancel-button', 'name' => 'signup-button']) ?>
-       <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
-			'id' => 'evaluation-delete-button',
-                        'class' => 'btn btn-danger',
-                        'data' => [
-                            'confirm' => 'Are you sure you want to delete this evaluation?',
-                            'method' => 'post',
-                        ]
-                ]);?>
+       <?php echo Html::a('Delete', [
+            'exam-result/delete', 'id' => $model->id
+        ], [
+							'id' => 'evaluation-delete-' . $model->id,
+							'title' => Yii::t('yii', 'Delete'),
+							'class' => 'evaluation-delete btn btn-danger',
+					]);?>
     </div>
     </div>
 <?php ActiveForm::end(); ?>
