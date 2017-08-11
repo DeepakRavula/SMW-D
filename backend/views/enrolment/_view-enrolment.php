@@ -10,22 +10,22 @@ use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);	
 ?>
 <div class="group-course-view">
-	<div class="row-fluid user-details-wrapper">
-    <div class="col-md-1 p-0" data-toggle="tooltip" data-placement="bottom" title="Program Name">
+	<div class="row-fluid p-10">
+    <div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Program">
         	<i class="fa fa-music"></i> <?= $model->course->program->name; ?>
     </div>
-	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Teacher Name">
+	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Teacher ">
         	<i class="fa fa-graduation-cap"></i> <?= $model->course->teacher->publicIdentity; ?>
     </div>
-    <div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Rate">
+    <div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Rate">
     	<i class="fa fa-money"></i> <?= $model->course->program->rate; ?>
     </div>
-	<div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Duration">
+	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Duration">
     	<i class="fa fa-calendar"></i> <?php
         $length = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->duration);
         echo $length->format('H:i'); ?>
     </div>
-	<div class="col-md-1" data-toggle="tooltip" data-placement="bottom" title="Day">
+	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Day">
     	<i class="fa fa-calendar"></i> <?php
         $dayList = Course::getWeekdaysList();
         $day = $dayList[$model->courseSchedule->day];
@@ -36,16 +36,19 @@ DateTimePickerAsset::register($this);
         $fromTime = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->fromTime);
         echo $fromTime->format('h:i A'); ?>
 	</div>
+	</div>
+    <div class="clearfix"></div>
+	<div class="row-fluid p-20">
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Start Date">
 			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->startDate)?>
 	</div>
-		<div class="row-fluid">
 	<?php yii\widgets\Pjax::begin(['id' => 'course-enddate','timeout' => 6000,]); ?>
-	<div class="col-md-1 p-0 hand" data-toggle="tooltip" data-placement="bottom" title="End Date">
+	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="End Date">
 			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->endDate)?>
 	</div>
+	</div>
 	<?php yii\widgets\Pjax::end(); ?>
-    <div class="clearfix"></div>
+    <div class="p-10"></div>
 	<?php if($model->course->program->isPrivate()) :
             $enrolmentDataProvider = new ActiveDataProvider([
             'query' => Enrolment::find()
@@ -85,8 +88,6 @@ DateTimePickerAsset::register($this);
     <?php yii\widgets\Pjax::end(); ?>
 	<?php endif; ?>
     <div class="clearfix"></div>
-</div>
-</div>
 </div>
     <?php Modal::begin([
         'header' => '<h4 class="m-0">Enrolment Edit</h4>',
