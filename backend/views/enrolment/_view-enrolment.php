@@ -42,9 +42,11 @@ DateTimePickerAsset::register($this);
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Start Date">
 			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->startDate)?>
 	</div>
-	<?php yii\widgets\Pjax::begin(['id' => 'course-enddate','timeout' => 6000,]); ?>
+	<?php yii\widgets\Pjax::begin(['id' => 'course-endDate','timeout' => 6000,]); ?>
 	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="End Date">
-			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->endDate)?>
+			<i class="fa fa-calendar"></i> <?php 
+			$endDate = Yii::$app->formatter->asDate($model->course->endDate);
+			echo $endDate;?>
 	</div>
 	</div>
 	<?php yii\widgets\Pjax::end(); ?>
@@ -125,7 +127,16 @@ DateTimePickerAsset::register($this);
         });
         return false;
     });
-
+	$(document).on('click', '#enrolment-edit-save-btn', function (e) {
+		e.preventDefault();
+		var date = $('#course-enddate').val();
+		var endDate = '<?= $endDate; ?>'; 
+		if(date > endDate) {
+            $('#enrolment-enddate').html("End date can't be greater than original end date").fadeIn().delay(5000).fadeOut();
+		} else {
+			$('#enrolment-update-form').submit();
+		}
+	});
     $(document).on('beforeSubmit', '#enrolment-update-form', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
@@ -149,7 +160,7 @@ DateTimePickerAsset::register($this);
             var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
             $.pjax.reload({url:url,container:"#payment-cycle-listing",replace:false, async:false, timeout: 4000});
             $.pjax.reload({url:url,container:"#enrolment-view",replace:false, async:false, timeout: 4000});
-            $.pjax.reload({url:url,container:"#course-enddate",replace:false, async:false, timeout: 4000});
+            $.pjax.reload({url:url,container:"#course-endDate",replace:false, async:false, timeout: 4000});
         }
     }
 </script>

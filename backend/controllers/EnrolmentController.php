@@ -18,6 +18,7 @@ use common\models\Student;
 use yii\filters\ContentNegotiator;
 use common\models\TeacherAvailability;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 use common\models\UserLocation;
 use common\models\User;
 use common\models\UserProfile;

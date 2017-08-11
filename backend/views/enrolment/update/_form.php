@@ -16,6 +16,7 @@ use kartik\datetime\DateTimePicker;
 
 ?>
 <div id="warning-notification" style="display:none;" class="alert-warning alert fade in"></div>
+<div id="enrolment-enddate" style="display:none;" class="alert-danger alert fade in"></div>
     <?php $form = ActiveForm::begin([
         'id' => 'enrolment-update-form',
         'action' => Url::to(['enrolment/edit', 'id' => $model->id]),
@@ -61,7 +62,7 @@ use kartik\datetime\DateTimePicker;
 			?>
         </div>
 	<div class="form-group col-xs-12">
-            <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+            <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-edit-save-btn']) ?>
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']);?>
         </div>
     <?php ActiveForm::end(); ?>
