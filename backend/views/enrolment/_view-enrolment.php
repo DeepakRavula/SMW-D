@@ -37,7 +37,7 @@ use yii\helpers\Url;
 			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->startDate)?>
 	</div>
 		<div class="row-fluid">
-	<div class="col-md-1 p-0 hand" data-toggle="tooltip" data-placement="bottom" title="End Date">
+	<div class="col-md-1 p-0 hand" id="course-end-date" data-toggle="tooltip" data-placement="bottom" title="End Date">
 			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->endDate)?>
 	</div>
     <div class="clearfix"></div>
@@ -89,7 +89,12 @@ use yii\helpers\Url;
     ]); ?>
     <div id="enrolment-edit-content"></div>
     <?php Modal::end(); ?>
-
+<?php Modal::begin([
+        'header' => '<h4 class="m-0">Adjust Enrolment End date</h4>',
+        'id' => 'enrolment-enddate-edit',
+    ]); ?>
+    <div id="enrolment-enddate-content"></div>
+    <?php Modal::end(); ?>
 <script>
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     
@@ -138,6 +143,22 @@ use yii\helpers\Url;
         return false;
     });
     
+	$(document).on('click', '#course-end-date', function(){
+        $.ajax({
+            url    : '<?= Url::to(['enrolment/preview', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#enrolment-enddate-content').html(response.data);
+                    $('#enrolment-enddate-edit').modal('show');
+                }
+            }
+        });
+        return false;
+    });
     var paymentFrequency = {
 	onEditableSuccess :function(event, val, form, data) {
             var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
