@@ -424,14 +424,6 @@ class Enrolment extends \yii\db\ActiveRecord
         
     }
 
-    public function beforeDelete()
-    {
-        $this->invoiceAllCompletedlessons();
-        $this->addCreditInvoice();
-
-        return parent::beforeDelete();
-    }
-
     public function beforeSave($insert) {
         if($insert) {
             $this->isDeleted = false;

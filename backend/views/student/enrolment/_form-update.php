@@ -13,8 +13,11 @@ use common\models\Course;
 /* @var $model common\models\Enrolment */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<div id="bulk-reschedule" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="enrolment-form">
-	<?php $form			 = ActiveForm::begin(); ?>
+	<?php $form			 = ActiveForm::begin([
+		'id' => 'enrolment-update'
+	]); ?>
     <div class="row">
         <div class="col-md-3">
 			<?php $locationId = Yii::$app->session->get('location_id');
@@ -84,7 +87,7 @@ use common\models\Course;
 	<div class="clearfix"></div>
     <div class="form-group">
 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
-	['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+	['class' => 'btn btn-primary', 'name' => 'signup-button', 'id' => 'preview-button']) ?>
 		<?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']); ?>
     </div>
 

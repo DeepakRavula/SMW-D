@@ -22,8 +22,6 @@ use common\models\CourseGroup;
  */
 class Course extends \yii\db\ActiveRecord
 {
-	const EVENT_VACATION_CREATE_PREVIEW = 'vacation-create-preview';
-	const EVENT_VACATION_DELETE_PREVIEW = 'vacation-delete-preview';
 	const SCENARIO_GROUP_COURSE = 'group-course';
 	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
     const EVENT_CREATE = 'event-create';
@@ -247,24 +245,6 @@ class Course extends \yii\db\ActiveRecord
 			$isProfessionalDevelopmentDay = true;
 		}
 		return $isProfessionalDevelopmentDay;
-	}
-
-	public function pushLessons($fromDate, $toDate)
-	{
-		$fromDate	 = (new \DateTime($fromDate))->format('Y-m-d');
-		$lessons	 = Lesson::find()
-			->where([
-				'courseId' => $this->id,
-				'lesson.status' => Lesson::STATUS_SCHEDULED
-			])
-			->isConfirmed()
-			->andWhere(['>=', 'date', $fromDate])
-			->all();
-		$dayList = self::getWeekdaysList();
-		$day = $dayList[$this->courseSchedule->day];
-		$startDate	 = new \DateTime($toDate);
-		$startDate->modify('next '.$day);
-		$this->generateLessons($lessons, $startDate, $this->teacherId);
 	}
 
 	public static function groupCourseCount()

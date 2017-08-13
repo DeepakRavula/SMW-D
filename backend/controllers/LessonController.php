@@ -573,6 +573,12 @@ class LessonController extends Controller
 		}  else {
 			$query->where(['courseId' => $courseModel->id, 'isConfirmed' => false]);
 		}
+		if(!empty($vacationId)) {
+			$query = Lesson::find()
+				->andWhere(['courseId' => $courseModel->id,
+					'status' => Lesson::STATUS_SCHEDULED,
+					'isConfirmed' => false]);
+		}
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
 			'pagination' => false,
@@ -667,14 +673,18 @@ class LessonController extends Controller
 		}
 		if(! empty($vacationId)) {
 			$vacation = Vacation::findOne(['id' => $vacationId]);
-			$fromDate = (new \DateTime($vacation->fromDate))->format('Y-m-d');
-			$toDate = (new \DateTime($vacation->toDate))->format('Y-m-d');
+			$fromDate = new \DateTime($vacation->fromDate);
+			$toDate = new \DateTime($vacation->toDate);
 			$vacation->isConfirmed = true;
 			$vacation->save();
 			$oldLessons = Lesson::find()
-			->where(['courseId' => $courseId])
-			->andWhere(['>=', 'lesson.date', $fromDate])
-			->all();
+				->andWhere([
+					'courseId' => $courseId,
+					'isConfirmed' => true,
+					'lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]
+				])
+				->between($fromDate, $toDate)
+				->all();
 			$oldLessonIds = [];
 			foreach ($oldLessons as $oldLesson) {
 				$oldLessonIds[] = $oldLesson->id;
@@ -720,7 +730,7 @@ class LessonController extends Controller
 				if(!$lessonRescheduleModel->save()) {
 					Yii::error('Bulk reschedule: ' . \yii\helpers\VarDumper::dumpAsString($lessonRescheduleModel->getErrors()));
 				}
-
+			if(! empty($rescheduleBeginDate)) {
 				$bulkReschedule = new BulkReschedule();
 				$bulkReschedule->type = $this->getRescheduleLessonType($courseModel, $rescheduleEndDate);
 				try {
@@ -737,6 +747,7 @@ class LessonController extends Controller
 				} catch(ErrorException $exception) {
 					Yii::$app->errorHandler->logException($exception);
 				}
+			}
 			}
 		}
 		foreach ($lessons as $lesson) {
