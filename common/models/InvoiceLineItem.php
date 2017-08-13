@@ -532,13 +532,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                     if ($this->lesson->proFormaLineItem->hasCustomerDiscount()) {
                         $this->addCustomerDiscount(null, $this->lesson->proFormaLineItem->customerDiscount);
                     }
-                    if ($this->lesson->proFormaLineItem->hasLineItemDiscount()) {
+                    if ($this->lesson->proFormaLineItem->hasLineItemDiscount()  && !$lesson->isExploded) {
                         $this->addLineItemDiscount($this->lesson->proFormaLineItem->lineItemDiscount);
                     }
                     if ($this->lesson->proFormaLineItem->hasEnrolmentPaymentFrequencyDiscount()) {
                         $this->addEnrolmentPaymentFrequencyDiscount(null, $this->lesson->proFormaLineItem->enrolmentPaymentFrequencyDiscount);
                     }
-                    if ($this->lesson->proFormaLineItem->hasMultiEnrolmentDiscount()) {
+                    if ($this->lesson->proFormaLineItem->hasMultiEnrolmentDiscount()  && !$lesson->isExploded) {
                         $this->addMultiEnrolmentDiscount(null, $this->lesson->proFormaLineItem->multiEnrolmentDiscount);
                     }
                 }
@@ -546,7 +546,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             if ($this->canAddEnrolmentPaymentFrequencyDiscount()) {
                 $this->addEnrolmentPaymentFrequencyDiscount($this->enrolment);
             }
-            if ($this->canAddMultiEnrolmentDiscount()) {
+            if ($this->canAddMultiEnrolmentDiscount()  && !$lesson->isExploded) {
                 $this->addMultiEnrolmentDiscount($this->enrolment);
             }
         }
