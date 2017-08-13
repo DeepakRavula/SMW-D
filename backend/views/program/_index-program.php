@@ -1,12 +1,13 @@
 <?php
 
-use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\bootstrap\ActiveForm;
 use backend\models\search\ProgramSearch;
 use common\models\Program;
 use common\models\User;
+use \yiister\adminlte\widgets\grid\GridView;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -14,11 +15,10 @@ use common\models\User;
 $titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 'Private Programs' : 'Group Programs';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
-
+$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']);
 ?>
-<div class="program-index">
-<div class="smw-search">
-    <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
+<div>
+<div>
     <?php
     $form = ActiveForm::begin([
                 'action' => ['index'],
@@ -26,35 +26,18 @@ $lastRole = end($roles);
                 'options' => ['class' => 'pull-left'],
     ]);
     ?>
-    <?=
-    $form->field($searchModel, 'query', [
-        'inputOptions' => [
-            'placeholder' => 'Search ...',
-            'class' => 'search-field',
-        ],
-    ])->input('search')->label(false);
-    ?>
 </div>
-<div class="pull-right  m-r-20">
-	<div class="schedule-index">
-		<div class="e1Div">
+<div>
 			<?= $form->field($searchModel, 'showAllPrograms')->checkbox(['data-pjax' => true])->label('Show All'); ?>
-		</div>
-    </div>
 </div>
-    	<?php echo $form->field($searchModel, 'type')->hiddenInput()->label(false); ?>
-    <?php ActiveForm::end(); ?>
-	
+   	<?php echo $form->field($searchModel, 'type')->hiddenInput()->label(false); ?>
+    <?php ActiveForm::end(); ?>	
 <?php if ($lastRole->name === User::ROLE_ADMINISTRATOR):?>
 <div class="col-md-8">
-<h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
-<a href="#" class="add-new-program  text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add</a>
-<div class="clearfix"></div>
+<h4 class="pull-left"><?php echo $titleName; ?></h4>
 </div>
 <?php endif; ?>
-<div class="clearfix"></div>
-
-<div class="dn program-create section-tab form-well form-well-smw p-15">
+<div>
     <?php echo $this->render('_form', [
         'model' => $model,
     ]) ?>
@@ -64,18 +47,14 @@ $lastRole = end($roles);
 	<?php Pjax::begin(['id' => 'program-listing']) ?>
         <?php echo GridView::widget([
             'dataProvider' => $dataProvider,
-            'options' => ['class' => 'col-md-8'],
-            'tableOptions' => ['class' => 'table table-bordered'],
-            'headerRowOptions' => ['class' => 'bg-light-gray'],
-            'rowOptions' => function ($model, $key, $index, $grid) {
-                $url = Url::to(['program/view', 'id' => $model->id]);
-
-                return ['data-url' => $url];
-            },
+    		'filterModel' => $searchModel,
+			'condensed' => true,
+        	'hover' => true,
             'columns' => [
                 'name',
                 [
                 'label' => $rateLabel,
+				'attribute' => 'rate', 
                 'value' => function ($data) {
                     return !empty($data->rate) ? Yii::$app->formatter->asCurrency($data->rate) : null;
                 },

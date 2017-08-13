@@ -99,7 +99,8 @@
     "insolita/yii2-adminlte-widgets": "~2.0",
     "league/period": "^3.3",
     "nesbot/carbon": "^1.22",
-    "valentinek/yii2-closure-table-behavior": "*"
+    "valentinek/yii2-closure-table-behavior": "*",
+    "yiister/yii2-adminlte": "~1.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",
