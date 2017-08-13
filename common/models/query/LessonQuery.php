@@ -5,7 +5,7 @@ namespace common\models\query;
 use common\models\Lesson;
 use common\models\Program;
 use common\models\Invoice;
-use valentinek\behaviors\ClosureTableQuery;
+use common\behaviors\ClosureTableQuery;
 use common\models\InvoiceItemPaymentCycleLesson;
 
 /**
@@ -114,6 +114,12 @@ class LessonQuery extends \yii\db\ActiveQuery
         }]);
 
         return $this;
+    }
+    
+    public function invoicableLessons()
+    {
+        return $this->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED,
+                'lesson.status' => Lesson::STATUS_DRAFT]]]);
     }
 
     public function unInvoiced()

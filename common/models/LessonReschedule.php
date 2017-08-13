@@ -63,17 +63,20 @@ class LessonReschedule extends \yii\db\ActiveRecord
     {
         if ($insert) {
             $oldLesson = Lesson::findOne($this->lessonId);
-            if (!empty($this->paymentCycleLesson) && !$oldLesson->isExploded) {
-                $this->paymentCycleLesson->lessonId = $this->rescheduledLessonId;
-                $this->paymentCycleLesson->save();
-            }
+            $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
+            $oldLesson->append($rescheduledLesson);
+            $paymentCycleLesson = new PaymentCycleLesson();
+            $paymentCycleLesson->paymentCycleId = $this->paymentCycleLesson->paymentCycleId;
+            $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
+            $paymentCycleLesson->save();
             if (!empty($oldLesson->invoiceLineItem)) {
                 $oldLesson->invoiceLineItem->lineItemLesson->lessonId = $this->rescheduledLessonId;
                 $oldLesson->invoiceLineItem->lineItemLesson->save();
-            } else if (!empty($oldLesson->proFormaLineItem) &&  !$oldLesson->isExploded) {
-                $oldLesson->proFormaLineItem->lineItemPaymentCycleLesson
-                    ->paymentCycleLessonId = $this->paymentCycleLesson->id;
-                $oldLesson->proFormaLineItem->lineItemPaymentCycleLesson->save();
+            }
+            if (!empty($oldLesson->proFormaLineItem)) {
+                $lineItemPaymentCycleLesson = $oldLesson->proFormaLineItem->lineItemPaymentCycleLesson;
+                $lineItemPaymentCycleLesson->paymentCycleLessonId = $paymentCycleLesson->id;
+                $lineItemPaymentCycleLesson->save();
             }
         }
 

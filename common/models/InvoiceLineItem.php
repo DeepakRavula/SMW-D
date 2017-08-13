@@ -86,9 +86,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getLesson()
     {
         $query = $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
-        if($this->isLessonSplit()) {
-            return $query->via('lineItemPaymentCycleLessonSplit');
-        } else if($this->isPaymentCycleLesson()) {
+        if($this->isPaymentCycleLesson()) {
             return $query->via('paymentCycleLesson');
         } else {
             return $query->via('lineItemLesson');
@@ -200,17 +198,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id']);
     }
 
-    public function getLineItemPaymentCycleLessonSplit()
-    {
-        return $this->hasOne(InvoiceItemPaymentCycleLessonSplit::className(), ['invoiceLineItemId' => 'id']);
-    }
-
-    public function getLessonSplit()
-    {
-        return $this->hasOne(LessonSplit::className(), ['id' => 'lessonSplitId'])
-            ->via('lineItemPaymentCycleLessonSplit');
-    }
-
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
@@ -218,13 +205,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getProFormaLesson()
     {
-        if ($this->isPaymentCycleLesson()) {
-            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
                     ->via('paymentCycleLesson');
-        } else if($this->isPaymentCycleLessonSplit()) {
-            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                    ->via('lessonSplit');
-        }
     }
 
     public function getOriginalInvoice()
@@ -475,10 +457,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_SPLIT;
     }
 
-    public function getLessonCreditUnit($lessonId)
+    public function getLessonCreditUnit($lesson)
     {
-        $split       = Lesson::findOne($lessonId);
-        $getDuration = \DateTime::createFromFormat('H:i:s', $split->duration);
+        $getDuration = \DateTime::createFromFormat('H:i:s', $lesson->duration);
         $hours       = $getDuration->format('H');
         $minutes     = $getDuration->format('i');
         return (($hours * 60) + $minutes) / 60;
@@ -509,11 +490,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 			->sum('cost');
 			return $totalCost;
 	}
-    public function addLessonCreditApplied($lessonId)
+    public function addLessonCreditApplied($lesson)
     {
-        $lesson  = Lesson::findOne($lessonId);
         $old = clone $this;
-        $this->unit   = $this->unit + $this->getLessonCreditUnit($lessonId);
+        $this->unit   = $this->unit + $this->getLessonCreditUnit($lesson);
         $amount = $lesson->enrolment->program->rate * $this->unit;
         $this->amount = $amount;
         $this->save();
@@ -528,17 +508,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
     }
 
-    public function beforeDelete()
-    {
-        if ($this->isPaymentCycleLesson()) {
-            $this->lineItemPaymentCycleLesson->delete();
-        } else if ($this->isPrivateLesson() || $this->isExtraLesson()) {
-            $this->lineItemLesson->delete();
-        }
-
-        return parent::beforeDelete();
-    }
-
     public function addLineItemDetails($lesson)
     {
         if ($this->invoice->isReversedInvoice()) {
@@ -549,12 +518,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $invoiceItemPaymentCycleLesson->paymentCycleLessonId    = $lesson->paymentCycleLesson->id;
             $invoiceItemPaymentCycleLesson->invoiceLineItemId    = $this->id;
             $invoiceItemPaymentCycleLesson->save();
-        }
-        if ($this->isPaymentCycleLessonSplit()) {
-            $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLessonSplit();
-            $invoiceItemPaymentCycleLesson->lessonSplitId     = $lesson->id;
-            $invoiceItemPaymentCycleLesson->invoiceLineItemId = $this->id;
-            return $invoiceItemPaymentCycleLesson->save();
         }
         if ($this->isPrivateLesson() || $this->isExtraLesson() ||
             ($this->isGroupLesson() && $this->invoice->isInvoice())) {
