@@ -340,9 +340,7 @@ class Invoice extends \yii\db\ActiveRecord
             if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
                 $this->trigger(self::EVENT_GENERATE);
             }
-            if ($this->isDeleted) {
-                $this->manageAccount();
-            } else if ((float) $this->total !== (float) $oldTotal->total) {
+            if ($this->isInvoice() && (float) $this->total !== (float) $oldTotal->total) {
                 $this->manageAccount();
             }
             
@@ -469,7 +467,8 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $sumOfPayment = Payment::find()
                 ->andWhere(['user_id' => $customerId])
-                ->andWhere(['NOT', ['payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
+                ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, 
+                    PaymentMethod::TYPE_CREDIT_APPLIED]]])
                 ->sum('payment.amount');
 
         return $sumOfPayment;
@@ -505,7 +504,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function getCustomerAccountBalance($customerId)
     {
         $totalPayment = $this->getSumOfCustomerPayment($customerId);
-        $totalInvoice = $this->getSumOfAllInvoice($customerId);
+        $totalInvoice = $this->getSumOfInvoice($customerId);
         $customerBalance = $totalInvoice - $totalPayment;
 
         return $customerBalance;
@@ -846,22 +845,14 @@ class Invoice extends \yii\db\ActiveRecord
         $model->type = CustomerAccount::TYPE_INVOICE;
         $model->actionType = $this->actionType();
         $model->amount = $this->total;
-        if ((int) $model->actionType !== (int) CustomerAccount::ACTION_TYPE_DELETE){
-            $model->credit = $this->total;
-        } else {
-            $model->credit = null;
-        }
-        if ((int) $model->actionType === (int) CustomerAccount::ACTION_TYPE_DELETE) {
-            $model->debit = $this->total;
-        } else {
-            $model->debit = null;
-        }
+        $model->credit = $this->total;
+        $model->debit = null;
         $model->actionUserId = Yii::$app->user->id;
         $model->balance = $this->accountBalance();
         $model->date = (new \DateTime())->format('Y-m-d H:i:s');
         $model->save();
     }
-
+    
     public function addLessonCreditAppliedPayment($amount, $invoice)
     {
         $paymentModel = new Payment();
@@ -891,9 +882,7 @@ class Invoice extends \yii\db\ActiveRecord
         $model = CustomerAccount::find()
             ->where(['type' => CustomerAccount::TYPE_INVOICE, 'foreignKeyId' => $this->id])
             ->one();
-        if ($this->isDeleted) {
-            return CustomerAccount::ACTION_TYPE_DELETE;
-        }else if (!empty($model)) {
+        if (!empty($model)) {
             return CustomerAccount::ACTION_TYPE_UPDATE;
         } else {
             return CustomerAccount::ACTION_TYPE_CREATE;
@@ -951,7 +940,7 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
-    public function alterLessonItem($lesson)
+    public function updateLessonItem($lesson)
     {
         foreach ($lesson->children()->all() as $splitLesson) {
             $lineItem = $this->addPrivateLessonLineItem($splitLesson);

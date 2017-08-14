@@ -84,7 +84,6 @@ use kartik\grid\GridView;
                 }
             ],
             [
-                'format' => ['decimal', 2],
                 'label' => 'Customer(%)',
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:100px;'],
@@ -96,7 +95,6 @@ use kartik\grid\GridView;
                 }
             ],
             [
-                'format' => ['decimal', 2],
                 'label' => 'Item($)',
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:60px;'],
@@ -107,7 +105,6 @@ use kartik\grid\GridView;
                 }
             ],
             [
-                'format' => ['decimal', 2],
                 'label' => 'Net($)',
                 'value' => function ($data) {
                     return floatval($data->discount);
