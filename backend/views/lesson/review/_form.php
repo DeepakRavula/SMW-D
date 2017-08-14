@@ -43,6 +43,9 @@ use common\models\Lesson;
 		]);
 		?>
 	</div>
+    <div id="spinner" class="spinner col-md-4 col-md-offset-4" style="display:none;">
+    <img src="/backend/web/img/page-loader.gif" alt="" height="100" width="100"/>
+</div>
 	<?= $form->field($model, 'id')->hiddenInput()->label(false);?>
 	<?= $form->field($model, 'applyContext')->hiddenInput()->label(false);?>
 	<div class="col-md-12 p-l-20 form-group">
@@ -64,3 +67,11 @@ use common\models\Lesson;
 	</div>
 </div>
 <?php ActiveForm::end(); ?>
+<script>
+$(document).ready(function () {
+		$("#lesson-review-apply-all").on("click", function() {
+			$('#spinner').show();
+            $('#spinner').delay(25000).fadeOut("slow");
+		});
+	});
+</script>
