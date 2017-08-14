@@ -35,6 +35,7 @@ use common\models\LessonSplit;
 use common\models\timelineEvent\VacationLog;
 use common\models\lesson\BulkReschedule;
 use common\models\lesson\BulkRescheduleLesson;
+use common\models\PaymentCycleLesson;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -315,9 +316,7 @@ class LessonController extends Controller
 						$model->duration = $duration->format('H:i:s');
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-                    if ($model->isExploded) {
-                        $model->duration = $oldLesson->duration;
-                    }
+                    
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
                     if(! $model->save()) {
 					   Yii::error('Update Lesson: ' . \yii\helpers\VarDumper::dumpAsString($model->getErrors()));
@@ -755,7 +754,7 @@ class LessonController extends Controller
 			$lesson->updateAttributes([
 				'isConfirmed' => true,
 			]);
-			
+			$lesson->markAsRoot();
 		}
         if (!empty($courseModel->enrolment) && empty($courseRequest) &&
             empty($vacationRequest)) {
@@ -885,7 +884,6 @@ class LessonController extends Controller
         } else if ($model->isExtra()) {
             if (!$model->hasProFormaInvoice()) {
                 $locationId = $model->enrolment->student->customer->userLocation->location_id;
-                $user = User::findOne(['id' => $model->enrolment->student->customer->id]);
                 $invoice = new Invoice();
                 if (is_a(Yii::$app, 'yii\console\Application')) {
                     $roleUser = User::findByRole(User::ROLE_BOT);
@@ -939,10 +937,6 @@ class LessonController extends Controller
     {
         $model = $this->findModel($id);
         $lessonDurationSec = $model->durationSec;
-        if ($model->hasProFormaInvoice()) {
-            $model->proFormaInvoice->removeLessonItem($id);
-        }
-        $model->markAsRoot();
         for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
             $lesson = clone $model;
             $lesson->isNewRecord = true;
@@ -956,12 +950,19 @@ class LessonController extends Controller
             $lesson->date = $date->format('Y-m-d H:i:s');
             $lesson->isExploded = true;
             $lesson->save();
+            $paymentCycleLesson = new PaymentCycleLesson();
+            $paymentCycleLesson->paymentCycleId = $model->paymentCycle->id;
+            $paymentCycleLesson->lessonId = $lesson->id;
+            $paymentCycleLesson->save();
             $privateLesson = clone $model->privateLesson;
             $privateLesson->isNewRecord = true;
             $privateLesson->id = null;
             $privateLesson->lessonId = $lesson->id;
             $privateLesson->save();
             $model->append($lesson);
+        }
+        if ($model->hasProFormaInvoice()) {
+            $model->proFormaInvoice->alterLessonItem($model);
         }
         $model->cancel();
         Yii::$app->session->setFlash('alert', [
