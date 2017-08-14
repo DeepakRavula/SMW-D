@@ -56,8 +56,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         </div>    
     <div class="clearfix"></div>
 
-    <div class="tabbable-panel">
-	<div class="tabbable-line">
+    <div class="nav-tabs-custom">
 
 		<?php $roles = Yii::$app->authManager->getRolesByUser($model->id);
         $role = end($roles); ?>
@@ -328,7 +327,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         ]);
         ?>
 		<div class="clearfix"></div>
-	</div>
 </div>
 
 <?php Modal::begin([

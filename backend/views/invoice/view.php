@@ -86,8 +86,7 @@ Modal::end();
     <?php ActiveForm::end(); ?>
 </div>
 <?php if(empty($model->lineItem) || $model->lineItem->isMisc()) : ?>
-<div class="tabbable-panel">
-     <div class="tabbable-line">
+<div class="nav-tabs-custom">
 <?php 
 
 $customerContent = $this->render('_customer', [
@@ -119,10 +118,8 @@ $guestContent = $this->render('_guest', [
     ],
 ]); ?>
 </div>
-</div>
 <?php endif; ?>
-<div class="tabbable-panel">
-     <div class="tabbable-line">
+<div class="nav-tabs-custom">
 <?php 
 
 $invoiceContent = $this->render('_view-invoice', [
@@ -176,7 +173,6 @@ $logContent = $this->render('log', [
         ],
     ],
 ]); ?>
-</div>
 </div>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Edit Line Item</h4>',

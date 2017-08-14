@@ -7,8 +7,7 @@ use yii\bootstrap\Tabs;
 $this->title = $model->student->fullName.' - '.$model->course->program->name;
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'EnrolmentSearch[showAllEnrolments]' => false], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
 ?>
-<div class="tabbable-panel">
-    <div class="tabbable-line">
+    <div class="nav-tabs-custom">
 <?php
 
     $detailContent = $this->render('_view-enrolment', [
@@ -53,5 +52,4 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		'items' => $items,
 	]);
 ?>
-    </div>
 </div>

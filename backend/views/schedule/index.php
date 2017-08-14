@@ -168,8 +168,7 @@ bottom:-10px;
        </div>
    
 </div>
-<div class="tabbable-panel">
-    <div class="tabbable-line">
+<div class="nav-tabs-custom">
         <?php
 
         $teacher = $this->render('_teacher-view',[
@@ -198,7 +197,7 @@ bottom:-10px;
                 ],
             ],
         ]);?>
-    </div>
+</div>
     <div class="schedule-index">
         <div class="row schedule-filter">
             <div class="col-md-2 pull-right">
@@ -214,7 +213,6 @@ bottom:-10px;
 	<div class="schedule-index tv-icon">
 		<i class="fa fa-tv fa-2x"></i>	
 	</div>
-</div>
 <?php $url = env('FRONTEND_SCHEDULE_URL'); ?>
 <script type="text/javascript">
 var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;

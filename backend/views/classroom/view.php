@@ -10,8 +10,7 @@ use yii\helpers\Url;
 /* @var $model common\models\ClassRoom */
 
 ?>
- <div class="tabbable-panel">
-     <div class="tabbable-line">
+ <div class="nav-tabs-custom">
 <?php 
 
 $unavailabilityContent = $this->render('unavailability/view', [
@@ -32,7 +31,6 @@ $unavailabilityContent = $this->render('unavailability/view', [
 		]
 	]);
 ?>
-    </div>
  </div>
 <script>
 $(document).ready(function() {

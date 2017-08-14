@@ -8,8 +8,7 @@ use yii\helpers\Url;
 ?>
 
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
-<div class="tabbable-panel">
-    <div class="tabbable-line">
+<div class="nav-tabs-custom">
         <?php
 
         $locationDetails = $this->render('view',[
@@ -40,7 +39,6 @@ use yii\helpers\Url;
                 ],
             ],
         ]);?>
-    </div>
 </div>
 
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />

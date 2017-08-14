@@ -35,8 +35,7 @@ echo $this->render('_profile', [
 ?>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
-<div class="tabbable-panel">
-	<div class="tabbable-line">
+<div class="nav-tabs-custom">
 		<?php
 		$enrolmentContent = $this->render('enrolment/_view', [
 			'model' => $model,
@@ -147,7 +146,6 @@ echo $this->render('_profile', [
 		]);
 		?>
 		<div class="clearfix"></div>
-	</div>
 </div>
 
 <?php Modal::begin([

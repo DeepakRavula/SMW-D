@@ -65,8 +65,7 @@ use yii\bootstrap\Tabs;
         ];
     }
     ?>
-	<div class="tabbable-panel">
-		<div class="tabbable-line">
+	<div class="nav-tabs-custom">
 			<?php
             echo Tabs::widget([
                 'id' => 'user-update-tab',
@@ -74,7 +73,6 @@ use yii\bootstrap\Tabs;
 
             ]);
             ?>
-		</div>
 	</div>
 
 	<div class="col-md-12 m-b-10">

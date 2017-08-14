@@ -39,8 +39,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<div class="tabbable-panel">
-			<div class="tabbable-line">
+		<div class="nav-tabs-custom">
 				<?php
 				$noteContent = $this->render('note/view', [
 					'model' => new Note(),
@@ -69,7 +68,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 				?>
 			</div>
 		</div>	
-	</div>
 </div>
 <script>
  $(document).ready(function() {

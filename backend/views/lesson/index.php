@@ -7,8 +7,7 @@ $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="tabbable-panel">
-     <div class="tabbable-line">
+<div class="nav-tabs-custom">
 <?php 
 
 $indexPrivateLesson = $this->render('_index-lesson', [
@@ -40,5 +39,4 @@ $indexGroupLesson = $this->render('_index-lesson', [
     ],
 ]); ?>
 <div class="clearfix"></div>
-</div>
 </div>

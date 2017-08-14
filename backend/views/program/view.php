@@ -65,8 +65,7 @@ foreach ($roles as $name => $description) {
     </div>
     <div class="clearfix"></div>
 </div>
-<div class="tabbable-panel">
-	<div class="tabbable-line">
+<div class="nav-tabs-custom">
 		<?php
             $studentContent = $this->render('_student', [
                 'model' => $model,
@@ -102,7 +101,6 @@ foreach ($roles as $name => $description) {
         ]);
         ?>
 		<div class="clearfix"></div>
-	</div>
 </div>
     <script>
        $(document).on('click', '.edit-program-button', function () {

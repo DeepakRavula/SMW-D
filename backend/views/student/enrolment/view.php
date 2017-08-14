@@ -25,8 +25,7 @@ $this->title = 'Student Enrolment';
 	</div>
 	<div class="clearfix"></div>
 </div>
- <div class="tabbable-panel">
-     <div class="tabbable-line">
+ <div class="nav-tabs-custom">
 <?php 
 
 $privateCourseContent = $this->render('_form-private', [
@@ -58,5 +57,4 @@ $groupCourseContent = $this->render('_form-group', [
 ]);
 ?>
 <div class="clearfix"></div>
-</div>
  </div>

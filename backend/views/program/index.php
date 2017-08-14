@@ -10,8 +10,7 @@ $this->title = 'Programs';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="tabbable-panel">
-     <div class="tabbable-line">
+<div class="nav-tabs-custom">
 <?php 
 
 $indexProgram = $this->render('_index-program', [
@@ -39,7 +38,6 @@ $indexProgram = $this->render('_index-program', [
     ],
 ]); ?>
 <div class="clearfix"></div>
-</div>
 </div>
  <?php Modal::begin([
         'header' => '<h4 class="m-0">Program</h4>',

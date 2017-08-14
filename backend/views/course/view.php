@@ -42,8 +42,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['
     <div class="clearfix"></div>
 </div>
 </div>
-<div class="tabbable-panel">
-     <div class="tabbable-line">
+<div class="nav-tabs-custom">
 <?php 
 
 $studentContent = $this->render('_student', [
@@ -85,7 +84,6 @@ $logContent = $this->render('log', [
     ],
 ]); ?>
 <div class="clearfix"></div>
-     </div>
  </div>
 <script type="text/javascript">
 jQuery(document).ready(function($) {
