@@ -79,8 +79,9 @@ echo GridView::widget([
         'contentOptions' => ['class' => 'text-left'],
         'label' => 'Description',
         'value'=> function ($data) {
-            return $data->getAccountType() . ' #' . $data->foreignKeyId. ' '
-                . $data->getAccountActionType();
+            return $data->getAccountType() . ' ' . $data->getAccountActionType() . 
+                    '' . str_pad($data->foreignKeyId, 5, 0, STR_PAD_LEFT);
+                ;
         }
     ],
     [
