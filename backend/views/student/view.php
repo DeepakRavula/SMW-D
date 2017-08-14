@@ -223,15 +223,7 @@ echo $this->render('_profile', [
             $('#student-note-modal').modal('show');
             return false;
         });
-        $(document).on('click', '.add-new-exam-result', function (e) {
-    		$('input[type="text"]').val('');
-			$('#examresult-date').val(moment(new Date()).format('DD-MM-YYYY'));
-			$('#examresult-programid').val('');
-			$('#examresult-teacherid').val('');
-            $('#new-exam-result-modal').modal('show');
-            return false;
-        });
-		$(document).on('click', '.exam-result-cancel-button', function () {
+        $(document).on('click', '.exam-result-cancel-button', function () {
             $('#new-exam-result-modal').modal('hide');
             return false;
         });
@@ -239,9 +231,16 @@ echo $this->render('_profile', [
             $('#new-lesson-modal').modal('hide');
             return false;
         });
-        $(document).on('click', '.edit-button', function () {
+        $(document).on("click", ".add-new-exam-result,#student-exam-result-listing tbody > tr", function() {
+		var examResultId = $(this).data('key');
+        var studentId=<?= $model->id ?>;
+            if (examResultId === undefined) {
+                var customUrl = '<?= Url::to(['exam-result/create']); ?>?studentId='+studentId;
+            } else {
+                var customUrl = '<?= Url::to(['exam-result/update']); ?>?id=' + examResultId;
+            }
             $.ajax({
-                url: '<?= Url::to(['exam-result/update']); ?>?id=' + $(this).parent().parent().data('key'),
+                url    : customUrl,
                 type: 'get',
                 dataType: "json",
                 success: function (response)
@@ -257,8 +256,37 @@ echo $this->render('_profile', [
                     }
                 }
             });
-        });
+            
+		return false;
+	});
 		
+$(document).on('click', '.evaluation-delete', function () {
+		var examResultId = $('#examresult-id').val();
+		 bootbox.confirm({ 
+  			message: "Are you sure you want to delete this evaluation?", 
+  			callback: function(result){
+				if(result) {
+					$('.bootbox').modal('hide');
+				$.ajax({
+					url: '<?= Url::to(['exam-result/delete']); ?>?id=' + examResultId,
+					type: 'post',
+					success: function (response)
+					{
+						if (response.status)
+						{
+                            $('#new-exam-result-modal').modal('hide');
+							$.pjax.reload({container: '#student-exam-result-listing', timeout: 6000});
+						} else {
+							$('#evaluation-delete').html('You are not allowed to delete this evaluation.').fadeIn().delay(3000).fadeOut();
+						}
+					}
+				});
+				return false;	
+			}
+			}
+		});	
+		return false;
+        });
 		$(document).on('click', '.enrolment-delete', function () {
 		var enrolmentId = $(this).parent().parent().data('key');
 		 bootbox.confirm({ 
@@ -328,16 +356,8 @@ echo $this->render('_profile', [
             return false;
         });
         $(document).on('beforeSubmit', '#exam-result-form', function (e) {
-            var studentId = <?= $model->id; ?>;
-            var examResultId = $('#examresult-id').val();
-
-            if (examResultId) {
-                var url = '<?= Url::to(['/exam-result/update']);?>?id=' + examResultId;
-            } else {
-                var url = '<?= Url::to(['/exam-result/create']);?>?studentId=' + studentId;
-            }
-            $.ajax({
-                url: url,
+        $.ajax({
+                url    : $(this).attr('action'),
                 type: 'post',
                 dataType: "json",
                 data: $(this).serialize(),

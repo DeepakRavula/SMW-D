@@ -49,15 +49,15 @@ $splitLessonDataProvider = new ActiveDataProvider([
             [
                 'label' => 'Program',
                 'value' => function ($data) {
-                    return !empty($data->lesson->course->program->name) ? $data->lesson->course->program->name : null;
+                    return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
             ],
             [
                 'label' => 'Invoice Status',
                 'value' => function ($data) {
                     $status = null;
-                    if (!empty($data->lesson->invoice)) {
-                        return $data->lesson->invoice->getStatus();
+                    if (!empty($data->invoice)) {
+                        return $data->invoice->getStatus();
                     } else {
                         $status = 'Not Invoiced';
                     }

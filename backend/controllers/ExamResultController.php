@@ -13,6 +13,7 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Url;
 use common\models\ExamResultLog;
+use yii\filters\ContentNegotiator;
 
 /**
  * ExamResultController implements the CRUD actions for ExamResult model.
@@ -28,7 +29,14 @@ class ExamResultController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-            
+           'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['create'],
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
+                ],
+            ], 
                        
         ];
     }
@@ -68,32 +76,24 @@ class ExamResultController extends Controller
     public function actionCreate($studentId)
     {   
         
-        $response = Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;  
                 $model = new ExamResult();
                 $userModel = User::findOne(['id' => Yii::$app->user->id]);
                 $model->on(ExamResult::EVENT_CREATE, [new ExamResultLog(), 'create']);      
         $model->userName = $userModel->publicIdentity;
-               if ($model->load(Yii::$app->request->post())) {
 			$model->studentId = $studentId;
-			if ($model->validate()) {
-	            $model->save();
-				$response = [
-					'status' => true,
-				];
-			} else {
-				$errors = ActiveForm::validate($model);
-				$response = [
-					'status' => false,
-					'errors' =>  $errors
-				];
-			}
-                        
-                        
-                        
-                        
-			return $response;
-        }
+			 $data  = $this->renderAjax('/student/exam-result/_form', [
+            'model' => $model,
+        ]); 
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			return [
+				'status' => true
+			];
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        } 
         
              
         
