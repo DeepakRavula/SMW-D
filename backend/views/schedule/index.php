@@ -136,8 +136,7 @@ left:45%;
 bottom:-10px;
 }	
 </style>
-<div class=" calendar-filter">
-        <div class="pull-right m-1-20">
+        <div class="pull-right calendar-filter">
 		<span class="filter_by_calendar">Filter by</span>
             <?=
             SelectivityWidget::widget([
@@ -166,8 +165,6 @@ bottom:-10px;
             ]);
             ?>
        </div>
-   
-</div>
 <div class="nav-tabs-custom">
         <?php
 

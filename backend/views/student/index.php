@@ -15,21 +15,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="student-index">  
 	
     <div class="smw-search"> 
-      <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
       <?php
       $form = ActiveForm::begin([
                   'action' => ['index'],
                   'method' => 'get',
                   'options' => ['class' => 'pull-left'],
       ]);
-      ?>
-      <?=
-      $form->field($searchModel, 'query', [
-          'inputOptions' => [
-              'placeholder' => 'Search ...',
-              'class' => 'search-field',
-          ],
-      ])->input('search')->label(false);
       ?>
       <?php ActiveForm::end(); ?>
       <a id="print" class="btn btn-default m-l-20">
@@ -67,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $(document).ready(function(){
   $("#studentsearch-showallstudents").on("change", function() {
       var showAllStudents = $(this).is(":checked");
-      var url = "<?php echo Url::to(['student/index']); ?>?StudentSearch[query]=" + "<?php echo $searchModel->query; ?>&StudentSearch[showAllStudents]=" + (showAllStudents | 0);
+      var url = "<?php echo Url::to(['student/index']); ?>?StudentSearch[showAllStudents]=" + (showAllStudents | 0);
       $.pjax.reload({url:url,container:"#student-listing",replace:false,  timeout: 4000});  //Reload GridView
   });  
   $("#print").on("click", function() {
