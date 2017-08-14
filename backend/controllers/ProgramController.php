@@ -29,7 +29,7 @@ class ProgramController extends Controller
             ],
             [
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['update'],
+				'only' => ['update', 'create'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -118,25 +118,23 @@ class ProgramController extends Controller
      *
      * @return mixed
      */
-    public function actionCreate()
+
+	public function actionCreate()
     {
         $model = new Program();
-        $model->status = Program::STATUS_ACTIVE;
-        $request = Yii::$app->request;
-        $programRequest = $request->get('ProgramSearch');
-        $model->type = $programRequest['type'];
+        $data  = $this->renderAjax('_form', [
+            'model' => $model,
+        ]); 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Program has been created successfully',
-        ]);
-
-            return $this->redirect(['view', 'id' => $model->id]);
+			return [
+				'status' => true
+			];
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        } 
     }
 
     /**
@@ -147,28 +145,28 @@ class ProgramController extends Controller
      *
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
 
-        $data = $this->renderAjax('//program/_form', [
+	 public function actionUpdate($id)
+    {
+		$model = $this->findModel($id);
+        $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if ($model->status == Program::STATUS_INACTIVE) {
+			if ($model->status == Program::STATUS_INACTIVE) {
                 return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
             } else {
                 return [
                     'status' => true,
                 ];
             }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
-        return [
-            'status' => true,
-            'data' => $data
-        ];
     }
-
     /**
      * Deletes an existing Program model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
