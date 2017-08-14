@@ -6,16 +6,15 @@ use yii\bootstrap\ActiveForm;
 use backend\models\search\ProgramSearch;
 use common\models\Program;
 use common\models\User;
-use \yiister\adminlte\widgets\grid\GridView;
+use common\components\gridView\AdminLteGridView;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 'Private Programs' : 'Group Programs';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
-$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm']);
+$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm', 'id' => 'add-program']);
 ?>
 <div>
 <div>
@@ -32,20 +31,11 @@ $this->params['action-button'] = Html::a('<i class="fa fa-plus-circle"></i> Add'
 </div>
    	<?php echo $form->field($searchModel, 'type')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>	
-<?php if ($lastRole->name === User::ROLE_ADMINISTRATOR):?>
-<div class="col-md-8">
-<h4 class="pull-left"><?php echo $titleName; ?></h4>
-</div>
-<?php endif; ?>
-<div>
-    <?php echo $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-</div>
-    <div class="grid-row-open">
+    <div>
 	<?php $rateLabel = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour' : 'Rate Per Course'; ?>
 	<?php Pjax::begin(['id' => 'program-listing']) ?>
-        <?php echo GridView::widget([
+        <?php echo AdminLteGridView::widget([
+			'id' => 'program-grid',
             'dataProvider' => $dataProvider,
     		'filterModel' => $searchModel,
 			'condensed' => true,
