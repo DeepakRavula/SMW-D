@@ -8,6 +8,7 @@ use common\models\User;
 use common\models\Program;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -25,10 +26,17 @@ use yii\helpers\Url;
                 ->notDeleted()
 		->all(),
 	'id', 'userProfile.fullName'
-);?>
+);
+if ($model->isNewRecord) {
+    $url = Url::to(['exam-result/create', 'studentId' => $model->studentId]);
+} else {
+    $url = Url::to(['exam-result/update', 'id' => $model->id]);
+}
+?>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
 	'id' => 'exam-result-form',
+    'action' => $url,
 ]); ?>
 <div class="row">
 	<div class="col-md-6">
@@ -54,8 +62,18 @@ use yii\helpers\Url;
 		<?=  $form->field($model, 'type')->textInput();?>
     </div>
 	<div class="col-md-6">
-		<?= $form->field($model, 'programId')->dropDownList(
-			ArrayHelper::map(Program::find()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'), ['prompt' => 'Select Program']);?>
+		<?= $form->field($model, 'programId')->widget(Select2::classname(), [
+	    		'data' => ArrayHelper::map(Program::find()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
+				'options' => [
+                                    'id' => 'examresult-programid'
+				],
+				'pluginOptions' => [
+                                    'allowClear' => true,
+                                    'multiple' => false,
+                                    'placeholder' => 'Select Program',
+				],
+			]);
+			?>
     </div>
 	<div class="col-md-6">
 		<?php $teacher = !empty($model->teacherId) ? $model->teacher->publicIdentity : null; ?>
@@ -64,6 +82,7 @@ use yii\helpers\Url;
 		echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
 			[
 			'data' => [$teacherId => $teacher],
+            'type' => DepDrop::TYPE_SELECT2,    
 			'pluginOptions' => [
 				'depends' => ['examresult-programid'],
 				'placeholder' => 'Select...',
@@ -77,6 +96,13 @@ use yii\helpers\Url;
 		<?=  $form->field($model, 'id')->hiddenInput()->label(false);?>
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
         <?php echo Html::submitButton(Yii::t('backend', 'Cancel'), ['class' => 'btn btn-default exam-result-cancel-button', 'name' => 'signup-button']) ?>
+       <?php echo Html::a('Delete', [
+            'exam-result/delete', 'id' => $model->id
+        ], [
+							'id' => 'evaluation-delete-' . $model->id,
+							'title' => Yii::t('yii', 'Delete'),
+							'class' => 'evaluation-delete btn btn-danger',
+					]);?>
     </div>
     </div>
 <?php ActiveForm::end(); ?>
