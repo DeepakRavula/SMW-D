@@ -962,7 +962,7 @@ class LessonController extends Controller
             $model->append($lesson);
         }
         if ($model->hasProFormaInvoice()) {
-            $model->proFormaInvoice->alterLessonItem($model);
+            $model->proFormaInvoice->updateLessonItem($model);
         }
         $model->cancel();
         Yii::$app->session->setFlash('alert', [

@@ -213,7 +213,7 @@ class Payment extends ActiveRecord
                 $this->updateCreditUsed();
             }
             $this->invoice->save();
-            if (!$this->isCreditUsed()) {
+            if (!$this->isCreditUsed() && !$this->isCreditApplied()) {
                 if (isset($changedAttributes['amount']) && (float) $this->amount !==
                     (float) $changedAttributes['amount']) {
                     $this->manageAccount();
@@ -227,10 +227,18 @@ class Payment extends ActiveRecord
         $invoicePaymentModel->payment_id = $this->id;
         $invoicePaymentModel->save();
 	$this->invoice->save();
-        if (!$this->isCreditUsed()) {
+        if (!$this->isCreditUsed() && !$this->isCreditApplied()) {
             $this->manageAccount();
         }
-
+        if($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
+            if ($this->invoice->isExtraLessonProformaInvoice()) {
+                $this->invoice->makeExtraLessonInvoicePayment();
+            } else if ($this->invoice->lineItem->isGroupLesson()) {
+                $this->invoice->makeGroupInvoicePayment();
+            } else {
+                $this->invoice->makeInvoicePayment();
+            }
+        }
         $this->trigger(self::EVENT_CREATE);
 		
         return parent::afterSave($insert, $changedAttributes);
@@ -315,7 +323,7 @@ class Payment extends ActiveRecord
             ->one();
         if ($this->isDeleted) {
             return CustomerAccount::ACTION_TYPE_DELETE;
-        }else if (!empty($model)) {
+        } else if (!empty($model)) {
             return CustomerAccount::ACTION_TYPE_UPDATE;
         } else {
             return CustomerAccount::ACTION_TYPE_CREATE;
