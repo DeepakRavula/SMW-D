@@ -74,22 +74,7 @@ use yii\helpers\Url;
 					return !empty($data->teacherId) ? $data->teacher->publicIdentity : null;
 				}
 			],
-			[
-				'class' => 'yii\grid\ActionColumn',
-				'template' => '{edit}{delete}',
-				'buttons' => [
-					'edit' => function  ($url, $model) {
-	                    return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
-							'id' => 'edit-button-' . $model->id,
-							'class' => 'edit-button m-l-20'
-						]);
-					},
-					'delete' => function  ($url, $model) {
-	                    return  Html::a('<i class="fa fa-times" aria-hidden="true"></i>',['exam-result/delete', 'id' => $model->id], ['id' => 'button', 'class' => 'm-l-20']);
-					},
-				],
-			],
-	    ],
+				    ],
 	]);
 	?>
 	</div>
