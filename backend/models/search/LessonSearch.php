@@ -14,7 +14,8 @@ use common\models\Invoice;
 class LessonSearch extends Lesson
 {
     const STATUS_INVOICED = 'invoiced';
-
+	const ALL = 'All';
+	
     public $lessonStatus;
     public $fromDate;
     public $toDate;
@@ -54,12 +55,8 @@ class LessonSearch extends Lesson
      */
     public function search($params)
     {
-        $previousMonth = new \DateTime();
-        $previousMonth->modify('first day of last month');
-        $this->fromDate = $previousMonth->format('M d,Y');
-        $currentMonth = new \DateTime();
-        $currentMonth->modify('last day of this month');
-        $this->toDate = $currentMonth->format('M d,Y');
+        $this->fromDate = (new \DateTime())->format('M d,Y');
+        $this->toDate = (new \DateTime())->format('M d,Y');
         $this->dateRange = $this->fromDate.' - '.$this->toDate;
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
@@ -106,7 +103,7 @@ class LessonSearch extends Lesson
         if ($this->lessonStatus == Lesson::STATUS_COMPLETED) {
             $query->unInvoiced()
                 ->completed();
-        } elseif ($this->lessonStatus === 'scheduled') {
+        } elseif ((int)$this->lessonStatus === Lesson::STATUS_SCHEDULED) {
             $query->scheduled();
         } elseif ($this->lessonStatus === self::STATUS_INVOICED) {
             $query->invoiced();
@@ -137,9 +134,9 @@ class LessonSearch extends Lesson
     public static function lessonStatuses()
     {
         return [
-            'all' => 'All',
+            self::ALL => 'All',
             Lesson::STATUS_COMPLETED => 'Completed',
-            'scheduled' => 'Scheduled',
+            Lesson::STATUS_SCHEDULED => 'Scheduled',
             self::STATUS_INVOICED => 'Invoiced',
 			Lesson::STATUS_UNSCHEDULED => 'Unscheduled'
         ];

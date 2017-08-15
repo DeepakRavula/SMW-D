@@ -305,7 +305,6 @@ class Payment extends ActiveRecord
         }
         $model->balance = $this->accountBalance();
         if ((int) $model->actionType === (int) CustomerAccount::ACTION_TYPE_DELETE) {
-            $model->balance += $model->amount;
             $model->credit = $this->amount;
         } else {
             $model->credit = null;

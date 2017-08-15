@@ -79,13 +79,21 @@ class CustomerAccount extends \yii\db\ActiveRecord
     {
         switch($this->actionType) {
             case self::ACTION_TYPE_CREATE :
-                $actionType = 'created';
+                if ($this->type === self::TYPE_PAYMENT) {
+                    $actionType = 'recieved on P-';
+                } else {
+                    $actionType = 'created I-';
+                }
             break;
             case self::ACTION_TYPE_UPDATE :
-                $actionType = 'updated';
-            break;
+                if ($this->type === self::TYPE_PAYMENT) {
+                    $actionType = 'updated P-';
+                } else {
+                    $actionType = 'updated I-';
+                }            
+                break;
             case self::ACTION_TYPE_DELETE :
-                $actionType = 'deleted';
+                $actionType = 'deleted P-';
             break;
         }
         return $actionType;
