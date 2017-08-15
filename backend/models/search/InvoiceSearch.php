@@ -35,7 +35,7 @@ class InvoiceSearch extends Invoice
     public function rules()
     {
         return [
-            [['fromDate', 'toDate'], 'date', 'format' => 'php:d-m-Y'],
+            [['fromDate', 'toDate'], 'date', 'format' => 'php:M d,Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange','invoiceDateRange',
                 'dueFromDate', 'dueToDate', 'summariseReport'], 'safe'],
