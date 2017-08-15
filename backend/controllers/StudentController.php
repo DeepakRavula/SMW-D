@@ -279,6 +279,7 @@ class StudentController extends Controller
                 }])
                 ->where(['NOT IN', 'course.id', $groupEnrolments])
                 ->andWhere(['locationId' => $locationId])
+               ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])  
 				->confirmed();
         $groupCourseDataProvider = new ActiveDataProvider([
             'query' => $groupCourses,
