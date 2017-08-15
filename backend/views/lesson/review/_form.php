@@ -67,11 +67,3 @@ use common\models\Lesson;
 	</div>
 </div>
 <?php ActiveForm::end(); ?>
-<script>
-$(document).ready(function () {
-		$("#lesson-review-apply-all").on("click", function() {
-			$('#spinner').show();
-            $('#spinner').delay(25000).fadeOut("slow");
-		});
-	});
-</script>

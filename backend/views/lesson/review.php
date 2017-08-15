@@ -132,6 +132,7 @@ Modal::begin([
 				dataType: "json",
 				success: function (response)
 				{
+                    $("#spinner").hide();
 					if (response.hasConflict) {
 						$("#confirm-button").attr("disabled", true);
 						$('#confirm-button').bind('click', false);
@@ -194,6 +195,7 @@ Modal::begin([
         });
 		$(document).on('click','#lesson-review-apply, #lesson-review-apply-all',function() {
 			$('#lesson-applycontext').val($(this).val());
+            $('#spinner').show();
 		});
 		$(document).on('beforeSubmit', '#lesson-review-form', function (e) {
 			var lessonId = $('#lesson-id').val();
