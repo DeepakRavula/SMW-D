@@ -845,7 +845,6 @@ class Lesson extends \yii\db\ActiveRecord
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
                 $lineItem = $invoice->addPrivateLessonLineItem($extendedLesson->lesson);
-                $lineItem->addExplodedLessonsDiscount($extendedLesson->lesson->parent()->one());
                 $invoice->save();
                 if ($extendedLesson->lesson->hasProFormaInvoice()) {
                     if ($extendedLesson->lesson->proFormaInvoice->hasProFormaCredit()) {

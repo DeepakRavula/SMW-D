@@ -70,7 +70,6 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
             if ($this->extendedLesson->hasInvoice()) {
                 $invoice = $this->extendedLesson->invoice;
                 $lineItem = $invoice->addPrivateLessonLineItem($this->lesson);
-                $lineItem->addExplodedLessonsDiscount($this->lesson);
                 $invoice->save();
                 if ($this->lesson->hasProFormaInvoice()) {
                     if ($this->lesson->proFormaInvoice->hasProFormaCredit()) {
