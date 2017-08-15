@@ -41,7 +41,7 @@ class StudentController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['create', 'update', 'merge', 'fetch-program-rate'],
+                'only' => ['create', 'update', 'merge', 'fetch-program-rate','validate'],
                 'formats' => [
                         'application/json' => Response::FORMAT_JSON,
                 ],
@@ -402,4 +402,13 @@ class StudentController extends Controller
             'searchModel' => $searchModel,
         ]);
     }
+    public function actionValidate()
+    {
+        $model = new Student();
+        
+		$request = Yii::$app->request;
+        if ($model->load($request->post())) {
+            return  ActiveForm::validate($model);
+        }
+        }
 }
