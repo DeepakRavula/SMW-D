@@ -156,10 +156,13 @@ class EnrolmentController extends Controller
                     $model->resetPaymentCycle();
                 }
             }
+			$message = '';
 			if($endDate !== $course->endDate) {
+				
 				$courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
 				$lessons = Lesson::find()
 					->andWhere(['>=', 'DATE(date)', $courseEndDate])
+					->andWhere(['courseId' => $model->courseId])
 					->all();
 				foreach($lessons as $lesson) {
 					$lesson->updateAttributes([
@@ -169,8 +172,13 @@ class EnrolmentController extends Controller
 				$course->updateAttributes([
 					'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s') 
 				]);
+				$invoice = $model->addCreditInvoice();
+				$message = '$' . abs($invoice->invoiceBalance) . ' has been credited to ' . $invoice->user->publicIdentity . ' account.'; 
 			}
-            return ['status' => true];
+            return [
+				'status' => true,
+				'message' => $message,
+			];
         } else {
 
             return [
