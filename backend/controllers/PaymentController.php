@@ -143,10 +143,9 @@ class PaymentController extends Controller
         } elseif ($model->isAccountEntry()) {
             $modelInvoice->lineItem->delete();
         }
-        if($model->delete()) {
+            $model->delete();
         	$modelInvoice->save();
 			$model->trigger(Payment::EVENT_DELETE);
-		}
 		
 		return [
 			'status' => true,
