@@ -844,7 +844,19 @@ class Lesson extends \yii\db\ActiveRecord
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
-                $invoice->lineItem->addLessonCreditApplied($extendedLesson->lesson);
+                $lineItem = $invoice->addPrivateLessonLineItem($extendedLesson->lesson);
+                $invoice->save();
+                if ($extendedLesson->lesson->hasProFormaInvoice()) {
+                    if ($extendedLesson->lesson->proFormaInvoice->hasProFormaCredit()) {
+                        $amount = $extendedLesson->lesson->proFormaLineItem->netPrice;
+                        if ($amount > $extendedLesson->lesson->proFormaInvoice->proFormaCredit) {
+                           $amount = $extendedLesson->lesson->proFormaInvoice->proFormaCredit;
+                        }
+                        if ($invoice->addLessonCreditAppliedPayment($amount, $extendedLesson->lesson->proFormaInvoice)) {
+                            $extendedLesson->lesson->proFormaInvoice->save();
+                        }
+                    }
+                }
             }
         }
 
