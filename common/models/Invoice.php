@@ -340,10 +340,6 @@ class Invoice extends \yii\db\ActiveRecord
             if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
                 $this->trigger(self::EVENT_GENERATE);
             }
-            if ($this->isInvoice() && (float) $this->total !== (float) $oldTotal->total) {
-                $this->manageAccount();
-            }
-            
         } else {
             $this->trigger(self::EVENT_CREATE);
         }
@@ -837,22 +833,6 @@ class Invoice extends \yii\db\ActiveRecord
         return !empty($this->invoiceReverse);
     }
 
-    public function manageAccount()
-    {
-        $model = new CustomerAccount();
-        $model->foreignKeyId = $this->id;
-        $model->userId = $this->user_id;
-        $model->type = CustomerAccount::TYPE_INVOICE;
-        $model->actionType = $this->actionType();
-        $model->amount = $this->total;
-        $model->credit = $this->total;
-        $model->debit = null;
-        $model->actionUserId = Yii::$app->user->id;
-        $model->balance = $this->accountBalance();
-        $model->date = (new \DateTime())->format('Y-m-d H:i:s');
-        $model->save();
-    }
-    
     public function addLessonCreditAppliedPayment($amount, $invoice)
     {
         $paymentModel = new Payment();
@@ -875,18 +855,6 @@ class Invoice extends \yii\db\ActiveRecord
         $creditUsageModel->credit_payment_id = $creditPaymentId;
         $creditUsageModel->debit_payment_id = $debitPaymentId;
         return $creditUsageModel->save();
-    }
-
-    public function actionType()
-    {
-        $model = CustomerAccount::find()
-            ->where(['type' => CustomerAccount::TYPE_INVOICE, 'foreignKeyId' => $this->id])
-            ->one();
-        if (!empty($model)) {
-            return CustomerAccount::ACTION_TYPE_UPDATE;
-        } else {
-            return CustomerAccount::ACTION_TYPE_CREATE;
-        }
     }
 
     public function accountBalance()
