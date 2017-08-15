@@ -221,6 +221,7 @@ Modal::begin([
                 		review.onEditableGridSuccess();
                         $('#review-lesson-modal').modal('hide');
                     } else {
+                        $('#spinner').hide();
 				 		$('#lesson-review-form').yiiActiveForm('updateMessages',
 					   		response.errors	, true);
 					}
