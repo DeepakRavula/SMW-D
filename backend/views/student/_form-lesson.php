@@ -87,7 +87,11 @@ use yii\helpers\Url;
             ?>
         </div>
         <div class="col-md-12">
-            <div id="lesson-calendar"></div>
+            <div id="lesson-calendar">
+                <div id="spinner" class="spinner" style="" >
+                    <img src="/backend/web/img/page-loader.gif" alt="" height="100" width="100"/>
+                </div>  
+            </div>
         </div>
         <div class="clearfix"></div>
     <div class="col-md-12 p-l-20 form-group">

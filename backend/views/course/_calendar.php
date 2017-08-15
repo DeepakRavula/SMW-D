@@ -9,7 +9,11 @@ use yii\helpers\Url;
 <?php $this->render('/lesson/_color-code'); ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
  <div class="row-fluid">
-	<div id="course-calendar"> </div>
+	<div id="course-calendar">
+    <div id="spinner" class="spinner" style="display:none;">
+    <img src="/backend/web/img/page-loader.gif" alt="" height="100" width="100"/>
+</div>
+    </div>
 </div>
  <div class="form-group">
 	<?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary course-apply', 'name' => 'button']) ?>
@@ -53,6 +57,7 @@ $(document).ready(function(){
     function renderCalendar(date, lessonFreeSlotPicker) {
         var events, availableHours;
         var teacherId = $('#course-teacherid').val();
+        $('#spinner').show();
         $.ajax({
             url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
             type: 'get',
@@ -62,6 +67,7 @@ $(document).ready(function(){
                 events = response.events;
                 availableHours = response.availableHours;
                 refreshCalendar(availableHours, events, date, lessonFreeSlotPicker);
+                $('#spinner').hide();
             }
         });
     }
@@ -108,8 +114,12 @@ $(document).ready(function(){
                 );
                 $('#course-calendar').fullCalendar('unselect');
             },
+            loading: function () { 
+            $('#spinner').show(); 
+            },
             eventAfterAllRender: function (view) {
                 $('.fc-short').removeClass('fc-short');
+                $('#spinner').hide();                
             },
             selectable: true,
             selectHelper: true,
