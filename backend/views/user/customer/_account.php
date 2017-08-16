@@ -97,6 +97,15 @@ echo GridView::widget([
         'value' => function ($data) {
         return !empty($data->debit) ? Yii::$app->formatter->asCurrency($data->debit) : null;
         }
+    ],
+    [
+        'format' => ['decimal', 2],
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right'],
+        'label' => 'Balance',
+        'value' => function ($data) {
+            return $data->balance;
+        }
     ]
    
 ],

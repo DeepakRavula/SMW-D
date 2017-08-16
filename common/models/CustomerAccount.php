@@ -32,7 +32,7 @@ class CustomerAccount extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoiceId'], 'integer'],
+            [['invoiceId', 'transactionId'], 'integer'],
             [['date'], 'safe'],
             [['description'], 'string', 'max' => 7],
             [['debit'], 'string', 'max' => 12],
@@ -66,6 +66,14 @@ class CustomerAccount extends \yii\db\ActiveRecord
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoiceId']);
+    }
+    
+    public function getBalance()
+    {
+        return self::find()
+                ->where(['userId' => $this->userId])
+                ->andWhere(['<=', 'transactionId', $this->transactionId])
+                ->sum('credit+debit');
     }
     
     public function getAccountDescription()

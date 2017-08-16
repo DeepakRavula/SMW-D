@@ -92,7 +92,8 @@ class Invoice extends \yii\db\ActiveRecord
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
-            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 'balance'], 'safe']
+            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 
+                'transactionId', 'balance'], 'safe']
         ];
     }
 
@@ -574,6 +575,9 @@ class Invoice extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($insert) {
+            $transaction = new Transaction();
+            $transaction->save();
+            $this->transactionId = $transaction->id;
             $lastInvoice   = $this->lastInvoice();
             $invoiceNumber = 1;
             if (!empty($lastInvoice)) {

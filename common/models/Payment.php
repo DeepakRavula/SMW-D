@@ -64,7 +64,8 @@ class Payment extends ActiveRecord
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
                     self::SCENARIO_CREDIT_USED, ]],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
-           [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 'sourceId', 'credit', 'isDeleted'], 'safe'],
+           [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 
+               'sourceId', 'credit', 'isDeleted', 'transactionId'], 'safe'],
         ];
     }
 
@@ -189,6 +190,10 @@ class Payment extends ActiveRecord
     {
         if (!$insert) {
             return parent::beforeSave($insert);
+        } else {
+            $transaction = new Transaction();
+            $transaction->save();
+            $this->transactionId = $transaction->id;
         }
         $model = Invoice::findOne(['id' => $this->invoiceId]);
         $this->user_id = $model->user_id;

@@ -346,7 +346,8 @@ class UserController extends Controller
             ->groupBy('day')
             ->all();
 
-        $account = CustomerAccount::find()->where(['userId' => $id])->orderBy('date');
+        $account = CustomerAccount::find()->where(['userId' => $id])
+                ->orderBy(['transactionId' => SORT_ASC]);
 
         $accountDataProvider = new ActiveDataProvider([
             'query' => $account,
