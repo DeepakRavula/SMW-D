@@ -543,6 +543,7 @@ class LessonController extends Controller
 		$conflictedLessonIds = [];
 			$draftLessons = Lesson::find()
 				->where(['courseId' => $courseModel->id, 'isConfirmed' => false])
+				->andWhere(['status' => Lesson::STATUS_SCHEDULED])
 				->all();
 		foreach ($draftLessons as $draftLesson) {
 			$draftLesson->setScenario('review');

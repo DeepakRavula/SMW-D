@@ -4,7 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
-
+use Carbon\Carbon;
 /**
  * This is the model class for table "enrolment".
  *
@@ -349,79 +349,47 @@ class Enrolment extends \yii\db\ActiveRecord
         return $isExpiring;
     }
 
-    public function invoiceAllCompletedlessons()
-    {
-        $query = Lesson::find()
-			->isConfirmed()
-            ->notDeleted();
-        if (!$this->course->program->isGroup()) {
-            $privateLessons = $query->completedUnInvoicedPrivate()
-                ->enrolment($this->id)->all();
-            foreach($privateLessons as $lesson) {
-                $lesson->createPrivateLessonInvoice();
-            }
-        } else {
-            $groupLessons = $query->groupLessons()->completed()
-                ->enrolment($this->id)->all();
-            foreach ($groupLessons as $lesson) {
-                if (!$this->hasInvoice($lesson->id)) {
-                    $lesson->createGroupInvoice($this->id);
-                }
-            }
-        }
-        return true;
-    }
-
-    public function getProFormaCreditInvoice()
-    {
-        if ($this->course->program->isGroup()) {
-            return $this->proFormaInvoices;
-        } else {
-            $invoices = [];
-            foreach ($this->paymentCycles as $paymentCycle) {
-                if ($paymentCycle->hasProFormaInvoice()) {
-                    if ($paymentCycle->proFormaInvoice->hasProFormaCredit()) {
-                        $invoices[] = $paymentCycle->proFormaInvoice;
-                    }
-                }
-            }
-            return $invoices;
-        }
-    }
-
     public function addCreditInvoice()
     {
-        $creditInvoices = $this->getProFormaCreditInvoice();
-        if ($creditInvoices) {
-            $invoice = new Invoice();
-            $invoice->user_id = $this->customer->id;
-            $invoice->location_id = end($creditInvoices)->location_id;
-            $invoice->type = Invoice::TYPE_INVOICE;
-            $invoice->save();
-            $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
-            $invoiceLineItem->invoice_id = $invoice->id;
-            $item = Item::findOne(['code' => Item::LESSON_CREDIT]);
-            $invoiceLineItem->item_id = $item->id;
-            $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
-            $invoiceLineItem->description = $this->student->studentIdentity .'\'s '
-                . $this->course->program->name . ' Lesson credit';
-            $invoiceLineItem->unit = 1;
-            $invoiceLineItem->amount = 0.0;
-            $invoiceLineItem->code = $invoiceLineItem->getItemCode();
-            $invoiceLineItem->cost = 0;
-            $invoiceLineItem->save();
-            $invoice->tax = $invoiceLineItem->tax_rate;
-            $invoice->total = $invoice->subTotal + $invoice->tax;
-            $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
-            $invoice->save();
-            foreach ($creditInvoices as $creditInvoice) {
-                $amount = $creditInvoice->proformaCredit;
-                if ($invoice->addLessonCreditAppliedPayment($amount, $creditInvoice)) {
-                    $creditInvoice->save();
-                }
-            }
-        }
-        
+		$invoice = new Invoice();
+		$invoice->user_id = $this->customer->id;
+		$invoice->location_id = $this->customer->userLocation->location_id;
+		$invoice->type = Invoice::TYPE_INVOICE;
+		$invoice->save();
+		$invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
+		$invoiceLineItem->invoice_id = $invoice->id;
+		$item = Item::findOne(['code' => Item::LESSON_CREDIT]);
+		$invoiceLineItem->item_id = $item->id;
+		$invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
+		$invoiceLineItem->description = $this->student->studentIdentity .'\'s '
+			. $this->course->program->name . ' Lesson credit';
+		$invoiceLineItem->unit = 1;
+		$invoiceLineItem->amount = 0.0;
+		$invoiceLineItem->code = $invoiceLineItem->getItemCode();
+		$invoiceLineItem->cost = 0;
+		$invoiceLineItem->save();
+		$invoice->tax = $invoiceLineItem->tax_rate;
+		$invoice->total = $invoice->subTotal + $invoice->tax;
+		$invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
+		$invoice->save();
+
+		$endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
+		$lessons = Lesson::find()
+			->andWhere(['>=', 'DATE(date)', $endDate])
+			->andWhere(['courseId' => $this->courseId, 'status' => Lesson::STATUS_CANCELED])
+			->notDeleted()
+			->all();
+		foreach($lessons as $lesson) {
+			if (!empty($lesson->proFormaInvoice) && $lesson->proFormaInvoice->isPaid()) {
+				$creditInvoice = $lesson->proFormaInvoice; 
+				$amount = $lesson->ProFormaLineItem->amount;
+				if ($invoice->addLessonCreditAppliedPayment($amount, $creditInvoice)) {
+					$creditInvoice->save();
+				}
+			}	
+			$lesson->delete();
+		}
+		return $invoice;
     }
 
     public function beforeSave($insert) {

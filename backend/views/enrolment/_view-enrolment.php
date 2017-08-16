@@ -138,6 +138,9 @@ DateTimePickerAsset::register($this);
                 {
                     $('#enrolment-edit-modal').modal('hide');
                     paymentFrequency.onEditableSuccess();
+					if(response.message) {
+						$('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
+					}
                 }
             }
         });
