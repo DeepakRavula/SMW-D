@@ -70,7 +70,7 @@ class Invoice extends \yii\db\ActiveRecord
                 'class' => TimestampBehavior::className(),
                 'createdAtAttribute' => 'createdOn',
                 'updatedAtAttribute' => 'updatedOn',
-                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+                'value' => (new \DateTime())->format('Y-m-d H:i:s.u'),
             ],
             [
                 'class' => BlameableBehavior::className(),
