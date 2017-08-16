@@ -540,7 +540,6 @@ class InvoiceController extends Controller
             $newLineItem->invoice_id = $creditInvoice->id;
             $newLineItem->amount = - ($newLineItem->amount);
             $newLineItem->unit = - ($newLineItem->unit);
-            $newLineItem->tax_rate = - ($newLineItem->tax_rate);
             $newLineItem->save();
             foreach ($lineItem->discounts as $discount) {
                 $newDiscount = clone $discount;
