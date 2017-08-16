@@ -68,7 +68,20 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
     {
         if ($insert) {
             if ($this->extendedLesson->hasInvoice()) {
-                $this->extendedLesson->invoiceLineItem->addLessonCreditApplied($this->lesson);
+                $invoice = $this->extendedLesson->invoice;
+                $lineItem = $invoice->addPrivateLessonLineItem($this->lesson);
+                $invoice->save();
+                if ($this->lesson->hasProFormaInvoice()) {
+                    if ($this->lesson->proFormaInvoice->hasProFormaCredit()) {
+                        $amount = $this->lesson->proFormaLineItem->netPrice;
+                        if ($amount > $this->lesson->proFormaInvoice->proFormaCredit) {
+                           $amount = $this->lesson->proFormaInvoice->proFormaCredit;
+                        }
+                        if ($invoice->addLessonCreditAppliedPayment($amount, $this->lesson->proFormaInvoice)) {
+                            $this->lesson->proFormaInvoice->save();
+                        }
+                    }
+                }
             }
         }
 

@@ -70,8 +70,9 @@ class InvoiceController extends Controller
 				$searchModel->dateRange = $invoiceSearchRequest['dateRange'];
 			}
         } else {
-            $searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
-            $searchModel->toDate   = (new \DateTime('last day of this month'))->format('d-m-Y');
+            $searchModel->fromDate = (new \DateTime('first day of this month'))->format('M d,Y');
+            $searchModel->toDate   = (new \DateTime('last day of this month'))->format('M d,Y');
+             $searchModel->invoiceDateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -435,31 +436,6 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function actionPrint($id)
-    {
-        $model = $this->findModel($id);
-        $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
-        $payments = Payment::find()
-            ->joinWith(['invoicePayments' => function ($query) use ($id) {
-                $query->where(['invoice_id' => $id]);
-            }])
-            ->groupBy('payment.payment_method_id');
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoiceLineItems,
-			'pagination' => false,
-        ]);
-        $paymentsDataProvider = new ActiveDataProvider([
-            'query' => $payments,
-        ]);
-        $this->layout = '/print';
-
-        return $this->render('_print', [
-                    'model' => $model,
-                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                    'paymentsDataProvider' => $paymentsDataProvider,
-        ]);
-    }
-
     public function actionUpdateMailStatus($id)
     {
         $request = Yii::$app->request;
@@ -539,7 +515,6 @@ class InvoiceController extends Controller
             $newLineItem->invoice_id = $creditInvoice->id;
             $newLineItem->amount = - ($newLineItem->amount);
             $newLineItem->unit = - ($newLineItem->unit);
-            $newLineItem->tax_rate = - ($newLineItem->tax_rate);
             $newLineItem->save();
             foreach ($lineItem->discounts as $discount) {
                 $newDiscount = clone $discount;

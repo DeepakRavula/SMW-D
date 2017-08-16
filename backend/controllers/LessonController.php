@@ -362,7 +362,8 @@ class LessonController extends Controller
 		$conflicts = [];
 		$conflictedLessonIds = [];
 		$draftLessons = Lesson::find()
-			->where(['courseId' => $course->id, 'isConfirmed' => false])
+			->where(['courseId' => $course->id, 'isConfirmed' => false,
+				'status' => Lesson::STATUS_SCHEDULED])
 			->all();
 		foreach ($draftLessons as $draftLesson) {
 			$draftLesson->setScenario('review');
@@ -543,6 +544,7 @@ class LessonController extends Controller
 		$conflictedLessonIds = [];
 			$draftLessons = Lesson::find()
 				->where(['courseId' => $courseModel->id, 'isConfirmed' => false])
+				->andWhere(['status' => Lesson::STATUS_SCHEDULED])
 				->all();
 		foreach ($draftLessons as $draftLesson) {
 			$draftLesson->setScenario('review');
@@ -610,7 +612,8 @@ class LessonController extends Controller
 		$conflicts = [];
 		$conflictedLessonIds = [];
 		$draftLessons = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'isConfirmed' => false])
+			->where(['courseId' => $courseModel->id, 'isConfirmed' => false,
+				'status' => Lesson::STATUS_SCHEDULED])
 			->all();
 		foreach ($draftLessons as $draftLesson) {
 			$draftLesson->setScenario('review');
@@ -835,27 +838,6 @@ class LessonController extends Controller
 		}
 	}
 
-	public function actionPresent($id)
-	{
-        $model = $this->findModel($id);
-		$currentDate = new \DateTime();
-		$lessonDate = new \DateTime($model->date);
-		$model->status = Lesson::STATUS_SCHEDULED;
-		if($currentDate >= $lessonDate) {
-			$model->status = Lesson::STATUS_COMPLETED;
-		}
-		$model->save();
-	}
-
-	public function actionAbsent($id)
-	{
-        $model = $this->findModel($id);
-		$model->status = Lesson::STATUS_MISSED;
-		$model->save();
-		return [
-			'status' => true,
-		];
-	}
     public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);

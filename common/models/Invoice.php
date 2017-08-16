@@ -92,7 +92,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
-            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId'], 'safe']
+            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 'balance'], 'safe']
         ];
     }
 
@@ -267,7 +267,10 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return (int) $this->status === (int) self::STATUS_PAID;
     }
-
+	public function isUnassignedUser()
+    {
+        return (int) $this->user_id === self::USER_UNASSINGED;
+    }
     public function isOwing()
     {
         return (int) $this->status === (int) self::STATUS_OWING;
@@ -838,8 +841,8 @@ class Invoice extends \yii\db\ActiveRecord
         $paymentModel = new Payment();
         $paymentModel->amount = abs ($amount);
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-        $paymentModel->reference = $invoice->id;
         $paymentModel->invoiceId = $this->id;
+        $paymentModel->reference = $invoice->id;
         $paymentModel->save();
 
         $creditPaymentId = $paymentModel->id;
@@ -912,32 +915,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         foreach ($lesson->children()->all() as $splitLesson) {
             $lineItem = $this->addPrivateLessonLineItem($splitLesson);
-            if ($lesson->proFormaLineItem->hasLineItemDiscount()) {
-                if ($lesson->proFormaLineItem->lineItemDiscount->valueType) {
-                    $lienItemDiscount = new InvoiceLineItemDiscount();
-                    $lienItemDiscount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
-                    $lienItemDiscount->invoiceLineItemId = $splitLesson->proFormaLineItem->id;
-                    $lienItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
-                    $lienItemDiscount->value = $lesson->proFormaLineItem->lineItemDiscount->value / 
-                            ($lesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
-                    $lienItemDiscount->save();
-                } else {
-                    $lineItem->addLineItemDiscount($lesson->proFormaLineItem->lineItemDiscount);
-                }
-            }
-            if ($lesson->proFormaLineItem->hasMultiEnrolmentDiscount()) {
-                if ($lesson->proFormaLineItem->multiEnrolmentDiscount->valueType) {
-                    $lienItemDiscount = new InvoiceLineItemDiscount();
-                    $lienItemDiscount->type = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;
-                    $lienItemDiscount->invoiceLineItemId = $splitLesson->proFormaLineItem->id;
-                    $lienItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
-                    $lienItemDiscount->value = $lesson->proFormaLineItem->multiEnrolmentDiscount->value / 
-                            ($lesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
-                    $lienItemDiscount->save();
-                } else {
-                    $lineItem->addMultiEnrolmentDiscount(null, $lesson->proFormaLineItem->multiEnrolmentDiscount);
-                }
-            }
+            $lineItem->addExplodedLessonsDiscount($lesson);
         }
         
         $lesson->proFormaLineItem->delete();
