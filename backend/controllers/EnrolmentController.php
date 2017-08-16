@@ -165,9 +165,7 @@ class EnrolmentController extends Controller
 					->andWhere(['courseId' => $model->courseId])
 					->all();
                                 foreach($lessons as $lesson) {
-                                    $lesson->updateAttributes([
-                                            'status' => Lesson::STATUS_CANCELED
-                                    ]);
+                                    $lesson->Cancel();
                                     if ($lesson->proFormaLineItem) {
                                         $lesson->proFormaLineItem->delete();
                                     }
