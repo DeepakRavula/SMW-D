@@ -41,7 +41,14 @@ use kartik\editable\Editable;
               To
               <address>
                 <strong>
+				<?php 
+				if(!$model->isUnassignedUser()) {
+					$roles = Yii::$app->authManager->getRolesByUser($model->user_id);
+					$role = end($roles);
+				} ?>
+				<?php if(!empty($role) && $role->name === User::ROLE_CUSTOMER) : ?>
                   <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id]) ?>">
+				<?php endif; ?>
                         <?= isset($customer->publicIdentity) ? $customer->publicIdentity : null?>
                   </a></strong>
                   <br>

@@ -62,7 +62,7 @@ Modal::end();
 		<?= Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', '#', [
 			'id' => 'invoice-mail-button',
 			'class' => 'btn btn-default pull-right  m-l-10']) ?>
-        <?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-right m-l-10', 'target' => '_blank']) ?>
+        <?= Html::a('<i class="fa fa-print"></i> Print', ['print/invoice', 'id' => $model->id], ['class' => 'btn btn-default pull-right m-l-10', 'target' => '_blank']) ?>
 <?php $form = ActiveForm::begin([
                 'id' => 'mail-flag',
             ]);?>

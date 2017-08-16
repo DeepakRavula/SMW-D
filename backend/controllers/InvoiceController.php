@@ -436,31 +436,6 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function actionPrint($id)
-    {
-        $model = $this->findModel($id);
-        $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
-        $payments = Payment::find()
-            ->joinWith(['invoicePayments' => function ($query) use ($id) {
-                $query->where(['invoice_id' => $id]);
-            }])
-            ->groupBy('payment.payment_method_id');
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoiceLineItems,
-			'pagination' => false,
-        ]);
-        $paymentsDataProvider = new ActiveDataProvider([
-            'query' => $payments,
-        ]);
-        $this->layout = '/print';
-
-        return $this->render('_print', [
-                    'model' => $model,
-                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                    'paymentsDataProvider' => $paymentsDataProvider,
-        ]);
-    }
-
     public function actionUpdateMailStatus($id)
     {
         $request = Yii::$app->request;
