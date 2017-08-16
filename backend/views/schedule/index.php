@@ -26,12 +26,6 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holid
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.min.js"></script>
 <script type="text/javascript" src="/plugins/poshytip/jquery.poshytip.js"></script>
-<link type="text/css" href="/plugins/poshytip/tip-darkgray/tip-darkgray.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-green/tip-green.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-skyblue/tip-skyblue.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-twitter/tip-twitter.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-violet/tip-violet.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/poshytip/tip-yellow/tip-yellow.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/poshytip/tip-yellowsimple/tip-yellowsimple.css" rel='stylesheet' />
 <?php
     $teacherAvailability = CalendarEventColor::findOne(['cssClass' => 'teacher-availability']);
@@ -253,6 +247,7 @@ $(document).ready(function() {
             $(location).attr('href', event.url);
         },
         eventDrop: function(event) {
+			$('.tip-yellowsimple').hide();
             var params = $.param({
                 id: event.lessonId,
                 start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
@@ -464,6 +459,7 @@ function showclassroomCalendar(date) {
             });
         },
         eventDrop: function(event) {
+			$('.tip-yellowsimple').hide();
             var params = $.param({
                 id: event.id,
                 classroomId: event.resourceId,
@@ -547,6 +543,7 @@ function refreshCalendar(date) {
             });
         },
         eventDrop: function(event) {
+			$('.tip-yellowsimple').hide();
             var params = $.param({
                 id: event.lessonId,
                 start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
