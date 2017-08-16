@@ -161,13 +161,18 @@ class EnrolmentController extends Controller
 				
 				$courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
 				$lessons = Lesson::find()
+                                        ->notDeleted()
 					->andWhere(['>=', 'DATE(date)', $courseEndDate])
 					->andWhere(['courseId' => $model->courseId])
 					->all();
-				foreach($lessons as $lesson) {
-					$lesson->updateAttributes([
-						'status' => Lesson::STATUS_CANCELED
-					]);
+                                foreach($lessons as $lesson) {
+                                    $lesson->updateAttributes([
+                                            'status' => Lesson::STATUS_CANCELED
+                                    ]);
+                                    if ($lesson->proFormaLineItem) {
+                                        $lesson->proFormaLineItem->delete();
+                                    }
+                                    $lesson->delete();
 				}
 				$course->updateAttributes([
 					'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s') 

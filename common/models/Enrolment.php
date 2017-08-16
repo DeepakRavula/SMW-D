@@ -151,6 +151,25 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return !empty($this->proFormaInvoice);
     }
+    
+    public function getPrivateLessonProFormaInvoices()
+    {
+        return $this->hasMany(Invoice::className(), ['id' => 'invoice_id'])
+            ->via('privateLessonLineItems')
+            ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+    }
+    
+    public function getPaymentCycleLessons()
+    {
+        return $this->hasMany(PaymentCycleLesson::className(), ['lessonId' => 'id'])
+            ->via('lessons');
+    }
+    
+    public function getLineItemPaymentCycleLessons()
+    {
+        return $this->hasMany(InvoiceItemPaymentCycleLesson::className(), ['paymentCycleLessonId' => 'id'])
+            ->via('paymentCycleLessons');
+    }
 
     public function getProFormaInvoice()
     {
@@ -198,6 +217,13 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
             ->via('invoiceItemsEnrolment')
             ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_GROUP_LESSON]);
+    }
+    
+    public function getPrivateLessonLineItems()
+    {
+        return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+            ->via('lineItemPaymentCycleLessons')
+            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
     }
 
     public function getInvoiceItemsEnrolment()
@@ -372,22 +398,21 @@ class Enrolment extends \yii\db\ActiveRecord
 		$invoice->total = $invoice->subTotal + $invoice->tax;
 		$invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
 		$invoice->save();
-
-		$endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
-		$lessons = Lesson::find()
-			->andWhere(['>=', 'DATE(date)', $endDate])
-			->andWhere(['courseId' => $this->courseId, 'status' => Lesson::STATUS_CANCELED])
-			->notDeleted()
-			->all();
-		foreach($lessons as $lesson) {
-			if (!empty($lesson->proFormaInvoice) && $lesson->proFormaInvoice->isPaid()) {
-				$creditInvoice = $lesson->proFormaInvoice; 
-				$amount = $lesson->ProFormaLineItem->amount;
-				if ($invoice->addLessonCreditAppliedPayment($amount, $creditInvoice)) {
-					$creditInvoice->save();
-				}
-			}	
-			$lesson->delete();
+                
+                foreach ($this->privateLessonProFormaInvoices as $pfi) {
+                    if ($pfi->total < $pfi->paymentTotal) {
+                        $invoice->addLessonCreditAppliedPayment($pfi->paymentTotal 
+                                - $pfi->total, $pfi);
+                    }
+                    $pfi->save();
+                }
+                $endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
+		$paymentCycles = PaymentCycle::find()
+                        ->where(['enrolmentId' => $this->id])
+                        ->andWhere(['>', 'DATE(startDate)', $endDate])
+                        ->all();
+                foreach($paymentCycles as $paymentCycle) {
+                    $paymentCycle->delete();
 		}
 		return $invoice;
     }
