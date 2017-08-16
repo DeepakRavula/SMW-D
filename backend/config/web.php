@@ -126,7 +126,7 @@ $config = [
             ],
             [
                 'controllers' => ['schedule', 'student', 'exam-result','note','classroom-unavailability', 'calendar','item', 'item-category', 
-					'release-notes', 'lesson', 'invoice', 'timeline-event', 'enrolment','teacher-room',
+					'release-notes', 'lesson', 'invoice', 'timeline-event', 'enrolment','teacher-room', 'program',
 					'teacher-availability', 'group-course', 'group-lesson', 'group-enrolment', 
 					'payment', 'course', 'dashboard', 'log', 'invoice-line-item', 'holiday', 'qualification', 'customer-payment-preference',
 					'tax-code', 'vacation', 'customer-discount', 'classroom', 'report', 'teacher-rate', 'private-lesson','student-birthday', 'teacher-unavailability', 'print'
