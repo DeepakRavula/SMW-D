@@ -311,14 +311,13 @@
          'tableOptions' => ['class' => 'table table-bordered m-0 table-more-condensed'],
          'headerRowOptions' => ['class' => 'bg-light-gray'],
          'columns' => [
-             [
-                 'label' => 'Description',
-                 'value' => function ($data) {
-                    return $data->discount;
+            [
+         		'label' => 'Description',
+            	'headerOptions' => ['class' => 'text-left'],
+            	'value' => function ($data) {
+                     return $data->description;
                  },
-                 'headerOptions' => ['class' => 'text-left'],
-                 'contentOptions' => ['class' => 'text-left'],
-             ],
+        	],
              [
          'label' => 'Qty',
          'value' => function ($data) {
@@ -386,6 +385,10 @@
                             <?php endif; ?>
                                 <td rowspan="2" class="subtotal-table p-t-10">
                                     <table class="table-invoice-childtable table-more-condensed" style="float:right; width:auto;">
+										<tr>
+											<td id="invoice-discount">Discounts</td>
+											<td><?= Yii::$app->formatter->format($model->totalDiscount, ['currency']); ?></td>
+										</tr>
                                         <tr>
                                             <td>SubTotal</td>
                                             <td>

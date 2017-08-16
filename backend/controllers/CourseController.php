@@ -449,27 +449,4 @@ public function getLessons($date)
 
         return $result;
     }
-
-    public function actionPrint($id)
-    {
-        $model = $this->findModel($id);
-       	$lessonDataProvider = new ActiveDataProvider([
-            'query' => Lesson::find()
-				->andWhere([
-					'courseId' => $model->id,
-					'status' => Lesson::STATUS_SCHEDULED
-				])
-				->isConfirmed()
-				->notDeleted()
-                ->orderBy(['lesson.date' => SORT_ASC]),
-				'pagination' => false,
-       	]);
-
-        $this->layout = '/print';
-
-        return $this->render('_print', [
-                    'model' => $model,
-                    'lessonDataProvider' => $lessonDataProvider,
-        ]);
-    }
 }
