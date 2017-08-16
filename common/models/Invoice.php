@@ -267,7 +267,10 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return (int) $this->status === (int) self::STATUS_PAID;
     }
-
+	public function isUnassignedUser()
+    {
+        return (int) $this->user_id === self::USER_UNASSINGED;
+    }
     public function isOwing()
     {
         return (int) $this->status === (int) self::STATUS_OWING;
