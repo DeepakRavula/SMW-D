@@ -944,32 +944,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         foreach ($lesson->children()->all() as $splitLesson) {
             $lineItem = $this->addPrivateLessonLineItem($splitLesson);
-            if ($lesson->proFormaLineItem->hasLineItemDiscount()) {
-                if ($lesson->proFormaLineItem->lineItemDiscount->valueType) {
-                    $lienItemDiscount = new InvoiceLineItemDiscount();
-                    $lienItemDiscount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
-                    $lienItemDiscount->invoiceLineItemId = $splitLesson->proFormaLineItem->id;
-                    $lienItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
-                    $lienItemDiscount->value = $lesson->proFormaLineItem->lineItemDiscount->value / 
-                            ($lesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
-                    $lienItemDiscount->save();
-                } else {
-                    $lineItem->addLineItemDiscount($lesson->proFormaLineItem->lineItemDiscount);
-                }
-            }
-            if ($lesson->proFormaLineItem->hasMultiEnrolmentDiscount()) {
-                if ($lesson->proFormaLineItem->multiEnrolmentDiscount->valueType) {
-                    $lienItemDiscount = new InvoiceLineItemDiscount();
-                    $lienItemDiscount->type = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;
-                    $lienItemDiscount->invoiceLineItemId = $splitLesson->proFormaLineItem->id;
-                    $lienItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
-                    $lienItemDiscount->value = $lesson->proFormaLineItem->multiEnrolmentDiscount->value / 
-                            ($lesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
-                    $lienItemDiscount->save();
-                } else {
-                    $lineItem->addMultiEnrolmentDiscount(null, $lesson->proFormaLineItem->multiEnrolmentDiscount);
-                }
-            }
+            $lineItem->addExplodedLessonsDiscount($lesson);
         }
         
         $lesson->proFormaLineItem->delete();

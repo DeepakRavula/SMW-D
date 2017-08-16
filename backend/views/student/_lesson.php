@@ -164,7 +164,11 @@ use yii\bootstrap\Modal;
                     );
                     $('#lesson-calendar').fullCalendar('unselect');
                 },
+                loading: function (bool) { 
+                        $('#spinner').show();                    
+                },
                 eventAfterAllRender: function (view) {
+                    $('#spinner').hide(); 
                     $('.fc-short').removeClass('fc-short');
                 },
                 selectable: true,
