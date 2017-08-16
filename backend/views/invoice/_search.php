@@ -20,8 +20,7 @@ use kartik\daterange\DateRangePicker;
     ]); ?>
 	<?php if((int) $model->type === Invoice::TYPE_INVOICE) : ?>
     <div class="row">
-    <div class="col-md-3">
-    <label>Select Date</label>
+    <div class="col-md-3 m-t-20">
         <?php
         echo DateRangePicker::widget([
             'model' => $model,
@@ -64,7 +63,7 @@ use kartik\daterange\DateRangePicker;
                     Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
                 ],
                 'locale' => [
-                    'format' => 'd-m-Y',
+                    'format' => 'M d,Y',
                 ],
                 'opens' => 'right',
             ],

@@ -70,8 +70,9 @@ class InvoiceController extends Controller
 				$searchModel->dateRange = $invoiceSearchRequest['dateRange'];
 			}
         } else {
-            $searchModel->fromDate = (new \DateTime('first day of this month'))->format('d-m-Y');
-            $searchModel->toDate   = (new \DateTime('last day of this month'))->format('d-m-Y');
+            $searchModel->fromDate = (new \DateTime('first day of this month'))->format('M d,Y');
+            $searchModel->toDate   = (new \DateTime('last day of this month'))->format('M d,Y');
+             $searchModel->invoiceDateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
