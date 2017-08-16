@@ -22,16 +22,9 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
 $form = ActiveForm::begin([
 		'action' => ['index'],
 		'method' => 'get',
-		'options' => ['class' => 'pull-left'],
 	]);
 ?>
-<div class="pull-right  m-r-20">
-	<div class="schedule-index">
-		<div class="e1Div">
-			<?= $form->field($searchModel, 'showAllEnrolments')->checkbox(['data-pjax' => true]); ?>
-		</div>
-	</div>
-</div>
+
 <?php ActiveForm::end(); ?>
 	<?php $columns = [
 		[
@@ -134,7 +127,8 @@ $form = ActiveForm::begin([
 			]
         ], 
 	]; ?>
-<div>
+<div class="box">
+	<?= $form->field($searchModel, 'showAllEnrolments')->checkbox(['data-pjax' => true]); ?>
 	<?php
 	echo GridView::widget([
 		'dataProvider' => $dataProvider,

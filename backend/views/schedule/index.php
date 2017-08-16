@@ -8,6 +8,7 @@ use common\models\Holiday;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 $holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
@@ -16,6 +17,7 @@ if(!empty($holiday)) {
 	$holidayResource = ' (' . $holiday->description. ')';
 }
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
+$this->params['action-button'] = Html::a('<i class="fa fa-tv fa-2x"></i>', '', ['class' => 'tv-icon']);
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -74,68 +76,15 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holid
 .fc-view-container .fc-view > table {
   width: 2500px;
 }
-    .schedule-index {
-        position: absolute;
-        top: -45px;
-    }
-.selectivity-single-select{
-    margin-right: 10px;
-    padding-bottom:2px;
-}
-.tab-content{
-    padding:0 !important;
-}
-.box-body .fc{
-    margin:0 !important;
-}
-.ui-widget-content{
-    font-size: 12px;
-    line-height: 20px;
-    overflow: inherit;
-    color: #333333;
-    padding: 10px;
-    background-color: #ffffff;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 6px;
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -webkit-background-clip: padding-box;
-    -moz-background-clip: padding;
-    background-clip: padding-box;
-    background-image: none;
-    text-transform: capitalize;
-    position: absolute;
-    top: -182px;
-    width: 150px;
-    border: none;
-}
-.ui-widget-content b{
-	display:block;
-	color:#ff0000;
-	font-size:13px;
-	font-weight:400;
-	border-top:1px solid #ccc;
-	padding-top:5px;
-	padding-bottom:0;
-}
-.ui-widget-content b:first-child{
-	padding:0;
-	border:none;
-}
-.ui-widget-content:before{
-	content:"";
-	width: 0;
-height: 0;
-border-style: solid;
-border-width: 10px 10px 0 10px;
-border-color: #fff transparent transparent transparent;
-position:absolute;
-left:45%;
-bottom:-10px;
-}	
 </style>
+	<div class="col-md-2 pull-right">
+		<div id="datepicker" class="input-group date">
+			<input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
+			<div class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</div>
+		</div>
+	</div>
         <div class="pull-right calendar-filter">
 		<span class="filter_by_calendar">Filter by</span>
             <?=
@@ -195,21 +144,7 @@ bottom:-10px;
             ],
         ]);?>
 </div>
-    <div class="schedule-index">
-        <div class="row schedule-filter">
-            <div class="col-md-2 pull-right">
-                <div id="datepicker" class="input-group date">
-                    <input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-	<div class="schedule-index tv-icon">
-		<i class="fa fa-tv fa-2x"></i>	
-	</div>
+
 <?php $url = env('FRONTEND_SCHEDULE_URL'); ?>
 <script type="text/javascript">
 var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;

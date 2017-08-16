@@ -8,44 +8,20 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+$this->registerCssFile("@web/css/student/style.css");
 $this->title = 'Students';
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['action-button'] = Html::a('<i class="fa fa-print"> Print</i>', '#', ['class' => "btn bg-maroon", 'id' => 'print']);
 ?> 
-<?php $this->registerCssFile("@web/css/student/style.css");?>
 <div class="student-index">  
-	
-    <div class="smw-search"> 
-      <?php
-      $form = ActiveForm::begin([
-                  'action' => ['index'],
-                  'method' => 'get',
-                  'options' => ['class' => 'pull-left'],
-      ]);
-      ?>
-      <?php ActiveForm::end(); ?>
-      <a id="print" class="btn btn-default m-l-20">
-        <i class="fa fa-print"></i> Print all
-    </a>
-    </div>  
-    
     <?php
       $form = ActiveForm::begin([
                   'action' => ['index'],
                   'method' => 'get',
-                  'options' => ['class' => 'pull-left'],
       ]);
       ?>
-<div class="pull-right  m-r-20">
 	<?php yii\widgets\Pjax::begin() ?>
-    <div class="schedule-index">
-        <div class="e1Div">
         <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true])->label('Show All'); ?>
-        </div>
-    </div>
-    
     <?php \yii\widgets\Pjax::end(); ?>
-	
-</div>
 <?php ActiveForm::end(); ?>
 <div class="grid-row-open"> 
 <?= $this->render('_index', [
