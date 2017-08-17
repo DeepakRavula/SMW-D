@@ -84,4 +84,10 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
     {
         return ($this->isNewRecord && !empty($this->value)) || !$this->isNewRecord;
     }
+    
+    public function afterSave($insert, $changedAttributes)
+    {
+        $this->invoiceLineItem->save();
+        return parent::afterSave($insert, $changedAttributes);
+    }
 }
