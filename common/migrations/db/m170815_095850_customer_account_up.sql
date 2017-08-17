@@ -4,7 +4,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 --  Table structure for `invoice_discount``
 -- ----------------------------
-CREATE OR REPLACE VIEW `customer_account` AS
+CREATE OR REPLACE VIEW `customer_account_info` AS
 
 SELECT
 'Invoice' AS 'description', 
