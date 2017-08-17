@@ -18,7 +18,6 @@ use common\models\Student;
 use yii\filters\ContentNegotiator;
 use common\models\TeacherAvailability;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 use common\models\UserLocation;
 use common\models\User;
 use common\models\UserProfile;
@@ -156,21 +155,32 @@ class EnrolmentController extends Controller
                     $model->resetPaymentCycle();
                 }
             }
+			$message = '';
 			if($endDate !== $course->endDate) {
+				
 				$courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
 				$lessons = Lesson::find()
+                                        ->notDeleted()
 					->andWhere(['>=', 'DATE(date)', $courseEndDate])
+					->andWhere(['courseId' => $model->courseId])
 					->all();
-				foreach($lessons as $lesson) {
-					$lesson->updateAttributes([
-						'status' => Lesson::STATUS_CANCELED
-					]);
+                                foreach($lessons as $lesson) {
+                                    $lesson->Cancel();
+                                    if ($lesson->proFormaLineItem) {
+                                        $lesson->proFormaLineItem->delete();
+                                    }
+                                    $lesson->delete();
 				}
 				$course->updateAttributes([
 					'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s') 
 				]);
+				$invoice = $model->addCreditInvoice();
+				$message = '$' . abs($invoice->invoiceBalance) . ' has been credited to ' . $invoice->user->publicIdentity . ' account.'; 
 			}
-            return ['status' => true];
+            return [
+				'status' => true,
+				'message' => $message,
+			];
         } else {
 
             return [
@@ -318,89 +328,6 @@ class EnrolmentController extends Controller
 		return $this->redirect(['student/view', 'id' => $enrolmentModel->student->id]);
 	}
 
-	public function actionRenderResources($date, $programId)
-    {
-        $locationId = Yii::$app->session->get('location_id');
-        $date       = \DateTime::createFromFormat('Y-m-d', $date);
-		$teachersAvailabilities = TeacherAvailability::find()
-				->qualification($locationId, $programId)
-				->andWhere(['day' => $date->format('N')])
-				->groupBy(['teacher_location_id'])
-				->all();
-		if (!empty($teachersAvailabilities)) {
-			foreach ($teachersAvailabilities as $teachersAvailability) {
-				$resources[] = [
-					'id'    => $teachersAvailability->teacher->id,
-					'title' => $teachersAvailability->teacher->getPublicIdentity(),
-				];
-			}
-		} else {
-			$resources[] = [
-				'id'    => '0',
-				'title' => 'No Teacher Available Today for the Selected Program'
-			];
-		}
-        return $resources;
-    }
-
-	public function actionRenderDayEvents($date, $programId)
-    {
-        $locationId = Yii::$app->session->get('location_id');
-        $date       = \DateTime::createFromFormat('Y-m-d', $date);
-       	$teachersAvailabilities = TeacherAvailability::find()
-			->qualification($locationId, $programId)
-			->andWhere(['day' => $date->format('N')])
-			->all();
-		$events = [];
-		foreach ($teachersAvailabilities as $teachersAvailability) {
-			$start = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-				' ' . $teachersAvailability->from_time);
-			$end   = \DateTime::createFromFormat('Y-m-d H:i:s', $date->format('Y-m-d') .
-				' ' . $teachersAvailability->to_time);
-			$events[] = [
-				'resourceId' => $teachersAvailability->teacher->id,
-				'title'      => '',
-				'start'      => $start->format('Y-m-d H:i:s'),
-				'end'        => $end->format('Y-m-d H:i:s'),
-				'rendering'  => 'background',
-			];
-		}
-		$lessons = $this->getLessons($date, $programId);
-		foreach ($lessons as &$lesson) {
-			$toTime = new \DateTime($lesson->date);
-			$length = explode(':', $lesson->fullDuration);
-			$toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-			$title = $lesson->scheduleTitle;
-			$class = $lesson->class;
-			$backgroundColor = $lesson->colorCode;
-			$events[] = [
-				'lessonId' => $lesson->id,
-				'resourceId' => $lesson->teacherId,
-				'title' => $title,
-				'start' => $lesson->date,
-				'end' => $toTime->format('Y-m-d H:i:s'),
-				'url' => Url::to(['lesson/view', 'id' => $lesson->id]),
-				'className' => $class,
-				'backgroundColor' => $backgroundColor,
-			];
-		}
-		unset($lesson);
-        return $events;
-    }
-	public function getLessons($date, $programId)
-    {
-		$locationId = Yii::$app->session->get('location_id');
-        $lessons = Lesson::find()
-			->location($locationId)
-		    ->andWhere(['course.programId' => $programId])
-			->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
-			->isConfirmed()
-			->between($date, $date)
-			->notDeleted()
-			->all();
-        return $lessons;
-    }
-
     /**
      * Updates an existing Enrolment model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -463,18 +390,6 @@ class EnrolmentController extends Controller
 
     }
 
-	public function actionPreview($id)
-	{
-		$model = $this->findModel($id);
-		$data =  $this->renderAjax('preview', [
-            'model' => $model,
-        ]);	
-		return [
-			'status' => true,
-			'data' => $data
-		];
-	}
-  
     public function actionDelete($id)
     {
         $model = $this->findModel($id);

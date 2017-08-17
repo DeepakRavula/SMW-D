@@ -92,7 +92,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
-            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId'], 'safe']
+            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 'balance'], 'safe']
         ];
     }
 
@@ -267,7 +267,10 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return (int) $this->status === (int) self::STATUS_PAID;
     }
-
+	public function isUnassignedUser()
+    {
+        return (int) $this->user_id === self::USER_UNASSINGED;
+    }
     public function isOwing()
     {
         return (int) $this->status === (int) self::STATUS_OWING;
@@ -858,8 +861,8 @@ class Invoice extends \yii\db\ActiveRecord
         $paymentModel = new Payment();
         $paymentModel->amount = abs ($amount);
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-        $paymentModel->reference = $invoice->id;
         $paymentModel->invoiceId = $this->id;
+        $paymentModel->reference = $invoice->id;
         $paymentModel->save();
 
         $creditPaymentId = $paymentModel->id;

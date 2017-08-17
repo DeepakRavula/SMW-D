@@ -306,10 +306,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 }
             }
         }
-        if ($this->invoice->isReversedInvoice()) {
-            $this->amount = -($this->amount);
-            $this->setScenario(self::SCENARIO_OPENING_BALANCE);
-        }
         return parent::afterSave($insert, $changedAttributes);
     }
 
@@ -376,8 +372,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return $this->invoice->isReversedInvoice() ? -(abs($this->amount) - $this->discount) :
-            abs($this->amount) - $this->discount;
+        return $this->amount - $this->discount;
     }
 
     public function getDiscount()
@@ -385,19 +380,21 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $discount = 0.0;
         if ($this->hasLineItemDiscount()) {
             if ((int) $this->lineItemDiscount->valueType) {
-                $discount += $this->lineItemDiscount->value;
+                $discount += $this->amount < 0 ? - ($this->lineItemDiscount->value) : 
+                    $this->lineItemDiscount->value;
             } else {
-                $discount += ($this->lineItemDiscount->value / 100) * abs($this->amount);
+                $discount += ($this->lineItemDiscount->value / 100) * $this->amount;
             }
         }
         if ($this->hasCustomerDiscount()) {
-            $discount += ($this->customerDiscount->value / 100) * abs($this->amount);
+            $discount += ($this->customerDiscount->value / 100) * $this->amount;
         }
         if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
-            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * abs($this->amount);
+            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $this->amount;
         }
         if ($this->hasMultiEnrolmentDiscount()) {
-            $discount += $this->multiEnrolmentDiscount->value;
+            $discount += $this->amount < 0 ? - ($this->multiEnrolmentDiscount->value) :
+                $this->multiEnrolmentDiscount->value;
         }
         return $discount;
     }
