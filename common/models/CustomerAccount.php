@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "customer_account".
+ * This is the model class for table "customer_account_info".
  *
  * @property string $description
  * @property integer $invoiceId
@@ -23,7 +23,7 @@ class CustomerAccount extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'customer_account';
+        return 'customer_account_info';
     }
 
     /**
