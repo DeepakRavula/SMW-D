@@ -53,7 +53,7 @@ use kartik\grid\GridView;
         	</div>
 		</div>
 		<div class="col-md-2 m-t-25">
-			<?= Html::a('<i class="fa fa-print"></i> Print', ['print-time-voucher', 'id' => $model->id], ['id' => 'time-voucher-print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+			<?= Html::a('<i class="fa fa-print"></i> Print', ['print/time-voucher', 'id' => $model->id], ['id' => 'time-voucher-print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 
 		</div>
 		<div class="clearfix"></div>
@@ -213,7 +213,7 @@ GridView::widget([
             'InvoiceSearch[toDate]': toDate, 'InvoiceSearch[summariseReport]': (summariesOnly | 0) });
         var url = '<?php echo Url::to(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]); ?>&' + params;
         $.pjax.reload({url:url,container:"#time-voucher-grid",replace:false,  timeout: 4000});  //Reload GridView
-		var printUrl = '<?= Url::to(['user/print-time-voucher', 'id' => $model->id]); ?>&' + params;
+		var printUrl = '<?= Url::to(['print/time-voucher', 'id' => $model->id]); ?>&' + params;
 		 $('#time-voucher-print-btn').attr('href', printUrl);
     });
         $("#time-voucher-search-form").on("submit", function () {
@@ -223,7 +223,7 @@ GridView::widget([
             $.pjax.reload({container: "#time-voucher-grid", replace: false, timeout: 6000, data: $(this).serialize()});
 			var params = $.param({ 'InvoiceSearch[fromDate]': fromDate,
             'InvoiceSearch[toDate]': toDate, 'InvoiceSearch[summariseReport]': (summariesOnly | 0) });
-            var url = '<?= Url::to(['user/print-time-voucher', 'id' => $model->id]); ?>&' + params;
+            var url = '<?= Url::to(['print/time-voucher', 'id' => $model->id]); ?>&' + params;
             $('#time-voucher-print-btn').attr('href', url);
             return false;
         });

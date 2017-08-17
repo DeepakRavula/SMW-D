@@ -50,7 +50,7 @@ use common\models\Qualification;
 			<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
 		</div>
 		<div class="col-md-2 m-t-25">
-			<?= Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+			<?= Html::a('<i class="fa fa-print"></i> Print', ['print/teacher-lessons', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 
 		</div>
 		<div class="clearfix"></div>
@@ -148,7 +148,7 @@ GridView::widget([
             $.pjax.reload({container: "#teacher-lesson-grid", replace: false, timeout: 6000, data: $(this).serialize()});
 			var params = $.param({ 'LessonSearch[fromDate]': fromDate,
             'LessonSearch[toDate]': toDate});
-            var url = '<?= Url::to(['user/print', 'id' => $model->id]); ?>&' + params;
+            var url = '<?= Url::to(['print/teacher-lessons', 'id' => $model->id]); ?>&' + params;
             $('#print-btn').attr('href', url);
             return false;
         });
