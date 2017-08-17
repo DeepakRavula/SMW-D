@@ -16,8 +16,9 @@ use yii\web\Response;
 use common\models\CourseSchedule;
 use common\models\Student;
 use yii\filters\ContentNegotiator;
-use common\models\TeacherAvailability;
-use yii\helpers\Url;
+use backend\models\search\LessonSearch;
+use yii\base\Model;
+use common\models\timelineEvent\TimelineEventEnrolment;
 use common\models\UserLocation;
 use common\models\User;
 use common\models\UserProfile;
@@ -41,7 +42,7 @@ class EnrolmentController extends Controller
             ],
 			'contentNegotiator' => [
 				'class' => ContentNegotiator::className(),
-				'only' => ['add', 'preview', 'delete', 'edit', 'render-day-events','render-resources','schedule', 'update'],
+				'only' => ['add', 'delete', 'edit','schedule', 'update'],
 				'formatParam' => '_format',
 				'formats' => [
 				   'application/json' => Response::FORMAT_JSON,
@@ -455,4 +456,60 @@ class EnrolmentController extends Controller
 		
         return $this->redirect(['view', 'id' => $model->id]);
     }
+	public function actionReview($id)
+	{
+		$model = new Lesson();
+		$enrolment = Enrolment::findOne(['id' => $id]);
+        $searchModel = new LessonSearch();
+		$request = Yii::$app->request;
+        $lessonSearchRequest = $request->get('LessonSearch');
+        $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
+        $courseModel = $enrolment->course;
+		$conflicts = [];
+		$conflictedLessonIds = [];
+
+		$lessons = Lesson::find()
+			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
+			->all();
+		foreach ($lessons as $lesson) {
+			$lesson->setScenario(Lesson::SCENARIO_GROUP_ENROLMENT_REVIEW);
+			$lesson->studentId = $enrolment->student->id;
+		}
+		Model::validateMultiple($lessons);
+		foreach ($lessons as $lesson) {
+			if(!empty($lesson->getErrors('date'))) {
+				$conflictedLessonIds[] = $lesson->id;
+			}
+			$conflicts[$lesson->id] = $lesson->getErrors('date');
+		}
+		$query = Lesson::find();
+		if(! $showAllReviewLessons) {
+			$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
+		}  else {
+				$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED]);
+		}
+        $lessonDataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        return $this->render('review', [
+            'courseModel' => $courseModel,
+            'lessonDataProvider' => $lessonDataProvider,
+            'conflicts' => $conflicts,
+			'model' => $model,
+            'searchModel' => $searchModel,
+			'enrolment' => $enrolment,
+        ]);
+	}
+	public function actionConfirmGroup($id)
+	{
+		$enrolment = Enrolment::findOne(['id' => $id]);
+		$enrolment->isConfirmed = true;
+		$enrolment->save();
+        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $enrolment->on(Enrolment::EVENT_GROUP, [new TimelineEventEnrolment(), 'groupCourseEnrolment'], ['userName' => $user->publicIdentity]);
+        $enrolment->trigger(Enrolment::EVENT_GROUP);
+        $invoice = $enrolment->createProFormaInvoice();
+			return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
+	}
 }
