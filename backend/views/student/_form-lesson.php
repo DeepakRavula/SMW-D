@@ -9,6 +9,7 @@ use kartik\depdrop\DepDrop;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use yii\helpers\Url;
+use kartik\time\TimePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -23,7 +24,7 @@ use yii\helpers\Url;
 	'action' => Url::to(['lesson/create', 'studentId' => $studentModel->id]),
 ]); ?>
 <div class="row">
-        <div class="col-md-6 lesson-program">
+        <div class="col-md-3 lesson-program">
             <?php $query = Program::find()
                             ->active()
                             ->privateProgram();
@@ -48,7 +49,7 @@ use yii\helpers\Url;
                 'options' => ['placeholder' => 'Select program', 'id' => 'lesson-program']
             ])->label('Program - <a id="show-all">Click to show all</a>'); ?>
         </div>
-    	<div class="col-md-6 lesson-teacher">
+    	<div class="col-md-3 lesson-teacher">
         <?php $locationId = Yii::$app->session->get('location_id');
         $teachers = ArrayHelper::map(
                     User::find()
@@ -72,13 +73,25 @@ use yii\helpers\Url;
             ]);
         ?>
         </div>
-        <div class="col-md-6 lesson-date">
+		 <div class="col-md-2">
+            <?php
+            echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+                [
+                'pluginOptions' => [
+                    'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+                    'showMeridian' => false,
+                ],
+            ]);
+            ?>
+        </div>
+        <div class="col-md-4 lesson-date">
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
                     'id' => 'extra-lesson-date',
                     'value' =>Yii::$app->formatter->asDate((new \DateTime())->format('d-m-Y')),
                 ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
+				'layout' => '{input}{picker}',
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy',
