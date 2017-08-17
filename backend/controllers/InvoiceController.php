@@ -423,19 +423,6 @@ class InvoiceController extends Controller
         }
     }
 
-    public function actionAddInvoice()
-    {
-        $model = new User();
-
-        if (isset(Yii::$app->request->queryParams['User'])) {
-            $model->customer = Yii::$app->request->queryParams['User']['customer'];
-        }
-
-        return $this->render('create', [
-                    'model' => $model,
-        ]);
-    }
-
     public function actionUpdateMailStatus($id)
     {
         $request = Yii::$app->request;
