@@ -144,7 +144,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
         'modelClass' => 'User',
         ]),
-        ['delete-all-customer'],
+        ['customer/delete-all'],
         ['class' => 'btn pull-left'])
     ?>
 <?php endif; ?>

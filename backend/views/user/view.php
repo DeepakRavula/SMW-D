@@ -395,7 +395,7 @@ $(document).ready(function(){
     });
     $(document).on('click', '#customer-merge', function () {
         $.ajax({
-            url    : '<?= Url::to(['user/merge', 'id' => $model->id]); ?>',
+            url    : '<?= Url::to(['customer/merge', 'id' => $model->id]); ?>',
             type   : 'get',
             dataType: "json",
             data   : $(this).serialize(),
@@ -414,7 +414,7 @@ $(document).ready(function(){
     });
     $(document).on('beforeSubmit', '#customer-merge-form', function () {
         $.ajax({
-            url    : '<?= Url::to(['user/merge', 'id' => $model->id]); ?>',
+            url    : '<?= Url::to(['customer/merge', 'id' => $model->id]); ?>',
             type   : 'post',
             dataType: "json",
             data   : $(this).serialize(),
