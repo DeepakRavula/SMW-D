@@ -10,6 +10,8 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use common\models\Course;
 use common\models\Lesson;
+use common\models\ExamResult;
+use common\models\Student;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -62,4 +64,19 @@ class PrintController extends Controller
 			'lessonDataProvider' => $lessonDataProvider,
         ]);
     }	
+	public function actionEvaluation($studentId)
+    {
+		$studentModel = Student::findOne(['id' => $studentId]);
+        $examResults = ExamResult::find()->where(['studentId' => $studentId]);
+        $examResultDataProvider = new ActiveDataProvider([
+            'query' => $examResults,
+        ]);
+
+        $this->layout = '/print';
+
+        return $this->render('/student/exam-result/_print', [
+			'studentModel' => $studentModel,
+			'examResultDataProvider' => $examResultDataProvider,
+        ]);
+	}
 }

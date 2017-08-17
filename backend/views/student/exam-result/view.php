@@ -19,7 +19,7 @@ use yii\helpers\Url;
 	</div>
 
 	<div class="print_evaluation_student">
-		<?= Html::a('<i class="fa fa-print"></i> Print', ['exam-result/print', 'studentId' => $studentModel->id], ['class' => 'btn btn-default pull-right m-l-20', 'target' => '_blank']) ?>
+		<?= Html::a('<i class="fa fa-print"></i> Print', ['print/evaluation', 'studentId' => $studentModel->id], ['class' => 'btn btn-default pull-right m-l-20', 'target' => '_blank']) ?>
 			<div class="clearfix"></div>
 		<?php
 		Modal::begin([
