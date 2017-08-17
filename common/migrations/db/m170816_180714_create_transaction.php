@@ -12,8 +12,9 @@ class m170816_180714_create_transaction extends Migration
                 'id' => $this->primaryKey()
             ]);
         }
-        $this->addColumn('invoice', 'transactionId', $this->integer()->notNull()->after('id'));
-        $this->addColumn('payment', 'transactionId', $this->integer()->notNull()->after('id'));
+        $this->addColumn('invoice', 'transactionId', $this->integer()->null()->after('id'));
+        $this->addColumn('payment', 'transactionId', $this->integer()->null()->after('id'));
+        $this->addColumn('payment', 'transactionDummy', $this->integer()->null()->after('isDeleted'));
     }
 
     public function down()
