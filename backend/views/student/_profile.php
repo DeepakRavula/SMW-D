@@ -4,9 +4,12 @@ use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use common\models\User;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+use yii\widgets\Pjax;
 ?>
 <?php
-yii\widgets\Pjax::begin([
+Pjax::begin([
 	'id' => 'student-profile',
 ])
 ?>
@@ -19,8 +22,8 @@ yii\widgets\Pjax::begin([
 	?>
 <?php endif; ?>
 <?php
-\insolita\wgadminlte\LteBox::begin([
-	'type' => \insolita\wgadminlte\LteConst::TYPE_DEFAULT,
+LteBox::begin([
+	'type' => LteConst::TYPE_DEFAULT,
 	'boxTools' => '<i class="fa fa-pencil student-profile-edit-button"></i>',
 	'title' => 'Details',
 ])
@@ -36,8 +39,8 @@ yii\widgets\Pjax::begin([
 <a href="<?= Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $model->customer->id]); ?>">
 	<?= $model->customer->publicIdentity; ?>
 </a>
-<?php \insolita\wgadminlte\LteBox::end() ?>
-<?php \yii\widgets\Pjax::end(); ?>
+<?php LteBox::end() ?>
+<?php Pjax::end(); ?>
 <?php
 Modal::begin([
 	'header' => '<h4 class="m-0">Edit Student Profile</h4>',
