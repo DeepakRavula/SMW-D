@@ -263,7 +263,7 @@ class StudentController extends Controller
             $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
             $enrolmentModel->save();
 
-            return $this->redirect(['lesson/group-enrolment-review', 'courseId' => $enrolmentModel->courseId, 'enrolmentId' => $enrolmentModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
+            return $this->redirect(['enrolment/review', 'id' => $enrolmentModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
         }
 
         $groupEnrolments = Enrolment::find()

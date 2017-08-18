@@ -150,7 +150,7 @@ $this->title = 'Review Lessons';
 
     <div class="form-group">
 	<div class="p-10 text-center">
-		<?= Html::a('Confirm', ['confirm-group-enrolment', 'enrolmentId' => $enrolment->id], [
+		<?= Html::a('Confirm', ['confirm-group', 'id' => $enrolment->id], [
             'class' => 'btn btn-danger',
             'id' => 'confirm-button',
             'disabled' => $hasConflict,
@@ -169,7 +169,7 @@ $(document).ready(function(){
     }
 	$("#lessonsearch-showallreviewlessons").on("change", function() {
         var showAllReviewLessons = $(this).is(":checked");
-        var url = "<?php echo Url::to(['lesson/group-enrolment-review', 'courseId' => $courseModel->id, 'enrolmentId' => $enrolment->id]); ?>?LessonSearch[showAllReviewLessons]=" + (showAllReviewLessons | 0);
+        var url = "<?php echo Url::to(['enrolment/review', 'id' => $enrolment->id]); ?>?LessonSearch[showAllReviewLessons]=" + (showAllReviewLessons | 0);
         $.pjax.reload({url:url,container:"#review-lesson-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
 });
