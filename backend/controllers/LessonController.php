@@ -156,7 +156,6 @@ class LessonController extends Controller
         $studentModel = Student::findOne($studentId);
         $model->programId = !empty($studentModel->firstPrivateCourse) ? $studentModel->firstPrivateCourse->programId : null;
         $model->teacherId = !empty($studentModel->firstPrivateCourse) ? $studentModel->firstPrivateCourse->teacherId : null;
-        $model->duration  = Lesson::DEFAULT_LESSON_DURATION;
         $data = $this->renderAjax('/student/_form-lesson', [
             'model' => $model,
             'studentModel' => $studentModel
