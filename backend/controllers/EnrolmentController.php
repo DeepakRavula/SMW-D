@@ -224,7 +224,6 @@ class EnrolmentController extends Controller
 		$multipleEnrolmentDiscount = new EnrolmentDiscount();
         $paymentFrequencyDiscount = new EnrolmentDiscount();
 			
-		$request = Yii::$app->request;
         $post = $request->post();
 		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
 		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
@@ -242,33 +241,25 @@ class EnrolmentController extends Controller
 			$authManager = Yii::$app->authManager;
 			$authManager->assign($auth->getRole(User::ROLE_CUSTOMER), $user->id);
 			$userProfile->user_id = $user->id;
-			if(!$userProfile->save()) {
-				Yii::error('New enrolment User profile: ' . \yii\helpers\VarDumper::dumpAsString($userProfile->getErrors()));
-			}
+			$userProfile->save();
 			$userLocation->location_id = $locationId;
 			$userLocation->user_id = $user->id;
-			if(!$userLocation->save()) {
-				Yii::error('New enrolment User location: ' . \yii\helpers\VarDumper::dumpAsString($userLocation->getErrors()));	
-			}
+			$userLocation->save();
+			
 			//save address and phone number
 			if(!empty($address->address)) {
-				if(!$address->save()) {
-					Yii::error('New enrolment Address: ' . \yii\helpers\VarDumper::dumpAsString($address->getErrors()));	
-				}
+				$address->save();
 				$user->link('addresses', $address);
 			}
 			if(!empty($phoneNumber->number)) {
 				$phoneNumber->user_id = $user->id;
-				if(!$phoneNumber->save()) {
-					Yii::error('New enrolment Phone number: ' . \yii\helpers\VarDumper::dumpAsString($phoneNumber->getErrors()));	
-				}
+				$phoneNumber->save();
 			}
 			//save student
 			$student->customer_id = $user->id;
 			$student->status = Student::STATUS_DRAFT;
-			if(!$student->save()) {
-				Yii::error('New enrolment Student: ' . \yii\helpers\VarDumper::dumpAsString($student->getErrors()));	
-			}
+			$student->save();
+			
 			//save course
 			$dayList = Course::getWeekdaysList();
 			$course->locationId = $locationId;
@@ -276,31 +267,22 @@ class EnrolmentController extends Controller
 			$courseSchedule->studentId = $student->id;
 			if($course->save()) {
 				$courseSchedule->courseId = $course->id;
-				if(!$courseSchedule->save()) {
-					Yii::error('New enrolment Course schedule: ' . \yii\helpers\VarDumper::dumpAsString($courseSchedule->getErrors()));
-				}
+				$courseSchedule->save();
+					
 				 if (!empty($multipleEnrolmentDiscount->discount)) {
 					$multipleEnrolmentDiscount->enrolmentId = $course->enrolment->id;
 					$multipleEnrolmentDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
 					$multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
-					if(! $multipleEnrolmentDiscount->save()) {
-						Yii::error('New enrolment multiple enrolment discount: ' . \yii\helpers\VarDumper::dumpAsString($multipleEnrolmentDiscount->getErrors()));
-					}
+					$multipleEnrolmentDiscount->save();
 				}
 				if (!empty($paymentFrequencyDiscount->discount)) {
 					$paymentFrequencyDiscount->enrolmentId = $course->enrolment->id;
 					$paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLOR;
 					$paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
-					if(!$paymentFrequencyDiscount->save()) {
-						Yii::error('New enrolment payment frequency discount: ' . \yii\helpers\VarDumper::dumpAsString($paymentFrequencyDiscount->getErrors()));	
-					}
+					$paymentFrequencyDiscount->save();
 				}
-			} else {
-				Yii::error('New enrolment Course: ' . \yii\helpers\VarDumper::dumpAsString($course->getErrors()));
 			}
 			return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Enrolment[type]' => Enrolment::TYPE_REVERSE]);
-		} else {
-			Yii::error('New enrolment user: ' . \yii\helpers\VarDumper::dumpAsString($user->getErrors()));	
 		}
     }
 

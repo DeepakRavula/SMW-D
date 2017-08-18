@@ -92,7 +92,7 @@ $config = [
 				],
 				'rollbar' =>  [
 					'class' => 'baibaratsky\yii\rollbar\log\Target',
-					'levels' => ['error', 'warning', 'info'], // Log levels you want to appear in Rollbar
+					'levels' => ['error'], // Log levels you want to appear in Rollbar
 
 					'categories' => ['application'],
 				],

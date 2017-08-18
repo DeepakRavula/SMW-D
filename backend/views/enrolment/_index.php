@@ -132,7 +132,8 @@ echo $this->render('new/_calendar', [
 			$('#new-enrolment-form').yiiActiveForm('validate');
         });
 		$('#new-enrolment-form').on('afterValidate', function (event, messages) {
-			if(messages["course-programid"].length || 
+			if(messages["course-programid"].length ||
+				messages["courseschedule-day"].length ||
 				messages["course-teacherid"].length ||
 				messages["userprofile-firstname"].length ||
 				messages["userprofile-lastname"].length || messages["address-address"].length || messages["phonenumber-number"].length){ 
