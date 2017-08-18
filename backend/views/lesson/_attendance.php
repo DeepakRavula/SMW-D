@@ -1,11 +1,18 @@
 <?php
-\insolita\wgadminlte\LteBox::begin([
-	'type' => \insolita\wgadminlte\LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i class="fa fa-pencil"></i>',
+
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+?>
+<?php
+LteBox::begin([
+	'type' => LteConst::TYPE_DEFAULT,
 	'title' => 'Attendance',
 ])
 ?>
-<strong>Present</strong>
+<div class="col-xs-2 p-0"><strong>Present</strong></div>
+<div class="col-xs-6">
 <?= $model->getPresent(); ?>	
-<?php \insolita\wgadminlte\LteBox::end() ?>
+</div> 
+<div class='clearfix'></div>
+<?php LteBox::end() ?>
 					

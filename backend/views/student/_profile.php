@@ -28,17 +28,28 @@ LteBox::begin([
 	'title' => 'Details',
 ])
 ?>
-<strong>Name</strong>
-<?= $model->fullName; ?><div class='clearfix'></div>
-<strong>Birthday</strong>
-<?php echo!empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?><div class='clearfix'></div>
-<strong>Age</strong>
-<?= $age; ?>
+<div class="col-xs-2 p-0"><strong>Name</strong></div>
+<div class="col-xs-6">
+	<?= $model->fullName; ?>
+</div> 
 <div class='clearfix'></div>
-<strong>Customer</strong>
-<a href="<?= Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $model->customer->id]); ?>">
-	<?= $model->customer->publicIdentity; ?>
-</a>
+<div class="col-xs-2 p-0"><strong>Birthday</strong></div>
+<div class="col-xs-6">
+	<?= !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?>
+</div> 
+<div class='clearfix'></div>
+<div class="col-xs-2 p-0"><strong>Age</strong></div>
+<div class="col-xs-6">
+	<?= $age; ?>
+</div> 
+<div class='clearfix'></div>
+<div class="col-xs-2 p-0"><strong>Customer</strong></div>
+<div class="col-xs-6">
+	<a href="<?= Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $model->customer->id]); ?>">
+		<?= $model->customer->publicIdentity; ?></a>
+</div> 
+<div class='clearfix'></div>
+<div class='clearfix'></div>
 <?php LteBox::end() ?>
 <?php Pjax::end(); ?>
 <?php

@@ -1,20 +1,33 @@
-<?php ?>
 <?php
-\insolita\wgadminlte\LteBox::begin([
-	'type' => \insolita\wgadminlte\LteConst::TYPE_DEFAULT,
+
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+?>
+<?php
+LteBox::begin([
+	'type' => LteConst::TYPE_DEFAULT,
 	'boxTools' => '<i class="fa fa-pencil"></i>',
 	'title' => 'Schedule',
 ])
 ?>
-<strong>Date</strong>
+<div class="col-xs-2 p-0"><strong>Date</strong></div>
+<div class="col-xs-6">
 <?= (new \DateTime($model->date))->format('l, F jS, Y'); ?>
-<div class="clearfix"></div>
-<strong>Time</strong>
+</div> 
+<div class='clearfix'></div>
+<div class="col-xs-2 p-0"><strong>Time</strong></div>
+<div class="col-xs-6">
 <?= Yii::$app->formatter->asTime($model->date); ?>
-<div class="clearfix"></div>
-<strong>Duration</strong>
+</div> 
+<div class='clearfix'></div>
+<div class="col-xs-2 p-0"><strong>Duration</strong></div>
+<div class="col-xs-6">
 <?= (new \DateTime($model->duration))->format('H:i'); ?>
-<div class="clearfix"></div>
-<strong>Classroom</strong>
+</div> 
+<div class='clearfix'></div>
+<div class="col-xs-2 p-0"><strong>Classroom</strong></div>
+<div class="col-xs-6">
 <?= !empty($model->classroom->name) ? $model->classroom->name : 'None'; ?>
-<?php \insolita\wgadminlte\LteBox::end() ?>
+</div> 
+<div class='clearfix'></div>
+<?php LteBox::end() ?>
