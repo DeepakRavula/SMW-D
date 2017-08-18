@@ -290,7 +290,11 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getPaymentCycle()
     {
-        return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
+        $model = $this;
+        if ($this->rootLesson) {
+            $model = $this->rootLesson;
+        }
+        return $model->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
                     ->via('paymentCycleLesson');
     }
 
@@ -354,10 +358,14 @@ class Lesson extends \yii\db\ActiveRecord
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON]);
         }
     }
-
+    
     public function getProFormaInvoice()
     {
-        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+        $model = $this;
+        if ($this->rootLesson) {
+            $model = $this->rootLesson;
+        }
+        return $model->hasOne(Invoice::className(), ['id' => 'invoice_id'])
             ->via('proFormaLineItems')
                 ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
     }
@@ -441,12 +449,9 @@ class Lesson extends \yii\db\ActiveRecord
         } else if ($this->isGroup()) {
             $class = 'group-lesson';
         }
-        if ($this->getRootLesson()) {
-            $rootLesson = $this->getRootLesson();
-            if($rootLesson->id !== $this->id && empty($this->colorCode)) {
-                $class = 'lesson-rescheduled';
-            }
-            if ($rootLesson->teacherId !== $this->teacherId && empty($this->colorCode)) {
+        if ($this->rootLesson && empty($this->colorCode)) {
+            $class = 'lesson-rescheduled';
+            if ($this->rootLesson->teacherId !== $this->teacherId) {
                 $class = 'teacher-substituted';
             }
         }
@@ -456,8 +461,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaLineItem()
     {
-        $lessonId = $this->id;
-        $paymentCycleLessonId = $this->paymentCycleLesson->id;
+        $model = $this;
+        if ($this->rootLesson) {
+            $model = $this->rootLesson;
+        }
+        $lessonId = $model->id;
+        $paymentCycleLessonId = $model->paymentCycleLesson->id;
         if ($this->hasProFormaInvoice()) {
             if ($this->isExtra()) {
                 return InvoiceLineItem::find()
@@ -469,7 +478,7 @@ class Lesson extends \yii\db\ActiveRecord
                     ->one();
             } else {
                 return InvoiceLineItem::find()
-                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
+                    ->andWhere(['invoice_id' => $model->proFormaInvoice->id])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
                     ->joinWith(['lineItemPaymentCycleLesson' => function ($query) use ($paymentCycleLessonId) {
                         $query->where(['paymentCycleLessonId' => $paymentCycleLessonId]);
@@ -642,19 +651,6 @@ class Lesson extends \yii\db\ActiveRecord
         return $lessonStartDate == $priorDate;
     }
 
-    public function getRootLessonId($lessonId)
-    {
-        $parent = (new Query())->select(['lessonId'])
-            ->from('lesson_reschedule')
-            ->where(['rescheduledLessonId' => $lessonId])
-            ->scalar();
-
-        if (!empty($parent)) {
-            return $this->getRootLessonId($parent);
-        }
-        return $lessonId;
-    }
-
     public function canMerge()
     {
         $lessonDuration = new \DateTime($this->duration);
@@ -675,15 +671,15 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getRootLesson()
     {
-        $rootLessonId = $this->getRootLessonId($this->id);
-        return self::findOne(['id' => $rootLessonId]);
+        return self::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_ASC])->one();
     }
 
     public function isRescheduled()
     {
-        $rootLessonId = $this->getRootLessonId($this->id);
-
-        return $rootLessonId !== $this->id;
+        if ($this->isExploded) {
+            return $this->parent()->one()->rootLesson;
+        }
+        return $this->rootLesson;
     }
 
     public function isRescheduledByDate($changedAttributes)

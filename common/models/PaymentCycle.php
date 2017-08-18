@@ -164,7 +164,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $lessons = Lesson::find()
             ->isConfirmed()
             ->notDeleted()
-            ->invoicableLessons()
+            ->roots()
             ->joinWith('paymentCycleLesson')
             ->andWhere(['payment_cycle_lesson.paymentCycleId' => $this->id])
             ->all();
