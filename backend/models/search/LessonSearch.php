@@ -64,6 +64,7 @@ class LessonSearch extends Lesson
 				->isConfirmed()
                 ->notDeleted()
                 ->location($locationId)
+			->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED, Lesson::STATUS_MISSED]])
                 ->orderBy(['lesson.date' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([
@@ -74,7 +75,6 @@ class LessonSearch extends Lesson
             return $dataProvider;
         }
 
-		$query->andWhere(['NOT', ['lesson.status' => Lesson::STATUS_CANCELED]]);
         if (!empty($this->type)) {
             if ((int) $this->type === Lesson::TYPE_PRIVATE_LESSON) {
                 $query->activePrivateLessons();
@@ -101,8 +101,7 @@ class LessonSearch extends Lesson
             $query->andFilterWhere(['lesson.courseId' => $this->courseId]);
         }
         if ($this->lessonStatus == Lesson::STATUS_COMPLETED) {
-            $query->unInvoiced()
-                ->completed();
+            $query->completed();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_SCHEDULED) {
             $query->scheduled();
         } elseif ($this->lessonStatus === self::STATUS_INVOICED) {

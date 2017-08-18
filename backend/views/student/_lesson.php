@@ -144,15 +144,11 @@ use yii\bootstrap\Modal;
                 select: function (start, end, allDay) {
                     $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
                     $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
-                    var endtime = start.clone();
-                    var differenceInMinute = moment(end).minute() - moment(start).minute();
-                    if (differenceInMinute === 15) {
-                        moment(endtime.add(30, 'minutes'));
-                    } else {
-                        endtime = end;
-                    }
-                    var duration = moment.utc(moment(endtime, "HH:mm:ss").diff(moment(start, "HH:mm:ss"))).format("HH:mm:ss");
-                    $('#lesson-duration').val(duration);
+					var duration = $('#lesson-duration').val();
+					var endtime = start.clone();
+					var durationMinutes = moment.duration(duration).asMinutes();
+					moment(endtime.add(durationMinutes, 'minutes'));
+					
                     $('#lesson-calendar').fullCalendar('renderEvent',
                         {
                             id: 'newEnrolment',

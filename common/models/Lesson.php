@@ -129,7 +129,7 @@ class Lesson extends \yii\db\ActiveRecord
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT, self::SCENARIO_EDIT_REVIEW_LESSON]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
-            [['programId','date'], 'required', 'on' => self::SCENARIO_CREATE],
+            [['programId','date', 'duration'], 'required', 'on' => self::SCENARIO_CREATE],
             ['date', TeacherValidator::className(), 'on' => [self::SCENARIO_EDIT_REVIEW_LESSON,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_EDIT]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
