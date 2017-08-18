@@ -170,24 +170,4 @@ class ExamResultController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
-	public function actionPrint($studentId)
-    {
-		$studentModel = Student::findOne(['id' => $studentId]);
-        $examResults = ExamResult::find()->where(['studentId' => $studentId]);
-        $examResultDataProvider = new ActiveDataProvider([
-            'query' => $examResults,
-        ]);
-
-        $this->layout = '/print';
-
-        return $this->render('/student/exam-result/_print', [
-			'studentModel' => $studentModel,
-			'examResultDataProvider' => $examResultDataProvider,
-        ]);
-	}
-        
-        
-        
-        
 }

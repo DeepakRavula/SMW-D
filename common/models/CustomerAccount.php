@@ -5,31 +5,25 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "customer_account".
+ * This is the model class for table "customer_account_info".
  *
- * @property string $id
- * @property string $foreignKeyId
- * @property integer $type
- * @property integer $actionType
- * @property double $amount
- * @property double $credit
- * @property double $debit
- * @property double $balance
+ * @property string $description
+ * @property integer $invoiceId
+ * @property string $date
+ * @property string $debit
+ * @property string $credit
  */
 class CustomerAccount extends \yii\db\ActiveRecord
 {
-    const TYPE_INVOICE = 1;
-    const TYPE_PAYMENT = 2;
-    const ACTION_TYPE_CREATE = 1;
-    const ACTION_TYPE_UPDATE = 2;
-    const ACTION_TYPE_DELETE = 3;
+    const INVOICE_DESCRIPTION = 'Invoice';
+    const PAYMENT_DESCRIPTION = 'Payment';
 
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'customer_account';
+        return 'customer_account_info';
     }
 
     /**
@@ -38,9 +32,11 @@ class CustomerAccount extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['foreignKeyId', 'type', 'actionType', 'amount', 'balance'], 'required'],
-            [['foreignKeyId', 'type', 'actionType'], 'integer'],
-            [['amount', 'credit', 'debit', 'balance'], 'number'],
+            [['invoiceId', 'transactionId'], 'integer'],
+            [['date'], 'safe'],
+            [['description'], 'string', 'max' => 7],
+            [['debit'], 'string', 'max' => 12],
+            [['credit'], 'string', 'max' => 13],
         ];
     }
 
@@ -50,14 +46,11 @@ class CustomerAccount extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'foreignKeyId' => 'Foreign Key',
-            'type' => 'Type',
-            'actionType' => 'Action Type',
-            'amount' => 'Amount',
-            'credit' => 'Credit',
+            'description' => 'Description',
+            'invoiceId' => 'Invoice ID',
+            'date' => 'Date',
             'debit' => 'Debit',
-            'balance' => 'Balance',
+            'credit' => 'Credit',
         ];
     }
 
@@ -69,46 +62,35 @@ class CustomerAccount extends \yii\db\ActiveRecord
     {
         return new \common\models\query\CustomerAccountQuery(get_called_class());
     }
-
-    public function getActionUser()
+    
+    public function getInvoice()
     {
-        return $this->hasOne(User::className(), ['id' => 'actionUserId']);
+        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId']);
     }
-
-    public function getAccountActionType()
+    
+    public function getBalance()
     {
-        switch($this->actionType) {
-            case self::ACTION_TYPE_CREATE :
-                if ($this->type === self::TYPE_PAYMENT) {
-                    $actionType = 'recieved on P-';
+        return self::find()
+                ->where(['userId' => $this->userId])
+                ->andWhere(['<=', 'transactionId', $this->transactionId])
+                ->sum('credit+debit');
+    }
+    
+    public function getAccountDescription()
+    {
+        $description = null;
+        switch($this->description) {
+            case self::INVOICE_DESCRIPTION :
+                $description = $this->description . ' I-' . str_pad($this->invoiceId, 5, 0, STR_PAD_LEFT);
+            break;
+            case self::PAYMENT_DESCRIPTION :
+                if (!$this->invoice->isInvoice()) {
+                    $description = $this->description . ' P-' . str_pad($this->invoiceId, 5, 0, STR_PAD_LEFT);
                 } else {
-                    $actionType = 'created I-';
+                    $description = $this->description . ' I-' . str_pad($this->invoiceId, 5, 0, STR_PAD_LEFT);
                 }
             break;
-            case self::ACTION_TYPE_UPDATE :
-                if ($this->type === self::TYPE_PAYMENT) {
-                    $actionType = 'updated P-';
-                } else {
-                    $actionType = 'updated I-';
-                }            
-                break;
-            case self::ACTION_TYPE_DELETE :
-                $actionType = 'deleted P-';
-            break;
         }
-        return $actionType;
-    }
-
-    public function getAccountType()
-    {
-        switch($this->type) {
-            case self::TYPE_INVOICE :
-                $type = 'Invoice';
-            break;
-            case self::TYPE_PAYMENT :
-                $type = 'Payment';
-            break;
-        }
-        return $type;
+        return $description;
     }
 }

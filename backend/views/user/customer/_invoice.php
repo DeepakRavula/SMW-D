@@ -67,7 +67,7 @@ use common\models\Student;
 	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
     </div>
 	<?php ActiveForm::end(); ?>
-	<?= Html::a('<i class="fa fa-print"></i> Print', ['invoice-print', 'id' => $userModel->id], ['id' => 'invoice-print', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+	<?= Html::a('<i class="fa fa-print"></i> Print', ['print/customer-invoice', 'id' => $userModel->id], ['id' => 'invoice-print', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
 </div>
 <div class="clearfix"></div>
 <div class="grid-row-open">
@@ -131,7 +131,7 @@ $(document).ready(function(){
 		//});
 		$.pjax.reload({container:"#customer-invoice-grid", replace:false, timeout:6000, data:$(this).serialize()});
 		var params = $.param({ 'User[dateRange]': dateRange, 'User[invoiceStatus]': invoiceStatus, 'User[studentId]': studentId });
-		var url = '<?= Url::to(['user/invoice-print', 'id' => $userModel->id]); ?>&' + params;
+		var url = '<?= Url::to(['print/customer-invoice', 'id' => $userModel->id]); ?>&' + params;
 		$('#invoice-print').attr('href', url);
 		return false;
     });

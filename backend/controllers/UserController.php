@@ -2,11 +2,9 @@
 
 namespace backend\controllers;
 
-use yii\filters\ContentNegotiator;
 use common\models\Payment;
 use Yii;
 use common\models\User;
-use common\models\Item;
 use yii\helpers\Url;
 use common\models\Address;
 use common\models\PhoneNumber;
@@ -35,12 +33,10 @@ use common\models\Program;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
 use common\models\ItemType;
-use common\models\TaxStatus;
 use common\models\PaymentMethod;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
-use common\models\TeacherRate;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -346,9 +342,8 @@ class UserController extends Controller
             ->groupBy('day')
             ->all();
 
-        $account = CustomerAccount::find()
-            ->where(['userId' => $id])
-            ->orderBy(['id' => SORT_DESC]);
+        $account = CustomerAccount::find()->where(['userId' => $id])
+                ->orderBy(['transactionId' => SORT_ASC]);
 
         $accountDataProvider = new ActiveDataProvider([
             'query' => $account,
@@ -443,55 +438,6 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionAddOpeningBalance($id)
-    {
-        $model = $this->findModel($id);
-        $locationId = Yii::$app->session->get('location_id');
-        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
-        if ($paymentModel->load(Yii::$app->request->post())) {
-            $invoice = new Invoice();
-            $invoice->user_id = $model->id;
-            $invoice->location_id = $locationId;
-            $invoice->type = Invoice::TYPE_INVOICE;
-            $invoice->save();
-
-            $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
-            $invoiceLineItem->invoice_id = $invoice->id;
-            $item = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
-            $invoiceLineItem->item_id = $item->id;
-            $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
-            $invoiceLineItem->description = $item->description;
-            $invoiceLineItem->unit = 1;
-            $invoiceLineItem->amount = $paymentModel->amount;
-            $invoiceLineItem->code = $invoiceLineItem->getItemCode();
-            $invoiceLineItem->cost = 0;
-            $invoiceLineItem->save();
-
-            if ($paymentModel->amount > 0) {
-                $invoice->subTotal = $invoiceLineItem->amount;
-            } else {
-                $invoice->subTotal = 0.00;
-            }
-            $invoice->tax = $invoiceLineItem->tax_rate;
-            $invoice->total = $invoice->subTotal + $invoice->tax;
-            $invoice->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
-            $invoice->save();
-
-            if ($paymentModel->amount < 0) {
-                $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
-                $paymentModel->invoiceId = $invoice->id;
-                $paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
-                $paymentModel->amount = abs($paymentModel->amount);
-                $paymentModel->save();
-            }
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Invoice has been created successfully',
-            ]);
-
-            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-        }
-    }
     /**
      * Creates a new User model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -790,27 +736,6 @@ class UserController extends Controller
      *
      * @return mixed
      */
-    public function actionDeleteAllCustomer()
-    {
-        $db = Yii::$app->db;
-        $command = $db->createCommand("DELETE u, up, pn, ua, a,s,raa  FROM `user` u
-			LEFT JOIN `user_profile` up ON u.`id` = up.`user_id`
-			LEFT JOIN `phone_number` pn ON u.`id` = pn.`user_id`
-			LEFT JOIN `user_address` ua ON u.`id` = ua.`user_id` 
-			LEFT JOIN `student` s ON s.`customer_id` = u.`id`           
-			LEFT JOIN `address` a ON a.`id` = ua.`address_id` 
-			LEFT JOIN `rbac_auth_assignment` raa ON raa.`user_id` = u.`id`  
-			WHERE raa.`item_name` = 'customer'");
-        $command->execute();
-
-        Yii::$app->session->setFlash('alert', [
-            'options' => ['class' => 'alert-success'],
-            'body' => Yii::t('backend', 'All customer and student records have been deleted successfully ', []),
-        ]);
-
-        return $this->redirect(['index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER]);
-    }
-
     public function actionDeleteAllStaffMembers()
     {
         $db = Yii::$app->db;
@@ -858,183 +783,6 @@ class UserController extends Controller
             return $adminModel;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
-
-	public function actionPrint($id)
-    {
-        $model = $this->findModel($id);
-        $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
-		$request = Yii::$app->request;
-		$lessonSearch = new LessonSearch();
-		$lessonSearch->fromDate = new \DateTime();
-		$lessonSearch->toDate = new \DateTime();
-		$lessonSearchModel = $request->get('LessonSearch');
-		
-		if(!empty($lessonSearchModel)) {
-			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
-			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
-		}
-		$teacherLessons = Lesson::find()
-			->innerJoinWith('enrolment')
-			->location($locationId)
-			->where(['lesson.teacherId' => $model->id])
-			->isConfirmed()
-			->notDeleted()
-			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
-			->between($lessonSearch->fromDate, $lessonSearch->toDate)
-			->orderBy(['date' => SORT_ASC]);
-			
-		$teacherLessonDataProvider = new ActiveDataProvider([
-			'query' => $teacherLessons,
-			'pagination' => false,
-		]);
-		
-        $this->layout = '/print';
-
-        return $this->render('teacher/_print', [
-			'model' => $model,
-			'teacherLessonDataProvider' => $teacherLessonDataProvider,
-			'fromDate' => $lessonSearch->fromDate,
-			'toDate' => $lessonSearch->toDate,
-			'searchModel' => $lessonSearch
-        ]);
-    }
-
-	public function actionPrintTimeVoucher($id)
-    {
-        $model = $this->findModel($id);
-		$request = Yii::$app->request;
-		$invoiceSearch = new InvoiceSearch();
-		$invoiceSearch->fromDate = new \DateTime();
-		$invoiceSearch->toDate = new \DateTime();
-		$invoiceSearchModel = $request->get('InvoiceSearch');
-		
-		if(!empty($invoiceSearchModel)) {
-			$invoiceSearch->fromDate = new \DateTime($invoiceSearchModel['fromDate']);
-			$invoiceSearch->toDate = new \DateTime($invoiceSearchModel['toDate']);
-			$invoiceSearch->summariseReport = $invoiceSearchModel['summariseReport']; 
-		}
-		$timeVoucher = InvoiceLineItem::find()
-			->joinWith(['invoice' => function($query) use($invoiceSearch) {
-				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
-					->between($invoiceSearch->fromDate->format('Y-m-d'), $invoiceSearch->toDate->format('Y-m-d'));
-			}])
-			->joinWith(['lesson' => function($query) use($model){
-				$query->andWhere(['lesson.teacherId' => $model->id]);
-			}]);
-			if($invoiceSearch->summariseReport) {
-				$timeVoucher->groupBy('DATE(invoice.date)');	
-			} else {
-				$timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
-			}
-			
-		$timeVoucherDataProvider = new ActiveDataProvider([
-			'query' => $timeVoucher,
-			'pagination' => false,
-		]);
-		
-        $this->layout = '/print';
-
-        return $this->render('teacher/_print-time-voucher', [
-			'model' => $model,
-			'timeVoucherDataProvider' => $timeVoucherDataProvider,
-			'fromDate' => $invoiceSearch->fromDate,
-			'toDate' => $invoiceSearch->toDate,
-			'searchModel' => $invoiceSearch
-        ]);
-    }
-
-	public function actionInvoicePrint($id)
-    {
-        $model = $this->findModel($id);
-        $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
-		$request = Yii::$app->request;
-        $currentDate = new \DateTime();
-        $model->fromDate = $currentDate->format('1-m-Y');
-        $model->toDate = $currentDate->format('t-m-Y');
-        $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
-        $userRequest = $request->get('User');
-		if(!empty($userRequest)) {
-			$model->dateRange = $userRequest['dateRange']; 
-			list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
-			$invoiceStatus = $userRequest['invoiceStatus'];
-			$studentId = $userRequest['studentId'];
-		} 
-		$fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
-        $toDate =(new \DateTime($model->toDate))->format('Y-m-d');
-        $invoiceQuery = Invoice::find()
-                ->where([
-					'invoice.user_id' => $model->id,
-                    'invoice.type' => Invoice::TYPE_INVOICE,
-                    'invoice.location_id' => $locationId,
-                ])
-				->notDeleted()
-				->between($fromDate,$toDate);
-		if(!empty($invoiceStatus) && (int)$invoiceStatus !== UserSearch::STATUS_ALL) {
-			$invoiceQuery->andWhere(['invoice.status' => $invoiceStatus]);
-		}
-		if(!empty($studentId)) {
-			$invoiceQuery->student($studentId);
-		}
-        $invoiceDataProvider = new ActiveDataProvider([
-            'query' => $invoiceQuery,
-			'pagination' => false,
-        ]);
-        $this->layout = '/print';
-
-        return $this->render('customer/_print', [
-			'model' => $model,
-			'invoiceDataProvider' => $invoiceDataProvider,
-			'dateRange' => $model->dateRange,
-        ]);
-    }
-
-    public function actionMerge($id)
-    {
-        $model = User::findOne($id);
-        $model->setScenario(User::SCENARIO_MERGE);
-        $data       = $this->renderAjax('customer/_merge', [
-            'model' => $model,
-        ]);
-        $post = Yii::$app->request->post();
-        if ($model->load($post)) {
-            if ($model->validate()) {
-                foreach ($model->customerIds as $customerId) {
-                    $customer = User::findOne($customerId);
-                    foreach ($customer->students as $student) {
-                        $student->setScenario(Student::SCENARIO_CUSTOMER_MERGE);
-                        $student->customer_id = $id;
-                        $student->save();
-                    }
-                    foreach ($customer->notes as $note) {
-                        $note->instanceId = $id;
-                        $note->save();
-                    }
-                    foreach ($customer->logs as $log) {
-                        $log->userId = $id;
-                        $log->save();
-                    }
-                    $customer->delete();
-                }
-                return [
-                    'status' => true,
-                    'message' => 'Customer successfully merged!'
-                ];
-            } else {
-                $errors = ActiveForm::validate($model);
-                return [
-                    'status' => false,
-                    'errors' => current($errors)
-                ];
-            }
-        } else {
-            return [
-                'status' => true,
-                'data' => $data
-            ];
         }
     }
 }
