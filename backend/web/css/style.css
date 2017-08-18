@@ -45,6 +45,9 @@ body .user-panel > .info {
     height: 102px; /*hight of the spinner gif +2px to fix IE8 issue */
 }
 .go-back {
-	margin-right: 10px;
-    margin-top: -9px;
+	margin-right: 8px;
+	font-size: 14px;
+}
+.lesson-note-btn {
+	margin-bottom:-10px;
 }
