@@ -9,7 +9,7 @@ use common\models\Lesson;
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 $this->title = 'Lessons / Lesson Details';
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
 ?>
 <div class="row">
 	<div class="col-md-6">

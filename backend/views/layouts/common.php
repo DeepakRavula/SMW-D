@@ -27,14 +27,14 @@ $bundle = BackendAsset::register($this);
             <section class="content-header">
                 <h1>
                     <?php if (isset($this->params['goback'])) : ?>  
-                    <div class="pull-left m-r-10">
+                    <div class="pull-left go-back">
                         <?php echo $this->params['goback']; ?>
                     </div>
                     <?php endif; ?>
                     <?php echo $this->title ?>
                         
                     <?php if (isset($this->params['action-button'])) : ?>
-                        <div class="pull-right m-r-10">
+                        <div class="pull-right">
                             <?php echo $this->params['action-button']; ?>
                         </div>
                     <?php endif; ?>
