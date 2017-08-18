@@ -29,13 +29,11 @@ $this->params['action-button'] = Html::a(Yii::t('backend', 'Merge'), '#', ['clas
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <div class="row">
-	<div class="col-md-6">
-		<?php
-		echo $this->render('_profile', [
-			'model' => $model,
-		]);
-		?>
-	</div>
+	<?php
+	echo $this->render('_profile', [
+		'model' => $model,
+	]);
+	?>
 </div>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>

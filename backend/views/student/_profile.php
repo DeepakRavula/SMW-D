@@ -21,36 +21,49 @@ Pjax::begin([
 	$age = $birthDate->diff($currentDate)->y . 'yrs old';
 	?>
 <?php endif; ?>
-<?php
-LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i class="fa fa-pencil student-profile-edit-button"></i>',
-	'title' => 'Details',
-])
-?>
-<div class="col-xs-2 p-0"><strong>Name</strong></div>
-<div class="col-xs-6">
-	<?= $model->fullName; ?>
-</div> 
-<div class='clearfix'></div>
-<div class="col-xs-2 p-0"><strong>Birthday</strong></div>
-<div class="col-xs-6">
-	<?= !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?>
-</div> 
-<div class='clearfix'></div>
-<div class="col-xs-2 p-0"><strong>Age</strong></div>
-<div class="col-xs-6">
-	<?= $age; ?>
-</div> 
-<div class='clearfix'></div>
-<div class="col-xs-2 p-0"><strong>Customer</strong></div>
-<div class="col-xs-6">
-	<a href="<?= Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $model->customer->id]); ?>">
-		<?= $model->customer->publicIdentity; ?></a>
-</div> 
-<div class='clearfix'></div>
-<div class='clearfix'></div>
-<?php LteBox::end() ?>
+	<div class="col-md-6">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'boxTools' => '<i class="fa fa-pencil student-profile-edit-button"></i>',
+			'title' => 'Details',
+		])
+		?>
+		<div class="col-xs-2 p-0"><strong>Name</strong></div>
+		<div class="col-xs-6">
+			<?= $model->fullName; ?>
+		</div> 
+		<div class='clearfix'></div>
+		<div class="col-xs-2 p-0"><strong>Birthday</strong></div>
+		<div class="col-xs-6">
+			<?= !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?>
+		</div> 
+		<div class='clearfix'></div>
+		<div class="col-xs-2 p-0"><strong>Age</strong></div>
+		<div class="col-xs-6">
+			<?= $age; ?>
+		</div> 
+		<?php LteBox::end() ?>
+		</div> 
+	<div class="col-md-6">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'title' => 'Customer',
+		])
+		?>
+		<div class="col-xs-2 p-0"><strong>Customer</strong></div>
+		<div class="col-xs-6">
+			<a href="<?= Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $model->customer->id]); ?>">
+				<?= $model->customer->publicIdentity; ?></a>
+		</div> 
+		<div class='clearfix'></div>
+		<div class="col-xs-2 p-0"><strong>Phone</strong></div>
+		<div class="col-xs-6">
+			<?= !empty($model->customer->phoneNumber->number) ? $model->customer->phoneNumber->number : 'None'; ?>
+		</div> 
+		<?php LteBox::end() ?>
+	</div>
 <?php Pjax::end(); ?>
 <?php
 Modal::begin([
