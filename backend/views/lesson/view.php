@@ -29,12 +29,12 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$this->render('_student', [
 			'model' => $model,
 		]);
-		?>	
+		?>
 		<?=
 		$this->render('_attendance', [
 			'model' => $model,
 		]);
-		?>
+		?>	
 	</div>
 </div>
 <div class="row">
