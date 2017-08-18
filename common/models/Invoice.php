@@ -325,9 +325,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function isProformaPaymentFrequencyApplicable()
     {
-        return $this->isProFormaInvoice() && !$this->isExtraLessonProformaInvoice()
-            && !$this->proformaPaymentFrequency && $this->lineItem && 
-            !$this->isGroupLessonProformaInvoice();
+        return !$this->proformaPaymentFrequency && $this->proformaEnrolment ;
     }
 
     public function afterSave($insert, $changedAttributes)
@@ -867,28 +865,6 @@ class Invoice extends \yii\db\ActiveRecord
     public function accountBalance()
     {
         return $this->getCustomerAccountBalance($this->user_id);
-    }
-
-    public function addLessonSplitItem($splitId)
-    {
-        $split = LessonSplit::findOne($splitId);
-        $invoiceLineItem = $this->addLessonLineItem();
-        $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_SPLIT;
-        $invoiceLineItem->unit       = $split->units;
-        $qualification = Qualification::findOne(['teacher_id' => $split->lesson->teacherId,
-            'program_id' => $split->lesson->course->program->id]);
-        $rate = !empty($qualification->rate) ? $qualification->rate : 0;
-        $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
-		$invoiceLineItem->rate = $rate;
-        $invoiceLineItem->amount = $split->lesson->enrolment->program->rate * $invoiceLineItem->unit;
-        $invoiceLineItem->description  = 'Lesson Split';
-        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
-        if ($invoiceLineItem->save()) {
-            $invoiceLineItem->addLineItemDetails($split);
-            return $invoiceLineItem;
-        } else {
-            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
-        }
     }
 
     public function addGroupProFormaLineItem($enrolment)
