@@ -89,7 +89,7 @@ use yii\helpers\Url;
         <div class="col-md-12">
             <div id="lesson-calendar">
                 <div id="spinner" class="spinner" style="" >
-                    <img src="/backend/web/img/page-loader.gif" alt="" height="100" width="100"/>
+                    <img src="/backend/web/img/loader.gif" alt="" height="50" width="50"/>
                 </div>  
             </div>
         </div>

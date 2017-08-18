@@ -194,6 +194,7 @@ Modal::begin([
         });
 		$(document).on('click','#lesson-review-apply, #lesson-review-apply-all',function() {
 			$('#lesson-applycontext').val($(this).val());
+            $('#spinner').show();
 		});
 		$(document).on('beforeSubmit', '#lesson-review-form', function (e) {
 			var lessonId = $('#lesson-id').val();
@@ -210,6 +211,7 @@ Modal::begin([
                 data: $(this).serialize(),
                 success: function (response)
                 {
+                     $('#spinner').hide();
                     if (response.status)
                     {
 						$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000, async:false});
@@ -219,6 +221,7 @@ Modal::begin([
                 		review.onEditableGridSuccess();
                         $('#review-lesson-modal').modal('hide');
                     } else {
+                         $('#spinner').hide();
 				 		$('#lesson-review-form').yiiActiveForm('updateMessages',
 					   		response.errors	, true);
 					}

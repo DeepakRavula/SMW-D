@@ -75,6 +75,9 @@ bottom:-10px;
 	<div class="col-sm-3">
 		<?= $form->field($model, 'startDate')->textInput(['readOnly' => true])->label('Date & Time'); ?>
 	</div>
+     <div id="spinner" class="spinner">
+                        <img src="/backend/web/img/loader.gif" alt="" height="50" width="52"/>
+                    </div>
 	<div class="col-sm-2 apply-button">
 		<?= Html::a('Apply', '#', ['class' => 'btn btn-info enrolment-apply-button']) ?>
     </div>
@@ -109,6 +112,7 @@ $(document).ready(function() {
     $(document).on('click', '.enrolment-calendar-icon', function(){
         $('#enrolment-calendar').fullCalendar('destroy');
         $('#new-enrolment-modal').modal('show');
+        $('#spinner').show();
         $('#new-enrolment-modal .modal-dialog').css({'width': '1000px'});
         var date = moment(new Date()).format('DD-MM-YYYY');
 	    renderCalendar(date);
@@ -173,6 +177,7 @@ $(document).ready(function() {
             },
             eventAfterAllRender: function (view) {
                 $('.fc-short').removeClass('fc-short');
+               $('#spinner').hide(); 
             },
             selectable: true,
             selectHelper: true,

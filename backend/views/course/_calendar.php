@@ -11,7 +11,7 @@ use yii\helpers\Url;
  <div class="row-fluid">
 	<div id="course-calendar">
     <div id="spinner" class="spinner" style="display:none;">
-    <img src="/backend/web/img/page-loader.gif" alt="" height="100" width="100"/>
+    <img src="/backend/web/img/loader.gif" alt="" height="50" width="50"/>
 </div>
     </div>
 </div>
