@@ -29,6 +29,7 @@ use yii\helpers\Url;
         <div class="col-xs-6">
              <?php
             $customerName = $model->isNewRecord ? $customer->userProfile->lastname : null;
+			$model->birth_date = !empty($model->birth_date) ? (new \DateTime($model->birth_date))->format('d-m-Y') : null; 
         ?>
             <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
         </div>
