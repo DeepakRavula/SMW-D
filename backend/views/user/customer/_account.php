@@ -79,9 +79,7 @@ echo GridView::widget([
         'contentOptions' => ['class' => 'text-left'],
         'label' => 'Description',
         'value'=> function ($data) {
-            return $data->getAccountType() . ' ' . $data->getAccountActionType() . 
-                    '' . str_pad($data->foreignKeyId, 5, 0, STR_PAD_LEFT);
-                ;
+            return $data->getAccountDescription();
         }
     ],
     [
@@ -101,13 +99,14 @@ echo GridView::widget([
         }
     ],
     [
+        'format' => ['decimal', 2],
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right'],
         'label' => 'Balance',
         'value' => function ($data) {
-        	return !empty($data->balance) ? Yii::$app->formatter->asCurrency($data->balance) : '$0.00';
+            return $data->balance;
         }
-    ],
+    ]
    
 ],
 ]);
