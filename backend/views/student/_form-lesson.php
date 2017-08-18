@@ -112,7 +112,6 @@ use kartik\time\TimePicker;
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default extra-lesson-cancel-button']); ?>
     </div>
     </div>
-    <?php echo $form->field($model, 'duration')->hiddenInput()->label(false) ?>
 <?php ActiveForm::end(); ?>
 
 </div>
