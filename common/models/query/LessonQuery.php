@@ -221,7 +221,7 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function completed()
     {
-        $this->andFilterWhere(['OR',
+        $this->andWhere(['OR',
                 [
                     'AND',
                     ['lesson.status' => Lesson::STATUS_SCHEDULED],
