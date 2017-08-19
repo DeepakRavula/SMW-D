@@ -4,93 +4,43 @@ use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use common\models\Course;
 use common\models\Enrolment;
+use yii\widgets\Pjax;
 use yii\helpers\Url;
 
 use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);	
 ?>
-<div class="group-course-view">
-	<div class="row-fluid p-10">
-    <div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Program">
-        	<i class="fa fa-music"></i> <?= $model->course->program->name; ?>
-    </div>
-	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Teacher ">
-        	<i class="fa fa-graduation-cap"></i> <?= $model->course->teacher->publicIdentity; ?>
-    </div>
-    <div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Rate">
-    	<i class="fa fa-money"></i> <?= $model->course->program->rate; ?>
-    </div>
-	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Duration">
-    	<i class="fa fa-calendar"></i> <?php
-        $length = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->duration);
-        echo $length->format('H:i'); ?>
-    </div>
-	<div class="col-md-2" data-toggle="tooltip" data-placement="bottom" title="Day">
-    	<i class="fa fa-calendar"></i> <?php
-        $dayList = Course::getWeekdaysList();
-        $day = $dayList[$model->courseSchedule->day];
-        echo $day; ?>
-    </div>
-	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Time">
-		<i class="fa fa-clock-o"></i> <?php
-        $fromTime = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->fromTime);
-        echo $fromTime->format('h:i A'); ?>
+<div class="row">
+	<div class="col-md-6">
+		<?=
+		$this->render('_details', [
+			'model' => $model,
+		]);
+		?>
 	</div>
+    <?php Pjax::begin(['id' => 'course-endDate']); ?>
+	<div class="col-md-6">
+		<?=
+		$this->render('_schedule', [
+			'model' => $model,
+		]);
+		?>
 	</div>
-    <div class="clearfix"></div>
-	<div class="row-fluid p-20">
-	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Start Date">
-			<i class="fa fa-calendar"></i> <?= Yii::$app->formatter->asDate($model->course->startDate)?>
-	</div>
-	<?php yii\widgets\Pjax::begin(['id' => 'course-endDate','timeout' => 6000,]); ?>
-	<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="End Date">
-			<i class="fa fa-calendar"></i> <?php 
-			$endDate = Yii::$app->formatter->asDate($model->course->endDate);
-			echo $endDate;?>
-	</div>
-	</div>
-	<?php yii\widgets\Pjax::end(); ?>
-    <div class="p-10"></div>
-	<?php if($model->course->program->isPrivate()) :
-            $enrolmentDataProvider = new ActiveDataProvider([
-            'query' => Enrolment::find()
-                ->where(['id' => $model->id]),
-        ]);?>
-    <?php yii\widgets\Pjax::begin(['id' => 'enrolment-view']); ?>
-	<?php echo GridView::widget([
-        'dataProvider' => $enrolmentDataProvider,
-        'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'summary' => '',
-        'columns' => [
-            [
-                'label' => 'Payment Frequency',
-                'value' => function($data) {
-                    return $data->getPaymentFrequency();
-                }
-            ],
-            [
-                'label' => 'Payment Frequency Discount',
-                'value' => function($data) {
-                    return $data->getPaymentFrequencyDiscountValue();
-                }
-            ],
-            [
-                'label' => 'Multiple Enrolment Discount',
-                'value' => function($data) {
-                    return $data->getMultipleEnrolmentDiscountValue();
-                }
-
-            ],
-            ['class' => 'yii\grid\ActionColumn',
-                'template' => '{update}'
-            ],
-        ],
-    ]); ?>
-    <?php yii\widgets\Pjax::end(); ?>
-	<?php endif; ?>
-    <div class="clearfix"></div>
+    <?php Pjax::end(); ?>
 </div>
+<?php if($model->course->program->isPrivate()) :?>
+<div class="row">
+    <?php Pjax::begin(['id' => 'enrolment-view']); ?>
+	<div class="col-md-12">
+<?=
+		$this->render('_pf', [
+			'model' => $model,
+		]);
+		?>
+	</div>
+    <?php Pjax::end(); ?>
+</div>
+<?php endif; ?>
     <?php Modal::begin([
         'header' => '<h4 class="m-0">Enrolment Edit</h4>',
         'id' => 'enrolment-edit-modal',
@@ -105,7 +55,7 @@ DateTimePickerAsset::register($this);
         return false;
     });
 
-    $(document).on('click', '.glyphicon-pencil', function(){
+    $(document).on('click', '.edit-enrolment', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
             type   : 'get',
