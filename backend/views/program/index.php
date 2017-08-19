@@ -7,7 +7,6 @@ use yii\bootstrap\Modal;
 use yii\helpers\Url;
 
 $this->title = 'Programs';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="nav-tabs-custom">

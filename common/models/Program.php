@@ -61,6 +61,7 @@ class Program extends \yii\db\ActiveRecord
             'rate' => 'Rate',
             'status' => 'Status',
             'type' => 'Type',
+			'showAllPrograms' => 'Show All'
         ];
     }
 
