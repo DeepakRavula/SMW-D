@@ -327,8 +327,7 @@ $.ajax({
 	dataType: "json",
 	success: function (response)
 	{
-        var formattedDate = moment(date).format('dddd, MMMM Do, YYYY');
-        $(".content-header h1").text("Schedule for " + formattedDate.concat(response));
+		$(".content-header").html(response);
 	}
 });	
 }
