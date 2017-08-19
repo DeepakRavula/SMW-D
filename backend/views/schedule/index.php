@@ -17,7 +17,7 @@ if(!empty($holiday)) {
 	$holidayResource = ' (' . $holiday->description. ')';
 }
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
-$this->params['action-button'] = Html::a('<i class="fa fa-tv fa-2x"></i>', '', ['class' => 'tv-icon']);
+$this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class' => 'tv-icon']);
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
@@ -71,7 +71,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv fa-2x"></i>', '', [
   width: 2500px;
 }
 </style>
-	<div class="col-md-2 pull-right">
+	<div class="col-md-2 schedule-picker">
 		<div id="datepicker" class="input-group date">
 			<input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
 			<div class="input-group-addon">

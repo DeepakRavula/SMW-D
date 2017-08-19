@@ -38,6 +38,11 @@ $bundle = BackendAsset::register($this);
                             <?php echo $this->params['action-button']; ?>
                         </div>
                     <?php endif; ?>
+					 <?php if (isset($this->params['show-all'])) : ?>
+                        <div class="pull-right" style="margin-bottom:-10px">
+                            <?php echo $this->params['show-all']; ?>
+                        </div>
+                    <?php endif; ?> 
                     <div class="clearfix"></div>
                 </h1>
 

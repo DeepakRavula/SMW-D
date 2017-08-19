@@ -10,26 +10,18 @@ use yii\helpers\Html;
 
 $this->registerCssFile("@web/css/student/style.css");
 $this->title = 'Students';
-$this->params['action-button'] = Html::a('<i class="fa fa-print"> Print</i>', '#', ['class' => "btn bg-maroon", 'id' => 'print']);
+$this->params['action-button'] = Html::a('<i class="fa fa-print"> Print</i>', '#', ['class' => "btn bg-primary btn-sm", 'id' => 'print']);
+$this->params['show-all'] = $this->render('_button', [
+	'searchModel' => $searchModel
+]);
 ?> 
-<div class="student-index">  
-    <?php
-      $form = ActiveForm::begin([
-                  'action' => ['index'],
-                  'method' => 'get',
-      ]);
-      ?>
-	<?php yii\widgets\Pjax::begin() ?>
-        <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true])->label('Show All'); ?>
-    <?php \yii\widgets\Pjax::end(); ?>
-<?php ActiveForm::end(); ?>
+
 <div class="grid-row-open"> 
 <?= $this->render('_index', [
 	'dataProvider' => $dataProvider,
 	'searchModel' => $searchModel
 ]);?>
     </div>
-</div>
 <script>
 $(document).ready(function(){
   $("#studentsearch-showallstudents").on("change", function() {

@@ -3,29 +3,22 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
-use common\models\Enrolment;
-use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\Student;
 use common\models\UserProfile;
+use common\components\gridView\KartikGridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Enrolments';
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['create'], ['class' => 'btn btn-success btn-sm']);
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['create'], ['class' => 'btn bg-primary btn-sm']);
+$this->params['show-all'] = $this->render('_button', [
+	'searchModel' => $searchModel
+]);
 ?>
-<div class="enrolment-index">
-<?php
-$form = ActiveForm::begin([
-		'action' => ['index'],
-		'method' => 'get',
-	]);
-?>
-
-<?php ActiveForm::end(); ?>
 	<?php $columns = [
 		[
             'attribute' => 'program',
@@ -33,7 +26,7 @@ $form = ActiveForm::begin([
 				'value' => function($data) {
 					return $data->course->program->name;
 				},
-				'filterType'=>GridView::FILTER_SELECT2,
+				'filterType'=>KartikGridView::FILTER_SELECT2,
 				'filter'=>ArrayHelper::map(
 					Program::find()->orderBy(['name' => SORT_ASC])
 					->joinWith(['course' => function($query) {
@@ -54,7 +47,7 @@ $form = ActiveForm::begin([
 				'value' => function($data) {
 					return $data->student->fullName;
 				},
-				'filterType'=>GridView::FILTER_SELECT2,
+				'filterType'=>KartikGridView::FILTER_SELECT2,
 				'filter'=>ArrayHelper::map(Student::find()->orderBy(['first_name' => SORT_ASC])
 					->joinWith(['enrolment' => function($query) {
 						$query->joinWith(['course' => function($query) {
@@ -78,7 +71,7 @@ $form = ActiveForm::begin([
 				'value' => function($data) {
 					return $data->course->teacher->publicIdentity;
 				},
-				'filterType'=>GridView::FILTER_SELECT2,
+				'filterType'=>KartikGridView::FILTER_SELECT2,
 				'filter'=>ArrayHelper::map(UserProfile::find()->orderBy(['firstname' => SORT_ASC])
 					->joinWith(['courses' => function($query) {
 						$query->joinWith('enrolment')
@@ -103,7 +96,7 @@ $form = ActiveForm::begin([
 					return Yii::$app->formatter->asDate($data->course->endDate);
 				},
 				'contentOptions' => ['style' => 'width:200px'],
-				'filterType'=>GridView::FILTER_DATE,
+				'filterType'=>KartikGridView::FILTER_DATE,
 				'filterWidgetOptions'=>[
 					'pluginOptions'=>[
 						'allowClear'=>true,
@@ -127,28 +120,28 @@ $form = ActiveForm::begin([
 			]
         ], 
 	]; ?>
-<div class="box">
-	<?= $form->field($searchModel, 'showAllEnrolments')->checkbox(['data-pjax' => true]); ?>
 	<?php
-	echo GridView::widget([
+	echo KartikGridView::widget([
 		'dataProvider' => $dataProvider,
         'filterModel'=>$searchModel,
 		'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'columns' => $columns,
 		'pjax'=>true,
-		'pjaxSettings'=>[
-			'id' => 'enrolment-index',
-		]
+		'pjaxSettings' => [
+		'neverTimeout' => true,
+		'options' => [
+			'id' => 'enrolment-listing',
+		],
+	],
 	]);
 	?>
-</div>
 <script>
 $(document).ready(function(){
   $("#enrolmentsearch-showallenrolments").on("change", function() {
       var showAllEnrolments = $(this).is(":checked");
       var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);
-      $.pjax.reload({url:url,container:"#enrolment-index",replace:false,  timeout: 4000});  //Reload GridView
+      $.pjax.reload({url:url,container:"#enrolment-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
 });
 </script>
