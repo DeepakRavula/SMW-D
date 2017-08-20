@@ -18,6 +18,9 @@ body .user-panel > .info {
 }
 
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */
+.alert {
+	padding:6px;
+}
 .login-logo-img {
 	width : 300px;	
 }
@@ -48,7 +51,7 @@ body .user-panel > .info {
 	margin-right: 8px;
 	font-size: 14px;
 }
-.lesson-note-btn {
+.note-btn {
 	margin-bottom:-10px;
 }
 #show-all label{

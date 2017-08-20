@@ -102,7 +102,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 				],
 			],
 				[
-				'label' => 'Notes',
+				'label' => 'Comments',
 				'content' => $noteContent,
 				'options' => [
 					'id' => 'note',
@@ -401,12 +401,6 @@ $(document).on('click', '.evaluation-delete', function () {
                     if (response.status)
                     {
                         $('.student-note-content').html(response.data);
-                        $('#student-note-modal').modal('hide');
-                    } else
-                    {
-                        $('#student-note-form').yiiActiveForm('updateMessages',
-                                response.errors
-                                , true);
                     }
                 }
             });

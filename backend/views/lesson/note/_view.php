@@ -18,7 +18,7 @@ use yii\helpers\Html;
 	<div class="input-group">
         <?php echo $form->field($model, 'content')->textInput(['placeholder' => "Type message"])->label(false)?>
 		<div class="input-group-btn ">
-			<?php echo Html::submitButton('<i class="fa fa-plus"></i>', ['class' => 'btn btn-success lesson-note-btn', 'name' => 'signup-button']) ?>
+			<?php echo Html::submitButton('<i class="fa fa-plus"></i>', ['class' => 'btn btn-success lesson-note-btn note-btn', 'name' => 'signup-button']) ?>
 		</div>
 	</div>
 </div>

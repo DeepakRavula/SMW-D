@@ -1,7 +1,9 @@
 <?php
-$this->registerCssFile("@web/css/lesson.css");
+use yii\widgets\Pjax;
+
+$this->registerCssFile("@web/css/note.css");
 ?>
-<?php yii\widgets\Pjax::begin(['id' => 'lesson-note-listing']); ?>
+<?php Pjax::begin(['id' => 'lesson-note-listing']); ?>
 <div class="item">
 	<img src='<?= Yii::getAlias('@backendUrl') . '/img/anonymous.jpg';?>' alt="user image" class="img-circle offline">
 	<p class="message">
@@ -12,6 +14,6 @@ $this->registerCssFile("@web/css/lesson.css");
 		<?= $model->content; ?>
 	</p>
 </div>
-<?php yii\widgets\Pjax::end(); ?>
+<?php Pjax::end(); ?>
 
 

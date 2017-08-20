@@ -51,10 +51,13 @@ $bundle = BackendAsset::register($this);
             <!-- Main content -->
             <section class="content">
                 <?php if (Yii::$app->session->hasFlash('alert')):?>
+					<div class="col-md-2"></div>
+					<div class="col-md-7">
                     <?php echo \yii\bootstrap\Alert::widget([
                         'body' => ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'body'),
                         'options' => ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'options'),
                     ])?>
+					</div>
                 <?php endif; ?>
                 <?php echo $content ?>
             </section><!-- /.content -->           
