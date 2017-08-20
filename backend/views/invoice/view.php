@@ -14,7 +14,7 @@ use yii\bootstrap\Modal;
 /* @var $model common\models\Invoice */
 
 $this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice';
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'InvoiceSearch[type]' => $model->type], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'InvoiceSearch[type]' => $model->type], ['class' => 'go-back']);
 ?>
 <div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <?php

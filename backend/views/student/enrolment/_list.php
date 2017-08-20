@@ -77,20 +77,20 @@ echo GridView::widget([
 					$url = Url::to(['enrolment/view', 'id' => $model->id]);
 					return Html::a('<i class="fa fa-eye"></i>', $url, [
 							'title' => Yii::t('yii', 'View'),
-							'class' => ['btn-primary btn-xs m-l-10']
+							'class' => ['btn-primary btn-xs m-r-10']
 					]);
 				},
 				'reschedule' => function ($url, $model, $key) {
 					return Html::a('<i class="fa fa-book"></i>', '#', [
 							'id' => 'enrolment-edit-' . $model->id,
 							'title' => Yii::t('yii', 'Reschedule Lessons'),
-							'class' => 'enrolment-edit m-l-10 btn-info btn-xs'
+							'class' => 'enrolment-edit m-r-10 btn-info btn-xs'
 					]);
 				},
 				'add-vacation' => function ($url, $model) {
 					return Html::a('<i class="fa fa-plane"></i>', '#', [
 							'title' => Yii::t('yii', 'Add Vacation'),
-							'class' => ['btn-success btn-xs m-l-10 add-new-vacation']
+							'class' => ['btn-success btn-xs m-r-10 add-new-vacation']
 					]);
 				},
 				'delete' => function ($url, $model, $key) {
@@ -99,7 +99,7 @@ echo GridView::widget([
         ], [
 							'id' => 'enrolment-delete-' . $model->id,
 							'title' => Yii::t('yii', 'Delete'),
-							'class' => 'enrolment-delete m-l-10 btn-danger btn-xs',
+							'class' => 'enrolment-delete m-r-10 btn-danger btn-xs',
 					]);
 				},
 			],

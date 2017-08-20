@@ -75,6 +75,13 @@ body .user-panel > .info {
 	position: relative;
     top: 5px;
 }
+.text-add-new {
+	float: left;
+    margin: 10px 0 0 0;
+}
 .m-r-10 {
+	margin-right:10px;
+}
+.m-r-20 {
 	margin-right:10px;
 }

@@ -8,7 +8,7 @@ use common\models\Enrolment;
 /* @var $model common\models\GroupCourse */
 
 $this->title = 'Group Course Details';
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back text-add-new f-s-14 m-r-10 m-t-0']);
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back']);
 $this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-left', 'target' => '_blank']);
 
 ?>
