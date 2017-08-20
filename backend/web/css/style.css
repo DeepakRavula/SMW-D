@@ -75,3 +75,6 @@ body .user-panel > .info {
 	position: relative;
     top: 5px;
 }
+.m-r-10 {
+	margin-right:10px;
+}
