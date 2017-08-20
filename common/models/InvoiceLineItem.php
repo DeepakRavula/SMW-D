@@ -632,6 +632,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         } else {
             $invoiceLineItemDiscount->value     = $enrolment->multipleEnrolmentDiscount->discountPerLesson;
         }
+        if ($this->lesson->isExploded) {
+            $parentLesson = $this->lesson->parent()->one();
+            $spiltParts = Lesson::find()
+                ->descendantsOf($parentLesson->id)
+                ->all();
+            $invoiceLineItemDiscount->value = $invoiceLineItemDiscount->value / count($spiltParts);
+        }
         $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
         $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;
         return $invoiceLineItemDiscount->save();
@@ -639,6 +646,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     
     public function addExplodedLessonsDiscount($lesson)
     {
+        $rootLesson = Lesson::find()
+                ->ancestorsOf($lesson->id)
+                ->orderBy(['id' => SORT_ASC])
+                ->one();
         if ($lesson->proFormaLineItem->hasEnrolmentPaymentFrequencyDiscount()) { 
             $discount = $this->addEnrolmentPaymentFrequencyDiscount( null, 
                     $lesson->proFormaLineItem->enrolmentPaymentFrequencyDiscount);
@@ -653,7 +664,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $lienItemDiscount->invoiceLineItemId = $this->id;
                 $lienItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
                 $lienItemDiscount->value = $lesson->proFormaLineItem->lineItemDiscount->value / 
-                        ($lesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
+                        ($rootLesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
                 $lienItemDiscount->save();
             } else {
                 $this->addLineItemDiscount($lesson->proFormaLineItem->lineItemDiscount);
@@ -666,7 +677,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $lienItemDiscount->invoiceLineItemId = $this->id;
                 $lienItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
                 $lienItemDiscount->value = $lesson->proFormaLineItem->multiEnrolmentDiscount->value / 
-                        ($lesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
+                        ($rootLesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
                 $lienItemDiscount->save();
             } else {
                 $discount = $this->addMultiEnrolmentDiscount(null, $lesson->proFormaLineItem->multiEnrolmentDiscount);

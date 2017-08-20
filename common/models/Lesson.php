@@ -827,13 +827,8 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addPrivateLessonLineItem($this);
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
-            if ($this->isSplitRescheduled()) {
-                $netPrice = $this->getSplitRescheduledAmount();
-            } else {
-                $netPrice = $this->proFormaLineItem->netPrice;
-            }
-            if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
-                $invoice->addPayment($this->proFormaInvoice, $netPrice);
+            if ($this->proFormaInvoice->proFormaCredit >= $this->proFormaLineItem->netPrice) {
+                $invoice->addPayment($this->proFormaInvoice, $this->proFormaLineItem->netPrice);
             } else {
                 $invoice->addPayment($this->proFormaInvoice, $this->proFormaInvoice->proFormaCredit);
             }
@@ -844,7 +839,7 @@ class Lesson extends \yii\db\ActiveRecord
                 $invoice->save();
                 if ($extendedLesson->lesson->hasProFormaInvoice()) {
                     if ($extendedLesson->lesson->proFormaInvoice->hasProFormaCredit()) {
-                        $amount = $extendedLesson->lesson->proFormaLineItem->netPrice;
+                        $amount = $extendedLesson->lesson->getSplitedAmount();
                         if ($amount > $extendedLesson->lesson->proFormaInvoice->proFormaCredit) {
                            $amount = $extendedLesson->lesson->proFormaInvoice->proFormaCredit;
                         }
@@ -947,16 +942,13 @@ class Lesson extends \yii\db\ActiveRecord
 		return in_array($lessonDate, $holidayDates);
 }
 
-    public function getSplitRescheduledAmount()
+    public function getSplitedAmount()
     {
-        $getDuration   = new \DateTime($this->reschedule->lesson->duration);
-        $hours         = $getDuration->format('H');
-        $minutes       = $getDuration->format('i');
-        $unit          = (($hours * 60) + $minutes) / 60;
-        $amount        = $this->enrolment->program->rate * $unit;
-        $discount      = $this->proFormaLineItem->discount;
-
-        return $amount - $discount;
+        $parentLesson = $this->parent()->one();
+        $spiltParts = self::find()
+                ->descendantsOf($parentLesson->id)
+                ->all();
+        return $parentLesson->proFormaLineItem->netPrice / count($spiltParts);
     }
 
     public function canInvoice()

@@ -760,13 +760,12 @@ class Invoice extends \yii\db\ActiveRecord
     public function makeInvoicePayment()
     {
         foreach($this->lineItems as $lineItem) {
-            $model = Lesson::find()
+            $lesson = Lesson::find()
                     ->descendantsOf($lineItem->proFormaLesson->id)
                     ->orderBy(['id' => SORT_DESC])
                     ->one();
-            $lesson = Lesson::findOne($lineItem->proFormaLesson->id);
-            if ($model) {
-                $lesson = $model;
+            if (!$lesson) {
+                $lesson = Lesson::findOne($lineItem->proFormaLesson->id);
             }
             if($lesson->canInvoice()) {
                 if (!$lesson->hasInvoice()) {
@@ -775,7 +774,7 @@ class Invoice extends \yii\db\ActiveRecord
                     if ($lesson->hasProFormaInvoice()) {
                         $netPrice = $lesson->proFormaLineItem->netPrice;
                         if ($lesson->isExploded) {
-                            $netPrice = $lesson->getSplitRescheduledAmount();
+                            $netPrice = $lesson->getSplitedAmount();
                         }
                         if ($lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
                             $lesson->invoice->addPayment($lesson->proFormaInvoice, $netPrice);
