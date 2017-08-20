@@ -9,21 +9,15 @@ LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
 	'boxTools' => '<i class="fa fa-pencil edit-enrolment"></i>',
 	'title' => 'PF & Discounts',
+	'withBorder' => true,
 ])
 ?>
-<div class="col-xs-5 p-0"><strong>Payment Frequency</strong></div>
-<div class="col-xs-6">
-	<?= $model->getPaymentFrequency(); ?>
-</div> 
-<div class='clearfix'></div>
-<div class="col-xs-5 p-0"><strong>Payment Frequency Discount</strong></div>
-<div class="col-xs-6">
-<?= $model->getPaymentFrequencyDiscountValue(); ?>
-</div> 
-<div class='clearfix'></div>
-<div class="col-xs-5 p-0"><strong>Multiple Enrolment Discount</strong></div>
-<div class="col-xs-6">
-	<?= $model->getMultipleEnrolmentDiscountValue(); ?>
-</div> 
-<?php
-LteBox::end()?>
+<dl class="dl-horizontal">
+	<dt>Payment Frequency</dt>
+	<dd><?= $model->getPaymentFrequency(); ?></dd>
+	<dt>PF Discount</dt>
+	<dd><?= $model->getPaymentFrequencyDiscountValue(); ?></dd>
+	<dt>Multiple Enrol. Discount</dt>
+	<dd><?= $model->getMultipleEnrolmentDiscountValue(); ?></dd>
+</dl>
+<?php LteBox::end()?>

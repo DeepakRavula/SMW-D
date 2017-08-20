@@ -7,12 +7,12 @@ use insolita\wgadminlte\LteConst;
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
 	'title' => 'Attendance',
+	'withBorder' => true,
 ])
 ?>
-<div class="col-xs-2 p-0"><strong>Present</strong></div>
-<div class="col-xs-6">
-<?= $model->getPresent(); ?>	
-</div> 
-<div class='clearfix'></div>
+<dl class="dl-horizontal">
+	<dt>Present</dt>
+	<dd><?= $model->getPresent(); ?></dd>
+</dl>
 <?php LteBox::end() ?>
 					
