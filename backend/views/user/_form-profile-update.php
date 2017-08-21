@@ -1,12 +1,17 @@
 <?php
 
 use common\models\User;
+use yii\widgets\ActiveForm;
 
 $Roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 foreach ($Roles as $name => $description) {
     $role_name = $name;
 }
 ?>
+<?php
+    $form = ActiveForm::begin([
+        'enableAjaxValidation' => true, ]);
+    ?>
 <div class="row-fluid section-tab">
 	<div class="col-xs-8 p-l-10">
 		<div class="col-xs-6 p-l-0">
@@ -35,4 +40,6 @@ foreach ($Roles as $name => $description) {
 			<div class="clearfix"></div>
 		</div>
 	</div>
+	<div class="clearfix"></div>
 </div>
+<?php ActiveForm::end(); ?>
