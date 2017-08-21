@@ -73,7 +73,7 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
                 $invoice->save();
                 if ($this->lesson->hasProFormaInvoice()) {
                     if ($this->lesson->proFormaInvoice->hasProFormaCredit()) {
-                        $amount = $this->lesson->proFormaLineItem->netPrice;
+                        $amount = $this->lesson->getSplitedAmount();
                         if ($amount > $this->lesson->proFormaInvoice->proFormaCredit) {
                            $amount = $this->lesson->proFormaInvoice->proFormaCredit;
                         }

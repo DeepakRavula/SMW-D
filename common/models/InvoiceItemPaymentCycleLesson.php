@@ -58,4 +58,15 @@ class InvoiceItemPaymentCycleLesson extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
                 ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
     }
+    
+    public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                ->via('paymentCycleLesson');
+    }
+    
+    public function getPaymentCycleLesson()
+    {
+        return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId']);
+    }
 }
