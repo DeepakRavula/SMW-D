@@ -104,7 +104,9 @@ DateTimePickerAsset::register($this);
         $('#enrolment-edit-modal').modal('hide');
         return false;
     });
-
+ $(document).on('click', '#enrolment-edit-save-btn', function(){
+       $('#spinner').show();
+    });  
     $(document).on('click', '.glyphicon-pencil', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
@@ -134,6 +136,7 @@ DateTimePickerAsset::register($this);
             data: $(this).serialize(),
             success: function(response)
             {
+               $('#spinner').hide(); 
                 if(response.status)
                 {
                     $('#enrolment-edit-modal').modal('hide');
