@@ -74,7 +74,6 @@ use yii\bootstrap\Tabs;
             ]);
             ?>
 	</div>
-
 	<div class="col-md-12 m-b-10">
 		<?php echo $form->field($model, 'section')->hiddenInput()->label(false); ?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>

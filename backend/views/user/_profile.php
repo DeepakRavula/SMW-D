@@ -10,7 +10,6 @@ $boxTools = array_merge($boxTools, $merge);
 ?>
 <?php endif;?>
 
-
 <div class="col-md-6">	
 	<?php
 	LteBox::begin([

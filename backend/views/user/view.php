@@ -8,6 +8,7 @@ use common\models\Note;
 use yii\helpers\Url;
 use common\models\TeacherRoom;
 use yii\bootstrap\Modal;
+use backend\models\UserForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
@@ -327,12 +328,14 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 ]); ?>
 <div id="customer-merge-content"></div>
 <?php Modal::end(); ?>
+<?php $userForm = new UserForm();
+    $userForm->setModel($model);?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0"> Edit</h4>',
     'id' => 'user-edit-modal',
 ]); ?>
 <?= $this->render('_form-profile-update', [
-	'model' => $model,
+	'model' => $userForm,
 ]);?>
 <?php Modal::end(); ?>
 <script>
