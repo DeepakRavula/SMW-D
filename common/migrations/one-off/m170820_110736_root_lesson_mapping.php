@@ -10,9 +10,11 @@ class m170820_110736_root_lesson_mapping extends Migration
         $invoiceItems = InvoiceItemPaymentCycleLesson::find()
                 ->all();
         foreach ($invoiceItems as $invoiceItem) {
-            $invoiceItem->paymentCycleLessonId = $invoiceItem->lesson->rootLesson
-                    ->paymentCycleLesson->id;
-            $invoiceItem->save();
+            if ($invoiceItem->lesson->rootLesson) {
+                $invoiceItem->paymentCycleLessonId = $invoiceItem->lesson->rootLesson
+                        ->paymentCycleLesson->id;
+                $invoiceItem->save();
+            }
         }
     }
 
