@@ -312,7 +312,7 @@ class LessonController extends Controller
 					}
 				} else {
 					if($model->course->program->isPrivate()) {
-						$duration = \DateTime::createFromFormat('H:i', $model->duration);
+						$duration = new \DateTime($model->duration);
 						$model->duration = $duration->format('H:i:s');
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
