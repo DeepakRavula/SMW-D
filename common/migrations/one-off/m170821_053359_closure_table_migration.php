@@ -24,7 +24,7 @@ class m170821_053359_closure_table_migration extends Migration
                     'childLessonId' => $lesson->lessonReschedule->rescheduleLesson->id,
                     'depth' => true
                 ]);
-                if (!$hierarchy) {
+                if (!$hierarchy && $lesson->lessonReschedule->rescheduleLesson) {
                     $lesson->append($lesson->lessonReschedule->rescheduleLesson);
                 }
             }
