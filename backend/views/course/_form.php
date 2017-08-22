@@ -4,7 +4,7 @@ use common\models\Program;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use kartik\depdrop\DepDrop;
-use yii\bootstrap\Modal;
+use common\models\LocationAvailability;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\time\TimePicker;
@@ -17,11 +17,6 @@ use kartik\time\TimePicker;
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="group-course-form p-10">
 	<?php
@@ -90,14 +85,54 @@ use kartik\time\TimePicker;
 		</div>
 		<?php ActiveForm::end(); ?>
 	</div>
-	<?php
-	Modal::begin([
-		'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-		'id' => 'course-calendar-modal',
-	]);
-	?>
-	<?php
-	echo $this->render('_calendar', [
-	]);
-	?>
-	<?php Modal::end(); ?>
+
+<?php
+    $locationId = Yii::$app->session->get('location_id');
+    $minLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['fromTime' => SORT_ASC])
+        ->one();
+    $maxLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['toTime' => SORT_DESC])
+        ->one();
+    $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+    $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
+
+<script>
+    $(document).on('click', '.course-calendar-icon', function() {
+        var name = $(this);
+        var teacherId = $('#course-teacherid').val();
+        var duration = $('#course-duration').val();
+        var params = $.param({ id: teacherId });
+        if (!$.isEmptyObject(teacherId) && !$.isEmptyObject(duration)) {
+            $.ajax({
+                url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    var options = {
+                        name: name,
+                        date: moment(new Date()),
+                        duration: duration,
+                        businessHours: response.availableHours,
+                        minTime: '<?= $minTime; ?>',
+                        maxTime: '<?= $maxTime; ?>',
+                        eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?lessonId=&teacherId=' + teacherId
+                    };
+                    $('#calendar-date-time-picker').calendarPicker(options);
+                }
+            });
+            return false;
+        }
+    });
+    
+    $(document).on('after-date-set', function(event, params) {
+        if (!$.isEmptyObject(params.date)) {
+            $(params.name).parent().find('.lesson-time').find('.time').val(moment(date).format('DD-MM-YYYY h:mm A'));
+            $(params.name).parent().find('.lesson-day').find('.day').val(moment(date).format('dddd'));
+        }
+    });
+</script>

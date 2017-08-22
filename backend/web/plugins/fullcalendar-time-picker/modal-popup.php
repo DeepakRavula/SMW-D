@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use kartik\date\DatePicker;
+use common\models\Lesson;
+use yii\widgets\ActiveForm;
 
 ?>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
@@ -19,6 +21,16 @@ use kartik\date\DatePicker;
 ?>
 <div id="calendar-date-time-picker-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="row-fluid">
+    <div class="form-group">
+        <?php $lessonModel = new Lesson();
+        $form = ActiveForm::begin([
+           'id' => 'lesson-form'
+        ]); ?>
+            <?= $form->field($lessonModel, 'date')->hiddenInput([
+                'id' => 'calendar-date-time-picker-date',
+            ])->label(false);?>
+        <?php ActiveForm::end(); ?>
+    </div>
     <div class="col-lg-2 pull-right">
         <?php echo '<label>Go to Date</label>'; ?>
         <?php echo DatePicker::widget([

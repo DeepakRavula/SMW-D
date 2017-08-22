@@ -2,6 +2,7 @@
 
 use common\models\Course;
 
+
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
 

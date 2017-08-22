@@ -1,13 +1,3 @@
-$(document).on('click', '.calendar-date-time-picker-save', function () {
-    if (!$.isEmptyObject($('#calendar-date-time-picker').fullCalendar('clientEvents', 'newEnrolment'))){
-        $('#calendar-date-time-picker-modal').modal('hide');
-        $(document).trigger( "after-date-set");
-    } else {
-        $('#calendar-date-time-picker-error-notification').html('Please select a date time!').fadeIn().delay(5000).fadeOut();
-    }
-    return false;
-});
-
 $(document).on('click', '.calendar-date-time-picker-cancel', function () {
     $('#calendar-date-time-picker-modal').modal('hide');
     return false;
@@ -39,6 +29,21 @@ $.fn.calendarPicker = function(options) {
         return false;
     });
     
+    $(document).on('click', '.calendar-date-time-picker-save', function () {
+        if (!$.isEmptyObject($('#calendar-date-time-picker').fullCalendar('clientEvents', 'newEnrolment'))){
+            $('#calendar-date-time-picker-modal').modal('hide');
+            var selecetdEvent = $('#calendar-date-time-picker').fullCalendar('clientEvents', 'newEnrolment');
+            var params = {
+                name: options.name,
+                date: selecetdEvent[0].start
+            };
+            $(document).trigger( "after-date-set", params);
+        } else {
+            $('#calendar-date-time-picker-error-notification').html('Please select a date time!').fadeIn().delay(5000).fadeOut();
+        }
+        return false;
+    });
+
     $(document).on('change', '#go-to-date', function(){
         var date = moment($('#go-to-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
         if (! moment(date).isValid()) {
