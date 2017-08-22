@@ -21,6 +21,7 @@ use yii\widgets\ActiveForm;
 ?>
 <div id="calendar-date-time-picker-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="row-fluid">
+    <?php $this->render('/lesson/_color-code'); ?>
     <div class="form-group">
         <?php $lessonModel = new Lesson();
         $form = ActiveForm::begin([
