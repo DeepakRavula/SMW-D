@@ -84,6 +84,7 @@ class Item extends \yii\db\ActiveRecord
             'royaltyFree' => 'Royalty Free',
             'taxStatusId' => 'Tax Status',
             'status' => 'status',
+			'showAllItems' => 'Show All'
         ];
     }
 

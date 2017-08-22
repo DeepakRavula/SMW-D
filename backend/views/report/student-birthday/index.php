@@ -1,8 +1,8 @@
 <?php
 
-use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\helpers\Url;
+use yii\widgets\Pjax;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -10,17 +10,12 @@ use yii\helpers\Url;
 $this->title = 'Student Birthdays';
 
 ?>
-<div class="payments-index p-10">
-    
-	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
-  
-</div>
-
+<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <div class="clearfix"></div>
 <div class="grid-row-open"> 
-    <?php yii\widgets\Pjax::begin(['id' => 'birthday-listing']); ?>
+<?php Pjax::begin(['id' => 'birthday-listing']); ?>
     <?php
-    echo GridView::widget([
+    echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['student/view', 'id' => $model->id]);
@@ -47,7 +42,7 @@ $this->title = 'Student Birthdays';
 
     ?>
 
-<?php yii\widgets\Pjax::end(); ?>
+<?php Pjax::end(); ?>
 </div>
 <script>
 $(document).ready(function(){
