@@ -372,6 +372,10 @@ $(document).ready(function(){
         $('#user-edit-modal').modal('show');
         return false;
     });
+	$(document).on('click', '#user-cancel-btn', function () {
+        $('#user-edit-modal').modal('hide');
+        return false;
+    });
     $(document).on('click', '#customer-merge', function () {
         $.ajax({
             url    : '<?= Url::to(['customer/merge', 'id' => $model->id]); ?>',
@@ -386,6 +390,25 @@ $(document).ready(function(){
                     $('#customer-merge-modal').modal('show');
                     $('#warning-notification').html('Merging another customer will \n\
                     delete all of their contact data. This can not be undone.').fadeIn();
+                }
+            }
+        });
+        return false;
+    });
+	$(document).on('beforeSubmit', '#user-update-form', function () {
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+        			$('#user-edit-modal').modal('hide');
+        			$.pjax.reload({container:"#user-profile",replace:false,  timeout: 4000});
+                    
+                } else {
+                    $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                 }
             }
         });

@@ -1,6 +1,7 @@
 <?php 
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use yii\widgets\Pjax;
 ?>
 <?php 
 $boxTools = ['<i class="fa fa-pencil user-edit-button m-r-10"></i>'];?>
@@ -9,7 +10,9 @@ $boxTools = ['<i class="fa fa-pencil user-edit-button m-r-10"></i>'];?>
 $boxTools = array_merge($boxTools, $merge);
 ?>
 <?php endif;?>
-
+<?php Pjax::begin([
+	'id' => 'user-profile'
+]); ?>
 <div class="col-md-6">	
 	<?php
 	LteBox::begin([
@@ -29,3 +32,4 @@ $boxTools = array_merge($boxTools, $merge);
 	</dl>
 	<?php LteBox::end() ?>
 </div> 
+<?php Pjax::end(); ?>
