@@ -333,7 +333,7 @@ class TeacherAvailabilityController extends Controller
         return $events;
     }
 
-    public function actionShowLessonEvent($lessonId, $teacherId)
+    public function actionShowLessonEvent($lessonId = null, $teacherId)
     {
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {

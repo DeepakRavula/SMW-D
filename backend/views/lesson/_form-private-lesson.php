@@ -69,7 +69,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                 <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
                 <div id="calendar-date-time-picker-date-datetime" class="input-group date">
                     <input type="text" id="calendar-date-time-picker-date" class="form-control" name="Lesson[date]"
-                        value='<?php echo $model->date; ?>' readonly validation-url='<?php echo Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>'>
+                        value='<?php echo $model->date; ?>' readonly>
                     <span class="input-group-addon" title="Clear field">
                         <span class="glyphicon glyphicon-remove"></span>
                     </span>
@@ -172,6 +172,7 @@ $(document).on('click', '.lesson-edit-calendar', function () {
                 maxTime: '<?= $maxTime; ?>',
                 eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event',
                     'lessonId' => $model->id]); ?>&teacherId=' + teacherId,
+                validationUrl: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>'
             };
             $('#calendar-date-time-picker').calendarPicker(options);
         }

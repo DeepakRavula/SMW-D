@@ -40,7 +40,7 @@ use common\models\Student;
         ],
 			
         'locale' => [
-            'format' => 'd-m-Y',
+            'format' => 'M d,Y',
         ],
         'opens' => 'right',
         ],

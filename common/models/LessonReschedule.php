@@ -54,7 +54,13 @@ class LessonReschedule extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
-	public function getBulkRescheduleLesson()
+    
+    public function getRescheduleLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'rescheduledLessonId']);
+    }
+    
+    public function getBulkRescheduleLesson()
     {
         return $this->hasOne(BulkRescheduleLesson::className(), ['lessonId' => 'rescheduledLessonId']);
     }

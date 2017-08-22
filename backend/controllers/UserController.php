@@ -209,8 +209,8 @@ class UserController extends Controller
 
 		$request = Yii::$app->request;
         $currentDate = new \DateTime();
-        $model->fromDate = $currentDate->format('1-m-Y');
-        $model->toDate = $currentDate->format('t-m-Y');
+        $model->fromDate = $currentDate->format('M d,Y');
+        $model->toDate = $currentDate->format('M d,Y');
         $model->dateRange = $model->fromDate.' - '.$model->toDate;
         $userRequest = $request->get('User');
 		if(!empty($userRequest)) {

@@ -1,28 +1,9 @@
 $(document).on('click', '.calendar-date-time-picker-save', function () {
     if (!$.isEmptyObject($('#calendar-date-time-picker').fullCalendar('clientEvents', 'newEnrolment'))){
         $('#calendar-date-time-picker-modal').modal('hide');
+        $(document).trigger( "after-date-set");
     } else {
         $('#calendar-date-time-picker-error-notification').html('Please select a date time!').fadeIn().delay(5000).fadeOut();
-    }
-    return false;
-});
-
-$(document).on('change', '#calendar-date-time-picker-date', function () {
-    var validationUrl = $(this).attr('validation-url');
-    if (!$.isEmptyObject(validationUrl)) {
-        $.ajax({
-            url: validationUrl,
-            type: 'post',
-            dataType: "json",
-            data: $(this).serialize(),
-            success: function (response)
-            {
-                if (!$.isEmptyObject(response['lesson-date'])) {
-                    $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
-                    $('#calendar-date-time-picker-error-notification').html(response['lesson-date']).fadeIn().delay(5000).fadeOut();
-                }
-            }
-        });
     }
     return false;
 });
@@ -37,6 +18,42 @@ $.fn.calendarPicker = function(options) {
     $('#calendar-date-time-picker-modal .modal-dialog').css({'width': '1000px'});
     $(document).on('shown.bs.modal', '#calendar-date-time-picker-modal', function () {
         calendar.showCalendar(options);
+    });
+    $(document).on('change', '#calendar-date-time-picker-date', function () {
+        var validationUrl = options.validationUrl;
+        if (!$.isEmptyObject(validationUrl)) {
+            $.ajax({
+                url: validationUrl,
+                type: 'post',
+                dataType: "json",
+                data: $(this).serialize(),
+                success: function (response)
+                {
+                    if (!$.isEmptyObject(response['lesson-date'])) {
+                        $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
+                        $('#calendar-date-time-picker-error-notification').html(response['lesson-date']).fadeIn().delay(5000).fadeOut();
+                    }
+                }
+            });
+        }
+        return false;
+    });
+    
+    $(document).on('change', '#go-to-date', function(){
+        var date = moment($('#go-to-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+        if (! moment(date).isValid()) {
+            var date = moment($('#go-to-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+        }
+        var calendarOptions = {
+            date: date,
+            duration: options.duration,
+            businessHours: options.businessHours,
+            minTime: options.minTime,
+            maxTime: options.maxTime,
+            eventUrl: options.eventUrl,
+            validationUrl: options.validationUrl
+        };
+        calendar.showCalendar(calendarOptions);
     });
 };
 

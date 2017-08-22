@@ -2,12 +2,12 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
-use yii\bootstrap\Modal;
+use common\models\Lesson;
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use common\models\LocationAvailability;
 
 ?>
-<link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <div class=" p-15">
     <?php yii\widgets\Pjax::begin([
 	'id' => 'lesson-index',
@@ -68,6 +68,7 @@ use yii\helpers\Html;
 					'edit' => function  ($url, $model) {
 	                    return  Html::a('<i class="fa fa-calendar"></i>','#', [
 							'id' => 'unschedule-calendar-' . $model->id,
+                                                        'duration' => $model->duration,
 							'title' => 'Reschedule',
 							'class' => 'unschedule-calendar m-l-20'
 						]);
@@ -81,38 +82,68 @@ use yii\helpers\Html;
 	<?php yii\widgets\Pjax::end(); ?>
 
 </div>
+
+<div class="form-group">
+    <?php $lessonModel = new Lesson();
+    $form = ActiveForm::begin([
+       'id' => 'unschedule-lesson-form'
+    ]); ?>
+	<?= $form->field($lessonModel, 'date')->hiddenInput([
+            'id' => 'calendar-date-time-picker-date',
+        ])->label(false);?>
+    <?php ActiveForm::end(); ?>
+</div>
+
 <?php
-Modal::begin([
-	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-	'id' => 'unschedule-lesson-modal',
-]);
+$locationId = Yii::$app->session->get('location_id');
+$minLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['fromTime' => SORT_ASC])
+    ->one();
+$maxLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['toTime' => SORT_DESC])
+    ->one();
+$from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+$to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
-<?php
-echo $this->render('_calendar', [
-    'model' => $model,
-]);
-?>
-<?php Modal::end(); ?>
-<script>
-$(document).ready(function () {
-	$(document).on('beforeSubmit', '#unschedule-lesson-form', function () {
-		var lessonId = $('#user-lessonid').val();
+<script type="text/javascript">
+    $(document).on('click', '.unschedule-calendar', function () {
+        var teacherId = '<?= $model->id; ?>';
+        var duration = $(this).attr('duration');
+        var params = $.param({ id: teacherId });
+        var lessonId = $(this).parent().parent().data('key');
+        var eventParams = $.param({ lessonId: lessonId, teacherId: teacherId });
+        $.ajax({
+            url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                var options = {
+                    date: moment(new Date()),
+                    duration: duration,
+                    businessHours: response.availableHours,
+                    minTime: '<?= $from_time; ?>',
+                    maxTime: '<?= $to_time; ?>',
+                    eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?' + eventParams,
+                    validationUrl: '<?= Url::to(['lesson/validate-on-update']); ?>?id=' + lessonId
+                };
+                $('#calendar-date-time-picker').calendarPicker(options);
+            }
+        });
+        return false;
+    });
+    
+    $(document).on('after-date-set', function () {
+        var lessonId = $('.unschedule-calendar').parent().parent().data('key');
         var param = $.param({ id: lessonId });
-		$.ajax({
-			url    : '<?= Url::to(['lesson/update']);?>?' + param,
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-				if(response.status) {
-				} else {
-					$('#unschedule-lesson-modal').modal('hide');
-				    $('#lesson-conflict').html(response.message).fadeIn().delay(8000).fadeOut();
-				}
-			}
-		});
-		return false;
+        $.ajax({
+            url    : '<?= Url::to(['lesson/update']);?>?' + param,
+            type   : 'post',
+            dataType: "json",
+            data   : $('#unschedule-lesson-form').serialize()
+        });
+        return false;
    });
-});
 </script>

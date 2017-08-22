@@ -257,11 +257,6 @@ class Lesson extends \yii\db\ActiveRecord
 			->via('enrolment');
     }
 
-    public function getLessonSplit()
-    {
-        return $this->hasOne(LessonSplit::className(), ['lessonId' => 'id']);
-    }
-
     public function getExtendedLessons()
     {
         return $this->hasMany(LessonSplitUsage::className(), ['extendedLessonId' => 'id']);
@@ -430,7 +425,7 @@ class Lesson extends \yii\db\ActiveRecord
             return $this->enrolment->student->fullName;
         }
     }
-
+    
     public function getClassroomTitle()
     {
         return $this->enrolment->student->fullName;
