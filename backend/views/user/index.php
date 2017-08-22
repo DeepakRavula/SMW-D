@@ -3,18 +3,16 @@
 use common\models\User;
 use common\models\Invoice;
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\helpers\Url;
+use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
-use yii\bootstrap\ActiveForm;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$roles = ArrayHelper::getColumn(
-             Yii::$app->authManager->getRoles(), 'description'
-        );
+$roles = ArrayHelper::getColumn(Yii::$app->authManager->getRoles(), 'description');
 foreach ($roles as $name => $description) {
     if ($name === $searchModel->role_name) {
         $role = $description;
@@ -24,62 +22,15 @@ foreach ($roles as $name => $description) {
 $roleName = $searchModel->role_name;
 $originalInvoice = Invoice::TYPE_INVOICE;
 $this->title = Yii::t('backend',  !isset($role) ? 'User' : $role.'s');
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-success btn-sm']);
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-primary btn-sm']);
+$this->params['show-all'] = $this->render('_button', [
+	'searchModel' => $searchModel
+]);
 ?>
-<?php if ($searchModel->role_name == 'staffmember') {
-    ?>
-<?php 
-}
-?>
-<?php if ($searchModel->role_name == 'administrator') {
-    ?>
-<?php 
-}
-?>
-
 <div class="user-index"> 
-	<div class="smw-search">
-    <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
-    <?php
-    $form = ActiveForm::begin([
-                'action' => ['index'],
-                'method' => 'get',
-                'options' => ['class' => 'pull-left'],
-    ]);
-    ?>
-    <?=
-    $form->field($searchModel, 'query', [
-        'inputOptions' => [
-            'placeholder' => 'Search ...',
-            'class' => 'search-field',
-        ],
-    ])->input('search')->label(false);
-    ?>
-    <?php echo $form->field($searchModel, 'role_name')->hiddenInput()->label(false); ?>
-    </div>
-    <?php if ($searchModel->role_name === User::ROLE_CUSTOMER):?>
-	<div class="pull-right  m-r-20">
-		<div class="schedule-index">
-			<div class="e1Div">
-				<?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true])->label('Show All'); ?>
-			</div>
-		</div>
-    </div>
-    <?php endif; ?>
-    <?php if ($searchModel->role_name === User::ROLE_TEACHER):?>
-	<div class="pull-right  m-r-20">
-		<div class="schedule-index">
-			<div class="e1Div">
-				<?= $form->field($searchModel, 'showAllTeachers')->checkbox(['data-pjax' => true])->label('Show All'); ?>
-			</div>
-		</div>
-    </div>
-    <?php endif; ?> 
-    <?php ActiveForm::end(); ?>
 <div class="grid-row-open">
-    <?php yii\widgets\Pjax::begin(['id' => 'user-index']); ?>
-        <?php echo GridView::widget([
+    <?php Pjax::begin(['id' => 'user-index']); ?>
+        <?= AdminLteGridView::widget([
             'dataProvider' => $dataProvider,
             'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel, $roleName, $originalInvoice) {
                 $url = Url::to(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);
@@ -120,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
-<?php yii\widgets\Pjax::end(); ?>
+<?php Pjax::end(); ?>
 </div>
 <div class=" m-b-20">
 <?php if ($searchModel->role_name === User::ROLE_CUSTOMER && YII_ENV !== 'prod'):?>

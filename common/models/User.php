@@ -169,6 +169,8 @@ class User extends ActiveRecord implements IdentityInterface
             'logged_at' => Yii::t('common', 'Last login'),
             'customerId' => Yii::t('common', 'Customers'),
             'customerIds' => Yii::t('common', 'Selected Customers'),
+            'showAllCustomers' => Yii::t('common', 'Show All'),
+            'showAllTeachers' => Yii::t('common', 'Show All'),
         ];
     }
 

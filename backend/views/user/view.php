@@ -8,14 +8,13 @@ use common\models\Note;
 use yii\helpers\Url;
 use common\models\TeacherRoom;
 use yii\bootstrap\Modal;
+use backend\models\UserForm;
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
 
-$roleNames = ArrayHelper::getColumn(
-                Yii::$app->authManager->getRoles(), 'description', 'name'
-);
+$roleNames = ArrayHelper::getColumn(Yii::$app->authManager->getRoles(), 'description', 'name');
 foreach ($roleNames as $name => $description) {
     if ($name === $searchModel->role_name) {
         $roleName = $description;
@@ -25,16 +24,13 @@ $this->title = $model->publicIdentity.' - '.ucwords($searchModel->role_name);
 $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back']);
 ?>
-<div class="student-index">
-    <div class="pull-right  m-r-10">
-        <div class="schedule-index">
-            <div class="e1Div">
-                <?php if ($model->isCustomer()) : ?>
-                    <?= Html::a('Merge', ['#'], ['class' => 'btn btn-success', 'id' => 'customer-merge']); ?>
-                <?php endif; ?> 
-            </div>
-        </div>
-    </div>
+<div class="row">
+	<?php
+	echo $this->render('_profile', [
+		'model' => $model,
+		'role' => $roleName,
+	]);
+	?>
 </div>
 <div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
@@ -56,12 +52,9 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             <div class="clearfix"></div>
         </div>    
     <div class="clearfix"></div>
-
     <div class="nav-tabs-custom">
-
 		<?php $roles = Yii::$app->authManager->getRolesByUser($model->id);
         $role = end($roles); ?>
-
 		<?php
 
         $studentContent = $this->render('customer/_student', [
@@ -336,7 +329,16 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 ]); ?>
 <div id="customer-merge-content"></div>
 <?php Modal::end(); ?>
-
+<?php $userForm = new UserForm();
+    $userForm->setModel($model);?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0"> Edit</h4>',
+    'id' => 'user-edit-modal',
+]); ?>
+<?= $this->render('_form-profile-update', [
+	'model' => $userForm,
+]);?>
+<?php Modal::end(); ?>
 <script>
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
@@ -367,6 +369,14 @@ $(document).ready(function(){
         $('#customer-merge-modal').modal('hide');
         return false;
     });
+	$(document).on('click', '.user-edit-button', function () {
+        $('#user-edit-modal').modal('show');
+        return false;
+    });
+	$(document).on('click', '#user-cancel-btn', function () {
+        $('#user-edit-modal').modal('hide');
+        return false;
+    });
     $(document).on('click', '#customer-merge', function () {
         $.ajax({
             url    : '<?= Url::to(['customer/merge', 'id' => $model->id]); ?>',
@@ -381,6 +391,25 @@ $(document).ready(function(){
                     $('#customer-merge-modal').modal('show');
                     $('#warning-notification').html('Merging another customer will \n\
                     delete all of their contact data. This can not be undone.').fadeIn();
+                }
+            }
+        });
+        return false;
+    });
+	$(document).on('beforeSubmit', '#user-update-form', function () {
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+        			$('#user-edit-modal').modal('hide');
+        			$.pjax.reload({container:"#user-profile",replace:false,  timeout: 4000});
+                    
+                } else {
+                    $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                 }
             }
         });
