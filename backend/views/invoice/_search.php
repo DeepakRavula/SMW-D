@@ -13,14 +13,13 @@ use kartik\daterange\DateRangePicker;
 ?>
 
 <div class="user-search">
-
+    <div class="row">
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 	<?php if((int) $model->type === Invoice::TYPE_INVOICE) : ?>
-    <div class="row">
-    <div class="col-md-3 m-t-20">
+    <div class="col-md-3">
         <?php
         echo DateRangePicker::widget([
             'model' => $model,
@@ -41,7 +40,6 @@ use kartik\daterange\DateRangePicker;
                 'opens' => 'right',
             ],
         ]);
-
         ?>
     </div>
 	<?php endif; ?>
@@ -76,14 +74,11 @@ use kartik\daterange\DateRangePicker;
     <div class="col-md-3">
         <?php echo $form->field($model, 'invoiceStatus')->dropDownList(InvoiceSearch::invoiceStatuses())->label('Invoice Status'); ?>
     </div>
-        <?php endif; ?>
-    <div class="col-md-2 form-group m-t-10">
+    <?php endif; ?>
+    <div class="col-md-2">
         <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <div class="clearfix"></div>
+        <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary']) ?>
     </div>
-    </div>
-
     <?php ActiveForm::end(); ?>
-
+    </div>
 </div>
