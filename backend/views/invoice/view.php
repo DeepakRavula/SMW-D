@@ -9,6 +9,8 @@ use kartik\switchinput\SwitchInput;
 use common\models\Note;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
+use common\models\Payment;
+use yii\data\ActiveDataProvider;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -121,12 +123,20 @@ $guestContent = $this->render('_guest', [
 <?php endif; ?>
 <div class="nav-tabs-custom">
 <?php 
-
+$payments = Payment::find()
+	->joinWith(['invoicePayments' => function ($query) use($model) {
+		$query->where(['invoice_id' => $model->id]);
+	}])
+	->groupBy('payment.payment_method_id');
+$paymentsDataProvider = new ActiveDataProvider([
+	'query' => $payments,
+]);
 $invoiceContent = $this->render('_view-invoice', [
     'model' => $model,
     'customer' => $customer,
     'searchModel' => $searchModel,
     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+	'paymentsDataProvider' => $paymentsDataProvider
 ]);
 $paymentContent = $this->render('payment/_index', [
     'model' => $model,
@@ -140,6 +150,7 @@ $noteContent = $this->render('note/view', [
 $logContent = $this->render('log', [
 	'model' => $model,
 ]);
+
 ?>
 <?php echo Tabs::widget([
     'items' => [

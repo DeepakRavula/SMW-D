@@ -103,6 +103,7 @@ use yii\grid\GridView;
 		'id' => 'line-item-grid',
         'dataProvider' => $invoiceLineItemsDataProvider,
         'columns' => $columns,
+		'summary' => ''
     ]);
     ?>
 <?php \yii\widgets\Pjax::end(); ?>	
