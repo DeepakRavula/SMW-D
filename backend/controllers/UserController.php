@@ -568,6 +568,79 @@ class UserController extends Controller
 			}
 		}
 	}
+	public function actionEditPhone($id)
+	{
+		$request = Yii::$app->request;
+		$model = new UserForm();
+        $model->setModel($this->findModel($id));	
+        $phoneNumberModels = $model->phoneNumbers;
+
+        $response = Yii::$app->response;
+        if ($model->load($request->post())) {
+            $oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
+            $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
+            Model::loadMultiple($phoneNumberModels, $request->post());
+            $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
+			
+            if ($request->isAjax) {
+                $response->format = Response::FORMAT_JSON;
+
+                return ArrayHelper::merge(
+                    ActiveForm::validate($model), ActiveForm::validateMultiple($phoneNumberModels));
+            }
+            $valid = $model->validate();
+            $valid = (Model::validateMultiple($phoneNumberModels)) && $valid;
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+                    if ($flag = $model->save(false)) {
+                        if (!empty($deletedPhoneIDs)) {
+                            PhoneNumber::deleteAll(['id' => $deletedPhoneIDs]);
+                        }
+                        foreach ($phoneNumberModels as $phoneNumberModel) {
+                            $phoneNumberModel->user_id = $id;
+                            if (!($flag = $phoneNumberModel->save(false))) {
+                                $transaction->rollBack();
+                                break;
+                            }
+                        }
+                    }
+                    if ($flag) {
+                        $transaction->commit();
+                        Yii::$app->session->setFlash('alert', [
+                                'options' => ['class' => 'alert-success'],
+                                'body' => ucwords($model->roles).' profile has been updated successfully',
+                        ]);
+						return $this->redirect($link);
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            }
+        }
+
+        return $this->render('update', [
+			'model' => $model,
+			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
+			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
+			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
+        ]);
+		if ($model->load($request->post())) {
+			if($model->save()) {
+				return [
+				   'status' => true,
+				];	
+			} else {
+				$errors = ActiveForm::validate($model);
+                return [
+                    'status' => false,
+                    'errors' => current($errors)
+                ];
+			}
+		}
+	}
     /**
      * Updates an existing User model.
      *

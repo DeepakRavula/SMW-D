@@ -2,9 +2,6 @@
 
 use yii\helpers\Html;
 use yii\widgets\ListView;
-use common\models\User;
-use kartik\editable\Editable;
-use yii\helpers\Url;
 ?>
 <div class="row p-10">
 	<div class="col-xs-4">

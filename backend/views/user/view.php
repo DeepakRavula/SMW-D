@@ -25,12 +25,21 @@ $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back']);
 ?>
 <div class="row">
-	<?php
-	echo $this->render('_profile', [
-		'model' => $model,
-		'role' => $roleName,
-	]);
-	?>
+	<div class="col-md-6">	
+		<?php
+		echo $this->render('_profile', [
+			'model' => $model,
+			'role' => $roleName,
+		]);
+		?>
+	</div> 
+	<div class="col-md-6">	
+		<?php
+		echo $this->render('_phone', [
+			'model' => $model,
+		]);
+		?>
+	</div> 
 </div>
 <div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
