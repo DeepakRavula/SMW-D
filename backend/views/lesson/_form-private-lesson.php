@@ -68,7 +68,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             <div class="form-group field-calendar-date-time-picker-date">
                 <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
                 <div id="calendar-date-time-picker-date-datetime" class="input-group date">
-                    <input type="text" id="calendar-date-time-picker-date" class="form-control" name="Lesson[date]"
+                    <input type="text" id="lesson-date" class="form-control" name="Lesson[date]"
                         value='<?php echo $model->date; ?>' readonly>
                     <span class="input-group-addon" title="Clear field">
                         <span class="glyphicon glyphicon-remove"></span>
@@ -180,7 +180,13 @@ $(document).on('click', '.lesson-edit-calendar', function () {
     return false;
 });
 
+$(document).on('after-date-set', function(event, params) {
+    if (!$.isEmptyObject(params.date)) {
+        $('#lesson-date').val(moment(params.date).format('DD-MM-YYYY h:mm A')).trigger('change');
+    }
+});
+
 $(document).on('click', '.glyphicon-remove', function () {
-    $('#calendar-date-time-picker-date').val('').trigger('change');
+    $('#lesson-date').val('').trigger('change');
 });
 </script>

@@ -74,7 +74,7 @@ DynamicFormWidget::begin([
 						</div>
 						<div class="col-sm-3 lesson-time">
 							<?= $form->field($schedule, "[{$index}]fromTime")
-							->textInput(['maxlength' => true, 
+							->textInput(['maxlength' => true,
 							'class' => 'time form-control',
 							'readOnly' => true,
 							])->label('Time') ?>

@@ -106,19 +106,11 @@ DateTimePickerAsset::register($this);
 </div>
 <?php ActiveForm::end(); ?>
 <?php
-Modal::begin([
-	'header' => '<h4 class="m-0">Choose Teacher, Day and Time</h4>',
-	'id' => 'new-enrolment-modal',
-]);
-?>
-<?php
 echo $this->render('new/_calendar', [
 	'model' => new course(),
 	'courseSchedule' => new CourseSchedule()
 ]);
 ?>
-<div id="enrolment-calendar"></div>
-<?php Modal::end(); ?>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#step1-btn').click(function() {
