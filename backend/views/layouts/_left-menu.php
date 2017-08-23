@@ -69,15 +69,7 @@ echo Menu::widget([
 			'badgeBgClass' => 'label-default'
 		],
 		
-			[
-			'label' => Yii::t('backend', 'Administrators'),
-			'icon' => '<i class="fa fa-user-secret"></i>',
-			'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR],
-			'visible' => Yii::$app->user->can('administrator'),
-			'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_ADMINISTRATOR || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_ADMINISTRATOR)) ? true : false,
-			'badge' => User::adminCount(),
-			'badgeBgClass' => 'label-default'
-		],
+		
 		
 			[
 			'label' => Yii::t('backend', 'Group Courses'),
@@ -191,13 +183,22 @@ echo Menu::widget([
                         'url' => ['item/index', 'ItemSearch[showAllItems]' => false],
                         'visible' => Yii::$app->user->can('staffmember'),
                 ],
-		[
-			'label' => Yii::t('backend', 'Admin'),
-			'url' => '#',
-			'icon' => '<i class="fa fa-user"></i>',
-			'visible' => Yii::$app->user->can('administrator'),
-			'options' => ['class' => 'treeview'],
-			'items' => [
+				[
+					'label' => Yii::t('backend', 'Admin'),
+					'url' => '#',
+					'icon' => '<i class="fa fa-user"></i>',
+					'visible' => Yii::$app->user->can('administrator'),
+					'options' => ['class' => 'treeview'],
+					'items' => [
+							[
+					'label' => Yii::t('backend', 'Administrators'),
+					'icon' => '<i class="fa fa-user-secret"></i>',
+					'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR],
+					'visible' => Yii::$app->user->can('administrator'),
+					'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_ADMINISTRATOR || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_ADMINISTRATOR)) ? true : false,
+					'badge' => User::adminCount(),
+					'badgeBgClass' => 'label-default'
+				],
 				[
 					'label' => Yii::t('backend', 'Cities'),
 					'icon' => '<i class="fa fa-building"></i>',
