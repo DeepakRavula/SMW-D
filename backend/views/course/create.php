@@ -1,6 +1,6 @@
 <?php
 
-
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* @var $this yii\web\View */
 /* @var $model common\models\Course */
 

@@ -88,9 +88,7 @@ use common\models\LocationAvailability;
     $form = ActiveForm::begin([
        'id' => 'unschedule-lesson-form'
     ]); ?>
-	<?= $form->field($lessonModel, 'date')->hiddenInput([
-            'id' => 'calendar-date-time-picker-date',
-        ])->label(false);?>
+	<?= $form->field($lessonModel, 'date')->hiddenInput()->label(false);?>
     <?php ActiveForm::end(); ?>
 </div>
 
@@ -135,15 +133,18 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
         return false;
     });
     
-    $(document).on('after-date-set', function () {
-        var lessonId = $('.unschedule-calendar').parent().parent().data('key');
-        var param = $.param({ id: lessonId });
-        $.ajax({
-            url    : '<?= Url::to(['lesson/update']);?>?' + param,
-            type   : 'post',
-            dataType: "json",
-            data   : $('#unschedule-lesson-form').serialize()
-        });
-        return false;
+    $(document).on('after-date-set', function (event, params) {
+        if (!$.isEmptyObject(params.date)) {
+            $('#lesson-date').val(moment(params.date).format('DD-MM-YYYY h:mm A'));
+            var lessonId = $('.unschedule-calendar').parent().parent().data('key');
+            var param = $.param({ id: lessonId });
+            $.ajax({
+                url    : '<?= Url::to(['lesson/update']);?>?' + param,
+                type   : 'post',
+                dataType: "json",
+                data   : $('#unschedule-lesson-form').serialize()
+            });
+            return false;
+        }
    });
 </script>

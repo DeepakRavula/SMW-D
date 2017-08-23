@@ -31,7 +31,7 @@ $this->render('review/_teacher-availability', [
 ?>
 <?php
 $hasConflict = false;
-if ($conflictedLessonIdsCount > 0 || !empty($vacationId)) {
+if ($conflictedLessonIdsCount > 0) {
 		$hasConflict = true;
 	}
 ?>
