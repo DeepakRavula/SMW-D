@@ -68,24 +68,7 @@ echo Menu::widget([
 			'badge' => User::teacherCount(),
 			'badgeBgClass' => 'label-default'
 		],
-			[
-			'label' => Yii::t('backend', 'Staff Members'),
-			'icon' => '<i class="fa fa-users"></i>',
-			'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],
-			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_STAFFMEMBER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_STAFFMEMBER)) ? true : false,
-			'badge' => User::staffCount(),
-			'badgeBgClass' => 'label-default'
-		],
-			[
-			'label' => Yii::t('backend', 'Owners'),
-			'icon' => '<i class="fa fa-user"></i>',
-			'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],
-			'visible' => Yii::$app->user->can('owner'),
-			'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_OWNER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_OWNER)) ? true : false,
-			'badge' => User::ownerCount(),
-			'badgeBgClass' => 'label-default'
-		],
+		
 			[
 			'label' => Yii::t('backend', 'Administrators'),
 			'icon' => '<i class="fa fa-user-secret"></i>',
@@ -95,15 +78,7 @@ echo Menu::widget([
 			'badge' => User::adminCount(),
 			'badgeBgClass' => 'label-default'
 		],
-			[
-			'label' => Yii::t('backend', 'Programs'),
-			'icon' => '<i class="fa fa-table"></i>',
-			'url' => ['program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
-			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (Yii::$app->controller->id === 'program') ? true : false,
-			'badge' => Program::find()->active()->count(),
-			'badgeBgClass' => 'label-default'
-		],
+		
 			[
 			'label' => Yii::t('backend', 'Group Courses'),
 			'url' => ['course/index', 'CourseSearch[showAllCourses]' => false],
@@ -296,6 +271,33 @@ echo Menu::widget([
 			'icon' => '<i class="fa fa-cogs"></i>',
 			'options' => ['class' => 'treeview'],
 			'items' => [
+					[
+					'label' => Yii::t('backend', 'Staff Members'),
+					'icon' => '<i class="fa fa-users"></i>',
+					'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],
+					'visible' => Yii::$app->user->can('staffmember'),
+					'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_STAFFMEMBER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_STAFFMEMBER)) ? true : false,
+					'badge' => User::staffCount(),
+					'badgeBgClass' => 'label-default'
+				],
+					[
+					'label' => Yii::t('backend', 'Owners'),
+					'icon' => '<i class="fa fa-user"></i>',
+					'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],
+					'visible' => Yii::$app->user->can('owner'),
+					'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_OWNER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_OWNER)) ? true : false,
+					'badge' => User::ownerCount(),
+					'badgeBgClass' => 'label-default'
+				],
+					[
+					'label' => Yii::t('backend', 'Programs'),
+					'icon' => '<i class="fa fa-table"></i>',
+					'url' => ['program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
+					'visible' => Yii::$app->user->can('staffmember'),
+					'active' => (Yii::$app->controller->id === 'program') ? true : false,
+					'badge' => Program::find()->active()->count(),
+					'badgeBgClass' => 'label-default'
+				],
 					[
 					'label' => Yii::t('backend', 'Classrooms'),
 					'icon' => '<i class="fa fa-home"></i>',
