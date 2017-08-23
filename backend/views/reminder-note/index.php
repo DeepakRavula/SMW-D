@@ -1,6 +1,6 @@
 <?php
 
-use yii\grid\GridView;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="reminder-notes-index p-10">
 
 
-    <?php echo GridView::widget([
+    <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             'notes:raw',

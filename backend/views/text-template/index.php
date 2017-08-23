@@ -3,6 +3,7 @@
 use yii\grid\GridView;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -13,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="student-index">  
 <?php yii\widgets\Pjax::begin(['id' => 'text-template']); ?>
 <?php
-echo GridView::widget([
+echo AdminLteGridView::widget([
 	'id' => 'template-grid',
 	'dataProvider' => $dataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],

@@ -43,12 +43,9 @@ use kartik\date\DatePicker;
         <div class="col-lg-10">
     <?php echo $form->field($model, 'reason')->textarea(['rows' => 6]) ?>
 		</div>
-	</div>
-
     <div class="form-group">
         <?php echo Html::submitButton('Save', ['class' => 'btn btn-primary']) ?>
     </div>
-
+	</div>
     <?php ActiveForm::end(); ?>
-
 </div>

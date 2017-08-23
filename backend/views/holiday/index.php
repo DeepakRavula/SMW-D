@@ -3,9 +3,8 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
-use common\models\User;
 use yii\bootstrap\Modal;
-use common\models\Holiday;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\HolidaySearch */
@@ -24,7 +23,7 @@ $this->title = 'Holidays';
 <?php yii\widgets\Pjax::begin([
 	'id' => 'holiday-listing'
 ]); ?>
-    <?php echo GridView::widget([
+    <?php echo AdminLteGridView::widget([
 		'id' => 'holiday-grid',
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],

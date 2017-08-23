@@ -12,14 +12,12 @@ use common\models\Student;
 ?>
 <div class="col-md-12">
     <h4 class="pull-left m-r-20">Invoices</h4>
-	<?php
-        echo Html::a(
-            Html::tag('i', '', ['class' => 'fa fa-plus-circle']),
-            Url::to(['invoice/blank-invoice', 'Invoice[customer_id]' => $userModel->id,
-            'Invoice[type]' => INVOICE::TYPE_INVOICE, ]), [
-            'class' => 'add-new-invoice text-add-new',
-            ]);
-    ?>
+	<?= Html::a('<i class="fa fa-plus-circle"></i>',
+        ['invoice/blank-invoice', 'Invoice[customer_id]' => $userModel->id,
+            'Invoice[type]' => INVOICE::TYPE_INVOICE, ], [
+            'class' => 'add-new-invoice text-add-new m-r-10',
+        ]); ?>
+	<?= Html::a('<i class="fa fa-print"></i>', ['print/customer-invoice', 'id' => $userModel->id], ['id' => 'invoice-print', 'class' => 'text-add-new', 'target' => '_blank']) ?>
 	<?php $form = ActiveForm::begin([
 		'id' => 'customer-invoice-search-form'
     ]); ?>
@@ -64,10 +62,11 @@ use common\models\Student;
         <?php echo $form->field($userModel, 'studentId')->dropDownList($students, ['prompt' => 'Select Student'])->label(false); ?>
     </div>
     <div class="col-md-2 form-group M-t-5">
-	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
-    </div>
+	<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary btn-sm']) ?>
+		
+    </div>	
 	<?php ActiveForm::end(); ?>
-	<?= Html::a('<i class="fa fa-print"></i> Print', ['print/customer-invoice', 'id' => $userModel->id], ['id' => 'invoice-print', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+	
 </div>
 <div class="clearfix"></div>
 <div class="grid-row-open">

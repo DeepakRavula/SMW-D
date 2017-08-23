@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\GridView;
 use common\models\User;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\CountrySearch */
@@ -17,7 +18,7 @@ $addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
 <div class="grid-row-open">
-    <?php echo GridView::widget([
+    <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['country/view', 'id' => $model->id]);

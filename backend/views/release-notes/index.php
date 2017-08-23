@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -11,7 +11,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-plus" aria-hidden="tru
 $this->params['breadcrumbs'][] = $this->title;
 ?> 
 <div class="release-notes-index "> 
-    <?php echo GridView::widget([
+    <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered m-0'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
