@@ -1,29 +1,25 @@
-<div class="table-responsive">
-	<table class="table">
-		<tbody>
-			<tr>
-                <th style="width:50%">Discounts:</th>
-                <td><?= Yii::$app->formatter->format($model->totalDiscount, ['currency']); ?></td>
-			</tr>
-			<tr>
-                <th style="width:50%">Subtotal:</th>
-                <td><?= Yii::$app->formatter->asCurrency($model->subTotal); ?></td>
-			</tr>
-			<tr>
-                <th>Tax (9.3%)</th>
-                <td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
-			</tr>
-			<tr>
-                <th>Paid:</th>
-                <td><?= !empty($model->invoicePaymentTotal) ? Yii::$app->formatter->asCurrency($model->invoicePaymentTotal) : '$0.00'; ?></td>
-			</tr>
-			<tr>
-                <th>Total:</th>
-                <td><?= Yii::$app->formatter->asCurrency($model->total); ?></td>
-			</tr>
-			<tr>
-                <th>Balance:</th>
-                <td><?= Yii::$app->formatter->asCurrency($model->balance); ?></td>
-			</tr>
-		</tbody></table>
-</div>
+<tr>
+    <td id="invoice-discount">Discounts</td>
+	<td><?= Yii::$app->formatter->format($model->totalDiscount, ['currency']); ?></td>
+</tr>
+<tr>
+	<td>SubTotal</td>
+	<td><?= Yii::$app->formatter->asCurrency($model->subTotal); ?></td>
+</tr>
+
+<tr>
+	<td>Tax</td>
+	<td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
+</tr>
+<tr>
+	<td><strong>Total</strong></td>
+	<td><strong><?= Yii::$app->formatter->asCurrency($model->total); ?></strong></td>
+</tr>
+<tr>
+	<td>Paid</td>
+	<td><?= !empty($model->invoicePaymentTotal) ? Yii::$app->formatter->asCurrency($model->invoicePaymentTotal) : '$0.00'; ?></td>
+</tr>
+<tr>
+<td class="p-t-20"><strong>Balance</strong></td>
+<td class="p-t-20"><strong><?= Yii::$app->formatter->asCurrency($model->balance); ?></strong></td>
+</tr>

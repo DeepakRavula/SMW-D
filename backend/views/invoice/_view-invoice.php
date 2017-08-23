@@ -86,47 +86,13 @@ use kartik\editable\Editable;
 	<!-- /.col -->
   </div>
 <div class="row">
-<?php echo $this->render('_view-line-item', [
-	'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-	'searchModel' => $searchModel,
-]) ?>	
-</div>
-<div class="row">
-	<div class="col-xs-6">
-	  <p class="lead">Payments:</p>
-	  <?= $this->render('print/_payment', [
-		'paymentsDataProvider' => $paymentsDataProvider
-	  ]);?>
-	</div>
-	<!-- /.col -->
-	<div class="col-xs-4">
-		<?php
-			echo $this->render('_view-bottom-summary', [
-				'model' => $model,
-		]); ?>
-	</div>
-	<!-- /.col -->
-  </div>
-</section>
-<div class="invoice-view p-10">
-    <div class="invoice-info m-t-20">
 	<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
-	<div id="add-misc-item" class="col-sm-2">
-    <div class="m-b-20">
-	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Item</a>
-	<div class="clearfix"></div>
-    </div>
-	</div>
+	<a href="#" class="add-new-misc text-add-new m-r-10"><i class="fa fa-plus-circle"></i> Add Item</a>
 <?php endif; ?>
-    <?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
-    <div id="apply-discount" class="col-sm-2">
-    <div class="m-b-20">
+	<?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
 	<a href="#" class="apply-discount text-add-new"><i class="fa fa-plus-circle"></i> Apply Discount</a>
-	<div class="clearfix"></div>
-    </div>
-    </div>
     <?php endif; ?>
-    <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+	  <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
     $lastRole = end($roles);
     if(!empty($model->lineItem) && ($lastRole->name === User::ROLE_ADMINISTRATOR ||
         $lastRole->name === User::ROLE_OWNER)) :?>
@@ -138,6 +104,11 @@ use kartik\editable\Editable;
 	<?php echo $this->render('_line-item', [
         'invoiceModel' => $model,
     ]) ?>
+<?php echo $this->render('_view-line-item', [
+	'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+	'searchModel' => $searchModel,
+]) ?>	
+</div>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
@@ -146,7 +117,6 @@ use kartik\editable\Editable;
               <tbody>
                 <tr>
                   <td colspan="4">
-                    
                     <div class="row-fluid m-t-20">
 					<em><strong>Notes:</strong></em><Br>
 					<?=
@@ -166,6 +136,10 @@ use kartik\editable\Editable;
                   </td>
                   <td colspan="2">
                     <table id="invoice-summary-section" class="table-invoice-childtable">
+						<?php
+			echo $this->render('_view-bottom-summary', [
+				'model' => $model,
+		]); ?>	
                     </table>
                   </td>
                 </tr>
@@ -176,16 +150,10 @@ use kartik\editable\Editable;
         <!-- /.col -->
         </div>
 <div class="clearfix"></div>
-<div class="no-print">
-  <div class="col-xs-12">
-  <!-- <hr class="default-hr">   -->
-  </div>
-</div>
-</div>
 <div class="reminder_notes text-muted well well-sm no-shadow">
     <?php echo $model->reminderNotes; ?>
 </div>
-</div>
+</section>
 <script>
 $(document).ready(function() {
     $('.add-new-misc').click(function(){
