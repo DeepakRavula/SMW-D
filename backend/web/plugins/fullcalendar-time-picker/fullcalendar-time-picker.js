@@ -29,6 +29,7 @@ $.fn.calendarPicker = function(options) {
         return false;
     });
     
+    $(document).off('click', '.calendar-date-time-picker-save');
     $(document).on('click', '.calendar-date-time-picker-save', function () {
         if (!$.isEmptyObject($('#calendar-date-time-picker').fullCalendar('clientEvents', 'newEnrolment'))){
             $('#calendar-date-time-picker-modal').modal('hide');

@@ -102,7 +102,7 @@ use kartik\time\TimePicker;
 
 <script>
     $(document).on('click', '.course-calendar-icon', function() {
-        var name = $(this);
+        var name = $(this).parent();
         var teacherId = $('#course-teacherid').val();
         var duration = $('#course-duration').val();
         var params = $.param({ id: teacherId });
@@ -129,10 +129,17 @@ use kartik\time\TimePicker;
         }
     });
     
+    $(document).on('change', '#course-teacherid', function() {
+        $('.remove-item').click();
+        $('.day').val('');
+        $('.time').val('');
+        return false;
+    }); 
+        
     $(document).on('after-date-set', function(event, params) {
         if (!$.isEmptyObject(params.date)) {
-            $(params.name).parent().find('.lesson-time').find('.time').val(moment(date).format('DD-MM-YYYY h:mm A'));
-            $(params.name).parent().find('.lesson-day').find('.day').val(moment(date).format('dddd'));
+            params.name.find('.lesson-time').find('.time').val(moment(params.date).format('DD-MM-YYYY h:mm A'));
+            params.name.find('.lesson-day').find('.day').val(moment(params.date).format('dddd'));
         }
     });
 </script>
