@@ -16,10 +16,12 @@ $bundle = BackendAsset::register($this);
 ?>
 <!-- header logo: style can be found in header.less -->
         <header class="main-header">
-            <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class=" logo">
-                <!-- Add the class icon to your logo image or logo icon to add the margining -->                
-                <img class="smw-logo" src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/logo.png')) ?>"  />        
-            </a>
+			 <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class=" logo">
+			  <!-- mini logo for sidebar mini 50x50 pixels -->
+			  <span class="logo-mini">SMW</span>
+			  <!-- logo for regular state and mobile devices -->
+			  <span class="logo-lg"><b>Arcadia</b>SMW</span>
+			</a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top" role="navigation">
                 <!-- Sidebar toggle button-->
