@@ -4,6 +4,10 @@ namespace common\components\validators\lesson\conflict;
 use Yii;
 use yii\validators\Validator;
 use common\models\Lesson;
+use common\models\Vacation;
+use Carbon\Carbon;
+use Carbon\CarbonInterval;
+use League\Period\Period;
 
 class StudentValidator extends Validator
 {
@@ -43,5 +47,21 @@ class StudentValidator extends Validator
                 $this->addError($model,$attribute, 'Lesson time conflicts with student\'s another lesson');
             }
         }
+		$vacations = Vacation::find()
+			->andWhere(['enrolmentId' => $model->course->enrolment->id])
+			->andWhere(['>=', 'DATE(fromDate)', (new \DateTime())->format('Y-m-d')])
+			->all();
+		foreach($vacations as $vacation) {
+			$date = Carbon::parse($model->date); 
+			$start = Carbon::parse($vacation->fromDate);
+			$end = Carbon::parse($vacation->toDate); 
+			$diff = $start->diff($end);
+			$interval = CarbonInterval::year($diff->y)->months($diff->m)->days($diff->d);
+			$period = Period::createFromDuration($start, $interval);
+			$result = $period->contains($date);
+			if(!empty($result)) {
+                $this->addError($model,$attribute, 'Lesson date/time conflicts with student\'s vacation');
+            }
+		}
     }
 }
