@@ -67,17 +67,6 @@ $bundle = BackendAsset::register($this);
                                 <i class="fa fa-support"></i>
                             </a>
                         </li>
-                        <li id="timeline-notifications" class="notifications-menu"  data-toggle="tooltip" data-original-title="Notifications" data-placement="bottom">
-                            <a href="<?php echo Url::to(['timeline-event/index']) ?>">
-                                <i class="fa fa-bell"></i>
-                                <span class="label label-success">
-                                    <?php echo TimelineEvent::find()
-										->andWhere(['locationId' => Yii::$app->session->get('location_id')])
-										->today()->count() ?>
-                                </span>
-                            </a>
-                        </li>
-                        <!-- Notifications: style can be found in dropdown.less -->
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="user-menu">
