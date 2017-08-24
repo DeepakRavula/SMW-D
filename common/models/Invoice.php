@@ -758,6 +758,44 @@ class Invoice extends \yii\db\ActiveRecord
         return $discount;
     }
 
+	public function addLessonCredit()
+	{
+		foreach($this->lineItems as $lineItem) {
+            $lesson = Lesson::find()
+				->descendantsOf($lineItem->proFormaLesson->id)
+				->orderBy(['id' => SORT_DESC])
+				->one();
+            if (!$lesson) {
+                $lesson = Lesson::findOne($lineItem->proFormaLesson->id);
+            }
+			$paymentModel = new Payment();
+			$paymentModel->amount = $lesson->proFormaLineItem->netPrice;
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+			$paymentModel->reference = $this->id;
+			$paymentModel->lessonId = $lesson->id;
+			$paymentModel->save();	
+			
+			$creditPaymentId = $paymentModel->id;
+			$paymentModel->id = null;
+			$paymentModel->isNewRecord = true;
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+			$paymentModel->reference = $lesson->id;
+			$paymentModel->lessonId = $lesson->id;
+			$paymentModel->save();
+			
+			$lessonCredit  = new LessonCredit();
+			$lessonCredit->lessonId = $lesson->id;
+			$lessonCredit->paymentId = $creditPaymentId;
+			$lessonCredit->save();
+			
+			$debitPaymentId = $paymentModel->id;
+			$creditUsageModel = new CreditUsage();
+			$creditUsageModel->credit_payment_id = $creditPaymentId;
+			$creditUsageModel->debit_payment_id = $debitPaymentId;
+			$creditUsageModel->save();
+		}
+	}
+	
     public function makeInvoicePayment()
     {
         foreach($this->lineItems as $lineItem) {

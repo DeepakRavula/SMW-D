@@ -22,6 +22,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class Payment extends ActiveRecord
 {
     public $invoiceId;
+    public $lessonId;
     public $credit;
     public $amountNeeded;
     public $sourceType;
@@ -196,8 +197,14 @@ class Payment extends ActiveRecord
             $transaction->save();
             $this->transactionId = $transaction->id;
         }
-        $model = Invoice::findOne(['id' => $this->invoiceId]);
-        $this->user_id = $model->user_id;
+		if(!empty($this->invoiceId)) {
+			$model = Invoice::findOne(['id' => $this->invoiceId]);
+			$this->user_id = $model->user_id;
+		}
+		if(!empty($this->lessonId)) {
+			$model = Lesson::findOne(['id' => $this->lessonId]);
+			$this->user_id = $model->enrolment->student->customer->id;
+		}
         $this->isDeleted = false;
         if (empty($this->date)) {
             $this->date = (new \DateTime())->format('Y-m-d H:i:s');
@@ -205,41 +212,9 @@ class Payment extends ActiveRecord
         if ($this->isCreditUsed()) {
             $this->amount = -abs($this->amount);
         }
-
         return parent::beforeSave($insert);
     }
 
-	public function addLessonCredit()
-	{
-		foreach($this->invoice->lineItems as $lineItem) {
-			$paymentModel = new Payment();
-			//$paymentModel->setScenario(self::SCENARIO_LESSON_CREDIT);
-			$paymentModel->amount = $lineItem->amount;
-			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-			$paymentModel->reference = $this->invoice->id;
-			$paymentModel->invoiceId = $this->invoice->id;
-			$paymentModel->save();	
-
-			$creditPaymentId = $paymentModel->id;
-			$paymentModel->id = null;
-			$paymentModel->isNewRecord = true;
-			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-			$paymentModel->reference = $lineItem->lesson->id;
-			$paymentModel->invoiceId = $this->invoice->id;
-			$paymentModel->save();
-			
-			$lessonCredit  = new LessonCredit();
-			$lessonCredit->lessonId = $lineItem->lesson->id;
-			$lessonCredit->paymentId = $creditPaymentId;
-			$lessonCredit->save();
-			
-			$debitPaymentId = $paymentModel->id;
-			$creditUsageModel = new CreditUsage();
-			$creditUsageModel->credit_payment_id = $creditPaymentId;
-			$creditUsageModel->debit_payment_id = $debitPaymentId;
-			$creditUsageModel->save();
-		}
-	}
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
@@ -249,26 +224,30 @@ class Payment extends ActiveRecord
             if ($this->isCreditUsed()) {
                 $this->updateCreditUsed();
             }
-            $this->invoice->save();
+			if(!empty($this->invoiceId)) {
+				$this->invoice->save();
+			}
             return parent::afterSave($insert, $changedAttributes);
         }
+		if(!empty($this->invoiceId)) {
 			$invoicePaymentModel = new InvoicePayment();
 			$invoicePaymentModel->invoice_id = $this->invoiceId;
 			$invoicePaymentModel->payment_id = $this->id;
 			$invoicePaymentModel->save();
-		if($this->invoice->isProFormaInvoice()) {
-			$this->addLessonCredit();	
+			$this->invoice->save();
+			if($this->invoice->isProFormaInvoice()) {
+				$this->invoice->addLessonCredit();
+			}
+			if($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
+				if ($this->invoice->isExtraLessonProformaInvoice()) {
+					$this->invoice->makeExtraLessonInvoicePayment();
+				} else if ($this->invoice->lineItem->isGroupLesson()) {
+					$this->invoice->makeGroupInvoicePayment();
+				} else {
+					//$this->invoice->makeInvoicePayment();
+				}
+			}
 		}
-		$this->invoice->save();
-        if($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
-            if ($this->invoice->isExtraLessonProformaInvoice()) {
-                $this->invoice->makeExtraLessonInvoicePayment();
-            } else if ($this->invoice->lineItem->isGroupLesson()) {
-                $this->invoice->makeGroupInvoicePayment();
-            } else {
-                $this->invoice->makeInvoicePayment();
-            }
-        }
         $this->trigger(self::EVENT_CREATE);
 		
         return parent::afterSave($insert, $changedAttributes);
