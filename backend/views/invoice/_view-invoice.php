@@ -8,108 +8,91 @@ use kartik\editable\Editable;
 
 ?>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
-<div class="invoice-view p-10">
-		    <div class="row">
-            <a href="<?= Yii::getAlias('@frontendUrl') ?>" class="logo invoice-col col-sm-3">              
-                <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
-            </a>
-          <div class="col-sm-3 invoice-address invoice-col text-gray">
-              <div class="row-fluid">
-                <h2 class="m-0 text-inverse"><strong>
-                  <?= (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? '' : 'INVOICE'?> </strong>
-                </h2>
-              </div>
-              <small>
-                <?php if (!empty($model->user->userLocation->location->address)): ?>
-                  <?= $model->user->userLocation->location->address?><br>
-          			<?php endif; ?>
-          			<?php if (!empty($model->user->userLocation->location->phone_number)): ?>
-                  <?= $model->user->userLocation->location->phone_number?>
-          			<?php endif; ?> 
-                                <?php if (!empty($model->user->userLocation->location->email)): ?>
-                  <?= $model->user->userLocation->location->email?>
-          			<?php endif; ?> 
-              </small> 
-            </div>
-            <?php if (!empty($customer)):?>
-            <div class="col-sm-3 invoice-col">
-              To
-              <address>
-                <strong>
-				<?php 
-				if(!$model->isUnassignedUser()) {
-					$roles = Yii::$app->authManager->getRolesByUser($model->user_id);
-					$role = end($roles);
-				} ?>
-				<?php if(!empty($role) && $role->name === User::ROLE_CUSTOMER) : ?>
-                  <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id]) ?>">
-				<?php endif; ?>
-                        <?= isset($customer->publicIdentity) ? $customer->publicIdentity : null?>
-                  </a></strong>
-                  <br>
-                  <?php
-                      $addresses = $customer->addresses;
-                      foreach ($addresses as $address) {
-                          if ($address->label === 'Billing') {
-                              $billingAddress = $address;
-                              break;
-                          }
-                      }
-                      $phoneNumber = $customer->phoneNumber;
-                  ?>
-                <!-- Billing address -->
-                <?php if (!empty($billingAddress)) {
-                    echo $billingAddress->address.'<br> '.$billingAddress->city->name.', ';
-                    echo $billingAddress->province->name.'<br>'.$billingAddress->country->name.' ';
-                    echo $billingAddress->postal_code;
-                } ?><br>
-            
-               <?php if (!empty($customer->email)): ?>
-               <?= 'E: ' . $customer->email?><br>
-               <?php endif; ?>
-            
-            <!-- Phone number -->
-            
-              <?php if (!empty($phoneNumber)) : ?>
-                <div class="row-fluid"><?= 'P: '; ?><?= $phoneNumber->number; ?>
-                </div>
-              <?php endif; ?>
-              </address>
-            </div>
-             <?php endif; ?>
-            <div class="col-sm-2 invoice-col">
-              <b>Invoice <?= '#'.$model->getInvoiceNumber()?></b><br><br>
-              <b>Date:</b> <?= Yii::$app->formatter->asDate($model->date); ?><br>
-              <?php if (!$model->isInvoice()) : ?>
-              <b>Due Date:</b> <?= Yii::$app->formatter->asDate($model->dueDate); ?><br>
-              <?php endif; ?>
-               <b>Status:</b><?= $model->getStatus(); ?>
-            </div>
-          <div class="clearfix"></div>
-        </div>
-        <!-- /.col -->
-    <div class="invoice-info m-t-20">
-        <!-- /.col -->
-
-
-		
-	<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
-	<div id="add-misc-item" class="col-sm-2">
-    <div class="m-b-20">
-	<a href="#" class="add-new-misc text-add-new"><i class="fa fa-plus-circle"></i> Add Item</a>
-	<div class="clearfix"></div>
-    </div>
+<section class="invoice">
+<div class="row">
+	<div class="col-xs-12">
+	  <h2 class="page-header" style="margin: -11px 0 10px 0;">
+		<img style="width:110px" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />    
+		<small class="pull-right">Date: <?= Yii::$app->formatter->asDate($model->date); ?></small>
+	  </h2>
 	</div>
+	<!-- /.col -->
+</div>
+ <div class="row invoice-info">
+	<div class="col-sm-5 invoice-col">
+	  From
+	  <address>
+		<strong>Arcadia Music Academy (<?= $model->location->name; ?>)</strong><br>
+		<?php if (!empty($model->location->address)): ?>
+			<?= $model->location->address;?>
+		<?php endif; ?><br>
+		<?php if (!empty($model->location->city_id)): ?>
+			<?= $model->location->city->name;?>
+		<?php endif; ?>
+		<?php if (!empty($model->location->province_id)): ?>
+			<?= ', ' . $model->location->province->name;?>
+		<?php endif; ?><br>
+		<?php if (!empty($model->location->postal_code)): ?>
+			<?= $model->location->postal_code;?>
+		<?php endif; ?><br>
+		<?php if (!empty($model->location->phone_number)): ?>
+			Phone: <?= $model->location->phone_number?>
+		<?php endif; ?><br>
+		 <?php if (!empty($model->location->email)): ?>
+			Email: <?= $model->location->email?>
+		<?php endif; ?><br>
+		www.arcadiamusicacademy.com
+	  </address>
+	</div>
+	<!-- /.col -->
+    <?php if (!empty($customer)):?>
+	<div class="col-sm-3 invoice-col">
+	  To
+	  <address>
+		<strong><?php 
+		if(!$model->isUnassignedUser()) {
+			$roles = Yii::$app->authManager->getRolesByUser($model->user_id);
+			$role = end($roles);
+		} ?>
+		<?php if(!empty($role) && $role->name === User::ROLE_CUSTOMER) : ?>
+		  <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id]) ?>">
+		<?php endif; ?>
+		<?= isset($customer->publicIdentity) ? $customer->publicIdentity : null?>
+		</a></strong><br>
+        <?php if (!empty($customer->billingAddress)) : ?>
+		<?= $customer->billingAddress->address; ?><br>
+		<?= $customer->billingAddress->city->name . ', ' . $customer->billingAddress->province->name; ?><br>
+		<?= $customer->billingAddress->postal_code; ?><br>
+		<?php endif; ?>
+		<?php if (!empty($customer->phoneNumber)): ?>
+		  Phone: <?= $customer->phoneNumber->number?><br>
+		<?php endif; ?>
+		<?php if (!empty($customer->email)): ?>
+		  Email: <?= $customer->email?><br>
+		<?php endif; ?>
+	  </address>
+	</div>
+	<?php endif; ?>
+	<!-- /.col -->
+	<div class="col-sm-4 invoice-col">
+	  <b>Invoice #<?= $model->getInvoiceNumber();?></b><br>
+	  <br>
+	  <b>Date:</b> <?= Yii::$app->formatter->asDate($model->date); ?><br>
+	  <?php if (!$model->isInvoice()) : ?>
+	  <b>Due Date:</b> <?= Yii::$app->formatter->asDate($model->dueDate); ?><br>
+	  <?php endif; ?>
+	  <b>Status:</b> <?= $model->getStatus(); ?>
+	</div>
+	<!-- /.col -->
+  </div>
+<div class="row">
+	<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
+	<a href="#" class="add-new-misc text-add-new m-r-10"><i class="fa fa-plus-circle"></i> Add Item</a>
 <?php endif; ?>
-    <?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
-    <div id="apply-discount" class="col-sm-2">
-    <div class="m-b-20">
+	<?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
 	<a href="#" class="apply-discount text-add-new"><i class="fa fa-plus-circle"></i> Apply Discount</a>
-	<div class="clearfix"></div>
-    </div>
-    </div>
     <?php endif; ?>
-    <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+	  <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
     $lastRole = end($roles);
     if(!empty($model->lineItem) && ($lastRole->name === User::ROLE_ADMINISTRATOR ||
         $lastRole->name === User::ROLE_OWNER)) :?>
@@ -121,10 +104,11 @@ use kartik\editable\Editable;
 	<?php echo $this->render('_line-item', [
         'invoiceModel' => $model,
     ]) ?>
-	<?php echo $this->render('_view-line-item', [
-        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-        'searchModel' => $searchModel,
-    ]) ?>
+<?php echo $this->render('_view-line-item', [
+	'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+	'searchModel' => $searchModel,
+]) ?>	
+</div>
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
@@ -133,7 +117,6 @@ use kartik\editable\Editable;
               <tbody>
                 <tr>
                   <td colspan="4">
-                    
                     <div class="row-fluid m-t-20">
 					<em><strong>Notes:</strong></em><Br>
 					<?=
@@ -153,10 +136,10 @@ use kartik\editable\Editable;
                   </td>
                   <td colspan="2">
                     <table id="invoice-summary-section" class="table-invoice-childtable">
-					<?php
-                        echo $this->render('_view-bottom-summary', [
-                            'model' => $model,
-                    ]); ?>
+						<?php
+			echo $this->render('_view-bottom-summary', [
+				'model' => $model,
+		]); ?>	
                     </table>
                   </td>
                 </tr>
@@ -167,16 +150,10 @@ use kartik\editable\Editable;
         <!-- /.col -->
         </div>
 <div class="clearfix"></div>
-<div class="no-print">
-  <div class="col-xs-12">
-  <!-- <hr class="default-hr">   -->
-  </div>
-</div>
-</div>
 <div class="reminder_notes text-muted well well-sm no-shadow">
     <?php echo $model->reminderNotes; ?>
 </div>
-</div>
+</section>
 <script>
 $(document).ready(function() {
     $('.add-new-misc').click(function(){
