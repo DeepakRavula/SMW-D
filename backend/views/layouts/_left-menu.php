@@ -9,11 +9,6 @@ use common\models\Student;
 use common\models\Course;
 use common\models\timelineEvent\TimelineEvent;
 ?>
-<style>
-	.label{
-		font-size:80%;
-	}
-</style>
 <?php
 echo Menu::widget([
 	'options' => ['class' => 'sidebar-menu'],

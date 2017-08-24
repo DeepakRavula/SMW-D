@@ -8,12 +8,6 @@ use kartik\daterange\DateRangePicker;
 /* @var $model backend\models\search\UserSearch */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<style>
-  .e1Div{
-    right: 0 !important;
-    top: -59px;
-  }
-</style>
 <div class="user-search">
 
     <?php $form = ActiveForm::begin([

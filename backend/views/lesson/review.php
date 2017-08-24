@@ -10,12 +10,6 @@ DateTimePickerAsset::register($this);
 
 $this->title = 'Review Lessons';
 ?>
-<style>
-	.e1Div{
-		top: -46px;
-		right: 0px;
-	}
-</style>
 <?php $form = ActiveForm::begin(); ?>
 <div class="pull-right  m-r-20">
 	<div class="schedule-index">

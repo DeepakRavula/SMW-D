@@ -10,7 +10,6 @@ use yii\grid\GridView;
         'dataProvider' => $paymentCycleDataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'summary' => '',
         'columns' => [
             'startDate:date',
             'endDate:date',
@@ -52,7 +51,7 @@ use yii\grid\GridView;
                         $url = Url::to(['invoice/invoice-payment-cycle', 'id' => $model->id]);
                         if ($model->canRaiseProformaInvoice() && !$model->hasProFormaInvoice()) {
                             return Html::a('Create PFI', $url, [
-                                                            'class' => ['btn-success btn-sm']
+                                'class' => ['btn-success btn-xs']
                             ]);
                         } else {
                             return null;
@@ -65,7 +64,7 @@ use yii\grid\GridView;
                         }
                         $url = Url::to(['invoice/view', 'id' => $model->proFormaInvoice->id]);
                         return Html::a('View PFI', $url, [
-							'class' => ['btn-info btn-sm']
+							'class' => ['btn-info btn-xs']
                         ]);                                
                     }
                 ]                            

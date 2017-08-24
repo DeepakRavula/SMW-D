@@ -1,8 +1,5 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\DetailView;
-use common\models\User;
 use yii\bootstrap\Tabs;
 use yii\helpers\Url;
 
@@ -10,10 +7,8 @@ use yii\helpers\Url;
 /* @var $model common\models\ClassRoom */
 
 ?>
- <div class="tabbable-panel">
-     <div class="tabbable-line">
+ <div class="nav-tabs-custom">
 <?php 
-
 $unavailabilityContent = $this->render('unavailability/view', [
     'model' => $model,
 	'unavailabilityDataProvider' => $unavailabilityDataProvider
@@ -32,7 +27,6 @@ $unavailabilityContent = $this->render('unavailability/view', [
 		]
 	]);
 ?>
-    </div>
  </div>
 <script>
 $(document).ready(function() {

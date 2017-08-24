@@ -1,8 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\helpers\Url;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="grid-row-open p-20">
 
-    <?php echo GridView::widget([
+    <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered m-0'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],

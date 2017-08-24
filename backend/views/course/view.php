@@ -2,48 +2,56 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\Tabs;
-use common\models\Enrolment;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
 
 $this->title = 'Group Course Details';
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back text-add-new f-s-14 m-r-10 m-t-0']);
-$this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-default pull-left', 'target' => '_blank']);
-
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back']);
+$this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-primary pull-left', 'target' => '_blank']);
 ?>
-<div class="group-course-view">
-	<div class="row-fluid user-details-wrapper">
-    <div class="col-md-3 text-center" data-toggle="tooltip" data-placement="bottom" title="Program Name">
-        	<i class="fa fa-music"></i><br><?php echo $model->program->name; ?>
-    </div>
-	<div class="col-md-2 text-center" data-toggle="tooltip" data-placement="bottom" title="Teacher Name">
-        	<i class="fa fa-graduation-cap"></i><br> <?php echo $model->teacher->publicIdentity; ?>
-    </div>
-    <div class="col-md-1 text-center" data-toggle="tooltip" data-placement="bottom" title="Rate">
-    	<i class="fa fa-money"></i> <br><?php echo $model->program->rate; ?>
-    </div>
-	<div class="col-md-1 text-center" data-toggle="tooltip" data-placement="bottom" title="Duration">
-    	<i class="fa fa-calendar"></i> <br><?php 
-        $length = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->duration);
-        echo $length->format('H:i'); ?>
-    </div>
-	<div class="col-md-1 p-0 hand text-center" data-toggle="tooltip" data-placement="bottom" title="Time">
-		<i class="fa fa-clock-o"></i> <br><?php 
-        $fromTime = \DateTime::createFromFormat('H:i:s', $model->courseSchedule->fromTime);
-        echo $fromTime->format('h:i A'); ?>	
+<div class="row">
+	<div class="col-md-6">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'title' => 'Details',
+			'withBorder' => true,
+		])
+		?>
+		<dl class="dl-horizontal">
+			<dt>Program</dt>
+			<dd><?= $model->program->name; ?></dd>
+			<dt>Teacher</dt>
+			<dd><?= $model->teacher->publicIdentity; ?></dd>
+			<dt>Rate</dt>
+			<dd><?= $model->program->rate; ?></dd>
+		</dl>
+		<?php LteBox::end() ?>
+		</div> 
+	<div class="col-md-6">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'title' => 'Schedule',
+			'withBorder' => true,
+		])
+		?>
+		<dl class="dl-horizontal">
+			<dt>Duration</dt>
+			<dd>
+				<?= (new \DateTime($model->courseSchedule->duration))->format('H:i'); ?></dd>
+			<dt>Time</dt>
+			<dd><?= Yii::$app->formatter->asTime($model->courseSchedule->fromTime) ?></dd>
+			<dt>Period</dt>
+			<dd><?= Yii::$app->formatter->asDate($model->startDate) . ' to ' . Yii::$app->formatter->asDate($model->endDate)?></dd>
+		</dl>
+		<?php LteBox::end() ?>
 	</div>
-	<div class="col-md-2 hand text-center" data-toggle="tooltip" data-placement="bottom" title="Start Date">
-			<i class="fa fa-calendar"></i> <br><?php echo Yii::$app->formatter->asDate($model->startDate)?>	
-	</div>
-	<div class="col-md-2 hand text-center" data-toggle="tooltip" data-placement="bottom" title="End Date">
-			<i class="fa fa-calendar"></i> <br><?php echo Yii::$app->formatter->asDate($model->endDate)?>	
-	</div>
-    <div class="clearfix"></div>
 </div>
-</div>
-<div class="tabbable-panel">
-     <div class="tabbable-line">
+<div class="nav-tabs-custom">
 <?php 
 
 $studentContent = $this->render('_student', [
@@ -85,7 +93,6 @@ $logContent = $this->render('log', [
     ],
 ]); ?>
 <div class="clearfix"></div>
-     </div>
  </div>
 <script type="text/javascript">
 jQuery(document).ready(function($) {

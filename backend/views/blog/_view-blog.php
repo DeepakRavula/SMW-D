@@ -1,10 +1,3 @@
-<style>
-    .content > .box{
-        border-top: 0;
-        background: transparent;
-        box-shadow: 0px 0px 0px;
-    }
-</style>
           <!-- Box Comment -->
           <div class="box box-widget">
             <div class="box-header with-border">

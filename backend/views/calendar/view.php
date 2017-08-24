@@ -45,23 +45,6 @@ $this->title = 'Calendar for ' .(new \DateTime())->format('l, F jS, Y');
             background-color: " . $rescheduledLesson->code . " !important; }"
     );
 ?>
-<style>
-	.fc-view-container {
-  width: auto;
-}
-
-.fc-view-container .fc-view {
-  overflow-x: scroll;
-}
-
-.fc-view-container .fc-view > table {
-  width: 2500px;
-}
-    .schedule-index {
-    position: absolute;
-    top: -45px;
-}
-</style>
 <div class="tabbable-panel">
     <div class="schedule-index">
         <div class="row schedule-filter">

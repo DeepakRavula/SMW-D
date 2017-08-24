@@ -12,57 +12,6 @@ $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<style>
-    table>thead>tr>th:first-child,
-    table>tbody>tr>td:first-child{
-        text-align: left !important;
-    }
-    table>thead>tr>th:last-child,
-    table>tbody>tr>td:last-child{
-      text-align: right;
-    }
-    .table-invoice-childtable>tbody>tr>td:first-of-type{
-      width: 230px;
-    }
-    .invoice-view .logo>img{
-      width:135px;
-    }
-    
-    .badge{
-      border-radius: 50px;
-      font-size: 18px;
-      font-weight: 400;
-      padding: 7px 30px;
-      background: #ea212c;
-    }
-    @media print{
-      .invoice-info{
-        margin-top: 5px;
-      }
-      .text-gray{
-        color: gray !important;
-      }
-      .invoice-labels{
-        width: 82px;
-      }
-      .text-left{
-        text-align: left !important;
-      }
-      
-      .table-invoice-childtable{
-        width: 10vw;
-        float:right !important;
-
-      }
-      .table-invoice-childtable>thead>tr>th:last-child, 
-      .table-invoice-childtable>tbody>tr>td:last-child{
-        white-space: nowrap;
-      }
-      .table-invoice-childtable>tbody>tr>td:first-of-type{
-        width: 7vw;
-      }
-    }
-</style>
 <div class="invoice-view p-10">
     <div class="row">
         <div class="col-xs-12 p-0">

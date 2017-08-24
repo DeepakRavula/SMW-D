@@ -3,18 +3,13 @@
 use common\models\Program;
 use backend\models\search\ProgramSearch;
 use yii\bootstrap\Tabs;
+use yii\bootstrap\Modal;
+use yii\helpers\Url;
 
 $this->title = 'Programs';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
-<style>
-    .tabbable-line > .tab-content{
-        padding-top:0;
-    }
-</style>
 
-<div class="tabbable-panel">
-     <div class="tabbable-line">
+<div class="nav-tabs-custom">
 <?php 
 
 $indexProgram = $this->render('_index-program', [
@@ -43,11 +38,56 @@ $indexProgram = $this->render('_index-program', [
 ]); ?>
 <div class="clearfix"></div>
 </div>
-</div>
+ <?php Modal::begin([
+        'header' => '<h4 class="m-0">Program</h4>',
+        'id' => 'program-modal',
+    ]); ?>
+<div id="program-content"></div>
+ <?php  Modal::end(); ?>
 <script>
-$(document).ready(function() {
-	$('.add-new-program').click(function(){
-		$('.program-create').show();
-  });
-});
+    $(document).ready(function() {
+        $(document).on('click', '#add-program, #program-listing  tbody > tr', function () {
+            var programId = $(this).data('key');
+            if (programId === undefined) {
+                var customUrl = '<?= Url::to(['program/create']); ?>';
+            } else {
+                var customUrl = '<?= Url::to(['program/update']); ?>?id=' + programId;
+            }
+            $.ajax({
+                url    : customUrl,
+                type   : 'post',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $('#program-content').html(response.data);
+                        $('#program-modal').modal('show');
+                    }
+                }
+            });
+            return false;
+        });
+        $(document).on('beforeSubmit', '#program-form', function () {
+            $.ajax({
+                url    : $(this).attr('action'),
+                type   : 'post',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status) {
+                        $.pjax.reload({container: '#program-listing', timeout: 6000});
+                        $('#program-modal').modal('hide');
+                    }
+                }
+            });
+            return false;
+        });
+        $(document).on('click', '.program-cancel', function () {
+            $('#program-modal').modal('hide');
+            return false;
+        });
+    });
 </script>

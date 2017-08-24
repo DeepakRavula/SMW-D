@@ -12,27 +12,6 @@ if (!$model->isNewRecord) {
     $this->title = $title;
 }
 ?>
-<style>
-	#w3 .tab-content{
-		padding: 0;
-	}
-	.smw-box {
-    background: #f5ecec;
-    border: 1px solid #f5ecec;
-    padding: 10px;
-    color: white;
-    border-radius: 5px;
-    color:#333;
-}
-.monthly-estimate {
-	margin-top:20px;
-	margin-bottom: 0px;
-}
-.text-inform {
-	color:#483535;
-}
-
-</style>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
 	'id' => 'program-form',
@@ -48,17 +27,17 @@ if (!$model->isNewRecord) {
 					<?php echo $form->field($model, 'rate')->textInput()->label($rateLabel); ?>
 				</div>
 				<div class="col-md-12">
+					<?php echo $form->field($model, 'type')->dropDownList(Program::types()) ?>
+				</div>
+				<div class="col-md-12">
 					<?php if (!$model->getIsNewRecord()) : ?>
 					<?php echo $form->field($model, 'status')->dropDownList(Program::statuses()) ?>
 					<?php endif; ?>
 				</div>
-			    <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
-   				
    			</div>
    		</div>
-   		<div class="col-md-8">
-   			<?php if ((int) $model->type === Program::TYPE_PRIVATE_PROGRAM) : ?>
-				<div class="smw-box col-md-11 m-l-20 m-b-30 monthly-estimate">
+   		<div class="col-md-8 monthly-estimate">
+				<div class="col-md-11">
 					<div id="program-rate-per-month" >
 						<p class="text-inform">
 							<strong>What's that per month?</strong></p>
@@ -73,16 +52,13 @@ if (!$model->isNewRecord) {
 					</div>
 					</div>
 				</div>
-			<?php endif; ?>
    		</div>
 	</div>
 	<div class="row-fluid">
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-		<?php 
-            if (!$model->isNewRecord) {
-                echo Html::a('Cancel','#', ['class' => 'btn btn-default program-edit-cancel-button']);
-            }
-        ?>
+		<div class="form-group">
+       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+        <?= Html::a('Cancel', '', ['class' => 'btn btn-default program-cancel']);?>
+    </div>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
@@ -90,6 +66,21 @@ if (!$model->isNewRecord) {
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
+    var program = {
+		rateEstimation : function() {
+			var programId = $('#program-type').val();
+			if(programId == program.private) {
+				$('.monthly-estimate').show();
+			} else {
+				$('.monthly-estimate').hide();
+			}	
+		},
+		'private' : 1
+	}
+	program.rateEstimation();	
+$(document).on('change', '#program-type', function() {
+	program.rateEstimation();	
+});
 $("#program-rate").on('change keyup paste', function() {
 	    var rate30 = ($('#program-rate').val() / 2).toFixed(2);
 		$('#rate-30-min').text(rate30);

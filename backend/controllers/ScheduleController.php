@@ -122,7 +122,11 @@ class ScheduleController extends Controller
 		if(!empty($holiday)) {
 			$holidayResource = ' (' . $holiday->description . ')';
 		}
-		return $holidayResource;
+		$data = $this->renderAjax('title', [
+			'name' => $holidayResource,
+			'date' => $date,
+		]);
+		return $data;
 	}
 
     public function getLessons($date, $programId, $teacherId)

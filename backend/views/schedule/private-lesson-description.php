@@ -2,16 +2,6 @@
 
 use common\models\Lesson;
 ?>
-<style>
-	li {
-	  list-style-type: none;
-	}
-	li label {
-		font-family: monospace;
-		font-size: 14px;
-		font-weight: bold;
-	}
-</style>
 <?php if((int)$view === Lesson::CLASS_ROOM_VIEW) : ?>
 	<li><label>Teacher: </label><span><?= $title; ?></span></li>
 	<li><label>Student Count: </label><span><?= $lesson->course->getEnrolmentsCount(); ?></span></li>

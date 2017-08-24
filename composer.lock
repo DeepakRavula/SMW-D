@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f5a6a01c06add29bd7c5bb26e159c33",
-    "content-hash": "7bad4314a09edd0fa78d1f6ff4bd5657",
+    "content-hash": "acfc427ef4dfebcacf51bbdf8c166fba",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -173,6 +172,46 @@
             "time": "2015-02-20T15:13:36+00:00"
         },
         {
+            "name": "almasaeed2010/adminlte",
+            "version": "v2.3.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/almasaeed2010/AdminLTE.git",
+                "reference": "2be703222af2edcb87e562d3da2299e4352bff8a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/almasaeed2010/AdminLTE/zipball/2be703222af2edcb87e562d3da2299e4352bff8a",
+                "reference": "2be703222af2edcb87e562d3da2299e4352bff8a",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Abdullah Almsaeed",
+                    "email": "abdullah@almsaeedstudio.com"
+                }
+            ],
+            "description": "AdminLTE - admin control panel and dashboard that's based on Bootstrap 3",
+            "homepage": "http://almsaeedstudio.com/",
+            "keywords": [
+                "JS",
+                "admin",
+                "back-end",
+                "css",
+                "less",
+                "responsive",
+                "template",
+                "theme",
+                "web"
+            ],
+            "time": "2017-01-08T21:03:57+00:00"
+        },
+        {
             "name": "asofter/yii2-imperavi-redactor",
             "version": "dev-master",
             "target-dir": "yii/imperavi",
@@ -221,7 +260,7 @@
                 "imperavi redactor",
                 "yii"
             ],
-            "time": "2017-02-28T16:15:10+00:00"
+            "time": "2017-02-28 16:15:10"
         },
         {
             "name": "baibaratsky/yii2-rollbar",
@@ -733,6 +772,43 @@
             "description": "Font Awesome"
         },
         {
+            "name": "bower-asset/fontawesome",
+            "version": "v4.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FortAwesome/Font-Awesome.git",
+                "reference": "e554555d73a44e0a7d11b0361ad7a5325a5f551c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FortAwesome/Font-Awesome/zipball/e554555d73a44e0a7d11b0361ad7a5325a5f551c",
+                "reference": "e554555d73a44e0a7d11b0361ad7a5325a5f551c",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "less/font-awesome.less",
+                    "scss/font-awesome.scss"
+                ],
+                "bower-asset-ignore": [
+                    "*/.*",
+                    "*.json",
+                    "src",
+                    "*.yml",
+                    "Gemfile",
+                    "Gemfile.lock",
+                    "*.md"
+                ]
+            },
+            "license": [
+                "OFL-1.1",
+                "MIT",
+                "CC-BY-3.0"
+            ],
+            "description": "Font Awesome"
+        },
+        {
             "name": "bower-asset/fullcalendar",
             "version": "v3.4.0",
             "source": {
@@ -1035,6 +1111,41 @@
                     "/test"
                 ]
             }
+        },
+        {
+            "name": "bower-asset/js-cookie",
+            "version": "v2.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/js-cookie/js-cookie.git",
+                "reference": "8b70250875f7e07445b6a457f9c2474ead4cba44"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/js-cookie/js-cookie/zipball/8b70250875f7e07445b6a457f9c2474ead4cba44",
+                "reference": "8b70250875f7e07445b6a457f9c2474ead4cba44",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "src/js.cookie.js"
+                ],
+                "bower-asset-ignore": [
+                    "travis.sh",
+                    "test",
+                    "Gruntfile.js",
+                    "package.json",
+                    ".gitignore",
+                    ".jshintignore",
+                    ".jshintrc",
+                    ".tm_properties",
+                    ".travis.yml"
+                ]
+            },
+            "license": [
+                "MIT"
+            ]
         },
         {
             "name": "bower-asset/marionette",
@@ -1706,6 +1817,48 @@
             "time": "2017-03-20T17:10:46+00:00"
         },
         {
+            "name": "insolita/yii2-adminlte-widgets",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Insolita/yii2-adminlte-widgets.git",
+                "reference": "f5a5d03d57086f5a13ac2d79a5bcb95431fa5c5b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Insolita/yii2-adminlte-widgets/zipball/f5a5d03d57086f5a13ac2d79a5bcb95431fa5c5b",
+                "reference": "f5a5d03d57086f5a13ac2d79a5bcb95431fa5c5b",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/js-cookie": "~2.1.0",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "insolita\\wgadminlte\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "insolita",
+                    "email": "donnainsolita@gmail.com"
+                }
+            ],
+            "description": "Widgets for AdminLTE theme (Box with remember collapse state, Timeline, Tile, Callout, SmallBox etc)",
+            "keywords": [
+                "AdminLTE",
+                "widget",
+                "yii2"
+            ],
+            "time": "2017-03-25T18:16:22+00:00"
+        },
+        {
             "name": "intervention/image",
             "version": "2.3.13",
             "source": {
@@ -2171,7 +2324,7 @@
                 "yii",
                 "yii2"
             ],
-            "time": "2017-01-14T11:34:27+00:00"
+            "time": "2017-01-14 11:34:27"
         },
         {
             "name": "kartik-v/yii2-dialog",
@@ -2329,7 +2482,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-29T18:46:37+00:00"
+            "time": "2017-04-29 18:46:37"
         },
         {
             "name": "kartik-v/yii2-krajee-base",
@@ -2588,7 +2741,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-01T16:03:50+00:00"
+            "time": "2017-04-01 16:03:50"
         },
         {
             "name": "kartik-v/yii2-widget-datetimepicker",
@@ -2686,7 +2839,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-01-10T17:30:48+00:00"
+            "time": "2016-01-10 17:30:48"
         },
         {
             "name": "kartik-v/yii2-widget-select2",
@@ -2739,7 +2892,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2017-04-12T09:00:24+00:00"
+            "time": "2017-04-12 09:00:24"
         },
         {
             "name": "kartik-v/yii2-widget-switchinput",
@@ -3506,6 +3659,58 @@
                 "response"
             ],
             "time": "2016-08-06T14:39:51+00:00"
+        },
+        {
+            "name": "rmrevin/yii2-fontawesome",
+            "version": "2.12.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rmrevin/yii2-fontawesome.git",
+                "reference": "62308687477734c166753de0ad9e2333dc7dce32"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rmrevin/yii2-fontawesome/zipball/62308687477734c166753de0ad9e2333dc7dce32",
+                "reference": "62308687477734c166753de0ad9e2333dc7dce32",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/fontawesome": "4.4.*",
+                "php": ">=5.4.0",
+                "yiisoft/yii2": "2.0.*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "asset-installer-paths": {
+                    "npm-asset-library": "vendor/npm",
+                    "bower-asset-library": "vendor/bower"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "rmrevin\\yii\\fontawesome\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Revin Roman",
+                    "email": "roman@rmrevin.com",
+                    "homepage": "https://rmrevin.com/"
+                }
+            ],
+            "description": "Asset Bundle for Yii2 with Font Awesome",
+            "keywords": [
+                "asset",
+                "awesome",
+                "bundle",
+                "font",
+                "yii"
+            ],
+            "time": "2015-11-20T09:17:45+00:00"
         },
         {
             "name": "rollbar/rollbar",
@@ -4565,7 +4770,7 @@
                     ""
                 ]
             },
-            "time": "2017-06-05T13:38:06+00:00"
+            "time": "2017-06-05 13:38:06"
         },
         {
             "name": "wbraganca/yii2-selectivity",
@@ -5068,6 +5273,59 @@
                 "yii2"
             ],
             "time": "2017-05-01T08:29:00+00:00"
+        },
+        {
+            "name": "yiister/yii2-adminlte",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yiister/yii2-adminlte.git",
+                "reference": "8d03738309840436700ea1a71428c879ca3bccab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yiister/yii2-adminlte/zipball/8d03738309840436700ea1a71428c879ca3bccab",
+                "reference": "8d03738309840436700ea1a71428c879ca3bccab",
+                "shasum": ""
+            },
+            "require": {
+                "almasaeed2010/adminlte": "~2.0",
+                "php": ">=5.4.0",
+                "rmrevin/yii2-fontawesome": "2.12.*",
+                "yiisoft/yii2": ">=2.0.5",
+                "yiisoft/yii2-bootstrap": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "yiister\\adminlte\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pavel Fedotov",
+                    "email": "fps.06@mail.ru",
+                    "homepage": "https://github.com/fps01",
+                    "role": "Creator"
+                }
+            ],
+            "description": "yii2-adminlte is a package for yii framework 2 that consists a very popular backend template AdminLTE (based on bootstrap 3).",
+            "homepage": "http://adminlte.yiister.ru",
+            "keywords": [
+                "AdminLTE",
+                "admin",
+                "back-end",
+                "backend",
+                "bootstrap 3",
+                "template",
+                "theme",
+                "yii2"
+            ],
+            "time": "2016-01-20T18:10:37+00:00"
         }
     ],
     "packages-dev": [

@@ -2,11 +2,8 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\GridView;
 use common\models\Invoice;
-use backend\models\search\InvoiceSearch;
-use yii\widgets\ActiveForm;
-use kartik\switchinput\SwitchInput;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -17,16 +14,13 @@ $invoiceAddButton = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i
 $actionButton = (int) $searchModel->type === Invoice::TYPE_INVOICE ?  $invoiceAddButton : null;
 
 $this->title = (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoices' : 'Invoices';
-$this->params['action-button'] = $actionButton;
-$this->params['breadcrumbs'][] = $this->title;
-?>
-<div class="grid-row-open p-10">
-<?php yii\widgets\Pjax::begin([
-        'id' => 'invoice-listing',
-        'timeout' => 6000,
-    ]) ?>
-    
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+$this->params['action-button'] = $actionButton; ?>
+<?php if((int)$searchModel->type === Invoice::TYPE_INVOICE) :?>
+<?php $this->params['show-all'] = Html::a('<i class="fa fa-dollar"></i> Invoice All Completed Lessons', ['all-completed-lessons'], ['class' => 'btn btn-default btn-sm m-r-10']); ?> 
+<?php endif;?>
+<?php echo $this->render('_search', ['model' => $searchModel]); ?>
+<div class="clearfix"></div>
+<div class="grid-row-open">
 	<?php 
         if ((int) $searchModel->type === (int) Invoice::TYPE_PRO_FORMA_INVOICE) {
             $columns = [
@@ -183,8 +177,11 @@ $this->params['breadcrumbs'][] = $this->title;
         }
 
         ?>
-	
-    <?php echo GridView::widget([
+	<?php yii\widgets\Pjax::begin([
+        'id' => 'invoice-listing',
+        'timeout' => 6000,
+    ]) ?>
+    <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],

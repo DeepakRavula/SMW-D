@@ -6,9 +6,24 @@ $config = [
 			'class' => 'baibaratsky\yii\rollbar\web\ErrorHandler',
 		],
         'assetManager' => [
-            'class' => 'yii\web\AssetManager',
-            'linkAssets' => false,
-            'appendTimestamp' => YII_ENV_DEV,
+			'class'=>'yii\web\AssetManager',
+			'linkAssets' => false,
+			'appendTimestamp' => YII_ENV_DEV,
+			'bundles'=>[
+				'insolita\wgadminlte\ExtAdminlteAsset'=>[
+					'depends'=>[
+						'yii\web\YiiAsset',
+						'common\assets\AdminLte',
+						'insolita\wgadminlte\JsCookieAsset'
+					]
+				],
+				'insolita\wgadminlte\JsCookieAsset'=>[
+					'depends'=>[
+						'yii\web\YiiAsset',
+						'common\assets\AdminLte',
+					]
+				],
+			],
         ],
 		'request' => [
 			'enableCsrfValidation' => false,

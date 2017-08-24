@@ -2,8 +2,8 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\GridView;
 use common\models\User;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\CitySearch */
@@ -17,7 +17,7 @@ $addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
 <div class="grid-row-open p-10">
-    <?php echo GridView::widget([
+    <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'tableOptions' => ['class' => 'table table-bordered'],
@@ -37,7 +37,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
             ],
             [
                 'attribute' => 'province_id',
-                'label' => 'Province Name',
+                'label' => 'Province',
                 'value' => function ($data) {
                     return !empty($data->province->name) ? $data->province->name : null;
                 },

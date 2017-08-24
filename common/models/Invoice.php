@@ -110,7 +110,8 @@ class Invoice extends \yii\db\ActiveRecord
             'type' => 'Type',
             'reminderNotes' => 'Reminder Notes',
             'customer_id' => 'Customer Name',
-			'toEmailAddress' => 'To'
+			'toEmailAddress' => 'To',
+			'invoiceDateRange' => 'Date Range'
         ];
     }
 

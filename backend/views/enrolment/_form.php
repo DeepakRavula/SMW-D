@@ -13,20 +13,6 @@ use yii\data\ActiveDataProvider;
 /* @var $model common\models\Enrolment */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<style>
-.smw-box {
-    background: #f5ecec;
-    border: 1px solid #f5ecec;
-    padding: 10px;
-    color: white;
-    border-radius: 5px;
-    color:#333;
-}
-.monthly-estimate {
-	margin-top:20px;
-	margin-bottom: 0px;
-}
-</style>
 <?=
 $this->render('_view-enrolment', [
 	'model' => $model->enrolment,

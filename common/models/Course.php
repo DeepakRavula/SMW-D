@@ -78,6 +78,7 @@ class Course extends \yii\db\ActiveRecord
             'paymentFrequency' => 'Payment Frequency',
             'rescheduleBeginDate' => 'Reschedule Future Lessons From',
             'rescheduleFromDate' => 'With effects from',
+			'showAllCourses' => 'Show All'
         ];
     }
 

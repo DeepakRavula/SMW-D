@@ -16,9 +16,9 @@ $bundle = BackendAsset::register($this);
 ?>
 <!-- header logo: style can be found in header.less -->
         <header class="main-header">
-            <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
+            <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class=" logo">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
-                <img src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/logo.png')) ?>"  />        
+                <img class="smw-logo" src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/logo.png')) ?>"  />        
             </a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top" role="navigation">
@@ -92,6 +92,9 @@ $bundle = BackendAsset::register($this);
                                 </li>
                             </ul>
                         </li>
+						<li>
+                        <?php echo Html::a('<i class="fa fa-cogs"></i>', ['/site/settings']) ?>
+                    </li>
                     </ul>
                 </div>
             </nav>

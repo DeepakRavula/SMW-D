@@ -7,7 +7,6 @@ foreach ($Roles as $name => $description) {
     $role_name = $name;
 }
 ?>
-
 <div class="row-fluid section-tab">
 	<div class="col-xs-8 p-l-10">
 		<div class="col-xs-6 p-l-0">
@@ -36,5 +35,4 @@ foreach ($Roles as $name => $description) {
 			<div class="clearfix"></div>
 		</div>
 	</div>
-	<div class="clearfix"></div>
 </div>

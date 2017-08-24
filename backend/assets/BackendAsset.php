@@ -18,6 +18,7 @@ class BackendAsset extends AssetBundle
 
     public $css = [
         'css/style.css',
+		'css/dashboard/style.css',
         'plugins/jquery-timepicker/jquery.timepicker.css',
         'plugins/jquery-multiselect/style.css',
     ];

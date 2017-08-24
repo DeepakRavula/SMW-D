@@ -13,7 +13,6 @@ use common\models\Student;
 class StudentSearch extends Student
 {
     public $showAllStudents;
-    public $query;
 
     /**
      * {@inheritdoc}
@@ -21,7 +20,7 @@ class StudentSearch extends Student
     public function rules()
     {
         return [
-            [['first_name', 'last_name', 'customer_id', 'showAllStudents', 'query'], 'safe'],
+            [['first_name', 'last_name', 'customer_id', 'showAllStudents'], 'safe'],
         ];
     }
 
@@ -54,11 +53,9 @@ class StudentSearch extends Student
         }
 
         $query->joinWith('customerProfile cp');
-        $query->andFilterWhere(['like', 'first_name', $this->query])
-                ->orFilterWhere(['like', 'last_name', $this->query])
-                ->orFilterWhere(['like', 'cp.firstname', $this->query])
-                ->orFilterWhere(['like', 'cp.lastname', $this->query]);
-        $query->groupBy('student.id');
+        $query->andFilterWhere(['like', 'first_name', $this->first_name])
+                ->orFilterWhere(['like', 'last_name', $this->last_name])
+        		->groupBy('student.id');
 
         if (!$this->showAllStudents) {
             $currentDate = (new \DateTime())->format('Y-m-d H:i:s');

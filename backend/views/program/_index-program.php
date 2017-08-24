@@ -1,92 +1,36 @@
 <?php
 
-use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\bootstrap\ActiveForm;
-use backend\models\search\ProgramSearch;
 use common\models\Program;
-use common\models\User;
+use common\components\gridView\AdminLteGridView;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$titleName = (int) $searchModel->type === ProgramSearch::TYPE_PRIVATE_PROGRAM ? 'Private Programs' : 'Group Programs';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
-
+$this->params['action-button'] = Html::a('<i class="fa fa-plus"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm', 'id' => 'add-program']);
+$this->params['show-all'] = $this->render('_button', [
+	'searchModel' => $searchModel
+]);
 ?>
-<style>
-  .e1Div{
-		top: -61px;
-        right: 0;
-  }
-</style>
-<style>
-    #w3 .tab-content{
-        padding: 0;
-    }
-</style>
-<div class="program-index">
-<div class="smw-search">
-    <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
-    <?php
-    $form = ActiveForm::begin([
-                'action' => ['index'],
-                'method' => 'get',
-                'options' => ['class' => 'pull-left'],
-    ]);
-    ?>
-    <?=
-    $form->field($searchModel, 'query', [
-        'inputOptions' => [
-            'placeholder' => 'Search ...',
-            'class' => 'search-field',
-        ],
-    ])->input('search')->label(false);
-    ?>
-</div>
-<div class="pull-right  m-r-20">
-	<div class="schedule-index">
-		<div class="e1Div">
-			<?= $form->field($searchModel, 'showAllPrograms')->checkbox(['data-pjax' => true])->label('Show All'); ?>
-		</div>
-    </div>
-</div>
-    	<?php echo $form->field($searchModel, 'type')->hiddenInput()->label(false); ?>
-    <?php ActiveForm::end(); ?>
-	
-<?php if ($lastRole->name === User::ROLE_ADMINISTRATOR):?>
-<div class="col-md-8">
-<h4 class="pull-left m-r-20"><?php echo $titleName; ?></h4>
-<a href="#" class="add-new-program  text-add-new p-l-20"><i class="fa fa-plus-circle m-l-20"></i> Add</a>
-<div class="clearfix"></div>
-</div>
-<?php endif; ?>
-<div class="clearfix"></div>
-
-<div class="dn program-create section-tab form-well form-well-smw p-15">
-    <?php echo $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-</div>
-    <div class="grid-row-open">
+<div>
 	<?php $rateLabel = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour' : 'Rate Per Course'; ?>
 	<?php Pjax::begin(['id' => 'program-listing']) ?>
-        <?php echo GridView::widget([
+        <?php echo AdminLteGridView::widget([
+			'id' => 'program-grid',
             'dataProvider' => $dataProvider,
-            'options' => ['class' => 'col-md-8'],
-            'tableOptions' => ['class' => 'table table-bordered'],
-            'headerRowOptions' => ['class' => 'bg-light-gray'],
-            'rowOptions' => function ($model, $key, $index, $grid) {
-                $url = Url::to(['program/view', 'id' => $model->id]);
-
-                return ['data-url' => $url];
-            },
+    		'filterModel' => $searchModel,
+			'condensed' => true,
+        	'hover' => true,
             'columns' => [
                 'name',
                 [
                 'label' => $rateLabel,
+				'attribute' => 'rate', 
                 'value' => function ($data) {
                     return !empty($data->rate) ? Yii::$app->formatter->asCurrency($data->rate) : null;
                 },
@@ -94,7 +38,6 @@ $lastRole = end($roles);
             ],
         ]); ?>
     <?php Pjax::end(); ?>
-    </div>
     <div class="clearfix"></div>
 </div>
   <script>

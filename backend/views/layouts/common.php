@@ -27,18 +27,22 @@ $bundle = BackendAsset::register($this);
             <section class="content-header">
                 <h1>
                     <?php if (isset($this->params['goback'])) : ?>  
-                    <div class="pull-left m-r-10">
+                    <div class="pull-left go-back">
                         <?php echo $this->params['goback']; ?>
                     </div>
                     <?php endif; ?>
                     <?php echo $this->title ?>
-                    
-                    <?php if (isset($this->params['action-button'])) : ?>
                         
-                        <div class="pull-right m-r-10">
+                    <?php if (isset($this->params['action-button'])) : ?>
+                        <div class="pull-right action-button">
                             <?php echo $this->params['action-button']; ?>
                         </div>
                     <?php endif; ?>
+					 <?php if (isset($this->params['show-all'])) : ?>
+                        <div class="pull-right" style="margin-bottom:-10px">
+                            <?php echo $this->params['show-all']; ?>
+                        </div>
+                    <?php endif; ?> 
                     <div class="clearfix"></div>
                 </h1>
 
@@ -47,10 +51,13 @@ $bundle = BackendAsset::register($this);
             <!-- Main content -->
             <section class="content">
                 <?php if (Yii::$app->session->hasFlash('alert')):?>
+					<div class="col-md-2"></div>
+					<div class="col-md-7">
                     <?php echo \yii\bootstrap\Alert::widget([
                         'body' => ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'body'),
                         'options' => ArrayHelper::getValue(Yii::$app->session->getFlash('alert'), 'options'),
                     ])?>
+					</div>
                 <?php endif; ?>
                 <?php echo $content ?>
             </section><!-- /.content -->           

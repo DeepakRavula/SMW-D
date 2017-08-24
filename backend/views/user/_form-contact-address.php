@@ -30,14 +30,6 @@ jQuery(".dynamicform_address").on("afterDelete", function(e) {
 
 $this->registerJs($js);
 ?>
-<style>
-	.checkbox{
-		margin: 0;
-	}
-	input[type="checkbox"]{
-		margin-top: 2px;
-	}
-</style>
 <?php
     DynamicFormWidget::begin([
         'widgetContainer' => 'dynamicform_address', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]

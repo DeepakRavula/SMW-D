@@ -61,12 +61,13 @@ class Program extends \yii\db\ActiveRecord
             'rate' => 'Rate',
             'status' => 'Status',
             'type' => 'Type',
+			'showAllPrograms' => 'Show All'
         ];
     }
 
     public function beforeSave($insert)
     {
-        if ($this->isNewRecord) {
+        if ($insert) {
             $this->status = self::STATUS_ACTIVE;
         }
 
@@ -83,6 +84,13 @@ class Program extends \yii\db\ActiveRecord
         return [
             self::STATUS_INACTIVE => Yii::t('common', 'In Active'),
             self::STATUS_ACTIVE => Yii::t('common', 'Active'),
+        ];
+    }
+	public static function types()
+    {
+        return [
+            self::TYPE_PRIVATE_PROGRAM => Yii::t('common', 'Private'),
+            self::TYPE_GROUP_PROGRAM => Yii::t('common', 'Group'),
         ];
     }
 

@@ -1,8 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\helpers\Url;
+use common\components\gridView\AdminLteGridView;
 use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use yii\bootstrap\ActiveForm;
@@ -14,37 +14,17 @@ Select2Asset::register($this);
 
 $this->title = 'Items';
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['#'], ['class' => 'btn btn-success btn-sm', 'id' => 'create-item']);
+$this->params['show-all'] = $this->render('_button', [
+	'searchModel' => $searchModel
+]);
 ?>
-<div class="item-category-index">
-<style>
-	.e1Div{
-		top: -61px;
-		right: 76px;
-	}
-</style>
-<div class="student-index">
-    <div class="pull-right  m-r-20">
-    <?php $form = ActiveForm::begin([
-                'action' => ['index'],
-                'method' => 'get',
-                'options' => ['class' => 'pull-left'],
-    ]); ?>
-    </div>
-    <?php yii\widgets\Pjax::begin() ?>
-    <div class="schedule-index">
-        <div class="e1Div">
-            <?= $form->field($searchModel, 'showAllItems')->checkbox(['data-pjax' => true])->label('Show All'); ?>
-        </div>
-    </div>
-
-    <?php \yii\widgets\Pjax::end(); ?>
-    <?php ActiveForm::end(); ?>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+<div class="item-category-index">
     <?php Pjax::begin([
         'id' => 'item-listing',
         'timeout' => 6000,
     ]) ?>
-    <?php echo GridView::widget([
+    <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             'code',

@@ -5,11 +5,7 @@ use yii\grid\GridView;
 use common\models\Invoice;
 
 ?>
-<style>
-    hr{
-        margin: 10px 0;
-    }
-</style>
+
 <div class="col-md-12">
     <h4 class="pull-left m-r-20">Pro Forma Invoices</h4>
     <?php

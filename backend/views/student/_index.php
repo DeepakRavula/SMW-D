@@ -1,7 +1,7 @@
 <?php
 
-use yii\grid\GridView;
 use yii\widgets\Pjax;
+use common\components\gridView\AdminLteGridView;
 use yii\helpers\Url;
 use common\models\Student;
 /*
@@ -13,7 +13,7 @@ use common\models\Student;
 <?php $this->registerCssFile("@web/css/student/style.css");?>
 <?php yii\widgets\Pjax::begin(['id' => 'student-listing']); ?>
 <?php
-echo GridView::widget([
+echo AdminLteGridView::widget([
 	'id' => 'student-grid',
 	'dataProvider' => $dataProvider,
 	'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {

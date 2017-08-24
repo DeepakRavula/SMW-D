@@ -16,9 +16,7 @@ DateRangePickerAsset::register($this);
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 $this->title = 'Student Details';
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'StudentSearch[showAllStudents]' => false], ['class' => 'go-back text-add-new f-s-14 m-t-0 m-r-10']);
-
-$this->params['action-button'] = Html::a(Yii::t('backend', 'Merge'), '#', ['class' => 'btn btn-success', 'id' => 'student-merge']);
+$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'StudentSearch[showAllStudents]' => false], ['class' => 'go-back']);
 ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
@@ -28,22 +26,16 @@ $this->params['action-button'] = Html::a(Yii::t('backend', 'Merge'), '#', ['clas
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
-<?php
-echo $this->render('_profile', [
-	'model' => $model,
-]);
-?>
-<style>
-  .e1Div{
-    right: 0 !important;
-    top: -52px;
-  }
-</style>
-
+<div class="row">
+	<?php
+	echo $this->render('_profile', [
+		'model' => $model,
+	]);
+	?>
+</div>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
-<div class="tabbable-panel">
-	<div class="tabbable-line">
+<div class="nav-tabs-custom">
 		<?php
 		$enrolmentContent = $this->render('enrolment/_view', [
 			'model' => $model,
@@ -110,7 +102,7 @@ echo $this->render('_profile', [
 				],
 			],
 				[
-				'label' => 'Notes',
+				'label' => 'Comments',
 				'content' => $noteContent,
 				'options' => [
 					'id' => 'note',
@@ -154,7 +146,6 @@ echo $this->render('_profile', [
 		]);
 		?>
 		<div class="clearfix"></div>
-	</div>
 </div>
 
 <?php Modal::begin([
@@ -410,12 +401,6 @@ $(document).on('click', '.evaluation-delete', function () {
                     if (response.status)
                     {
                         $('.student-note-content').html(response.data);
-                        $('#student-note-modal').modal('hide');
-                    } else
-                    {
-                        $('#student-note-form').yiiActiveForm('updateMessages',
-                                response.errors
-                                , true);
                     }
                 }
             });

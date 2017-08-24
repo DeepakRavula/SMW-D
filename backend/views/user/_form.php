@@ -10,24 +10,6 @@ use yii\bootstrap\Tabs;
 /* @var $roles yii\rbac\Role[] */
 /* @var $permissions yii\rbac\Permission[] */
 ?>
-<style>
-    .box-body{
-        padding-left: 0;
-        padding-right: 0;
-    }
-	.address-fields, .phone-fields, .quali-fields, .quali-fields label{
-        display: none;
-    }
-    hr{
-        margin:10px 0;
-    }
-    .form-well{
-        margin-bottom: 10px;
-        padding-top: 15px;
-    }
-
-</style>
-
 <div class="user-form">   
 
 	<?php
@@ -83,8 +65,7 @@ use yii\bootstrap\Tabs;
         ];
     }
     ?>
-	<div class="tabbable-panel">
-		<div class="tabbable-line">
+	<div class="nav-tabs-custom">
 			<?php
             echo Tabs::widget([
                 'id' => 'user-update-tab',
@@ -92,9 +73,7 @@ use yii\bootstrap\Tabs;
 
             ]);
             ?>
-		</div>
 	</div>
-
 	<div class="col-md-12 m-b-10">
 		<?php echo $form->field($model, 'section')->hiddenInput()->label(false); ?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>

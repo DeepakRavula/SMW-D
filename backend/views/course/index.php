@@ -1,10 +1,10 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 use common\models\Course;
+use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\GroupCourseSearch */
@@ -13,48 +13,13 @@ use common\models\Course;
 $this->title = 'Group Courses';
 $this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-success btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['show-all'] = $this->render('_button', [
+	'searchModel' => $searchModel
+]);
 ?>
-<style>
-	.smw-search{
-		left: 135px;
-	}
-	.e1Div {
-	    right: 85px;
-	    top: -60px;
-	}
-</style>
-
-<div class="group-course-index "> 
-    <div class="smw-search">
-    <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
-    <?php
-    $form = ActiveForm::begin([
-                'action' => ['index'],
-                'method' => 'get',
-                'options' => ['class' => 'pull-left'],
-    ]);
-    ?>
-    <?=
-    $form->field($searchModel, 'query', [
-        'inputOptions' => [
-            'placeholder' => 'Search ...',
-            'class' => 'search-field',
-        ],
-    ])->input('search')->label(false);
-    ?>
-    </div>  	
-	<div class="pull-right  m-r-20">    
-		<div class="schedule-index">
-			<div class="e1Div">
-				<?= $form->field($searchModel, 'showAllCourses')->checkbox(['data-pjax' => true])->label('Show All'); ?>
-			</div>
-		</div> 
-	</div>
-           
-    <?php ActiveForm::end(); ?>
     <div class="grid-row-open">  
     <?php yii\widgets\Pjax::begin(['id' => 'group-courses']) ?>
-    <?php echo GridView::widget([
+    <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
@@ -117,7 +82,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
     <?php \yii\widgets\Pjax::end(); ?>
-</div>
 </div>
 <script>
 $(document).ready(function(){

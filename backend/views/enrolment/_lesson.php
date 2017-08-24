@@ -1,30 +1,26 @@
 <?php
 
 use yii\grid\GridView;
-use common\models\Program;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
+use yii\widgets\Pjax;
 ?>
 
 <div class="row-fluid p-10">
-    
     <div class="pull-left">
-    <h4><strong><?= 'Schedule of Lessons' ?> </strong></h4> 
-    </div>
-    <div class="pull-right">
-        <?= Html::a('<i class="fa fa-print"></i> Print', ['print/course', 'id' => $model->course->id], ['class' => 'btn btn-default pull-left', 'target' => '_blank']) ?>  
-        <?= Html::a('<i class="fa fa-envelope-o"></i> Email Lessons', '#' , [
+	<p>
+    <h4><strong class="m-r-10"><?= 'Schedule of Lessons' ?></strong> 
+        <?= Html::a('<i class="fa fa-print"></i> ', ['print/course', 'id' => $model->course->id], ['class' => 'm-r-10', 'target' => '_blank']) ?>  
+        <?= Html::a('<i class="fa fa-envelope-o"></i> ', '#' , [
         'id' => 'schedule-mail-button', 
-        'class' => 'btn btn-default pull-left  m-l-20']) ?>
+        'class' => '']) ?> </h4></p>
     </div>
     <div class="clearfix"></div>
-    
-    <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+    <?php Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
                 'dataProvider' => $lessonDataProvider,
                 'tableOptions' => ['class' => 'table table-bordered'],
-                'headerRowOptions' => ['class' => 'bg-light-gray'],
-                'summary' => '',
+				'showHeader' => false,
                 'columns' => [
                     [
                         'value' => function ($data) {
@@ -36,7 +32,7 @@ use yii\helpers\Html;
                     ],
                 ],
         ]); ?>
-    <?php yii\widgets\Pjax::end(); ?> 
+    <?php Pjax::end(); ?> 
 </div>
 <?php
 Modal::begin([

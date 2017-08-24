@@ -8,21 +8,11 @@ use kartik\daterange\DateRangePicker;
 /* @var $model backend\models\search\UserSearch */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<style>
-  .e1Div{
-    right: 0;
-    top: -49px;
-  }
-  .e1Div > .form-group > input {
-    width: 180px;
-  }
-</style>
     <?php $form = ActiveForm::begin([
 		'id' => 'dashboard-search-form',
         'action' => ['index'],
         'method' => 'get'
     ]); ?>
-    <div class="e1Div form-inline">
         <div class="form-group">
            <?php 
            echo DateRangePicker::widget([
@@ -41,14 +31,13 @@ use kartik\daterange\DateRangePicker;
                 'locale' => [
                     'format' => 'M d,Y',
                 ],
-                'opens' => 'left',
+                'opens' => 'right',
                 ],
 
             ]);
            ?>
         </div>
-	   <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['name' => 'dashboard-apply-button', 'class' => 'btn btn-primary']) ?>
-	</div>
+	   <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['name' => 'dashboard-apply-button', 'class' => 'btn btn-primary']) ?>
     <?php ActiveForm::end(); ?>
 <script>
     $(document).ready(function () {

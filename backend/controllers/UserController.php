@@ -54,7 +54,7 @@ class UserController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['merge'],
+                'only' => ['edit-profile'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -549,6 +549,25 @@ class UserController extends Controller
         ]);
     }
 
+	public function actionEditProfile($id)
+	{
+		$request = Yii::$app->request;
+		$model = new UserForm();
+        $model->setModel($this->findModel($id));	
+		if ($model->load($request->post())) {
+			if($model->save()) {
+				return [
+				   'status' => true,
+				];	
+			} else {
+				$errors = ActiveForm::validate($model);
+                return [
+                    'status' => false,
+                    'errors' => current($errors)
+                ];
+			}
+		}
+	}
     /**
      * Updates an existing User model.
      *

@@ -81,6 +81,7 @@ class Student extends \yii\db\ActiveRecord
             'last_name' => 'Last Name',
             'birth_date' => 'Birth Date',
             'customer_id' => 'Customer Name',
+			'showAllStudents' => 'Show All',
         ];
     }
 

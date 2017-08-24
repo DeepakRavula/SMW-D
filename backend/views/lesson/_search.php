@@ -11,7 +11,6 @@ use kartik\daterange\DateRangePicker;
 ?>
 
 <div class="user-search">
-
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
@@ -22,7 +21,8 @@ use kartik\daterange\DateRangePicker;
     </div>
     
     <div class="col-md-3">
-         <div class="form-group m-t-20">
+         <div class="form-group">
+			 <label>Date Range</label>
             <?php echo DateRangePicker::widget([
             'model' => $model,
             'attribute' => 'dateRange',
@@ -46,10 +46,8 @@ use kartik\daterange\DateRangePicker;
            ?>
         </div>
     </div>
-    <div class="col-md-3 form-group m-t-10">
-        <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
-    </div>
+	<?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
+	<?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary btn-sm', 'style' => 'margin-bottom:-27px']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

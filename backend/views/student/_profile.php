@@ -4,50 +4,71 @@ use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use common\models\User;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+use yii\widgets\Pjax;
 ?>
-	<?php yii\widgets\Pjax::begin([
-		'id' => 'student-profile',
-	]) ?>
-<div class="student-profile user-details-wrapper">
-	<div class="row">
-		<div class="col-md-12">
-			<p class="users-name"><?php echo $model->first_name; ?> <?php echo $model->last_name; ?></p>
-		</div>
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Birth date">
-			<i class="fa fa-birthday-cake detail-icon"></i> <?php echo !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?>
-		</div>
-		<?php if (! empty($model->birth_date)) : ?>
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Age">
-			<i class="fa fa-birthday-cake detail-icon"></i> <?php
-			$birthDate = new DateTime($model->birth_date);
-			$currentDate   = new DateTime('today');
-			echo $birthDate->diff($currentDate)->y .'yrs old';
-			?>
-		</div>
-		<?php endif;?>
-		<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Customer">
-			<a href="<?= Url::to(['/user/view','UserSearch[role_name]' => User::ROLE_CUSTOMER,'id' => $model->customer->id]); ?>">
-			<i class="fa fa-user detail-icon"></i> <?php echo !empty($model->customer->userProfile->fullName) ? $model->customer->userProfile->fullName : null ?>
-		</a>
-		</div>
-		<div class="clearfix"></div>
-		<div class="student-view">
-			<div class="col-md-12 action-btns">
-				<?php echo Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20 student-profile-edit-button']) ?>
-		    </div>
-		    <div class="clearfix"></div>
-		</div>		
-	</div>
-</div>
-    <?php \yii\widgets\Pjax::end(); ?>
 <?php
-	Modal::begin([
-		'header' => '<h4 class="m-0">Edit Student Profile</h4>',
-		'id'=>'student-profile-modal',
-	]);
-	echo $this->render('_form', [
-		'model' => $model,
-		'customer' => $model->customer
-	]);
-	Modal::end();
+Pjax::begin([
+	'id' => 'student-profile',
+])
+?>
+<?php $age = 0; ?>
+<?php if (!empty($model->birth_date)) : ?>
+	<?php
+	$birthDate = new DateTime($model->birth_date);
+	$currentDate = new DateTime('today');
+	$age = $birthDate->diff($currentDate)->y . 'yrs old';
 	?>
+<?php endif; ?>
+	<div class="col-md-6">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'boxTools' => [
+				'<i class="fa fa-pencil student-profile-edit-button m-r-10"></i>',
+				'<i id="student-merge" class="fa fa-chain"></i>'
+			],
+			'title' => 'Details',
+			'withBorder' => true,
+		])
+		?>
+		<dl class="dl-horizontal">
+			<dt>Name</dt>
+			<dd><?= $model->fullName; ?></dd>
+			<dt>Birthday</dt>
+			<dd><?= !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?></dd>
+			<dt>Age</dt>
+			<dd><?= $age; ?></dd>
+		</dl>
+		<?php LteBox::end() ?>
+		</div> 
+	<div class="col-md-6">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'title' => 'Customer',
+			'withBorder' => true,
+		])
+		?>
+		<dl class="dl-horizontal">
+			<dt>Customer</dt>
+			<dd><a href="<?= Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $model->customer->id]); ?>">
+				<?= $model->customer->publicIdentity; ?></a></dd>
+			<dt>Phone</dt>
+			<dd><?= !empty($model->customer->phoneNumber->number) ? $model->customer->phoneNumber->number : 'None'; ?></dd>
+		</dl>
+		<?php LteBox::end() ?>
+	</div>
+<?php Pjax::end(); ?>
+<?php
+Modal::begin([
+	'header' => '<h4 class="m-0">Edit Student Profile</h4>',
+	'id' => 'student-profile-modal',
+]);
+echo $this->render('_form', [
+	'model' => $model,
+	'customer' => $model->customer
+]);
+Modal::end();
+?>

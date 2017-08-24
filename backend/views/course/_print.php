@@ -7,14 +7,6 @@ use yii\grid\GridView;
 
 $this->title = $model->id;
 ?>
-<style>
-.table{
-    margin-bottom: 0;
-}
-    .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td{
-        border-top: 0;
-    }
-</style>
 <div class="invoice-view p-10">
         <h4 class="f-w-400 p-l-10"><strong><?= 'Lessons'?> </strong></h4>
         <table class="table">

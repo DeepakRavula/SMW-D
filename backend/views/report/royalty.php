@@ -25,11 +25,6 @@ $royaltyAmount = 0;
 $advertisementAmount = 0; 	
 }
 ?>
-<style>
-.table-invoice-childtable>tbody>tr>td:last-of-type {
-    text-align: right;
-}
-</style>
 <div class="col-md-12">
 	<div>
 		<table cellspacing="0" cellpadding="3" border="0" style="width:40%" class="table-invoice-childtable">

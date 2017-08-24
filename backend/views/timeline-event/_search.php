@@ -13,12 +13,6 @@ use common\models\Student;
 /* @var $model backend\models\search\TimelineEventSearch */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<style>
-    .select2-container--krajee .select2-selection--single {
-        padding: 9px 24px 6px 12px;
-    }
-</style>
-
 <div class="system-event-search">
 
     <?php $form = ActiveForm::begin([

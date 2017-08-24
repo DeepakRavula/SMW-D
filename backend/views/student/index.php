@@ -8,72 +8,25 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+$this->registerCssFile("@web/css/student/style.css");
 $this->title = 'Students';
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['action-button'] = Html::a('<i class="fa fa-print"> Print</i>', '#', ['class' => "btn bg-primary btn-sm", 'id' => 'print']);
+$this->params['show-all'] = $this->render('_button', [
+	'searchModel' => $searchModel
+]);
 ?> 
-<?php $this->registerCssFile("@web/css/student/style.css");?>
-<style>
-  .e1Div{
-    right: 0 !important;
-    top: -59px;
-  }
-</style>
-<div class="student-index">  
-	
-    <div class="smw-search"> 
-      <i class="fa fa-search m-l-20 m-t-5 pull-left m-r-10 f-s-16"></i>
-      <?php
-      $form = ActiveForm::begin([
-                  'action' => ['index'],
-                  'method' => 'get',
-                  'options' => ['class' => 'pull-left'],
-      ]);
-      ?>
-      <?=
-      $form->field($searchModel, 'query', [
-          'inputOptions' => [
-              'placeholder' => 'Search ...',
-              'class' => 'search-field',
-          ],
-      ])->input('search')->label(false);
-      ?>
-      <?php ActiveForm::end(); ?>
-      <a id="print" class="btn btn-default m-l-20">
-        <i class="fa fa-print"></i> Print all
-    </a>
-    </div>  
-    
-    <?php
-      $form = ActiveForm::begin([
-                  'action' => ['index'],
-                  'method' => 'get',
-                  'options' => ['class' => 'pull-left'],
-      ]);
-      ?>
-<div class="pull-right  m-r-20">
-	<?php yii\widgets\Pjax::begin() ?>
-    <div class="schedule-index">
-        <div class="e1Div">
-        <?= $form->field($searchModel, 'showAllStudents')->checkbox(['data-pjax' => true])->label('Show All'); ?>
-        </div>
-    </div>
-    
-    <?php \yii\widgets\Pjax::end(); ?>
-	
-</div>
-<?php ActiveForm::end(); ?>
+
 <div class="grid-row-open"> 
 <?= $this->render('_index', [
 	'dataProvider' => $dataProvider,
 	'searchModel' => $searchModel
 ]);?>
     </div>
-</div>
 <script>
 $(document).ready(function(){
   $("#studentsearch-showallstudents").on("change", function() {
       var showAllStudents = $(this).is(":checked");
-      var url = "<?php echo Url::to(['student/index']); ?>?StudentSearch[query]=" + "<?php echo $searchModel->query; ?>&StudentSearch[showAllStudents]=" + (showAllStudents | 0);
+      var url = "<?php echo Url::to(['student/index']); ?>?StudentSearch[showAllStudents]=" + (showAllStudents | 0);
       $.pjax.reload({url:url,container:"#student-listing",replace:false,  timeout: 4000});  //Reload GridView
   });  
   $("#print").on("click", function() {
