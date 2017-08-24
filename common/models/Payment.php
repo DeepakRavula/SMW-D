@@ -38,6 +38,7 @@ class Payment extends ActiveRecord
     const SCENARIO_OPENING_BALANCE = 'allow-negative-payments';
     const SCENARIO_CREDIT_USED = 'credit-used';
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
+    const SCENARIO_LESSON_CREDIT = 'lesson-credit';
 	
 	const EVENT_CREATE = 'create';
 	const EVENT_EDIT = 'edit';
@@ -212,7 +213,8 @@ class Payment extends ActiveRecord
 	{
 		foreach($this->invoice->lineItems as $lineItem) {
 			$paymentModel = new Payment();
-			$paymentModel->amount = $this->amount;
+			//$paymentModel->setScenario(self::SCENARIO_LESSON_CREDIT);
+			$paymentModel->amount = $lineItem->amount;
 			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
 			$paymentModel->reference = $this->invoice->id;
 			$paymentModel->invoiceId = $this->invoice->id;
@@ -236,7 +238,6 @@ class Payment extends ActiveRecord
 			$creditUsageModel->credit_payment_id = $creditPaymentId;
 			$creditUsageModel->debit_payment_id = $debitPaymentId;
 			$creditUsageModel->save();
-			print_r($lineItem->lesson->id);die;	
 		}
 	}
     public function afterSave($insert, $changedAttributes)
@@ -251,10 +252,10 @@ class Payment extends ActiveRecord
             $this->invoice->save();
             return parent::afterSave($insert, $changedAttributes);
         }
-        $invoicePaymentModel = new InvoicePayment();
-        $invoicePaymentModel->invoice_id = $this->invoiceId;
-        $invoicePaymentModel->payment_id = $this->id;
-        $invoicePaymentModel->save();
+			$invoicePaymentModel = new InvoicePayment();
+			$invoicePaymentModel->invoice_id = $this->invoiceId;
+			$invoicePaymentModel->payment_id = $this->id;
+			$invoicePaymentModel->save();
 		if($this->invoice->isProFormaInvoice()) {
 			$this->addLessonCredit();	
 		}
