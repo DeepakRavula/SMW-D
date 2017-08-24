@@ -1,0 +1,41 @@
+<?php
+
+namespace common\models;
+
+/**
+ * This is the model class for table "city".
+ *
+ * @property int $id
+ * @property string $name
+ * @property int $province_id
+ */
+class LessonCredit extends \yii\db\ActiveRecord
+{
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return '{{%lesson_credit}}';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['lessonId', 'paymentId'], 'integer'],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+           
+        ];
+    }
+}

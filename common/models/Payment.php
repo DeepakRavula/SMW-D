@@ -208,6 +208,37 @@ class Payment extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
+	public function addLessonCredit()
+	{
+		foreach($this->invoice->lineItems as $lineItem) {
+			$paymentModel = new Payment();
+			$paymentModel->amount = $this->amount;
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+			$paymentModel->reference = $this->invoice->id;
+			$paymentModel->invoiceId = $this->invoice->id;
+			$paymentModel->save();	
+
+			$creditPaymentId = $paymentModel->id;
+			$paymentModel->id = null;
+			$paymentModel->isNewRecord = true;
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+			$paymentModel->reference = $lineItem->lesson->id;
+			$paymentModel->invoiceId = $this->invoice->id;
+			$paymentModel->save();
+			
+			$lessonCredit  = new LessonCredit();
+			$lessonCredit->lessonId = $lineItem->lesson->id;
+			$lessonCredit->paymentId = $creditPaymentId;
+			$lessonCredit->save();
+			
+			$debitPaymentId = $paymentModel->id;
+			$creditUsageModel = new CreditUsage();
+			$creditUsageModel->credit_payment_id = $creditPaymentId;
+			$creditUsageModel->debit_payment_id = $debitPaymentId;
+			$creditUsageModel->save();
+			print_r($lineItem->lesson->id);die;	
+		}
+	}
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
@@ -224,7 +255,10 @@ class Payment extends ActiveRecord
         $invoicePaymentModel->invoice_id = $this->invoiceId;
         $invoicePaymentModel->payment_id = $this->id;
         $invoicePaymentModel->save();
-	$this->invoice->save();
+		if($this->invoice->isProFormaInvoice()) {
+			$this->addLessonCredit();	
+		}
+		$this->invoice->save();
         if($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
             if ($this->invoice->isExtraLessonProformaInvoice()) {
                 $this->invoice->makeExtraLessonInvoicePayment();
