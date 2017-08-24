@@ -20,7 +20,7 @@ class LessonSearch extends Lesson
     public $fromDate;
     public $toDate;
     public $dateRange;
-   // public $type;
+    public $type;
     public $customerId;
     public $invoiceType;
     public $showAllReviewLessons = false;
@@ -75,15 +75,6 @@ class LessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
-//        if (!empty($this->type)) {
-//            if ((int) $this->type === Lesson::TYPE_PRIVATE_LESSON) {
-//                $query->activePrivateLessons();
-//            } else {
-//                $query->groupLessons();
-//                $query->groupBy('id');
-//            }
-//        }
 
         if (!empty($this->customerId)) {
             $query->student($this->customerId);
