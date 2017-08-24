@@ -78,6 +78,9 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             </div>
             <div class="col-md-3" style="padding:0;">
                 <div class="hand lesson-edit-calendar">
+                    <div id="spinner" class="spinner">
+                        <img src="/backend/web/img/loader.gif" alt="" height="50" width="52"/>
+                    </div>
                 <p> <label> Calendar View </label></p>
                 <span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
                 </div>
@@ -155,6 +158,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 
 <script type="text/javascript">
 $(document).on('click', '.lesson-edit-calendar', function () {
+    $('#spinner').show();
     var teacherId = $('#lesson-teacherid').val();
     var duration = $('#course-duration').val();
     var params = $.param({ id: teacherId });
@@ -164,6 +168,7 @@ $(document).on('click', '.lesson-edit-calendar', function () {
         dataType: "json",
         success: function (response)
         {
+            $('#spinner').hide();
             var options = {
                 date: moment(new Date()),
                 duration: duration,
