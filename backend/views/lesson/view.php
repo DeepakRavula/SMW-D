@@ -5,6 +5,7 @@ use yii\bootstrap\Tabs;
 use yii\helpers\Url;
 use common\models\Note;
 use common\models\Lesson;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -69,8 +70,42 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			</div>
 		</div>	
 </div>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Edit Details</h4>',
+    'id' => 'classroom-edit-modal',
+]); ?>
+<?= $this->render('classroom/_form', [
+	'model' => $model,
+]);?>
+<?php Modal::end(); ?>
+
 <script>
  $(document).ready(function() {
+ 	$(document).on('click', '.edit-lesson-detail', function () {
+		$('#classroom-edit-modal').modal('show');
+		return false;
+	});
+	$(document).on('click', '.lesson-detail-cancel', function () {
+		$('#classroom-edit-modal').modal('hide');
+		return false;
+	});
+	$(document).on('beforeSubmit', '#classroom-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   	{
+					$('#classroom-edit-modal').modal('hide');
+					$.pjax.reload({container: '#lesson-detail', timeout: 6000});
+				}
+			}
+		});
+		return false;
+	});
 	$(document).on('beforeSubmit', '#lesson-note-form', function (e) {
 		$.ajax({
 			url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON]); ?>',

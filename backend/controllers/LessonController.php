@@ -54,7 +54,7 @@ class LessonController extends Controller
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
-                    'validate-on-update', 'modify-lesson'],
+                    'validate-on-update', 'modify-lesson', 'edit-classroom'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -254,10 +254,31 @@ class LessonController extends Controller
      *
      * @return mixed
      */
+	public function actionEditClassroom($id)
+	{
+		$request = Yii::$app->request;
+        $model = $this->findModel($id);
+		$model->setScenario(Lesson::SCENARIO_EDIT);
+		$model->on(Lesson::EVENT_RESCHEDULE_ATTEMPTED,
+            [new LessonReschedule(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
+	 $model->on(Lesson::EVENT_RESCHEDULED,
+       [new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);	
+		if ($model->load($request->post())) {
+			if($model->save()) {
+				return [
+					'status' => true
+				];
+			} else {
+				return [
+					'status' => false,
+					'errors' => ActiveForm::validate($model)
+				];
+			}
+		}		
+	}
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $oldLesson = clone $model;
         $oldDate = $model->date;
         $model->date =Yii::$app->formatter->asDateTime($model->date);
         $oldTeacherId = $model->teacherId;
