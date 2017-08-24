@@ -56,7 +56,7 @@ Modal::begin([
  $(document).on('click', '#enrolment-edit-save-btn', function(){
        $('#spinner').show();
     });  
-    $(document).on('click', '.glyphicon-pencil', function(){
+    $(document).on('click', '.edit-enrolment', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
             type   : 'get',
