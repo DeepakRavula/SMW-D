@@ -43,6 +43,9 @@ use common\models\Lesson;
 		]);
 		?>
 	</div>
+    <div id="spinner" class="spinner col-md-4 col-md-offset-4" style="display:none;">
+        <img src="/backend/web/img/loader.gif" alt="" height="50" width="50"/>
+    </div>
 	<?= $form->field($model, 'id')->hiddenInput()->label(false);?>
 	<?= $form->field($model, 'applyContext')->hiddenInput()->label(false);?>
 	<div class="col-md-12 p-l-20 form-group">
