@@ -61,6 +61,9 @@ use kartik\datetime\DateTimePicker;
 			]);
 			?>
         </div>
+        <div id="spinner" class="spinner" style="display:none">
+            <img src="/backend/web/img/loader.gif" alt="" height="50" width="52"/>
+        </div>
 	<div class="form-group col-xs-12">
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-edit-save-btn']) ?>
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']);?>
