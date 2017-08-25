@@ -3,6 +3,7 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
+use yii\helpers\Html;
 ?>
 <?php Pjax::begin([
 	'id' => 'lesson-detail'
@@ -10,7 +11,7 @@ use yii\widgets\Pjax;
 <?php
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i class="fa fa-pencil edit-lesson-detail"></i>',
+	'boxTools' => Html::a('<i class="fa fa-pencil edit-lesson-detail"></i>',['#']),
 	'title' => 'Details',
 	'withBorder' => true,
 ])
