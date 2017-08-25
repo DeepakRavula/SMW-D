@@ -94,9 +94,6 @@ $bundle = BackendAsset::register($this);
                                 </li>
                             </ul>
                         </li>
-						<li>
-                        <?php echo Html::a('<i class="fa fa-cogs"></i>', ['/site/settings']) ?>
-                    </li>
                     </ul>
                 </div>
             </nav>
