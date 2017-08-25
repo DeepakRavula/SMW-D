@@ -46,4 +46,10 @@ class LessonCredit extends \yii\db\ActiveRecord
     {
         return $this->hasOne(CreditUsage::className(), ['credit_payment_id' => 'paymentId']);
     }
+	public function getCredit()
+    {
+        $credit = Payment::findOne(['id' => $this->paymentId])
+            ->column('payment.amount');
+        return $credit;
+    }
 }

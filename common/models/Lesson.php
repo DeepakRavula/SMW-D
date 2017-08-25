@@ -386,6 +386,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasMany(Enrolment::className(), ['courseId' => 'courseId'])
             ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);;
     }
+	
+	public function getLessonCredit()
+    {
+        return $this->hasOne(LessonCredit::className(), ['lessonId' => 'id']);
+    }
 
     public function hasGroupInvoice()
     {
@@ -813,7 +818,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->type = INVOICE::TYPE_INVOICE;
         return $invoice;
     }
-
+	
     public function createPrivateLessonInvoice()
     {
         $invoice = $this->createInvoice();
@@ -832,12 +837,8 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->save();
         $invoice->addPrivateLessonLineItem($this);
         $invoice->save();
-        if ($this->hasProFormaInvoice()) {
-            if ($this->proFormaInvoice->proFormaCredit >= $this->proFormaLineItem->netPrice) {
-                $invoice->addPayment($this->proFormaInvoice, $this->proFormaLineItem->netPrice);
-            } else {
-                $invoice->addPayment($this->proFormaInvoice, $this->proFormaInvoice->proFormaCredit);
-            }
+        if ($this->hasLessonCredit()) {
+            $invoice->addPayment($this, $this->lessonCredit->credit);
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
@@ -893,7 +894,10 @@ class Lesson extends \yii\db\ActiveRecord
 
         return $invoice;
     }
-
+	public function hasLessonCredit()
+    {
+        return !empty($this->lessonCredit);
+    }
     public function hasProFormaInvoice()
     {
         return !empty($this->proFormaInvoice);

@@ -239,15 +239,16 @@ class Payment extends ActiveRecord
 			$invoicePaymentModel->payment_id = $this->id;
 			$invoicePaymentModel->save();
 			$this->invoice->save();
-			if($this->invoice->isProFormaInvoice()) {
-				$this->invoice->addLessonCredit();
-			}
+//			if($this->invoice->isProFormaInvoice()) {
+//				$this->invoice->addLessonCredit();
+//			}
 			if($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
 				if ($this->invoice->isExtraLessonProformaInvoice()) {
 					$this->invoice->makeExtraLessonInvoicePayment();
 				} else if ($this->invoice->lineItem->isGroupLesson()) {
 					$this->invoice->makeGroupInvoicePayment();
 				} else {
+					$this->invoice->addLessonCredit();
 					//$this->invoice->makeInvoicePayment();
 				}
 			}

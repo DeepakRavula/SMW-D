@@ -710,12 +710,12 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
-    public function addPayment($proFormaInvoice, $amount)
+    public function addPayment($lesson, $amount)
     {
         $paymentModel = new Payment();
         $paymentModel->amount = $amount;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-        $paymentModel->reference = $proFormaInvoice->id;
+        $paymentModel->reference = $lesson->id;
         $paymentModel->invoiceId = $this->id;
         $paymentModel->save();
 
@@ -723,7 +723,7 @@ class Invoice extends \yii\db\ActiveRecord
         $paymentModel->id = null;
         $paymentModel->isNewRecord = true;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-        $paymentModel->invoiceId = $proFormaInvoice->id;
+        $paymentModel->invoiceId = $lesson->id;
         $paymentModel->reference = $this->id;
         $paymentModel->save();
 
@@ -793,6 +793,7 @@ class Invoice extends \yii\db\ActiveRecord
 			$creditUsageModel->credit_payment_id = $creditPaymentId;
 			$creditUsageModel->debit_payment_id = $debitPaymentId;
 			$creditUsageModel->save();
+			$this->makeInvoicePayment();
 		}
 	}
 	
