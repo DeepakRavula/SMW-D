@@ -19,13 +19,6 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 ?>
 
 <div class="lesson-qualify">
-
-	<?=
-        $this->render('_view', [
-            'model' => $model,
-        ]);
-    ?>
-
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
@@ -78,7 +71,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             </div>
             <div class="col-md-3" style="padding:0;">
                 <div class="hand lesson-edit-calendar">
-                    <div id="spinner" class="spinner">
+                    <div id="spinner" class="spinner" style="display:none">
                         <img src="/backend/web/img/loader.gif" alt="" height="50" width="52"/>
                     </div>
                 <p> <label> Calendar View </label></p>
