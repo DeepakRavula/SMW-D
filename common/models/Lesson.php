@@ -353,7 +353,18 @@ class Lesson extends \yii\db\ActiveRecord
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON]);
         }
     }
-    
+   
+    public function getRootLesson()
+    {
+        return self::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_ASC])->one();
+    }
+ 
+	public function getPfi()
+	{
+		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+            ->via('proFormaLineItems')
+            ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+	}
     public function getProFormaInvoice()
     {
         $model = $this;
@@ -417,6 +428,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
+	public function getLessonNumber()
+	{
+		$number = str_pad($this->id, 6, 0, STR_PAD_LEFT);
+        return 'L-' . $number;
+	}
     public function getScheduleTitle()
     {
         if ($this->isGroup()) {
@@ -662,11 +678,6 @@ class Lesson extends \yii\db\ActiveRecord
 
         return $lesson->validate() && $this->enrolment->hasExplodedLesson()
             && !$this->isExploded;
-    }
-
-    public function getRootLesson()
-    {
-        return self::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_ASC])->one();
     }
 
     public function isRescheduled()

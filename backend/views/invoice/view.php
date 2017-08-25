@@ -128,6 +128,7 @@ $payments = Payment::find()
 		$query->where(['invoice_id' => $model->id]);
 	}])
 	->groupBy('payment.payment_method_id');
+
 $paymentsDataProvider = new ActiveDataProvider([
 	'query' => $payments,
 ]);

@@ -18,6 +18,7 @@ use common\models\Note;
 use common\models\Student;
 use common\models\CourseSchedule;
 use yii\web\Response;
+use common\models\Payment;
 use common\models\Vacation;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
@@ -130,12 +131,19 @@ class LessonController extends Controller
         $splitDataProvider = new ActiveDataProvider([
             'query' => $splits,
         ]);
-
+		$payments = Payment::find()
+			->joinWith(['lessonCredit' => function($query) use($id){
+				$query->andWhere(['lesson_credit.lessonId' => $id]);	
+			}]);
+		$paymentsDataProvider = new ActiveDataProvider([
+            'query' => $payments,
+        ]);
         return $this->render('view', [
             'model' => $model,
             'noteDataProvider' => $noteDataProvider,
             'studentDataProvider' => $studentDataProvider,
-            'splitDataProvider' => $splitDataProvider
+            'splitDataProvider' => $splitDataProvider,
+			'paymentsDataProvider' => $paymentsDataProvider
         ]);
     }
 

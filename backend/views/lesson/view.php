@@ -41,6 +41,9 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	<div class="col-md-12">
 		<div class="nav-tabs-custom">
 				<?php
+				$paymentContent = $this->render('payment/view', [
+					'paymentsDataProvider' => $paymentsDataProvider
+				]);
 				$noteContent = $this->render('note/view', [
 					'model' => new Note(),
 					'noteDataProvider' => $noteDataProvider
@@ -51,11 +54,15 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 				]);
 
 				$items = [
-						[
+					[
+						'label' => 'Payments',
+						'content' => $paymentContent,
+					],
+					[
 						'label' => 'Comments',
 						'content' => $noteContent,
 					],
-						[
+					[
 						'label' => 'History',
 						'content' => $logContent,
 					],

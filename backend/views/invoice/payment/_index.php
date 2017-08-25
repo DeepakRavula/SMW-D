@@ -1,6 +1,6 @@
 <?php
-use yii\helpers\Html;
 use common\models\Payment;
+use common\models\Lesson;
 use common\models\Invoice;
 use common\models\PaymentMethod;
 use yii\bootstrap\ButtonGroup;
@@ -17,7 +17,13 @@ $columns = [
         'value' => function ($data) {
             if ($data->isCreditApplied() || $data->isCreditUsed()) {
                 $invoice = Invoice::findOne(['id' => $data->reference]);
-                $number = $invoice->getInvoiceNumber();
+				$lesson = Lesson::findOne(['id' => $data->reference]);
+				if(!empty($invoice)) {
+                	$number = $invoice->getInvoiceNumber();
+				}
+				if(!empty($lesson)) {
+					$number = $lesson->getLessonNumber();	
+				}
             } else {
                 $number = $data->reference;
             }

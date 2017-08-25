@@ -38,4 +38,12 @@ class LessonCredit extends \yii\db\ActiveRecord
            
         ];
     }
+	public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
+    }
+	public function getCreditUsage()
+    {
+        return $this->hasOne(CreditUsage::className(), ['credit_payment_id' => 'paymentId']);
+    }
 }
