@@ -61,9 +61,10 @@ class LessonSearch extends Lesson
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
         $query = Lesson::find()
-				->isConfirmed()
-                ->notDeleted()
-                ->location($locationId)
+			->isConfirmed()
+			->notDeleted()
+			->location($locationId)
+			->activePrivateLessons()
 			->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED, Lesson::STATUS_MISSED]])
                 ->orderBy(['lesson.date' => SORT_ASC]);
 
@@ -73,15 +74,6 @@ class LessonSearch extends Lesson
 
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
-        }
-
-        if (!empty($this->type)) {
-            if ((int) $this->type === Lesson::TYPE_PRIVATE_LESSON) {
-                $query->activePrivateLessons();
-            } else {
-                $query->groupLessons();
-                $query->groupBy('id');
-            }
         }
 
         if (!empty($this->customerId)) {

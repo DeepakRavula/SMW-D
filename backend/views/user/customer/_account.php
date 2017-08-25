@@ -82,20 +82,20 @@ echo GridView::widget([
             return $data->getAccountDescription();
         }
     ],
+	[
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right'],
+        'label' => 'Debit',
+        'value' => function ($data) {
+        return !empty($data->debit) ? Yii::$app->formatter->asCurrency($data->debit) : null;
+        }
+    ],
     [
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right'],
         'label' => 'Credit',
         'value' => function ($data) {
             return !empty($data->credit) ? Yii::$app->formatter->asCurrency($data->credit) : null;
-        }
-    ],
-    [
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right'],
-        'label' => 'Debit',
-        'value' => function ($data) {
-        return !empty($data->debit) ? Yii::$app->formatter->asCurrency($data->debit) : null;
         }
     ],
     [

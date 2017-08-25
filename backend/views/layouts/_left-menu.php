@@ -64,21 +64,9 @@ echo Menu::widget([
 			'badge' => User::teacherCount(),
 			'badgeBgClass' => 'label-default'
 		],
-		
-		
-		
-			[
-			'label' => Yii::t('backend', 'Group Courses'),
-			'url' => ['course/index', 'CourseSearch[showAllCourses]' => false],
-			'icon' => '<i class="fa fa-book"></i>',
-			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (Yii::$app->controller->id === 'group-course') ? true : false,
-			'badge' => Course::groupCourseCount(),
-			'badgeBgClass' => 'label-default'
-		],
 			[
 			'label' => Yii::t('backend', 'Lessons'),
-			'url' => ['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON],
+			'url' => ['lesson/index'],
 			'icon' => '<i class="fa fa-music"></i>',
 			'visible' => Yii::$app->user->can('staffmember'),
 			'active' => (Yii::$app->controller->id === 'lesson') ? true : false,

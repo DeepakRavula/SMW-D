@@ -10,13 +10,25 @@ use common\components\gridView\AdminLteGridView;
 /* @var $searchModel backend\models\search\GroupCourseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Group Courses';
-$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['create'], ['class' => 'btn btn-success btn-sm']);
-$this->params['breadcrumbs'][] = $this->title;
-$this->params['show-all'] = $this->render('_button', [
-	'searchModel' => $searchModel
-]);
+$this->title = 'Lessons';
 ?>
+<div>
+	<?= Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['course/create'], ['class' => 'btn btn-success btn-sm']);?>
+		<?php
+$form = ActiveForm::begin([
+		'action' => ['index'],
+		'method' => 'get',
+	'fieldConfig' => [
+        'options' => [
+            'tag' => false,
+        ],
+    ],
+	]);
+?>
+<?= $form->field($searchModel, 'showAllCourses')->checkbox(['data-pjax' => true]); ?>
+<?php ActiveForm::end(); ?>
+</div>
+<div class="clearfix"></div>
     <div class="grid-row-open">  
     <?php yii\widgets\Pjax::begin(['id' => 'group-courses']) ?>
     <?php echo AdminLteGridView::widget([

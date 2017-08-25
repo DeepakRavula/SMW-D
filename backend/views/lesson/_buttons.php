@@ -1,23 +1,20 @@
-<?php 
+<?php
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\switchinput\SwitchInput;
 ?>
-<div class="row-fluid">
-	<div class="col-md-12 action-btns m-b-20 lesson-buttons">
-		<?php echo Html::a('<span class="btn btn-info">Edit</span>', ['update', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
-		<?php if (!$model->isGroup()) : ?>
-                <?php if ($model->invoice) : ?>
-			<?= Html::a('<span class="btn btn-info">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-20 del-ce']) ?>
+<?php if ($model->isPrivate()) : ?>
+    <?php if ($model->invoice) : ?>
+		<?= Html::a('<span class="btn btn-info">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-10']) ?>
 		<?php else : ?>
-			<?php echo Html::a('<span class="btn btn-primary">Invoice This Lesson</span>', ['invoice', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
+			<?php echo Html::a('<i class="fa fa-usd"></i>', ['invoice', 'id' => $model->id], ['class' => 'm-r-10']) ?>
 		<?php endif; ?>
 		<?php if ($model->isScheduled()) : ?>
 			<?php if (!empty($model->proFormaInvoice->id) && $model->proFormaInvoice->isPaid()) : ?>
 				<?= Html::a('<span class="btn bg-maroon">View Payment</span>', ['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment'], ['class' => 'm-r-20 del-ce']) ?>
 			<?php else : ?>
-				<?php echo Html::a('<span class="btn bg-navy">Take Payment</span>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
+				<?php echo Html::a('<i class="fa fa-money"></i>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
 			<?php endif; ?>
 		<?php endif; ?>
 		<?php if ($model->canExplode()) : ?>
@@ -37,45 +34,18 @@ use kartik\switchinput\SwitchInput;
                 ?>
 		<?php endif; ?>
                 <?php endif; ?>
-		<?php
-		echo Html::a('<i class="fa fa-mail"></i> Email', '#', [
-			'id' => 'lesson-mail-button',
-			'class' => 'btn bg-purple m-r-20 del-ce'])
-		?>	
-
-		<?php
-		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');
-		$currentDate = (new \DateTime())->format('Y-m-d');
-		?>
-            <?php if (!$model->isGroup()) : ?>
-			<?php $form = ActiveForm::begin(['id' => 'lesson-present-form']); ?>
-			<?php $model->present = $model->isMissed() ? false : true; 
-			$disabled = $model->isMissed() ? true : false;
-			?> 
-			<?=
-			$form->field($model, 'present')->widget(SwitchInput::classname(), [
-				'name' => 'present',
-				'disabled' => $disabled,
-				'pluginOptions' => [
-					'handleWidth' => 61,
-					'onText' => 'Present',
-					'offText' => 'Absent',
-				],
-			])->label(false);
-			?>
-		<?php ActiveForm::end(); ?>
-            <?php endif; ?>
-		<?php if ($model->isDeletable()) : ?>
-			<?php
-			echo Html::a('<span class="btn btn-danger"> Delete</span>', ['private-lesson/delete', 'id' => $model->id], [
-				'class' => 'm-r-20 del-ce',
-				'id' => 'lesson-delete',
-				'data' => [
-					'confirm' => 'Are you sure you want to delete this lesson?',
-					'method' => 'post',
-				],
-			])
-			?>	
-		<?php endif; ?>
-	</div>
-</div>
+<?= Html::a('<i class="fa fa-envelope"></i>', '#', [
+	'id' => 'lesson-mail-button',
+	'class' => 'm-r-10'])
+?>	
+<?php if ($model->isDeletable()) : ?>
+	<?= Html::a('<i class="fa fa-trash-o"></i>', ['private-lesson/delete', 'id' => $model->id], [
+		'class' => 'm-r-10',
+		'id' => 'lesson-delete',
+		'data' => [
+			'confirm' => 'Are you sure you want to delete this lesson?',
+			'method' => 'post',
+		],
+	])
+	?>	
+<?php endif; ?>
