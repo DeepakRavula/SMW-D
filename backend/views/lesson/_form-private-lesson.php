@@ -19,6 +19,11 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 ?>
 
 <div class="lesson-qualify">
+    <?=
+        $this->render('_view', [
+            'model' => $model,
+        ]);
+    ?>
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
@@ -81,28 +86,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             </div>
         </div>
 	   <div class="clearfix"></div>
-	   <div class=" col-md-4">
 		   <?php $locationId = Yii::$app->session->get('location_id'); ?>
-		   <?=
-		   $form->field($model, 'classroomId')->widget(Select2::classname(), [
-			   'data' => ArrayHelper::map(Classroom::find()->orderBy(['name' => SORT_ASC])
-					   ->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
-			   'pluginOptions' => [
-				   'placeholder' => 'Select Classroom',
-				   'allowClear' => true
-			   ]
-		   ]);
-		   ?>
-		</div>
-        <div class="col-md-4">
-        <?php echo $form->field($model, 'colorCode')->widget(ColorInput::classname(), [
-                'options' => [
-                    'placeholder' => 'Select color ...',
-                    'value' => $model->getColorCode(),
-                ],
-        ]);
-        ?>
-        </div>
 		<?php if($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
 		<div class="col-md-3">
 			<?php
