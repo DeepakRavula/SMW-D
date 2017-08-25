@@ -325,6 +325,13 @@ class Lesson extends \yii\db\ActiveRecord
         return ((int) $this->course->program->type === (int) Program::TYPE_PRIVATE_PROGRAM);
     }
 
+    public function isExpired()
+    {
+        $currentDate = new \DateTime();
+        $expiryDate  = new \DateTime($this->privateLesson->expiryDate);
+        return $currentDate > $expiryDate;
+    }
+
     public function beforeSave($insert)
     {
 		if (isset($this->colorCode)) {
