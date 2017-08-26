@@ -14,7 +14,9 @@ $bundle = BackendAsset::register($this);
 <header class="main-header">
 	<?php if (!Yii::$app->user->isGuest) : ?>
 		<a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
-			<img src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"/>        
+			 <span class="logo-mini">SMW</span>
+			  <!-- logo for regular state and mobile devices -->
+			  <span class="logo-lg"><b>Arcadia</b>SMW</span>      
 		</a>
 		<?php 
 			$userId = Yii::$app->user->id;
