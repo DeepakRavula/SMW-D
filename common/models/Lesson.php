@@ -873,7 +873,6 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $invoice   = $this->createInvoice();
         $enrolment = Enrolment::findOne($enrolmentId);
-        $courseCount = $enrolment->courseCount;
         $location_id = $enrolment->student->customer->userLocation->location_id;
         $user = User::findOne(['id' => $enrolment->student->customer->id]);
         $invoice->userName = $user->publicIdentity;
@@ -883,13 +882,9 @@ class Lesson extends \yii\db\ActiveRecord
         $this->enrolmentId = $enrolmentId;
         $invoice->addGroupLessonLineItem($this);
         $invoice->save();
-        if ($enrolment->hasProFormaInvoice()) {
-            $netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
-            if ($enrolment->proFormaInvoice->proFormaCredit >= $netPrice) {
-                $invoice->addPayment($enrolment->proFormaInvoice, $netPrice);
-            } else {
-                $invoice->addPayment($enrolment->proFormaInvoice, $enrolment->proFormaInvoice->proFormaCredit);
-            }
+        if ($enrolment->lesson->hasLessonCredit()) {
+            $netPrice = $enrolment->lesson->lessonCredit->credit;
+            $invoice->addPayment($enrolment->lesson, $netPrice);
         }
 
         return $invoice;

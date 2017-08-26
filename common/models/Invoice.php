@@ -710,20 +710,20 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
-    public function addPayment($lesson, $amount)
+    public function addPayment($object, $amount)
     {
         $paymentModel = new Payment();
         $paymentModel->amount = $amount;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
         $paymentModel->invoiceId = $this->id;
-        $paymentModel->reference = $lesson->id;
+        $paymentModel->reference = $object->id;
         $paymentModel->save();
 		
         $creditPaymentId = $paymentModel->id;
         $paymentModel->id = null;
         $paymentModel->isNewRecord = true;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-        $paymentModel->lessonId = $lesson->id;
+        $paymentModel->lessonId = $object->id;
 		$paymentModel->invoiceId = null;
         $paymentModel->reference = $this->id;
         $paymentModel->save();
@@ -815,32 +815,57 @@ class Invoice extends \yii\db\ActiveRecord
 		}
     }
 
-    public function makeGroupInvoicePayment()
-    {
-        $enrolment = Enrolment::findOne($this->lineItem->lineItemEnrolment->enrolmentId);
+	public function addGroupLessonCredit()
+	{
+		$enrolment = Enrolment::findOne($this->lineItem->lineItemEnrolment->enrolmentId);
         $lessons = Lesson::find()
 			->isConfirmed()
             ->notDeleted()
             ->joinWith('enrolment')
             ->andWhere(['enrolment.id' => $enrolment->id])
             ->all();
-        $courseCount = $enrolment->courseCount;
-        foreach ($lessons as $lesson) {
-            if($lesson->canInvoice()) {
-                if (!$enrolment->hasInvoice($lesson->id)) {
-                    $invoice = $lesson->createGroupInvoice($enrolment->id);
-                } else if (!$enrolment->getInvoice($lesson->id)->isPaid()) {
-                    if ($enrolment->hasProFormaInvoice()) {
-                        $netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
-                        if ($enrolment->proFormaInvoice->proFormaCredit >= $netPrice) {
-                            $enrolment->getInvoice($lesson->id)->addPayment($enrolment->proFormaInvoice, $netPrice);
-                        } else {
-                            $enrolment->getInvoice($lesson->id)->addPayment($enrolment->proFormaInvoice, $enrolment->proFormaInvoice->proFormaCredit);
-                        }
-                    }
-                }
-            }
-        }
+		foreach($lessons as $lesson) {
+			$paymentModel = new Payment();
+			$paymentModel->amount = $lesson->proFormaLineItem->netPrice;
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+			$paymentModel->reference = $this->id;
+			$paymentModel->lessonId = $lesson->id;
+			$paymentModel->save();	
+			
+			$creditPaymentId = $paymentModel->id;
+			$paymentModel->id = null;
+			$paymentModel->isNewRecord = true;
+			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+			$paymentModel->reference = $lesson->id;
+			$paymentModel->lessonId = $lesson->id;
+			$paymentModel->save();
+			
+			$lessonCredit  = new LessonCredit();
+			$lessonCredit->lessonId = $lesson->id;
+			$lessonCredit->paymentId = $creditPaymentId;
+			$lessonCredit->save();
+			
+			$debitPaymentId = $paymentModel->id;
+			$creditUsageModel = new CreditUsage();
+			$creditUsageModel->credit_payment_id = $creditPaymentId;
+			$creditUsageModel->debit_payment_id = $debitPaymentId;
+			$creditUsageModel->save();
+			$this->makeGroupInvoicePayment($lesson);
+		}
+	}
+	
+    public function makeGroupInvoicePayment($lesson)
+    {
+		if($lesson->canInvoice()) {
+			if (!$lesson->hasInvoice()) {
+				$invoice = $lesson->createGroupInvoice($enrolment->id);
+			} else if (!$lesson->invoice->isPaid()) {
+				if ($lesson->hasLessonCredit()) {
+					$netPrice = $lesson->lessonCredit->credit;
+					$lesson->invoice->addPayment($lesson, $netPrice);
+				}
+			}
+		}
     }
 
     public function makeExtraLessonInvoicePayment()
