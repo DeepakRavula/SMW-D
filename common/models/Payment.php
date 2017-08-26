@@ -246,7 +246,6 @@ class Payment extends ActiveRecord
 					$this->invoice->makeGroupInvoicePayment();
 				} else {
 					$this->invoice->addLessonCredit();
-					//$this->invoice->makeInvoicePayment();
 				}
 			}
 		}

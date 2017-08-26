@@ -800,27 +800,19 @@ class Invoice extends \yii\db\ActiveRecord
 	
     public function makeInvoicePayment($lesson)
     {
-        //foreach($this->lineItems as $lineItem) {
-//            $lesson = Lesson::find()
-//                    ->descendantsOf($lineItem->proFormaLesson->id)
-//                    ->orderBy(['id' => SORT_DESC])
-//                    ->one();
-//            if (!$lesson) {
-//                $lesson = Lesson::findOne($lineItem->proFormaLesson->id);
-//            }
-            if($lesson->canInvoice()) {
-                if (!$lesson->hasInvoice()) {
-                    $invoice = $lesson->createPrivateLessonInvoice();
-                } else if (!$lesson->invoice->isPaid()) {
-                    if ($lesson->hasLessonCredit()) {
-                        $netPrice = $lesson->lessonCredit->credit;
-                        if ($lesson->isExploded) {
-                            $netPrice = $lesson->getSplitedAmount();
-                        }
-                        $lesson->invoice->addPayment($lesson, $netPrice);
-                    }
-                }
-            }
+		if($lesson->canInvoice()) {
+			if (!$lesson->hasInvoice()) {
+				$invoice = $lesson->createPrivateLessonInvoice();
+			} else if (!$lesson->invoice->isPaid()) {
+				if ($lesson->hasLessonCredit()) {
+					$netPrice = $lesson->lessonCredit->credit;
+					if ($lesson->isExploded) {
+						$netPrice = $lesson->getSplitedAmount();
+					}
+					$lesson->invoice->addPayment($lesson, $netPrice);
+				}
+			}
+		}
     }
 
     public function makeGroupInvoicePayment()
