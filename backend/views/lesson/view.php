@@ -110,7 +110,7 @@ echo $this->render('_merge-lesson', [
 	'model' => $model,
 	'privateLessonModel' => !empty($privateLessonModel) ? $privateLessonModel : null
 ]);?>
-+<?php Modal::end(); ?>
+<?php Modal::end(); ?>
 <script>
  $(document).ready(function() {
  	$(document).on('click', '.edit-lesson-detail', function () {
