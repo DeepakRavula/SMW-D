@@ -48,8 +48,8 @@ class LessonCredit extends \yii\db\ActiveRecord
     }
 	public function getCredit()
     {
-        $credit = Payment::findOne(['id' => $this->paymentId])
-            ->column('payment.amount');
-        return $credit;
+        $payment = Payment::findOne(['id' => $this->paymentId]);
+		
+        return $payment->amount;
     }
 }

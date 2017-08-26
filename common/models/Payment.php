@@ -204,8 +204,7 @@ class Payment extends ActiveRecord
 		if(!empty($this->invoiceId)) {
 			$model = Invoice::findOne(['id' => $this->invoiceId]);
 			$this->user_id = $model->user_id;
-		}
-		if(!empty($this->lessonId)) {
+		}else if(!empty($this->lessonId)) {
 			$model = Lesson::findOne(['id' => $this->lessonId]);
 			$this->user_id = $model->enrolment->student->customer->id;
 		}
@@ -239,9 +238,7 @@ class Payment extends ActiveRecord
 			$invoicePaymentModel->payment_id = $this->id;
 			$invoicePaymentModel->save();
 			$this->invoice->save();
-//			if($this->invoice->isProFormaInvoice()) {
-//				$this->invoice->addLessonCredit();
-//			}
+
 			if($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
 				if ($this->invoice->isExtraLessonProformaInvoice()) {
 					$this->invoice->makeExtraLessonInvoicePayment();
