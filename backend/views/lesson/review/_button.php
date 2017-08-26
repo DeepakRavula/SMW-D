@@ -26,7 +26,7 @@ use yii\helpers\Url;
 	<div class="p-10 text-center">
 		<?=
 		Html::a('Confirm', $url, [
-			'class' => 'btn btn-danger',
+			'class' => 'btn btn-primary',
 			'id' => 'confirm-button',
 			'disabled' => $hasConflict,
 			'data' => [
@@ -35,13 +35,13 @@ use yii\helpers\Url;
 		])
 		?>
 		<?php if ((int) $courseModel->program->isPrivate() && empty($enrolmentType)) : ?>
-			<?= Html::a('Cancel', ['student/view', 'id' => $courseModel->enrolment->studentId], ['class' => 'btn']);
+			<?= Html::a('Cancel', ['student/view', 'id' => $courseModel->enrolment->studentId], ['class' => 'btn btn-default']);
 			?>
 		<?php elseif(!empty($enrolmentType)) : ?>
-			<?= Html::a('Cancel', ['enrolment/index'], ['class' => 'btn']);
+			<?= Html::a('Cancel', ['enrolment/index'], ['class' => 'btn btn-default']);
 			?>
 		<?php else :?>
-			<?= Html::a('Cancel', ['course/index'], ['class' => 'btn']);
+			<?= Html::a('Cancel', ['course/index'], ['class' => 'btn btn-default']);
 			?>
 		<?php endif; ?>
 	</div>

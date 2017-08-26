@@ -3,17 +3,16 @@
 use common\models\TeacherAvailability;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 ?>
-<div class="clearfix"></div>
-<div class="col-md-10 m-t-20">
-<div class="box box-default collapsed-box">
-  <div class="box-header with-border">
-    <h3 class="box-title">Teacher Availabilities</h3>
-    <div class="box-tools">
-      <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
-    </div><!-- /.box-tools -->
-  </div><!-- /.box-header -->
-  <div class="box-body ">
+<?php
+LteBox::begin([
+	'type' => LteConst::TYPE_DEFAULT,
+	'title' => 'Teacher Availabilities',
+	'withBorder' => true,
+])
+?>
      <?php
     $locationId = Yii::$app->session->get('location_id');
     $query = TeacherAvailability::find()
@@ -26,9 +25,9 @@ use yii\grid\GridView;
   <?php
     echo GridView::widget([
       'dataProvider' => $teacherAvailabilityDataProvider,
-      'options' => ['class' => 'col-md-5 m-t-15'],
       'tableOptions' => ['class' => 'table table-bordered table-more-condensed'],
       'headerRowOptions' => ['class' => 'bg-light-gray'],
+	'summary' => '',
       'columns' => [
           [
             'label' => 'Day',
@@ -56,7 +55,5 @@ use yii\grid\GridView;
       ],
     ]);
   ?>
-  </div><!-- /.box-body -->
-</div><!-- /.box -->
-</div><!-- /.box -->
-<div class="clearfix"></div>
+<?php LteBox::end()?>
+  

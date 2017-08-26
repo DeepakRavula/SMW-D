@@ -166,7 +166,8 @@ class Lesson extends \yii\db\ActiveRecord
             'colorCode' => 'Color Code',
 			'classroomId' => 'Classroom',
 			'summariseReport' => 'Summarize Results',
-			'toEmailAddress' => 'To'
+			'toEmailAddress' => 'To',
+			'showAllReviewLessons' => 'Show All'
         ];
     }
 
