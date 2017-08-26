@@ -10,6 +10,11 @@ use common\models\EnrolmentDiscount;
 /* @var $model common\models\Enrolment */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<style>
+	.wizard {
+		margin-top:-50px;
+	}
+</style>
 <?php
 $form = ActiveForm::begin([
     'id' => 'enrolment-form',

@@ -66,6 +66,12 @@ body .user-panel > .info {
 	float: left;
     margin: 10px 0 0 0;
 }
+#stepwizard_step1_next {
+	margin-top: 20px;
+}
+#stepwizard_step2_prev, #stepwizard_step2_save {
+	margin-top: 10px;	
+}
 .m-r-10 {
 	margin-right:10px;
 }
