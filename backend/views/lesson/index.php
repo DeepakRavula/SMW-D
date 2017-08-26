@@ -29,14 +29,14 @@ $indexGroupLesson = $this->render('/course/index', [
 <?php echo Tabs::widget([
     'items' => [
         [
-            'label' => 'Private Lessons',
+            'label' => 'Private',
            'content' => $indexPrivateLesson,
             'options' => [
 				'id' => 'private',
 			],
         ],
         [
-            'label' => 'Group Lessons',
+            'label' => 'Group',
             'content' => $indexGroupLesson,
             'options' => [
 				'id' => 'group',
