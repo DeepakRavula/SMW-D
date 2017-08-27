@@ -824,9 +824,11 @@ class Invoice extends \yii\db\ActiveRecord
             ->joinWith('enrolment')
             ->andWhere(['enrolment.id' => $enrolment->id])
             ->all();
+		$courseCount = $enrolment->courseCount;
+		$netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
 		foreach($lessons as $lesson) {
 			$paymentModel = new Payment();
-			$paymentModel->amount = $lesson->proFormaLineItem->netPrice;
+			$paymentModel->amount = $netPrice;
 			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
 			$paymentModel->reference = $this->id;
 			$paymentModel->lessonId = $lesson->id;
@@ -850,11 +852,11 @@ class Invoice extends \yii\db\ActiveRecord
 			$creditUsageModel->credit_payment_id = $creditPaymentId;
 			$creditUsageModel->debit_payment_id = $debitPaymentId;
 			$creditUsageModel->save();
-			$this->makeGroupInvoicePayment($lesson);
+			$this->makeGroupInvoicePayment($lesson, $enrolment);
 		}
 	}
 	
-    public function makeGroupInvoicePayment($lesson)
+    public function makeGroupInvoicePayment($lesson, $enrolment)
     {
 		if($lesson->canInvoice()) {
 			if (!$lesson->hasInvoice()) {

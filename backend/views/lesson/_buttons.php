@@ -8,7 +8,7 @@ use kartik\switchinput\SwitchInput;
     <?php if ($model->invoice) : ?>
 		<?= Html::a('<span class="btn btn-info">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-10']) ?>
 		<?php else : ?>
-			<?php echo Html::a('<i class="fa fa-usd"></i>', ['invoice', 'id' => $model->id], ['class' => 'm-r-10']) ?>
+			<?php echo Html::a('<i class="fa fa-usd"></i>', ['invoice', 'id' => $model->id], ['class' => 'm-r-10 btn btn-box-tool']) ?>
 		<?php endif; ?>
 		<?php if ($model->isScheduled()) : ?>
 			<?php if (!empty($model->proFormaInvoice->id) && $model->proFormaInvoice->isPaid()) : ?>
@@ -36,11 +36,11 @@ use kartik\switchinput\SwitchInput;
                 <?php endif; ?>
 <?= Html::a('<i class="fa fa-envelope"></i>', '#', [
 	'id' => 'lesson-mail-button',
-	'class' => 'm-r-10'])
+	'class' => ' btn btn-box-tool m-r-10'])
 ?>	
 <?php if ($model->isDeletable()) : ?>
 	<?= Html::a('<i class="fa fa-trash-o"></i>', ['private-lesson/delete', 'id' => $model->id], [
-		'class' => 'm-r-10',
+		'class' => 'btn btn-box-tool m-r-10',
 		'id' => 'lesson-delete',
 		'data' => [
 			'confirm' => 'Are you sure you want to delete this lesson?',

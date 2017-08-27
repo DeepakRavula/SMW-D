@@ -882,9 +882,9 @@ class Lesson extends \yii\db\ActiveRecord
         $this->enrolmentId = $enrolmentId;
         $invoice->addGroupLessonLineItem($this);
         $invoice->save();
-        if ($enrolment->lesson->hasLessonCredit()) {
-            $netPrice = $enrolment->lesson->lessonCredit->credit;
-            $invoice->addPayment($enrolment->lesson, $netPrice);
+        if ($this->hasLessonCredit()) {
+            $netPrice = $this->lessonCredit->credit;
+            $invoice->addPayment($this, $netPrice);
         }
 
         return $invoice;
