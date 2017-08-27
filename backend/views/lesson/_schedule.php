@@ -4,12 +4,13 @@ use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\helpers\Url;
 use common\models\User;
+use yii\helpers\Html;
 ?>
 <?php
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i class="fa fa-pencil"></i>',
-	'title' => 'Schedule',
+	'boxTools' =>Html::a('<i class="fa fa-pencil"></i>', ['update', 'id' => $model->id]),
+    'title' => 'Schedule',
 	'withBorder' => true,
 ])
 ?>

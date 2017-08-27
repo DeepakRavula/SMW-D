@@ -53,7 +53,7 @@ use yii\helpers\Html;
     ?>
     <div class="grid-row-open">
     <?php echo GridView::widget([
-        'dataProvider' => $dataProvider,
+    'dataProvider' => $dataProvider,
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['lesson/view', 'id' => $model->id]);
 
@@ -61,6 +61,7 @@ use yii\helpers\Html;
     },
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
+		'summary' => '',
         'columns' => $columns,
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>

@@ -4,31 +4,43 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
+use common\components\gridView\AdminLteGridView;
 
 use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);
 
 $this->title = 'Review Lessons';
+$this->params['show-all'] = $this->render('review/_show-all', [
+	'searchModel' => $searchModel
+]);
 ?>
-<?php $form = ActiveForm::begin(); ?>
-<div class="pull-right  m-r-20">
-	<div class="schedule-index">
-		<div class="e1Div">
-<?= $form->field($searchModel, 'showAllReviewLessons')->checkbox(['data-pjax' => true]); ?>
-		</div>
+<div class="row">
+	<div class="col-md-6">
+		<?=
+		$this->render('review/_details', [
+			'courseModel' => $courseModel,
+		]);
+		?>
+		<?php if(empty($rescheduleBeginDate) && empty($vacationId)) : ?>
+			<?=
+			$this->render('review/_summary', [
+				'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
+				'unscheduledLessonCount' => $unscheduledLessonCount,
+				'lessonCount' => $lessonCount,
+				'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
+			]);
+			?>
+		<?php endif; ?>
+	</div>
+	<div class="col-md-6">
+		<?=
+		$this->render('review/_teacher-availability', [
+			'courseModel' => $courseModel,
+		]);
+		?>
 	</div>
 </div>
-<?php ActiveForm::end(); ?>
-<?=
-$this->render('review/_details', [
-	'courseModel' => $courseModel,
-]);
-?>
-<?=
-$this->render('review/_teacher-availability', [
-	'courseModel' => $courseModel,
-]);
-?>
+
 <?php
 $hasConflict = false;
 if ($conflictedLessonIdsCount > 0) {
@@ -80,26 +92,14 @@ $columns = [
 		'timeout' => 6000,
 	]) ?>
 <?=
-\yii\grid\GridView::widget([
+AdminLteGridView::widget([
 	'dataProvider' => $lessonDataProvider,
 	'columns' => $columns,
 	'emptyText' => 'No conflicts here! You are ready to confirm!',
 ]);
 ?>
 <?php \yii\widgets\Pjax::end(); ?>
-<?php if(empty($rescheduleBeginDate) && empty($vacationId)) : ?>
-	<?php yii\widgets\Pjax::begin([
-		'id' => 'review-lesson-summary'
-	]) ?>
-<div style="text-align: center">
-	<strong>Unscheduled Lesson(s) due to holiday conflict:</strong> <?= count($holidayConflictedLessonIds);?><br>
-	<strong>Unscheduled Lessons:</strong> <?= $unscheduledLessonCount;?><br>
-	<strong>Scheduled Lessons:</strong> <?= $lessonCount - (count($holidayConflictedLessonIds) + $conflictedLessonIdsCount + $unscheduledLessonCount);?><br>
-	<strong>Conflicted Lesson(s):</strong> <?= $conflictedLessonIdsCount;?><br>
-	<strong>Total Lessons:</strong> <?= $lessonCount;?><br>
-</div>
-<?php \yii\widgets\Pjax::end(); ?>
-<?php endif; ?>
+	
 <?= $this->render('review/_button', [
 	'vacationId' => $vacationId,
 	'hasConflict' => $hasConflict,

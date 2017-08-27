@@ -62,25 +62,15 @@ body .user-panel > .info {
 .table {
 	cursor:pointer; 
 }
-.schedule-picker {
-	margin-left: 725px;
-    position: absolute;
-    margin-top: -45px;
-}
-.selectivity-single-select {
-	background: transparent;
-    border-radius: 0;
-    border-bottom: 1px solid #b5b5b5;
-	margin-right: 10px;
-    padding-bottom: 2px;
-}
-.filter_by_calendar {
-	position: relative;
-    top: 5px;
-}
 .text-add-new {
 	float: left;
     margin: 10px 0 0 0;
+}
+#stepwizard_step1_next {
+	margin-top: 20px;
+}
+#stepwizard_step2_prev, #stepwizard_step2_save {
+	margin-top: 10px;	
 }
 .m-r-10 {
 	margin-right:10px;

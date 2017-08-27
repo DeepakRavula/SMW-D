@@ -9,6 +9,7 @@ use yii\helpers\Url;
 echo GridView::widget([
 	'id' => 'enrolment-grid',
 	'dataProvider' => $enrolmentDataProvider,
+	'summary' => '',
 	'rowOptions' => function ($model, $key, $index, $grid) {
 		$url = Url::to(['enrolment/view', 'id' => $model->id]);
 

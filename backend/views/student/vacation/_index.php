@@ -9,10 +9,6 @@ use yii\helpers\Html;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<div class="col-md-12">
-	<h4 class="pull-left m-r-20">Vacations</h4>
-</div>
-
 <?php
 $vacations = Vacation::find()
 	->joinWith(['enrolment' => function($query) use($studentModel){

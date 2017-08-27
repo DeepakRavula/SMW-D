@@ -88,15 +88,15 @@ $bundle = BackendAsset::register($this);
                                 </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
+									<div class="pull-left">
+                                        <?php echo Html::a(Yii::t('backend', 'Profile'), Url::to(['user/update', 'UserSearch[role_name]' => $role, 'id' => Yii::$app->user->id]), ['class' => 'btn btn-default btn-flat', 'data-method' => 'post']) ?>
+                                    </div>
                                     <div class="pull-right">
                                         <?php echo Html::a(Yii::t('backend', 'Logout'), ['sign-in/logout'], ['class' => 'btn btn-default btn-flat', 'data-method' => 'post']) ?>
                                     </div>
                                 </li>
                             </ul>
                         </li>
-						<li>
-                        <?php echo Html::a('<i class="fa fa-cogs"></i>', ['/site/settings']) ?>
-                    </li>
                     </ul>
                 </div>
             </nav>

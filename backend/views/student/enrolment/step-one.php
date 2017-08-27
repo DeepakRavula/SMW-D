@@ -9,6 +9,8 @@ use common\models\LocationAvailability;
 use yii\helpers\Url;
 use kartik\select2\Select2;
 use kartik\switchinput\SwitchInput;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */
@@ -20,9 +22,19 @@ $privatePrograms = ArrayHelper::map(Program::find()
             ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
             ->all(), 'id', 'name')
 ?>
-<div class="enrolment-form form-well form-well-smw ">
-    <div class="row">
-		<div class="col-md-4 asd">
+	<div class="row">
+		<div class="col-md-3">
+			<?php
+            echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
+                [
+                'pluginOptions' => [
+                    'showMeridian' => false,
+                    'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+                ],
+            ]);
+            ?>
+        </div>
+		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'startDate')->widget(DatePicker::classname(),
                 [
@@ -38,18 +50,8 @@ $privatePrograms = ArrayHelper::map(Program::find()
             ]);
             ?>
         </div>
-        <div class="col-md-4">
-			<?php
-            echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
-                [
-                'pluginOptions' => [
-                    'showMeridian' => false,
-                    'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
-                ],
-            ]);
-            ?>
-        </div>
-        <div class="col-md-4">
+		
+		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'programId')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(Program::find()
@@ -59,7 +61,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
                 'options' => ['placeholder' => 'Program']
             ]) ?>
         </div>
-        <div class="clear-fix"></div>
+	</div>
         <div class="col-md-3">
             <?= $form->field($courseSchedule, 'paymentFrequency')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')
@@ -71,34 +73,36 @@ $privatePrograms = ArrayHelper::map(Program::find()
                 'name' => 'PaymentFrequencyDiscount[discount]'
             ])->label('Payment Frequency Discount(%)'); ?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
                 'id' => 'enrolment-discount',
                 'name' => 'MultipleEnrolmentDiscount[discount]'
-            ])->label('Multiple Enrolment Discount($)'); ?>
+            ])->label('Multiple Enrol. Discount($) Per month'); ?>
         </div>
-        <div class="col-md-2 p-20">per month</div>
-        <div id="course-rate-estimation">
-        	<hr class="default-hr">
-				<div class="col-md-6">
-					<p class="text-info">
-					<strong>What's that per month?</strong></p>
-					<div class="col-md-4"></div>
-				<div class="smw-box col-md-offset-4 col-md-8 m-l-0 m-b-30 course-monthly-estimate text-center">
-                                    <div id="before-discount"></div>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<p class="text-info">
-					<strong>After Discount</strong></p>
-					<div class="col-md-6"></div>
-				<div class="smw-box col-md-offset-4 col-md-8 m-l-0 m-b-30 course-monthly-estimate text-center">
-					<div id="after-discount"></div>
-					</div>
-				</div>
-			</div>
-					</div>
-				</div>
+	<div class="row" id="course-rate-estimation">
+	<div class="col-md-6">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'title' => 'What\'s that per month?',
+			'withBorder' => true,
+		])
+		?>
+		 <p id="before-discount"></p>	
+		<?php LteBox::end() ?>
+		</div> 
+		<div class="col-md-6">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'title' => 'After Discount',
+			'withBorder' => true,
+		])
+		?>
+		<div id="after-discount"></div>
+		<?php LteBox::end() ?>
+		</div> 
+	</div>
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
 <?php
