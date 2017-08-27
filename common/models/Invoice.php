@@ -729,10 +729,7 @@ class Invoice extends \yii\db\ActiveRecord
         $paymentModel->save();
 
         $debitPaymentId = $paymentModel->id;
-        $creditUsageModel = new CreditUsage();
-        $creditUsageModel->credit_payment_id = $creditPaymentId;
-        $creditUsageModel->debit_payment_id = $debitPaymentId;
-        $creditUsageModel->save();
+        $this->createCreditUsage($creditPaymentId, $debitPaymentId);
     }
 
     public function getNetSubtotal()
@@ -758,7 +755,39 @@ class Invoice extends \yii\db\ActiveRecord
 
         return $discount;
     }
+	public function createCreditUsage($creditPaymentId, $debitPaymentId)
+	{
+		$creditUsageModel = new CreditUsage();
+		$creditUsageModel->credit_payment_id = $creditPaymentId;
+		$creditUsageModel->debit_payment_id = $debitPaymentId;
+		$creditUsageModel->save();	
+	}
 
+	public function createLessonCredit($lesson, $amount)
+	{
+		$paymentModel = new Payment();
+		$paymentModel->amount = $amount;
+		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+		$paymentModel->reference = $this->id;
+		$paymentModel->lessonId = $lesson->id;
+		$paymentModel->save();	
+
+		$creditPaymentId = $paymentModel->id;
+		$paymentModel->id = null;
+		$paymentModel->isNewRecord = true;
+		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+		$paymentModel->reference = $lesson->id;
+		$paymentModel->lessonId = $lesson->id;
+		$paymentModel->save();
+
+		$lessonCredit  = new LessonCredit();
+		$lessonCredit->lessonId = $lesson->id;
+		$lessonCredit->paymentId = $creditPaymentId;
+		$lessonCredit->save();
+
+		$debitPaymentId = $paymentModel->id;
+		$this->createCreditUsage($creditPaymentId, $debitPaymentId);
+	}
 	public function addLessonCredit()
 	{
 		foreach($this->lineItems as $lineItem) {
@@ -769,31 +798,9 @@ class Invoice extends \yii\db\ActiveRecord
             if (!$lesson) {
                 $lesson = Lesson::findOne($lineItem->proFormaLesson->id);
             }
-			$paymentModel = new Payment();
-			$paymentModel->amount = $lesson->proFormaLineItem->netPrice;
-			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-			$paymentModel->reference = $this->id;
-			$paymentModel->lessonId = $lesson->id;
-			$paymentModel->save();	
+			$amount = $lesson->proFormaLineItem->netPrice;
+			$this->createLessonCredit($lesson, $amount);
 			
-			$creditPaymentId = $paymentModel->id;
-			$paymentModel->id = null;
-			$paymentModel->isNewRecord = true;
-			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-			$paymentModel->reference = $lesson->id;
-			$paymentModel->lessonId = $lesson->id;
-			$paymentModel->save();
-			
-			$lessonCredit  = new LessonCredit();
-			$lessonCredit->lessonId = $lesson->id;
-			$lessonCredit->paymentId = $creditPaymentId;
-			$lessonCredit->save();
-			
-			$debitPaymentId = $paymentModel->id;
-			$creditUsageModel = new CreditUsage();
-			$creditUsageModel->credit_payment_id = $creditPaymentId;
-			$creditUsageModel->debit_payment_id = $debitPaymentId;
-			$creditUsageModel->save();
 			$this->makeInvoicePayment($lesson);
 		}
 	}
@@ -825,33 +832,9 @@ class Invoice extends \yii\db\ActiveRecord
             ->andWhere(['enrolment.id' => $enrolment->id])
             ->all();
 		$courseCount = $enrolment->courseCount;
-		$netPrice = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
+		$amount = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
 		foreach($lessons as $lesson) {
-			$paymentModel = new Payment();
-			$paymentModel->amount = $netPrice;
-			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-			$paymentModel->reference = $this->id;
-			$paymentModel->lessonId = $lesson->id;
-			$paymentModel->save();	
-			
-			$creditPaymentId = $paymentModel->id;
-			$paymentModel->id = null;
-			$paymentModel->isNewRecord = true;
-			$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-			$paymentModel->reference = $lesson->id;
-			$paymentModel->lessonId = $lesson->id;
-			$paymentModel->save();
-			
-			$lessonCredit  = new LessonCredit();
-			$lessonCredit->lessonId = $lesson->id;
-			$lessonCredit->paymentId = $creditPaymentId;
-			$lessonCredit->save();
-			
-			$debitPaymentId = $paymentModel->id;
-			$creditUsageModel = new CreditUsage();
-			$creditUsageModel->credit_payment_id = $creditPaymentId;
-			$creditUsageModel->debit_payment_id = $debitPaymentId;
-			$creditUsageModel->save();
+			$this->createLessonCredit($lesson, $amount);
 			$this->makeGroupInvoicePayment($lesson, $enrolment);
 		}
 	}

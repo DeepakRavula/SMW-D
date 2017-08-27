@@ -244,7 +244,6 @@ class Payment extends ActiveRecord
 					$this->invoice->makeExtraLessonInvoicePayment();
 				} else if ($this->invoice->lineItem->isGroupLesson()) {
 					$this->invoice->addGroupLessonCredit();
-					//$this->invoice->makeGroupInvoicePayment();
 				} else {
 					$this->invoice->addLessonCredit();
 				}
