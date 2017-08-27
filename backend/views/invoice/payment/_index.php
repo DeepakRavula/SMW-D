@@ -39,6 +39,7 @@ $columns = [
 		'id' => 'payment-grid',
         'dataProvider' => $invoicePaymentsDataProvider,
         'columns' => $columns,
+		'summary' => ''
     ]);
     ?>
 <?php \yii\widgets\Pjax::end(); ?>	
