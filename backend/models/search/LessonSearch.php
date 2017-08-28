@@ -14,7 +14,6 @@ use common\models\Invoice;
 class LessonSearch extends Lesson
 {
     const STATUS_INVOICED = 'invoiced';
-	const ALL = 'All';
 	
     public $lessonStatus;
     public $fromDate;
@@ -25,7 +24,9 @@ class LessonSearch extends Lesson
     public $invoiceType;
     public $showAllReviewLessons = false;
 	public $summariseReport = false;
-    /**
+	public $student;
+	public $program;
+	/**
      * {@inheritdoc}
      */
     public function rules()
@@ -33,7 +34,7 @@ class LessonSearch extends Lesson
         return [
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport'], 'safe'],
-            [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 'invoiceType','dateRange'], 'safe'],
+            [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 'invoiceType','dateRange', 'student', 'program',], 'safe'],
         ];
     }
     
@@ -75,7 +76,11 @@ class LessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
+		$query->andFilterWhere(['OR', 
+			['student.first_name' => $this->student],
+			['student.last_name' => $this->student]
+		]);
+		$query->andFilterWhere(['program.name' => $this->program]);
         if (!empty($this->customerId)) {
             $query->student($this->customerId);
         }
@@ -111,8 +116,8 @@ class LessonSearch extends Lesson
                 $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
             }
         } else {
-            $this->fromDate = \DateTime::createFromFormat('d-m-Y', $this->fromDate);
-            $this->toDate = \DateTime::createFromFormat('d-m-Y', $this->toDate);
+            $this->fromDate = \DateTime::createFromFormat('M d,Y', $this->fromDate);
+            $this->toDate = \DateTime::createFromFormat('M d,Y', $this->toDate);
 
             if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
                 $query->andWhere(['between', 'DATE(lesson.date)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
@@ -125,7 +130,6 @@ class LessonSearch extends Lesson
     public static function lessonStatuses()
     {
         return [
-            self::ALL => 'All',
             Lesson::STATUS_COMPLETED => 'Completed',
             Lesson::STATUS_SCHEDULED => 'Scheduled',
             self::STATUS_INVOICED => 'Invoiced',

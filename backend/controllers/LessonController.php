@@ -73,12 +73,11 @@ class LessonController extends Controller
         $searchModel = new LessonSearch();
         $searchModel->lessonStatus = Lesson::STATUS_COMPLETED;
         $request = Yii::$app->request;
-        $invoiceRequest = $request->get('LessonSearch');
-        $searchModel->type = $invoiceRequest['type'];
-        $searchModel->lessonStatus = LessonSearch::ALL;
+        $lessonRequest = $request->get('LessonSearch');
+        $searchModel->lessonStatus = Lesson::STATUS_SCHEDULED;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        if (!empty($invoiceRequest['dateRange'])) {
-				$searchModel->dateRange = $invoiceRequest['dateRange'];
+        if (!empty($lessonRequest['dateRange'])) {
+				$searchModel->dateRange = $lessonRequest['dateRange'];
 			}
         return $this->render('index', [
             'searchModel' => $searchModel,
