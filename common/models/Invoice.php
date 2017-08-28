@@ -804,6 +804,14 @@ class Invoice extends \yii\db\ActiveRecord
 			$this->makeInvoicePayment($lesson);
 		}
 	}
+	public function addExtraLessonCredit()
+	{
+		$lesson = Lesson::findOne($this->lineItem->lesson->id);
+		$amount =  $lesson->proFormaInvoice->lineItem->netPrice;
+		$this->createLessonCredit($lesson, $amount);
+
+		$this->makeInvoicePayment($lesson);
+	}
 	
     public function makeInvoicePayment($lesson)
     {
@@ -851,25 +859,6 @@ class Invoice extends \yii\db\ActiveRecord
 				}
 			}
 		}
-    }
-
-    public function makeExtraLessonInvoicePayment()
-    {
-        $lesson = Lesson::findOne($this->lineItem->lesson->id);
-        if($lesson->canInvoice()) {
-            if (!$lesson->hasInvoice()) {
-                $invoice = $lesson->createPrivateLessonInvoice();
-            } else if (!$lesson->invoice->isPaid()) {
-                if ($lesson->hasProFormaInvoice()) {
-                    $netPrice = $lesson->proFormaInvoice->lineItem->netPrice;
-                    if ($lesson->proFormaInvoice->proFormaCredit >= $netPrice) {
-                        $lesson->invoice->addPayment($lesson->proFormaInvoice, $netPrice);
-                    } else {
-                        $lesson->invoice->addPayment($lesson->proFormaInvoice, $lesson->proFormaInvoice->proFormaCredit);
-                    }
-                }
-            }
-        }
     }
 
     public function isReversedInvoice()

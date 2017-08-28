@@ -14,7 +14,7 @@ use kartik\switchinput\SwitchInput;
 			<?php if (!empty($model->proFormaInvoice->id) && $model->proFormaInvoice->isPaid()) : ?>
 				<?= Html::a('<span class="btn bg-maroon">View Payment</span>', ['invoice/view', 'id' => $model->proFormaInvoice->id, '#' => 'payment'], ['class' => 'm-r-20 del-ce']) ?>
 			<?php else : ?>
-				<?php echo Html::a('<i class="fa fa-money"></i>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 del-ce']) ?>
+				<?php echo Html::a('<i class="fa fa-money"></i>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 btn btn-box-tool']) ?>
 			<?php endif; ?>
 		<?php endif; ?>
 		<?php if ($model->canExplode()) : ?>
