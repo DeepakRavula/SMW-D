@@ -6,8 +6,19 @@ use common\models\PaymentMethod;
 use yii\bootstrap\ButtonGroup;
 use yii\helpers\Url;
 use yii\grid\GridView;
+use yii\bootstrap\Modal;
 
 ?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Add Payment</h4>',
+    'id' => 'payment-modal',
+]);
+echo $this->render('payment-method/_form', [
+	'model' => new Payment(),
+	'invoice' => $model,
+]);
+Modal::end(); ?>
+<?= Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['#'], ['class' => 'btn btn-primary btn-sm add-payment']);?>
 <?php
 $columns = [
     'date:date',
@@ -30,6 +41,7 @@ $columns = [
 			'format' => 'currency',
         ],
     ]; ?>
+
 <div>
 	<?php yii\widgets\Pjax::begin([
 		'id' => 'invoice-payment-listing',

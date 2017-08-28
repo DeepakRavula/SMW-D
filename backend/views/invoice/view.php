@@ -217,6 +217,14 @@ var payment = {
 		$('#invoice-mail-modal').modal('show');
 		return false;
   	});
+	$(document).on('click', '.add-payment', function (e) {
+		$('#payment-modal').modal('show');
+		return false;
+  	});
+	$(document).on('click', '.payment-cancel-btn', function (e) {
+		$('#payment-modal').modal('hide');
+		return false;
+  	});
 	$(document).on('beforeSubmit', '#invoice-note-form', function (e) {
 		$.ajax({
 			url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE]); ?>',
