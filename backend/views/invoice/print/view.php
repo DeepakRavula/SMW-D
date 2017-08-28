@@ -3,7 +3,7 @@
    use common\models\InvoiceLineItem;
    use backend\models\search\InvoiceSearch;
    use common\models\ItemType;
-
+$this->registerCssFile("@web/css/invoice/style.css");
    /* @var $this yii\web\View */
    /* @var $model common\models\Invoice */
 
@@ -13,23 +13,28 @@
    ?>
     <div class="invoice-view">
        <div class="row">
-      <div class="col-xs-12">
+      <div class="col-md-12">
         <h2 class="page-header">
           <span class="logo-lg"><b>Arcadia</b>SMW</span>
           <small class="pull-right"><?= Yii::$app->formatter->asDate($model->date); ?></small>
         </h2>
       </div>
-           <div class="row invoice-info">
-      <div class="col-sm-4 invoice-col">
+       </div>
+        <div class="row">
+      <div class="col-md-6 invoice-col">
+          <div class="invoice-print-address">
         From
         <address>
-          <strong>Arcadia Music Academy ( <?= $model->location->name; ?> )</strong><br>
+          <b>Arcadia Music Academy ( <?= $model->location->name; ?> )</b><br>
           <?php if (!empty($model->location->address)): ?>
               <?= $model->location->address; ?>
           <?php endif; ?>
           <br/>
           <?php if (!empty($model->location->city_id)): ?>
-              <?= $model->location->city->name; ?>
+              <?= $model->location->city->name; ?>,
+          <?php endif; ?>        
+          <?php if (!empty($model->location->province_id)): ?>
+              <?= $model->location->province->name; ?>
           <?php endif; ?>
           <br/>
           <?php if (!empty($model->location->postal_code)): ?>
@@ -46,9 +51,11 @@
           <br/>
           www.arcadiamusicacademy.com
         </address>
+          </div>
       </div>
       <!-- /.col -->
-      <div class="col-sm-4 invoice-col">
+      <div class="col-md-4 invoice-col">
+          <div class="invoice-print-address">
         To
         <?php if(!empty($model->user)) : ?>
         <address>
@@ -67,8 +74,11 @@
               <?= $billingAddress->address; echo '<br/>'; ?>
           <?php endif; ?>
           <?php if (!empty($billingAddress->city->name)) : ?>
-              <?= $billingAddress->city->name; echo '<br/>'; ?>
-          <?php endif; ?>    
+              <?= $billingAddress->city->name; ?>,
+          <?php endif; ?>  
+          <?php if (!empty($billingAddress->province->name)) : ?>
+              <?= $billingAddress->province->name; echo '<br/>'; ?>
+          <?php endif; ?>  
           <?php if (!empty($billingAddress->postal_code)) : ?>
               <?= $billingAddress->postal_code; echo '<br/>'; ?>
           <?php endif; ?>
@@ -81,11 +91,16 @@
           <?php endif; ?>
         </address>
       </div>
-      <div class="col-sm-4 invoice-col">
+      </div>
+      <div class="col-md-2 invoice-col">
         <b><?= $model->getInvoiceNumber();?></b><br>
         <br>
         <b>Date:</b><?= Yii::$app->formatter->asDate($model->date); ?> <br>
         <b>Status:</b>  <?= $model->getStatus(); ?><br>
+        <?php if (!empty($model->dueDate)) : ?>
+        <b>Due Date:</b><?= Yii::$app->formatter->asDate($model->dueDate);?>
+           <?php endif; ?>
+        
       </div>
       <!-- /.col -->
     </div>
@@ -97,6 +112,7 @@
          'dataProvider' => $invoiceLineItemsDataProvider,
          'tableOptions' => ['class' => 'table table-bordered m-0 table-more-condensed'],
          'headerRowOptions' => ['class' => 'bg-light-gray'],
+         'summary' => '',
          'columns' => [
             [
          		'label' => 'Description',
@@ -129,45 +145,50 @@
         <div class="row">
       <!-- accepted payments column -->
       <div class="col-xs-6">
-        <p class="lead">Notes:</p>
-        <?php if (!empty($model->notes)):?>
-        <p class="text-muted well well-sm no-shadow" style="margin-top: 10px;">
-         <?php echo $model->notes; ?>
-        </p>
-        <?php endif; ?>
+          <strong>Payments:</strong>
+          <?php
+          echo $this->render('_payment', [
+              'model' => $model,
+              'paymentsDataProvider' => $paymentsDataProvider,
+          ]);
+
+          ?>
       </div>
       <!-- /.col -->
       <div class="col-xs-6">
-          <?php if (!empty($model->dueDate)) : 
-              echo '<p class="lead">Due Date  '. Yii::$app->formatter->asDate($model->dueDate).'</p>';
-           endif; ?>
           <div class="table-responsive">
-          <table class="table">
-            <tbody><tr>
-              <th style="width:50%">Discounts:</th>
-              <td><?= Yii::$app->formatter->format($model->totalDiscount, ['currency']); ?></td>
-            </tr>
-            <tr>
-              <th>SubTotal</th>
-              <td><?= Yii::$app->formatter->format($model->subTotal, ['currency']); ?></td>
-            </tr>
-            <tr>
-              <th>Tax:</th>
-              <td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
-            </tr>
-            <tr>
-              <th>Total:</th>
-              <td><?= Yii::$app->formatter->format($model->total, ['currency']); ?></td>
-            </tr>
-            <tr>
-              <th>Paid:</th>
-              <td><?= Yii::$app->formatter->format($model->invoicePaymentTotal, ['currency']); ?></td>
-            </tr>
-            <tr>
-              <th>Balance:</th>
-              <td><?= Yii::$app->formatter->format($model->balance, ['currency']); ?></td>
-            </tr>
-          </tbody></table>
+           <table class="table-invoice-childtable" style="float:right; width:auto;">
+										<tr>
+											<td id="invoice-discount">Discounts</td>
+											<td><?= Yii::$app->formatter->format($model->totalDiscount, ['currency']); ?></td>
+										</tr>
+                                        <tr>
+                                            <td>SubTotal</td>
+                                            <td>
+                                                <?= Yii::$app->formatter->format($model->subTotal, ['currency']); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tax</td>
+                                            <td>
+                                                <?= Yii::$app->formatter->format($model->tax, ['currency']); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total</strong></td>
+                                            <td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Paid</td>
+                                            <td>
+                                                <?= Yii::$app->formatter->format($model->invoicePaymentTotal, ['currency']); ?>
+                                            </td>
+                                        </tr>
+                                        <tr class="last-balance">
+                                            <td class="p-t-0"><strong>Balance</strong></td>
+                                            <td class="p-t-0"><strong><?= Yii::$app->formatter->format($model->balance, ['currency']); ?></strong></td>
+                                        </tr>
+                                    </table>
         </div>
       </div>
       <!-- /.col -->
