@@ -14,12 +14,13 @@ use common\models\Qualification;
 	<div class="row p-10">
 	<div class="col-xs-6">
 		<div class="row-fluid">
-			<h4 class="pull-left m-r-20">Private Programs </h4> 
+			<h4 class="pull-left m-r-20">Private</h4> 
 			<a href="#" class="add-new-qualification text-add-new"><i class="fa fa-plus"></i></a>
 		<div class="clearfix"></div>
 		 <?php echo GridView::widget([
 			 'id' => 'qualification-grid',
 			'dataProvider' => $privateQualificationDataProvider,
+			 'summary' => '',
 			'tableOptions' => ['class' => 'table table-bordered'],
 			'headerRowOptions' => ['class' => 'bg-light-gray'],
 			'columns' => [
@@ -31,13 +32,14 @@ use common\models\Qualification;
 	</div>
 	<div class="col-xs-6">
 		<div class="row-fluid">
-			<h4 class="pull-left m-r-20">Group Programs </h4> 
+			<h4 class="pull-left m-r-20">Group</h4> 
 			<a href="#" class="add-new-group-qualification text-add-new"><i class="fa fa-plus"></i></a>
 			<?php echo GridView::widget([
 			 'id' => 'qualification-grid',
 				'dataProvider' => $groupQualificationDataProvider,
 				'tableOptions' => ['class' => 'table table-bordered'],
 				'headerRowOptions' => ['class' => 'bg-light-gray'],
+			 	'summary' => '',
 				'columns' => [
 					'program.name',
 					'rate:currency',

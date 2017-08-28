@@ -78,3 +78,7 @@ body .user-panel > .info {
 .m-r-20 {
 	margin-right:10px;
 }
+.primary-contact {
+	font-size: 15px;
+    margin-top: -10px;
+}
