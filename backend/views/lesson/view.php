@@ -6,7 +6,7 @@ use yii\helpers\Url;
 use common\models\Note;
 use common\models\Lesson;
 use yii\bootstrap\Modal;
-
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 $this->title = 'Lessons / Lesson Details';
@@ -99,6 +99,18 @@ echo $this->render('_merge-lesson', [
 ]);?>
 <?php Modal::end(); ?>
 
+<?php if ($model->hasExpiryDate()) :?>
+	<?php $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);?>
+<?php endif; ?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Edit Schedule</h4>',
+    'id' => 'lesson-schedule-modal',
+]); ?>
+<?= $this->render('_form', [
+	'model' => $model,
+	'privateLessonModel' => !empty($privateLessonModel) ? $privateLessonModel : null
+]);?>
+<?php Modal::end(); ?>
 <script>
  $(document).ready(function() {
  	$(document).on('click', '.edit-lesson-detail', function () {
@@ -109,7 +121,16 @@ echo $this->render('_merge-lesson', [
 		$('#classroom-edit-modal').modal('hide');
 		return false;
 	});
-	$(document).on('beforeSubmit', '#classroom-form', function (e) {
+	$(document).on('click', '.lesson-schedule-cancel', function () {
+		$('#lesson-schedule-modal').modal('hide');
+		return false;
+	});
+	$(document).on('click', '.edit-lesson-schedule', function () {
+    	$('#spinner').hide();
+		$('#lesson-schedule-modal').modal('show');
+		return false;
+	});
+        $(document).on('beforeSubmit', '#classroom-form', function (e) {
 		$.ajax({
 			url    : $(this).attr('action'),
 			type   : 'post',
