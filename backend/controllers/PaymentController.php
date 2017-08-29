@@ -208,14 +208,6 @@ class PaymentController extends Controller
 				'errors' => $errors['payment-amount'],
 			];
 		}
-			
-//            Yii::$app->session->setFlash('alert',
-//                [
-//                'options' => ['class' => 'alert-success'],
-//                'body' => 'Payment has been recorded successfully',
-//            ]);
-			
-            //return $this->redirect(['invoice/view', 'id' => $id, '#' => 'payment']);
         } 
     }
 
