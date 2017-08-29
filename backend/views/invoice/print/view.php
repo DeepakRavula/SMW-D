@@ -3,7 +3,6 @@
    use common\models\InvoiceLineItem;
    use backend\models\search\InvoiceSearch;
    use common\models\ItemType;
-$this->registerCssFile("@web/css/invoice/style.css");
    /* @var $this yii\web\View */
    /* @var $model common\models\Invoice */
 
