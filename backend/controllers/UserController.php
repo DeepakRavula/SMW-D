@@ -580,7 +580,6 @@ class UserController extends Controller
 		]);
 		
         $response = Yii::$app->response;
-		//print_r($_POST);die;
         if ($request->isPost) {
             $oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
