@@ -15,8 +15,6 @@ use common\models\PaymentMethod;
 <?php $form = ActiveForm::begin([
     'id' => 'payment-form',
 	'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id]),
-	'enableAjaxValidation' => true,
-	'enableClientValidation' => false
 ]); ?>
    <div class="row">
 	   <div class="col-md-5">
@@ -26,23 +24,21 @@ use common\models\PaymentMethod;
                 	'active' => PaymentMethod::STATUS_ACTIVE,
                 	'displayed' => 1,
             	])
-      			->orderBy(['sortOrder' => SORT_ASC])->all(), 'name', 'name') );
+      			->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name') );
             ?>
         </div>
         <div class="clearfix"></div>
         <div class="col-md-4 amount">
-            <?= $form->field($model, 'amount')->textInput();?>
+            <?= $form->field($model, 'amount')->textInput(['class' => 'payment-amount form-control']);?>
         </div>
+           <div class="col-md-3 reference">
        <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
-           <div class="col-md-3">
                <?= $form->field($model, 'reference')->textInput()->label('Cheque Number'); ?>
-           </div>
        <?php elseif ($model->payment_method_id !== PaymentMethod::TYPE_CASH) : ?>
-           <div class="col-md-3">
                <?= $form->field($model, 'reference')->textInput(); ?>
-           </div>
        <?php endif; ?>
-		<div class="col-md-5">
+           </div>
+		<div class="col-md-5 cheque-date">
    			<?php
             $currentDate = (new \DateTime())->format('d-m-Y');
             echo $form->field($model, 'date')->widget(DatePicker::classname(), [
@@ -67,12 +63,28 @@ use common\models\PaymentMethod;
 </div>
 <script>
 var paymentMethods = {
-	'cash' : 1,
-	'cheque' : 2,
-}
+	'cash' : '4',
+	'cheque' : '5'
+};
 $(document).ready(function() {
+	$('.amount').show();
+	$('.reference').hide();
+	$('.cheque-date').hide();
 	$(document).on('change', '#payment-payment_method_id', function() {
-			
+		var paymentMethod = $('#payment-payment_method_id').val();
+		if(paymentMethod == paymentMethods.cash) {
+			$('.amount').show();
+			$('.reference').hide();
+			$('.cheque-date').hide();	
+		}else if(paymentMethod == paymentMethods.cheque) {
+			$('.amount').show();
+			$('.reference').show();
+			$('.cheque-date').show();	
+		} else {
+			$('.amount').show();
+			$('.reference').show();
+			$('.cheque-date').hide();	
+		}
 	});	
 });	
 </script>
