@@ -1,0 +1,17 @@
+.table-invoice-childtable>tbody>tr>td:last-of-type {
+    text-align: right;
+}
+
+.table-invoice-childtable>tbody>tr>td:first-of-type {
+    width: 110px;
+    text-align: left !important;
+}
+.invoice-print-address {
+    width: 700px;
+    margin-top: 10px;
+}
+.invoice-print-address {
+    font-size: 16px;
+    font-weight: 300;
+    color: #000;
+}
