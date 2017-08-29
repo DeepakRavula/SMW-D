@@ -71,7 +71,6 @@ class LessonController extends Controller
     public function actionIndex()
     {
         $searchModel = new LessonSearch();
-        $searchModel->lessonStatus = Lesson::STATUS_COMPLETED;
         $request = Yii::$app->request;
         $lessonRequest = $request->get('LessonSearch');
         $searchModel->lessonStatus = Lesson::STATUS_SCHEDULED;
