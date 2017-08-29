@@ -288,10 +288,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                 ],
             ],
 			[
-				'label' => 'Notes',
+				'label' => 'Comments',
 				'content' => $noteContent,
 				'options' => [
-					'id' => 'note',
+					'id' => 'comments',
 				],
        		],
 			[
@@ -449,11 +449,6 @@ $(document).ready(function(){
             $('#calendar').fullCalendar('render');
         }
 	});
-	$(document).on('click', '#user-note', function (e) {
-		$('#note-content').val('');
-		$('#user-note-modal').modal('show');
-		return false;
-  	});
     $(document).on('beforeSubmit', '#user-note-form', function (e) {
 		$.ajax({
 			url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_USER]); ?>',
@@ -465,7 +460,7 @@ $(document).ready(function(){
 			   if(response.status)
 			   {
 					$('.user-note-content').html(response.data);
-					$('#user-note-modal').modal('hide');
+                    $.pjax.reload({container:"#user-note-listing",replace:false,  timeout: 4000});
 				}else
 				{
 				 $('#user-note-form').yiiActiveForm('updateMessages',
