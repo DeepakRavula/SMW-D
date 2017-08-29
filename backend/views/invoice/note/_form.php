@@ -11,17 +11,13 @@ use yii\bootstrap\ActiveForm;
 <?php $form = ActiveForm::begin([
 	'id' => 'invoice-note-form',
 ]); ?>
-<div class="">
+<div class="row p-20">
 	<div>
         <?php echo $form->field($model, 'content')->textarea(['rows' => '10'])->label(false)?>
     </div>
     <div class="form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-		<?php if(! $model->isNewRecord) : ?>
-            <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']); ?>
-		<?php endif; ?>
     </div>
 </div>
-<div class="clearfix"></div>
 <?php ActiveForm::end(); ?>
 </div>
