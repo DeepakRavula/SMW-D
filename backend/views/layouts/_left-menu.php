@@ -7,6 +7,7 @@ use common\models\Lesson;
 use common\models\Invoice;
 use common\models\Student;
 use common\models\Course;
+use common\models\timelineEvent\TimelineEvent;
 ?>
 <?php
 echo Menu::widget([
@@ -64,53 +65,8 @@ echo Menu::widget([
 			'badgeBgClass' => 'label-default'
 		],
 			[
-			'label' => Yii::t('backend', 'Staff Members'),
-			'icon' => '<i class="fa fa-users"></i>',
-			'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],
-			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_STAFFMEMBER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_STAFFMEMBER)) ? true : false,
-			'badge' => User::staffCount(),
-			'badgeBgClass' => 'label-default'
-		],
-			[
-			'label' => Yii::t('backend', 'Owners'),
-			'icon' => '<i class="fa fa-user"></i>',
-			'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],
-			'visible' => Yii::$app->user->can('owner'),
-			'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_OWNER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_OWNER)) ? true : false,
-			'badge' => User::ownerCount(),
-			'badgeBgClass' => 'label-default'
-		],
-			[
-			'label' => Yii::t('backend', 'Administrators'),
-			'icon' => '<i class="fa fa-user-secret"></i>',
-			'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR],
-			'visible' => Yii::$app->user->can('administrator'),
-			'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_ADMINISTRATOR || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_ADMINISTRATOR)) ? true : false,
-			'badge' => User::adminCount(),
-			'badgeBgClass' => 'label-default'
-		],
-			[
-			'label' => Yii::t('backend', 'Programs'),
-			'icon' => '<i class="fa fa-table"></i>',
-			'url' => ['program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
-			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (Yii::$app->controller->id === 'program') ? true : false,
-			'badge' => Program::find()->active()->count(),
-			'badgeBgClass' => 'label-default'
-		],
-			[
-			'label' => Yii::t('backend', 'Group Courses'),
-			'url' => ['course/index', 'CourseSearch[showAllCourses]' => false],
-			'icon' => '<i class="fa fa-book"></i>',
-			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (Yii::$app->controller->id === 'group-course') ? true : false,
-			'badge' => Course::groupCourseCount(),
-			'badgeBgClass' => 'label-default'
-		],
-			[
 			'label' => Yii::t('backend', 'Lessons'),
-			'url' => ['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON],
+			'url' => ['lesson/index'],
 			'icon' => '<i class="fa fa-music"></i>',
 			'visible' => Yii::$app->user->can('staffmember'),
 			'active' => (Yii::$app->controller->id === 'lesson') ? true : false,
@@ -211,13 +167,22 @@ echo Menu::widget([
                         'url' => ['item/index', 'ItemSearch[showAllItems]' => false],
                         'visible' => Yii::$app->user->can('staffmember'),
                 ],
-		[
-			'label' => Yii::t('backend', 'Admin'),
-			'url' => '#',
-			'icon' => '<i class="fa fa-user"></i>',
-			'visible' => Yii::$app->user->can('administrator'),
-			'options' => ['class' => 'treeview'],
-			'items' => [
+				[
+					'label' => Yii::t('backend', 'Admin'),
+					'url' => '#',
+					'icon' => '<i class="fa fa-user"></i>',
+					'visible' => Yii::$app->user->can('administrator'),
+					'options' => ['class' => 'treeview'],
+					'items' => [
+							[
+					'label' => Yii::t('backend', 'Administrators'),
+					'icon' => '<i class="fa fa-user-secret"></i>',
+					'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR],
+					'visible' => Yii::$app->user->can('administrator'),
+					'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_ADMINISTRATOR || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_ADMINISTRATOR)) ? true : false,
+					'badge' => User::adminCount(),
+					'badgeBgClass' => 'label-default'
+				],
 				[
 					'label' => Yii::t('backend', 'Cities'),
 					'icon' => '<i class="fa fa-building"></i>',
@@ -292,6 +257,33 @@ echo Menu::widget([
 			'options' => ['class' => 'treeview'],
 			'items' => [
 					[
+					'label' => Yii::t('backend', 'Staff Members'),
+					'icon' => '<i class="fa fa-users"></i>',
+					'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],
+					'visible' => Yii::$app->user->can('staffmember'),
+					'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_STAFFMEMBER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_STAFFMEMBER)) ? true : false,
+					'badge' => User::staffCount(),
+					'badgeBgClass' => 'label-default'
+				],
+					[
+					'label' => Yii::t('backend', 'Owners'),
+					'icon' => '<i class="fa fa-user"></i>',
+					'url' => ['user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],
+					'visible' => Yii::$app->user->can('owner'),
+					'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_OWNER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_OWNER)) ? true : false,
+					'badge' => User::ownerCount(),
+					'badgeBgClass' => 'label-default'
+				],
+					[
+					'label' => Yii::t('backend', 'Programs'),
+					'icon' => '<i class="fa fa-table"></i>',
+					'url' => ['program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
+					'visible' => Yii::$app->user->can('staffmember'),
+					'active' => (Yii::$app->controller->id === 'program') ? true : false,
+					'badge' => Program::find()->active()->count(),
+					'badgeBgClass' => 'label-default'
+				],
+					[
 					'label' => Yii::t('backend', 'Classrooms'),
 					'icon' => '<i class="fa fa-home"></i>',
 					'url' => ['classroom/index'],
@@ -302,6 +294,15 @@ echo Menu::widget([
 					'icon' => '<i class="fa  fa-upload"></i>',
 					'url' => ['user/import'],
 					'visible' => Yii::$app->user->can('staffmember'),
+				],
+				[
+					'label' => Yii::t('backend', 'Timeline'),
+					'icon' => '<i class="fa fa-bell"></i>',
+					'url' => ['timeline-event/index'],
+					'badge' => TimelineEvent::find()
+						->andWhere(['locationId' => Yii::$app->session->get('location_id')])
+						->today()->count(),
+					'badgeBgClass' => 'label-default'
 				],
 			],
 		],

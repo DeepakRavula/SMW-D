@@ -2,6 +2,7 @@
 
 use yii\bootstrap\Tabs;
 use common\models\Lesson;
+use backend\models\search\CourseSearch;
 
 $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
@@ -15,9 +16,12 @@ $indexPrivateLesson = $this->render('_index-lesson', [
     'dataProvider' => $dataProvider,
 ]);
 
-$indexGroupLesson = $this->render('_index-lesson', [
-    'searchModel' => $searchModel,
-    'dataProvider' => $dataProvider,
+$courseSearchModel = new CourseSearch();
+$dataProvider = $courseSearchModel->search(Yii::$app->request->queryParams);
+
+$indexGroupLesson = $this->render('/course/index', [
+	'searchModel' => $courseSearchModel,
+	'dataProvider' => $dataProvider,
 ]);
 
 ?>
@@ -25,16 +29,18 @@ $indexGroupLesson = $this->render('_index-lesson', [
 <?php echo Tabs::widget([
     'items' => [
         [
-            'label' => 'Private Lessons',
-           'content' => (int) $searchModel->type === Lesson::TYPE_PRIVATE_LESSON ? $indexPrivateLesson : null,
-            'url' => ['/lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON],
-            'active' => (int) $searchModel->type === Lesson::TYPE_PRIVATE_LESSON,
+            'label' => 'Private',
+           'content' => $indexPrivateLesson,
+            'options' => [
+				'id' => 'private',
+			],
         ],
         [
-            'label' => 'Group Lessons',
-            'content' => (int) $searchModel->type === Lesson::TYPE_GROUP_LESSON ? $indexGroupLesson : null,
-            'url' => ['/lesson/index', 'LessonSearch[type]' => Lesson::TYPE_GROUP_LESSON],
-            'active' => (int) $searchModel->type === Lesson::TYPE_GROUP_LESSON,
+            'label' => 'Group',
+            'content' => $indexGroupLesson,
+            'options' => [
+				'id' => 'group',
+			],
         ],
     ],
 ]); ?>

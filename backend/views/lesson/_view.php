@@ -8,6 +8,28 @@ use kartik\grid\GridView;
 /* @var $model common\models\Lesson */
 ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
+<style>
+	.student_customer{
+		margin-left:-5px;
+	}
+	.hand i{
+		padding-right:5px;
+		color:#bc3c3c;
+	}
+	.hand{
+		text-transform: capitalize;
+	}
+	.bootstrap-switch-id-lesson-present {
+		left:397px;
+		top:-30px;
+	}
+	.student_customer {
+		margin-bottom: 10px;
+    }
+    .user-details-wrapper{
+        background: transparent;
+    }
+</style>
 <div class="lesson-view user-details-wrapper">
     <div class="row">
         <div class="col-md-9">

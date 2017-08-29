@@ -49,12 +49,12 @@ $this->registerJs($js);
 			<a href="#" class="add-phone text-add-new phone-add-item"><i class="fa fa-plus"></i></a>
 			<div class="clearfix"></div>
 		</div>
-		<div class="phone-container-items phone-fields form-well">
+		<div class="phone-container-items phone-fields">
 <?php foreach ($phoneNumberModels as $index => $phoneNumberModel): ?>
 				<div class="item-block phone-item"><!-- widgetBody -->
 					<h4>
-						<span class="panel-title-phone pull-left">Phone Number: <?= ($index + 1) ?></span>
-						<em class="pull-left f-s-14 m-l-20"><?= $form->field($phoneNumberModel, "[{$index}]is_primary")->checkbox() ?></em>
+						<span class="panel-title-phone m-r-10 pull-left">Phone Number: <?= ($index + 1) ?></span>
+						<em class="pull-left primary-contact"><?= $form->field($phoneNumberModel, "[{$index}]is_primary")->checkbox() ?></em>
 						<button type="button" class="pull-right phone-remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
 						<div class="clearfix"></div>
 					</h4>

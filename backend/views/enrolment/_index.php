@@ -25,85 +25,89 @@ DateTimePickerAsset::register($this);
 	'id' => 'new-enrolment-form',
 	'action' => Url::to(['enrolment/add'])
 ]); ?>
-<div class="container-fluid">
 	<div class="row">
-		<div class="p-15">
-			<div id="accordion" class="enrolment">
-				<div class="panel enrolment-step">
-					<div class="panel-heading"> <span class="enrolment-step-number">1</span>
-						<h4 class="enrolment-step-title"> <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" > Program</a></h4>
-					</div>
-					<div id="collapseOne" class="collapse in">
-						<div class="enrolment-step-body">
-							<?=
-							$this->render('new/_form-course', [
-								'model' => new Course(),
-								'courseSchedule' => new CourseSchedule(),
-								'paymentFrequencyDiscount' => new EnrolmentDiscount(),
-								'multipleEnrolmentDiscount' => new EnrolmentDiscount(),
-								'form' => $form,
-							]);
-							?>
-							<div class="row">
-							<div class="col-md-12">
-								<a class="collapsed btn btn-default pull-left m-r-10" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
-								<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" id="step1-btn"> Next </a>
-								<div class="clearfix"></div>
-							</div>
-							<div class="clearfix"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="panel enrolment-step">
-					<div class="panel-heading" role="tab" id="headingTwo"> <span class="enrolment-step-number">2</span>
-						<h4 class="enrolment-step-title"> <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" > Customer </a> </h4>
-					</div>
-					<div id="collapseTwo" class="panel-collapse collapse">
-						<div class="enrolment-step-body">
-							<div class="row">
-								<?=
-								$this->render('new/_form-customer', [
-									'model' => new User(),
-									'phoneModel' => new PhoneNumber(),
-									'addressModel' => new Address(),
-									'userProfile' => new UserProfile(),
-									'form' => $form,
-								]);
-								?> 
-							</div>
-							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
-							<a class="collapsed btn btn-default m-l-10 m-r-10" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"> Back </a>
-							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" id="step2-btn"> Next </a>
-						</div>
-					</div>
-				</div>
-				<div class="panel enrolment-step">
-					<div class="panel-heading" role="tab" id="headingThree"> <span class="enrolment-step-number">3</span>
-						<h4 class="enrolment-step-title"> <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree"  > Student </a> </h4>
-					</div>
-					<div id="collapseThree" class="panel-collapse collapse">
-						<div class="enrolment-step-body">
-							<div class="row">
-								<div class="form-group">
-									<?=
-									$this->render('new/_form-student', [
-										'model' => new Student(),
-										'form' => $form,
-									]);
-									?> 
-								</div>
-							</div>
-							<a class="collapsed btn btn-default pull-left" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
-							<a class="collapsed btn btn-default m-l-10 m-r-10" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Back </a>
-							<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" id="step3-btn" data-parent="#accordion" href=""> Preview Lessons </a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+          <div class="box box-default">
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="box-group" id="accordion">
+                <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+                <div class="panel box box-primary">
+                  <div class="box-header with-border">
+                    <h4 class="box-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" class="">
+                        Program
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="collapseOne" class="panel-collapse collapse in" aria-expanded="true" style="">
+                    <div class="box-body">
+                      <?=
+						$this->render('new/_form-course', [
+							'model' => new Course(),
+							'courseSchedule' => new CourseSchedule(),
+							'paymentFrequencyDiscount' => new EnrolmentDiscount(),
+							'multipleEnrolmentDiscount' => new EnrolmentDiscount(),
+							'form' => $form,
+						]);
+						?>
+						<a class="collapsed btn btn-default pull-left m-r-10" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
+						<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" id="step1-btn"> Next </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel box box-primary">
+                  <div class="box-header with-border">
+                    <h4 class="box-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="collapsed" aria-expanded="false">
+						  Customer
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="collapseTwo" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
+                    <div class="box-body">
+                     <?=
+						$this->render('new/_form-customer', [
+							'model' => new User(),
+							'phoneModel' => new PhoneNumber(),
+							'addressModel' => new Address(),
+							'userProfile' => new UserProfile(),
+							'form' => $form,
+						]);
+						?> 
+					<a class="collapsed btn btn-default m-r-10" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"> Back </a>
+					<a class="collapsed btn btn-primary m-r-10" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" id="step2-btn"> Next </a>
+					<a class="collapsed btn btn-default" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel box box-primary">
+                  <div class="box-header with-border">
+                    <h4 class="box-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" class="collapsed" aria-expanded="false">
+                        Student
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="collapseThree" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
+                    <div class="box-body">
+                     <?=
+						$this->render('new/_form-student', [
+							'model' => new Student(),
+							'form' => $form,
+						]);
+						?> 
+					<a class="collapsed btn btn-default m-r-10" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"> Back </a>
+					<a class="collapsed btn btn-primary m-r-10" role="button" data-toggle="collapse" id="step3-btn" data-parent="#accordion" href=""> Preview Lessons </a>
+					<a class="collapsed btn btn-default pull-left m-r-10" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>	
 <?php ActiveForm::end(); ?>
 <?php
 echo $this->render('new/_calendar', [

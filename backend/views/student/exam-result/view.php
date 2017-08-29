@@ -11,12 +11,9 @@ use yii\helpers\Url;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<div class="row p-10 student_eval_wrapper">
-	<div id="new-exam-result" class="col-md-12">
-		<h4 class="pull-left m-r-20">Exam History</h4>
+	<div class="pull-right">
 		<a href="#" class="add-new-exam-result text-add-new m-r-10"><i class="fa fa-plus"></i></a>
 		<?= Html::a('<i class="fa fa-print"></i>', ['print/evaluation', 'studentId' => $studentModel->id], ['class' => 'text-add-new', 'target' => '_blank']) ?>
-		<div class="clearfix"></div>
 	</div>
 		<?php
 		Modal::begin([
@@ -70,6 +67,5 @@ use yii\helpers\Url;
 				    ],
 	]);
 	?>
-	</div>
 	<?php \yii\widgets\Pjax::end(); ?>	
-</div>
+	</div>

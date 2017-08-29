@@ -8,12 +8,11 @@ $this->title = $model->student->fullName.' - '.$model->course->program->name;
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'EnrolmentSearch[showAllEnrolments]' => false], ['class' => 'go-back']);
 ?>
 <div id="enrolment-enddate-alert" style="display: none;" class="alert-info alert fade in"></div>
+<?= $this->render('_view-enrolment', [
+    'model' => $model,
+]);?>
     <div class="nav-tabs-custom">
 <?php
-
-    $detailContent = $this->render('_view-enrolment', [
-        'model' => $model,
-    ]);
 
     $lessonContent = $this->render('_lesson', [
         'model' => $model,
@@ -26,13 +25,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
     ]);
 
     $items = [
-        [
-            'label' => 'Details',
-            'content' => $detailContent,
-            'options' => [
-                'id' => 'details',
-            ],
-        ],
         [
             'label' => 'Lesson',
             'content' => $lessonContent,

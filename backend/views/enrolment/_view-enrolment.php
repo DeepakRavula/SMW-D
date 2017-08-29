@@ -47,47 +47,50 @@ Modal::begin([
 <div id="enrolment-edit-content"></div>
 <?php Modal::end(); ?>
 <script>
-	$.fn.modal.Constructor.prototype.enforceFocus = function () {};
-
-	$(document).on('click', '.enrolment-edit-cancel', function () {
-		$('#enrolment-edit-modal').modal('hide');
-		return false;
-	});
-
-	$(document).on('click', '.edit-enrolment', function () {
-		$.ajax({
-			url: '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
-			type: 'get',
-			dataType: "json",
-			success: function (response)
-			{
-				if (response.status)
-				{
-					$('#enrolment-edit-content').html(response.data);
-					$('#enrolment-edit-modal').modal('show');
-					$('#warning-notification').html('You have entered a \n\
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+    
+    $(document).on('click', '.enrolment-edit-cancel', function(){
+        $('#enrolment-edit-modal').modal('hide');
+        return false;
+    });
+ $(document).on('click', '#enrolment-edit-save-btn', function(){
+       $('#spinner').show();
+    });  
+    $(document).on('click', '.edit-enrolment', function(){
+        $.ajax({
+            url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#enrolment-edit-content').html(response.data);
+                    $('#enrolment-edit-modal').modal('show');
+                    $('#warning-notification').html('You have entered a \n\
                     non-approved Arcadia discount. All non-approved discounts \n\
                     must be submitted in writing and approved by Head Office \n\
                     prior to entering a discount, otherwise you are in breach \n\
                     of your agreement.').fadeIn();
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on('beforeSubmit', '#enrolment-update-form', function () {
-		$.ajax({
-			url: '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
-			type: 'post',
-			dataType: "json",
-			data: $(this).serialize(),
-			success: function (response)
-			{
-				if (response.status)
-				{
-					$('#enrolment-edit-modal').modal('hide');
-					paymentFrequency.onEditableSuccess();
-					if (response.message) {
+                }
+            }
+        });
+        return false;
+    });
+    $(document).on('beforeSubmit', '#enrolment-update-form', function(){
+        $.ajax({
+            url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
+            type   : 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function(response)
+            {
+               $('#spinner').hide(); 
+                if(response.status)
+                {
+                    $('#enrolment-edit-modal').modal('hide');
+                    paymentFrequency.onEditableSuccess();
+					if(response.message) {
 						$('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
 					}
 				}

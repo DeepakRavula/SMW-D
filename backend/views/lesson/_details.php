@@ -2,7 +2,12 @@
 
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use yii\widgets\Pjax;
+use yii\helpers\Html;
 ?>
+<?php Pjax::begin([
+	'id' => 'lesson-detail'
+]);?>
 <?php
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
@@ -19,5 +24,5 @@ LteBox::begin([
 	<dt>Status</dt>
 	<dd><?= $model->getStatus(); ?></dd>
 </dl>
-<?php
-LteBox::end()?>
+<?php LteBox::end()?>
+<?php Pjax::end(); ?>

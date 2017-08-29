@@ -11,7 +11,7 @@ use yii\helpers\ArrayHelper;
 use common\models\Classroom;
 use common\models\User;
 use common\models\LocationAvailability;
-require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -19,11 +19,6 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 ?>
 
 <div class="lesson-qualify">
-    <?=
-        $this->render('_view', [
-            'model' => $model,
-        ]);
-    ?>
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
@@ -34,8 +29,8 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                 'class' => 'p-10',
             ]
         ]); ?>
-   <div class="row-fluid">
-	   <div class="col-md-3">
+		<div class="row">
+	   <div class="col-md-4">
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
                 [
@@ -46,7 +41,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             ]);
             ?>
         </div>
-	   <div class="col-md-4">
+	   <div class="col-md-5">
         <?php
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->dropDownList(
@@ -60,9 +55,9 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 		))->label();
             ?>  
         </div>
-        <div class="col-md-5">
-            <div class="row">
-            <div class="col-md-6" style="width:60%;">
+        </div>
+	<div class="row">
+            <div class="col-md-4" style="width:40%;">
             <div class="form-group field-calendar-date-time-picker-date">
                 <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
                 <div id="calendar-date-time-picker-date-datetime" class="input-group date">
@@ -76,7 +71,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             </div>
             <div class="col-md-3" style="padding:0;">
                 <div class="hand lesson-edit-calendar">
-                    <div id="spinner" class="spinner" style="display:none">
+                    <div id="spinner" class="spinner">
                         <img src="/backend/web/img/loader.gif" alt="" height="50" width="52"/>
                     </div>
                 <p> <label> Calendar View </label></p>
@@ -84,11 +79,11 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                 </div>
             </div>
             </div>
-        </div>
 	   <div class="clearfix"></div>
-		   <?php $locationId = Yii::$app->session->get('location_id'); ?>
+		<?php $locationId = Yii::$app->session->get('location_id'); ?>
 		<?php if($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
-		<div class="col-md-3">
+	   <div class="row">
+		<div class="col-md-4">
 			<?php
                 if ($privateLessonModel->isNewRecord) {
                     $date = new \DateTime($model->date);
@@ -109,11 +104,11 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             ]);
             ?>
 		</div>
+		</div>
 		<?php endif; ?>
-	</div>
-   <div class="col-md-12 p-l-20 form-group">
+   <div class="form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-primary', 'name' => 'button']) ?>
-		<?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+		<?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);
         ?>
 		<div class="clearfix"></div>
 	</div>
@@ -136,6 +131,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 <script type="text/javascript">
 $(document).on('click', '.lesson-edit-calendar', function () {
     $('#spinner').show();
+    $('#lesson-schedule-modal').modal('hide');
     var teacherId = $('#lesson-teacherid').val();
     var duration = $('#course-duration').val();
     var params = $.param({ id: teacherId });
@@ -163,6 +159,7 @@ $(document).on('click', '.lesson-edit-calendar', function () {
 });
 
 $(document).on('after-date-set', function(event, params) {
+$('#lesson-schedule-modal').modal('show');
     if (!$.isEmptyObject(params.date)) {
         $('#lesson-date').val(moment(params.date).format('DD-MM-YYYY h:mm A')).trigger('change');
     }

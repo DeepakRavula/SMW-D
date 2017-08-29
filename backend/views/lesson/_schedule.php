@@ -8,8 +8,8 @@ use common\models\User;
 <?php
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i class="fa fa-pencil"></i>',
-	'title' => 'Schedule',
+	'boxTools' =>'<i class="fa fa-pencil edit-lesson-schedule"></i>',
+    'title' => 'Schedule',
 	'withBorder' => true,
 ])
 ?>

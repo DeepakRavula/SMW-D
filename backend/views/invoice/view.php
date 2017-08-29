@@ -9,14 +9,43 @@ use kartik\switchinput\SwitchInput;
 use common\models\Note;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
+use common\models\Payment;
+use yii\data\ActiveDataProvider;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 
 $this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice';
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'InvoiceSearch[type]' => $model->type], ['class' => 'go-back']);
-?>
+$this->params['action-button'] = $this->render('_buttons', [
+	'model' => $model,
+]); ?>
+<?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
+<?php $this->params['show-all'] = $this->render('_show-all', [
+	'model' => $model,
+]); ?>
+<?php endif; ?>
 <div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
+<div class="row">
+	<div class="col-md-6">
+		<?=
+		$this->render('_details', [
+			'model' => $model,
+		]);
+		?>
+	</div>
+    <?php if (!empty($customer)):?>
+	<div class="col-md-6">
+		<?=
+		$this->render('_customer-details', [
+			'model' => $model,
+			'customer' => $customer,
+			'searchModel' => $searchModel,
+		]);
+		?>	
+	</div>
+	<?php endif; ?>
+</div>
 <?php
 $lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->id]);
 if (!empty($lineItem)) {
@@ -36,55 +65,6 @@ Modal::begin([
 ]);
 Modal::end();
 ?>
-<div class="invoice-index p0">
-		<?= Html::a('<i class="fa fa-envelope-o"></i> Mail this Invoice', '#', [
-			'id' => 'invoice-mail-button',
-			'class' => 'btn btn-default pull-right  m-l-10']) ?>
-        <?= Html::a('<i class="fa fa-print"></i> Print', ['print/invoice', 'id' => $model->id], ['class' => 'btn btn-default pull-right m-l-10', 'target' => '_blank']) ?>
-<?php $form = ActiveForm::begin([
-                'id' => 'mail-flag',
-            ]);?>
-		<?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
-                    <?php if ((bool) !$model->isDeleted()): ?>
-			<?=
-			Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id],
-				[
-				'class' => 'btn btn-primary pull-right',
-                                'data' => [
-                                    'confirm' => 'Are you sure you want to delete this invoice?',
-                                    'method' => 'post',
-                                ],
-				'id' => 'delete-button',
-			])
-			?>
-                    <?php endif; ?>
-			<div class='mail-flag'>
-			<?=
-            $form->field($model, 'isSent')->widget(SwitchInput::classname(),
-                [
-                'name' => 'isSent',
-                'pluginOptions' => [
-                    'handleWidth' => 60, 
-                    'onText' => 'Sent',
-                    'offText' => 'Not Sent',
-                ],
-            ])->label(false);
-            ?>
-			</div>
-		<?php elseif($model->canRevert()): ?>
-                    <?=
-			Html::a('<i class="fa fa-remove"></i> Return this invoice', ['revert-invoice', 'id' => $model->id],
-				[
-				'class' => 'btn btn-primary pull-right',
-                                'data' => [
-                                    'confirm' => 'Are you sure you want to return this invoice?',
-                                ],
-				'id' => 'revert-button',
-			])
-			?>
-                <?php endif; ?>
-    <?php ActiveForm::end(); ?>
-</div>
 <?php if(empty($model->lineItem) || $model->lineItem->isMisc()) : ?>
 <div class="nav-tabs-custom">
 <?php 
@@ -121,12 +101,20 @@ $guestContent = $this->render('_guest', [
 <?php endif; ?>
 <div class="nav-tabs-custom">
 <?php 
-
+$payments = Payment::find()
+	->joinWith(['invoicePayments' => function ($query) use($model) {
+		$query->where(['invoice_id' => $model->id]);
+	}])
+	->groupBy('payment.payment_method_id');
+$paymentsDataProvider = new ActiveDataProvider([
+	'query' => $payments,
+]);
 $invoiceContent = $this->render('_view-invoice', [
     'model' => $model,
     'customer' => $customer,
     'searchModel' => $searchModel,
     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+	'paymentsDataProvider' => $paymentsDataProvider
 ]);
 $paymentContent = $this->render('payment/_index', [
     'model' => $model,
@@ -140,24 +128,18 @@ $noteContent = $this->render('note/view', [
 $logContent = $this->render('log', [
 	'model' => $model,
 ]);
+
 ?>
 <?php echo Tabs::widget([
     'items' => [
         [
-            'label' => 'Details',
+            'label' => 'Items',
             'content' => $invoiceContent,
             'options' => [
                     'id' => 'invoice',
                 ],
         ],
-		[
-            'label' => 'Notes',
-            'content' => $noteContent,
-            'options' => [
-                'id' => 'note',
-            ],
-        ],
-        [
+		 [
             'label' => 'Payments',
             'content' => $paymentContent,
             'options' => [
@@ -165,7 +147,15 @@ $logContent = $this->render('log', [
                 ],
         ],
 		[
-            'label' => 'Logs',
+            'label' => 'Comments',
+            'content' => $noteContent,
+            'options' => [
+                'id' => 'comment',
+            ],
+        ],
+       
+		[
+            'label' => 'History',
             'content' => $logContent,
             'options' => [
                     'id' => 'log',

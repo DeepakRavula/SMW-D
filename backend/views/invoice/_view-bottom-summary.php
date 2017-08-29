@@ -19,7 +19,7 @@
 	<td>Paid</td>
 	<td><?= !empty($model->invoicePaymentTotal) ? Yii::$app->formatter->asCurrency($model->invoicePaymentTotal) : '$0.00'; ?></td>
 </tr>
-
+<tr>
 <td class="p-t-20"><strong>Balance</strong></td>
 <td class="p-t-20"><strong><?= Yii::$app->formatter->asCurrency($model->balance); ?></strong></td>
 </tr>
