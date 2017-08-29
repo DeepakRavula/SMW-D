@@ -33,6 +33,15 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	]);
 	?>
 </div>
+<div class="row">
+	<?php
+	echo $this->render('exam-result/view', [
+		'model' => new ExamResult(),
+		'studentModel' => $model,
+		'examResultDataProvider' => $examResultDataProvider
+	]);
+	?>
+</div>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div class="nav-tabs-custom">
@@ -59,12 +68,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 
 		$logContent = $this->render('log/index', [
 			'model' => $model,
-		]);
-
-		$examResultContent = $this->render('exam-result/view', [
-			'model' => new ExamResult(),
-			'studentModel' => $model,
-			'examResultDataProvider' => $examResultDataProvider
 		]);
 
 		$noteContent = $this->render('note/view', [
@@ -106,13 +109,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 				'content' => $noteContent,
 				'options' => [
 					'id' => 'note',
-				],
-			],
-				[
-				'label' => 'Evaluations',
-				'content' => $examResultContent,
-				'options' => [
-					'id' => 'exam-result',
 				],
 			],
 				[
