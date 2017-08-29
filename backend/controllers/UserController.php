@@ -580,21 +580,15 @@ class UserController extends Controller
 		]);
 		
         $response = Yii::$app->response;
-//		print_r($_POST);die;
+		//print_r($_POST);die;
         if ($request->isPost) {
             $oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
             Model::loadMultiple($phoneNumberModels, $request->post());
             $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
-			
-            if ($request->isAjax) {
-                $response->format = Response::FORMAT_JSON;
 
-                return  ActiveForm::validateMultiple($phoneNumberModels);
-            }
             $valid = Model::validateMultiple($phoneNumberModels);
             if ($valid) {
-				die('sdfdf');
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
 					if (!empty($deletedPhoneIDs)) {
