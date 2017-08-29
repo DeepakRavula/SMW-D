@@ -42,6 +42,11 @@ use kartik\grid\GridView;
         </address>
           </div>
       </div>
+         <div class="col-sm-4 invoice-col">
+        <b></b><br>
+        <br>
+        <b></b>
+      </div>
       <!-- /.col -->
       <div class="col-md-6 invoice-col">
           <div class="invoice-print-address">
@@ -70,15 +75,12 @@ use kartik\grid\GridView;
           </div>
       </div>
       <!-- /.col -->
-     <div class="col-sm-4 invoice-col">
-        <b>Time Voucher</b><br>
-        <br>
-        <b><?php echo  $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b>
-      </div>
+    
       <!-- /.col -->
     </div>
     <div class="row">
       <div class="col-xs-12 table-responsive">
+          <h2 class="col-md-12"><b><?= $model->publicIdentity . '\'s Time Voucher for ' . $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h2>
 <div class="report-grid">
 <?php
 if(!$searchModel->summariseReport) {
