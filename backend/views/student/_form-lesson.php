@@ -102,7 +102,8 @@ use kartik\time\TimePicker;
         <div class="col-md-12">
             <div id="lesson-calendar">
                 <div id="spinner" class="spinner" style="" >
-                    <img src="/backend/web/img/loader.gif" alt="" height="50" width="50"/>
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                    <span class="sr-only">Loading...</span>
                 </div>  
             </div>
         </div>
