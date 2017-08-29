@@ -4,7 +4,7 @@ use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
 ?>
 <?php Pjax::begin([
-	'id' => 'user-profile'
+	'id' => 'user-phone'
 ]); ?>
 	<?php
 	LteBox::begin([

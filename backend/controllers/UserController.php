@@ -54,7 +54,7 @@ class UserController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile'],
+                'only' => ['edit-profile', 'edit-phone'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -574,9 +574,14 @@ class UserController extends Controller
 		$model = new UserForm();
         $model->setModel($this->findModel($id));	
         $phoneNumberModels = $model->phoneNumbers;
-
+		$data = $this->renderAjax('update/_phone', [
+			'model' => $model,
+			'phoneNumberModels' => $phoneNumberModels,
+		]);
+		
         $response = Yii::$app->response;
-        if ($model->load($request->post())) {
+//		print_r($_POST);die;
+        if ($request->isPost) {
             $oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
             Model::loadMultiple($phoneNumberModels, $request->post());
@@ -585,60 +590,38 @@ class UserController extends Controller
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
 
-                return ArrayHelper::merge(
-                    ActiveForm::validate($model), ActiveForm::validateMultiple($phoneNumberModels));
+                return  ActiveForm::validateMultiple($phoneNumberModels);
             }
-            $valid = $model->validate();
-            $valid = (Model::validateMultiple($phoneNumberModels)) && $valid;
+            $valid = Model::validateMultiple($phoneNumberModels);
             if ($valid) {
+				die('sdfdf');
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
-                    if ($flag = $model->save(false)) {
-                        if (!empty($deletedPhoneIDs)) {
-                            PhoneNumber::deleteAll(['id' => $deletedPhoneIDs]);
-                        }
-                        foreach ($phoneNumberModels as $phoneNumberModel) {
-                            $phoneNumberModel->user_id = $id;
-                            if (!($flag = $phoneNumberModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-                    }
+					if (!empty($deletedPhoneIDs)) {
+						PhoneNumber::deleteAll(['id' => $deletedPhoneIDs]);
+					}
+					foreach ($phoneNumberModels as $phoneNumberModel) {
+						$phoneNumberModel->user_id = $id;
+						if (!($flag = $phoneNumberModel->save(false))) {
+							$transaction->rollBack();
+							break;
+						}
+					}
                     if ($flag) {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('alert', [
-                                'options' => ['class' => 'alert-success'],
-                                'body' => ucwords($model->roles).' profile has been updated successfully',
-                        ]);
-						return $this->redirect($link);
+                       	return [
+							'status' => true,
+						]; 
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();
                 }
-            }
-        }
-
-        return $this->render('update', [
-			'model' => $model,
-			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
-			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
-			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
-        ]);
-		if ($model->load($request->post())) {
-			if($model->save()) {
-				return [
-				   'status' => true,
-				];	
-			} else {
-				$errors = ActiveForm::validate($model);
-                return [
-                    'status' => false,
-                    'errors' => current($errors)
-                ];
-			}
+            } 
+        } else {
+			return [
+				'status' => true,
+				'data' => $data,
+			];
 		}
 	}
     /**
