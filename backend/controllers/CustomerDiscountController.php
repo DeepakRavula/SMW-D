@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use common\models\User;
 use common\models\CustomerDiscountLog;
 use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
@@ -84,12 +85,16 @@ class CustomerDiscountController extends Controller
         	$customerDiscountModel->userName = $userModel->publicIdentity;
 		}
         if ($customerDiscountModel->load(Yii::$app->request->post()) && $customerDiscountModel->save()) {
-			return [
-				'status' => true,
-				'message' => $message,
-				'data' => 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.' 
-			];
-        }
+				return [
+				   'status' => true,
+				];	
+			} else {
+				$errors = ActiveForm::validate($customerDiscountmodel);
+                return [
+                    'status' => false,
+                    'errors' => current($errors)
+                ];
+			}
     }
 
     /**
