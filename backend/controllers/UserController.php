@@ -617,6 +617,56 @@ class UserController extends Controller
 			];
 		}
 	}
+	public function actionEditAddress($id)
+	{
+		$request = Yii::$app->request;
+		$model = new UserForm();
+        $model->setModel($this->findModel($id));	
+        $addressModels = $model->addresses;
+        $phoneNumberModels = $model->phoneNumbers;
+		$data = $this->renderAjax('update/_address', [
+			'model' => $model,
+			'phoneNumberModels' => $phoneNumberModels,
+		]);
+		
+        $response = Yii::$app->response;
+        if ($request->isPost) {
+            $oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
+            $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
+            Model::loadMultiple($phoneNumberModels, $request->post());
+            $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
+
+            $valid = Model::validateMultiple($phoneNumberModels);
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+					if (!empty($deletedPhoneIDs)) {
+						PhoneNumber::deleteAll(['id' => $deletedPhoneIDs]);
+					}
+					foreach ($phoneNumberModels as $phoneNumberModel) {
+						$phoneNumberModel->user_id = $id;
+						if (!($flag = $phoneNumberModel->save(false))) {
+							$transaction->rollBack();
+							break;
+						}
+					}
+                    if ($flag) {
+                        $transaction->commit();
+                       	return [
+							'status' => true,
+						]; 
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            } 
+        } else {
+			return [
+				'status' => true,
+				'data' => $data,
+			];
+		}
+	}
     /**
      * Updates an existing User model.
      *

@@ -32,6 +32,10 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'role' => $roleName,
 		]);
 		?>
+		<?= $this->render('_address', [
+			'model' => $model,
+		]);
+		?>
 	</div> 
 	<div class="col-md-6">	
 		<?php
@@ -354,6 +358,12 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 ]); ?>
 <div id="phone-content"></div>
 <?php Modal::end(); ?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Edit</h4>',
+    'id' => 'edit-address-modal',
+]); ?>
+<div id="address-content"></div>
+<?php Modal::end(); ?>
 <script>
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
@@ -406,6 +416,48 @@ $(document).ready(function(){
                     $('#edit-phone-modal').modal('show');
                 	$('#edit-phone-modal .modal-dialog').css({'width': '800px'});
                 }
+            }
+        });
+        return false;
+    });
+	$(document).on('click', '.address-cancel-btn', function () {
+        $('#edit-address-modal').modal('hide');
+        return false;
+    });
+	$(document).on('click', '.user-address-btn', function () {
+		$.ajax({
+            url    : '<?= Url::to(['user/edit-address', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#phone-content').html(response.data);
+                    $('#edit-phone-modal').modal('show');
+                	$('#edit-phone-modal .modal-dialog').css({'width': '800px'});
+                }
+            }
+        });
+        return false;
+    });
+	$(document).on('beforeSubmit', '#phone-form', function () {
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+        			$('#edit-phone-modal').modal('hide');
+        			$.pjax.reload({container:"#user-phone",replace:false,  timeout: 4000});
+                    
+                } else {
+					$('#phone-form').yiiActiveForm('updateMessages', response.errors
+					, true);
+				}
             }
         });
         return false;

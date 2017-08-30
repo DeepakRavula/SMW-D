@@ -2,7 +2,6 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
-use yii\helpers\Html;
 
 ?>
 <?php Pjax::begin([
