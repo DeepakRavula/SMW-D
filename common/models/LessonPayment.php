@@ -9,14 +9,14 @@ namespace common\models;
  * @property string $name
  * @property int $province_id
  */
-class LessonCredit extends \yii\db\ActiveRecord
+class LessonPayment extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%lesson_credit}}';
+        return '{{%lesson_payment}}';
     }
 
     /**
