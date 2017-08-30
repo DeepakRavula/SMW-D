@@ -25,12 +25,21 @@ $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back']);
 ?>
 <div class="row">
-	<?php
-	echo $this->render('_profile', [
-		'model' => $model,
-		'role' => $roleName,
-	]);
-	?>
+	<div class="col-md-6">	
+		<?php
+		echo $this->render('_profile', [
+			'model' => $model,
+			'role' => $roleName,
+		]);
+		?>
+	</div> 
+	<div class="col-md-6">	
+		<?php
+		echo $this->render('_phone', [
+			'model' => $model,
+		]);
+		?>
+	</div> 
 </div>
 <div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
@@ -335,9 +344,15 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
     'header' => '<h4 class="m-0"> Edit</h4>',
     'id' => 'user-edit-modal',
 ]); ?>
-<?= $this->render('_form-profile-update', [
+<?= $this->render('update/_profile', [
 	'model' => $userForm,
 ]);?>
+<?php Modal::end(); ?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Edit</h4>',
+    'id' => 'edit-phone-modal',
+]); ?>
+<div id="phone-content"></div>
 <?php Modal::end(); ?>
 <script>
 	$('.availability').click(function () {
@@ -371,6 +386,28 @@ $(document).ready(function(){
     });
 	$(document).on('click', '.user-edit-button', function () {
         $('#user-edit-modal').modal('show');
+        return false;
+    });
+	$(document).on('click', '.phone-cancel-btn', function () {
+        $('#edit-phone-modal').modal('hide');
+        return false;
+    });
+	$(document).on('click', '.user-phone-btn', function () {
+		$.ajax({
+            url    : '<?= Url::to(['user/edit-phone', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#phone-content').html(response.data);
+                    $('#edit-phone-modal').modal('show');
+                	$('#edit-phone-modal .modal-dialog').css({'width': '800px'});
+                }
+            }
+        });
         return false;
     });
 	$(document).on('click', '#user-cancel-btn', function () {
@@ -411,6 +448,26 @@ $(document).ready(function(){
                 } else {
                     $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                 }
+            }
+        });
+        return false;
+    });
+	$(document).on('beforeSubmit', '#phone-form', function () {
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+        			$('#edit-phone-modal').modal('hide');
+        			$.pjax.reload({container:"#user-phone",replace:false,  timeout: 4000});
+                    
+                } else {
+					$('#phone-form').yiiActiveForm('updateMessages', response.errors
+					, true);
+				}
             }
         });
         return false;

@@ -13,7 +13,6 @@ $boxTools = array_merge($boxTools, $merge);
 <?php Pjax::begin([
 	'id' => 'user-profile'
 ]); ?>
-<div class="col-md-6">	
 	<?php
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,
@@ -31,5 +30,4 @@ $boxTools = array_merge($boxTools, $merge);
 		<dd><?= $role; ?></dd>
 	</dl>
 	<?php LteBox::end() ?>
-</div> 
 <?php Pjax::end(); ?>

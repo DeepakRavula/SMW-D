@@ -33,7 +33,7 @@ class PaymentController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'credit-payment', 'update', 'delete'],
+                'only' => ['edit', 'invoice-payment', 'credit-payment', 'update', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -196,17 +196,19 @@ class PaymentController extends Controller
         if ($paymentModel->load($request->post())) {
             $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
             $paymentModel->invoiceId = $id;
-            $paymentModel->save();
-            $transaction->commit();
-			
-            Yii::$app->session->setFlash('alert',
-                [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Payment has been recorded successfully',
-            ]);
-
-            return $this->redirect(['invoice/view', 'id' => $id, '#' => 'payment']);
-        }
+            if($paymentModel->save()) {
+            	$transaction->commit();
+				return [
+					'status' => true,
+				];	
+			} else {
+				$errors = ActiveForm::validate($paymentModel); 
+			return [
+				'status' => false,
+				'errors' => $errors['payment-amount'],
+			];
+		}
+        } 
     }
 
     public function actionCreditPayment($id)

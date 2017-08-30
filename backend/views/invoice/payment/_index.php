@@ -6,8 +6,27 @@ use common\models\PaymentMethod;
 use yii\bootstrap\ButtonGroup;
 use yii\helpers\Url;
 use yii\grid\GridView;
+use yii\bootstrap\Modal;
 
 ?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Add Payment</h4>',
+    'id' => 'payment-modal',
+]);
+echo $this->render('payment-method/_form', [
+	'model' => new Payment(),
+	'invoice' => $model,
+]);
+Modal::end(); ?>
+<?= $this->render('payment-method/_apply-credit', [
+	'invoice' => $model,
+]);?>
+<div style="margin-bottom: 10px">
+<?= Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['#'], ['class' => 'btn btn-primary btn-sm m-r-10 add-payment']);?>
+	<?php if($model->isInvoice()) : ?>
+	<?= Html::a(Yii::t('backend', 'Apply Credit'), ['#'], ['class' => 'btn btn-primary btn-sm apply-credit']);?>
+	<?php endif; ?>
+</div>
 <?php
 $columns = [
     'date:date',
@@ -30,6 +49,7 @@ $columns = [
 			'format' => 'currency',
         ],
     ]; ?>
+
 <div>
 	<?php yii\widgets\Pjax::begin([
 		'id' => 'invoice-payment-listing',
@@ -44,78 +64,13 @@ $columns = [
     ?>
 <?php \yii\widgets\Pjax::end(); ?>	
 </div>
-<div class="col-md-8 m-t-10">  
-    <?php $buttons = [];
-    ?>
-    <?php foreach (PaymentMethod::find()
-        ->where([
-                'active' => PaymentMethod::STATUS_ACTIVE,
-                'displayed' => 1,
-            ])
-        ->orderBy(['sortOrder' => SORT_ASC])->all() as $method):?>
-        <?php if ((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE):?>
-            <?php if ($method->name === 'Apply Credit'):?>
-                <?php continue; ?>
-            <?php endif; ?>
-        <?php endif; ?>
-        <?php 
-        $paymentType = $method->name;
-        if (in_array($method->id, [8, 9, 10, 11])) {
-            $paymentType = 'Credit Card';
-        }?>
-        <?php $paymentType = str_replace(' ', '-', trim(strtolower($paymentType))); ?>
-        <?php $buttons[] = [
-                'label' => $method->name,
-                'options' => [
-                    'class' => 'btn btn-outline-info',
-                    'id' => str_replace(' ', '-', trim(strtolower($method->name))).'-btn',
-                    'data-payment-type' => $paymentType,
-                    'data-payment-type-id' => $method->id,
-                ],
-        ]; ?>
-    <?php endforeach; ?>
-
-    <?php // a button group with items configuration
-    echo ButtonGroup::widget([
-        'buttons' => $buttons,
-        'options' => [
-            'id' => 'payment-method-btn-section',
-            'class' => 'btn-group-horizontal p-l-10 m-t-20 m-b-20',
-        ],
-    ]); ?>
-
-    <?php
-        $amount = 0.0;
-        if ($model->total > $model->invoicePaymentTotal) {
-            $amount = $model->balance;
-        }
-    ?>
-
-    <?php foreach (PaymentMethod::findAll([
-                'active' => PaymentMethod::STATUS_ACTIVE,
-                'displayed' => 1,
-                'id' => [4, 5, 6, 7],
-        ]) as $method):?>
-        <div id="<?= str_replace(' ', '-', trim(strtolower($method->name))).'-section'; ?>" class="payment-method-section" style="display: none;">
-            <?php echo $this->render('payment-method/_'.str_replace(' ', '-', trim(strtolower($method->name))), [
-                    'model' => new Payment(),
-                    'invoice' => $model,
-                    'amount' => $amount,
-            ]); ?>  
-        </div>
-    <?php endforeach; ?>
-
-        <div id="credit-card-section" class="payment-method-section" style="display: none;">
-            <?php echo $this->render('payment-method/_credit-card', [
-                    'model' => new Payment(),
-                    'invoice' => $model,
-                    'amount' => $amount,
-            ]); ?>  
-        </div>
-</div>
-
+<?php
+	$amount = 0.0;
+	if ($model->total > $model->invoicePaymentTotal) {
+		$amount = $model->balance;
+	}
+?>
 <?php if ((int) $model->type === Invoice::TYPE_INVOICE):?>
-
 <div id="invoice-payment-detail" class="pull-right col-md-4  m-b-20">
 <?php echo $this->render('_invoice-summary', [
         'model' => $model,
@@ -123,32 +78,9 @@ $columns = [
 </div>
 <div class="clearfix"></div>
 <?php endif; ?>
-
 <script type="text/javascript">
 $(document).ready(function(){
-    $('#payment-method-btn-section').on('click', '.btn', function() {
-        $('.payment-method-section').hide();
-        $('#' + $(this).data('payment-type') + '-section').show();
-        $('.payment-method-id').val($(this).data('payment-type-id'));
-        $('#payment-method-btn-section .btn').removeClass('active');
-        $(this).addClass('active');
-        if($(this).data('payment-type') == 'apply-credit'){
-           $('input[type="text"]').val('');
-           $('#credit-modal').modal('show');
-        }
-        $.ajax({
-            url    : '<?= Url::to(['invoice/get-payment-amount', 'id' => $model->id]); ?>',
-            type   : 'get',
-            dataType: 'json',
-            success: function(response)
-            {
-                if (response.status) {
-                    $('.payment-amount').val(response.amount);
-                }
-            }
-        });
-    });
-  $('td').click(function () {
+  	$('td').click(function () {
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
         var type = $(this).closest('tr').data('source');    
@@ -163,30 +95,28 @@ $(document).ready(function(){
 		$('#payment-sourceid').val(id);
 		$('#payment-sourcetype').val(type);
     });
-});
-</script>
-<script>
-$(document).on('beforeSubmit', '#apply-credit-form', function (e) {
-	$.ajax({
-		url    : $(this).attr('action'),
-		type   : 'post',
-		dataType: 'json',
-		data   : $(this).serialize(),
-		success: function(response)
-		{
-		   if(response.status)
-		   {
-				$.pjax.reload({container : '#invoice-payment-listing', timeout : 4000});
-                invoice.updateSummarySectionAndStatus();
-				$('#credit-modal').modal('hide');
-			}else
+	$(document).on('beforeSubmit', '#apply-credit-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: 'json',
+			data   : $(this).serialize(),
+			success: function(response)
 			{
-			 $('#apply-credit-form').yiiActiveForm('updateMessages',
-				   response.errors
-				, true);
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#invoice-payment-listing', timeout : 4000});
+					invoice.updateSummarySectionAndStatus();
+					$('#credit-modal').modal('hide');
+				}else
+				{
+				 $('#apply-credit-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
+				}
 			}
-		}
-		});
-		return false;
+			});
+			return false;
+	});
 });
 </script>
