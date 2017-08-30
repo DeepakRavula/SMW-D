@@ -1,41 +1,50 @@
 <?php
 
-use yii\data\ActiveDataProvider;
 use common\models\ExamResult;
+use yii\widgets\Pjax;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
-use yii\helpers\Url;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-	<div class="pull-right">
-		<a href="#" class="add-new-exam-result text-add-new m-r-10"><i class="fa fa-plus"></i></a>
-		<?= Html::a('<i class="fa fa-print"></i>', ['print/evaluation', 'studentId' => $studentModel->id], ['class' => 'text-add-new', 'target' => '_blank']) ?>
-	</div>
-		<?php
-		Modal::begin([
-		    'header' => '<h4 class="m-0">Evaluations</h4>',
-		    'id'=>'new-exam-result-modal',
-		]);
-		 echo $this->render('_form', [
-				'model' => new ExamResult(),
-		        'studentModel' => $studentModel,
-		]);
-		Modal::end();
-		?>		
-	<div>
-	<?php yii\widgets\Pjax::begin([
+<?php
+	Modal::begin([
+		'header' => '<h4 class="m-0">Evaluations</h4>',
+		'id'=>'new-exam-result-modal',
+	]);
+	 echo $this->render('_form', [
+			'model' => new ExamResult(),
+			'studentModel' => $studentModel,
+	]);
+	Modal::end();
+	?>		
+<div class="col-md-12">	
+	<?php
+	LteBox::begin([
+		'type' => LteConst::TYPE_DEFAULT,
+		'boxTools' => [
+			'<i class="fa fa-plus add-new-exam-result m-r-10"></i>',
+			Html::a('<i class="fa fa-print"></i>', ['print/evaluation', 'studentId' => $studentModel->id], ['target' => '_blank'])
+		],
+		'title' => 'Evaluations',
+		'withBorder' => true,
+	])
+	?>
+<?php Pjax::begin([
 		'id' => 'student-exam-result-listing',
 		'timeout' => 6000,
 	]) ?>
 	<?php
 	echo GridView::widget([
 	    'dataProvider' => $examResultDataProvider,
+		'summary' => '',
 	    'options' => ['class' => 'col-md-12'],
-	    'tableOptions' => ['class' => 'table table-bordered'],
+	    'tableOptions' => ['class' => 'table table-condensed'],
 	    'headerRowOptions' => ['class' => 'bg-light-gray'],
 	    'columns' => [
 	        [
@@ -67,5 +76,6 @@ use yii\helpers\Url;
 				    ],
 	]);
 	?>
-	<?php \yii\widgets\Pjax::end(); ?>	
-	</div>
+	<?php Pjax::end(); ?>		
+	<?php LteBox::end() ?>
+</div> 

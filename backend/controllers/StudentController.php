@@ -83,8 +83,8 @@ class StudentController extends Controller
 			}])
 			->location($locationId)
 			->notDeleted()
-                        ->isConfirmed()
-                        ->andWhere(['studentId' => $model->id]);
+			->isConfirmed()
+			->andWhere(['studentId' => $model->id]);
         $enrolments = $query->all();
         $allEnrolments = [];
         foreach ($enrolments as $enrolment) {
@@ -128,6 +128,9 @@ class StudentController extends Controller
 		
         $examResultDataProvider = new ActiveDataProvider([
             'query' => $examResults,
+			'pagination' => [
+				'pageSize' => 5,
+			]
         ]);
 
 		$notes = Note::find()
