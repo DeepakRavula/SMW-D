@@ -7,9 +7,6 @@ use yii\bootstrap\Modal;
 use common\models\Qualification;
 ?>
 <div class="row-fluid m-t-20 p-10">
-	<div>
-		<h5 class="m-t-5"><i class="fa fa-graduation-cap"></i> Qualifications</h5>
-	</div>
     <?php yii\widgets\Pjax::begin(['id' => 'qualification-grid']); ?>
 	<div class="row p-10">
 	<div class="col-xs-6">

@@ -7,12 +7,11 @@ use common\models\Invoice;
 ?>
 
 <div class="col-md-12">
-    <h4 class="pull-left m-r-20">Pro Forma Invoices</h4>
     <?php
         echo Html::a(
             Html::tag('i', '', ['class' => 'fa fa-plus-circle']),
             Url::to(['/invoice/create', 'Invoice[customer_id]' => $userModel->id]), [
-            'class' => 'add-new-invoice text-add-new',
+            'class' => 'add-new-invoice pull-right',
             ]);
     ?>
 </div>

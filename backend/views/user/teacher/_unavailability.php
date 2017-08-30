@@ -7,9 +7,8 @@ use yii\bootstrap\Modal;
 use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);
 ?>
-<div class="col-md-4 row-fluid">
-<h4 class="pull-left m-r-20">Unavailabilities </h4> 
-	<a href="#" class="add-unavailability text-add-new"><i class="fa fa-plus"></i></a>
+<div class="row-fluid">
+	<a href="#" class="add-unavailability pull-right"><i class="fa fa-plus"></i></a>
 </div>
 <div>
 <?php yii\widgets\Pjax::begin([

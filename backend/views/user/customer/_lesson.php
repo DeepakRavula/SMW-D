@@ -5,9 +5,6 @@ use yii\helpers\Url;
 use yii\grid\GridView;
 
 ?>
-<div class="col-md-12">
-	<h4 class="pull-left m-r-20">Lessons</h4>
-</div>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
     'id' => 'customer-lesson-listing',
