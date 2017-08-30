@@ -8,7 +8,7 @@ use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);
 ?>
 <div class="row-fluid">
-	<a href="#" class="add-unavailability pull-right"><i class="fa fa-plus"></i></a>
+	<a href="#" title="Add" class="add-unavailability pull-right"><i class="fa fa-plus"></i></a>
 </div>
 <div>
 <?php yii\widgets\Pjax::begin([

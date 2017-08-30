@@ -26,8 +26,8 @@ Pjax::begin([
 		LteBox::begin([
 			'type' => LteConst::TYPE_DEFAULT,
 			'boxTools' => [
-				'<i class="fa fa-pencil student-profile-edit-button m-r-10"></i>',
-				'<i id="student-merge" class="fa fa-chain"></i>'
+				'<i title="Edit" class="fa fa-pencil student-profile-edit-button m-r-10"></i>',
+				'<i title="Merge" id="student-merge" class="fa fa-chain"></i>'
 			],
 			'title' => 'Details',
 			'withBorder' => true,

@@ -28,8 +28,8 @@ use insolita\wgadminlte\LteConst;
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,
 		'boxTools' => [
-			'<i class="fa fa-plus add-new-exam-result m-r-10"></i>',
-			Html::a('<i class="fa fa-print"></i>', ['print/evaluation', 'studentId' => $studentModel->id], ['target' => '_blank'])
+			'<i title="Add" class="fa fa-plus add-new-exam-result m-r-10"></i>',
+			Html::a('<i title="Print" class="fa fa-print"></i>', ['print/evaluation', 'studentId' => $studentModel->id], ['target' => '_blank'])
 		],
 		'title' => 'Evaluations',
 		'withBorder' => true,

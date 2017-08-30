@@ -8,7 +8,7 @@ use common\models\LocationAvailability;
 ?>
 <div class="row p-10">
     <div class="pull-right m-r-10">
-    <?= Html::a('<i class="fa fa-plus"></i>', ['enrolment', 'id' => $model->id], ['class' => 'add-new-lesson text-add-new']); ?>
+    <?= Html::a('<i title="Add" class="fa fa-plus"></i>', ['enrolment', 'id' => $model->id], ['class' => 'add-new-lesson text-add-new']); ?>
     <div class="clearfix"></div>
     </div>
 	<?php

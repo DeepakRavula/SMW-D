@@ -10,8 +10,7 @@ use yii\bootstrap\Modal;
 <?php $this->render('/lesson/_color-code'); ?>
 <div class="">
     <div class="pull-right m-r-10">
-    	<a href="#"  id="new-lesson" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
-    	<div class="clearfix"></div>
+    	<a href="#"  title="Add" id="new-lesson" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
     </div>
 	<?php
 	Modal::begin([

@@ -11,7 +11,8 @@ use common\models\Invoice;
         echo Html::a(
             Html::tag('i', '', ['class' => 'fa fa-plus-circle']),
             Url::to(['/invoice/create', 'Invoice[customer_id]' => $userModel->id]), [
-            'class' => 'add-new-invoice pull-right',
+            'class' => 'add-new-invoice pull-right', 
+			'title' => 'Add'
             ]);
     ?>
 </div>
