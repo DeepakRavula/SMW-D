@@ -218,6 +218,29 @@ var payment = {
 		$('#invoice-mail-modal').modal('show');
 		return false;
   	});
+	$(document).on('click', '.apply-credit', function (e) {
+		$('#credit-modal').modal('show');
+		return false;
+  	});
+	$(document).on('click', '.add-payment', function (e) {
+		$('#payment-modal').modal('show');
+		$.ajax({
+            url    : '<?= Url::to(['invoice/get-payment-amount', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('.payment-amount').val(response.amount);
+                }
+            }
+        });
+		return false;
+  	});
+	$(document).on('click', '.payment-cancel-btn', function (e) {
+		$('#payment-modal').modal('hide');
+		return false;
+  	});
 	$(document).on('beforeSubmit', '#invoice-note-form', function (e) {
 		$.ajax({
 			url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE]); ?>',
@@ -233,6 +256,30 @@ var payment = {
 				}else
 				{
 				 $('#invoice-note-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#payment-form', function (e) {
+		e.preventDefault();
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$('#payment-modal').modal('hide');
+					$.pjax.reload({container: '#invoice-payment-listing', replace:false, timeout: 6000});
+					payment.onEditableGridSuccess();
+				}else
+				{
+				 $('#payment-form').yiiActiveForm('updateMessages',
 					   response.errors
 					, true);
 				}

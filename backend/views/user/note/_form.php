@@ -17,9 +17,6 @@ use yii\bootstrap\ActiveForm;
     </div>
     <div class="form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-		<?php if(! $model->isNewRecord) : ?>
-            <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']); ?>
-		<?php endif; ?>
     </div>
 </div>
 <?php ActiveForm::end(); ?>

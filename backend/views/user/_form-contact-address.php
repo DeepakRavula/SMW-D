@@ -53,16 +53,16 @@ $this->registerJs($js);
     ?>
     <div class="row-fluid">
 		<div class="col-md-12">
-			<h4 class="pull-left m-r-20">Addresses</h4>
+			<h4 class="pull-left m-r-10">Addresses</h4>
 			<a href="#" class="add-address text-add-new address-add-item"><i class="fa fa-plus"></i></a>
 			<div class="clearfix"></div>
 		</div>
-		<div class="address-container-items address-fields form-well">
+		<div class="address-container-items address-fields">
 <?php foreach ($addressModels as $index => $addressModel): ?>
 				<div class="item-block address-item"><!-- widgetBody -->
 					<h4>
-						<span class="panel-title-address pull-left">Address: <?= ($index + 1) ?></span>
-						<em class="pull-left f-s-14 m-l-20"><?= $form->field($addressModel, "[{$index}]is_primary")->checkbox() ?></em>
+						<span class="panel-title-address pull-left m-r-10">Address: <?= ($index + 1) ?></span>
+						<em class="pull-left primary-contact"><?= $form->field($addressModel, "[{$index}]is_primary")->checkbox() ?></em>
 						<button type="button" class="pull-right address-remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
 						<div class="clearfix"></div>
 					</h4>

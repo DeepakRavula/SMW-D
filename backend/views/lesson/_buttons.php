@@ -27,9 +27,9 @@ use kartik\switchinput\SwitchInput;
 		<?php endif; ?>
                 <?php if ($model->canMerge()) : ?>
                 <?php
-                    echo Html::a('<span class="btn bg-orange"> Merge</span>', '#', [
+                    echo Html::a('<i class="fa fa-chain"></i>', '#', [
                             'id' => 'merge-lesson',
-                            'class' => 'm-r-20 del-ce',
+                            'class' => 'm-r-20 btn btn-box-tool',
                     ])
                 ?>
 		<?php endif; ?>
