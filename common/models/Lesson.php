@@ -390,7 +390,7 @@ class Lesson extends \yii\db\ActiveRecord
 	
 	public function getLessonCredit()
     {
-        return $this->hasOne(LessonCredit::className(), ['lessonId' => 'id']);
+        return $this->hasMany(LessonCredit::className(), ['lessonId' => 'id']);
     }
 
     public function hasGroupInvoice()
@@ -839,22 +839,18 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addPrivateLessonLineItem($this);
         $invoice->save();
         if ($this->hasLessonCredit()) {
-            $invoice->addPayment($this, $this->lessonCredit->credit);
+            $invoice->addLessonDebitPayment($this, $this->getLessonCreditAmount());
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
                 $lineItem = $invoice->addPrivateLessonLineItem($extendedLesson->lesson);
                 $invoice->save();
-                if ($extendedLesson->lesson->hasProFormaInvoice()) {
-                    if ($extendedLesson->lesson->proFormaInvoice->hasProFormaCredit()) {
-                        $amount = $extendedLesson->lesson->getSplitedAmount();
-                        if ($amount > $extendedLesson->lesson->proFormaInvoice->proFormaCredit) {
-                           $amount = $extendedLesson->lesson->proFormaInvoice->proFormaCredit;
-                        }
-                        if ($invoice->addLessonCreditAppliedPayment($amount, $extendedLesson->lesson->proFormaInvoice)) {
-                            $extendedLesson->lesson->proFormaInvoice->save();
-                        }
+                if ($extendedLesson->lesson->hasLessonCredit()) {
+                    $amount = $extendedLesson->lesson->getSplitedAmount();
+                    if ($amount > $extendedLesson->lesson->getLessonCreditAmount()) {
+                       $amount = $extendedLesson->lesson->getLessonCreditAmount();
                     }
+                    $invoice->addLessonDebitPayment($extendedLesson->lesson, $amount);
                 }
             }
         }
@@ -884,16 +880,24 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addGroupLessonLineItem($this);
         $invoice->save();
         if ($this->hasLessonCredit()) {
-            $netPrice = $this->lessonCredit->credit;
-            $invoice->addPayment($this, $netPrice);
+            $netPrice = $this->getLessonCreditAmount();
+            $invoice->addLessonDebitPayment($this, $netPrice);
         }
 
         return $invoice;
     }
-	public function hasLessonCredit()
+    
+    public function getLessonCreditAmount()
     {
-        return !empty($this->lessonCredit);
+        return $this->hasMany(Payment::className(), ['id' => 'paymentId'])
+                ->via('lessonCredit')->sum('amount');
     }
+    
+    public function hasLessonCredit()
+    {
+        return !empty($this->getLessonCreditAmount());
+    }
+
     public function hasProFormaInvoice()
     {
         return !empty($this->proFormaInvoice);
@@ -970,5 +974,31 @@ class Lesson extends \yii\db\ActiveRecord
         $course->locationId  = $this->locationId;
         $course->save();
         return $course;
+    }
+    
+    public function createLessonCreditPayment($invoice, $amount)
+    {
+        $paymentModel = new Payment();
+        $paymentModel->amount = $amount;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+        $paymentModel->reference = $invoice->id;
+        $paymentModel->lessonId = $this->id;
+        $paymentModel->save();	
+
+        $creditPaymentId = $paymentModel->id;
+        $paymentModel->id = null;
+        $paymentModel->isNewRecord = true;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+        $paymentModel->reference = $this->id;
+        $paymentModel->invoiceId = $invoice->id;
+        $paymentModel->save();
+
+        $lessonCredit  = new LessonCredit();
+        $lessonCredit->lessonId = $this->id;
+        $lessonCredit->paymentId = $creditPaymentId;
+        $lessonCredit->save();
+
+        $debitPaymentId = $paymentModel->id;
+        $invoice->createCreditUsage($creditPaymentId, $debitPaymentId);
     }
 }

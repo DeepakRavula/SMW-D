@@ -154,26 +154,11 @@ class InvoiceController extends Controller
 
         $invoicePayments = Payment::find()
 			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-				$query->where(['ip.invoice_id' => $model->id]);
-			}]);
-		$lessonCredits = Payment::find()
-			->select(['p1.*'])
-			->joinWith(['lessonCredit' => function($query) use($model) {
-				$query->joinWith(['creditUsage' => function($query) {
-					$query->join('LEFT JOIN', 'payment p1',
-                		'p1.id = credit_usage.debit_payment_id');
-				}]);
-				$query->joinWith(['lesson' => function($query) use($model) {
-					$query->joinWith(['pfi' => function($query) use($model) {
-						$query->andWhere(['invoice.id' => $model->id]);
-					}]);
-				}]);
-			}]);
-		$payments = Payment::find()
-			->from(['payment' => $invoicePayments->union($lessonCredits)])
-            ->orderBy(['date' => SORT_DESC]);
+                            $query->where(['ip.invoice_id' => $model->id]);
+			}])
+                        ->orderBy(['date' => SORT_DESC]);
         $invoicePaymentsDataProvider = new ActiveDataProvider([
-            'query' => $payments,
+            'query' => $invoicePayments,
         ]);
 
         if (!empty($model->user->userProfile->user_id)) {
@@ -532,7 +517,7 @@ class InvoiceController extends Controller
             } else {
                 $amount = $invoice->balance;
             }
-            $invoice->addPayment($creditInvoice, $amount);
+            $invoice->addInvoicePayment($creditInvoice, $amount);
             $invoice->save();
             $creditInvoice->save();
         }

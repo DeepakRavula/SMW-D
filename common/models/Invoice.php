@@ -710,21 +710,46 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
-    public function addPayment($object, $amount)
+    public function addLessonDebitPayment($lesson, $amount)
     {
         $paymentModel = new Payment();
         $paymentModel->amount = $amount;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
         $paymentModel->invoiceId = $this->id;
-        $paymentModel->reference = $object->id;
+        $paymentModel->reference = $lesson->id;
         $paymentModel->save();
 		
         $creditPaymentId = $paymentModel->id;
         $paymentModel->id = null;
         $paymentModel->isNewRecord = true;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-        $paymentModel->lessonId = $object->id;
-		$paymentModel->invoiceId = null;
+        $paymentModel->lessonId = $lesson->id;
+        $paymentModel->invoiceId = null;
+        $paymentModel->reference = $this->id;
+        $paymentModel->save();
+
+        $debitPaymentId = $paymentModel->id;
+        $lessonCredit  = new LessonCredit();
+        $lessonCredit->lessonId = $lesson->id;
+        $lessonCredit->paymentId = $debitPaymentId;
+        $lessonCredit->save();
+        $this->createCreditUsage($creditPaymentId, $debitPaymentId);
+    }
+    
+    public function addInvoicePayment($invoice, $amount)
+    {
+        $paymentModel = new Payment();
+        $paymentModel->amount = $amount;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+        $paymentModel->invoiceId = $this->id;
+        $paymentModel->reference = $invoice->id;
+        $paymentModel->save();
+		
+        $creditPaymentId = $paymentModel->id;
+        $paymentModel->id = null;
+        $paymentModel->isNewRecord = true;
+        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+        $paymentModel->invoiceId = $invoice->id;
         $paymentModel->reference = $this->id;
         $paymentModel->save();
 
@@ -763,56 +788,44 @@ class Invoice extends \yii\db\ActiveRecord
 		$creditUsageModel->save();	
 	}
 
-	public function createLessonCredit($lesson, $amount)
-	{
-		$paymentModel = new Payment();
-		$paymentModel->amount = $amount;
-		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-		$paymentModel->reference = $this->id;
-		$paymentModel->lessonId = $lesson->id;
-		$paymentModel->save();	
-
-		$creditPaymentId = $paymentModel->id;
-		$paymentModel->id = null;
-		$paymentModel->isNewRecord = true;
-		$paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-		$paymentModel->reference = $lesson->id;
-		$paymentModel->lessonId = $lesson->id;
-		$paymentModel->save();
-
-		$lessonCredit  = new LessonCredit();
-		$lessonCredit->lessonId = $lesson->id;
-		$lessonCredit->paymentId = $creditPaymentId;
-		$lessonCredit->save();
-
-		$debitPaymentId = $paymentModel->id;
-		$this->createCreditUsage($creditPaymentId, $debitPaymentId);
-	}
-	public function addLessonCredit()
-	{
-		foreach($this->lineItems as $lineItem) {
-            $lesson = Lesson::find()
-				->descendantsOf($lineItem->proFormaLesson->id)
-				->orderBy(['id' => SORT_DESC])
-				->one();
-            if (!$lesson) {
-                $lesson = Lesson::findOne($lineItem->proFormaLesson->id);
+    public function addLessonCredit()
+    {
+        if ($this->lineItem->isGroupLesson()) {
+            $enrolment = Enrolment::findOne($this->lineItem->lineItemEnrolment->enrolmentId);
+            $lessons = Lesson::find()
+                            ->isConfirmed()
+                            ->notDeleted()
+                            ->joinWith('enrolment')
+                            ->andWhere(['enrolment.id' => $enrolment->id])
+                            ->all();
+            $courseCount = $enrolment->courseCount;
+            $amount = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
+            foreach($lessons as $lesson) {
+                $lesson->createLessonCreditPayment($this, $amount);
+                $this->makeGroupInvoicePayment($lesson, $enrolment);
             }
-			$amount = $lesson->proFormaLineItem->netPrice;
-			$this->createLessonCredit($lesson, $amount);
-			
-			$this->makeInvoicePayment($lesson);
-		}
-	}
-	public function addExtraLessonCredit()
-	{
-		$lesson = Lesson::findOne($this->lineItem->lesson->id);
-		$amount =  $lesson->proFormaInvoice->lineItem->netPrice;
-		$this->createLessonCredit($lesson, $amount);
+        } else {
+            foreach($this->lineItems as $lineItem) {
+                if ($this->isExtraLessonProformaInvoice()) {
+                    $lesson = Lesson::findOne($lineItem->lesson->id);
+                    $amount =  $lesson->proFormaInvoice->lineItem->netPrice;
+                } else {
+                    $lesson = Lesson::find()
+                                ->descendantsOf($lineItem->proFormaLesson->id)
+                                ->orderBy(['id' => SORT_DESC])
+                                ->one();
+                    if (!$lesson) {
+                        $lesson = Lesson::findOne($lineItem->proFormaLesson->id);
+                    }
+                    $amount = $lesson->proFormaLineItem->netPrice;
+                }
+                $lesson->createLessonCreditPayment($this, $amount);
 
-		$this->makeInvoicePayment($lesson);
-	}
-	
+                $this->makeInvoicePayment($lesson);
+            }
+        }
+    }
+    
     public function makeInvoicePayment($lesson)
     {
 		if($lesson->canInvoice()) {
@@ -820,33 +833,16 @@ class Invoice extends \yii\db\ActiveRecord
 				$invoice = $lesson->createPrivateLessonInvoice();
 			} else if (!$lesson->invoice->isPaid()) {
 				if ($lesson->hasLessonCredit()) {
-					$netPrice = $lesson->lessonCredit->credit;
+					$netPrice = $lesson->getLessonCreditAmount();
 					if ($lesson->isExploded) {
 						$netPrice = $lesson->getSplitedAmount();
 					}
-					$lesson->invoice->addPayment($lesson, $netPrice);
+					$lesson->invoice->addLessonDebitPayment($lesson, $netPrice);
 				}
 			}
 		}
     }
 
-	public function addGroupLessonCredit()
-	{
-		$enrolment = Enrolment::findOne($this->lineItem->lineItemEnrolment->enrolmentId);
-        $lessons = Lesson::find()
-			->isConfirmed()
-            ->notDeleted()
-            ->joinWith('enrolment')
-            ->andWhere(['enrolment.id' => $enrolment->id])
-            ->all();
-		$courseCount = $enrolment->courseCount;
-		$amount = $enrolment->proFormaInvoice->netSubtotal / $courseCount;
-		foreach($lessons as $lesson) {
-			$this->createLessonCredit($lesson, $amount);
-			$this->makeGroupInvoicePayment($lesson, $enrolment);
-		}
-	}
-	
     public function makeGroupInvoicePayment($lesson, $enrolment)
     {
 		if($lesson->canInvoice()) {
@@ -854,8 +850,8 @@ class Invoice extends \yii\db\ActiveRecord
 				$invoice = $lesson->createGroupInvoice($enrolment->id);
 			} else if (!$lesson->invoice->isPaid()) {
 				if ($lesson->hasLessonCredit()) {
-					$netPrice = $lesson->lessonCredit->credit;
-					$lesson->invoice->addPayment($lesson, $netPrice);
+					$netPrice = $lesson->getLessonCreditAmount();
+					$lesson->invoice->addLessonDebitPayment($lesson, $netPrice);
 				}
 			}
 		}
@@ -869,30 +865,6 @@ class Invoice extends \yii\db\ActiveRecord
     public function isInvoiceReversed()
     {
         return !empty($this->invoiceReverse);
-    }
-
-    public function addLessonCreditAppliedPayment($amount, $invoice)
-    {
-        $paymentModel = new Payment();
-        $paymentModel->amount = abs ($amount);
-        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-        $paymentModel->invoiceId = $this->id;
-        $paymentModel->reference = $invoice->id;
-        $paymentModel->save();
-
-        $creditPaymentId = $paymentModel->id;
-        $paymentModel->id = null;
-        $paymentModel->isNewRecord = true;
-        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-        $paymentModel->invoiceId = $invoice->id;
-        $paymentModel->reference = $this->id;
-        $paymentModel->save();
-
-        $debitPaymentId = $paymentModel->id;
-        $creditUsageModel = new CreditUsage();
-        $creditUsageModel->credit_payment_id = $creditPaymentId;
-        $creditUsageModel->debit_payment_id = $debitPaymentId;
-        return $creditUsageModel->save();
     }
 
     public function accountBalance()

@@ -71,16 +71,12 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
                 $invoice = $this->extendedLesson->invoice;
                 $lineItem = $invoice->addPrivateLessonLineItem($this->lesson);
                 $invoice->save();
-                if ($this->lesson->hasProFormaInvoice()) {
-                    if ($this->lesson->proFormaInvoice->hasProFormaCredit()) {
-                        $amount = $this->lesson->getSplitedAmount();
-                        if ($amount > $this->lesson->proFormaInvoice->proFormaCredit) {
-                           $amount = $this->lesson->proFormaInvoice->proFormaCredit;
-                        }
-                        if ($invoice->addLessonCreditAppliedPayment($amount, $this->lesson->proFormaInvoice)) {
-                            $this->lesson->proFormaInvoice->save();
-                        }
+                if ($this->lesson->hasLessonCredit()) {
+                    $amount = $this->lesson->getSplitedAmount();
+                    if ($amount > $this->lesson->getLessonCreditAmount()) {
+                       $amount = $this->lesson->getLessonCreditAmount();
                     }
+                    $invoice->addLessonDebitPayment($this->lesson, $amount);
                 }
             }
         }

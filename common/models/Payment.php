@@ -240,13 +240,7 @@ class Payment extends ActiveRecord
 			$this->invoice->save();
 
 			if($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
-				if ($this->invoice->isExtraLessonProformaInvoice()) {
-					$this->invoice->addExtraLessonCredit();
-				} else if ($this->invoice->lineItem->isGroupLesson()) {
-					$this->invoice->addGroupLessonCredit();
-				} else {
-					$this->invoice->addLessonCredit();
-				}
+                            $this->invoice->addLessonCredit();
 			}
 		}
         $this->trigger(self::EVENT_CREATE);
