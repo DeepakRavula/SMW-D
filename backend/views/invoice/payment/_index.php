@@ -7,6 +7,7 @@ use yii\bootstrap\ButtonGroup;
 use yii\helpers\Url;
 use yii\grid\GridView;
 use yii\bootstrap\Modal;
+use yii\helpers\Html;
 
 ?>
 <?php Modal::begin([
