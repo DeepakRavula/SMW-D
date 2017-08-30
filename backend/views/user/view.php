@@ -21,7 +21,6 @@ foreach ($roleNames as $name => $description) {
     }
 }
 $this->title = $model->publicIdentity.' - '.ucwords($searchModel->role_name);
-$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', ['update', 'UserSearch[role_name]' => $searchModel->role_name, 'id' => $model->id, '#' => 'profile'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back']);
 ?>
 <div class="row">
@@ -50,21 +49,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
-        <div class="pull-left m-T-10">
-  			 <?php if ($searchModel->role_name === 'staffmember'):?>
-			 <?php
-            echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
-                'class' => 'abs-delete',
-                'data' => [
-                    'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
-                    'method' => 'post',
-                ],
-            ])
-            ?>
-			<?php endif; ?>
-            <div class="clearfix"></div>
-        </div>    
-    <div class="clearfix"></div>
     <div class="nav-tabs-custom">
 		<?php $roles = Yii::$app->authManager->getRolesByUser($model->id);
         $role = end($roles); ?>
@@ -169,13 +153,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         ?>
 		<?php
         $items = [
-            [
-                'label' => 'Contact Information',
-                'content' => $addressContent,
-                'options' => [
-                    'id' => 'contact',
-                ],
-            ],
 			[
         	    'label' => 'Logs',
     	        'content' => $logContent,
@@ -184,7 +161,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             	],
         	],
         ];
-		$logItem = $items[1];
         $teacherItems = [
             [
                 'label' => 'Qualifications',
@@ -317,15 +293,11 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         ];
 		
         if (in_array($role->name, ['teacher'])) {
-            $items = array_merge($items, $teacherItems);
-			unset($items[1]);
-			array_push($items, $logItem);
+            $items = array_merge($teacherItems, $items);
         }
 
         if (in_array($role->name, ['customer'])) {
-            $items = array_merge($items, $customerItems);
-			unset($items[1]);
-			array_push($items, $logItem);
+            $items = array_merge($customerItems, $items);
         }
         ?>
 		<?php
@@ -434,15 +406,15 @@ $(document).ready(function(){
             {
                 if(response.status)
                 {
-                    $('#phone-content').html(response.data);
-                    $('#edit-phone-modal').modal('show');
-                	$('#edit-phone-modal .modal-dialog').css({'width': '800px'});
+                    $('#address-content').html(response.data);
+                    $('#edit-address-modal').modal('show');
+                	$('#edit-address-modal .modal-dialog').css({'width': '800px'});
                 }
             }
         });
         return false;
     });
-	$(document).on('beforeSubmit', '#phone-form', function () {
+	$(document).on('beforeSubmit', '#address-form', function () {
         $.ajax({
             url    : $(this).attr('action'),
             type   : 'post',
@@ -451,11 +423,11 @@ $(document).ready(function(){
             success: function(response)
             {
                 if(response.status) {
-        			$('#edit-phone-modal').modal('hide');
-        			$.pjax.reload({container:"#user-phone",replace:false,  timeout: 4000});
+        			$('#edit-address-modal').modal('hide');
+        			$.pjax.reload({container:"#user-address",replace:false,  timeout: 4000});
                     
                 } else {
-					$('#phone-form').yiiActiveForm('updateMessages', response.errors
+					$('#address-form').yiiActiveForm('updateMessages', response.errors
 					, true);
 				}
             }

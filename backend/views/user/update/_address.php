@@ -8,6 +8,8 @@ use common\models\City;
 use common\models\Province;
 use common\models\Country;
 use yii\helpers\ArrayHelper;
+use yii\widgets\ActiveForm;
+use yii\helpers\Url;
 
 /* @var $model backend\models\UserForm */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -46,7 +48,7 @@ $form = ActiveForm::begin([
         'insertButton' => '.address-add-item', // css class
         'deleteButton' => '.address-remove-item', // css class
         'model' => $addressModels[0],
-        'formId' => 'dynamic-form',
+        'formId' => 'address-form',
         'formFields' => [
             'addresslabel',
             'address',
@@ -59,9 +61,7 @@ $form = ActiveForm::begin([
     ?>
     <div class="row-fluid">
 		<div class="col-md-12">
-			<h4 class="pull-left m-r-10">Addresses</h4>
-			<a href="#" class="add-address text-add-new address-add-item"><i class="fa fa-plus"></i></a>
-			<div class="clearfix"></div>
+			<a href="#" class="btn btn-primary btn-xs add-address address-add-item"><i class="fa fa-plus"> Add</i></a>
 		</div>
 		<div class="address-container-items address-fields">
 <?php foreach ($addressModels as $index => $addressModel): ?>

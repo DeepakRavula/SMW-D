@@ -54,7 +54,7 @@ class UserController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile', 'edit-phone'],
+                'only' => ['edit-profile', 'edit-phone', 'edit-address'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -623,32 +623,30 @@ class UserController extends Controller
 		$model = new UserForm();
         $model->setModel($this->findModel($id));	
         $addressModels = $model->addresses;
-        $phoneNumberModels = $model->phoneNumbers;
 		$data = $this->renderAjax('update/_address', [
 			'model' => $model,
-			'phoneNumberModels' => $phoneNumberModels,
+			'addressModels' => $addressModels,
 		]);
 		
-        $response = Yii::$app->response;
         if ($request->isPost) {
-            $oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
-            $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
-            Model::loadMultiple($phoneNumberModels, $request->post());
-            $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
+            $oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
+            $addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
+            Model::loadMultiple($addressModels, $request->post());
+            $deletedAddressIDs = array_diff($oldAddressIDs, array_filter(ArrayHelper::map($addressModels, 'id', 'id')));
 
-            $valid = Model::validateMultiple($phoneNumberModels);
+            $valid = Model::validateMultiple($addressModels);
             if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
-					if (!empty($deletedPhoneIDs)) {
-						PhoneNumber::deleteAll(['id' => $deletedPhoneIDs]);
+					if (!empty($deletedAddressIDs)) {
+						Address::deleteAll(['id' => $deletedAddressIDs]);
 					}
-					foreach ($phoneNumberModels as $phoneNumberModel) {
-						$phoneNumberModel->user_id = $id;
-						if (!($flag = $phoneNumberModel->save(false))) {
+					foreach ($addressModels as $addressModel) {
+						if (!($flag = $addressModel->save(false))) {
 							$transaction->rollBack();
 							break;
 						}
+						$model->getModel()->link('addresses', $addressModel);
 					}
                     if ($flag) {
                         $transaction->commit();
@@ -667,119 +665,6 @@ class UserController extends Controller
 			];
 		}
 	}
-    /**
-     * Updates an existing User model.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
-
-        $model = new UserForm();
-        $model->setModel($this->findModel($id));
-        $user = $this->findModel($id);
-        $ownProfile = true;
-        if (!Yii::$app->user->can('updateOwnProfile', ['model' => $user])) {
-            $ownProfile = false;
-        }
-        if ((!$ownProfile)) {
-            $role = $model->roles;
-            if (($role === User::ROLE_TEACHER) && (!Yii::$app->user->can('updateTeacherProfile'))) {
-                throw new ForbiddenHttpException();
-            }
-            if (($role === User::ROLE_CUSTOMER) && (!Yii::$app->user->can('updateCustomerProfile'))) {
-                throw new ForbiddenHttpException();
-            }
-            if (($role === User::ROLE_OWNER) && (!Yii::$app->user->can('updateOwnerProfile'))) {
-                throw new ForbiddenHttpException();
-            }
-            if (($role === User::ROLE_STAFFMEMBER) && (!Yii::$app->user->can('updateStaffProfile'))) {
-                throw new ForbiddenHttpException();
-            }
-        }
-
-        $addressModels = $model->addresses;
-        $phoneNumberModels = $model->phoneNumbers;
-
-        $request = Yii::$app->request;
-        $response = Yii::$app->response;
-        if ($model->load($request->post())) {
-            $oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
-            $addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
-            Model::loadMultiple($addressModels, $request->post());
-            $deletedAddressIDs = array_diff($oldAddressIDs, array_filter(ArrayHelper::map($addressModels, 'id', 'id')));
-
-            $oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
-            $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
-            Model::loadMultiple($phoneNumberModels, $request->post());
-            $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
-			
-            if ($request->isAjax) {
-                $response->format = Response::FORMAT_JSON;
-
-                return ArrayHelper::merge(
-                    ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels));
-            }
-            $valid = $model->validate();
-            $valid = (Model::validateMultiple($addressModels) && Model::validateMultiple($phoneNumberModels)) && $valid;
-            if ($valid) {
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-                    if ($flag = $model->save(false)) {
-                        if (!empty($deletedAddressIDs)) {
-                            Address::deleteAll(['id' => $deletedAddressIDs]);
-                        }
-                        foreach ($addressModels as $addressModel) {
-                            if (!($flag = $addressModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                            $model->getModel()->link('addresses', $addressModel);
-                        }
-                        if (!empty($deletedPhoneIDs)) {
-                            PhoneNumber::deleteAll(['id' => $deletedPhoneIDs]);
-                        }
-                        foreach ($phoneNumberModels as $phoneNumberModel) {
-                            $phoneNumberModel->user_id = $id;
-                            if (!($flag = $phoneNumberModel->save(false))) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-                    }
-                    if ($flag) {
-                        $transaction->commit();
-                        Yii::$app->session->setFlash('alert', [
-                                'options' => ['class' => 'alert-success'],
-                                'body' => ucwords($model->roles).' profile has been updated successfully',
-                        ]);
-                        $section = ltrim($model->section, '#');
-						if((int)$model->status === User::STATUS_NOT_ACTIVE) {
-							$link = Url::to(['index', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]); 
-						} else {
-                        	$link = Url::to(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id, '#' => $section]);
-						}
-						return $this->redirect($link);
-                    }
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                }
-            }
-        }
-
-        return $this->render('update', [
-			'model' => $model,
-			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
-			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
-			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
-        ]);
-    }
 
     /**
      * Updates an existing User model.
