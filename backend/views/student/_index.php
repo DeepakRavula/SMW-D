@@ -16,6 +16,7 @@ use common\models\Student;
 echo AdminLteGridView::widget([
 	'id' => 'student-grid',
 	'dataProvider' => $dataProvider,
+    'summary'=>'',
 	'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
 		$url = Url::to(['student/view', 'id' => $model->id]);
 		$data = ['data-url' => $url];

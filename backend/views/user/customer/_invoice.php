@@ -11,13 +11,12 @@ use yii\helpers\ArrayHelper;
 use common\models\Student;
 ?>
 <div class="col-md-12">
-    <h4 class="pull-left m-r-20">Invoices</h4>
-	<?= Html::a('<i class="fa fa-plus-circle"></i>',
+	<?= Html::a('<i title="Add" class="fa fa-plus-circle"></i>',
         ['invoice/blank-invoice', 'Invoice[customer_id]' => $userModel->id,
             'Invoice[type]' => INVOICE::TYPE_INVOICE, ], [
             'class' => 'add-new-invoice text-add-new m-r-10',
         ]); ?>
-	<?= Html::a('<i class="fa fa-print"></i>', ['print/customer-invoice', 'id' => $userModel->id], ['id' => 'invoice-print', 'class' => 'text-add-new', 'target' => '_blank']) ?>
+	<?= Html::a('<i title="Print" class="fa fa-print"></i>', ['print/customer-invoice', 'id' => $userModel->id], ['id' => 'invoice-print', 'class' => 'text-add-new', 'target' => '_blank']) ?>
 	<?php $form = ActiveForm::begin([
 		'id' => 'customer-invoice-search-form'
     ]); ?>

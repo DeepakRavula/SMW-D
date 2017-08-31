@@ -9,11 +9,13 @@ use yii\grid\GridView;
 </div>
 <div class="clearfix"></div><hr>
 <div>
+    <h3 class="col-md-12"><b>Evaluations for <?= $studentModel->fullName;?></b></h3>
 <?php
 echo GridView::widget([
 	'dataProvider' => $examResultDataProvider,
 	'options' => ['class' => 'col-md-12 p-0'],
-	'tableOptions' => ['class' => 'table table-bordered'],
+    'summary' =>'',
+	'tableOptions' => ['class' => 'table table-condensed'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [
 			[
