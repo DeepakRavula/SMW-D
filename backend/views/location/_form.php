@@ -73,7 +73,7 @@ $this->title = 'Edit Location';
 		<div class="col-md-4">
 			<?php echo $form->field($model, 'conversionDate')->widget(DatePicker::classname(), [
 				'options' => [
-					'value' => Carbon::parse($model->conversionDate)->format('d-m-Y')
+					'value' => !empty($model->conversionDate) ? Carbon::parse($model->conversionDate)->format('d-m-Y') : ''
 				],
 				'layout' => '{input}{picker}',
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,

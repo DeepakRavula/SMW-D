@@ -43,11 +43,14 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'model' => $model,
 		]);
 		?>
-           <?php if($searchModel->role_name=='customer'):?>
-   	
-		<?php
-		echo $this->render('customer/_discount', [
+        <?php if($searchModel->role_name == 'customer'):?>
+		<?= $this->render('customer/_discount', [
 			'model' => $model,
+		]);
+		?>
+		<?= $this->render('customer/_opening-balance', [
+			'model' => $model,
+            'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
 		]);
 		?>
     <?php endif;?>
@@ -123,13 +126,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             'unavailabilityDataProvider' => $unavailability,
 			'model' => $model,
         ]);
-        $openingBalanceContent = $this->render('customer/_opening-balance', [
-            'openingBalanceDataProvider' => $openingBalanceDataProvider,
-            'openingBalanceCredit' => $openingBalanceCredit,
-            'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
-            'model' => $model,
-        ]);
-
+       
         $unscheduledLessonContent = $this->render('teacher/_unscheduled-lesson', [
             'dataProvider' => $unscheduledLessonDataProvider,
             'model' => $model,
@@ -280,13 +277,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                     'id' => 'account',
                 ],
             ],
-            [
-                'label' => 'Opening Balance',
-                'content' => $openingBalanceContent,
-                'options' => [
-                    'id' => 'opening-balance',
-                ],
-            ],
 			[
 				'label' => 'Comments',
 				'content' => $noteContent,
@@ -381,6 +371,14 @@ $(document).ready(function(){
     });
 	$(document).on('click', '.user-edit-button', function () {
         $('#user-edit-modal').modal('show');
+        return false;
+    });
+	$(document).on('click', '.ob-cancel', function () {
+        $('#ob-modal').modal('hide');
+        return false;
+    });
+	$(document).on('click', '.ob-add-btn', function () {
+        $('#ob-modal').modal('show');
         return false;
     });
     $(document).on('click', '.customer-discount-button', function () {

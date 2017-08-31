@@ -287,22 +287,6 @@ class UserController extends Controller
                 ->notDeleted()
                 ->one();
 
-        $openingBalanceQuery = Payment::find()
-                ->notDeleted()
-                ->joinWith(['invoicePayment ip' => function ($query) {
-                    $query->joinWith(['invoice' => function ($query) {
-                        $query->joinWith(['lineItems' => function ($query) {
-                            $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
-                        }])
-                        ->notDeleted();
-                    }]);
-                }])
-                ->where(['payment.user_id' => $model->id])
-                ->andWhere(['NOT', ['payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY]]);
-
-        $openingBalanceDataProvider = new ActiveDataProvider([
-            'query' => $openingBalanceQuery,
-        ]);
 		$request = Yii::$app->request;
 		$lessonSearch = new LessonSearch();
 		$lessonSearch->fromDate = new \DateTime();
@@ -422,7 +406,6 @@ class UserController extends Controller
             'invoiceDataProvider' => $invoiceDataProvider,
             'studentDataProvider' => $studentDataProvider,
             'paymentDataProvider' => $paymentDataProvider,
-            'openingBalanceDataProvider' => $openingBalanceDataProvider,
             'openingBalanceCredit' => $openingBalanceCredit,
             'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
             'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,

@@ -549,7 +549,19 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
-    public function isCustomer()
+	public function isOpeningBalanceExist()
+	{
+		return Invoice::find()
+			->joinWith(['lineItems' => function ($query) {
+				$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+			}])
+			->where(['invoice.user_id' => $this->id])
+			->andWhere(['<', 'invoice.balance', 0])
+			->notDeleted()
+			->exists();
+	}
+
+	public function isCustomer()
     {
         $roles = Yii::$app->authManager->getRolesByUser($this->id);
         $role  = end($roles);

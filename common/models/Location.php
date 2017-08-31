@@ -48,10 +48,10 @@ class Location extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'royaltyValue', 'advertisementValue', 'conversionDate'], 'required'],
+            [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'royaltyValue', 'advertisementValue', 'email'], 'required'],
             [['email'], 'unique'],
             [['email'], 'email'],
-            [['slug'], 'safe'],
+            [['slug', 'conversionDate', 'email'], 'safe'],
             [['royaltyValue', 'advertisementValue'], 'number'],
             [['city_id', 'province_id', 'country_id'], 'integer'],
             [['name'], 'string', 'max' => 32],
@@ -122,7 +122,9 @@ class Location extends \yii\db\ActiveRecord
      */
     public function beforeSave($insert)
     {
-		$this->conversionDate = Carbon::parse($this->conversionDate)->format('Y-m-d H:i:s');
+		if(!empty($this->conversionDate)) {
+			$this->conversionDate = Carbon::parse($this->conversionDate)->format('Y-m-d H:i:s');
+		}
 		if($insert) {
             $this->country_id = 1;
 		}

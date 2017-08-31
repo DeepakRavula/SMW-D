@@ -1,44 +1,40 @@
 <?php
 
 use common\models\Payment;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+use yii\bootstrap\Modal;
+?>
 
-?>
-<div>
+<?php if ($model->isOpeningBalanceExist()) : ?>
+<?php $boxTools = '<i title="View" class="fa fa-eye"></i>'; ?> 
+<?php else : ?>
+<?php $boxTools = '<i title="Add" class="fa fa-plus ob-add-btn m-r-10"></i>';?>
+<?php endif;?>
 	<?php
-    echo $this->render('_view-opening-balance', [
-        'openingBalanceDataProvider' => $openingBalanceDataProvider,
-    ])
-    ?>
-</div>
-<?php if (!empty($openingBalanceCredit->id)):?>
-<?php $paymentModel = Payment::find()
-        ->joinWith(['invoicePayment' => function ($query) use ($openingBalanceCredit) {
-            $query->where(['invoice_id' => $openingBalanceCredit->id]);
-        }])
-        ->one();
+	LteBox::begin([
+		'type' => LteConst::TYPE_DEFAULT,
+		'boxTools' => $boxTools,
+		'title' => 'Opening Balance',
+		'withBorder' => true,
+	])
+	?>
+	<dl class="dl-horizontal">
+		<dt>Name</dt>
+		<dd><?= $model->publicIdentity; ?></dd>
+		<dt>Email</dt>
+		<dd><?= !empty($model->email) ? $model->email : null; ?></dd>
+		
+	</dl>
+	<?php LteBox::end() ?>
+<?php Modal::begin([
+    'header' => '<h4>Opening Balance</h4>',
+    'id' => 'ob-modal',
+]); ?>
+<?php
+echo $this->render('_form-opening-balance', [
+	'model' => new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]),
+	'userModel' => $model,
+])
 ?>
-<div class="p-t-20 p-b-20">
-	<div class="col-xs-2"><strong>Date:</strong> <?= Yii::$app->formatter->asDate($paymentModel->date); ?></div>
-	<div class="col-xs-3">
-	<strong>Opening Balance:</strong>
-	 <?= $openingBalanceCredit->balance; ?>
-	</div>
-	<div class="clearfix"></div>
-</div>
-<?php elseif (!empty($positiveOpeningBalanceModel->id)):?>
-<div class="p-t-20 p-b-20">
-	<div class="col-xs-2"><strong>Date:</strong> <?= Yii::$app->formatter->asDate($positiveOpeningBalanceModel->date); ?></div>
-	<div class="col-xs-3">
-	<strong>Opening Balance:</strong>
-		<?= $positiveOpeningBalanceModel->total; ?>
-	</div>
-	<div class="clearfix"></div>
-</div>
-<?php else:?>
-	<?php
-    echo $this->render('_form-opening-balance', [
-        'model' => new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]),
-        'userModel' => $model,
-    ])
-    ?>
-<?php endif; ?>
+<?php Modal::end(); ?>
