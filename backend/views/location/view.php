@@ -43,10 +43,13 @@ $lastRole = end($roles);
 			<i class="fa fa-envelope detail-icon"></i> <?php echo $model->email; ?>
 		</div>
 		  <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Royalty">
-			<i class="fa fa-cny detail-icon"></i> <?php echo $model->royalty->value . '%'; ?>
+			<i class="fa fa-cny detail-icon"></i> <?php echo !empty($model->royalty->value) ? $model->royalty->value . '%' : null; ?>
 		</div>
 		  <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Advertisement">
-			<i class="fa fa-cny detail-icon"></i> <?php echo $model->advertisement->value . '%'; ?>
+			<i class="fa fa-cny detail-icon"></i> <?php echo !empty($model->advertisement->value) ?  $model->advertisement->value . '%' : null; ?>
+		</div>
+		 <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Conversion Date">
+			<i class="fa fa-calendar detail-icon"></i> <?= Yii::$app->formatter->asDate($model->conversionDate); ?>
 		</div>
 	</div>
 	

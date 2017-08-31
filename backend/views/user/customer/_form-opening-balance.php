@@ -8,10 +8,7 @@ use yii\helpers\Url;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<div class="clearfix"></div>
-
-<div class="form-well p-l-20 payments-form p-t-15 m-t-20">
-	<h4>Add new opening balance</h4>
+<div>
 	<?php $form = ActiveForm::begin([
         'action' => Url::to(['customer/add-opening-balance', 'id' => $userModel->id]),
     ]); ?>
@@ -19,23 +16,11 @@ use yii\helpers\Url;
         <div class="col-xs-4">
 			<?php echo $form->field($model, 'amount')->textInput(['placeholder' => 'Amount'])->label(false); ?>
         </div>
-		<div class="col-xs-4">
-            <?php echo $form->field($model, 'date')->widget(\yii\jui\DatePicker::classname(), [
-                    'options' => ['class' => 'form-control'],
-                    'clientOptions' => [
-                        'changeMonth' => true,
-                        'changeYear' => true,
-                        'yearRange' => '-70:today',
-                    ],
-                ])->textInput(['placeholder' => 'Date'])->label(false); ?>
-        </div>
 	</div>
 	<div class="form-group">
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php
-        if (!$model->isNewRecord) {
-            echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
-        }
+            echo Html::a('Cancel', '#', ['class' => 'btn btn-default ob-cancel']);
         ?>
 	</div>
 	<?php ActiveForm::end(); ?>
