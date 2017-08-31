@@ -9,6 +9,7 @@ use yii\helpers\Url;
 use common\models\TeacherRoom;
 use yii\bootstrap\Modal;
 use backend\models\UserForm;
+use common\models\CustomerDiscount;
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
@@ -42,8 +43,18 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'model' => $model,
 		]);
 		?>
+           <?php if($searchModel->role_name=='customer'):?>
+   	
+		<?php
+		echo $this->render('customer/_discount', [
+			'model' => $model,
+		]);
+		?>
+    <?php endif;?>
 	</div> 
+
 </div>
+
 <div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
@@ -283,14 +294,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 					'id' => 'comments',
 				],
        		],
-			[
-				'label' => 'Discount',
-				'content' => $discountContent,
-				'options' => [
-					'id' => 'discount',
-				],
-       		],
-        ];
+		  ];
 		
         if (in_array($role->name, ['teacher'])) {
             $items = array_merge($teacherItems, $items);
@@ -322,6 +326,15 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 ]); ?>
 <?= $this->render('update/_profile', [
 	'model' => $userForm,
+]);?>
+<?php Modal::end(); ?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0"> Discount</h4>',
+    'id' => 'customer-discount-edit-modal',
+]); ?>
+<?= $this->render('customer/_form-discount', [
+	'model' => new CustomerDiscount,
+    'userModel'=> $model,
 ]);?>
 <?php Modal::end(); ?>
 <?php Modal::begin([
@@ -368,6 +381,15 @@ $(document).ready(function(){
     });
 	$(document).on('click', '.user-edit-button', function () {
         $('#user-edit-modal').modal('show');
+        return false;
+    });
+    $(document).on('click', '.customer-discount-button', function () {
+        $('#customer-discount-edit-modal').modal('show');
+         $('#warning-notification').html('You have entered a \n\
+                    non-approved Arcadia discount. All non-approved discounts \n\
+                    must be submitted in writing and approved by Head Office \n\
+                    prior to entering a discount, otherwise you are in breach \n\
+                    of your agreement.').fadeIn();
         return false;
     });
 	$(document).on('click', '.phone-cancel-btn', function () {
@@ -571,23 +593,24 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	$(document).on('beforeSubmit', '#customer-discount', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-				    $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
-				    $('#discount-warning').html(response.data).fadeIn().delay(8000).fadeOut();
-        			$.pjax.reload({container:"#customer-log-listing",replace:false,  timeout: 4000});
-				}
-			}
-		});
-		return false;
-	});
+	$(document).on('beforeSubmit', '#customer-discount', function () {
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+        			$('#customer-discount-edit-modal').modal('hide');
+        			$.pjax.reload({container:"#discount-customer",replace:false,  timeout: 4000});
+                    
+                } else {
+                    $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
+        return false;
+    });
 });
 </script>
