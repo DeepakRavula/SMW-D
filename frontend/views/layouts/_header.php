@@ -47,6 +47,9 @@ $bundle = BackendAsset::register($this);
 							</li>
 							<!-- Menu Footer-->
 							<li class="user-footer">
+								<div class="pull-left">
+									<?php echo Html::a(Yii::t('backend', 'Profile'), Url::to(['/user/default/update',]), ['class' => 'btn btn-default btn-flat']) ?>
+								</div>
 								<div class="pull-right">
 									<?php echo Html::a(Yii::t('backend', 'Logout'), ['/user/sign-in/logout'], ['class' => 'btn btn-default btn-flat', 'data-method' => 'post']) ?>
 								</div>
