@@ -353,7 +353,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 ]);?>
 <?php Modal::end(); ?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0"> Edit</h4>',
+    'header' => '<h4 class="m-0"> Discount</h4>',
     'id' => 'customer-discount-edit-modal',
 ]); ?>
 <?= $this->render('customer/_form-discount', [
@@ -401,7 +401,7 @@ $(document).ready(function(){
         $('#user-edit-modal').modal('show');
         return false;
     });
-    $(document).on('click', '.customer-discount-edit-button', function () {
+    $(document).on('click', '.customer-discount-button', function () {
         $('#customer-discount-edit-modal').modal('show');
         return false;
     });

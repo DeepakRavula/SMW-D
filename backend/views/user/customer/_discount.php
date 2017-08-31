@@ -5,8 +5,19 @@ use yii\widgets\Pjax;
 use common\models\CustomerDiscount;
 
 ?>
-<?php 
-$boxTools = ['<i class="fa fa-pencil customer-discount-edit-button m-r-10"></i>'];?>
+<?php
+$customerDiscount = CustomerDiscount::findOne(['customerId' => $model->id]);
+$discount = !empty($customerDiscount) ? $customerDiscount->value : null;
+
+?>
+<?php
+if (empty($discount)) {
+    $boxTools = ['<i class="fa fa-plus customer-discount-button m-r-10"></i>'];
+} else {
+    $boxTools = ['<i class="fa fa-pencil customer-discount-button m-r-10"></i>'];
+}
+
+?>
 <?php Pjax::begin([
 	'id' => 'discount-customer'
 ]); ?>
@@ -18,9 +29,7 @@ $boxTools = ['<i class="fa fa-pencil customer-discount-edit-button m-r-10"></i>'
 		'withBorder' => true,
 	])
 	?>
-<?php 
-$customerDiscount = CustomerDiscount::findOne(['customerId' => $model->id]);
-	$discount = !empty($customerDiscount) ? $customerDiscount->value : null; ?>
+
 	<dl class="dl-horizontal">
 		<dt>Discount</dt>
 		<dd><?= $discount ?></dd>
