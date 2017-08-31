@@ -403,6 +403,11 @@ $(document).ready(function(){
     });
     $(document).on('click', '.customer-discount-button', function () {
         $('#customer-discount-edit-modal').modal('show');
+         $('#warning-notification').html('You have entered a \n\
+                    non-approved Arcadia discount. All non-approved discounts \n\
+                    must be submitted in writing and approved by Head Office \n\
+                    prior to entering a discount, otherwise you are in breach \n\
+                    of your agreement.').fadeIn();
         return false;
     });
 	$(document).on('click', '.phone-cancel-btn', function () {
@@ -566,7 +571,7 @@ $(document).ready(function(){
 	});
 	$(document).on('beforeSubmit', '#customer-discount', function () {
         $.ajax({
-            url    : '<?= Url::to(['customer-discount/create', 'id' => $model->id, ]); ?>',
+            url    : $(this).attr('action'),
             type   : 'post',
             dataType: "json",
             data   : $(this).serialize(),

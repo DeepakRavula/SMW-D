@@ -85,16 +85,16 @@ class CustomerDiscountController extends Controller
         	$customerDiscountModel->userName = $userModel->publicIdentity;
 		}
         if ($customerDiscountModel->load(Yii::$app->request->post()) && $customerDiscountModel->save()) {
-				return [
-				   'status' => true,
-				];	
-			} else {
-				$errors = ActiveForm::validate($customerDiscountmodel);
-                return [
-                    'status' => false,
-                    'errors' => current($errors)
-                ];
-			}
+            return [
+                'status' => true,
+            ];
+        } else {
+            $errors = ActiveForm::validate($customerDiscountmodel);
+            return [
+                'status' => false,
+                'errors' => current($errors)
+            ];
+        }
     }
 
     /**
