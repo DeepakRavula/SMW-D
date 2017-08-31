@@ -54,7 +54,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		$lessonContent = $this->render('_lesson', [
 			'lessonDataProvider' => $lessonDataProvider,
 			'model' => $model,
-                        'allEnrolments' => $allEnrolments
+            'allEnrolments' => $allEnrolments
 		]);
 
 		$unscheduledLessonContent = $this->render('_unscheduledLesson', [

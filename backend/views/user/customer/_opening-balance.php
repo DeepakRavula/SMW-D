@@ -4,10 +4,22 @@ use common\models\Payment;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\bootstrap\Modal;
-?>
+use yii\helpers\Html;
+use yii\helpers\Url;
 
-<?php if ($model->isOpeningBalanceExist()) : ?>
-<?php $boxTools = '<i title="View" class="fa fa-eye"></i>'; ?> 
+?>
+<?php 
+$amount = 0;
+if(!empty($openingBalanceCredit)) {
+	$amount = $openingBalanceCredit->balance;
+	$invoiceId = $openingBalanceCredit->id;
+} 
+if(!empty($positiveOpeningBalanceModel)) {
+	$amount = $positiveOpeningBalanceModel->total;
+	$invoiceId = $positiveOpeningBalanceModel->id;
+} ?>
+<?php if (!empty($openingBalanceCredit) || !empty($positiveOpeningBalanceModel)) : ?>
+<?php $boxTools = Html::a('<i title="View" class="fa fa-eye"></i>', Url::to(['invoice/view', 'id' => $invoiceId])); ?> 
 <?php else : ?>
 <?php $boxTools = '<i title="Add" class="fa fa-plus ob-add-btn m-r-10"></i>';?>
 <?php endif;?>
@@ -20,11 +32,8 @@ use yii\bootstrap\Modal;
 	])
 	?>
 	<dl class="dl-horizontal">
-		<dt>Name</dt>
-		<dd><?= $model->publicIdentity; ?></dd>
-		<dt>Email</dt>
-		<dd><?= !empty($model->email) ? $model->email : null; ?></dd>
-		
+		<dt>Amount</dt>
+		<dd><?= $amount; ?></dd>
 	</dl>
 	<?php LteBox::end() ?>
 <?php Modal::begin([

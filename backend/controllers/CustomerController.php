@@ -76,9 +76,8 @@ class CustomerController extends UserController
             }
             $invoice->tax = $invoiceLineItem->tax_rate;
             $invoice->total = $invoice->subTotal + $invoice->tax;
-			echo $invoice->location->conversionDate;die;
 			if(!empty($invoice->location->conversionDate)) {
-            	$invoice->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
+            	$invoice->date = $invoice->location->conversionDate;
 			}
             $invoice->save();
 

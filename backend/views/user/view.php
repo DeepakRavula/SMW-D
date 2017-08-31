@@ -51,6 +51,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		<?= $this->render('customer/_opening-balance', [
 			'model' => $model,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
+			'openingBalanceCredit' => $openingBalanceCredit
 		]);
 		?>
     <?php endif;?>
