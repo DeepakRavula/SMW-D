@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 use kartik\switchinput\SwitchInput;
 
 ?>
+<?php $boxTools = null;?>
 <?php if (!$model->isGroup()) : ?>
 	<?php $form = ActiveForm::begin(['id' => 'lesson-present-form']); ?>
 	<?php $model->present = $model->isMissed() ? false : true; 

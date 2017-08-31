@@ -6,6 +6,8 @@ use yii\helpers\Url;
 use common\models\Note;
 use common\models\Lesson;
 use yii\bootstrap\Modal;
+use common\models\PrivateLesson;
+
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */

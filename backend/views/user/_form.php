@@ -65,16 +65,17 @@ use yii\bootstrap\Tabs;
         ];
     }
     ?>
-	<div class="nav-tabs-custom">
-			<?php
-            echo Tabs::widget([
-                'id' => 'user-update-tab',
-                'items' => $items,
-
-            ]);
-            ?>
+	<div class="row">
+		<div class="nav-tabs-custom">
+				<?php
+				echo Tabs::widget([
+					'id' => 'user-update-tab',
+					'items' => $items,
+				]);
+				?>
+		</div>
 	</div>
-	<div class="col-md-12 m-b-10">
+	<div class="row col-md-12">
 		<?php echo $form->field($model, 'section')->hiddenInput()->label(false); ?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 			<?php
