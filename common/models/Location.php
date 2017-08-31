@@ -4,6 +4,7 @@ namespace common\models;
 
 use yii\behaviors\SluggableBehavior;
 use common\models\LocationDebt;
+use Carbon\Carbon;
 /**
  * This is the model class for table "location".
  *
@@ -47,7 +48,7 @@ class Location extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code'], 'required'],
+            [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'royaltyValue', 'advertisementValue', 'conversionDate'], 'required'],
             [['email'], 'unique'],
             [['email'], 'email'],
             [['slug'], 'safe'],
@@ -121,12 +122,12 @@ class Location extends \yii\db\ActiveRecord
      */
     public function beforeSave($insert)
     {
-        if (parent::beforeSave($insert)) {
+		$this->conversionDate = Carbon::parse($this->conversionDate)->format('Y-m-d H:i:s');
+		if($insert) {
             $this->country_id = 1;
-            return true;
-        } else {
-            return false;
-        }
+		}
+       
+		return parent::beforeSave($insert);
     }
 
     public function afterSave($insert, $changedAttributes)
