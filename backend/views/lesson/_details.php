@@ -11,7 +11,7 @@ use yii\helpers\Html;
 <?php
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i class="fa fa-pencil edit-lesson-detail"></i>',
+	'boxTools' => '<i title="Edit" class="fa fa-pencil edit-lesson-detail"></i>',
 	'title' => 'Details',
 	'withBorder' => true,
 ])

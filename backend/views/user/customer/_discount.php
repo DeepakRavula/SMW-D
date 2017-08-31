@@ -1,13 +1,38 @@
-<?php
-
+<?php 
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+use yii\widgets\Pjax;
 use common\models\CustomerDiscount;
 
 ?>
-<div>
 <?php
-echo $this->render('_form-discount', [
-	'model' => new CustomerDiscount(),
-	'userModel' => $model,
-])
+$customerDiscount = CustomerDiscount::findOne(['customerId' => $model->id]);
+$discount = !empty($customerDiscount) ? $customerDiscount->value : null;
+
 ?>
-</div>
+<?php
+if (empty($discount)) {
+    $boxTools = ['<i class="fa fa-plus customer-discount-button m-r-10"></i>'];
+} else {
+    $boxTools = ['<i class="fa fa-pencil customer-discount-button m-r-10"></i>'];
+}
+
+?>
+<?php Pjax::begin([
+	'id' => 'discount-customer'
+]); ?>
+	<?php
+	LteBox::begin([
+		'type' => LteConst::TYPE_DEFAULT,
+		'boxTools' => $boxTools,
+		'title' => 'Discount  (%)',
+		'withBorder' => true,
+	])
+	?>
+
+	<dl class="dl-horizontal">
+		<dt>Discount</dt>
+		<dd><?= $discount ?></dd>
+	</dl>
+	<?php LteBox::end() ?>
+<?php Pjax::end(); ?>

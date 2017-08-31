@@ -2,7 +2,6 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
-use yii\helpers\Html;
 
 ?>
 <?php Pjax::begin([
@@ -11,7 +10,7 @@ use yii\helpers\Html;
 	<?php
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,
-		'boxTools' => '<i class="fa fa-pencil user-phone-btn"></i>',
+		'boxTools' => '<i title="Edit" class="fa fa-pencil user-phone-btn"></i>',
 		'title' => 'Phone',
 		'withBorder' => true,
 	])

@@ -10,7 +10,7 @@ use insolita\wgadminlte\LteConst;
 
 $this->title = 'Group Course Details';
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back']);
-$this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['print', 'id' => $model->id], ['class' => 'btn btn-primary pull-left', 'target' => '_blank']);
+$this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['print/course', 'id' => $model->id], ['class' => 'btn btn-primary pull-left', 'target' => '_blank']);
 ?>
 <div class="row">
 	<div class="col-md-6">	

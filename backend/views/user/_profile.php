@@ -4,9 +4,9 @@ use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
 ?>
 <?php 
-$boxTools = ['<i class="fa fa-pencil user-edit-button m-r-10"></i>'];?>
+$boxTools = ['<i title="Edit" class="fa fa-pencil user-edit-button m-r-10"></i>'];?>
 <?php if ($model->isCustomer()) : ?>
-<?php $merge[] = '<i id="customer-merge" class="fa fa-chain"></i>';
+<?php $merge[] = '<i title="Merge" id="customer-merge" class="fa fa-chain"></i>';
 $boxTools = array_merge($boxTools, $merge);
 ?>
 <?php endif;?>
