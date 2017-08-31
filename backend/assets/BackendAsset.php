@@ -21,6 +21,7 @@ class BackendAsset extends AssetBundle
 		'css/dashboard/style.css',
 		'css/calendar/style.css',
         'css/invoice/style.css',
+        'css/teacher/style.css',
         'plugins/jquery-timepicker/jquery.timepicker.css',
         'plugins/jquery-multiselect/style.css',
     ];
