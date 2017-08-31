@@ -85,6 +85,11 @@ $config = [
                 'actions' => ['logout', 'profile', 'account'],
             ],
 			[
+                'controllers' => ['user/default'],
+                'allow' => true,
+                'roles' => ['@'],
+            ],
+			[
                 'controllers' => ['site'],
                 'allow' => true,
                 'roles' => ['?', '@'],
