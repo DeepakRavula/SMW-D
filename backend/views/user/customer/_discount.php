@@ -25,7 +25,7 @@ if (empty($discount)) {
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,
 		'boxTools' => $boxTools,
-		'title' => 'Discount',
+		'title' => 'Discount  (%)',
 		'withBorder' => true,
 	])
 	?>

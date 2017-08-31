@@ -25,7 +25,7 @@ $this->title = $model->publicIdentity.' - '.ucwords($searchModel->role_name);
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back']);
 ?>
 <div class="row">
-	<div class="col-md-5">	
+	<div class="col-md-6">	
 		<?php
 		echo $this->render('_profile', [
 			'model' => $model,
@@ -37,22 +37,22 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		]);
 		?>
 	</div> 
-	<div class="col-md-4">	
+	<div class="col-md-6">	
 		<?php
 		echo $this->render('_phone', [
 			'model' => $model,
 		]);
 		?>
-	</div> 
-   <?php if($searchModel->role_name=='customer'):?>
-    <div class="col-md-3">	
+           <?php if($searchModel->role_name=='customer'):?>
+   	
 		<?php
 		echo $this->render('customer/_discount', [
 			'model' => $model,
 		]);
 		?>
-	</div> 
     <?php endif;?>
+	</div> 
+
 </div>
 
 <div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
