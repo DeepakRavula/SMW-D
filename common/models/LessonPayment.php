@@ -25,7 +25,7 @@ class LessonPayment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['lessonId', 'paymentId'], 'integer'],
+            [['lessonId', 'paymentId', 'enrolmentId'], 'integer'],
         ];
     }
 

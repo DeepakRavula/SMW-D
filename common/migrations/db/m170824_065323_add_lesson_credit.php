@@ -12,6 +12,7 @@ class m170824_065323_add_lesson_credit extends Migration
 				'id' => $this->primaryKey(),
 				'lessonId' => $this->integer()->notNull(),
 				'paymentId' => $this->integer()->notNull(),
+                                'enrolmentId' => $this->integer()->notNull()
 			]);
 		}
     }

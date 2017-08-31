@@ -390,7 +390,7 @@ class Lesson extends \yii\db\ActiveRecord
 	
 	public function getLessonCredit()
     {
-        return $this->hasMany(LessonCredit::className(), ['lessonId' => 'id']);
+        return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id']);
     }
 
     public function hasGroupInvoice()
@@ -893,6 +893,22 @@ class Lesson extends \yii\db\ActiveRecord
                 ->via('lessonCredit')->sum('amount');
     }
     
+    public function getLessonCreditAppliedAmount()
+    {
+        return $this->hasMany(Payment::className(), ['id' => 'paymentId'])
+                ->via('lessonCredit')
+                ->onCondition(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_APPLIED])
+                ->sum('amount');
+    }
+    
+    public function getCreditAppliedAmount($enrolmentId)
+    {
+        return Payment::find()
+                ->joinWith('lessonCredit')
+                ->where(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
+                ->sum('amount');
+    }
+    
     public function hasLessonCredit()
     {
         return !empty($this->getLessonCreditAmount());
@@ -976,7 +992,7 @@ class Lesson extends \yii\db\ActiveRecord
         return $course;
     }
     
-    public function createLessonCreditPayment($invoice, $amount)
+    public function createLessonCreditPayment($invoice, $amount, $enrolment = null)
     {
         $paymentModel = new Payment();
         $paymentModel->amount = $amount;
@@ -993,9 +1009,13 @@ class Lesson extends \yii\db\ActiveRecord
         $paymentModel->invoiceId = $invoice->id;
         $paymentModel->save();
 
-        $lessonCredit  = new LessonCredit();
+        $lessonCredit  = new LessonPayment();
         $lessonCredit->lessonId = $this->id;
         $lessonCredit->paymentId = $creditPaymentId;
+        $lessonCredit->enrolmentId = $this->enrolment->id;
+        if ($enrolment) {
+            $lessonCredit->enrolmentId = $enrolment->id;
+        }
         $lessonCredit->save();
 
         $debitPaymentId = $paymentModel->id;

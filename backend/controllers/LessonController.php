@@ -131,7 +131,7 @@ class LessonController extends Controller
         ]);
 		$payments = Payment::find()
 			->joinWith(['lessonCredit' => function($query) use($id){
-				$query->andWhere(['lesson_credit.lessonId' => $id]);	
+				$query->andWhere(['lesson_payment.lessonId' => $id]);	
 			}]);
 		$paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
@@ -827,7 +827,7 @@ class LessonController extends Controller
                     $model->paymentCycle->proFormaInvoice->save();
                 }
             } else {
-                $model->proFormaInvoice->makeInvoicePayment();
+                $model->proFormaInvoice->makeInvoicePayment($model);
             }
             return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
         } else if ($model->isExtra()) {
