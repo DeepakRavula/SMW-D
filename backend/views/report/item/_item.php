@@ -63,22 +63,23 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 			],
 		];
 		?>
-
-	<?=
-	GridView::widget([
-		'dataProvider' => $dataProvider,
-		'options' => ['class' => ''],
-		'showPageSummary' => true,
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
-		'pjax' => true,
-		'pjaxSettings' => [
-			'neverTimeout' => true,
-			'options' => [
-				'id' => 'item-listing',
-			],
-		],
-		'columns' => $columns,
-	]);
-	?>
+    <div class="box">
+        <?=
+        GridView::widget([
+            'dataProvider' => $dataProvider,
+            'options' => ['class' => ''],
+            'showPageSummary' => true,
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
+            'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
+            'pjax' => true,
+            'pjaxSettings' => [
+                'neverTimeout' => true,
+                'options' => [
+                    'id' => 'item-listing',
+                ],
+            ],
+            'columns' => $columns,
+        ]);
+        ?>
+    </div>
 </div>
