@@ -25,13 +25,19 @@ class m170831_124738_lesson_payment extends Migration
                 $invoice = Invoice::findOne($payment->reference);
                 $lessonPayment = new LessonPayment();
                 $lessonPayment->lessonId = $invoice->lineItem->lesson->id;
-                $lessonPayment->paymentId = $payment->id;
+                $lessonPayment->paymentId = $payment->debitUsage->credit_payment_id;
                 $lessonPayment->enrolmentId = $invoice->lineItem->lesson->enrolment->id;
                 if ($invoice->lineItem->lineItemEnrolment) {
                     $lessonPayment->enrolmentId = $invoice->lineItem->lineItemEnrolment->enrolmentId;
                 }
                 $lessonPayment->save();
                 $payment->updateAttributes(['reference' => $invoice->lineItem->lesson->id]);
+                $paymentModel = new Payment();
+                $paymentModel->amount = $payment->amount;
+                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+                $paymentModel->reference = $payment->invoice->id;
+                $paymentModel->lessonId = $invoice->lineItem->lesson->id;
+                $paymentModel->save();
             }
         }
         
@@ -51,13 +57,18 @@ class m170831_124738_lesson_payment extends Migration
                 $invoice = $payment->invoice;
                 $lessonPayment = new LessonPayment();
                 $lessonPayment->lessonId = $invoice->lineItem->lesson->id;
-                $lessonPayment->paymentId = $payment->id;
+                $lessonPayment->paymentId = $payment->creditUsage->debit_payment_id;
                 $lessonPayment->enrolmentId = $invoice->lineItem->lesson->enrolment->id;
                 if ($invoice->lineItem->lineItemEnrolment) {
                     $lessonPayment->enrolmentId = $invoice->lineItem->lineItemEnrolment->enrolmentId;
                 }
                 $lessonPayment->save();
                 $payment->updateAttributes(['reference' => $invoice->lineItem->lesson->id]);
+                $paymentModel = new Payment();
+                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+                $paymentModel->lessonId = $invoice->lineItem->lesson->id;
+                $paymentModel->reference = $invoice->id;
+                $paymentModel->save();
             }
         }
     }
