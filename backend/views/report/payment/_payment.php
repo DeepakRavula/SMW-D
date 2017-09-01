@@ -19,6 +19,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 ?>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <div class="payments-index">
+    <div class="box">
+        <div class="box-body">
 	<?php if ($searchModel->groupByMethod) : ?>
 		<?php
 		$columns = [
@@ -182,21 +184,23 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 		?>
 	<?php endif; ?>
 
-	<?=
-	GridView::widget([
-		'dataProvider' => $dataProvider,
-		'options' => ['class' => ''],
-		'showPageSummary' => true,
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
-		'pjax' => true,
-		'pjaxSettings' => [
-			'neverTimeout' => true,
-			'options' => [
-				'id' => 'payment-listing',
-			],
-		],
-		'columns' => $columns,
-	]);
-	?>
+            <?=
+            GridView::widget([
+                'dataProvider' => $dataProvider,
+                'options' => ['class' => ''],
+                'showPageSummary' => true,
+                'headerRowOptions' => ['class' => 'bg-light-gray'],
+                'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
+                'pjax' => true,
+                'pjaxSettings' => [
+                    'neverTimeout' => true,
+                    'options' => [
+                        'id' => 'payment-listing',
+                    ],
+                ],
+                'columns' => $columns,
+            ]);
+            ?>
+        </div>
+    </div>
 </div>
