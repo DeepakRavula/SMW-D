@@ -838,17 +838,17 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->save();
         $invoice->addPrivateLessonLineItem($this);
         $invoice->save();
-        if ($this->hasLessonCredit()) {
-            $invoice->addLessonDebitPayment($this, $this->getLessonCreditAmount());
+        if ($this->hasLessonCredit($this->enrolment->id)) {
+            $invoice->addLessonDebitPayment($this, $this->getLessonCreditAmount($this->enrolment->id));
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
                 $lineItem = $invoice->addPrivateLessonLineItem($extendedLesson->lesson);
                 $invoice->save();
-                if ($extendedLesson->lesson->hasLessonCredit()) {
+                if ($extendedLesson->lesson->hasLessonCredit($this->enrolment->id)) {
                     $amount = $extendedLesson->lesson->getSplitedAmount();
-                    if ($amount > $extendedLesson->lesson->getLessonCreditAmount()) {
-                       $amount = $extendedLesson->lesson->getLessonCreditAmount();
+                    if ($amount > $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id)) {
+                       $amount = $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id);
                     }
                     $invoice->addLessonDebitPayment($extendedLesson->lesson, $amount);
                 }
@@ -879,29 +879,15 @@ class Lesson extends \yii\db\ActiveRecord
         $this->enrolmentId = $enrolmentId;
         $invoice->addGroupLessonLineItem($this);
         $invoice->save();
-        if ($this->hasLessonCredit()) {
-            $netPrice = $this->getLessonCreditAmount();
+        if ($this->hasLessonCredit($enrolmentId)) {
+            $netPrice = $this->getLessonCreditAmount($enrolmentId);
             $invoice->addLessonDebitPayment($this, $netPrice);
         }
 
         return $invoice;
     }
     
-    public function getLessonCreditAmount()
-    {
-        return $this->hasMany(Payment::className(), ['id' => 'paymentId'])
-                ->via('lessonCredit')->sum('amount');
-    }
-    
-    public function getLessonCreditAppliedAmount()
-    {
-        return $this->hasMany(Payment::className(), ['id' => 'paymentId'])
-                ->via('lessonCredit')
-                ->onCondition(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_APPLIED])
-                ->sum('amount');
-    }
-    
-    public function getCreditAppliedAmount($enrolmentId)
+    public function getLessonCreditAmount($enrolmentId)
     {
         return Payment::find()
                 ->joinWith('lessonCredit')
@@ -909,9 +895,27 @@ class Lesson extends \yii\db\ActiveRecord
                 ->sum('amount');
     }
     
-    public function hasLessonCredit()
+    public function getCreditAppliedAmount($enrolmentId)
     {
-        return !empty($this->getLessonCreditAmount());
+        return Payment::find()
+                ->joinWith('lessonCredit')
+                ->where(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId, 
+                    'payment_method_id' => PaymentMethod::TYPE_CREDIT_APPLIED])
+                ->sum('amount');
+    }
+    
+    public function getCreditUsedAmount($enrolmentId)
+    {
+        return Payment::find()
+                ->joinWith('lessonCredit')
+                ->where(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId, 
+                    'payment_method_id' => PaymentMethod::TYPE_CREDIT_USED])
+                ->sum('amount');
+    }
+    
+    public function hasLessonCredit($enrolmentId)
+    {
+        return $this->getLessonCreditAmount($enrolmentId) > 0;
     }
 
     public function hasProFormaInvoice()

@@ -377,44 +377,49 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function addCreditInvoice()
     {
-		$invoice = new Invoice();
-		$invoice->user_id = $this->customer->id;
-		$invoice->location_id = $this->customer->userLocation->location_id;
-		$invoice->type = Invoice::TYPE_INVOICE;
-		$invoice->save();
-		$invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
-		$invoiceLineItem->invoice_id = $invoice->id;
-		$item = Item::findOne(['code' => Item::LESSON_CREDIT]);
-		$invoiceLineItem->item_id = $item->id;
-		$invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
-		$invoiceLineItem->description = $this->student->studentIdentity .'\'s '
-			. $this->course->program->name . ' Lesson credit';
-		$invoiceLineItem->unit = 1;
-		$invoiceLineItem->amount = 0.0;
-		$invoiceLineItem->code = $invoiceLineItem->getItemCode();
-		$invoiceLineItem->cost = 0;
-		$invoiceLineItem->save();
-		$invoice->tax = $invoiceLineItem->tax_rate;
-		$invoice->total = $invoice->subTotal + $invoice->tax;
-		$invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
-		$invoice->save();
-                
-                foreach ($this->privateLessonProFormaInvoices as $pfi) {
-                    if ($pfi->total < $pfi->paymentTotal) {
-                        $invoice->addLessonCreditAppliedPayment($pfi->paymentTotal 
-                                - $pfi->total, $pfi);
-                    }
-                    $pfi->save();
-                }
-                $endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
-		$paymentCycles = PaymentCycle::find()
-                        ->where(['enrolmentId' => $this->id])
-                        ->andWhere(['>', 'DATE(startDate)', $endDate])
-                        ->all();
-                foreach($paymentCycles as $paymentCycle) {
-                    $paymentCycle->delete();
-		}
-		return $invoice;
+        $invoice = new Invoice();
+        $invoice->user_id = $this->customer->id;
+        $invoice->location_id = $this->customer->userLocation->location_id;
+        $invoice->type = Invoice::TYPE_INVOICE;
+        $invoice->save();
+        $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
+        $invoiceLineItem->invoice_id = $invoice->id;
+        $item = Item::findOne(['code' => Item::LESSON_CREDIT]);
+        $invoiceLineItem->item_id = $item->id;
+        $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
+        $invoiceLineItem->description = $this->student->studentIdentity .'\'s '
+                . $this->course->program->name . ' Lesson credit';
+        $invoiceLineItem->unit = 1;
+        $invoiceLineItem->amount = 0.0;
+        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
+        $invoiceLineItem->cost = 0;
+        $invoiceLineItem->save();
+        $invoice->tax = $invoiceLineItem->tax_rate;
+        $invoice->total = $invoice->subTotal + $invoice->tax;
+        $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
+        $invoice->save();
+        $endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
+        $lessons = Lesson::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['>=', 'DATE(date)', $endDate])
+                    ->andWhere(['courseId' => $this->courseId])
+                    ->all();
+        foreach ($lessons as $lesson) {
+            if ($lesson->hasLessonCredit($this->id)) {
+                $invoice->addLessonDebitPayment($lesson, $lesson->getLessonCreditAmount($this->id));
+            }
+            $lesson->Cancel();
+            $lesson->delete();
+        }
+        $paymentCycles = PaymentCycle::find()
+                ->where(['enrolmentId' => $this->id])
+                ->andWhere(['>', 'DATE(startDate)', $endDate])
+                ->all();
+        foreach($paymentCycles as $paymentCycle) {
+            $paymentCycle->delete();
+        }
+        return $invoice;
     }
 
     public function beforeSave($insert) {

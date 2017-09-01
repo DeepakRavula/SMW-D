@@ -812,20 +812,7 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
     
-    public function addExtraLessonCredit()
-    {
-        $lesson = Lesson::findOne($this->lineItem->lesson->id);
-        $amount = $lesson->proFormaLineItem->netPrice - $lesson->getLessonCreditAppliedAmount();
-        if ($amount > $this->proFormaCredit) {
-            $amount = $this->proFormaCredit;
-        }
-        if ($this->hasProFormaCredit() && !empty($amount)) {
-            $lesson->createLessonCreditPayment($this, $amount);
-            $this->makeInvoicePayment($lesson);
-        }
-    }
-    
-    public function addPrivateRegularLessonCredit()
+    public function addPrivateLessonCredit()
     {
         foreach ($this->lineItems as $lineItem) {
             $lesson = Lesson::find()
@@ -842,7 +829,7 @@ class Invoice extends \yii\db\ActiveRecord
                         ->orderBy(['id' => SORT_DESC])
                         ->all();
                 foreach ($splitLessons as $splitLesson) {
-                    $amount = $splitLesson->getSplitedAmount() - $splitLesson->getLessonCreditAppliedAmount();
+                    $amount = $splitLesson->getSplitedAmount() - $splitLesson->getCreditAppliedAmount($splitLesson->enrolment->id);
                     if ($amount > $this->proFormaCredit) {
                         $amount = $this->proFormaCredit;
                     }
@@ -852,7 +839,10 @@ class Invoice extends \yii\db\ActiveRecord
                     }
                 }
             } else {
-                $amount = $lesson->proFormaLineItem->netPrice - $lesson->getLessonCreditAppliedAmount();
+                if ($this->isExtraLessonProformaInvoice()) {
+                    $lesson = Lesson::findOne($this->lineItem->lesson->id);
+                }
+                $amount = $lesson->proFormaLineItem->netPrice - $lesson->getCreditAppliedAmount($lesson->enrolment->id);
                 if ($amount > $this->proFormaCredit) {
                     $amount = $this->proFormaCredit;
                 }
@@ -866,12 +856,10 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function addLessonCredit()
     {
-        if ($this->lineItem->isGroupLesson()) {//die('com');
+        if ($this->lineItem->isGroupLesson()) {
             $this->addGroupLessonCredit();
-        } else if ($this->isExtraLessonProformaInvoice()) {
-            $this->addExtraLessonCredit();
         } else {
-            $this->addPrivateRegularLessonCredit();
+            $this->addPrivateLessonCredit();
         }
     }
     
@@ -881,13 +869,11 @@ class Invoice extends \yii\db\ActiveRecord
             if (!$lesson->hasInvoice()) {
                 $invoice = $lesson->createPrivateLessonInvoice();
             } else if (!$lesson->invoice->isPaid()) {
-                if ($lesson->hasLessonCredit()) {
-                    $netPrice = $lesson->proFormaLineItem->netPrice;
+                if ($lesson->hasLessonCredit($lesson->enrolment->id)) {
+                    $netPrice = $lesson->getLessonCreditAmount($lesson->enrolment->id);
                     if ($lesson->isExploded) {
-                        $netPrice = $lesson->getSplitedAmount();
-                    }
-                    if ($netPrice > $lesson->getLessonCreditAppliedAmount()) {
-                       $netPrice = $lesson->getLessonCreditAppliedAmount();
+                        $netPrice = $lesson->getSplitedAmount() - $lesson->
+                                getCreditUsedAmount($lesson->enrolment->id);
                     }
                     $lesson->invoice->addLessonDebitPayment($lesson, $netPrice);
                 }
@@ -898,12 +884,12 @@ class Invoice extends \yii\db\ActiveRecord
     public function makeGroupInvoicePayment($lesson, $enrolment)
     {
         if($lesson->canInvoice()) {
-            if (!$lesson->hasInvoice()) {
+            if (!$enrolment->hasInvoice($lesson->id)) {
                 $invoice = $lesson->createGroupInvoice($enrolment->id);
-            } else if (!$lesson->invoice->isPaid()) {
-                if ($lesson->hasLessonCredit()) {
-                    $netPrice = $lesson->getLessonCreditAmount();
-                    $lesson->invoice->addLessonDebitPayment($lesson, $netPrice);
+            } else if (!$enrolment->getInvoice($lesson->id)->isPaid()) {
+                if ($lesson->hasLessonCredit($enrolment->id)) {
+                    $netPrice = $lesson->getLessonCreditAmount($enrolment->id);
+                    $enrolment->getInvoice($lesson->id)->addLessonDebitPayment($lesson, $netPrice);
                 }
             }
         }

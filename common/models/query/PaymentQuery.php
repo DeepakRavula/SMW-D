@@ -3,6 +3,7 @@
 namespace common\models\query;
 
 use common\models\Payment;
+use common\models\PaymentMethod;
 use common\models\Invoice;
 use yii\db\ActiveQuery;
 
@@ -60,5 +61,15 @@ class PaymentQuery extends ActiveQuery
         $this->andWhere(['payment.isDeleted' => false]);
 
         return $this;
+    }
+    
+    public function creditUsed()
+    {
+        return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
+    }
+    
+    public function creditApplied()
+    {
+        return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_APPLIED]);
     }
 }
