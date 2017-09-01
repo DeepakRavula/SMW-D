@@ -5,11 +5,18 @@ use common\models\Invoice;
 use common\models\Payment;
 use common\models\LessonPayment;
 use common\models\PaymentMethod;
+use common\models\CreditUsage;
 
 class m170831_124738_lesson_payment extends Migration
 {
     public function up()
     {
+        $this->addColumn('credit_usage', 'credit_payment_id1', 
+			$this->integer()->after('debit_payment_id'));
+        $creditUsages = CreditUsage::find()->all();
+        foreach ($creditUsages as $creditUsage) {
+            $creditUsage->updateAttributes(['credit_payment_id1' => $creditUsage->credit_payment_id]);
+        }
         $pfis = Invoice::find()
                 ->notCanceled()
                 ->notDeleted()
@@ -24,21 +31,23 @@ class m170831_124738_lesson_payment extends Migration
                     ->all();
             foreach ($payments as $payment) {
                 $invoice = Invoice::findOne($payment->reference);
+                $payment->updateAttributes(['reference' => $invoice->lineItem->lesson->id]);
+                $paymentModel = new Payment();
+                $paymentModel->amount = abs ($payment->amount);
+                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
+                $paymentModel->reference = $payment->invoice->id;
+                $paymentModel->lessonId = $invoice->lineItem->lesson->id;
+                $paymentModel->save();
                 $lessonPayment = new LessonPayment();
                 $lessonPayment->lessonId = $invoice->lineItem->lesson->id;
-                $lessonPayment->paymentId = $payment->debitUsage->credit_payment_id;
+                $lessonPayment->paymentId = $paymentModel->id;
                 $lessonPayment->enrolmentId = $invoice->lineItem->lesson->enrolment->id;
                 if ($invoice->lineItem->lineItemEnrolment) {
                     $lessonPayment->enrolmentId = $invoice->lineItem->lineItemEnrolment->enrolmentId;
                 }
                 $lessonPayment->save();
-                $payment->updateAttributes(['reference' => $invoice->lineItem->lesson->id]);
-                $paymentModel = new Payment();
-                $paymentModel->amount = $payment->amount;
-                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-                $paymentModel->reference = $payment->invoice->id;
-                $paymentModel->lessonId = $invoice->lineItem->lesson->id;
-                $paymentModel->save();
+                $payment->debitUsage->credit_payment_id = $paymentModel->id;
+                $payment->debitUsage->save();
             }
         }
         
@@ -56,22 +65,26 @@ class m170831_124738_lesson_payment extends Migration
                     ->all();
             foreach ($payments as $payment) {
                 $invoice = $payment->invoice;
-                $lessonPayment = new LessonPayment();
-                $lessonPayment->lessonId = $invoice->lineItem->lesson->id;
-                $lessonPayment->paymentId = $payment->creditUsage->debit_payment_id;
-                $lessonPayment->enrolmentId = $invoice->lineItem->lesson->enrolment->id;
-                if ($invoice->lineItem->lineItemEnrolment) {
-                    $lessonPayment->enrolmentId = $invoice->lineItem->lineItemEnrolment->enrolmentId;
-                }
-                $lessonPayment->save();
                 $payment->updateAttributes(['reference' => $invoice->lineItem->lesson->id]);
                 $paymentModel = new Payment();
                 $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
                 $paymentModel->lessonId = $invoice->lineItem->lesson->id;
                 $paymentModel->reference = $invoice->id;
+                $paymentModel->amount = $payment->amount;
                 $paymentModel->save();
+                $lessonPayment = new LessonPayment();
+                $lessonPayment->lessonId = $invoice->lineItem->lesson->id;
+                $lessonPayment->paymentId = $paymentModel->id;
+                $lessonPayment->enrolmentId = $invoice->lineItem->lesson->enrolment->id;
+                if ($invoice->lineItem->lineItemEnrolment) {
+                    $lessonPayment->enrolmentId = $invoice->lineItem->lineItemEnrolment->enrolmentId;
+                }
+                $lessonPayment->save();
+                $payment->creditUsage1->debit_payment_id = $paymentModel->id;
+                $payment->creditUsage1->save();
             }
         }
+        $this->dropColumn('credit_usage', 'credit_payment_id1');
     }
 
     public function down()
