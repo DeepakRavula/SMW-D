@@ -3,12 +3,12 @@
 /**
  * @var yii\web\View
  */
-use backend\assets\BackendAsset;
+use frontend\assets\FrontendAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\User;
 
-$bundle = BackendAsset::register($this);
+$bundle = FrontendAsset::register($this);
 ?>
 <!-- header logo: style can be found in header.less -->
 <header class="main-header">

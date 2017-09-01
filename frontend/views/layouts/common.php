@@ -4,9 +4,6 @@
  * @var $this yii\web\View
  */
 use frontend\assets\FrontendAsset;
-use backend\widgets\Menu;
-use yii\helpers\ArrayHelper;
-use yii\widgets\Breadcrumbs;
 
 $bundle = FrontendAsset::register($this);
 ?>

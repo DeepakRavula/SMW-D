@@ -1,12 +1,12 @@
 <?php
-use backend\assets\BackendAsset;
+use frontend\assets\FrontendAsset;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-$bundle = BackendAsset::register($this);
+$bundle = FrontendAsset::register($this);
 
 $this->params['body-class'] = array_key_exists('body-class', $this->params) ?
     $this->params['body-class']
