@@ -4,6 +4,7 @@ use yii\db\Migration;
 use common\models\Invoice;
 use common\models\Payment;
 use common\models\LessonPayment;
+use common\models\PaymentMethod;
 
 class m170831_124738_lesson_payment extends Migration
 {
@@ -17,7 +18,7 @@ class m170831_124738_lesson_payment extends Migration
         foreach ($pfis as $pfi) {
             $payments = Payment::find()
                     ->notDeleted()
-                    ->join('invoicePayment')
+                    ->joinWith('invoicePayment')
                     ->where(['invoice_payment.invoice_id' => $pfi->id])
                     ->creditUsed()
                     ->all();
@@ -49,7 +50,7 @@ class m170831_124738_lesson_payment extends Migration
         foreach ($invoices as $invoice) {
             $payments = Payment::find()
                     ->notDeleted()
-                    ->join('invoicePayment')
+                    ->joinWith('invoicePayment')
                     ->where(['invoice_payment.invoice_id' => $invoice->id])
                     ->creditApplied()
                     ->all();
