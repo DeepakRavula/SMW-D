@@ -3,12 +3,12 @@
 /**
  * @var yii\web\View
  */
-use backend\assets\BackendAsset;
+use frontend\assets\FrontendAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\User;
 
-$bundle = BackendAsset::register($this);
+$bundle = FrontendAsset::register($this);
 ?>
 <!-- header logo: style can be found in header.less -->
 <header class="main-header">
@@ -47,6 +47,9 @@ $bundle = BackendAsset::register($this);
 							</li>
 							<!-- Menu Footer-->
 							<li class="user-footer">
+								<div class="pull-left">
+									<?php echo Html::a(Yii::t('backend', 'Profile'), Url::to(['/user/default/update',]), ['class' => 'btn btn-default btn-flat']) ?>
+								</div>
 								<div class="pull-right">
 									<?php echo Html::a(Yii::t('backend', 'Logout'), ['/user/sign-in/logout'], ['class' => 'btn btn-default btn-flat', 'data-method' => 'post']) ?>
 								</div>

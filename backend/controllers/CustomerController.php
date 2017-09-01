@@ -15,6 +15,7 @@ use common\models\ItemType;
 use common\models\PaymentMethod;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use Carbon\Carbon;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -76,7 +77,10 @@ class CustomerController extends UserController
             }
             $invoice->tax = $invoiceLineItem->tax_rate;
             $invoice->total = $invoice->subTotal + $invoice->tax;
-            $invoice->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
+			if(!empty($invoice->location->conversionDate)) {
+				$date = Carbon::parse($invoice->location->conversionDate);
+            	$invoice->date = $date->subDay(1);
+			}
             $invoice->save();
 
             if ($paymentModel->amount < 0) {

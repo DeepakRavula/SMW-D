@@ -6,13 +6,13 @@ use common\models\City;
 use common\models\Province;
 use common\models\Country;
 use yii\helpers\ArrayHelper;
+use kartik\date\DatePicker;
+use Carbon\Carbon;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
 /* @var $form yii\bootstrap\ActiveForm */
 $this->title = 'Edit Location';
-$this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
-$this->params['breadcrumbs'][] = 'Edit';
 ?>
 
 <div class="location-form">
@@ -67,6 +67,22 @@ $this->params['breadcrumbs'][] = 'Edit';
 		</div>
 		<div class="col-md-4">
 			<?php echo $form->field($model, 'advertisementValue')->textInput() ?>
+		</div>
+	</div>
+	<div class="row p-10">
+		<div class="col-md-4">
+			<?php echo $form->field($model, 'conversionDate')->widget(DatePicker::classname(), [
+				'options' => [
+					'value' => !empty($model->conversionDate) ? Carbon::parse($model->conversionDate)->format('d-m-Y') : ''
+				],
+				'layout' => '{input}{picker}',
+                'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd-mm-yyyy',
+                ],
+            ]);
+            ?>
 		</div>
 	</div>
 	<div class="clearfix"></div>

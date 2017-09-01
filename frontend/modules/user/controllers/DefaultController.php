@@ -10,6 +10,13 @@ use trntv\filekit\actions\UploadAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use common\models\User;
+use frontend\models\UserForm;
+use yii\web\Response;
+use yii\helpers\ArrayHelper;
+use common\models\Address;
+use common\models\PhoneNumber;
+use yii\base\Model;
 
 class DefaultController extends Controller
 {
@@ -31,7 +38,7 @@ class DefaultController extends Controller
             ],
             'avatar-delete' => [
                 'class' => DeleteAction::className(),
-            ],
+            ],			
         ];
     }
 
@@ -48,6 +55,13 @@ class DefaultController extends Controller
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                ],
+            ],
+			[
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['edit-profile', 'edit-phone', 'edit-address'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -81,4 +95,132 @@ class DefaultController extends Controller
 
         return $this->render('index', ['model' => $model]);
     }
+	public function actionUpdate()
+    {
+		$id = Yii::$app->user->id;
+        $model = User::findOne(['id' => $id]);
+       
+        return $this->render('view', [
+            'model' => $model,
+        ]);
+    }
+	public function actionEditProfile($id)
+	{
+		$request = Yii::$app->request;
+		$model = new UserForm();
+        $user = User::findOne(['id' => $id]);
+        $model->setModel($user);	
+		if ($model->load($request->post())) {
+			if($model->save()) {
+				return [
+				   'status' => true,
+				];	
+			} else {
+				$errors = ActiveForm::validate($model);
+                return [
+                    'status' => false,
+                    'errors' => current($errors)
+                ];
+			}
+		}
+	}
+	public function actionEditPhone($id)
+	{
+		$request = Yii::$app->request;
+		$model = new UserForm();
+		$user = User::findOne(['id' => $id]);
+        $model->setModel($user);
+        $phoneNumberModels = $model->phoneNumbers;
+		$data = $this->renderAjax('update/_phone', [
+			'model' => $model,
+			'phoneNumberModels' => $phoneNumberModels,
+		]);
+		
+        $response = Yii::$app->response;
+        if ($request->isPost) {
+            $oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
+            $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
+            Model::loadMultiple($phoneNumberModels, $request->post());
+            $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
+
+            $valid = Model::validateMultiple($phoneNumberModels);
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+					if (!empty($deletedPhoneIDs)) {
+						PhoneNumber::deleteAll(['id' => $deletedPhoneIDs]);
+					}
+					foreach ($phoneNumberModels as $phoneNumberModel) {
+						$phoneNumberModel->user_id = $id;
+						if (!($flag = $phoneNumberModel->save(false))) {
+							$transaction->rollBack();
+							break;
+						}
+					}
+                    if ($flag) {
+                        $transaction->commit();
+                       	return [
+							'status' => true,
+						]; 
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            } 
+        } else {
+			return [
+				'status' => true,
+				'data' => $data,
+			];
+		}
+	}
+	public function actionEditAddress($id)
+	{
+		$request = Yii::$app->request;
+		$model = new UserForm();
+		$user = User::findOne(['id' => $id]);
+        $model->setModel($user);
+        $addressModels = $model->addresses;
+		$data = $this->renderAjax('update/_address', [
+			'model' => $model,
+			'addressModels' => $addressModels,
+		]);
+		
+        if ($request->isPost) {
+            $oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
+            $addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
+            Model::loadMultiple($addressModels, $request->post());
+            $deletedAddressIDs = array_diff($oldAddressIDs, array_filter(ArrayHelper::map($addressModels, 'id', 'id')));
+
+            $valid = Model::validateMultiple($addressModels);
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+					if (!empty($deletedAddressIDs)) {
+						Address::deleteAll(['id' => $deletedAddressIDs]);
+					}
+					foreach ($addressModels as $addressModel) {
+						if (!($flag = $addressModel->save(false))) {
+							$transaction->rollBack();
+							break;
+						}
+						$model->getModel()->link('addresses', $addressModel);
+					}
+                    if ($flag) {
+                        $transaction->commit();
+                       	return [
+							'status' => true,
+						]; 
+                    }
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            } 
+        } else {
+			return [
+				'status' => true,
+				'data' => $data,
+			];
+		}
+	}
 }
