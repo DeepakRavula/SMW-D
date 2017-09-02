@@ -59,15 +59,16 @@ use kartik\editable\Editable;
 					])
 					?>  
                     </div>
-                    
+
                   </td>
                   <td colspan="2">
-                    <table id="invoice-summary-section" class="table-invoice-childtable">
-						<?php
-			echo $this->render('_view-bottom-summary', [
-				'model' => $model,
-		]); ?>	
-                    </table>
+                      <?php
+                      echo $this->render('_view-bottom-summary', [
+                          'model' => $model,
+                      ]);
+
+                      ?>	
+
                   </td>
                 </tr>
               </tbody>
