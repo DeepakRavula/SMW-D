@@ -63,7 +63,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 			],
 		];
 		?>
-
+<div class="box">
 	<?=
 	GridView::widget([
 		'dataProvider' => $dataProvider,
@@ -81,4 +81,5 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 		'columns' => $columns,
 	]);
 	?>
+</div>
 </div>
