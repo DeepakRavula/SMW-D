@@ -13,7 +13,9 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
     <div class="form-group form-inline">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     </div>
+    <div class="box">
     <?php echo $this->render('_item-category', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]); ?>
+    </div>
 </div>
 
 <script>
