@@ -360,12 +360,6 @@ class Lesson extends \yii\db\ActiveRecord
         return self::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_ASC])->one();
     }
  
-	public function getPfi()
-	{
-		return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
-            ->via('proFormaLineItems')
-            ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
-	}
     public function getProFormaInvoice()
     {
         $model = $this;

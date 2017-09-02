@@ -24,9 +24,7 @@ Modal::end(); ?>
 ]);?>
 <div style="margin-bottom: 10px">
 <?= Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['#'], ['class' => 'btn btn-primary btn-sm m-r-10 add-payment']);?>
-	<?php if($model->isInvoice()) : ?>
 	<?= Html::a(Yii::t('backend', 'Apply Credit'), ['#'], ['class' => 'btn btn-primary btn-sm apply-credit']);?>
-	<?php endif; ?>
 </div>
 <?php
 $columns = [
