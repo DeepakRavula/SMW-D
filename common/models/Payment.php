@@ -80,9 +80,12 @@ class Payment extends ActiveRecord
     }
     
     public function validateNegativeBalance($attributes)
-    {   $invoice = Invoice::findOne($this->invoiceId);
-        if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
-            return $this->addError($attributes, "Can't over pay");
+    {   
+        if (!empty($this->invoiceId)) {
+            $invoice = Invoice::findOne($this->invoiceId);
+            if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
+                return $this->addError($attributes, "Can't over pay");
+            }
         }
     }
 
