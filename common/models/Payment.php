@@ -174,6 +174,12 @@ class Payment extends ActiveRecord
                 ['credit_payment_id' => 'id']);
     }
     
+    public function getCreditUsage1()
+    {
+        return $this->hasOne(CreditUsage::className(),
+                ['credit_payment_id1' => 'id']);
+    }
+    
     public function getDebitUsage()
     {
         return $this->hasOne(CreditUsage::className(),
