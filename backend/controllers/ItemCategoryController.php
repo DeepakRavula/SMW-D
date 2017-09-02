@@ -225,7 +225,7 @@ class ItemCategoryController extends Controller
         }
         $searchModel->groupByItemCategory = true;
         $dataProvider                     = $searchModel->search(Yii::$app->request->queryParams);
-
+        $dataProvider->pagination=false;
         $this->layout = '/print';
 
         return $this->render('/report/item-category/_print',
