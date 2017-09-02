@@ -7,17 +7,19 @@ use kartik\daterange\DateRangePicker;
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\UserSearch */
 /* @var $form yii\bootstrap\ActiveForm */
+
 ?>
 <div class="user-search">
 
-    <?php $form = ActiveForm::begin([
-        'action' => ['report/payment'],
-        'method' => 'get',
-    ]); ?>
-    <div class="row">
-    <div class="col-md-3">
-       <div class="form-group m-t-20">
-            <?php echo DateRangePicker::widget([
+    <?php
+    $form = ActiveForm::begin([
+            'action' => ['report/payment'],
+            'method' => 'get',
+    ]);
+    ?>
+    <div class="form-group">
+        <?php
+        echo DateRangePicker::widget([
             'model' => $model,
             'attribute' => 'dateRange',
             'convertFormat' => true,
@@ -34,26 +36,10 @@ use kartik\daterange\DateRangePicker;
                     'format' => 'M d,Y',
                 ],
                 'opens' => 'right',
-                ],
-
-            ]);
-           ?>
-        </div>
+            ],
+        ]);
+        ?>
     </div>
-    <div class="pull-right  m-r-20">
-        <div class="schedule-index">
-            <div class="e1Div">
-                <?= $form->field($model, 'groupByMethod')->checkbox(['id' => 'group-by-method', 'data-pjax' => true]); ?>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 form-group m-t-20">
-        <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
-        <div class="clearfix"></div>
-    </div>
-    </div>
-
-    <?php ActiveForm::end(); ?>
-
+<?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary btn-sm']) ?>      
+<?php ActiveForm::end(); ?>
 </div>

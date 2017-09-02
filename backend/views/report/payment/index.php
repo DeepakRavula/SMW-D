@@ -6,15 +6,19 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Payments';
+$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print']);
+$this->params['show-all'] = $this->render('_button', [
+    'model' => $searchModel
+    ]);
 ?>
 
 <div class="payments-index p-10">
-    <div id="print" class="btn btn-default pull-right m-t-20">
-        <?= Html::a('<i class="fa fa-print"></i> Print') ?>
-    </div>
+    <div class="payment-search">
+    <div class="form-inline form-group">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+    </div>
     <?php echo $this->render('_payment', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]); ?>
-	
+    </div>
 </div>
 
 <script>

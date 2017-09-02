@@ -58,6 +58,15 @@ class ReportController extends Controller {
 	public function actionPayment()
     {
         $searchModel = new PaymentSearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('M d,Y');
+        $searchModel->toDate = $currentDate->format('M d,Y');
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $paymentRequest = $request->get('PaymentSearch');
+            $searchModel->dateRange = $paymentRequest['dateRange'];
+        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('payment/index', [
