@@ -18,6 +18,7 @@ class m170831_124738_lesson_payment extends Migration
             $creditUsage->updateAttributes(['credit_payment_id1' => $creditUsage->credit_payment_id]);
         }
         $pfis = Invoice::find()
+                ->where(['invoice.location_id' => 7])
                 ->notCanceled()
                 ->notDeleted()
                 ->proFormaInvoice()
@@ -52,6 +53,7 @@ class m170831_124738_lesson_payment extends Migration
         }
         
         $invoices = Invoice::find()
+                 ->where(['invoice.location_id' => 7])
                 ->notCanceled()
                 ->notDeleted()
                 ->invoice()

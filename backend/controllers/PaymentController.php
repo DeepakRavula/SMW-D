@@ -205,7 +205,7 @@ class PaymentController extends Controller
 				$errors = ActiveForm::validate($paymentModel); 
 			return [
 				'status' => false,
-				'errors' => $errors['payment-amount'],
+				'errors' => $errors,
 			];
 		}
         } 
