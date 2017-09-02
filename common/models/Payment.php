@@ -60,6 +60,7 @@ class Payment extends ActiveRecord
     {
         return [
             [['amount'], 'required'],
+            [['amount'], 'validateNegativeBalance'],
             [['amount'], 'validateLessThanCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'validateCreditApplied', 'on' => self::SCENARIO_CREDIT_APPLIED],
             [['amount'], 'validateCreditUsed', 'on' => self::SCENARIO_CREDIT_USED],
@@ -75,6 +76,13 @@ class Payment extends ActiveRecord
     {
         if ((float) $this->credit < (float) $this->amount) {
             return $this->addError($attributes, 'Insufficient Credit');
+        }
+    }
+    
+    public function validateNegativeBalance($attributes)
+    {   $invoice = Invoice::findOne($this->invoiceId);
+        if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
+            return $this->addError($attributes, "Can't over pay");
         }
     }
 
