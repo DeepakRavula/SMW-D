@@ -13,7 +13,6 @@ use kartik\daterange\DateRangePicker;
         'action' => ['report/discount'],
         'method' => 'get'
     ]); ?>
-    <div class="e1Div form-inline">
         <div class="form-group">
             <?php echo DateRangePicker::widget([
             'model' => $model,
@@ -37,10 +36,6 @@ use kartik\daterange\DateRangePicker;
             ]);
            ?>
         </div>
-        <div id="print" class="btn btn-default pull-right m-t-6">
-            <?= Html::a('<i class="fa fa-print"></i> Print') ?>
-        </div>
-    </div>
     <?php ActiveForm::end(); ?>
     
 <script>
