@@ -8,6 +8,8 @@ use backend\models\search\CitySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
 
 /**
  * CityController implements the CRUD actions for City model.
@@ -21,6 +23,14 @@ class CityController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+			'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['update', 'create'],
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -62,22 +72,22 @@ class CityController extends Controller
      *
      * @return mixed
      */
-    public function actionCreate()
+	public function actionCreate()
     {
         $model = new City();
-
+        $data  = $this->renderAjax('_form', [
+            'model' => $model,
+        ]); 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'City has been created successfully',
-        ]);
-
-            return $this->redirect(['view', 'id' => $model->id]);
+			return [
+				'status' => true
+			];
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        } 
     }
 
     /**
@@ -88,21 +98,21 @@ class CityController extends Controller
      *
      * @return mixed
      */
-    public function actionUpdate($id)
+	public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'City has been updated successfully',
+		$model = $this->findModel($id);
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
         ]);
-
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			return [
+				'status' => true
+			];
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
     }
 
