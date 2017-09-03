@@ -5,6 +5,8 @@ use yii\helpers\Url;
 use yii\grid\GridView;
 use common\components\gridView\AdminLteGridView;
 use common\models\User;
+use yii\bootstrap\Modal;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\ProvinceSearch */
@@ -14,23 +16,27 @@ $this->title = 'Provinces';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
-$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['create'], ['class' => 'btn btn-primary btn-sm']);
+$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), '#', ['class' => 'add-province btn btn-primary btn-sm']);
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
-<div class="grid-row-open">
+<?php Modal::begin([
+        'header' => '<h4 class="m-0">Province</h4>',
+        'id' => 'province-modal',
+    ]); ?>
+<div id="province-content"></div>
+ <?php  Modal::end(); ?>
+<?php Pjax::begin([
+	'id' => 'province-listing'
+]);?>
+<div>
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
-        'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['province/view', 'id' => $model->id]);
-
-            return ['data-url' => $url];
-        },
-        //'filterModel' => $searchModel,
+        'filterModel' => $searchModel,
         'columns' => [
             'name',
             'tax_rate',
             [
-                'label' => 'Country Name',
+                'label' => 'Country',
                 'value' => function ($data) {
                     return !empty($data->country->name) ? $data->country->name : null;
                 },
@@ -39,3 +45,51 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
     ]); ?>
 
 </div>
+<?php Pjax::end(); ?>
+<script>
+    $(document).ready(function() {
+        $(document).on('click', '.add-province, #province-listing  tbody > tr', function () {
+            var provinceId = $(this).data('key');
+            if (provinceId === undefined) {
+                var customUrl = '<?= Url::to(['province/create']); ?>';
+            } else {
+                var customUrl = '<?= Url::to(['province/update']); ?>?id=' + provinceId;
+            }
+            $.ajax({
+                url    : customUrl,
+                type   : 'post',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $('#province-content').html(response.data);
+                        $('#province-modal').modal('show');
+                    }
+                }
+            });
+            return false;
+        });
+        $(document).on('beforeSubmit', '#province-form', function () {
+            $.ajax({
+                url    : $(this).attr('action'),
+                type   : 'post',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status) {
+                        $.pjax.reload({container: '#province-listing', timeout: 6000});
+                        $('#province-modal').modal('hide');
+                    }
+                }
+            });
+            return false;
+        });
+        $(document).on('click', '.province-cancel', function () {
+            $('#province-modal').modal('hide');
+            return false;
+        });
+    });
+</script>
