@@ -1,10 +1,5 @@
 <?php
-use yii\helpers\Html;
-use common\models\Payment;
 use common\models\Invoice;
-use common\models\PaymentMethod;
-use yii\bootstrap\ButtonGroup;
-use yii\helpers\Url;
 use yii\grid\GridView;
 
 ?>

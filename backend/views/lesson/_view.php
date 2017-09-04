@@ -104,23 +104,6 @@ use kartik\grid\GridView;
     </div>
 </div>
 
-<?php
-
-Modal::begin([
-    'header' => '<h4 class="m-0">Email Preview</h4>',
-    'id'=>'lesson-mail-modal',
-]);
- echo $this->render('mail/preview', [
-		'model' => $model,
-]);
-Modal::end();
-?>
-
-<?php
-echo $this->render('_merge-lesson', [
-	'model' => $model,
-]);
-?>
 <script>
     $(document).ready(function() {
         $(document).on('click', '#lesson-mail-button', function (e) {

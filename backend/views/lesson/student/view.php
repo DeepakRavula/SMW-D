@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use common\models\Enrolment;
+use common\models\LessonPayment;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\GroupCourseSearch */
@@ -38,7 +39,7 @@ use common\models\Enrolment;
                 },
             ],
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {create}',
+                'template' => '{view} {create} {payment}',
                 'buttons' => [
                     'create' => function ($url, $model) use ($lessonModel){
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
@@ -68,6 +69,22 @@ use common\models\Enrolment;
                             'title' => Yii::t('yii', 'View Invoice'),
 							'class' => ['btn-info btn-sm']
                         ]);
+                    },
+                    'payment' => function ($url, $model) use ($lessonModel){
+                        $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
+                            ->where(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['studentId' => $model->id])->one();
+                        $lessonPayment = LessonPayment::findOne(['enrolmentId' => $enrolment->id, 
+                            'lessonId' => $lessonModel->id]);
+                        if ($lessonPayment) {
+                            $url = Url::to(['lesson/payment', 'lessonId' => $lessonModel->id, 'enrolmentId' => $enrolment->id]);
+                            return Html::a('View Payment', null, [
+                                'id' => 'view-payment',
+                                'url' => $url,
+                                'title' => Yii::t('yii', 'View Payment'),
+                                                            'class' => ['btn-info btn-sm']
+                            ]);
+                        }
                     }
                 ]
             ],
