@@ -12,14 +12,12 @@ use kartik\daterange\DateRangePicker;
 <div class="user-search">
 
     <?php $form = ActiveForm::begin([
-        //'action' => ['royalty'],
         'method' => 'get',
     ]); ?>
 	
     <div class="row">
     <div class="col-md-5">
    <?php 
-   echo '<label>Date Range</label>';
    echo DateRangePicker::widget([
     'model' => $model,
     'attribute' => 'dateRange',
@@ -52,8 +50,7 @@ use kartik\daterange\DateRangePicker;
 	</div>
 	<?php endif; ?>
     <div class="col-md-5 form-group m-t-20">
-        <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
-        <?php echo Html::resetButton(Yii::t('backend', 'Reset'), ['class' => 'btn btn-default']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary']) ?>
     </div>
     </div>
 
