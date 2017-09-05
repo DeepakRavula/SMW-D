@@ -31,11 +31,13 @@ $this->params['action-button'] = $this->render('_buttons', [
 		?>
 	</div>
 	<div class="col-md-6">
+            <?php if (!$model->isGroup()): ?>
 		<?=
 		$this->render('_student', [
 			'model' => $model,
 		]);
 		?>
+            <?php endif; ?>
 		<?=
 		$this->render('_attendance', [
 			'model' => $model,
@@ -50,6 +52,10 @@ $this->params['action-button'] = $this->render('_buttons', [
 				$paymentContent = $this->render('payment/view', [
 					'paymentsDataProvider' => $paymentsDataProvider
 				]);
+                                $studentContent = $this->render('student/view', [
+					'studentDataProvider' => $studentDataProvider,
+                                        'lessonModel' => $model
+				]);
 				$noteContent = $this->render('note/view', [
 					'model' => new Note(),
 					'noteDataProvider' => $noteDataProvider
@@ -59,11 +65,19 @@ $this->params['action-button'] = $this->render('_buttons', [
 					'model' => $model,
 				]);
 
-				$items = [
+				$privateItem = [
 					[
 						'label' => 'Payments',
 						'content' => $paymentContent,
-					],
+					]
+                                ];
+                                $groupItem = [
+					[
+						'label' => 'Students',
+						'content' => $studentContent,
+					]
+                                ];
+                                $items = [
 					[
 						'label' => 'Comments',
 						'content' => $noteContent,
@@ -73,10 +87,13 @@ $this->params['action-button'] = $this->render('_buttons', [
 						'content' => $logContent,
 					],
 				];
-				?>
-				<?php
+                                if (!$model->isGroup()) {
+                                    $lessonItems = array_merge($privateItem, $items);
+                                } else {
+                                    $lessonItems = array_merge($groupItem, $items);
+                                }
 				echo Tabs::widget([
-					'items' => $items,
+					'items' => $lessonItems,
 				]);
 				?>
 			</div>
@@ -94,11 +111,12 @@ Modal::begin([
 Modal::end();
 ?>
 
-<?php
-echo $this->render('_merge-lesson', [
+<?php if (!$model->isGroup()): ?>
+    <?= $this->render('_merge-lesson', [
 	'model' => $model,
-]);
-?>
+    ]); ?>
+<?php endif; ?>
+
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Edit Details</h4>',
     'id' => 'classroom-edit-modal',
@@ -106,6 +124,13 @@ echo $this->render('_merge-lesson', [
 <?= $this->render('classroom/_form', [
 	'model' => $model,
 ]);?>
+<?php Modal::end(); ?>
+
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Payment Details</h4>',
+    'id' => 'lesson-payment-modal',
+]); ?>
+<div id="lesson-payment-content"></div>
 <?php Modal::end(); ?>
 
 <?php if ($model->hasExpiryDate()) :?>
@@ -125,6 +150,21 @@ echo $this->render('_merge-lesson', [
  	$(document).on('click', '.edit-lesson-detail', function () {
 		$('#classroom-edit-modal').modal('show');
 		return false;
+	});
+        $(document).on('click', '#view-payment', function () {
+            $.ajax({
+                url    : $(this).attr('url'),
+                type   : 'get',
+                success: function(response)
+                {
+                    if(response.status)
+                        {
+                            $('#lesson-payment-modal').modal('show');
+                            $('#lesson-payment-content').html(response.data);
+                        }
+                }
+            });
+            return false;
 	});
 	$(document).on('click', '.lesson-detail-cancel', function () {
 		$('#classroom-edit-modal').modal('hide');

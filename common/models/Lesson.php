@@ -833,7 +833,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addPrivateLessonLineItem($this);
         $invoice->save();
         if ($this->hasLessonCredit($this->enrolment->id)) {
-            $invoice->addLessonDebitPayment($this, $this->getLessonCreditAmount($this->enrolment->id));
+            $invoice->addLessonDebitPayment($this, $this->getLessonCreditAmount($this->enrolment->id), $this->enrolment);
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
@@ -844,7 +844,7 @@ class Lesson extends \yii\db\ActiveRecord
                     if ($amount > $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id)) {
                        $amount = $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id);
                     }
-                    $invoice->addLessonDebitPayment($extendedLesson->lesson, $amount);
+                    $invoice->addLessonDebitPayment($extendedLesson->lesson, $amount, $this->enrolment);
                 }
             }
         }
@@ -875,7 +875,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->save();
         if ($this->hasLessonCredit($enrolmentId)) {
             $netPrice = $this->getLessonCreditAmount($enrolmentId);
-            $invoice->addLessonDebitPayment($this, $netPrice);
+            $invoice->addLessonDebitPayment($this, $netPrice, $enrolment);
         }
 
         return $invoice;
@@ -1005,18 +1005,26 @@ class Lesson extends \yii\db\ActiveRecord
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
         $paymentModel->reference = $this->id;
         $paymentModel->invoiceId = $invoice->id;
-        $paymentModel->save();
-
-        $lessonCredit  = new LessonPayment();
-        $lessonCredit->lessonId = $this->id;
-        $lessonCredit->paymentId = $creditPaymentId;
-        $lessonCredit->enrolmentId = $this->enrolment->id;
+        if (!$paymentModel->save()) {
+            print_r($paymentModel->getErrors());die;
+    }
+        
+        $enrolmentId = $this->enrolment->id;
         if ($enrolment) {
-            $lessonCredit->enrolmentId = $enrolment->id;
+            $enrolmentId = $enrolment->id;
         }
-        $lessonCredit->save();
+        $this->addLessonPayment($creditPaymentId, $enrolmentId);
 
         $debitPaymentId = $paymentModel->id;
         $invoice->createCreditUsage($creditPaymentId, $debitPaymentId);
+    }
+    
+    public function addLessonPayment($paymentId, $enrolmentId)
+    {
+        $lessonCredit  = new LessonPayment();
+        $lessonCredit->lessonId = $this->id;
+        $lessonCredit->paymentId = $paymentId;
+        $lessonCredit->enrolmentId = $enrolmentId;
+        $lessonCredit->save();
     }
 }

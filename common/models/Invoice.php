@@ -710,7 +710,7 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
-    public function addLessonDebitPayment($lesson, $amount)
+    public function addLessonDebitPayment($lesson, $amount, $enrolment)
     {
         $paymentModel = new Payment();
         $paymentModel->amount = $amount;
@@ -728,11 +728,7 @@ class Invoice extends \yii\db\ActiveRecord
         $paymentModel->reference = $this->id;
         $paymentModel->save();
 
-        $debitPaymentId = $paymentModel->id;
-        $lessonCredit  = new LessonPayment();
-        $lessonCredit->lessonId = $lesson->id;
-        $lessonCredit->paymentId = $debitPaymentId;
-        $lessonCredit->enrolmentId = $lesson->enrolment->id;
+        $lesson->addLessonPayment($debitPaymentId, $enrolment->id);
         $lessonCredit->save();
         $this->createCreditUsage($creditPaymentId, $debitPaymentId);
     }
@@ -875,7 +871,7 @@ class Invoice extends \yii\db\ActiveRecord
                         $netPrice = $lesson->getSplitedAmount() - $lesson->
                                 getCreditUsedAmount($lesson->enrolment->id);
                     }
-                    $lesson->invoice->addLessonDebitPayment($lesson, $netPrice);
+                    $lesson->invoice->addLessonDebitPayment($lesson, $netPrice, $lesson->enrolment);
                 }
             }
         }
@@ -889,7 +885,7 @@ class Invoice extends \yii\db\ActiveRecord
             } else if (!$enrolment->getInvoice($lesson->id)->isPaid()) {
                 if ($lesson->hasLessonCredit($enrolment->id)) {
                     $netPrice = $lesson->getLessonCreditAmount($enrolment->id);
-                    $enrolment->getInvoice($lesson->id)->addLessonDebitPayment($lesson, $netPrice);
+                    $enrolment->getInvoice($lesson->id)->addLessonDebitPayment($lesson, $netPrice, $enrolment);
                 }
             }
         }
