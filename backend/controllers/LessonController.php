@@ -55,7 +55,7 @@ class LessonController extends Controller
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
-                    'validate-on-update', 'modify-lesson', 'edit-classroom'],
+                    'validate-on-update', 'modify-lesson', 'edit-classroom', 'payment'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -997,5 +997,24 @@ class LessonController extends Controller
         }
 
         return $response;
+    }
+    
+    public function actionPayment($lessonId, $enrolmentId)
+    {
+        $payments = Payment::find()
+                ->joinWith(['lessonCredit' => function($query) use($lessonId, $enrolmentId){
+                        $query->andWhere(['lesson_payment.lessonId' => $lessonId, 
+                            'lesson_payment.enrolmentId' => $enrolmentId]);	
+                }]);
+        $paymentsDataProvider = new ActiveDataProvider([
+            'query' => $payments,
+        ]);
+        $data = $this->renderAjax('payment/view', [
+            'paymentsDataProvider' => $paymentsDataProvider
+        ]); 
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 }

@@ -81,7 +81,7 @@ class Payment extends ActiveRecord
     
     public function validateNegativeBalance($attributes)
     {   
-        if (!empty($this->invoiceId)) {
+        if (!empty($this->invoiceId) && !$this->isCreditUsed()) {
             $invoice = Invoice::findOne($this->invoiceId);
             if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
                 return $this->addError($attributes, "Can't over pay");
@@ -172,12 +172,6 @@ class Payment extends ActiveRecord
     {
         return $this->hasOne(CreditUsage::className(),
                 ['credit_payment_id' => 'id']);
-    }
-    
-    public function getCreditUsage1()
-    {
-        return $this->hasOne(CreditUsage::className(),
-                ['credit_payment_id1' => 'id']);
     }
     
     public function getDebitUsage()
