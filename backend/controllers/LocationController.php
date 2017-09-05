@@ -28,7 +28,7 @@ class LocationController extends Controller
             ],
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
-               'only' => ['edit-availability', 'add-availability', 'render-events', 'check-availability',
+               'only' => ['create', 'update', 'edit-availability', 'add-availability', 'render-events', 'check-availability',
                    'delete-availability'],
                'formatParam' => '_format',
                'formats' => [
@@ -63,7 +63,7 @@ class LocationController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('_view', [
+        return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
     }
@@ -74,21 +74,22 @@ class LocationController extends Controller
      *
      * @return mixed
      */
-    public function actionCreate()
+	public function actionCreate()
     {
         $model = new Location();
+        $data  = $this->renderAjax('_form', [
+            'model' => $model,
+        ]); 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Location has been created successfully',
-        ]);
-
-            return $this->redirect(['view', 'id' => $model->id]);
+			return [
+				'status' => true
+			];
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        } 
     }
 
     /**
@@ -99,30 +100,54 @@ class LocationController extends Controller
      *
      * @return mixed
      */
-    public function actionUpdate($id)
+	public function actionUpdate($id)
     {
-        $model  = $this->findModel($id);
+		$model = $this->findModel($id);
 		$model->royaltyValue = $model->royalty->value;
 		$model->advertisementValue = $model->advertisement->value;
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
+        if ($model->load(Yii::$app->request->post())) {
 			$model->royalty->value = $model->royaltyValue;
 			$model->advertisement->value = $model->advertisementValue;	
 			$model->save();
 			$model->royalty->save();
 			$model->advertisement->save();
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Location has been updated successfully',
-        ]);
-
-            return $this->redirect(['view', 'id' => $model->id]);
+			return [
+				'status' => true
+			];
         } else {
-            return $this->render('_form', [
-                'model' => $model,
-            ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
     }
+//    public function actionUpdate($id)
+//    {
+//        $model  = $this->findModel($id);
+//		$model->royaltyValue = $model->royalty->value;
+//		$model->advertisementValue = $model->advertisement->value;
+//
+//        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+//			$model->royalty->value = $model->royaltyValue;
+//			$model->advertisement->value = $model->advertisementValue;	
+//			$model->save();
+//			$model->royalty->save();
+//			$model->advertisement->save();
+//            Yii::$app->session->setFlash('alert', [
+//                'options' => ['class' => 'alert-success'],
+//                'body' => 'Location has been updated successfully',
+//        ]);
+//
+//            return $this->redirect(['view', 'id' => $model->id]);
+//        } else {
+//            return $this->render('_form', [
+//                'model' => $model,
+//            ]);
+//        }
+//    }
 
     public function actionEditAvailability($id, $resourceId, $startTime, $endTime)
     {

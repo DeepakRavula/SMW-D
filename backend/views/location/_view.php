@@ -11,10 +11,6 @@ use yii\helpers\Url;
 <div class="nav-tabs-custom">
         <?php
 
-        $locationDetails = $this->render('view',[
-            'model' => $model,
-        ]);
-
         $availabilityDetails = $this->render('_availability-details',[
             'model' => $model,
         ]);
@@ -23,13 +19,6 @@ use yii\helpers\Url;
 
         <?php echo Tabs::widget([
             'items' => [
-                [
-                    'label' => 'Address',
-                    'content' => $locationDetails,
-                    'options' => [
-                            'id' => 'location',
-                        ],
-                ],
                 [
                     'label' => 'Availability',
                     'content' => $availabilityDetails,

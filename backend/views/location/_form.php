@@ -8,6 +8,7 @@ use common\models\Country;
 use yii\helpers\ArrayHelper;
 use kartik\date\DatePicker;
 use Carbon\Carbon;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
@@ -16,8 +17,14 @@ $this->title = 'Edit Location';
 ?>
 
 <div class="location-form">
-
-	<?php $form = ActiveForm::begin(); ?>
+	<?php   $url = Url::to(['location/update', 'id' => $model->id]);
+		if ($model->isNewRecord) {
+		   $url = Url::to(['location/create']);
+		}
+        $form = ActiveForm::begin([
+        'id' => 'location-form',
+        'action' => $url,
+    ]); ?>
 		<div class="row p-10">
 		<div class="col-md-6">
 			<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
@@ -91,7 +98,13 @@ $this->title = 'Edit Location';
 <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php
             if (!$model->isNewRecord) {
-                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+                echo Html::a('Cancel', '#', ['class' => 'btn btn-default location-cancel m-r-10' ]);
+            echo Html::a('Delete', ['delete', 'id' => $model->id],['class' => 'btn btn-danger'], [
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'post',
+                ],
+            ]);
             }
         ?>
 	</div>
