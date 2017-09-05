@@ -6,7 +6,7 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Payments';
-$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print']);
+$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool']);
 $this->params['show-all'] = $this->render('_button', [
     'model' => $searchModel
     ]);
