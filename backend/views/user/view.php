@@ -163,7 +163,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		<?php
         $items = [
 			[
-        	    'label' => 'Logs',
+        	    'label' => 'History',
     	        'content' => $logContent,
 	            'options' => [
                 	'id' => 'log',
