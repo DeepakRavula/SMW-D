@@ -62,30 +62,20 @@ use common\models\TaxStatus;
             <?= $form->field($model, 'description')->textarea();?>
         </div>
         <div class="col-md-6">
-            <?= $form->field($paymentFrequencyDiscount, 'value')->textInput([
-                'id' => 'payment-frequency-value',
-                'name' => 'PaymentFrequencyDiscount[value]'
-            ])->label('Payment Frequency Discount(%)'); ?>
+            <?= $form->field($paymentFrequencyDiscount, 'value')->textInput()
+                    ->label('Payment Frequency Discount(%)'); ?>
         </div>
         <div class="col-md-5">
-            <?= $form->field($customerDiscount, 'value')->textInput([
-                'id' => 'customer-value',
-                'name' => 'CustomerDiscount[value]'
-            ])->label('Customer Discount(%)'); ?>
+            <?= $form->field($customerDiscount, 'value')->textInput()
+                            ->label('Customer Discount(%)'); ?>
         </div>
         <div class="col-md-3">
-            <?= $form->field($lineItemDiscount, 'value')->textInput([
-                'id' => 'line-item-value',
-                'name' => 'LineItemDiscount[value]'
-            ])->label('Line Item Discount'); ?>
+            <?= $form->field($lineItemDiscount, 'value')->textInput()
+                                    ->label('Line Item Discount'); ?>
         </div>
         <div class="col-md-3">
             <?= $form->field($lineItemDiscount, 'valueType')->widget(SwitchInput::classname(),
                 [
-                'options' => [
-                    'id' => 'line-item-discount-valueType',
-                    'name' => 'LineItemDiscount[valueType]'
-                ],
                 'name' => 'valueType',
                 'pluginOptions' => [
                     'handleWidth' => 30,
@@ -95,10 +85,8 @@ use common\models\TaxStatus;
             ])->label('Discount Type');?>
         </div>
         <div class="col-md-5">
-            <?= $form->field($multiEnrolmentDiscount, 'value')->textInput([
-                'id' => 'multi-enrolment-discount-value',
-                'name' => 'MultiEnrolmentDiscount[value]'
-            ])->label('Multi Enrolment Discount($)'); ?>
+            <?= $form->field($multiEnrolmentDiscount, 'value')->textInput()
+                    ->label('Multi Enrolment Discount($)'); ?>
         </div>
         
     <div class="col-md-12 p-l-20 form-group">

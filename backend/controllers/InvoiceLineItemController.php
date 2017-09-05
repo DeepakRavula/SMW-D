@@ -4,7 +4,10 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\InvoiceLineItemDiscount;
-use common\models\TaxCode;
+use backend\models\CustomerLineItemDiscount;
+use backend\models\EnrolmentLineItemDiscount;
+use backend\models\PaymentFrequencyDiscount;
+use backend\models\LineItemDiscount;
 use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\InvoiceLineItem;
@@ -56,22 +59,26 @@ class InvoiceLineItemController extends Controller
     public function actionUpdate($id) 
     {
         $model = $this->findModel($id);
-        $lineItemDiscount = $model->lineItemDiscount;
-        $customerDiscount = $model->customerDiscount;
-        $paymentFrequencyDiscount = $model->enrolmentPaymentFrequencyDiscount;
-        $multiEnrolmentDiscount = $model->multiEnrolmentDiscount;
-        if (!$customerDiscount) {
-            $customerDiscount = new InvoiceLineItemDiscount();
+        $lineItemDiscount = new LineItemDiscount();
+        $paymentFrequencyDiscount = new PaymentFrequencyDiscount();
+        $customerDiscount = new CustomerLineItemDiscount();
+        $multiEnrolmentDiscount = new EnrolmentLineItemDiscount();
+        if ($model->customerDiscount) {
+            $customerDiscount = $customerDiscount->setModel($model->customerDiscount);
         }
-        if (!$paymentFrequencyDiscount) {
-            $paymentFrequencyDiscount = new InvoiceLineItemDiscount();
+        if ($model->enrolmentPaymentFrequencyDiscount) {
+            $paymentFrequencyDiscount = $paymentFrequencyDiscount->setModel($model->enrolmentPaymentFrequencyDiscount);
         }
-        if (!$lineItemDiscount) {
-            $lineItemDiscount = new InvoiceLineItemDiscount();
+        if ($model->lineItemDiscount) {
+            $lineItemDiscount = $lineItemDiscount->setModel($model->lineItemDiscount);
         }
-        if (!$multiEnrolmentDiscount) {
-            $multiEnrolmentDiscount = new InvoiceLineItemDiscount();
+        if ($model->multiEnrolmentDiscount) {
+            $multiEnrolmentDiscount = $multiEnrolmentDiscount->setModel($model->multiEnrolmentDiscount);
         }
+        $customerDiscount->invoiceLineItemId = $id;
+        $paymentFrequencyDiscount->invoiceLineItemId = $id;
+        $lineItemDiscount->invoiceLineItemId = $id;
+        $multiEnrolmentDiscount->invoiceLineItemId = $id;
         $customerDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
         $paymentFrequencyDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
         $lineItemDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
@@ -89,54 +96,12 @@ class InvoiceLineItemController extends Controller
             'multiEnrolmentDiscount' => $multiEnrolmentDiscount
         ]);
         $post = Yii::$app->request->post();
-        if ($model->load($post)) {
-            $customerDiscount->load($post['CustomerDiscount'], '');
-            if ($customerDiscount->isNewRecord) {
-                $customerDiscount->invoiceLineItemId = $id;
-                $customerDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
-                $customerDiscount->type = InvoiceLineItemDiscount::TYPE_CUSTOMER;
-            }
-            $lineItemDiscount->load($post['LineItemDiscount'], '');
-            if ($lineItemDiscount->isNewRecord) {
-                $lineItemDiscount->invoiceLineItemId = $id;
-                $lineItemDiscount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
-            }
-            $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
-            if ($paymentFrequencyDiscount->isNewRecord) {
-                $paymentFrequencyDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
-                $paymentFrequencyDiscount->invoiceLineItemId = $id;
-                $paymentFrequencyDiscount->type = InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
-            }
-            $multiEnrolmentDiscount->load($post['MultiEnrolmentDiscount'], '');
-            if ($multiEnrolmentDiscount->isNewRecord) {
-                $multiEnrolmentDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
-                $multiEnrolmentDiscount->invoiceLineItemId = $id;
-                $multiEnrolmentDiscount->type = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;
-            }
-            if ($customerDiscount->canSave()) {
-                if (empty($customerDiscount->value)) {
-                    $customerDiscount->value = 0.0;
-                }
-                $customerDiscount->save();
-            }
-            if ($paymentFrequencyDiscount->canSave()) {
-                if (empty($paymentFrequencyDiscount->value)) {
-                    $paymentFrequencyDiscount->value = 0.0;
-                }
-                $paymentFrequencyDiscount->save();
-            }
-            if ($lineItemDiscount->canSave()) {
-                if (empty($lineItemDiscount->value)) {
-                    $lineItemDiscount->value = 0.0;
-                }
-                $lineItemDiscount->save();
-            }
-            if ($multiEnrolmentDiscount->canSave()) {
-                if (empty($multiEnrolmentDiscount->value)) {
-                    $multiEnrolmentDiscount->value = 0.0;
-                }
-                $multiEnrolmentDiscount->save();
-            }
+        if ($model->load($post) && $customerDiscount->load($post) && $lineItemDiscount->load($post)
+                && $paymentFrequencyDiscount->load($post) && $multiEnrolmentDiscount->load($post)) {
+            $customerDiscount->save();
+            $paymentFrequencyDiscount->save();
+            $lineItemDiscount->save();
+            $multiEnrolmentDiscount->save();
             $taxStatus         = $post['InvoiceLineItem']['tax_status'];
             $taxCode           = $model->computeTaxCode($taxStatus);
             $model->tax_status = $taxCode->taxStatus->name;
