@@ -12,13 +12,12 @@ use kartik\grid\GridView;
 /* @var $form yii\bootstrap\ActiveForm */
 
 ?>
-<div class="user-search">
     <?php $form = ActiveForm::begin([
 		'id' => 'birthday-search-form',
         'method' => 'get'
     ]); ?>
    	
-	<div class="row">
+	<div class="row" style="padding-bottom: 10px">
 		<div class="col-md-3">
            <?php 
            echo DateRangePicker::widget([
@@ -44,24 +43,15 @@ use kartik\grid\GridView;
             ]);
            ?>
         </div>
-        <div class="col-md-2">
-	   <?php echo Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary']) ?>
-        </div>
-        <div id="print" class="btn btn-default col-md-0">
-        <?= Html::a('<i class="fa fa-print"></i> Print') ?>
-   </div>        	</div>
+	   <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary']) ?>
+	</div>
     <?php ActiveForm::end(); ?>
-</div>
 <script>
     $(document).ready(function () {
         $("#birthday-search-form").on("submit", function () {
            var dateRange = $('#birthday-daterange').val();
-        	$.pjax.reload({container: "#birthday-listing", replace: false, timeout: 6000, data: $(this).serialize()});           return false
-            var params = $.param({ 'StudentBirthdaySearch[fromDate]': fromDate,
-            'StudentBirthdaySearch[toDate]': toDate});
-            var url = '<?= Url::to(['user/print', 'id' => $model->id]); ?>&' + params;
-            $('#print-btn').attr('href', url);	
-        return false;
+        	$.pjax.reload({container: "#birthday-listing", replace: false, timeout: 6000, data: $(this).serialize()});   
+			return false
         });
     });
 </script>

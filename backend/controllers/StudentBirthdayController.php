@@ -67,6 +67,7 @@ class StudentBirthdayController extends Controller
     {
         $searchModel = new StudentBirthdaySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		$dataProvider->pagination = false;
         $session = Yii::$app->session; 
         $locationId = $session->get('location_id');
         $model = Location::findOne(['id' => $locationId]);

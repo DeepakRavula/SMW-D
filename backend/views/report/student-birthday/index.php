@@ -3,12 +3,13 @@
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use common\components\gridView\AdminLteGridView;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Student Birthdays';
-
+$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool'])
 ?>
 <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <div class="clearfix"></div>
