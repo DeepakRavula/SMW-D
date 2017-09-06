@@ -2,75 +2,236 @@
 
 use yii\helpers\Html;
 use common\models\User;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+use yii\helpers\Url;
+use yii\widgets\Pjax;
+use yii\bootstrap\Modal;
+
+use kartik\date\DatePickerAsset;
+DatePickerAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', '#', ['class' => 'btn btn-primary btn-sm edit-location']); 
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 ?>
-<div class="location-view">
-<div class="user-details-wrapper">
-	<div class="col-md-12">
-		<p class="users-name"><?php echo $model->name; ?></p>
-	</div>
-	<div class="row-fluid">
-		<div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Address">
-			<i class="fa fa-arrows-h detail-icon"></i> <?php echo $model->address; ?>
-		</div>
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="City name">
-			<i class="fa fa-location-arrow detail-icon"></i> <?php echo $model->city->name; ?>
-		</div>
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Province">
-			<i class="fa fa-map-marker detail-icon"></i> <?php echo $model->province->name; ?>
-		</div>
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Country">
-			<i class="fa fa-flag detail-icon"></i> <?php echo $model->country->name; ?>
-		</div>
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Postal code">
-			<i class="fa fa-paper-plane-o detail-icon"></i> <?php echo $model->postal_code; ?>
-		</div>
-		<div class="clearfix"></div>
-	</div>
-	<div class="row-fluid m-t-10">
-		<div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Phone number">
-			<i class="fa fa-phone detail-icon"></i> <?php echo $model->phone_number; ?>
-		</div>
-                <div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Email">
-			<i class="fa fa-envelope detail-icon"></i> <?php echo $model->email; ?>
-		</div>
-		  <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Royalty">
-			<i class="fa fa-cny detail-icon"></i> <?php echo !empty($model->royalty->value) ? $model->royalty->value . '%' : null; ?>
-		</div>
-		  <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Advertisement">
-			<i class="fa fa-cny detail-icon"></i> <?php echo !empty($model->advertisement->value) ?  $model->advertisement->value . '%' : null; ?>
-		</div>
-		 <div class="col-md-2 hand" data-toggle="tooltip" data-placement="bottom" title="Conversion Date">
-			<i class="fa fa-calendar detail-icon"></i> <?= Yii::$app->formatter->asDate($model->conversionDate); ?>
-		</div>
-	</div>
-	
-	<div class="clearfix"></div>
-
-	<!-- If admin show this -->
-	<?php if ($lastRole->name === User::ROLE_ADMINISTRATOR): ?>
-	<div class="student-view">
-		<div class="col-md-12 action-btns">
-			<?php echo Html::a('<i class="fa fa-pencil"></i>Edit', ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
-			<?php
-            echo Html::a('<i class="fa fa-remove"></i> Delete', ['delete', 'id' => $model->id], [
-                'data' => [
-                    'confirm' => 'Are you sure you want to delete this item?',
-                    'method' => 'post',
-                ],
-            ])
-            ?>
-	    </div>
-	    <div class="clearfix"></div>
-	</div>
-	<?php endif; ?>
+<div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+<?php Pjax::begin([
+	'id' => 'location-view']) ; ?>
+<div class="row">
+	<div class="col-md-6">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'title' => 'Details',
+			'withBorder' => true,
+		])
+		?>
+		<dl class="dl-horizontal">
+			<dt>Email</dt>
+			<dd><?= $model->email; ?></dd>
+			<dt>Phone</dt>
+			<dd><?= !empty($model->phone_number) ? $model->phone_number : null; ?></dd>
+			<dt>Royalty</dt>
+			<dd><?= !empty($model->royalty->value) ? $model->royalty->value . '%' : null; ?></dd>
+			<dt>Advertisement</dt>
+			<dd><?= !empty($model->advertisement->value) ?  $model->advertisement->value . '%' : null; ?></dd>
+			<dt>Conversion Date</dt>
+			<dd><?= !empty($model->conversionDate) ?  Yii::$app->formatter->asDate($model->conversionDate) : null; ?></dd>
+		</dl>
+		<?php LteBox::end() ?>
+		</div> 
+	<div class="col-md-6">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'title' => 'Address',
+			'withBorder' => true,
+		])
+		?>
+		<dl class="dl-horizontal">
+			<dt>Address</dt>
+			<dd><?= $model->address; ?></dd>
+			<dt>City</dt>
+			<dd><?= $model->city->name; ?></dd>
+			<dt>Province</dt>
+			<dd><?= $model->province->name; ?></dd>
+			<dt>Country</dt>
+			<dd><?= $model->country->name; ?></dd>
+			<dt>Postal</dt>
+			<dd><?= $model->postal_code; ?></dd>
+		</dl>
+		<?php LteBox::end() ?>
+		</div> 
 </div>
+<div class="row">
+	<div class="col-md-12">	
+		<?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'title' => 'Availability',
+			'withBorder' => true,
+		])
+		?>
+		<?php echo $this->render('_availability-details',[
+            'model' => $model,
+        ]); ?>
+		<?php LteBox::end() ?>
+	</div>
 </div>
+<?php Pjax::end(); ?>
+<?php Modal::begin([
+        'header' => '<h4 class="m-0">Location</h4>',
+        'id' => 'location-edit-modal',
+    ]); ?>
+<div id="location-edit-content"></div>
+ <?php  Modal::end(); ?>
+<script>
+	$(document).ready(function(){
+		$(document).on('click', '.edit-location', function () {
+			var locationId = '<?= $model->id;?>';
+		$.ajax({
+			url    : '<?= Url::to(['location/update']); ?>?id=' + locationId,
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+				if(response.status)
+				{
+					$('#location-edit-content').html(response.data);
+					$('#location-edit-modal').modal('show');
+				}
+			}
+		});
+		return false;
+	});	
+	$(document).on('beforeSubmit', '#location-edit-form', function () {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+				if(response.status) {
+					$.pjax.reload({container: '#location-view', timeout: 6000});
+					$('#location-edit-modal').modal('hide');
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('click', '.location-cancel', function () {
+		$('#location-edit-modal').modal('hide');
+		return false;
+	});
+	$('#calendar').fullCalendar({
+        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+        header: false,
+        defaultView: 'agendaDay',
+        minTime: "00:00:00",
+        maxTime: "23:59:59",
+        slotDuration: "00:30:00",
+        editable: true,
+        selectable: true,
+        draggable: false,
+        droppable: false,
+        resources: [{'id':'1', 'title':'Monday'}, {'id':'2','title':'Tuesday'},
+            {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'}, 
+            {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
+        events: {
+            url: '<?= Url::to(['location/render-events', 'id' => $model->id]) ?>',
+            type: 'POST',
+            error: function() {
+                $("#calendar").fullCalendar("refetchEvents");
+            }
+        },
+        eventRender: function(event, element) {
+            element.find("div.fc-content").prepend("<i  class='fa fa-close pull-right text-danger'></i>");
+        },
+        eventClick: function(event) {
+            var params = $.param({ resourceId: event.resourceId });
+            $(".fa-close").click(function() {
+                var status = confirm("Are you sure to delete availability?");
+                if (status) {
+                    $.ajax({
+                        url    : '<?= Url::to(['location/delete-availability', 'id' => $model->id]) ?>&' + params,
+                        type   : 'POST',
+                        dataType: 'json',
+                        success: function()
+                        {
+                            $("#calendar").fullCalendar("refetchEvents");
+                        }
+                    });
+                }
+            });
+        },
+        eventResize: function(event) {
+            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
+            $.ajax({
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                type   : 'POST',
+                dataType: 'json',
+                success: function()
+                {
+                    $("#calendar").fullCalendar("refetchEvents");
+                }
+            });
+        },
+        eventDrop: function(event) {
+            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
+            $.ajax({
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                type   : 'POST',
+                dataType: 'json',
+                success: function()
+                {
+                    $("#calendar").fullCalendar("refetchEvents");
+                }
+            });
+        },
+        select: function( start, end, jsEvent, view, resourceObj ) {
+            var endTime = moment(end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: resourceObj.id, startTime: startTime, endTime: endTime });
+            var availabilityCheckParams = $.param({ resourceId: resourceObj.id});
+            $.ajax({
+                url    : '<?= Url::to(['location/check-availability', 'id' => $model->id]) ?>&' + availabilityCheckParams,
+                type   : 'POST',
+                dataType: 'json',
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $.ajax({
+                            url    : '<?= Url::to(['location/add-availability', 'id' => $model->id]) ?>&' + params,
+                            type   : 'POST',
+                            dataType: 'json',
+                            success: function()
+                            {
+                                $("#calendar").fullCalendar("refetchEvents");
+                            }
+                        });
+                    } else {
+                        $('#flash-danger').text("You are not allowed to set more than one availability for a day!").fadeIn().delay(3000).fadeOut();
+                    }
+                }
+            });
+        }
+});
+    });
+</script>

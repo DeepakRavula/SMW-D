@@ -17,13 +17,10 @@ $this->title = 'Edit Location';
 ?>
 
 <div class="location-form">
-	<?php   $url = Url::to(['location/update', 'id' => $model->id]);
-		if ($model->isNewRecord) {
-		   $url = Url::to(['location/create']);
-		}
+	<?php   
         $form = ActiveForm::begin([
-        'id' => 'location-form',
-        'action' => $url,
+        'id' => 'location-edit-form',
+        'action' => Url::to(['location/update', 'id' => $model->id]),
     ]); ?>
 		<div class="row p-10">
 		<div class="col-md-6">
@@ -97,15 +94,8 @@ $this->title = 'Edit Location';
     <div class="form-group">
 <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 		<?php
-            if (!$model->isNewRecord) {
-                echo Html::a('Cancel', '#', ['class' => 'btn btn-default location-cancel m-r-10' ]);
-            echo Html::a('Delete', ['delete', 'id' => $model->id],['class' => 'btn btn-danger'], [
-                'data' => [
-                    'confirm' => 'Are you sure you want to delete this item?',
-                    'method' => 'post',
-                ],
-            ]);
-            }
+            echo Html::a('Cancel', '#', ['class' => 'btn btn-default location-cancel m-r-10' ]);
+            echo Html::a('Delete', ['delete', 'id' => $model->id],['class' => 'btn btn-danger']);
         ?>
 	</div>
 <?php ActiveForm::end(); ?>
