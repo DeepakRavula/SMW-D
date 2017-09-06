@@ -437,13 +437,6 @@ class UserController extends Controller
 			'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id),
 			'unavailability' => $this->getUnavailabilityDataProvider($id)
         ]);
-		
-		
-
-		
-		
-		
-        
     }
 
     /**
