@@ -7,6 +7,7 @@ use common\models\LocationAvailability;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use common\models\Location;
+use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -23,7 +24,6 @@ class LocationController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['post'],
                 ],
             ],
             'contentNegotiator' => [
@@ -81,9 +81,7 @@ class LocationController extends Controller
             'model' => $model,
         ]); 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+			return $this->redirect(Url::to(['location/view', 'id' => $model->id]));
         } else {
             return [
                 'status' => true,
@@ -105,7 +103,7 @@ class LocationController extends Controller
 		$model = $this->findModel($id);
 		$model->royaltyValue = $model->royalty->value;
 		$model->advertisementValue = $model->advertisement->value;
-        $data = $this->renderAjax('_form', [
+        $data = $this->renderAjax('_form-update', [
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post())) {
@@ -124,31 +122,7 @@ class LocationController extends Controller
             ];
         }
     }
-//    public function actionUpdate($id)
-//    {
-//        $model  = $this->findModel($id);
-//		$model->royaltyValue = $model->royalty->value;
-//		$model->advertisementValue = $model->advertisement->value;
-//
-//        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-//			$model->royalty->value = $model->royaltyValue;
-//			$model->advertisement->value = $model->advertisementValue;	
-//			$model->save();
-//			$model->royalty->save();
-//			$model->advertisement->save();
-//            Yii::$app->session->setFlash('alert', [
-//                'options' => ['class' => 'alert-success'],
-//                'body' => 'Location has been updated successfully',
-//        ]);
-//
-//            return $this->redirect(['view', 'id' => $model->id]);
-//        } else {
-//            return $this->render('_form', [
-//                'model' => $model,
-//            ]);
-//        }
-//    }
-
+	
     public function actionEditAvailability($id, $resourceId, $startTime, $endTime)
     {
         $availabilityModel = LocationAvailability::find()

@@ -73,24 +73,5 @@ $(document).ready(function() {
 		});
 		return false;
 	});
-	$(document).on('beforeSubmit', '#location-form', function () {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-				if(response.status) {
-					$.pjax.reload({container: '#location-listing', timeout: 6000});
-					$.pjax.reload({container: '#location-view', timeout: 6000});
-					$('#location-modal').modal('hide');
-					$('#location-edit-modal').modal('hide');
-				}
-			}
-		});
-		return false;
-	});
-	
 });
 </script>
