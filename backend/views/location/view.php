@@ -73,6 +73,7 @@ $lastRole = end($roles);
 		<?php LteBox::end() ?>
 		</div> 
 </div>
+<?php Pjax::end(); ?>
 <div class="row">
 	<div class="col-md-12">	
 		<?php
@@ -88,7 +89,6 @@ $lastRole = end($roles);
 		<?php LteBox::end() ?>
 	</div>
 </div>
-<?php Pjax::end(); ?>
 <?php Modal::begin([
         'header' => '<h4 class="m-0">Location</h4>',
         'id' => 'location-edit-modal',
