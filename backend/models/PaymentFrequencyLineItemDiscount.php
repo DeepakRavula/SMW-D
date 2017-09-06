@@ -7,14 +7,14 @@ use common\models\InvoiceLineItemDiscount;
 /**
  * Create user form.
  */
-class EnrolmentLineItemDiscount extends Discount
+class PaymentFrequencyLineItemDiscount extends Discount
 {
     private $model;
     public $invoiceLineItemId;
     public $type;
     public $valueType;
     public $value;
-
+    
     const SCENARIO_ON_INVOICE = 'invoice';
     /**
      * {@inheritdoc}
@@ -37,6 +37,7 @@ class EnrolmentLineItemDiscount extends Discount
     {
         $this->invoiceLineItemId = $model->invoiceLineItemId;
         $this->value = $model->value;
+        $this->valueType = $model->valueType;
         $this->model = $this->getModel();
         return $this;
     }
@@ -47,7 +48,7 @@ class EnrolmentLineItemDiscount extends Discount
     public function getModel()
     {
         if (!$this->model) {
-            $this->model = new EnrolmentLineItemDiscount();
+            $this->model = new PaymentFrequencyLineItemDiscount();
         }
 
         return $this->model;
@@ -55,7 +56,7 @@ class EnrolmentLineItemDiscount extends Discount
     
     public function init()
     {
-        $this->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
-        $this->type = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;
+        $this->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+        $this->type = InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
     }
 }

@@ -54,11 +54,6 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
         ];
     }
 
-    public function canSave()
-    {
-        return ($this->isNewRecord && !empty($this->discount)) || !$this->isNewRecord;
-    }
-
     public function getDiscountPerLesson()
     {
         return $this->discount / 4;

@@ -1,7 +1,6 @@
 <?php
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
-use kartik\switchinput\SwitchInput;
 use common\models\PaymentFrequency;
 use yii\helpers\Html;
 use kartik\select2\Select2;
@@ -31,16 +30,12 @@ use kartik\datetime\DateTimePicker;
             ]); ?>
         </div>
         <div class="col-md-6">
-            <?= $form->field($paymentFrequencyDiscount, 'discount')->textInput([
-                'id' => 'payment-frequency-discount',
-                'name' => 'PaymentFrequencyDiscount[discount]'
-            ])->label('Payment Frequency Discount'); ?>
+            <?= $form->field($paymentFrequencyDiscount, 'discount')->textInput()
+                    ->label('Payment Frequency Discount'); ?>
         </div>
         <div class="col-md-6">
-            <?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
-                'id' => 'enrolment-discount',
-                'name' => 'MultipleEnrolmentDiscount[discount]'
-            ])->label('Multiple Enrolment Discount'); ?>
+            <?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput()
+                            ->label('Multiple Enrolment Discount'); ?>
         </div>
 		<div class="clearfix"></div>
 		<div class="col-md-4">

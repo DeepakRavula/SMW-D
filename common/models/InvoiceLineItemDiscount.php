@@ -80,11 +80,6 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId']);
     }
 
-    public function canSave()
-    {
-        return ($this->isNewRecord && !empty($this->value)) || !$this->isNewRecord;
-    }
-    
     public function afterSave($insert, $changedAttributes)
     {
         $this->invoiceLineItem->save();

@@ -3,13 +3,11 @@
 namespace backend\models;
 
 use common\models\User;
-use yii\base\Exception;
-use yii\base\Model;
 use common\models\InvoiceLineItemDiscount;
 /**
  * Create user form.
  */
-class CustomerLineItemDiscount extends Model
+class CustomerLineItemDiscount extends Discount
 {
     private $model;
     public $invoiceLineItemId;
@@ -24,21 +22,9 @@ class CustomerLineItemDiscount extends Model
     public function rules()
     {
         return [
-            [['value'], 'required'],
             ['value', 'safe', 'on' => self::SCENARIO_ON_INVOICE],
             [['invoiceLineItemId', 'valueType', 'type'], 'integer'],
-            [['value'], 'number', 'min' => 0],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-        
-            
+            [['value'], 'number', 'min' => 0, 'max' => 100],
         ];
     }
 
@@ -51,8 +37,8 @@ class CustomerLineItemDiscount extends Model
     {
         $this->invoiceLineItemId = $model->invoiceLineItemId;
         $this->value = $model->value;
-        $this->model = $model;
-        return $this->model;
+        $this->model = $this->getModel();
+        return $this;
     }
 
     /**
@@ -61,34 +47,15 @@ class CustomerLineItemDiscount extends Model
     public function getModel()
     {
         if (!$this->model) {
-            $this->model = new InvoiceLineItemDiscount();
+            $this->model = new CustomerLineItemDiscount();
         }
 
         return $this->model;
     }
-
-    /**
-     * Signs user up.
-     *
-     * @return User|null the saved model or null if saving fails
-     *
-     * @throws Exception
-     */
-    public function save()
+    
+    public function init()
     {
-        if ($this->validate()) {
-            $lineItemDiscount = new InvoiceLineItemDiscount();
-            $lineItemDiscount->invoiceLineItemId = $this->invoiceLineItemId;
-            $lineItemDiscount->value = $this->value;
-            $lineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
-            $lineItemDiscount->type = InvoiceLineItemDiscount::TYPE_CUSTOMER;
-            
-            if (!$lineItemDiscount->save()) {
-                throw new Exception('Model not saved');
-            }
-            return !$lineItemDiscount->hasErrors();
-        }
-
-        return null;
+        $this->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+        $this->type = InvoiceLineItemDiscount::TYPE_CUSTOMER;
     }
 }

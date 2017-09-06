@@ -6,7 +6,7 @@ use Yii;
 use common\models\InvoiceLineItemDiscount;
 use backend\models\CustomerLineItemDiscount;
 use backend\models\EnrolmentLineItemDiscount;
-use backend\models\PaymentFrequencyDiscount;
+use backend\models\PaymentFrequencyLineItemDiscount;
 use backend\models\LineItemDiscount;
 use common\models\Payment;
 use common\models\PaymentMethod;
@@ -60,7 +60,7 @@ class InvoiceLineItemController extends Controller
     {
         $model = $this->findModel($id);
         $lineItemDiscount = new LineItemDiscount();
-        $paymentFrequencyDiscount = new PaymentFrequencyDiscount();
+        $paymentFrequencyDiscount = new PaymentFrequencyLineItemDiscount();
         $customerDiscount = new CustomerLineItemDiscount();
         $multiEnrolmentDiscount = new EnrolmentLineItemDiscount();
         if ($model->customerDiscount) {
@@ -96,8 +96,11 @@ class InvoiceLineItemController extends Controller
             'multiEnrolmentDiscount' => $multiEnrolmentDiscount
         ]);
         $post = Yii::$app->request->post();
-        if ($model->load($post) && $customerDiscount->load($post) && $lineItemDiscount->load($post)
-                && $paymentFrequencyDiscount->load($post) && $multiEnrolmentDiscount->load($post)) {
+        if ($model->load($post)) {
+            $customerDiscount->load($post);
+            $lineItemDiscount->load($post);
+            $paymentFrequencyDiscount->load($post);
+            $multiEnrolmentDiscount->load($post);
             $customerDiscount->save();
             $paymentFrequencyDiscount->save();
             $lineItemDiscount->save();
