@@ -107,108 +107,78 @@ class UserController extends Controller
                     'dataProvider' => $dataProvider,
         ]);
     }
-
-    /**
-     * Displays a single User model.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
-    public function actionView($id)
+ 	protected function getStudentDataProvider($id)
     {
-        $model = $this->findModel($id);
-        $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
-        $locationAvailabilityMinTime = LocationAvailability::find()
-            ->where(['locationId' => $locationId])
-            ->orderBy(['fromTime' => SORT_ASC])
-            ->one();
-        $locationAvailabilityMaxTime = LocationAvailability::find()
-            ->where(['locationId' => $locationId])
-            ->orderBy(['toTime' => SORT_DESC])
-            ->one();
-        $minTime                     = $locationAvailabilityMinTime->fromTime;
-        $maxTime                     = $locationAvailabilityMaxTime->toTime;
-
-        $searchModel = new UserSearch();
-        $db = $searchModel->search(Yii::$app->request->queryParams);
-
-        $query = Student::find()
+		$query = Student::find()
             ->notDeleted()
             ->andWhere(['customer_id' => $id])
 			->active();
-        $dataProvider = new ActiveDataProvider([
+        return new ActiveDataProvider([
             'query' => $query,
         ]);
-
-        $query = Student::find()->notDeleted()
-                ->teacherStudents($locationId, $model->id)
-				->active();
-
-        $studentDataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $query = Location::find()
-                ->joinWith('userLocations')
-                ->where(['user_id' => $id]);
-        $locationDataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $query = TeacherAvailability::find()
+    }
+	protected function  getTeacherDataProvider($id)
+	{
+		$query = TeacherAvailability::find()
                 ->joinWith('userLocation')
                 ->where(['user_id' => $id]);
-        $teacherDataProvider = new ActiveDataProvider([
+        return new ActiveDataProvider([
             'query' => $query,
         ]);
+	}
+	protected function  getLessonDataProvider($id, $locationId)
+	{
 		
-        $addressDataProvider = new ActiveDataProvider([
-            'query' => $model->getAddresses(),
-            'sort' => [
-            'defaultOrder' => [
-            'is_primary' => SORT_DESC,
-        ],
-    ],
-            ]);
-        $phoneDataProvider = new ActiveDataProvider([
-            'query' => $model->getPhoneNumbers(),
-            'sort' => [
-            'defaultOrder' => [
-            'is_primary' => SORT_DESC,
-             ],
-                ],
-            ]);
-
-        $currentDate = new \DateTime();
-        $lessonQuery = Lesson::find()
+		$lessonQuery = Lesson::find()
                 ->location($locationId)
                 ->student($id)
                 ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
 				->isConfirmed()
                 ->notDeleted();
 
-        $lessonDataProvider = new ActiveDataProvider([
+        return new ActiveDataProvider([
             'query' => $lessonQuery,
         ]);
+	}
+	protected function  getEnrolledStudentDataProvider($id, $locationId)
+	{
+		$query = Student::find()->notDeleted()
+                ->teacherStudents($locationId, $id)
+				->active();
 
-        $enrolmentQuery = Enrolment::find()
+        return new ActiveDataProvider([
+            'query' => $query,
+        ]);
+	}
+	protected function getLocationDataProvider($id)
+	{
+		$query = Location::find()
+                ->joinWith('userLocations')
+                ->where(['user_id' => $id]);
+        return new ActiveDataProvider([
+            'query' => $query,
+        ]);
+	}
+	protected function getEnrolmentDataProvider($id, $locationId)
+	{
+		$enrolmentQuery = Enrolment::find()
             ->location($locationId)
-            ->joinWith(['student' => function ($query) use ($model) {
-                $query->where(['customer_id' => $model->id])
+            ->joinWith(['student' => function ($query) use ($id) {
+                $query->where(['customer_id' => $id])
                 ->active();
             }])
             ->notDeleted()
             ->isConfirmed()
             ->isRegular();
 
-        $enrolmentDataProvider = new ActiveDataProvider([
+        return new ActiveDataProvider([
             'query' => $enrolmentQuery,
         ]);
-
+	}
+	protected function getInvoiceDataProvider($model, $locationId)
+	{
 		$request = Yii::$app->request;
-        $currentDate = new \DateTime();
+		$currentDate = new \DateTime();
         $model->fromDate = $currentDate->format('M d,Y');
         $model->toDate = $currentDate->format('M d,Y');
         $model->dateRange = $model->fromDate.' - '.$model->toDate;
@@ -235,19 +205,26 @@ class UserController extends Controller
 			$invoiceQuery->student($studentId);
 		}
 
-        $invoiceDataProvider = new ActiveDataProvider([
+        return new ActiveDataProvider([
             'query' => $invoiceQuery,
         ]);
-
-        $proFormaInvoiceQuery = Invoice::find()
-                ->where([
-					'invoice.user_id' => $model->id,
-                    'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
-                    'invoice.location_id' => $locationId,
-                ])
-				->notDeleted();
-
-        $unscheduledLessons = Lesson::find()
+	}
+	protected function getPfiDataProvider($id, $locationId)
+	{
+		$proFormaInvoiceQuery = Invoice::find()
+			->where([
+				'invoice.user_id' => $id,
+				'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
+				'invoice.location_id' => $locationId,
+			])
+			->notDeleted();
+		return new ActiveDataProvider([
+            'query' => $proFormaInvoiceQuery,
+        ]);
+	}
+	protected function getUnscheduleLessonDataProvider($id)
+	{
+		$unscheduledLessons = Lesson::find()
 			->enrolled()
 			->isConfirmed()
             ->joinWith(['privateLesson'])
@@ -257,36 +234,28 @@ class UserController extends Controller
 			->notDeleted()
             ->groupBy('id');
 
-        $unscheduledLessonDataProvider = new ActiveDataProvider([
+        return new ActiveDataProvider([
             'query' => $unscheduledLessons,
         ]);
-
-        $proFormaInvoiceDataProvider = new ActiveDataProvider([
-            'query' => $proFormaInvoiceQuery,
-        ]);
-
-        $paymentDataProvider = new ActiveDataProvider([
+	}
+	protected function getPaymentDataProvider($id)
+	{
+		return new ActiveDataProvider([
             'query' => payment::find()
-                ->where(['user_id' => $model->id]),
+                ->where(['user_id' => $id]),
         ]);
+	}
+	protected function getUnavailabilityDataProvider($id)
+	{
+		$unavailabilities = TeacherUnavailability::find()
+			->andWhere(['teacherId' => $id]);
 
-        $openingBalanceCredit = Invoice::find()
-                ->joinWith(['lineItems' => function ($query) {
-                    $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
-                }])
-                ->where(['invoice.user_id' => $model->id])
-                ->andWhere(['<', 'invoice.balance', 0])
-				->notDeleted()
-                ->one();
-        $positiveOpeningBalanceModel = Invoice::find()
-                ->joinWith(['lineItems' => function ($query) {
-                    $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
-                }])
-                ->where(['invoice.user_id' => $model->id])
-                ->andWhere(['>', 'invoice.balance', 0])
-                ->notDeleted()
-                ->one();
-
+		return new ActiveDataProvider([
+            'query' => $unavailabilities,
+        ]);
+	}
+	protected function getTeacherLessonDataProvider($id, $locationId)
+	{
 		$request = Yii::$app->request;
 		$lessonSearch = new LessonSearch();
 		$lessonSearch->fromDate = new \DateTime();
@@ -300,59 +269,81 @@ class UserController extends Controller
 		$teacherLessons = Lesson::find()
 			->innerJoinWith('enrolment')
 			->location($locationId)
-			->where(['lesson.teacherId' => $model->id])
+			->where(['lesson.teacherId' => $id])
 			->notDeleted()
 			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
 			->isConfirmed()
 			->between($lessonSearch->fromDate, $lessonSearch->toDate)
 			->orderBy(['date' => SORT_ASC]);
 			
-		$teacherLessonDataProvider = new ActiveDataProvider([
+		return new ActiveDataProvider([
 			'query' => $teacherLessons,
 			'pagination' => false,
 		]);
-
+	}
+	protected function getOpeningBalanceCredit($id)
+	{
+		return Invoice::find()
+			->openingBalance()
+			->customer($id)
+			->andWhere(['<', 'invoice.balance', 0])
+			->notDeleted()
+			->one();	
+	}
+	protected function getPositiveOpeningBalance($id)
+	{
+		return Invoice::find()
+			->openingBalance()
+			->customer($id)
+			->andWhere(['>', 'invoice.balance', 0])
+			->notDeleted()
+			->one();
+	
+	}
+	protected function getNoteDataProvider($id)
+	{
 		$notes = Note::find()
-			->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_USER])
+			->where(['instanceId' => $id, 'instanceType' => Note::INSTANCE_TYPE_USER])
 			->orderBy(['createdOn' => SORT_DESC]);
 
-        $noteDataProvider = new ActiveDataProvider([
+        return new ActiveDataProvider([
             'query' => $notes,
         ]);
-		$teachersAvailabilities = TeacherAvailability::find()
-            ->joinWith(['userLocation' => function ($query) use ($locationId, $model) {
-                $query->andWhere(['user_location.location_id' => $locationId, 'user_id' => $model->id]);
-            }])
-            ->groupBy('day')
-            ->all();
-
-        $account = CustomerAccount::find()->where(['userId' => $id])
-                ->orderBy(['transactionId' => SORT_ASC]);
-
-        $accountDataProvider = new ActiveDataProvider([
-            'query' => $account,
+	}
+	protected function getAccountDataProvider($id)
+	{
+		return new ActiveDataProvider([
+            'query' => CustomerAccount::find()->where(['userId' => $id])
+                ->orderBy(['transactionId' => SORT_ASC]),
         ]);
-
+	}
+	protected function getPrivateQualificationDataProvider($id)
+	{
 		$privatePrograms = Qualification::find()
 			->joinWith(['program' => function($query) {
 				$query->privateProgram();
 			}])
 			->andWhere(['teacher_id' => $id]);
 
-		$privateQualificationDataProvider = new ActiveDataProvider([
+		return new ActiveDataProvider([
             'query' => $privatePrograms,
-        ]);
-
+        ]);	
+	}
+	protected function getGroupQualificationDataProvider($id)
+	{
 		$groupPrograms = Qualification::find()
 			->joinWith(['program' => function($query) {
 				$query->group();
 			}])
 			->andWhere(['teacher_id' => $id]);
 
-		$groupQualificationDataProvider = new ActiveDataProvider([
+		return new ActiveDataProvider([
             'query' => $groupPrograms,
-        ]);
-		
+        ]);	
+	}
+	protected function getTimeVoucherDataProvider($id)
+	{
+		$request = Yii::$app->request;
 		$invoiceSearch = new InvoiceSearch();
 		$invoiceSearch->fromDate = new \DateTime();
 		$invoiceSearch->toDate = new \DateTime();
@@ -368,8 +359,8 @@ class UserController extends Controller
 				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
 					->between($invoiceSearch->fromDate->format('Y-m-d'), $invoiceSearch->toDate->format('Y-m-d'));
 			}])
-			->joinWith(['lesson' => function($query) use($model){
-				$query->andWhere(['lesson.teacherId' => $model->id]);
+			->joinWith(['lesson' => function($query) use($id){
+				$query->andWhere(['lesson.teacherId' => $id]);
 			}]);
 			if($invoiceSearch->summariseReport) {
 				$timeVoucher->groupBy('DATE(invoice.date)');	
@@ -377,48 +368,82 @@ class UserController extends Controller
 				$timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
 			}
 			
-		$timeVoucherDataProvider = new ActiveDataProvider([
+		return new ActiveDataProvider([
 			'query' => $timeVoucher,
 			'pagination' => false,
-		]);
-		$unavailabilities = TeacherUnavailability::find()
-			->andWhere(['teacherId' => $id]);
+		]);	
+	}
+	protected function getTeacherAvailabilities($id, $locationId)
+	{
+		return TeacherAvailability::find()
+            ->joinWith(['userLocation' => function ($query) use ($locationId, $id) {
+                $query->andWhere(['user_location.location_id' => $locationId, 'user_id' => $id]);
+            }])
+            ->groupBy('day')
+            ->all();
+	}
 
-		$unavailabilityDataProvider = new ActiveDataProvider([
-            'query' => $unavailabilities,
-        ]);
-		
-        return $this->render('view', [
+	/**
+     * Displays a single User model.
+     *
+     * @param int $id
+     *
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        $model = $this->findModel($id);
+		$session = Yii::$app->session;
+        $locationId = $session->get('location_id');
+        $locationAvailabilityMinTime = LocationAvailability::find()
+            ->where(['locationId' => $locationId])
+            ->orderBy(['fromTime' => SORT_ASC])
+            ->one();
+        $locationAvailabilityMaxTime = LocationAvailability::find()
+            ->where(['locationId' => $locationId])
+            ->orderBy(['toTime' => SORT_DESC])
+            ->one();
+        $minTime                     = $locationAvailabilityMinTime->fromTime;
+        $maxTime                     = $locationAvailabilityMaxTime->toTime;
+		$searchModel = new UserSearch();
+        $db = $searchModel->search(Yii::$app->request->queryParams);
+
+		return $this->render('view', [
             'minTime' => $minTime,
             'maxTime' => $maxTime,
-            'student' => new Student(),
-            'dataProvider' => $dataProvider,
-            'teacherDataProvider' => $teacherDataProvider,
             'model' => $model,
+            'student' => new Student(),
             'searchModel' => $searchModel,
-            'lessonSearchModel' => $lessonSearch,
-			'invoiceSearchModel' => $invoiceSearch,
-            'addressDataProvider' => $addressDataProvider,
-            'phoneDataProvider' => $phoneDataProvider,
-            'lessonDataProvider' => $lessonDataProvider,
-            'locationDataProvider' => $locationDataProvider,
-            'enrolmentDataProvider' => $enrolmentDataProvider,
-            'invoiceDataProvider' => $invoiceDataProvider,
-            'studentDataProvider' => $studentDataProvider,
-            'paymentDataProvider' => $paymentDataProvider,
-            'openingBalanceCredit' => $openingBalanceCredit,
-            'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
-            'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
-            'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
-            'teacherLessonDataProvider' => $teacherLessonDataProvider,
-            'noteDataProvider' => $noteDataProvider,
-            'accountDataProvider' => $accountDataProvider,
-            'teachersAvailabilities' => $teachersAvailabilities,
-			'privateQualificationDataProvider' => $privateQualificationDataProvider,
-			'groupQualificationDataProvider' => $groupQualificationDataProvider,
-			'timeVoucherDataProvider' => $timeVoucherDataProvider,
-			'unavailability' => $unavailabilityDataProvider
+            'lessonSearchModel' => new LessonSearch(),
+			'invoiceSearchModel' => new InvoiceSearch(),
+			'dataProvider' => $this->getStudentDataProvider($id),
+            'teacherDataProvider' => $this->getTeacherDataProvider($id),
+            'lessonDataProvider' => $this->getLessonDataProvider($id, $locationId),
+            'locationDataProvider' => $this->getLocationDataProvider($id),
+            'enrolmentDataProvider' => $this->getEnrolmentDataProvider($id, $locationId),
+            'invoiceDataProvider' => $this->getInvoiceDataProvider($model, $locationId),
+            'studentDataProvider' => $this->getEnrolledStudentDataProvider($id, $locationId),
+            'paymentDataProvider' => $this->getPaymentDataProvider($id),
+            'proFormaInvoiceDataProvider' => $this->getPfiDataProvider($id, $locationId),
+            'unscheduledLessonDataProvider' => $this->getUnscheduleLessonDataProvider($id),
+            'positiveOpeningBalanceModel' => $this->getPositiveOpeningBalance($id),
+            'openingBalanceCredit' => $this->getOpeningBalanceCredit($id),
+            'teacherLessonDataProvider' => $this->getTeacherLessonDataProvider($id, $locationId),
+            'noteDataProvider' => $this->getNoteDataProvider($id),
+            'accountDataProvider' => $this->getAccountDataProvider($id),
+            'teachersAvailabilities' => $this->getTeacherAvailabilities($id, $locationId),
+			'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
+			'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
+			'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id),
+			'unavailability' => $this->getUnavailabilityDataProvider($id)
         ]);
+		
+		
+
+		
+		
+		
+        
     }
 
     /**

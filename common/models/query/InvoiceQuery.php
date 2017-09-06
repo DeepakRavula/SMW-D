@@ -3,6 +3,7 @@
 namespace common\models\query;
 
 use common\models\Invoice;
+use common\models\ItemType;
 
 /**
  * This is the ActiveQuery class for [[Invoice]].
@@ -183,4 +184,10 @@ class InvoiceQuery extends \yii\db\ActiveQuery
     {
         return $this->andFilterWhere(['invoice.user_id' => $customerId]);
     }
+	public function openingBalance()
+	{
+		return $this->joinWith(['lineItems' => function ($query) {
+			$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+		}]);
+	}
 }
