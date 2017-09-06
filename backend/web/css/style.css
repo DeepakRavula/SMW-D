@@ -27,13 +27,12 @@ body .user-panel > .info {
 .smw-logo {
 	width : 160px;	
 }
-#location_id {
+.location {
     margin: 9px 10px 0 0;
     border: 0;
     position: relative;
     background: url(/img/select-arrow.png) no-repeat 97% center;
     cursor: pointer;
-	color : white;
 }
 .spinner {
     position: fixed;

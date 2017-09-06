@@ -47,7 +47,7 @@ $bundle = BackendAsset::register($this);
                         <div class="pull-left">
                             <?php $form = Html::beginForm(); ?>                        
                                  <?= Html::dropDownList('location_id', null,
-                                  ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control', 'id' => 'location_id', 'options' => [Yii::$app->session->get('location_id') => ['Selected' => 'selected']]]); ?>
+                                  ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control location', 'options' => [Yii::$app->session->get('location_id') => ['Selected' => 'selected']]]); ?>
                             <?php Html::endForm() ?>
                             </div>
                         <?php else:?>
@@ -103,13 +103,13 @@ $bundle = BackendAsset::register($this);
         </header>
 <script>
 $(document).ready(function(){
-	$('#location_id').change(function(){
+	$('.location').change(function(){
 		$.ajax({
 			type     :'POST',
 			cache    : false,
 			url  : '<?= Url::to(['/location/change-location']); ?>',
 			data: {
-				location_id: $('#location_id').val()
+				location_id: $('.location').val()
 			},
 			success  : function(response) {
 				location.reload();
