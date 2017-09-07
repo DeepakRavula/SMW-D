@@ -1,8 +1,9 @@
 <?php
 
-namespace common\models;
+namespace common\models\discount;
 
-use Yii;
+use common\models\Invoice;
+use common\models\InvoiceLineItem;
 
 /**
  * This is the model class for table "invoice_line_item_discount".
@@ -23,8 +24,6 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
     const TYPE_MULTIPLE_ENROLMENT = 3;
     const TYPE_LINE_ITEM = 4;
 
-    const SCENARIO_ON_INVOICE = 'invoice';
-
     /**
      * @inheritdoc
      */
@@ -40,7 +39,6 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
     {
         return [
             [['invoiceLineItemId', 'valueType', 'type'], 'required'],
-            ['value', 'safe', 'on' => self::SCENARIO_ON_INVOICE],
             [['invoiceLineItemId', 'valueType', 'type'], 'integer'],
             [['value'], 'number', 'min' => 0],
         ];
@@ -80,11 +78,6 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId']);
     }
 
-    public function canSave()
-    {
-        return ($this->isNewRecord && !empty($this->value)) || !$this->isNewRecord;
-    }
-    
     public function afterSave($insert, $changedAttributes)
     {
         $this->invoiceLineItem->save();

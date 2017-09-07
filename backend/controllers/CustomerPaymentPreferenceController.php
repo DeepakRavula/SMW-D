@@ -12,6 +12,7 @@ use common\models\User;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use yii\bootstrap\ActiveForm;
+use common\models\discount\CustomerDiscount;
 
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.

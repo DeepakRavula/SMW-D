@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models;
+namespace common\models\discount;
 
 use Yii;
 
@@ -52,11 +52,6 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
             'enrolmentId' => 'Enrolment ID',
             'discount' => 'Discount',
         ];
-    }
-
-    public function canSave()
-    {
-        return ($this->isNewRecord && !empty($this->discount)) || !$this->isNewRecord;
     }
 
     public function getDiscountPerLesson()

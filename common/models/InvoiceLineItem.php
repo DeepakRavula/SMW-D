@@ -6,6 +6,7 @@ use Yii;
 use common\models\ItemType;
 use common\models\TaxStatus;
 use common\models\query\InvoiceLineItemQuery;
+use common\models\discount\InvoiceLineItemDiscount;
 /**
  * This is the model class for table "invoice_line_item".
  *

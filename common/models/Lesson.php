@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-use yii\db\Query;
+use common\models\discount\EnrolmentDiscount;
 use yii\helpers\ArrayHelper;
 use valentinek\behaviors\ClosureTable;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;

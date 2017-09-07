@@ -1,8 +1,8 @@
 <?php
 
-namespace common\models;
+namespace common\models\discount;
 
-use Yii;
+use common\models\User;
 
 /**
  * This is the model class for table "customer_discount".
@@ -53,9 +53,9 @@ class CustomerDiscount extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
          if (!$insert) {
-            $this->trigger(CustomerDiscount::EVENT_EDIT);
+            $this->trigger(self::EVENT_EDIT);
         }
-        $this->trigger(CustomerDiscount::EVENT_CREATE);
+        $this->trigger(self::EVENT_CREATE);
         return parent::afterSave($insert, $changedAttributes);
     }
     public function getCustomer()

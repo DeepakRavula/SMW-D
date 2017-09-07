@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use Carbon\Carbon;
+use common\models\discount\EnrolmentDiscount;
 /**
  * This is the model class for table "enrolment".
  *
