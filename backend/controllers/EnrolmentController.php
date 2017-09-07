@@ -111,10 +111,10 @@ class EnrolmentController extends Controller
         $model = $this->findModel($id);
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
         $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
-        if ($model->multipleEnrolmentDiscount) {
+        if ($model->hasMultiEnrolmentDiscount()) {
             $multipleEnrolmentDiscount = $multipleEnrolmentDiscount->setModel($model->multipleEnrolmentDiscount);
         }
-        if ($model->paymentFrequencyDiscount) {
+        if ($model->hasPaymentFrequencyDiscount()) {
             $paymentFrequencyDiscount = $paymentFrequencyDiscount->setModel($model->paymentFrequencyDiscount);
         }
         $paymentFrequencyDiscount->enrolmentId = $id;

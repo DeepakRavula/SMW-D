@@ -63,16 +63,16 @@ class InvoiceLineItemController extends Controller
         $paymentFrequencyDiscount = new PaymentFrequencyLineItemDiscount();
         $customerDiscount = new CustomerLineItemDiscount();
         $multiEnrolmentDiscount = new EnrolmentLineItemDiscount();
-        if ($model->customerDiscount) {
+        if ($model->hasCustomerDiscount()) {
             $customerDiscount = $customerDiscount->setModel($model->customerDiscount);
         }
-        if ($model->enrolmentPaymentFrequencyDiscount) {
+        if ($model->hasEnrolmentPaymentFrequencyDiscount()) {
             $paymentFrequencyDiscount = $paymentFrequencyDiscount->setModel($model->enrolmentPaymentFrequencyDiscount);
         }
-        if ($model->lineItemDiscount) {
+        if ($model->hasLineItemDiscount()) {
             $lineItemDiscount = $lineItemDiscount->setModel($model->lineItemDiscount);
         }
-        if ($model->multiEnrolmentDiscount) {
+        if ($model->hasMultiEnrolmentDiscount()) {
             $multiEnrolmentDiscount = $multiEnrolmentDiscount->setModel($model->multiEnrolmentDiscount);
         }
         $customerDiscount->invoiceLineItemId = $id;
