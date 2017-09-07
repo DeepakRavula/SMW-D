@@ -130,7 +130,8 @@ class Lesson extends \yii\db\ActiveRecord
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
             [['programId','date', 'duration'], 'required', 'on' => self::SCENARIO_CREATE],
-            ['date', TeacherValidator::className(), 'on' => [self::SCENARIO_EDIT_REVIEW_LESSON,
+            ['date', TeacherValidator::className(), 'on' => [
+				self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_EDIT]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
                 return $model->course->program->isPrivate();
@@ -141,7 +142,6 @@ class Lesson extends \yii\db\ActiveRecord
             [['date'], StudentBackToBackLessonValidator::className(), 'on' => [self::SCENARIO_CREATE,
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
-            ['teacherId', TeacherValidator::className(), 'on' => self::SCENARIO_EDIT],
             ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
             ['duration', StudentAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
 

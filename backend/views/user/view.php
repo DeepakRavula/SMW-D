@@ -75,13 +75,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
                 'student' => $student,
         ]);
 
-        $addressContent = $this->render('_view-contact', [
-            'model' => $model,
-            'addressDataProvider' => $addressDataProvider,
-            'phoneDataProvider' => $phoneDataProvider,
-            'searchModel' => $searchModel,
-        ]);
-
         $lessonContent = $this->render('customer/_lesson', [
             'model' => $model,
             'lessonDataProvider' => $lessonDataProvider,
