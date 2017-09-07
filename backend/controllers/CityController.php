@@ -127,11 +127,6 @@ class CityController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-        Yii::$app->session->setFlash('alert', [
-               'options' => ['class' => 'alert-success'],
-               'body' => 'City has been deleted successfully',
-        ]);
-
         return $this->redirect(['index']);
     }
 
