@@ -3,7 +3,6 @@
 use kartik\grid\GridView;
 
 ?>
-<div class="payments-index">
     <?php
         $columns = [
             [
@@ -128,6 +127,7 @@ use kartik\grid\GridView;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'summary'=>'',
         'options' => ['class' => ''],
         'formatter' => ['class' => 'yii\i18n\Formatter', 'nullDisplay' => '-'],
         'showPageSummary' => true,
@@ -142,4 +142,3 @@ use kartik\grid\GridView;
         ],
         'columns' => $columns,
     ]); ?>
-</div>
