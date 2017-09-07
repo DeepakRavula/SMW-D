@@ -17,8 +17,7 @@ use kartik\grid\GridView;
         'method' => 'get'
     ]); ?>
    	
-	<div class="row" style="padding-bottom: 10px">
-		<div class="col-md-3">
+	<div class="form-group">
            <?php 
            echo DateRangePicker::widget([
             'model' => $model,
@@ -44,7 +43,6 @@ use kartik\grid\GridView;
            ?>
         </div>
 	   <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary']) ?>
-	</div>
     <?php ActiveForm::end(); ?>
 <script>
     $(document).ready(function () {

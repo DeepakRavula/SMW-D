@@ -11,7 +11,9 @@ use yii\helpers\Html;
 $this->title = 'Student Birthdays';
 $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool'])
 ?>
-<?php echo $this->render('_search', ['model' => $searchModel]); ?>
+<div class="form-group form-inline">
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+</div>
 <div class="clearfix"></div>
 <div class="grid-row-open"> 
 <?php Pjax::begin(['id' => 'birthday-listing']); ?>
