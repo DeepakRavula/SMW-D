@@ -214,9 +214,18 @@ class ItemCategoryController extends Controller
     public function actionPrint()
     {
         $searchModel                      = new InvoiceLineItemSearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('M d,Y');
+        $searchModel->toDate = $currentDate->format('M d,Y');
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $invoiceLineItemRequest = $request->get('InvoiceLineItemSearch');
+            $searchModel->dateRange = $invoiceLineItemRequest['dateRange'];
+        }
         $searchModel->groupByItemCategory = true;
         $dataProvider                     = $searchModel->search(Yii::$app->request->queryParams);
-
+        $dataProvider->pagination=false;
         $this->layout = '/print';
 
         return $this->render('/report/item-category/_print',
