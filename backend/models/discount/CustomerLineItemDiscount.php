@@ -1,13 +1,13 @@
 <?php
 
-namespace backend\models;
+namespace backend\models\discount;
 
 use common\models\User;
-use common\models\InvoiceLineItemDiscount;
+use common\models\discount\InvoiceLineItemDiscount;
 /**
  * Create user form.
  */
-class LineItemDiscount extends Discount
+class CustomerLineItemDiscount extends InvoiceDiscount
 {
     /**
      * @param User $model
@@ -18,7 +18,6 @@ class LineItemDiscount extends Discount
     {
         $this->invoiceLineItemId = $model->invoiceLineItemId;
         $this->value = $model->value;
-        $this->valueType = $model->valueType;
         $this->model = $this->getModel();
         return $this;
     }
@@ -29,7 +28,7 @@ class LineItemDiscount extends Discount
     public function getModel()
     {
         if (!$this->model) {
-            $this->model = new LineItemDiscount();
+            $this->model = new CustomerLineItemDiscount();
         }
 
         return $this->model;
@@ -37,6 +36,7 @@ class LineItemDiscount extends Discount
     
     public function init()
     {
-        $this->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
+        $this->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+        $this->type = InvoiceLineItemDiscount::TYPE_CUSTOMER;
     }
 }

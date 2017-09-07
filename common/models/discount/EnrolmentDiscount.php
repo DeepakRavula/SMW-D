@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models;
+namespace common\models\discount;
 
 use Yii;
 

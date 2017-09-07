@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
-use common\models\CustomerDiscount;
+use common\models\discount\CustomerDiscount;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */

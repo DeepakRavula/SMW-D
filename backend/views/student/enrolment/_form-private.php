@@ -4,7 +4,7 @@ use common\models\Course;
 use drsdre\wizardwidget\WizardWidget;
 use yii\bootstrap\ActiveForm;
 use common\models\CourseSchedule;
-use common\models\EnrolmentDiscount;
+use common\models\discount\EnrolmentDiscount;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Enrolment */

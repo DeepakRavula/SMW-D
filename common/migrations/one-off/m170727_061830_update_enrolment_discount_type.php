@@ -1,7 +1,7 @@
 <?php
 
 use yii\db\Migration;
-use common\models\EnrolmentDiscount;
+use common\models\discount\EnrolmentDiscount;
 
 class m170727_061830_update_enrolment_discount_type extends Migration
 {

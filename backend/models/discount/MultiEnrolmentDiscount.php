@@ -1,9 +1,9 @@
 <?php
 
-namespace backend\models;
+namespace backend\models\discount;
 
 use common\models\User;
-use backend\models\EnrolmentDiscount;
+use backend\models\discount\EnrolmentDiscount;
 /**
  * Create user form.
  */
@@ -11,8 +11,8 @@ class MultiEnrolmentDiscount extends EnrolmentDiscount
 {
     public function init()
     {
-        $this->discountType = \common\models\EnrolmentDiscount::VALUE_TYPE_DOLOR;
-        $this->type = \common\models\EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
+        $this->discountType = \common\models\discount\EnrolmentDiscount::VALUE_TYPE_DOLOR;
+        $this->type = \common\models\discount\EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
     }
     /**
      * @param User $model

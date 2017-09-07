@@ -3,11 +3,11 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\InvoiceLineItemDiscount;
-use backend\models\CustomerLineItemDiscount;
-use backend\models\EnrolmentLineItemDiscount;
-use backend\models\PaymentFrequencyLineItemDiscount;
-use backend\models\LineItemDiscount;
+use common\models\discount\InvoiceLineItemDiscount;
+use backend\models\discount\CustomerLineItemDiscount;
+use backend\models\discount\EnrolmentLineItemDiscount;
+use backend\models\discount\PaymentFrequencyLineItemDiscount;
+use backend\models\discount\LineItemDiscount;
 use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\InvoiceLineItem;

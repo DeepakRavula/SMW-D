@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 use common\models\InvoiceLineItem;
-use common\models\InvoiceLineItemDiscount;
+use common\models\discount\InvoiceLineItemDiscount;
 
 class m170724_071604_add_line_item_discount extends Migration
 {

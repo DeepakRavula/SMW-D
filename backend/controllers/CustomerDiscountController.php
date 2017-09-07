@@ -3,13 +3,13 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\CustomerDiscount;
+use common\models\discount\CustomerDiscount;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\User;
-use common\models\CustomerDiscountLog;
+use common\models\discount\CustomerDiscountLog;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 

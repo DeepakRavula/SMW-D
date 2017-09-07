@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\models;
+namespace backend\models\discount;
 
 use common\models\User;
 use yii\base\Exception;
@@ -32,12 +32,12 @@ class EnrolmentDiscount extends Model
      */
     public function getDiscountModel()
     {
-        $enrolmentDiscount = \common\models\EnrolmentDiscount::find()
+        $enrolmentDiscount = \common\models\discount\EnrolmentDiscount::find()
                 ->where(['enrolmentId' => $this->enrolmentId,
                     'type' => $this->type])
                 ->one();
 
-        return !empty($enrolmentDiscount) ? $enrolmentDiscount : new \common\models\EnrolmentDiscount();
+        return !empty($enrolmentDiscount) ? $enrolmentDiscount : new \common\models\discount\EnrolmentDiscount();
     }
     /**
      * Signs user up.

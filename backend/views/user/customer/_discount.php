@@ -2,7 +2,7 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
-use common\models\CustomerDiscount;
+use common\models\discount\CustomerDiscount;
 
 ?>
 <?php

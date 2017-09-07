@@ -1,9 +1,9 @@
 <?php
 
-namespace common\models;
+namespace common\models\discount;
 
 use Yii;
-use common\models\CustomerDiscount;
+use common\models\discount\CustomerDiscount;
 use common\commands\AddToTimelineCommand;
 use yii\helpers\Url;
 use common\models\timelineEvent\TimelineEventLink;

@@ -1,15 +1,15 @@
 <?php
 
-namespace backend\models;
+namespace backend\models\discount;
 
 use common\models\User;
 use yii\base\Exception;
 use yii\base\Model;
-use common\models\InvoiceLineItemDiscount;
+use common\models\discount\InvoiceLineItemDiscount;
 /**
  * Create user form.
  */
-class Discount extends Model
+class InvoiceDiscount extends Model
 {
     public $model;
     public $invoiceLineItemId;

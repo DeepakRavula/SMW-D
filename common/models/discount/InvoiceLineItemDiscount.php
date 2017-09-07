@@ -1,8 +1,9 @@
 <?php
 
-namespace common\models;
+namespace common\models\discount;
 
-use Yii;
+use common\models\Invoice;
+use common\models\InvoiceLineItem;
 
 /**
  * This is the model class for table "invoice_line_item_discount".

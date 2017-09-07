@@ -19,7 +19,7 @@ use common\models\ExamResult;
 use common\models\Note;
 use common\models\StudentLog;
 use common\models\User;
-use common\models\EnrolmentDiscount;
+use common\models\discount\EnrolmentDiscount;
 use common\models\PaymentFrequency;
 use common\models\TeacherAvailability;
 use yii\widgets\ActiveForm;

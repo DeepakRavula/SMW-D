@@ -25,9 +25,9 @@ use common\models\UserProfile;
 use common\models\PhoneNumber;
 use common\models\Address;
 use Carbon\Carbon;
-use common\models\EnrolmentDiscount;
-use backend\models\MultiEnrolmentDiscount;
-use backend\models\PaymentFrequencyEnrolmentDiscount;
+use common\models\discount\EnrolmentDiscount;
+use backend\models\discount\MultiEnrolmentDiscount;
+use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
