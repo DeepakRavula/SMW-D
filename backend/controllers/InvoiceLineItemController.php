@@ -79,10 +79,6 @@ class InvoiceLineItemController extends Controller
         $paymentFrequencyDiscount->invoiceLineItemId = $id;
         $lineItemDiscount->invoiceLineItemId = $id;
         $multiEnrolmentDiscount->invoiceLineItemId = $id;
-        $customerDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
-        $paymentFrequencyDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
-        $lineItemDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
-        $multiEnrolmentDiscount->setScenario(InvoiceLineItemDiscount::SCENARIO_ON_INVOICE);
         $model->setScenario(InvoiceLineItem::SCENARIO_EDIT);
         if ($model->invoice->isReversedInvoice()) {
             $model->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);

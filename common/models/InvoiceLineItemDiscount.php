@@ -23,8 +23,6 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
     const TYPE_MULTIPLE_ENROLMENT = 3;
     const TYPE_LINE_ITEM = 4;
 
-    const SCENARIO_ON_INVOICE = 'invoice';
-
     /**
      * @inheritdoc
      */
@@ -40,7 +38,6 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
     {
         return [
             [['invoiceLineItemId', 'valueType', 'type'], 'required'],
-            ['value', 'safe', 'on' => self::SCENARIO_ON_INVOICE],
             [['invoiceLineItemId', 'valueType', 'type'], 'integer'],
             [['value'], 'number', 'min' => 0],
         ];

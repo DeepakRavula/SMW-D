@@ -9,28 +9,11 @@ use backend\models\EnrolmentDiscount;
  */
 class MultiEnrolmentDiscount extends EnrolmentDiscount
 {
-    private $model;
-    public $enrolmentId;
-    public $type;
-    public $discountType;
-    public $discount;
-
     public function init()
     {
         $this->discountType = \common\models\EnrolmentDiscount::VALUE_TYPE_DOLOR;
         $this->type = \common\models\EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
     }
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['enrolmentId', 'discountType', 'type'], 'integer'],
-            [['discount'], 'number', 'min' => 0, 'max' => 100],
-        ];
-    }
-
     /**
      * @param User $model
      *

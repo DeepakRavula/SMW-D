@@ -9,28 +9,11 @@ use backend\models\EnrolmentDiscount;
  */
 class PaymentFrequencyEnrolmentDiscount extends EnrolmentDiscount
 {
-    private $model;
-    public $enrolmentId;
-    public $type;
-    public $discountType;
-    public $discount;
-
     public function init()
     {
         $this->discountType = \common\models\EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
         $this->type = \common\models\EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
     }
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['enrolmentId', 'discountType', 'type'], 'integer'],
-            [['discount'], 'number', 'min' => 0, 'max' => 100],
-        ];
-    }
-
     /**
      * @param User $model
      *

@@ -11,6 +11,7 @@ use common\models\InvoiceLineItemDiscount;
  */
 class Discount extends Model
 {
+    public $model;
     public $invoiceLineItemId;
     public $type;
     public $valueType;

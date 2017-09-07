@@ -9,25 +9,6 @@ use common\models\InvoiceLineItemDiscount;
  */
 class EnrolmentLineItemDiscount extends Discount
 {
-    private $model;
-    public $invoiceLineItemId;
-    public $type;
-    public $valueType;
-    public $value;
-
-    const SCENARIO_ON_INVOICE = 'invoice';
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            ['value', 'safe', 'on' => self::SCENARIO_ON_INVOICE],
-            [['invoiceLineItemId', 'valueType', 'type'], 'integer'],
-            [['value'], 'number', 'min' => 0, 'max' => 100],
-        ];
-    }
-
     /**
      * @param User $model
      *

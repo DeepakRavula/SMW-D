@@ -10,6 +10,7 @@ use yii\base\Model;
  */
 class EnrolmentDiscount extends Model
 {
+    public $model;
     public $enrolmentId;
     public $type;
     public $discountType;
