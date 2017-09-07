@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 use backend\models\UserForm;
+use common\models\discount\CustomerDiscount;
 
 /**
  * User model.

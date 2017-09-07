@@ -728,8 +728,8 @@ class Invoice extends \yii\db\ActiveRecord
         $paymentModel->reference = $this->id;
         $paymentModel->save();
 
+        $debitPaymentId = $paymentModel->id;
         $lesson->addLessonPayment($debitPaymentId, $enrolment->id);
-        $lessonCredit->save();
         $this->createCreditUsage($creditPaymentId, $debitPaymentId);
     }
     

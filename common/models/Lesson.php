@@ -1005,9 +1005,7 @@ class Lesson extends \yii\db\ActiveRecord
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
         $paymentModel->reference = $this->id;
         $paymentModel->invoiceId = $invoice->id;
-        if (!$paymentModel->save()) {
-            print_r($paymentModel->getErrors());die;
-    }
+        $paymentModel->save();
         
         $enrolmentId = $this->enrolment->id;
         if ($enrolment) {
