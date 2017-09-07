@@ -128,6 +128,7 @@ use kartik\grid\GridView;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'summary'=>'',
         'options' => ['class' => ''],
         'formatter' => ['class' => 'yii\i18n\Formatter', 'nullDisplay' => '-'],
         'showPageSummary' => true,
