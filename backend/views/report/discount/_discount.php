@@ -3,7 +3,6 @@
 use kartik\grid\GridView;
 
 ?>
-<div class="payments-index">
     <?php
         $columns = [
             [
@@ -143,4 +142,3 @@ use kartik\grid\GridView;
         ],
         'columns' => $columns,
     ]); ?>
-</div>
