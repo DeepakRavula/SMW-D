@@ -54,7 +54,8 @@ class ProgramSearch extends Program
         }
 
         $query->andWhere(['type' => $this->type]);
-        $query->andFilterWhere(['like', 'name', $this->query]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'rate', $this->rate]);
 
         return $dataProvider;
     }
