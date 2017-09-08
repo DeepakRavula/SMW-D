@@ -28,8 +28,11 @@ $this->params['show-all'] = $this->render('_button', [
 ]);
 ?>
 <div class="user-index"> 
+    <?php Pjax::begin([
+		'id' => 'user-index',
+		'timeout' => 6000
+	]); ?>
 <div class="grid-row-open">
-    <?php Pjax::begin(['id' => 'user-index']); ?>
         <?= AdminLteGridView::widget([
             'dataProvider' => $dataProvider,
             'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel, $roleName, $originalInvoice) {
@@ -71,8 +74,8 @@ $this->params['show-all'] = $this->render('_button', [
             ],
         ],
     ]); ?>
-<?php Pjax::end(); ?>
 </div>
+<?php Pjax::end(); ?>
 <div class=" m-b-20">
 <?php if ($searchModel->role_name === User::ROLE_CUSTOMER && YII_ENV !== 'prod'):?>
 	<?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
@@ -98,12 +101,12 @@ $(document).ready(function(){
   $("#usersearch-showallcustomers").on("change", function() {
       var showAllCustomers = $(this).is(":checked");
       var url = "<?php echo Url::to(['user/index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER]); ?>&UserSearch[query]=" + "<?php echo $searchModel->query; ?>&UserSearch[showAllCustomers]=" + (showAllCustomers | 0);
-      $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 4000});  //Reload GridView
+      $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});  //Reload GridView
     });
 	 $("#usersearch-showallteachers").on("change", function() {
       var showAllTeachers = $(this).is(":checked");
       var url = "<?php echo Url::to(['user/index', 'UserSearch[role_name]' => User::ROLE_TEACHER]); ?>&UserSearch[query]=" + "<?php echo $searchModel->query; ?>&UserSearch[showAllTeachers]=" + (showAllTeachers | 0);
-      $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 4000});  //Reload GridView
+      $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});  //Reload GridView
     });
 });
 </script>
