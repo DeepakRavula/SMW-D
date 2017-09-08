@@ -564,7 +564,7 @@ class UserController extends Controller
 				$errors = ActiveForm::validate($model);
                 return [
                     'status' => false,
-                    'errors' => current($errors)
+                    'errors' => $errors
                 ];
 			}
 		}
