@@ -126,8 +126,14 @@ class CityController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-        return $this->redirect(['index']);
+        $response = Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        $model = $this->findModel($id);
+        if ($model->delete()) {
+            return [
+                'status' => true,
+            ];
+        }
     }
 
     /**
