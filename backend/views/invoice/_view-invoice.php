@@ -37,7 +37,7 @@ use kartik\editable\Editable;
     <div class="row">
         <!-- /.col -->
         <div class="col-xs-12">
-          <div class="table-responsive">
+          <div id="invoice-summary-section" class="table-responsive">
             <table class="table table-invoice-total">
               <tbody>
                 <tr>
