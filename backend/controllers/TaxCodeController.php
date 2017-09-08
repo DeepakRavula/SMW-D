@@ -78,20 +78,19 @@ class TaxCodeController extends Controller
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post())) {
-            $startDate = \DateTime::createFromFormat('d-m-Y', $model->start_date);
-            $model->start_date = $startDate->format('Y-m-d H:i:s');
-            $model->save();
+        if ($model->load(Yii::$app->request->post())&& $model->save()) {
             return [
                 'status' => true,
             ];
         }
+        else
+        {
         return [
             'status' => true,
             'data' => $data
         ];
     }
-
+    }
     /**
      * Updates an existing TaxCode model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -106,10 +105,7 @@ class TaxCodeController extends Controller
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post())) {
-            $startDate = \DateTime::createFromFormat('d-m-Y', $model->start_date);
-            $model->start_date = $startDate->format('Y-m-d H:i:s');
-            $model->save();
+        if ($model->load(Yii::$app->request->post())&& $model->save()) {
             return [
                 'status' => true,
             ];

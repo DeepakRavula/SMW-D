@@ -63,11 +63,11 @@ Pjax::Begin([
 <script>
     $(document).ready(function() {
         $(document).on('click', '.add-taxcode, #taxcode-listing  tbody > tr', function () {
-            var countryId = $(this).data('key');
-            if (countryId === undefined) {
+            var taxcodeId = $(this).data('key');
+            if (taxcodeId === undefined) {
                 var customUrl = '<?= Url::to(['tax-code/create']); ?>';
             } else {
-                var customUrl = '<?= Url::to(['tax-code/update']); ?>?id=' + countryId;
+                var customUrl = '<?= Url::to(['tax-code/update']); ?>?id=' + taxcodeId;
             }
             $.ajax({
                 url    : customUrl,
