@@ -596,17 +596,16 @@ class UserController extends Controller
 					}
 					foreach ($phoneNumberModels as $phoneNumberModel) {
 						$phoneNumberModel->user_id = $id;
-						if (!($flag = $phoneNumberModel->save(false))) {
+						if (!$phoneNumberModel->save(false)) {
 							$transaction->rollBack();
 							break;
 						}
 					}
-                    if ($flag) {
-                        $transaction->commit();
-                       	return [
-							'status' => true,
-						]; 
-                    }
+                    
+					$transaction->commit();
+					return [
+						'status' => true,
+					]; 
                 } catch (Exception $e) {
                     $transaction->rollBack();
                 }
