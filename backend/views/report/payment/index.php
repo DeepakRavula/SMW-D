@@ -14,10 +14,12 @@ $this->params['show-all'] = $this->render('_button', [
 
 <div class="payments-index p-10">
     <div class="payment-search">
-    <div class="form-inline form-group">
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-    </div>
-    <?php echo $this->render('_payment', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]); ?>
+        <div class="form-inline form-group">
+            <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+        </div>
+        <div class="box">  
+            <?php echo $this->render('_payment', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]); ?>
+        </div>
     </div>
 </div>
 
