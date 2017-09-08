@@ -27,7 +27,7 @@ class CityController extends Controller
             ],
 			'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['update', 'create'],
+                'only' => ['update', 'create','delete'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -126,8 +126,6 @@ class CityController extends Controller
      */
     public function actionDelete($id)
     {
-        $response = Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
         if ($model->delete()) {
             return [
