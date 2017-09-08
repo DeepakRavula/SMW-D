@@ -642,18 +642,17 @@ class UserController extends Controller
 						Address::deleteAll(['id' => $deletedAddressIDs]);
 					}
 					foreach ($addressModels as $addressModel) {
-						if (!($flag = $addressModel->save(false))) {
+						if (!$addressModel->save(false)) {
 							$transaction->rollBack();
 							break;
 						}
 						$model->getModel()->link('addresses', $addressModel);
 					}
-                    if ($flag) {
-                        $transaction->commit();
-                       	return [
-							'status' => true,
-						]; 
-                    }
+                    
+					$transaction->commit();
+					return [
+						'status' => true,
+					]; 
                 } catch (Exception $e) {
                     $transaction->rollBack();
                 }
