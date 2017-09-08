@@ -1,5 +1,4 @@
 <?php
-
 namespace backend\controllers;
 
 use Yii;
@@ -8,12 +7,15 @@ use backend\models\search\TaxCodeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
 
 /**
  * TaxCodeController implements the CRUD actions for TaxCode model.
  */
 class TaxCodeController extends Controller
 {
+
     public function behaviors()
     {
         return [
@@ -21,6 +23,14 @@ class TaxCodeController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['create', 'update', 'delete'],
+                'formatParam' => '_format',
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -37,8 +47,8 @@ class TaxCodeController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -52,7 +62,7 @@ class TaxCodeController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                'model' => $this->findModel($id),
         ]);
     }
 
@@ -65,17 +75,21 @@ class TaxCodeController extends Controller
     public function actionCreate()
     {
         $model = new TaxCode();
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
         if ($model->load(Yii::$app->request->post())) {
             $startDate = \DateTime::createFromFormat('d-m-Y', $model->start_date);
             $model->start_date = $startDate->format('Y-m-d H:i:s');
             $model->save();
-
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            return [
+                'status' => true,
+            ];
         }
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 
     /**
@@ -89,18 +103,21 @@ class TaxCodeController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
         if ($model->load(Yii::$app->request->post())) {
             $startDate = \DateTime::createFromFormat('d-m-Y', $model->start_date);
             $model->start_date = $startDate->format('Y-m-d H:i:s');
             $model->save();
-
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            return [
+                'status' => true,
+            ];
         }
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 
     /**
@@ -113,9 +130,12 @@ class TaxCodeController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id);
+        if ($model->delete()) {
+            return [
+                'status' => true,
+            ];
+        }
     }
 
     /**

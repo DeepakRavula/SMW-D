@@ -13,10 +13,12 @@ use common\models\Province;
 
 <div class="tax-code-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+        'id' => 'taxcode-form',
+    ]); ?>
 
     <?php echo $form->errorSummary($model); ?>
-	<div class="row p-10">
+	<div class="row">
         <div class="col-xs-4">
 		<?php
             echo $form->field($model, 'tax_type_id')->dropDownList(ArrayHelper::map(
@@ -48,11 +50,22 @@ use common\models\Province;
                 ]); ?>
         </div>
     </div>
-    <div class="form-group col-xs-4">
+    <div class="form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-		<?php if (!$model->isNewRecord) : ?>
-         <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);?>
-		<?php endif; ?> 
+        <?php
+        if (!$model->isNewRecord) {
+            echo Html::a('Cancel', '#', ['class' => 'btn btn-default taxcode-cancel']);
+            echo Html::a('Delete', ['delete', 'id' => $model->id], [
+                'id' => 'taxcode-delete-button',
+                'class' => 'btn btn-danger',
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'post',
+                ]
+            ]);
+        }
+
+        ?>
     </div>
 
     <?php ActiveForm::end(); ?>
