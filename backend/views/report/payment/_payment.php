@@ -18,9 +18,6 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  */
 ?>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
-<div class="payments-index">
-    <div class="box">
-        <div class="box-body">
 	<?php if ($searchModel->groupByMethod) : ?>
 		<?php
 		$columns = [
@@ -187,6 +184,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             <?=
             GridView::widget([
                 'dataProvider' => $dataProvider,
+                'summary' =>'',
                 'options' => ['class' => ''],
                 'showPageSummary' => true,
                 'headerRowOptions' => ['class' => 'bg-light-gray'],
@@ -201,6 +199,3 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'columns' => $columns,
             ]);
             ?>
-        </div>
-    </div>
-</div>

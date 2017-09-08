@@ -14,7 +14,6 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  */
 ?>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
-<div class="payments-index">
 	<?php $columns = [
 				[
 				'value' => function ($data) {
@@ -63,10 +62,10 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 			],
 		];
 		?>
-    <div class="box">
         <?=
         GridView::widget([
             'dataProvider' => $dataProvider,
+            'summary' =>'',
             'options' => ['class' => ''],
             'showPageSummary' => true,
             'headerRowOptions' => ['class' => 'bg-light-gray'],
@@ -81,5 +80,3 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'columns' => $columns,
         ]);
         ?>
-    </div>
-</div>
