@@ -8,16 +8,12 @@ use kartik\editable\Editable;
 
 ?>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
-
- <div class="row invoice-info">
-	<!-- /.col -->
-  </div>
-<div class="row">
+<div style="margin-bottom: 10px">
 	<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
-	<a href="#" class="add-new-misc text-add-new m-r-10"><i class="fa fa-plus-circle"></i> Add Item</a>
+	<?= Html::a('Add Item', '#', ['class' => 'add-new-misc btn btn-primary btn-sm m-r-10']) ?>
 <?php endif; ?>
 	<?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
-	<a href="#" class="apply-discount text-add-new"><i class="fa fa-plus-circle"></i> Apply Discount</a>
+	 <?= Html::a('Apply Discount', '#', ['class' => 'apply-discount btn btn-primary btn-sm']) ?>
     <?php endif; ?>
 	  <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
     $lastRole = end($roles);
@@ -31,10 +27,12 @@ use kartik\editable\Editable;
 	<?php echo $this->render('_line-item', [
         'invoiceModel' => $model,
     ]) ?>
-<?php echo $this->render('_view-line-item', [
-	'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-	'searchModel' => $searchModel,
-]) ?>	
+</div>
+<div>
+	<?php echo $this->render('_view-line-item', [
+		'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+		'searchModel' => $searchModel,
+	]) ?>	
 </div>
     <div class="row">
         <!-- /.col -->

@@ -138,21 +138,21 @@ $logContent = $this->render('log', [
             'content' => $invoiceContent,
             'options' => [
                     'id' => 'invoice',
-                ],
+        ],
         ],
 		 [
             'label' => 'Payments',
             'content' => $paymentContent,
             'options' => [
-                    'id' => 'payment',
-                ],
+                'id' => 'payment',
+        	],
         ],
 		[
             'label' => 'Comments',
             'content' => $noteContent,
             'options' => [
                 'id' => 'comment',
-            ],
+        ],
         ],
        
 		[
@@ -160,8 +160,8 @@ $logContent = $this->render('log', [
             'content' => $logContent,
             'options' => [
                     'id' => 'log',
-                ],
         ],
+    ],
     ],
 ]); ?>
 </div>
