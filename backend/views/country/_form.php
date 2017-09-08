@@ -31,7 +31,15 @@ use yii\helpers\Url;
 		<?php 
             if (!$model->isNewRecord) {
                 echo Html::a('Cancel', '#', ['class' => 'btn btn-default country-cancel']);
-            }
+                echo Html::a('Delete', ['delete', 'id' => $model->id], [
+        'id' => 'province-delete-button',
+        'class' => 'btn btn-danger',
+        'data' => [
+            'confirm' => 'Are you sure you want to delete this item?',
+            'method' => 'post',
+        ]
+    ]);
+}
         ?>
     </div>
 
