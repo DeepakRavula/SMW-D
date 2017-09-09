@@ -105,6 +105,7 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => 'Net($)',
+                'format' => ['decimal', 2],
                 'value' => function ($data) {
                     return floatval($data->discount);
                 },
