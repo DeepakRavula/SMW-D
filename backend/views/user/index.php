@@ -50,6 +50,7 @@ $this->params['show-all'] = $this->render('_button', [
             },
             'tableOptions' => ['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
+			'filterModel' => $searchModel,
             'columns' => [
             [
                 'attribute' => 'firstname',
