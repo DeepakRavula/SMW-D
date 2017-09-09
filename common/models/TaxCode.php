@@ -73,4 +73,10 @@ class TaxCode extends \yii\db\ActiveRecord
         return $this->hasOne(TaxStatus::className(), ['id' => 'tax_status_id'])
         ->viaTable('tax_type_tax_status_assoc', ['tax_type_id' => 'tax_type_id']);
     }
+     public function beforeSave($insert)
+    {
+        $startDate = \DateTime::createFromFormat('d-m-Y', $this->start_date);
+        $this->start_date = $startDate->format('Y-m-d H:i:s');
+        return parent::beforeSave($insert);
+    }
 }

@@ -7,8 +7,9 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Tax Collected';
+$this->params['show-all'] = $this->render('_button', ['model' => $searchModel]);
 ?>
-<div class="col-xs-12 col-md-6 p-10 p-r-0">
+<div class="form-inline form-group">
 	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 
@@ -123,9 +124,10 @@ $this->title = 'Tax Collected';
 	],	
 ]; ?>
 <?php endif; ?>
-<div class="col-md-12">
+<div class="box">
 <?php echo GridView::widget([
 	'dataProvider' => $taxDataProvider,
+    'summary' =>'',
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'pjax' => true,

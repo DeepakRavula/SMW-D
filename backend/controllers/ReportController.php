@@ -133,8 +133,7 @@ class ReportController extends Controller {
 		if ($searchModel->load($request->get())) {
 			$royaltyRequest = $request->get('ReportSearch');
 			$searchModel->dateRange = $royaltyRequest['dateRange'];
-			$searchModel->summarizeResults = $royaltyRequest['summarizeResults']; 
-		}
+			}
 		$toDate = $searchModel->toDate;
 		if ($toDate > $currentDate) {
 			$toDate = $currentDate;
