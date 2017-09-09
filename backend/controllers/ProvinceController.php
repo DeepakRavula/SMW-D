@@ -27,7 +27,7 @@ class ProvinceController extends Controller
             ],
 			'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['update', 'create'],
+                'only' => ['update', 'create','delete'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -125,13 +125,12 @@ class ProvinceController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-        Yii::$app->session->setFlash('alert', [
-              'options' => ['class' => 'alert-success'],
-               'body' => 'Province has been deleted successfully',
-        ]);
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id);
+        if ($model->delete()) {
+            return [
+                'status' => true,
+            ];
+        }
     }
 
     /**
