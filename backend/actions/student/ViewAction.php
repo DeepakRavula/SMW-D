@@ -21,15 +21,15 @@ class ViewAction extends Action
        	if(!empty($this->findModel($id))) {
         	$model = $this->findModel($id);
 			$locationId = Yii::$app->session->get('location_id');
-			$query = Enrolment::find()
+			$enrolments = Enrolment::find()
 				->joinWith(['course' => function($query) {
 					$query->isConfirmed();
 				}])
 				->location($locationId)
 				->notDeleted()
 				->isConfirmed()
-				->andWhere(['studentId' => $model->id]);
-			$enrolments = $query->all();
+				->andWhere(['studentId' => $model->id])
+				->all();
 			$allEnrolments = [];
 			foreach ($enrolments as $enrolment) {
 				$allEnrolments[] = [
@@ -37,66 +37,89 @@ class ViewAction extends Action
 					'programId' => $enrolment->course->programId
 				];
 			}
-			$enrolmentDataProvider = new ActiveDataProvider([
-				'query' => $query->isRegular(),
-			]);
-
-			$currentDate = new \DateTime();
-			$lessons = Lesson::find()
-				->studentEnrolment($locationId, $model->id)
-				->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
-				->isConfirmed()
-				->orderBy(['lesson.date' => SORT_ASC])
-				->notDeleted();
-
-			$lessonDataProvider = new ActiveDataProvider([
-				'query' => $lessons,
-			]);
-
-			$unscheduledLessons = Lesson::find()
-				->studentEnrolment($locationId, $model->id)
-				->isConfirmed()
-				->joinWith(['privateLesson'])
-				->andWhere(['NOT', ['private_lesson.lessonId' => null]])
-				->orderBy(['private_lesson.expiryDate' => SORT_DESC])
-				->unscheduled()
-				->notRescheduled()
-				->notDeleted();
-
-			$unscheduledLessonDataProvider = new ActiveDataProvider([
-				'query' => $unscheduledLessons,
-			]);    
-
-			$examResults = ExamResult::find()
-				->where(['studentId' => $model->id]);
-
-			$examResultDataProvider = new ActiveDataProvider([
-				'query' => $examResults,
-				'pagination' => [
-					'pageSize' => 5,
-				]
-			]);
-
-			$notes = Note::find()
-				->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_STUDENT])
-				->orderBy(['createdOn' => SORT_DESC]);
-
-			$noteDataProvider = new ActiveDataProvider([
-				'query' => $notes,
-			]);
-
 			return $this->controller->render('view', [
 				'model' => $model,
 				'allEnrolments' => $allEnrolments,
-				'lessonDataProvider' => $lessonDataProvider,
-				'enrolmentDataProvider' => $enrolmentDataProvider,
-				'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
-				'examResultDataProvider' => $examResultDataProvider,
-				'noteDataProvider' => $noteDataProvider
+				'lessonDataProvider' => $this->getLessons($id, $locationId),
+				'enrolmentDataProvider' => $this->getEnrolments($id, $locationId),
+				'unscheduledLessonDataProvider' => $this->getUnscheduledLessons($id, $locationId),
+				'examResultDataProvider' => $this->getExamResults($id),
+				'noteDataProvider' => $this->getNotes($id),
 				]);
 		} else {
 			$this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
 		} 
+	}
+	protected function getUnscheduledLessons($id, $locationId)
+	{
+		$unscheduledLessons = Lesson::find()
+			->studentEnrolment($locationId, $id)
+			->isConfirmed()
+			->joinWith(['privateLesson'])
+			->andWhere(['NOT', ['private_lesson.lessonId' => null]])
+			->orderBy(['private_lesson.expiryDate' => SORT_DESC])
+			->unscheduled()
+			->notRescheduled()
+			->notDeleted();
+
+		return new ActiveDataProvider([
+			'query' => $unscheduledLessons,
+		]);  
+	}
+
+	protected function getLessons($id, $locationId)
+	{
+		$lessons = Lesson::find()
+			->studentEnrolment($locationId, $id)
+			->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
+			->isConfirmed()
+			->orderBy(['lesson.date' => SORT_ASC])
+			->notDeleted();
+
+		return new ActiveDataProvider([
+			'query' => $lessons,
+		]);
+	}
+
+	protected function getExamResults($id)
+	{
+		$examResults = ExamResult::find()
+			->where(['studentId' => $id]);
+
+		return new ActiveDataProvider([
+			'query' => $examResults,
+			'pagination' => [
+				'pageSize' => 5,
+			]
+		]);
+	}
+
+	protected function getNotes($id)
+	{
+		$notes = Note::find()
+			->where(['instanceId' => $id, 'instanceType' => Note::INSTANCE_TYPE_STUDENT])
+			->orderBy(['createdOn' => SORT_DESC]);
+
+		return new ActiveDataProvider([
+			'query' => $notes,
+		]);
+	}
+	
+	protected function getEnrolments($id, $locationId)
+	{
+		$query = Enrolment::find()
+			->joinWith(['course' => function($query) {
+				$query->isConfirmed();
+			}])
+			->location($locationId)
+			->notDeleted()
+			->isConfirmed()
+			->andWhere(['studentId' => $id])
+			->isRegular();
+		
+		return new ActiveDataProvider([
+			'query' => $query,
+		]);
 	}
 	protected function findModel($id)
     {
