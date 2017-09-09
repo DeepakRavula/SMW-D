@@ -8,7 +8,7 @@ use yii\helpers\Url;
 
 $this->title = 'Royalty Free Items';
 ?>
-<div class="col-xs-12 col-md-6 p-10 p-r-0">
+<div class="form-group form-inline">
 	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 
@@ -32,26 +32,30 @@ $this->title = 'Royalty Free Items';
 		'pageSummaryFunc'=>GridView::F_SUM
 	],	
 ]; ?>
-<div class="grid-row-open col-md-12">
-<?php echo GridView::widget([
-	'dataProvider' => $royaltyFreeDataProvider,
-	'tableOptions' => ['class' => 'table table-bordered'],
-	'headerRowOptions' => ['class' => 'bg-light-gray'],
-	'rowOptions' => function ($model, $key, $index, $grid) {
-        $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
+<div class="grid-row-open">
+    <div class="box">
+        <?php
+        echo GridView::widget([
+            'dataProvider' => $royaltyFreeDataProvider,
+            'summary' => '',
+            'tableOptions' => ['class' => 'table table-bordered'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
+            'rowOptions' => function ($model, $key, $index, $grid) {
+                $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
 
-        return ['data-url' => $url];
-    },
-	'pjax' => true,
-	'showPageSummary' => true,
-	'pjaxSettings' => [
-		'neverTimeout' => true,
-		'options' => [
-			'id' => 'tax-grid',
-		],
-	],
-	'columns' => $columns,
+                return ['data-url' => $url];
+            },
+            'pjax' => true,
+            'showPageSummary' => true,
+            'pjaxSettings' => [
+                'neverTimeout' => true,
+                'options' => [
+                    'id' => 'tax-grid',
+                ],
+            ],
+            'columns' => $columns,
 ]); ?>
+    </div>
 </div>
 <script>
 $(document).ready(function () {
