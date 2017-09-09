@@ -343,6 +343,7 @@ class LessonController extends Controller
 						$model->duration = $duration->format('H:i:s');
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+					
                     
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
                     if(! $model->save()) {

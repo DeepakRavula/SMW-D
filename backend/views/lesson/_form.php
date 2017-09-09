@@ -62,7 +62,7 @@ use yii\bootstrap\Modal;
                 <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
                 <div id="calendar-date-time-picker-date-datetime" class="input-group date">
                     <input type="text" id="lesson-date" class="form-control" name="Lesson[date]"
-                        value='<?php echo $model->date; ?>' readonly>
+                        value='<?php echo Yii::$app->formatter->asDateTime($model->date); ?>' readonly>
                     <span class="input-group-addon" title="Clear field">
                         <span class="glyphicon glyphicon-remove"></span>
                     </span>
