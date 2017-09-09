@@ -45,7 +45,7 @@ class InvoiceController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'get-payment-amount'],
+                'only' => ['delete', 'get-payment-amount','update-customer', 'update-walkin'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -112,6 +112,43 @@ class InvoiceController extends Controller
         return $this->redirect(['view', 'id' => $invoice->id]);
     }
 
+	public function actionUpdateCustomer($id)
+	{
+		$request = Yii::$app->request;
+        $model = $this->findModel($id);
+		$invoiceRequest = $request->post('Invoice');
+        $customerId = $invoiceRequest['customer_id'];
+		$model->user_id = $customerId;
+		if($model->save()) {
+			return [
+				'status' => true,
+				'message' => 'customer has been updated successfully.'
+			];
+		} 
+	}
+	public function actionUpdateWalkin($id)
+	{
+		$request = Yii::$app->request;
+        $model = $this->findModel($id);
+		$customer = new User();
+		$userProfile = new UserProfile();
+		if ($customer->load($request->post()) && $userProfile->load($request->post())) {
+			if ($customer->save()) {
+				$model->user_id = $customer->id;
+				$model->save();
+
+				$userProfile->user_id = $customer->id;
+				$userProfile->save();
+				$auth = Yii::$app->authManager;
+				$auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
+
+				return [
+					'status' => true,
+					'message' => 'customer has been updated successfully.'
+				];
+			}
+		}
+	}
     public function actionView($id)
     {
         $model = $this->findModel($id);
@@ -125,9 +162,7 @@ class InvoiceController extends Controller
         ]);
         $invoiceRequest = $request->post('Invoice');
         $customerId = $invoiceRequest['customer_id'];
-        if (!empty($model->user_id)) {
-            $customer = User::findOne(['id' => $model->user_id]);
-        }
+
         if (isset($customerId)) {
             $customer = User::findOne(['id' => $customerId]);
             if ($customer->hasDiscount()) {
@@ -138,15 +173,12 @@ class InvoiceController extends Controller
                 }
             }
         }
-        if (empty($customer)) {
-            $customer = new User();
-        }
 
         $customerInvoicePayments = Payment::find()
-                ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                    $query->where(['ip.invoice_id' => $model->id]);
-                }])
-                ->where(['user_id' => $model->user_id]);
+			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
+				$query->where(['ip.invoice_id' => $model->id]);
+			}])
+			->where(['user_id' => $model->user_id]);
 
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
@@ -154,61 +186,32 @@ class InvoiceController extends Controller
 
         $invoicePayments = Payment::find()
 			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                            $query->where(['ip.invoice_id' => $model->id]);
+                $query->where(['ip.invoice_id' => $model->id]);
 			}])
-                        ->orderBy(['date' => SORT_DESC]);
+            ->orderBy(['date' => SORT_DESC]);
         $invoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $invoicePayments,
         ]);
+		
+        $notes = Note::find()
+            ->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE])
+            ->orderBy(['createdOn' => SORT_DESC]);
 
-        if (!empty($model->user->userProfile->user_id)) {
+        $noteDataProvider = new ActiveDataProvider([
+            'query' => $notes,
+        ]);
+
+		$customer = new User();
+        $userModel = new UserProfile();
+		if (!empty($model->user_id)) {
+            $customer = User::findOne(['id' => $model->user_id]);
             $userModel = UserProfile::findOne(['user_id' => $customer->id]);
-        } else {
-            $userModel = new UserProfile();
-        }
-
-        if ($request->isPost) {
-            if (isset($_POST['customer-invoice'])) {
-                if ($model->load($request->post())) {
-                    $model->user_id = $customer->id;
-                    $model->save();
-                }
-            }
-            if (isset($_POST['guest-invoice'])) {
-                if ($customer->load($request->post())) {
-                    if ($customer->save()) {
-                        $model->user_id = $customer->id;
-                        $model->save();
-
-                        if ($userModel->load($request->post())) {
-                            $userModel->user_id = $customer->id;
-                            $userModel->save();
-                            $auth = Yii::$app->authManager;
-                            if (empty($customer->id)) {
-                                $auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
-                            }
-                            Yii::$app->session->setFlash('alert', [
-                                'options' => ['class' => 'alert-success'],
-                                'body' => 'Invoice has been updated successfully',
-                            ]);
-                        }
-                    }
-                }
-            }
         }
 		if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
 			$response = Yii::$app->response;
 			$response->format = Response::FORMAT_JSON;
                 return ['output' => $model->notes, 'message' => ''];
         }
-
-        $notes = Note::find()
-                ->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE])
-                ->orderBy(['createdOn' => SORT_DESC]);
-
-        $noteDataProvider = new ActiveDataProvider([
-            'query' => $notes,
-        ]);
 
         return $this->render('view', [
             'model' => $model,

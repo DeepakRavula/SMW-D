@@ -564,7 +564,7 @@ class UserController extends Controller
 				$errors = ActiveForm::validate($model);
                 return [
                     'status' => false,
-                    'errors' => current($errors)
+                    'errors' => $errors
                 ];
 			}
 		}
@@ -596,17 +596,16 @@ class UserController extends Controller
 					}
 					foreach ($phoneNumberModels as $phoneNumberModel) {
 						$phoneNumberModel->user_id = $id;
-						if (!($flag = $phoneNumberModel->save(false))) {
+						if (!$phoneNumberModel->save(false)) {
 							$transaction->rollBack();
 							break;
 						}
 					}
-                    if ($flag) {
-                        $transaction->commit();
-                       	return [
-							'status' => true,
-						]; 
-                    }
+                    
+					$transaction->commit();
+					return [
+						'status' => true,
+					]; 
                 } catch (Exception $e) {
                     $transaction->rollBack();
                 }
@@ -643,18 +642,17 @@ class UserController extends Controller
 						Address::deleteAll(['id' => $deletedAddressIDs]);
 					}
 					foreach ($addressModels as $addressModel) {
-						if (!($flag = $addressModel->save(false))) {
+						if (!$addressModel->save(false)) {
 							$transaction->rollBack();
 							break;
 						}
 						$model->getModel()->link('addresses', $addressModel);
 					}
-                    if ($flag) {
-                        $transaction->commit();
-                       	return [
-							'status' => true,
-						]; 
-                    }
+                    
+					$transaction->commit();
+					return [
+						'status' => true,
+					]; 
                 } catch (Exception $e) {
                     $transaction->rollBack();
                 }

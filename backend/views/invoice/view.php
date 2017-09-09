@@ -3,12 +3,11 @@
 use yii\helpers\Html;
 use backend\models\search\InvoiceSearch;
 use yii\bootstrap\Tabs;
-use yii\widgets\ActiveForm;
 use common\models\InvoiceLineItem;
-use kartik\switchinput\SwitchInput;
 use common\models\Note;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
+use yii\widgets\Pjax;
 use common\models\Payment;
 use yii\data\ActiveDataProvider;
 
@@ -25,6 +24,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 	'model' => $model,
 ]); ?>
 <?php endif; ?>
+<div id="customer-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div class="row">
 	<div class="col-md-6">
@@ -35,6 +35,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 		?>
 	</div>
     <?php if (!empty($customer)):?>
+	<?php Pjax::Begin(['id' => 'invoice-customer', 'timeout' => 6000]); ?>
 	<div class="col-md-6">
 		<?=
 		$this->render('_customer-details', [
@@ -44,6 +45,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 		]);
 		?>	
 	</div>
+	<?php Pjax::end(); ?>
 	<?php endif; ?>
 </div>
 <?php
@@ -65,7 +67,7 @@ Modal::begin([
 ]);
 Modal::end();
 ?>
-<?php if(empty($model->lineItem) || $model->lineItem->isMisc()) : ?>
+<?php if((empty($model->lineItem) || $model->lineItem->isMisc())) : ?>
 <div class="nav-tabs-custom">
 <?php 
 
@@ -138,21 +140,21 @@ $logContent = $this->render('log', [
             'content' => $invoiceContent,
             'options' => [
                     'id' => 'invoice',
-                ],
+        ],
         ],
 		 [
             'label' => 'Payments',
             'content' => $paymentContent,
             'options' => [
-                    'id' => 'payment',
-                ],
+                'id' => 'payment',
+        	],
         ],
 		[
             'label' => 'Comments',
             'content' => $noteContent,
             'options' => [
                 'id' => 'comment',
-            ],
+        ],
         ],
        
 		[
@@ -160,8 +162,8 @@ $logContent = $this->render('log', [
             'content' => $logContent,
             'options' => [
                     'id' => 'log',
-                ],
         ],
+    ],
     ],
 ]); ?>
 </div>
@@ -392,6 +394,48 @@ var payment = {
 	});
 	$(document).on("click", '.payment-cancel', function() {
 		$('#payment-edit-modal').modal('hide');
+		return false;
+	});
+	$(document).on('beforeSubmit', '#customer-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#invoice-customer', async : false, timeout : 6000});
+					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
+				}else
+				{
+				 $('#customer-form').yiiActiveForm('updateMessages',
+					response.errors, true);
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#walkin-customer-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container : '#invoice-customer', async : false, timeout : 6000});
+					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
+				}else
+				{
+				 $('#walkin-customer-form').yiiActiveForm('updateMessages',
+					response.errors, true);
+				}
+			}
+		});
 		return false;
 	});
 });

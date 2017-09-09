@@ -16,6 +16,7 @@ use common\models\Student;
 echo AdminLteGridView::widget([
 	'id' => 'student-grid',
 	'dataProvider' => $dataProvider,
+	'filterModel' => $searchModel,
     'summary'=>'',
 	'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
 		$url = Url::to(['student/view', 'id' => $model->id]);
@@ -35,12 +36,14 @@ echo AdminLteGridView::widget([
 	'columns' => [
 		[
 			'label' => 'First Name',
+			'attribute' => 'first_name',
 			'value' => function ($data) {
 				return !(empty($data->first_name)) ? $data->first_name : null;
 			},
 		],
 		[
 			'label' => 'Last Name',
+			'attribute' => 'last_name',
 			'value' => function ($data) {
 				return !(empty($data->last_name)) ? $data->last_name : null;
 			},

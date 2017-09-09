@@ -484,7 +484,7 @@ $(document).ready(function(){
         			$.pjax.reload({container:"#user-profile",replace:false,  timeout: 4000});
                     
                 } else {
-                    $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                  $('#user-update-form').yiiActiveForm('updateMessages', response.errors, true); 
                 }
             }
         });

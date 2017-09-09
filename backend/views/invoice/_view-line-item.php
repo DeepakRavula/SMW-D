@@ -92,6 +92,8 @@ use yii\grid\GridView;
 			'value' => function($data) {
 				return $data->netPrice;	
 			},
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
         ],
     ];
 }?>
