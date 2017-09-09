@@ -520,7 +520,7 @@ class InvoiceController extends Controller
             } else {
                 $amount = $invoice->balance;
             }
-            $invoice->addInvoicePayment($creditInvoice, $amount);
+            $invoice->addInvoicePayment($creditInvoice, $invoice, $amount);
             $invoice->save();
             $creditInvoice->save();
         }

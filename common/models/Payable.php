@@ -27,7 +27,7 @@ trait Payable
                         $netPrice = $lesson->getSplitedAmount() - $lesson->
                                 getCreditUsedAmount($lesson->enrolment->id);
                     }
-                    $lesson->invoice->addLessonDebitPayment($lesson, $netPrice, $lesson->enrolment);
+                    $lesson->invoice->addPayment($lesson, $lesson->invoice, $netPrice, $lesson->enrolment);
                 }
             }
         }
@@ -41,7 +41,8 @@ trait Payable
             } else if (!$enrolment->getInvoice($lesson->id)->isPaid()) {
                 if ($lesson->hasLessonCredit($enrolment->id)) {
                     $netPrice = $lesson->getLessonCreditAmount($enrolment->id);
-                    $enrolment->getInvoice($lesson->id)->addLessonDebitPayment($lesson, $netPrice, $enrolment);
+                    $enrolment->getInvoice($lesson->id)->addPayment($lesson, 
+                        $enrolment->getInvoice($lesson->id), $netPrice, $enrolment);
                 }
             }
         }
@@ -49,53 +50,52 @@ trait Payable
     
     public function createCreditUsage($creditPaymentId, $debitPaymentId)
     {
-            $creditUsageModel = new CreditUsage();
-            $creditUsageModel->credit_payment_id = $creditPaymentId;
-            $creditUsageModel->debit_payment_id = $debitPaymentId;
-            $creditUsageModel->save();	
+        $creditUsageModel = new CreditUsage();
+        $creditUsageModel->credit_payment_id = $creditPaymentId;
+        $creditUsageModel->debit_payment_id = $debitPaymentId;
+        $creditUsageModel->save();	
     }
     
-    public function addLessonDebitPayment($lesson, $amount, $enrolment)
+    public function addPayment($from, $to, $amount, $enrolment = null)
     {
         $paymentModel = new Payment();
         $paymentModel->amount = $amount;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-        $paymentModel->invoiceId = $this->id;
-        $paymentModel->reference = $lesson->id;
+        if ($to->tableName() === 'invoice') {
+            $paymentModel->invoiceId = $to->id;
+        } else {
+            $paymentModel->lessonId = $to->id;
+        }
+        $paymentModel->reference = $from->id;
         $paymentModel->save();
-		
-        $creditPaymentId = $paymentModel->id;
+	$creditPaymentId = $paymentModel->id;
+        if ($to->tableName() === 'lesson') {
+            if (!$enrolment) {
+                $enrolment = $to->enrolment;
+            }
+            $to->addLessonPayment($creditPaymentId, $enrolment->id);
+        }
+        
         $paymentModel->id = null;
         $paymentModel->isNewRecord = true;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-        $paymentModel->lessonId = $lesson->id;
-        $paymentModel->invoiceId = null;
-        $paymentModel->reference = $this->id;
+        if ($from->tableName() === 'invoice') {
+            $paymentModel->invoiceId = $from->id;
+            $paymentModel->lessonId = null;
+        } else {
+            $paymentModel->lessonId = $from->id;
+            $paymentModel->invoiceId = null;
+        }
+        $paymentModel->reference = $to->id;
         $paymentModel->save();
 
         $debitPaymentId = $paymentModel->id;
-        $lesson->addLessonPayment($debitPaymentId, $enrolment->id);
-        $this->createCreditUsage($creditPaymentId, $debitPaymentId);
-    }
-    
-    public function addInvoicePayment($invoice, $amount)
-    {
-        $paymentModel = new Payment();
-        $paymentModel->amount = $amount;
-        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-        $paymentModel->invoiceId = $this->id;
-        $paymentModel->reference = $invoice->id;
-        $paymentModel->save();
-		
-        $creditPaymentId = $paymentModel->id;
-        $paymentModel->id = null;
-        $paymentModel->isNewRecord = true;
-        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-        $paymentModel->invoiceId = $invoice->id;
-        $paymentModel->reference = $this->id;
-        $paymentModel->save();
-
-        $debitPaymentId = $paymentModel->id;
+        if ($from->tableName() === 'lesson') {
+            if (!$enrolment) {
+                $enrolment = $from->enrolment;
+            }
+            $from->addLessonPayment($debitPaymentId, $enrolment->id);
+        }
         $this->createCreditUsage($creditPaymentId, $debitPaymentId);
     }
 
@@ -116,7 +116,7 @@ trait Payable
                 $amount = $this->proFormaCredit;
             }
             if ($this->hasProFormaCredit() && !empty($amount)) {
-                $lesson->createLessonCreditPayment($this, $amount, $enrolment);
+                $lesson->addPayment($this, $lesson, $amount, $enrolment);
                 $this->makeGroupInvoicePayment($lesson, $enrolment);
             }
         }
@@ -144,7 +144,7 @@ trait Payable
                         $amount = $this->proFormaCredit;
                     }
                     if ($this->hasProFormaCredit() && !empty($amount)) {
-                        $splitLesson->createLessonCreditPayment($this, $amount);
+                        $splitLesson->addPayment($this, $splitLesson, $amount);
                         $this->makeInvoicePayment($splitLesson);
                     }
                 }
@@ -157,7 +157,7 @@ trait Payable
                     $amount = $this->proFormaCredit;
                 }
                 if ($this->hasProFormaCredit() && !empty($amount)) {
-                    $lesson->createLessonCreditPayment($this, $amount);
+                    $lesson->addPayment($this, $lesson, $amount);
                     $this->makeInvoicePayment($lesson);
                 }
             }
@@ -171,5 +171,14 @@ trait Payable
         } else {
             $this->addPrivateLessonCredit();
         }
+    }
+    
+    public function addLessonPayment($paymentId, $enrolmentId)
+    {
+        $lessonCredit  = new LessonPayment();
+        $lessonCredit->lessonId = $this->id;
+        $lessonCredit->paymentId = $paymentId;
+        $lessonCredit->enrolmentId = $enrolmentId;
+        $lessonCredit->save();
     }
 }

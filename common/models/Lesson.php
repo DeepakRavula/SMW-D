@@ -27,6 +27,7 @@ use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
  */
 class Lesson extends \yii\db\ActiveRecord
 {
+    use Payable;
     const TYPE_PRIVATE_LESSON = 1;
     const TYPE_GROUP_LESSON = 2;
 	
@@ -833,7 +834,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addPrivateLessonLineItem($this);
         $invoice->save();
         if ($this->hasLessonCredit($this->enrolment->id)) {
-            $invoice->addLessonDebitPayment($this, $this->getLessonCreditAmount($this->enrolment->id), $this->enrolment);
+            $invoice->addPayment($this, $invoice, $this->getLessonCreditAmount($this->enrolment->id), $this->enrolment);
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
@@ -844,7 +845,7 @@ class Lesson extends \yii\db\ActiveRecord
                     if ($amount > $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id)) {
                        $amount = $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id);
                     }
-                    $invoice->addLessonDebitPayment($extendedLesson->lesson, $amount, $this->enrolment);
+                    $invoice->addPayment($extendedLesson->lesson, $invoice, $amount, $this->enrolment);
                 }
             }
         }
@@ -875,7 +876,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->save();
         if ($this->hasLessonCredit($enrolmentId)) {
             $netPrice = $this->getLessonCreditAmount($enrolmentId);
-            $invoice->addLessonDebitPayment($this, $netPrice, $enrolment);
+            $invoice->addPayment($this, $invoice, $netPrice, $enrolment);
         }
 
         return $invoice;
@@ -988,41 +989,5 @@ class Lesson extends \yii\db\ActiveRecord
         $course->locationId  = $this->locationId;
         $course->save();
         return $course;
-    }
-    
-    public function createLessonCreditPayment($invoice, $amount, $enrolment = null)
-    {
-        $paymentModel = new Payment();
-        $paymentModel->amount = $amount;
-        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-        $paymentModel->reference = $invoice->id;
-        $paymentModel->lessonId = $this->id;
-        $paymentModel->save();	
-
-        $creditPaymentId = $paymentModel->id;
-        $paymentModel->id = null;
-        $paymentModel->isNewRecord = true;
-        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-        $paymentModel->reference = $this->id;
-        $paymentModel->invoiceId = $invoice->id;
-        $paymentModel->save();
-        
-        $enrolmentId = $this->enrolment->id;
-        if ($enrolment) {
-            $enrolmentId = $enrolment->id;
-        }
-        $this->addLessonPayment($creditPaymentId, $enrolmentId);
-
-        $debitPaymentId = $paymentModel->id;
-        $invoice->createCreditUsage($creditPaymentId, $debitPaymentId);
-    }
-    
-    public function addLessonPayment($paymentId, $enrolmentId)
-    {
-        $lessonCredit  = new LessonPayment();
-        $lessonCredit->lessonId = $this->id;
-        $lessonCredit->paymentId = $paymentId;
-        $lessonCredit->enrolmentId = $enrolmentId;
-        $lessonCredit->save();
     }
 }

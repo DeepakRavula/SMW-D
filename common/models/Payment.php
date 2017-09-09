@@ -5,9 +5,6 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use common\models\query\PaymentQuery;
-use common\commands\AddToTimelineCommand;
-use common\models\timelineEvent\TimelineEventLink;
-use yii\helpers\Url;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
@@ -31,7 +28,7 @@ class Payment extends ActiveRecord
     public $invoiceNumber;
     public $lastAmount;
     public $differnce;
-	public $userName;
+    public $userName;
 	
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_APPLY_CREDIT = 'apply-credit';
@@ -41,9 +38,9 @@ class Payment extends ActiveRecord
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
     const SCENARIO_LESSON_CREDIT = 'lesson-credit';
 	
-	const EVENT_CREATE = 'create';
-	const EVENT_EDIT = 'edit';
-	const EVENT_DELETE = 'delete';
+    const EVENT_CREATE = 'create';
+    const EVENT_EDIT = 'edit';
+    const EVENT_DELETE = 'delete';
 
     /**
      * {@inheritdoc}
@@ -122,7 +119,7 @@ class Payment extends ActiveRecord
         ];
     }
 
-	public function behaviors()
+    public function behaviors()
     {
         return [
             'softDeleteBehavior' => [
@@ -130,7 +127,7 @@ class Payment extends ActiveRecord
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
-				'replaceRegularDelete' => true
+                'replaceRegularDelete' => true
             ],
         ];
     }
@@ -147,10 +144,11 @@ class Payment extends ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
-	public function getLessonCredit()
+    public function getLessonCredit()
     {
         return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id']);
     }
+    
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
@@ -195,14 +193,15 @@ class Payment extends ActiveRecord
         return $this->hasOne(PaymentCheque::className(), ['payment_id' => 'id']);
     }
 
-	public function getInvoiceBalance()
-	{
-		$amount = 0.0;
+    public function getInvoiceBalance()
+    {
+        $amount = 0.0;
         if ($this->invoice->total > $this->invoice->invoicePaymentTotal) {
             $amount = $this->invoice->balance;
         }
-		return $amount;
-	}
+        return $amount;
+    }
+        
     public function beforeSave($insert)
     {
         if (!$insert) {
@@ -212,13 +211,13 @@ class Payment extends ActiveRecord
             $transaction->save();
             $this->transactionId = $transaction->id;
         }
-		if(!empty($this->invoiceId)) {
-			$model = Invoice::findOne(['id' => $this->invoiceId]);
-			$this->user_id = $model->user_id;
-		}else if(!empty($this->lessonId)) {
-			$model = Lesson::findOne(['id' => $this->lessonId]);
-			$this->user_id = $model->enrolment->student->customer->id;
-		}
+        if(!empty($this->invoiceId)) {
+            $model = Invoice::findOne(['id' => $this->invoiceId]);
+            $this->user_id = $model->user_id;
+        } else if(!empty($this->lessonId)) {
+            $model = Lesson::findOne(['id' => $this->lessonId]);
+            $this->user_id = $model->enrolment->student->customer->id;
+        }
         $this->isDeleted = false;
         if (empty($this->date)) {
             $this->date = (new \DateTime())->format('Y-m-d H:i:s');
@@ -238,22 +237,22 @@ class Payment extends ActiveRecord
             if ($this->isCreditUsed()) {
                 $this->updateCreditUsed();
             }
-			if(!empty($this->invoiceId)) {
-				$this->invoice->save();
-			}
+            if(!empty($this->invoiceId)) {
+                $this->invoice->save();
+            }
             return parent::afterSave($insert, $changedAttributes);
         }
-		if(!empty($this->invoiceId)) {
-			$invoicePaymentModel = new InvoicePayment();
-			$invoicePaymentModel->invoice_id = $this->invoiceId;
-			$invoicePaymentModel->payment_id = $this->id;
-			$invoicePaymentModel->save();
-			$this->invoice->save();
+        if(!empty($this->invoiceId)) {
+            $invoicePaymentModel = new InvoicePayment();
+            $invoicePaymentModel->invoice_id = $this->invoiceId;
+            $invoicePaymentModel->payment_id = $this->id;
+            $invoicePaymentModel->save();
+            $this->invoice->save();
 
-			if($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
-                            $this->invoice->addLessonCredit();
-			}
-		}
+            if($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
+                $this->invoice->addLessonCredit();
+            }
+        }
         $this->trigger(self::EVENT_CREATE);
 		
         return parent::afterSave($insert, $changedAttributes);
