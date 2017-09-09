@@ -67,6 +67,7 @@ var calendar = {
     showCalendar: function (calendarOptions) {
         $('#calendar-date-time-picker').fullCalendar('destroy');
         $('#calendar-date-time-picker').fullCalendar({
+        	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
             defaultDate: moment(calendarOptions.date).format('YYYY-MM-DD'),
             header: {
                 left: 'prev,next today',
