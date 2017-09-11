@@ -5,60 +5,49 @@ use common\models\Location;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 ?>
-  <?php $location = Location::findOne(['id' => Yii::$app->session->get('location_id')]); ?>
-	 <div class="row-fluid invoice-view" >
-		<div class="logo invoice-col" style="width: 100%">
-			<img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png" />
-			<div class="invoice-status">
-				<p class="invoice-number">
-					<strong><?= $searchModel->getDateRange();?></strong>
-				</p>
-			</div>
-		</div>
-		<div class="invoice-col " style="clear: both;">
-			<div class="invoice-print-address">
-				<ul>
-					<li><strong>Arcadia Music Academy ( <?= $location->name; ?> )</strong></li>
-					<li>
-						<?php if (!empty($location->address)): ?>
-							<?= $location->address;?>
-						<?php endif; ?>
-					</li>
-					<li>
-						<?php if (!empty($location->city_id)): ?>
-							<?= $location->city->name;?>
-						<?php endif; ?>
-						<?php if (!empty($location->province_id)): ?>
-							<?= ', ' . $location->province->name;?>
-						<?php endif; ?>
-					</li>
-					<li>
-						<?php if (!empty($location->postal_code)): ?>
-							<?= $location->postal_code;?>
-						<?php endif; ?>
-					</li>
-				</ul>
-				<ul>
-					<li>
-						</br>
-					</li>
-					<li>
-						<?php if (!empty($location->phone_number)): ?>
-							<?= $location->phone_number?>
-						<?php endif; ?>
-					</li>
-					<li>
-						<?php if (!empty($location->email)): ?>
-							<?= $location->email?>
-						<?php endif; ?>
-					</li>
-					<li>
-					   www.arcadiamusicacademy.com
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
+  <?php $model = Location::findOne(['id' => Yii::$app->session->get('location_id')]); ?>
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="page-header">
+            <span class="logo-lg"><b>Arcadia</b>SMW</span>
+            <small class="pull-right"><?= Yii::$app->formatter->asDate('now'); ?></small>
+        </h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 invoice-col">
+        <div class="invoice-print-address">
+            From
+            <address>
+                <b>Arcadia Music Academy ( <?= $model->name; ?> )</b><br>
+                <?php if (!empty($model->address)): ?>
+                    <?= $model->address; ?>
+                <?php endif; ?>
+                <br/>
+                <?php if (!empty($model->city_id)): ?>
+                    <?= $model->city->name; ?>,
+                <?php endif; ?>        
+                <?php if (!empty($model->province_id)): ?>
+                    <?= $model->province->name; ?>
+                <?php endif; ?>
+                <br/>
+                <?php if (!empty($model->postal_code)): ?>
+                    <?= $model->postal_code; ?>
+                <?php endif; ?>
+                <br/>
+                <?php if (!empty($model->phone_number)): ?>
+                    <?= $model->phone_number ?>
+                <?php endif; ?>
+                <br/>
+                <?php if (!empty($model->email)): ?>
+                    <?= $model->email ?>
+                <?php endif; ?>
+                <br/>
+                www.arcadiamusicacademy.com
+            </address>
+        </div>
+    </div>
+</div>
 <?php
 $columns = [
 		[
