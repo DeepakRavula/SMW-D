@@ -115,7 +115,7 @@ class ReportController extends Controller {
 			->royaltyFree()
 			->sum('invoice_line_item.amount');
 				
-		return $this->render('royalty', [
+		return $this->render('royalty/index', [
 			'searchModel' => $searchModel, 
 			'invoiceTaxTotal' => $invoiceTaxTotal,
 			'payments' => $payments,
@@ -284,6 +284,57 @@ class ReportController extends Controller {
         return $this->render('/report/discount/_print', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+        ]);
+    }
+
+    public function actionRoyaltyPrint()
+    {
+        $searchModel = new ReportSearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('1-m-Y');
+        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $royaltyRequest = $request->get('ReportSearch');
+            $searchModel->dateRange = $royaltyRequest['dateRange'];
+        }
+        $toDate = $searchModel->toDate;
+        if ($toDate > $currentDate) {
+            $toDate = $currentDate;
+        }
+        $locationId = Yii::$app->session->get('location_id');
+
+        $invoiceTaxTotal = Invoice::find()
+            ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
+            ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+            ->notDeleted()
+            ->sum('tax');
+
+        $payments = Payment::find()
+            ->joinWith(['invoice i' => function ($query) use ($locationId) {
+                    $query->where(['i.location_id' => $locationId]);
+                }])
+            ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
+            ->notDeleted()
+            ->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+            ->sum('payment.amount');
+
+        $royaltyPayment = InvoiceLineItem::find()
+            ->joinWith(['invoice i' => function ($query) use ($locationId) {
+                    $query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
+                }])
+            ->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+            ->royaltyFree()
+            ->sum('invoice_line_item.amount');
+
+        $this->layout = '/print';
+
+        return $this->render('royalty/_print', [
+                'searchModel' => $searchModel,
+                'invoiceTaxTotal' => $invoiceTaxTotal,
+                'payments' => $payments,
+                'royaltyPayment' => $royaltyPayment,
         ]);
     }
 }

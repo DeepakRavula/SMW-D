@@ -7,12 +7,16 @@ use kartik\daterange\DateRangePicker;
 /* @var $this yii\web\View */
 /* @var $model backend\models\search\UserSearch */
 /* @var $form yii\bootstrap\ActiveForm */
+
 ?>
 
 
-    <?php $form = ActiveForm::begin([
+<?php
+$form = ActiveForm::begin([
         'method' => 'get',
-    ]); ?>
+    ]);
+
+?>
 
 <div class="form-group">
     <?php
@@ -35,6 +39,7 @@ use kartik\daterange\DateRangePicker;
             'opens' => 'right',
         ],
     ]);
+
     ?>
 </div>    
 <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary']) ?>
