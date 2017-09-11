@@ -1,5 +1,4 @@
 <?php
-
 namespace backend\controllers;
 
 use Yii;
@@ -24,13 +23,13 @@ class ClassroomUnavailabilityController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['create'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+                [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['create', 'update', 'delete'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -45,7 +44,7 @@ class ClassroomUnavailabilityController extends Controller
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -57,7 +56,7 @@ class ClassroomUnavailabilityController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                'model' => $this->findModel($id),
         ]);
     }
 
@@ -69,22 +68,20 @@ class ClassroomUnavailabilityController extends Controller
     public function actionCreate($classroomId)
     {
         $model = new ClassroomUnavailability();
-
-        if ($model->load(Yii::$app->request->post())) {
-			$model->classroomId = $classroomId;
-			if ($model->save()) {
-				$response = [
-					'status' => true,
-				];
-			} else {
-				$errors = ActiveForm::validate($model);
-				$response = [
-					'status' => false,
-					'errors' =>  $errors
-				];
-			}
-			return $response;
-        } 
+        $model->classroomId = $classroomId;
+        $data = $this->renderAjax('/classroom/unavailability/_form', [
+            'model' => $model,
+        ]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return [
+                'status' => true
+            ];
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
     }
 
     /**
@@ -96,14 +93,19 @@ class ClassroomUnavailabilityController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        $data = $this->renderAjax('//classroom/unavailability/_form', [
+            'model' => $model,
+        ]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save();
+            return [
+                'status' => true,
+            ];
         }
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 
     /**
@@ -114,9 +116,12 @@ class ClassroomUnavailabilityController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id);
+        if ($model->delete()) {
+            return [
+                'status' => true,
+            ];
+        }
     }
 
     /**
