@@ -159,7 +159,7 @@ class ReportController extends Controller {
 			'query' => $invoiceTaxes, 
 		]);
 				
-		return $this->render('tax-collected', [
+		return $this->render('tax-collected/index', [
 			'searchModel' => $searchModel, 
 			'taxDataProvider' => $taxDataProvider,
 		]);
@@ -284,6 +284,48 @@ class ReportController extends Controller {
         return $this->render('/report/discount/_print', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+        ]);
+    }
+    public function actionTaxCollectedPrint()
+    {
+        $searchModel = new ReportSearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('1-m-Y');
+        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $royaltyRequest = $request->get('ReportSearch');
+            $searchModel->dateRange = $royaltyRequest['dateRange'];
+        }
+        $toDate = $searchModel->toDate;
+        if ($toDate > $currentDate) {
+            $toDate = $currentDate;
+        }
+        $locationId = Yii::$app->session->get('location_id');
+        $invoiceTaxes = InvoiceLineItem::find()
+            ->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
+                    $query->andWhere([
+                        'location_id' => $locationId,
+                        'type' => Invoice::TYPE_INVOICE,
+                    ])
+                    ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->notDeleted();
+                }])
+            ->andWhere(['>', 'tax_rate', 0]);
+        if ($searchModel->summarizeResults) {
+            $invoiceTaxes->groupBy('DATE(invoice.date)');
+        } else {
+            $invoiceTaxes->orderBy(['invoice.date' => SORT_ASC]);
+        }
+
+        $taxDataProvider = new ActiveDataProvider([
+            'query' => $invoiceTaxes,
+        ]);
+        $this->layout = '/print';
+        return $this->render('/report/tax-collected/_print', [
+                'searchModel' => $searchModel,
+                'taxDataProvider' => $taxDataProvider,
         ]);
     }
 }
