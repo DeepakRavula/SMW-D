@@ -278,6 +278,14 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(PhoneNumber::className(), ['user_id' => 'id']);
     }
 
+	public function getPhone()
+    {
+        $phones = [];
+        foreach ($this->phoneNumbers as $phoneNumber) {
+            $phones[] = $phoneNumber->number;
+        }
+        return implode(", ", $phones);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
