@@ -26,3 +26,6 @@ $form = ActiveForm::begin([
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
 <?php ActiveForm::end(); ?>
+<div style="margin-top:-40px;margin-left:-30px">
+    <?= Html::a('<i title="Print" class="fa fa-print"></i>', ['print/teacher'], ['class' => 'btn btn-box-tool', 'target' => '_blank']) ?>
+</div>
