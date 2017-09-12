@@ -14,7 +14,7 @@
        <div class="row">
       <div class="col-md-12">
         <h2 class="page-header">
-          <span class="logo-lg"><b>Arcadia</b>SMW</span>
+          <span class="logo-lg"><img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png" /></span>
           <small class="pull-right"><?= Yii::$app->formatter->asDate($model->date); ?></small>
         </h2>
       </div>

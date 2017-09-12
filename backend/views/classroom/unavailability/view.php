@@ -4,55 +4,67 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use common\models\ClassroomUnavailability;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 
 $this->title = $model->name;
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back']);
 ?>
-<div id="classroom-unavailability" class="col-md-12">
-	<h4 class="pull-left m-r-20">Unavailabilities</h4>
-	<a href="#" class="text-add-new"><i class="fa fa-plus"></i></a>
-	<div class="clearfix"></div>
-</div>
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Unavailability</h4>',
-    'id'=>'classroom-unavailability-modal',
+    'id' => 'classroom-unavailability-modal',
 ]);
- echo $this->render('_form', [
-		'model' => new ClassroomUnavailability(),
-        'classroomModel' => $model,
+echo $this->render('_form', [
+    'model' => new ClassroomUnavailability(),
+    'classroomModel' => $model,
 ]);
 Modal::end();
 ?>
-<?php yii\widgets\Pjax::begin([
-	'id' => 'classroom-unavailability-grid'
-]) ?>
-<?php
-echo GridView::widget([
-    'dataProvider' => $unavailabilityDataProvider,
-    'options' => ['class' => 'col-md-5'],
-    'tableOptions' => ['class' => 'table table-bordered'],
-    'headerRowOptions' => ['class' => 'bg-light-gray'],
-    'columns' => [
-        [
-            'label' => 'From Date',
-            'value' => function ($data) {
-               return !empty($data->fromDate) ? Yii::$app->formatter->asDate($data->fromDate) : null;
-            },
+<div class="col-md-12">	
+    <?php
+    LteBox::begin([
+        'type' => LteConst::TYPE_DEFAULT,
+        'boxTools' => [
+            '<i title="Add" class="fa fa-plus classroom-unavailability m-r-10"></i>',
         ],
-        [
-            'label' => 'To Date',
-            'value' => function ($data) {
-               return !empty($data->toDate) ? Yii::$app->formatter->asDate($data->toDate) : null;
-            },
+        'title' => 'Unavailabilites',
+        'withBorder' => true,
+    ])
+    ?>
+    <?php
+    yii\widgets\Pjax::begin([
+        'id' => 'classroom-unavailability-grid'
+    ])
+    ?>
+    <?php
+    echo GridView::widget([
+        'dataProvider' => $unavailabilityDataProvider,
+        'summary' => '',
+        'options' => ['class' => 'col-md-5'],
+        'tableOptions' => ['class' => 'table'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'columns' => [
+                [
+                'label' => 'From Date',
+                'value' => function ($data) {
+                    return !empty($data->fromDate) ? Yii::$app->formatter->asDate($data->fromDate) : null;
+                },
+            ],
+                [
+                'label' => 'To Date',
+                'value' => function ($data) {
+                    return !empty($data->toDate) ? Yii::$app->formatter->asDate($data->toDate) : null;
+                },
+            ],
+                [
+                'label' => 'Reason',
+                'value' => function ($data) {
+                    return !empty($data->reason) ? $data->reason : null;
+                },
+            ],
         ],
-        [
-            'label' => 'Reason',
-            'value' => function ($data) {
-                return !empty($data->reason) ? $data->reason : null;
-            },
-        ],
-    ],
-]);
-?>
+    ]);
+    ?>
 <?php \yii\widgets\Pjax::end(); ?>
+<?php LteBox::end() ?>
