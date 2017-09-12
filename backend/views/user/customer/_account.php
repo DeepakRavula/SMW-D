@@ -1,18 +1,21 @@
 <?php
 
 use kartik\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 
-<?php
-yii\widgets\Pjax::begin([
-    'id' => 'customer',
-    'timeout' => 6000,
-])
-
-?>
 <div class="col-md-12 p-b-20">
-    <h5><strong><?= 'Accounts' ?> </strong></h5> 
+    <h5><strong><?= 'Accounts' ?> </strong> 
+        <?= Html::a('<i class="fa fa-print"></i>', ['print/customer-account', 'id' => $userModel->id], ['id' => 'account-print', 'target' => '_blank']) ?></h5>
+    <?php
+    yii\widgets\Pjax::begin([
+        'id' => 'accounts-customer',
+        'timeout' => 6000,
+    ])
+
+    ?>  
     <?php
     echo GridView::widget([
         'dataProvider' => $accountDataProvider,
